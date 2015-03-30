@@ -1,0 +1,101 @@
+// ---------------------------------------------------------------------------------
+// General
+// ---------------------------------------------------------------------------------
+
+body {
+  padding-top: 50px;
+}
+
+.lead {
+  font-family: $font-family-sap-light, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+// ---------------------------------------------------------------------------------
+// Buttons
+// ---------------------------------------------------------------------------------
+
+.btn-outline {
+  @include button-variant-outline($btn-outline-color, $btn-outline-bg, $btn-outline-border);
+}
+
+.btn-outline-negative {
+  @extend .btn-outline;
+
+  @include button-variant-outline-negative;
+}
+
+
+// ---------------------------------------------------------------------------------
+// Navigation
+// ---------------------------------------------------------------------------------
+
+
+.nav-highlight {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  padding-left: 80px;
+}
+
+
+// ---------------------------------------------------------------------------------
+// Breadcrumb
+// ---------------------------------------------------------------------------------
+
+
+.breadcrumb {
+  margin-top: 20px;
+
+  li.active > a {
+    color: $breadcrumb-active-color;
+  }
+
+  & > li + li:before {
+    padding: 0 10px 0 14px;
+  }
+
+}
+
+
+// ---------------------------------------------------------------------------------
+// Jumbotron
+// ---------------------------------------------------------------------------------
+
+.jumbotron {
+  background: linear-gradient($deep-blue, $bright-blue);
+}
+
+
+// ---------------------------------------------------------------------------------
+// Header
+// ---------------------------------------------------------------------------------
+
+.logo {
+  background: inline-image("sap-logo.svg") no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 10px;
+  left: $grid-gutter-width / 2;
+  height: 30px;
+  width: 62px;
+}
+
+.navbar-sap {
+  // border-bottom: 10px solid $sapgold;
+}
+
+
+// ---------------------------------------------------------------------------------
+// Footer
+// ---------------------------------------------------------------------------------
+
+footer, .footer {
+  @include pie-clearfix;
+  background: #e9e9e9;
+  margin-top: 100px;
+  padding: 8px 0;
+}

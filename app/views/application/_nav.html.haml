@@ -1,0 +1,78 @@
+%nav.navbar.navbar-fixed-top.navbar-inverse.navbar-sap
+  .container
+    .navbar-header
+      %button.navbar-toggle.collapsed{"data-target": "#main-nav-collapse", "data-toggle": "collapse", type: "button"}
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      = link_to root_path, class: "navbar-brand" do
+        .logo
+        Monsoon Converged Cloud
+
+    .collapse.navbar-collapse#main-nav-collapse
+      %ul.nav.navbar-nav.navbar-left
+        %li.dropdown
+          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            = controller.controller_name.humanize
+            %span.caret
+          %ul.dropdown-menu{:role => "menu"}
+            %li.dropdown-header Compute
+            %li
+              = link_to "Instances", instances_path
+            %li
+              %a{:href => "#"} Volumes
+            %li
+              %a{:href => "#"} Images
+            %li
+              %a{:href => "#"} Automation
+
+            %li.dropdown-header Identity
+            %li
+              %a{:href => "#"} User Permissions
+            %li
+              %a{:href => "#"} Teams
+            %li
+              %a{:href => "#"} Credentials
+            %li
+              %a{:href => "#"} Organizations
+            %li
+              %a{:href => "#"} Projects
+
+            %li.dropdown-header Networking
+            %li
+              %a{:href => "#"} Networks
+            %li
+              %a{:href => "#"} Loadbalancers
+
+            %li.dropdown-header Storage
+            %li
+              %a{:href => "#"} Swift
+
+
+      %ul.nav.navbar-nav.navbar-right
+        %li.dropdown
+          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            Esther Schmitz
+            %span.caret
+          %ul.dropdown-menu{:role => "menu"}
+            %li
+              %a{:href => "#"} View Profile
+            %li
+              %a{:href => "#"} Credentials
+            %li.divider
+            %li
+              %a{:href => "#"} Log out
+        %li.dropdown
+          %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            Region: Europe
+            %span.caret
+          %ul.dropdown-menu{:role => "menu"}
+            %li
+              %a{:href => "#"} Canada
+            %li.active
+              %a{:href => "#"} Europe
+            %li
+              %a{:href => "#"} US-East
+            %li
+              %a{:href => "#"} US-West

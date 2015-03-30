@@ -1,0 +1,39 @@
+.container
+  %ol.breadcrumb
+    %li.dropdown
+      %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Esther's Organization
+        %span.caret
+      %ul.dropdown-menu{:role => "menu"}
+        %li
+          %a{:href => "#"} Monsoon
+        %li
+          %a{:href => "#"} Testorg 1
+        %li
+          %a{:href => "#"} Testorg Zwo
+        %li
+          %a{:href => "#"} Superimportant Org
+
+    %li.dropdown
+      %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+        Super_Project
+        %span.caret
+      %ul.dropdown-menu{:role => "menu"}
+        %li
+          %a{:href => "#"} TEST_1
+        %li
+          %a{:href => "#"} HANA_Testing
+        %li
+          %a{:href => "#"} My_Staging_Test
+
+      %li.dropdown.active
+        %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+          Choose project
+          %span.caret
+        %ul.dropdown-menu{:role => "menu"}
+          %li
+            %a{:href => "#"} Inner_TEST_1
+          %li
+            %a{:href => "#"} Inner_HANA_Testing
+          %li
+            %a{:href => "#"} Inner_My_Staging_Test
