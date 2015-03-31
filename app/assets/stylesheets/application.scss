@@ -13,9 +13,11 @@
 
 @import "variables";
 
+@import "compass";
+
+@import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bootstrap/theme";
-@import "compass";
 
 @import "mixins";
 @import "monsoon_theme";

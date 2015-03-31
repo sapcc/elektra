@@ -1,3 +1,28 @@
 .container
-  %h1 Instances#index
-  %p Find me in app/views/instances/index.html.haml
+
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th OS
+        %th Network
+        %th Status
+        %th.snug
+    %tbody
+      %tr
+        %td App Server 1
+        %td CoreOS
+        %td 10.67.77.99
+        %td Running
+        %td
+          %button.btn.btn-sm.btn-default
+            %span.glyphicon.glyphicon-cog
+
+      %tr
+        %td App Server 2
+        %td CoreOS
+        %td 10.67.77.101
+        %td Running
+        %td
+          %button.btn.btn-sm.btn-default
+            %span.glyphicon.glyphicon-cog
