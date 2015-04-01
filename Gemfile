@@ -16,6 +16,7 @@ gem 'turbolinks'
 
 # Database
 gem 'pg'
+gem 'activerecord-session_store'
 
 # Openstack
 gem 'monsoon-fog',            git: 'git://localhost/monsoon/monsoon-fog.git'
