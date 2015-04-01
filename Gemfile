@@ -17,6 +17,10 @@ gem 'turbolinks'
 # Database
 gem 'pg'
 
+# Openstack
+gem 'monsoon-fog',            git: 'git://localhost/monsoon/monsoon-fog.git'
+gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git'
+
 # Extras
 gem 'rails_config'
 
