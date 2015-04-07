@@ -4,7 +4,7 @@ NAMESPACE = monsoon
 NAME      = dashboard
 IMAGE     = $(REGISTRY)/$(NAMESPACE)/$(NAME)
 
-.PHONY: 			 all build test tag push postgres clean
+.PHONY: 			 all build test tag push postgres clean git-set-mtimes
 .INTERMEDIATE: version
 
 all:
@@ -13,7 +13,7 @@ all:
 	@echo "  * test  - test $(IMAGE)"
 	@echo "  * push  - tags and pushes $(IMAGE)"
 
-build:
+build: git-set-mtimes
 	docker build -t $(IMAGE) --rm . 
 
 test: docker = docker run --link postgres:postgres 
@@ -44,3 +44,15 @@ version:
 						 /image_daily_version -r $(REGISTRY) \
 																	-n $(NAMESPACE) \
 																	-i $(NAME) > version
+
+git-set-mtimes: 
+	@echo "Reseting mtimes"
+	@find . -exec touch -t 201401010000 {} \; 
+	@IFS=$$'\n'; \
+	files=( $$({ git ls-files | xargs -n1 dirname | sort -u && git ls-files; } | sort -r) ); \
+	unset IFS; \
+	for x in $${files[@]}; do \
+		stamp=$$(git log -1 --format=%ci -- "$${x}"); \
+		echo "$${stamp} $${x}"; \
+		touch -t $$(date -d "$${stamp}" +%y%m%d%H%M.%S) "$${x}"; \
+	done
