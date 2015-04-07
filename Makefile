@@ -48,7 +48,6 @@ clean:
 
 postgres: 
 	$(DOCKER) run -d postgres > postgres 
-	$(MAKE) wait_for_postgres
 
 wait_for_postgres: postgres
 	$(DOCKER) run --link $(postgres):postgres aanand/wait
