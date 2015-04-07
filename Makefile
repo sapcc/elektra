@@ -9,7 +9,8 @@ DOCKER    := docker
 postgres   = $(shell cat postgres 2> /dev/null)
 version    = $(shell cat version  2> /dev/null)
 
-.PHONY: 			 all build test tag push clean reset_mtimes
+.PHONY: 			 all build test migrate rspec cucumber tag push clean \
+							 wait_for_postgres reset_mtimes
 .INTERMEDIATE: version
 
 all:
