@@ -20,6 +20,10 @@ default: &default
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 5
+  username: postgres
+  password:
+  host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || localhost %>
+  port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || 5432 %>
 
 development:
   <<: *default
@@ -81,5 +85,3 @@ test:
 production:
   <<: *default
   database: monsoon-dashboard_production
-  username: monsoon-dashboard
-  password: <%= ENV['MONSOON-DASHBOARD_DATABASE_PASSWORD'] %>
