@@ -57,18 +57,24 @@
 
 
       %ul.nav.navbar-nav.navbar-right
-        %li.dropdown
-          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            Esther Schmitz
-            %span.caret
-          %ul.dropdown-menu{:role => "menu"}
-            %li
-              %a{:href => "#"} View Profile
-            %li
-              %a{:href => "#"} Credentials
-            %li.divider
-            %li
-              %a{:href => "#"} Log out
+        - if logged_in?
+          %li.dropdown
+            -# = link_to "https://localhost/pictures/#{current_user.name}", "data-toggle" => "tooltip", "data-placement" => "left", "data-delay" => "300", title: "Click to change your profile picture", class: "linked_img" do
+
+
+            %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+              %img.avatar{src: "https://localhost/avatar/#{current_user.name}?size=24x24"}
+              #{current_user.name}
+              %span.caret
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:href => "#"} View Profile
+              %li
+                %a{:href => "#"} Credentials
+              %li.divider
+              %li
+                %a{:href => "#"} Log out
+
         %li.dropdown
           %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
             Region: Europe

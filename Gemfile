@@ -13,6 +13,7 @@ gem 'coffee-rails'
 gem 'jquery-rails'
 gem 'haml-rails'
 gem 'turbolinks'
+gem 'simple_form'
 
 # Database
 gem 'pg'

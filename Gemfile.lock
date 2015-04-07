@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 9a08fd1d6bc95ad467de66823e005e01c85ff8dd
+  revision: fdf9d28d5cfeabdba15f65a651e2eb035d7c4d70
   specs:
-    monsoon-openstack-auth (0.1.3)
+    monsoon-openstack-auth (0.1.4)
       monsoon-fog
       rails
 
@@ -335,6 +335,9 @@ GEM
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
     sexp_processor (4.5.0)
+    simple_form (3.1.0)
+      actionpack (~> 4.0)
+      activemodel (~> 4.0)
     slop (3.6.0)
     spring (1.3.3)
     sprockets (2.12.3)
@@ -392,6 +395,7 @@ DEPENDENCIES
   rspec-rails (~> 2.0)
   sass-rails
   sdoc (~> 0.4.0)
+  simple_form
   spring
   turbolinks
   uglifier

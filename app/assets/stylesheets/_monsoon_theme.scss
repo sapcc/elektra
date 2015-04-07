@@ -2,12 +2,25 @@
 // General
 // ---------------------------------------------------------------------------------
 
+html {
+  /* Needed for sticky footer */
+  position: relative;
+  min-height: 100%;
+}
+
 body {
   padding-top: 50px;
+
+  /* Margin bottom by footer height + some whitespace */
+  margin-bottom: 160px;
 }
 
 .lead {
   font-family: $font-family-sap-light, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.avatar {
+  margin-right: 6px;
 }
 
 
@@ -106,6 +119,10 @@ footer, .footer {
   background: #e9e9e9;
   margin-top: 100px;
   padding: 8px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
 }
 
 
