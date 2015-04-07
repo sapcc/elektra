@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MonsoonServicesController do
+describe ServicesController do
 
   describe "GET 'index'" do
     it "returns http success" do
