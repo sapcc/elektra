@@ -35,7 +35,7 @@ postgres:
 	docker run --link postgres:postgres aanand/wait
 
 clean: 
-	rm version
+	rm -rf version
 	docker kill $$(docker ps -aq) &> /dev/null || true
 	docker rm $$(docker ps -aq) &> /dev/null   || true
 
