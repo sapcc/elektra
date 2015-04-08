@@ -1,8 +1,9 @@
-SHELL     := /bin/sh
-REGISTRY  := localhost
-NAMESPACE := monsoon
-NAME      := dashboard
-IMAGE     := $(REGISTRY)/$(NAMESPACE)/$(NAME)
+SHELL       := /bin/sh
+REGISTRY    := localhost
+NAMESPACE   := monsoon
+NAME        := dashboard
+IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
+BUILD_IMAGE := localhost/monsoon/build:latest 
 
 # Executables
 DOCKER    := docker
@@ -84,8 +85,7 @@ postgres:
 # be an extra target because make will not be able to know the container id or
 # read the generated file in the same target (or at least I don't know how).
 wait_for_postgres: postgres
-	$(DOCKER) run --link $(postgres):postgres \
-		localhost/monsoon/build:latest /wait
+	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) /wait
 
 # ----------------------------------------------------------------------------------
 # Helper Targets
@@ -94,7 +94,7 @@ wait_for_postgres: postgres
 # Creates an incrementing daily version by querying the given image from the
 # registry. e.g. v20150401, v20150401.1, v20150401.2, ...
 version:
-	$(DOCKER) run localhost/monsoon/build /image_daily_version \
+	$(DOCKER) run $(BUILD_IMAGE) /image_daily_version \
 		-r $(REGISTRY) -n $(NAMESPACE) -i $(NAME) > $@
 
 # Resets the modification times of all files in a git repository to the date of
@@ -103,5 +103,4 @@ version:
 # hand does not. Without this the cache will be busted by Git and is basically
 # useless.
 reset_mtimes: 
-	$(DOCKER) run -v $(shell pwd):/git localhost/monsoon/build:latest \
-		/reset_mtimes
+	$(DOCKER) run -v $(shell pwd):/git $(BUILD_IMAGE) /reset_mtimes
