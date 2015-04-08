@@ -84,7 +84,8 @@ postgres:
 # be an extra target because make will not be able to know the container id or
 # read the generated file in the same target (or at least I don't know how).
 wait_for_postgres: postgres
-	$(DOCKER) run --link $(postgres):postgres localhost/monsoon/build /wait
+	$(DOCKER) run --link $(postgres):postgres \
+		localhost/monsoon/build:latest /wait
 
 # ----------------------------------------------------------------------------------
 # Helper Targets
@@ -102,4 +103,5 @@ version:
 # hand does not. Without this the cache will be busted by Git and is basically
 # useless.
 reset_mtimes: 
-	$(DOCKER) run -v $(shell pwd):/git localhost/monsoon/build /reset_mtimes
+	$(DOCKER) run -v $(shell pwd):/git localhost/monsoon/build:latest \
+		/reset_mtimes
