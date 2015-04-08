@@ -25,7 +25,8 @@ build: reset_mtimes
 test: migrate rspec cucumber 
 
 migrate: postgres 
-	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=test $(IMAGE) \
+	$(DOCKER) run --link $(postgres):postgres \
+								-e RAILS_ENV=test $(IMAGE) \
 								bundle exec rake db:create db:migrate 
 
 rspec: migrate
