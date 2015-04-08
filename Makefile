@@ -62,13 +62,4 @@ version:
 																		 -i $(NAME) > version
 
 reset_mtimes: 
-	@echo "Reseting mtimes"
-	@find . -exec touch -t 201401010000 {} \; 
-	@IFS=$$'\n'; \
-	files=( $$({ git ls-files | xargs -n1 dirname | sort -u && git ls-files; } | sort -r) ); \
-	unset IFS; \
-	for x in $${files[@]}; do \
-		stamp=$$(git log -1 --format=%ci -- "$${x}"); \
-		echo "$${stamp} $${x}"; \
-		touch -t $$(date -d "$${stamp}" +%y%m%d%H%M.%S) "$${x}"; \
-	done
+	$(DOCKER) run -v $(shell pwd):/git localhost/monsoon/build /reset_mtimes
