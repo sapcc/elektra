@@ -38,7 +38,10 @@ tag: version
 	$(DOCKER) tag -f $(IMAGE) $(IMAGE):$(version) 
 
 push: tag
-	$(DOCKER) push $(IMAGE):
+	$(DOCKER) push $(IMAGE):$(version)
+
+pull:
+	$(DOCKER) pull $(IMAGE)
 
 clean: 	
 	$(DOCKER) kill $(postgres) &> /dev/null || true
