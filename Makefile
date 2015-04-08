@@ -3,7 +3,7 @@ REGISTRY    := localhost
 NAMESPACE   := monsoon
 NAME        := dashboard
 IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
-BUILD_IMAGE := localhost/monsoon/build:latest 
+BUILD_IMAGE := localhost/monsoon/build:1.0.1 
 
 # Executables
 DOCKER    := docker
@@ -93,7 +93,7 @@ wait_for_postgres: postgres
 
 # Creates an incrementing daily version by querying the given image from the
 # registry. e.g. v20150401, v20150401.1, v20150401.2, ...
-version:
+version: 
 	$(DOCKER) run $(BUILD_IMAGE) /image_daily_version \
 		-r $(REGISTRY) -n $(NAMESPACE) -i $(NAME) > $@
 
@@ -104,3 +104,4 @@ version:
 # useless.
 reset_mtimes: 
 	$(DOCKER) run -v $(shell pwd):/git $(BUILD_IMAGE) /reset_mtimes
+
