@@ -3,7 +3,7 @@ REGISTRY    := localhost
 NAMESPACE   := monsoon
 NAME        := dashboard
 IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
-BUILD_IMAGE := localhost/monsoon/build:1.0.1 
+BUILD_IMAGE := localhost/monsoon/build:1.0.2
 
 # Executables
 DOCKER    := docker
@@ -85,7 +85,7 @@ postgres:
 # be an extra target because make will not be able to know the container id or
 # read the generated file in the same target (or at least I don't know how).
 wait_for_postgres: postgres
-	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) sh /wait
+	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) /wait
 
 # ----------------------------------------------------------------------------------
 # Helper Targets
