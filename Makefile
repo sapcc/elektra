@@ -13,27 +13,22 @@ DOCKER      := docker
 # Variables that are expanded dynamically
 postgres    = $(shell cat postgres 2> /dev/null)
 
-.PHONY: all clean \
-	build promote push pull \
-	test migrate rspec cucumber \
-	wait_for_postgres \
-	reset_mtimes
-
-.INTERMEDIATE: version
-
 # ----------------------------------------------------------------------------------
 # Make Idiomatic Targets
 # ----------------------------------------------------------------------------------
 
 # This is the default target
-all:
+.PHONY: info
+help: info
+	@echo
 	@echo "Available targets:"
-	@echo "  * build - build $(IMAGE)"
-	@echo "  * test  - test $(IMAGE)"
-	@echo "  * push  - tags and pushes $(IMAGE)"
+	@echo "  * build   - builds $(IMAGE):$(VERSION)"
+	@echo "  * test    - runs all test targets for $(IMAGE)"
+	@echo "  * promote - promotes $(IMAGE):$(VERSION) to $(IMAGE):$(CHANNEL)"
 
 # Return everything into a pristine state. Stops dependant processes and
 # deleted intermediate files
+.PHONY: clean
 clean: 	
 	$(DOCKER) kill $(postgres) &> /dev/null || true
 	$(DOCKER) rm   $(postgres) &> /dev/null || true
@@ -44,16 +39,20 @@ clean:
 # Docker Targets 
 # ----------------------------------------------------------------------------------
 
+.PHONY: build
 build: reset_mtimes
 	$(DOCKER) build -t $(IMAGE):$(VERSION) --rm . 
 
+.PHONY: promote
 promote: 
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${CHANNEL}
 	$(DOCKER) push $(IMAGE):$(CHANNEL)
 
+.PHONY: push 
 push: 
 	$(DOCKER) push $(IMAGE):$(VERSION)
 
+.PHONY: pull 
 pull:
 	$(DOCKER) pull $(IMAGE):$(VERSION)
 
@@ -61,15 +60,19 @@ pull:
 # Rails Targets 
 # ----------------------------------------------------------------------------------
 
+.PHONY: test 
 test: migrate rspec cucumber 
 
+.PHONY: migrate
 migrate: postgres 
 	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=test $(IMAGE):$(VERSION) \
 		bundle exec rake db:create db:migrate 
 
+.PHONY: rspec 
 rspec: migrate
 	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
 
+.PHONY: cucumber
 cucumber: migrate
 	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
 
@@ -85,7 +88,8 @@ postgres:
 # Waits for the postgres port to become available. Required because of race
 # conditions when later processes start fastet than the database. This needs to
 # be an extra target because make will not be able to know the container id or
-# read the generated file in the same target (or at least I don't know how).
+# read the generated file in the same target (or at least I don't know how). 
+.PHONY: wait_for_postgres
 wait_for_postgres: postgres
 	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) /wait
 
@@ -95,6 +99,7 @@ wait_for_postgres: postgres
 
 # Creates an incrementing daily version by querying the given image from the
 # registry. e.g. v20150401, v20150401.1, v20150401.2, ...
+.INTERMEDIATE: version
 version: 
 	$(DOCKER) run $(BUILD_IMAGE) /image_daily_version \
 		-r $(REGISTRY) -n $(NAMESPACE) -i $(NAME) > $@
@@ -104,6 +109,19 @@ version:
 # mtime of a file into account when checking for modifications. Git on the other
 # hand does not. Without this the cache will be busted by Git and is basically
 # useless.
+.PHONY: reset_mtimes
 reset_mtimes: 
 	$(DOCKER) run -v $(shell pwd):/git $(BUILD_IMAGE) /reset_mtimes
 
+# Print a banner containing all expanded variables. Great for verifying
+# environment variables are being passed correctly, etc.
+.PHONY: info
+info:
+	@echo "------------------------------------------------------------------------------------"
+	@echo "  Environment"
+	@echo "------------------------------------------------------------------------------------"
+	@echo "  VERSION     = $(VERSION)"
+	@echo "  CHANNEL     = $(CHANNEL)"
+	@echo "  IMAGE       = $(IMAGE)"
+	@echo "  BUILD_IMAGE = $(BUILD_IMAGE)"
+	@echo "------------------------------------------------------------------------------------"
