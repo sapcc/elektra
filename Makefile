@@ -7,16 +7,14 @@ IMAGE          := $(REGISTRY)/$(NAMESPACE)/$(NAME)
 STAGE          ?= build
 DATE           := $(shell date +%Y%m%d)
 VERSION        := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
-TARGET_VERSION ?= $(STAGE).latest
-SOURCE_VERSION ?= build.latest
 
 BUILD_IMAGE    := localhost/monsoon/build:1.0.2
 
 # Executables
-DOCKER      := docker
+DOCKER := docker
 
 # Variables that are expanded dynamically
-postgres    = $(shell cat postgres 2> /dev/null)
+postgres = $(shell cat postgres 2> /dev/null)
 
 # ----------------------------------------------------------------------------------
 # Make Idiomatic Targets
@@ -29,7 +27,8 @@ help: info
 	@echo "Available targets:"
 	@echo "  * build   - builds $(IMAGE):$(VERSION)"
 	@echo "  * test    - runs all test targets for $(IMAGE)"
-	@echo "  * promote - promotes $(IMAGE):$(VERSION) to $(IMAGE):$(PROMOTION)"
+	@echo "  * promote - tags $(VERSION) as TARGET_VERSION"
+	@echo "  * freeze  - tags SOURCE_VERSION as $(VERSION)"
 
 # Return everything into a pristine state. Stops dependant processes and
 # deleted intermediate files
@@ -50,11 +49,19 @@ build: reset_mtimes
 
 .PHONY: promote
 promote: 
+	@if [ -z "$$TARGET_VERSION" ]; then \
+		echo "You need to set TARGET_VERSION to use the promote target"; \
+		exit 1; \
+	fi
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
 	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
 
 .PHONY: freeze 
 freeze:
+	@if [ -z "$$SOURCE_VERSION" ]; then \
+		echo "You need to set SOURCE_VERSION to use the freeze target"; \
+		exit 1; \
+	fi
 	$(DOCKER) tag -f $(IMAGE):$(SOURCE_VERSION) $(IMAGE):${VERSION}
 	$(DOCKER) push $(IMAGE):${VERSION}
 
@@ -107,13 +114,6 @@ wait_for_postgres: postgres
 # Helper Targets
 # ----------------------------------------------------------------------------------
 
-# Creates an incrementing daily version by querying the given image from the
-# registry. e.g. v20150401, v20150401.1, v20150401.2, ...
-.INTERMEDIATE: version
-version: 
-	$(DOCKER) run $(BUILD_IMAGE) /image_daily_version \
-		-r $(REGISTRY) -n $(NAMESPACE) -i $(NAME) > $@
-
 # Resets the modification times of all files in a git repository to the date of
 # the latest commit that changed it. This is required because Docker takes the
 # mtime of a file into account when checking for modifications. Git on the other
@@ -132,9 +132,7 @@ info:
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
-	@echo
-	@echo "  SOURCE_VERSION = $(SOURCE_VERSION)"
-	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
-	@echo
+	@$(if $(SOURCE_VERSION), echo "  SOURCE_VERSION = $(SOURCE_VERSION)")
+	@$(if $(TARGET_VERSION), echo "  TARGET_VERSION = $(TARGET_VERSION)")
 	@echo "  BUILD_IMAGE    = $(BUILD_IMAGE)"
 	@echo "------------------------------------------------------------------------------------"
