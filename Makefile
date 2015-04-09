@@ -44,8 +44,7 @@ clean:
 # Docker Targets 
 # ----------------------------------------------------------------------------------
 
-#build: reset_mtimes
-build: 
+build: reset_mtimes
 	$(DOCKER) build -t $(IMAGE):$(VERSION) --rm . 
 
 promote: 
