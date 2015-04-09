@@ -1,11 +1,16 @@
-SHELL       := /bin/sh
-REGISTRY    := localhost
-NAMESPACE   := monsoon
-NAME        := dashboard
-VERSION     ?= latest
-CHANNEL     ?= alpha
-IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
-BUILD_IMAGE := localhost/monsoon/build:1.0.2
+SHELL          := /bin/sh
+REGISTRY       := localhost
+NAMESPACE      := monsoon
+NAME           := dashboard
+IMAGE          := $(REGISTRY)/$(NAMESPACE)/$(NAME)
+
+STAGE          ?= build
+DATE           := $(shell date +%Y%m%d)
+VERSION        := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+TARGET_VERSION ?= $(STAGE).latest
+SOURCE_VERSION ?= build.latest
+
+BUILD_IMAGE    := localhost/monsoon/build:1.0.2
 
 # Executables
 DOCKER      := docker
@@ -24,7 +29,7 @@ help: info
 	@echo "Available targets:"
 	@echo "  * build   - builds $(IMAGE):$(VERSION)"
 	@echo "  * test    - runs all test targets for $(IMAGE)"
-	@echo "  * promote - promotes $(IMAGE):$(VERSION) to $(IMAGE):$(CHANNEL)"
+	@echo "  * promote - promotes $(IMAGE):$(VERSION) to $(IMAGE):$(PROMOTION)"
 
 # Return everything into a pristine state. Stops dependant processes and
 # deleted intermediate files
@@ -45,8 +50,13 @@ build: reset_mtimes
 
 .PHONY: promote
 promote: 
-	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${CHANNEL}
-	$(DOCKER) push $(IMAGE):$(CHANNEL)
+	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${PROMOTION}
+	$(DOCKER) push $(IMAGE):$(PROMOTION)
+
+.PHONY: freeze 
+freeze:
+	$(DOCKER) tag -f $(IMAGE):$(PARENT) $(IMAGE):${VERSION}
+	$(DOCKER) push $(IMAGE):${VERSION}
 
 .PHONY: push 
 push: 
@@ -120,8 +130,11 @@ info:
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  Environment"
 	@echo "------------------------------------------------------------------------------------"
-	@echo "  VERSION     = $(VERSION)"
-	@echo "  CHANNEL     = $(CHANNEL)"
-	@echo "  IMAGE       = $(IMAGE)"
-	@echo "  BUILD_IMAGE = $(BUILD_IMAGE)"
+	@echo "  IMAGE          = $(IMAGE)"
+	@echo "  VERSION        = $(VERSION)"
+	@echo
+	@echo "  SOURCE_VERSION = $(SOURCE_VERSION)"
+	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
+	@echo
+	@echo "  BUILD_IMAGE    = $(BUILD_IMAGE)"
 	@echo "------------------------------------------------------------------------------------"
