@@ -50,12 +50,12 @@ build: reset_mtimes
 
 .PHONY: promote
 promote: 
-	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${PROMOTION}
-	$(DOCKER) push $(IMAGE):$(PROMOTION)
+	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
+	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
 
 .PHONY: freeze 
 freeze:
-	$(DOCKER) tag -f $(IMAGE):$(PARENT) $(IMAGE):${VERSION}
+	$(DOCKER) tag -f $(IMAGE):$(SOURCE_VERSION) $(IMAGE):${VERSION}
 	$(DOCKER) push $(IMAGE):${VERSION}
 
 .PHONY: push 
