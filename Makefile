@@ -2,18 +2,19 @@ SHELL       := /bin/sh
 REGISTRY    := localhost
 NAMESPACE   := monsoon
 NAME        := dashboard
+VERSION     ?= latest
+CHANNEL     ?= alpha
 IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
 BUILD_IMAGE := localhost/monsoon/build:1.0.2
 
 # Executables
-DOCKER    := docker
+DOCKER      := docker
 
 # Variables that are expanded dynamically
-postgres   = $(shell cat postgres 2> /dev/null)
-version    = $(shell cat version  2> /dev/null)
+postgres    = $(shell cat postgres 2> /dev/null)
 
 .PHONY: all clean \
-	build tag push pull \
+	build promote push pull \
 	test migrate rspec cucumber \
 	wait_for_postgres \
 	reset_mtimes
@@ -43,17 +44,19 @@ clean:
 # Docker Targets 
 # ----------------------------------------------------------------------------------
 
-build: reset_mtimes
-	$(DOCKER) build -t $(IMAGE) --rm . 
+#build: reset_mtimes
+build: 
+	$(DOCKER) build -t $(IMAGE):$(VERSION) --rm . 
 
-tag: version
-	$(DOCKER) tag -f $(IMAGE) $(IMAGE):$(version) 
+promote: 
+	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${CHANNEL}
+	$(DOCKER) push $(IMAGE):$(CHANNEL)
 
-push: tag
-	$(DOCKER) push $(IMAGE):$(version)
+push: 
+	$(DOCKER) push $(IMAGE):$(VERSION)
 
 pull:
-	$(DOCKER) pull $(IMAGE)
+	$(DOCKER) pull $(IMAGE):$(VERSION)
 
 # ----------------------------------------------------------------------------------
 # Rails Targets 
@@ -62,14 +65,14 @@ pull:
 test: migrate rspec cucumber 
 
 migrate: postgres 
-	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=test $(IMAGE) \
+	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=test $(IMAGE):$(VERSION) \
 		bundle exec rake db:create db:migrate 
 
 rspec: migrate
-	$(DOCKER) run --link $(postgres):postgres $(IMAGE) bundle exec rspec
+	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
 
 cucumber: migrate
-	$(DOCKER) run --link $(postgres):postgres $(IMAGE) bundle exec cucumber
+	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
 
 # ----------------------------------------------------------------------------------
 # Required Containers 
