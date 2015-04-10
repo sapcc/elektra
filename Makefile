@@ -1,20 +1,20 @@
-SHELL          := /bin/sh
-REGISTRY       := localhost
-NAMESPACE      := monsoon
-NAME           := dashboard
-IMAGE          := $(REGISTRY)/$(NAMESPACE)/$(NAME)
+SHELL       := /bin/sh
+REGISTRY    := localhost
+NAMESPACE   := monsoon
+NAME        := dashboard
+IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
 
-STAGE          ?= build
-DATE           := $(shell date +%Y%m%d)
-VERSION        := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+STAGE       ?= build
+DATE        := $(shell date +%Y%m%d)
+VERSION     := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
 
-BUILD_IMAGE    := localhost/monsoon/build:1.0.2
+BUILD_IMAGE := localhost/monsoon/build:1.0.2
 
 # Executables
-DOCKER := docker
+DOCKER      := docker
 
 # Variables that are expanded dynamically
-postgres = $(shell cat postgres 2> /dev/null)
+postgres    = $(shell cat postgres 2> /dev/null)
 
 # ----------------------------------------------------------------------------------
 # Make Idiomatic Targets
