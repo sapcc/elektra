@@ -1,7 +1,9 @@
 MonsoonOpenstackAuth.configure do |config|
-  config.connection_driver.api_endpoint = 'http://localhost:8083/v3/auth/tokens'
-  config.connection_driver.api_userid   = 'u-admin'
-  config.connection_driver.api_password = 'secret'
+  # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
+  # config.connection_driver = DriverClass
+  config.connection_driver.api_endpoint = ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
+  config.connection_driver.api_userid   = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
+  config.connection_driver.api_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
 
   # optional, default=true
   config.token_auth_allowed = true

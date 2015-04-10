@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: fdf9d28d5cfeabdba15f65a651e2eb035d7c4d70
+  revision: 21ee8b8aec0a30ac15b48708b65f742413012aaf
   specs:
-    monsoon-openstack-auth (0.1.4)
+    monsoon-openstack-auth (0.2.0)
       monsoon-fog
       rails
 
@@ -124,6 +124,8 @@ GEM
     debugger-linecache (1.2.0)
     diff-lcs (1.2.5)
     dotenv (1.0.2)
+    dotenv-rails (1.0.2)
+      dotenv (= 1.0.2)
     erubis (2.7.0)
     excon (0.45.1)
     execjs (2.4.0)
@@ -380,6 +382,7 @@ DEPENDENCIES
   compass-rails
   cucumber-rails
   database_cleaner
+  dotenv-rails
   factory_girl_rails (~> 4.0)
   foreman
   haml-rails

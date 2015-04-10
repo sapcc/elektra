@@ -28,4 +28,5 @@
             %span.glyphicon.glyphicon-cog
 
 
-  = current_user.inspect
+  =# current_user.inspect
+  %pre= JSON.pretty_generate(current_user.context)
