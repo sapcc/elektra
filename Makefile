@@ -53,6 +53,7 @@ promote:
 		echo "You need to set TARGET_VERSION to use the promote target"; \
 		exit 1; \
 	fi
+	$(DOCKER) pull $(IMAGE):$(VERSION)
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
 	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
 
@@ -62,6 +63,7 @@ freeze:
 		echo "You need to set SOURCE_VERSION to use the freeze target"; \
 		exit 1; \
 	fi
+	$(DOCKER) pull $(IMAGE):$(SOURCE_VERSION)
 	$(DOCKER) tag -f $(IMAGE):$(SOURCE_VERSION) $(IMAGE):${VERSION}
 	$(DOCKER) push $(IMAGE):${VERSION}
 
