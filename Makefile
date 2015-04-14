@@ -1,5 +1,5 @@
 SHELL       := /bin/sh
-IMAGE       := localhost/monsoon/monsoon-dashboard 
+IMAGE       := localhost/monsoon/monsoon-dashboard
 BUILD_IMAGE := localhost/monsoon/docker-build:1.0.6
 
 ### Executables
