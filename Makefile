@@ -80,8 +80,6 @@ promote:
 .PHONY: freeze 
 freeze:
 ifndef PARENT_VERSION
-	$(DOCKER) run -ti $(BUILD_IMAGE) \
-			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE)
 	@echo "Couldn't find a source version to freeze."
 	@exit 1
 endif
@@ -155,9 +153,6 @@ info:
 	@echo "  Environment"
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  STAGE          = ${STAGE}"
-ifndef PARENT_STAGE
-	@echo "  PARENT_STAGE   = $(PARENT_STAGE)"
-endif
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
 ifndef PARENT_VERSION
