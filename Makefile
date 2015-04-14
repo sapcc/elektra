@@ -151,6 +151,7 @@ info:
 	@echo "  Environment"
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  STAGE          = ${STAGE}"
+	@$(if $(PARENT_STAGE), echo "  PARENT_STAGE   = $(PARENT_STAGE)")
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
 	@$(if $(SOURCE_VERSION), echo "  SOURCE_VERSION = $(SOURCE_VERSION)")
