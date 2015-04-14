@@ -50,7 +50,9 @@ help: info
 	@echo "  * build   - build a docker image"
 	@echo "  * test    - runs all test targets for $(IMAGE)"
 	@echo "  * promote - tags $(VERSION) as $(TARGET_VERSION)"
-	@$(if $(PARENT_VERSION), echo "  * freeze  - tags $(PARENT_VERSION) as $(VERSION)")
+ifndef PARENT_VERSION
+	@echo "  * freeze  - tags $(PARENT_VERSION) as $(VERSION)"
+endif
 
 # Return everything into a pristine state. Stops dependant processes and
 # deleted intermediate files
@@ -153,10 +155,14 @@ info:
 	@echo "  Environment"
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  STAGE          = ${STAGE}"
-	@$(if $(PARENT_STAGE), echo "  PARENT_STAGE   = $(PARENT_STAGE)")
+ifndef PARENT_STAGE
+	@echo "  PARENT_STAGE   = $(PARENT_STAGE)"
+endif
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
-	@$(if $(PARENT_VERSION), echo "  PARENT_VERSION = $(PARENT_VERSION)")
+ifndef PARENT_VERSION
+	@echo "  PARENT_VERSION = $(PARENT_VERSION)"
+endif
 	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
 	@echo "  BUILD_IMAGE    = $(BUILD_IMAGE)"
 	@echo "------------------------------------------------------------------------------------"
