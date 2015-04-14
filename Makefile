@@ -77,10 +77,12 @@ promote:
 
 .PHONY: freeze 
 freeze:
-	@if [ -z "$$PARENT_VERSION" ]; then \
-		echo "Couldn't find a source version to freeze."; \
-		exit 1; \
-	fi
+ifndef PARENT_VERSION
+	$(DOCKER) run -ti $(BUILD_IMAGE) \
+			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE)
+	@echo "Couldn't find a source version to freeze."
+	@exit 1
+endif
 	$(DOCKER) pull $(IMAGE):$(PARENT_VERSION)
 	$(DOCKER) tag -f $(IMAGE):$(PARENT_VERSION) $(IMAGE):${VERSION}
 	$(DOCKER) push $(IMAGE):${VERSION}
