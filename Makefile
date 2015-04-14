@@ -1,14 +1,11 @@
 SHELL       := /bin/sh
-REGISTRY    := localhost
-NAMESPACE   := monsoon
-NAME        := dashboard
-IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
-BUILD_IMAGE := localhost/monsoon/build:1.0.3
+IMAGE       := localhost/monsoon/monsoon-dashboard 
+BUILD_IMAGE := localhost/monsoon/docker-build:1.0.3
 
-# Executables
-DOCKER      := docker
+### Executables
+DOCKER := docker
 
-# Versioning
+### Versioning
 STAGE          ?= build
 DATE           := $(shell date +%Y%m%d)
 VERSION        := $(STAGE)-lock.$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
@@ -35,14 +32,12 @@ ifneq ($(STAGE),build)
 			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE))
 endif
 
-# Variables that are expanded dynamically
+### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
 
-# ----------------------------------------------------------------------------------
-# Make Idiomatic Targets
-# ----------------------------------------------------------------------------------
 
-# This is the default target
+### Make Idiomatic Targets
+
 .PHONY: info
 help: info
 	@echo
@@ -63,9 +58,8 @@ clean:
 	$(RM) postgres
 	$(RM) version
 
-# ----------------------------------------------------------------------------------
-# Docker Targets 
-# ----------------------------------------------------------------------------------
+
+### Docker Targets 
 
 .PHONY: build
 build: reset_mtimes
@@ -95,9 +89,8 @@ push:
 pull:
 	$(DOCKER) pull $(IMAGE):$(VERSION)
 
-# ----------------------------------------------------------------------------------
-# Rails Targets 
-# ----------------------------------------------------------------------------------
+
+### Rails Targets 
 
 .PHONY: test 
 test: migrate rspec cucumber 
@@ -115,9 +108,8 @@ rspec: migrate
 cucumber: migrate
 	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
 
-# ----------------------------------------------------------------------------------
-# Required Containers 
-# ----------------------------------------------------------------------------------
+
+### Required Containers 
 
 # Starts postgres and saves the container id in "postgres"
 postgres: 
@@ -132,9 +124,8 @@ postgres:
 wait_for_postgres: postgres
 	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) /wait
 
-# ----------------------------------------------------------------------------------
-# Helper Targets
-# ----------------------------------------------------------------------------------
+
+### Helper Targets
 
 # Resets the modification times of all files in a git repository to the date of
 # the latest commit that changed it. This is required because Docker takes the
