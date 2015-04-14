@@ -154,7 +154,7 @@ info:
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  STAGE:         ${STAGE}"
 ifdef POINT_VERSION
-	@echo "  POINT_VERSION: $(PARENT_VERSION)"
+	@echo "  POINT_VERSION: $(POINT_VERSION)"
 endif
 	@echo
 	@echo
