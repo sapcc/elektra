@@ -50,8 +50,8 @@ help: info
 	@echo "  * build   - build a docker image"
 	@echo "  * test    - runs all test targets for $(IMAGE)"
 	@echo "  * promote - tags $(VERSION) as $(TARGET_VERSION)"
-ifndef PARENT_VERSION
-	@echo "  * freeze  - tags $(PARENT_VERSION) as $(VERSION)"
+ifdef PARENT_VERSION
+	@echo "  * lock    - tags $(PARENT_VERSION) as $(VERSION)"
 endif
 
 # Return everything into a pristine state. Stops dependant processes and
@@ -77,10 +77,10 @@ promote:
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
 	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
 
-.PHONY: freeze 
-freeze:
+.PHONY: lock 
+lock:
 ifndef PARENT_VERSION
-	@echo "Couldn't find a source version to freeze."
+	@echo "Couldn't find a source version to lock."
 	@exit 1
 endif
 	$(DOCKER) pull $(IMAGE):$(PARENT_VERSION)
@@ -155,7 +155,7 @@ info:
 	@echo "  STAGE          = ${STAGE}"
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
-ifndef PARENT_VERSION
+ifdef PARENT_VERSION
 	@echo "  PARENT_VERSION = $(PARENT_VERSION)"
 endif
 	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
