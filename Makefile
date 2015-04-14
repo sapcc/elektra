@@ -16,19 +16,19 @@ TARGET_VERSION := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
 
 ifneq ($(STAGE),build)
 	ifeq ($(STAGE),test)
-		PARENT_STAGE = build
+		PARENT_STAGE := build
 	endif
 
 	ifeq ($(STAGE),alpha)
-		PARENT_STAGE = test 
+		PARENT_STAGE := test 
 	endif
 
 	ifeq ($(STAGE),beta)
-		PARENT_STAGE = alpha 
+		PARENT_STAGE := alpha 
 	endif
 
 	ifeq ($(STAGE),stable)
-		PARENT_STAGE = beta 
+		PARENT_STAGE := beta 
 	endif
 
 	SOURCE_VERSION := $(shell $(DOCKER) run -ti $(BUILD_IMAGE) \
@@ -150,6 +150,7 @@ info:
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  Environment"
 	@echo "------------------------------------------------------------------------------------"
+	@echo "  STAGE          = ${STAGE}"
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
 	@$(if $(SOURCE_VERSION), echo "  SOURCE_VERSION = $(SOURCE_VERSION)")
