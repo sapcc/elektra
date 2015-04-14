@@ -31,7 +31,7 @@ ifneq ($(STAGE),build)
 		PARENT_STAGE := beta 
 	endif
 
-	SOURCE_VERSION := $(shell $(DOCKER) run -ti $(BUILD_IMAGE) \
+	PARENT_VERSION := $(shell $(DOCKER) run -ti $(BUILD_IMAGE) \
 			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE))
 endif
 
@@ -50,7 +50,7 @@ help: info
 	@echo "  * build   - build a docker image"
 	@echo "  * test    - runs all test targets for $(IMAGE)"
 	@echo "  * promote - tags $(VERSION) as $(TARGET_VERSION)"
-	@$(if $(SOURCE_VERSION), echo "  * freeze  - tags $(SOURCE_VERSION) as $(VERSION)")
+	@$(if $(PARENT_VERSION), echo "  * freeze  - tags $(PARENT_VERSION) as $(VERSION)")
 
 # Return everything into a pristine state. Stops dependant processes and
 # deleted intermediate files
@@ -77,12 +77,12 @@ promote:
 
 .PHONY: freeze 
 freeze:
-	@if [ -z "$$SOURCE_VERSION" ]; then \
+	@if [ -z "$$PARENT_VERSION" ]; then \
 		echo "Couldn't find a source version to freeze."; \
 		exit 1; \
 	fi
-	$(DOCKER) pull $(IMAGE):$(SOURCE_VERSION)
-	$(DOCKER) tag -f $(IMAGE):$(SOURCE_VERSION) $(IMAGE):${VERSION}
+	$(DOCKER) pull $(IMAGE):$(PARENT_VERSION)
+	$(DOCKER) tag -f $(IMAGE):$(PARENT_VERSION) $(IMAGE):${VERSION}
 	$(DOCKER) push $(IMAGE):${VERSION}
 
 .PHONY: push 
@@ -154,7 +154,7 @@ info:
 	@$(if $(PARENT_STAGE), echo "  PARENT_STAGE   = $(PARENT_STAGE)")
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
-	@$(if $(SOURCE_VERSION), echo "  SOURCE_VERSION = $(SOURCE_VERSION)")
+	@$(if $(PARENT_VERSION), echo "  PARENT_VERSION = $(PARENT_VERSION)")
 	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
 	@echo "  BUILD_IMAGE    = $(BUILD_IMAGE)"
 	@echo "------------------------------------------------------------------------------------"
