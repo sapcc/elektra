@@ -152,12 +152,26 @@ info:
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  Environment"
 	@echo "------------------------------------------------------------------------------------"
-	@echo "  STAGE          = ${STAGE}"
-	@echo "  IMAGE          = $(IMAGE)"
-	@echo "  VERSION        = $(VERSION)"
-ifdef PARENT_VERSION
-	@echo "  PARENT_VERSION = $(PARENT_VERSION)"
+	@echo "  STAGE:         ${STAGE}"
+ifdef POINT_VERSION
+	@echo "  POINT_VERSION: $(PARENT_VERSION)"
 endif
-	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
-	@echo "  BUILD_IMAGE    = $(BUILD_IMAGE)"
+	@echo
+	@echo
 	@echo "------------------------------------------------------------------------------------"
+	@echo " Docker " 
+	@echo "------------------------------------------------------------------------------------"
+	@echo "  Image:       $(IMAGE)"
+	@echo "  Build Image: $(BUILD_IMAGE)"
+	@echo
+	@echo
+	@echo "------------------------------------------------------------------------------------"
+	@echo "  Versions"
+	@echo "------------------------------------------------------------------------------------"
+ifdef PARENT_VERSION
+	@echo "  Parent:  $(PARENT_VERSION)"
+endif
+	@echo "  Current: $(VERSION)"
+	@echo "  Target:  $(TARGET_VERSION)"
+	@echo
+	@echo
