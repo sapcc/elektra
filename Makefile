@@ -31,7 +31,7 @@ ifneq ($(STAGE),build)
 		PARENT_STAGE := beta 
 	endif
 
-	PARENT_VERSION := $(shell $(DOCKER) run -ti $(BUILD_IMAGE) \
+	PARENT_VERSION := $(shell $(DOCKER) run $(BUILD_IMAGE) \
 			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE))
 endif
 
