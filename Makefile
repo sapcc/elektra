@@ -1,6 +1,6 @@
 SHELL       := /bin/sh
 IMAGE       := localhost/monsoon/monsoon-dashboard 
-BUILD_IMAGE := localhost/monsoon/docker-build:1.0.3
+BUILD_IMAGE := localhost/monsoon/docker-build:1.0.5
 
 ### Executables
 DOCKER := docker
@@ -38,7 +38,7 @@ postgres = $(shell cat postgres 2> /dev/null)
 
 ### Make Idiomatic Targets
 
-.PHONY: info
+.PHONY: help 
 help: info
 	@echo
 	@echo "Available targets:"
@@ -122,7 +122,7 @@ postgres:
 # read the generated file in the same target (or at least I don't know how). 
 .PHONY: wait_for_postgres
 wait_for_postgres: postgres
-	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) /wait
+	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) wait
 
 
 ### Helper Targets
@@ -134,7 +134,7 @@ wait_for_postgres: postgres
 # useless.
 .PHONY: reset_mtimes
 reset_mtimes: 
-	$(DOCKER) run -v $(shell pwd):/git $(BUILD_IMAGE) /reset_mtimes
+	$(DOCKER) run -v $(shell pwd):/git $(BUILD_IMAGE) reset_mtimes
 
 # Print a banner containing all expanded variables. Great for verifying
 # environment variables are being passed correctly, etc.
