@@ -3,18 +3,40 @@ REGISTRY    := localhost
 NAMESPACE   := monsoon
 NAME        := dashboard
 IMAGE       := $(REGISTRY)/$(NAMESPACE)/$(NAME)
-
-STAGE       ?= build
-DATE        := $(shell date +%Y%m%d)
-VERSION     := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
-
-BUILD_IMAGE := localhost/monsoon/build:1.0.2
+BUILD_IMAGE := localhost/monsoon/build:1.0.3
 
 # Executables
 DOCKER      := docker
 
+# Versioning
+STAGE          ?= build
+DATE           := $(shell date +%Y%m%d)
+VERSION        := $(STAGE)-lock.$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+TARGET_VERSION := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+
+ifneq ($(STAGE),build)
+	ifeq ($(STAGE),test)
+		PARENT_STAGE = build
+	endif
+
+	ifeq ($(STAGE),alpha)
+		PARENT_STAGE = test 
+	endif
+
+	ifeq ($(STAGE),beta)
+		PARENT_STAGE = alpha 
+	endif
+
+	ifeq ($(STAGE),stable)
+		PARENT_STAGE = beta 
+	endif
+
+	SOURCE_VERSION := $(shell $(DOCKER) run -ti $(BUILD_IMAGE) \
+			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE))
+endif
+
 # Variables that are expanded dynamically
-postgres    = $(shell cat postgres 2> /dev/null)
+postgres = $(shell cat postgres 2> /dev/null)
 
 # ----------------------------------------------------------------------------------
 # Make Idiomatic Targets
@@ -25,10 +47,10 @@ postgres    = $(shell cat postgres 2> /dev/null)
 help: info
 	@echo
 	@echo "Available targets:"
-	@echo "  * build   - builds $(IMAGE):$(VERSION)"
+	@echo "  * build   - build a docker image"
 	@echo "  * test    - runs all test targets for $(IMAGE)"
-	@echo "  * promote - tags $(VERSION) as TARGET_VERSION"
-	@echo "  * freeze  - tags SOURCE_VERSION as $(VERSION)"
+	@echo "  * promote - tags $(VERSION) as $(TARGET_VERSION)"
+	@$(if $(SOURCE_VERSION), echo "  * freeze  - tags $(SOURCE_VERSION) as $(VERSION)")
 
 # Return everything into a pristine state. Stops dependant processes and
 # deleted intermediate files
@@ -49,10 +71,6 @@ build: reset_mtimes
 
 .PHONY: promote
 promote: 
-	@if [ -z "$$TARGET_VERSION" ]; then \
-		echo "You need to set TARGET_VERSION to use the promote target"; \
-		exit 1; \
-	fi
 	$(DOCKER) pull $(IMAGE):$(VERSION)
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
 	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
@@ -60,7 +78,7 @@ promote:
 .PHONY: freeze 
 freeze:
 	@if [ -z "$$SOURCE_VERSION" ]; then \
-		echo "You need to set SOURCE_VERSION to use the freeze target"; \
+		echo "Couldn't find a source version to freeze."; \
 		exit 1; \
 	fi
 	$(DOCKER) pull $(IMAGE):$(SOURCE_VERSION)
@@ -135,6 +153,6 @@ info:
 	@echo "  IMAGE          = $(IMAGE)"
 	@echo "  VERSION        = $(VERSION)"
 	@$(if $(SOURCE_VERSION), echo "  SOURCE_VERSION = $(SOURCE_VERSION)")
-	@$(if $(TARGET_VERSION), echo "  TARGET_VERSION = $(TARGET_VERSION)")
+	@echo "  TARGET_VERSION = $(TARGET_VERSION)"
 	@echo "  BUILD_IMAGE    = $(BUILD_IMAGE)"
 	@echo "------------------------------------------------------------------------------------"
