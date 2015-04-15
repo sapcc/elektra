@@ -71,5 +71,4 @@ group :development, :test do
 
   gem "better_errors"
   gem 'pry-rails'
-
 end
