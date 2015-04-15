@@ -44,7 +44,7 @@ class RevisionMiddleware
     else
       status, headers, body = @app.call(env)
       headers["X-Revision"]    = @revision.to_s
-      headers["X-Remote-Addr"] = env["REMOTE_ADDR"]
+      headers["X-Server-Addr"] = env["SERVER_ADDR"]
       [status, headers, body]
     end
   end
