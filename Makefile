@@ -1,6 +1,6 @@
 SHELL       := /bin/sh
 IMAGE       := localhost/monsoon/monsoon-dashboard
-BUILD_IMAGE := localhost/monsoon/docker-build:1.0.22
+BUILD_IMAGE := localhost/monsoon/docker-build:1.0.23
 
 ### Executables
 DOCKER := docker
@@ -27,7 +27,9 @@ endif
 DATE           := $(shell date +%Y%m%d)
 VERSION        := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
 TARGET_VERSION := $(STAGE)-approved.$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+ifdef PARENT_STAGE
 PARENT_VERSION := $(shell $(DOCKER) run $(BUILD_IMAGE) monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE)-approved)
+endif
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -145,13 +147,11 @@ ifdef POINT_VERSION
 	@echo "  POINT_VERSION: $(POINT_VERSION)"
 endif
 	@echo
-	@echo
 	@echo "------------------------------------------------------------------------------------"
 	@echo " Docker " 
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  Image:       $(IMAGE)"
 	@echo "  Build Image: $(BUILD_IMAGE)"
-	@echo
 	@echo
 	@echo "------------------------------------------------------------------------------------"
 	@echo "  Versions"
@@ -161,5 +161,4 @@ ifdef PARENT_VERSION
 endif
 	@echo "  Current: $(VERSION)"
 	@echo "  Target:  $(TARGET_VERSION)"
-	@echo
 	@echo
