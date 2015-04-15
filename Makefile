@@ -1,36 +1,33 @@
 SHELL       := /bin/sh
 IMAGE       := localhost/monsoon/monsoon-dashboard
-BUILD_IMAGE := localhost/monsoon/docker-build:1.0.6
+BUILD_IMAGE := localhost/monsoon/docker-build:1.0.22
 
 ### Executables
 DOCKER := docker
 
 ### Versioning
-STAGE          ?= build
-DATE           := $(shell date +%Y%m%d)
-VERSION        := $(STAGE)-lock.$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
-TARGET_VERSION := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+STAGE ?= build
 
-ifneq ($(STAGE),build)
-	ifeq ($(STAGE),test)
-		PARENT_STAGE := build
-	endif
-
-	ifeq ($(STAGE),alpha)
-		PARENT_STAGE := test 
-	endif
-
-	ifeq ($(STAGE),beta)
-		PARENT_STAGE := alpha 
-	endif
-
-	ifeq ($(STAGE),stable)
-		PARENT_STAGE := beta 
-	endif
-
-	PARENT_VERSION := $(shell $(DOCKER) run $(BUILD_IMAGE) \
-			monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE))
+ifeq ($(STAGE),test)
+	PARENT_STAGE := build
 endif
+
+ifeq ($(STAGE),alpha)
+	PARENT_STAGE := test
+endif
+
+ifeq ($(STAGE),beta)
+	PARENT_STAGE := alpha
+endif
+
+ifeq ($(STAGE),stable)
+	PARENT_STAGE := beta
+endif
+
+DATE           := $(shell date +%Y%m%d)
+VERSION        := $(STAGE).$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+TARGET_VERSION := $(STAGE)-approved.$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSION))
+PARENT_VERSION := $(shell $(DOCKER) run $(BUILD_IMAGE) monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE)-approved)
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -134,7 +131,7 @@ wait_for_postgres: postgres
 # useless.
 .PHONY: reset_mtimes
 reset_mtimes: 
-	$(DOCKER) run -v $(shell pwd):/git $(BUILD_IMAGE) reset_mtimes
+	$(DOCKER) run -v $(shell pwd):/src $(BUILD_IMAGE) reset_mtimes
 
 # Print a banner containing all expanded variables. Great for verifying
 # environment variables are being passed correctly, etc.
