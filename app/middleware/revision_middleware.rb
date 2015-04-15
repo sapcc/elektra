@@ -43,7 +43,8 @@ class RevisionMiddleware
       [200, { "Content-Type" => "text/plain", "Content-Length" => body.size.to_s }, [body]]
     else
       status, headers, body = @app.call(env)
-      headers["X-Revision"] = @revision.to_s
+      headers["X-Revision"]    = @revision.to_s
+      headers["X-Remote-Addr"] = env["REMOTE_ADDR"]
       [status, headers, body]
     end
   end
