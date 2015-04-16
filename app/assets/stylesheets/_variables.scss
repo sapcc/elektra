@@ -48,6 +48,33 @@ $font-family-sap-medium: "BentonSansMedium", "BentonSans-Medium", "BentonSans";
 $font-family-sap-bold: "BentonSansBold", "BentonSans-Bold", "BentonSans";
 
 
+// --------------------------------------------------
+// BREADCRUMB
+// --------------------------------------------------
+
+$context-breadcrumb-bg: #efefef;
+$context-breadcrumb-height: 35px;
+$context-breadcrumb-padding-horizontal: 10px;
+
+
+// --------------------------------------------------
+// BREADCRUMB
+// --------------------------------------------------
+
+
+$inverse-dropdown-bg: #090909;
+$inverse-dropdown-divider-bg: #444;
+$inverse-dropdown-link-color: #fff;
+
+
+
+// --------------------------------------------------
+// FOOTER
+// --------------------------------------------------
+
+$footer-height: 60px;
+$footer-margin-top: 100px;
+
 
 // --------------------------------------------------
 // BOOTSTRAP VARIABLE OVERRIDES
@@ -73,11 +100,6 @@ $btn-danger-bg:      #e22;
 $font-family-sans-serif: $font-family-sap-regular, "Helvetica Neue", Helvetica, Arial, sans-serif;
 $headings-font-family: $font-family-sap-regular, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-// Dropdowns
-$dropdown-bg: #090909;
-$dropdown-divider-bg: #444;
-$dropdown-link-color: #fff;
-$dropdown-link-hover-bg: #ddd;
 
 // Jumbotron
 $jumbotron-color: #fff;

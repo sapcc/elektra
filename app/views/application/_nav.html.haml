@@ -61,8 +61,7 @@
           %li.dropdown
             -# = link_to "https://localhost/pictures/#{current_user.name}", "data-toggle" => "tooltip", "data-placement" => "left", "data-delay" => "300", title: "Click to change your profile picture", class: "linked_img" do
 
-
-            %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
               %img.avatar{src: "https://localhost/avatar/#{current_user.name}?size=24x24"}
               #{current_user.description}
               %span.caret

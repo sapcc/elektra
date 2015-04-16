@@ -1,32 +1,75 @@
-.container
+.content
+  .container
 
-  %table.table
-    %thead
-      %tr
-        %th Name
-        %th OS
-        %th Network
-        %th Status
-        %th.snug
-    %tbody
-      %tr
-        %td App Server 1
-        %td CoreOS
-        %td 10.67.77.99
-        %td Running
-        %td
-          %button.btn.btn-sm.btn-default
-            %span.glyphicon.glyphicon-cog
+    %h1 Compute: Instances
 
-      %tr
-        %td App Server 2
-        %td CoreOS
-        %td 10.67.77.101
-        %td Running
-        %td
-          %button.btn.btn-sm.btn-default
-            %span.glyphicon.glyphicon-cog
+    %p Deliverables next-generation authentic empower distributed empower facilitate infrastructures innovative wikis grow dynamic. Morph widgets integrate, rich scale interfaces world-class create, e-markets supply-chains compelling applications visualize iterate out-of-the-box integrateAJAX-enabled viral.
+
+    %h3 Choose an organization:
+
+    .row
+      .col-sm-6
+        .list-group
+          - @auth_service.user_domains(current_user.id).each do |organization|
+            %a.list-group-item(href="#")= organization["name"]
+
+    %pre= JSON.pretty_generate(JSON.parse(@auth_service.user_domains(current_user.id).to_json))
 
 
-  =# current_user.inspect
-  %pre= JSON.pretty_generate(current_user.context)
+    -# %table.table
+    -#   %thead
+    -#     %tr
+    -#       %th Name
+    -#       %th OS
+    -#       %th Network
+    -#       %th Status
+    -#       %th.snug
+    -#   %tbody
+    -#     %tr
+    -#       %td App Server 1
+    -#       %td CoreOS
+    -#       %td 10.67.77.99
+    -#       %td Running
+    -#       %td
+    -#         %button.btn.btn-sm.btn-default
+    -#           %span.glyphicon.glyphicon-cog
+    -#
+    -#     %tr
+    -#       %td App Server 2
+    -#       %td CoreOS
+    -#       %td 10.67.77.101
+    -#       %td Running
+    -#       %td
+    -#         %button.btn.btn-sm.btn-default
+    -#           %span.glyphicon.glyphicon-cog
+    -#
+    -#
+    -# %pre= JSON.pretty_generate(current_user.context)
+    -#
+    -# %h3 Openstack Service
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.to_json))
+    -#
+    -# %h3 Openstack Service 2
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.to_json))
+    -#
+    -# %pre= JSON.pretty_generate(current_user.service_catalog)
+    -#
+    -# = @auth_service.inspect
+    -# %hr
+    -# %h3 Fog services
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.services.to_json))
+    -# %hr
+    -# %h3 Fog Endpoints
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.endpoints.to_json))
+    -# %hr
+    -# = @auth_service.user_domains(current_user.id)
+    -# %hr
+    -# -# = @service.domain
+    -# %hr
+    -# -# = @service.project
+    -# %hr
+    -# %h3 Projects for domain
+    -# %pre= JSON.pretty_generate(JSON.parse(@auth_service.domain_projects("default").to_json))
+    -# %hr
+    -# %h3 Fog domains
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.domains.to_json))

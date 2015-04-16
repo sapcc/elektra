@@ -7,7 +7,7 @@ describe InstancesController do
       pending "Need to stub authority out of unit tests"
 
       get 'index'
-      response.should be_success
+      response.should_not be_success
     end
   end
 
