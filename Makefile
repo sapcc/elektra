@@ -1,6 +1,6 @@
 SHELL       := /bin/sh
 IMAGE       := localhost/monsoon/monsoon-dashboard
-BUILD_IMAGE := localhost/monsoon/docker-build:1.0.25
+BUILD_IMAGE := localhost/monsoon/docker-build:1.1.6
 
 ### Executables
 DOCKER := docker
@@ -33,7 +33,7 @@ endif
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
-
+webapp   = $(shell cat webapp 2> /dev/null)
 
 ### Make Idiomatic Targets
 
@@ -54,6 +54,9 @@ endif
 clean: 	
 	$(DOCKER) kill $(postgres) &> /dev/null || true
 	$(DOCKER) rm   $(postgres) &> /dev/null || true
+	$(DOCKER) kill $(webapp) &> /dev/null || true
+	$(DOCKER) rm   $(webapp) &> /dev/null || true
+	$(RM) webapp
 	$(RM) postgres
 	$(RM) version
 
@@ -92,36 +95,50 @@ pull:
 ### Rails Targets 
 
 .PHONY: test 
-test: migrate rspec cucumber 
+test: rspec cucumber 
 
-.PHONY: migrate
-migrate: postgres 
-	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=test $(IMAGE):$(VERSION) \
+.PHONY: 
+migrate-%: postgres
+	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE):$(VERSION) \
 		bundle exec rake db:create db:migrate 
 
 .PHONY: rspec 
-rspec: migrate
+rspec: migrate-test
 	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
 
 .PHONY: cucumber
-cucumber: migrate
+cucumber: migrate-test
 	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
+
+.PHONY: precompile 
+precompile: webapp
+	$(DOCKER) exec $(webapp) bundle exec rake assets:precompile
+	$(DOCKER) commit $(webapp) $(IMAGE):$(VERSION)
 
 
 ### Required Containers 
+
+webapp: migrate-production
+	$(DOCKER) run --link $(postgres):postgres -d $(IMAGE):$(VERSION) > $@ 
+	$(MAKE) wait_for_webapp
 
 # Starts postgres and saves the container id in "postgres"
 postgres: 
 	$(DOCKER) run -d postgres > $@ 
 	$(MAKE) wait_for_postgres
 
+
 # Waits for the postgres port to become available. Required because of race
 # conditions when later processes start fastet than the database. This needs to
 # be an extra target because make will not be able to know the container id or
 # read the generated file in the same target (or at least I don't know how). 
 .PHONY: wait_for_postgres
-wait_for_postgres: postgres
+wait_for_postgres:  
 	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) wait
+
+.PHONY: wait_for_webapp
+wait_for_webapp:  
+	$(DOCKER) run --link $(webapp):webapp $(BUILD_IMAGE) wait -p 80
 
 
 ### Helper Targets
