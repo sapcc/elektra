@@ -10,10 +10,13 @@
     .row
       .col-sm-6
         .list-group
-          - @auth_service.user_domains(current_user.id).each do |organization|
-            %a.list-group-item(href="#")= organization["name"]
-
-    %pre= JSON.pretty_generate(JSON.parse(@auth_service.user_domains(current_user.id).to_json))
+          - services.identity.user_domains(per_page: 30, page: 1).each do |domain|
+            %a.list-group-item(href="#")= domain.name
+            / - services.identity.user_domain_projects(domain.id).each do |project|
+            /   %a.list-group-item(href="#")=project.name
+             
+              
+    %pre= JSON.pretty_generate(JSON.parse(services.identity.user_domains.to_json))
 
 
     -# %table.table

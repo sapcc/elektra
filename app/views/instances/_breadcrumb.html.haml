@@ -7,9 +7,9 @@
           Choose an organization
           %span.caret
         %ul.dropdown-menu{:role => "menu"}
-          - @auth_service.user_domains(current_user.id).each do |organization|
+          - services.identity.user_domains.each do |organization|
             %li
-              %a(href="#")= organization["name"]
+              %a(href="#")= organization.name
 
       %li.dropdown
         %span.glyphicon.glyphicon-th
