@@ -21,7 +21,7 @@ module Openstack
     
     # returns project which user has access to
     def user_project(project_id)
-      @driver.projects.auth_project.find_by_id(project_id) 
+      @driver.projects.auth_projects.find_by_id(project_id) 
     end
     
     # returns all domain projects
