@@ -112,7 +112,7 @@ cucumber: migrate-test
 
 .PHONY: precompile 
 precompile: webapp
-	$(DOCKER) exec $(webapp) bundle exec rake assets:precompile
+	$(DOCKER) exec $(webapp) env RAILS_ENV=production bundle exec rake assets:precompile
 	$(DOCKER) commit $(webapp) $(IMAGE):$(VERSION)
 
 
