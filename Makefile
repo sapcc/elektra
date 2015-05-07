@@ -30,6 +30,7 @@ TARGET_VERSION := $(STAGE)-approved.$(DATE)$(if $(POINT_VERSION),.$(POINT_VERSIO
 ifdef PARENT_STAGE
 PARENT_VERSION := $(shell $(DOCKER) run $(BUILD_IMAGE) monsoonctl-version latest -i $(IMAGE) -t $(PARENT_STAGE)-approved)
 endif
+LATEST_VERSION := $(STAGE).latest
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -71,7 +72,9 @@ build: reset_mtimes
 promote: 
 	$(DOCKER) pull $(IMAGE):$(VERSION)
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
+	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${LATET_VERSION}
 	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
+	$(DOCKER) push $(IMAGE):$(LATEST_VERSION)
 
 .PHONY: lock 
 lock:
