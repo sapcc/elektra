@@ -72,7 +72,7 @@ build: reset_mtimes
 promote: 
 	$(DOCKER) pull $(IMAGE):$(VERSION)
 	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${TARGET_VERSION}
-	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${LATET_VERSION}
+	$(DOCKER) tag -f $(IMAGE):$(VERSION) $(IMAGE):${LATEST_VERSION}
 	$(DOCKER) push $(IMAGE):$(TARGET_VERSION)
 	$(DOCKER) push $(IMAGE):$(LATEST_VERSION)
 
