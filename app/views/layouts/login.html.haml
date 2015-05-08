@@ -12,23 +12,14 @@
 
   %body
 
-    %nav.navbar.navbar-fixed-top.navbar-inverse.navbar-sap
-      .container
-        .navbar-header
-          %button.navbar-toggle.collapsed{"data-target": "#main-nav-collapse", "data-toggle": "collapse", type: "button"}
-            %span.sr-only Toggle navigation
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
-          = link_to "/", class: "navbar-brand" do
-            .logo
-            Monsoon Converged Cloud
+    %nav.navbar.navbar-login
+      .navbar-header
+        = link_to "/", class: "navbar-brand" do
+          .logo
+          Monsoon Converged Cloud
 
     = yield
 
-    %footer.footer
-      .container
-        = image_tag "monsoon_logo.png", class: "pull-right"
 
     = yield :templates
     = yield :javascripts

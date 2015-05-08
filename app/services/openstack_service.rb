@@ -1,9 +1,11 @@
 class OpenstackService
 
-  attr_reader :region, :service_catalog, :token
+  attr_reader :region, :domain, :project, :service_catalog, :token
 
-  def initialize(user, region)
+  def initialize(user, region, domain, project)
     @region           = region
+    @domain           = domain
+    @project          = project
     @service_catalog  = user.service_catalog
     @token            = user.token
   end
@@ -31,13 +33,15 @@ class OpenstackService
     # openstack_project_id:project_id,
     # openstack_domain_id:domain_id,
 
-    puts "================================ tok: #{token} ====== auth: #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']} ========== region: #{region}"
+    puts "================================ tok: #{token} ====== auth: #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']} ========== region: #{region} =============== domain: #{domain} =================== project: #{project}"
 
     {
         provider: 'openstack',
         openstack_auth_token: token,
         openstack_auth_url: ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT'],
-        openstack_region: region
+        openstack_region: region,
+        openstack_domain_id: domain,
+        openstack_project_id: project
     }
   end
 

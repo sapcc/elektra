@@ -58,7 +58,7 @@ $context-breadcrumb-padding-horizontal: 10px;
 
 
 // --------------------------------------------------
-// BREADCRUMB
+// DROPDOWN
 // --------------------------------------------------
 
 
@@ -75,6 +75,13 @@ $inverse-dropdown-link-color: #fff;
 $footer-height: 60px;
 $footer-margin-top: 100px;
 
+
+
+// --------------------------------------------------
+// LOGIN
+// --------------------------------------------------
+
+$login-max-width: 330px;
 
 // --------------------------------------------------
 // BOOTSTRAP VARIABLE OVERRIDES
@@ -104,3 +111,7 @@ $headings-font-family: $font-family-sap-regular, "Helvetica Neue", Helvetica, Ar
 // Jumbotron
 $jumbotron-color: #fff;
 $jumbotron-bg: $medium-blue;
+
+// List group
+$list-group-hover-bg: $medium-blue;
+$list-group-link-hover-color: #fff;

@@ -5,18 +5,44 @@
 
     %p Deliverables next-generation authentic empower distributed empower facilitate infrastructures innovative wikis grow dynamic. Morph widgets integrate, rich scale interfaces world-class create, e-markets supply-chains compelling applications visualize iterate out-of-the-box integrateAJAX-enabled viral.
 
-    %h3 Choose an organization:
+    = render "application/projects_list" unless @project_id
 
-    .row
-      .col-sm-6
-        .list-group
-          - services.identity.user_domains(per_page: 30, page: 1).each do |domain|
-            %a.list-group-item(href="#")= domain.name
-            / - services.identity.user_domain_projects(domain.id).each do |project|
-            /   %a.list-group-item(href="#")=project.name
-             
-              
-    %pre= JSON.pretty_generate(JSON.parse(services.identity.user_domains.to_json))
+    - if @instances
+      %table.table.datatable
+        %thead
+          %tr
+            %th Name
+            %th OS
+            %th Network
+            %th Status
+            %th.snug
+        %tbody
+          - (rand(20) + 3).times do | number |
+            %tr
+              %td= "Server #{number}"
+              %td= ["CoreOS", "Ubuntu 14.0", "Suse", "RHEL 7", "Windows 2012"].sample
+              %td= "10.#{rand(255)}.#{rand(255)}.#{rand(255)}"
+              %td Running
+              %td
+                %button.btn.btn-sm.btn-default
+                  %span.glyphicon.glyphicon-cog
+
+
+
+    %a.toggle-debug(href="#") Toggle debug info
+    %pre.debug-info= JSON.pretty_generate(current_user.context)
+
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.auth_domains.to_json))
+    -# %h3 Auth projects
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.auth_projects.to_json))
+    -# = @identity.auth_domains.body["domains"].inspect
+    -# %hr
+    -#
+    -# %pre= JSON.pretty_generate(JSON.parse(@identity.projects.to_json))
+    -# %hr
+    -# %pre= JSON.pretty_generate(current_user.context)
+
+    -# %pre= JSON.pretty_generate(JSON.parse(@auth_service.user_domains(current_user.id).to_json))
 
 
     -# %table.table

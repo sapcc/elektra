@@ -13,6 +13,7 @@ gem 'coffee-rails'
 gem 'jquery-rails'
 gem 'haml-rails'
 gem 'turbolinks'
+gem 'jquery-turbolinks'
 gem 'simple_form'
 
 # Database
@@ -47,7 +48,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :development, :test do
   # load .env
   gem 'dotenv-rails'
-  
+
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 

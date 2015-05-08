@@ -2,36 +2,14 @@
   .container
     %ol.context-list
       %li.dropdown
-        %span.glyphicon.glyphicon-th-large
-        %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-          Choose an organization
-          %span.caret
-        %ul.dropdown-menu{:role => "menu"}
-          - services.identity.user_domains.each do |organization|
-            %li
-              %a(href="#")= organization.name
-
-      %li.dropdown
         %span.glyphicon.glyphicon-th
         %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-          Super_Project
+          - if @active_project
+            = @active_project.name
+          - else
+            Choose a project
           %span.caret
         %ul.dropdown-menu{:role => "menu"}
-          %li
-            %a{:href => "#"} TEST_1
-          %li
-            %a{:href => "#"} HANA_Testing
-          %li
-            %a{:href => "#"} My_Staging_Test
-
-        %li.dropdown.active
-          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            Choose project
-            %span.caret
-          %ul.dropdown-menu{:role => "menu"}
-            %li
-              %a{:href => "#"} Inner_TEST_1
-            %li
-              %a{:href => "#"} Inner_HANA_Testing
-            %li
-              %a{:href => "#"} Inner_My_Staging_Test
+          - @user_domain_projects.each do |project|
+            %li{class: ("active" if project.id == @project_id)}
+              = link_to project.name, instances_path(project: project.id)

@@ -1,0 +1,6 @@
+%h3 Choose a project:
+.row
+  .col-sm-6
+    .list-group
+      - @user_domain_projects.each do |project|
+        = link_to project.name, instances_path(domain: @domain_id, project: project.id), class: "list-group-item"
