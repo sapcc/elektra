@@ -16,6 +16,11 @@ MonsoonOpenstackAuth.configure do |config|
   
   # optional, default=false
   config.access_key_auth_allowed = false
+  
+  config.default_region = ENV['MONSOON_DASHBOARD_REGION']
+  
+  # optional, default=sap_default
+  config.default_domain_name = 'sap_default'
 
   # optional, default= last url before redirected to form
   #config.login_redirect_url = '/'
@@ -27,3 +32,4 @@ MonsoonOpenstackAuth.configure do |config|
   # optional, default=false
   config.debug=true
 end
+

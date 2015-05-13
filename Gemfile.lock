@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 9eb5a78f055934c5f8a988e97bb027a25e32fea3
+  revision: b0f2e370ba7d05f4deb5b0d330ac3ed69f8d875f
   specs:
-    monsoon-openstack-auth (0.6.3)
+    monsoon-openstack-auth (0.6.8)
       hashie
       rails
       uglifier (>= 1.3.0)

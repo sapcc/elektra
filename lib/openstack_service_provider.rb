@@ -14,11 +14,11 @@ module OpenstackServiceProvider
         unless @services
           if MonsoonOpenstackAuth.configuration.connection_driver and 
             MonsoonOpenstackAuth.configuration.connection_driver.endpoint and 
-            @monsoon_openstack_auth and logged_in?
+            auth_session and logged_in?
             
             @services = OpenstackServiceProvider::ServicesManager.new(
               MonsoonOpenstackAuth.configuration.connection_driver.endpoint,
-              @monsoon_openstack_auth.region,
+              auth_session.region,
               current_user)
           end
         end

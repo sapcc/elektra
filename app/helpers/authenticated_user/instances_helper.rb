@@ -1,0 +1,2 @@
+module AuthenticatedUser::InstancesHelper
+end

@@ -20,7 +20,7 @@ module Openstack
 
     # returns domain projects which user has access to
     def user_domain_projects(domain_id,options={per_page: 30, page: 1})
-      @driver.projects.all(domain_id: domain_id)
+      @driver.projects.auth_projects.all(domain_id: domain_id)
     end
 
     # returns project which user has access to
