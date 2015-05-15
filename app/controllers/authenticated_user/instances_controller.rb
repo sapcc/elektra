@@ -2,7 +2,9 @@ module AuthenticatedUser
   class InstancesController < AuthenticatedUserController
     
     def index
+      #services.identity
       @active_domain = services.identity.user_domain(@domain_id)
+      #render text: 'test' and return
 
       @user_domain_projects = services.identity.user_domain_projects(@active_domain.id)
 

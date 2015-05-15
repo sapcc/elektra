@@ -1,13 +1,23 @@
 require 'spec_helper'
+require 'controllers/authenticated_user/shared_examples'
 
-describe InstancesController do
+describe AuthenticatedUser::InstancesController do
+  include AuthenticationStub
+  
+  it_behaves_like "an authenticated_user controller"
+  default_params = {domain_id: AuthenticationStub.domain_id}
+
+  before(:each) do
+    stub_authentication  
+    
+    driver = object_spy('driver')
+    allow_any_instance_of(Openstack::IdentityService).to receive(:driver).and_return(driver)
+  end
 
   describe "GET 'index'" do
     it "returns http success" do
-      pending "Need to stub authority out of unit tests"
-
-      get 'index'
-      response.should_not be_success
+      get :index, default_params
+      expect(response).to be_success
     end
   end
 

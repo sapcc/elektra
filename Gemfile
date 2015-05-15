@@ -23,6 +23,7 @@ gem 'activerecord-session_store'
 # Openstack
 gem 'monsoon-fog',            git: 'git://localhost/monsoon/monsoon-fog.git'
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git'
+#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 # Extras
 gem 'rails_config'
@@ -62,7 +63,7 @@ group :development, :test do
 
   # Testing
   gem "rspec"
-  gem "rspec-rails", "~> 2.0"
+  gem "rspec-rails"
   gem "factory_girl_rails", "~> 4.0"
   gem "cucumber-rails", require: false
   gem "capybara"
@@ -72,4 +73,8 @@ group :development, :test do
 
   gem "better_errors"
   gem 'pry-rails'
+end
+
+group :test do
+  gem 'guard-rspec'
 end

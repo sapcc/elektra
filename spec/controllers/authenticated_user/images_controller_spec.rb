@@ -1,47 +1,56 @@
 require 'spec_helper'
+require 'controllers/authenticated_user/shared_examples'
 
 describe AuthenticatedUser::ImagesController do
+  include AuthenticationStub
+  
+  it_behaves_like "an authenticated_user controller"
+
+  default_params = {domain_id: AuthenticationStub.domain_id}
+
+  before(:each) do
+    stub_authentication
+  end
 
   describe "GET 'index'" do
     it "returns http success" do
-      get 'index'
-      response.should be_success
+      get 'index', default_params
+      expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new'
-      response.should be_success
+      get 'new', default_params
+      expect(response).to be_success
     end
   end
 
-  describe "GET 'create'" do
+  describe "POST 'create'" do
     it "returns http success" do
-      get 'create'
-      response.should be_success
+      post 'create', default_params
+      expect(response).to be_success
     end
   end
 
   describe "GET 'edit'" do
     it "returns http success" do
-      get 'edit'
-      response.should be_success
+      get 'edit', default_params.merge(id:1)
+      expect(response).to be_success
     end
   end
 
-  describe "GET 'update'" do
+  describe "PUT 'update'" do
     it "returns http success" do
-      get 'update'
-      response.should be_success
+      put 'update', default_params.merge(id:1)
+      expect(response).to be_success
     end
   end
 
-  describe "GET 'destroy'" do
+  describe "DELETE 'destroy'" do
     it "returns http success" do
-      get 'destroy'
-      response.should be_success
+      delete 'destroy', default_params.merge(id:1)
+      expect(response).to be_success
     end
   end
-
 end
