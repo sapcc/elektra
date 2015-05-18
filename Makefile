@@ -102,16 +102,16 @@ test: rspec cucumber
 
 .PHONY: 
 migrate-%: postgres
-	$(DOCKER) run --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE):$(VERSION) \
+	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE):$(VERSION) \
 		bundle exec rake db:create db:migrate 
 
 .PHONY: rspec 
 rspec: migrate-test
-	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
+	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
 
 .PHONY: cucumber
 cucumber: migrate-test
-	$(DOCKER) run --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
+	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
 
 .PHONY: precompile 
 precompile: webapp
@@ -137,11 +137,11 @@ postgres:
 # read the generated file in the same target (or at least I don't know how). 
 .PHONY: wait_for_postgres
 wait_for_postgres:  
-	$(DOCKER) run --link $(postgres):postgres $(BUILD_IMAGE) wait
+	$(DOCKER) run --rm --link $(postgres):postgres $(BUILD_IMAGE) wait
 
 .PHONY: wait_for_webapp
 wait_for_webapp:  
-	$(DOCKER) run --link $(webapp):webapp $(BUILD_IMAGE) wait -p 80
+	$(DOCKER) run --rm --link $(webapp):webapp $(BUILD_IMAGE) wait -p 80
 
 
 ### Helper Targets
@@ -153,7 +153,7 @@ wait_for_webapp:
 # useless.
 .PHONY: reset_mtimes
 reset_mtimes: 
-	$(DOCKER) run -v $(shell pwd):/src $(BUILD_IMAGE) reset_mtimes
+	$(DOCKER) run --rm -v $(shell pwd):/src $(BUILD_IMAGE) reset_mtimes
 
 # Print a banner containing all expanded variables. Great for verifying
 # environment variables are being passed correctly, etc.
