@@ -1,6 +1,6 @@
 SHELL       := /bin/sh
 IMAGE       := localhost/monsoon/monsoon-dashboard
-BUILD_IMAGE := localhost/monsoon/docker-build:1.1.12
+BUILD_IMAGE := localhost/monsoon/docker-build:1.1.13
 
 ### Executables
 DOCKER := docker
@@ -103,7 +103,7 @@ test: rspec cucumber
 .PHONY: 
 migrate-%: postgres
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE):$(VERSION) \
-		bundle exec rake db:create db:migrate 
+		sudo -E -u app bundle exec rake db:create db:migrate 
 
 .PHONY: rspec 
 rspec: migrate-test
@@ -115,7 +115,7 @@ cucumber: migrate-test
 
 .PHONY: precompile 
 precompile: webapp
-	$(DOCKER) exec $(webapp) env RAILS_ENV=production sudo -u app bundle exec rake assets:precompile
+	$(DOCKER) exec $(webapp) env RAILS_ENV=production sudo -E -u app bundle exec rake assets:precompile
 	$(DOCKER) commit $(webapp) $(IMAGE):$(VERSION)
 
 
