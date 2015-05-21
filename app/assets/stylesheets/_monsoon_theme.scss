@@ -17,6 +17,10 @@ body {
   }
 }
 
+section {
+  padding: $line-height-computed*2 0;
+}
+
 .content {
   padding: ($line-height-computed * 2) 0 0 0;
 }
@@ -35,6 +39,15 @@ body {
 
 .visible {
   display: block;
+}
+
+.scrollable-text {
+  @include border-radius;
+  background: $input-bg-disabled;
+  border: 1px solid #ccc;
+  padding: 15px;
+  height: 500px;
+  overflow-y: scroll;
 }
 
 

@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :instances
       resources :volumes
       resources :images
+      resources :users, only: [:new, :create]
     end
   end
 

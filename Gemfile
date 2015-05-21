@@ -15,6 +15,7 @@ gem 'haml-rails'
 gem 'turbolinks'
 gem 'jquery-turbolinks'
 gem 'simple_form'
+gem 'redcarpet'
 
 # Database
 gem 'pg'
