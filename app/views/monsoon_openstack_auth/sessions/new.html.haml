@@ -1,8 +1,11 @@
 = inside_layout 'login' do
+  = "REGION: #{@region}"
+  = "DOMAIN: #{@domain_id}"  
 
   .container
 
     = form_tag(sessions_path, class: "form-signin") do
+      = hidden_field_tag :domain_id, @domain_id
 
       %h2.form-signin-heading Please sign in
 

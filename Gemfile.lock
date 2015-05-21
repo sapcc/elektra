@@ -1,14 +1,13 @@
 GIT
   remote: git://localhost/monsoon/monsoon-fog.git
-  revision: 74c959bbf80d11e308c61d0c7cdf4436c5c94971
+  revision: e67931859394ddeaf2b6b74e0822af89f5a7ba6f
   specs:
     monsoon-fog (0.4.0)
       fog (~> 1.28)
       retryable (~> 1.3)
 
-GIT
-  remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 83f5e0eb89d62cd98b21344b162970bf2341da89
+PATH
+  remote: ../monsoon-openstack-auth
   specs:
     monsoon-openstack-auth (0.7.1)
       hashie

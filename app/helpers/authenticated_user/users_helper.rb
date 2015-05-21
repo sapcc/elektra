@@ -1,0 +1,2 @@
+module AuthenticatedUser::UsersHelper
+end
