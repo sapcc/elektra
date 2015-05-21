@@ -1,46 +1,50 @@
-.content
+.jumbotron
   .container
     %h1
       Welcome
       = current_user.description
+    %p Please accept the terms of use for this domain before you continue. Once you have accepted our terms of use your user will be registered to the domain and a sandbox project will be created for you.
+    %p Thank you and enjoy your stay!
 
+
+.container
+  %form
     .row
       .col-sm-8
-        %p Please accept the terms of use for this domain before you continue. Once you have accepted our terms of use your user will be registered to the domain and a sandbox project will be created for you.
-        %p Thank you and enjoy your stay!
+        .form-group
+          %label Terms and Conditions
+          .scrollable-text
+            :markdown
+              #{Settings.terms}
 
-    %section
-      %form
-        .row
-          .col-sm-4
-            .form-group
-              %label User
-              %input.form-control{type: "text", placeholder: "#{current_user.description} (#{current_user.name})", readonly: "readonly"}
+      .col-sm-4
+        .form-group
+          %label User
+          %input.form-control{type: "text", placeholder: "#{current_user.description} (#{current_user.name})", readonly: "readonly"}
 
-          .col-sm-4
-            .form-group
-              %label Domain
-              %input.form-control{type: "text", placeholder: @domain_id, readonly: "readonly"}
+        .form-group
+          %label Domain
+          %input.form-control{type: "text", placeholder: @domain_id, readonly: "readonly"}
 
-        .row
-          .col-sm-8
-            -# .form-group
-            -#   %label Domain
-            -#   %input.form-control{type: "text", placeholder: @domain_id, readonly: "readonly"}
 
-            .form-group
-              %label Terms and Conditions
-              .scrollable-text
-                :markdown
-                  #{Settings.terms}
+        .form-group
+          .checkbox
+            %label
+              = check_box_tag 'terms_of_use', 'accepted', false
+              I have read and agree to the terms of use
 
-            .form-group
-              .checkbox
-                %label
-                  = check_box_tag 'terms_of_use', 'accepted', false
-                  I have read and agree to the terms of use
+        .form-group
+          = submit_tag "Register", class: "btn btn-primary btn-lg"
 
-            .form-group
-              = submit_tag "Register", class: "btn btn-primary btn-lg"
 
-            -# = f.input :terms_of_use, as: :boolean, checked_value: true, unchecked_value: false, inline_label: raw("I have read and agree to the #{link_to('terms of use', '/docs/service/terms/', target:'_blank')}"), required: true, error: false
+
+    -# .form-group
+    -#   .checkbox
+    -#     %label
+    -#       = check_box_tag 'terms_of_use', 'accepted', false
+    -#       I have read and agree to the terms of use
+    -#
+    -# .form-group
+    -#   = submit_tag "Register", class: "btn btn-primary btn-lg"
+
+    -# = f.input :terms_of_use, as: :boolean, checked_value: true, unchecked_value: false, inline_label: raw("I have read and agree to the #{link_to('terms of use', '/docs/service/terms/', target:'_blank')}"), required: true, error: false

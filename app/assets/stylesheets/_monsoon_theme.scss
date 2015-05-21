@@ -12,7 +12,7 @@ body {
   padding-top: $navbar-height + $context-breadcrumb-height;
   margin-bottom: $footer-height + $footer-margin-top;
 
-  &.services {
+  &.services, &.users {
     padding-top: $navbar-height;
   }
 }
@@ -46,7 +46,7 @@ section {
   background: $input-bg-disabled;
   border: 1px solid #ccc;
   padding: 15px;
-  height: 500px;
+  height: 400px;
   overflow-y: scroll;
 }
 
