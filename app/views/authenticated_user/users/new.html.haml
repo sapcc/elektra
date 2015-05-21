@@ -6,7 +6,7 @@
 
     .row
       .col-sm-8
-        %p Please accept the terms of use for this domain before you continue. Once you have accepted our terms of use your user will be added to the domain and a sandbox project will be created for you.
+        %p Please accept the terms of use for this domain before you continue. Once you have accepted our terms of use your user will be registered to the domain and a sandbox project will be created for you.
         %p Thank you and enjoy your stay!
 
     %section
@@ -33,5 +33,14 @@
               .scrollable-text
                 :markdown
                   #{Settings.terms}
+
+            .form-group
+              .checkbox
+                %label
+                  = check_box_tag 'terms_of_use', 'accepted', false
+                  I have read and agree to the terms of use
+
+            .form-group
+              = submit_tag "Register", class: "btn btn-primary btn-lg"
 
             -# = f.input :terms_of_use, as: :boolean, checked_value: true, unchecked_value: false, inline_label: raw("I have read and agree to the #{link_to('terms of use', '/docs/service/terms/', target:'_blank')}"), required: true, error: false
