@@ -12,6 +12,6 @@ Rails.application.routes.draw do
   end
 
   scope "/system" do
-    resource :health, only: [:index]
+    get :health, to: "health#show"
   end
 end
