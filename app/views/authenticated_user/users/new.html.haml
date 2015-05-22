@@ -2,8 +2,8 @@
   .container
     %h1
       Welcome
-      = current_user.description
-    %p Please accept the terms of use for this domain before you continue. Once you have accepted our terms of use your user will be registered to the domain and a sandbox project will be created for you.
+      = current_user.full_name
+    %p Please accept the terms of use for this domain before you continue. Once you have accepted the terms your user will be registered to the domain and a sandbox project will be created for you.
     %p Thank you and enjoy your stay!
 
 
@@ -20,7 +20,7 @@
       .col-sm-4
         .form-group
           %label User
-          %input.form-control{type: "text", placeholder: "#{current_user.description} (#{current_user.name})", readonly: "readonly"}
+          %input.form-control{type: "text", placeholder: "#{current_user.full_name} (#{current_user.name})", readonly: "readonly"}
 
         .form-group
           %label Domain
@@ -30,11 +30,11 @@
         .form-group
           .checkbox
             %label
-              = check_box_tag 'terms_of_use', 'accepted', false
+              = check_box_tag 'terms_of_use', 'accepted', false, id: "accept_tos"
               I have read and agree to the terms of use
 
         .form-group
-          = submit_tag "Register", class: "btn btn-primary btn-lg"
+          = submit_tag "Register", class: "btn btn-primary btn-lg", id: "register-button", disabled: true
 
 
 
@@ -48,4 +48,3 @@
     -#   = submit_tag "Register", class: "btn btn-primary btn-lg"
 
     -# = f.input :terms_of_use, as: :boolean, checked_value: true, unchecked_value: false, inline_label: raw("I have read and agree to the #{link_to('terms of use', '/docs/service/terms/', target:'_blank')}"), required: true, error: false
-
