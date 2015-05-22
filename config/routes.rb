@@ -11,4 +11,7 @@ Rails.application.routes.draw do
     end
   end
 
+  scope "/system" do
+    resource :health, only: [:index]
+  end
 end
