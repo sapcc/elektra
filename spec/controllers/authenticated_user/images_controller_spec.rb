@@ -10,6 +10,7 @@ describe AuthenticatedUser::ImagesController do
 
   before(:each) do
     stub_authentication
+    allow_any_instance_of(TechnicalUser).to receive(:sandbox_exists?).and_return(true)
   end
 
   describe "GET 'index'" do

@@ -12,6 +12,7 @@ describe AuthenticatedUser::InstancesController do
     
     driver = object_spy('driver')
     allow_any_instance_of(Openstack::IdentityService).to receive(:driver).and_return(driver)
+    allow_any_instance_of(TechnicalUser).to receive(:sandbox_exists?).and_return(true)
   end
 
   describe "GET 'index'" do

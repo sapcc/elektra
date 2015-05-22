@@ -1,16 +1,16 @@
-class AuthenticatedUser::UsersController < ApplicationController
+class AuthenticatedUser::UsersController < AuthenticatedUserController
   skip_before_filter :check_terms_of_use
   
-  def terms_of_use
+  def new
   end
 
-  def register
-    if params[:terms_of_use_accepted]
+  def create
+    if params[:terms_of_use]
       technical_user = TechnicalUser.new(auth_session)
       sandbox = technical_user.create_user_sandbox
-      redirect_to session[:requested_url]
+      redirect_to session[:requested_url] and return
     end
     
-    render action: :terms_of_use
+    render action: :new
   end
 end

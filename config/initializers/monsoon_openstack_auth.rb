@@ -27,7 +27,7 @@ MonsoonOpenstackAuth.configure do |config|
   #config.login_redirect_url = '/'
 
   # authorization policy file
-  config.authorization.policy_file_path = "config/policy_test.json"
+  config.authorization.policy_file_path = "config/policy.json"
   config.authorization.context = "identity"
   
   # optional, default=false

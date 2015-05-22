@@ -1,15 +1,16 @@
 GIT
   remote: git://localhost/monsoon/monsoon-fog.git
-  revision: e67931859394ddeaf2b6b74e0822af89f5a7ba6f
+  revision: b3a2f733c65ebf9135c45659e38a352acd6d4ea8
   specs:
     monsoon-fog (0.4.0)
       fog (~> 1.28)
       retryable (~> 1.3)
 
-PATH
-  remote: ../monsoon-openstack-auth
+GIT
+  remote: git://localhost/monsoon/monsoon-openstack-auth.git
+  revision: 3b41dd6afb410955312e169d406ab36c39289065
   specs:
-    monsoon-openstack-auth (0.7.1)
+    monsoon-openstack-auth (0.7.2)
       hashie
       rails
       uglifier (>= 1.3.0)
@@ -344,6 +345,7 @@ GEM
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
     rdoc (4.2.0)
+    redcarpet (3.2.3)
     retryable (1.3.6)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
@@ -441,6 +443,7 @@ DEPENDENCIES
   pry-rails
   rails (= 4.2.0)
   rails_config
+  redcarpet
   rspec
   rspec-rails
   sass-rails

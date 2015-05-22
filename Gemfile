@@ -15,6 +15,7 @@ gem 'haml-rails'
 gem 'turbolinks'
 gem 'jquery-turbolinks'
 gem 'simple_form'
+gem 'redcarpet'
 
 # Database
 gem 'pg'
@@ -22,8 +23,8 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'monsoon-fog',            git: 'git://localhost/monsoon/monsoon-fog.git'
-#gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git'
-gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git'
+#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 # Extras
 gem 'rails_config'

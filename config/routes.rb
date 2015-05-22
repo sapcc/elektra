@@ -7,9 +7,7 @@ Rails.application.routes.draw do
       resources :instances
       resources :volumes
       resources :images
-      
-      get 'users/terms_of_use'
-      get 'users/register'
+      resources :users, only: [:new, :create]
     end
   end
 

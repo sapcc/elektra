@@ -24,11 +24,6 @@ class TechnicalUser
       admin_role = @service_connection.roles.all(name:'admin').first
       # assign admin role to user for sandbox
       user_sandbox.grant_role_to_user(admin_role.id,@user.id)
-            
-      # assign member role to user for sandbox
-      #domain = @service_connection.domains.find_by_id(@domain_id)
-      #member_role = @service_connection.roles.all(name:'member').first
-      #domain.grant_role_to_user(member_role.id,@user.id)
                     
       return user_sandbox
     rescue => e
@@ -40,7 +35,6 @@ class TechnicalUser
   def sandbox_exists?
     begin
       user_connection = @service_connection.users.find_by_id(@user.id)
-      p user_connection.projects
       user_connection.projects.length>0
     rescue => e
       p e

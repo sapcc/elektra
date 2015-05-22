@@ -90,6 +90,9 @@ module OpenstackServiceProvider
         openstack_region: @region
       }
       
+      @auth_params[:openstack_domain_id]=current_user.domain_id if current_user.domain_id
+      @auth_params[:openstack_project_id]=current_user.project_id if current_user.project_id
+
       @driver = driver(@auth_params)
     end
     
