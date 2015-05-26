@@ -1,6 +1,6 @@
 GIT
   remote: git://localhost/monsoon/monsoon-fog.git
-  revision: b3a2f733c65ebf9135c45659e38a352acd6d4ea8
+  revision: e6a2e122e5c1960f1ca5216c371573bde4d3c48a
   specs:
     monsoon-fog (0.4.0)
       fog (~> 1.28)
@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: a87bec8706ea9ecfab24a588c1af31726789c22f
+  revision: f61224e0aa0e81014eb7261319be1297d43ee30e
   specs:
     monsoon-openstack-auth (0.7.2)
       hashie
@@ -163,7 +163,7 @@ GEM
     fog-atmos (0.1.0)
       fog-core
       fog-xml
-    fog-aws (0.2.2)
+    fog-aws (0.3.0)
       fog-core (~> 1.27)
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
