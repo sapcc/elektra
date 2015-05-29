@@ -1,0 +1,15 @@
+.content
+  .container
+    .page-header
+      %h1
+        Project:
+        = @project.name
+
+
+    .row
+      .col-sm-6
+        %p Show super interesting information about this project here.
+
+      .col-sm-6
+        - unless @project.name == "#{current_user.name}_sandbox"
+          = link_to "Delete Project", project_path(@project.id, domain_id: @domain_id), method: :delete, class: "btn btn-danger"

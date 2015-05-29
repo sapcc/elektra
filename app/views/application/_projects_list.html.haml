@@ -1,6 +1,6 @@
-%h3 Choose a project:
+%h3 Choose a project context to view its instances:
 .row
-  .col-sm-6
+  .col-lg-6
     .list-group
       - @user_domain_projects.each do |project|
         = link_to project.name, instances_path(domain_id: @domain_id, project_id: project.id), class: "list-group-item"

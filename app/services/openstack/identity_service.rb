@@ -36,6 +36,18 @@ module Openstack
       api_connection.projects.all(domain_id: domain_id)
     end
 
+    # returns all roles (may filter by name)
+    def roles(options = {})
+      @driver.roles.all(options)
+    end
+
+    # Project CRUD
+
+    # parameters: name, domain_id, enabled (true|false, defaults: true)
+    def create_project(options = {})
+      @driver.projects.create(options)
+    end
+
     protected
     # admin connection to identity
     def api_connection

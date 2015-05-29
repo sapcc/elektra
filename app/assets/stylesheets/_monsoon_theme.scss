@@ -12,7 +12,7 @@ body {
   padding-top: $navbar-height + $context-breadcrumb-height;
   margin-bottom: $footer-height + $footer-margin-top;
 
-  &.services, &.users {
+  &.services, &.users, &.projects {
     padding-top: $navbar-height;
   }
 }
@@ -22,7 +22,7 @@ section {
 }
 
 .content {
-  padding: ($line-height-computed * 2) 0 0 0;
+  padding: ($line-height-computed) 0 0 0;
 }
 
 .lead {
@@ -63,6 +63,11 @@ section {
   @extend .btn-outline;
 
   @include button-variant-outline-negative;
+}
+
+.btn-md {
+  // line-height: ensure even-numbered height of button next to large input
+  @include button-size($padding-medium-vertical, $padding-medium-horizontal, $font-size-large, $line-height-large, $border-radius-base);
 }
 
 
@@ -270,4 +275,25 @@ td, th {
 
 input[type='checkbox'], input[type='radio'] {
   cursor: pointer;
+}
+
+.form-inline .form-group {
+  &.input-new-project {
+    width: 60%;
+
+    input {
+      width: 100%;
+    }
+  }
+}
+
+
+
+
+// ---------------------------------------------------------------------------------
+// Interactive
+// ---------------------------------------------------------------------------------
+
+.js-target-hiddenform {
+  display: none;
 }

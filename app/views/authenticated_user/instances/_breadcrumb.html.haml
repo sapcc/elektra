@@ -12,4 +12,6 @@
         %ul.dropdown-menu{:role => "menu"}
           - @user_domain_projects.each do |project|
             %li{class: ("active" if project.id == @project_id)}
-              = link_to project.name, instances_path(project: project.id)
+              = link_to project.name, instances_path(domain_id: @domain_id, project_id: project.id)
+          %li.divider
+          %li= link_to "Instances overview", instances_path(domain_id: @domain_id)

@@ -11,6 +11,12 @@ Rails.application.routes.draw do
     end
   end
 
+  scope "/(:domain_id)" do
+    scope module: 'authenticated_user' do
+      resources :projects, only: [:new, :create, :index, :show, :destroy]
+    end
+  end
+
   scope "/system" do
     get :health, to: "health#show"
   end
