@@ -277,17 +277,23 @@ input[type='checkbox'], input[type='radio'] {
   cursor: pointer;
 }
 
-.form-inline .form-group {
-  &.input-new-project {
-    width: 60%;
 
-    input {
-      width: 100%;
-    }
+.inline-form-row {
+  display: table-row;
+
+  .form-group {
+    margin: 0;
   }
 }
 
+.inline-form-cell, .inline-form-button {
+  display: table-cell;
+}
 
+.inline-form-button {
+  padding-left: 5px;
+  width: 1%;
+}
 
 
 // ---------------------------------------------------------------------------------
