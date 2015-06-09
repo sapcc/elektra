@@ -5,7 +5,7 @@ MonsoonOpenstackAuth.configure do |config|
   config.connection_driver.api_userid   = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
   config.connection_driver.api_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
   config.connection_driver.ssl_verify_peer = false
-  
+
   # optional, default=true
   config.token_auth_allowed = true
   # optional, default=true
