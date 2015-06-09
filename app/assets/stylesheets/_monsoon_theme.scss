@@ -12,7 +12,7 @@ body {
   padding-top: $navbar-height + $context-breadcrumb-height;
   margin-bottom: $footer-height + $footer-margin-top;
 
-  &.services, &.users, &.projects {
+  &.services, &.users, &.projects, &.credentials {
     padding-top: $navbar-height;
   }
 }
@@ -242,6 +242,18 @@ footer, .footer {
 
 
 // ---------------------------------------------------------------------------------
+// Alerts
+// ---------------------------------------------------------------------------------
+
+.alert-error {
+  @extend .alert-danger;
+}
+
+.alert-notice {
+  @extend .alert-info;
+}
+
+// ---------------------------------------------------------------------------------
 // Jumbotron
 // ---------------------------------------------------------------------------------
 
@@ -278,8 +290,8 @@ input[type='checkbox'], input[type='radio'] {
 }
 
 
-.inline-form-row {
-  display: table-row;
+.inline-form {
+  display: table;
 
   .form-group {
     margin: 0;

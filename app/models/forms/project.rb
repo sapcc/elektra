@@ -15,9 +15,6 @@ class Forms::Project
     @user_id = params[:user_id]
     @options  = params[:forms_project] || {}
 
-    puts "+++++++++++++++++++++++++++++++ Params: #{params.inspect}"
-    puts "---====---===-=-=-=-==-- ID YO: #{params[:id]}"
-
     if params[:id]
       @keystone_project = @identity_service.user_project(params[:id])
     else
@@ -53,7 +50,6 @@ class Forms::Project
   def persist!
     project = @identity_service.create_project(name: @name, domain_id: @domain_id)
     project.grant_role_to_user(@identity_service.roles(name: "admin").first.id, @user_id) # give admin role to user, expects role with name "admin" to exist, will fail miserably if it doesn't
-    puts "+++++++++++++++++++++++++++++++++++++++ project created, name: #{@name}, domain id: #{@domain_id} ----return value: #{project.inspect}"
   rescue => e
     # e.body.errors.each do |attribute, messages|
     #   messages.each do |message|

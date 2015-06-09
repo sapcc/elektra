@@ -20,38 +20,14 @@
             %li.dropdown-header Compute
             %li
               = link_to "Instances", instances_path
-            %li
-              %a{:href => "#"} Volumes
-            %li
-              %a{:href => "#"} Images
-            %li
-              %a{:href => "#"} Automation
 
             %li.divider
 
             %li.dropdown-header Identity
             %li
-              %a{:href => "#"} User Permissions
-            %li
-              %a{:href => "#"} Teams
-            %li
-              %a{:href => "#"} Credentials
+              = link_to "Credentials", credentials_path
             %li
               = link_to "Projects", projects_path
-
-            %li.divider
-
-            %li.dropdown-header Networking
-            %li
-              %a{:href => "#"} Networks
-            %li
-              %a{:href => "#"} Loadbalancers
-
-            %li.divider
-
-            %li.dropdown-header Storage
-            %li
-              %a{:href => "#"} Swift
 
 
       %ul.nav.navbar-nav.navbar-right
@@ -67,7 +43,8 @@
               %li
                 %a{:href => "#"} View Profile
               %li
-                %a{:href => "#"} Credentials
+                = link_to "Credentials", credentials_path
+
               %li.divider
               %li
                 = link_to 'Log out', monsoon_openstack_auth.logout_path

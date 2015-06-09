@@ -1,3 +1,17 @@
+credentials:
+  types:
+    - ec2
+    - ssh-key
+
+  blobs:
+    ec2:
+      - access
+      - secret
+    ssh-key:
+      - name
+      - public_key
+
+
 terms: >
   ### Overview
 

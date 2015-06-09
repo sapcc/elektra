@@ -48,6 +48,13 @@ module Openstack
       @driver.projects.create(options)
     end
 
+    # Credentials
+
+    # parameters: page, per_page
+    def credentials(options={})
+      @driver.os_credentials
+    end
+
     protected
     # admin connection to identity
     def api_connection

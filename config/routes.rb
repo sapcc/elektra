@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
+
   root 'services#index'
 
   scope "/(:domain_id)/(:project_id)" do
@@ -8,6 +9,7 @@ Rails.application.routes.draw do
       resources :volumes
       resources :images
       resources :users, only: [:new, :create]
+      resources :credentials
     end
   end
 
@@ -15,6 +17,10 @@ Rails.application.routes.draw do
     scope module: 'authenticated_user' do
       resources :projects, only: [:new, :create, :index, :show, :destroy]
     end
+  end
+
+  scope "/:domain_id" do  
+    match '/', to: 'services#index', via: :get
   end
 
   scope "/system" do

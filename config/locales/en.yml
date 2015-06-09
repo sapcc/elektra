@@ -20,4 +20,10 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  credentials:
+    ec2:
+      access: Access Key
+      secret: Secret Key
+    ssh-key:
+      name: Name
+      public_key: Public Key

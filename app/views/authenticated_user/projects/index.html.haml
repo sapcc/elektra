@@ -15,7 +15,7 @@
         = simple_form_for Forms::Project.new(@domain_id, services.identity), url: projects_path(@domain_id), method: :post do |f|
           .js-target-hiddenform
             .well
-              .inline-form-row
+              .inline-form
                 .inline-form-cell
                   = f.input :name,
                     input_html:  { maxlength: 255 },

@@ -12,6 +12,9 @@
 
   %body
 
+    .container
+      = render "application/flashes"
+
     %nav.navbar.navbar-login
       .navbar-header
         = link_to "/", class: "navbar-brand" do
