@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-# require 'controllers/authenticated_user/shared_examples'
+require 'controllers/authenticated_user/shared_examples'
 
 describe AuthenticatedUser::CredentialsController do
   include AuthenticationStub
@@ -24,11 +24,11 @@ describe AuthenticatedUser::CredentialsController do
     end
   end
 
-  describe "GET 'new'" do
-    it "returns http success" do
-      get :new, default_params
-      expect(response).to be_success
-    end
-  end
+  # describe "GET 'new'" do
+  #   it "returns http success" do
+  #     get :new, default_params
+  #     expect(response).to be_success
+  #   end
+  # end
 
 end
