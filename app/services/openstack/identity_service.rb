@@ -41,18 +41,61 @@ module Openstack
       @driver.roles.all(options)
     end
 
-    # Project CRUD
-
-    # parameters: name, domain_id, enabled (true|false, defaults: true)
+  
+    
+    ##################### FORMS MODELS ########################
+    def forms_project(id=nil)
+      Forms::Project.new(self,id)
+    end
+    
+    # def forms_user(id=nil)
+    #
+    # end
+    
+    ##################### END ##################################
+    
+    ##################### GRUD PROJETS #########################
     def create_project(options = {})
       @driver.projects.create(options)
     end
+    
+    def find_project(id)
+      @driver.projects.auth_projects.find_by_id(id)
+    end
+
+    def grant_project_role(project,role_name)
+      role = role_by_name(role_name)
+      project.grant_role_to_user(role.id, @current_user.id)
+    end
+    
+    # def find_project(id)
+    #   @driver.projects.find_by_id(id)
+    # end
+    #
+    # def create_project(params)
+    #
+    # end
+    #
+    # def update_project(id,params)
+    #
+    # end
+    #
+    # def destroy_project(id)
+    #
+    # end
+    
+    ##################### END #############################
+    
 
     # Credentials
 
     # parameters: page, per_page
     def credentials(options={})
       @driver.os_credentials
+    end
+    
+    def role_by_name(name)
+      api_connection.roles.all(name:name).first
     end
 
     protected

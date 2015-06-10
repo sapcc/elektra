@@ -3,13 +3,34 @@
     .page-header
       %h1
         Project:
-        = @project.name
+        = @forms_project.name
 
 
     .row
       .col-sm-6
         %p Show super interesting information about this project here.
-
+          
       .col-sm-6
-        - unless @project.name == "#{current_user.name}_sandbox"
-          = link_to "Delete Project", project_path(@project.id, domain_id: @domain_id), method: :delete, class: "btn btn-danger"
+        - unless @forms_project.name == "#{current_user.name}_sandbox"
+          = link_to "Delete Project", project_path(@forms_project.id, domain_id: @domain_id), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
+
+        %p  
+        = simple_form_for @forms_project, url: project_path(@domain_id,@forms_project.id), method: :put do |f|
+          .js-target-hiddenform
+            .well
+              .inline-form
+                .inline-form-cell
+                  = f.input :name,
+                    input_html:  { maxlength: 255 },
+                    placeholder: "Enter name",
+                    autofocus:   true,
+                    label:       false
+
+                .inline-form-button
+                  = f.submit 'Update Project', class: 'btn btn-primary', data: { disable_with: "Updating..." }
+                .inline-form-button
+                  %a.btn.btn-default.js-cancel-hiddenform Cancel
+
+        .form-group
+          %a.btn.btn-primary.btn-md.js-trigger-hiddenform Update
+   

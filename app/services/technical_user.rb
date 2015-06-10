@@ -21,7 +21,8 @@ class TechnicalUser
       end
       
       # get admin role  
-      admin_role = @service_connection.roles.all(name:'admin').first
+      #admin_role = @service_connection.roles.all(name:'admin').first
+      admin_role = role('admin')
       # assign admin role to user for sandbox
       user_sandbox.grant_role_to_user(admin_role.id,@user.id)
                     
@@ -40,4 +41,13 @@ class TechnicalUser
       p e
     end
   end
+  
+  def roles
+    @roles ||= @service_connection.roles
+  end
+  
+  def role(name)
+    roles.select {|r| r.name==name}
+  end
+  
 end

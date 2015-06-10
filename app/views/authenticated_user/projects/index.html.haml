@@ -12,7 +12,7 @@
             = link_to project.name, project_path(project.id, domain_id: @domain_id), class: "list-group-item"
 
       .col-md-6
-        = simple_form_for Forms::Project.new(@domain_id, services.identity), url: projects_path(@domain_id), method: :post do |f|
+        = simple_form_for @forms_project, url: projects_path(@domain_id), method: :post do |f|
           .js-target-hiddenform
             .well
               .inline-form
@@ -28,5 +28,5 @@
                 .inline-form-button
                   %a.btn.btn-default.js-cancel-hiddenform Cancel
 
-          .form-group
-            %a.btn.btn-primary.btn-md.js-trigger-hiddenform New Project
+        .form-group
+          %a.btn.btn-primary.btn-md.js-trigger-hiddenform New Project
