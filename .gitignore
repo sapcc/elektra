@@ -38,3 +38,4 @@ config/environments/*.local.yml
 .vendor/bundle
 webapp
 postgres
+version
