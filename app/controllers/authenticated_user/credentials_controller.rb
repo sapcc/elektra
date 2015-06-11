@@ -3,7 +3,7 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
 
   def index
     @user_credentials = services.identity.credentials
-    @credential = Forms::Credential.new(services.identity, current_user.id)
+    @forms_credential = #Forms::Credential.new(services.identity, current_user.id)
   end
 
   def create

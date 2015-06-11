@@ -3,10 +3,10 @@ module AuthenticatedUser
 
     def index
       #services.identity
-      @active_domain = services.identity.user_domain(@domain_id)
+      @active_domain = services.identity.find_domain(@domain_id)
       #render text: 'test' and return
 
-      @user_domain_projects = services.identity.user_domain_projects(@active_domain.id)
+      @user_domain_projects = services.identity.projects.auth_projects
 
       @active_project = @user_domain_projects.find { |project| project.id == @project_id } if @project_id
       @instances = true if @project_id

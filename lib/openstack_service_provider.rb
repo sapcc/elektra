@@ -10,15 +10,17 @@ module OpenstackServiceProvider
 
     module InstanceMethods
       # load services provider
-      def services
+      def services(region=nil)
         unless @services
+          region ||= auth_session.region if auth_session
+          region ||= MonsoonOpenstackAuth.configuration.default_region
+          
           if MonsoonOpenstackAuth.configuration.connection_driver and 
-            MonsoonOpenstackAuth.configuration.connection_driver.endpoint and 
-            auth_session and logged_in?
+            MonsoonOpenstackAuth.configuration.connection_driver.endpoint
             
             @services = OpenstackServiceProvider::ServicesManager.new(
               MonsoonOpenstackAuth.configuration.connection_driver.endpoint,
-              auth_session.region,
+              region,
               current_user)
           end
         end
@@ -63,6 +65,7 @@ module OpenstackServiceProvider
         end
 
         service = klazz.new(@endpoint,@region,@current_user)
+        service.services=self
         # new service is instantiated -> cache it for further use in the same controller request.
         instance_variable_set("@#{method_sym.to_s}", service)
       end
@@ -72,6 +75,7 @@ module OpenstackServiceProvider
   end
   
   class BaseProvider
+    attr_accessor :services
     def initialize(endpoint,region,current_user)
       @endpoint = endpoint
       @region = region
@@ -101,7 +105,11 @@ module OpenstackServiceProvider
     end
     
     def method_missing(method_sym, *arguments, &block)
-      @driver.send(method_sym, arguments)
+      if arguments.blank?
+        @driver.send(method_sym)
+      else
+        @driver.send(method_sym, arguments)
+      end
     end
   end
   

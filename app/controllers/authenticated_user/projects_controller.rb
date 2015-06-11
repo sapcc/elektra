@@ -36,7 +36,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
     forms_project = services.identity.forms_project(params[:id])
         
     if forms_project.destroy
-      flash[:notice] = "Project successfully deleted"
+      flash[:notice] = "Project successfully deleted."
     else
       flash[:error] = forms_project.errors.full_messages #"Something when wrong when trying to delete the project"
     end

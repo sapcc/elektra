@@ -16,9 +16,9 @@ class AuthenticatedUserController < ApplicationController
   include OpenstackServiceProvider::Services  
   
   def check_terms_of_use
-    technical_user = TechnicalUser.new(auth_session)
-    
-    unless technical_user.sandbox_exists?#current_user.roles.length>0 or technical_user.sandbox_exists?
+    unless services.identity.has_projects?
+      # user has no project yet. 
+      # We assume that it is a new user -> redirect to terms of use page.
       session[:requested_url] = request.env['REQUEST_URI']
       redirect_to new_user_path
     end

@@ -245,7 +245,7 @@ footer, .footer {
 // Alerts
 // ---------------------------------------------------------------------------------
 
-.alert-error {
+.alert-error, .alert-alert {
   @extend .alert-danger;
 }
 
