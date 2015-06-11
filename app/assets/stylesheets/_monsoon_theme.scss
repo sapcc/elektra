@@ -277,6 +277,19 @@ td, th {
   }
 }
 
+.data-tabular-display {
+  display: table;
+}
+
+.data-tabular-row {
+  display: table-row;
+}
+
+.data-tabular-cell {
+  display: table-cell;
+  padding-right: 8px;
+}
+
 
 
 

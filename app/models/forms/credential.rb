@@ -3,7 +3,7 @@ class Forms::Credential
   include ActiveModel::Conversion
   include ActiveModel::Validations
 
-  attr_accessor :user_id, :type, :blob, :project_id, :access, :secret, :name, :public_key
+  attr_accessor :user_id, :type, :blob, :project, :access, :secret, :name, :public_key
 
   validates :user_id, :type, :blob, presence: true
 
@@ -13,9 +13,8 @@ class Forms::Credential
     @identity_service = identity_service
     @user_id          = user_id
     @options          = params[:forms_credential] || {}
-    @project_id       = params[:project_id]
-    # @blob             = @options[:blob].to_json
-    @blob             = {access: '123', secret: '123'}.to_json
+    @project          = @options[:project]
+    @blob             = @options[:blob].to_json
 
 
     if params[:id]
@@ -52,11 +51,13 @@ class Forms::Credential
 
   def persist!
     options = { user_id: @user_id, type: @type, blob: @blob }
-    options.merge(project_id: @project_id) if @project_id
+    options.merge!({project_id: @project}) if @project
 
-    puts "============================== Options: #{options.inspect}"
+    puts "||||||||||||||||||||||||||||||||||||||||||||||||||  Options for create: #{options.inspect}   |||||||||||| project id: #{@project}"
 
     credential = @identity_service.credentials.create(options)
+    # credential = @identity_service.credentials.create(user_id: '7adde6c509104e2ba75f4212fea83a18', type: 'ec2', blob: {access: '123', secret: '123'}.to_json)
+
     true
 
   rescue => e
