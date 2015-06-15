@@ -59,6 +59,9 @@ module Forms
       @errors = ActiveModel::Errors.new(self)     
       @model = nil
       load_model(id) if id
+      
+      # execute after callback
+      after_initialize
     end
   
     def attributes=(params={})
@@ -74,14 +77,23 @@ module Forms
     end
   
     def save
+      # execute before callback
+      before_save
+      
+      success = false
       if @model.nil?
-        create
+        success = create
       else
-        update
+        success = update
       end
+
+      return success & after_save 
     end
     
     def destroy
+      # execute before callback
+      before_destroy
+      
       begin
         if @model
           @model.destroy 
@@ -91,7 +103,7 @@ module Forms
           return false
         end
       rescue => e
-        errors = parse_error(e)
+        errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
           name = ' ' if name.to_s.downcase=='message'
           self.errors.add(name, message) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
@@ -102,23 +114,35 @@ module Forms
     end
     
     protected
+    
+    # callbacks
+    def before_create;    return true;  end
+    def before_destroy;   return true;  end
+    def before_save;      return true;  end
+    def after_initialize; return true;  end
+    def after_create;     return true;  end
+    def after_save;       return true; end
   
     def create
+      # execute before callback
+      before_create
+      
       create_attributes = self.attributes
       create_attributes.delete(:id)
       
       begin
         @model = @service.send("create_#{@class_name}", create_attributes)
       rescue => e
-        errors = parse_error(e)
+        errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          name = ' ' if name.to_s.downcase=='message'
+          name = ' ' if name.downcase=='message'
           self.errors.add(name, message) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end
           
         return false
       end
-      self.attributes = @model.attributes
+      #self.attributes = @model.attributes
+      after_create
       return true
     end
     
@@ -129,8 +153,9 @@ module Forms
       begin
         @model.save
       rescue => e
-        errors = parse_error(e)
+        errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
+          name = ' ' if name.downcase=='message'
           self.errors.add(name, message) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end
         return false
@@ -141,23 +166,6 @@ module Forms
     def load_model(id)
       @model = @service.send("find_#{@class_name}",id)
       self.attributes = @model.attributes
-    end
-  
-    def parse_error(e)
-      puts e     
-      if e.class.name.starts_with?("Fog::")
-        return {@class_name => e.message}
-      end
-
-      begin
-        errors = e.message.scan(/.*excon\.error\.response.*\n.*:body\s*=>\s*"(.*).*"\n/)
-        error_string = errors.flatten.first
-        error_string.gsub!(/\\+"/,'"') if error_string
-        parsed_errors = JSON.parse(error_string)
-        parsed_errors["errors"] || parsed_errors["error"]
-      rescue
-        return {"Error" => e.message}
-      end
     end
     
   end

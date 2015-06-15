@@ -1,0 +1,10 @@
+.content
+  .container
+    .page-header
+      %h1
+        Error occured
+
+    %ul
+      - @errors.each do |name,message|
+        %li= "#{name}: #{message}"
+         

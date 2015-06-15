@@ -35,8 +35,10 @@ module Openstack
       @driver.projects.auth_projects.find_by_id(id)
     end
     
-    def projects
-      @driver.projects.auth_projects
+    def projects(domain_id=nil)
+      projects = @driver.projects.auth_projects
+      return projects if domain_id.nil?
+      projects.select {|project| project.domain_id==domain_id}
     end
 
     def grant_project_role(project,role_name)

@@ -15,6 +15,22 @@ class AuthenticatedUserController < ApplicationController
   
   include OpenstackServiceProvider::Services  
   
+  rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
+  rescue_from "Excon::Errors::InternalServerError", with: :handle_api_error
+  rescue_from "MonsoonOpenstackAuth::ApiError", with: :handle_auth_error
+    
+  protected
+  
+  def handle_api_error(exception)
+    @errors = ApiErrorParser.handle(exception)
+    render template: 'authenticated_user/error'
+  end
+  
+  def handle_auth_error(exception)
+    @errors = {exception.class.name => exception.message}
+    render template: 'authenticated_user/error'
+  end
+  
   def check_terms_of_use
     unless services.identity.has_projects?
       # user has no project yet. 
@@ -23,4 +39,5 @@ class AuthenticatedUserController < ApplicationController
       redirect_to new_user_path
     end
   end
+  
 end
