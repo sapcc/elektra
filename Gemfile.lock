@@ -87,6 +87,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    addressable (2.3.8)
     arel (6.0.0)
     autoprefixer-rails (5.1.11)
       execjs
@@ -109,9 +110,13 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-screenshot (1.0.9)
+      capybara (>= 1.0, < 3)
+      launchy
     celluloid (0.16.0)
       timers (~> 4.0.0)
     chunky_png (1.3.4)
+    cliver (0.3.2)
     coderay (1.1.0)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
@@ -285,6 +290,8 @@ GEM
       railties (>= 3.1.0)
       turbolinks
     json (1.8.2)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     listen (2.10.0)
       celluloid (~> 0.16.0)
       rb-fsevent (>= 0.9.3)
@@ -311,6 +318,11 @@ GEM
       shellany (~> 0.0)
     pg (0.18.2)
     phantomjs (1.9.8.0)
+    poltergeist (1.6.0)
+      capybara (~> 2.1)
+      cliver (~> 0.3.1)
+      multi_json (~> 1.0)
+      websocket-driver (>= 0.2.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -419,6 +431,9 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    websocket-driver (0.5.4)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -431,6 +446,7 @@ DEPENDENCIES
   bootstrap-sass
   byebug
   capybara
+  capybara-screenshot
   coffee-rails
   compass-rails
   cucumber-rails
@@ -447,6 +463,7 @@ DEPENDENCIES
   monsoon-openstack-auth!
   pg
   phantomjs
+  poltergeist
   pry-rails
   rails (= 4.2.0)
   rails_config

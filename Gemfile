@@ -71,8 +71,12 @@ group :development, :test do
   gem "cucumber-rails", require: false
   gem "capybara"
   gem "database_cleaner"
-  gem 'phantomjs'
+  #gem 'phantomjs'
 
+  gem 'poltergeist'
+  gem 'phantomjs', :require => 'phantomjs/poltergeist'
+  gem 'capybara-screenshot'
+  
 
   gem "better_errors"
   gem 'pry-rails'

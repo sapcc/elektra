@@ -1,3 +1,4 @@
+@javascript
 Feature: Authentication
   In order to avoid login errors
   I want to check the authentication functionality
