@@ -9,7 +9,7 @@ RSpec.describe Forms::Credential do
   before :each do 
     @identity = double("identity").as_null_object
     @credential_model = double("credential")
-    allow(@credential_model).to receive(:attributes).and_return(id:1, project_id: 2, type: 'ec2', user_id: 3, blob: 'blob')
+    allow(@credential_model).to receive(:attributes).and_return(id:1, project_id: 2, type: 'ec2', user_id: 3, blob: '{"access": "test", "secret": "test"}')
     allow(@identity).to receive(:find_credential).with(1).and_return(@credential_model)    
   end
 
@@ -39,7 +39,7 @@ RSpec.describe Forms::Credential do
     end
     
     it "contains 'blob' as blob" do
-      expect(@forms_credential.attributes[:blob]).to eq('blob')
+      expect(@forms_credential.attributes[:blob]).to eq({"access"=> "test", "secret"=> "test"})
     end
   end
 end
