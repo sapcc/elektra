@@ -3,6 +3,7 @@ MonsoonOpenstackAuth.configure do |config|
   # config.connection_driver = DriverClass
   config.connection_driver.api_endpoint = ("http://#{ENV['AUTHORITY_SERVICE_HOST']}:#{ENV['AUTHORITY_SERVICE_PORT']}/v3/auth/tokens" if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']) || ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
   config.connection_driver.api_userid   = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
+  config.connection_driver.api_domain   = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
   config.connection_driver.api_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
   config.connection_driver.ssl_verify_peer = false
 
