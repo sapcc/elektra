@@ -71,7 +71,6 @@ version:
 
 .PHONY: build
 build: version
-	$(DOCKER) pull $(IMAGE):$(LATEST_VERSION)
 	$(DOCKER) build -t $(IMAGE):$(VERSION) --rm . 
 
 .PHONY: promote
