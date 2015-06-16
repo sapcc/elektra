@@ -1,32 +1,32 @@
-.content
-  .container
-    .page-header
-      %h1
-        Projects
-        %small Manage your projects in this domain
 
-    .row
-      .col-md-6
-        .list-group
-          - @user_domain_projects.each do |project|
-            = link_to project.name, project_path(project.id, domain_id: @domain_id), class: "list-group-item"
+.container
+  .page-header
+    %h1
+      Projects
+      %small Manage your projects in this domain
 
-      .col-md-6
-        = simple_form_for @forms_project, url: projects_path(@domain_id), method: :post do |f|
-          .js-target-hiddenform
-            .well
-              .inline-form
-                .inline-form-cell
-                  = f.input :name,
-                    input_html:  { maxlength: 255 },
-                    placeholder: "Enter name",
-                    autofocus:   true,
-                    label:       false
+  .row
+    .col-md-6
+      .list-group
+        - @user_domain_projects.each do |project|
+          = link_to project.name, project_path(project.id, domain_id: @domain_id), class: "list-group-item"
 
-                .inline-form-button
-                  = f.submit 'Create Project', class: 'btn btn-primary', data: { disable_with: "Creating..." }
-                .inline-form-button
-                  %a.btn.btn-default.js-cancel-hiddenform Cancel
+    .col-md-6
+      = simple_form_for @forms_project, url: projects_path(@domain_id), method: :post do |f|
+        .js-target-hiddenform
+          .well
+            .inline-form
+              .inline-form-cell
+                = f.input :name,
+                  input_html:  { maxlength: 255 },
+                  placeholder: "Enter name",
+                  autofocus:   true,
+                  label:       false
 
-        .form-group
-          %a.btn.btn-primary.btn-md.js-trigger-hiddenform New Project
+              .inline-form-button
+                = f.submit 'Create Project', class: 'btn btn-primary', data: { disable_with: "Creating..." }
+              .inline-form-button
+                %a.btn.btn-default.js-cancel-hiddenform Cancel
+
+      .form-group
+        %a.btn.btn-primary.btn-md.js-trigger-hiddenform New Project

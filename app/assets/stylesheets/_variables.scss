@@ -116,7 +116,8 @@ $headings-font-family: $font-family-sap-regular, "Helvetica Neue", Helvetica, Ar
 
 
 // Jumbotron
-$jumbotron-color: #fff;
+$jumbotron-color: rgba(255, 255, 255, 0.85);
+$jumbotron-heading-color: #fff;
 $jumbotron-bg: $medium-blue;
 
 // List group
