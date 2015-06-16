@@ -109,7 +109,7 @@ test: rspec cucumber
 .PHONY: 
 migrate-%: postgres
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE):$(VERSION) \
-		bundle exec rake db:create db:migrate 
+		bundle exec rake db:create db:schema:load db:migrate db:seed
 
 .PHONY: rspec 
 rspec: migrate-test
