@@ -115,6 +115,7 @@ rspec: migrate-test
 	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
 
 
+CUCUMBER_OPTIONS=
 ifdef CAPYBARA_APP_HOST 
 	CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(CAPYBARA_APP_HOST)
 endif
