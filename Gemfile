@@ -1,7 +1,6 @@
 # encoding: UTF-8
 source 'http://localhost:8080/rubygemsorg/'
 
-
 gem 'rails', '4.2.0'
 
 # Views and Assets

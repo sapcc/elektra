@@ -28,8 +28,7 @@ ensure
 end
 
 Capybara.javascript_driver = :poltergeist
-#Capybara.default_driver    = :poltergeist 
 Capybara.server_port       = find_available_port # Needed for runnning multiple features simultaniously
-Capybara.app_host          = ENV['CAPYBARA_APP_HOST'] #ENV['CAPYBARA_APP_HOST'].nil? ? "http://localhost:#{Capybara.server_port}" : ENV['CAPYBARA_APP_HOST']
+Capybara.app_host          = ENV['CAPYBARA_APP_HOST'] ? "http://localhost:#{Capybara.server_port}" : ENV['CAPYBARA_APP_HOST']
 Capybara.run_server        = ENV['CAPYBARA_APP_HOST'].nil?
 Capybara.default_wait_time = 5

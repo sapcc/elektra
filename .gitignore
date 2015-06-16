@@ -39,3 +39,4 @@ config/environments/*.local.yml
 webapp
 postgres
 version
+precompile
