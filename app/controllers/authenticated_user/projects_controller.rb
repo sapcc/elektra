@@ -1,4 +1,5 @@
 class AuthenticatedUser::ProjectsController < AuthenticatedUserController
+
   before_filter only: [:index, :create, :update] do
     @active_domain = services.identity.find_domain(@domain_id)
     @user_domain_projects = services.identity.projects(@active_domain.id)

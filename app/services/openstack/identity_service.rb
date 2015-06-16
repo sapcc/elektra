@@ -32,13 +32,18 @@ module Openstack
     end
     
     def find_project(id)
-      @driver.projects.auth_projects.find_by_id(id)
+      #@driver.projects.auth_projects.find_by_id(id)
+      @found_projects ||= {} 
+      unless @found_projects[id]
+        @found_projects[id] = projects.find {|project| project.id==id}
+      end
+      @found_projects[id]
     end
     
     def projects(domain_id=nil)
-      projects = @driver.projects.auth_projects
-      return projects if domain_id.nil?
-      projects.select {|project| project.domain_id==domain_id}
+      @auth_projects ||= @driver.projects.auth_projects
+      return @auth_projects if domain_id.nil?
+      @auth_projects.select {|project| project.domain_id==domain_id}
     end
 
     def grant_project_role(project,role_name)
@@ -57,11 +62,17 @@ module Openstack
     end
     
     def find_credential(id)
-      @driver.os_credentials.find_by_id(id)
+      @found_credentials ||= {}
+      unless @found_credentials[id]
+        @found_credentials[id] = credentials.find{|c| c.id==id}
+      end
+      @found_credentials[id]
+      #@driver.os_credentials.find_by_id(id)
     end
     
     def credentials(options={})
-      @driver.os_credentials
+      @user_credentials ||= @driver.os_credentials.all(user_id: @current_user.id)
+      #@driver.os_credentials
     end
   end
 end

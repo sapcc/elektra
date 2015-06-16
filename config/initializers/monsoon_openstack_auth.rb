@@ -30,6 +30,9 @@ MonsoonOpenstackAuth.configure do |config|
   config.authorization.policy_file_path = "config/policy.json"
   config.authorization.context = "identity"
   
+  config.authorization.trace_enabled = true
+  config.authorization.reload_policy = true
+  
   # optional, default=false
   config.debug=true
 end

@@ -21,7 +21,7 @@
 
     .container
       = render "application/flashes"
-
+      %pre.debug-info= MonsoonOpenstackAuth.api_client(MonsoonOpenstackAuth.configuration.default_region).service_user.to_json
     = yield
 
     %footer.footer

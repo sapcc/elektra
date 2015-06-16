@@ -7,4 +7,8 @@ class Forms::Project < Forms::Base
   
   ignore_attributes :parent_id, :links
   default_values enabled: true
+  
+  def is_sandbox?
+    self.name.end_with? "_sandbox"
+  end
 end

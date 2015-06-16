@@ -1,6 +1,6 @@
 GIT
   remote: git://localhost/monsoon/fog.git
-  revision: e37aca97db74fe0858d3a2b57693a81f19633b5d
+  revision: a7ad548b745bc6747d83ea0ae392cddbe11b71a0
   branch: master
   specs:
     fog (1.31.1)
@@ -8,7 +8,7 @@ GIT
       fog-aws (~> 0.0)
       fog-brightbox (~> 0.4)
       fog-core (~> 1.30)
-      fog-ecloud
+      fog-ecloud (= 0.1.1)
       fog-google (>= 0.0.2)
       fog-json
       fog-local
@@ -37,7 +37,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 508de9312d47b87e351983ef03cf04c7d8dfb5a8
+  revision: 913d9eccdecf5589c4706eefacde8350e8a940c0
   specs:
     monsoon-openstack-auth (0.7.5)
       hashie
@@ -174,7 +174,7 @@ GEM
     fog-atmos (0.1.0)
       fog-core
       fog-xml
-    fog-aws (0.4.0)
+    fog-aws (0.4.1)
       fog-core (~> 1.27)
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
@@ -190,7 +190,7 @@ GEM
       mime-types
       net-scp (~> 1.1)
       net-ssh (>= 2.1.3)
-    fog-ecloud (0.1.2)
+    fog-ecloud (0.1.1)
       fog-core
       fog-xml
     fog-google (0.0.5)

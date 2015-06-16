@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   scope "/(:domain_id)" do
     scope module: 'authenticated_user' do
       resources :projects, only: [:update, :create, :index, :show, :destroy] do
-        get 'credentials'
+        #get 'credentials'
       end
     end
   end
