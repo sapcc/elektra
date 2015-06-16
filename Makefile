@@ -58,6 +58,7 @@ clean:
 	$(DOCKER) kill $(webapp) &> /dev/null || true
 	$(DOCKER) rm   $(webapp) &> /dev/null || true
 	$(RM) webapp
+	$(RM) precompile 
 	$(RM) postgres
 	$(RM) version
 
@@ -69,7 +70,7 @@ version:
 	echo $(VERSION) > version
 
 .PHONY: build
-build: reset_mtimes version
+build: version
 	$(DOCKER) build -t $(IMAGE):$(VERSION) --rm . 
 
 .PHONY: promote
@@ -107,21 +108,29 @@ test: rspec cucumber
 .PHONY: 
 migrate-%: postgres
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE):$(VERSION) \
-		sudo -E -u app bundle exec rake db:create db:migrate 
+		bundle exec rake db:create db:schema:load db:migrate db:seed
 
 .PHONY: rspec 
 rspec: migrate-test
 	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec rspec
 
+
+CUCUMBER_OPTIONS=
+ifdef CAPYBARA_APP_HOST 
+	CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(CAPYBARA_APP_HOST)
+endif
+
+CUCUMBER_PROFILE ?= default
+
 .PHONY: cucumber
 cucumber: migrate-test
-	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE):$(VERSION) bundle exec cucumber
+	$(DOCKER) run --rm --link $(postgres):postgres $(CUCUMBER_OPTIONS) \
+		$(IMAGE):$(VERSION) \
+		bundle exec cucumber -p $(CUCUMBER_PROFILE) 
 
-.PHONY: precompile 
 precompile: webapp
-	$(DOCKER) exec $(webapp) env RAILS_ENV=production sudo -E -u app bundle exec rake assets:precompile
-	$(DOCKER) commit $(webapp) $(IMAGE):$(VERSION)
-
+	$(DOCKER) exec $(webapp) env RAILS_ENV=production bundle exec rake assets:precompile
+	$(DOCKER) commit $(webapp) $(IMAGE):$(VERSION) > $@ 
 
 ### Required Containers 
 

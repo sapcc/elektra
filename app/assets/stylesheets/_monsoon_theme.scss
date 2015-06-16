@@ -17,6 +17,12 @@ body {
   }
 }
 
+h1, h2, h3, h4, h5, h6 {
+  small, .small {
+    font-family: $font-family-sap-light;
+  }
+}
+
 section {
   padding: $line-height-computed*2 0;
 }
@@ -50,6 +56,10 @@ section {
   overflow-y: scroll;
 }
 
+.text-nobreak {
+  white-space: nowrap;
+}
+
 
 // ---------------------------------------------------------------------------------
 // Buttons
@@ -69,6 +79,34 @@ section {
   // line-height: ensure even-numbered height of button next to large input
   @include button-size($padding-medium-vertical, $padding-medium-horizontal, $font-size-large, $line-height-large, $border-radius-base);
 }
+
+
+// ---------------------------------------------------------------------------------
+// Toolbar
+// ---------------------------------------------------------------------------------
+
+.toolbar {
+  @include pie-clearfix;
+  background-color: #f9f9f9;
+  border-top: 2px solid #ddd;
+  border-bottom: 1px solid #eee;
+  padding: 5px 8px;
+  margin-top: $line-height-computed * 2.5;
+
+  &.toolbar-bottom {
+    margin-top: 0;
+    margin-bottom: $line-height-computed * 2.5;
+  }
+
+  .btn {
+    @extend .btn-sm;
+  }
+
+  .btn-primary {
+    float: right;
+  }
+}
+
 
 
 // ---------------------------------------------------------------------------------
@@ -259,6 +297,10 @@ footer, .footer {
 
 .jumbotron {
   background: linear-gradient($deep-blue, $bright-blue);
+  color: rgba(255, 255, 255, 0.8);
+  font-family: $font-family-sap-light;
+
+
 }
 
 
@@ -288,6 +330,7 @@ td, th {
 .data-tabular-cell {
   display: table-cell;
   padding-right: 8px;
+  word-break: break-word;
 }
 
 

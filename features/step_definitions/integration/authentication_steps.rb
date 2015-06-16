@@ -14,6 +14,9 @@ Then(/^I see login form$/) do
   expect(page).to have_selector("form[action='#{monsoon_openstack_auth.sessions_path}']")
 end
 
+Then(/^It works$/) do
+end
+
 def current_path
   URI.parse(current_url).path
 end

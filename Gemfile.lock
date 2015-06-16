@@ -1,6 +1,6 @@
 GIT
   remote: git://localhost/monsoon/fog.git
-  revision: a7ad548b745bc6747d83ea0ae392cddbe11b71a0
+  revision: e6cd34c976099effa7f819d0ac9026d068c061a4
   branch: master
   specs:
     fog (1.31.1)
@@ -302,10 +302,10 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
-    mime-types (2.5)
+    mime-types (2.6.1)
     mini_portile (0.6.2)
     minitest (5.6.1)
-    multi_json (1.11.0)
+    multi_json (1.11.1)
     multi_test (0.1.2)
     nenv (0.2.0)
     net-scp (1.2.1)
