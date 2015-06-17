@@ -80,33 +80,47 @@ module Forms
       # execute before callback
       before_save
       
-      success = false
-      if @model.nil?
-        success = create
-      else
-        success = update
-      end
+      success = self.valid?
 
+      if success
+        if @model.nil?
+          success = create
+        else
+          success = update
+        end
+      end
+      
       return success & after_save 
+    end
+    
+    def api_error_name_mapping 
+      {
+        "message": " ",
+        "Message": " "
+      }
     end
     
     def destroy
       # execute before callback
       before_destroy
       
+      error_names = api_error_name_mapping
       begin
         if @model
           @model.destroy 
           return true
         else
-          self.errors.add(' ', "Could not destroy #{@class_name}. #{@class_name.capitalize} not found.") 
+          name = error_names['message'] || ' '
+          
+          self.errors.add(name, "Could not destroy #{@class_name}. #{@class_name.capitalize} not found.") 
           return false
         end
       rescue => e
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          name = ' ' if name.to_s.downcase=='message'
-          self.errors.add(name, message) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
+          n = error_names[name] || error_names[message] || name
+          message = message.join(", ") if message.is_a?(Array)
+          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end
           
         return false
@@ -133,10 +147,13 @@ module Forms
       begin
         @model = @service.send("create_#{@class_name}", create_attributes)
       rescue => e
+        error_names = api_error_name_mapping
+        
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          name = ' ' if name.downcase=='message'
-          self.errors.add(name, message) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
+          n = error_names[name] || error_names[message] || name
+          message = message.join(", ") if message.is_a?(Array)
+          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end
           
         return false
@@ -153,10 +170,13 @@ module Forms
       begin
         @model.save
       rescue => e
+        error_names = api_error_name_mapping
+        
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          name = ' ' if name.downcase=='message'
-          self.errors.add(name, message) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
+          n = error_names[name] || error_names[message] || name
+          message = message.join(", ") if message.is_a?(Array)
+          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end
         return false
       end
