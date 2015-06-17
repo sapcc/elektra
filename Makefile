@@ -70,7 +70,7 @@ version:
 	echo $(VERSION) > version
 
 .PHONY: build
-build: version
+build: reset_mtimes version
 	$(DOCKER) build -t $(IMAGE):$(VERSION) --rm . 
 
 .PHONY: promote
