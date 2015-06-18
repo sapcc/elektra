@@ -28,7 +28,7 @@ section {
 }
 
 .content {
-  padding: ($line-height-computed) 0 0 0;
+  margin: ($line-height-computed) 0 0 0;
 }
 
 .lead {
@@ -282,6 +282,8 @@ footer, .footer {
 // ---------------------------------------------------------------------------------
 // Alerts
 // ---------------------------------------------------------------------------------
+
+
 
 .alert-error, .alert-alert {
   @extend .alert-danger;
