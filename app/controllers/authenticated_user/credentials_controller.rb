@@ -17,13 +17,8 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
     respond_to do |format|
       if @forms_credential.save
         flash[:notice] = "Credential created."
-        format.html { redirect_to :back }
         format.js 
       else
-        format.html { 
-          flash[:error] = @forms_credential.errors.full_messages.to_sentence 
-          render action: :index
-        }
         format.js { render action: :new }
       end
     end
@@ -32,12 +27,10 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
   def destroy
     @forms_credential = services.identity.forms_credential(params[:id])
     
-    if @forms_credential.destroy
-      flash[:notice] = "Credential successfully deleted."
-      redirect_to credentials_path
-    else
-      flash[:error] = @forms_credential.errors.full_messages.to_sentence
-      render action: :index
+    @forms_credential.destroy
+    #@forms_credential.errors.add('test','error')
+    respond_to do |format|
+      format.js
     end
   end
 

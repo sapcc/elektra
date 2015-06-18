@@ -16,4 +16,4 @@
 //= require bootstrap-sprockets
 //= require dashboard
 //= require authenticated_user/users
-//= require confirm_dialog  
+//= require dialogs 

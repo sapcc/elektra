@@ -37,7 +37,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 60615c14e256c331356e5e047b83d4301440ae2d
+  revision: 2a008f2afeafebf9cb55fc13530ccb6955992d2c
   specs:
     monsoon-openstack-auth (0.7.7)
       hashie
