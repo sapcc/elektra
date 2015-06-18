@@ -19,9 +19,13 @@
     = render "nav"
     = render "breadcrumb"
 
+    = yield :page_lead
+
     .container
-      = render "application/flashes"
-    = yield
+      .content
+        = render "application/flashes"
+
+        = yield
 
     %footer.footer
       .container
