@@ -146,6 +146,7 @@ module Forms
       
       begin
         @model = @service.send("create_#{@class_name}", create_attributes)
+        self.id = @model.id
       rescue => e
         error_names = api_error_name_mapping
         

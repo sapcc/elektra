@@ -17,14 +17,14 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
     respond_to do |format|
       if @forms_credential.save
         flash[:notice] = "Credential created."
-        format.html { redirect_to :back}
+        format.html { redirect_to :back }
         format.js 
       else
         format.html { 
           flash[:error] = @forms_credential.errors.full_messages.to_sentence 
           render action: :index
         }
-        format.js { render action: :new}
+        format.js { render action: :new }
       end
     end
   end

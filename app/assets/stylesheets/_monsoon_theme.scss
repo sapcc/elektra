@@ -365,6 +365,9 @@ input[type='checkbox'], input[type='radio'] {
 
 .dynamic-form-target {
   display: none;
+  &.visible {
+    display: block;
+  }
 }
 
 
