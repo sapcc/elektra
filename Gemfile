@@ -15,6 +15,7 @@ gem 'turbolinks'
 gem 'jquery-turbolinks'
 gem 'simple_form'
 gem 'redcarpet'
+gem 'spinners'
 
 # Database
 gem 'pg'
@@ -75,7 +76,7 @@ group :development, :test do
   gem 'poltergeist'
   gem 'phantomjs', :require => 'phantomjs/poltergeist'
   gem 'capybara-screenshot'
-  
+
 
   gem "better_errors"
   gem 'pry-rails'

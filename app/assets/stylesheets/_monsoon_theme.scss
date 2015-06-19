@@ -23,6 +23,11 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+abbr[title],
+abbr[data-original-title] {
+  color: $medium-blue;
+}
+
 section {
   padding: $line-height-computed*2 0;
 }
@@ -333,6 +338,25 @@ td, th {
   }
 }
 
+tr.deleting {
+  td {
+    color: #999;
+    background-color: #efefef;
+  }
+
+  .btn {
+    .glyphicon {
+      @include spinner(background rgba(0,0,0,0.2));
+
+      &:before {
+        content: "";
+      }
+
+    }
+  }
+}
+
+
 .data-tabular-display {
   display: table;
 }
@@ -345,14 +369,12 @@ td, th {
   display: table-cell;
   padding-right: 8px;
   word-break: break-word;
-}
 
-
-table tr.deleting {
-  td {
-    color: #aaa;
+  &.label-cell {
+    min-width: 100px;
   }
 }
+
 
 
 // ---------------------------------------------------------------------------------
