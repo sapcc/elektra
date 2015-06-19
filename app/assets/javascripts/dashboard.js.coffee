@@ -9,7 +9,26 @@ class @Dashboard
     # show the target that's been selected by the trigger, enable all descendants that are inputs
     target.show().find(":input").prop("disabled", false)
   
-  @jsSubmitButton: (element, selector) -> $(element).closest(selector).find('form').submit()
+  @jsSubmitButton: (element, formSelector) -> 
+    $link = $(element)
+    value = $link.val()
+    html = $link.html()
+    $form = $(formSelector)
+    
+    disableWith = $link?.attr?('data-disable-with')
+    
+    if $form.length>0 and disableWith      
+      $link.prop( "disabled", true )
+      $link.text(disableWith)
+      $link.val(disableWith) 
+
+      $form.parent().unbind().bind 'contentLoaded', (event, data) -> 
+        $link.prop( "disabled", false )
+        $link.html(html)
+        $link.val(value)
+      
+    
+    $form?.submit()
 
 
 $(document).on 'ready page:load', ->  
