@@ -6,6 +6,8 @@
 
       %h2.form-signin-heading Please sign in
 
+      = render "application/flashes"
+
       %label.sr-only{:for => "username"} User ID
       = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
 
