@@ -1,24 +1,33 @@
-# Confirmation Dialog
+# Custom Confirmation Dialog
 $ ->
   $.rails.allowAction = (link) ->
+    # return if link has been already confirmed
     return true unless link.attr('data-confirm')
-    $.rails.showConfirmDialog(link) unless link.attr('data-confirming') 
-    link.attr('data-confirming','true')
-    false 
+    # open custom confirmation dialog
+    $.rails.showConfirmDialog(link)
+    # hold on
+    false
 
+  # action has been confirmed
   $.rails.confirmed = (link) ->
+    # remove confirm attribute
     link.removeAttr('data-confirm')
-    link.removeAttr('data-confirming')
+    # fire confirm:complete event
+    $.rails.fire(link, 'confirm:complete', true)
+    # fire click event
     link.trigger('click.rails')
 
-  $.rails.canceled = (link) ->
-    link.removeAttr('data-confirming') 
 
-
+  # custom confirmation dialog
   $.rails.showConfirmDialog = (link) ->
+    # do not show a new dialog if an existing dialog for this link is already presented
+    return false if link.attr('data-confirming')
+    # mark link as confirming -> means the dialog is active
+    link.attr('data-confirming','true')
+
     message = link.attr 'data-confirm'
     html = """
-           <div class="modal fade" id="confirmationDialog">
+           <div class="modal fade" style="padding-top:15%; overflow-y:visible;">
              <div class="modal-dialog">
                <div class="modal-content">
                  <div class="modal-header">
@@ -26,7 +35,7 @@ $ ->
                    <h4>#{message}</h4>
                  </div>
                  <div class="modal-footer">
-                   <a data-dismiss="modal" class="btn cancel">#{link.data('cancel') || 'Cancel'}</a>
+                   <a data-dismiss="modal" class="btn">#{link.data('cancel') || 'Cancel'}</a>
                    <a data-dismiss="modal" class="btn btn-primary confirm">#{link.data('ok') || 'Ok'}</a>
                  </div>
                </div>
@@ -35,17 +44,32 @@ $ ->
            """
     $html = $(html)
     $html.find('.confirm').on 'click', -> $.rails.confirmed(link)
-    $html.find('.cancel').on 'click', -> $.rails.canceled(link)
+
+    # dialog is beeing closed
+    $html.on 'hidden.bs.modal', (e) ->
+      # remove confirming mark
+      link.removeAttr('data-confirming')
+
     $html.modal()
 
+$ ->
+  # handle confirm:complete events on links 
+  $('*[data-confirm]').on 'confirm:complete', (e,response) ->
+    try
+      if response
+        link = e.currentTarget
+        confirmed_callback = link?.getAttribute('data-confirmed')?.replace('this','link')
+        # execute confirmed callback if defined (<a data-confirmed="alert('confirmed')"/>)
+        eval(confirmed_callback) if confirmed_callback
+    catch
+      
+    response
 
 
-@waitingDialog ||= (($) -> 
-  #'use strict'
-  
+class @InfoDialog
   # Creating modal dialog's DOM
   html = """
-      <div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
+      <div class="modal fade" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
         <div class="modal-dialog modal-m">
           <div class="modal-content">
             <div class="modal-header"><h3 style="margin:0;"></h3></div>
@@ -61,8 +85,8 @@ $ ->
       """
   $dialog = $(html)
   
-
-  show: (title,message, options) ->
+  # class method show
+  @show: (title,message, options) ->
     # Assigning defaults
     options ||= {}
     message ||= 'Loading'
@@ -87,9 +111,17 @@ $ ->
     # Opening dialog
     $dialog.modal()
     
-  showError: (message) ->
-    waitingDialog.show("Error", message)
+  # class method  
+  @showError: (message) ->
+    InfoDialog.show("Error", message)
+    
+  # class method  
+  @showNotice: (message) ->
+    InfoDialog.show("Notice", message)  
   
-  hide: () -> $dialog.modal 'hide'
-      
-)(jQuery)
+  # class method
+  @showInfo: (message) ->
+    InfoDialog.show("Info", message)  
+  
+  # class method
+  @hide: () -> $dialog.modal 'hide'

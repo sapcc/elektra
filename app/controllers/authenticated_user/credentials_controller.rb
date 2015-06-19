@@ -28,7 +28,8 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
     @forms_credential = services.identity.forms_credential(params[:id])
     
     @forms_credential.destroy
-    #@forms_credential.errors.add('test','error')
+    #sleep(3)
+    #@forms_credential.errors.add(' ','could not delete credential')
     respond_to do |format|
       format.js
     end
