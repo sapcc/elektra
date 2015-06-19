@@ -44,6 +44,26 @@ class Forms::Credential < Forms::Base
     
     errors.add(:name, "can't be blank") if ssh_key? and blob_values["name"].blank?
     errors.add(:public_key, "can't be blank") if ssh_key? and blob_values["public_key"].blank?
+    
+    if ssh_key?
+      begin
+        public_key = blob_values["public_key"]
+        # try to sanitize the key material first to strip any whitespace and/or linefeeds
+        key_parts = public_key.split
+        errors.add :public_key, 'The key format is corrupt. It should contain at least a ssh encryption type and a public key.' if key_parts.size < 2
+        public_key = key_parts.join(' ')
+        Net::SSH::KeyFactory.load_data_public_key(public_key)
+      rescue NotImplementedError => e
+        puts e
+        errors.add :public_key, "The key is not a valid ssh public key. Please check the formatting and remove any linebreaks"
+      rescue Net::SSH::Exception => e
+        puts e
+        errors.add :public_key, "The key is not a valid ssh public key."
+      rescue => e
+        puts e
+        errors.add :public_key, "The key is not a valid ssh public key."
+      end
+    end
   end
   
   def ec2?

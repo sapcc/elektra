@@ -95,8 +95,8 @@ module Forms
     
     def api_error_name_mapping 
       {
-        "message": " ",
-        "Message": " "
+        #"message": " ",
+        "Message": "message"
       }
     end
     
@@ -149,7 +149,7 @@ module Forms
         self.id = @model.id
       rescue => e
         error_names = api_error_name_mapping
-        
+
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name
