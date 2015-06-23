@@ -7,6 +7,8 @@ When(/^I visit "(.*?)"$/) do |path|
 end
 
 Then(/^I am redirected to login page$/) do
+  puts ":::::::::::::::::::::::::::"
+  puts  page.current_url
   puts ">>>>>>>>>>>>>>>>>>>>>>>HTML"
   puts page.html
   expect(current_path).to eq(monsoon_openstack_auth.new_session_path)
