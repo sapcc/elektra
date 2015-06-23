@@ -4,7 +4,6 @@ require 'phantomjs'
 # Poltergeist is a headless web driver for capybara  
 # Register slightly larger than default window size...
 
-p Phantomjs.path
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, { 
     phantomjs: Phantomjs.path,
