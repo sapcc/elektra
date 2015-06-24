@@ -1,11 +1,16 @@
 Given(/^I am not logged in$/) do
   puts "::::::::::::::::::::::::::: NOT LOGGED IN(BEVOR)"
-  puts ENV['CAPYBARA_APP_HOST']
-  puts page.current_url
-  puts monsoon_openstack_auth.logout_path
+  puts "env: #{ENV['CAPYBARA_APP_HOST']}"
+  puts "page.current_url: #{page.current_url}"
+  puts "monsoon_openstack_auth.logout_path: #{monsoon_openstack_auth.logout_path}"
+  puts "root_path: #{root_path}"
+  puts "root_url: #{root_url}"
+  visit root_path
+  puts "page.current_url: #{page.current_url}"
+  puts "logout_url: #{monsoon_openstack_auth.logout_path}"
   visit monsoon_openstack_auth.logout_path
   puts "::::::::::::::::::::::::::: NOT LOGGED IN(AFTER)"
-  puts  page.current_url
+  puts  "page.current_url: #{page.current_url}"
 end
 
 When(/^I visit "(.*?)"$/) do |path|
