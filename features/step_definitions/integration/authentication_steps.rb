@@ -1,5 +1,6 @@
 Given(/^I am not logged in$/) do
   puts "::::::::::::::::::::::::::: NOT LOGGED IN(BEVOR)"
+  puts ENV['CAPYBARA_APP_HOST']
   puts  page.current_url
   visit monsoon_openstack_auth.logout_path
   puts "::::::::::::::::::::::::::: NOT LOGGED IN(AFTER)"
