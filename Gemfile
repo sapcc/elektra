@@ -25,8 +25,7 @@ gem 'activerecord-session_store'
 gem 'monsoon-fog', git: 'git://localhost/monsoon/monsoon-fog.git'
 gem 'fog', git: 'git://localhost/monsoon/fog.git', branch:'master'
 
-gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git'
-#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
 
 # Extras
 gem 'rails_config'
