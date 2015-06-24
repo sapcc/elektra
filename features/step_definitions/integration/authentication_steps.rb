@@ -1,13 +1,11 @@
+Given(/I am on the root page$/) do
+  visit root_path
+end
+
 Given(/^I am not logged in$/) do
   puts "::::::::::::::::::::::::::: NOT LOGGED IN(BEVOR)"
   puts "env: #{ENV['CAPYBARA_APP_HOST']}"
   puts "page.current_url: #{page.current_url}"
-  puts "monsoon_openstack_auth.logout_path: #{monsoon_openstack_auth.logout_path}"
-  puts "root_path: #{root_path}"
-  puts "root_url: #{root_url}"
-  visit root_path
-  puts "page.current_url: #{page.current_url}"
-  puts "logout_url: #{monsoon_openstack_auth.logout_path}"
   visit monsoon_openstack_auth.logout_path
   puts "::::::::::::::::::::::::::: NOT LOGGED IN(AFTER)"
   puts  "page.current_url: #{page.current_url}"
