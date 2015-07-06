@@ -1,6 +1,6 @@
 SHELL       := /bin/sh
 REPOSITORY  := localhost/concourse/monsoon-dashboard
-TAG         := latest
+TAG         ?= latest
 IMAGE       := $(REPOSITORY):$(TAG)
 
 ### Executables
@@ -139,7 +139,7 @@ migrate-%: postgres
 		bundle exec rake db:create db:schema:load db:migrate db:seed
 
 # ----------------------------------------------------------------------------------
-#   migrate-%
+#   clean 
 # ----------------------------------------------------------------------------------
 #
 # Kill and remove all containers. Remove intermediate files. 
