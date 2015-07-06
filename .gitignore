@@ -40,3 +40,5 @@ webapp
 postgres
 version
 precompile
+build
+image
