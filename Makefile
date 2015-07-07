@@ -12,8 +12,6 @@ SCRIPT = $(DOCKER) run --rm $(SCRIPT_OPTS) \
 postgres = $(shell cat postgres 2> /dev/null)
 webapp   = $(shell cat webapp 2> /dev/null)
 
-.PHONY: test rspec cucumber clean reset_mtimes
-
 # ----------------------------------------------------------------------------------
 #   image 
 # ----------------------------------------------------------------------------------
@@ -59,12 +57,15 @@ precompile: webapp
 #
 # Runs all unit tests suits.
 #
+.PHONY: 
 test: rspec cucumber 
 
+.PHONY: 
 alpha: CAPYBARA_APP_HOST=https://localhost
 alpha: CUCUMBER_PROFILE=integration
 alpha: cucumber 
 	
+.PHONY: 
 beta: CAPYBARA_APP_HOST=https://localhost
 beta: CUCUMBER_PROFILE=e2e
 beta: cucumber
@@ -76,6 +77,7 @@ beta: cucumber
 # Runs the rspec test suit. Requires the postgres db to be started and
 # prepared. 
 #
+.PHONY: 
 rspec: postgres migrate-test
 	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE) \
 		bundle exec rspec
@@ -100,6 +102,7 @@ ifdef CAPYBARA_APP_HOST
 	CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(CAPYBARA_APP_HOST)
 endif
 
+.PHONY: 
 cucumber: postgres migrate-test
 	$(DOCKER) run --rm --link $(postgres):postgres $(CUCUMBER_OPTIONS) $(IMAGE) \
 		bundle exec cucumber -p $(CUCUMBER_PROFILE) 
@@ -127,13 +130,13 @@ postgres:
 	$(DOCKER) run -d postgres > postgres 
 	$(SCRIPT) wait
 
-.PHONY: 
 # ----------------------------------------------------------------------------------
 #   migrate-%
 # ----------------------------------------------------------------------------------
 #
 # Prepare the database by running the db tasks for the given environment. 
 #
+.PHONY: 
 migrate-%: postgres 
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE) \
 		bundle exec rake db:create db:schema:load db:migrate db:seed
@@ -144,6 +147,7 @@ migrate-%: postgres
 #
 # Kill and remove all containers. Remove intermediate files. 
 #
+.PHONY: 
 clean: 	
 	$(DOCKER) rm -f $(postgres) $(webapp) &> /dev/null || true
 	$(RM) image build precompile webapp postgres
