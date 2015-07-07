@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
-  root to: 'services#index', domain_id: "#{MonsoonOpenstackAuth.default_domain.id}"
+  root to: 'services#index'
 
   scope "/:domain_id/(:project_id)" do
     scope module: 'authenticated_user' do
