@@ -4,9 +4,13 @@ TAG         ?= latest
 IMAGE       := $(REPOSITORY):$(TAG)
 
 ### Executables
-DOCKER = docker 
-SCRIPT = $(DOCKER) run --rm $(SCRIPT_OPTS) \
-				 localhost/monsoon/docker-build:1.3.0
+DOCKER = docker
+WAIT   = $(DOCKER) run --rm --link $(WAIT_ID):wait  \
+				 localhost/monsoon/docker-build:1.3.0 \
+				 wait
+MTIMES = $(DOCKER) run --rm $(MTIMES_OPTS) \
+				 localhost/monsoon/docker-build:1.3.0 \
+				 reset_mtimes
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -30,9 +34,9 @@ image: build precompile
 # hand does not. Without this the cache will be busted by Git and is basically
 # useless.
 #
-build: SCRIPT_OPTS = -v $(shell pwd):/src
+build: MTIMES_OPTS = -v $(shell pwd):/src
 build: 
-	$(SCRIPT) reset_mtimes
+	$(MTIMES) 
 	$(DOCKER) build -t $(IMAGE) --rm . 
 	echo $(IMAGE) > build
 
@@ -114,10 +118,10 @@ cucumber: postgres migrate-test
 # Start the application and its required containers. Waits until it is
 # listening on port 80
 #
-webapp: SCRIPT_OPTS = --link $$(cat webapp):webapp
+webapp: WAIT_ID = $$(cat webapp)
 webapp: migrate-production
 	$(DOCKER) run --link $(postgres):postgres -d $(IMAGE) > webapp 
-	$(SCRIPT) wait -p 80
+	$(WAIT) -p 80
 
 # ----------------------------------------------------------------------------------
 #   postgres 
@@ -125,10 +129,10 @@ webapp: migrate-production
 #
 # Start postgres database and wait for it to become available. 
 #
-postgres: SCRIPT_OPTS = --link $$(cat postgres):postgres
+postgres: WAIT_ID = $$(cat postgres)
 postgres: 
 	$(DOCKER) run -d postgres > postgres 
-	$(SCRIPT) wait
+	$(WAIT)
 
 # ----------------------------------------------------------------------------------
 #   migrate-%
