@@ -103,12 +103,15 @@ CUCUMBER_PROFILE ?= default
 CUCUMBER_OPTIONS  =
 
 ifdef CAPYBARA_APP_HOST 
-	CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(CAPYBARA_APP_HOST)
+CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(CAPYBARA_APP_HOST)
+else
+CUCUMBER_OPTIONS += --link $(postgres):postgres
+cucumber: postgres migrate-test
 endif
 
 .PHONY: 
-cucumber: postgres migrate-test
-	$(DOCKER) run --rm --link $(postgres):postgres $(CUCUMBER_OPTIONS) $(IMAGE) \
+cucumber: 
+	$(DOCKER) run --rm $(CUCUMBER_OPTIONS) $(IMAGE) \
 		bundle exec cucumber -p $(CUCUMBER_PROFILE) 
 
 # ----------------------------------------------------------------------------------
