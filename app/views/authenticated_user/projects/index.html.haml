@@ -8,7 +8,7 @@
   .col-md-6
     .list-group
       - @user_domain_projects.each do |project|
-        = link_to project.name, project_path(project.id, domain_id: @domain_id), class: "list-group-item"
+        = link_to project.name, project_path(id: project.id, domain_id: @domain_id), class: "list-group-item"
 
   - if current_user.is_allowed?("identity:create_project")
     .col-md-6

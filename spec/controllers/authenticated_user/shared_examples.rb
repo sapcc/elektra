@@ -1,24 +1,10 @@
 shared_examples_for "an authenticated_user controller" do
   include AuthenticationStub
-  
+
+  default_params = {domain_id: AuthenticationStub.domain_id}
+
   before :each do
     stub_auth_configuration  
-  end
-  
-  context "no domain_id provided" do
-    describe "GET 'index'" do
-      it "redirects to index with default domain" do
-        get :index
-        expect(response).to redirect_to(controller.url_for(domain_id: AuthenticationStub.default_domain_id))
-      end
-
-      context "project_id is provided" do
-        it "redirects to index with default domain and project_id" do
-          get :index, project_id: AuthenticationStub.project_id
-          expect(response).to redirect_to(controller.url_for(domain_id: AuthenticationStub.default_domain_id, project_id: AuthenticationStub.project_id))
-        end
-      end
-    end
   end
 
   context "domain_id is provided" do

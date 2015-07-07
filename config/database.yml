@@ -20,8 +20,8 @@ default: &default
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 5
-  username: postgres
-  password:
+  username: <%= ENV['MONSOON_DB_USER'] || 'postgres' %>
+  password: <%= ENV['MONSOON_DB_PASSWORD'] || '' %>
   host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || ENV['POSTGRES_SERVICE_HOST'] || 'localhost' %>
   port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || ENV['POSTGRES_SERVICE_PORT'] || 5432 %>
 

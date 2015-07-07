@@ -1,4 +1,4 @@
-class AuthenticatedUser::ImagesController < AuthenticatedUserController
+class AuthenticatedUser::OsImagesController < AuthenticatedUserController
   def index
   end
 

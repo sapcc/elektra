@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'controllers/authenticated_user/shared_examples'
 
-describe AuthenticatedUser::ImagesController do
+describe AuthenticatedUser::OsImagesController do
   include AuthenticationStub
   
   it_behaves_like "an authenticated_user controller"
