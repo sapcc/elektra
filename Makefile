@@ -102,8 +102,8 @@ rspec: postgres migrate-test
 CUCUMBER_PROFILE ?= default
 CUCUMBER_OPTIONS  =
 
-ifdef CAPYBARA_APP_HOST 
-CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(CAPYBARA_APP_HOST)
+ifdef APP_HOST 
+CUCUMBER_OPTIONS += -e CAPYBARA_APP_HOST=$(APP_HOST)
 else
 CUCUMBER_OPTIONS += --link $(postgres):postgres
 cucumber: postgres migrate-test
