@@ -1,5 +1,5 @@
 SHELL       := /bin/sh
-REPOSITORY  := localhost/concourse/monsoon-dashboard
+REPOSITORY  := localhost/monsoon/monsoon-dashboard
 TAG         ?= latest
 IMAGE       := $(REPOSITORY):$(TAG)
 
