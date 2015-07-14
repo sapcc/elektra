@@ -1,4 +1,3 @@
-
 .page-header
   %h1 Compute: Instances
 
@@ -6,7 +5,26 @@
 
 = render "application/projects_list" unless @project_id
 
-- if @instances
+- if current_user.is_allowed?("identity:instance_create", {instance: {user_id: current_user.id} })
+  .toolbar
+    %button.btn.btn-primary.btn-lg{type:"button", data: {toggle:"modal", target: "#instanceForm"}} Create new
+
+  .modal#instanceForm.fade{data: { backdrop: 'static' }}
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %button.close{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}}
+            %span{aria: {hidden: "true"}} &times;
+          %h4.modal-title New Instance
+
+        .modal-body= render partial: "form", locals: { forms_instance: @forms_instance }
+
+        .modal-footer
+          %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+          %button{type: "submit", class: 'btn btn-primary', data: {js_submit: "#instanceForm .modal-body form", disable_with: 'Saving...'}} Save
+          
+    
+- if @instances         
   %table.table.datatable
     %thead
       %tr
@@ -16,88 +34,18 @@
         %th Status
         %th.snug
     %tbody
-      - (rand(20) + 3).times do | number |
+      - if @instances.empty?
         %tr
-          %td= "Server #{number}"
-          %td= ["CoreOS", "Ubuntu 14.0", "Suse", "RHEL 7", "Windows 2012"].sample
-          %td= "10.#{rand(255)}.#{rand(255)}.#{rand(255)}"
-          %td Running
-          %td
-            %button.btn.btn-sm.btn-default
-              %span.glyphicon.glyphicon-cog
+          %td{colspa: 5} No instances available
+      - else    
+        - @instances.each do | instance |
+          = render partial: 'item', locals: {instance: instance}
 
 
 
 %a.toggle-debug(href="#") Toggle debug info
 %pre.debug-info= JSON.pretty_generate(current_user.context)
 
--# %pre= JSON.pretty_generate(JSON.parse(@identity.auth_domains.to_json))
--# %h3 Auth projects
--# %pre= JSON.pretty_generate(JSON.parse(@identity.auth_projects.to_json))
--# = @identity.auth_domains.body["domains"].inspect
--# %hr
--#
--# %pre= JSON.pretty_generate(JSON.parse(@identity.projects.to_json))
--# %hr
--# %pre= JSON.pretty_generate(current_user.context)
 
--# %pre= JSON.pretty_generate(JSON.parse(@auth_service.user_domains(current_user.id).to_json))
-
-
--# %table.table
--#   %thead
--#     %tr
--#       %th Name
--#       %th OS
--#       %th Network
--#       %th Status
--#       %th.snug
--#   %tbody
--#     %tr
--#       %td App Server 1
--#       %td CoreOS
--#       %td 10.67.77.99
--#       %td Running
--#       %td
--#         %button.btn.btn-sm.btn-default
--#           %span.glyphicon.glyphicon-cog
--#
--#     %tr
--#       %td App Server 2
--#       %td CoreOS
--#       %td 10.67.77.101
--#       %td Running
--#       %td
--#         %button.btn.btn-sm.btn-default
--#           %span.glyphicon.glyphicon-cog
--#
--#
--# %pre= JSON.pretty_generate(current_user.context)
--#
--# %h3 Openstack Service
--# %pre= JSON.pretty_generate(JSON.parse(@identity.to_json))
--#
--# %h3 Openstack Service 2
--# %pre= JSON.pretty_generate(JSON.parse(@identity.to_json))
--#
--# %pre= JSON.pretty_generate(current_user.service_catalog)
--#
--# = @auth_service.inspect
--# %hr
--# %h3 Fog services
--# %pre= JSON.pretty_generate(JSON.parse(@identity.services.to_json))
--# %hr
--# %h3 Fog Endpoints
--# %pre= JSON.pretty_generate(JSON.parse(@identity.endpoints.to_json))
--# %hr
--# = @auth_service.user_domains(current_user.id)
--# %hr
--# -# = @service.domain
--# %hr
--# -# = @service.project
--# %hr
--# %h3 Projects for domain
--# %pre= JSON.pretty_generate(JSON.parse(@auth_service.domain_projects("default").to_json))
--# %hr
--# %h3 Fog domains
--# %pre= JSON.pretty_generate(JSON.parse(@identity.domains.to_json))
+        
+        

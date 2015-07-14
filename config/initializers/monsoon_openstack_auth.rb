@@ -33,6 +33,13 @@ MonsoonOpenstackAuth.configure do |config|
   
   #config.authorization.trace_enabled = true
   config.authorization.reload_policy = true
+  config.authorization.trace_enabled = true
+  
+  config.authorization.controller_action_map = {
+    :index   => 'list',
+    :show    => 'get',
+    :destroy => 'delete'
+  }
   
   # optional, default=false
   config.debug=true

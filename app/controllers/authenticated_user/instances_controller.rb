@@ -9,9 +9,19 @@ module AuthenticatedUser
       @user_domain_projects = services.identity.projects.auth_projects
 
       @active_project = @user_domain_projects.find { |project| project.id == @project_id } if @project_id
-      @instances = true if @project_id
+      @instances = services.compute.servers if @project_id
     end
 
+    def show
+      @instance = services.compute.servers.get(params[:id])
+      @flavor = services.compute.flavors.get(@instance.flavor.fetch("id",nil))
+      @image = services.compute.images.get(@instance.image.fetch("id",nil))      
+
+      respond_to do |format|
+        format.html {render partial: 'show', locals: {instance: @instance, flavor: @flavor}}
+        format.js { render partial: 'show', locals: {instance: @instance, flavor: @flavor}}
+      end
+    end
   end
 
 end

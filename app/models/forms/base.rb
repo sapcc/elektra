@@ -118,7 +118,7 @@ module Forms
       rescue => e
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          n = error_names[name] || error_names[message] || name
+          n = error_names[name] || error_names[message] || name || ' '
           message = message.join(", ") if message.is_a?(Array)
           self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end

@@ -8,7 +8,7 @@ class AuthenticatedUserController < ApplicationController
   end
 
   authentication_required domain: -> c { c.instance_variable_get("@domain_id") }, project: -> c { c.instance_variable_get('@project_id') }
-
+  
   before_filter :check_terms_of_use
 
   include OpenstackServiceProvider::Services
@@ -36,6 +36,14 @@ class AuthenticatedUserController < ApplicationController
       session[:requested_url] = request.env['REQUEST_URI']
       redirect_to new_user_path
     end
+  end
+  
+  def authorization_forbidden exception
+    @exception = exception
+    respond_to do |format|
+      format.html { render "authenticated_user/forbidden", :status => 403 } 
+      format.js { render "authenticated_user/forbidden.js" }
+    end    
   end
 
 end
