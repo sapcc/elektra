@@ -1,2 +1,4 @@
 $("#instanceForm .modal-body").html("<%= escape_javascript(render partial: 'form', locals: {forms_instance: @forms_instance} ) %>").triggerHandler('contentLoaded'); 
 $($("#instanceForm .modal-body").find(".dynamic-form-trigger")).change(Dashboard.hideRevealFormParts);
+
+$('#instanceForm').modal({'show': true});

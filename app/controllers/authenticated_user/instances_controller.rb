@@ -10,6 +10,16 @@ module AuthenticatedUser
 
       @active_project = @user_domain_projects.find { |project| project.id == @project_id } if @project_id
       @instances = services.compute.servers if @project_id
+      
+      @forms_instance = services.compute.forms_instance
+    end
+    
+    def edit
+      @forms_instance = services.compute.forms_instance(params[:id])
+      respond_to do |format|
+        format.html {}
+        format.js 
+      end
     end
 
     def show
