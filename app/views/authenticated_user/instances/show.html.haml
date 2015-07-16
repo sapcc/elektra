@@ -1,8 +1,6 @@
-.modal-header
-  %button.close{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}}
-    %span{aria: {hidden: "true"}} &times;
-  %h4.modal-title= "Overview of instance #{instance.name}"
-
+/ = content_for :title do
+/   Show
+  
 .modal-body
   %ul.nav.nav-tabs
     %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} 
@@ -18,49 +16,49 @@
         %tbody
           %tr
             %th Name
-            %td= instance.name 
+            %td= @instance.name 
           %tr
             %th ID
-            %td= instance.id
+            %td= @instance.id
           %tr
             %th Status
-            %td= instance.state
+            %td= @instance.state
           %tr
             %th Availability Zone
-            %td= instance.availability_zone
+            %td= @instance.availability_zone
           %tr
             %th Created
-            %td= instance.created
+            %td= @instance.created
           %tr
             %th Time Since Created
-            %td= instance.updated
+            %td= @instance.updated
           %tr
             %th Host
-            %td= instance.os_ext_srv_attr_host
+            %td= @instance.os_ext_srv_attr_host
             
     .tab-pane{role:"tabpanel", id:"specs"}        
       %table.table.datatable
         %tbody
           %tr
             %th Flavor
-            %td= flavor.name
+            %td= @flavor.name
           %tr
             %th Flavor ID
-            %td= flavor.id
+            %td= @flavor.id
           %tr
             %th RAM
-            %td= "#{flavor.ram}MB"
+            %td= "#{@flavor.ram}MB"
           %tr
             %th VCPUs
-            %td= "#{flavor.vcpus} VCPU"
+            %td= "#{@flavor.vcpus} VCPU"
           %tr
             %th Disk
-            %td= "#{flavor.disk}GB"
+            %td= "#{@flavor.disk}GB"
       
     .tab-pane{role:"tabpanel", id:"ip_addresses"}  
       %table.table.datatable
         %tbody
-          - instance.addresses.each do |name,values|
+          - @instance.addresses.each do |name,values|
             %tr
               %th= name
               %td
@@ -71,7 +69,7 @@
     .tab-pane{role:"tabpanel", id:"security_groups"}  
       %table.table.datatable
         %tbody
-          - instance.security_groups.each do |sg| 
+          - @instance.security_groups.each do |sg| 
             %tr
               %th= sg.name
               %td
@@ -92,14 +90,14 @@
     .tab-pane{role:"tabpanel", id:"volumes"}  
       %table.table.datatable
         %tbody 
-          - if instance.volumes.empty?
+          - if @instance.volumes.empty?
             %tr
               %th Volume
               %td No volumes attached. 
-          - instance.volumes.each do |vol|           
+          - @instance.volumes.each do |vol|           
             %tr
               %th Volume
               %td= vol.name  
-
-.modal-footer
-  %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+- if modal?
+  .modal-footer
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

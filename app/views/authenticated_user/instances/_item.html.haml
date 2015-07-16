@@ -1,12 +1,12 @@
 %tr{id: "instance_#{instance.id}"}
   %td
-    .modal.fade{id:"instanceShow#{instance.id}"}
-      .modal-dialog.modal-lg
-        .modal-content
     - if current_user.is_allowed?("identity:instance_get", {})
-      = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {toggle:"modal", target: "#instanceShow#{instance.id}"}
-    - else 
-      = instance.name
+      = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {modal: true}
+        
+    / - if current_user.is_allowed?("identity:instance_get", {})
+    /   = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {toggle:"modal", target: "#instanceShow#{instance.id}"}
+    / - else
+    /   = instance.name
         
   %td= services.compute.images.get(instance.image["id"]).name
   %td= instance.addresses["private"].collect{|address| address["addr"]}.join(', ')

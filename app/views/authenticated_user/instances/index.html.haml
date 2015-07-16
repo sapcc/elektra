@@ -7,22 +7,7 @@
 
 - if current_user.is_allowed?("identity:instance_create", {instance: {user_id: current_user.id} })
   .toolbar
-    %button.btn.btn-primary.btn-lg{type:"button", data: {toggle:"modal", target: "#instanceForm"}} Create new
-
-  .modal#instanceForm.fade{data: { backdrop: 'static' }}
-    .modal-dialog
-      .modal-content
-        .modal-header
-          %button.close{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}}
-            %span{aria: {hidden: "true"}} &times;
-          %h4.modal-title New Instance
-
-        .modal-body= render partial: "form", locals: { forms_instance: @forms_instance }
-
-        .modal-footer
-          %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-          %button{type: "submit", class: 'btn btn-primary', data: {js_submit: "#instanceForm .modal-body form", disable_with: 'Saving...'}} Save
-          
+    = link_to 'Create new', new_instance_path(domain_id: @domain_id), data: {modal: true}, class: 'btn btn-primary btn-lg'
     
 - if @instances         
   %table.table.datatable

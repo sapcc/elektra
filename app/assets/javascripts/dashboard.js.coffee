@@ -9,27 +9,6 @@ class @Dashboard
     # show the target that's been selected by the trigger, enable all descendants that are inputs
     target.show().find(":input").prop("disabled", false)
 
-  @jsSubmitButton: (element, formSelector) ->
-    $link = $(element)
-    value = $link.val()
-    html = $link.html()
-    $form = $(formSelector)
-
-    disableWith = $link?.attr?('data-disable-with')
-
-    if $form.length>0 and disableWith
-      $link.prop( "disabled", true )
-      $link.text(disableWith)
-      $link.val(disableWith)
-
-      $form.parent().unbind().bind 'contentLoaded', (event, data) ->
-        $link.prop( "disabled", false )
-        $link.html(html)
-        $link.val(value)
-
-
-    $form?.submit()
-
 
 $(document).on 'ready page:load', ->
   $(".toggle-debug").click (e) ->
@@ -55,12 +34,8 @@ $(document).on 'ready page:load', ->
   # Dynamic Form - Hide/reveal parts of the form following a trigger event
   $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
 
-  # initialize js submit buttons
-  $("[data-js-submit]").click (e) -> Dashboard.jsSubmitButton(this,$(this).data('js-submit'))
-
 
   # -----------
   # Tooltips
   # -----------
-
   $('abbr[title], abbr[data-original-title]').tooltip(delay: { "show": 300 })

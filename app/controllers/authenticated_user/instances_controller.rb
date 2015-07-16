@@ -1,5 +1,8 @@
 module AuthenticatedUser
   class InstancesController < AuthenticatedUserController
+    
+    
+    respond_to :html, :json
 
     def index
       #services.identity
@@ -21,16 +24,31 @@ module AuthenticatedUser
         format.js 
       end
     end
+    
+    def new
+      
+    end
 
     def show
       @instance = services.compute.servers.get(params[:id])
       @flavor = services.compute.flavors.get(@instance.flavor.fetch("id",nil))
       @image = services.compute.images.get(@instance.image.fetch("id",nil))      
 
-      respond_to do |format|
-        format.html {render partial: 'show', locals: {instance: @instance, flavor: @flavor}}
-        format.js { render partial: 'show', locals: {instance: @instance, flavor: @flavor}}
-      end
+      #respond_with nil, responder: ModalResponder
+      
+      #respond_modal_with @instance
+      # if request.xhr?
+      #   render action: 'show', layout: 'modal'
+      # end
+      
+      
+        
+      # respond_to do |format|
+      #   format.html {render partial: 'show', locals: {instance: @instance, flavor: @flavor}}
+      #   format.js { render partial: 'show', locals: {instance: @instance, flavor: @flavor}}
+      # end
+      
+      
     end
   end
 

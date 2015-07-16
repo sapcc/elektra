@@ -4,35 +4,34 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
   end
 
   def index
-    @forms_credential = services.identity.forms_credential
+    
   end
   
   def new
+    @forms_credential = services.identity.forms_credential
   end
 
   def create
     @forms_credential = services.identity.forms_credential
     @forms_credential.attributes = params.fetch(:forms_credential,{}).merge(user_id: current_user.id)
 
-    respond_to do |format|
-      if @forms_credential.save
-        flash[:notice] = "Credential created."
-        format.js 
-      else
-        format.js { render action: :new }
-      end
+    if @forms_credential.save
+      flash[:notice] = "Credential created."
+      redirect_to action: :index
+    else
+      render action: :new, layout: 'modal'
     end
   end
   
   def destroy
     @forms_credential = services.identity.forms_credential(params[:id])
     
-    @forms_credential.destroy
-    #sleep(3)
-    #@forms_credential.errors.add(' ','could not delete credential')
-    respond_to do |format|
-      format.js
+    if @forms_credential.destroy
+      flash[:notice] = "Credential deleted."
+    else
+      flash[:notice] = "Could not delete credential"
     end
+    redirect_to action: :index
   end
 
 end

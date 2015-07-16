@@ -17,6 +17,8 @@ gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
 
+gem 'responders'
+
 # Database
 gem 'pg'
 gem 'activerecord-session_store'

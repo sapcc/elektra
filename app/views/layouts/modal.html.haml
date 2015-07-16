@@ -1,0 +1,13 @@
+.modal#mainModal{tabindex: "-1", role: "dialog", data: { backdrop: 'static' }, aria: {labelledby: "mainModalLabel", hidden: true} }
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        %button.close{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}}
+          %span{aria: {hidden: "true"}} &times;
+        %h4.modal-title
+          - if content_for? :title 
+            = yield :title 
+          - else
+            = "#{action_name.capitalize} #{controller_name.singularize}"
+
+      = yield
