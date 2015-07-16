@@ -9,10 +9,12 @@ describe AuthenticatedUser::InstancesController do
 
   before(:each) do
     stub_authentication  
-    
+
     driver = object_spy('driver')
     allow_any_instance_of(Openstack::IdentityService).to receive(:driver).and_return(driver)
     allow_any_instance_of(Openstack::IdentityService).to receive(:has_projects?).and_return(true)
+    
+    allow_any_instance_of(Openstack::ComputeService).to receive(:driver).and_return(driver)
   end
 
   describe "GET 'index'" do

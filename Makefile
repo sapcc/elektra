@@ -6,10 +6,10 @@ IMAGE       := $(REPOSITORY):$(TAG)
 ### Executables
 DOCKER = docker
 WAIT   = $(DOCKER) run --rm --link $(WAIT_ID):wait  \
-				 localhost/monsoon/docker-build:1.3.0 \
+				 localhost/monsoon/docker-build:1.4.0 \
 				 wait
 MTIMES = $(DOCKER) run --rm $(MTIMES_OPTS) \
-				 localhost/monsoon/docker-build:1.3.0 \
+				 localhost/monsoon/docker-build:1.4.0 \
 				 reset_mtimes
 
 ### Variables that are expanded dynamically
