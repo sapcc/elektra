@@ -29,10 +29,10 @@
 
     %footer.footer
       .container
+        = render partial: 'layouts/debug'
         = image_tag "monsoon_logo.png", class: "pull-right"
 
     = yield :templates
     = yield :javascripts
     
-    #modal-holder
-    
+    #modal-holder    

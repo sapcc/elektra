@@ -25,7 +25,7 @@ class AuthenticatedUser::CredentialsController < AuthenticatedUserController
     if @forms_credential.destroy
       flash[:notice] = "Credential deleted."
     else
-      flash[:notice] = "Could not delete credential"
+      flash[:notice] = "Could not delete credential."
     end
     redirect_to action: :index
   end

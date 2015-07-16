@@ -10,7 +10,7 @@
     = link_to 'Create new', new_instance_path(domain_id: @domain_id), data: {modal: true}, class: 'btn btn-primary btn-lg'
     
 - if @instances         
-  %table.table.datatable
+  %table.table
     %thead
       %tr
         %th Name
@@ -24,13 +24,4 @@
           %td{colspa: 5} No instances available
       - else    
         - @instances.each do | instance |
-          = render partial: 'item', locals: {instance: instance}
-
-
-
-%a.toggle-debug(href="#") Toggle debug info
-%pre.debug-info= JSON.pretty_generate(current_user.context)
-
-
-        
-        
+          = render partial: 'item', locals: {instance: instance}  

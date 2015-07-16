@@ -346,7 +346,7 @@ tr.deleting {
 
   .btn {
     .glyphicon {
-      @include spinner(background rgba(0,0,0,0.2), 1.2s);
+      @include spinner(3px solid, 1.2s);
 
       &:before {
         content: "";
@@ -356,7 +356,7 @@ tr.deleting {
   }
 }
 
-.btn.loading {
+.loading {
   &:before {
     content: " ";
     @include spinner(3px solid, 1.2s);

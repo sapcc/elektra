@@ -12,6 +12,20 @@ module AuthenticatedUser
       @instances = services.compute.servers if @project_id
     end
     
+    def show
+      @instance = services.compute.servers.get(params[:id])
+      @flavor = services.compute.flavors.get(@instance.flavor.fetch("id",nil))
+      @image = services.compute.images.get(@instance.image.fetch("id",nil))      
+    end
+    
+    def new
+      @forms_instance = services.compute.forms_instance
+    end
+    
+    def create
+      
+    end
+    
     def edit
       @forms_instance = services.compute.forms_instance(params[:id])
       respond_to do |format|
@@ -20,14 +34,19 @@ module AuthenticatedUser
       end
     end
     
-    def new
-      @forms_instance = services.compute.forms_instance
+    def update
+      
     end
-
-    def show
-      @instance = services.compute.servers.get(params[:id])
-      @flavor = services.compute.flavors.get(@instance.flavor.fetch("id",nil))
-      @image = services.compute.images.get(@instance.image.fetch("id",nil))      
+    
+    def destroy
+      @forms_instance = services.compute.forms_instance(params[:id])
+      
+      if @forms_instance.destroy
+        flash[:notice] = "Instance deleted."
+      else
+        flash[:notice] = "Could not delete instance."
+      end
+      redirect_to instances_url(domain_id:@domain_id,project_id:@project_id)
     end
   end
 

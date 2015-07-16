@@ -1,7 +1,7 @@
 %tr{id: "instance_#{instance.id}"}
   %td
     - if current_user.is_allowed?("identity:instance_get", {})
-      = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button btn', data: {modal: true}
+      = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), data: {modal: true}
         
     / - if current_user.is_allowed?("identity:instance_get", {})
     /   = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {toggle:"modal", target: "#instanceShow#{instance.id}"}
@@ -21,9 +21,9 @@
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if current_user.is_allowed?("identity:instance_update", {})
-            %li= link_to 'Edit', edit_instance_path(id: instance.id, domain_id: @domain_id), remote: true            
+            %li= link_to 'Edit', edit_instance_path(id: instance.id, domain_id: @domain_id), data: {modal: true}            
             %li.divider
           - if current_user.is_allowed?("identity:instance_delete", {})
-            %li= link_to 'Delete', instance_path(id: instance.id, domain_id: @domain_id), method: :delete, remote: true, data: { confirm: 'Are you sure you want to delete the credential?', ok: "Yes, delete it", confirmed: "$(this).closest('tr').addClass('deleting')"}
+            %li= link_to 'Delete', instance_path(id: instance.id, domain_id: @domain_id), method: :delete, data: { confirm: 'Are you sure you want to delete the credential?', ok: "Yes, delete it", confirmed: "$(this).closest('tr').addClass('deleting')", modal: true}
 
 

@@ -14,12 +14,16 @@ $ ->
     
   $(document).on 'click', 'a[data-modal=true]', ->
     $button = $(this)
+    
     $button.addClass('loading')
     location = $(this).attr('href')
     #Load modal dialog from server
 
+    #InfoDialog.showLoading()
+    
     $.get location, (data, status, xhr)->
       $button.removeClass('loading')
+      #InfoDialog.hideLoading()
       url = xhr.getResponseHeader('Location')
       # got a redirect response
       window.location = url if url
@@ -32,19 +36,25 @@ $ ->
     false
 
   $(document).on 'ajax:success',
-    'form[data-modal=true]', (event, data, status, xhr)->
-      # Remove old modal backdrop
-      $('.modal-backdrop').remove()
-      
+    'form[data-modal=true]', (event, data, status, xhr)->  
       url = xhr.getResponseHeader('Location')
       
       if url
         # remove modal
+        $('.modal-backdrop').remove()
         $(modal_holder_selector).empty()
         # Redirect to url
         window.location = url
       else
-        # Replace old modal with new one
-        $(modal_holder_selector).html(data).
-        find(modal_selector).modal()
+        # modal has the fade effect 
+        if $($(modal_holder_selector).find(modal_selector)).hasClass('fade')
+          # replace content of old modal
+          $oldModal = $(modal_holder_selector)
+          $newContent = $(data)
+          $oldModal.find(selector).replaceWith( $newContent.find(selector) ) for selector in ['.modal-body','.modal-footer']
+        else  
+          # Remove old modal backdrop
+          $('.modal-backdrop').remove()
+          # Replace old modal with new one
+          $(modal_holder_selector).html(data).find(modal_selector).modal()
       false
