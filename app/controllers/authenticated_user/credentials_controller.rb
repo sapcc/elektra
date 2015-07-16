@@ -1,10 +1,6 @@
 class AuthenticatedUser::CredentialsController < AuthenticatedUserController 
-  before_filter only: [:index] do #,:create,:destroy] do
-    @user_credentials = services.identity.credentials 
-  end
-
   def index
-    
+    @user_credentials = services.identity.credentials 
   end
   
   def new

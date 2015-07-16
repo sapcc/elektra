@@ -26,11 +26,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to(options)
-    url = url_for(options)
-    p ">>>>>>>>>>>>>>>"
-    p url
-    p monsoon_openstack_auth.new_session_path
-    if modal? and url!=monsoon_openstack_auth.new_session_path
+    if modal?
       head :ok, location: url_for(options)
     else
       super options

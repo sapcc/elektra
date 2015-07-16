@@ -67,6 +67,17 @@ $ ->
 
 
 class @InfoDialog
+  loading = """
+      <div class="modal " data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-body"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div>
+          </div>
+        </div>
+      </div>
+      """
+  $ajaxLoader = $(loading)    
+          
   # Creating modal dialog's DOM
   html = """
       <div class="modal fade" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">
@@ -125,3 +136,6 @@ class @InfoDialog
   
   # class method
   @hide: () -> $dialog.modal 'hide'
+  
+  @showLoading: () -> $ajaxLoader.modal()
+  @hideLoading: () -> $ajaxLoader.modal 'hide'

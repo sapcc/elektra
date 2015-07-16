@@ -346,7 +346,7 @@ tr.deleting {
 
   .btn {
     .glyphicon {
-      @include spinner(background rgba(0,0,0,0.2));
+      @include spinner(background rgba(0,0,0,0.2), 1.2s);
 
       &:before {
         content: "";
@@ -356,6 +356,37 @@ tr.deleting {
   }
 }
 
+.btn.loading {
+  &:before {
+    content: " ";
+    @include spinner(3px solid, 1.2s);
+    margin-right: 3px;
+  }
+}
+
+.btn-primary.loading {
+  &:before {
+    content: " ";
+    @include spinner(3px solid #fff, 1.2s);
+    margin-right: 3px;
+  }
+}
+
+.modal-body {
+  .loading-spinner {
+    position: relative;
+    left: 50%;
+    margin-left: -3em;
+    @include spinner(6em, 1.2s);
+  }
+  .loading-text {
+    position: absolute;
+    top: 50%;
+    margin-top: -0.6em;
+    left: 50%;
+    margin-left: -2.5em;
+  }
+}
 
 .data-tabular-display {
   display: table;

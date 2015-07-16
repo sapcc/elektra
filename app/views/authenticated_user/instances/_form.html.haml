@@ -1,8 +1,2 @@
-- unless forms_instance.errors["message"].blank?
-  %p.alert.alert-error= forms_instance.errors.full_messages.to_sentence
-
-= simple_form_for forms_instance, url: instances_path(@domain_id, format: :js), method: :post, remote: true do |f|
-  - projects = services.identity.projects(@domain_id)
-  
-  %fieldset
-    = f.input :name
+%fieldset
+  = form.input :name

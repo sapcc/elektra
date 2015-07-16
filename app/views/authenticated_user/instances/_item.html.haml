@@ -1,7 +1,7 @@
 %tr{id: "instance_#{instance.id}"}
   %td
     - if current_user.is_allowed?("identity:instance_get", {})
-      = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {modal: true}
+      = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button btn', data: {modal: true}
         
     / - if current_user.is_allowed?("identity:instance_get", {})
     /   = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {toggle:"modal", target: "#instanceShow#{instance.id}"}
