@@ -1,6 +1,8 @@
 module Openstack
   class IdentityService < OpenstackServiceProvider::FogProvider
 
+    attr_reader :region
+
     def driver(auth_params)
       # TODO: this line of code authenticates user and creates a new token in keystone.
       # this is not necessary because the user already exists in session and has a valid token.

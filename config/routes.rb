@@ -1,18 +1,7 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
-  # TODO: remove after friendlyid is available
-  keystone_endpoint = ENV["MONSOON_OPENSTACK_AUTH_API_ENDPOINT"] || ''
-  domain_id = if keystone_endpoint.include?("mo-72302efe6")
-    "9e1152e7da284ce2a026df84194aaa78"
-  elsif keystone_endpoint.include?("localhost")
-    'o-sap_default'
-  else
-    'o-135d203c5'
-  end
-
-  
-  root to: 'services#index', domain_id: domain_id #MonsoonOpenstackAuth.configuration.default_domain_name
+  root to: 'services#index', domain_id: MonsoonOpenstackAuth.configuration.default_domain_name #"9e1152e7da284ce2a026df84194aaa78"
 
   scope "/:domain_id/(:project_id)" do
     scope module: 'authenticated_user' do
@@ -25,7 +14,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope "/:domain_id" do
+  scope "/:domain_fid" do
     match '/', to: 'services#index', via: :get
   end
 

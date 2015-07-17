@@ -4,6 +4,8 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
     @active_domain = services.identity.find_domain(@domain_id)
     @user_domain_projects = services.identity.projects(@active_domain.id)
   end
+
+  before_filter :load_project,  except: [:index, :create]
   
   def credentials
     @user_credentials = services.identity.credentials 
@@ -16,7 +18,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
   end
 
   def show
-    @forms_project = services.identity.forms_project(params[:id])
+    @forms_project = services.identity.forms_project(@project.key)
   end
   
   def new
@@ -30,7 +32,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
     if @forms_project.save
       services.identity.grant_project_role(@forms_project.model,'admin')
       flash[:notice] = "Project #{@forms_project.name} successfully created."
-      redirect_to projects_path(domain_id: @domain_id)
+      redirect_to projects_path(domain_fid: @domain_fid)
     else
       flash[:error] = @forms_project.errors.full_messages.to_sentence
       render action: :new
@@ -43,12 +45,12 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
   end
   
   def update
-    @forms_project = services.identity.forms_project(params[:id])
+    @forms_project = services.identity.forms_project(@project.key)
     @forms_project.attributes = params[:forms_project]
     
     if @forms_project.save
       flash[:notice] = "Project #{@forms_project.name} successfully updated."
-      redirect_to projects_path(domain_id: @domain_id)
+      redirect_to projects_path(domain_fid: @domain_fid)
     else
       flash[:error] = @forms_project.errors.full_messages.join(', ')
       render action: :edit
@@ -56,7 +58,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
   end
   
   def destroy
-    forms_project = services.identity.forms_project(params[:id])
+    forms_project = services.identity.forms_project(@project.key)
         
     if forms_project.destroy
       flash[:notice] = "Project successfully deleted."
@@ -64,7 +66,14 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
       flash[:error] = forms_project.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
     end
 
-    redirect_to projects_path(@domain_id)
+    redirect_to projects_path(@domain_fid)
+  end
+
+  private
+
+  def load_project
+    @domain = ::Domain.friendly_find_or_create @region, @domain_id
+    @project = ::Project.friendly_find_or_create @region, @domain, params[:id]
   end
 
 end

@@ -11,7 +11,7 @@
 
     .col-sm-6
       - if current_user.is_allowed?("identity:project_delete", {trarget: {project: @forms_project} }) and !@forms_project.is_sandbox?
-        = link_to "Delete Project", project_path(domain_id: @domain_id, project_id:@forms_project.id, id:@forms_project.id), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
+        = link_to "Delete Project", project_path(domain_fid: @domain_fid, project_fid:@project_fid, id:@forms_project.id), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
 
       - if current_user.is_allowed?("identity:project_update", {trarget: {project: @forms_project} }) and !@forms_project.is_sandbox?
-        = link_to "Edit Project", edit_project_path(domain_id: @domain_id, project_id:@forms_project.id, id:@forms_project.id), class: "btn btn-primary", data: { modal: true }
+        = link_to "Edit Project", edit_project_path(domain_fid: @domain_fid, project_fid:@project_fid, id:@forms_project.id), class: "btn btn-primary", data: { modal: true }

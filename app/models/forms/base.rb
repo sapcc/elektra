@@ -4,7 +4,7 @@ module Forms
     include ActiveModel::Conversion
     include ActiveModel::Validations
 
-    attr_reader :errors, :model
+    attr_reader :errors, :model, :service
     
     ERRORS_TO_IGNORE = ["code","title"]
   

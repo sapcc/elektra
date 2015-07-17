@@ -3,10 +3,27 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  include OpenstackServiceProvider::Services
+
   prepend_before_filter do
-    if params[:domain_id]
-      @domain_id ||= params[:domain_id]
-      #@domain ||= services.identity.find_domain(@domain_id)
+
+    @region ||= MonsoonOpenstackAuth.configuration.default_region
+
+    if params[:domain_fid]
+      fid = params[:domain_fid]
+    else
+      fid = 'sap_default'
+    end
+
+    domain = ::Domain.friendly_find_or_create @region, fid
+    @domain_fid = domain.slug
+    @domain_id = domain.key
+
+    if params[:project_fid]
+      fid = params[:project_fid]
+      project = ::Project.friendly_find_or_create @region, domain, fid
+      @project_fid ||= project.slug
+      @project_id ||= project.key
     end
   end
   

@@ -8,8 +8,8 @@
   .col-md-6
     .list-group
       - @user_domain_projects.each do |project|
-        = link_to project.name, project_path(domain_id: @domain_id, project_id: project.id, id: project.id), class: "list-group-item"
+        = link_to project.name, project_path(domain_fid: @domain_fid, project_fid: @project_fid, id: project.id), class: "list-group-item"
 
   - if current_user.is_allowed?("identity:project_create", { project: {domain_id: @domain_id} })
     .col-md-6
-      = link_to 'New Project', new_project_path(domain_id: @domain_id, project_id: @project_id), class: 'btn btn-primary btn-md', data: { modal: true }
+      = link_to 'New Project', new_project_path(domain_fid: @domain_fid, project_fid: @project_fid), class: 'btn btn-primary btn-md', data: { modal: true }

@@ -3,4 +3,4 @@
   .col-lg-6
     .list-group
       - @user_domain_projects.each do |project|
-        = link_to project.name, instances_path(domain_id: @domain_id, project_id: project.id), class: "list-group-item"
+        = link_to project.name, instances_path(domain_fid: @domain_fid, project_fid: project.fid), class: "list-group-item"

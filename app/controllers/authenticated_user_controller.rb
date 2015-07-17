@@ -3,15 +3,12 @@ class AuthenticatedUserController < ApplicationController
   prepend_before_filter do
     # initialize session unless loaded yet
     session[:init] = true unless session.loaded?
-    @region ||= MonsoonOpenstackAuth.configuration.default_region
-    @project_id ||= params[:project_id]
+    #@region ||= MonsoonOpenstackAuth.configuration.default_region
   end
 
   authentication_required domain: -> c { c.instance_variable_get("@domain_id") }, project: -> c { c.instance_variable_get('@project_id') }
   
   before_filter :check_terms_of_use
-
-  include OpenstackServiceProvider::Services
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
   rescue_from "Excon::Errors::InternalServerError", with: :handle_api_error

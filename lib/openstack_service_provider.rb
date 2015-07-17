@@ -1,6 +1,5 @@
 # provides openstack services in controller and views
 module OpenstackServiceProvider
-  
   # this module is included in controllers
   module Services
     def self.included(base)
@@ -112,5 +111,5 @@ module OpenstackServiceProvider
       end
     end
   end
-  
+
 end

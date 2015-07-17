@@ -1,14 +1,14 @@
 module Openstack
   class AdminIdentityService < OpenstackServiceProvider::BaseProvider
-    
-    def create_user_sandbox(domain_id,user)
+
+    def create_user_sandbox(domain_id, user)
       begin
         name = "#{user.name}_sandbox"
         user_sandbox = service_user.projects.all(name: name, domain_id: domain_id).first
 
         unless user_sandbox
           # get root project (sandboxes)
-          sandboxes = service_user.projects.all(name:'sandboxes',domain_id: domain_id)
+          sandboxes = service_user.projects.all(name: 'sandboxes', domain_id: domain_id)
           return nil unless sandboxes or sandboxes.length==0
 
           # create sandbox for user
@@ -20,7 +20,7 @@ module Openstack
         #admin_role = @service_connection.roles.all(name:'admin').first
         admin_role = role('admin')
         # assign admin role to user for sandbox
-        user_sandbox.grant_role_to_user(admin_role.id,user.id)
+        user_sandbox.grant_role_to_user(admin_role.id, user.id)
 
         return user_sandbox
       rescue => e
@@ -32,11 +32,27 @@ module Openstack
     def roles
       @roles ||= service_user.roles
     end
-  
+
     def role(name)
-      roles.select {|r| r.name==name}.first
+      roles.select { |r| r.name==name }.first
     end
-    
+
+    def domain_find_by_key_or_name id
+      begin
+        service_user.domains.find_by_id id
+      rescue
+        service_user.domains.all(:name => id).first
+      end
+    end
+
+    def project_find_by_key_or_name id
+      begin
+        service_user.projects.find_by_id id
+      rescue
+        service_user.projects.all(:name => id).first
+      end
+    end
+
     def service_user
       @service_user ||= MonsoonOpenstackAuth.api_client(@region).connection_driver.connection
     end

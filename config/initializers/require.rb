@@ -1,0 +1,1 @@
+require "#{Rails.root}/lib/fog_extensions"
