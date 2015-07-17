@@ -59,4 +59,5 @@ $ ->
           $('.modal-backdrop').remove()
           # Replace old modal with new one
           $(modal_holder_selector).html(data).find(modal_selector).modal()
+        Dashboard.initForm()  
       false
