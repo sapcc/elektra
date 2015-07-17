@@ -24,10 +24,6 @@ class Domain < ActiveRecord::Base
       rescue
         fog_domain = self.service_user(region).domains.all(:name => fid).first
       end
-      
-      p ":::::::::::::::::::::"
-      p fid
-      p self.service_user(region).domains.all(:name => fid)
 
       if fog_domain
         domain = Domain.new
@@ -38,9 +34,7 @@ class Domain < ActiveRecord::Base
       else
         raise ActiveRecord::RecordNotFound, "Domain #{fid} missing"
       end
-    rescue => e
-      p ">>>>>>>>>>>>>>>>>"
-      puts e
+    rescue
       raise ActiveRecord::RecordNotFound, "Domain #{fid} missing"
     end
   end

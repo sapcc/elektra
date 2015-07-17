@@ -9,21 +9,22 @@ class ApplicationController < ActionController::Base
 
     @region ||= MonsoonOpenstackAuth.configuration.default_region
 
-    if params[:domain_fid]
-      fid = params[:domain_fid]
-    else
-      fid = 'sap_default'
-    end
+    fid = params[:domain_fid] || 'sap_default'
 
-    domain = ::Domain.friendly_find_or_create @region, fid
-    @domain_fid = domain.slug
-    @domain_id = domain.key
+    begin
+      domain = ::Domain.friendly_find_or_create @region, fid
+      @domain_fid = domain.slug
+      @domain_id = domain.key
 
-    if params[:project_fid]
-      fid = params[:project_fid]
-      project = ::Project.friendly_find_or_create @region, domain, fid
-      @project_fid ||= project.slug
-      @project_id ||= project.key
+      if params[:project_fid]
+        fid = params[:project_fid]
+        project = ::Project.friendly_find_or_create @region, domain, fid
+        @project_fid ||= project.slug
+        @project_id ||= project.key
+      end
+    rescue => exception
+      @errors = {exception.class.name => exception.message}
+      render template: 'application/error'
     end
   end
   
