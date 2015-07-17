@@ -1,6 +1,7 @@
 SHELL       := /bin/sh
 REPOSITORY  := localhost/monsoon/monsoon-dashboard
 TAG         ?= latest
+PREVIOUS    ?= latest
 IMAGE       := $(REPOSITORY):$(TAG)
 
 ### Executables
@@ -37,6 +38,7 @@ image: build precompile
 build: MTIMES_OPTS = -v $(shell pwd):/src
 build: 
 	$(MTIMES) 
+	$(DOCKER) pull $(REPOSITORY):$(PREVIOUS)
 	$(DOCKER) build -t $(IMAGE) --rm . 
 	echo $(IMAGE) > build
 
