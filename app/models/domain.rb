@@ -24,6 +24,10 @@ class Domain < ActiveRecord::Base
       rescue
         fog_domain = self.service_user(region).domains.all(:name => fid).first
       end
+      
+      p ":::::::::::::::::::::"
+      p fid
+      p self.service_user(region).domains.all(:name => fid)
 
       if fog_domain
         domain = Domain.new
