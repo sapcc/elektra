@@ -9,7 +9,7 @@
     /   = instance.name
         
   %td= services.compute.images.get(instance.image["id"]).name
-  %td= instance.addresses["private"].collect{|address| address["addr"]}.join(', ')
+  %td=instance.state# instance.addresses["private"].collect{|address| address["addr"]}.join(', ')
   %td
     = case instance.os_ext_sts_power_state; when 1 then 'Running'; when 3 then 'Paused'; end
   %td.snug

@@ -6,9 +6,9 @@ Rails.application.routes.draw do
   domain_id = if keystone_endpoint.include?("mo-72302efe6")
     "9e1152e7da284ce2a026df84194aaa78"
   elsif keystone_endpoint.include?("localhost")
-    'o-135d203c5'
-  else
     'o-sap_default'
+  else
+    'o-135d203c5'
   end
 
   

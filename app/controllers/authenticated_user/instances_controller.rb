@@ -10,6 +10,8 @@ module AuthenticatedUser
 
       @active_project = @user_domain_projects.find { |project| project.id == @project_id } if @project_id
       @instances = services.compute.servers if @project_id
+      
+      p @instances
     end
     
     def show
@@ -37,14 +39,17 @@ module AuthenticatedUser
       begin
         flavor = @flavors.select{|f| f.id==@forms_instance.flavor}.first
         flavor_ref = flavor.links.select{|l| l["rel"]=="self"}.first["href"]
-        @forms_instance.flavor_ref = flavor_ref
+        @forms_instance.flavor_ref = @forms_instance.flavor#flavor_ref
       rescue
       end
       
       begin
+        
         image = @images.select{|i| i.id==@forms_instance.image}.first
         p image
-        image_ref = image.links.select{|l| l["rel"]=="self"}.first["href"]
+        #image_ref = image.links.select{|l| l["rel"]=="self"}.first["href"]
+        #p image_ref
+        image_ref=image.id
         p image_ref
         @forms_instance.image_ref = image_ref
       rescue
