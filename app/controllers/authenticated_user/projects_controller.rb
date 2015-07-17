@@ -20,7 +20,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
   def show
     @forms_project = services.identity.forms_project(@project.key)
   end
-  
+
   def new
     @forms_project = services.identity.forms_project
   end
@@ -37,17 +37,17 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
       flash[:error] = @forms_project.errors.full_messages.to_sentence
       render action: :new
     end
-    
+
   end
-  
+
   def edit
     @forms_project = services.identity.forms_project(params[:id])
   end
-  
+
   def update
     @forms_project = services.identity.forms_project(@project.key)
     @forms_project.attributes = params[:forms_project]
-    
+
     if @forms_project.save
       flash[:notice] = "Project #{@forms_project.name} successfully updated."
       redirect_to projects_path(domain_fid: @domain_fid)
