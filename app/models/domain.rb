@@ -34,7 +34,9 @@ class Domain < ActiveRecord::Base
       else
         raise ActiveRecord::RecordNotFound, "Domain #{fid} missing"
       end
-    rescue
+    rescue => e
+      p ">>>>>>>>>>>>>>>>>"
+      puts e
       raise ActiveRecord::RecordNotFound, "Domain #{fid} missing"
     end
   end

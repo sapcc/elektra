@@ -3,19 +3,18 @@
 
 %p Deliverables next-generation authentic empower distributed empower facilitate infrastructures innovative wikis grow dynamic. Morph widgets integrate, rich scale interfaces world-class create, e-markets supply-chains compelling applications visualize iterate out-of-the-box integrateAJAX-enabled viral.
 
-= render "application/projects_list" unless @project_id
-
-- if current_user.is_allowed?("identity:instance_create", {instance: {user_id: current_user.id} })
-  .toolbar
-    = link_to 'Create new', new_instance_path(domain_id: @domain_id), data: {modal: true}, class: 'btn btn-primary btn-lg'
-    
-- if @instances         
+- if @project_id   
+  - if current_user.is_allowed?("identity:instance_create", {instance: {user_id: current_user.id} })
+    .toolbar
+      = link_to 'Create new', new_instance_path(domain_id: @domain_id), data: {modal: true}, class: 'btn btn-primary btn-lg'
+      
   %table.table
     %thead
       %tr
         %th Name
         %th OS
         %th Network
+        %th Power state
         %th Status
         %th.snug
     %tbody
@@ -25,3 +24,5 @@
       - else    
         - @instances.each do | instance |
           = render partial: 'item', locals: {instance: instance}  
+- else
+  = render "application/projects_list"  

@@ -5,7 +5,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
     @user_domain_projects = services.identity.projects(@active_domain.id)
   end
 
-  before_filter :load_project,  except: [:index, :create]
+  before_filter :load_project,  except: [:index, :create, :new]
   
   def credentials
     @user_credentials = services.identity.credentials 

@@ -29,5 +29,10 @@ class Forms::Instance < Forms::Base
   wrapper_for ::Fog::Compute::OpenStack::Server
   
   additional_attributes :flavor_ref, :image_ref
+  
+  def before_save
+    self.image_ref = image
+    self.flavor_ref = flavor
+  end
     
 end
