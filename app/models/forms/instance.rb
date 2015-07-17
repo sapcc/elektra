@@ -27,4 +27,7 @@ class Forms::Instance < Forms::Base
 
   
   wrapper_for ::Fog::Compute::OpenStack::Server
+  
+  additional_attributes :flavor_ref, :image_ref
+    
 end

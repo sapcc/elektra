@@ -37,6 +37,15 @@ module Forms
         attr_accessor *names
       end
       
+      def additional_attributes(*names)
+        names = names.flatten
+        @attribute_names ||= []
+        names.each do |name|
+          @attribute_names << name
+          attr_accessor name
+        end
+      end
+      
       def attribute_names
         @attribute_names
       end
@@ -145,6 +154,8 @@ module Forms
       create_attributes.delete(:id)
       
       begin
+        p ">>>>>>>>>>>>>>>>>>>>>"
+        p create_attributes
         @model = @service.send("create_#{@class_name}", create_attributes)
         self.id = @model.id
       rescue => e
@@ -153,7 +164,7 @@ module Forms
 
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          n = error_names[name] || error_names[message] || name
+          n = error_names[name] || error_names[message] || name || 'message'
           message = message.join(", ") if message.is_a?(Array)
           self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end
@@ -176,7 +187,7 @@ module Forms
         
         errors = ::ApiErrorParser.handle(e)
         errors.each do |name, message|
-          n = error_names[name] || error_names[message] || name
+          n = error_names[name] || error_names[message] || name || ' '
           message = message.join(", ") if message.is_a?(Array)
           self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
         end

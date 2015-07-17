@@ -12,11 +12,15 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
   end
 
   def index
-    @forms_project = services.identity.forms_project
+    
   end
 
   def show
     @forms_project = services.identity.forms_project(params[:id])
+  end
+  
+  def new
+    @forms_project = services.identity.forms_project
   end
 
   def create
@@ -26,22 +30,29 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
     if @forms_project.save
       services.identity.grant_project_role(@forms_project.model,'admin')
       flash[:notice] = "Project #{@forms_project.name} successfully created."
-      redirect_to :back
+      redirect_to projects_path(domain_id: @domain_id)
     else
       flash[:error] = @forms_project.errors.full_messages.to_sentence
-      render action: :index
+      render action: :new
     end
     
+  end
+  
+  def edit
+    @forms_project = services.identity.forms_project(params[:id])
   end
   
   def update
     @forms_project = services.identity.forms_project(params[:id])
     @forms_project.attributes = params[:forms_project]
     
-    unless @forms_project.save
+    if @forms_project.save
+      flash[:notice] = "Project #{@forms_project.name} successfully updated."
+      redirect_to projects_path(domain_id: @domain_id)
+    else
       flash[:error] = @forms_project.errors.full_messages.join(', ')
+      render action: :edit
     end
-    redirect_to :back
   end
   
   def destroy

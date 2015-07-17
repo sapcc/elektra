@@ -10,6 +10,12 @@
 
     "default": "rule:admin_required",
 
+    "identity:project_get": "rule:cloud_admin or rule:admin_required or project_id:%(target.project.id)s",
+    "identity:project_list": "rule:cloud_admin or rule:admin_required or domain_id:%(domain_id)s",
+    "identity:project_create": "rule:cloud_admin or (rule:admin_required and domain_id:%(project.domain_id)s)",
+    "identity:project_update": "rule:cloud_admin or rule:admin_required",
+    "identity:project_delete": "rule:cloud_admin or rule:admin_required",
+    
     "identity:credential_get": "rule:admin_required",
     "identity:credential_list": "rule:cloud_admin or domain_id:%(domain_id)s",
     "identity:credential_create": "rule:admin_required or user_id:%(credential.user_id)s",

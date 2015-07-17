@@ -20,10 +20,43 @@ module AuthenticatedUser
     
     def new
       @forms_instance = services.compute.forms_instance
+      @flavors = services.compute.flavors
+      @images = services.image.images
+      
+      @forms_instance.flavor=@flavors.first.id
+      @forms_instance.image=@images.first.id
     end
     
     def create
+      @forms_instance = services.compute.forms_instance(params[:id])
+      @flavors = services.compute.flavors
+      @images = services.image.images
       
+      @forms_instance.attributes=params[:forms_instance]
+
+      begin
+        flavor = @flavors.select{|f| f.id==@forms_instance.flavor}.first
+        flavor_ref = flavor.links.select{|l| l["rel"]=="self"}.first["href"]
+        @forms_instance.flavor_ref = flavor_ref
+      rescue
+      end
+      
+      begin
+        image = @images.select{|i| i.id==@forms_instance.image}.first
+        p image
+        image_ref = image.links.select{|l| l["rel"]=="self"}.first["href"]
+        p image_ref
+        @forms_instance.image_ref = image_ref
+      rescue
+      end
+
+      
+      if @forms_instance.save
+        flash[:notice] = "Instance successfully created."
+        redirect_to instances_path(domain_id:@domain_id, project_id:@project_id)
+      else
+        render action: :new
+      end
     end
     
     def edit

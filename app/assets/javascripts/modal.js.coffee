@@ -24,14 +24,19 @@ $ ->
     $.get location, (data, status, xhr)->
       $button.removeClass('loading')
       #InfoDialog.hideLoading()
+      
       url = xhr.getResponseHeader('Location')
+      
       # got a redirect response
-      window.location = url if url
-
-      if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
-        # open modal with content from ajax response
-        $(modal_holder_selector).html(data).
-        find(modal_selector).modal()
+      if url
+        window.location = url
+      else  
+        if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
+          # open modal with content from ajax response
+          $(modal_holder_selector).html(data).
+          find(modal_selector).modal()
+          # for the case the response contains a form intialize it
+          Dashboard.initForm()
         
     false
 
@@ -40,9 +45,6 @@ $ ->
       url = xhr.getResponseHeader('Location')
       
       if url
-        # remove modal
-        $('.modal-backdrop').remove()
-        $(modal_holder_selector).empty()
         # Redirect to url
         window.location = url
       else

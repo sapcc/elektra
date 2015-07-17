@@ -9,33 +9,24 @@ class @Dashboard
     # show the target that's been selected by the trigger, enable all descendants that are inputs
     target.show().find(":input").prop("disabled", false)
 
+  @showFormDetails: () ->
+    target = $(this).data('target')
+    $(target).addClass("hidden")
+    $("#{target}##{this.value}").removeClass("hidden")
+      
+  @initForm: () ->
+    # flavor details
+    $("form select[data-trigger=change]").change Dashboard.showFormDetails
+    # Dynamic Form - Hide/reveal parts of the form following a trigger event
+    $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
+    
 
 $(document).on 'ready page:load', ->
-  $(".toggle-debug").click (e) ->
-    e.preventDefault()
-    $(".debug-info").toggleClass("visible")
-
-  # Interactive page elements #
-
-  # -----------
-  # Hidden form
-  # -----------
-  $(".js-trigger-hiddenform").click (e) ->
-    e.preventDefault()
-    $(this).hide()
-    $(".js-target-hiddenform").show()
-
-  $(".js-cancel-hiddenform").click (e) ->
-    e.preventDefault()
-    $(".js-target-hiddenform").hide()
-    $(".js-trigger-hiddenform").show()
-
-
-  # Dynamic Form - Hide/reveal parts of the form following a trigger event
-  $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
-
-
+  
   # -----------
   # Tooltips
   # -----------
   $('abbr[title], abbr[data-original-title]').tooltip(delay: { "show": 300 })
+  
+  # init Form
+  Dashboard.initForm()

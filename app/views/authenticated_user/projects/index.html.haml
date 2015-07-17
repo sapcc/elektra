@@ -8,26 +8,8 @@
   .col-md-6
     .list-group
       - @user_domain_projects.each do |project|
-        = link_to project.name, project_path(id: project.id, domain_id: @domain_id), class: "list-group-item"
+        = link_to project.name, project_path(domain_id: @domain_id, project_id: project.id, id: project.id), class: "list-group-item"
 
-  - if current_user.is_allowed?("identity:create_project")
+  - if current_user.is_allowed?("identity:project_create", { project: {domain_id: @domain_id} })
     .col-md-6
-      = simple_form_for @forms_project, url: projects_path(@domain_id), method: :post do |f|
-        .js-target-hiddenform
-          .well
-            .inline-form
-              .inline-form-cell
-                = f.input :name,
-                  input_html:  { maxlength: 255 },
-                  placeholder: "Enter name",
-                  autofocus:   true,
-                  label:       false
-
-
-              .inline-form-button
-                = f.submit 'Create Project', class: 'btn btn-primary', data: { disable_with: "Creating..." }
-              .inline-form-button
-                %a.btn.btn-default.js-cancel-hiddenform Cancel
-
-      .form-group
-        %a.btn.btn-primary.btn-md.js-trigger-hiddenform New Project
+      = link_to 'New Project', new_project_path(domain_id: @domain_id, project_id: @project_id), class: 'btn btn-primary btn-md', data: { modal: true }
