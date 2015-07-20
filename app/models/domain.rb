@@ -27,6 +27,7 @@ class Domain < ActiveRecord::Base
       rescue
         p '.......................'
         p self.service_user(region).domains.all(:name => fid).first
+        
         fog_domain = self.service_user(region).domains.all(:name => fid).first
       end
 
