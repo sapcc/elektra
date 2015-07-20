@@ -36,7 +36,8 @@ shared_examples_for "an authenticated_user controller" do
       end
 
       it "throws exception if domain is changed and domain NOT exists" do
-        expect { get :index, domain_fid: 'SUPER_BAD_DOMAIN' }.to raise_error(ActiveRecord::RecordNotFound)
+        get :index, domain_fid: 'SUPER_BAD_DOMAIN'
+        expect(response).to render_template("application/error")
       end
     end
   end
