@@ -21,7 +21,12 @@ class Domain < ActiveRecord::Base
       # try to get from authority with key or unslugged name
       begin
         fog_domain = self.service_user(region).domains.find_by_id fid
+        
+        p "::::::::::::::"
+        p (self.service_user(region).domains.find_by_id fid)
       rescue
+        p '.......................'
+        p self.service_user(region).domains.all(:name => fid).first
         fog_domain = self.service_user(region).domains.all(:name => fid).first
       end
 
@@ -43,6 +48,7 @@ class Domain < ActiveRecord::Base
     p ">>>>>>>>>>>>>>>>>>>>>"
     p "region: #{region}"
     p MonsoonOpenstackAuth.api_client(region).connection_driver.connection
+    
      
     @service_user ||= MonsoonOpenstackAuth.api_client(region).connection_driver.connection
   end
