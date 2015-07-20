@@ -5,11 +5,10 @@ class Project < ActiveRecord::Base
   extend FriendlyId
   friendly_id :name, :use => :scoped, :scope => :domain
 
-
   def should_generate_new_friendly_id?
     name_changed?
   end
-
+  
   def self.friendly_find_or_create region, domain, fid
     # try with friendly id
     project = domain.projects.friendly.find fid rescue ActiveRecord::RecordNotFound

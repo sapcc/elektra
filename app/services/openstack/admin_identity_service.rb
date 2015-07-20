@@ -28,6 +28,12 @@ module Openstack
         return nil
       end
     end
+    
+    def set_user_default_project(current_user,project_id)
+      user = service_user.users.find_by_id(current_user.id)
+      user.default_project_id = project_id
+      user.save
+    end
 
     def roles
       @roles ||= service_user.roles

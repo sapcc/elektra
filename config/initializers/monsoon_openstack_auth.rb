@@ -1,3 +1,22 @@
+def after_login_url(current_user)
+  region = MonsoonOpenstackAuth.configuration.default_region
+  
+  url = if current_user.project_id
+    domain = ::Domain.friendly_find_or_create region, current_user.project_domain_id
+    project = ::Project.friendly_find_or_create region, domain, current_user.project_id
+    
+    "/#{domain.slug}/#{project.slug}/projects/#{project.slug}"
+  elsif current_user.domain_id
+    domain = ::Domain.friendly_find_or_create region, current_user.domain_id
+    
+    "/#{domain.slug}"
+  else
+    "/"
+  end
+rescue
+  "/"
+end
+
 MonsoonOpenstackAuth.configure do |config|
   # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
   # config.connection_driver = DriverClass
@@ -25,7 +44,7 @@ MonsoonOpenstackAuth.configure do |config|
   config.default_domain_name = 'sap_default'
 
   # optional, default= last url before redirected to form
-  #config.login_redirect_url = '/'
+  config.login_redirect_url = -> current_user { after_login_url(current_user)}
 
   # authorization policy file
   config.authorization.policy_file_path = "config/policy.json"
