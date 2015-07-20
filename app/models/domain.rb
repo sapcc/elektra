@@ -40,6 +40,10 @@ class Domain < ActiveRecord::Base
   end
 
   def self.service_user region
+    p ">>>>>>>>>>>>>>>>>>>>>"
+    p "region: #{region}"
+    p MonsoonOpenstackAuth.api_client(region).connection_driver.connection
+     
     @service_user ||= MonsoonOpenstackAuth.api_client(region).connection_driver.connection
   end
 
