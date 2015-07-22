@@ -12,6 +12,10 @@ class Fog::Identity::OpenStack::V3::Project
     return id
   end
 
+  def is_sandbox?
+    self.name.end_with? "_sandbox"
+  end
+  
 end
 
 class Fog::Identity::OpenStack::V3::Domain
@@ -23,7 +27,7 @@ class Fog::Identity::OpenStack::V3::Domain
     return p.slug if p
     return id
   end
-
+  
 end
 
 

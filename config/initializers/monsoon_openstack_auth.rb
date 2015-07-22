@@ -3,27 +3,20 @@ def after_login_url(referrer_url, current_user)
     path = URI(referrer_url).path rescue nil
     path.nil? ? true : path.count('/') < 3
   end
-
-  if redirect_to_sandbox
+  
+  sandbox_url = if (redirect_to_sandbox and current_user.project_id)
     region = MonsoonOpenstackAuth.configuration.default_region
-
-    if current_user.project_id
-      domain = ::Domain.friendly_find_or_create region, current_user.project_domain_id
-      project = ::Project.friendly_find_or_create region, domain, current_user.project_id
-    
-      "/#{domain.slug}/#{project.slug}/projects/#{project.slug}"
-    elsif current_user.domain_id
-      domain = ::Domain.friendly_find_or_create region, current_user.domain_id
-    
-      "/#{domain.slug}"
-    else
-      "/"
-    end
+    domain = ::Domain.friendly_find_or_create region, current_user.project_domain_id
+    project = ::Project.friendly_find_or_create region, domain, current_user.project_id
+    "/#{domain.slug}/#{project.slug}/projects/#{project.slug}"
   else
-    referrer_url
-  end  
+    nil
+  end
+    
+  sandbox_url || referrer_url
+      
 rescue
-  "/"
+  referrer_url || "/"
 end
 
 MonsoonOpenstackAuth.configure do |config|

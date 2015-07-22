@@ -2,18 +2,22 @@
 .page-header
   %h1
     Project:
-    = @forms_project.name
+    = @current_project.name
 
   .row
     .col-sm-6
       %p Show super interesting information about this project here.
+      %p= link_to "Instances (#{@instances.length})", instances_path 
       
-      %p= link_to 'Instances', instances_path(domain_fid: @domain_fid, project_fid: @project_fid)
+      - if @current_project.subtree.count>0
+        - @current_project.subtree.each do |sub_project|
+          - project = sub_project["project"]
+          = link_to project["name"], project_path(domain_fid: project["domain_id"], project_fid: project["id"], id: project["id"]), class: "list-group-item"
 
     .col-sm-6
-      - if current_user.is_allowed?("identity:project_delete", {trarget: {project: @forms_project} }) and !@forms_project.is_sandbox?
-        = link_to "Delete Project", project_path(domain_fid: @domain_fid, project_fid:@project_fid, id:@forms_project.id), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
+      - if current_user.is_allowed?("identity:project_delete", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
+        = link_to "Delete Project", project_path(id:@current_project.fid), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
 
-      - if current_user.is_allowed?("identity:project_update", {trarget: {project: @forms_project} }) and !@forms_project.is_sandbox?
-        = link_to "Edit Project", edit_project_path(domain_fid: @domain_fid, project_fid:@project_fid, id:@forms_project.id), class: "btn btn-primary", data: { modal: true }
+      - if current_user.is_allowed?("identity:project_update", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
+        = link_to "Edit Project", edit_project_path(id:@current_project.fid), class: "btn btn-primary", data: { modal: true }
             

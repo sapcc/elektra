@@ -1,4 +1,4 @@
-= simple_form_for @forms_project, url: project_path(domain_id: @domain_id, id: @forms_project.id), method: :put, remote: request.xhr?, html: {data: {modal: true} }  do |f|
+= simple_form_for @forms_project, url: project_path(id: @forms_project.id), method: :put, remote: modal?, html: {data: {modal: modal?} }  do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - unless @forms_project.errors["message"].blank?
       %p.alert.alert-error= @forms_project.errors.full_messages.to_sentence

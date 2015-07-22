@@ -22,10 +22,19 @@ class ApplicationController < ActionController::Base
         @project_fid ||= project.slug
         @project_id ||= project.key
       end
+      
+      # if params[:domain_fid]!=@domain_fid or params[:project_fid]!=@project_fid
+      #   redirect_to url_for params.merge(domain_fid: @domain_fid, project_fid: @project_fid)
+      # end
+      
     rescue => exception
       @errors = {exception.class.name => exception.message}
       render template: 'application/error'
     end
+  end
+  
+  def url_options
+    { domain_fid: @domain_fid, project_fid: @project_fid }.merge(super)
   end
   
   helper_method :modal?
