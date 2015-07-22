@@ -1,30 +1,43 @@
-%tr{id: "instance_#{instance.id}"}
-  %td
+- data = {}
+- if instance.os_ext_sts_task_state
+  - data[:update_url]=update_item_instance_path(domain_fid:@domain_fid,project_fid:@project_fid,id:instance.id)
+  - data[:interval]=5000 
+
+%tr{class: "state-#{instance.state.downcase} #{'task-state ' + instance.os_ext_sts_task_state if instance.os_ext_sts_task_state}", data: data}
+  %td    
     - if current_user.is_allowed?("identity:instance_get", {})
       = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), data: {modal: true}
-        
-    / - if current_user.is_allowed?("identity:instance_get", {})
-    /   = link_to instance.name, instance_path(domain_id: @domain_id, project_id: @project_id, id: instance.id), class: 'show_instance_button', data: {toggle:"modal", target: "#instanceShow#{instance.id}"}
-    / - else
-    /   = instance.name
         
   %td= services.compute.images.get(instance.image["id"]).name
   %td= instance.addresses.fetch("private",[]).collect{|address| address["addr"]}.join(', ') 
   %td
-    = case instance.os_ext_sts_power_state; when 0 then 'No State'; when 1 then 'Running'; when 3 then 'Paused'; end
-  %td= instance.state  
+    =# instance.os_ext_sts_power_state
+    = instance.power_state_string
+  %td
+    = instance.os_ext_sts_task_state.nil? ? instance.state.capitalize : instance.os_ext_sts_task_state
+  
   %td.snug
     - if current_user.is_allowed?("identity:instance_delete", {}) or current_user.is_allowed?("identity:instance_update", {})
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.glyphicon.glyphicon-cog
           -# %span.spinner
+          
+        - unless instance.os_ext_sts_task_state
+          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+            - if current_user.is_allowed?("identity:instance_update", {})
+              %li= link_to 'Edit', edit_instance_path(id: instance.id, domain_id: @domain_id, project_fid: @project_fid), data: {loading_status: true}  
+              
+              - if ['Shut Down','Paused'].include? instance.power_state_string
+                %li= link_to 'Start', start_instance_path(id: instance.id, domain_id: @domain_id, project_fid: @project_fid), method: :put, data: {loading_status: true}
+                  
+                        
+              %li.divider
+            - if current_user.is_allowed?("identity:instance_update", {})
+              - if instance.power_state_string=='Running'
+                %li= link_to 'Stop', stop_instance_path(id: instance.id, domain_id: @domain_id, project_fid: @project_fid), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}  
 
-        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if current_user.is_allowed?("identity:instance_update", {})
-            %li= link_to 'Edit', edit_instance_path(id: instance.id, domain_id: @domain_id), data: {modal: true}            
-            %li.divider
-          - if current_user.is_allowed?("identity:instance_delete", {})
-            %li= link_to 'Delete', instance_path(id: instance.id, domain_id: @domain_id), method: :delete, data: { confirm: 'Are you sure you want to delete the credential?', ok: "Yes, delete it", confirmed: "$(this).closest('tr').addClass('deleting')", modal: true}
-
-
+                %li= link_to 'Pause', pause_instance_path(id: instance.id, domain_id: @domain_id, project_fid: @project_fid), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }  
+          
+            - if current_user.is_allowed?("identity:instance_delete", {})
+              %li= link_to 'Terminate', instance_path(id: instance.id, domain_id: @domain_id, project_fid: @project_fid), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: "Yes, terminate it", confirmed: :loading_status}

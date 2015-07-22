@@ -1,18 +1,27 @@
-def after_login_url(current_user)
-  region = MonsoonOpenstackAuth.configuration.default_region
-  
-  url = if current_user.project_id
-    domain = ::Domain.friendly_find_or_create region, current_user.project_domain_id
-    project = ::Project.friendly_find_or_create region, domain, current_user.project_id
-    
-    "/#{domain.slug}/#{project.slug}/projects/#{project.slug}"
-  elsif current_user.domain_id
-    domain = ::Domain.friendly_find_or_create region, current_user.domain_id
-    
-    "/#{domain.slug}"
-  else
-    "/"
+def after_login_url(referrer_url, current_user)
+  redirect_to_sandbox = if referrer_url
+    path = URI(referrer_url).path rescue nil
+    path.nil? ? true : path.count('/') < 3
   end
+
+  if redirect_to_sandbox
+    region = MonsoonOpenstackAuth.configuration.default_region
+
+    if current_user.project_id
+      domain = ::Domain.friendly_find_or_create region, current_user.project_domain_id
+      project = ::Project.friendly_find_or_create region, domain, current_user.project_id
+    
+      "/#{domain.slug}/#{project.slug}/projects/#{project.slug}"
+    elsif current_user.domain_id
+      domain = ::Domain.friendly_find_or_create region, current_user.domain_id
+    
+      "/#{domain.slug}"
+    else
+      "/"
+    end
+  else
+    referrer_url
+  end  
 rescue
   "/"
 end
@@ -44,15 +53,15 @@ MonsoonOpenstackAuth.configure do |config|
   config.default_domain_name = 'sap_default'
 
   # optional, default= last url before redirected to form
-  config.login_redirect_url = -> current_user { after_login_url(current_user)}
+  config.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
 
   # authorization policy file
   config.authorization.policy_file_path = "config/policy.json"
   config.authorization.context = "identity"
   
   #config.authorization.trace_enabled = true
-  config.authorization.reload_policy = true
-  config.authorization.trace_enabled = true
+  config.authorization.reload_policy = false
+  config.authorization.trace_enabled = false
   
   config.authorization.controller_action_map = {
     :index   => 'list',

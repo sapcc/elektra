@@ -338,7 +338,7 @@ td, th {
   }
 }
 
-tr.deleting {
+tr.deleting, tr.updating {
   td {
     color: #999;
     background-color: #efefef;
@@ -355,6 +355,47 @@ tr.deleting {
     }
   }
 }
+
+tr.state-active {
+  td:first-child {
+    
+  }
+}
+
+tr.state-paused {
+  td:first-child {
+    &:before {
+      font-family: 'Glyphicons Halflings';
+      content: "\e034";
+      color: #FFCC33;
+    }
+  }
+}
+
+tr.state-error {
+  td:first-child {
+    &:before {
+      font-family: 'Glyphicons Halflings';
+      content: "\e034";
+      color: red;
+    }
+  }
+}
+
+tr.task-state {
+  background-color: #ffffb5;
+  .btn {
+    .glyphicon {
+      @include spinner(3px solid, 1.2s);
+
+      &:before {
+        content: "";
+      }
+
+    }
+  }
+}
+
 
 .loading {
   &:before {

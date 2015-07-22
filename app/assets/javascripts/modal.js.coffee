@@ -21,7 +21,7 @@ $ ->
 
     #InfoDialog.showLoading()
     
-    $.get location, (data, status, xhr)->
+    $.get location, {modal:true}, (data, status, xhr)->
       $button.removeClass('loading')
       #InfoDialog.hideLoading()
       
@@ -39,6 +39,10 @@ $ ->
           Dashboard.initForm()
         
     false
+    
+  $(document).on 'ajax:beforeSend', 
+    'form[data-modal=true]', (event, xhr, settings) ->
+      settings.data += "&modal=true"    
 
   $(document).on 'ajax:success',
     'form[data-modal=true]', (event, data, status, xhr)->  

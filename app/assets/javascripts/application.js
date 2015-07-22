@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap-sprockets
+//= require plugins  
 //= require dashboard
 //= require authenticated_user/users
 //= require dialogs

@@ -19,10 +19,9 @@ class @Dashboard
     $("form select[data-trigger=change]").change Dashboard.showFormDetails
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
-    
-
-$(document).on 'ready page:load', ->
   
+    
+$(document).on 'ready page:load', ->
   # -----------
   # Tooltips
   # -----------
@@ -30,3 +29,12 @@ $(document).on 'ready page:load', ->
   
   # init Form
   Dashboard.initForm()
+
+  # update items which has the update attribute
+  $('[data-update-url]').update()
+  
+  # initialize buttons with loading status
+  $(document).on 'click', 'tr [data-loading-status]', () -> $(this).closest('tr').addClass('updating')
+  $('tr [data-confirmed=loading_status]').attr('data-confirmed',"$(this).closest('tr').addClass('updating')")
+        
+

@@ -6,7 +6,14 @@ Rails.application.routes.draw do
 
   scope "/:domain_fid/(:project_fid)" do
     scope module: 'authenticated_user' do
-      resources :instances
+      resources :instances do
+        member do
+          get 'update_item'
+          put 'stop'
+          put 'start' 
+          put 'pause'
+        end
+      end
       resources :volumes
       resources :os_images
       resources :users, only: [:new, :create]

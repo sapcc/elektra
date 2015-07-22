@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
 
   def modal?
     if @modal.nil?
-      @modal = request.xhr? ? true : false 
+      @modal = (request.xhr? and params[:modal]) ? true : false 
     end
     @modal
   end

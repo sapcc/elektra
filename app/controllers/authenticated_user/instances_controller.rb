@@ -9,9 +9,7 @@ module AuthenticatedUser
       @user_domain_projects = services.identity.projects.auth_projects
 
       @active_project = @user_domain_projects.find { |project| project.id == @project_id } if @project_id
-      @instances = services.compute.servers if @project_id
-      
-      p @instances
+      @instances = services.compute.servers.all if @project_id
     end
     
     def show
@@ -29,13 +27,22 @@ module AuthenticatedUser
       @forms_instance.image=@images.first.id
     end
     
+    def update_item
+      instance = services.compute.find_instance(params[:id])
+      if instance
+        render partial: 'authenticated_user/instances/item', locals: {instance: instance}
+      else
+        render text: ''
+      end
+    end
+    
     def create
       @forms_instance = services.compute.forms_instance(params[:id])    
       @forms_instance.attributes=params[:forms_instance]
       
       if @forms_instance.save
         flash[:notice] = "Instance successfully created."
-        redirect_to instances_path(domain_id:@domain_id, project_id:@project_id)
+        redirect_to instances_path(domain_fid:@domain_fid, project_fid:@project_fid)
       else
         @flavors = services.compute.flavors
         @images = services.image.images
@@ -55,15 +62,39 @@ module AuthenticatedUser
       
     end
     
+    def stop
+      execute_instance_action
+    end
+    
+    def start
+      execute_instance_action
+    end
+    
+    def pause
+      execute_instance_action
+    end
+
+    
     def destroy
       @forms_instance = services.compute.forms_instance(params[:id])
       
       if @forms_instance.destroy
-        flash[:notice] = "Instance deleted."
+        flash[:notice] = "instance is terminating"
       else
         flash[:notice] = "Could not delete instance."
       end
-      redirect_to instances_url(domain_id:@domain_id,project_id:@project_id)
+      redirect_to instances_url(domain_fid:@domain_fid,project_fid:@project_fid)
+    end
+    
+    private
+    
+    def execute_instance_action(action=action_name)
+      instance = services.compute.find_instance(params[:id])
+      p '::::::::::::'
+      p instance
+      instance.send(action)
+      p instance
+      redirect_to instances_url(domain_fid:@domain_fid,project_fid:@project_fid)
     end
   end
 

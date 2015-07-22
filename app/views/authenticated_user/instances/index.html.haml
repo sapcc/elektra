@@ -6,7 +6,7 @@
 - if @project_id   
   - if current_user.is_allowed?("identity:instance_create", {instance: {user_id: current_user.id} })
     .toolbar
-      = link_to 'Create new', new_instance_path(domain_id: @domain_id), data: {modal: true}, class: 'btn btn-primary btn-lg'
+      = link_to 'Create new', new_instance_path(domain_id: @domain_id, project_fid: @project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
       
   %table.table
     %thead

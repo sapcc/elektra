@@ -154,8 +154,6 @@ module Forms
       create_attributes.delete(:id)
       
       begin
-        p ">>>>>>>>>>>>>>>>>>>>>"
-        p create_attributes
         @model = @service.send("create_#{@class_name}", create_attributes)
         self.id = @model.id
       rescue => e
@@ -198,7 +196,8 @@ module Forms
     
     def load_model(id)
       @model = @service.send("find_#{@class_name}",id)
-      self.attributes = @model.attributes
+      
+      self.attributes = @model.attributes if @model
     end
     
   end
