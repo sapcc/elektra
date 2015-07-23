@@ -22,9 +22,9 @@ class ApplicationController < ActionController::Base
         @project_fid ||= project.slug
         @project_id ||= project.key
       end
-      
+
       if params[:domain_fid]!=@domain_fid or params[:project_fid]!=@project_fid
-        redirect_to url_for params.merge(domain_fid: @domain_fid, project_fid: @project_fid)
+        redirect_to url_for(params.merge(domain_fid: @domain_fid, project_fid: @project_fid))
       end
       
     rescue => exception
