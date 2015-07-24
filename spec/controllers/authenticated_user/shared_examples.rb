@@ -35,10 +35,10 @@ shared_examples_for "an authenticated_user controller" do
         expect(response).to redirect_to(controller.url_for(controller.params.merge(domain_fid: 'bad_domain')))
       end
       
-      it "redirects to login form if domain has changed and domain exists" do
+      it "render error if domain has changed and domain exists and user is not authorized" do
         @bad_domain = create(:domain, key: 'BAD_DOMAIN')
         get :index, domain_fid: 'bad_domain'
-        expect(response).to redirect_to(controller.monsoon_openstack_auth.new_session_path)
+        expect(response).to render_template('authenticated_user/error')
       end
 
       it "throws exception if domain is changed and domain NOT exists" do

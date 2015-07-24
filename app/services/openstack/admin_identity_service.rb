@@ -29,12 +29,24 @@ module Openstack
       end
     end
     
+    def new_user?(user_id)
+      user = service_user.users.find_by_id(user_id)
+      user.roles.length==0 or user.projects.count==0
+    end
+    
     def set_user_default_project(current_user,project_id)
       user = service_user.users.find_by_id(current_user.id)
       user.default_project_id = project_id
       user.save
     end
-
+    
+    def create_user_domain_role(user_id,role_name)
+      return false if user_id.nil? or role_name.nil?
+      user = service_user.users.find_by_id(user_id)
+      member_role = service_user.roles.all(name:role_name).first
+      user.grant_role(member_role.id)
+    end
+    
     def roles
       @roles ||= service_user.roles
     end

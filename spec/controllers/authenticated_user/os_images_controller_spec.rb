@@ -16,7 +16,7 @@ describe AuthenticatedUser::OsImagesController do
 
   before(:each) do
     stub_authentication
-    allow_any_instance_of(Openstack::IdentityService).to receive(:has_projects?).and_return(true)
+    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:new_user?).and_return(false)
   end
 
   describe "GET 'index'" do

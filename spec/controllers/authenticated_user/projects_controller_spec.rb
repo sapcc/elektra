@@ -18,6 +18,7 @@ describe AuthenticatedUser::ProjectsController do
     stub_authentication
 
     driver = object_spy('driver')
+    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:new_user?).and_return(false)
     allow_any_instance_of(Openstack::IdentityService).to receive(:driver).and_return(driver)
   end
 

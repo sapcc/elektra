@@ -5,14 +5,34 @@ class AuthenticatedUserController < ApplicationController
     session[:init] = true unless session.loaded?
   end
 
-  authentication_required domain: -> c { c.instance_variable_get("@domain_id") }, project: -> c { c.instance_variable_get('@project_id') }
+  # authenticate user -> current_user is available
+  authentication_required domain: -> c { c.instance_variable_get("@domain_id") },
+                          project: -> c { c.instance_variable_get('@project_id') },
+                          rescope: false # do not rescope after authentication
   
+  # check if user has accepted terms of use. Otherwise it is a new, unboarded user.                                                  
   before_filter :check_terms_of_use
+  # rescope token
+  before_filter :authentication_rescope_token
+                          
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
   rescue_from "Excon::Errors::InternalServerError", with: :handle_api_error
   rescue_from "MonsoonOpenstackAuth::ApiError", with: :handle_auth_error
+  rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :handle_auth_error
 
+  
+  def check_terms_of_use
+    if services.admin_identity.new_user?(current_user.id)
+      # new user: user has not a role for requested domain or user has no project yet. 
+        
+      # save current_url in session  
+      session[:requested_url] = request.env['REQUEST_URI']
+      # redirect to user onboarding page.
+      redirect_to new_user_path and return 
+    end
+  end
+  
   protected
 
   def handle_api_error(exception)
@@ -23,15 +43,6 @@ class AuthenticatedUserController < ApplicationController
   def handle_auth_error(exception)
     @errors = {exception.class.name => exception.message}
     render template: 'authenticated_user/error'
-  end
-
-  def check_terms_of_use
-    unless services.identity.has_projects?
-      # user has no project yet. 
-      # We assume that it is a new user -> redirect to terms of use page.
-      session[:requested_url] = request.env['REQUEST_URI']
-      redirect_to new_user_path
-    end
   end
   
   def authorization_forbidden exception
