@@ -25,7 +25,6 @@ class AuthenticatedUserController < ApplicationController
   def check_terms_of_use
     if services.admin_identity.new_user?(current_user.id)
       # new user: user has not a role for requested domain or user has no project yet. 
-        
       # save current_url in session  
       session[:requested_url] = request.env['REQUEST_URI']
       # redirect to user onboarding page.
@@ -41,6 +40,11 @@ class AuthenticatedUserController < ApplicationController
   end
 
   def handle_auth_error(exception)
+    # the user token can be invaild if for example the domain permission has been modified in backend.
+    # in this case redirect user to login form
+    valid_token = services.admin_identity.validate_token(current_user.token)
+    redirect_to_login_form and return unless valid_token
+    
     @errors = {exception.class.name => exception.message}
     render template: 'authenticated_user/error'
   end

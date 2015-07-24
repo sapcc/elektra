@@ -24,7 +24,7 @@ class AuthenticatedUser::UsersController < AuthenticatedUserController
       # TODO: remove after refactoring
       domain = ::Domain.friendly_find_or_create @region, @domain_fid
       project = ::Project.friendly_find_or_create @region, domain, sandbox.id
-      
+            
       # redirect to sandbox (friendly url)
       redirect_to project_path(domain_fid:@domain_fid, id: project.slug)
     else

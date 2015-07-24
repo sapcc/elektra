@@ -47,6 +47,10 @@ module Openstack
       user.grant_role(member_role.id)
     end
     
+    def validate_token(token)
+      service_user.tokens.validate(token) rescue false
+    end
+    
     def roles
       @roles ||= service_user.roles
     end
