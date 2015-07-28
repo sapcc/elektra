@@ -275,6 +275,7 @@ GEM
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
     hashie (3.4.2)
+    high_voltage (2.3.0)
     hike (1.2.3)
     hitimes (1.2.2)
     html2haml (2.0.0)
@@ -465,6 +466,7 @@ DEPENDENCIES
   friendly_id
   guard-rspec
   haml-rails
+  high_voltage
   jquery-rails
   jquery-turbolinks
   monsoon-fog!

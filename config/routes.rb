@@ -11,7 +11,7 @@ Rails.application.routes.draw do
         member do
           get 'update_item'
           put 'stop'
-          put 'start' 
+          put 'start'
           put 'pause'
         end
       end
@@ -19,9 +19,10 @@ Rails.application.routes.draw do
       resources :os_images
       resources :users, only: [:new, :create]
       resources :credentials
-      
+
       resources :projects
-      # #TEST, use scoped project id as project  
+
+      # #TEST, use scoped project id as project
       # constraints project_id: nil do |request|
       #   resources :projects, only: [:index,:new,:create]
       # end
@@ -34,6 +35,10 @@ Rails.application.routes.draw do
       #   delete '/', to: 'projects#destroy'#, as: :project
       # end
 
+
+
+      get 'start' => 'pages#show', id: 'start'
+
     end
   end
 
@@ -44,5 +49,9 @@ Rails.application.routes.draw do
   scope "/system" do
     get :health, to: "health#show"
   end
+
+  # route for overwritten High Voltage Pages controller
+  get "/pages/*id" => 'pages#show', as: :page, format: false
+
 
 end

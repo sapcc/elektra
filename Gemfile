@@ -17,6 +17,7 @@ gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
 gem 'friendly_id'
+gem 'high_voltage'
 
 gem 'responders'
 
