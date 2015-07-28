@@ -346,7 +346,7 @@ tr.deleting, tr.updating {
 
   .btn {
     .glyphicon {
-      @include spinner(3px solid, 1.2s);
+      @include spinner(background rgba(0,0,0,0.2));
 
       &:before {
         content: "";
@@ -358,7 +358,7 @@ tr.deleting, tr.updating {
 
 tr.state-active {
   td:first-child {
-    
+
   }
 }
 
@@ -386,7 +386,7 @@ tr.task-state {
   background-color: #ffffb5;
   .btn {
     .glyphicon {
-      @include spinner(3px solid, 1.2s);
+      @include spinner(background rgba(0,0,0,0.2));
 
       &:before {
         content: "";
@@ -400,7 +400,7 @@ tr.task-state {
 .loading {
   &:before {
     content: " ";
-    @include spinner(3px solid, 1.2s);
+    @include spinner(background rgba(0,0,0,0.2));
     margin-right: 3px;
   }
 }
@@ -408,8 +408,8 @@ tr.task-state {
 .btn-primary.loading {
   &:before {
     content: " ";
-    @include spinner(3px solid #fff, 1.2s);
-    margin-right: 3px;
+    @include spinner(border-color #efefef, background rgba(0,0,0,0.2));
+    margin-right: 0.5em;
   }
 }
 
@@ -418,7 +418,7 @@ tr.task-state {
     position: relative;
     left: 50%;
     margin-left: -3em;
-    @include spinner(6em, 1.2s);
+    @include spinner(6em);
   }
   .loading-text {
     position: absolute;
