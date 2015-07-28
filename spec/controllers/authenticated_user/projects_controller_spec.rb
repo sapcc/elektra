@@ -6,12 +6,12 @@ describe AuthenticatedUser::ProjectsController do
 
   # commented out for now because the user controller doesn't have an index action and all the shared examples use the index action
   # it_behaves_like "an authenticated_user controller"
-  default_params = {domain_fid: AuthenticationStub.domain_id}
+  default_params = {domain_id: AuthenticationStub.domain_id}
 
   before(:all) do
     DatabaseCleaner.clean
-    @domain = create(:domain, key: default_params[:domain_fid])
-    @project = create(:project, key: default_params[:project_fid], domain: @domain)
+    @domain = create(:domain, key: default_params[:domain_id])
+    @project = create(:project, key: default_params[:project_id], domain: @domain)
   end
 
   before(:each) do

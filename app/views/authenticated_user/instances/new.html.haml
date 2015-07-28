@@ -1,4 +1,4 @@
-= simple_form_for @forms_instance, url: instances_path(domain_fid: @domain_fid, project_fid: @project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @forms_instance, url: instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @forms_instance.errors["message"].blank?

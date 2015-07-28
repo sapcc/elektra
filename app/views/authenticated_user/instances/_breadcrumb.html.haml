@@ -13,6 +13,6 @@
           - if @user_domain_projects
             - @user_domain_projects.each do |project|
               %li{class: ("active" if project.id == @project_id)}
-                = link_to project.name, instances_path(domain_fid: @domain_fid, project_fid: project.fid)
+                = link_to project.name, instances_path(domain_id: @scoped_domain_fid, project_id: project.fid)
           %li.divider
-          %li= link_to "Instances overview", instances_path(domain_fid: @domain_fid)
+          %li= link_to "Instances overview", instances_path(domain_id: @scoped_domain_fid)

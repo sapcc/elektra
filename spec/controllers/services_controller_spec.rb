@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe ServicesController do
 
-  default_params = {domain_fid: AuthenticationStub.domain_id}
+  default_params = {domain_id: AuthenticationStub.domain_id}
 
   before(:all) do
     DatabaseCleaner.clean
-    @domain = create(:domain, key: default_params[:domain_fid])
-    @project = create(:project, key: default_params[:project_fid], domain: @domain)
+    @domain = create(:domain, key: default_params[:domain_id])
+    @project = create(:project, key: default_params[:project_id], domain: @domain)
   end
 
 

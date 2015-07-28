@@ -3,13 +3,15 @@ module AuthenticatedUser
 
     def index
       #services.identity
-      @active_domain = services.identity.find_domain(@domain_id)
+      @active_domain = services.identity.find_domain(@scoped_domain_id)
       #render text: 'test' and return
 
       @user_domain_projects = services.identity.projects.auth_projects
-
-      @active_project = @user_domain_projects.find { |project| project.id == @project_id } if @project_id
-      @instances = services.compute.servers.all if @project_id
+      
+      if @scoped_project_id
+        @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id } 
+        @instances = services.compute.servers.all 
+      end
     end
     
     def show
@@ -42,7 +44,7 @@ module AuthenticatedUser
       
       if @forms_instance.save
         flash[:notice] = "Instance successfully created."
-        redirect_to instances_path(domain_fid:@domain_fid, project_fid:@project_fid)
+        redirect_to instances_path
       else
         @flavors = services.compute.flavors
         @images = services.image.images
@@ -83,18 +85,15 @@ module AuthenticatedUser
       else
         flash[:notice] = "Could not delete instance."
       end
-      redirect_to instances_url(domain_fid:@domain_fid,project_fid:@project_fid)
+      redirect_to instances_url
     end
     
     private
     
     def execute_instance_action(action=action_name)
       instance = services.compute.find_instance(params[:id])
-      p '::::::::::::'
-      p instance
       instance.send(action)
-      p instance
-      redirect_to instances_url(domain_fid:@domain_fid,project_fid:@project_fid)
+      redirect_to instances_url
     end
   end
 

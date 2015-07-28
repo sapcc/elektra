@@ -9,15 +9,7 @@ class Forms::Project < Forms::Base
   default_values enabled: true
 
   def after_save
-    domain = ::Domain.friendly_find_or_create self.service.region, self.domain_id
-    if domain
-      p = ::Project.where(key: self.id).first
-      p = ::Project.new unless p
-      p.domain = domain
-      p.key = self.id
-      p.name = self.name
-      p.save
-    end
+    Project.find_or_create_by_remote_project(self)
   end
 
   def before_destroy

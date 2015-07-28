@@ -3,6 +3,11 @@
   %h1
     Project:
     = @current_project.name
+    
+    %br
+    =# @current_project.domain.friendly_id
+    = @current_project.friendly_id
+    
 
   .row
     .col-sm-6
@@ -11,7 +16,7 @@
       
       - if @current_project.subtree.count>0
         - @current_project.subtree.each do |sub_project|
-          = link_to sub_project.name, project_path(domain_fid: sub_project.domain_id, project_fid: sub_project.id, id: sub_project.id), class: "list-group-item"
+          = link_to sub_project.name, project_path(domain_id: sub_project.domain_id, project_id: sub_project.id, id: sub_project.id), class: "list-group-item"
 
     .col-sm-6
       - if current_user.is_allowed?("identity:project_delete", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?

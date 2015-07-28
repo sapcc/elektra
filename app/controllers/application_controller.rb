@@ -6,35 +6,32 @@ class ApplicationController < ActionController::Base
   include OpenstackServiceProvider::Services
 
   prepend_before_filter do
+    domain_id = params[:domain_id] || 'sap_default'
+    project_id = params[:project_id]
 
-    @region ||= MonsoonOpenstackAuth.configuration.default_region
-
-    fid = params[:domain_fid] || 'sap_default'
-
-    begin
-      domain = ::Domain.friendly_find_or_create @region, fid
-      @domain_fid = domain.slug
-      @domain_id = domain.key
-
-      if params[:project_fid]
-        fid = params[:project_fid]
-        project = ::Project.friendly_find_or_create @region, domain, fid
-        @project_fid ||= project.slug
-        @project_id ||= project.key
-      end
-
-      if params[:domain_fid]!=@domain_fid or params[:project_fid]!=@project_fid
-        redirect_to url_for(params.merge(domain_fid: @domain_fid, project_fid: @project_fid))
+    local_domain = services.admin_identity.find_or_create_local_domain(domain_id) if domain_id    
+    
+    if local_domain          
+      @scoped_domain_id = local_domain.key
+      @scoped_domain_fid = local_domain.slug
+      
+      if project_id
+        local_project = services.admin_identity.find_or_create_local_project(local_domain,project_id)
+        @scoped_project_id = local_project.key if local_project
+        @scoped_project_fid = local_project.slug if local_project
       end
       
-    rescue => exception
-      @errors = {exception.class.name => exception.message}
+      if domain_id!=@scoped_domain_fid or project_id!=@scoped_project_fid
+        redirect_to url_for(params.merge(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid))
+      end   
+    else
+      @errors = {"domain" => "Not found"}
       render template: 'application/error'
-    end
+    end   
   end
   
   def url_options
-    { domain_fid: @domain_fid, project_fid: @project_fid }.merge(super)
+    { domain_id: @scoped_domain_fid, project_id: @scoped_project_fid }.merge(super)
   end
   
   helper_method :modal?

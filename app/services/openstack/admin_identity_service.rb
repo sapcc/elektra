@@ -28,7 +28,45 @@ module Openstack
         return nil
       end
     end
+  
+  
+    ######################### FIND LOCAL 
+    def find_or_create_local_domain(friendly_id_or_key)
+      Domain.find_by_friendly_id_or_key(friendly_id_or_key) or 
+      create_local_domain(friendly_id_or_key)
+    end
     
+    def find_or_create_local_project(local_domain, friendly_id_or_key)
+      Project.find_by_domain_fid_and_fid(local_domain.slug,friendly_id_or_key) or 
+      create_local_project(friendly_id_or_key,local_domain.key)
+    end
+      
+    def create_local_domain(domain_id)
+      # load remote domain
+      remote_domain = begin
+        service_user.domains.find_by_id(domain_id)
+      rescue
+        service_user.domains.all(:name => domain_id).first
+      end
+      
+      # create local domain
+      Domain.find_or_create_by_remote_domain(remote_domain)
+    end
+    
+    def create_local_project(project_id, domain_id=nil)
+      remote_project = begin
+        service_user.projects.find_by_id(project_id)
+      rescue
+        if domain_id
+          service_user.projects.all(domain_id: domain_id, :name => project_id).first
+        else
+          nil
+        end
+      end
+      Project.find_or_create_by_remote_project(remote_project)
+    end
+    ########################### END
+        
     def new_user?(user_id)
       user = service_user.users.find_by_id(user_id)
       user.roles.length==0 or user.projects.count==0

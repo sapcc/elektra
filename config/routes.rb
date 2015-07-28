@@ -2,9 +2,9 @@ Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
   root :to => redirect("/#{MonsoonOpenstackAuth.configuration.default_domain_name}")
-  #root to: 'services#index', domain_fid: "sap_default" #MonsoonOpenstackAuth.configuration.default_domain_name
+  #root to: 'services#index', domain_id: "sap_default" #MonsoonOpenstackAuth.configuration.default_domain_name
 
-  scope "/:domain_fid/(:project_fid)" do
+  scope "/:domain_id/(:project_id)" do
     scope module: 'authenticated_user' do
       resources :instances do
         member do
@@ -22,7 +22,7 @@ Rails.application.routes.draw do
     end
   end
 
-  scope "/:domain_fid" do
+  scope "/:domain_id" do
     match '/', to: 'services#index', via: :get
   end
 

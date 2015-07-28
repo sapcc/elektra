@@ -72,6 +72,22 @@ module Forms
       # execute after callback
       after_initialize
     end
+    
+    def method_missing(method_sym, *arguments, &block)
+      if @model
+        if arguments.count>0
+          @model.send(method_sym,arguments)
+        else
+          @model.send(method_sym)
+        end 
+      else
+        super
+      end
+    end
+    
+    def remote_object
+      @model
+    end
   
     def attributes=(params={})
       params.each do |name, value|

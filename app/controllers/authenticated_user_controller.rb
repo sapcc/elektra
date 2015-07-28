@@ -4,12 +4,12 @@ class AuthenticatedUserController < ApplicationController
     # initialize session unless loaded yet
     session[:init] = true unless session.loaded?
   end
-
-  # authenticate user -> current_user is available
-  authentication_required domain: -> c { c.instance_variable_get("@domain_id") },
-                          project: -> c { c.instance_variable_get('@project_id') },
-                          rescope: false # do not rescope after authentication
   
+  # authenticate user -> current_user is available
+  authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
+                          project: -> c { c.instance_variable_get('@scoped_project_id') },
+                          rescope: false # do not rescope after authentication
+
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.                                                  
   before_filter :check_terms_of_use
   # rescope token

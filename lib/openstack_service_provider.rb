@@ -10,6 +10,7 @@ module OpenstackServiceProvider
     module InstanceMethods
       # load services provider
       def services(region=nil)
+        # initialize services unless already initialized
         unless @services
           region ||= auth_session.region if auth_session
           region ||= MonsoonOpenstackAuth.configuration.default_region
@@ -23,12 +24,15 @@ module OpenstackServiceProvider
               current_user)
           end
         end
+        # if services was first called for admin_identity it can happens that current_user was nil.
+        @services.current_user = current_user 
         @services
       end
     end
   end
   
   class ServicesManager
+    attr_accessor :current_user
     def initialize(endpoint,region,current_user)
       @endpoint = endpoint
       @region = region
