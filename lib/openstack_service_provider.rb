@@ -111,6 +111,7 @@ module OpenstackServiceProvider
       if arguments.blank?
         @driver.send(method_sym)
       else
+        arguments = arguments.first if arguments.count==1
         @driver.send(method_sym, arguments)
       end
     end

@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   prepend_before_filter do
     domain_id = params[:domain_id] || 'sap_default'
     project_id = params[:project_id]
+    
+    @scoped_domain_fid = domain_id
+    @scoped_project_fid = project_id
 
     local_domain = services.admin_identity.find_or_create_local_domain(domain_id) if domain_id    
     

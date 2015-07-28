@@ -10,11 +10,7 @@ module AuthenticatedUser
       
       if @scoped_project_id
         @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id } 
-        @instances = services.compute.servers.all(project_id: @scoped_project_id)
-        
-        #p ':::::::::'
-        #p ({project_id: @scoped_project_id})
-        #p @instances
+        @instances = services.compute.servers.all
       end
     end
     
@@ -35,8 +31,6 @@ module AuthenticatedUser
     
     def update_item
       instance = services.compute.find_instance(params[:id])
-      #p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>update_item"
-      #p instance
       if instance
         render partial: 'authenticated_user/instances/item', locals: {instance: instance}
       else
