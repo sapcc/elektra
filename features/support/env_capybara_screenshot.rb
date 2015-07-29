@@ -36,22 +36,26 @@ module Screenshots
 end
 
 at_exit do
-  unless Dir["features/screenshots/*"].empty?
-    puts ""
-    puts ""
-    puts "         '"
-    puts "    '    )" 
-    puts "     ) ("
-    puts "    ( .')  __/\\"
-    puts "      (.  /o/\` \\"
-    puts "       __/o/\`   \\"
-    puts "FAIL  / /o/\`    /"
-    puts "^^^^^^^^^^^^^^^^^^^^"
-    puts ""
-    puts "Some tests failed. But do not despair. Check these URLs:"
+  # do the work in a separate thread, to avoid stomping on $!,
+  # since other libraries depend on it directly.
+  Thread.new do
+    unless Dir["features/screenshots/*"].empty?
+      puts ""
+      puts ""
+      puts "         '"
+      puts "    '    )" 
+      puts "     ) ("
+      puts "    ( .')  __/\\"
+      puts "      (.  /o/\` \\"
+      puts "       __/o/\`   \\"
+      puts "FAIL  / /o/\`    /"
+      puts "^^^^^^^^^^^^^^^^^^^^"
+      puts ""
+      puts "Some tests failed. But do not despair. Check these URLs:"
 
-    Dir["features/screenshots/*"].each do |file|
-      puts Screenshots::upload(File.expand_path(file))
+      Dir["features/screenshots/*"].each do |file|
+        puts Screenshots::upload(File.expand_path(file))
+      end
     end
-  end
+  end.join
 end
