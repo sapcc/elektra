@@ -13,6 +13,8 @@
   %td
     =# instance.os_ext_sts_power_state
     = instance.power_state_string
+    %br
+    = instance.progress
   %td
     = instance.os_ext_sts_task_state.nil? ? instance.state.capitalize : instance.os_ext_sts_task_state
   

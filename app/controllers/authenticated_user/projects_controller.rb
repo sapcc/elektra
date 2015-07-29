@@ -9,7 +9,7 @@ class AuthenticatedUser::ProjectsController < AuthenticatedUserController
 
   def show
     @current_project = services.identity.projects.find_by_id(@project_id, :subtree_as_list)
-    @instances = services.compute.servers.all(tenant_id: @current_project.id)
+    @instances = services.compute.servers.all(tenant_id: @current_project.id) rescue []
   end
 
   def new

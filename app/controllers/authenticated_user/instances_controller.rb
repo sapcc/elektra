@@ -11,6 +11,7 @@ module AuthenticatedUser
       if @scoped_project_id
         @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id } 
         @instances = services.compute.servers.all
+        #p services.compute.servers
       end
     end
     

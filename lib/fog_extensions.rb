@@ -6,24 +6,12 @@ require 'fog/openstack/models/compute/server'
 
 class Fog::Identity::OpenStack::V3::Project
 
-  attr_accessor :fid
-
-  def fid
-    p = ::Project.where(key: id).first
-    return p.slug if p
-    return id
-  end
-
   def is_sandbox?
     self.name.end_with? "_sandbox"
   end
-  
-  def domain
-    service.domains.find_by_id(domain_id)
-  end
-  
+    
   def friendly_id
-    project = Project.find_or_create_by_remote_project(self)
+    project = ::Project.find_or_create_by_remote_project(self)
     project.nil? ? self.id : project.slug
   end
 end
@@ -89,21 +77,10 @@ end
 # end
 
 class Fog::Identity::OpenStack::V3::Domain
-
-  attr_accessor :fid
-
-  def fid
-    p = ::Domain.where(key: id).first
-    return p.slug if p
-    return id
-  end
-    
-  
   def friendly_id
-    domain = Domain.find_or_create_by_remote_domain(self)
+    domain = ::Domain.find_or_create_by_remote_domain(self)
     domain.nil? ? self.id : domain.slug
-  end
-  
+  end  
 end
 
 

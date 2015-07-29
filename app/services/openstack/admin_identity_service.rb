@@ -48,7 +48,6 @@ module Openstack
       rescue
         service_user.domains.all(:name => domain_id).first
       end
-      
       # create local domain
       Domain.find_or_create_by_remote_domain(remote_domain)
     end
@@ -56,7 +55,7 @@ module Openstack
     def create_local_project(project_id, domain_id=nil)
       remote_project = begin
         service_user.projects.find_by_id(project_id)
-      rescue
+      rescue 
         if domain_id
           service_user.projects.all(domain_id: domain_id, :name => project_id).first
         else

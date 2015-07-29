@@ -3,11 +3,6 @@
   %h1
     Project:
     = @current_project.name
-    
-    %br
-    =# @current_project.domain.friendly_id
-    = @current_project.friendly_id
-    
 
   .row
     .col-sm-6
@@ -20,8 +15,8 @@
 
     .col-sm-6
       - if current_user.is_allowed?("identity:project_delete", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
-        = link_to "Delete Project", project_path(id:@current_project.fid), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
+        = link_to "Delete Project", project_path(id:@current_project.friendly_id), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
 
       - if current_user.is_allowed?("identity:project_update", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
-        = link_to "Edit Project", edit_project_path(id:@current_project.fid), class: "btn btn-primary", data: { modal: true }
+        = link_to "Edit Project", edit_project_path(id:@current_project.friendly_id), class: "btn btn-primary", data: { modal: true }
             
