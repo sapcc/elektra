@@ -56,6 +56,9 @@ at_exit do
       Dir["features/screenshots/*"].each do |file|
         puts Screenshots::upload(File.expand_path(file))
       end
+
+      puts ""
+      puts ""
     end
   end.join
 end
