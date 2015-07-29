@@ -4,13 +4,10 @@ TAG         ?= latest
 IMAGE       := $(REPOSITORY):$(TAG)
 
 ### Executables
-DOCKER = docker
-WAIT   = $(DOCKER) run --rm --link $(WAIT_ID):wait  \
-				 localhost/monsoon/docker-build:1.4.0 \
-				 wait
-MTIMES = $(DOCKER) run --rm $(MTIMES_OPTS) \
-				 localhost/monsoon/docker-build:1.4.0 \
-				 reset_mtimes
+DOCKER      = docker
+BUILD_IMAGE = localhost/monsoon/docker-build:1.5.0 
+WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(BUILD_IMAGE) wait
+MTIMES      = $(DOCKER) run --rm $(MTIMES_OPTS)         $(BUILD_IMAGE) reset_mtimes
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -36,7 +33,7 @@ image: build precompile
 #
 build: MTIMES_OPTS = -v $(shell pwd):/src
 build: 
-	$(MTIMES) 
+	$(MTIMES)
 	$(DOCKER) pull $(REPOSITORY):latest || true
 	$(DOCKER) build -t $(IMAGE) --rm . 
 	echo $(IMAGE) > build
@@ -110,7 +107,7 @@ endif
 .PHONY: 
 cucumber: postgres migrate-test
 	$(DOCKER) run --rm  --link $(postgres):postgres $(CUCUMBER_OPTIONS) $(IMAGE) \
-		bundle exec cucumber -p $(CUCUMBER_PROFILE) 
+		 bundle exec cucumber -p $(CUCUMBER_PROFILE) 
 
 # ----------------------------------------------------------------------------------
 #   webapp 
