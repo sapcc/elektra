@@ -33,7 +33,7 @@ image: build precompile
 #
 build: MTIMES_OPTS = -v $(shell pwd):/src
 build: 
-	#$(MTIMES)
+	$(MTIMES)
 	$(DOCKER) pull $(REPOSITORY):latest || true
 	$(DOCKER) build -t $(IMAGE) --rm . 
 	echo $(IMAGE) > build
