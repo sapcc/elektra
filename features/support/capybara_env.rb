@@ -8,7 +8,10 @@ Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, { 
     phantomjs: Phantomjs.path,
     debug: false, # change this to true to troubleshoot
-    phantomjs_options: ['--ssl-protocol=any', '--ignore-ssl-errors=true', '--proxy-type=none']
+    timeout: 180,
+    phantomjs_options: ['--ssl-protocol=any', 
+                        '--ignore-ssl-errors=true', 
+                        '--proxy-type=none']
   })
 end
 
