@@ -19,8 +19,8 @@ Rails.application.routes.draw do
       resources :os_images
       resources :users, only: [:new, :create]
       resources :credentials
-      #resources :projects
-      get '/', to: 'projects#index', constraints: lambda { |request| request.params.include?(:project_id) }
+      resources :projects
+      #get '/', to: 'projects#index', constraints: lambda { |request| request.params.include?(:project_id) }
     end
   end
 
