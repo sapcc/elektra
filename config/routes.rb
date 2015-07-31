@@ -20,7 +20,18 @@ Rails.application.routes.draw do
       resources :users, only: [:new, :create]
       resources :credentials
       resources :projects
-      #get '/', to: 'projects#index', constraints: lambda { |request| request.params.include?(:project_id) }
+      
+      # constraints project_id: nil do |request|
+      #   get '/projects', to: 'projects#index', as: :projects
+      # end
+      #
+      # constraints project_id: (not nil) do |request|
+      #   get '/', to: 'projects#show', constraints: lambda { |request| request.params.include?(:project_id) }, as: :project
+      # end
+      #
+      # # get '/projects', to: 'projects#index', constraints: lambda { |request| request.params[:project_id].nil? }, as: :projects
+      # # get '/', to: 'projects#show', constraints: lambda { |request| request.params.include?(:project_id) }, as: :project
+      # # get '/edit', to: 'projects#edit', constraints: lambda { |request| request.params.include?(:project_id) }, as: :edit_project
     end
   end
 

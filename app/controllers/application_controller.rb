@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include OpenstackServiceProvider::Services
 
   prepend_before_filter do
-    domain_id = params[:domain_id] || 'sap_default'
+    domain_id = params[:domain_id] || MonsoonOpenstackAuth.configuration.default_domain_name
     project_id = params[:project_id]
     
     @scoped_domain_fid = domain_id
