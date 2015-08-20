@@ -1,9 +1,9 @@
 - data = {}
 - if instance.os_ext_sts_task_state
-  - data[:update_url]=update_item_instance_path(id:instance.id)
-  - data[:interval]=5000 
+  - data[:update_url]=update_item_instance_path(id:instance.id, target_state: local_assigns[:target_state])
+  - data[:interval]=2500 
 
-%tr{class: "state-#{instance.state.downcase} #{'task-state ' + instance.os_ext_sts_task_state if instance.os_ext_sts_task_state}", data: data}
+%tr{class: "state-#{instance.state.downcase} #{'task-state ' + instance.os_ext_sts_task_state if instance.os_ext_sts_task_state}", data: data, id: "instance_#{instance.id}"}
   %td    
     - if current_user.is_allowed?("identity:instance_get", {})
       = link_to instance.name, instance_path(id: instance.id), data: {modal: true}
@@ -11,10 +11,7 @@
   %td= services.compute.images.get(instance.image["id"]).name
   %td= instance.addresses.fetch("private",[]).collect{|address| address["addr"]}.join(', ') 
   %td
-    =# instance.os_ext_sts_power_state
     = instance.power_state_string
-    %br
-    = instance.progress
   %td
     = instance.os_ext_sts_task_state.nil? ? instance.state.capitalize : instance.os_ext_sts_task_state
   
@@ -28,18 +25,18 @@
         - unless instance.os_ext_sts_task_state
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if current_user.is_allowed?("identity:instance_update", {})
-              %li= link_to 'Edit', edit_instance_path(id: instance.id), data: {loading_status: true}  
+              %li= link_to 'Edit', edit_instance_path(id: instance.id), data: {modal: true}  
               
-              - if ['Shut Down','Paused'].include? instance.power_state_string
-                %li= link_to 'Start', start_instance_path(id: instance.id), method: :put, data: {loading_status: true}
+              - if ['Shut down','Paused'].include? instance.power_state_string
+                %li= link_to 'Start', start_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
                   
                         
               %li.divider
             - if current_user.is_allowed?("identity:instance_update", {})
               - if instance.power_state_string=='Running'
-                %li= link_to 'Stop', stop_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}  
+                %li= link_to 'Stop', stop_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true  
 
-                %li= link_to 'Pause', pause_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }  
+                %li= link_to 'Pause', pause_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }, remote: true  
           
             - if current_user.is_allowed?("identity:instance_delete", {})
-              %li= link_to 'Terminate', instance_path(id: instance.id), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: "Yes, terminate it", confirmed: :loading_status}
+              %li= link_to 'Terminate', instance_path(id: instance.id), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: "Yes, terminate it", confirmed: :loading_status}, remote: true

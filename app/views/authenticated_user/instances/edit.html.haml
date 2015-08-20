@@ -1,10 +1,16 @@
 - unless @forms_instance.errors["message"].blank?
   %p.alert.alert-error= @forms_instance.errors.full_messages.to_sentence
   
-= simple_form_for @forms_instance, url: instance_path(@domain_id,@forms_instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
-
+= simple_form_for @forms_instance, url: edit_instance_path(id:@forms_instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
-    = render partial: 'form', locals: {form: f} 
+    - unless @forms_instance.errors["message"].blank?
+      %p.alert.alert-error= @forms_instance.errors.full_messages.to_sentence
+      
+    .row
+      .col-md-6
+        %fieldset
+          = f.input :name
+          
   
   %div.buttons{class: modal? ? 'modal-footer' : ''}  
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

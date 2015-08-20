@@ -19,19 +19,21 @@ Rails.application.routes.draw do
       resources :os_images
       resources :users, only: [:new, :create]
       resources :credentials
-      resources :projects
       
+      resources :projects
+      # #TEST, use scoped project id as project  
       # constraints project_id: nil do |request|
-      #   get '/projects', to: 'projects#index', as: :projects
+      #   resources :projects, only: [:index,:new,:create]
       # end
       #
-      # constraints project_id: (not nil) do |request|
-      #   get '/', to: 'projects#show', constraints: lambda { |request| request.params.include?(:project_id) }, as: :project
+      # scope constraints: lambda {|request| request.params[:project_id].nil? ? false : (request.params[:id]=request.params[:project_id]; true) } do
+      #   get 'edit', to: 'projects#edit', as: :edit_project
+      #   get '/', to: 'projects#show', as: :project
+      #   patch '/', to: 'projects#update'#, as: :project
+      #   put '/', to: 'projects#update'#, as: :project
+      #   delete '/', to: 'projects#destroy'#, as: :project
       # end
-      #
-      # # get '/projects', to: 'projects#index', constraints: lambda { |request| request.params[:project_id].nil? }, as: :projects
-      # # get '/', to: 'projects#show', constraints: lambda { |request| request.params.include?(:project_id) }, as: :project
-      # # get '/edit', to: 'projects#edit', constraints: lambda { |request| request.params.include?(:project_id) }, as: :edit_project
+
     end
   end
 

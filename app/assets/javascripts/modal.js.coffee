@@ -15,15 +15,15 @@ $ ->
   $(document).on 'click', 'a[data-modal=true]', ->
     $button = $(this)
     
-    $button.addClass('loading')
+    #$button.addClass('loading')
     location = $(this).attr('href')
     #Load modal dialog from server
 
-    #InfoDialog.showLoading()
+    InfoDialog.showLoading()
     
     $.get location, {modal:true}, (data, status, xhr)->
-      $button.removeClass('loading')
-      #InfoDialog.hideLoading()
+      #$button.removeClass('loading')
+      InfoDialog.hideLoading()
       
       url = xhr.getResponseHeader('Location')
       

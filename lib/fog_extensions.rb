@@ -81,17 +81,34 @@ class Fog::Identity::OpenStack::V3::Domain
     domain = ::Domain.find_or_create_by_remote_domain(self)
     domain.nil? ? self.id : domain.slug
   end  
-end
-
+end   
 
 class Fog::Compute::OpenStack::Server
+  NO_STATE    = 0
+  RUNNING     = 1
+  BLOCKED     = 2
+  PAUSED      = 3
+  SHUT_DOWN   = 4
+  SHUT_OFF    = 5
+  CRASHED     = 6
+  SUSPENDED   = 7
+  FAILED      = 8
+  BUILDING    = 9
+  
   def power_state_string
     case os_ext_sts_power_state 
-    when 1 then 'Running'
-    when 3 then 'Paused'  
-    when 4 then 'Shut Down'  
+    when RUNNING then "Running"
+    when BLOCKED then "Blocked"
+    when PAUSED then "Paused"
+    when SHUT_DOWN then "Shut down"
+    when SHUT_OFF then "Shut off"
+    when CRASHED then "Crashed"
+    when SUSPENDED then "Suspended"
+    when FAILED then "Failed"
+    when BUILDING then "Building"
     else 
       'No State'
     end
   end
+  
 end
