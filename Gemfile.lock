@@ -484,5 +484,6 @@ DEPENDENCIES
   simple_form
   spinners
   spring
+  turbolinks
   uglifier
   web-console (~> 2.0)
