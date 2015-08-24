@@ -3,26 +3,26 @@
   %div{class: modal? ? 'modal-body' : ''}
     - unless @forms_instance.errors["message"].blank?
       %p.alert.alert-error= @forms_instance.errors.full_messages.to_sentence
-      
+
     .row
       .col-md-6
         %fieldset
           = f.input :name
-          
+
           = f.input :flavor, { label: "Flavor",
             input_html:         {data: {trigger: 'change', target: '.flavor-details'} },
             as:                 :select,
             collection:         @flavors,
             required:           true}
-          
+
           = f.input :image, { label: "Image",
             input_html:         {data: {trigger: 'change', target: '.image-details'} },
             as:                 :select,
             collection:         @images,
-            required:           true}  
+            required:           true}
 
       .col-md-6
-        %h3 Flavor Details   
+        %h3 Flavor Details
         - @flavors.each do |flavor|
           %table.table.flavor-details{id: flavor.id, class: flavor.id==@forms_instance.flavor ? '' : 'hidden'}
             %tbody
@@ -40,9 +40,9 @@
                 %td= "#{flavor.vcpus} VCPU"
               %tr
                 %th Disk
-                %td= "#{flavor.disk}GB"   
-                
-        %h3 Image Details   
+                %td= "#{flavor.disk}GB"
+
+        %h3 Image Details
         - @images.each do |image|
           %table.table.image-details{id: image.id, class: image.id==@forms_instance.image ? '' : 'hidden'}
             %tbody
@@ -58,9 +58,8 @@
               %tr
                 %th Updated at
                 %td= image.updated_at
-       
-  
-  %div.buttons{class: modal? ? 'modal-footer' : ''}  
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save
-    
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Create

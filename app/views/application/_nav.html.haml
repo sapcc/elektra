@@ -8,30 +8,19 @@
         %span.icon-bar
       = link_to "/#{@scoped_domain_fid ? @scoped_domain_fid : 'sap_default'}", class: "navbar-brand" do
         .logo
-        Monsoon Converged Cloud
+        Openstack Cloud
+
 
     .collapse.navbar-collapse#main-nav-collapse
-      %ul.nav.navbar-nav.navbar-left
-        %li.dropdown
-          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            = controller.controller_name.humanize
-            %span.caret
-          %ul.dropdown-menu{:role => "menu"}
-            %li.dropdown-header Compute
-            %li
-              = link_to "Instances", instances_path
-
-            %li.divider
-
-            %li.dropdown-header Identity
-            %li
-              = link_to "Credentials", credentials_path
-            %li
-              = link_to "Projects", projects_path
-
+      %ul.nav.navbar-nav
+        %li
+          = link_to @scoped_domain_name, domain_start_path
 
       %ul.nav.navbar-nav.navbar-right
-        - if logged_in?
+        - unless logged_in?
+          %li
+            = link_to "Log in", domain_start_path, id: "navbar-login-btn"
+        - else
           %li.dropdown
             -# = link_to "https://localhost/pictures/#{current_user.name}", "data-toggle" => "tooltip", "data-placement" => "left", "data-delay" => "300", title: "Click to change your profile picture", class: "linked_img" do
 

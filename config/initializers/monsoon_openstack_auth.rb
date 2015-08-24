@@ -5,16 +5,16 @@ def after_login_url(referrer_url, current_user)
   else
     true
   end
-  
+
   sandbox_url = if (redirect_to_sandbox and current_user.project_id)
-    "/#{current_user.project_domain_id}/#{current_user.project_id}/projects/#{current_user.project_id}"
+    "/#{current_user.project_domain_id}/#{current_user.project_id}/instances"
   else
     nil
   end
   domain_url = "/#{current_user.domain_id}" if current_user.domain_id
-    
+
   sandbox_url || referrer_url || domain_url || "/"
-      
+
 rescue
   referrer_url || "/"
 end
@@ -36,12 +36,12 @@ MonsoonOpenstackAuth.configure do |config|
   config.sso_auth_allowed   = true
   # optional, default=true
   config.form_auth_allowed  = true
-  
+
   # optional, default=false
   config.access_key_auth_allowed = false
-  
+
   config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'europe'
-  
+
   # optional, default=sap_default
   config.default_domain_name = 'sap_default'
 
@@ -51,18 +51,17 @@ MonsoonOpenstackAuth.configure do |config|
   # authorization policy file
   config.authorization.policy_file_path = "config/policy.json"
   config.authorization.context = "identity"
-  
+
   #config.authorization.trace_enabled = true
   config.authorization.reload_policy = false
   config.authorization.trace_enabled = false
-  
+
   config.authorization.controller_action_map = {
     :index   => 'list',
     :show    => 'get',
     :destroy => 'delete'
   }
-  
+
   # optional, default=false
   config.debug=true
 end
-

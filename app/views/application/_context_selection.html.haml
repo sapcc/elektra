@@ -1,0 +1,65 @@
+.well
+  .alert.alert-danger
+    %strong IMPORTANT!!!
+    Remember to turn off the stove before you leave the house!
+
+  .row
+    .col-sm-6
+      %h4 News
+      %p Here are some important news. You won't believe what just happened when he clicked that link.
+      %p Read more here:
+      %%ul
+        %li
+          %a(href="#") This is interesting
+        %li
+          %a(href="#") And this
+    .col-sm-6
+      %h4 Did You Know?
+      %p Pluto is a planet after all
+
+      %h4 Learning Center
+      %ul
+        %li
+          %a(href="#") Where do pineapples grow?
+        %li
+          %a(href="#") How many 1 Euro coins do you need to stack to reach the Moon?
+
+        %li
+          %a(href="#") Why aren't there any teleporters yet?
+
+
+-# %h3 Choose where you want to go:
+-# .row
+-#   .col-sm-6
+-#     - if @user_domain_projects
+-#       %table.table.table-striped.table-bordered.table-select
+-#         %thead
+-#           %tr
+-#             %th
+-#               Projects
+-#         %tbody
+-#           - @user_domain_projects.each do |project|
+-#             %tr
+-#               %td{class: ("active" if project.id == @scoped_project_id)}
+-#                 = link_to "#{project.name}", project_id: project.fid
+
+
+
+-# %table.table.table-striped.table-bordered
+-#   %thead
+-#     %tr
+-#       %th(colspan="2")
+-#         Services
+-#   %tbody
+-#     %tr
+-#       %td.snug Compute
+-#       %td
+-#         = link_to "Instances", instances_path
+-#
+-#     %tr
+-#       %td.snug(rowspan="2") Identity
+-#       %td
+-#         = link_to "Credentials", credentials_path
+-#     %tr
+-#       %td
+-#         = link_to "Projects", projects_path

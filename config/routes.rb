@@ -5,21 +5,42 @@ Rails.application.routes.draw do
   #root to: 'services#index', domain_id: "sap_default" #MonsoonOpenstackAuth.configuration.default_domain_name
   root to: 'services#index'
 
-  scope "/:domain_id/(:project_id)" do
-    scope module: 'authenticated_user' do
-      resources :instances do
-        member do
-          get 'update_item'
-          put 'stop'
-          put 'start'
-          put 'pause'
-        end
-      end
-      resources :volumes
-      resources :os_images
-      resources :users, only: [:new, :create]
-      resources :credentials
 
+  # scope "/:domain_id" do
+  #   match '/', to: 'services#index', via: :get
+  #
+  #   scope module: 'authenticated_user' do
+  #     get 'start' => 'pages#show', id: 'start', as: :domain_start
+  #
+  #     resources :credentials
+  #
+  #     scope "/:project_id" do
+  #       resources :instances do
+  #         member do
+  #           get 'update_item'
+  #           put 'stop'
+  #           put 'start'
+  #           put 'pause'
+  #         end
+  #       end
+  #       resources :volumes
+  #       resources :os_images
+  #       resources :users, only: [:new, :create]
+  #       resources :credentials
+  #       resources :projects
+  #
+  #       get 'start' => 'pages#show', id: 'start'
+  #     end
+  #   end
+  # end
+
+  scope "/:domain_id" do
+    match '/', to: 'services#index', via: :get
+
+    scope module: 'authenticated_user' do
+      get 'start' => 'pages#show', id: 'start', as: :domain_start
+
+      resources :credentials
       resources :projects
 
       # #TEST, use scoped project id as project
@@ -36,15 +57,28 @@ Rails.application.routes.draw do
       # end
 
 
+      scope "/:project_id" do
+        resources :instances do
+          member do
+            get 'update_item'
+            put 'stop'
+            put 'start'
+            put 'pause'
+          end
+        end
+        resources :volumes
+        resources :os_images
+        resources :users, only: [:new, :create]
+        resources :credentials
+        resources :projects
 
-      get 'start' => 'pages#show', id: 'start'
+        get 'start' => 'pages#show', id: 'start'
+      end
 
     end
   end
 
-  scope "/:domain_id" do
-    match '/', to: 'services#index', via: :get
-  end
+
 
   scope "/system" do
     get :health, to: "health#show"

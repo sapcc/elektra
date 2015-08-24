@@ -3,37 +3,36 @@ module AuthenticatedUser
 
     def index
       @active_domain = services.identity.find_domain(@scoped_domain_id)
-      @user_domain_projects = services.identity.projects.auth_projects
-      
+
       if @scoped_project_id
-        @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id } 
         @instances = services.compute.servers.all
       end
     end
-    
+
     def show
       @instance = services.compute.servers.get(params[:id])
       @flavor = services.compute.flavors.get(@instance.flavor.fetch("id",nil))
-      @image = services.compute.images.get(@instance.image.fetch("id",nil))      
+      @image = services.compute.images.get(@instance.image.fetch("id",nil))
     end
-    
+
     def new
       @forms_instance = services.compute.forms_instance
       @flavors = services.compute.flavors
       @images = services.image.images
-      
+
       @forms_instance.flavor=@flavors.first.id
       @forms_instance.image=@images.first.id
     end
-    
+
+
     # update instance table row (ajax call)
     def update_item
       #@instance = services.compute.find_instance(params[:id])
       instances = services.compute.servers.all(changes_since: Time.now-2.seconds)
       @instance = instances.find{|i|i.id==params[:id]}
-      
+
       @target_state = params[:target_state]
-      
+
       respond_to do |format|
         format.js do
 
@@ -43,11 +42,11 @@ module AuthenticatedUser
         end
       end
     end
-    
+
     def create
-      @forms_instance = services.compute.forms_instance(params[:id])    
+      @forms_instance = services.compute.forms_instance(params[:id])
       @forms_instance.attributes=params[:forms_instance]
-      
+
       if @forms_instance.save
         flash[:notice] = "Instance successfully created."
         redirect_to instances_path
@@ -57,32 +56,32 @@ module AuthenticatedUser
         render action: :new
       end
     end
-    
+
     def edit
       @forms_instance = services.compute.forms_instance(params[:id])
       respond_to do |format|
         format.html {}
-        format.js 
+        format.js
       end
     end
-    
+
     def update
-      
+
     end
-    
+
     def stop
       execute_instance_action
     end
-    
+
     def start
       execute_instance_action
     end
-    
+
     def pause
       execute_instance_action
     end
 
-    
+
     def destroy
       execute_instance_action
       # @forms_instance = services.compute.forms_instance(params[:id])
@@ -93,21 +92,22 @@ module AuthenticatedUser
       #   flash[:notice] = "Could not delete instance."
       # end
       # redirect_to instances_url
+
     end
-    
+
     private
-    
+
     def execute_instance_action(action=action_name)
       instance_id = params[:id]
       @instance = services.compute.find_instance(instance_id)
-      
-      @target_state=nil  
+
+      @target_state=nil
       if (@instance.os_ext_sts_task_state || '')!='deleting'
         if @instance.send(action)
           sleep(2)
           instances = services.compute.servers.all
           @instance = instances.find{|i|i.id==instance_id}
-          
+
           @target_state = target_state_for_action(action)
           @instance.os_ext_sts_task_state ||= task_state(@target_state)
         end
@@ -115,7 +115,7 @@ module AuthenticatedUser
       render template: 'authenticated_user/instances/update_item.js'
       #redirect_to instances_url
     end
-    
+
     def target_state_for_action(action)
       case action
       when 'start' then Fog::Compute::OpenStack::Server::RUNNING
@@ -126,7 +126,7 @@ module AuthenticatedUser
       when 'block' then Fog::Compute::OpenStack::Server::BLOCKED
       end
     end
-    
+
     def task_state(target_state)
       target_state = target_state.to_i if target_state.is_a?(String)
       case target_state

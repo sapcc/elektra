@@ -18,6 +18,7 @@ gem 'redcarpet'
 gem 'spinners'
 gem 'friendly_id'
 gem 'high_voltage'
+gem 'simple-navigation' # Navigation menu builder
 
 gem 'responders'
 

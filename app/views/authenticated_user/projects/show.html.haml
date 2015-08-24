@@ -1,3 +1,4 @@
+= render "application/context_selection"
 
 .page-header
   %h1
@@ -7,8 +8,8 @@
   .row
     .col-sm-6
       %p Show super interesting information about this project here.
-      %p= link_to "Instances (#{@instances.length})", instances_path 
-      
+      %p= link_to "Instances (#{@instances.length})", instances_path
+
       - if @current_project.subtree.count>0
         - @current_project.subtree.each do |sub_project|
           = link_to sub_project.name, project_path(domain_id: sub_project.domain_id, project_id: sub_project.id, id: sub_project.id), class: "list-group-item"
@@ -19,4 +20,3 @@
 
       - if current_user.is_allowed?("identity:project_update", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
         = link_to "Edit Project", edit_project_path(id:@current_project.friendly_id), class: "btn btn-primary", data: { modal: true }
-            

@@ -1,0 +1,38 @@
+.context-breadcrumb
+  .container
+    %ol.context-list
+      %li.dropdown
+        %span.glyphicon.glyphicon-th
+        %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+          - if @active_project
+            = @active_project.name
+          - else
+            Choose a Project
+          %span.caret
+        %ul.dropdown-menu{:role => "menu"}
+          - if @user_domain_projects
+            - @user_domain_projects.each do |project|
+              %li{class: ("active" if project.id == @scoped_project_id)}
+                -# = link_to project.name, instances_path(domain_id: @scoped_domain_fid, project_id: project.fid)
+                = link_to "#{project.name}", domain_id: @scoped_domain_fid, project_id: project.fid
+
+
+    - if @scoped_project_id
+      %ol.context-list
+        %li.dropdown
+          %span.glyphicon.glyphicon-cloud
+          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            = processed_controller_name
+            %span.caret
+          %ul.dropdown-menu{:role => "menu"}
+            %li.dropdown-header Compute
+            %li
+              = link_to "Instances", instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+
+            %li.divider
+
+            %li.dropdown-header Identity
+            %li
+              = link_to "Credentials", credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+            %li
+              = link_to "Projects", projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)

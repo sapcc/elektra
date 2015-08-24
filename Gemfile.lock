@@ -406,6 +406,8 @@ GEM
       rdoc (~> 4.0)
     sexp_processor (4.5.1)
     shellany (0.0.1)
+    simple-navigation (4.0.3)
+      activesupport (>= 2.3.2)
     simple_form (3.1.0)
       actionpack (~> 4.0)
       activemodel (~> 4.0)
@@ -483,6 +485,7 @@ DEPENDENCIES
   rspec-rails
   sass-rails
   sdoc (~> 0.4.0)
+  simple-navigation
   simple_form
   spinners
   spring
