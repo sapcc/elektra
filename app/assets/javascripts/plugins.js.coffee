@@ -1,5 +1,5 @@
 $.fn.update = () ->
-  this.each () ->    
+  this.each () ->
     $element  = $(this)
 
     # data-updateUrl is set by server
@@ -7,15 +7,14 @@ $.fn.update = () ->
     # return if no update url defined
     return this unless url
     interval  = $element.data('interval') || 5000
-  
+
     setTimeout () ->
       $.ajax
         url: url
         # success: (newItem) ->
         #   $newItem = $(newItem)
         #   $element.replaceWith($newItem)
-        #   $newItem.update()        
+        #   $newItem.update()
     , interval
 
     return this;
- 

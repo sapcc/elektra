@@ -13,28 +13,42 @@ class @Dashboard
     target = $(this).data('target')
     $(target).addClass("hidden")
     $("#{target}##{this.value}").removeClass("hidden")
-      
+
   @initForm: () ->
     # flavor details
     $("form select[data-trigger=change]").change Dashboard.showFormDetails
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
-  
-    
+
 $(document).on 'ready page:load', ->
   # -----------
   # Tooltips
   # -----------
   $('abbr[title], abbr[data-original-title]').tooltip(delay: { "show": 300 })
-  
+
   # init Form
   Dashboard.initForm()
 
   # update items which has the update attribute
   $('[data-update-url]').update()
-  
+
   # initialize buttons with loading status
   $(document).on 'click', 'tr [data-loading-status]', () -> $(this).closest('tr').addClass('updating')
   $('tr [data-confirmed=loading_status]').attr('data-confirmed',"$(this).closest('tr').addClass('updating')")
-        
 
+
+
+# TURBOLINKS SUPPORT ---------------------------------------------------------------------
+# React to turbolinks page load events to indicate to the user that something is happening
+$ =>
+  startPageLoadIndicator = ->
+    $("html").css "cursor", "progress"
+    return
+
+  stopPageLoadIndicator = ->
+    $("html").css "cursor", "auto"
+    return
+
+
+  $(document).on "page:fetch", startPageLoadIndicator
+  $(document).on "page:receive", stopPageLoadIndicator

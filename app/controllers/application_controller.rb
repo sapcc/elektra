@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   prepend_before_filter do
     domain_id = params[:domain_id] || MonsoonOpenstackAuth.configuration.default_domain_name
     project_id = params[:project_id]
-    
+
     @scoped_domain_fid = domain_id
     @scoped_project_fid = project_id
 

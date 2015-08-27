@@ -1,4 +1,12 @@
 // ---------------------------------------------------------------------------------
+// Variables based on bootstrap variables
+// ---------------------------------------------------------------------------------
+
+$font-size-medium: ceil(($font-size-base * 1.125));
+
+
+
+// ---------------------------------------------------------------------------------
 // General
 // ---------------------------------------------------------------------------------
 
@@ -280,21 +288,23 @@ footer, .footer {
   z-index: 1029;
 
   .glyphicon {
-    @include opacity(0.85);
-    margin-right: 1px;
+    @include opacity(0.75);
+    margin-right: 5px;
   }
 
   .context-list {
-    float: left;
     @include pie-clearfix;
+    float: left;
     list-style-type: none;
     margin-left: -$context-breadcrumb-padding-horizontal;
-    margin-right: 15px;
+    margin-right: $context-breadcrumb-padding-horizontal;
     padding: 0;
 
     > li {
       border-left: 1px solid $context-breadcrumb-bg;
+      border-right: 1px solid $dropdown-border;
       display: block;
+      font-size: $font-size-medium;
       position: relative;
       float: left;
       padding: 0 $context-breadcrumb-padding-horizontal;
@@ -318,6 +328,9 @@ footer, .footer {
     }
   }
 }
+
+
+
 
 
 // ---------------------------------------------------------------------------------
