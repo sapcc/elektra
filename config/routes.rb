@@ -68,13 +68,13 @@ Rails.application.routes.draw do
         end
         resources :volumes
         resources :os_images
-        resources :users, only: [:new, :create]
         resources :credentials
         resources :projects
 
         get 'start' => 'pages#show', id: 'start'
       end
 
+      resources :users, only: [:new, :create]
     end
   end
 

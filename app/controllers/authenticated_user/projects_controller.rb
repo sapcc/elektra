@@ -1,6 +1,9 @@
 class AuthenticatedUser::ProjectsController < AuthenticatedUserController
 
   before_filter :get_project_id,  except: [:index, :create, :new]
+  before_filter do
+    @scoped_project_fid = params[:project_id] || @project_id
+  end
 
   def index
     @active_domain = services.identity.find_domain(@scoped_domain_id)
