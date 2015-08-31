@@ -1,8 +1,12 @@
 // ---------------------------------------------------------------------------------
 // Variables based on bootstrap variables
+// (can't be in the variables.scss because it is included before bootstrap to be
+// able to overwrite bootstrap variables in it)
 // ---------------------------------------------------------------------------------
 
 $font-size-medium: ceil(($font-size-base * 1.125));
+$context-breadcrumb-font-size: $font-size-medium;
+
 
 
 
@@ -301,15 +305,14 @@ footer, .footer {
     padding: 0;
 
     > li {
-      border-left: 1px solid $context-breadcrumb-bg;
-      border-right: 1px solid $dropdown-border;
+      border-right: 1px solid rgba(51, 51, 51, 0.4);
       display: block;
-      font-size: $font-size-medium;
+      font-size: $context-breadcrumb-font-size;
       position: relative;
       float: left;
-      padding: 0 $context-breadcrumb-padding-horizontal;
+      padding: 0 0 0 $context-breadcrumb-padding-horizontal;
 
-      &.open {
+      &.open, &:hover {
         background-color: $dropdown-bg;
         border-color: $dropdown-border;
       }
@@ -322,10 +325,45 @@ footer, .footer {
       }
 
       > a {
+        color: #333;
         display: inline-block;
-        padding: (($context-breadcrumb-height - 1px - $line-height-computed) / 2) 0;
+        padding: (($context-breadcrumb-height - 1px - ($context-breadcrumb-font-size - $font-size-base) - $line-height-computed) / 2) 0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
+        padding-right: $context-breadcrumb-padding-horizontal;
+
+        &:active {
+          text-decoration: none;
+        }
       }
     }
+  }
+
+  &.context-breadcrumb-fancy {
+    background: $context-breadcrumb-fancy-bg;
+
+    .context-list {
+      > li {
+      border-right-color: rgba(255, 255, 255, 0.4);
+
+
+        &.open, &:hover {
+          > .glyphicon {
+            color: #333;
+          }
+          > a {
+            color: #333;
+          }
+        }
+
+        > .glyphicon {
+          color: #fff;
+        }
+
+        > a {
+          color: #fff;
+        }
+      }
+    }
+
   }
 }
 
@@ -347,6 +385,37 @@ footer, .footer {
   @extend .alert-info;
 }
 
+
+
+
+
+// ---------------------------------------------------------------------------------
+// Callouts / Blockouts
+// ---------------------------------------------------------------------------------
+
+
+.bs-callout {
+    padding: 20px;
+    margin: 40px 0 20px;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+
+    &.bs-callout-primary {
+      border-left-color: $btn-primary-border;
+    }
+
+    &.bs-callout-info {
+      border-left-color: $btn-info-border;
+    }
+}
+
+blockquote, .bs-callout {
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+}
+
 // ---------------------------------------------------------------------------------
 // Jumbotron
 // ---------------------------------------------------------------------------------
@@ -356,7 +425,30 @@ footer, .footer {
   color: rgba(255, 255, 255, 0.8);
   font-family: $font-family-sap-light;
 
+}
 
+
+// ---------------------------------------------------------------------------------
+// Hero Elements
+// ---------------------------------------------------------------------------------
+
+.hero-info {
+  margin-bottom: $line-height-computed;
+
+  .info-stat {
+    font-size: $font-size-h1;
+  }
+
+  .info-stat-text {
+    @include opacity(0.7);
+    font-size: $font-size-small;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+  }
+}
+
+.jumbotron .hero-info .info-stat {
+  color: #fff;
 }
 
 

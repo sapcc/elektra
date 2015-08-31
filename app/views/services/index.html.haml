@@ -1,16 +1,41 @@
 = content_for :page_lead do
   .jumbotron
     .container
-      %h1 SAP Openstack Cloud
-      %p Get VMs for your development and production scenarios. HANA ready. Monsoon automation enabled.
-      = link_to "Enter the cloud", domain_start_path, class: "btn btn-outline-negative btn-lg"
+      .row
+        .col-sm-8
+          %h1 SAP Openstack Cloud
+          %p Get VMs for your development and production scenarios. HANA ready. Monsoon automation enabled.
+          = link_to "Enter the cloud", domain_start_path, class: "btn btn-outline-negative btn-lg"
+        .col-sm-4
+          .row
+            .col-sm-6.hero-info
+              .info-stat
+                26457
+              .info-stat-text
+                virtual machines
+            .col-sm-6.hero-info
+              .info-stat
+                578 TB
+              .info-stat-text
+                storage
+
+          .row
+            .col-sm-6.hero-info
+              .info-stat
+                35
+              .info-stat-text
+                availability zones
+            .col-sm-6.hero-info
+              .info-stat
+                397
+              .info-stat-text
+                networks
 
 
 
 %h1.page-header Compute
 
 %p.lead Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas.
-%p= link_to "Try it out now", domain_start_path, class: "btn btn-outline"
 
 
 .row
@@ -39,45 +64,55 @@
     -#   = link_to "Go to Images", os_images_path(@scoped_domain_fid), class: "btn btn-outline"
 
 
-%h1.page-header Identity
-
-%p.lead Proactively envisioned multimedia based expertise and cross-media growth strategies.
-%p= link_to "Try it out now", domain_start_path, class: "btn btn-outline"
-
 
 .row
+  .col-sm-8
+    %h1.page-header Identity
+
+    %p.lead Proactively envisioned multimedia based expertise and cross-media growth strategies.
+
+
+    .row
+      .col-sm-6
+        %h3 User Permissions
+        %p
+          Seamlessly visualize quality intellectual capital without superior collaboration and idea-sharing.
+
+        -# %p
+        -#   %a.btn.btn-outline Go to User Permissions
+
+      .col-sm-6
+        %h3 Teams
+        %p
+          Holistically pontificate installed base portals after maintainable products.
+
+        -# %p
+        -#   %a.btn.btn-outline Go to Teams
+
+      .col-sm-6
+        %h3 Credentials
+        %p
+          Phosfluorescently engage worldwide methodologies with web-enabled technology.
+
+        -# %p
+        -#   = link_to "Go to Credentials", credentials_path(@scoped_domain_fid), class: "btn btn-outline"
+
+      .col-sm-6
+        %h3 Projects
+        %p
+          Phosfluorescently engage worldwide methodologies with web-enabled technology.
+
+        -# %p
+        -#   = link_to "Go to Projects", projects_path(@scoped_domain_fid), class: "btn btn-outline"
+
   .col-sm-4
-    %h3 User Permissions
-    %p
-      Seamlessly visualize quality intellectual capital without superior collaboration and idea-sharing.
-
-    -# %p
-    -#   %a.btn.btn-outline Go to User Permissions
-
-  .col-sm-4
-    %h3 Teams
-    %p
-      Holistically pontificate installed base portals after maintainable products.
-
-    -# %p
-    -#   %a.btn.btn-outline Go to Teams
-
-  .col-sm-4
-    %h3 Credentials
-    %p
-      Phosfluorescently engage worldwide methodologies with web-enabled technology.
-
-    -# %p
-    -#   = link_to "Go to Credentials", credentials_path(@scoped_domain_fid), class: "btn btn-outline"
-
-  .col-sm-4
-    %h3 Projects
-    %p
-      Phosfluorescently engage worldwide methodologies with web-enabled technology.
-
-    -# %p
-    -#   = link_to "Go to Projects", projects_path(@scoped_domain_fid), class: "btn btn-outline"
-
+    .bs-callout.bs-callout-primary
+      %h3 Interested?
+      %p
+        = link_to "Try it out", domain_start_path, class: "btn btn-outline"
+      %p
+        or get more indepth information:
+        = link_to "Learn more", "/docs"
 
 
 
@@ -86,7 +121,6 @@
 %h1.page-header Networking
 
 %p.lead Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed base benefits. Dramatically visualize customer directed convergence without revolutionary ROI.
-%p= link_to "Try it out now", domain_start_path, class: "btn btn-outline"
 
 
 .row
@@ -112,7 +146,6 @@
 %h1.page-header Storage
 
 %p.lead Phosfluorescently engage worldwide methodologies with web-enabled technology.
-%p= link_to "Try it out now", domain_start_path, class: "btn btn-outline"
 
 
 .row
@@ -123,7 +156,6 @@
 
     -# %p
     -#   %a.btn.btn-outline Go to Swift
-
 
 
 
