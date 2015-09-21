@@ -1,0 +1,199 @@
+= content_for :page_lead do
+  .jumbotron
+    .container
+      .row
+        .col-sm-8
+          %h1 SAP Openstack Cloud
+          %p Get VMs for your development and production scenarios. HANA ready. Monsoon automation enabled.
+          = link_to "Enter the cloud", domain_start_path, class: "btn btn-outline-negative btn-lg"
+        .col-sm-4
+          .row
+            .col-sm-6.hero-info
+              .info-stat
+                26457
+              .info-stat-text
+                virtual machines
+            .col-sm-6.hero-info
+              .info-stat
+                578 TB
+              .info-stat-text
+                storage
+
+          .row
+            .col-sm-6.hero-info
+              .info-stat
+                35
+              .info-stat-text
+                availability zones
+            .col-sm-6.hero-info
+              .info-stat
+                397
+              .info-stat-text
+                networks
+
+
+
+%h1.page-header What is SAP Openstack Cloud?
+
+%p.lead
+  SAP Openstack Cloud is SAP's internal cloud offering running on an
+  - external_link_to "OpenStack", "https://www.openstack.org/"
+  backend. You can spawn VMs, build whole landscapes for development and productive use to run your applications and services. The cloud comes in different flavors called
+  = link_to "cluster types", "#cluster-types"
+  which cater to different audiences and use cases.
+  You choose what you need and where you need it and you'll get it with the press of a button and minimal red tape. A quick overview:
+
+%ul.fancy-list
+  %li
+    .fancy-icon
+      %span.fa.fa-globe.fa-fw
+    %h5.fancy-header 5 Regions
+    %p Europe, US-East, US-West, Canada, Russia
+
+  %li
+    .fancy-icon
+      %span.fa.fa-cubes.fa-fw
+    %h5.fancy-header 3 Cluster Types
+    %p Type 1, type 2, type 3
+
+  %li
+    .fancy-icon
+      %span.fa.fa-archive.fa-fw
+    %h5.fancy-header 13 OS Images
+    %p CoreOS, Debian 7, RHEL6, RHEL7, SAP Suse 11 (SP2, SP3), Suse 11 (SP2, SP3), Suse 12, Ubuntu 12, Ubuntu 14, Win 2008, Win 2012
+
+  %li
+    .fancy-icon
+      %span.fa.fa-hdd-o.fa-fw
+    %h5.fancy-header 19 VM Sizes
+    %p Small (1 CPU, 1 GB Ram) up to Hana sized (16 CPU, 64 GB Ram)
+
+  %li
+    .fancy-icon
+      %span.fa.fa-object-group.fa-fw
+    %h5.fancy-header 23 Availability Zones
+    %p Multiple datacenters for many regions: Germany (3), USA (3), Canada (1), Russia (1)
+
+  %li
+    .fancy-icon
+      %span.fa.fa-database.fa-fw
+    %h5.fancy-header Storage
+    %p OpenStack Swift object store to store and retrieve data swiftly via API.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-cloud.fa-fw
+    %h5.fancy-header Compute Services
+    %p Instance operations (create, terminate, start, stop), volumes and snapshots (volume capacity 1 GB - 1 TB)
+
+    %li
+      .fancy-icon
+        %span.fa.fa-gears.fa-fw
+      %h5.fancy-header Monsoon Automation Services
+      %p Automate single machines or whole landscapes. Automate software installation or updates, triggering jobs, ...
+
+  %li
+    .fancy-icon
+      %span.fa.fa-sitemap.fa-fw
+    %h5.fancy-header Networking Services
+    %p Software defined networking, security groups, load balancing
+
+
+.alert.alert-info
+  Are you an exisiting customer of GMP, HCP, or Monsoon?
+  = link_to "Here's how SAP Openstack Cloud compares to what you are used to", "#existing-customer", class: "alert-link"
+
+
+%h1.page-header Getting Started
+%p asdlfakjsdflasjdf;ld
+%p Add "Are you an existing customer?" here maybe in a box on the right?
+
+%h1.page-header Cluster Types
+%p
+  There are three cluster types, type 1, type 2, and type 3. Depending on your requirements or use case some types will be a better fit than others. See the chart below for a summary or visit the
+  = link_to "indepth documentation", "#"
+  if you need more information.
+
+%table.table.table-fancy.table-striped
+  %thead
+    %tr
+      %th Type 1 Cluster
+      %th Type 2 Cluster
+      %th Type 3 Cluster
+
+  %tbody
+    %tr
+      %td
+        %p This cluster type is our general purpose cluster, it runs on VMWare. If you don't feel you need the specific features the other types offer, this is the right one to pick.
+      %td
+        %p If you are a customer of HCP pick this.
+      %td
+        %p For this use case here this cluster is so much better.
+
+    %tr
+      %th Use For
+      %th Use For
+      %th Use For
+    %tr
+      %td
+        %ul
+          %li
+            %span.fa.fa-li.fa-square-o
+            This usecase
+          %li
+            %span.fa.fa-li.fa-square-o
+            Or this
+
+      %td
+        %ul
+          %li
+            %span.fa.fa-li.fa-square-o
+            This usecase
+          %li
+            %span.fa.fa-li.fa-square-o
+            Or this
+          %li
+            %span.fa.fa-li.fa-square-o
+            Or maybe even this
+
+      %td
+        %ul
+          %li
+            %span.fa.fa-li.fa-square-o
+            This usecase
+
+    %tr
+      %th Available In
+      %th Available In
+      %th Available In
+
+    %tr
+      %td
+        %ul
+          %li
+            %span.fa.fa-li.fa-square-o
+            All regions
+      %td
+        %ul
+          %li
+            %span.fa.fa-li.fa-square-o
+            Europe
+          %li
+            %span.fa.fa-li.fa-square-o
+            US-East
+          %li
+            %span.fa.fa-li.fa-square-o
+            US-West
+      %td
+        %ul
+          %li
+            %span.fa.fa-li.fa-square-o
+            Europe
+          %li
+            %span.fa.fa-li.fa-square-o
+            Canada
+
+
+
+%h1.page-header Existing Customers
+%p adslfajsdfadf

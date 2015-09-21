@@ -14,7 +14,7 @@
     %meta(name="viewport" content="width=device-width, initial-scale=1")
     %meta(http-equiv="X-UA-Compatible" content="IE=edge")
 
-  %body{class: "#{controller.controller_name}"}
+  %body{class: "#{body_class}"}
 
     = render "nav"
     = render "breadcrumb"
@@ -34,5 +34,5 @@
 
     = yield :templates
     = yield :javascripts
-    
-    #modal-holder    
+
+    #modal-holder

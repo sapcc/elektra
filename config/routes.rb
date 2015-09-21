@@ -3,7 +3,8 @@ Rails.application.routes.draw do
 
   #root :to => redirect("/#{MonsoonOpenstackAuth.configuration.default_domain_name}")
   #root to: 'services#index', domain_id: "sap_default" #MonsoonOpenstackAuth.configuration.default_domain_name
-  root to: 'services#index'
+  # root to: 'services#index'
+  root to: 'pages#show', id: 'landing'
 
 
   # scope "/:domain_id" do
@@ -35,7 +36,7 @@ Rails.application.routes.draw do
   # end
 
   scope "/:domain_id" do
-    match '/', to: 'services#index', via: :get
+    match '/', to: 'pages#show', id: 'landing', via: :get
 
     scope module: 'authenticated_user' do
       get 'start' => 'pages#show', id: 'start', as: :domain_start

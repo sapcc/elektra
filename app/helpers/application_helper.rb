@@ -36,4 +36,16 @@ module ApplicationHelper
     name.humanize
   end
 
+  def body_class
+    css_class = controller.controller_name
+    css_class = "#{css_class} #{params[:id]}" if css_class == "pages"
+  end
+
+  def external_link_to(name, url)
+    haml_tag :a, href: url do
+      haml_tag :span, class: "glyphicon glyphicon-share-alt"
+      haml_concat name
+    end
+  end
+
 end
