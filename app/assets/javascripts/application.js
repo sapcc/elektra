@@ -17,6 +17,8 @@
 //= require plugins  
 //= require dashboard
 //= require authenticated_user/users
-//= require dialogs
-  
+//= require dialogs  
 //= require modal 
+//= require jquery.history
+//= require stateful_links
+   

@@ -13,5 +13,9 @@
           
   
   %div.buttons{class: modal? ? 'modal-footer' : ''}  
-    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    
     %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save
