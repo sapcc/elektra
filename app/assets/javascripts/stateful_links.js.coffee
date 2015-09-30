@@ -39,22 +39,20 @@
 #     //History.back();
 #   });
 # });
-      
-$ ->
-  console.log('LOADED!')
+
+
+# apply non-idempotent transformations to the body
+$(document).on 'ready', ->
+  # get current window location
   current_location = window.location.href
-  
+    
+  # replace history state with current location
   History.replaceState(current_location)
   
-  State = History.getState() # Note: We are using History.getState() instead of event.state
-  
-  console.log State
-  console.log($("[data-modal='true']"), $("[data-modal='true']").length);
-    
-  $(document).on 'click', 'a[data-modal=true]', ->
-    console.log('-------------',this.href)
-    History.pushState(null, null, this.href)
-          
   $('#modal-holder').on 'hidden.bs.modal', '.modal', ->
-    console.log 'hidden'
-    History.pushState(null, null, current_location)
+    History.replaceState(null, null, current_location)
+  
+# apply non-idempotent transformations to the document
+# initialize modal links. Push the url of the modal link to the history.
+$(document).on 'click', 'a[data-modal=true]', ->
+  History.replaceState(null, null, this.href)
