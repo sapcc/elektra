@@ -39,17 +39,20 @@
 #     //History.back();
 #   });
 # });
-      
-$ ->
+
+
+# apply non-idempotent transformations to the body
+$(document).on 'ready', ->
   # get current window location
   current_location = window.location.href
+    
   # replace history state with current location
   History.replaceState(current_location)
-
-  # initialize modal links. Push the url of the modal link to the history.
-  $(document).on 'click', 'a[data-modal=true]', ->
-    History.pushState(null, null, this.href)
-          
-  # push primary url (current_location) to the history after modal was closed.
+  
   $('#modal-holder').on 'hidden.bs.modal', '.modal', ->
-    History.pushState(null, null, current_location)
+    History.replaceState(null, null, current_location)
+  
+# apply non-idempotent transformations to the document
+# initialize modal links. Push the url of the modal link to the history.
+$(document).on 'click', 'a[data-modal=true]', ->
+  History.replaceState(null, null, this.href)

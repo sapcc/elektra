@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require bootstrap-sprockets
 //= require plugins  
 //= require dashboard
@@ -21,4 +20,3 @@
 //= require modal 
 //= require jquery.history
 //= require stateful_links
-   

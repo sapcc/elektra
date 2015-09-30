@@ -137,5 +137,5 @@ class @InfoDialog
   # class method
   @hide: () -> $dialog.modal 'hide'
   
-  @showLoading: () -> $ajaxLoader.modal()
+  @showLoading: () -> $ajaxLoader.modal 'show'
   @hideLoading: () -> $ajaxLoader.modal 'hide'
