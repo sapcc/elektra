@@ -100,4 +100,8 @@
               %td= vol.name  
 - if modal?
   .modal-footer
-    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", instances_url(), class: 'btn btn-default'
+    
