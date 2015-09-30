@@ -41,20 +41,15 @@
 # });
       
 $ ->
-  console.log('LOADED!')
+  # get current window location
   current_location = window.location.href
-  
+  # replace history state with current location
   History.replaceState(current_location)
-  
-  State = History.getState() # Note: We are using History.getState() instead of event.state
-  
-  console.log State
-  console.log($("[data-modal='true']"), $("[data-modal='true']").length);
-    
+
+  # initialize modal links. Push the url of the modal link to the history.
   $(document).on 'click', 'a[data-modal=true]', ->
-    console.log('-------------',this.href)
     History.pushState(null, null, this.href)
           
+  # push primary url (current_location) to the history after modal was closed.
   $('#modal-holder').on 'hidden.bs.modal', '.modal', ->
-    console.log 'hidden'
     History.pushState(null, null, current_location)
