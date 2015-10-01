@@ -14,9 +14,11 @@
 //= require jquery_ujs
 //= require bootstrap-sprockets
 //= require plugins  
-//= require dashboard
 //= require authenticated_user/users
 //= require dialogs  
 //= require modal 
 //= require jquery.history
 //= require stateful_links
+  
+  
+//= require dashboard

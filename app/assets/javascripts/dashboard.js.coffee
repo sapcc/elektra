@@ -20,7 +20,8 @@ class @Dashboard
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
 
-$(document).on 'ready page:load', ->
+# Initialize Dashboard App
+$ ->
   # -----------
   # Tooltips
   # -----------
@@ -37,18 +38,17 @@ $(document).on 'ready page:load', ->
   $('tr [data-confirmed=loading_status]').attr('data-confirmed',"$(this).closest('tr').addClass('updating')")
 
 
-
-# TURBOLINKS SUPPORT ---------------------------------------------------------------------
-# React to turbolinks page load events to indicate to the user that something is happening
-$ =>
-  startPageLoadIndicator = ->
-    $("html").css "cursor", "progress"
-    return
-
-  stopPageLoadIndicator = ->
-    $("html").css "cursor", "auto"
-    return
-
-
-  $(document).on "page:fetch", startPageLoadIndicator
-  $(document).on "page:receive", stopPageLoadIndicator
+# # TURBOLINKS SUPPORT ---------------------------------------------------------------------
+# # React to turbolinks page load events to indicate to the user that something is happening
+# $ =>
+#   startPageLoadIndicator = ->
+#     $("html").css "cursor", "progress"
+#     return
+#
+#   stopPageLoadIndicator = ->
+#     $("html").css "cursor", "auto"
+#     return
+#
+#
+#   $(document).on "page:fetch", startPageLoadIndicator
+#   $(document).on "page:receive", stopPageLoadIndicator

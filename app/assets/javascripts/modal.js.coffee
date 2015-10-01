@@ -1,4 +1,4 @@
-$ ->
+class @MoModal 
   modal_holder_selector = '#modal-holder'
   modal_selector = '.modal'
   
@@ -12,11 +12,18 @@ $ ->
       </div>
       """
     
-  $(document).on 'click', 'a[data-modal=true]', ->
-    $button = $(this)
+  @init= () ->
+    $(document).on 'click', 'a[data-modal=true]', -> 
+      MoModal.load(this)  
+    $(document).on 'ajax:beforeSend','form[data-modal=true]', (event, xhr, settings) -> 
+      settings.data += "&modal=true"
+    $(document).on 'ajax:success', 'form[data-modal=true]', handleAjaxSuccess
+      
+  @load= (anker)->
+    $button = $(anker)
     
     #$button.addClass('loading')
-    location = $(this).attr('href')
+    location = $(anker).attr('href')
     #Load modal dialog from server
 
     InfoDialog.showLoading()
@@ -38,14 +45,10 @@ $ ->
           # for the case the response contains a form intialize it
           Dashboard.initForm()
         
-    false
-    
-  $(document).on 'ajax:beforeSend', 
-    'form[data-modal=true]', (event, xhr, settings) ->
-      settings.data += "&modal=true"    
+    return false
+  
 
-  $(document).on 'ajax:success',
-    'form[data-modal=true]', (event, data, status, xhr)->  
+  handleAjaxSuccess= (event, data, status, xhr)->  
       url = xhr.getResponseHeader('Location')
       
       if url
@@ -64,4 +67,6 @@ $ ->
           # Replace old modal with new one
           $(modal_holder_selector).html(data).find(modal_selector).modal()
         Dashboard.initForm()  
-      false
+      return false
+
+$ -> MoModal.init()           
