@@ -4,6 +4,8 @@
     %title Monsoon Converged Cloud Dashboard
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     -# = content_for :javascripts do
+    :javascript
+      //window.History = { options: { html4Mode: true} };
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = favicon_png
     = favicon_ico
