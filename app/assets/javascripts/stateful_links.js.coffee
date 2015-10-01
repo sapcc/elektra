@@ -40,7 +40,8 @@ getParameterByName= (url,name) ->
 handleUrl= (url) ->
   # check if overlay parameter is presented  
   hidden = true
-  if url.indexOf("?overlay=") > -1
+
+  if url.indexOf("?overlay=")>-1 or url.indexOf("&overlay=") >-1
     overlay = getParameterByName(url,'overlay');
     # build the href. If overlay value doesn't start with a "/" then 
     # it is a relative url and should be extended with the current path.
