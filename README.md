@@ -1,7 +1,7 @@
 monsoon-dashboard
 =================
 
-New service based Monsoon dashboard.
+New service based Converged Cloud dashboard.
 
 Prerequisites
 -------------
