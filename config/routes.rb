@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   # scope "/:domain_id" do
   #   match '/', to: 'services#index', via: :get
   #
-  #   scope module: 'authenticated_user' do
+  #   scope module: 'dashboard' do
   #     get 'start' => 'pages#show', id: 'start', as: :domain_start
   #
   #     resources :credentials
@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   scope "/:domain_id" do
     match '/', to: 'pages#show', id: 'landing', via: :get
 
-    scope module: 'authenticated_user' do
+    scope module: 'dashboard' do
       get 'start' => 'pages#show', id: 'start', as: :domain_start
 
       resources :credentials
