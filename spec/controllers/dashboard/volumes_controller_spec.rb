@@ -1,10 +1,12 @@
 require 'spec_helper'
 require 'controllers/dashboard/shared_examples'
+require 'controllers/dashboard/stub_identity_service'
 
 describe Dashboard::VolumesController do
   include AuthenticationStub
+  include StubIdentityService
   
-  default_params = {domain_id: AuthenticationStub.domain_id}
+  default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
   it_behaves_like "an dashboard controller"
 
   before(:all) do

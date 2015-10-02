@@ -1,39 +1,7 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
-  #root :to => redirect("/#{MonsoonOpenstackAuth.configuration.default_domain_name}")
-  #root to: 'services#index', domain_id: "sap_default" #MonsoonOpenstackAuth.configuration.default_domain_name
-  # root to: 'services#index'
   root to: 'pages#show', id: 'landing'
-
-
-  # scope "/:domain_id" do
-  #   match '/', to: 'services#index', via: :get
-  #
-  #   scope module: 'dashboard' do
-  #     get 'start' => 'pages#show', id: 'start', as: :domain_start
-  #
-  #     resources :credentials
-  #
-  #     scope "/:project_id" do
-  #       resources :instances do
-  #         member do
-  #           get 'update_item'
-  #           put 'stop'
-  #           put 'start'
-  #           put 'pause'
-  #         end
-  #       end
-  #       resources :volumes
-  #       resources :os_images
-  #       resources :users, only: [:new, :create]
-  #       resources :credentials
-  #       resources :projects
-  #
-  #       get 'start' => 'pages#show', id: 'start'
-  #     end
-  #   end
-  # end
 
   scope "/:domain_id" do
     match '/', to: 'pages#show', id: 'landing', via: :get
@@ -87,6 +55,4 @@ Rails.application.routes.draw do
 
   # route for overwritten High Voltage Pages controller
   get "/pages/*id" => 'pages#show', as: :page, format: false
-
-
 end

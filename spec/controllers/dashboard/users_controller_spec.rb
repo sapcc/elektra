@@ -1,9 +1,11 @@
 require 'spec_helper'
+require 'controllers/dashboard/stub_identity_service'
 
 # require 'controllers/dashboard/shared_examples'
 
 describe Dashboard::UsersController do
   include AuthenticationStub
+  include StubIdentityService
 
   # commented out for now because the user controller doesn't have an index action and all the shared examples use the index action
   # it_behaves_like "an dashboard controller"

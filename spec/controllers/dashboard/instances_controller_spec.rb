@@ -5,7 +5,7 @@ describe Dashboard::InstancesController do
   include AuthenticationStub
   
   it_behaves_like "an dashboard controller"
-  default_params = {domain_id: AuthenticationStub.domain_id}
+  default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 
   before(:all) do
     DatabaseCleaner.clean

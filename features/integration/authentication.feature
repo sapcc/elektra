@@ -6,6 +6,6 @@ Feature: Authentication
   Scenario: User is not logged in
     Given I am on the root page
      And I am not logged in
-    When I visit "/sap_default/instances"
+    When I visit "/sap_default/start"
     Then I am redirected to login page
     And I see login form
