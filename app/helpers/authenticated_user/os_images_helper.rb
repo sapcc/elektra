@@ -1,2 +1,0 @@
-module AuthenticatedUser::OsImagesHelper
-end

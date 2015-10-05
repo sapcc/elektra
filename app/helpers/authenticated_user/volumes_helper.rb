@@ -1,2 +1,0 @@
-module AuthenticatedUser::VolumesHelper
-end
