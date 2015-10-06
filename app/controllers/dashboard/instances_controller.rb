@@ -19,6 +19,7 @@ module Dashboard
       @forms_instance = services.compute.forms_instance
       @flavors = services.compute.flavors
       @images = services.image.images
+      @network_zones = services.neutron.networks.all
 
       @forms_instance.flavor=@flavors.first.id
       @forms_instance.image=@images.first.id
@@ -46,7 +47,10 @@ module Dashboard
     def create
       @forms_instance = services.compute.forms_instance(params[:id])
       @forms_instance.attributes=params[:forms_instance]
-
+      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      # p params[:forms_instance]
+      # @forms_instance.tenant_id = current_project_id
+      
       if @forms_instance.save
         flash[:notice] = "Instance successfully created."
         redirect_to instances_path
@@ -138,6 +142,14 @@ module Dashboard
       when Fog::Compute::OpenStack::Server::BLOCKED then 'blocking'
       when Fog::Compute::OpenStack::Server::BUILDING then 'creating'
       end
+    end
+    
+    def current_project_id 
+      unless @current_project_id
+        local_project = Project.find_by_domain_fid_and_fid(@scoped_domain_fid,@scoped_project_fid)
+        @current_project_id = local_project.key if local_project
+      end
+      return @current_project_id
     end
   end
 

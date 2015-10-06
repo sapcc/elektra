@@ -20,6 +20,12 @@
             as:                 :select,
             collection:         @images,
             required:           true}
+            
+          = f.input :nics, { label: "Network",
+            input_html:         {data: {trigger: 'change', target: '.network-details'} },
+            as:                 :select,
+            collection:         @networks,
+            required:           true}
 
       .col-md-6
         %h3 Flavor Details
