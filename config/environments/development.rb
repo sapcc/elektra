@@ -41,12 +41,14 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
+  if ENV['TRUSTED_IP']
+    # to use better errors not only on localhost
+    BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']
+    # the same goes for the console
+    config.web_console.whitelisted_ips = ENV['TRUSTED_IP']
+    puts "=> Trusted IP #{ENV['TRUSTED_IP']}"
+  end
 
-  # to use better errors not only on localhost
-  BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP'] if ENV['TRUSTED_IP']
-  # the same goes for the console
-  config.web_console.whitelisted_ips = ENV['TRUSTED_IP'] if ENV['TRUSTED_IP']
-  
-  puts "=> Trusted IP #{ENV['TRUSTED_IP']}"
-  puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}"
+  puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
+
 end
