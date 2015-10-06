@@ -52,67 +52,63 @@
       %span.moo-cloud
     %h5.fancy-header Compute, Block Storage & Networking
     %p
-      Create instances from a set of centrally maintained images. Create images and new instances from snapshots of running machines.
-      Decide to run your project on VMWare or KVM, whichever fits your type of application best.
-      Manage block storage and attach them to your instances. Snapshot volumes and create new volumes from existing snapshots.
-      Backup instances and block storage via scheduled snapshots or run ad-hoc backup and restore.
+      Create vms from images in sizes up to 256 GB Ram, snapshot running machines and create own images on VMWare or KVM.
+      Create volumes and attach them to your vms. Snapshot volumes and create volumes from snapshots.
+      Schedule backups or run ad-hoc backup and restore.
 
   %li
     .fancy-icon
       %span.fa.fa-sitemap.fa-fw
     %h5.fancy-header Networking & Load Balancing
     %p
-      Take control of your networking by managing your private networks, subnets, routers, elastic IPs and security groups yourself. Or decide to deploy into a set of internal and external shared networks.
-      Decide which network zones you need to connect into: internal (zone2) or public internet. Route into special networks on request.
-      Configure your loadblancing setup and use advanced blue-green deployment strategies, also for sticky applications.
+      Manage your private networks, subnets, routers, elastic IPs, firewalls and security groups.
+      Route into internal (zone2) or public internet or into special networks on request. Manage your own vpn.
+      Setup loadbalancing and use blue-green deployment strategies, also for sticky applications.
 
   %li
     .fancy-icon
       %span.fa.fa-database.fa-fw
     %h5.fancy-header Additional Storage Types & Software Repositories
     %p
-      Use low-cost shared object storage including versioning via Swift API.
-      Use NFS file system storage to share files between different applications for HA and other scenarios
-      Upload, version and replicate binary artifacts between all the regions your application is running on (with support for binary and repository formats of all major Linux distributions).
-      Consume Windows update services from all regions.
-      Publish, version and consume Chef cookbooks from all regions; central Docker images from a global Docker registry.
+      Use low-cost shared object storage with swift.
+      create NFS file system storage.
+      Manage repositories (rpm, deb, swift), chef cookbooks and docker images & replicate them between regions. Consume Windows update services from all regions.
+      Manage Chef cookbooks & docker images and replicate them to your regions regions.
 
   %li
     .fancy-icon
       %span.fa.fa-lock.fa-fw
     %h5.fancy-header Access Management & Auditing
     %p
-      Assign authorizations to users using groups and roles.
-      Delegate administrative functions to central groups of operators relevant to your process.
-      Configure whether OS users should be provisioned and audited for all centrally provided OS, or use a 3rd-party system for managing OS access.
+      Manage authorizations to users using groups and roles & Delegate administrative rights to central groups of operators.
       Delegate authorization management to external applications such as Cloud Access Manager (CAM).
-      Keep and review the audit trail for your project services.
+      Keep an audit trail for your project services.
 
   %li
     .fancy-icon
       %span.fa.fa-code.fa-fw
     %h5.fancy-header API Access & Tested Tool Belt
     %p
-      Your choice of OpenStack or AWS API.
+      Your choice of OpenStack, AWS API or GMP/Tic API
       Download the tested SDKs for your preferred language and refer to the supported API documentation.
-      Review our set of tested and verified frameworks for usage with our API such as BOSH, Terraform, etc.
+      Learn how to use one of the tested frameworks such as CF Bosh, Packer, kubernetes, terraform and more.
 
   %li
     .fancy-icon
       %span.fa.fa-map-signs.fa-fw
     %h5.fancy-header DNS
     %p
-      Manage domains and domain records via AWS Route 53 API.
-      Allow your customers to bring their own domain to your application endpoint.
+      Manage your own domains
+      Allow your customers to bring their own domain.
 
   %li
     .fancy-icon
       %span.fa.fa-gears.fa-fw
     %h5.fancy-header Monsoon Automation (IaC)
     %p
-      Execute ad-hoc jobs using scripts, Chef and other agents against a set of instances in your project.
-      Publish, configure and execute defined infrastructure as code run-lists using Chef, Ansible or scripts; also in response to dedicated infrastructure events or custom stages.
-      Configure all your systems with a base configuration and software which will be active by default for all automations within your domain or project hierarchy.
+      Execute ad-hoc jobs using scripts, Chef, Ansible.
+      Publish, configure and execute defined run-lists; also in response to dedicated infrastructure events or custom stages.
+      Make all instances compliant to your business needs based on default "base runlist".
       Download and install our open source IaC OpenStack service into any other OpenStack installation.
 
   %li
@@ -120,7 +116,7 @@
       %span.fa.fa-cubes.ga-fw
     %h5.fancy-header Orchestration & Containerization
     %p
-      Create and update complex system landscapes using OpenStack Heat or AWS CloudFormation format.
+      Create complex system landscapes using Heat or AWS CloudFormation format.
       Combine automation and orchestration to implement complex repeatable system setups and updates.
       Consume pre-configured software stacks with relevant SAP and non-SAP software.
       Run your cloud native app using container-as-a-service
@@ -130,19 +126,17 @@
       %span.fa.fa-area-chart.ga-fw
     %h5.fancy-header  Monitoring, Quotas & Logging
     %p
-      Understand the quotas set for your project, monitor the consumption and request an extension.
-      Consume centrally maintained default metrics via dashboards and graphs, configure your own metrics and alarms.
-      Forward logs to make them accessible to your operator's dashboard and to search.
+      Understand quotas set for your project, monitor the consumption and request an extension.
+      Consume default metrics and configure your own metrics and alarms.
+      Forward logs to make them accessible to your operator's dashboard.
 
   %li
     .fancy-icon
       %span.fa.fa-hdd-o.ga-fw
     %h5.fancy-header Bare Metal Data Processing & HANA
     %p
-      Create single or scaleable HANA machines on bare metal using HANA cloud cells and connect them to your project.
-      Create bare metal instances and connect them to your project.
-      Bring your own hardware and connect it to your project.
-
+      Create single or scaleable HANA databases on bare metal using HANA cloud cells.
+      Create bare metal instances or bring your own hardware and connect it to your project.
 
 %h2.page-header Technical Overview
 
