@@ -1,3 +1,6 @@
+
+
+
 // ---------------------------------------------------------------------------------
 // Variables based on bootstrap variables
 // (can't be in the variables.scss because it is included before bootstrap to be
@@ -106,6 +109,13 @@ section {
 
 .glyphicon-cloud {
   top: 3px;
+}
+
+.moo-cloud {
+  background: inline-svg('monsoon_logo_flat.svg') 0 0px no-repeat;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
 }
 
 // ---------------------------------------------------------------------------------
@@ -232,7 +242,7 @@ section {
 // ---------------------------------------------------------------------------------
 
 .logo {
-  background: inline-image("sap-logo.svg") no-repeat;
+  background: inline-svg("sap-logo.svg") no-repeat;
   background-size: contain;
   position: absolute;
   top: $navbar-padding-vertical - 5px;
@@ -406,7 +416,7 @@ footer, .footer {
 
 .bs-callout {
     padding: 20px;
-    margin: 40px 0 20px;
+    margin: 0 0 $line-height-computed;
     border: 1px solid #eee;
     border-left-width: 5px;
     border-radius: 3px;
@@ -614,8 +624,19 @@ tr.task-state {
   table-layout: fixed;
   margin: $line-height-computed*2 0;
 
-  thead th {
-    font-size: $font-size-medium;
+  thead {
+    tr {
+      background: linear-gradient($medium-blue, $bright-blue);
+    }
+
+    th {
+      color: #fff;
+      font-size: $font-size-medium;
+    }
+  }
+
+  td {
+    background: #f9f9f9;
   }
 
   ul {
@@ -623,7 +644,7 @@ tr.task-state {
     padding-left: 0;
 
     li {
-      background: inline-image("rounded-square-outline.svg") 0 1px no-repeat;
+      background: inline-svg('rounded-square-outline.svg') 0 1px no-repeat;
       padding-left: 22px;
     }
   }
@@ -650,6 +671,8 @@ tr.task-state {
     position: relative;
     padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
     margin-bottom: $line-height-computed;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     .fancy-icon {
       position: absolute;
@@ -666,6 +689,20 @@ tr.task-state {
       font-weight: bold;
     }
 
+  }
+
+  &.fancy-list-2col {
+    li {
+      @include make-md-column(6);
+      padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
+
+    }
+  }
+
+  &.fancy-list-xl-height {
+    li {
+      height: $line-height-computed * 13;
+    }
   }
 }
 

@@ -3,7 +3,7 @@
     .container
       .row
         .col-sm-8
-          %h1 SAP Openstack Cloud
+          %h1 SAP Converged Cloud
           %p Get VMs for your development and production scenarios. HANA ready. Monsoon automation enabled.
           = link_to "Enter the cloud", domain_start_path, class: "btn btn-outline-negative btn-lg"
         .col-sm-4
@@ -33,28 +33,126 @@
 
 
 
-%h1.page-header What is SAP Openstack Cloud?
+%h1.page-header What is SAP Converged Cloud?
 
 %p.lead
-  SAP Openstack Cloud is SAP's internal cloud offering running on an
+  SAP Converged Cloud is SAP's internal cloud offering running on an
   - external_link_to "OpenStack", "https://www.openstack.org/"
-  backend. You can spawn VMs, build whole landscapes for development and productive use to run your applications and services. The cloud comes in different flavors called
-  = link_to "cluster types", "#cluster-types"
-  which cater to different audiences and use cases.
-  You choose what you need and where you need it and you'll get it with the press of a button and minimal red tape. A quick overview:
+  backend. You can spawn VMs, build whole landscapes for development and productive use on which you can run your applications and services. We offer a powerful automation
+  service which you can use to automate many aspects of your landscapes like spawning and configuring new VMs, installing or uninstalling software, updating existing VMs, etc.
+%p.lead
+  SAP Converged Cloud makes it easy for you to get the landscape you need. You choose what you need and where you need it and you'll get it with the press of a button and minimal red tape.
+
+
+
+
+%ul.fancy-list.fancy-list-2col
+  %li
+    .fancy-icon
+      %span.moo-cloud
+    %h5.fancy-header Compute, Block Storage & Networking
+    %p
+      Create instances from a set of centrally maintained images. Create images and new instances from snapshots of running machines.
+      Decide to run your project on VMWare or KVM, whichever fits your type of application best.
+      Manage block storage and attach them to your instances. Snapshot volumes and create new volumes from existing snapshots.
+      Backup instances and block storage via scheduled snapshots or run ad-hoc backup and restore.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-sitemap.fa-fw
+    %h5.fancy-header Networking & Load Balancing
+    %p
+      Take control of your networking by managing your private networks, subnets, routers, elastic IPs and security groups yourself. Or decide to deploy into a set of internal and external shared networks.
+      Decide which network zones you need to connect into: internal (zone2) or public internet. Route into special networks on request.
+      Configure your loadblancing setup and use advanced blue-green deployment strategies, also for sticky applications.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-database.fa-fw
+    %h5.fancy-header Additional Storage Types & Software Repositories
+    %p
+      Use low-cost shared object storage including versioning via Swift API.
+      Use NFS file system storage to share files between different applications for HA and other scenarios
+      Upload, version and replicate binary artifacts between all the regions your application is running on (with support for binary and repository formats of all major Linux distributions).
+      Consume Windows update services from all regions.
+      Publish, version and consume Chef cookbooks from all regions; central Docker images from a global Docker registry.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-lock.fa-fw
+    %h5.fancy-header Access Management & Auditing
+    %p
+      Assign authorizations to users using groups and roles.
+      Delegate administrative functions to central groups of operators relevant to your process.
+      Configure whether OS users should be provisioned and audited for all centrally provided OS, or use a 3rd-party system for managing OS access.
+      Delegate authorization management to external applications such as Cloud Access Manager (CAM).
+      Keep and review the audit trail for your project services.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-code.fa-fw
+    %h5.fancy-header API Access & Tested Tool Belt
+    %p
+      Your choice of OpenStack or AWS API.
+      Download the tested SDKs for your preferred language and refer to the supported API documentation.
+      Review our set of tested and verified frameworks for usage with our API such as BOSH, Terraform, etc.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-map-signs.fa-fw
+    %h5.fancy-header DNS
+    %p
+      Manage domains and domain records via AWS Route 53 API.
+      Allow your customers to bring their own domain to your application endpoint.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-gears.fa-fw
+    %h5.fancy-header Monsoon Automation (IaC)
+    %p
+      Execute ad-hoc jobs using scripts, Chef and other agents against a set of instances in your project.
+      Publish, configure and execute defined infrastructure as code run-lists using Chef, Ansible or scripts; also in response to dedicated infrastructure events or custom stages.
+      Configure all your systems with a base configuration and software which will be active by default for all automations within your domain or project hierarchy.
+      Download and install our open source IaC OpenStack service into any other OpenStack installation.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-cubes.ga-fw
+    %h5.fancy-header Orchestration & Containerization
+    %p
+      Create and update complex system landscapes using OpenStack Heat or AWS CloudFormation format.
+      Combine automation and orchestration to implement complex repeatable system setups and updates.
+      Consume pre-configured software stacks with relevant SAP and non-SAP software.
+      Run your cloud native app using container-as-a-service
+
+  %li
+    .fancy-icon
+      %span.fa.fa-area-chart.ga-fw
+    %h5.fancy-header  Monitoring, Quotas & Logging
+    %p
+      Understand the quotas set for your project, monitor the consumption and request an extension.
+      Consume centrally maintained default metrics via dashboards and graphs, configure your own metrics and alarms.
+      Forward logs to make them accessible to your operator's dashboard and to search.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-hdd-o.ga-fw
+    %h5.fancy-header Bare Metal Data Processing & HANA
+    %p
+      Create single or scaleable HANA machines on bare metal using HANA cloud cells and connect them to your project.
+      Create bare metal instances and connect them to your project.
+      Bring your own hardware and connect it to your project.
+
+
+%h2.page-header Technical Overview
 
 %ul.fancy-list
   %li
     .fancy-icon
       %span.fa.fa-globe.fa-fw
-    %h5.fancy-header 5 Regions
-    %p Europe, US-East, US-West, Canada, Russia
+    %h5.fancy-header 5 Regions with multiple data centers
+    %p Europe (3 datacenters), US-East (1 datacenter), US-West (2 datacenters), Canada (1 datacenter), Russia (1 datacenter)
 
-  %li
-    .fancy-icon
-      %span.fa.fa-cubes.fa-fw
-    %h5.fancy-header 3 Cluster Types
-    %p Type 1, type 2, type 3
 
   %li
     .fancy-icon
@@ -68,53 +166,26 @@
     %h5.fancy-header 19 VM Sizes
     %p Small (1 CPU, 1 GB Ram) up to Hana sized (16 CPU, 64 GB Ram)
 
-  %li
-    .fancy-icon
-      %span.fa.fa-object-group.fa-fw
-    %h5.fancy-header 23 Availability Zones
-    %p Multiple datacenters for many regions: Germany (3), USA (3), Canada (1), Russia (1)
-
-  %li
-    .fancy-icon
-      %span.fa.fa-database.fa-fw
-    %h5.fancy-header Storage
-    %p OpenStack Swift object store to store and retrieve data swiftly via API.
-
-  %li
-    .fancy-icon
-      %span.fa.fa-cloud.fa-fw
-    %h5.fancy-header Compute Services
-    %p Instance operations (create, terminate, start, stop), volumes and snapshots (volume capacity 1 GB - 1 TB)
-
-    %li
-      .fancy-icon
-        %span.fa.fa-gears.fa-fw
-      %h5.fancy-header Monsoon Automation Services
-      %p Automate single machines or whole landscapes. Automate software installation or updates, triggering jobs, ...
-
-  %li
-    .fancy-icon
-      %span.fa.fa-sitemap.fa-fw
-    %h5.fancy-header Networking Services
-    %p Software defined networking, security groups, load balancing
-
-
-.alert.alert-info
-  Are you an exisiting customer of GMP, HCP, or Monsoon?
-  = link_to "Here's how SAP Openstack Cloud compares to what you are used to", "#existing-customer", class: "alert-link"
-
 
 %h1.page-header Getting Started
-%p asdlfakjsdflasjdf;ld
-%p Add "Are you an existing customer?" here maybe in a box on the right?
+.row
+  .col-sm-8
+    %p asdlfakjsdflasjdf;ld
+    %p Add "Are you an existing customer?" here maybe in a box on the right?
+  .col-sm-4
+    .bs-callout.bs-callout-primary
+      %h4 Are you an exisiting customer of GMP, Monsoon or AWS?
+      = link_to "Learn how you can adopt SAP Converged Cloud", "#existing-customer"
+
+
 
 %h1.page-header Cluster Types
 %p
   There are three cluster types, type 1, type 2, and type 3. Depending on your requirements or use case some types will be a better fit than others. See the chart below for a summary or visit the
-  = link_to "indepth documentation", "#"
+  = link_to "in-depth documentation", "#"
   if you need more information.
 
-%table.table.table-fancy.table-striped
+%table.table.table-fancy
   %thead
     %tr
       %th Type 1 Cluster
@@ -129,6 +200,7 @@
         %p If you are a customer of HCP pick this.
       %td
         %p For this use case here this cluster is so much better.
+
 
     %tr
       %th Use For
@@ -162,6 +234,7 @@
             %span.fa.fa-li.fa-square-o
             This usecase
 
+
     %tr
       %th Available In
       %th Available In
@@ -194,6 +267,6 @@
             Canada
 
 
-
+%a#existing-customer
 %h1.page-header Existing Customers
 %p adslfajsdfadf

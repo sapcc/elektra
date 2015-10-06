@@ -43,7 +43,8 @@ module ApplicationHelper
 
   def external_link_to(name, url)
     haml_tag :a, href: url do
-      haml_tag :span, class: "glyphicon glyphicon-share-alt"
+      # haml_tag :span, class: "glyphicon glyphicon-share-alt"
+      haml_tag :span, class: "fa fa-external-link"
       haml_concat name
     end
   end
