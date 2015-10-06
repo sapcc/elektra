@@ -2,6 +2,9 @@ module Openstack
   class ComputeService < OpenstackServiceProvider::FogProvider
     
     def driver(auth_params)
+      #TODO: remove this shit
+      auth_params[:connection_options]= { ssl_verify_peer: false }
+      
       Fog::Compute::OpenStack.new(auth_params)
     end
     
