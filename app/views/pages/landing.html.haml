@@ -50,10 +50,12 @@
   %li
     .fancy-icon
       %span.moo-cloud
-    %h5.fancy-header Compute, Block Storage & Networking
+    %h5.fancy-header Compute & Block Storage
     %p
-      Create vms from images in sizes up to 256 GB Ram, snapshot running machines and create own images on VMWare or KVM.
-      Create volumes and attach them to your vms. Snapshot volumes and create volumes from snapshots.
+      Create vms with up to 256 GB Ram, snapshot running vms and create images on VMWare or KVM.
+      %br
+      Create volumes, attach them to vms and snapshot them.
+      %br
       Schedule backups or run ad-hoc backup and restore.
 
   %li
@@ -61,27 +63,32 @@
       %span.fa.fa-sitemap.fa-fw
     %h5.fancy-header Networking & Load Balancing
     %p
-      Manage your private networks, subnets, routers, elastic IPs, firewalls and security groups.
-      Route into internal (zone2) or public internet or into special networks on request. Manage your own VPN.
-      Setup loadbalancing and use blue-green deployment strategies, also for sticky applications.
+      Manage private networks, subnets, routers, elastic IPs, firewalls and security groups.
+      %br
+      Route into internal (zone2) or public internet facing networks and setup VPN connections.
+      %br
+      Setup loadbalancing and use blue-green deployment strategies.
 
   %li
     .fancy-icon
       %span.fa.fa-database.fa-fw
     %h5.fancy-header Additional Storage Types & Software Repositories
     %p
-      Use low-cost shared object storage with swift.
-      create NFS file system storage.
-      Manage repositories (rpm, deb, swift), chef cookbooks and docker images & replicate them between regions. Consume Windows update services from all regions.
-      Manage Chef cookbooks & docker images and replicate them to your regions regions.
+      Use Low-cost shared object storage or NFS file system storage as service.
+      %br
+      Setup repositories for linux packages, chef cookbooks and docker images & Consume Windows update services.
+      %br
+      Replicate your repos into the regions you need them.
 
   %li
     .fancy-icon
       %span.fa.fa-lock.fa-fw
     %h5.fancy-header Access Management & Auditing
     %p
-      Manage authorizations to users using groups and roles & Delegate administrative rights to central groups of operators.
-      Delegate authorization management to external applications such as Cloud Access Manager (CAM).
+      Manage authorizations & Delegate administrative rights to central groups of operators.
+      %br
+      Delegate authorization management to Cloud Access Manager (CAM) or other apps.
+      %br
       Keep an audit trail for your project services.
 
   %li
@@ -89,9 +96,11 @@
       %span.fa.fa-code.fa-fw
     %h5.fancy-header API Access & Tested Tool Belt
     %p
-      Your choice of OpenStack, AWS API or GMP/Tic API
-      Download the tested SDKs for your preferred language and refer to the supported API documentation.
-      Learn how to use one of the tested frameworks such as CF Bosh, Packer, kubernetes, terraform and more.
+      Your choice of OpenStack, AWS or GMP/TIC API
+      %br
+      Download the tested SDKs for your preferred language & consume the supported API documentation.
+      %br
+      Use CF Bosh, Packer, kubernetes, terraform and other tested tools.
 
   %li
     .fancy-icon
@@ -99,6 +108,7 @@
     %h5.fancy-header DNS
     %p
       Manage your own domains
+      &br
       Allow your customers to bring their own domain.
 
   %li
@@ -107,8 +117,11 @@
     %h5.fancy-header Monsoon Automation (IaC)
     %p
       Execute ad-hoc jobs using scripts, Chef, Ansible.
-      Publish, configure and execute defined run-lists; also in response to dedicated infrastructure events or custom stages.
-      Make all instances compliant to your business needs based on default "base runlist".
+      %br
+      Publish, configure and execute defined run-lists; also based on infrastructure events.
+      %br
+      Make instances compliant to your business needs based on default "base runlist".
+      %br
       Download and install our open source IaC OpenStack service into any other OpenStack installation.
 
   %li
@@ -116,18 +129,21 @@
       %span.fa.fa-cubes.ga-fw
     %h5.fancy-header Orchestration & Containerization
     %p
-      Create complex system landscapes using Heat or AWS CloudFormation format.
-      Combine automation and orchestration to implement complex repeatable system setups and updates.
+      Create complex landscapes using yml or json and combine with IaC
+      %br
       Consume pre-configured software stacks with relevant SAP and non-SAP software.
+      %br
       Run your cloud native app using container-as-a-service
 
   %li
     .fancy-icon
       %span.fa.fa-area-chart.ga-fw
-    %h5.fancy-header  Monitoring, Quotas & Logging
+    %h5.fancy-header  Monitoring, Logging, cost & capacity control
     %p
-      Understand quotas set for your project, monitor the consumption and request an extension.
-      Consume default metrics and configure your own metrics and alarms.
+      Understand quotas, monitor consumption & cost.
+      %br
+      Consume metrics and configure your own metrics and alarms.
+      %br
       Forward logs to make them accessible to your operator's dashboard.
 
   %li
@@ -135,7 +151,8 @@
       %span.fa.fa-hdd-o.ga-fw
     %h5.fancy-header Bare Metal Data Processing & HANA
     %p
-      Create single or scaleable HANA databases on bare metal using HANA cloud cells.
+      Create single or scaled-out HANA databases on bare metal using HANA cloud cells.
+      %br
       Create bare metal instances or bring your own hardware and connect it to your project.
 
 %h2.page-header Technical Overview
@@ -158,7 +175,7 @@
     .fancy-icon
       %span.fa.fa-hdd-o.fa-fw
     %h5.fancy-header 19 VM Sizes
-    %p Small (1 CPU, 1 GB Ram) up to Hana sized (16 CPU, 64 GB Ram)
+    %p Small (1 GB Ram) up to large sized (256 GB Ram)
 
 
 %h1.page-header Getting Started
