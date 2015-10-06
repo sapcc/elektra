@@ -41,10 +41,13 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
+  # better error and web_console is only working when you accessing from localhost
+  # if you running the development server on a remote machine use TRUSTED_IP
+  # for that take a look to the .env and set the variable or run "TRUSTED_IP=192.168.1.1 forman start"
   if ENV['TRUSTED_IP']
     # to use better errors not only on localhost
     BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']
-    # the same goes for the console
+    # use web_console not only on localhost
     config.web_console.whitelisted_ips = ENV['TRUSTED_IP']
     puts "=> Trusted IP #{ENV['TRUSTED_IP']}"
   end

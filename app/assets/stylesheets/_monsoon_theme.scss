@@ -27,7 +27,7 @@ body {
   padding-top: $navbar-height + $context-breadcrumb-height;
   margin-bottom: $footer-height + $footer-margin-top;
 
-  &.landing {
+  &.landing, &.users {
     padding-top: $navbar-height;
   }
 }

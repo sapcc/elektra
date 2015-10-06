@@ -3,6 +3,7 @@ class Dashboard::UsersController < DashboardController
   skip_before_filter :check_terms_of_use, only: [:new, :create]
   # do not rescope token for actions new and create
   skip_before_filter :authentication_rescope_token, only: [:new, :create]
+  skip_before_filter :load_user_projects, only: [:new, :create]
       
   def new
     @domain = services.admin_identity.domain_find_by_key_or_name(@scoped_domain_id)
