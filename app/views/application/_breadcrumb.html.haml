@@ -25,14 +25,11 @@
             = processed_controller_name
             %span.caret
           %ul.dropdown-menu{:role => "menu"}
+            %li.dropdown-header Network
+            %li= link_to "Networks", networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
             %li.dropdown-header Compute
-            %li
-              = link_to "Instances", instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-
+            %li= link_to "Instances", instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
             %li.divider
-
             %li.dropdown-header Identity
-            %li
-              = link_to "Credentials", credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-            %li
-              = link_to "Projects", projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+            %li= link_to "Credentials", credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+            %li= link_to "Projects", projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)

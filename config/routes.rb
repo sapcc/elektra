@@ -39,6 +39,7 @@ Rails.application.routes.draw do
         resources :os_images
         resources :credentials
         resources :projects
+        resources :networks
 
         get 'start' => 'pages#show', id: 'start'
       end
