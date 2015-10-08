@@ -7,6 +7,7 @@ module Openstack
       # TODO: this line of code authenticates user and creates a new token in keystone.
       # this is not necessary because the user already exists in session and has a valid token.
       # It should be possible to create a fog instance without "new" authentication. It can use the token from session!
+      auth_params[:connection_options]= { ssl_verify_peer: false }
       Fog::IdentityV3::OpenStack.new(auth_params.merge(openstack_service_type: ["identityv3"]))
     end
 

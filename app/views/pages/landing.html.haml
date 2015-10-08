@@ -3,7 +3,7 @@
     .container
       .row
         .col-sm-8
-          %h1 SAP Openstack Cloud
+          %h1 SAP Converged Cloud
           %p Get VMs for your development and production scenarios. HANA ready. Monsoon automation enabled.
           = link_to "Enter the cloud", domain_start_path, class: "btn btn-outline-negative btn-lg"
         .col-sm-4
@@ -33,167 +33,189 @@
 
 
 
-%h1.page-header What is SAP Openstack Cloud?
+%h1.page-header What is SAP Converged Cloud?
 
 %p.lead
-  SAP Openstack Cloud is SAP's internal cloud offering running on an
+  SAP Converged Cloud is SAP's internal cloud offering running on an
   - external_link_to "OpenStack", "https://www.openstack.org/"
-  backend. You can spawn VMs, build whole landscapes for development and productive use to run your applications and services. The cloud comes in different flavors called
-  = link_to "cluster types", "#cluster-types"
-  which cater to different audiences and use cases.
-  You choose what you need and where you need it and you'll get it with the press of a button and minimal red tape. A quick overview:
+  backend. You can spawn VMs, build whole landscapes for development and productive use on which you can run your applications and services. We offer a powerful automation
+  service which you can use to automate many aspects of your landscapes like spawning and configuring new VMs, installing or uninstalling software, updating existing VMs, etc.
+%p.lead
+  SAP Converged Cloud makes it easy for you to get the landscape you need. You choose what you need and where you need it and you'll get it with the press of a button and minimal red tape.
 
-%ul.fancy-list
+
+
+
+%ul.fancy-list.fancy-list-2col
   %li
     .fancy-icon
-      %span.fa.fa-globe.fa-fw
-    %h5.fancy-header 5 Regions
-    %p Europe, US-East, US-West, Canada, Russia
-
-  %li
-    .fancy-icon
-      %span.fa.fa-cubes.fa-fw
-    %h5.fancy-header 3 Cluster Types
-    %p Type 1, type 2, type 3
-
-  %li
-    .fancy-icon
-      %span.fa.fa-archive.fa-fw
-    %h5.fancy-header 13 OS Images
-    %p CoreOS, Debian 7, RHEL6, RHEL7, SAP Suse 11 (SP2, SP3), Suse 11 (SP2, SP3), Suse 12, Ubuntu 12, Ubuntu 14, Win 2008, Win 2012
-
-  %li
-    .fancy-icon
-      %span.fa.fa-hdd-o.fa-fw
-    %h5.fancy-header 19 VM Sizes
-    %p Small (1 CPU, 1 GB Ram) up to Hana sized (16 CPU, 64 GB Ram)
-
-  %li
-    .fancy-icon
-      %span.fa.fa-object-group.fa-fw
-    %h5.fancy-header 23 Availability Zones
-    %p Multiple datacenters for many regions: Germany (3), USA (3), Canada (1), Russia (1)
-
-  %li
-    .fancy-icon
-      %span.fa.fa-database.fa-fw
-    %h5.fancy-header Storage
-    %p OpenStack Swift object store to store and retrieve data swiftly via API.
-
-  %li
-    .fancy-icon
-      %span.fa.fa-cloud.fa-fw
-    %h5.fancy-header Compute Services
-    %p Instance operations (create, terminate, start, stop), volumes and snapshots (volume capacity 1 GB - 1 TB)
-
-    %li
-      .fancy-icon
-        %span.fa.fa-gears.fa-fw
-      %h5.fancy-header Monsoon Automation Services
-      %p Automate single machines or whole landscapes. Automate software installation or updates, triggering jobs, ...
+      %span.moo-cloud
+    %h5.fancy-header Compute & Block Storage
+    %p
+      Create vms with up to 256 GB Ram
+      %br
+      Snapshot running vms and create images on VMWare or KVM.
+      %br
+      Create volumes, attach them to vms and take snapshots.
+      %br
+      Schedule backups or run ad-hoc backup and restore.
 
   %li
     .fancy-icon
       %span.fa.fa-sitemap.fa-fw
-    %h5.fancy-header Networking Services
-    %p Software defined networking, security groups, load balancing
+    %h5.fancy-header Networking & Load Balancing
+    %p
+      Manage private networks, subnets, routers, elastic IPs, firewalls and security groups
+      %br
+      Configure access from zone 2, the internet or via VPN.
+      %br
+      Setup loadbalancing and use blue-green deployment strategies.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-database.fa-fw
+    %h5.fancy-header Additional Storage Types & Software Repositories
+    %p
+      Use Low-cost shared object storage or NFS file system storage as service.
+      %br
+      Setup repositories for linux packages, chef cookbooks and docker images
+      %br
+      Consume Windows update services.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-lock.fa-fw
+    %h5.fancy-header Access Management & Auditing
+    %p
+      Manage authorizations
+      %br
+      Delegate administrative rights to central operator.
+      %br
+      Configure Cloud Access Manager (CAM).
+      %br
+      Keep an audit trail for your project services.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-gears.fa-fw
+    %h5.fancy-header Monsoon Automation (IaC)
+    %p
+      Execute ad-hoc jobs using scripts, Chef and Ansible.
+      %br
+      Execute defined run-lists, also based on infrastructure events.
+      %br
+      Be compliant applying default "base runlist".
+      %br
+      Install the open source IaC service into any other OpenStack.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-code.fa-fw
+    %h5.fancy-header API Access & Tested Tool Belt
+    %p
+      Your choice of OpenStack, AWS or GMP/TIC API
+      %br
+      Download the tested SDKs for your preferred language
+      %br
+      Consume the supported API documentation.
+      %br
+      Use CF Bosh, Packer, kubernetes, terraform and other tested tools.
 
 
-.alert.alert-info
-  Are you an exisiting customer of GMP, HCP, or Monsoon?
-  = link_to "Here's how SAP Openstack Cloud compares to what you are used to", "#existing-customer", class: "alert-link"
+  %li
+    .fancy-icon
+      %span.fa.fa-cubes.ga-fw
+    %h5.fancy-header Orchestration & Containerization
+    %p
+      Create complex landscapes using yml or json and combine with IaC
+      %br
+      Consume pre-configured software stacks.
+      %br
+      Run your cloud native app using container-as-a-service
+
+  %li
+    .fancy-icon
+      %span.fa.fa-area-chart.ga-fw
+    %h5.fancy-header  Monitoring, Logging, cost & capacity control
+    %p
+      Understand quotas, monitor consumption & cost.
+      %br
+      Consume metrics and configure your own metrics and alarms.
+      %br
+      Forward logs to make them accessible to your operator's dashboard.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-hdd-o.ga-fw
+    %h5.fancy-header Bare Metal Data Processing & HANA
+    %p
+      Setup HANA databases on bare metal using HANA cloud cells.
+      %br
+      Create bare metal instances or bring your own hardware and connect it to your project.
+
+
+  %li
+    .fancy-icon
+      %span.fa.fa-globe.fa-fw
+    %h5.fancy-header Global distribution
+    %p Choose where you want to deploy your VMs: Europe (3 datacenters), US-East (1 datacenter), US-West (2 datacenters), Canada (1 datacenter), Russia (1 datacenter). Replicate your repos into the regions where you need them.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-map-signs.fa-fw
+    %h5.fancy-header DNS
+    %p
+      Manage your own domains
+      %br
+      Allow your customers to bring their own domain.
+
+  %li
+    .fancy-icon
+      %span.fa.fa-archive.fa-fw
+    %h5.fancy-header OS Images
+    %p Choose from CoreOS, Debian, RHEL, SAP Suse, Suse, Ubuntu or Windows flavors.
+
+
 
 
 %h1.page-header Getting Started
-%p asdlfakjsdflasjdf;ld
-%p Add "Are you an existing customer?" here maybe in a box on the right?
+.row
+  .col-sm-8
+    %p And that same day, too, gazing far down from his boat's side into that same golden sea, Starbuck lowly murmured:&mdash; "Loveliness unfathomable, as ever lover saw in his young bride's eye!&mdash;Tell me not of thy teeth-tiered sharks, and thy kidnapping cannibal ways. Let faith oust fact; let fancy oust memory; I look deep down and do believe."
 
-%h1.page-header Cluster Types
-%p
-  There are three cluster types, type 1, type 2, and type 3. Depending on your requirements or use case some types will be a better fit than others. See the chart below for a summary or visit the
-  = link_to "indepth documentation", "#"
-  if you need more information.
+    %p And Stubb, fish-like, with sparkling scales, leaped up in that same golden light:&mdash;
 
-%table.table.table-fancy.table-striped
-  %thead
-    %tr
-      %th Type 1 Cluster
-      %th Type 2 Cluster
-      %th Type 3 Cluster
+    %p "I am Stubb, and Stubb has his history; but here Stubb takes oaths that he has always been jolly!"
 
-  %tbody
-    %tr
-      %td
-        %p This cluster type is our general purpose cluster, it runs on VMWare. If you don't feel you need the specific features the other types offer, this is the right one to pick.
-      %td
-        %p If you are a customer of HCP pick this.
-      %td
-        %p For this use case here this cluster is so much better.
+    %p And jolly enough were the sights and the sounds that came bearing down before the wind, some few weeks after Ahab's harpoon had been welded.
 
-    %tr
-      %th Use For
-      %th Use For
-      %th Use For
-    %tr
-      %td
-        %ul
-          %li
-            %span.fa.fa-li.fa-square-o
-            This usecase
-          %li
-            %span.fa.fa-li.fa-square-o
-            Or this
+    %p It was a Nantucket ship, the Bachelor, which had just wedged in her last cask of oil, and bolted down her bursting hatches; and now, in glad holiday apparel, was joyously, though somewhat vain-gloriously, sailing round among the widely-separated ships on the ground, previous to pointing her prow for home.
 
-      %td
-        %ul
-          %li
-            %span.fa.fa-li.fa-square-o
-            This usecase
-          %li
-            %span.fa.fa-li.fa-square-o
-            Or this
-          %li
-            %span.fa.fa-li.fa-square-o
-            Or maybe even this
+    %p The three men at her mast-head wore long streamers of narrow red bunting at their hats; from the stern, a whale-boat was suspended, bottom down; and hanging captive from the bowsprit was seen the long lower jaw of the last whale they had slain. Signals, ensigns, and jacks of all colours were flying from her rigging, on every side. Sideways lashed in each of her three basketed tops were two barrels of sperm; above which, in her top-mast cross-trees, you saw slender breakers of the same precious fluid; and nailed to her main truck was a brazen lamp.
 
-      %td
-        %ul
-          %li
-            %span.fa.fa-li.fa-square-o
-            This usecase
-
-    %tr
-      %th Available In
-      %th Available In
-      %th Available In
-
-    %tr
-      %td
-        %ul
-          %li
-            %span.fa.fa-li.fa-square-o
-            All regions
-      %td
-        %ul
-          %li
-            %span.fa.fa-li.fa-square-o
-            Europe
-          %li
-            %span.fa.fa-li.fa-square-o
-            US-East
-          %li
-            %span.fa.fa-li.fa-square-o
-            US-West
-      %td
-        %ul
-          %li
-            %span.fa.fa-li.fa-square-o
-            Europe
-          %li
-            %span.fa.fa-li.fa-square-o
-            Canada
+    %p As was afterwards learned, the Bachelor had met with the most surprising success; all the more wonderful, for that while cruising in the same seas numerous other vessels had gone entire months without securing a single fish. Not only had barrels of beef and bread been given away to make room for the far more valuable sperm, but additional supplemental casks had been bartered for, from the ships she had met; and these were stowed along the deck, and in the captain's and officers' state-rooms. Even the cabin table itself had been knocked into kindling-wood; and the cabin mess dined off the broad head of an oil-butt, lashed down to the floor for a centrepiece. In the forecastle, the sailors had actually caulked and pitched their chests, and filled them; it was humorously added, that the cook had clapped a head on his largest boiler, and filled it; that the steward had plugged his spare coffee-pot and filled it; that the harpooneers had headed the sockets of their irons and filled them; that indeed everything was filled with sperm, except the captain's pantaloons pockets, and those he reserved to thrust his hands into, in self-complacent testimony of his entire satisfaction.
 
 
+    %a#existing-customer
+    %h2 Existing Customers
+    :markdown
+      Night came. The moon was entering her first quarter, and her insufficient light would soon die out in the mist on the horizon. Clouds were rising from the east, and already overcast a part of the heavens.
 
-%h1.page-header Existing Customers
-%p adslfajsdfadf
+      The pilot had hung out his lights, which was very necessary in these seas crowded with vessels bound landward; for collisions are not uncommon occurrences, and, at the speed she was going, the least shock would shatter the gallant little craft.
+
+      Fix, seated in the bow, gave himself up to meditation. He kept apart from his fellow-travellers, knowing Mr. Fogg's taciturn tastes; besides, he did not quite like to talk to the man whose favours he had accepted. He was thinking, too, of the future. It seemed certain that Fogg would not stop at Yokohama, but would at once take the boat for San Francisco; and the vast extent of America would ensure him impunity and safety. Fogg's plan appeared to him the simplest in the world. Instead of sailing directly from England to the United States, like a common villain, he had traversed three quarters of the globe, so as to gain the American continent more surely; and there, after throwing the police off his track, he would quietly enjoy himself with the fortune stolen from the bank. But, once in the United States, what should he, Fix, do? Should he abandon this man? No, a hundred times no! Until he had secured his extradition, he would not lose sight of him for an hour. It was his duty, and he would fulfil it to the end. At all events, there was one thing to be thankful for; Passepartout was not with his master; and it was above all important, after the confidences Fix had imparted to him, that the servant should never have speech with his master.
+
+      Phileas Fogg was also thinking of Passepartout, who had so strangely disappeared. Looking at the matter from every point of view, it did not seem to him impossible that, by some mistake, the man might have embarked on the Carnatic at the last moment; and this was also Aouda's opinion, who regretted very much the loss of the worthy fellow to whom she owed so much. They might then find him at Yokohama; for, if the Carnatic was carrying him thither, it would be easy to ascertain if he had been on board.
+
+      A brisk breeze arose about ten o'clock; but, though it might have been prudent to take in a reef, the pilot, after carefully examining the heavens, let the craft remain rigged as before. The Tankadere bore sail admirably, as she drew a great deal of water, and everything was prepared for high speed in case of a gale.
+
+      Mr. Fogg and Aouda descended into the cabin at midnight, having been already preceded by Fix, who had lain down on one of the cots. The pilot and crew remained on deck all night.
+
+      At sunrise the next day, which was 8th November, the boat had made more than one hundred miles. The log indicated a mean speed of between eight and nine miles. The Tankadere still carried all sail, and was accomplishing her greatest capacity of speed. If the wind held as it was, the chances would be in her favour. During the day she kept along the coast, where the currents were favourable; the coast, irregular in profile, and visible sometimes across the clearings, was at most five miles distant. The sea was less boisterous, since the wind came off land—a fortunate circumstance for the boat, which would suffer, owing to its small tonnage, by a heavy surge on the sea.
+
+      The breeze subsided a little towards noon, and set in from the south-west. The pilot put up his poles, but took them down again within two hours, as the wind freshened up anew.
+
+  .col-sm-4
+    .bs-callout.bs-callout-primary
+      %h4 Are you an exisiting customer of GMP, Monsoon or AWS?
+      = link_to "Learn how you can adopt SAP Converged Cloud", "#existing-customer"

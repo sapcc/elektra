@@ -403,6 +403,7 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
+    sass_inline_svg (0.0.2)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -484,6 +485,7 @@ DEPENDENCIES
   rspec
   rspec-rails
   sass-rails
+  sass_inline_svg
   sdoc (~> 0.4.0)
   simple-navigation
   simple_form
