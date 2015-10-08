@@ -8,7 +8,7 @@ module Screenshots
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
     type         = Mime::Type.lookup_by_extension(extension)
-    endpoint_url = URI.parse("https://localhost/v1/AUTH_p-7496766f1debug/#{basename}")
+    endpoint_url = URI.parse("https://localhost/v1/AUTH_p-7496766f1/debug/#{basename}")
     content      = File.read(path)
 
     Net::HTTP.start(endpoint_url.host, endpoint_url.port) do |http|
