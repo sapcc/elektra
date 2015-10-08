@@ -8,7 +8,7 @@ module Screenshots
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
     type         = Mime::Type.lookup_by_extension(extension)
-    endpoint_url = URI.parse("http://localhost:8080/v1/AUTH_p-d3288b19a/screenshots/#{basename}")
+    endpoint_url = URI.parse("https://localhost/v1/AUTH_p-7496766f1debug/#{basename}")
     content      = File.read(path)
 
     Net::HTTP.start(endpoint_url.host, endpoint_url.port) do |http|
@@ -26,10 +26,10 @@ module Screenshots
   def self.token
     fog = Fog::Identity::OpenStack::V3.new(
       openstack_domain_name:  "monsooncc",
-      openstack_project_name: "service",
+      openstack_project_name: "p-7496766f1",
       openstack_api_key:      "secret",
       openstack_userid:       "concourse",
-      openstack_auth_url:     "http://localhost:5000/v3/auth/tokens",
+      openstack_auth_url:     "https://localhost:5000/v3/auth/tokens",
       openstack_region:       "europe"
     ).credentials[:openstack_auth_token]
   end
