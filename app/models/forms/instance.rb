@@ -2,7 +2,7 @@ require 'fog/openstack/models/compute/server'
 
 class Forms::Instance < Forms::Base
   # available attributes: 
-  # :instance_name, :addresses, :flavor, :host_id, :image, :metadata, :links,
+  # :instance_name, :addresses, :flavor, :host_id, :image, :metadata, :links, :networks
   # :personality,
   # :progress,
   # :accessIPv4,
@@ -28,11 +28,14 @@ class Forms::Instance < Forms::Base
   
   wrapper_for ::Fog::Compute::OpenStack::Server
   
-  additional_attributes :flavor_ref, :image_ref
+  additional_attributes :flavor_ref, :image_ref, :max_count, :nics
+  default_values min_count: 1, max_count: 1
   
   def before_save
     self.image_ref = image
-    self.flavor_ref = flavor
+    self.flavor_ref = flavor.to_i
+    self.max_count = self.max_count.to_i
   end
-    
+  
+     
 end

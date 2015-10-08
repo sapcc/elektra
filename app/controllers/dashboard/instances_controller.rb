@@ -19,9 +19,15 @@ module Dashboard
       @forms_instance = services.compute.forms_instance
       @flavors = services.compute.flavors
       @images = services.image.images
+      @availability_zones = services.compute.availability_zones
+      #@security_groups= services.compute.security_groups
+      @network_zones = services.neutron.networks
 
       @forms_instance.flavor=@flavors.first.id
       @forms_instance.image=@images.first.id
+      @forms_instance.nics=[@network_zones.first.id]
+      @forms_instance.availability_zone=@availability_zones.first
+      #@forms_instance.security_group=@security_groups.first 
     end
 
 
@@ -138,6 +144,14 @@ module Dashboard
       when Fog::Compute::OpenStack::Server::BLOCKED then 'blocking'
       when Fog::Compute::OpenStack::Server::BUILDING then 'creating'
       end
+    end
+    
+    def current_project_id 
+      unless @current_project_id
+        local_project = Project.find_by_domain_fid_and_fid(@scoped_domain_fid,@scoped_project_fid)
+        @current_project_id = local_project.key if local_project
+      end
+      return @current_project_id
     end
   end
 

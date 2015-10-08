@@ -11,6 +11,7 @@
   %td= services.compute.images.get(instance.image["id"]).name
   %td= instance.addresses.fetch("private",[]).collect{|address| address["addr"]}.join(', ') 
   %td
+    = instance.os_ext_sts_task_state
     = instance.power_state_string
   %td
     = instance.os_ext_sts_task_state.nil? ? instance.state.capitalize : instance.os_ext_sts_task_state

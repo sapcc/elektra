@@ -116,5 +116,41 @@ module OpenstackServiceProvider
       end
     end
   end
+  
+  
+  class CustomProvider < BaseProvider
+    def initialize(endpoint,region,current_user)
+      super
+
+      @auth_params = {
+        auth_token: @current_user.token,
+        service_catalog: @current_user.service_catalog,
+        auth_url: @endpoint,
+        region: @region
+      }
+      
+      @driver = driver(@auth_params)
+    end
+    
+    def driver(auth_params)
+      raise "Not implemented yet!"
+    end
+    
+    def get_service_url(type,version=nil)
+      network_service = @auth_params[:service_catalog].select do |service| 
+        service["type"]==type
+      end.first
+    
+      endpoint_url = network_service["endpoints"].select do |endpoint|
+        endpoint["region_id"]==@auth_params[:region]  
+      end.first["url"]
+    
+      if version.nil?
+        endpoint_url
+      else
+        endpoint_url.last=='/' ? endpoint_url+version : endpoint_url+"/#{version}"
+      end
+    end
+  end
 
 end
