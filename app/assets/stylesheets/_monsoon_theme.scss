@@ -699,9 +699,17 @@ tr.task-state {
     }
   }
 
+  &.fancy-list-2col-indented {
+    li {
+      @include make-md-column(5);
+      padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
+
+    }
+  }
+
   &.fancy-list-xl-height {
     li {
-      height: $line-height-computed * 13;
+      height: $line-height-computed * 12;
     }
   }
 }
