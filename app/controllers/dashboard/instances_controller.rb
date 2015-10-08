@@ -19,10 +19,15 @@ module Dashboard
       @forms_instance = services.compute.forms_instance
       @flavors = services.compute.flavors
       @images = services.image.images
-      @network_zones = services.neutron.networks.all
+      @availability_zones = services.compute.availability_zones
+      #@security_groups= services.compute.security_groups
+      @network_zones = services.neutron.networks
 
       @forms_instance.flavor=@flavors.first.id
       @forms_instance.image=@images.first.id
+      @forms_instance.nics=[@network_zones.first.id]
+      @forms_instance.availability_zone=@availability_zones.first
+      #@forms_instance.security_group=@security_groups.first 
     end
 
 
@@ -47,10 +52,7 @@ module Dashboard
     def create
       @forms_instance = services.compute.forms_instance(params[:id])
       @forms_instance.attributes=params[:forms_instance]
-      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      # p params[:forms_instance]
-      # @forms_instance.tenant_id = current_project_id
-      
+
       if @forms_instance.save
         flash[:notice] = "Instance successfully created."
         redirect_to instances_path

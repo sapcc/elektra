@@ -8,6 +8,20 @@
       .col-md-6
         %fieldset
           = f.input :name
+          
+          = f.input :availability_zone, { label: "Availability zone",
+            input_html:         {},
+            as:                 :select,
+            collection:         @availability_zones,
+            required:           true}
+            
+          / = f.input :security_group, { label: "Security group",
+          /   input_html:         {},
+          /   as:                 :select,
+          /   collection:         @availability_zones,
+          /   required:           true}
+            
+          = f.input :max_count, { as: :integer }  
 
           = f.input :flavor, { label: "Flavor",
             input_html:         {data: {trigger: 'change', target: '.flavor-details'} },
@@ -22,9 +36,10 @@
             required:           true}
             
           = f.input :nics, { label: "Network",
-            input_html:         {data: {trigger: 'change', target: '.network-details'} },
-            as:                 :select,
-            collection:         @networks,
+            input_html:         { name: "forms_instance[nics][][net_id]", include_hidden: false },
+            as:                 :check_boxes,
+            collection:         @network_zones,
+            include_hidden:     false,
             required:           true}
 
       .col-md-6
