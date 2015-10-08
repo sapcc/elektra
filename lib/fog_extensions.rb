@@ -112,7 +112,8 @@ class Fog::Compute::OpenStack::Server
   end
   
   def os_ext_sts_task_state
-    return nil if @os_ext_sts_task_state.nil? or @os_ext_sts_task_state.empty? or @os_ext_sts_task_state.downcase=='none'
-    return @os_ext_sts_task_state
+    task_state = attributes[:os_ext_sts_task_state]
+    return nil if task_state.nil? or task_state.empty? or task_state.downcase=='none'
+    return task_state
   end
 end

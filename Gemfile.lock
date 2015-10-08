@@ -1,6 +1,6 @@
 GIT
   remote: git://localhost/monsoon/fog.git
-  revision: 145d000c688b14503649756cb5c6f55cd9f41936
+  revision: b3c62f94fde6b821740170b39bc88232d91836bf
   branch: master
   specs:
     fog (1.34.0)

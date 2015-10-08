@@ -34,7 +34,7 @@ class Forms::Instance < Forms::Base
   def before_save
     self.image_ref = image
     self.flavor_ref = flavor.to_i
-    self.max_count = self.max_count.to_i
+    self.max_count.to_i!# = self.max_count.to_i
   end
   
      
