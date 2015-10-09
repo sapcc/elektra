@@ -1,6 +1,6 @@
 class Dashboard::NetworksController < DashboardController
   def index
-    @networks = services.network.networks.all rescue []
+    @networks = services.network.networks
   end
   
   def show
