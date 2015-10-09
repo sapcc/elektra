@@ -11,6 +11,7 @@ class Dashboard::NetworksController < DashboardController
   
   def new
     @forms_network = services.network.forms_network
+    p @forms_network
   end
   
   def create
