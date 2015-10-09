@@ -1,4 +1,4 @@
-require 'fog/openstack/models/compute/server'
+require 'fog/openstack/models/network/network'
 
 class Forms::Network < Forms::Base
   # available attributes: 
@@ -14,5 +14,5 @@ class Forms::Network < Forms::Base
   # :router_external
     
   wrapper_for ::Fog::Network::OpenStack::Network
-     
+
 end
