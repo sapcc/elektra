@@ -11,7 +11,10 @@ module Screenshots
     endpoint_url = URI.parse("#{endpoint}/debug/#{basename}")
     content      = File.read(path)
 
-    Net::HTTP.start(endpoint_url.host, endpoint_url.port, use_ssl: endpoint_url.scheme == "https") do |http|
+    Net::HTTP.start(endpoint_url.host, 
+                    endpoint_url.port, 
+                    use_ssl: endpoint_url.scheme == "https", 
+                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
       put = Net::HTTP::Put.new(endpoint_url.request_uri)
       put['X-Auth-Token']        = token
       put['X-Delete-After']      = 60 * 60 * 24 * 7
@@ -30,7 +33,10 @@ module Screenshots
     project      = "p-7496766f1" 
     domain       = "monsooncc"
 
-    Net::HTTP.start(endpoint_url.host, endpoint_url.port, use_ssl: endpoint_url.scheme == "https") do |http|
+    Net::HTTP.start(endpoint_url.host, 
+                    endpoint_url.port, 
+                    use_ssl: endpoint_url.scheme == "https", 
+                    verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
       post  = Net::HTTP::Post.new(endpoint_url.request_uri)
       post['Content-type'] = "application/json"
       post.body = { 
