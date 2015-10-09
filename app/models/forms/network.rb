@@ -13,6 +13,6 @@ class Forms::Network < Forms::Base
   # :provider_segmentation_id
   # :router_external
     
-  wrapper_for ::Fog::Compute::OpenStack::Network
+  wrapper_for ::Fog::Network::OpenStack::Network
      
 end
