@@ -1,15 +1,3 @@
-Given(/I am on the root page$/) do
-  visit root_path
-end
-
-Given(/^I am not logged in$/) do
-  visit monsoon_openstack_auth.logout_path
-end
-
-When(/^I visit "(.*?)"$/) do |path|
-  visit path
-end
-
 Then(/^I am redirected to login page$/) do
   expect(current_path).to eq(monsoon_openstack_auth.new_session_path)
 end

@@ -8,7 +8,7 @@ module Openstack
 
     ##################### CREDENTIALS #########################
     def forms_network(id=nil)
-      #Forms::Network.new(self,id)
+      Forms::Network.new(self,id)
     end
     
     def create_network(options = {})
@@ -17,6 +17,14 @@ module Openstack
     
     def find_network(id)
       @driver.networks.get(id)
+    end
+    
+    def subnets(network_id)
+      @driver.subnets.all( network_id: network_id)
+    end
+    
+    def ports(network_id)
+      @driver.ports.all( network_id: network_id)
     end
   end
 end

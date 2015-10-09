@@ -1,0 +1,95 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"} 
+    %li{role: "presentation"}
+      = link_to '#subnets', aria: {controls:"subnets"}, role: "tab", data: {toggle:"tab"} do
+        Subnets
+        %span.badge= @subnets.length
+          
+    %li{role: "presentation"}
+      = link_to '#ports', aria: {controls:"ports"}, role: "tab", data: {toggle:"tab"} do
+        Ports
+        %span.badge= @ports.length 
+  
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"overview"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name
+            %td= @network.name 
+          %tr
+            %th ID
+            %td= @network.id
+          %tr
+            %th Project ID
+            %td= @network.tenant_id
+          %tr
+            %th Status
+            %td= @network.status
+          %tr
+            %th Admin State
+            %td= @network.admin_state_up ? 'UP' : 'DOWN'
+          %tr
+            %th Shared
+            %td= @network.shared ? 'Yes' : 'No'
+          %tr
+            %th External Network
+            %td= "Maybe"
+          %tr
+            %th Provider Network
+            %td
+              = "Network Type: #{@network.provider_network_type}"
+              %br
+              = "Physical Network: #{@network.provider_physical_network}"
+              %br
+              = "Segmentation ID: #{@network.provider_segmentation_id}"           
+            
+    .tab-pane{role:"tabpanel", id:"subnets"}        
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name	
+            %th CIDR	
+            %th IP Version	
+            %th Gateway IP	
+            %th Actions
+          - @subnets.each do |subnet|
+            %tr
+              %td= subnet.name
+              %td= subnet.cidr
+              %td= subnet.ip_version
+              %td= subnet.gateway_ip
+              %td
+      
+    .tab-pane{role:"tabpanel", id:"ports"}  
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name	
+            %th Fixed IPs	
+            %th Attached Device	
+            %th Status
+            %th Admin State
+          - @ports.each do |port|
+            %tr
+              %td= port.name
+              %td
+                - port.fixed_ips.each do |ip|
+                  = ip["ip_address"]
+                  %br
+              %td= port.device_owner
+              %td= port.status
+              %td= port.admin_state_up ? 'UP' : 'DOWN'
+              %td
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", networks_url(), class: 'btn btn-default'
+    
