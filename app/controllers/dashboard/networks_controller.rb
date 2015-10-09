@@ -10,6 +10,7 @@ class Dashboard::NetworksController < DashboardController
   end
   
   def new
+    @forms_network = services.network.forms_network
   end
   
   def create
