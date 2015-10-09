@@ -8,7 +8,7 @@ module Screenshots
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
     type         = Mime::Type.lookup_by_extension(extension)
-    endpoint_url = URI.parse("#{endpoint}/#{basename}")
+    endpoint_url = URI.parse("#{endpoint}/debug/#{basename}")
     content      = File.read(path)
 
     Net::HTTP.start(endpoint_url.host, endpoint_url.port, use_ssl: endpoint_url.scheme == "https") do |http|
@@ -41,7 +41,7 @@ module Screenshots
             ],
             "password": {
               "user": {
-                "id": user, 
+                "name": user, 
                 "password": password,
                 "project": { 
                   "name": project
