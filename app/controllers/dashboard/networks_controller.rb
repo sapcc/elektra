@@ -1,12 +1,12 @@
 class Dashboard::NetworksController < DashboardController
   def index
-    @networks = services.neutron.networks
+    @networks = services.network.networks
   end
   
   def show
-    @network = services.neutron.find_network(params[:id])
-    @subnets = services.neutron.subnets(@network.id)
-    @ports   = services.neutron.ports(@network.id)
+    @network = services.network.find_network(params[:id])
+    @subnets = services.network.subnets(@network.id)
+    @ports   = services.network.ports(@network.id)
   end
   
   def new

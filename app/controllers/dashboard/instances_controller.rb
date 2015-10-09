@@ -21,7 +21,7 @@ module Dashboard
       @images = services.image.images
       @availability_zones = services.compute.availability_zones
       #@security_groups= services.compute.security_groups
-      @network_zones = services.neutron.networks
+      @network_zones = services.network.networks
 
       @forms_instance.flavor=@flavors.first.id
       @forms_instance.image=@images.first.id

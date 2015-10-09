@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'controllers/dashboard/shared_examples'
 require 'controllers/dashboard/stub_identity_service'
-require 'controllers/dashboard/stub_neutron_service'
+require 'controllers/dashboard/stub_network_service'
 
 describe Dashboard::NetworksController do
   include AuthenticationStub
   include StubIdentityService
-  include StubNeutronService
+  include StubNetworkService
   
   it_behaves_like "an dashboard controller"
   
