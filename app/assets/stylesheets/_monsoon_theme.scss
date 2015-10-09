@@ -38,6 +38,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.content {
+  ul {
+    padding-left: 0;
+    list-style-type: none;
+  }
+
+  li {
+    background: inline-svg('rounded-square-outline.svg') 0 4px no-repeat;
+    padding-left: 19px;
+  }
+}
+
 .pages {
   a {
     text-decoration: underline;
@@ -657,16 +669,6 @@ tr.task-state {
 // ---------------------------------------------------------------------------------
 // Lists
 // ---------------------------------------------------------------------------------
-
-ul {
-  padding-left: 0;
-  list-style-type: none;
-
-  li {
-    background: inline-svg('rounded-square-outline.svg') 0 1px no-repeat;
-    padding-left: 22px;
-  }
-}
 
 .fancy-list {
   @include pie-clearfix;

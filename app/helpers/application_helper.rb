@@ -39,6 +39,7 @@ module ApplicationHelper
   def body_class
     css_class = controller.controller_name
     css_class = "#{css_class} #{params[:id]}" if css_class == "pages"
+    css_class
   end
 
   def external_link_to(name, url)
