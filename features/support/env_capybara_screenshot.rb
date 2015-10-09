@@ -8,10 +8,10 @@ module Screenshots
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
     type         = Mime::Type.lookup_by_extension(extension)
-    endpoint_url = URI.parse("https://localhost/v1/AUTH_p-7496766f1/debug/#{basename}")
+    endpoint_url = URI.parse("#{endpoint}/#{basename}")
     content      = File.read(path)
 
-    Net::HTTP.start(endpoint_url.host, endpoint_url.port) do |http|
+    Net::HTTP.start(endpoint_url.host, endpoint_url.port, use_ssl: endpoint_url.scheme == "https") do |http|
       put = Net::HTTP::Put.new(endpoint_url.request_uri)
       put['X-Auth-Token']        = token
       put['X-Delete-After']      = 60 * 60 * 24 * 7
@@ -23,16 +23,50 @@ module Screenshots
     endpoint_url
   end
 
+  def self.request_token
+    endpoint_url = URI.parse("https://localhost:5000/v3/auth/tokens")
+    user         = "concourse" 
+    password     = "secret" 
+    project      = "p-7496766f1" 
+    domain       = "monsooncc"
+
+    Net::HTTP.start(endpoint_url.host, endpoint_url.port, use_ssl: endpoint_url.scheme == "https") do |http|
+      post  = Net::HTTP::Post.new(endpoint_url.request_uri)
+      post['Content-type'] = "application/json"
+      post.body = { 
+        "auth": {
+          "identity": {
+            "methods": [ 
+              "password" 
+            ],
+            "password": {
+              "user": {
+                "id": user, 
+                "password": password,
+                "project": { 
+                  "name": project
+                }, 
+                "domain": {
+                  "name": domain 
+                }
+              }
+            }
+          }
+        }
+      }.to_json
+
+      http.request(post)
+    end
+  end
+
+  def self.endpoint
+    @token ||= request_token
+    JSON.parse(@token.body)["token"]["catalog"].find {|t| t["name"] == "swift"}["endpoints"].find{|t| t["interface"] == "public"}["url"]
+  end
+
   def self.token
-    fog = Fog::Identity::OpenStack::V3.new(
-      openstack_domain_name:  "monsooncc",
-      openstack_project_name: "p-7496766f1",
-      openstack_api_key:      "secret",
-      openstack_userid:       "concourse",
-      openstack_auth_url:     "https://localhost:5000/v3/auth/tokens",
-      openstack_region:       "europe",
-      connection_options:     { ssl_verify_peer: false }
-    ).credentials[:openstack_auth_token]
+    @token ||= request_token
+    @token["X-Subject-Token"] 
   end
 end
 
