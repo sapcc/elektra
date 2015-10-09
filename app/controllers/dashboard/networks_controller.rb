@@ -1,6 +1,6 @@
 class Dashboard::NetworksController < DashboardController
   def index
-    @networks = services.network.networks
+    @networks = services.network.networks rescue []
   end
   
   def show
@@ -11,7 +11,6 @@ class Dashboard::NetworksController < DashboardController
   
   def new
     @forms_network = services.network.forms_network
-    p @forms_network
   end
   
   def create
