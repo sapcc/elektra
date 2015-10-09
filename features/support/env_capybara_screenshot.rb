@@ -30,7 +30,8 @@ module Screenshots
       openstack_api_key:      "secret",
       openstack_userid:       "concourse",
       openstack_auth_url:     "https://localhost:5000/v3/auth/tokens",
-      openstack_region:       "europe"
+      openstack_region:       "europe",
+      connection_options:     { ssl_verify_peer: false }
     ).credentials[:openstack_auth_token]
   end
 end
