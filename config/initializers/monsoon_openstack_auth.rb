@@ -7,7 +7,7 @@ def after_login_url(referrer_url, current_user)
   end
 
   sandbox_url = if (redirect_to_sandbox and current_user.project_id)
-    "/#{current_user.project_domain_id}/#{current_user.project_id}/instances"
+    "/#{current_user.project_domain_id}/#{current_user.project_id}/projects"
   else
     nil
   end
