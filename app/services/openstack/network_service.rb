@@ -1,5 +1,5 @@
 module Openstack
-  class NeutronService < OpenstackServiceProvider::FogProvider
+  class NetworkService < OpenstackServiceProvider::FogProvider
     
     def driver(auth_params)
       auth_params[:connection_options]= { ssl_verify_peer: false }
