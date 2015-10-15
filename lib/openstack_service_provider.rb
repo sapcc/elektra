@@ -1,3 +1,7 @@
+require 'openstack_service_provider/errors'
+require 'openstack_service_provider/driver'
+require 'openstack_service_provider/fog_driver'
+
 # provides openstack services in controller and views
 module OpenstackServiceProvider
   # this module is included in controllers
@@ -63,7 +67,7 @@ module OpenstackServiceProvider
         end
 
         # service must extend OpenstackServiceProvider::BaseProvider, see below.
-        unless klazz < OpenstackServiceProvider::BaseProvider
+        unless klazz < OpenstackServiceProvider::Service
           raise "service #{service_class_name} is not a subclass of OpenstackServiceProvider::BaseProvider"  
         end
 
@@ -77,72 +81,42 @@ module OpenstackServiceProvider
     end
   end
   
-  class BaseProvider
-    attr_accessor :services
-    def initialize(endpoint,region,current_user)
-      @endpoint = endpoint
-      @region = region
+  class Service
+    attr_accessor :services, :driver, :current_user, :auth_url, :region, :token, :domain_id, :project_id
+    
+    def initialize(auth_url,region,current_user)
+      @auth_url     = auth_url
+      @region       = region
       @current_user = current_user
-    end
-  end
-  
-  class FogProvider < BaseProvider
-    def initialize(endpoint,region,current_user)
-      super
-
-      @auth_params = {
-        provider: 'openstack',
-        openstack_auth_token: @current_user.token,
-        openstack_auth_url: @endpoint,
-        openstack_region: @region
-      }
       
-      @auth_params[:openstack_domain_id]=current_user.domain_id if current_user.domain_id
-      @auth_params[:openstack_project_id]=current_user.project_id if current_user.project_id
-
-      @driver = driver(@auth_params)
-    end
-    
-    def driver(auth_params)
-      raise "Not implemented yet!"
-    end
-    
-    def method_missing(method_sym, *arguments, &block)
-      if arguments.blank?
-        @driver.send(method_sym)
-      else
-        arguments = arguments.first if arguments.count==1
-        @driver.send(method_sym, arguments)
+      if current_user
+        @token        = current_user.token
+        @domain_id    = current_user.domain_id
+        @project_id   = current_user.project_id
       end
-    end
-  end
-  
-  
-  class CustomProvider < BaseProvider
-    def initialize(endpoint,region,current_user)
-      super
-
-      @auth_params = {
-        auth_token: @current_user.token,
-        service_catalog: @current_user.service_catalog,
-        auth_url: @endpoint,
-        region: @region
-      }
       
-      @driver = driver(@auth_params)
+      # init driver
+      @driver = get_driver({
+        auth_url:   @auth_url,
+        region:     @region,
+        token:      @token,
+        domain_id:  @domain_id,
+        project_id: @project_id  
+      })
     end
     
-    def driver(auth_params)
+    def get_driver(params={})
       raise "Not implemented yet!"
-    end
+    end 
     
+    # TODO: use public url!!!
     def get_service_url(type,version=nil)
-      network_service = @auth_params[:service_catalog].select do |service| 
+      network_service = @current_user.service_catalog.select do |service| 
         service["type"]==type
       end.first
     
       endpoint_url = network_service["endpoints"].select do |endpoint|
-        endpoint["region_id"]==@auth_params[:region]  
+        endpoint["region_id"]==@region 
       end.first["url"]
     
       if version.nil?
@@ -152,5 +126,4 @@ module OpenstackServiceProvider
       end
     end
   end
-
 end

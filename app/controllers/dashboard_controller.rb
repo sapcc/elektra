@@ -25,7 +25,7 @@ class DashboardController < ApplicationController
 
 
   def check_terms_of_use
-    if services.admin_identity.new_user?(current_user.id)
+    if services.admin_identity.new_user?(current_user)
       # new user: user has not a role for requested domain or user has no project yet.
       # save current_url in session
       session[:requested_url] = request.env['REQUEST_URI']
@@ -36,7 +36,7 @@ class DashboardController < ApplicationController
 
   def load_user_projects
     # get all projects for user (this might be expensive, might need caching, ajaxifying, ...)
-    @user_domain_projects = services.identity.projects.auth_projects
+    @user_domain_projects = services.identity.auth_projects
 
     # load active project
     if @scoped_project_id

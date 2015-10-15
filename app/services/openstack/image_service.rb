@@ -1,10 +1,12 @@
 module Openstack
-  class ImageService < OpenstackServiceProvider::FogProvider
+  class ImageService < OpenstackServiceProvider::Service
     
-    def driver(auth_params)
-      auth_params[:connection_options]= { ssl_verify_peer: false }
-      Fog::Image::OpenStack.new(auth_params)
+    def get_driver(params)
+      OpenstackServiceProvider::FogDriver::Image.new(params)
     end
     
+    def images
+      @driver.map_to(Image::Image).images
+    end
   end
 end

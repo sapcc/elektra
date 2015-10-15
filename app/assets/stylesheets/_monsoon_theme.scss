@@ -554,6 +554,16 @@ tr.state-paused {
   }
 }
 
+tr.state-shutoff {
+  td:first-child {
+    &:before {
+      font-family: 'Glyphicons Halflings';
+      content: "\e034";
+      color: #000000;
+    }
+  }
+}
+
 tr.state-error {
   td:first-child {
     &:before {

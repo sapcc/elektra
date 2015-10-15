@@ -5,74 +5,61 @@ module Dashboard
       @active_domain = services.identity.find_domain(@scoped_domain_id)
 
       if @scoped_project_id
-        @instances = services.compute.servers.all
+        @instances = services.compute.servers
       end
     end
 
     def show
-      @instance = services.compute.servers.get(params[:id])
-      @flavor = services.compute.flavors.get(@instance.flavor.fetch("id",nil))
-      @image = services.compute.images.get(@instance.image.fetch("id",nil))
+      @instance = services.compute.server(params[:id])
     end
 
     def new
-      @forms_instance = services.compute.forms_instance
+      @instance = services.compute.server
+
       @flavors = services.compute.flavors
       @images = services.image.images
       @availability_zones = services.compute.availability_zones
-      #@security_groups= services.compute.security_groups
-      @network_zones = services.network.networks
-
-      @forms_instance.flavor=@flavors.first.id
-      @forms_instance.image=@images.first.id
-      @forms_instance.nics=[@network_zones.first.id]
-      @forms_instance.availability_zone=@availability_zones.first
-      #@forms_instance.security_group=@security_groups.first 
+      @security_groups= services.compute.security_groups
+      @network_zones = services.network.accessible_networks(@scoped_project_id)
+      
+      @instance.new_flavor=@flavors.first.id
+      @instance.new_image=@images.first.id
+      @instance.new_networks=[@network_zones.first.try(:id)]
+      @instance.new_availability_zone=@availability_zones.first.id
+      @instance.new_max_count = 1
     end
 
 
     # update instance table row (ajax call)
     def update_item
-      #@instance = services.compute.find_instance(params[:id])
-      instances = services.compute.servers.all(changes_since: Time.now-2.seconds)
-      @instance = instances.find{|i|i.id==params[:id]}
-
+      @instance = services.compute.server(params[:id]) rescue nil
       @target_state = params[:target_state]
 
       respond_to do |format|
         format.js do
-
-          if @instance and @instance.os_ext_sts_power_state.to_s!=@target_state
-            @instance.os_ext_sts_task_state||=task_state(@target_state)
+          if @instance and @instance.power_state.to_s!=@target_state
+            @instance.task_state||=task_state(@target_state)
           end
         end
       end
     end
 
     def create
-      @forms_instance = services.compute.forms_instance(params[:id])
-      @forms_instance.attributes=params[:forms_instance]
+      @instance = services.compute.server(params[:id])
+      @instance.attributes=params[:compute_server]
 
-      if @forms_instance.save
+      if @instance.save
         flash[:notice] = "Instance successfully created."
         redirect_to instances_path
       else
+        puts @instance.pretty_attributes
         @flavors = services.compute.flavors
         @images = services.image.images
+        @availability_zones = services.compute.availability_zones
+        @security_groups= services.compute.security_groups
+        @network_zones = services.network.accessible_networks(@scoped_project_id)
         render action: :new
       end
-    end
-
-    def edit
-      @forms_instance = services.compute.forms_instance(params[:id])
-      respond_to do |format|
-        format.html {}
-        format.js
-      end
-    end
-
-    def update
-
     end
 
     def stop
@@ -86,36 +73,37 @@ module Dashboard
     def pause
       execute_instance_action
     end
+    
+    def suspend
+      execute_instance_action
+    end
 
+    def resume
+      execute_instance_action
+    end
+    
+    def reboot
+      execute_instance_action
+    end
 
     def destroy
-      execute_instance_action
-      # @forms_instance = services.compute.forms_instance(params[:id])
-      #
-      # if @forms_instance.destroy
-      #   flash[:notice] = "instance is terminating"
-      # else
-      #   flash[:notice] = "Could not delete instance."
-      # end
-      # redirect_to instances_url
-
+      execute_instance_action('terminate')
     end
 
     private
 
     def execute_instance_action(action=action_name)
       instance_id = params[:id]
-      @instance = services.compute.find_instance(instance_id)
+      @instance = services.compute.server(instance_id)
 
       @target_state=nil
-      if (@instance.os_ext_sts_task_state || '')!='deleting'
+      if (@instance.task_state || '')!='deleting'
         if @instance.send(action)
           sleep(2)
-          instances = services.compute.servers.all
-          @instance = instances.find{|i|i.id==instance_id}
+          @instance = services.compute.server(instance_id) 
 
           @target_state = target_state_for_action(action)
-          @instance.os_ext_sts_task_state ||= task_state(@target_state)
+          @instance.task_state ||= task_state(@target_state)
         end
       end
       render template: 'dashboard/instances/update_item.js'
@@ -124,25 +112,25 @@ module Dashboard
 
     def target_state_for_action(action)
       case action
-      when 'start' then Fog::Compute::OpenStack::Server::RUNNING
-      when 'stop' then Fog::Compute::OpenStack::Server::SHUT_DOWN
-      when 'shut_off' then Fog::Compute::OpenStack::Server::SHUT_OFF
-      when 'pause' then Fog::Compute::OpenStack::Server::PAUSED
-      when 'suspend' then Fog::Compute::OpenStack::Server::SUSPENDED
-      when 'block' then Fog::Compute::OpenStack::Server::BLOCKED
+      when 'start' then Compute::Server::RUNNING
+      when 'stop' then Compute::Server::SHUT_DOWN
+      when 'shut_off' then Compute::Server::SHUT_OFF
+      when 'pause' then Compute::Server::PAUSED
+      when 'suspend' then Compute::Server::SUSPENDED
+      when 'block' then Compute::Server::BLOCKED
       end
     end
 
     def task_state(target_state)
       target_state = target_state.to_i if target_state.is_a?(String)
       case target_state
-      when Fog::Compute::OpenStack::Server::RUNNING then 'starting'
-      when Fog::Compute::OpenStack::Server::SHUT_DOWN then 'powering-off'
-      when Fog::Compute::OpenStack::Server::SHUT_OFF then 'powering-off'
-      when Fog::Compute::OpenStack::Server::PAUSED then 'pausing'
-      when Fog::Compute::OpenStack::Server::SUSPENDED then 'suspending'
-      when Fog::Compute::OpenStack::Server::BLOCKED then 'blocking'
-      when Fog::Compute::OpenStack::Server::BUILDING then 'creating'
+      when Compute::Server::RUNNING then 'starting'
+      when Compute::Server::SHUT_DOWN then 'powering-off'
+      when Compute::Server::SHUT_OFF then 'powering-off'
+      when Compute::Server::PAUSED then 'pausing'
+      when Compute::Server::SUSPENDED then 'suspending'
+      when Compute::Server::BLOCKED then 'blocking'
+      when Compute::Server::BUILDING then 'creating'
       end
     end
     

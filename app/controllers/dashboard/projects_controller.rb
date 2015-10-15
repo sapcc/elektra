@@ -11,7 +11,7 @@ class Dashboard::ProjectsController < DashboardController
   end
 
   def show
-    @current_project = services.identity.projects.find_by_id(@project_id, :subtree_as_list)
+    @current_project = services.identity.find_project_by_id(@project_id, :subtree_as_list)
     @instances = services.compute.servers.all(tenant_id: @current_project.id) rescue []
   end
 

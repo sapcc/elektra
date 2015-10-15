@@ -14,7 +14,7 @@ class Dashboard::UsersController < DashboardController
       # user has accepted terms of use -> onboard use!
       
       # add member role to user
-      services.admin_identity.create_user_domain_role(current_user.id,'member')
+      services.admin_identity.create_user_domain_role(current_user,'member')
       
       # create a sandbox project.
       sandbox = services.admin_identity.create_user_sandbox(@scoped_domain_id,current_user)

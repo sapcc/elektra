@@ -26,16 +26,17 @@ class Forms::Instance < Forms::Base
   # :os_ext_sts_vm_state
 
   
-  wrapper_for ::Fog::Compute::OpenStack::Server
+  # wrapper_for ::Fog::Compute::OpenStack::Server
+  #
+  # additional_attributes :flavor_ref, :image_ref, :max_count, :nics
+  # default_values min_count: 1, max_count: 1
+  #
+  # def before_save
+  #   self.image_ref = image
+  #   self.flavor_ref = flavor.to_i
+  #   self.max_count = self.max_count.to_i
+  # end
+  #
+  #
   
-  additional_attributes :flavor_ref, :image_ref, :max_count, :nics
-  default_values min_count: 1, max_count: 1
-  
-  def before_save
-    self.image_ref = image
-    self.flavor_ref = flavor.to_i
-    self.max_count = self.max_count.to_i
-  end
-  
-     
 end
