@@ -8,7 +8,7 @@
     - if current_user.is_allowed?("identity:instance_get", {})
       = link_to instance.name, instance_path(id: instance.id), data: {modal: true}
         
-  %td= services.compute.images.get(instance.image["id"]).name
+  %td= services.compute.images.get(instance.image["id"]).try(:name) || "N/A"
   %td= instance.addresses.fetch("private",[]).collect{|address| address["addr"]}.join(', ') 
   %td
     = instance.os_ext_sts_task_state
