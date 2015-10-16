@@ -12,8 +12,12 @@ module Openstack
     end
 
     ##################### DOMAINS #########################
-    def find_domain(domain_id)
-      domains.find{|domain| domain.id==domain_id}
+    def domain(id)
+      if id
+        domains.find{|domain| domain.id==domain_id}
+      else
+        Identity::Domain.new(@driver)
+      end 
     end
 
     def domains
@@ -22,8 +26,12 @@ module Openstack
 
 
     ##################### PROJECTS #########################    
-    def find_project_by_id(id,options=[])
-      @driver.map_to(Identity::Project).get_project(id,options)
+    def project(id=nil,options=[])
+      if id
+        @driver.map_to(Identity::Project).get_project(id,options)
+      else
+        Identity::Project.new(@driver)
+      end 
     end
 
     def auth_projects
@@ -35,34 +43,24 @@ module Openstack
       return auth_projects if domain_id.nil?
       auth_projects.select {|project| project.domain_id==domain_id}
     end
-    #
-    # def grant_project_role(project,role_name)
-    #   role = services.admin_identity.role(role_name)
-    #   project.grant_role_to_user(role.id, @current_user.id)
-    # end
+
+    def grant_project_role(project,role_name)
+      role = services.admin_identity.role(role_name)
+      @driver.grant_project_user_role(project_id,@current_user.id,role.id)
+    end
 
 
     ##################### CREDENTIALS #########################
-    def forms_credential(id=nil)
-      Forms::Credential.new(self,id)
-    end
-
-    def create_credential(params)
-      @driver.create_os_credentials(params)
-    end
-
-    def find_credential(id)
-      @found_credentials ||= {}
-      unless @found_credentials[id]
-        @found_credentials[id] = credentials.find{|c| c.id==id}
+    def credential(id=nil)
+      if id
+        @driver.map_to(Identity::OsCredential).get_os_credential(id)
+      else
+        Identity::OsCredential.new(@driver)
       end
-      @found_credentials[id]
-      #@driver.os_credentials.find_by_id(id)
     end
 
     def credentials(options={})
-      @user_credentials ||= @driver.os_credentials.all(user_id: @current_user.id)
-      #@driver.os_credentials
+      @user_credentials ||= @driver.map_to(Identity::OsCredential).os_credentials(user_id: @current_user.id)
     end
   end
 end

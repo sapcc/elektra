@@ -9,8 +9,8 @@ module OpenstackServiceProvider
         @fog = Fog::Compute::OpenStack.new(auth_params)
       end  
       
-      def servers
-        handle_response{ @fog.list_servers_detail().body['servers'] }
+      def servers(filter={})
+        handle_response{ @fog.list_servers_detail(filter).body['servers'] }
       end
       
       def create_server(params={})

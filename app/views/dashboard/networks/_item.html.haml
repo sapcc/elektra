@@ -4,7 +4,7 @@
       = link_to network.name, network_path(id: network.id), data: {modal: true}
         
   %td
-    - network.subnets.each do |subnet|
+    - network.subnet_objects.each do |subnet|
       %b= subnet.name
       &nbsp;
       = subnet.cidr

@@ -19,28 +19,20 @@ module Openstack
       result
     end
     
-    def network(id)
-      @driver.map_to(Network::Network).get_network(id)
-    end
-    
-    def forms_network(id=nil)
-      Forms::Network.new(self,id)
-    end
-    
-    def create_network(params = {})
-      @driver.map_to(Network::Network).create_network(params)
-    end
-    
-    def find_network(id)
-      @driver.map_to(Network::Network).get_network(id)
+    def network(id=nil)
+      if id
+        @driver.map_to(Network::Network).get_network(id)
+      else
+        Network::Network.new(@driver)
+      end
     end
     
     def subnets(network_id)
-      @driver.map_to(Network::Network).subnets(network_id)
+      @driver.map_to(Network::Subnet).subnets(network_id)
     end
     
     def ports(network_id)
-      @driver.map_to(Network::Network).ports(network_id)
+      @driver.map_to(Network::Port).ports(network_id)
     end
   end
 end

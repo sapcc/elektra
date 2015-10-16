@@ -4,14 +4,14 @@ class Dashboard::CredentialsController < DashboardController
   end
   
   def new
-    @forms_credential = services.identity.forms_credential
+    @credential = services.identity.credential
   end
 
   def create
-    @forms_credential = services.identity.forms_credential
-    @forms_credential.attributes = params.fetch(:forms_credential,{}).merge(user_id: current_user.id)
+    @credential = services.identity.credential
+    @credential.attributes = params.fetch(:identity_os_credential,{}).merge(user_id: current_user.id)
 
-    if @forms_credential.save
+    if @credential.save
       flash[:notice] = "Credential created."
       redirect_to action: :index
     else
@@ -20,9 +20,9 @@ class Dashboard::CredentialsController < DashboardController
   end
   
   def destroy
-    @forms_credential = services.identity.forms_credential(params[:id])
+    @credential = services.identity.credential(params[:id])
     
-    if @forms_credential.destroy
+    if @credential.destroy
       flash[:notice] = "Credential deleted."
     else
       flash[:notice] = "Could not delete credential."

@@ -16,7 +16,7 @@ module OpenstackServiceProvider
       @attributes = params.nil? ? {} : params
 
       # get just the name of class without namespaces
-      @class_name = self.class.name.split('::').last.downcase      
+      @class_name = self.class.name.split('::').last.underscore      
 
       # create errors object
       @errors = ActiveModel::Errors.new(self)     
@@ -207,6 +207,8 @@ module OpenstackServiceProvider
         result = parsed_errors["errors"] || parsed_errors["error"] if parsed_errors
         result = parsed_errors if result.nil? and parsed_errors.is_a?(Hash)
         result = {"Error" => e.message} unless result
+        p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERROR"
+        p result
       rescue => e
         puts e
       end
