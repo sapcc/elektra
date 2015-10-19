@@ -7,7 +7,7 @@
   %td    
     - if current_user.is_allowed?("identity:instance_get", {})
       = link_to instance.name, instance_path(id: instance.id), data: {modal: true}
-        
+
   %td= instance.image.name
   %td= instance.ip_addresses.join(', ')
   %td= instance.flavor.name     
