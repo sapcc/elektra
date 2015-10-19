@@ -9,7 +9,7 @@
         %fieldset
           = f.input :new_name
           
-          = f.input :new_availability_zone, { label: "Availability zone",
+          = f.input :availability_zone_id, { label: "Availability zone",
             input_html:         {},
             as:                 :select,
             collection:         @availability_zones,
@@ -21,25 +21,25 @@
           /   collection:         @security_groups,
           /   required:           true}
             
-          = f.input :new_max_count, { as: :integer }  
+          = f.input :max_count, { as: :integer }  
 
-          = f.input :new_flavor, { label: "Flavor",
+          = f.input :flavor_id, { label: "Flavor",
             input_html:         {data: {trigger: 'change', target: '.flavor-details'} },
             as:                 :select,
             collection:         @flavors,
             required:           true}
 
-          = f.input :new_image, { label: "Image",
+          = f.input :image_id, { label: "Image",
             input_html:         {data: {trigger: 'change', target: '.image-details'} },
             as:                 :select,
             collection:         @images,
             required:           true}
             
-          = f.input :new_networks, { label: "Network",
-            input_html:         { name: "#{@instance.model_name.param_key}[new_networks][][id]", include_hidden: false },
+          = f.input :network_ids, { label: "Network",
+            input_html:         { name: "#{@instance.model_name.param_key}[network_ids][][id]", include_hidden: false },
             as:                 :check_boxes,
             collection:         @network_zones,
-            checked:            (@instance.new_networks || {}).collect{|n| n['id']},
+            checked:            (@instance.network_ids || []).collect{|n| n['id']},
             include_hidden:     false,
             required:           true}
 

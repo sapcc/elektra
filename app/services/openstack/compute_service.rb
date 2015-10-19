@@ -16,8 +16,8 @@ module Openstack
       end
     end
     
-    def servers
-      @driver.map_to(Compute::Server).servers
+    def servers(filter={})
+      @driver.map_to(Compute::Server).servers(filter)
     end
     
     def images

@@ -1,8 +1,8 @@
 module Compute
   class Server < OpenstackServiceProvider::BaseObject
-    validates :new_image, presence: {message: 'Please select an image'}
-    validates :new_flavor, presence: {message: 'Please select a flavor'}
-    validates :new_networks, presence: {message: 'Please select at least one network'}
+    validates :image_id, presence: {message: 'Please select an image'}
+    validates :flavor_id, presence: {message: 'Please select a flavor'}
+    validates :network_ids, presence: {message: 'Please select at least one network'}
         
     NO_STATE    = 0
     RUNNING     = 1
@@ -33,15 +33,15 @@ module Compute
 
     def create_attributes
       {
-        "name"              => read("new_name"),
-        "imageRef"          => read("new_image"),
-        "flavorRef"         => read("new_flavor"),
-        "max_count"         => read("new_max_count"),
-        "min_count"         => read("new_min_count"),
+        "name"              => read("name"),
+        "imageRef"          => read("image_id"),
+        "flavorRef"         => read("flavor_id"),
+        "max_count"         => read("max_count"),
+        "min_count"         => read("min_count"),
         # Optional
-        "networks"          => read("new_networks"),
-        "security_groups"   => read("new_security_groups"),
-        "availability_zone" => read("new_availability_zone")
+        "networks"          => read("network_ids"),
+        #"security_groups"   => read("security_groups"),
+        "availability_zone" => read("availability_zone_id")
         }.delete_if { |k, v| v.nil? }
     end
     

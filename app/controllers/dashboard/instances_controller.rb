@@ -20,13 +20,15 @@ module Dashboard
       @images = services.image.images
       @availability_zones = services.compute.availability_zones
       @security_groups= services.compute.security_groups
-      @network_zones = services.network.accessible_networks(@scoped_project_id)
+      @network_zones = services.network.project_networks(@scoped_project_id)
       
-      @instance.new_flavor=@flavors.first.id
-      @instance.new_image=@images.first.id
-      @instance.new_networks=[@network_zones.first.try(:id)]
-      @instance.new_availability_zone=@availability_zones.first.id
-      @instance.new_max_count = 1
+      @instance.flavor_id=@flavors.first.id
+      @instance.image_id=@images.first.id
+      @instance.network_ids=[{"id"=> @network_zones.first.try(:id)}]
+      @instance.availability_zone_id=@availability_zones.first.id
+      @instance.max_count = 1
+      
+      puts @instance.pretty_attributes
     end
 
 

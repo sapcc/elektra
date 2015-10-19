@@ -52,8 +52,9 @@ module OpenstackServiceProvider
         handle_response{ @fog.get_port(id).body['port']}
       end
       
-      def create_port(network_id,params = {})
+      def create_port(params = {})
         handle_response{
+          network_id = params.delete("network_id")
           @fog.create_port(network_id, params).body['port']
         }
       end
@@ -82,11 +83,17 @@ module OpenstackServiceProvider
       
       def create_subnet(params = {})
         handle_response{
+          network_id = params.delete("network_id")
+          cidr = params.delete("cidr")
+          ip_version = params.delete("ip_version")
           @fog.create_subnet(network_id, cidr, ip_version, params).body['subnet']
         }
       end
 
       def update_subnet(id, params={})
+        p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        p id
+        p params
         handle_response{
           @fog.update_subnet(id,params).body['subnet']
         }

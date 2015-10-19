@@ -9,7 +9,7 @@ module Openstack
       @driver.map_to(Network::Network).networks(filter)  
     end
     
-    def accessible_networks(project_id)
+    def project_networks(project_id)
       result = []
       @driver.networks.each do |n| 
         if n["shared"]==true or n["tenant_id"]==project_id
@@ -24,6 +24,14 @@ module Openstack
         @driver.map_to(Network::Network).get_network(id)
       else
         Network::Network.new(@driver)
+      end
+    end
+    
+    def subnet(id=nil)
+      if id
+        @driver.map_to(Network::Subnet).get_subnet(id)
+      else
+        Network::Subnet.new(@driver)
       end
     end
     

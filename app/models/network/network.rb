@@ -1,5 +1,7 @@
 module Network
   class Network < OpenstackServiceProvider::BaseObject
+    
+    validates :name, presence: {message: 'Please provide a name'}
 
     def subnet_objects
       @driver.map_to(::Network::Subnet).subnets(id)

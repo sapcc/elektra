@@ -4,17 +4,13 @@ module OpenstackServiceProvider
     include ActiveModel::Conversion
     include ActiveModel::Validations
   
-    attr_reader :errors, :service
-    attr_accessor :attributes
+    attr_reader :errors, :attributes
     
     ERRORS_TO_IGNORE = ["code","title"]
     
     def initialize(driver, params=nil)
       @driver = driver
-    
-      # intialize attributes hash
-      @attributes = params.nil? ? {} : params
-
+      self.attributes=params
       # get just the name of class without namespaces
       @class_name = self.class.name.split('::').last.underscore      
 
@@ -23,6 +19,10 @@ module OpenstackServiceProvider
         
       # execute after callback
       after_initialize      
+    end
+    
+    def id
+      @id
     end
 
     # look in attributes if a method is missing  
@@ -45,7 +45,11 @@ module OpenstackServiceProvider
     end
     
     def requires(*attrs)
-      attrs.each{|attribute| raise MissingAttribute.new("#{attribute} is missing") unless read(attribute)}
+      attrs.each do |attribute|
+        if self.send(attribute.to_s).nil?
+          raise OpenstackServiceProvider::Errors::MissingAttribute.new("#{attribute} is missing")
+        end
+      end
     end
     
     def api_error_name_mapping 
@@ -62,7 +66,7 @@ module OpenstackServiceProvider
       success = self.valid?
 
       if success
-        if read("id").nil?
+        if self.id.nil?
           success = create
         else
           success = update
@@ -71,58 +75,14 @@ module OpenstackServiceProvider
 
       return success & after_save
     end
-  
-    def create
-      # execute before callback
-      before_create
-
-      create_attrs = self.create_attributes
-      create_attrs.delete(:id)
-
-      begin
-        @attributes = @driver.send("create_#{@class_name}", create_attrs)
-      rescue => e
-        error_names = api_error_name_mapping
-
-        errors = handle_api_error(e)
-        errors.each do |name, message|
-          n = error_names[name] || error_names[message] || name || 'message'
-          message = message.join(", ") if message.is_a?(Array)
-          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
-        end
-
-        return false
-      end
-      #self.attributes = @model.attributes
-      after_create
-      return true
-    end
-
-    def update
-      begin
-        updated_attributes = @driver.send("update_#{@class_name}",update_attributes)
-        @attributes=update_attributes if update_attributes
-      rescue => e
-        error_names = api_error_name_mapping
-
-        errors = handle_api_error(e)
-        errors.each do |name, message|
-          n = error_names[name] || error_names[message] || name || ' '
-          message = message.join(", ") if message.is_a?(Array)
-          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
-        end
-        return false
-      end
-      return true
-    end
     
     def destroy
+      requires :id
       # execute before callback
       before_destroy
 
       error_names = api_error_name_mapping
       begin
-        id = read("id")
         if id
           @driver.send("delete_#{@class_name}",id)
           return true
@@ -142,6 +102,14 @@ module OpenstackServiceProvider
 
         return false
       end
+    end
+    
+    def attributes=(new_attributes)
+      @attributes = (new_attributes || {})   
+      # delete id from attributes!
+      new_id = (@attributes.delete("id") or @attributes.delete(:id))
+      # if current_id is nil then overwrite it with new_id.
+      @id ||= new_id
     end
 
     # callbacks
@@ -170,17 +138,7 @@ module OpenstackServiceProvider
       @attributes
     end
   
-    def attribute_to_object(attribute_name,klass)
-      value = read(attribute_name)
-      if value
-        if value.is_a?(Hash)
-          return klass.new(@driver,value)
-        elsif value.is_a?(Array)
-          return value.collect{|attrs| klass.new(@driver,attrs)}
-        end
-      end
-    end
-  
+
     def write(attribute_name,value)
       @attributes[attribute_name.to_s] = value
     end
@@ -193,6 +151,71 @@ module OpenstackServiceProvider
       JSON.pretty_generate(@attributes)
     end
     
+    def attribute_to_object(attribute_name,klass)
+      value = read(attribute_name)
+
+      if value
+        if value.is_a?(Hash)
+          return klass.new(@driver,value)
+        elsif value.is_a?(Array)
+          return value.collect{|attrs| klass.new(@driver,attrs)}
+        end
+      end
+      return nil
+    end
+    
+    protected
+    
+    def create
+      # execute before callback
+      before_create
+
+      create_attrs = self.create_attributes.with_indifferent_access
+      create_attrs.delete(:id)
+
+      begin
+        created_attributes = @driver.send("create_#{@class_name}", create_attrs)
+        self.attributes= created_attributes
+      rescue => e
+        error_names = api_error_name_mapping
+
+        errors = handle_api_error(e)
+        errors.each do |name, message|
+          n = error_names[name] || error_names[message] || name || 'message'
+          message = message.join(", ") if message.is_a?(Array)
+          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
+        end
+
+        return false
+      end
+      #self.attributes = @model.attributes
+      after_create
+      return true
+    end 
+    
+    def update
+      begin
+        update_attrs = update_attributes.with_indifferent_access
+        update_attrs.delete(:id)
+        updated_attributes = @driver.send("update_#{@class_name}",id, update_attrs)
+        self.attributes=updated_attributes if updated_attributes
+      rescue => e
+        error_names = api_error_name_mapping
+
+        errors = handle_api_error(e)
+        errors.each do |name, message|
+          n = error_names[name] || error_names[message] || name || ' '
+          message = message.join(", ") if message.is_a?(Array)
+          self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
+        end
+        return false
+      end
+      return true
+    end
+            
+            
+    # Observed error formats        
+    # {"NeutronError"=>{"message"=>"Invalid network", "type"=>"", "detail"=>""}}
     def handle_api_error(e)
       result = {@class_name => e.message}
 
@@ -215,6 +238,8 @@ module OpenstackServiceProvider
 
       return result
     end
+    
+    
 
   end
 end
