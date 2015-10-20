@@ -85,7 +85,7 @@
         %tbody    
           %tr
             %th Image Name
-            %td= @image.name
+            %td= @image.try(:name) || "N/A"
 
     .tab-pane{role:"tabpanel", id:"volumes"}  
       %table.table.datatable

@@ -38,6 +38,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.content {
+  ul {
+    padding-left: 0;
+    list-style-type: none;
+  }
+
+  li {
+    background: inline-svg('rounded-square-outline.svg') 0 4px no-repeat;
+    padding-left: 19px;
+  }
+}
+
 .pages {
   a {
     text-decoration: underline;
@@ -663,11 +675,13 @@ tr.task-state {
   @extend .row;
   padding-left: 0;
   margin-top: $line-height-computed * 3;
+  list-style-type: none;
 
-  li {
+
+  > li {
     @include make-md-column(4);
+    background: none;
     height: $line-height-computed * 5;
-    list-style-type: none;
     position: relative;
     padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
     margin-bottom: $line-height-computed;
@@ -689,10 +703,11 @@ tr.task-state {
       font-weight: bold;
     }
 
+
   }
 
   &.fancy-list-2col {
-    li {
+    > li {
       @include make-md-column(6);
       padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
 
@@ -700,7 +715,7 @@ tr.task-state {
   }
 
   &.fancy-list-2col-indented {
-    li {
+    > li {
       @include make-md-column(5);
       padding-left: $font-size-large * 1.5 + $grid-gutter-width * 1.25;
 
@@ -708,7 +723,7 @@ tr.task-state {
   }
 
   &.fancy-list-xl-height {
-    li {
+    > li {
       height: $line-height-computed * 12;
     }
   }

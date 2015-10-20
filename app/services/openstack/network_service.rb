@@ -2,7 +2,7 @@ module Openstack
   class NetworkService < OpenstackServiceProvider::FogProvider
     
     def driver(auth_params)
-      auth_params[:connection_options]= { ssl_verify_peer: false }
+      auth_params[:connection_options]= { ssl_verify_peer: false, debug:true }
       Fog::Network::OpenStack.new(auth_params)
     end
 
