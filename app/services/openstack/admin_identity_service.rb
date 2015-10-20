@@ -74,10 +74,10 @@ module Openstack
       end
       Project.find_or_create_by_remote_project(remote_project)
     end
-    ########################### END
-        
+    
+    ########################### END ##########################    
     def new_user?(current_user)
-      current_user.roles.empty? or @driver.user_projects(current_user.id).empty?
+      current_user.roles.empty? and @driver.user_projects(current_user.id).empty?
     end
     
     def set_user_default_project(current_user,project_id)
