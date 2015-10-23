@@ -56,19 +56,38 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item :key_1, 'name', url, options
+    primary.item :compute, 'Compute & Block Storage', nil, html: {class: "dropdown-header"}
+    primary.item :instances, 'Instances', instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+    primary.item :projects, 'Projects', projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+
+
+    primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header"}
+    primary.item :networks, 'Networks', networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+
+    primary.item :account, 'Account', nil, html: {class: "dropdown-header"}
+    primary.item :credentials, 'Credentials', credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+
+
+                # %li.dropdown-header Network
+                # %li= link_to "Networks", networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                # %li.dropdown-header Compute
+                # %li= link_to "Instances", instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                # %li.divider
+                # %li.dropdown-header Identity
+                # %li= link_to "Credentials", credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                # %li= link_to "Projects", projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
 
     # Add an item which has a sub navigation (same params, but with block)
-    primary.item :key_2, 'name', url, options do |sub_nav|
-      # Add an item to the sub navigation (same params again)
-      sub_nav.item :key_2_1, 'name', url, options
-    end
+    # primary.item :key_2, 'name', url, options do |sub_nav|
+    #   # Add an item to the sub navigation (same params again)
+    #   sub_nav.item :key_2_1, 'name', url, options
+    # end
 
     # You can also specify a condition-proc that needs to be fullfilled to display an item.
     # Conditions are part of the options. They are evaluated in the context of the views,
     # thus you can use all the methods and vars you have available in the views.
-    primary.item :key_3, 'Admin', url, class: 'special', if: -> { current_user.admin? }
-    primary.item :key_4, 'Account', url, unless: -> { logged_in? }
+    # primary.item :key_3, 'Admin', url, class: 'special', if: -> { current_user.admin? }
+    # primary.item :key_4, 'Account', url, unless: -> { logged_in? }
 
     # you can also specify html attributes to attach to this particular level
     # works for all levels of the menu

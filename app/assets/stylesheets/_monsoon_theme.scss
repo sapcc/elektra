@@ -50,12 +50,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.pages {
-  a {
-    text-decoration: underline;
-  }
-}
-
 .navbar a, a.btn {
   text-decoration: none;
 }
@@ -323,6 +317,15 @@ footer, .footer {
   right: 0;
   z-index: 1029;
 
+  // Setup for megaflyout so that it can be positioned relative to the container rather than the dropdown parent
+  .context-container {
+    position: relative;
+
+    .dropdown {
+      position: static;
+    }
+  }
+
   .glyphicon {
     @include opacity(0.75);
     margin-right: 5px;
@@ -334,6 +337,7 @@ footer, .footer {
     list-style-type: none;
     margin-left: -$context-breadcrumb-padding-horizontal;
     margin-right: $context-breadcrumb-padding-horizontal;
+    margin-bottom: 0;
     padding: 0;
 
     > li {
@@ -354,6 +358,62 @@ footer, .footer {
         left: -1px;
         border-top: none;
         margin-top: 0;
+
+
+        // Megaflyout (full-width, requires context-container wrapper)
+        &.dropdown-menu-mega {
+          @include container-width-responsive;
+          @include column-count(3);
+
+          left: 0;
+          padding: $line-height-computed 0;
+
+          a {
+            padding-left: 0;
+          }
+
+          li {
+            @include column-break(inside, avoid);
+          }
+
+          ul {
+            list-style-type: none;
+            padding: 0 0 $line-height-computed 0;
+
+            li {
+              padding-left: $grid-gutter-width * 1.5;
+            }
+          }
+
+          .dropdown-header-fancy {
+            @include column-break(after, avoid);
+            position: relative;
+            display: block;
+            border-top: 1px solid #ccc;
+            padding-top: 0;
+            padding-bottom: $line-height-computed / 4;
+            font-size: $font-size-base;
+
+            &:first-child {
+              border: none;
+            }
+
+            .dropdown-icon {
+              position: absolute;
+              left: $grid-gutter-width / 2;
+              color: $bright-blue;
+              font-size: $font-size-base;
+
+
+              .icon {
+                @include background-size(16px);
+                font-size: $font-size-base;
+              }
+
+            }
+          }
+        }
+
       }
 
       > a {
