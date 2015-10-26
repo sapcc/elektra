@@ -66,8 +66,8 @@ class Dashboard::ProjectsController < DashboardController
 
   def get_project_id
     @project_id = params[:id]
-    local_project = Project.find_by_domain_fid_and_fid(@scoped_domain_fid,@project_id)
-    @project_id = local_project.key if local_project
+    entry = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project',@scoped_domain_id,@project_id)
+    @project_id = entry.key if entry
   end
 
 end

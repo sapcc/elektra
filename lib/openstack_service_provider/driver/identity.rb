@@ -189,6 +189,24 @@ module OpenstackServiceProvider
       def delete_role(id)
         raise OpenstackServiceProvider::Errors::NotImplemented
       end
+      
+      ######################### TOKENS #########################
+      def authenticate(auth)
+        raise OpenstackServiceProvider::Errors::NotImplemented
+      end
+
+      def validate(subject_token)
+        raise OpenstackServiceProvider::Errors::NotImplemented
+      end
+
+      def check(subject_token)
+        raise OpenstackServiceProvider::Errors::NotImplemented
+      end
+
+      def revoke(subject_token)
+        raise OpenstackServiceProvider::Errors::NotImplemented
+      end
+      
     end 
   end
 end

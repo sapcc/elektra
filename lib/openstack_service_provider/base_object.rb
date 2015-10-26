@@ -93,7 +93,7 @@ module OpenstackServiceProvider
           return false
         end
       rescue => e
-        errors = handle_api_error(e)
+        errors = OpenstackServiceProvider::ApiErrorHandler.parse(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name || ' '
           message = message.join(", ") if message.is_a?(Array)
@@ -179,7 +179,7 @@ module OpenstackServiceProvider
       rescue => e
         error_names = api_error_name_mapping
 
-        errors = handle_api_error(e)
+        errors = OpenstackServiceProvider::ApiErrorHandler.parse(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name || 'message'
           message = message.join(", ") if message.is_a?(Array)
@@ -202,7 +202,7 @@ module OpenstackServiceProvider
       rescue => e
         error_names = api_error_name_mapping
 
-        errors = handle_api_error(e)
+        errors = OpenstackServiceProvider::ApiErrorHandler.parse(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name || ' '
           message = message.join(", ") if message.is_a?(Array)
@@ -212,34 +212,6 @@ module OpenstackServiceProvider
       end
       return true
     end
-            
-            
-    # Observed error formats        
-    # {"NeutronError"=>{"message"=>"Invalid network", "type"=>"", "detail"=>""}}
-    def handle_api_error(e)
-      result = {@class_name => e.message}
-
-      begin
-        #TODO: improove error parsing
-        error_message = e.message.gsub('(Disable debug mode to suppress these details.)','')
-        errors = error_message.scan(/.*excon\.error\.response.*\n.*:body\s*=>\s*"(.*).*"\n/)
-
-        error_string = errors.flatten.first
-        error_string.gsub!(/\\+"/,'"') if error_string
-        parsed_errors = JSON.parse(error_string) rescue nil
-        result = parsed_errors["errors"] || parsed_errors["error"] if parsed_errors
-        result = parsed_errors if result.nil? and parsed_errors.is_a?(Hash)
-        result = {"Error" => e.message} unless result
-        p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERROR"
-        p result
-      rescue => e
-        puts e
-      end
-
-      return result
-    end
-    
-    
 
   end
 end

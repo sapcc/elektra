@@ -250,6 +250,37 @@ module OpenstackServiceProvider
       def delete_role(id)
         handle_response{ @fog.delete_role(id); true }
       end
+      
+      ######################### TOKENS ########################
+      def authenticate(auth)
+        handle_response{
+          response = @fog.token_authenticate(auth)
+          #response.headers['X-Subject-Token'])
+          response.body['token']
+        }
+      end
+
+      def validate(subject_token)
+        handle_response{
+          response = @fog.token_validate(subject_token)
+          #response.headers['X-Subject-Token'])
+          response.body['token']
+        }
+      end
+
+      def check(subject_token)
+        handle_response{
+          @fog.token_check(subject_token)
+          return true
+        }
+      end
+
+      def revoke(subject_token)
+        handle_response{
+          @fog.token_revoke(subject_token)
+          return true
+        }
+      end
     end
   end
 end

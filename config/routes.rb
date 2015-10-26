@@ -5,29 +5,18 @@ Rails.application.routes.draw do
 
   scope "/:domain_id" do
     match '/', to: 'pages#show', id: 'landing', via: :get
+    get 'onboarding' => 'dashboard#new_user'
+    post 'register' => 'dashboard#register_user'
 
     scope module: 'dashboard' do
       get 'start' => 'pages#show', id: 'start', as: :domain_start
-
+            
       resources :credentials
       resources :projects
 
-      # #TEST, use scoped project id as project
-      # constraints project_id: nil do |request|
-      #   resources :projects, only: [:index,:new,:create]
-      # end
-      #
-      # scope constraints: lambda {|request| request.params[:project_id].nil? ? false : (request.params[:id]=request.params[:project_id]; true) } do
-      #   get 'edit', to: 'projects#edit', as: :edit_project
-      #   get '/', to: 'projects#show', as: :project
-      #   patch '/', to: 'projects#update'#, as: :project
-      #   put '/', to: 'projects#update'#, as: :project
-      #   delete '/', to: 'projects#destroy'#, as: :project
-      # end
-
-
       scope "/:project_id" do
-        resources :instances, expect: [:edit, :update] do
+
+        resources :instances, except: [:edit, :update] do
           member do
             get 'update_item'
             put 'stop'
@@ -38,16 +27,16 @@ Rails.application.routes.draw do
             put 'reboot'
           end
         end
+        
         resources :volumes
         resources :os_images
         resources :credentials
         resources :projects
         resources :networks
+        resources :users
 
         get 'start' => 'pages#show', id: 'start'
-      end
-
-      resources :users, only: [:new, :create]
+      end      
     end
   end
 
