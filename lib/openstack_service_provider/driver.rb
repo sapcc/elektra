@@ -1,0 +1,5 @@
+require 'openstack_service_provider/driver/base'
+require 'openstack_service_provider/driver/identity'
+require 'openstack_service_provider/driver/compute'
+require 'openstack_service_provider/driver/network'
+require 'openstack_service_provider/driver/image'

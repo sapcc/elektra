@@ -1,84 +1,27 @@
-= simple_form_for @forms_network, url: instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @network, url: networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
-  / %div{class: modal? ? 'modal-body' : ''}
-  /   - unless @forms_network.errors["message"].blank?
-  /     %p.alert.alert-error= @forms_network.errors.full_messages.to_sentence
-  /
-  /   .row
-  /     .col-md-6
-  /       %fieldset
-  /         = f.input :name
-  /
-  /         = f.input :availability_zone, { label: "Availability zone",
-  /           input_html:         {},
-  /           as:                 :select,
-  /           collection:         @availability_zones,
-  /           required:           true}
-  /
-  /         / = f.input :security_group, { label: "Security group",
-  /         /   input_html:         {},
-  /         /   as:                 :select,
-  /         /   collection:         @availability_zones,
-  /         /   required:           true}
-  /
-  /         = f.input :max_count, { as: :integer }
-  /
-  /         = f.input :flavor, { label: "Flavor",
-  /           input_html:         {data: {trigger: 'change', target: '.flavor-details'} },
-  /           as:                 :select,
-  /           collection:         @flavors,
-  /           required:           true}
-  /
-  /         = f.input :image, { label: "Image",
-  /           input_html:         {data: {trigger: 'change', target: '.image-details'} },
-  /           as:                 :select,
-  /           collection:         @images,
-  /           required:           true}
-  /
-  /         = f.input :nics, { label: "Network",
-  /           input_html:         { name: "forms_instance[nics][][net_id]", include_hidden: false },
-  /           as:                 :check_boxes,
-  /           collection:         @network_zones,
-  /           include_hidden:     false,
-  /           required:           true}
-  /
-  /     .col-md-6
-  /       %h3 Flavor Details
-  /       - @flavors.each do |flavor|
-  /         %table.table.flavor-details{id: flavor.id, class: flavor.id==@forms_instance.flavor ? '' : 'hidden'}
-  /           %tbody
-  /             %tr
-  /               %th Flavor
-  /               %td= flavor.name
-  /             %tr
-  /               %th Flavor ID
-  /               %td= flavor.id
-  /             %tr
-  /               %th RAM
-  /               %td= "#{flavor.ram}MB"
-  /             %tr
-  /               %th VCPUs
-  /               %td= "#{flavor.vcpus} VCPU"
-  /             %tr
-  /               %th Disk
-  /               %td= "#{flavor.disk}GB"
-  /
-  /       %h3 Image Details
-  /       - @images.each do |image|
-  /         %table.table.image-details{id: image.id, class: image.id==@forms_instance.image ? '' : 'hidden'}
-  /           %tbody
-  /             %tr
-  /               %th Image
-  /               %td= image.name
-  /             %tr
-  /               %th Size
-  /               %td= image.size
-  /             %tr
-  /               %th Disk format
-  /               %td= image.disk_format
-  /             %tr
-  /               %th Updated at
-  /               %td= image.updated_at
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @network.errors["message"].blank?
+      %p.alert.alert-error= @network.errors.full_messages.to_sentence
+
+    %fieldset
+      = f.input :name, { label: "Network Name" }
+      = f.input :admin_state_up, { label: "Admin State",
+        as:         :select,
+        collection: [["UP",true],["DOWN",false]] }
+    
+    %label
+      = check_box_tag "subnet", "1", true, data:{ toggle: "collapse", target: "#collapseExample"}
+      Create subnet
+      
+    %fieldset.collapse.in{id: "collapseExample"}      
+      = f.simple_fields_for :subnets do |subnets|
+        = subnets.input :name, {label: "Subnet Name"}
+        = subnets.input :cidr, {label: "Network Address", placeholder: "192.168.0.0/24"}
+        
+        = subnets.input :enable_dhcp, {label: "Enable DHCP",
+          as:        :boolean} 
+          
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

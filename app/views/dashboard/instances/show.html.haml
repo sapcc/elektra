@@ -22,38 +22,38 @@
             %td= @instance.id
           %tr
             %th Status
-            %td= @instance.state
+            %td= @instance.status
           %tr
             %th Availability Zone
             %td= @instance.availability_zone
           %tr
             %th Created
-            %td= @instance.created
+            %td= @instance.created_at
           %tr
             %th Time Since Created
-            %td= @instance.updated
+            %td= @instance.updated_at
           %tr
             %th Host
-            %td= @instance.os_ext_srv_attr_host
+            %td= @instance.attr_host
             
     .tab-pane{role:"tabpanel", id:"specs"}        
       %table.table.datatable
         %tbody
           %tr
             %th Flavor
-            %td= @flavor.name
+            %td= @instance.flavor.name
           %tr
             %th Flavor ID
-            %td= @flavor.id
+            %td= @instance.flavor.id
           %tr
             %th RAM
-            %td= "#{@flavor.ram}MB"
+            %td= "#{@instance.flavor.ram}MB"
           %tr
             %th VCPUs
-            %td= "#{@flavor.vcpus} VCPU"
+            %td= "#{@instance.flavor.vcpus} VCPU"
           %tr
             %th Disk
-            %td= "#{@flavor.disk}GB"
+            %td= "#{@instance.flavor.disk}GB"
       
     .tab-pane{role:"tabpanel", id:"ip_addresses"}  
       %table.table.datatable
@@ -82,22 +82,28 @@
             
     .tab-pane{role:"tabpanel", id:"metadata"}  
       %table.table.datatable
-        %tbody    
+        %tbody 
           %tr
             %th Image Name
-            %td= @image.try(:name) || "N/A"
+            %td= @instance.image.name  
+          - @instance.metadata.attributes.each do |k,v| 
+            %tr
+              %th= k
+              %td= v.blank? ? "N/A" : v
 
     .tab-pane{role:"tabpanel", id:"volumes"}  
       %table.table.datatable
         %tbody 
-          - if @instance.volumes.empty?
+          - if @instance.attached_volumes.empty?
             %tr
               %th Volume
               %td No volumes attached. 
-          - @instance.volumes.each do |vol|           
+          - @instance.attached_volumes.each do |vol|           
             %tr
-              %th Volume
-              %td= vol.name  
+              %th Attached To
+              %td
+                = "#{vol.name} on #{vol.attachment_device(@instance.id)}"
+                  
 - if modal?
   .modal-footer
     - if modal?

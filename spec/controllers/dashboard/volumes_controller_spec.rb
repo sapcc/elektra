@@ -1,63 +1,29 @@
 require 'spec_helper'
-require 'controllers/dashboard/shared_examples'
-require 'controllers/dashboard/stub_identity_service'
 
 describe Dashboard::VolumesController do
   include AuthenticationStub
-  include StubIdentityService
   
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
-  it_behaves_like "an dashboard controller"
-
+  
   before(:all) do
     DatabaseCleaner.clean
-    @domain = create(:domain, key: default_params[:domain_id])
-    @project = create(:project, key: default_params[:project_id], domain: @domain)
+    FriendlyIdEntry.find_or_create_entry('Domain',nil,default_params[:domain_id],'default')
+    FriendlyIdEntry.find_or_create_entry('Project',default_params[:domain_id],default_params[:project_id],default_params[:project_id])
   end
-
-  before(:each) do
-    stub_authentication  
-    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:new_user?).and_return(false)
+  
+  before :each do
+    stub_authentication
+    
+    admin_identity_driver = double('admin_identity_service_driver').as_null_object
+    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
+    
+    identity_driver = double('identity_service_driver').as_null_object
+    allow_any_instance_of(Openstack::IdentityService).to receive(:get_driver).and_return(identity_driver)    
   end
 
   describe "GET 'index'" do
     it "returns http success" do
       get :index, default_params
-      expect(response).to be_success
-    end
-  end
-
-  describe "GET 'new'" do
-    it "returns http success" do
-      get :new, default_params
-      expect(response).to be_success
-    end
-  end
-
-  describe "POST 'create'" do
-    it "returns http success" do
-      post :create, default_params
-      expect(response).to be_success
-    end
-  end
-
-  describe "GET 'edit'" do
-    it "returns http success" do
-      get :edit, default_params.merge(id:1)
-      expect(response).to be_success
-    end
-  end
-
-  describe "PUT 'update'" do
-    it "returns http success" do
-      put 'update', default_params.merge(id: 1)
-      expect(response).to be_success
-    end
-  end
-
-  describe "DELETE 'destroy'" do
-    it "returns http success" do
-      delete :destroy, default_params.merge(id:1)
       expect(response).to be_success
     end
   end

@@ -1,0 +1,37 @@
+= content_for :page_lead do
+  .jumbotron
+    .container
+      %h1
+        Welcome
+        = current_user.full_name
+      %p Please accept the terms of use for this domain before you continue. Once you have accepted the terms your user will be registered to the domain and a sandbox project will be created for you.
+      %p Thank you and enjoy your stay!
+
+
+= form_tag register_path(@scoped_domain_fid), method: :post do
+  .row
+    .col-sm-8
+      .form-group
+        %label Terms and Conditions
+        .scrollable-text
+          :markdown
+            #{Settings.terms}
+
+    .col-sm-4
+      .form-group
+        %label User
+        %input.form-control{type: "text", placeholder: "#{current_user.full_name} (#{current_user.name})", readonly: "readonly"}
+
+      .form-group
+        %label Domain
+        %input.form-control{type: "text", placeholder: @scoped_domain_name, readonly: "readonly"}
+
+
+      .form-group
+        .checkbox
+          %label
+            = check_box_tag 'terms_of_use', 'accepted', false, id: "accept_tos"
+            I have read and agree to the terms of use
+
+      .form-group
+        = submit_tag "Register", class: "btn btn-primary btn-lg", id: "register-button", disabled: true

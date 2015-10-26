@@ -6,21 +6,21 @@ class Dashboard::ProjectsController < DashboardController
   end
 
   def index
-    @active_domain = services.identity.find_domain(@scoped_domain_id)
+    @active_domain = services.identity.domain(@scoped_domain_id)
     @projects = services.identity.projects(@active_domain.id)
   end
 
   def show
-    @current_project = services.identity.projects.find_by_id(@project_id, :subtree_as_list)
-    @instances = services.compute.servers.all(tenant_id: @current_project.id) rescue []
+    @current_project = services.identity.project(@project_id, :subtree_as_list)
+    @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
   end
 
   def new
-    @forms_project = services.identity.forms_project
+    @forms_project = services.identity.project
   end
 
   def create
-    @forms_project = services.identity.forms_project
+    @forms_project = services.identity.project
     @forms_project.attributes = params.fetch(:forms_project,{}).merge(domain_id: @scoped_domain_id)
 
     if @forms_project.save
@@ -31,15 +31,14 @@ class Dashboard::ProjectsController < DashboardController
       flash[:error] = @forms_project.errors.full_messages.to_sentence
       render action: :new
     end
-
   end
 
   def edit
-    @forms_project = services.identity.forms_project(@project_id)
+    @forms_project = services.identity.project(@project_id)
   end
 
   def update
-    @forms_project = services.identity.forms_project(@project_id)
+    @forms_project = services.identity.project(@project_id)
     @forms_project.attributes = params[:forms_project]
 
     if @forms_project.save
@@ -52,12 +51,12 @@ class Dashboard::ProjectsController < DashboardController
   end
   
   def destroy
-    forms_project = services.identity.forms_project(@project_id)
+    project = services.identity.project(@project_id)
         
-    if forms_project.destroy
+    if project.destroy
       flash[:notice] = "Project successfully deleted."
     else
-      flash[:error] = forms_project.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+      flash[:error] = project.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
     end
 
     redirect_to projects_path
@@ -67,8 +66,8 @@ class Dashboard::ProjectsController < DashboardController
 
   def get_project_id
     @project_id = params[:id]
-    local_project = Project.find_by_domain_fid_and_fid(@scoped_domain_fid,@project_id)
-    @project_id = local_project.key if local_project
+    entry = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project',@scoped_domain_id,@project_id)
+    @project_id = entry.key if entry
   end
 
 end

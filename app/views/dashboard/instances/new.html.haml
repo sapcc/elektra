@@ -1,51 +1,52 @@
-= simple_form_for @forms_instance, url: instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @instance, url: instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @forms_instance.errors["message"].blank?
-      %p.alert.alert-error= @forms_instance.errors.full_messages.to_sentence
-
+    - unless @instance.errors["message"].blank?
+      %p.alert.alert-error= @instance.errors.full_messages.to_sentence
+      
     .row
       .col-md-6
         %fieldset
-          = f.input :name
+          = f.input :new_name
           
-          = f.input :availability_zone, { label: "Availability zone",
+          = f.input :availability_zone_id, { label: "Availability zone",
             input_html:         {},
             as:                 :select,
             collection:         @availability_zones,
             required:           true}
             
-          / = f.input :security_group, { label: "Security group",
+          / = f.input :new_security_group, { label: "Security group",
           /   input_html:         {},
           /   as:                 :select,
-          /   collection:         @availability_zones,
+          /   collection:         @security_groups,
           /   required:           true}
             
           = f.input :max_count, { as: :integer }  
 
-          = f.input :flavor, { label: "Flavor",
+          = f.input :flavor_id, { label: "Flavor",
             input_html:         {data: {trigger: 'change', target: '.flavor-details'} },
             as:                 :select,
             collection:         @flavors,
             required:           true}
 
-          = f.input :image, { label: "Image",
+          = f.input :image_id, { label: "Image",
             input_html:         {data: {trigger: 'change', target: '.image-details'} },
             as:                 :select,
             collection:         @images,
             required:           true}
             
-          = f.input :nics, { label: "Network",
-            input_html:         { name: "forms_instance[nics][][net_id]", include_hidden: false },
+          = f.input :network_ids, { label: "Network",
+            input_html:         { name: "#{@instance.model_name.param_key}[network_ids][][id]", include_hidden: false },
             as:                 :check_boxes,
             collection:         @network_zones,
+            checked:            (@instance.network_ids || []).collect{|n| n['id']},
             include_hidden:     false,
             required:           true}
 
       .col-md-6
         %h3 Flavor Details
         - @flavors.each do |flavor|
-          %table.table.flavor-details{id: flavor.id, class: flavor.id==@forms_instance.flavor ? '' : 'hidden'}
+          %table.table.flavor-details{id: flavor.id, class: flavor.id==@instance.new_flavor ? '' : 'hidden'}
             %tbody
               %tr
                 %th Flavor
@@ -65,7 +66,7 @@
 
         %h3 Image Details
         - @images.each do |image|
-          %table.table.image-details{id: image.id, class: image.id==@forms_instance.image ? '' : 'hidden'}
+          %table.table.image-details{id: image.id, class: image.id==@instance.new_image ? '' : 'hidden'}
             %tbody
               %tr
                 %th Image

@@ -1,81 +1,66 @@
 module Openstack
-  class IdentityService < OpenstackServiceProvider::FogProvider
+  class IdentityService < OpenstackServiceProvider::Service
 
     attr_reader :region
 
-    def driver(auth_params)
-      # TODO: this line of code authenticates user and creates a new token in keystone.
-      # this is not necessary because the user already exists in session and has a valid token.
-      # It should be possible to create a fog instance without "new" authentication. It can use the token from session!
-      auth_params[:connection_options]= { ssl_verify_peer: false }
-      Fog::IdentityV3::OpenStack.new(auth_params.merge(openstack_service_type: ["identityv3"]))
+    def get_driver(params)
+      OpenstackServiceProvider::FogDriver::Identity.new(params)
     end
 
     def has_projects?
-      @driver.projects.auth_projects.count>0
+      @driver.auth_projects.count>0
     end
 
     ##################### DOMAINS #########################
-    def find_domain(domain_id)
-      @driver.domains.auth_domains.find_by_id(domain_id)
+    def domain(id)
+      if id
+        domains.find{|domain| domain.id==domain_id}
+      else
+        Identity::Domain.new(@driver)
+      end 
     end
 
     def domains
-      @driver.domains.auth_domains
+      @domains ||= @driver.auth_domains.collect{|attributes| Identity::Domain.new(attributes)}
     end
 
 
-    ##################### PROJECTS #########################
-    def forms_project(id=nil)
-      Forms::Project.new(self,id)
+    ##################### PROJECTS #########################    
+    def project(id=nil,options=[])
+      if id
+        @driver.map_to(Identity::Project).get_project(id,options)
+      else
+        Identity::Project.new(@driver)
+      end 
     end
 
-    def create_project(options = {})
-      @driver.projects.create(options)
-    end
-
-    def find_project(id)
-      #@driver.projects.auth_projects.find_by_id(id)
-      @found_projects ||= {}
-      unless @found_projects[id]
-        @found_projects[id] = projects.find {|project| project.id==id}
-      end
-      @found_projects[id]
+    def auth_projects
+      # caching
+      @auth_projects ||= @driver.map_to(Identity::Project).auth_projects
     end
 
     def projects(domain_id=nil)
-      @auth_projects ||= @driver.projects.auth_projects
-      return @auth_projects if domain_id.nil?
-      @auth_projects.select {|project| project.domain_id==domain_id}
+      return auth_projects if domain_id.nil?
+      auth_projects.select {|project| project.domain_id==domain_id}
     end
 
     def grant_project_role(project,role_name)
       role = services.admin_identity.role(role_name)
-      project.grant_role_to_user(role.id, @current_user.id)
+      @driver.grant_project_user_role(project_id,@current_user.id,role.id)
     end
 
 
     ##################### CREDENTIALS #########################
-    def forms_credential(id=nil)
-      Forms::Credential.new(self,id)
-    end
-
-    def create_credential(options = {})
-      @driver.os_credentials.create(options)
-    end
-
-    def find_credential(id)
-      @found_credentials ||= {}
-      unless @found_credentials[id]
-        @found_credentials[id] = credentials.find{|c| c.id==id}
+    def credential(id=nil)
+      if id
+        @driver.map_to(Identity::OsCredential).get_os_credential(id)
+      else
+        Identity::OsCredential.new(@driver)
       end
-      @found_credentials[id]
-      #@driver.os_credentials.find_by_id(id)
     end
 
     def credentials(options={})
-      @user_credentials ||= @driver.os_credentials.all(user_id: @current_user.id)
-      #@driver.os_credentials
+      @user_credentials ||= @driver.map_to(Identity::OsCredential).os_credentials(user_id: @current_user.id)
     end
   end
 end
