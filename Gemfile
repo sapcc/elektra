@@ -89,3 +89,12 @@ end
 group :test do
   gem 'guard-rspec'
 end
+
+
+###################### PLUGINS TEST ####################
+# load all plugins 
+Dir.glob("apps/*").each do |gem_path|
+  p ">>>>>>>>>>>>>>>>>>>>> LOAD #{gem_path}"
+  gemspec path: gem_path
+end
+######################## END ##########################

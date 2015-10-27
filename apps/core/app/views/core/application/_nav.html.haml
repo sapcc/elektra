@@ -1,0 +1,54 @@
+%nav.navbar.navbar-fixed-top.navbar-inverse.navbar-sap
+  .container
+    .navbar-header
+      %button.navbar-toggle.collapsed{"data-target": "#main-nav-collapse", "data-toggle": "collapse", type: "button"}
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      = link_to "/#{@scoped_domain_fid ? @scoped_domain_fid : 'sap_default'}", class: "navbar-brand" do
+        .logo
+        Converged Cloud
+
+
+    .collapse.navbar-collapse#main-nav-collapse
+      %ul.nav.navbar-nav
+        %li
+          = link_to @scoped_domain_name, core_app.domain_start_path
+
+      %ul.nav.navbar-nav.navbar-right
+        - unless logged_in?
+          %li
+            = link_to "Log in", core_app.domain_start_path, id: "navbar-login-btn"
+            =# link_to "Log in", monsoon_openstack_auth.login_path, id: "navbar-login-btn"
+        - else
+          %li.dropdown
+            -# = link_to "https://localhost/pictures/#{current_user.name}", "data-toggle" => "tooltip", "data-placement" => "left", "data-delay" => "300", title: "Click to change your profile picture", class: "linked_img" do
+
+            %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+              %img.avatar{src: "https://localhost/avatar/#{current_user.name}?size=24x24"}
+              = current_user.description.blank? ? current_user.name : current_user.description
+              %span.caret
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:href => "#"} View Profile
+              %li
+                = link_to "Credentials", core_app.credentials_path
+
+              %li.divider
+              %li
+                = link_to 'Log out', monsoon_openstack_auth.logout_path
+
+        %li.dropdown
+          %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            Region: Europe
+            %span.caret
+          %ul.dropdown-menu{:role => "menu"}
+            %li
+              %a{:href => "#"} Canada
+            %li.active
+              %a{:href => "#"} Europe
+            %li
+              %a{:href => "#"} US-East
+            %li
+              %a{:href => "#"} US-West

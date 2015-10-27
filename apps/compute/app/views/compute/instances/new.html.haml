@@ -1,0 +1,90 @@
+= simple_form_for @instance, url: instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @instance.errors["message"].blank?
+      %p.alert.alert-error= @instance.errors.full_messages.to_sentence
+      
+    .row
+      .col-md-6
+        %fieldset
+          = f.input :name
+          
+          = f.input :availability_zone_id, { label: "Availability zone",
+            input_html:         {},
+            as:                 :select,
+            collection:         @availability_zones,
+            required:           true}
+            
+          / = f.input :new_security_group, { label: "Security group",
+          /   input_html:         {},
+          /   as:                 :select,
+          /   collection:         @security_groups,
+          /   required:           true}
+            
+          = f.input :max_count, { as: :integer }  
+
+          = f.input :flavor_id, { label: "Flavor",
+            input_html:         {data: {trigger: 'change', target: '.flavor-details'} },
+            as:                 :select,
+            collection:         @flavors,
+            required:           true}
+
+          = f.input :image_id, { label: "Image",
+            input_html:         {data: {trigger: 'change', target: '.image-details'} },
+            as:                 :select,
+            collection:         @images,
+            required:           true}
+            
+          = f.input :network_ids, { label: "Network",
+            input_html:         { name: "#{@instance.model_name.param_key}[network_ids][][id]", include_hidden: false },
+            as:                 :check_boxes,
+            collection:         @network_zones,
+            checked:            (@instance.network_ids || []).collect{|n| n['id']},
+            include_hidden:     false,
+            required:           true}
+
+      .col-md-6
+        %h3 Flavor Details
+        - @flavors.each do |flavor|
+          %table.table.flavor-details{id: flavor.id, class: flavor.id==@instance.new_flavor ? '' : 'hidden'}
+            %tbody
+              %tr
+                %th Flavor
+                %td= flavor.name
+              %tr
+                %th Flavor ID
+                %td= flavor.id
+              %tr
+                %th RAM
+                %td= "#{flavor.ram}MB"
+              %tr
+                %th VCPUs
+                %td= "#{flavor.vcpus} VCPU"
+              %tr
+                %th Disk
+                %td= "#{flavor.disk}GB"
+
+        %h3 Image Details
+        - @images.each do |image|
+          %table.table.image-details{id: image.id, class: image.id==@instance.new_image ? '' : 'hidden'}
+            %tbody
+              %tr
+                %th Image
+                %td= image.name
+              %tr
+                %th Size
+                %td= image.size
+              %tr
+                %th Disk format
+                %td= image.disk_format
+              %tr
+                %th Updated at
+                %td= image.updated_at
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Create

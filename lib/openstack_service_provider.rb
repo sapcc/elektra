@@ -3,7 +3,9 @@ require 'openstack_service_provider/driver'
 require 'openstack_service_provider/fog_driver'
 
 # provides openstack services in controller and views
-module OpenstackServiceProvider
+module OpenstackServiceProvider2
+  
+  p '>>>>>>>>>>>>>>>>>>>>>> LOAD LIB <<<<<<<<<<<<<<<<<<<<<<<<<<<'
   # this module is included in controllers
   module Services
     def self.included(base)
