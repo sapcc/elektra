@@ -1,4 +1,6 @@
 require 'openstack_service_provider/errors'
+require 'openstack_service_provider/api_error_handler'
+require 'openstack_service_provider/base_object'
 require 'openstack_service_provider/driver'
 require 'openstack_service_provider/fog_driver'
 

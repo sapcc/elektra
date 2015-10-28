@@ -1,5 +1,5 @@
 module Core
-  class PagesController < ApplicationController
+  class PagesController < ScopeController
     include HighVoltage::StaticPage
   end
 end

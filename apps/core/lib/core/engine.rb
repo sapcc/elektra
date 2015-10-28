@@ -14,5 +14,11 @@ module Core
     #   app.config.assets.precompile += ["core/manifests/*"]
     # end
     
+    initializer 'core.high_voltage' do |app|
+      HighVoltage.configure do |config|
+        config.routes = false
+        config.content_path = 'core/pages/'
+      end
+    end
   end
 end

@@ -19,7 +19,7 @@ Core::Engine.routes.draw do
   end
   
   # route for overwritten High Voltage Pages controller
-  get "/pages/*id" => 'pages#show', as: :page, format: false
+  get "/pages/*id" => 'pages#show', as: :core_page, format: false
   
-  root to: 'pages#show', id: 'core/landing'
+  root to: 'pages#show', id: 'landing'
 end

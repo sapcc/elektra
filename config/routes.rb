@@ -1,27 +1,15 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
-  # scope module: :core do
-  #   root to: 'pages#show', id: 'landing'
-  # end
+  root to: 'core/pages#show', id: 'landing'
 
-  
   ###################### PLUGINS TEST #####################
-  # mount all plugins under root path
-  # mount Compute::Engine => "/"
-  
-  apps_path = 'apps'
-  Dir.glob("#{apps_path}/*") do |gem_path|
-    gem_name = gem_path.gsub("#{apps_path}/",'')
-    
-    engine_name = gem_name.classify
-    engine_name << 's' if gem_name[-1] == 's'
-    engine_class = engine_name.constantize.const_get(:Engine)
-    
-    mount engine_class => '/', as: "#{gem_name}_app"
+  BootInquirer.available_apps.each do |app|
+    if app.mountable?
+      BootInquirer.logger.debug "Mount engine #{app.name} as #{app.name}_app"
+      mount app.engine_class => '/', as: "#{app.name}_app" 
+    end
   end
-  
-  
   ######################## END ############################
   #
   # scope "/:domain_id" do
@@ -62,13 +50,4 @@ Rails.application.routes.draw do
   #     end
   #   end
   # end
-
-
-
-  # scope "/system" do
-  #   get :health, to: "health#show"
-  # end
-
-  # # route for overwritten High Voltage Pages controller
-#   get "/pages/*id" => 'pages#show', as: :page, format: false
 end

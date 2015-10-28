@@ -1,4 +1,3 @@
-
 module Openstack
   class AdminIdentityService < OpenstackServiceProvider::Service
   

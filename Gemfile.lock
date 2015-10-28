@@ -38,7 +38,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: f037344cda758480f3589ab846ad25b16849cfbb
+  revision: c1698f30f3c88ce8baba14877db4c72351eb6435
   branch: master
   specs:
     monsoon-openstack-auth (0.7.11)
@@ -60,21 +60,23 @@ PATH
       rails (= 4.2.0)
 
 PATH
-  remote: apps/identity
+  remote: apps/docs
   specs:
-    identity (0.0.1)
+    docs (0.0.1)
       rails (~> 4.2.0)
 
 PATH
   remote: apps/image
   specs:
     image (0.0.1)
+      core
       rails (~> 4.2.0)
 
 PATH
   remote: apps/network
   specs:
     network (0.0.1)
+      core
       rails (~> 4.2.0)
 
 GEM
@@ -310,7 +312,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.4.2)
+    hashie (3.4.3)
     high_voltage (2.3.0)
     hike (1.2.3)
     hitimes (1.2.2)
@@ -496,6 +498,7 @@ DEPENDENCIES
   core!
   cucumber-rails
   database_cleaner
+  docs!
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog!
@@ -505,7 +508,6 @@ DEPENDENCIES
   guard-rspec
   haml-rails
   high_voltage
-  identity!
   image!
   jquery-rails
   monsoon-fog!

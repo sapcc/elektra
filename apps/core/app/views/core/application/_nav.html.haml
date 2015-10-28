@@ -14,12 +14,12 @@
     .collapse.navbar-collapse#main-nav-collapse
       %ul.nav.navbar-nav
         %li
-          = link_to @scoped_domain_name, core_app.domain_start_path
+          = link_to @scoped_domain_name, core_app.domain_start_path if @scoped_domain_id
 
       %ul.nav.navbar-nav.navbar-right
         - unless logged_in?
           %li
-            = link_to "Log in", core_app.domain_start_path, id: "navbar-login-btn"
+            = link_to "Log in", core_app.domain_start_path, id: "navbar-login-btn" if @scoped_domain_id
             =# link_to "Log in", monsoon_openstack_auth.login_path, id: "navbar-login-btn"
         - else
           %li.dropdown
@@ -33,7 +33,7 @@
               %li
                 %a{:href => "#"} View Profile
               %li
-                = link_to "Credentials", core_app.credentials_path
+                = link_to "Credentials", identity_app.credentials_path
 
               %li.divider
               %li
