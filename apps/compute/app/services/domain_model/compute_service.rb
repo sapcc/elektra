@@ -1,9 +1,9 @@
-module Openstack
-  class ComputeService < OpenstackServiceProvider::Service
+module DomainModel
+  class ComputeService < DomainModelServiceLayer::Service
     
     def get_driver(params)
       driver = Compute::Driver.new(params)
-      raise "Error" unless driver.is_a?(OpenstackServiceProvider::Driver::Compute)
+      raise "Error" unless driver.is_a?(DomainModelServiceLayer::Driver::Compute)
       driver
     end
     

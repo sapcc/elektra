@@ -15,6 +15,10 @@ Core::Engine.routes.draw do
 
       resources :credentials
       resources :projects
+      
+      scope '/:project_id' do
+        resources :projects
+      end
     end 
   end
   

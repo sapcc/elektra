@@ -1,5 +1,5 @@
 module Core
-  class OsCredential < OpenstackServiceProvider::BaseObject
+  class OsCredential < DomainModelServiceLayer::BaseObject
     validates :type, presence: {message: 'Please select type'}
     validates :project_id, presence: {message: 'Please select project' }, if: :ec2?
     validate :blob_values_valid?

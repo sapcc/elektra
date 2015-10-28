@@ -1,4 +1,4 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   class BaseObject
     extend ActiveModel::Naming
     include ActiveModel::Conversion
@@ -47,7 +47,7 @@ module OpenstackServiceProvider
     def requires(*attrs)
       attrs.each do |attribute|
         if self.send(attribute.to_s).nil?
-          raise OpenstackServiceProvider::Errors::MissingAttribute.new("#{attribute} is missing")
+          raise DomainModelServiceLayer::Errors::MissingAttribute.new("#{attribute} is missing")
         end
       end
     end
@@ -93,7 +93,7 @@ module OpenstackServiceProvider
           return false
         end
       rescue => e
-        errors = OpenstackServiceProvider::ApiErrorHandler.parse(e)
+        errors = DomainModelServiceLayer::ApiErrorHandler.parse(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name || ' '
           message = message.join(", ") if message.is_a?(Array)
@@ -184,7 +184,7 @@ module OpenstackServiceProvider
       rescue => e
         error_names = api_error_name_mapping
 
-        errors = OpenstackServiceProvider::ApiErrorHandler.parse(e)
+        errors = DomainModelServiceLayer::ApiErrorHandler.parse(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name || 'message'
           message = message.join(", ") if message.is_a?(Array)
@@ -207,7 +207,7 @@ module OpenstackServiceProvider
       rescue => e
         error_names = api_error_name_mapping
 
-        errors = OpenstackServiceProvider::ApiErrorHandler.parse(e)
+        errors = DomainModelServiceLayer::ApiErrorHandler.parse(e)
         errors.each do |name, message|
           n = error_names[name] || error_names[message] || name || ' '
           message = message.join(", ") if message.is_a?(Array)

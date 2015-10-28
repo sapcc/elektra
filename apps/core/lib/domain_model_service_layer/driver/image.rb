@@ -1,15 +1,15 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module Driver
     # Compute calls
-    class Image < OpenstackServiceProvider::Driver::Base
+    class Image < DomainModelServiceLayer::Driver::Base
           
       ########################### IMAGES #############################
       def images(filter={})
-        raise OpenstackServiceProvider::Errors::NotImplemented
+        raise DomainModelServiceLayer::Errors::NotImplemented
       end
       
       def get_image(image_id)
-        raise OpenstackServiceProvider::Errors::NotImplemented
+        raise DomainModelServiceLayer::Errors::NotImplemented
       end
     end
   end

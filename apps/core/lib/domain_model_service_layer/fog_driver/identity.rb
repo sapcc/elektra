@@ -1,7 +1,7 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module FogDriver
     # Compute calls
-    class Identity < OpenstackServiceProvider::Driver::Identity
+    class Identity < DomainModelServiceLayer::Driver::Identity
       include FogDriver::ClientHelper
       
       def initialize(params_or_driver)
@@ -157,19 +157,19 @@ module OpenstackServiceProvider
       end
       
       # def domain_group_roles(domain_id,group_id)
-      #   raise OpenstackServiceProvider::Errors::NotImplemented
+      #   raise DomainModelServiceLayer::Errors::NotImplemented
       # end
       #
       # def grant_domain_group_role(domain_id,group_id,role_id)
-      #   raise OpenstackServiceProvider::Errors::NotImplemented
+      #   raise DomainModelServiceLayer::Errors::NotImplemented
       # end
       #
       # def check_domain_group_role(domain_id,group_id,role_id)
-      #   raise OpenstackServiceProvider::Errors::NotImplemented
+      #   raise DomainModelServiceLayer::Errors::NotImplemented
       # end
       #
       # def revoke_domain_group_role(domain_id,group_id,role_id)
-      #   raise OpenstackServiceProvider::Errors::NotImplemented
+      #   raise DomainModelServiceLayer::Errors::NotImplemented
       # end
       
       def auth_domains(filter={})
@@ -236,7 +236,7 @@ module OpenstackServiceProvider
       end
       
       def create_role(params={})
-        raise OpenstackServiceProvider::Errors::NotImplemented
+        raise DomainModelServiceLayer::Errors::NotImplemented
       end
       
       def get_role(id)

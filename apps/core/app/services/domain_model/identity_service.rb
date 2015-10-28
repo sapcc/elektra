@@ -1,10 +1,11 @@
-module Openstack
-  class IdentityService < OpenstackServiceProvider::Service
+module DomainModel
+
+  class IdentityService < DomainModelServiceLayer::Service
 
     attr_reader :region
 
     def get_driver(params)
-      OpenstackServiceProvider::FogDriver::Identity.new(params)
+      DomainModelServiceLayer::FogDriver::Identity.new(params)
     end
 
     def has_projects?

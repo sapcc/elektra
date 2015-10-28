@@ -17,13 +17,13 @@ describe Network::NetworksController, type: :controller do
     stub_authentication
     
     admin_identity_driver = double('admin_identity_service_driver').as_null_object
-    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
+    allow_any_instance_of(DomainModel::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
     
     identity_driver = double('identity_service_driver').as_null_object
-    allow_any_instance_of(Openstack::IdentityService).to receive(:get_driver).and_return(identity_driver)
+    allow_any_instance_of(DomainModel::IdentityService).to receive(:get_driver).and_return(identity_driver)
     
     network_driver = double('network_service_driver').as_null_object
-    allow_any_instance_of(Openstack::NetworkService).to receive(:get_driver).and_return(network_driver)
+    allow_any_instance_of(DomainModel::NetworkService).to receive(:get_driver).and_return(network_driver)
 
   end
 

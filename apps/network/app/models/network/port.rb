@@ -1,5 +1,5 @@
 module Network
-  class Port < OpenstackServiceProvider::BaseObject
+  class Port < DomainModelServiceLayer::BaseObject
 
   end
 end

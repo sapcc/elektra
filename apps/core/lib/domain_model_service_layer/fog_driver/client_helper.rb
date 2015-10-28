@@ -1,4 +1,4 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module FogDriver
     module ClientHelper
       def auth_params

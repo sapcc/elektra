@@ -1,4 +1,4 @@
 module Core
-  class Role < OpenstackServiceProvider::BaseObject
+  class Role < DomainModelServiceLayer::BaseObject
   end
 end

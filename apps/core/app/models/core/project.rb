@@ -1,5 +1,5 @@
 module Core
-  class Project < ::OpenstackServiceProvider::BaseObject
+  class Project < ::DomainModelServiceLayer::BaseObject
     def is_sandbox?
       self.name.end_with? "_sandbox"
     end

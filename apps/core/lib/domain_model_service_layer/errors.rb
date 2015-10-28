@@ -1,4 +1,4 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module Errors
     class NotImplemented < StandardError; end  
     class ApiError < StandardError; end

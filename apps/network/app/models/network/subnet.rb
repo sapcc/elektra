@@ -1,5 +1,5 @@
 module Network
-  class Subnet < OpenstackServiceProvider::BaseObject
+  class Subnet < DomainModelServiceLayer::BaseObject
     validates :name, presence: {message: 'Please provide a name'}
     
     def ip_version

@@ -1,5 +1,5 @@
 require "core/engine"
-require 'openstack_service_provider'
+require 'domain_model_service_layer'
 
 module Core
 end

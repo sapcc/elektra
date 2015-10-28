@@ -1,9 +1,9 @@
-module Openstack
-  class AdminIdentityService < OpenstackServiceProvider::Service
+module DomainModel
+  class AdminIdentityService < DomainModelServiceLayer::Service
   
     def get_driver(params)
       servce_user_driver = MonsoonOpenstackAuth.api_client(@region).connection_driver.connection
-      OpenstackServiceProvider::FogDriver::Identity.new(servce_user_driver)
+      DomainModelServiceLayer::FogDriver::Identity.new(servce_user_driver)
     end
 
     def create_user_sandbox(domain_id, user)

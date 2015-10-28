@@ -1,5 +1,5 @@
 module Network
-  class Network < OpenstackServiceProvider::BaseObject
+  class Network < DomainModelServiceLayer::BaseObject
     
     validates :name, presence: {message: 'Please provide a name'}
 

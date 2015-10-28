@@ -1,6 +1,6 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module FogDriver
-    class Image < OpenstackServiceProvider::Driver::Image
+    class Image < DomainModelServiceLayer::Driver::Image
       include FogDriver::ClientHelper
       
       def initialize(params)

@@ -3,7 +3,7 @@ require 'compute/client_helper'
 
 module Compute
   # Compute calls
-  class Driver < OpenstackServiceProvider::Driver::Compute
+  class Driver < DomainModelServiceLayer::Driver::Compute
     include ::Compute::ClientHelper
     
     def initialize(params)

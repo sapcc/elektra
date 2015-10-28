@@ -1,5 +1,5 @@
 module Compute
-  class Flavor < OpenstackServiceProvider::BaseObject
+  class Flavor < DomainModelServiceLayer::BaseObject
 
   end
 end

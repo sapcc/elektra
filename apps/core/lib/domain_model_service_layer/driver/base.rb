@@ -1,4 +1,4 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module Driver
     # this class maps the response to a given container class
     # e.g. list_domains -> [Indentity::Domain], get_domain -> Indentity::Domain 
@@ -41,13 +41,13 @@ module OpenstackServiceProvider
 
         response
       rescue => e
-        raise OpenstackServiceProvider::Errors::ApiError.new(e)  
+        raise DomainModelServiceLayer::Errors::ApiError.new(e)  
       end
       
       # use a mapper for response
       def map_to(klass)
-        unless (klass<=OpenstackServiceProvider::BaseObject)
-          raise OpenstackServiceProvider::Errors::BadMapperClass.new("#{klass} is not a subclass of OpenstackServiceProvider::BaseObject")
+        unless (klass<=DomainModelServiceLayer::BaseObject)
+          raise DomainModelServiceLayer::Errors::BadMapperClass.new("#{klass} is not a subclass of DomainModelServiceLayer::BaseObject")
         end
         Mapper.new(self,klass)
       end 

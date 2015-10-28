@@ -20,7 +20,7 @@ describe Core::ScopeController, type: :controller do
     stub_authentication
 
     admin_identity_driver = double('admin_identity_service_driver').as_null_object
-    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
+    allow_any_instance_of(DomainModel::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
 
     allow(controller).to receive(:_routes).and_return(@routes)
   end

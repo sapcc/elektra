@@ -1,5 +1,5 @@
 module Compute
-  class OsVolume < OpenstackServiceProvider::BaseObject
+  class OsVolume < DomainModelServiceLayer::BaseObject
     def attachment_by_server_id(server_id)
       attachments.find{|a|a["server_id"]==server_id}
     end

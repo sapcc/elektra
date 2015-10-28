@@ -1,4 +1,4 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   class ApiErrorHandler
     
     # Observed error formats        

@@ -17,13 +17,13 @@ describe Compute::InstancesController, type: :controller do
     stub_authentication
     
     admin_identity_driver = double('admin_identity_service_driver').as_null_object
-    allow_any_instance_of(Openstack::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
+    allow_any_instance_of(DomainModel::AdminIdentityService).to receive(:get_driver).and_return(admin_identity_driver)
     
     identity_driver = double('identity_service_driver').as_null_object
-    allow_any_instance_of(Openstack::IdentityService).to receive(:get_driver).and_return(identity_driver)
+    allow_any_instance_of(DomainModel::IdentityService).to receive(:get_driver).and_return(identity_driver)
     
     compute_driver = double('compute_service_driver').as_null_object
-    allow_any_instance_of(Openstack::ComputeService).to receive(:get_driver).and_return(compute_driver)
+    allow_any_instance_of(DomainModel::ComputeService).to receive(:get_driver).and_return(compute_driver)
     
   end
 

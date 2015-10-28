@@ -96,7 +96,7 @@ module Core
     def handle_api_error(exception)
       return if reset_domain_friendly_id
     
-      @errors = OpenstackServiceProvider::ApiErrorHandler.parse(exception)
+      @errors = DomainModelServiceLayer::ApiErrorHandler.parse(exception)
       render template: 'dashboard/error'
     end
 

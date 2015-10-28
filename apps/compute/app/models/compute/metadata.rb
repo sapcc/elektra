@@ -1,5 +1,5 @@
 module Compute
-  class Metadata < OpenstackServiceProvider::BaseObject
+  class Metadata < DomainModelServiceLayer::BaseObject
 
   end
 end

@@ -1,7 +1,7 @@
-module OpenstackServiceProvider
+module DomainModelServiceLayer
   module FogDriver
     # Compute calls
-    class Compute < OpenstackServiceProvider::Driver::Compute
+    class Compute < DomainModelServiceLayer::Driver::Compute
       include FogDriver::ClientHelper
       
       def initialize(params)

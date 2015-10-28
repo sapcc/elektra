@@ -6,7 +6,7 @@ module Core
 
     # includes services method
     # use: services.SERVICE_NAME.METHOD_NAME (e.g. services.identity.projects)
-    include OpenstackServiceProvider::Services
+    include DomainModelServiceLayer::Services
   
     prepend_before_filter do
       # initialize scoped domain's and project's friendly id 

@@ -1,11 +1,13 @@
-require 'openstack_service_provider/errors'
-require 'openstack_service_provider/api_error_handler'
-require 'openstack_service_provider/base_object'
-require 'openstack_service_provider/driver'
-require 'openstack_service_provider/fog_driver'
+require 'domain_model_service_layer/errors'
+require 'domain_model_service_layer/api_error_handler'
+require 'domain_model_service_layer/base_object'
+require 'domain_model_service_layer/driver'
+require 'domain_model_service_layer/fog_driver'
 
 # provides openstack services in controller and views
-module OpenstackServiceProvider
+#module DomainModelServiceLayer
+  
+module DomainModelServiceLayer
   # this module is included in controllers
   module Services
     def self.included(base)
@@ -24,7 +26,7 @@ module OpenstackServiceProvider
           if MonsoonOpenstackAuth.configuration.connection_driver and 
             MonsoonOpenstackAuth.configuration.connection_driver.endpoint
             
-            @services = OpenstackServiceProvider::ServicesManager.new(
+            @services = DomainModelServiceLayer::ServicesManager.new(
               MonsoonOpenstackAuth.configuration.connection_driver.endpoint,
               region,
               current_user)
@@ -57,9 +59,9 @@ module OpenstackServiceProvider
       # service is not cached yet -> first request
       unless service      
         # construct the class name of requested service.
-        # For example Openstack::IdentityService.
+        # For example DomainModel::IdentityService.
         # Services must be located in app/services/openstack
-        service_class_name = "Openstack::#{method_sym.to_s.classify}Service"
+        service_class_name = "DomainModel::#{method_sym.to_s.classify}Service"
         
         # load service class
         klazz = begin
@@ -68,9 +70,9 @@ module OpenstackServiceProvider
           raise "service #{service_class_name} not found!"
         end
 
-        # service must extend OpenstackServiceProvider::BaseProvider, see below.
-        unless klazz < OpenstackServiceProvider::Service
-          raise "service #{service_class_name} is not a subclass of OpenstackServiceProvider::BaseProvider"  
+        # service must extend DomainModelServiceLayer::BaseProvider, see below.
+        unless klazz < DomainModelServiceLayer::Service
+          raise "service #{service_class_name} is not a subclass of DomainModelServiceLayer::BaseProvider"  
         end
 
         service = klazz.new(@endpoint,@region,@current_user)

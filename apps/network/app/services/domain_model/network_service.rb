@@ -1,8 +1,8 @@
-module Openstack
-  class NetworkService < OpenstackServiceProvider::Service
+module DomainModel
+  class NetworkService < DomainModelServiceLayer::Service
   
     def get_driver(params)
-      OpenstackServiceProvider::FogDriver::Network.new(params)
+      DomainModelServiceLayer::FogDriver::Network.new(params)
     end
 
     def networks(filter={})

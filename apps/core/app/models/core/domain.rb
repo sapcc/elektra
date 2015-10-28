@@ -1,5 +1,5 @@
 module Core
-  class Domain < OpenstackServiceProvider::BaseObject
+  class Domain < DomainModelServiceLayer::BaseObject
     
     def friendly_id
       return nil if id.nil?

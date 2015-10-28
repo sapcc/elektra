@@ -1,5 +1,5 @@
 module Compute
-  class SecurityGroupRule < OpenstackServiceProvider::BaseObject
+  class SecurityGroupRule < DomainModelServiceLayer::BaseObject
 
   end
 end

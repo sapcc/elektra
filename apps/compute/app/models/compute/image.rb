@@ -1,5 +1,5 @@
 module Compute
-  class Image < OpenstackServiceProvider::BaseObject
+  class Image < DomainModelServiceLayer::BaseObject
 
   end
 end

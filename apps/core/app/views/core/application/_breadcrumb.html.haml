@@ -32,8 +32,10 @@
                   .dropdown-icon
                     %span.icon.moo-cloud
                   Compute & Monsoon Automation
-                %li= link_to "Instances", compute_app.instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-                %li= link_to "Projects", identity_app.projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                - if BootInquirer.app_available?('compute')
+                  %li= link_to "Instances", compute_app.instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                
+                %li= link_to "Projects", core_app.projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
                 %li= link_to "Volumes", "#"
                 %li= link_to "Snapshots", "#"
                 %li= link_to "Monsoon Automation", "#"
@@ -55,7 +57,8 @@
                   .dropdown-icon
                     %span.fa.fa-sitemap.fa-fw
                   Networking & Loadbalancing
-                %li= link_to "Networks", network_app.networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                - if BootInquirer.app_available?('network')
+                  %li= link_to "Networks", network_app.networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
                 %li= link_to "Loadbalancing", "#"
                 %li= link_to "DNS", "#"
 
@@ -91,4 +94,4 @@
                   .dropdown-icon
                     %span.fa.fa-user.fa-fw
                   Account
-                %li= link_to "Credentials", identity_app.credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                %li= link_to "Credentials", core_app.credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)

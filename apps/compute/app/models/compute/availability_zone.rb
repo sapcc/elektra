@@ -1,5 +1,5 @@
 module Compute
-  class AvailabilityZone < OpenstackServiceProvider::BaseObject
+  class AvailabilityZone < DomainModelServiceLayer::BaseObject
     def id
       read("zoneName")
     end
