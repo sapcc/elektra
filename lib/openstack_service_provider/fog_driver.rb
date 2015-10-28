@@ -1,5 +1,0 @@
-require 'openstack_service_provider/fog_driver/client_helper'
-require 'openstack_service_provider/fog_driver/identity'
-require 'openstack_service_provider/fog_driver/compute'
-require 'openstack_service_provider/fog_driver/network'
-require 'openstack_service_provider/fog_driver/image'

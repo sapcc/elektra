@@ -1,0 +1,97 @@
+.context-breadcrumb.context-breadcrumb-fancy
+  .container.context-container
+    - if @user_domain_projects
+      %ol.context-list
+        %li.dropdown
+          %span.glyphicon.glyphicon-th
+          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            - if @active_project
+              = @active_project.name
+            - else
+              Choose a Project
+            %span.caret
+          %ul.dropdown-menu{:role => "menu"}
+            - @user_domain_projects.each do |project|
+              %li{class: ("active" if project.id == @scoped_project_id)}
+                -# = link_to project.name, instances_path(domain_id: @scoped_domain_fid, project_id: project.fid)
+                = link_to "#{project.name}", domain_id: @scoped_domain_fid, project_id: project.friendly_id
+
+
+    - if @scoped_project_id
+      %ol.context-list
+        %li.dropdown
+          %span.glyphicon.glyphicon-cloud
+          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            = processed_controller_name
+            %span.caret
+          -# = render_navigation(context: :services)
+          %ul.dropdown-menu.dropdown-menu-mega{:role => "menu"}
+            %li
+              %ul
+                %li.dropdown-header.dropdown-header-fancy
+                  .dropdown-icon
+                    %span.icon.moo-cloud
+                  Compute & Monsoon Automation
+                - if BootInquirer.app_available?('compute')
+                  %li= link_to "Instances", compute_app.instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                
+                %li= link_to "Projects", core_app.projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                %li= link_to "Volumes", "#"
+                %li= link_to "Snapshots", "#"
+                %li= link_to "Monsoon Automation", "#"
+
+
+            %li
+              %ul
+                %li.dropdown-header.dropdown-header-fancy
+                  .dropdown-icon
+                    %span.fa.fa-lock.fa-fw
+                  Access Management
+                %li= link_to "Authorizations", "#"
+                %li= link_to "Audit", "#"
+
+
+            %li
+              %ul
+                %li.dropdown-header.dropdown-header-fancy
+                  .dropdown-icon
+                    %span.fa.fa-sitemap.fa-fw
+                  Networking & Loadbalancing
+                - if BootInquirer.app_available?('network')
+                  %li= link_to "Networks", network_app.networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+                %li= link_to "Loadbalancing", "#"
+                %li= link_to "DNS", "#"
+
+
+            %li
+              %ul
+                %li.dropdown-header.dropdown-header-fancy
+                  .dropdown-icon
+                    %span.fa.fa-database.fa-fw
+                  Storage
+                %li= link_to "Shared Object Storage", "#"
+                %li= link_to "File System Storage", "#"
+                %li= link_to "Repositories", "#"
+
+
+
+
+            %li
+              %ul
+                %li.dropdown-header.dropdown-header-fancy
+                  .dropdown-icon
+                    %span.fa.fa-area-chart.fa-fw
+                  Monitoring, Logging, Cost & Capacity Control
+                %li= link_to "Quotas", "#"
+                %li= link_to "Metrics", "#"
+                %li= link_to "Logs", "#"
+
+
+
+            %li
+              %ul
+                %li.dropdown-header.dropdown-header-fancy
+                  .dropdown-icon
+                    %span.fa.fa-user.fa-fw
+                  Account
+                %li= link_to "Credentials", core_app.credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)

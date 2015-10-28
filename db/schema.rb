@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151019150909) do
+ActiveRecord::Schema.define(version: 20151027130157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20151019150909) do
   enable_extension "pg_stat_statements"
   enable_extension "uuid-ossp"
 
-  create_table "friendly_id_entries", force: :cascade do |t|
+  create_table "core_friendly_id_entries", force: :cascade do |t|
     t.string   "class_name"
     t.string   "scope"
     t.string   "name"
@@ -31,12 +31,12 @@ ActiveRecord::Schema.define(version: 20151019150909) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "friendly_id_entries", ["class_name", "key"], name: "index_friendly_id_entries_on_class_name_and_key", using: :btree
-  add_index "friendly_id_entries", ["class_name", "scope", "key"], name: "index_friendly_id_entries_on_class_name_and_scope_and_key", using: :btree
-  add_index "friendly_id_entries", ["class_name"], name: "index_friendly_id_entries_on_class_name", using: :btree
-  add_index "friendly_id_entries", ["key"], name: "index_friendly_id_entries_on_key", using: :btree
-  add_index "friendly_id_entries", ["scope"], name: "index_friendly_id_entries_on_scope", using: :btree
-  add_index "friendly_id_entries", ["slug"], name: "index_friendly_id_entries_on_slug", using: :btree
+  add_index "core_friendly_id_entries", ["class_name", "key"], name: "index_core_friendly_id_entries_on_class_name_and_key", using: :btree
+  add_index "core_friendly_id_entries", ["class_name", "scope", "key"], name: "index_core_friendly_id_entries_on_class_name_and_scope_and_key", using: :btree
+  add_index "core_friendly_id_entries", ["class_name"], name: "index_core_friendly_id_entries_on_class_name", using: :btree
+  add_index "core_friendly_id_entries", ["key"], name: "index_core_friendly_id_entries_on_key", using: :btree
+  add_index "core_friendly_id_entries", ["scope"], name: "index_core_friendly_id_entries_on_scope", using: :btree
+  add_index "core_friendly_id_entries", ["slug"], name: "index_core_friendly_id_entries_on_slug", using: :btree
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false

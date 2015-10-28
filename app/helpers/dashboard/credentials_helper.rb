@@ -1,3 +1,0 @@
-module Dashboard::CredentialsHelper
-
-end

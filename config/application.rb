@@ -2,6 +2,7 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -12,6 +13,7 @@ module MonsoonDashboard
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
+    #config.autoload_paths += %W(#{config.root}/plugins)
     config.autoload_paths << Rails.root.join('lib')
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
@@ -25,8 +27,8 @@ module MonsoonDashboard
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
-    config.middleware.insert_before Rack::Sendfile, "DebugEnvMiddleware"
-    config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
-    config.middleware.use "RevisionMiddleware"
+    config.middleware.insert_before Rack::Sendfile, "Core::DebugEnvMiddleware"
+    config.middleware.insert_before Rack::Sendfile, "Core::DebugHeadersMiddleware"
+    config.middleware.use "Core::RevisionMiddleware"
   end
 end

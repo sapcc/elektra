@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/lib/boot_inquirer'
+
 # encoding: UTF-8
 source 'http://localhost:8080/rubygemsorg/'
 
@@ -31,6 +33,7 @@ gem 'monsoon-fog', git: 'git://localhost/monsoon/monsoon-fog.git'
 gem 'fog', git: 'git://localhost/monsoon/fog.git', branch:'master'
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
+#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 # Extras
 gem 'rails_config'
@@ -89,3 +92,12 @@ end
 group :test do
   gem 'guard-rspec'
 end
+
+
+###################### PLUGINS TEST ####################
+# load all plugins 
+BootInquirer.load_apps do |app_path|
+  BootInquirer.logger.debug "Load app #{app_path}"
+  gemspec path: app_path
+end
+######################## END ##########################
