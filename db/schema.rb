@@ -15,6 +15,11 @@ ActiveRecord::Schema.define(version: 20151019150909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pageinspect"
+  enable_extension "pg_buffercache"
+  enable_extension "pgrowlocks"
+  enable_extension "pg_stat_statements"
+  enable_extension "uuid-ossp"
 
   create_table "friendly_id_entries", force: :cascade do |t|
     t.string   "class_name"
