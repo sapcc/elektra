@@ -48,6 +48,11 @@ h1, h2, h3, h4, h5, h6 {
     background: inline-svg('rounded-square-outline.svg') 0 4px no-repeat;
     padding-left: 19px;
   }
+
+  .nav li {
+    background-image: none;
+    padding-left: 0;
+  }
 }
 
 .navbar a, a.btn {
