@@ -41,5 +41,4 @@ postgres
 version
 precompile
 build
-image
 .procfile
