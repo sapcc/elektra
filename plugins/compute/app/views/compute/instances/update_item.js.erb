@@ -1,0 +1,6 @@
+<%if @instance%>
+  $("#instance_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>");
+  $("#instance_<%=params[:id]%>").update()
+<%else%>
+  $("#instance_<%=params[:id]%>").remove();
+<%end%>

@@ -1,9 +1,26 @@
 module ApplicationHelper
-
-
+  # # for the case a url or path helper method from the main app is needed
+  # def method_missing method, *args, &block
+  #   p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+  #   p method
+  #   if (method.to_s.end_with?('_path') or method.to_s.end_with?('_url')) and main_app.respond_to?(method)
+  #     main_app.send(method, *args)
+  #   else
+  #     super
+  #   end
+  # end
+  
   # ---------------------------------------------------------------------------------------------------
   # Favicon Helpers
   # ---------------------------------------------------------------------------------------------------
+  
+  def plugin_available?(name)
+    self.respond_to?("#{name}_plugin".to_sym)
+  end
+  
+  def plugin(name)
+    plugin_available?(name) ? send("#{name}_plugin") : nil
+  end
 
   def favicon_png
     capture_haml do
@@ -38,7 +55,8 @@ module ApplicationHelper
 
   def body_class
     css_class = controller.controller_name
-    css_class = "#{css_class} #{params[:id]}" if css_class == "pages"
+    page_id = params[:id].split('/').last if params[:id]
+    css_class = "#{css_class} #{page_id}" if css_class == "pages"
     css_class
   end
 

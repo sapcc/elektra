@@ -31,6 +31,7 @@ gem 'monsoon-fog', git: 'git://localhost/monsoon/monsoon-fog.git'
 gem 'fog', git: 'git://localhost/monsoon/fog.git', branch:'master'
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
+#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 # Extras
 gem 'rails_config'
@@ -89,3 +90,17 @@ end
 group :test do
   gem 'guard-rspec'
 end
+
+
+###################### PLUGINS ####################
+require 'logger'
+# load all plugins 
+black_list = [] #e.g. ['compute']
+
+Dir.glob("plugins/*").each do |plugin_path|
+  unless black_list.include?(plugin_path.gsub('plugins/',''))
+    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
+    gemspec path: plugin_path 
+  end
+end
+######################## END ##########################

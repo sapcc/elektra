@@ -19,11 +19,12 @@ rescue
   referrer_url || "/"
 end
 
-MonsoonOpenstackAuth.configure do |config|
-  # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
-  # config.connection_driver = DriverClass
 
-  config.connection_driver.api_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
+MonsoonOpenstackAuth.configure do |auth|
+  # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
+  # auth.connection_driver = DriverClass
+
+  auth.connection_driver.api_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
                                             proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
                                             host  = ENV['AUTHORITY_SERVICE_HOST']
                                             port  = ENV['AUTHORITY_SERVICE_PORT']
@@ -31,45 +32,46 @@ MonsoonOpenstackAuth.configure do |config|
                                           else
                                             ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
                                           end
-  config.connection_driver.api_userid   = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
-  config.connection_driver.api_domain   = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
-  config.connection_driver.api_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
-  config.connection_driver.ssl_verify_peer = false
+  auth.connection_driver.api_userid   = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
+  auth.connection_driver.api_domain   = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
+  auth.connection_driver.api_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
+  auth.connection_driver.ssl_verify_peer = false
 
   # optional, default=true
-  config.token_auth_allowed = true
+  auth.token_auth_allowed = true
   # optional, default=true
-  config.basic_auth_allowed = true
+  auth.basic_auth_allowed = true
   # optional, default=true
-  config.sso_auth_allowed   = true
+  auth.sso_auth_allowed   = true
   # optional, default=true
-  config.form_auth_allowed  = true
+  auth.form_auth_allowed  = true
 
   # optional, default=false
-  config.access_key_auth_allowed = false
+  auth.access_key_auth_allowed = false
 
-  config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'europe'
+  auth.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'europe'
 
   # optional, default=sap_default
-  config.default_domain_name = 'sap_default'
+  auth.default_domain_name = 'sap_default'
 
   # optional, default= last url before redirected to form
-  config.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
+  auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
 
   # authorization policy file
-  config.authorization.policy_file_path = "config/policy.json"
-  config.authorization.context = "identity"
+  auth.authorization.policy_file_path = "config/policy.json"
+  auth.authorization.context = "identity"
 
-  #config.authorization.trace_enabled = true
-  config.authorization.reload_policy = false
-  config.authorization.trace_enabled = false
+  #auth.authorization.trace_enabled = true
+  auth.authorization.reload_policy = false
+  auth.authorization.trace_enabled = false
 
-  config.authorization.controller_action_map = {
+  auth.authorization.controller_action_map = {
     :index   => 'list',
     :show    => 'get',
     :destroy => 'delete'
   }
 
   # optional, default=false
-  config.debug=true
+  auth.debug=true
 end
+

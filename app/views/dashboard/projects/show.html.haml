@@ -8,7 +8,8 @@
   .row
     .col-sm-6
       %p Show super interesting information about this project here.
-      %p= link_to "Instances (#{@instances.length})", instances_path
+      - if plugin_available?('compute') 
+        %p= link_to "Instances (#{@instances.length})", plugin('compute').instances_path
 
       - if @current_project.subtree.count>0
         - @current_project.subtree.each do |sub_project|
