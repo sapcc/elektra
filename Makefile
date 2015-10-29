@@ -82,7 +82,7 @@ beta: cucumber
 .PHONY: 
 rspec: postgres migrate-test
 	$(DOCKER) run --rm --link $(postgres):postgres $(IMAGE) \
-		bundle exec rspec
+		bundle exec rspec spec plugins
 
 # ----------------------------------------------------------------------------------
 #   cucumber 
