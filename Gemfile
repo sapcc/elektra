@@ -96,8 +96,11 @@ end
 
 ###################### PLUGINS TEST ####################
 # load all plugins 
-BootInquirer.load_apps do |app_path|
-  BootInquirer.logger.debug "Load app #{app_path}"
+Dir.glob("apps/*").each do |app_path|
   gemspec path: app_path
 end
+# BootInquirer.load_apps do |app_path|
+#   BootInquirer.logger.debug "Load app #{app_path}"
+#   gemspec path: app_path
+# end
 ######################## END ##########################
