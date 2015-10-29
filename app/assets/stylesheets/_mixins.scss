@@ -54,3 +54,15 @@
         border-color: #fff;
   }
 }
+
+@mixin container-width-responsive($factor:1) {
+  @media (min-width: $screen-sm-min) {
+    width: $container-sm * $factor;
+  }
+  @media (min-width: $screen-md-min) {
+    width: $container-md * $factor;
+  }
+  @media (min-width: $screen-lg-min) {
+    width: $container-lg * $factor;
+  }
+}

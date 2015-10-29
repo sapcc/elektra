@@ -1,2 +1,0 @@
-module Dashboard::InstancesHelper
-end
