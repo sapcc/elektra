@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", "~> 4.2.0"
-  s.add_dependency "core"
+  s.add_dependency "domain_model_service_layer"
 end
