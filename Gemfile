@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/lib/boot_inquirer'
-
 # encoding: UTF-8
 source 'http://localhost:8080/rubygemsorg/'
 
@@ -94,13 +92,15 @@ group :test do
 end
 
 
-###################### PLUGINS TEST ####################
+###################### PLUGINS ####################
+require 'logger'
 # load all plugins 
-Dir.glob("apps/*").each do |app_path|
-  gemspec path: app_path
+black_list = [] #e.g. ['compute']
+
+Dir.glob("plugins/*").each do |plugin_path|
+  unless black_list.include?(plugin_path.gsub('plugins/',''))
+    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
+    gemspec path: plugin_path 
+  end
 end
-# BootInquirer.load_apps do |app_path|
-#   BootInquirer.logger.debug "Load app #{app_path}"
-#   gemspec path: app_path
-# end
 ######################## END ##########################
