@@ -44,7 +44,7 @@ class BootInquirer
     end
         
     def available_apps
-      @available_apps
+      @available_apps ||= load_apps
     end
     
     def get_app(name)
