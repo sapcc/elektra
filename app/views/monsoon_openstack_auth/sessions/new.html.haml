@@ -1,0 +1,17 @@
+= inside_layout 'login' do
+  .container
+
+    = form_tag(sessions_path, class: "form-signin") do
+      = hidden_field_tag :domain_id, @domain_id
+
+      %h2.form-signin-heading Please sign in
+
+      = render "application/flashes"
+
+      %label.sr-only{:for => "username"} User ID
+      = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
+
+      %label.sr-only{:for => "password"} Password
+      = password_field_tag :password, @password, placeholder: "Passwort", required: "", class: "form-control"
+
+      %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in
