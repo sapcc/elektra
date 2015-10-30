@@ -1,5 +1,5 @@
 module Network
-  class Network < DomainModelServiceLayer::BaseObject
+  class Network < DomainModelServiceLayer::Model
     
     validates :name, presence: {message: 'Please provide a name'}
 

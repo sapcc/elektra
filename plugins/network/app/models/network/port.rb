@@ -1,5 +1,5 @@
 module Network
-  class Port < DomainModelServiceLayer::BaseObject
+  class Port < DomainModelServiceLayer::Model
 
   end
 end

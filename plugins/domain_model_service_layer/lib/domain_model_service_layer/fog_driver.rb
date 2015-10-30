@@ -1,5 +1,0 @@
-require 'domain_model_service_layer/fog_driver/client_helper'
-require 'domain_model_service_layer/fog_driver/identity'
-# require 'domain_model_service_layer/fog_driver/compute'
-require 'domain_model_service_layer/fog_driver/network'
-require 'domain_model_service_layer/fog_driver/image'

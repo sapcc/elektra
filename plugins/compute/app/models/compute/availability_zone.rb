@@ -1,5 +1,5 @@
 module Compute
-  class AvailabilityZone < DomainModelServiceLayer::BaseObject
+  class AvailabilityZone < DomainModelServiceLayer::Model
     def id
       read("zoneName")
     end

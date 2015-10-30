@@ -1,12 +1,10 @@
-require 'domain_model_service_layer/errors'
-require 'domain_model_service_layer/api_error_handler'
-require 'domain_model_service_layer/base_object'
-require 'domain_model_service_layer/driver'
-require 'domain_model_service_layer/fog_driver'
+require_relative 'domain_model_service_layer/driver/base'
+require_relative 'domain_model_service_layer/fog_driver/client_helper'
+require_relative 'domain_model_service_layer/errors'
+require_relative 'domain_model_service_layer/api_error_handler'
+require_relative 'domain_model_service_layer/model'
 
-# provides openstack services in controller and views
-#module DomainModelServiceLayer
-  
+# implements service layer and domain model
 module DomainModelServiceLayer
   # this module is included in controllers
   module Services
