@@ -1,2 +1,2 @@
-class Role < DomainModelServiceLayer::BaseObject
+class Role < DomainModelServiceLayer::Model
 end

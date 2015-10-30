@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe DomainModelServiceLayer::BaseObject do
+describe DomainModelServiceLayer::Model do
   before :each do
     @driver = double('driver').as_null_object
-    @base_object = DomainModelServiceLayer::BaseObject.new(@driver)
+    @base_object = DomainModelServiceLayer::Model.new(@driver)
   end
   
   describe 'model_name' do
@@ -88,25 +88,25 @@ describe DomainModelServiceLayer::BaseObject do
   
   describe '::initialize' do
     it 'executes after_initialize callback' do
-      expect_any_instance_of(DomainModelServiceLayer::BaseObject).to receive(:after_initialize)
-      DomainModelServiceLayer::BaseObject.new(@driver)
+      expect_any_instance_of(DomainModelServiceLayer::Model).to receive(:after_initialize)
+      DomainModelServiceLayer::Model.new(@driver)
     end
         
     context 'no params given' do
       it 'creates a new empty base object' do
-        o = DomainModelServiceLayer::BaseObject.new(@driver)
+        o = DomainModelServiceLayer::Model.new(@driver)
         expect(o.attributes).to eq({})
       end
     end
     
     context 'params given' do
       it 'creates a new base object' do
-        o = DomainModelServiceLayer::BaseObject.new(@driver, {'a' => 'test'})
+        o = DomainModelServiceLayer::Model.new(@driver, {'a' => 'test'})
         expect(o.attributes).to eq({'a'=>'test'})
       end
       
       it 'sets id from params' do
-        o = DomainModelServiceLayer::BaseObject.new(@driver, {'id'=>1,'a' => 'test'})
+        o = DomainModelServiceLayer::Model.new(@driver, {'id'=>1,'a' => 'test'})
         expect(o.id).to eq(1)
       end
     end
@@ -132,7 +132,7 @@ describe DomainModelServiceLayer::BaseObject do
     end
     
     it "no error raised" do
-      o = DomainModelServiceLayer::BaseObject.new(@driver, {'id'=>1,'attr1' => 'test'})
+      o = DomainModelServiceLayer::Model.new(@driver, {'id'=>1,'attr1' => 'test'})
       expect{
         o.requires(:id,:attr1)
       }.not_to raise_error
@@ -142,7 +142,7 @@ describe DomainModelServiceLayer::BaseObject do
   describe 'save' do
     context 'id is nil' do
       before :each do
-        @o = DomainModelServiceLayer::BaseObject.new(@driver)
+        @o = DomainModelServiceLayer::Model.new(@driver)
       end
       
       it 'calls create method' do
@@ -154,7 +154,7 @@ describe DomainModelServiceLayer::BaseObject do
     
     context 'id is not nil' do
       before :each do
-        @o = DomainModelServiceLayer::BaseObject.new(@driver, {'id'=>1})
+        @o = DomainModelServiceLayer::Model.new(@driver, {'id'=>1})
       end
       it 'calls update method' do
         expect(@o).to receive(:update)
@@ -297,8 +297,8 @@ describe DomainModelServiceLayer::BaseObject do
   describe 'attribute_to_object' do
     it 'creates an object from attributes' do
       @base_object.attributes={'subobject'=>{a1:'test1',a2: 'test2'}}
-      subobject = @base_object.attribute_to_object(:subobject,DomainModelServiceLayer::BaseObject)
-      expect(subobject).to be_kind_of(DomainModelServiceLayer::BaseObject)
+      subobject = @base_object.attribute_to_object(:subobject,DomainModelServiceLayer::Model)
+      expect(subobject).to be_kind_of(DomainModelServiceLayer::Model)
       expect(subobject.a1).to eq('test1')
     end
   end

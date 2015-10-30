@@ -1,5 +1,5 @@
 module Compute
-  class Server < DomainModelServiceLayer::BaseObject
+  class Server < DomainModelServiceLayer::Model
     validates :image_id, presence: {message: 'Please select an image'}
     validates :flavor_id, presence: {message: 'Please select a flavor'}
     validates :network_ids, presence: {message: 'Please select at least one network'}

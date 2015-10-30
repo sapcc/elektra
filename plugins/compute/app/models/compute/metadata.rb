@@ -1,5 +1,5 @@
 module Compute
-  class Metadata < DomainModelServiceLayer::BaseObject
+  class Metadata < DomainModelServiceLayer::Model
 
   end
 end

@@ -1,5 +1,5 @@
 module DomainModelServiceLayer
-  class BaseObject
+  class Model
     extend ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Validations

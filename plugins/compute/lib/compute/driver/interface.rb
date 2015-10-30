@@ -1,7 +1,7 @@
-module DomainModelServiceLayer
+module Compute
   module Driver
     # Compute calls
-    class Compute < DomainModelServiceLayer::Driver::Base
+    class Interface < DomainModelServiceLayer::Driver::Base
     
       ########################### SERVERS ##############################  
       def servers(filter={})

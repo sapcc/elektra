@@ -1,4 +1,4 @@
-require "image/engine"
+require 'domain_model_service_layer'
 
-module Image
-end
+require_relative "image/engine"
+require_relative "image/driver"

@@ -46,8 +46,8 @@ module DomainModelServiceLayer
       
       # use a mapper for response
       def map_to(klass)
-        unless (klass<=DomainModelServiceLayer::BaseObject)
-          raise DomainModelServiceLayer::Errors::BadMapperClass.new("#{klass} is not a subclass of DomainModelServiceLayer::BaseObject")
+        unless (klass<=DomainModelServiceLayer::Model)
+          raise DomainModelServiceLayer::Errors::BadMapperClass.new("#{klass} is not a subclass of DomainModelServiceLayer::Model")
         end
         Mapper.new(self,klass)
       end 

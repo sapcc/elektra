@@ -1,4 +1,4 @@
-class OsCredential < DomainModelServiceLayer::BaseObject
+class OsCredential < DomainModelServiceLayer::Model
   validates :type, presence: {message: 'Please select type'}
   validates :project_id, presence: {message: 'Please select project' }, if: :ec2?
   validate :blob_values_valid?

@@ -1,4 +1,4 @@
-require "network/engine"
+require "domain_model_service_layer"
 
-module Network
-end
+require_relative "network/engine"
+require_relative "network/driver"

@@ -1,4 +1,4 @@
-class Project < ::DomainModelServiceLayer::BaseObject
+class Project < ::DomainModelServiceLayer::Model
   def is_sandbox?
     self.name.end_with? "_sandbox"
   end

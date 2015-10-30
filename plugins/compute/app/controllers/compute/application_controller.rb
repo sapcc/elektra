@@ -1,4 +1,4 @@
 module Compute
-  class ApplicationController < DashboardController
+  class ApplicationController < ::DashboardController
   end
 end

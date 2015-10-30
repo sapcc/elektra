@@ -2,8 +2,8 @@ module DomainModel
   class ComputeService < DomainModelServiceLayer::Service
     
     def get_driver(params)
-      driver = Compute::Driver.new(params)
-      raise "Error" unless driver.is_a?(DomainModelServiceLayer::Driver::Compute)
+      driver = Compute::Driver::Fog.new(params)
+      raise "Error" unless driver.is_a?(Compute::Driver::Interface)
       driver
     end
     

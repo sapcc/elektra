@@ -97,10 +97,16 @@ require 'logger'
 # load all plugins 
 black_list = [] #e.g. ['compute']
 
+# gemspec path: 'plugins/compute'
+# gemspec path: 'plugins/network'
+# gemspec path: 'plugins/domain_model_service_layer'
+# gemspec path: 'plugins/image'
+# gemspec path: 'plugins/docs'
+
 Dir.glob("plugins/*").each do |plugin_path|
   unless black_list.include?(plugin_path.gsub('plugins/',''))
     Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
-    gemspec path: plugin_path 
+    gemspec path: plugin_path
   end
 end
 ######################## END ##########################

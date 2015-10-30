@@ -1,4 +1,4 @@
-class Domain < DomainModelServiceLayer::BaseObject
+class Domain < DomainModelServiceLayer::Model
     
   def friendly_id
     return nil if id.nil?

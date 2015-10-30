@@ -5,7 +5,9 @@ module DomainModel
     attr_reader :region
 
     def get_driver(params)
-      DomainModelServiceLayer::FogDriver::Identity.new(params)
+      driver = Identity::Driver::Fog.new(params)
+      raise "Error" unless driver.is_a?(Identity::Driver::Interface)
+      driver
     end
 
     def has_projects?

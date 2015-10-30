@@ -1,5 +1,5 @@
 module Image
-  class Image < DomainModelServiceLayer::BaseObject
+  class Image < DomainModelServiceLayer::Model
 
   end
 end

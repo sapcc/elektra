@@ -1,5 +1,4 @@
-require "compute/engine"
-require "compute/driver"
+require 'domain_model_service_layer'
 
-module Compute
-end
+require_relative "compute/engine"
+require_relative "compute/driver"
