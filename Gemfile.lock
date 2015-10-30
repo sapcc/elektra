@@ -1,4 +1,23 @@
 GIT
+  remote: git://localhost/monsoon/converged_cloud_bootstrap.git
+  revision: 69826305fb2ec8e2a353a62a377d790ed6d4f759
+  specs:
+    converged_cloud_bootstrap (0.0.1)
+      bootstrap-sass
+      coffee-rails
+      compass-rails
+      font-awesome-sass
+      haml-rails
+      jquery-rails
+      rails (= 4.2.0)
+      redcarpet
+      sass-rails
+      sass_inline_svg
+      simple_form
+      spinners
+      uglifier
+
+GIT
   remote: git://localhost/monsoon/fog.git
   revision: b3c62f94fde6b821740170b39bc88232d91836bf
   branch: master
@@ -494,6 +513,7 @@ DEPENDENCIES
   coffee-rails
   compass-rails
   compute!
+  converged_cloud_bootstrap!
   cucumber-rails
   database_cleaner
   docs!

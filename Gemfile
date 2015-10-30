@@ -33,6 +33,9 @@ gem 'fog', git: 'git://localhost/monsoon/fog.git', branch:'master'
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
+gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_bootstrap.git'
+# gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
+
 # Extras
 gem 'rails_config'
 
