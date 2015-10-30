@@ -17,12 +17,8 @@ class ApplicationController < ActionController::Base
   end
 
   def render(*args)
-    options = args.extract_options!    
-
-    if modal?
-      # use modal layout
-      options.merge! layout: "/layouts/modal" 
-    end
+    options = args.extract_options!
+    options.merge! layout: 'modal' if modal?
     super *args, options
   end
 
