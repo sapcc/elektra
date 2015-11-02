@@ -108,8 +108,9 @@ black_list = [] #e.g. ['compute']
 
 Dir.glob("plugins/*").each do |plugin_path|
   unless black_list.include?(plugin_path.gsub('plugins/',''))
-    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
+    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")]
     gemspec path: plugin_path
   end
 end
 ######################## END ##########################
+
