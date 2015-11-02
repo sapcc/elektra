@@ -34,10 +34,27 @@ gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-au
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_bootstrap.git'
-# gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
+#gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
 
 # Extras
 gem 'rails_config'
+
+
+###################### PLUGINS ####################
+require 'logger'
+# load all plugins 
+black_list = [] #e.g. ['compute']
+
+Dir.glob("plugins/*").each do |plugin_path|
+  name = plugin_path.gsub('plugins/','')
+  unless black_list.include?(name)
+    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
+    gemspec path: plugin_path
+    #gem name, path: plugin_path
+  end
+end
+######################## END ##########################
+
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -93,23 +110,3 @@ end
 group :test do
   gem 'guard-rspec'
 end
-
-
-###################### PLUGINS ####################
-require 'logger'
-# load all plugins 
-black_list = [] #e.g. ['compute']
-
-# gemspec path: 'plugins/compute'
-# gemspec path: 'plugins/network'
-# gemspec path: 'plugins/domain_model_service_layer'
-# gemspec path: 'plugins/image'
-# gemspec path: 'plugins/docs'
-
-Dir.glob("plugins/*").each do |plugin_path|
-  unless black_list.include?(plugin_path.gsub('plugins/',''))
-    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
-    gemspec path: plugin_path
-  end
-end
-######################## END ##########################

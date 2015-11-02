@@ -1,6 +1,6 @@
 GIT
   remote: git://localhost/monsoon/converged_cloud_bootstrap.git
-  revision: 07aac1d93772a5f9887a7025ce0cf2f91bef80a4
+  revision: 6a9dadf71200bb946bc8b338eaa74475753b7f23
   specs:
     converged_cloud_bootstrap (0.0.1)
       bootstrap-sass
