@@ -22,7 +22,7 @@ this is work in progress so no guarantee of completeness ;-)
 Plugins
 -------
 
-![Dashboard-Plugins](docs/Dashboard-Plugins.jpeg).
+![Dashboard-Plugins](docs/Dashboard-Plugins.jpg?raw=true).
 
 ###Generate Plugin
 cd monsoon-dashboard
