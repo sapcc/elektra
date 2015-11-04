@@ -71,13 +71,13 @@ The complexity of a plugin may vary greatly depending on the tasks. For example 
 2. ```bin/rails g dashboard_plugin NAME```
 
 ####Create ServiceLayer-Pplugin
-1. cd monsoon-dashboard
+1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME --service_layer```
 
 ####Create Mountable-Pplugin
-1. cd monsoon-dashboard
+1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME --mountable```
 
 ####Create Mountable-ServiceLayer-Pplugin
-1. cd monsoon-dashboard
+1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME --mountable --service_layer```
