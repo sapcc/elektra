@@ -53,7 +53,7 @@ The mentioned drawbacks of pure hash use are eliminated by the concept of the Do
 The plugin folder structure needs to look as follows:
 ![Plugins](docs/dashboard_plugins_tree.jpg?raw=true)
 
-[Details](docs/dashboard_services.pdf)
+[Click this link for a detailed class diagram](docs/dashboard_services.pdf)
 
 
 ###Create Plugin
