@@ -50,6 +50,7 @@ To avoid that services communicate directly with the API and that each plugin im
 
 The mentioned drawbacks of pure hash use are eliminated by the concept of the Domain Model. The Domain Model wraps the data hash and implements methods that work on this hash. Services call driver methods and map the responses to Domain Model objects and, conversely, the Domain Model objects are converted to hashes when they reach the driver layer. As a result, it is possible to work with real ruby objects rather than using hashes. In such Domain Model objects we can use validations and define helper methods.
 
+The plugin folder structure needs to look as follows:
 ![Plugins](docs/dashboard_plugins_tree.jpg?raw=true)
 
 [Details](docs/dashboard_services.pdf)
@@ -57,7 +58,7 @@ The mentioned drawbacks of pure hash use are eliminated by the concept of the Do
 
 ###Create Plugin
 
-The complexity of a plugin may vary greatly depending on the tasks. For example the Lib Plugin includes no app tree and is not mountable. However, it contains a lib folder and therefore implements libraries which may be used in other plugins. On the other hand, a mountable plugin includes a full app tree and own routes and is able to be mounted and act as an isolated rails app. 
+The complexity of a plugin may vary greatly depending on the tasks. For example the Lib Plugin includes no app tree and is not mountable. However, it contains a lib folder and therefore implements libraries which may be used in other plugins. On the other hand, a mountable plugin includes a full app tree and own routes and is able to be mounted and act as an isolated rails app.
 
 * Lib Plugin
   * includes a "lib" directory and no app tree
@@ -69,19 +70,21 @@ The complexity of a plugin may vary greatly depending on the tasks. For example 
   * includes a full app tree
   * can be mounted and define own routes
   * is a Rails Engine 
- 
+
+For ease-of-use we have provided a generator which generates a skeleton plugin folder structure with the necessary elements and some basic classes to get started. To use it first decide which type of plugin you want to start developing:
+
 ####Create Lib Plugin
 1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME```
 
-####Create ServiceLayer-Pplugin
+####Create ServiceLayer Plugin
 1. cd monsoon-dashboard
 2. ```bin/rails g dashboard_plugin NAME --service_layer```
 
-####Create Mountable-Pplugin
+####Create Mountable Plugin
 1. cd monsoon-dashboard
 2. ```bin/rails g dashboard_plugin NAME --mountable```
 
-####Create Mountable-ServiceLayer-Pplugin
+####Create Mountable-ServiceLayer Plugin
 1. cd monsoon-dashboard
 2. ```bin/rails g dashboard_plugin NAME --mountable --service_layer```
