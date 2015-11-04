@@ -40,7 +40,7 @@ In principle a dashboard plugin is able to store data in the database and access
 
 As described above, the ``DashboardController`` in the main app takes care of user authentication. Each plugin controller that inherits from this controller automatically includes a reference to ``current_user`` which represents the token. The plugin can now use the information in ``current_user`` (mainly the token) to interact with the services.
 
-But how can a plugin for example the compute plugin access the network methods which are implemented in the network plugin? This is where the service layer comes into play. The ``DashboardController`` offers another method called "services" which contains the reference to all available plugin services. For example: ```ruby services.network.networks``` invokes the method networks from the network service. Thus, the Service Layer represents a communication channel to the main backend service a plugin consumes and also to the other plugin services.
+But how can a plugin for example the compute plugin access the network methods which are implemented in the network plugin? This is where the service layer comes into play. The ``DashboardController`` offers another method called "services" which contains the reference to all available plugin services. For example: ```services.network.networks``` invokes the method networks from the network service. Thus, the Service Layer represents a communication channel to the main backend service a plugin consumes and also to the other plugin services.
 
 
 
