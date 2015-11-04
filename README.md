@@ -46,7 +46,7 @@ To avoid that services communicate directly with the API and that each plugin im
 
 The mentioned drawbacks of pure hash use are eliminated by the concept of Domain Model. Domain Model wraps the data hash and implements methods that work on this hash. Services call driver methods and map the responses to Domain Model objects and, conversely, the Domain Model objects are converted to hashes when they reach the driver layer. As a result, it is possible to work with real ruby objects rather than using hashes. In such domain model objects we can use validations and define helper methods.
 
-![Plugins](docs/dashboard_plugins_tree.pdf?raw=true)
+![Plugins](docs/dashboard_plugins_tree.jpg?raw=true)
 
 [Details](docs/dashboard_services.pdf)
 
