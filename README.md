@@ -77,14 +77,14 @@ For ease-of-use we have provided a generator which generates a skeleton plugin f
 1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME```
 
-####Create ServiceLayer Plugin
-1. cd monsoon-dashboard
+####Create ServiceLayer-Pplugin
+1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME --service_layer```
 
-####Create Mountable Plugin
-1. cd monsoon-dashboard
+####Create Mountable-Pplugin
+1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME --mountable```
 
-####Create Mountable-ServiceLayer Plugin
-1. cd monsoon-dashboard
+####Create Mountable-ServiceLayer-Pplugin
+1. ```cd monsoon-dashboard```
 2. ```bin/rails g dashboard_plugin NAME --mountable --service_layer```
