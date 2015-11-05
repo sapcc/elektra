@@ -54,7 +54,7 @@ Services call driver methods and map the responses to Domain Model objects and, 
 
 ### Plugin Folder Structure
 
-The plugin folder structure needs to look as follows:
+The following diagram illustrates how plugins are structured and which core classes to inherit to make it all work as described above.
 ![Plugins](docs/dashboard_plugins_tree.jpg?raw=true)
 
 [Click this link for a detailed class diagram](docs/dashboard_services.pdf)
