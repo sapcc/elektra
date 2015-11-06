@@ -34,7 +34,7 @@
                   Compute & Monsoon Automation
                 - if plugin_available?('compute')
                   %li= link_to "Instances", plugin('compute').instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-                
+
                 %li= link_to "Projects", main_app.projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
                 %li= link_to "Volumes", "#"
                 %li= link_to "Snapshots", "#"

@@ -27,7 +27,7 @@ SimpleNavigation::Configuration.run do |navigation|
   #navigation.name_generator = Proc.new {|name, item| "<span>#{name}</span>"}
 
   # Specify if the auto highlight feature is turned on (globally, for the whole navigation). Defaults to true
-  #navigation.auto_highlight = true
+  # navigation.auto_highlight = true
 
   # Specifies whether auto highlight should ignore query params and/or anchors when
   # comparing the navigation items with the current URL. Defaults to true
@@ -56,26 +56,41 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item :compute, 'Compute & Block Storage', nil, html: {class: "dropdown-header"}
-    primary.item :instances, 'Instances', instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-    primary.item :projects, 'Projects', projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+    primary.item :compute, 'Compute & Monsoon Automation', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "icon moo-cloud" } do |compute_nav|
+      compute_nav.item :instances, 'Instances', instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      compute_nav.item :projects, 'Projects', projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      compute_nav.item :volumes, 'Volumes', '#'
+      compute_nav.item :snapshots, 'Snapshots', '#'
+      compute_nav.item :automation, 'Monsoon Automation', '#'
+    end
 
+    primary.item :access_managment, 'Access Management', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" } do |access_management_nav|
+      access_management_nav.item :volumes, 'Authorization', '#'
+      access_management_nav.item :volumes, 'Audit', '#'
+    end
 
-    primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header"}
-    primary.item :networks, 'Networks', networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+    primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|
+      networking_nav.item :networks, 'Networks', networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      networking_nav.item :loadbalancing, 'Loadbalancing', '#'
+      networking_nav.item :dns, 'DNS', '#'
+    end
 
-    primary.item :account, 'Account', nil, html: {class: "dropdown-header"}
-    primary.item :credentials, 'Credentials', credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+    primary.item :storage, 'Storage', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-database fa-fw" } do |storage_nav|
+      storage_nav.item :shared_storage, 'Shared Object Storage', '#'
+      storage_nav.item :filesystem_storage, 'File System Storage', '#'
+      storage_nav.item :repositories, 'Repositories', '#'
+    end
 
+    primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-area-chart fa-fw" } do |monitoring_nav|
+      monitoring_nav.item :metrics, 'Metrics', '#'
+      monitoring_nav.item :logs, 'Logs', '#'
+      monitoring_nav.item :quotas, 'Quotas', '#'
+    end
 
-                # %li.dropdown-header Network
-                # %li= link_to "Networks", networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-                # %li.dropdown-header Compute
-                # %li= link_to "Instances", instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-                # %li.divider
-                # %li.dropdown-header Identity
-                # %li= link_to "Credentials", credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-                # %li= link_to "Projects", projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+    primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
+      account_nav.item :credentials, 'Credentials', credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+    end
+
 
     # Add an item which has a sub navigation (same params, but with block)
     # primary.item :key_2, 'name', url, options do |sub_nav|
@@ -91,7 +106,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # you can also specify html attributes to attach to this particular level
     # works for all levels of the menu
-    primary.dom_attributes = {class: 'dropdown-menu', role: 'menu'}
+    primary.dom_attributes = {class: 'dropdown-menu dropdown-menu-mega', role: 'menu'}
 
     # You can turn off auto highlighting for a specific level
     #primary.auto_highlight = false

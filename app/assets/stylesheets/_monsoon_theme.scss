@@ -129,6 +129,16 @@ section {
   height: 32px;
 }
 
+.dropdown-icon {
+  @include background-size(16px);
+  width: 16px;
+  height: 16px;
+  font-size: $font-size-base;
+}
+
+
+
+
 // ---------------------------------------------------------------------------------
 // Buttons
 // ---------------------------------------------------------------------------------
@@ -377,44 +387,30 @@ footer, .footer {
             padding-left: 0;
           }
 
-          li {
+          > li {
             @include column-break(inside, avoid);
+            padding-left: $grid-gutter-width * 1.5;
           }
 
           ul {
             list-style-type: none;
             padding: 0 0 $line-height-computed 0;
-
-            li {
-              padding-left: $grid-gutter-width * 1.5;
-            }
           }
 
           .dropdown-header-fancy {
             @include column-break(after, avoid);
             position: relative;
             display: block;
-            border-top: 1px solid #ccc;
             padding-top: 0;
             padding-bottom: $line-height-computed / 4;
             font-size: $font-size-base;
 
-            &:first-child {
-              border: none;
-            }
 
             .dropdown-icon {
               position: absolute;
               left: $grid-gutter-width / 2;
               color: $bright-blue;
               font-size: $font-size-base;
-
-
-              .icon {
-                @include background-size(16px);
-                font-size: $font-size-base;
-              }
-
             }
           }
         }
