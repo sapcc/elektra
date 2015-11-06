@@ -1,4 +1,4 @@
-# encoding: UTF-8
+0# encoding: UTF-8
 source 'http://localhost:8080/rubygemsorg/'
 
 gem 'rails', '4.2.0'
@@ -41,16 +41,12 @@ gem 'rails_config'
 
 
 ###################### PLUGINS ####################
-require 'logger'
-# load all plugins 
+# backlist plugins 
 black_list = [] #e.g. ['compute']
 
 Dir.glob("plugins/*").each do |plugin_path|
-  name = plugin_path.gsub('plugins/','')
-  unless black_list.include?(name)
-    Logger.new(STDOUT).debug("Load plugin #{plugin_path}")
+  unless black_list.include?(plugin_path.gsub('plugins/',''))
     gemspec path: plugin_path
-    #gem name, path: plugin_path
   end
 end
 ######################## END ##########################
