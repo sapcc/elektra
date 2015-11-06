@@ -1,7 +1,7 @@
 0# encoding: UTF-8
 source 'http://localhost:8080/rubygemsorg/'
 
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.4'
 
 # Views and Assets
 gem 'compass-rails'
@@ -37,7 +37,7 @@ gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_b
 #gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
 
 # Extras
-gem 'rails_config'
+gem 'config'
 
 
 ###################### PLUGINS ####################
