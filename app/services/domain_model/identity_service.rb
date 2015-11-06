@@ -24,7 +24,7 @@ module DomainModel
     end
 
     def domains
-      @domains ||= @driver.auth_domains.collect{|attributes| Domain.new(attributes)}
+      @domains ||= @driver.auth_domains.collect{|attributes| Domain.new(@driver,attributes)}
     end
 
 
