@@ -30,7 +30,7 @@ class DashboardController < ScopeController
       # save current_url in session
       session[:requested_url] = request.env['REQUEST_URI']
       # redirect to user onboarding page.
-      redirect_to onboarding_path and return
+      redirect_to "/#{@scoped_domain_fid}/onboarding" and return
     end
   end
 

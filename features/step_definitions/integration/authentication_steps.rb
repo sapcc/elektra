@@ -17,7 +17,6 @@ end
 Then(/^It works$/) do
 end
 
-
 def current_path
   URI.parse(current_url).path
 end

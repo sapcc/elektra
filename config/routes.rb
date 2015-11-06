@@ -15,8 +15,10 @@ Rails.application.routes.draw do
   scope "/:domain_id" do
     match '/', to: 'pages#show', id: 'landing', via: :get
   
-    get 'onboarding' => 'dashboard#new_user'
-    post 'register' => 'dashboard#register_user'
+    scope "(/:project_id)" do
+      get 'onboarding' => 'dashboard#new_user'
+      post 'register' => 'dashboard#register_user'
+    end
 
     scope module: 'dashboard' do
       get 'start' => 'pages#show', id: 'start', as: :domain_start
