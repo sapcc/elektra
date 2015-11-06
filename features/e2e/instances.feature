@@ -1,7 +1,8 @@
 @javascript
 Feature: Instances
   Background:
-    Given User is logged in
+    Given I visit "/monsooncc_test/start"
+     And Login as test_admin
     
   Scenario: Instances page is reachable
     When I visit "/monsooncc_test/test_admin_sandbox/instances"
