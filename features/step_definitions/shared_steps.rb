@@ -1,5 +1,4 @@
-Given(/User is logged in/) do
-  visit '/monsooncc_test/start'
+And(/^Login as test_admin/) do
   fill_in "username", :with => "test_admin"
   fill_in "password", :with => "secret"
   click_on 'Sign in'
@@ -16,4 +15,16 @@ end
 
 When(/^I visit "(.*?)"$/) do |path|
   visit path
+end
+
+When /^I click on "(.*?)"$/ do |button| 
+  click_on(button)
+end
+
+Then(/^I am redirected to "(.*?)"$/) do |path|
+  expect(current_path).to eq(path)
+end
+
+Then(/^I see a "(.*?)" button$/) do |button_text|
+  expect(page).to have_selector('a', text: button_text)  
 end

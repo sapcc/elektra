@@ -1,23 +1,23 @@
-def after_login_url(referrer_url, current_user)
-  redirect_to_sandbox = if referrer_url
-    path = URI(referrer_url).path rescue nil
-    path.nil? ? true : path.count('/') < 3
-  else
-    true
-  end
-
-  sandbox_url = if (redirect_to_sandbox and current_user.project_id)
-    "/#{current_user.project_domain_id}/#{current_user.project_id}/projects"
-  else
-    nil
-  end
-  domain_url = "/#{current_user.domain_id}" if current_user.domain_id
-
-  sandbox_url || referrer_url || domain_url || "/"
-
-rescue
-  referrer_url || "/"
-end
+# def after_login_url(referrer_url, current_user)
+#   redirect_to_sandbox = if referrer_url
+#     path = URI(referrer_url).path rescue nil
+#     path.nil? ? true : path.count('/') < 3
+#   else
+#     true
+#   end
+#
+#   sandbox_url = if (redirect_to_sandbox and current_user.project_id)
+#     "/#{current_user.project_domain_id}/#{current_user.project_id}/projects"
+#   else
+#     nil
+#   end
+#   domain_url = "/#{current_user.domain_id}" if current_user.domain_id
+#
+#   sandbox_url || referrer_url || domain_url || "/"
+#
+# rescue
+#   referrer_url || "/"
+# end
 
 
 MonsoonOpenstackAuth.configure do |auth|
@@ -55,7 +55,7 @@ MonsoonOpenstackAuth.configure do |auth|
   auth.default_domain_name = 'sap_default'
 
   # optional, default= last url before redirected to form
-  auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
+  #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
 
   # authorization policy file
   auth.authorization.policy_file_path = "config/policy.json"
