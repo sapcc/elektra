@@ -1,3 +1,33 @@
+def after_login_url(referrer_url, current_user)
+  redirect_to_sandbox = if referrer_url
+    path = URI(referrer_url).path rescue nil
+    path.nil? ? true : path.count('/') < 3
+  else
+    true
+  end
+
+  sandbox_url = if (redirect_to_sandbox and current_user.project_id)
+    "/#{current_user.project_domain_id}/#{current_user.project_id}/projects"
+  else
+    nil
+  end
+  domain_url = "/#{current_user.domain_id}" if current_user.domain_id
+
+  sandbox_url || referrer_url || domain_url || "/"
+
+rescue
+  referrer_url || "/"
+end
+
+def policy_paths
+  paths = ["config/policy.json"]
+  PluginsManager.available_plugins.each do |p|
+    paths << p.policy_file_path if p.has_policy_file?
+  end
+  paths
+end
+
+
 MonsoonOpenstackAuth.configure do |auth|
   # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
   # auth.connection_driver = DriverClass
@@ -36,8 +66,9 @@ MonsoonOpenstackAuth.configure do |auth|
   #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
 
   # authorization policy file
-  auth.authorization.policy_file_path = "config/policy.json"
+  auth.authorization.policy_file_path = policy_paths
   auth.authorization.context = "identity"
+
 
   #auth.authorization.trace_enabled = true
   auth.authorization.reload_policy = false

@@ -1,0 +1,7 @@
+{
+  "image:image_get": "role:admin or role:Member or role:member",
+  "image:image_list": "role:admin or role:Member or role:member",
+  "image:image_create": "role:admin",
+  "image:image_update": "role:admin",
+  "image:image_delete": "role:admin-from-image"
+}
