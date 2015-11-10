@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe DomainModel::AdminIdentityService do
+RSpec.describe ServiceLayer::AdminIdentityService do
 
   before :each do
     @current_user = double('current_user').as_null_object
@@ -19,8 +19,11 @@ RSpec.describe DomainModel::AdminIdentityService do
     allow(@driver).to receive(:projects).with(name: 'sandboxes', domain_id: anything).and_return(@sandboxes)
     allow(@driver).to receive(:create_project).with(name:"#{@current_user.name}_sandbox", domain_id: anything, description: anything, enabled:true,parent_id:1).and_return(@user_sandbox)
         
-    allow_any_instance_of(DomainModel::AdminIdentityService).to receive(:get_driver).and_return(@driver)
-    @admin_identity = DomainModel::AdminIdentityService.new('http://localhost:5000/v3','europe',@current_user)
+    allow_any_instance_of(ServiceLayer::AdminIdentityService).to receive(:init) do |admin_identity|
+      admin_identity.instance_variable_set(:@driver, @driver)
+    end
+    
+    @admin_identity = ServiceLayer::AdminIdentityService.new('http://localhost:5000/v3','europe',@current_user)
   end
 
   describe 'domain_friendly_id' do

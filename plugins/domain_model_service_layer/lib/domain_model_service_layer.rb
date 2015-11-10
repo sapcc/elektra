@@ -57,9 +57,9 @@ module DomainModelServiceLayer
       # service is not cached yet -> first request
       unless service      
         # construct the class name of requested service.
-        # For example DomainModel::IdentityService.
+        # For example ServiceLayer::IdentityService.
         # Services must be located in app/services/openstack
-        service_class_name = "DomainModel::#{method_sym.to_s.classify}Service"
+        service_class_name = "ServiceLayer::#{method_sym.to_s.classify}Service"
         
         # load service class
         klazz = begin
@@ -98,7 +98,7 @@ module DomainModelServiceLayer
       end
       
       # init driver
-      @driver = get_driver({
+      init({
         auth_url:   @auth_url,
         region:     @region,
         token:      @token,
@@ -107,7 +107,7 @@ module DomainModelServiceLayer
       })
     end
     
-    def get_driver(params={})
+    def init(params={})
       raise "Not implemented yet!"
     end 
     

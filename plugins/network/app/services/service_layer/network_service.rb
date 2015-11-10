@@ -1,10 +1,9 @@
-module DomainModel
+module ServiceLayer
   class NetworkService < DomainModelServiceLayer::Service
   
-    def get_driver(params)
-      driver = Network::Driver::Fog.new(params)
-      raise "Error" unless driver.is_a?(Network::Driver::Interface)
-      driver
+    def init(params)
+      @driver = Network::Driver::Fog.new(params)
+      raise "Error" unless @driver.is_a?(Network::Driver::Interface)
     end
 
     def networks(filter={})
