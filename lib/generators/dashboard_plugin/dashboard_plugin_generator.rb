@@ -15,6 +15,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
   
   def adapt_plugin
     replace_test_with_spec
+    update_dependencies_to_gemspec
     
     if options.mountable?
       modify_application_controller
@@ -23,7 +24,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     end
       
     if options.service_layer?
-      update_dependencies_to_gemspec  
+        
       create_service_layer_service
       create_service_layer_driver
     end
