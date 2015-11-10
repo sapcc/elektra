@@ -92,6 +92,11 @@ PATH
   specs:
     network (0.0.1)
 
+PATH
+  remote: plugins/new_plugin
+  specs:
+    new_plugin (0.0.1)
+
 GEM
   remote: http://localhost:8080/rubygemsorg/
   specs:
@@ -524,6 +529,7 @@ DEPENDENCIES
   monsoon-fog!
   monsoon-openstack-auth!
   network!
+  new_plugin!
   pg
   phantomjs
   poltergeist

@@ -1,11 +1,10 @@
-module DomainModel
+module ServiceLayer
   class AdminIdentityService < DomainModelServiceLayer::Service
   
-    def get_driver(params)
+    def init(params)
       servce_user_driver = MonsoonOpenstackAuth.api_client(@region).connection_driver.connection
-      driver = Identity::Driver::Fog.new(servce_user_driver)
-      raise "Error" unless driver.is_a?(Identity::Driver::Interface)
-      driver
+      @driver = Identity::Driver::Fog.new(servce_user_driver)
+      raise "Error" unless @driver.is_a?(Identity::Driver::Interface)
     end
 
     def create_user_sandbox(domain_id, user)

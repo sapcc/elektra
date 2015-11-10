@@ -1,13 +1,12 @@
-module DomainModel
+module ServiceLayer
 
   class IdentityService < DomainModelServiceLayer::Service
 
     attr_reader :region
 
-    def get_driver(params)
-      driver = Identity::Driver::Fog.new(params)
-      raise "Error" unless driver.is_a?(Identity::Driver::Interface)
-      driver
+    def init(params)
+      @driver = Identity::Driver::Fog.new(params)
+      raise "Error" unless @driver.is_a?(Identity::Driver::Interface)
     end
 
     def has_projects?

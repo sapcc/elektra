@@ -3,7 +3,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
   source_root File.expand_path('../templates', __FILE__)  
   class_option :mountable, type: :boolean, default: false, description: "Generate mountable isolated application"
-  class_option :service_layer, type: :boolean, default: false, description: "Generate service layer (app/services/domain_model/)"
+  class_option :service_layer, type: :boolean, default: false, description: "Generate service layer (app/services/service_layer/)"
   
   def generate_plugin_skeleton
     plugin_options = "--skip-gemfile --skip-bundle --skip-git --skip-test-unit"
@@ -23,26 +23,29 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     end
       
     if options.service_layer?
-      add_dependencies_to_gemspec  
-      create_domain_model_service
-      create_domain_model_driver
+      update_dependencies_to_gemspec  
+      create_service_layer_service
+      create_service_layer_driver
     end
   end
 
   private
   
-  def add_dependencies_to_gemspec
-    inject_into_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", after: "s.test_files = Dir[\"test/**/*\"]\n" do 
-      "s.add_dependency \"domain_model_service_layer\""
-    end
+  def update_dependencies_to_gemspec
+    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /s.add_dependency "rails"[^\n]*\n/, ''
+    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /s.add_development_dependency "sqlite3"/, ''
+    
+    #inject_into_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", after: "s.test_files = Dir[\"test/**/*\"]\n" do 
+    #  "s.add_dependency \"domain_model_service_layer\""
+    #end
   end
   
-  def create_domain_model_service
-    copy_file "app/services/domain_model/service.rb", "#{PLUGINS_PATH}/#{name}/app/services/domain_model/#{name}_service.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/services/domain_model/#{name}_service.rb", '%{PLUGIN_NAME}', name.classify
+  def create_service_layer_service
+    copy_file "app/services/service_layer/service.rb", "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb"
+    gsub_file "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb", '%{PLUGIN_NAME}', name.classify
   end
   
-  def create_domain_model_driver
+  def create_service_layer_driver
     copy_file "lib/driver.rb", "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver.rb"
     copy_file "lib/driver/interface.rb", "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/interface.rb"
     copy_file "lib/driver/my_driver.rb", "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/my_driver.rb"
