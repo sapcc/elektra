@@ -67,7 +67,7 @@ class PluginsManager
 
     # engine_class looks like Compute::Engine
     def engine_class
-      @name.capitalize.constantize.const_get(:Engine) rescue nil
+      @name.classify.constantize.const_get(:Engine) rescue nil
     end
     
     # returns true if policy file exists inside plugin

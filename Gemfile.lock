@@ -92,6 +92,11 @@ PATH
   specs:
     network (0.0.1)
 
+PATH
+  remote: plugins/quota_management
+  specs:
+    quota_management (0.0.1)
+
 GEM
   remote: http://localhost:8080/rubygemsorg/
   specs:
@@ -528,6 +533,7 @@ DEPENDENCIES
   phantomjs
   poltergeist
   pry-rails
+  quota_management!
   rails (= 4.2.4)
   redcarpet
   responders
