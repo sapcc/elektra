@@ -59,6 +59,10 @@ class PluginsManager
       @name = gemspec.name
       @path = gemspec.full_gem_path
     end
+    
+    def mount_point
+      name.gsub('_','-')
+    end
 
     # is mountable if engine class exists
     def mountable?
@@ -67,7 +71,9 @@ class PluginsManager
 
     # engine_class looks like Compute::Engine
     def engine_class
-      @name.classify.constantize.const_get(:Engine) rescue nil
+      class_name = @name.classify
+      class_name += "s" if @name.last=="s"
+      class_name.constantize.const_get(:Engine) rescue nil
     end
     
     # returns true if policy file exists inside plugin

@@ -34,7 +34,17 @@ class ScopeController < ApplicationController
       end
 
       if domain_id!=@scoped_domain_fid or project_id!=@scoped_project_fid
-        redirect_to url_for(params.merge(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid))
+        #redirect_to url_for(params.merge(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid))
+
+        # url_for does not work for plugins. Use path instead!
+        if @scoped_domain_id
+          new_path = request.path.gsub(@scoped_domain_id,@scoped_domain_fid)
+          new_path = "/#{@scoped_domain_fid}#{new_path}" unless new_path.include?(@scoped_domain_fid)
+          # replace project_id with freindly id if given
+          new_path = new_path.gsub(@scoped_project_id,@scoped_project_fid) if @scoped_project_id
+
+          redirect_to new_path
+        end       
       end
     else
       @errors = {"domain" => "Not found"}
@@ -49,7 +59,7 @@ class ScopeController < ApplicationController
   end
 
 
-  def url_options
+  def default_url_options
     { domain_id: @scoped_domain_fid, project_id: @scoped_project_fid }.merge(super)
   end
 end

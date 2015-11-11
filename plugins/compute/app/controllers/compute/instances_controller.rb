@@ -19,7 +19,7 @@ module Compute
       @images = services.image.images
       @availability_zones = services.compute.availability_zones
       @security_groups= services.compute.security_groups
-      @network_zones = services.network.project_networks(@scoped_project_id)
+      @network_zones = services.networking.project_networks(@scoped_project_id)
       
       @instance.flavor_id=@flavors.first.id
       @instance.image_id=@images.first.id
@@ -58,7 +58,7 @@ module Compute
         @images = services.image.images
         @availability_zones = services.compute.availability_zones
         @security_groups= services.compute.security_groups
-        @network_zones = services.network.project_networks(@scoped_project_id)
+        @network_zones = services.networking.project_networks(@scoped_project_id)
         render action: :new
       end
     end

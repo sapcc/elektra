@@ -40,7 +40,7 @@ describe ScopeController, type: :controller do
     
       it "redirects to the same action with friendly ids for domain" do
         get :index, domain_id: AuthenticationStub.domain_id
-        expect(response).to redirect_to(controller: 'scope', action: 'index', domain_id: @domain_friendly_id.slug)
+        expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
       end
     end
   end
@@ -55,7 +55,7 @@ describe ScopeController, type: :controller do
 
       it "redirects to the same action with friendly ids for domain and project" do
         get :index, default_params
-        expect(response).to redirect_to(controller: "scope", action: "index", domain_id: @domain_friendly_id.slug, project_id: @project_friendly_id.slug)
+        expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
       end
     end
   end
