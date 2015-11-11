@@ -92,10 +92,17 @@ PATH
   specs:
     network (0.0.1)
 
+PATH
+  remote: plugins/requestor
+  specs:
+    requestor (0.0.1)
+      aasm
+
 GEM
   remote: http://localhost:8080/rubygemsorg/
   specs:
     CFPropertyList (2.3.2)
+    aasm (4.4.1)
     actionmailer (4.2.4)
       actionpack (= 4.2.4)
       actionview (= 4.2.4)
@@ -530,6 +537,7 @@ DEPENDENCIES
   pry-rails
   rails (= 4.2.4)
   redcarpet
+  requestor!
   responders
   rspec
   rspec-rails
