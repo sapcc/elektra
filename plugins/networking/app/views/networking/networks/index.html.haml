@@ -1,0 +1,33 @@
+= render "intro"
+
+.page-header
+  %h1
+    = @active_project.name
+    \-
+    Networks
+
+%p Deliverables next-generation authentic empower distributed empower facilitate infrastructures innovative wikis grow dynamic. Morph widgets integrate, rich scale interfaces world-class create, e-markets supply-chains compelling applications visualize iterate out-of-the-box integrateAJAX-enabled viral.
+
+- if @scoped_project_id
+  - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })
+    .toolbar
+      = link_to 'Create new', new_network_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th Subnets Associated
+        %th Shared
+        %th Status
+        %th Admin State
+        %th.snug
+    %tbody
+      - if @networks.length==0
+        %tr
+          %td{colspa: 5} No network available
+      - else
+        - @networks.each do | network |
+          = render partial: 'item', locals: {network: network}
+- else
+  = render "application/projects_list"

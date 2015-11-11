@@ -16,7 +16,7 @@ module ServiceLayer
     ##################### DOMAINS #########################
     def domain(id)
       if id
-        domains.find{|domain| domain.id==domain_id}
+        domains.find{|domain| domain.id==id}
       else
         Domain.new(@driver)
       end 

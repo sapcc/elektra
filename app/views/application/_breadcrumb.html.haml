@@ -14,7 +14,7 @@
             - @user_domain_projects.each do |project|
               %li{class: ("active" if project.id == @scoped_project_id)}
                 -# = link_to project.name, instances_path(domain_id: @scoped_domain_fid, project_id: project.fid)
-                = link_to "#{project.name}", domain_id: @scoped_domain_fid, project_id: project.friendly_id
+                = link_to "#{project.name}", main_app.project_path(project_id: project.friendly_id)
 
 
     - if @scoped_project_id

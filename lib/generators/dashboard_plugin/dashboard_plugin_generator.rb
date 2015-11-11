@@ -23,8 +23,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
       add_controller_spec
     end
       
-    if options.service_layer?
-        
+    if options.service_layer? 
       create_service_layer_service
       create_service_layer_driver
     end
@@ -54,8 +53,8 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     gsub_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/interface.rb", '%{PLUGIN_NAME}', name.classify
     gsub_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/my_driver.rb", '%{PLUGIN_NAME}', name.classify
     
-    prepend_to_file "#{PLUGINS_PATH}/#{name}/lib/#{name}.rb" do
-      "require \"domain_model_service_layer\""
+    inject_into_file "#{PLUGINS_PATH}/#{name}/lib/#{name}.rb", after: "require \"#{name}/engine\"\n" do 
+      "require \"domain_model_service_layer\"\n" +
       "require_relative \"#{name}/driver\"\n"
     end
   end

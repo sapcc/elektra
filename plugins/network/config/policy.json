@@ -1,7 +1,0 @@
-{
-  "network:network_get": "role:admin or role:Member or role:member",
-  "network:network_list": "role:admin or role:Member or role:member",
-  "network:network_create": "role:admin",
-  "network:network_update": "role:admin",
-  "network:network_delete": "role:admin"
-}

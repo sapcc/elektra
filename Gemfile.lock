@@ -88,9 +88,9 @@ PATH
     image (0.0.1)
 
 PATH
-  remote: plugins/network
+  remote: plugins/networking
   specs:
-    network (0.0.1)
+    networking (0.0.1)
 
 GEM
   remote: http://localhost:8080/rubygemsorg/
@@ -523,7 +523,7 @@ DEPENDENCIES
   jquery-rails
   monsoon-fog!
   monsoon-openstack-auth!
-  network!
+  networking!
   pg
   phantomjs
   poltergeist
