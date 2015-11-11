@@ -7,8 +7,7 @@ module Dashboard
     end
 
     def index
-      @active_domain = services.identity.domain(@scoped_domain_id)
-      @projects = services.identity.projects(@active_domain.id)
+      @projects = services.identity.projects(@scoped_domain_id)
     end
 
     def show
@@ -66,7 +65,7 @@ module Dashboard
     private
 
     def get_project_id
-      @project_id = params[:id]
+      @project_id = params[:id] || params[:project_id]
       entry = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project',@scoped_domain_id,@project_id)
       @project_id = entry.key if entry
     end
