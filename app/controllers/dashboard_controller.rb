@@ -1,6 +1,6 @@
 # This class guarantees that the user is logged in and his token is rescoped.
 # All subclasses which require a logged in user should inherit from this class.
-class DashboardController < ScopeController
+class DashboardController < ::ScopeController
   # load region, domain and project if given
   prepend_before_filter do
     # initialize session unless loaded yet

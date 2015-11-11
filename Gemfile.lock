@@ -88,15 +88,15 @@ PATH
     image (0.0.1)
 
 PATH
+  remote: plugins/inquiry
+  specs:
+    inquiry (0.0.1)
+      aasm
+
+PATH
   remote: plugins/network
   specs:
     network (0.0.1)
-
-PATH
-  remote: plugins/requestor
-  specs:
-    requestor (0.0.1)
-      aasm
 
 GEM
   remote: http://localhost:8080/rubygemsorg/
@@ -469,7 +469,7 @@ GEM
     slop (3.6.0)
     spinners (1.1.0)
       sass (~> 3.2)
-    spring (1.4.0)
+    spring (1.4.1)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -527,6 +527,7 @@ DEPENDENCIES
   haml-rails
   high_voltage
   image!
+  inquiry!
   jquery-rails
   monsoon-fog!
   monsoon-openstack-auth!
@@ -537,7 +538,6 @@ DEPENDENCIES
   pry-rails
   rails (= 4.2.4)
   redcarpet
-  requestor!
   responders
   rspec
   rspec-rails
@@ -550,3 +550,6 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6

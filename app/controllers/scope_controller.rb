@@ -1,7 +1,7 @@
 # This class guarantees that a scope is presented.
 # All subclasses which require a scope (e.g. domain_id/projects or domain_id/project_id/instances) 
 # should inherit from this class.
-class ScopeController < ApplicationController
+class ScopeController < ::ApplicationController
 
   # includes services method
   # use: services.SERVICE_NAME.METHOD_NAME (e.g. services.identity.projects)
