@@ -7,7 +7,7 @@
   .col-md-6
     .list-group
       - @projects.each do |project|
-        = link_to project.name, project_path(id: project.friendly_id), class: "list-group-item"
+        = link_to project.name, project_path(project_id: project.friendly_id), class: "list-group-item"
 
   - if current_user.is_allowed?("identity:project_create", { project: {domain_id: @scoped_domain_id} })
     .col-md-6
