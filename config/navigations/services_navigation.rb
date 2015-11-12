@@ -73,7 +73,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|
       # networking_nav.item :networks, 'Networks', plugin('networking').networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid)
-      networking_nav.item :networks, 'Networks', plugin('networking').networks_path
+      networking_nav.item :networks, 'Networks', plugin('networking').networks_path, if: Proc.new { plugin_available?('networking') }
       networking_nav.item :loadbalancing, 'Loadbalancing', '#'
       networking_nav.item :dns, 'DNS', '#'
     end
