@@ -1,0 +1,31 @@
+.page-header
+  %h1
+    = @active_project.name
+    \-
+    Monsoon Automation
+
+%p
+  List of all project related instances and Arc agents.
+
+%h2
+  Instances with Agent
+  %span.badge
+    = @instanceAgents[:withAgent].count
+
+= render partial: 'table_instances', locals: {instances: @instanceAgents[:withAgent]}
+
+- if !@instanceAgents[:external].empty?
+  %h2
+    External Agents
+    %span.badge
+      = @instanceAgents[:external].count
+
+  = render partial: 'table_instances', locals: {instances: @instanceAgents[:external]}
+
+- if !@instanceAgents[:withoutAgent].empty?
+  %h2
+    Instances without Agent
+    %span.badge
+      = @instanceAgents[:withoutAgent].count
+
+  = render partial: 'table_instances', locals: {instances: @instanceAgents[:withoutAgent]}
