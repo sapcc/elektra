@@ -14,23 +14,17 @@
  *= require_self
  */
 
-.quota-current, .quota-assigned {
-   border-radius:2px;
+.quota-approved {
    position:absolute;
-   width: 5px;
+   width: 2px;
    border: 2px solid #2A2A2A;
    border-left-width: 0;
    overflow: visible;
 }
 
-.quota-assigned {
-   bottom: 0;
-   top: calc(1.5rem - 2px);
-}
-
-.quota-current {
-   top: calc(1.5rem - 2px);
-   bottom: 0;
+.quota-approved {
+   top: 0;
+   bottom: calc(1.5rem - 2px);
 }
 
 .limit-danger {
@@ -40,23 +34,46 @@
   box-shadow: 0 0 1px #d9534f; 
 }
 
-.quota-current span, .quota-assigned span {
+.quota-current span, .quota-approved span {
     display: block;
     position: absolute;
     right: 0;
     margin-right: 0.3rem;
-    color: #767676;
+    color: black;
     font-size: 0.9rem;
     line-height: 1.6rem;
+    top:0;
 }
+
+.quota-label {
+    margin-top:14px;
+}
+
+.quota-request-more {
+    margin-top:12px;
+}
+
+.quota-row {
+    padding-top:20px;
+}
+
 
 .quota-current span {
-    bottom: 0;
-    color:#933232;
+    color: #777;
+    font-weight: bold;
 }
 
-.quota-assigned span {
-    bottom: 0;
+.quota-overcommit {
+    background: repeating-linear-gradient( -55deg, transparent,  transparent 3px, #DCDCDC 3px, #DCDCDC 5px );
+}
+
+.progress-bar-quota {
+    text-align: left;
+    padding-left:5px;
+}
+
+.progress-bar-empty {
+    background: transparent;
 }
 
 .quota {
@@ -68,3 +85,5 @@
 .quota > .progress {
     margin: 0;
 }
+
+

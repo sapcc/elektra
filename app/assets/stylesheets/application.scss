@@ -26,5 +26,9 @@
 @import "mixins";
 @import "monsoon_theme";
 
-
 @import "login";
+
+// Plugins
+@import "resource_management/application"
+
+
