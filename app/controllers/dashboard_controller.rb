@@ -54,7 +54,7 @@ class DashboardController < ScopeController
       project_friendly_id = services.admin_identity.project_friendly_id(@scoped_domain_id,sandbox_id)
                 
       # redirect to sandbox (friendly url)
-      redirect_to project_path(domain_id:@scoped_domain_fid, id: project_friendly_id.slug)
+      redirect_to main_app.domain_start_path
     else
       render action: :new
     end
