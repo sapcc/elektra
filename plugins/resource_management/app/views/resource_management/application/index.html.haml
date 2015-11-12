@@ -1,1 +1,116 @@
-%h1 ResourceManagement Index
+=render :partial => 'header'
+%ul{:class => "nav nav-tabs"}
+  = render :partial => 'tabs', :locals => { :level => 'overview'}
+
+.container
+  .row
+    .col-md-2
+      .text-muted 
+        -#= link_to 'Test', resources_details_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id, :level => 'compute', :resource_type => 'instances'), data: {modal: true}
+        = link_to 'Create new', plugin('resource_management').resources_details_path(:level => 'compute', :resource_type => 'instances'), data: {modal: true}
+
+
+ 
+    .col-md-8
+      .quota
+        .progress
+          .progress-bar{:style => "width:0%"}
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .progress
+          .progress-bar{:style => "width:64%"} 45 / 70
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .progress
+          .progress-bar.progress-bar-warning{:style => "width:85%"} 60 / 70
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .progress
+          .progress-bar.progress-bar-danger{:style => "width:97%"} 68 / 70
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .quota-assigned{:style => "right:30%"} 
+          %span.text-nowrap
+            Assigned quota: 70 
+        .progress
+          .progress-bar{:style => "width:0%"} 
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .quota-assigned{:style => "right:30%"} 
+          %span.text-nowrap
+            Assigned quota: 70 
+        .progress
+          .progress-bar{:style => "width:45%"} 45 / 100
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .quota-assigned{:style => "right:30%"} 
+          %span.text-nowrap
+            Assigned quota: 70 
+        .progress
+          .progress-bar.progress-bar-warning{:style => "width:60%"} 60 / 100
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .quota-assigned{:style => "right:30%"} 
+          %span.text-nowrap
+            Assigned quota: 70 
+        .progress
+          .progress-bar.progress-bar-danger{:style => "width:68%"} 68 / 100
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+  .row
+    .col-md-2
+      .text-muted Test
+    .col-md-8
+      .quota
+        .quota-assigned{:style => "right:30%"} 
+          %span.text-nowrap
+            Assigned quota: 70 
+        .progress.limit-danger
+          .progress-bar.progress-bar-danger{:style => "width:80%"} 80 / 100
+    .col-md-2
+      = link_to 'Request more', '#', class: 'btn btn-primary btn-sm'
+
+
+

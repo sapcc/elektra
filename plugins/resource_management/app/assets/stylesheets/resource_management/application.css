@@ -13,3 +13,58 @@
  *= require_tree .
  *= require_self
  */
+
+.quota-current, .quota-assigned {
+   border-radius:2px;
+   position:absolute;
+   width: 5px;
+   border: 2px solid #2A2A2A;
+   border-left-width: 0;
+   overflow: visible;
+}
+
+.quota-assigned {
+   bottom: 0;
+   top: calc(1.5rem - 2px);
+}
+
+.quota-current {
+   top: calc(1.5rem - 2px);
+   bottom: 0;
+}
+
+.limit-danger {
+  border-style: solid solid solid none;
+  border-color: #d9534f;
+  border-width: 1px;
+  box-shadow: 0 0 1px #d9534f; 
+}
+
+.quota-current span, .quota-assigned span {
+    display: block;
+    position: absolute;
+    right: 0;
+    margin-right: 0.3rem;
+    color: #767676;
+    font-size: 0.9rem;
+    line-height: 1.6rem;
+}
+
+.quota-current span {
+    bottom: 0;
+    color:#933232;
+}
+
+.quota-assigned span {
+    bottom: 0;
+}
+
+.quota {
+    padding: 1.6rem 0;
+    overflow: hidden;
+    position: relative; /* enable absolute positioning of ancestors */
+}
+
+.quota > .progress {
+    margin: 0;
+}

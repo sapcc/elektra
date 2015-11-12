@@ -1,0 +1,35 @@
+- if level.eql? "overview"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Overview
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+      Overview
+
+- if level.eql? "compute"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Compute
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_compute_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+      Compute
+
+- if level.eql? "network"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Network
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_network_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+      Network
+
+- if level.eql? "storage"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Storage
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_storage_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+      Storage

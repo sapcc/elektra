@@ -85,7 +85,8 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-area-chart fa-fw" } do |monitoring_nav|
       monitoring_nav.item :metrics, 'Metrics', '#'
       monitoring_nav.item :logs, 'Logs', '#'
-      monitoring_nav.item :quotas, 'Quotas', '#'
+      monitoring_nav.item :quotas, 'Quotas', plugin('resource_management').resources_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+ 
     end
 
     primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
