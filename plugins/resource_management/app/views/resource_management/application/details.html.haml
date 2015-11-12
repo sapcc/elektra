@@ -1,17 +1,19 @@
+= content_for(:title, "Details for quota #{@resource_type}")
 .modal-body
   .container
-    .row
-      .col-md-5
-        %h3 
-          Details for #{t(@resource_type)}
-          = link_to 'Show compute', plugin('resource_management').send("resources_#{@level}_path".to_sym, domain_id: @scoped_domain_fid, project_id: @scoped_project_id) , class: 'btn btn-primary btn-xs'
-
+    
 - if modal?
   .modal-footer
     - if modal?
+      - case @level
+      - when "compute"
+        = link_to 'Show all compute quotas', plugin('resource_management').resources_compute_path(), class: 'btn btn-primary btn-sm'
+      - when "network"
+        = link_to 'Show all network quotas', plugin('resource_management').resources_network_path(), class: 'btn btn-primary btn-sm'
+      - when
+        = link_to 'Show all storage quotas', plugin('resource_management').resources_storage_path(), class: 'btn btn-primary btn-sm'
+
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-    - else
-      = link_to "Close", instances_url(), class: 'btn btn-default'
    
 
 

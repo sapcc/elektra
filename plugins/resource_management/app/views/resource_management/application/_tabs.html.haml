@@ -4,7 +4,7 @@
       Overview
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+    %a{:href => plugin('resource_management').resources_path()}
       Overview
 
 - if level.eql? "compute"
@@ -13,7 +13,7 @@
       Compute
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_compute_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+    %a{:href => plugin('resource_management').resources_compute_path()}
       Compute
 
 - if level.eql? "network"
@@ -22,7 +22,7 @@
       Network
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_network_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+    %a{:href => plugin('resource_management').resources_network_path()}
       Network
 
 - if level.eql? "storage"
@@ -31,5 +31,5 @@
       Storage
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_storage_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)}
+    %a{:href => plugin('resource_management').resources_storage_path()}
       Storage

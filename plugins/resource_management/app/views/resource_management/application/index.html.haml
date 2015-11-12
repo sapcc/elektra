@@ -6,8 +6,7 @@
   .row
     .col-md-2
       .text-muted 
-        -#= link_to 'Test', resources_details_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id, :level => 'compute', :resource_type => 'instances'), data: {modal: true}
-        = link_to 'Create new', plugin('resource_management').resources_details_path(:level => 'compute', :resource_type => 'instances'), data: {modal: true}
+        = link_to 'Test', plugin('resource_management').resources_details_path(:level => 'compute', :resource_type => 'instances'), data: {modal: true}
 
 
  
