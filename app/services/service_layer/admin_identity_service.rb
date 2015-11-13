@@ -8,6 +8,30 @@ module ServiceLayer
       end
       @driver
     end
+    
+    # def admin_identity
+    #   unless @admin_identity
+    #     region = MonsoonOpenstackAuth.configuration.default_region
+    #     connection = MonsoonOpenstackAuth.api_client(region).connection_driver.connection
+    #
+    #     @admin_identity = ServiceLayer::IdentityService.new(
+    #       MonsoonOpenstackAuth.configuration.connection_driver.endpoint,
+    #       region,
+    #
+    #     )
+    #     if klazz
+    #       region = MonsoonOpenstackAuth.configuration.default_region
+    #       connection = MonsoonOpenstackAuth.api_client(region).connection_driver.connection
+    #       klazz.new(
+    #         MonsoonOpenstackAuth.configuration.connection_driver.endpoint,
+    #         region,
+    #         OpenStruct.new(params.merge({
+    #           token: connection.auth_token
+    #         }))
+    #       )
+    #     end
+    #   end
+    # end
 
     def create_user_sandbox(domain_id, user)
       begin

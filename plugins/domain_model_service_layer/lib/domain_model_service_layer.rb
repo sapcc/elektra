@@ -4,9 +4,19 @@ require_relative 'domain_model_service_layer/errors'
 require_relative 'domain_model_service_layer/api_error_handler'
 require_relative 'domain_model_service_layer/model'
 
-# implements service layer and domain model
+# implements service layer
 module DomainModelServiceLayer
-  # this module is included in controllers
+  
+  def self.keystone_endpoint
+    MonsoonOpenstackAuth.configuration.connection_driver.endpoint rescue nil
+  end
+  
+  def self.default_region
+    MonsoonOpenstackAuth.configuration.default_region
+  end
+  
+  # this module is included in controllers.
+  # the controller should respond_to current_user (monsoon-openstack-auth gem)
   module Services
     def self.included(base)
       base.send :include, InstanceMethods
@@ -20,18 +30,15 @@ module DomainModelServiceLayer
         unless @services
           region ||= auth_session.region if auth_session
           region ||= current_user.services_region if current_user
-          region ||= MonsoonOpenstackAuth.configuration.default_region
-          
-          if MonsoonOpenstackAuth.configuration.connection_driver and 
-            MonsoonOpenstackAuth.configuration.connection_driver.endpoint
-            
-            @services = DomainModelServiceLayer::ServicesManager.new(
-              MonsoonOpenstackAuth.configuration.connection_driver.endpoint,
-              region,
-              current_user)
-          end
+          # remove it after refactoring admin identity
+          region ||= DomainModelServiceLayer.default_region
+
+          @services = DomainModelServiceLayer::ServicesManager.new(
+            region,
+            current_user
+          )  
         end
-        # if services was first called for admin_identity it can happens that current_user was nil.
+        # update current_user
         @services.current_user = current_user 
         @services
       end
@@ -40,8 +47,44 @@ module DomainModelServiceLayer
   
   class ServicesManager
     attr_accessor :current_user
-    def initialize(endpoint,region,current_user)
-      @endpoint = endpoint
+    
+    class << self
+      # create a service for given params
+      def service(service_name,params={})
+        # construct the class name of requested service.
+        # For example ServiceLayer::IdentityService.
+        # Services must be located in app/services/service_layer
+        service_class_name = service_name.to_s.classify
+        # if service_name contains a "s" at the end then add a s to the class_name
+        service_class_name += 's' if service_name.to_s.last=='s'
+        # build the complete class name
+        service_class_name = "ServiceLayer::#{service_class_name}Service"        
+
+        # try to evaluate the class
+        klazz = begin
+          eval(service_class_name)
+        rescue
+          raise "service #{service_class_name} not found!"
+        end
+        
+        # raise an error unless the class inherits from Service
+        unless klazz < DomainModelServiceLayer::Service
+          raise "service #{service_class_name} is not a subclass of DomainModelServiceLayer::BaseProvider"  
+        end
+        
+        # create an instance of the service class
+        if klazz 
+          klazz.new(
+            DomainModelServiceLayer.keystone_endpoint,
+            params.delete(:region),
+            params.delete(:token),
+            params
+          )
+        end
+      end
+    end
+    
+    def initialize(region,current_user)
       @region = region
       @current_user = current_user
     end 
@@ -56,26 +99,21 @@ module DomainModelServiceLayer
       service = instance_variable_get("@#{method_sym.to_s}")
       
       # service is not cached yet -> first request
-      unless service      
-        # construct the class name of requested service.
-        # For example ServiceLayer::IdentityService.
-        # Services must be located in app/services/openstack
-        service_class_name = "ServiceLayer::#{method_sym.to_s.classify}Service"
+      unless service    
+        # create a DomainModelServiceLayer::Service  
+        params = {
+          auth_url: DomainModelServiceLayer.keystone_endpoint,
+          region: @region,
+        }
+        if @current_user
+          params[:token]      = @current_user.token
+          params[:domain_id]  = @current_user.domain_id
+          params[:project_id] = @current_user.project_id
+        end
         
-        # load service class
-        klazz = begin
-          eval(service_class_name)
-        rescue
-          raise "service #{service_class_name} not found!"
-        end
-
-        # service must extend DomainModelServiceLayer::BaseProvider, see below.
-        unless klazz < DomainModelServiceLayer::Service
-          raise "service #{service_class_name} is not a subclass of DomainModelServiceLayer::BaseProvider"  
-        end
-
-        service = klazz.new(@endpoint,@region,@current_user)
+        service = self.class.service(method_sym,params)
         service.services=self
+        service.current_user = @current_user
         # new service is instantiated -> cache it for further use in the same controller request.
         instance_variable_set("@#{method_sym.to_s}", service)
       end
@@ -84,21 +122,21 @@ module DomainModelServiceLayer
     end
   end
   
+  # Service class 
+  # each service in app/services/service_layer should inherit from this class.
+  # It provides the context of current user
   class Service
-    attr_accessor :services
-    attr_reader :current_user, :auth_url, :region, :token, :domain_id, :project_id, :service_catalog
+    attr_accessor :services, :current_user
+    attr_reader :auth_url, :region, :token, :domain_id, :project_id, :service_catalog
 
-    def initialize(auth_url,region,current_user)
-      @region       = region
-      @auth_url     = auth_url
-      @current_user = current_user
+    def initialize(auth_url,region,token, options={})
+      @region           = region
+      @auth_url         = auth_url
+      @token            = token
       
-      if @current_user
-        @token = @current_user.token
-        @domain_id = @current_user.domain_id
-        @project_id = @current_user.project_id
-        @service_catalog = @current_user.service_catalog
-      end
+      @domain_id        = options[:domain_id]
+      @project_id       = options[:project_id]
+      @service_catalog  = options[:service_catalog] || []
     end
     
     def service_url(type, options={})
