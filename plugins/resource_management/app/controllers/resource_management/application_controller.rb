@@ -6,7 +6,11 @@ module ResourceManagement
     def details
       @resource_type = params[:resource_type]
       @level = params[:level]
-      puts modal?
+    end
+
+    def resource_request
+      @resource_type = params[:resource_type]
+      @level = params[:level]
     end
   end
 end
