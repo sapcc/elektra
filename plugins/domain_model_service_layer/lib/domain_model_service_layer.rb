@@ -19,6 +19,7 @@ module DomainModelServiceLayer
         # initialize services unless already initialized
         unless @services
           region ||= auth_session.region if auth_session
+          region ||= current_user.services_region if current_user
           region ||= MonsoonOpenstackAuth.configuration.default_region
           
           if MonsoonOpenstackAuth.configuration.connection_driver and 
@@ -84,48 +85,39 @@ module DomainModelServiceLayer
   end
   
   class Service
-    attr_accessor :services, :driver, :current_user, :auth_url, :region, :token, :domain_id, :project_id
-    
+    attr_accessor :services
+    attr_reader :current_user, :auth_url, :region, :token, :domain_id, :project_id, :service_catalog
+
     def initialize(auth_url,region,current_user)
-      @auth_url     = auth_url
       @region       = region
+      @auth_url     = auth_url
       @current_user = current_user
       
-      if current_user
-        @token        = current_user.token
-        @domain_id    = current_user.domain_id
-        @project_id   = current_user.project_id
+      if @current_user
+        @token = @current_user.token
+        @domain_id = @current_user.domain_id
+        @project_id = @current_user.project_id
+        @service_catalog = @current_user.service_catalog
       end
-      
-      # init driver
-      init({
-        auth_url:   @auth_url,
-        region:     @region,
-        token:      @token,
-        domain_id:  @domain_id,
-        project_id: @project_id  
-      })
     end
     
-    def init(params={})
-      raise "Not implemented yet!"
-    end 
-    
-    # TODO: use public url!!!
-    def get_service_url(type,version=nil)
-      network_service = @current_user.service_catalog.select do |service| 
-        service["type"]==type
+    def service_url(type, options={})
+      region = options[:region] || @region
+      interface = options[:interface] || 'public'
+      
+      service = service_catalog.select do |service|
+        service["type"]==type.to_s
       end.first
-    
-      endpoint_url = network_service["endpoints"].select do |endpoint|
-        endpoint["region_id"]==@region 
-      end.first["url"]
-    
-      if version.nil?
-        endpoint_url
-      else
-        endpoint_url.last=='/' ? endpoint_url+version : endpoint_url+"/#{version}"
-      end
+      
+      return nil unless service
+
+      endpoint = service["endpoints"].select do |endpoint|
+        endpoint["region_id"]==region.to_s and endpoint["interface"]==interface.to_s
+      end.first
+      
+      return nil unless endpoint
+      
+      endpoint["url"]
     end
   end
 end

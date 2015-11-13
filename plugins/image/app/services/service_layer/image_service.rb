@@ -1,13 +1,18 @@
 module ServiceLayer
   class ImageService < DomainModelServiceLayer::Service
   
-    def init(params)
-      @driver = Image::Driver::Fog.new(params)
-      raise "Error" unless @driver.is_a?(Image::Driver::Interface)
+    def driver
+      @driver ||= Image::Driver::Fog.new({
+        auth_url:   self.auth_url,
+        region:     self.region,
+        token:      self.token,
+        domain_id:  self.domain_id,
+        project_id: self.project_id  
+      })
     end
   
     def images
-      @driver.map_to(Image::Image).images
+      driver.map_to(Image::Image).images
     end
   end
 end
