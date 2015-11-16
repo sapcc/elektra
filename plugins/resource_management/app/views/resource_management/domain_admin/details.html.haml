@@ -1,15 +1,33 @@
 = content_for(:title, "Details for quota #{@resource_type}")
 .modal-body
   .row
+    .col-md-2.quota-label
+      .text-muted
+        BLABLA 
+    .col-md-7
+      .quota
+        .quota-approved{:style => "right:20%"} 
+          %span.text-nowrap
+            Approved quota: 80
+        .quota-current
+          %span.text-nowrap
+            100
+        .progress
+          .progress-bar.progress-bar-empty{:style => "width:80%"}
+          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:20%"}
+    .col-md-1.quota-request-more
+      = link_to 'Request more',plugin('resource_management').resources_request_path(:level => 'compute', :resource_type => 'cores'), data: {modal: true}, class: 'btn btn-primary btn-sm'
+
   %h2
     %small Details
 
   %table.table
     %thead
       %tr
-        %th Name
+        %th Project
         %th Quota
         %th Usage
+        %th Edit
     %tbody
 
 - if modal?
