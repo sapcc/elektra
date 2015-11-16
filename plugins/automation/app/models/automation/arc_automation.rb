@@ -4,7 +4,7 @@ require 'securerandom'
 
 module Automation
 
-  class Automation
+  class ArcAutomation
 
     ARC_API_URL = "https://localhost/"
 

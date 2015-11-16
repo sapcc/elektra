@@ -1,3 +1,3 @@
 Automation::Engine.routes.draw do
-  get '/automation' => 'automation#index'
+  get '/instances' => 'instances#index'
 end

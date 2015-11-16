@@ -1,6 +1,6 @@
 module Automation
 
-  class AutomationController < Automation::ApplicationController
+  class InstancesController < Automation::ApplicationController
     before_filter :init_automation
 
     def index
@@ -12,7 +12,7 @@ module Automation
 
 
     def init_automation
-      @automation = Automation::Automation.new()
+      @automation = Automation::ArcAutomation.new()
     end
 
   end
