@@ -15,24 +15,13 @@ describe Compute::InstancesController, type: :controller do
   
   before :each do
     stub_authentication
-    
-    admin_identity_driver = double('admin_identity_service_driver').as_null_object
+    stub_admin_services
+      
     identity_driver = double('identity_service_driver').as_null_object
     compute_driver = double('compute_service_driver').as_null_object
     
-    
-    #controller.instance_variable_set(:@my_variable, Phone.new(...))
-    allow_any_instance_of(ServiceLayer::AdminIdentityService).to receive(:init) do |admin_identity|
-      admin_identity.instance_variable_set(:@driver, admin_identity_driver)
-    end
-    
-    allow_any_instance_of(ServiceLayer::IdentityService).to receive(:init) do |identity|
-      identity.instance_variable_set(:@driver, identity_driver)
-    end
-    
-    allow_any_instance_of(ServiceLayer::ComputeService).to receive(:init) do |compute|
-      compute.instance_variable_set(:@driver, compute_driver)
-    end
+    allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
+    allow_any_instance_of(ServiceLayer::ComputeService).to receive(:driver).and_return(compute_driver)
   end
 
   describe "GET 'index'" do
