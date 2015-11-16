@@ -14,16 +14,11 @@
             Volumes
         .col-md-7
           .quota
-            .quota-approved{:style => "right:40%"} 
-              %span.text-nowrap
-                Approved quota: 500 
             .quota-current
               %span.text-nowrap
-                900
+                500
             .progress
-              .progress-bar.progress-bar-quota{:style => "width:40%"} 400
-              .progress-bar.progress-bar-empty{:style => "width:20%"}
-              .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:40%"}
+              .progress-bar.progress-bar-quota{:style => "width:80%"} 400
         .col-md-1.quota-request-more
           = link_to 'Details', plugin('resource_management').admin_details_path(:level => 'storage', :resource_type => 'block storage volumes', :disable_show_all => true), data: {modal: true}, class: 'btn btn-primary btn-sm' 
         .col-md-1.quota-request-more
@@ -39,7 +34,7 @@
               %span.text-nowrap
                 1000
             .progress
-              .progress-bar.progress-bar-quota{:style => "width:80%"} 800
+              .progress-bar.progress-bar-quota{:style => "width:70%"} 700
         .col-md-1.quota-request-more
           = link_to 'Details', plugin('resource_management').admin_details_path(:level => 'storage', :resource_type => 'block storage capacity', :disable_show_all => true), data: {modal: true}, class: 'btn btn-primary btn-sm' 
         .col-md-1.quota-request-more
@@ -51,15 +46,14 @@
             Snapshots 
         .col-md-7
           .quota
-            .quota-approved{:style => "right:25%"} 
+            .quota-approved{:style => "right:27%"} 
               %span.text-nowrap
                 Approved quota: 150
             .quota-current
               %span.text-nowrap
-                200
+                180
             .progress
-              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:76%"} 152 
-              .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:24%"}
+              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:100%"} 180 
         .col-md-1.quota-request-more
           = link_to 'Details', plugin('resource_management').admin_details_path(:level => 'storage', :resource_type => 'block storage snapshots', :disable_show_all => true), data: {modal: true}, class: 'btn btn-primary btn-sm' 
         .col-md-1.quota-request-more
@@ -72,15 +66,14 @@
             Capacity (GiB) 
         .col-md-7
           .quota
-            .quota-approved{:style => "right:30%"} 
+            .quota-approved{:style => "right:25%"} 
               %span.text-nowrap
                 Approved quota: 300 
             .quota-current
               %span.text-nowrap
-                400
+                350
             .progress
-              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:80%"} 320
-              .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:20%"}
+              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:100%"} 350
         .col-md-1.quota-request-more
           = link_to 'Details', plugin('resource_management').admin_details_path(:level => 'storage', :resource_type => 'object storage capacity', :disable_show_all => true), data: {modal: true}, class: 'btn btn-primary btn-sm' 
         .col-md-1.quota-request-more
