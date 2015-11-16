@@ -15,12 +15,11 @@ describe Image::OsImagesController, type: :controller do
   
   before :each do
     stub_authentication
-    
-    admin_identity_driver = double('admin_identity_service_driver').as_null_object
+    stub_admin_services
+      
     identity_driver = double('identity_service_driver').as_null_object
     os_image_driver = double('image_service_driver').as_null_object
 
-    allow_any_instance_of(ServiceLayer::AdminIdentityService).to receive(:driver).and_return(admin_identity_driver)
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::ImageService).to receive(:driver).and_return(os_image_driver)
   end

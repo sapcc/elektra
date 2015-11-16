@@ -15,12 +15,11 @@ describe Networking::NetworksController, type: :controller do
   
   before :each do
     stub_authentication
-    
-    admin_identity_driver = double('admin_identity_service_driver').as_null_object    
+    stub_admin_services
+      
     identity_driver = double('identity_service_driver').as_null_object
     network_driver = double('network_service_driver').as_null_object
     
-    allow_any_instance_of(ServiceLayer::AdminIdentityService).to receive(:driver).and_return(admin_identity_driver)
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::NetworkingService).to receive(:driver).and_return(network_driver)
 

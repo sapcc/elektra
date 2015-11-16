@@ -4,7 +4,7 @@
 class ScopeController < ApplicationController
 
   # includes services method
-  # use: services.SERVICE_NAME.METHOD_NAME (e.g. services.identity.projects)
+  # use: services.SERVICE_NAME.METHOD_NAME (e.g. services.identity.auth_projects)
   include DomainModelServiceLayer::Services
 
   prepend_before_filter do
@@ -17,7 +17,7 @@ class ScopeController < ApplicationController
     @scoped_project_fid = @scoped_project_id = project_id
   
     # try to find or create friendly_id entry for domain
-    domain_friendly_id = services.admin_identity.domain_friendly_id(@scoped_domain_fid)
+    domain_friendly_id = Admin::RescopingService.domain_friendly_id(@scoped_domain_fid)
     if domain_friendly_id
       # set scoped domain parameters
       @scoped_domain_id   = domain_friendly_id.key
@@ -25,7 +25,7 @@ class ScopeController < ApplicationController
       @scoped_domain_name = domain_friendly_id.name
 
       # try to load or create friendly_id entry for project
-      project_friendly_id = services.admin_identity.project_friendly_id(@scoped_domain_id, @scoped_project_fid) if @scoped_project_id
+      project_friendly_id = Admin::RescopingService.project_friendly_id(@scoped_domain_id, @scoped_project_fid) if @scoped_project_id
 
       if project_friendly_id
         # set scoped project parameters
@@ -57,7 +57,6 @@ class ScopeController < ApplicationController
     #p "@scoped_project_id: #{@scoped_project_id}"
     #p "@scoped_project_fid: #{@scoped_project_fid}"
   end
-
 
   def default_url_options
     { domain_id: @scoped_domain_fid, project_id: @scoped_project_fid }.merge(super)
