@@ -5,14 +5,16 @@ module Automation
 
     def index
       @instances = services.compute.servers || []
-      # @instanceAgents = @automation.instanceAgents(@instances, current_user.token)
       @instanceAgents = @automation.instanceAgentsMock()
     end
 
-
+    def show_section
+      @instances = services.compute.servers || []
+      @instanceAgents = @automation.instanceAgentsMock()
+    end
 
     def init_automation
-      @automation = Automation::ArcAutomation.new()
+      @automation = ArcAutomation.new()
     end
 
   end

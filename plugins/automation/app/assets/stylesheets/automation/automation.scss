@@ -1,0 +1,4 @@
+.loading-spinner {
+  margin-left: 10px;
+  @include spinner(background rgba(0,0,0,0.2));
+}

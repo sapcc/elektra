@@ -1,0 +1,20 @@
+.well
+  .row
+    .col-sm-6
+      %h4 Overview
+      %ul
+        %li
+          Instances with Agent:
+          %b
+            = @instanceAgents[:withAgent].count
+        %li
+          External Agents:
+          %b
+            = @instanceAgents[:external].count
+        %li
+          Instances without Agent:
+          %b
+            = @instanceAgents[:withoutAgent].count
+          %br
+          = link_to "Show", instances_show_section_path, {id: "automation_show_section",remote: true}
+          = link_to "Show", instances_show_section_path, {id: "automation_show_section",remote: true, class: 'loading_section', data:{loading_target_id: 'automation_instances_without_agent', loading_text: 'Retrieving instances'}}
