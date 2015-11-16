@@ -8,12 +8,11 @@ ResourceManagement::Engine.routes.draw do
   get 'resources/details'  => 'application#details'
   get 'resources/request'  => 'application#resource_request'
 
-  get 'resources/admin'    => 'admin#index'
-#  get 'resources/compute'  => 'application#compute'
-#  get 'resources/network'  => 'application#network'
-#  get 'resources/storage'  => 'application#storage'
-#  get 'resources/details'  => 'application#details'
-#  get 'resources/request'  => 'application#resource_request'
-
+  get 'admin'          => 'domain_admin#index'
+  get 'admin/compute'  => 'domain_admin#compute'
+  get 'admin/network'  => 'domain_admin#network'
+  get 'admin/storage'  => 'domain_admin#storage'
+  get 'admin/details'  => 'domain_admin#details'
+  get 'admin/request'  => 'domain_admin#resource_request'
 
 end

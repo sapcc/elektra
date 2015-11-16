@@ -1,0 +1,29 @@
+= content_for(:title, "Details for quota #{@resource_type}")
+.modal-body
+  .row
+  %h2
+    %small Details
+
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th Quota
+        %th Usage
+    %tbody
+
+- if modal?
+  .modal-footer
+    - if modal?
+      - case @level
+      - when "compute"
+        = link_to 'Show all compute quotas', plugin('resource_management').admin_compute_path(), class: 'btn btn-primary btn-sm'
+      - when "network"
+        = link_to 'Show all network quotas', plugin('resource_management').admin_network_path(), class: 'btn btn-primary btn-sm'
+      - when "storage"
+        = link_to 'Show all storage quotas', plugin('resource_management').admin_storage_path(), class: 'btn btn-primary btn-sm'
+
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+   
+
+

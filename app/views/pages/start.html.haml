@@ -1,3 +1,14 @@
 = render "application/context_selection"
 
-Start!
+.page-header
+  %h1
+    Domain:
+    = @scoped_domain_name
+
+  .row
+    .col-sm-6
+      %p 
+        Usage and Quotas
+      = link_to "Quotas(2)", plugin('resource_management').admin_path()
+      %span.label.label-danger danger
+
