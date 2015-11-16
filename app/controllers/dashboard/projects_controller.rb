@@ -7,11 +7,11 @@ module Dashboard
     end
 
     def index
-      @projects = services.identity.projects(@scoped_domain_id)
+      @projects = services.identity.auth_projects(@scoped_domain_id)
     end
 
     def show
-      @current_project = services.identity.project(@project_id, :subtree_as_list)
+      @current_project = services.identity.find_project(@project_id, :subtree_as_list)
       @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
     end
 
@@ -20,7 +20,7 @@ module Dashboard
     end
 
     def create
-      @forms_project = services.identity.project
+      @forms_project = services.identity.new_project
       @forms_project.attributes = params.fetch(:forms_project,{}).merge(domain_id: @scoped_domain_id)
 
       if @forms_project.save
@@ -34,11 +34,11 @@ module Dashboard
     end
 
     def edit
-      @forms_project = services.identity.project(@project_id)
+      @forms_project = services.identity.find_project(@project_id)
     end
 
     def update
-      @forms_project = services.identity.project(@project_id)
+      @forms_project = services.identity.find_project(@project_id)
       @forms_project.attributes = params[:forms_project]
 
       if @forms_project.save
@@ -51,7 +51,7 @@ module Dashboard
     end
 
     def destroy
-      project = services.identity.project(@project_id)
+      project = services.identity.find_project(@project_id)
       
       if project.destroy
         flash[:notice] = "Project successfully deleted."

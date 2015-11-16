@@ -18,12 +18,7 @@ describe ScopeController, type: :controller do
 
   before :each do
     stub_authentication
-
-    admin_identity_driver = double('admin_identity_service_driver').as_null_object
-    
-    allow_any_instance_of(ServiceLayer::AdminIdentityService).to receive(:driver).and_return(admin_identity_driver)
-    
-    allow(controller).to receive(:_routes).and_return(@routes)
+    stub_admin_services
   end
   
   context "domain_id is provided, project_id is not provided" do
