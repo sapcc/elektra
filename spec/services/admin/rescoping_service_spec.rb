@@ -24,7 +24,7 @@ RSpec.describe Admin::RescopingService do
     context 'entry does not exists' do
       it "should create a new entry by id" do
         allow(Admin::IdentityService).to receive(:find_domain).with('12-34')
-          .and_return(Domain.new(nil,{"id"=>'12-34',"name"=>'test domain'}))
+          .and_return(Identity::Domain.new(nil,{"id"=>'12-34',"name"=>'test domain'}))
         
         expect{ 
           Admin::RescopingService.domain_friendly_id('12-34')
@@ -34,7 +34,7 @@ RSpec.describe Admin::RescopingService do
       it "should create a new entry by name" do
         allow(Admin::IdentityService).to receive(:find_domain).and_raise('error')
         allow(Admin::IdentityService).to receive(:domains).with(name:'test domain')
-          .and_return([Domain.new(nil,{"id"=>'12-34',"name"=>'test domain'})])
+          .and_return([Identity::Domain.new(nil,{"id"=>'12-34',"name"=>'test domain'})])
         
         expect{
           Admin::RescopingService.domain_friendly_id('test domain')
@@ -68,7 +68,7 @@ RSpec.describe Admin::RescopingService do
     context 'entry does not exists' do
       it "should create a new entry by id" do
         allow(Admin::IdentityService).to receive(:find_project).with('12')
-          .and_return(Project.new(nil,{"id"=>'12',"name"=>'Project 1'}))
+          .and_return(Identity::Project.new(nil,{"id"=>'12',"name"=>'Project 1'}))
 
         expect{
           Admin::RescopingService.project_friendly_id(domain_id,'12')
@@ -78,7 +78,7 @@ RSpec.describe Admin::RescopingService do
       it "should create a new entry by name" do
         allow(Admin::IdentityService).to receive(:find_project).and_raise('error')
         allow(Admin::IdentityService).to receive(:projects).with(domain_id: domain_id, name: 'Project 1')
-          .and_return([Project.new(nil,{"id"=>'12',"name"=>'Project 1'})])
+          .and_return([Identity::Project.new(nil,{"id"=>'12',"name"=>'Project 1'})])
           
         expect{
           Admin::RescopingService.project_friendly_id(domain_id,'Project 1')

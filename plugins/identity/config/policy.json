@@ -1,0 +1,7 @@
+{
+  "identity:project_get": "role:admin or role:Member or role:member",
+  "identity:project_list": "role:admin or role:Member or role:member",
+  "identity:project_create": "role:admin",
+  "identity:project_update": "role:admin",
+  "identity:project_delete": "role:admin"
+}

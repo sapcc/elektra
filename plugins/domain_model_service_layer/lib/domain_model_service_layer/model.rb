@@ -105,7 +105,7 @@ module DomainModelServiceLayer
     end
     
     def attributes=(new_attributes)
-      @attributes = (new_attributes || {})   
+      @attributes = (new_attributes || {}).clone   
       # delete id from attributes!
       new_id = (@attributes.delete("id") or @attributes.delete(:id))
       # if current_id is nil then overwrite it with new_id.

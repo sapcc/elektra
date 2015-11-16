@@ -14,7 +14,6 @@
 //= require jquery_ujs
 //= require bootstrap-sprockets
 //= require plugins  
-//= require dashboard/users
 //= require dialogs  
 //= require modal 
 //= require jquery.history

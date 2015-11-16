@@ -16,9 +16,11 @@ Rails.application.routes.draw do
       get 'onboarding' => 'dashboard#new_user'
       post 'register' => 'dashboard#register_user'
       
+      mount Identity::Engine => '/identity', as: :identity_plugin
+      
       ###################### MOUNT PLUGINS #####################
       PluginsManager.mountable_plugins.each do |plugin|
-        next if plugin.name=='docs'
+        next if ['docs','identity'].include?(plugin.name)
         Logger.new(STDOUT).debug("Mount plugin #{plugin.mount_point} as #{plugin.name}_plugin")
         mount plugin.engine_class => "/#{plugin.mount_point}", as: "#{plugin.name}_plugin"
       end
@@ -27,15 +29,7 @@ Rails.application.routes.draw do
 
     scope module: 'dashboard' do
       get 'start' => 'pages#show', id: 'start', as: :domain_start
-
-      resources :credentials
-      resources :projects, only: [:index]
-      
-      scope '/:project_id' do
-        get '/' => 'projects#show', as: :project
-        #resources :projects
-      end
-    end 
+    end
   end
   
   # route for overwritten High Voltage Pages controller
