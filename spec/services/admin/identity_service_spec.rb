@@ -5,7 +5,7 @@ RSpec.describe Admin::IdentityService do
   describe 'create_user_domain_role' do
     before :each do
       @current_user = double('current_user', user_domain_id: 'd1', id: 1) 
-      @member_role = Role.new(nil,{name:'member', id: 2})      
+      @member_role = Identity::Role.new(nil,{name:'member', id: 2})      
     end
     
     it 'should grant a domain role to user' do

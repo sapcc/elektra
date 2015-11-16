@@ -2,8 +2,8 @@ When(/^I fill in "(.*?)" as "(.*?)"/) do |value,field|
   fill_in field, :with => value
 end
 
-Then(/^I am redirected to login page$/) do
-  expect(current_path).to eq(monsoon_openstack_auth.new_session_path)
+Then(/^I am redirected to login page for "(.*?)"$/) do |domain_id|
+  expect(current_path.start_with(monsoon_openstack_auth.login_path)).to eq(true)
 end
 
 Then(/^I see login form$/) do

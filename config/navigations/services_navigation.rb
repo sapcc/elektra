@@ -58,9 +58,7 @@ SimpleNavigation::Configuration.run do |navigation|
     #
     primary.item :compute, 'Compute & Monsoon Automation', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "icon moo-cloud" } do |compute_nav|
       compute_nav.item :instances, 'Instances', plugin('compute').instances_path, if: Proc.new { plugin_available?('compute') }
-      # compute_nav.item :instances, 'Instances', plugin('compute').instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id), if: Proc.new { plugin_available?('compute') }
-      # compute_nav.item :projects, 'Projects', main_app.projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-      compute_nav.item :projects, 'Projects', main_app.projects_path
+      compute_nav.item :projects, 'Projects', plugin('identity').projects_path
       compute_nav.item :volumes, 'Volumes', '#'
       compute_nav.item :snapshots, 'Snapshots', '#'
       compute_nav.item :automation, 'Monsoon Automation', '#'
@@ -92,7 +90,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
       # account_nav.item :credentials, 'Credentials', main_app.credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
-      account_nav.item :credentials, 'Credentials', main_app.credentials_path
+      account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path
     end
 
 

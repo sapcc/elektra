@@ -36,6 +36,8 @@ $ ->
   # initialize buttons with loading status
   $(document).on 'click', 'tr [data-loading-status]', () -> $(this).closest('tr').addClass('updating')
   $('tr [data-confirmed=loading_status]').attr('data-confirmed',"$(this).closest('tr').addClass('updating')")
+  
+  $("#accept_tos").click -> $("#register-button").prop('disabled', not $(this).prop('checked') )
 
 
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------

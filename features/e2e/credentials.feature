@@ -5,5 +5,5 @@ Feature: Credentials
      And Login as test_admin
     
   Scenario: Credentials page is reachable
-    When I visit "/monsooncc_test/credentials"
+    When I visit "/monsooncc_test/identity/credentials"
     Then I see the credentials page
