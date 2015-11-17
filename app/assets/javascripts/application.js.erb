@@ -21,3 +21,10 @@
   
   
 //= require dashboard
+
+//= require compute/application
+<%
+PluginsManager.mountable_plugins.each do |plugin|
+  require_asset("#{plugin.name}/application") rescue nil
+end
+%>

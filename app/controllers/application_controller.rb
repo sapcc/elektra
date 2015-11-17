@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  helper_method :modal?
+  helper_method :modal?, :plugin_name
   
   def modal?
     if @modal.nil?
@@ -28,6 +28,14 @@ class ApplicationController < ActionController::Base
     else
       super options
     end
+  end
+  
+  def plugin_name
+    unless @plugin_name 
+      tokens = self.class.name.split('::').collect{|token| token.downcase}
+      @plugin_name = tokens.find{|t| PluginsManager.plugin?(t)}
+    end
+    @plugin_name
   end
 
 end

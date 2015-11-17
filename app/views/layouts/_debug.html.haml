@@ -7,6 +7,8 @@
         = link_to 'x', '#', class:"close", data: {dismiss: "modal"}
         %h4 Debug Info
       .modal-body
+        - if plugin_name
+          %pre= "Plugin Name: #{plugin_name}"
         %pre= JSON.pretty_generate(current_user.context) if current_user
       .modal-footer
         = link_to 'Close', '#', data: {dismiss: "modal"}, class: "btn"
