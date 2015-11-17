@@ -3,8 +3,8 @@
   .row
     .col-md-2.quota-label
       .text-muted
-        BLABLA 
-    .col-md-7
+        Quota usage
+    .col-md-10
       .quota
         .quota-approved{:style => "right:20%"} 
           %span.text-nowrap
@@ -13,10 +13,19 @@
           %span.text-nowrap
             100
         .progress
-          .progress-bar.progress-bar-empty{:style => "width:80%"}
-          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:20%"}
-    .col-md-1.quota-request-more
-      = link_to 'Request more',plugin('resource_management').resources_request_path(:level => 'compute', :resource_type => 'cores'), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          .progress-bar{:style => "width:0%"}
+
+  .row
+    .col-md-2.quota-label
+      .text-muted
+        Resource usage
+    .col-md-10
+      .quota
+        .quota-current
+          %span.text-nowrap
+            100
+        .progress
+          .progress-bar{:style => "width:0%"}
 
   %h2
     %small Details
@@ -25,10 +34,28 @@
     %thead
       %tr
         %th Project
-        %th Quota
+        %th approved Quota
+        %th current Quota
         %th Usage
         %th Edit
     %tbody
+      %tr
+        %th ***REMOVED***_sandbox
+        %th 50
+        %th 50
+        %th 20
+        %th 
+          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
+      %tr
+        %th bla_sandbox
+        %th 30
+        %th 
+          .text-warning 50
+        %th 
+          .text-danger 40
+        %th 
+          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
+  
 
 - if modal?
   .modal-footer
