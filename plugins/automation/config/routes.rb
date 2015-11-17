@@ -1,4 +1,7 @@
 Automation::Engine.routes.draw do
-  get '/instances' => 'instances#index'
-  get '/instances/show_section' => 'instances#show_section'
+
+  resources :instances, only: [:index, :show] do
+    get 'show_section', :on => :collection
+  end
+
 end

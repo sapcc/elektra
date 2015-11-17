@@ -16,4 +16,4 @@
           %b
             = @instanceAgents[:withoutAgent].count
           %br
-          = link_to "Show", instances_show_section_path, {id: "automation_show_section",remote: true, class: 'loading_section', data:{loading_target_id: 'automation_instances_without_agent', loading_text: 'Retrieving instances...'}}
+          = link_to "Show", show_section_instances_path, {id: "automation_show_section",remote: true, class: 'loading_section', data:{loading_target_id: 'automation_instances_without_agent', loading_text: 'Retrieving instances...'}}
