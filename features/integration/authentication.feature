@@ -26,6 +26,6 @@ Feature: Authentication
   
   Scenario: User is redirected to the requested url after login
     Given I am not logged in
-    When I visit "/monsooncc_test/credentials"
+    When I visit "/monsooncc_test/identity/credentials"
      And Login as test_admin
-    Then I am redirected to "/monsooncc_test/credentials"
+    Then I am redirected to "/monsooncc_test/identity/credentials"

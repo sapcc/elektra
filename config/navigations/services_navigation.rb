@@ -57,8 +57,8 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
     primary.item :compute, 'Compute & Monsoon Automation', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "icon moo-cloud" } do |compute_nav|
-      compute_nav.item :instances, 'Instances', plugin('compute').instances_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id), if: Proc.new { plugin_available?('compute') }
-      compute_nav.item :projects, 'Projects', main_app.projects_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      compute_nav.item :instances, 'Instances', plugin('compute').instances_path, if: Proc.new { plugin_available?('compute') }
+      compute_nav.item :projects, 'Projects', plugin('identity').projects_path
       compute_nav.item :volumes, 'Volumes', '#'
       compute_nav.item :snapshots, 'Snapshots', '#'
       compute_nav.item :automation, 'Monsoon Automation', '#'
@@ -71,7 +71,8 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|
-      networking_nav.item :networks, 'Networks', plugin('network').networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      # networking_nav.item :networks, 'Networks', plugin('networking').networks_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid)
+      networking_nav.item :networks, 'Networks', plugin('networking').networks_path, if: Proc.new { plugin_available?('networking') }
       networking_nav.item :loadbalancing, 'Loadbalancing', '#'
       networking_nav.item :dns, 'DNS', '#'
     end
@@ -89,7 +90,8 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
-      account_nav.item :credentials, 'Credentials', main_app.credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      # account_nav.item :credentials, 'Credentials', main_app.credentials_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path
     end
 
 

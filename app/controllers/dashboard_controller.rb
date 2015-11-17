@@ -21,11 +21,12 @@ class DashboardController < ::ScopeController
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
   rescue_from "Excon::Errors::InternalServerError", with: :handle_api_error
+  rescue_from "Excon::Errors::Unauthorized", with: :handle_api_error
   rescue_from "MonsoonOpenstackAuth::ApiError", with: :handle_auth_error
   rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :handle_auth_error
 
   def check_terms_of_use
-    if services.admin_identity.new_user?(current_user)
+    if Admin::OnboardingService.new_user?(current_user)
       # new user: user has not a role for requested domain or user has no project yet.
       # save current_url in session
       session[:requested_url] = request.env['REQUEST_URI']
@@ -33,7 +34,7 @@ class DashboardController < ::ScopeController
       redirect_to "/#{@scoped_domain_fid}/onboarding" and return
     end
   end
-
+  
   # render new user template
   def new_user
   end
@@ -41,20 +42,11 @@ class DashboardController < ::ScopeController
   # onboard new user
   def register_user
     if params[:terms_of_use]
-      # user has accepted terms of use -> onboard use!
-    
-      # add member role to user
-      services.admin_identity.create_user_domain_role(current_user,'member')
-    
-      # create a sandbox project.
-      sandbox_id = services.admin_identity.create_user_sandbox(@scoped_domain_id,current_user)
-    
-      # set user default project to sandbox
-      services.admin_identity.set_user_default_project(current_user,sandbox_id)
-      project_friendly_id = services.admin_identity.project_friendly_id(@scoped_domain_id,sandbox_id)
-                
+      # user has accepted terms of use -> onboard user
+      Admin::OnboardingService.register_user(current_user)
+
       # redirect to sandbox (friendly url)
-      redirect_to project_path(domain_id:@scoped_domain_fid, id: project_friendly_id.slug)
+      redirect_to main_app.domain_start_path
     else
       render action: :new
     end
@@ -104,7 +96,7 @@ class DashboardController < ::ScopeController
 
     # the user token can be invaild if for example the domain permission has been modified in backend.
     # in this case redirect user to login form
-    valid_token = services.admin_identity.validate_token(current_user.token) if current_user
+    valid_token = Admin::IdentityService.validate_token(current_user.token) if current_user
     redirect_to_login_form and return unless valid_token
 
     @errors = {exception.class.name => exception.message}

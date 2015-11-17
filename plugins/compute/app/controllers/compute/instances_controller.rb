@@ -1,7 +1,7 @@
 module Compute
   class InstancesController < Compute::ApplicationController
     def index
-      @active_domain = services.identity.domain(@scoped_domain_id)
+      @active_domain = services.identity.find_domain(@scoped_domain_id)
 
       if @scoped_project_id
         @instances = services.compute.servers
@@ -9,17 +9,17 @@ module Compute
     end
 
     def show
-      @instance = services.compute.server(params[:id])
+      @instance = services.compute.find_server(params[:id])
     end
 
     def new
-      @instance = services.compute.server
+      @instance = services.compute.new_server
 
       @flavors = services.compute.flavors
       @images = services.image.images
       @availability_zones = services.compute.availability_zones
       @security_groups= services.compute.security_groups
-      @network_zones = services.network.project_networks(@scoped_project_id)
+      @network_zones = services.networking.project_networks(@scoped_project_id)
       
       @instance.flavor_id=@flavors.first.id
       @instance.image_id=@images.first.id
@@ -33,7 +33,7 @@ module Compute
 
     # update instance table row (ajax call)
     def update_item
-      @instance = services.compute.server(params[:id]) rescue nil
+      @instance = services.compute.find_server(params[:id]) rescue nil
       @target_state = params[:target_state]
 
       respond_to do |format|
@@ -46,7 +46,7 @@ module Compute
     end
 
     def create
-      @instance = services.compute.server(params[:id])
+      @instance = services.compute.new_server
       @instance.attributes=params[@instance.model_name.param_key]
 
       if @instance.save
@@ -58,7 +58,7 @@ module Compute
         @images = services.image.images
         @availability_zones = services.compute.availability_zones
         @security_groups= services.compute.security_groups
-        @network_zones = services.network.project_networks(@scoped_project_id)
+        @network_zones = services.networking.project_networks(@scoped_project_id)
         render action: :new
       end
     end
@@ -95,13 +95,13 @@ module Compute
 
     def execute_instance_action(action=action_name)
       instance_id = params[:id]
-      @instance = services.compute.server(instance_id)
+      @instance = services.compute.find_server(instance_id)
 
       @target_state=nil
       if (@instance.task_state || '')!='deleting'
         if @instance.send(action)
           sleep(2)
-          @instance = services.compute.server(instance_id) 
+          @instance = services.compute.find_server(instance_id) 
 
           @target_state = target_state_for_action(action)
           @instance.task_state ||= task_state(@target_state)

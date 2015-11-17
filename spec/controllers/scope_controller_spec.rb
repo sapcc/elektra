@@ -18,14 +18,7 @@ describe ScopeController, type: :controller do
 
   before :each do
     stub_authentication
-
-    admin_identity_driver = double('admin_identity_service_driver').as_null_object
-    
-    allow_any_instance_of(ServiceLayer::AdminIdentityService).to receive(:init) do |admin_identity|
-      admin_identity.instance_variable_set(:@driver, admin_identity_driver)
-    end
-    
-    allow(controller).to receive(:_routes).and_return(@routes)
+    stub_admin_services
   end
   
   context "domain_id is provided, project_id is not provided" do
@@ -40,7 +33,7 @@ describe ScopeController, type: :controller do
     
       it "redirects to the same action with friendly ids for domain" do
         get :index, domain_id: AuthenticationStub.domain_id
-        expect(response).to redirect_to(controller: 'scope', action: 'index', domain_id: @domain_friendly_id.slug)
+        expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
       end
     end
   end
@@ -55,7 +48,7 @@ describe ScopeController, type: :controller do
 
       it "redirects to the same action with friendly ids for domain and project" do
         get :index, default_params
-        expect(response).to redirect_to(controller: "scope", action: "index", domain_id: @domain_friendly_id.slug, project_id: @project_friendly_id.slug)
+        expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
       end
     end
   end

@@ -105,7 +105,7 @@ module DomainModelServiceLayer
     end
     
     def attributes=(new_attributes)
-      @attributes = (new_attributes || {})   
+      @attributes = (new_attributes || {}).clone   
       # delete id from attributes!
       new_id = (@attributes.delete("id") or @attributes.delete(:id))
       # if current_id is nil then overwrite it with new_id.
@@ -172,14 +172,9 @@ module DomainModelServiceLayer
 
       create_attrs = self.create_attributes.with_indifferent_access
       create_attrs.delete(:id)
-      
-      p "::::::::::::::::::::::::::::::::::::"
-      p create_attrs
 
       begin
         created_attributes = @driver.send("create_#{@class_name}", create_attrs)
-        p "--------------<<<<<<<<<<<<<<<<<<<<<-----------"
-        p created_attributes
         self.attributes= created_attributes
       rescue => e
         error_names = api_error_name_mapping

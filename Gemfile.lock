@@ -59,10 +59,10 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: d82575c431af01789c16d7ba4a3657a08d2a8f5b
+  revision: bf109d9022a06bad62a0af4eecaa2e6a2b3e3339
   branch: master
   specs:
-    monsoon-openstack-auth (0.7.11)
+    monsoon-openstack-auth (0.7.13)
       hashie
       rails
       uglifier (>= 1.3.0)
@@ -83,6 +83,11 @@ PATH
     domain_model_service_layer (0.0.1)
 
 PATH
+  remote: plugins/identity
+  specs:
+    identity (0.0.1)
+
+PATH
   remote: plugins/image
   specs:
     image (0.0.1)
@@ -94,9 +99,9 @@ PATH
       aasm
 
 PATH
-  remote: plugins/network
+  remote: plugins/networking
   specs:
-    network (0.0.1)
+    networking (0.0.1)
 
 GEM
   remote: http://localhost:8080/rubygemsorg/
@@ -526,12 +531,13 @@ DEPENDENCIES
   guard-rspec
   haml-rails
   high_voltage
+  identity!
   image!
   inquiry!
   jquery-rails
   monsoon-fog!
   monsoon-openstack-auth!
-  network!
+  networking!
   pg
   phantomjs
   poltergeist
@@ -550,6 +556,3 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
-
-BUNDLED WITH
-   1.10.6
