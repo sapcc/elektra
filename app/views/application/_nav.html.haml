@@ -19,8 +19,8 @@
       %ul.nav.navbar-nav.navbar-right
         - unless logged_in?
           %li
-            = link_to "Log in", main_app.domain_start_path, id: "navbar-login-btn" if @scoped_domain_id
-            =# link_to "Log in", monsoon_openstack_auth.login_path, id: "navbar-login-btn"
+            =# link_to "Log in", main_app.domain_start_path, id: "navbar-login-btn" if @scoped_domain_id
+            = link_to "Log in", monsoon_openstack_auth.login_path(domain_id:@scoped_domain_id), id: "navbar-login-btn"
         - else
           %li.dropdown
             -# = link_to "https://localhost/pictures/#{current_user.name}", "data-toggle" => "tooltip", "data-placement" => "left", "data-delay" => "300", title: "Click to change your profile picture", class: "linked_img" do
@@ -33,7 +33,7 @@
               %li
                 %a{:href => "#"} View Profile
               
-              %li= link_to "Credentials", main_app.credentials_path
+              %li= link_to "Credentials", plugin('identity').credentials_path
 
               %li.divider
               %li

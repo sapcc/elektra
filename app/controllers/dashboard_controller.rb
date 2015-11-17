@@ -96,7 +96,7 @@ class DashboardController < ScopeController
 
     # the user token can be invaild if for example the domain permission has been modified in backend.
     # in this case redirect user to login form
-    valid_token = services.admin_identity.validate_token(current_user.token) if current_user
+    valid_token = Admin::IdentityService.validate_token(current_user.token) if current_user
     redirect_to_login_form and return unless valid_token
 
     @errors = {exception.class.name => exception.message}

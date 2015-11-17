@@ -54,12 +54,12 @@
 -#     %tr
 -#       %td.snug Compute
 -#       %td
--#         = link_to "Instances", instances_path
+-#         = link_to "Instances", plugin('compute').instances_path
 -#
 -#     %tr
 -#       %td.snug(rowspan="2") Identity
 -#       %td
--#         = link_to "Credentials", credentials_path
+-#         = link_to "Credentials", plugin('identity').credentials_path
 -#     %tr
 -#       %td
--#         = link_to "Projects", projects_path
+-#         = link_to "Projects", plugin('identity').projects_path
