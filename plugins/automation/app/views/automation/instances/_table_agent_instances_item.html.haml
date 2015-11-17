@@ -7,4 +7,5 @@
   %td= instance.os
   %td= instance.ip
   %td= instance.version
-  %td= instance.online_to_string
+  %td{class: "#{'automation_status_alarm' if instance.online == false}"}
+    = instance.online_to_string

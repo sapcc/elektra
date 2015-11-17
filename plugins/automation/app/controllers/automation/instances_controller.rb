@@ -5,12 +5,12 @@ module Automation
 
     def index
       @instances = services.compute.servers || []
-      @instanceAgents = @automation.instanceAgentsMock()
+      @instanceAgents = @automation.instanceAgents(@instances, current_user.token)
     end
 
     def show_section
       @instances = services.compute.servers || []
-      @instanceAgents = @automation.instanceAgentsMock()
+      @instanceAgents = @automation.instanceAgents(@instances, current_user.token)
     end
 
     def init_automation
