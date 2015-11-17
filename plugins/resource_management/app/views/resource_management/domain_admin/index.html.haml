@@ -8,7 +8,9 @@
       .row
         .col-md-2.quota-label
           .text-muted
-            = link_to "Snapshots", plugin('resource_management').admin_storage_path() 
+            = link_to "Snapshots", plugin('resource_management').admin_storage_path()
+            .small 
+              .small Block Storage
         .col-md-7
           .quota
             .quota-approved{:style => "right:27%"} 
@@ -26,8 +28,9 @@
         .row
         .col-md-2.quota-label
           .text-muted
-            = link_to "Object Storage", plugin('resource_management').admin_storage_path() 
-            .small Capacity (GiB)
+            = link_to "Capacity (GiB)", plugin('resource_management').admin_storage_path() 
+            .small 
+              .small Object Storage
         .col-md-7
           .quota
             .quota-approved{:style => "right:25%"} 

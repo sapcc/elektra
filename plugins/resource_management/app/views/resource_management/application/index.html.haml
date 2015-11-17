@@ -8,9 +8,9 @@
       .row
         .col-md-2.quota-label
           .text-muted
-            = link_to "Object Storage", plugin('resource_management').resources_storage_path() 
+            = link_to "Capacity (GiB)", plugin('resource_management').resources_storage_path() 
             .small 
-              .small Capacity (GiB) 
+              .small Object Storage
         .col-md-7
           .quota
             .quota-approved{:style => "right:30%"} 
@@ -30,6 +30,8 @@
         .col-md-2.quota-label
           .text-muted
             = link_to "Cores", plugin('resource_management').resources_compute_path() 
+            .small 
+              .small Compute
         .col-md-7
           .quota
             .quota-approved{:style => "right:25%"} 
