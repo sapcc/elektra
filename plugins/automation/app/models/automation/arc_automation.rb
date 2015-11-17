@@ -28,7 +28,7 @@ module Automation
           when InstallationState::INSTALLED then "Installed"
           when InstallationState::UNINSTALLED then "Uninstalled"
           else
-            'No State'
+            State::MISSING
         end
       end
 
@@ -37,12 +37,26 @@ module Automation
           when OnlineState::ONLINE then "Online"
           when OnlineState::OFFLINE then "Offline"
           else
-            '-'
+            State::MISSING
         end
       end
     end
 
-    def instanceAgents(instances=[], token)
+    class InstanceAgentFacts < RubyArcClient::Facts
+      def attributes
+        attr = self.marshal_dump
+        attr.each do |k, v|
+          if v != true && v != false && v != 'true' && v != 'false'
+            if v.blank?
+              attr[k] = State::MISSING
+            end
+          end
+        end
+        attr
+      end
+    end
+
+    def instanceAgents(token, instances=[])
       withAgentMap = {}
       withoutAgentMap = {}
       externalAgentMap = {}
@@ -76,7 +90,7 @@ module Automation
         else
           # create external instances with agents
           instanceAgent = InstanceAgent.new
-          instanceAgent.id = agent.id
+          instanceAgent.id = agent.agent_id
           instanceAgent.name = agent.facts.hostname
           instanceAgent.os = agent.facts.os
           instanceAgent.ip = agent.facts.ip || State::MISSING
@@ -87,53 +101,23 @@ module Automation
         end
       end
 
-
       {withAgent: withAgentMap, withoutAgent: withoutAgentMap,  external: externalAgentMap}
     end
 
     def list_agents(token)
+      # TODO error handling
       client = RubyArcClient::Client.new(ARC_API_URL)
       client.list_agents(token, "", ['arc_version', 'online', 'os', 'hostname', 'ip'])
     end
 
-    def instanceAgentsMock()
-      withAgentMap = {}
-      withoutAgentMap = {}
-      externalAgentMap = {}
-
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'rhel6', 'RHEL6-x86_64', '10.44.57.194', true, '20151111.1 (cf691b9)', true)
-      withAgentMap[instanceAgent.id] = instanceAgent
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'sles12', 'SLES12-x86_64', '10.44.57.130', true, '20151111.1 (cf691b9)', true)
-      withAgentMap[instanceAgent.id] = instanceAgent
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'win2008', 'WINDOWS-2008R2-x86_64', '10.44.57.124', true, '20151111.1 (cf691b9)', true)
-      withAgentMap[instanceAgent.id] = instanceAgent
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'sles11sp3', 'SAP-SLES11-SP3-x86_64', '10.44.57.125', true, '20151111.1 (cf691b9)', true)
-      withAgentMap[instanceAgent.id] = instanceAgent
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'newUbuntu1404', 'UBUNTU1404-x86_64', '10.44.57.197', true, '20151111.1 (cf691b9)', true)
-      withAgentMap[instanceAgent.id] = instanceAgent
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'win2012', 'win2012', '10.44.57.164', true, '20151111.1 (cf691b9)', true)
-      withAgentMap[instanceAgent.id] = instanceAgent
-
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'mo-1ae70c6b6', 'RHEL6-x86_64', '10.44.57.194', true, '20151111.1 (cf691b9)', true)
-      externalAgentMap[instanceAgent.id] = instanceAgent
-
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'ubuntu1404', 'UBUNTU1404-x86_64', '10.44.57.130', false, State::MISSING, State::MISSING)
-      withoutAgentMap[instanceAgent.id] = instanceAgent
-      instanceAgent = InstanceAgent.new(SecureRandom.hex, 'newSles12', 'SLES12-x86_64', '10.44.57.130', false, State::MISSING, State::MISSING)
-      withoutAgentMap[instanceAgent.id] = instanceAgent
-
-      {withAgent: withAgentMap, withoutAgent: withoutAgentMap,  external: externalAgentMap}
-    end
-
-    private
-
-    def installation_state_string(state)
-      case state
-        when InstallationState::INSTALLED then "Installed"
-        when InstallationState::UNINSTALLED then "Uninstalled"
-        else
-          'No State'
-      end
+    def list_agent_facts(token, agent_id)
+      # TODO error handling
+      client = RubyArcClient::Client.new(ARC_API_URL)
+      InstanceAgentFacts.new( client.list_agent_facts!(token, agent_id) )
+    rescue ::RestClient::ResourceNotFound => exception
+      # $stderr.puts "Ruby-Arc-Client: caught exception listing agent facts: #{e}"
+      Rails.logger.error exception.message
+      return InstanceAgentFacts.new()
     end
 
   end

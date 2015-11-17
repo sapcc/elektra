@@ -1,9 +1,7 @@
 %tr{class: "", id: "instance_#{instance.id}"}
-  -#%td
-  -#  - if current_user.is_allowed?("identity:instance_get", {})
-  -#    = link_to instance.name, instance_path(id: instance.id), data: {modal: true}
-
-  %td= instance.name
+  %td
+    - if current_user.is_allowed?("identity:instance_get", {})
+      = instance.id.nil? ? instance.name : link_to(instance.name, instance_path(id: instance.id, name: instance.name), data: {modal: true})
   %td= instance.os
   %td= instance.ip
   %td= instance.version
