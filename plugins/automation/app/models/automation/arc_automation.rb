@@ -47,37 +47,39 @@ module Automation
       withoutAgentMap = {}
       externalAgentMap = {}
 
-      # create instaceAgents
+      # create instaceAgents from compute instances
       instancesMap = {}
       instances.each do |instance|
-        instance = InstanceAgent.new
-        instance.id = instance.id
-        instance.name = instance.name
-        instance.os = instance.image.name
-        instance.ip = instance.ip_addresses.join(', ')
+        instanceAgent = InstanceAgent.new
+        instanceAgent.id = instance.id
+        instanceAgent.name = instance.name
+        instanceAgent.os = instance.image.name
+        instanceAgent.ip = instance.ip_addresses.join(', ')
         # empty agent attributes
-        instance.agent = false
-        instance.version = State::MISSING
-        instance.online = State::MISSING
-        withoutAgentMap[instance.id] = instance
+        instanceAgent.agent = false
+        instanceAgent.version = State::MISSING
+        instanceAgent.online = State::MISSING
+        withoutAgentMap[instance.id] = instanceAgent
       end
 
       # map instances with agents
       agents = list_agents(token)
       agents.each do |agent|
         if withoutAgentMap.has_key?(agent.agent_id)
+          # update instance with agent attributes
           instanceAgent = withoutAgentMap[agent.agent_id]
           instanceAgent.agent = true
           instanceAgent.version = agent.facts.arc_version
           instanceAgent.online = agent.facts.online
           withAgentMap[agent.agent_id] = instanceAgent
-          instancesMap.delete(agent.agent_id)
+          withoutAgentMap.delete(agent.agent_id)
         else
+          # create external instances with agents
           instanceAgent = InstanceAgent.new
           instanceAgent.id = agent.id
-          instanceAgent.name = agent.hostname
+          instanceAgent.name = agent.facts.hostname
           instanceAgent.os = agent.facts.os
-          instanceAgent.ip = agent.facts.ip
+          instanceAgent.ip = agent.facts.ip || State::MISSING
           instanceAgent.agent = true
           instanceAgent.version = agent.facts.arc_version
           instanceAgent.online = agent.facts.online

@@ -1,4 +1,8 @@
-.loading-spinner {
+.loading-spinner-section {
   margin-left: 10px;
   @include spinner(background rgba(0,0,0,0.2));
+}
+
+.automation_status_alarm {
+  color: $alarm-red;
 }
