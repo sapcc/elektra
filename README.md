@@ -87,6 +87,17 @@ End
 
 
 
+Plugin Assets
+--------------
+
+The dashboard UI design is a theme for [Twitter Bootstrap (v3.~)](http://getbootstrap.com/). All components described in the Twitter Bootstrap documentation also work in the dashboard. In addition we have included [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for icons.
+
+**Important** When building views for your plugin please check existing plugins for established best practices and patterns and also check with the core team (mainly Esther) so that the user experience stays the same or similar across plugins.
+
+In many cases the provided styles will be enough to build your views. If you need extra styles or scripts please coordinate with Esther to see whether we should include them in the core styles so they become accessible for everybody or whether they should remain specific to your plugin. Assets that are specific to your plugin must be located in the assets folder in your plugin.
+
+
+
 What are Plugins?
 -----------------
 
