@@ -67,15 +67,15 @@
             Capacity (GiB) 
         .col-md-7
           .quota
-            .quota-approved{:style => "right:25%"} 
+            .quota-approved{:style => "right:15%"} 
               %span.text-nowrap
                 Approved quota: 300 
             .quota-current
               %span.text-nowrap
                 350
             .progress
-              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:75%"} 350
-              .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:25%"}
+              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:85%"} 350
+              .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:15%"}
         .col-md-1.quota-request-more
           = link_to 'Details', plugin('resource_management').admin_details_path(:level => 'storage', :resource_type => 'object storage capacity', :disable_show_all => true), data: {modal: true}, class: 'btn btn-primary btn-sm' 
         .col-md-1.quota-request-more

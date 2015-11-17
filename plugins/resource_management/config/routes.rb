@@ -21,4 +21,13 @@ ResourceManagement::Engine.routes.draw do
   get 'admin/details'  => 'domain_admin#details'
   get 'admin/request'  => 'domain_admin#resource_request'
 
+  # this is only for demo, I have no idea where I can put the cloudadmin views
+  get 'cloud_admin'          => 'cloud_admin#index'
+  get 'cloud_admin/compute'  => 'cloud_admin#compute'
+  get 'cloud_admin/network'  => 'cloud_admin#network'
+  get 'cloud_admin/storage'  => 'cloud_admin#storage'
+  get 'cloud_admin/details'  => 'cloud_admin#details'
+  get 'cloud_admin/request'  => 'cloud_admin#resource_request'
+ 
+
 end

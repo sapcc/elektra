@@ -14,7 +14,7 @@
  *= require_self
  */
 
-.quota-approved {
+.quota-approved, .quota-usage {
    position:absolute;
    width: 2px;
    border: 2px solid #2A2A2A;
@@ -27,6 +27,11 @@
    bottom: calc(1.5rem - 2px);
 }
 
+.quota-usage {
+   bottom: 0;
+   top: calc(1.5rem - 2px);
+}
+
 .limit-danger {
   border-style: solid solid solid none;
   border-color: #d9534f;
@@ -34,7 +39,7 @@
   box-shadow: 0 0 1px #d9534f; 
 }
 
-.quota-current span, .quota-approved span {
+.quota-current span, .quota-approved span, .quota-usage span {
     display: block;
     position: absolute;
     right: 0;
@@ -42,7 +47,14 @@
     color: black;
     font-size: 0.9rem;
     line-height: 1.6rem;
-    top:0;
+}
+
+.quota-usage span {
+   bottom: 0;
+}
+
+.quota-approved span {
+   top: 0;
 }
 
 .quota-label {
@@ -57,10 +69,10 @@
     padding-top:20px;
 }
 
-
 .quota-current span {
     color: #777;
     font-weight: bold;
+    top: 0;
 }
 
 .quota-overcommit-danger {
