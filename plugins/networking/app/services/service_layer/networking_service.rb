@@ -19,7 +19,7 @@ module ServiceLayer
       result = []
       driver.networks.each do |n| 
         if n["shared"]==true or n["tenant_id"]==project_id
-          result << Networking::Network.new(@driver,n)
+          result << Networking::Network.new(driver,n)
         end
       end
       result
@@ -29,7 +29,7 @@ module ServiceLayer
       if id
         driver.map_to(Networking::Network).get_network(id)
       else
-        Networking::Network.new(@driver)
+        Networking::Network.new(driver)
       end
     end
   
@@ -37,7 +37,7 @@ module ServiceLayer
       if id
         driver.map_to(Networking::Subnet).get_subnet(id)
       else
-        Networking::Subnet.new(@driver)
+        Networking::Subnet.new(driver)
       end
     end
   
