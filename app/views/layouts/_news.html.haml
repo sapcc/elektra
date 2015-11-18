@@ -1,0 +1,21 @@
+- date = Time.new(2015,11,18)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Arturo Reuschenbach - #{date}"
+  %p Please use following format to add more news:
+  %code.language-html
+    %span date = Time.new(2015,11,18)
+    %span <br>
+    %span .bs-callout.bs-callout-info{data:{date: date}}
+    %span <br>
+    %span %p
+    %span <br>
+    %span %b= 'Your username - #{date}'
+    %span <br>
+    %span %p Add the news text here
+
+- date = Time.new(2015,11,17)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Arturo Reuschenbach - #{date}"
+  %p News overview page added.
