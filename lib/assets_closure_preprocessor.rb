@@ -2,22 +2,16 @@
 class AssetsClosurePreprocessor < Sprockets::Processor
   def evaluate(context, locals)
 
+    match = /\/plugins\/(.+)\/app\/assets/.match(context.pathname.to_s)
+    
     # is current js file from a plugin 
-    if context.root_path.include?("/plugins/")
+    if match
       # get the plugin name
-      plugin_name = context.root_path[context.root_path.index("/plugins/")+9..context.root_path.index("/app/assets")-1]
-      
-      # surround data with (function(){ ... }).
-      # first, define variable current_plugin unless already defined.
-      # second, define a closure.
-      # third, call the closure with current_plugin as parameter.
-      closure = "var #{plugin_name} = #{plugin_name} || {};\n"+ 
-        "(function(){\n"+
-          "var #{plugin_name} = this;\n"+
-          "#{data}\n"+
-        "}).call(#{plugin_name});\n"
-            
-      data.replace closure
+      plugin_name = match[1]
+      coffeescript = context.pathname.to_s.include?('.coffee')
+
+      data.replace "window.#{plugin_name} = window.#{plugin_name} || {};\n\n#{data}"
+      data.replace "(function(){\n  #{data}\n}).call(this);\n" unless coffeescript
     end
     data
   end
