@@ -29,5 +29,6 @@ ResourceManagement::Engine.routes.draw do
   get 'cloud_admin/details'  => 'cloud_admin#details'
   get 'cloud_admin/request'  => 'cloud_admin#resource_request'
  
+  get 'manual_sync' => 'application#manual_sync'
 
 end
