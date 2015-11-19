@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = Networking::VERSION
   s.authors     = ["Andreas Pfau"]
   s.email       = ["andreas.pfau@sap.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Network."
-  s.description = "TODO: Description of Network."
+  s.homepage    = ""
+  s.summary     = "Summary of Network."
+  s.description = "Description of Network."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "README.rdoc"]

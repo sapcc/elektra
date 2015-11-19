@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = Image::VERSION
   s.authors     = ["Andreas Pfau"]
   s.email       = ["andreas.pfau@sap.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of Image."
-  s.description = "TODO: Description of Image."
+  s.homepage    = ""
+  s.summary     = "Summary of Image."
+  s.description = "Description of Image."
 
   s.files = Dir["{app,config,db,lib}/**/*","README.rdoc"]
   s.test_files = Dir["spec/**/*"]
