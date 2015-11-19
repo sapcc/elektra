@@ -1,0 +1,33 @@
+= link_to 'Debug info', '#', data: { toggle: "modal", target: "#debug" } if current_user
+
+#debug.modal.fade
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        = link_to 'x', '#', class:"close", data: {dismiss: "modal"}
+        %h4 Debug Info
+      .modal-body
+        - if plugin_name
+          %pre= "Plugin Name: #{plugin_name}"
+        %pre= JSON.pretty_generate(current_user.context) if current_user
+      .modal-footer
+        = link_to 'Close', '#', data: {dismiss: "modal"}, class: "btn"
+
+= link_to '#', data: { toggle: "modal", target: "#news", class: 'btn btn-primary' } do
+  News
+  %span.badge.alert-info#news_badge
+
+#news.modal.fade
+  .modal-dialog.modal-lg
+    .modal-content
+      .modal-header
+        = link_to 'x', '#', class:"close", data: {dismiss: "modal"}
+        %h4 News
+      .modal-body
+        = render 'layouts/news'
+      .modal-footer
+        = link_to 'Close', '#', data: {dismiss: "modal"}, class: "btn"
+
+- content_for :javascripts do
+  %script{:type=>"text/javascript"}
+    = render 'layouts/dev_tools_script.js'

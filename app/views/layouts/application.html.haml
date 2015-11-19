@@ -30,7 +30,9 @@
 
     %footer.footer
       .container
-        = render partial: 'layouts/debug'
+        - if Rails.env.development?
+          = render partial: 'layouts/dev_tools'
+
         = image_tag "monsoon_logo.png", class: "pull-right"
 
     = yield :templates
