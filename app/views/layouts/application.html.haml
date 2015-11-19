@@ -24,7 +24,7 @@
     = yield :page_lead
 
     .container
-      .content
+      .content{class: "#{plugin_name if plugin_name}"}
         = render "application/flashes"
         = yield
 

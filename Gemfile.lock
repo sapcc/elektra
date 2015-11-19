@@ -102,11 +102,6 @@ PATH
   specs:
     networking (0.0.1)
 
-PATH
-  remote: plugins/new_plugin
-  specs:
-    new_plugin (0.0.1)
-
 GEM
   remote: http://localhost:8080/rubygemsorg/
   specs:
@@ -541,7 +536,6 @@ DEPENDENCIES
   monsoon-fog!
   monsoon-openstack-auth!
   networking!
-  new_plugin!
   pg
   phantomjs
   poltergeist
@@ -560,6 +554,3 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
-
-BUNDLED WITH
-   1.10.5
