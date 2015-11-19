@@ -17,6 +17,8 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     replace_test_with_spec
     update_dependencies_to_gemspec
     
+    update_assets
+    
     if options.mountable?
       modify_application_controller
       add_routes
@@ -43,6 +45,16 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
   def create_service_layer_service
     copy_file "app/services/service_layer/service.rb", "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb"
     gsub_file "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb", '%{PLUGIN_NAME}', name.classify
+  end
+  
+  def update_assets
+    remove_file "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/application.css"
+    remove_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js"
+    
+    copy_file "app/assets/application.css.scss", "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/application.css.scss"
+    copy_file "app/assets/application.js", "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js"
+    
+    gsub_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js", '%{PLUGIN_NAME}', name
   end
   
   def create_service_layer_driver
