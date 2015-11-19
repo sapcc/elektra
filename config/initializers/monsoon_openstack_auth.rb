@@ -1,24 +1,3 @@
-def after_login_url(referrer_url, current_user)
-  redirect_to_sandbox = if referrer_url
-    path = URI(referrer_url).path rescue nil
-    path.nil? ? true : path.count('/') < 3
-  else
-    true
-  end
-
-  sandbox_url = if (redirect_to_sandbox and current_user.project_id)
-    "/#{current_user.project_domain_id}/#{current_user.project_id}/projects"
-  else
-    nil
-  end
-  domain_url = "/#{current_user.domain_id}" if current_user.domain_id
-
-  sandbox_url || referrer_url || domain_url || "/"
-
-rescue
-  referrer_url || "/"
-end
-
 def policy_paths
   paths = ["config/policy.json"]
   PluginsManager.available_plugins.each do |p|
