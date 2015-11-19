@@ -1,0 +1,41 @@
+.row
+  .col-md-2.quota-label
+    .text-muted
+      - if overview
+        - case level
+        - when "compute"
+          = link_to name, plugin('resource_management').compute_path() 
+        - when "network"
+          = link_to name , plugin('resource_management').network_path()
+        - when "storage"
+          = link_to name, plugin('resource_management').storage_path()
+      - else
+        .text-muted #{name}
+      - if description 
+        .small 
+          .small #{description}
+
+  .col-md-7
+    .quota
+      - if quota_data[:approved] < quota_data[:current]
+        .quota-approved{:style => "right:#{100-percent[:approved]}%"} 
+          %span.text-nowrap
+            Approved quota: #{quota_data[:approved]}
+
+      .quota-current
+        %span.text-nowrap #{quota_data[:current]}
+      
+      .progress
+        - if quota_data[:usage] >= quota_data[:approved] or percent[:usage] >= 80
+          .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:#{percent[:usage]}%"} #{quota_data[:usage]}
+        - else
+          .progress-bar.progress-bar-quota{:style => "width:#{percent[:usage]}%"} #{quota_data[:usage]}
+
+        -if quota_data[:approved] < quota_data[:current]
+          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-percent[:usage]}%"}
+
+  .col-md-1.quota-request-more
+    = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
+  .col-md-1.quota-request-more
+    = link_to 'Request more',plugin('resource_management').resources_request_path(:level => level, :resource_type => resource_type ), data: {modal: true}, class: 'btn btn-primary btn-sm'
+ 

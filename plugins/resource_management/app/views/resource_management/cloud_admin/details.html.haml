@@ -10,7 +10,7 @@
           %span.text-nowrap
             4000
         .progress
-          .progress-bar.progress-bar-quota{:style => "width:28%"} 1000
+          .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:65%"} 2600
 
   .row
     .col-md-2.quota-label
@@ -20,7 +20,7 @@
       .quota
         .quota-approved{:style => "right:25%"} 
           %span.text-nowrap
-            Approved quota: 3000
+            Granted quota: 3000
         .quota-current
           %span.text-nowrap
             4000
@@ -35,24 +35,32 @@
     %thead
       %tr
         %th Domain
-        %th approved Quota
+        %th granted Quota
         %th current Quota
         %th Usage
         %th Edit
     %tbody
       %tr
-        %th bla
-        %th 1500
+        %th foo
+        %th 1000
+        %th 1000
+        %th 800
         %th 
-          .text-danger 2000
-        %th 500
+          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
+      %tr
+        %th bla
+        %th 1700
+        %th 
+          .text-danger 2150
+        %th 1600
         %th 
           = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
       %tr
         %th sap_default
-        %th 1500
-        %th 1500
-        %th 500
+        %th 300
+        %th 
+          .text-danger 350
+        %th 200
         %th 
           = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
  

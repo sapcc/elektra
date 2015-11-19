@@ -17,7 +17,7 @@
               %span.text-nowrap
                 4000
             .progress
-              .progress-bar.progress-bar-quota{:style => "width:28%"} 1000
+              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:65%"} 2600
     
         .col-md-1.quota-request-more
           = link_to 'Details', plugin('resource_management').cloud_admin_details_path(:level => 'storage', :resource_type => 'object storage capacity'), data: {modal: true}, class: 'btn btn-primary btn-sm'
