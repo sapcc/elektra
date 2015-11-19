@@ -31,12 +31,11 @@
       Every javascript file inside a plugin is embedded in a closure. 
       For a plugin called my_plugin the closure looks as follows
       %code.language-html
-        %span var my_plugin = my_plugin || {};
+        %span window.my_plugin = window.my_plugin || {};
         %br
         %span (function(){ <br/>
-        %span &nbsp;&nbsp;var my_plugin = this;
         %span &nbsp;&nbsp; //... content of the file <br/>     
-        %span }).call(my_plugin);
+        %span }).call(this);
     %li All functions are visible inside the file     
     %li 
       To make a function visible to outsie you should bind it to the variable my_plugin (replace my_plugin with the name of your plugin)
