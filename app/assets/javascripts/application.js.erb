@@ -18,7 +18,6 @@
 //= require modal 
 //= require jquery.history
 //= require stateful_links
-
 //= require dashboard
 
 <%
@@ -26,3 +25,4 @@ PluginsManager.mountable_plugins.each do |plugin|
   require_asset("#{plugin.name}/application") rescue nil
 end
 %>
+

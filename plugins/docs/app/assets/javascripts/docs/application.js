@@ -11,3 +11,6 @@
 // about supported directives.
 //
 //= require_tree .
+  
+// docs.test = function(){};
+// docs.test();
