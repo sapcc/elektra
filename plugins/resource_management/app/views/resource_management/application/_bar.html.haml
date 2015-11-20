@@ -17,8 +17,7 @@
       - approved_quota = data.approved_quota / display_unit
       - usage_percent    = ((data.usage.to_f / data.current_quota.to_f) *100).to_i
       - approved_percent = ((data.approved_quota.to_f / data.current_quota.to_f) *100).to_i
-      - is_danger        = usage > approved_quota || usage_percent >= 95
-      - is_warning       = usage_percent >= 80
+      - usage_level      = data.usage.to_f / [data.current_quota, data.approved_quota].min.to_f
       .quota
         - if approved_quota < current_quota
           .quota-approved{:style => "right:#{100-approved_percent}%"} 
@@ -29,9 +28,9 @@
           %span.text-nowrap #{current_quota}
 
         .progress
-          - if is_danger
+          - if usage_level >= 0.95
             .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
-          - elsif is_warning
+          - elsif usage_level >= 0.8
             .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
           - else
             .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage

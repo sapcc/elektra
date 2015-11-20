@@ -2,7 +2,9 @@ module ResourceManagement
   class ApplicationController < DashboardController
 
     def index
-      @critical_quotas = get_critical_quotas()
+      # resources are critical if they have a quota, and either one of the quotas is 95% used up
+      @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).
+        where("(current_quota > 0 OR approved_quota > 0) AND (usage > 0.95 * approved_quota OR usage > 0.95 * current_quota)")
     end
 
     def resource_request
@@ -36,40 +38,9 @@ module ResourceManagement
 
     private
 
-    def get_critical_quotas(danger_level = 100)
-      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)
-      calculate_quotas_usage(quotas,100,danger_level)
+    def get_quotas(service)
+      ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => service)
     end
 
-    def get_quotas(service,danger_level = 100)
-      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => service)
-      calculate_quotas_usage(quotas, 0, danger_level)
-    end
-
-    def calculate_quotas_usage(quotas,from_usage = 0,danger_level = 100)
-       usage_data = []
-       quotas.each do |data|
-         resource_config = data.attributes || {}
-         if resource_config
-
-           display_unit = resource_config[:display_unit] || 1
-           usage          = data.usage          / display_unit
-           current_quota  = data.current_quota  / display_unit
-           approved_quota = data.approved_quota / display_unit
-
-           usage_percent = 0
-           approved_percent = 0
-           if current_quota > 0
-             usage_percent = ((usage.to_f / current_quota.to_f)*100).to_i
-             approved_percent = ((approved_quota.to_f / current_quota.to_f)*100).to_i
-           end
-
-           if (approved_quota < current_quota and usage_percent >= approved_quota) or usage_percent >= from_usage
-             usage_data.push(data)
-           end
-         end
-       end
-       usage_data
-    end
   end
 end
