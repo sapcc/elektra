@@ -11,8 +11,18 @@ module ResourceManagement
     end
     
     def compute
-      @quotas = get_quota("compute")
+      @compute_quotas = get_quotas("compute")
     end
+
+    def network
+      @network_quotas = get_quotas("network")
+    end
+
+    def storage
+      @block_storage_quotas = get_quotas("block_storage")
+      @object_storage_quotas = get_quotas("object_storage")
+    end
+
 
     private
 
@@ -21,7 +31,7 @@ module ResourceManagement
       calculate_quotas_usage(quotas,100,danger_level)
     end
 
-    def get_quota(service,danger_level = 100)
+    def get_quotas(service,danger_level = 100)
       quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => service)
       calculate_quotas_usage(quotas, 0, danger_level)
     end

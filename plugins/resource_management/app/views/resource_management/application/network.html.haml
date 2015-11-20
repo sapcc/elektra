@@ -4,27 +4,13 @@
 
 .container
   .row.quota-row
-    .col-md-9   
-      .row
-        .col-md-2.quota-label
-          .text-muted
-            Networks  
-      .row
-        .col-md-2.quota-label
-          .text-muted
-            Routers       
-      .row
-        .col-md-2.quota-label
-          .text-muted
-            Ports       
-      .row
-        .col-md-2.quota-label
-          .text-muted
-            Floating IPs      
-      .row
-        .col-md-2.quota-label
-          .text-muted
-            Security Groups     
+    .col-md-9
+      - unless @network_quotas.nil? or @network_quotas.blank?
+        - @network_quotas.each do |resource_data|
+          = render :partial => 'bar', :locals => { :overview => false,  :data => resource_data }
+      - else
+        .bs-callout
+          No Network Quotas found!
 
     .col-md-3
       .bs-callout.bs-callout-primary
