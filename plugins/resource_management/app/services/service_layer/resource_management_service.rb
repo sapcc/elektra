@@ -2,11 +2,6 @@ module ServiceLayer
 
   class ResourceManagementService < DomainModelServiceLayer::Service
 
-    KNOWN_RESOURCES = {
-      # service name => names of resources
-      object_storage: [ :capacity ]
-    }
-
     def driver
       @driver ||= ResourceManagement::Driver::Fog.new({
         auth_url: self.auth_url,
