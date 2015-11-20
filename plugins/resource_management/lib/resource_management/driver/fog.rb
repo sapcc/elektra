@@ -111,14 +111,11 @@ module ResourceManagement
       end
 
       def query_project_usage_object_storage(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          capacity:  rand(0..(100 << 30)), # max 100 GiB
-        }
-      end
-
-      def actual_get_project_usage_object_storage(domain_id, project_id)
-        connection = get_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id)
+        connection = get_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id,
+          # the "service" role usually means "readonly access to everything",
+          # but not for Swift; here only the reseller-admin role works
+          role_name: 'ResellerAdmin',
+        )
 
         # the head_account request is not yet implemented in Fog (TODO: add it),
         # so we use request() directly
@@ -128,10 +125,13 @@ module ResourceManagement
           :path    => '',
           :query   => { 'format' => 'json' },
         )
-        raise "implementation not finished"
+
+        return {
+          capacity: response.headers['X-Account-Bytes-Used'].to_i,
+        }
       end
 
-      def get_service_user_connection(fog_class, domain_id, project_id)
+      def get_service_user_connection(fog_class, domain_id, project_id, options={})
         # establish service user connection to selected domain/project (this is
         # a bit ugly since MonsoonOpenstackAuth does not want to give us the
         # password back, so we have to resort to ENV there)
@@ -152,7 +152,8 @@ module ResourceManagement
           if e.response.body =~ /has no access to the requested project scope/
             # this is the first time that the dashboard user tries to access
             # this project -> grant service user role in this project
-            roles = @srv_conn.list_roles(name: 'service').body['roles']
+            service_role_name = options[:role_name] || 'service'
+            roles = @srv_conn.list_roles(name: service_role_name).body['roles']
             raise "missing role \"service\" in Keystone" if roles.empty?
             @srv_conn.grant_project_user_role(project_id, @srv_conn.current_user_id, roles.first['id'])
           else
