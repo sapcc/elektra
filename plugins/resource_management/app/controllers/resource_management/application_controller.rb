@@ -1,6 +1,6 @@
 module ResourceManagement
   class ApplicationController < DashboardController
-    
+
     def index
       @critical_quotas = get_critical_quotas()
     end
@@ -9,7 +9,7 @@ module ResourceManagement
       @resource_type = params[:resource_type]
       @service = params[:service]
     end
-    
+
     def compute
       @compute_quotas = get_quotas("compute")
     end
@@ -50,7 +50,7 @@ module ResourceManagement
        usage_data = []
        quotas.each do |data|
          resource_data = {}
-         resource_config = ResourceManagement::Resource.get_known_resource(data.service, data.name)
+         resource_config = data.attributes || {}
          if resource_config
 
            usage = data.usage
@@ -82,6 +82,7 @@ module ResourceManagement
                :approved => approved_percent,
                :usage => usage_percent,
              }
+             resource_data[:record] = data
            end
 
            usage_data.push(resource_data)

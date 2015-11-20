@@ -6,26 +6,18 @@
   - description   = t(service)
   - resource_type = "#{service} #{name}"
   - danger_level  = data[:danger_level]
+  - record        = data[:record]
   .row
     .col-md-2.quota-label
       .text-muted
         - if overview
-          - case service
-          - when "compute"
-            = link_to t("resource_management.#{name}"), plugin('resource_management').compute_path() 
-          - when "network"
-            = link_to t("resource_management.#{name}") , plugin('resource_management').network_path()
-          - when "block_storage" 
-            = link_to t("resource_management.#{name}"), plugin('resource_management').storage_path()
-          - when "object_storage"
-            = link_to t("resource_management.#{name}"), plugin('resource_management').storage_path()
+          = link_to t("resource_management.#{record.name}"), plugin('resource_management').send("#{record.attributes[:area]}_path") 
         - else
-          .text-muted 
-            = t("resource_management.#{name}")
+          = t("resource_management.#{name}")
         - if description and overview
-          .small 
-            .small #{description}
-  
+          .small
+            .small= description
+
     .col-md-7
       - if quota_data[:current] > 0
         .quota
@@ -33,16 +25,16 @@
             .quota-approved{:style => "right:#{100-percent[:approved]}%"} 
               %span.text-nowrap
                 Approved quota: #{quota_data[:approved]}
-    
+
           .quota-current
             %span.text-nowrap #{quota_data[:current]}
-          
+
           .progress
             - if percent[:usage] >= danger_level or quota_data[:usage] >= quota_data[:approved] 
               .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:#{percent[:usage]}%"} #{quota_data[:usage]}
             - else
               .progress-bar.progress-bar-quota{:style => "width:#{percent[:usage]}%"} #{quota_data[:usage]}
-    
+
             -if quota_data[:approved] < quota_data[:current]
               .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-percent[:usage]}%"}
       - else
