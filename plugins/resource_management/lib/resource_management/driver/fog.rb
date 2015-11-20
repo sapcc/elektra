@@ -117,7 +117,8 @@ module ResourceManagement
             :query   => { 'format' => 'json' },
           )
 
-          return { capacity: response.headers.fetch('X-Account-Meta-Quota-Bytes', 0).to_i }
+          # if the field is missing, no quota is set, so -1 will be returned
+          return { capacity: response.headers.fetch('X-Account-Meta-Quota-Bytes', -1).to_i }
         end
       end
 
