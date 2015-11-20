@@ -1,7 +1,12 @@
 module Inquiry
   class InquiriesController < DashboardController
     def index
-      @inquiries = services.inquiry.inquiries(@scoped_project_id)
+      filter = params[:filter] ? params[:filter] : {}
+      @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(params[:page] || 1).per(params[:per_page])
+      respond_to do |format|
+        format.html {render action: :index}
+        format.js {render template: 'inquiry/inquiries/index.js', layout: false}
+      end
     end
 
     def new
@@ -13,11 +18,78 @@ module Inquiry
     end
 
     def create
-      @inquiry = Inquiry.new()
-      @inquiry.kind = inquiry_params[:kind]
-      @inquiry.description = inquiry_params[:description]
-      @inquiry.requester_id = current_user.id
-      @inquiry.payload = {
+      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, [current_user.id], callbacks
+        flash[:notice] = "Inquiry successfully created."
+        redirect_to inquiries_path
+      else
+        render action: :new
+      end
+    end
+
+
+    def edit
+      session[:return_to] ||= request.referer
+      @inquiry = services.inquiry.inquiry(params[:id]) rescue nil
+    end
+
+    def update
+      @inquiry = Inquiry.find(params[:id]) rescue nil
+      if @inquiry.aasm_state != inquiry_params[:aasm_state]
+        @inquiry.process_step_description = inquiry_params[:process_step_description]
+        if @inquiry.valid?
+          @inquiry.reject!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
+          @inquiry.approve!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
+          @inquiry.reopen!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
+          flash[:notice] = "Inquiry successfully updated."
+          redirect_to session[:return_to]
+        else
+          render action: :edit
+        end
+      else
+        @inquiry.errors.messages[:aasm_state] =  ["Please change status before saving"]
+        render action: :edit
+      end
+    end
+
+    def destroy
+      @inquiry = Inquiry.find(params[:id]) rescue nil
+
+      if @inquiry
+        if @inquiry.destroy
+          flash[:notice] = "Inquiry successfully deleted."
+        else
+          flash[:error] = @inquiry.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+        end
+      end
+
+      respond_to do |format|
+        format.js {}
+        format.html { redirect_to inquiries_path }
+      end
+    end
+
+    private
+
+    def inquiry_params
+      params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
+    end
+
+    def callbacks
+      callbacks= {
+          "approved": {
+              "name": "Create",
+              "action": "index"
+          },
+          "rejected": {
+              "name": "RejectedAction",
+              "action": "rejected"
+          }
+      }
+      return callbacks
+    end
+
+    def payload
+      payload = {
           "run_provision_on_warehouse_push": false,
           "sap_openstack": {
               "compiletime": true
@@ -52,60 +124,8 @@ module Inquiry
               }
           }
       }
-
-      if @inquiry.save
-        flash[:notice] = "Inquiry successfully created."
-        redirect_to inquiries_path
-      else
-        render action: :new
-      end
+      return payload
     end
 
-    def edit
-      @inquiry = Inquiry.find(params[:id]) rescue nil
-    end
-
-    def update
-      @inquiry = Inquiry.find(params[:id]) rescue nil
-      if @inquiry.aasm_state != inquiry_params[:aasm_state]
-        @inquiry.process_step_description = inquiry_params[:process_step_description]
-        if @inquiry.valid?
-          @inquiry.reject!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
-          @inquiry.approve!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
-          @inquiry.reopen!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
-          flash[:notice] = "Network successfully updated."
-          redirect_to inquiries_path
-        else
-          #@inquiry.aasm_state = inquiry_params[:aasm_state]
-          render action: :edit
-        end
-      else
-        @inquiry.errors.messages[:aasm_state] =  ["Please change status before saving"]
-        render action: :edit
-      end
-    end
-
-    def destroy
-      @inquiry = Inquiry.find(params[:id]) rescue nil
-
-      if @inquiry
-        if @inquiry.destroy
-          flash[:notice] = "Inquiry successfully deleted."
-        else
-          flash[:error] = @inquiry.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
-        end
-      end
-
-      respond_to do |format|
-        format.js {}
-        format.html { redirect_to inquiries_path }
-      end
-    end
-
-    private
-
-    def inquiry_params
-      params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
-    end
   end
 end

@@ -1,6 +1,3 @@
-
-
-
 // ---------------------------------------------------------------------------------
 // Variables based on bootstrap variables
 // (can't be in the variables.scss because it is included before bootstrap to be
@@ -9,9 +6,6 @@
 
 $font-size-medium: ceil(($font-size-base * 1.125));
 $context-breadcrumb-font-size: $font-size-medium;
-
-
-
 
 // ---------------------------------------------------------------------------------
 // General
@@ -101,7 +95,15 @@ section {
   white-space: nowrap;
 }
 
-
+.pagination {
+  float: right;
+  ul {
+  }
+  li {
+    background: none;
+    padding-left: 0;
+  }
+}
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -111,8 +113,6 @@ section {
   width: $login-max-width;
   margin: 0 auto;
 }
-
-
 
 // ---------------------------------------------------------------------------------
 // Icons
@@ -136,9 +136,6 @@ section {
   font-size: $font-size-base;
 }
 
-
-
-
 // ---------------------------------------------------------------------------------
 // Buttons
 // ---------------------------------------------------------------------------------
@@ -157,7 +154,6 @@ section {
   // line-height: ensure even-numbered height of button next to large input
   @include button-size($padding-medium-vertical, $padding-medium-horizontal, $font-size-large, $line-height-large, $border-radius-base);
 }
-
 
 // ---------------------------------------------------------------------------------
 // Toolbar
@@ -185,12 +181,9 @@ section {
   }
 }
 
-
-
 // ---------------------------------------------------------------------------------
 // Navigation
 // ---------------------------------------------------------------------------------
-
 
 .nav-highlight {
   background: rgba(255, 255, 255, 0.1);
@@ -203,7 +196,6 @@ section {
   color: #555;
 }
 
-
 #navbar-login-btn {
   @extend .btn;
   @extend .btn-info;
@@ -213,8 +205,7 @@ section {
   margin-right: 15px;
   margin-left: 15px;
   color: #fff;
-  }
-
+}
 
 .navbar-identity {
   .avatar {
@@ -257,7 +248,6 @@ section {
   margin: 0 auto;
 }
 
-
 // ---------------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------------
@@ -276,8 +266,6 @@ section {
   // border-bottom: 10px solid $sapgold;
 }
 
-
-
 // ---------------------------------------------------------------------------------
 // Footer
 // ---------------------------------------------------------------------------------
@@ -293,11 +281,9 @@ footer, .footer {
   height: $footer-height;
 }
 
-
 // ---------------------------------------------------------------------------------
 // Breadcrumb
 // ---------------------------------------------------------------------------------
-
 
 .breadcrumb {
   margin-top: 20px;
@@ -321,7 +307,7 @@ footer, .footer {
 }
 
 .context-breadcrumb {
-  @include box-shadow(rgba(0,0,0,0.2) 0 1px 5px);
+  @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 5px);
   @include pie-clearfix;
   background: $context-breadcrumb-bg;
   border-bottom: 1px solid #ddd;
@@ -374,7 +360,6 @@ footer, .footer {
         border-top: none;
         margin-top: 0;
 
-
         // Megaflyout (full-width, requires context-container wrapper)
         &.dropdown-menu-mega {
           @include container-width-responsive;
@@ -405,7 +390,6 @@ footer, .footer {
             padding-bottom: $line-height-computed / 4;
             font-size: $font-size-base;
 
-
             .dropdown-icon {
               position: absolute;
               left: $grid-gutter-width / 2;
@@ -435,8 +419,7 @@ footer, .footer {
 
     .context-list {
       > li {
-      border-right-color: rgba(255, 255, 255, 0.4);
-
+        border-right-color: rgba(255, 255, 255, 0.4);
 
         &.open, &:hover {
           > .glyphicon {
@@ -460,15 +443,9 @@ footer, .footer {
   }
 }
 
-
-
-
-
 // ---------------------------------------------------------------------------------
 // Alerts
 // ---------------------------------------------------------------------------------
-
-
 
 .alert-error, .alert-alert {
   @extend .alert-danger;
@@ -478,29 +455,24 @@ footer, .footer {
   @extend .alert-info;
 }
 
-
-
-
-
 // ---------------------------------------------------------------------------------
 // Callouts / Blockouts
 // ---------------------------------------------------------------------------------
 
-
 .bs-callout {
-    padding: 20px;
-    margin: 0 0 $line-height-computed;
-    border: 1px solid #eee;
-    border-left-width: 5px;
-    border-radius: 3px;
+  padding: 20px;
+  margin: 0 0 $line-height-computed;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
 
-    &.bs-callout-primary {
-      border-left-color: $btn-primary-border;
-    }
+  &.bs-callout-primary {
+    border-left-color: $btn-primary-border;
+  }
 
-    &.bs-callout-info {
-      border-left-color: $btn-info-border;
-    }
+  &.bs-callout-info {
+    border-left-color: $btn-info-border;
+  }
 }
 
 blockquote, .bs-callout {
@@ -519,7 +491,6 @@ blockquote, .bs-callout {
   font-family: $font-family-sap-light;
 
 }
-
 
 // ---------------------------------------------------------------------------------
 // Hero Elements
@@ -543,8 +514,6 @@ blockquote, .bs-callout {
 .jumbotron .hero-info .info-stat {
   color: #fff;
 }
-
-
 
 // ---------------------------------------------------------------------------------
 // Tables
@@ -589,7 +558,7 @@ tr.deleting, tr.updating {
 
   .btn {
     .glyphicon {
-      @include spinner(background rgba(0,0,0,0.2));
+      @include spinner(background rgba(0, 0, 0, 0.2));
 
       &:before {
         content: "";
@@ -639,7 +608,7 @@ tr.task-state {
   background-color: #ffffb5;
   .btn {
     .glyphicon {
-      @include spinner(background rgba(0,0,0,0.2));
+      @include spinner(background rgba(0, 0, 0, 0.2));
 
       &:before {
         content: "";
@@ -649,11 +618,10 @@ tr.task-state {
   }
 }
 
-
 .loading {
   &:before {
     content: " ";
-    @include spinner(background rgba(0,0,0,0.2));
+    @include spinner(background rgba(0, 0, 0, 0.2));
     margin-right: 3px;
   }
 }
@@ -661,7 +629,7 @@ tr.task-state {
 .btn-primary.loading {
   &:before {
     content: " ";
-    @include spinner(border-color #efefef, background rgba(0,0,0,0.2));
+    @include spinner(border-color #efefef, background rgba(0, 0, 0, 0.2));
     margin-right: 0.5em;
   }
 }
@@ -700,7 +668,6 @@ tr.task-state {
   }
 }
 
-
 // >> Fancy Table <<
 
 .table-fancy {
@@ -734,9 +701,6 @@ tr.task-state {
 
 }
 
-
-
-
 // ---------------------------------------------------------------------------------
 // Lists
 // ---------------------------------------------------------------------------------
@@ -747,7 +711,6 @@ tr.task-state {
   padding-left: 0;
   margin-top: $line-height-computed * 3;
   list-style-type: none;
-
 
   > li {
     @include make-md-column(4);
@@ -774,7 +737,6 @@ tr.task-state {
       font-weight: bold;
     }
 
-
   }
 
   &.fancy-list-2col {
@@ -800,7 +762,6 @@ tr.task-state {
   }
 }
 
-
 // ---------------------------------------------------------------------------------
 // Forms
 // ---------------------------------------------------------------------------------
@@ -808,7 +769,6 @@ tr.task-state {
 input[type='checkbox'], input[type='radio'] {
   cursor: pointer;
 }
-
 
 .inline-form {
   display: table;
@@ -833,7 +793,6 @@ input[type='checkbox'], input[type='radio'] {
     display: block;
   }
 }
-
 
 // ---------------------------------------------------------------------------------
 // Interactive

@@ -28,6 +28,13 @@
             %th State
             %td= @inquiry.aasm_state
 
+    .tab-pane{role:"tabpanel", id:"payload"}
+      %table.table.datatable
+      %tbody
+        %tr
+          %td
+            %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
+
     .tab-pane{role:"tabpanel", id:"process_steps"}
       %table.table.datatable
         %tbody
@@ -45,12 +52,6 @@
               %td= step.created_at.getlocal
               %td{:width => "400"}= step.description
 
-    .tab-pane{role:"tabpanel", id:"payload"}
-      %table.table.datatable
-      %tbody
-        %tr
-          %td
-            %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
 
 - if modal?
   .modal-footer

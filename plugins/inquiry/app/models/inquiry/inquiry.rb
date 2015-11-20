@@ -1,9 +1,18 @@
 module Inquiry
   class Inquiry < ActiveRecord::Base
+    include Filterable
+    paginates_per 3
 
     has_many :process_steps
+    has_and_belongs_to_many :processors
+
     attr_accessor :process_step_description
     validates :process_step_description, presence: {message: 'Please provide a description for the process action'}
+
+    scope :id, -> (id) { where id: id }
+    scope :state, -> (state) { where aasm_state: state }
+    scope :requester_id, -> (requester_id) { where requester_id: requester_id }
+    scope :kind, -> (kind) { where kind: kind }
 
 
     include AASM

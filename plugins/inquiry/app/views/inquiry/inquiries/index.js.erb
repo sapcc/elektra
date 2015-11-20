@@ -1,0 +1,3 @@
+$("#<%=params[:container_id]%>").html("<%= escape_javascript(render(partial: 'index', locals: {inquiries: @inquiries})) %>");
+$("#<%=params[:container_id]%>").update();
+

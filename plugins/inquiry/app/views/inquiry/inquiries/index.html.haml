@@ -1,31 +1,11 @@
-= render "intro"
-
 .page-header
   %h1
     = @active_project ?  @active_project.name : @scoped_domain_fid
     \-
     Inquiries
 
-%p
-  Some text
-
 - if true #current_user.is_allowed?("network:network_create", {network: {user_id: current_user.id} })
   .toolbar
     = link_to 'Create new', new_inquiry_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-%table.table
-  %thead
-    %tr
-      %th Request for
-      %th Description
-      %th Requester
-      %th Date
-      %th Status
-      %th.snug
-  %tbody
-    - if @inquiries.length==0
-      %tr
-        %td{colspa: 6} No inquiries available
-    - else
-      - @inquiries.each do | inquiry |
-        = render partial: 'item', locals: {inquiry: inquiry}
+= render partial: 'index', locals: {inquiries: @inquiries}

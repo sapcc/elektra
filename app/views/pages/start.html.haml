@@ -1,3 +1,24 @@
 = render "application/context_selection"
 
-Start!
+%br
+%h2 Inquiries
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'My Inquiries', '#myinquiries', aria: {controls:"myinquiries"}, role: "tab", data: {toggle:"tab"}
+  %li{role: "presentation"}= link_to 'Open inquiries', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
+
+.tab-content
+  .tab-pane.active#myinquiries{role: "tabpanel"}
+  .tab-pane#openinquiries{role: "tabpanel"}
+
+:javascript
+  $.ajax({
+    url: "#{plugin('inquiry').inquiries_path()}",
+    data: {"container_id":"myinquiries", "per_page":4, "filter": {"requester_id": "#{current_user.id}"}},
+    dataType: 'script'
+  });
+  $.ajax({
+    url: "#{plugin('inquiry').inquiries_path()}",
+    data: {"container_id":"openinquiries","per_page":2, "filter": {"state": "open"}},
+    dataType: 'script'
+  });
+  // $("#openinquiries").loadInquiries({"filter":{}});
