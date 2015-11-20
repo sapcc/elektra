@@ -63,8 +63,10 @@ module ResourceManagement
            end
 
            usage_percent = 0
+           approved_percent = 0
            if current_quota > 0
              usage_percent = ((usage.to_f / current_quota.to_f)*100).to_i
+             approved_percent = ((approved_quota.to_f / current_quota.to_f)*100).to_i
            end
 
            if (approved_quota < current_quota and usage_percent >= approved_quota) or usage_percent >= from_usage
@@ -77,7 +79,7 @@ module ResourceManagement
                :usage    => usage,
              }
              resource_data[:percent] = {
-               :approved => ((approved_quota.to_f / current_quota.to_f)*100).to_i,
+               :approved => approved_percent,
                :usage => usage_percent,
              }
            end
