@@ -68,11 +68,6 @@ GIT
       uglifier (>= 1.3.0)
 
 PATH
-  remote: plugins/automation
-  specs:
-    automation (0.0.1)
-
-PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
@@ -506,7 +501,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store
-  automation!
   better_errors
   bootstrap-sass
   byebug
