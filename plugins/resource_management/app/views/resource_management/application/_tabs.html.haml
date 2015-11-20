@@ -13,7 +13,7 @@
       Compute
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_compute_path()}
+    %a{:href => plugin('resource_management').resources_area_path('compute')}
       Compute
 
 - if tab.eql? "network"
@@ -22,7 +22,7 @@
       Network
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_network_path()}
+    %a{:href => plugin('resource_management').resources_area_path('network')}
       Network
 
 - if tab.eql? "storage"
@@ -31,5 +31,5 @@
       Storage
 - else
   %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_storage_path()}
+    %a{:href => plugin('resource_management').resources_area_path('storage')}
       Storage

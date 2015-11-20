@@ -12,6 +12,14 @@ module ResourceManagement
       @service = params[:service]
     end
 
+    def show_area
+      @area = params.require(:area).to_sym
+      # which services belong to this area?
+      @area_services = ResourceManagement::Resource::KNOWN_RESOURCES.select { |res| res[:area] == @area }.map { |res| res[:service] }.uniq
+      # load all resources for these services
+      @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
+    end
+
     def compute
       @compute_quotas = get_quotas("compute")
     end
