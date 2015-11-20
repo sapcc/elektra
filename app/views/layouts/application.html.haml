@@ -24,14 +24,22 @@
     = yield :page_lead
 
     .container
-      .content
+      .content{class: "#{plugin_name if plugin_name}"}
         = render "application/flashes"
         = yield
 
     %footer.footer
       .container
-        = render partial: 'layouts/debug'
         = image_tag "monsoon_logo.png", class: "pull-right"
+
+        .row
+          .col-sm-3
+            - if Rails.env.development?
+              = render partial: 'layouts/dev_tools'
+          .col-sm-3
+          .col-sm-3
+
+
 
     = yield :templates
     = yield :javascripts

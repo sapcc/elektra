@@ -1,0 +1,65 @@
+- date = Time.new(2015,11,19)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Andreas Pfau - #{date}"
+    
+  %h4 SASS instead of Sprockets!  
+  %ul
+    %li 
+      Plugins should use SASS directives to import files. 
+      %code.language-html
+        @import "file_name";
+    %li
+      %b DO NOT USE 
+      require, require_tree, and require_self.
+
+  %h4 Namespace for Plugin's CCS classes
+  %ul
+    %li 
+      All css classes inside a plugin are embedded in a namespace. 
+      %br
+      css class inside a plugin called my_plugin  
+      %code.language-html
+        %span .test { ... } 
+      becomes 
+      %code.language-html
+        %span .my_plugin .test { ... }
+  
+  %h4 Closures for Plugin's JS files
+  %ul
+    %li 
+      Every javascript file inside a plugin is embedded in a closure. 
+      For a plugin called my_plugin the closure looks as follows
+      %code.language-html
+        %span window.my_plugin = window.my_plugin || {};
+        %br
+        %span (function(){ <br/>
+        %span &nbsp;&nbsp; //... content of the file <br/>     
+        %span }).call(this);
+    %li All functions are visible inside the file     
+    %li 
+      To make a function visible to outsie you should bind it to the variable my_plugin (replace my_plugin with the name of your plugin)
+      %code.language-html my_plugin.test = function() { ... }
+
+    
+- date = Time.new(2015,11,18)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Arturo Reuschenbach - #{date}"
+  %p Please use following format to add more news:
+  %code.language-html
+    %span date = Time.new(2015,11,18)
+    %span <br>
+    %span .bs-callout.bs-callout-info{data:{date: date}}
+    %span <br>
+    %span %p
+    %span <br>
+    %span %b= 'Your username - #{date}'
+    %span <br>
+    %span %p Add the news text here
+
+- date = Time.new(2015,11,17)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Arturo Reuschenbach - #{date}"
+  %p News overview page added.

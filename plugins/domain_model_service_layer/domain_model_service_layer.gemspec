@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = DomainModelServiceLayer::VERSION
   s.authors     = ["Andreas Pfau"]
   s.email       = ["andreas.pfau@sap.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of DomainModelServiceLayer."
-  s.description = "TODO: Description of DomainModelServiceLayer."
+  s.homepage    = ""
+  s.summary     = "Summary of DomainModelServiceLayer."
+  s.description = "Description of DomainModelServiceLayer."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "README.rdoc"]
