@@ -104,39 +104,30 @@ module ResourceManagement
       end
 
       def query_project_quota_object_storage(domain_id, project_id)
-        puts "QUOTA FOR #{domain_id} -> #{project_id}"
-        # the "service" role usually means "readonly access to everything",
-        # but not for Swift; here only the reseller-admin role works
-        with_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id, role_name: 'ResellerAdmin') do |connection|
-          # the head_account request is not yet implemented in Fog (TODO: add it),
-          # so let's use request() directly
-          response = connection.request(
-            :expects => [200, 204], # usually 204, but sometimes Swift Kilo inexplicably returns 200
-            :method  => 'HEAD',
-            :path    => '',
-            :query   => { 'format' => 'json' },
-          )
-
-          # if the field is missing, no quota is set, so -1 will be returned
-          return { capacity: response.headers.fetch('X-Account-Meta-Quota-Bytes', -1).to_i }
-        end
+        metadata = get_swift_account_metadata(domain_id, project_id)
+        return { capacity: metadata.fetch('X-Account-Meta-Quota-Bytes', -1).to_i }
       end
 
       def query_project_usage_object_storage(domain_id, project_id)
-        puts "USAGE FOR #{domain_id} -> #{project_id}"
+        metadata = get_swift_account_metadata(domain_id, project_id)
+        return { capacity: metadata['X-Account-Bytes-Used'].to_i }
+      end
+
+      # The query for quota and usage in Swift use the same request, so this
+      # method caches it.
+      def get_swift_account_metadata(domain_id, project_id)
         # the "service" role usually means "readonly access to everything",
         # but not for Swift; here only the reseller-admin role works
-        with_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id, role_name: 'ResellerAdmin') do |connection|
+        @swift_account_metadata_cache ||= {}
+        @swift_account_metadata_cache[project_id] ||= with_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id, role_name: 'ResellerAdmin') do |connection|
           # the head_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
-          response = connection.request(
+          connection.request(
             :expects => [200, 204], # usually 204, but sometimes Swift Kilo inexplicably returns 200
             :method  => 'HEAD',
             :path    => '',
             :query   => { 'format' => 'json' },
-          )
-
-          return { capacity: response.headers['X-Account-Bytes-Used'].to_i }
+          ).headers.to_hash
         end
       end
 
