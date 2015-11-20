@@ -1,0 +1,14 @@
+/*
+  We are using SASS!
+  DO NOT USE require, require_tree, and require_self.
+
+  Instead require further sass files by calling the "@import" directive.
+  e.g. @import "mixins";
+
+  Dashboard encapsulates plugin's css in a class with the same name as plugin.
+  If the name of your plugin is identity then all css classes inside identity plugin 
+  will be surrounded with .identity.
+  e.g. .test { color: red; } becomes to .identity .test { color: red; }
+  The content div gets also a css class with the name of current plugin. So your styles are 
+  effective inside the content of your plugin. 
+*/
