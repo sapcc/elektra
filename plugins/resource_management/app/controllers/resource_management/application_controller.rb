@@ -48,29 +48,44 @@ module ResourceManagement
 
     def calculate_quotas_usage(quotas,from_usage = 0,danger_level = 100)
        usage_data = []
-       # danger: approved = usage
-       #         danger_level = usage
        quotas.each do |data|
          resource_data = {}
-         usage_percent = ((data.usage.to_f / data.current_quota.to_f)*100).to_i
-         if (data.approved_quota < data.current_quota and usage_percent >= data.approved_quota) or usage_percent >= from_usage
-            resource_data[:service] = data.service
-            resource_data[:name] = data.name
-            resource_data[:danger_level] = danger_level
-            resource_data[:quota] = {
-                :approved => data.approved_quota,
-                :current => data.current_quota,
-                :usage => data.usage,
-            }
-            resource_data[:percent] = {
-                :approved => ((data.approved_quota.to_f / data.current_quota.to_f)*100).to_i,
-                :usage => usage_percent,
-            }
+         resource_config = ResourceManagement::Resource.get_known_resource(data.service, data.name)
+         if resource_config
+
+           usage = data.usage
+           current_quota = data.current_quota
+           approved_quota = data.approved_quota
+           if resource_config[:display_unit]
+             usage = data.usage/resource_config[:display_unit] 
+             current_quota = data.current_quota/resource_config[:display_unit]
+             approved_quota = data.approved_quota/resource_config[:display_unit]
+           end
+
+           usage_percent = 0
+           if current_quota > 0
+             usage_percent = ((usage.to_f / current_quota.to_f)*100).to_i
+           end
+
+           if (approved_quota < current_quota and usage_percent >= approved_quota) or usage_percent >= from_usage
+             resource_data[:service] = data.service
+             resource_data[:name] = data.name
+             resource_data[:danger_level] = danger_level
+             resource_data[:quota] = {
+               :approved => approved_quota,
+               :current  => current_quota,
+               :usage    => usage,
+             }
+             resource_data[:percent] = {
+               :approved => ((approved_quota.to_f / current_quota.to_f)*100).to_i,
+               :usage => usage_percent,
+             }
+           end
+
+           usage_data.push(resource_data)
          end
-         usage_data.push(resource_data)
        end
        usage_data
     end
-
   end
 end

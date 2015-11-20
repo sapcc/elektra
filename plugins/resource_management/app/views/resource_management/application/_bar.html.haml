@@ -15,7 +15,7 @@
             = link_to t("resource_management.#{name}"), plugin('resource_management').compute_path() 
           - when "network"
             = link_to t("resource_management.#{name}") , plugin('resource_management').network_path()
-          - when "storage" && "object storage"
+          - when "block_storage" && "object_storage"
             = link_to t("resource_management.#{name}"), plugin('resource_management').storage_path()
         - else
           .text-muted 

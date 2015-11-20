@@ -17,5 +17,13 @@ module ResourceManagement
       { service: :block_storage,  name: :volumes         },
       { service: :object_storage, name: :capacity,       display_unit: 1 << 30 }, # stored in bytes, displayed in GiB
     ]
+
+    def self.get_known_resource(service, name)
+      KNOWN_RESOURCES.each do |resource|
+        return resource if resource[:service] == service.to_sym and resource[:name] == name.to_sym            
+      end
+      false
+    end
+
   end
 end
