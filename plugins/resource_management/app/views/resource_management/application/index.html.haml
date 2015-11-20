@@ -1,12 +1,19 @@
 =render :partial => 'header'
 %ul{:class => "nav nav-tabs"}
-  = render :partial => 'tabs', :locals => { :level => 'overview'}
+  = render :partial => 'tabs', :locals => { :tab => 'overview'}
 
 .container
   .row.quota-row
     .col-md-9   
-      = render :partial => 'bar', :locals => { :overview => true, :quota_data => { :approved => 50, :current => 100, :usage => 80 }, :percent => { :approved => 50, :usage => 80 }, :level => 'storage', :resource_type => 'object storage capacity', :name => 'Capacity (GiB)', :description => 'Object Storage'}
-      = render :partial => 'bar', :locals => { :overview => true, :quota_data => { :approved => 20, :current => 20, :usage => 18 }, :percent => { :approved => 100, :usage => 90 }, :level => 'compute', :resource_type => 'cores', :name => 'Cores', :description => ''}
+      - if @critical_quotas.blank?
+        .bs-callout.bs-callout-info
+          Nothing to report! Everything is fine...
+      - else
+        - @critical_quotas.each do |resource_data|
+          = render :partial => 'bar', :locals => { :overview => true, :data => resource_data }
+
+      -#= render :partial => 'bar', :locals => { :overview => true, :data => {:quota => { :approved => 50, :current => 100, :usage => 80 }, :percent => { :approved => 50, :usage => 80 }, :service => 'object storage', :name => 'capacity'}}
+      -#= render :partial => 'bar', :locals => { :overview => true, :data => {:quota => { :approved => 20, :current => 20, :usage => 18 }, :percent => { :approved => 100, :usage => 90 }, :service => 'compute', :name => 'cores'}}
       
     .col-md-3
       .bs-callout.bs-callout-primary

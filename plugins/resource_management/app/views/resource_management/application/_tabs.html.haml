@@ -1,4 +1,4 @@
-- if level.eql? "overview"
+- if tab.eql? "overview"
   %li{:role => "presentation", :class => "active"}
     %a{:href => '#'}
       Overview
@@ -7,7 +7,7 @@
     %a{:href => plugin('resource_management').resources_path()}
       Overview
 
-- if level.eql? "compute"
+- if tab.eql? "compute"
   %li{:role => "presentation", :class => "active"}
     %a{:href => '#'}
       Compute
@@ -16,7 +16,7 @@
     %a{:href => plugin('resource_management').resources_compute_path()}
       Compute
 
-- if level.eql? "network"
+- if tab.eql? "network"
   %li{:role => "presentation", :class => "active"}
     %a{:href => '#'}
       Network
@@ -25,7 +25,7 @@
     %a{:href => plugin('resource_management').resources_network_path()}
       Network
 
-- if level.eql? "storage"
+- if tab.eql? "storage"
   %li{:role => "presentation", :class => "active"}
     %a{:href => '#'}
       Storage
