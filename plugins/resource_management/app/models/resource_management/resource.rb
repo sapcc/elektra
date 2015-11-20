@@ -23,7 +23,7 @@ module ResourceManagement
 
     def attributes
       KNOWN_RESOURCES.each do |resource|
-        return resource if resource[:service] == service.to_sym and resource[:name] == name.to_sym            
+        return resource if resource[:service] == service.to_sym and resource[:name] == name.to_sym
       end
       return {}
     end

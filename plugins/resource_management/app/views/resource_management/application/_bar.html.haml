@@ -1,6 +1,4 @@
 - unless data.blank?
-  - quota_data    = data[:quota]
-  - percent       = data[:percent]
   - name          = data[:name]
   - service       = data[:service]
   - description   = t(service)
@@ -19,34 +17,44 @@
             .small= description
 
     .col-md-7
-      - if quota_data[:current] > 0
+      - if record.current_quota > 0
+        - display_unit = record.attributes[:display_unit] || 1
+        - usage          = record.usage          / display_unit
+        - current_quota  = record.current_quota  / display_unit
+        - approved_quota = record.approved_quota / display_unit
+        - usage_percent    = ((record.usage.to_f / record.current_quota.to_f) *100).to_i
+        - approved_percent = ((record.approved_quota.to_f / record.current_quota.to_f) *100).to_i
+        - is_danger        = usage > approved_quota || usage_percent >= 95
+        - is_warning       = usage_percent >= 80
         .quota
-          - if quota_data[:approved] < quota_data[:current]
-            .quota-approved{:style => "right:#{100-percent[:approved]}%"} 
+          - if approved_quota < current_quota
+            .quota-approved{:style => "right:#{100-approved_percent}%"} 
               %span.text-nowrap
-                Approved quota: #{quota_data[:approved]}
+                Approved quota: #{approved_quota}
 
           .quota-current
-            %span.text-nowrap #{quota_data[:current]}
+            %span.text-nowrap #{current_quota}
 
           .progress
-            - if percent[:usage] >= danger_level or quota_data[:usage] >= quota_data[:approved] 
-              .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:#{percent[:usage]}%"} #{quota_data[:usage]}
+            - if is_danger
+              .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
+            - elsif is_warning
+              .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
             - else
-              .progress-bar.progress-bar-quota{:style => "width:#{percent[:usage]}%"} #{quota_data[:usage]}
-
-            -if quota_data[:approved] < quota_data[:current]
-              .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-percent[:usage]}%"}
+              .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage
+            -if approved_quota < current_quota
+              .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-usage_percent}%"}
       - else
         .quota
           .quota-current
             %span.text-nowrap Unlimited
           .progress
             .quota-overcommit &nbsp;
+
     .col-md-1.quota-request-more
       = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
     .col-md-1.quota-request-more
-      - if quota_data[:current] > 0
+      - if record.current_quota >= 0
         = link_to 'Request more',plugin('resource_management').resources_request_path(:service => service, :resource_type => resource_type ), data: {modal: true}, class: 'btn btn-primary btn-sm'
       - else
         = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'

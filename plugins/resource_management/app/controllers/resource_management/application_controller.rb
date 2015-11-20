@@ -53,14 +53,10 @@ module ResourceManagement
          resource_config = data.attributes || {}
          if resource_config
 
-           usage = data.usage
-           current_quota = data.current_quota
-           approved_quota = data.approved_quota
-           if resource_config[:display_unit]
-             usage = data.usage/resource_config[:display_unit] 
-             current_quota = data.current_quota/resource_config[:display_unit]
-             approved_quota = data.approved_quota/resource_config[:display_unit]
-           end
+           display_unit = resource_config[:display_unit] || 1
+           usage          = data.usage          / display_unit
+           current_quota  = data.current_quota  / display_unit
+           approved_quota = data.approved_quota / display_unit
 
            usage_percent = 0
            approved_percent = 0
@@ -73,15 +69,6 @@ module ResourceManagement
              resource_data[:service] = data.service
              resource_data[:name] = data.name
              resource_data[:danger_level] = danger_level
-             resource_data[:quota] = {
-               :approved => approved_quota,
-               :current  => current_quota,
-               :usage    => usage,
-             }
-             resource_data[:percent] = {
-               :approved => approved_percent,
-               :usage => usage_percent,
-             }
              resource_data[:record] = data
            end
 
