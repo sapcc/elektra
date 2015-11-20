@@ -2,8 +2,7 @@ module ResourceManagement
   class ApplicationController < DashboardController
     
     def index
-      @critical_quotas = ResourceManagement::Resource.get_critical_quotas(@scoped_domain_id,@scoped_project_id,100)
-      #raise
+      @critical_quotas = get_critical_quotas()
     end
 
     def resource_request
@@ -12,7 +11,45 @@ module ResourceManagement
     end
     
     def compute
-      @quotas = ResourceManagement::Resource.get_quotas(@scoped_domain_id,@scoped_project_id,"compute",100)
+      @quotas = get_quota("compute")
+    end
+
+    private
+
+    def get_critical_quotas(danger_level = 100)
+      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)
+      calculate_quotas_usage(quotas,100,danger_level)
+    end
+
+    def get_quota(service,danger_level = 100)
+      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => service)
+      calculate_quotas_usage(quotas, 0, danger_level)
+    end
+
+    def calculate_quotas_usage(quotas,from_usage = 0,danger_level = 100)
+       usage_data = []
+       # danger: approved = usage
+       #         danger_level = usage
+       quotas.each do |data|
+         resource_data = {}
+         usage_percent = ((data.usage.to_f / data.current_quota.to_f)*100).to_i
+         if (data.approved_quota < data.current_quota and usage_percent >= data.approved_quota) or usage_percent >= from_usage
+            resource_data[:service] = data.service
+            resource_data[:name] = data.name
+            resource_data[:danger_level] = danger_level
+            resource_data[:quota] = {
+                :approved => data.approved_quota,
+                :current => data.current_quota,
+                :usage => data.usage,
+            }
+            resource_data[:percent] = {
+                :approved => ((data.approved_quota.to_f / data.current_quota.to_f)*100).to_i,
+                :usage => usage_percent,
+            }
+         end
+         usage_data.push(resource_data)
+       end
+       usage_data
     end
 
     def manual_sync
