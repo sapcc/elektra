@@ -23,6 +23,16 @@ module ResourceManagement
       @object_storage_quotas = get_quotas("object_storage")
     end
 
+    def manual_sync
+      service = services.resource_management
+      service.sync_domains
+      ResourceManagement::Resource.pluck('DISTINCT domain_id, project_id').each { |d,p| service.sync_project(d,p) }
+      begin
+        redirect_to :back
+      rescue ActionController::RedirectBackError
+        render text: "Synced!"
+      end
+    end
 
     private
 
@@ -60,17 +70,6 @@ module ResourceManagement
          usage_data.push(resource_data)
        end
        usage_data
-    end
-
-    def manual_sync
-      # services.resource_management.get_project_usage_swift("o-5ca7c76b0","p-6e6e0bc61")
-      services.resource_management.sync_projects
-      services.resource_management.sync_service(:object_storage)
-      begin
-        redirect_to :back
-      rescue ActionController::RedirectBackError
-        render text: "Synced!"
-      end
     end
 
   end

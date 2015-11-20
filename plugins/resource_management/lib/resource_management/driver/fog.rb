@@ -13,25 +13,111 @@ module ResourceManagement
         @srv_conn = MonsoonOpenstackAuth.api_client(@region).connection_driver.connection
       end
 
-      # List all projects that exist, in the form { "domain_id": "xxx", "id": "xxx" }.
-      def enumerate_projects
-        result = []
-
-        @srv_conn.list_domains.body['domains'].each do |domain|
-          @srv_conn.list_projects(domain_id: domain['id']).body['projects'].each do |project|
-            result.append({ domain_id: domain['id'], id: project['id'] })
-          end
-        end
-
-        return result
+      # List all domain IDs that exist.
+      def enumerate_domains
+        @srv_conn.list_domains.body['domains'].map { |domain| domain['id'] }
       end
 
-      def get_project_usage_swift(domain_id, project_id)
-        # TODO: The following fails because the "service" role is not enough
-        # for Swift.  Therefore, this mock implementation reports a usage of 1
-        # GiB and quota of 2 GiB for every project.
-        return { capacity: 1 << 30, quota: 2 << 30 }
+      # List all project IDs that exist in the given domain.
+      def enumerate_projects(domain_id)
+        @srv_conn.list_projects(domain_id: domain_id).body['projects'].map { |domain| domain['id'] }
+      end
 
+      # Query quotas for the given project from the given service.
+      # Returns a hash with resource names as keys. The service argument and
+      # the resource names in the result are symbols, with acceptable values
+      # defined in ResourceManagement::Resource::KNOWN_RESOURCES.
+      def query_project_quota(domain_id, project_id, service)
+        # dispatch into the private implementation methods for each service
+        return send("query_project_quota_#{service}", domain_id, project_id)
+      end
+
+      # Query usage values for the given project from the given service.
+      # Returns a hash with resource names as keys. The service argument and
+      # the resource names in the result are symbols, with acceptable values
+      # defined in ResourceManagement::Resource::KNOWN_RESOURCES.
+      def query_project_usage(domain_id, project_id, service)
+        # dispatch into the private implementation methods for each service
+        return send("query_project_usage_#{service}", domain_id, project_id)
+      end
+
+      private
+
+      def query_project_quota_compute(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          cores:     rand(0..100),
+          instances: rand(0..100),
+          ram:       rand(0..100),
+        }
+      end
+
+      def query_project_usage_compute(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          cores:     rand(0..100),
+          instances: rand(0..100),
+          ram:       rand(0..100),
+        }
+      end
+
+      def query_project_quota_network(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          floating_ips:    rand(0..100),
+          networks:        rand(0..100),
+          ports:           rand(0..100),
+          routers:         rand(0..100),
+          security_groups: rand(0..100),
+          subnets:         rand(0..100),
+        }
+      end
+
+      def query_project_usage_network(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          floating_ips:    rand(0..100),
+          networks:        rand(0..100),
+          ports:           rand(0..100),
+          routers:         rand(0..100),
+          security_groups: rand(0..100),
+          subnets:         rand(0..100),
+        }
+      end
+
+      def query_project_quota_block_storage(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          capacity:  rand(0..(100 << 30)), # max 100 GiB
+          snapshots: rand(0..100),
+          volumes:   rand(0..100),
+        }
+      end
+
+      def query_project_usage_block_storage(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          capacity:  rand(0..(100 << 30)), # max 100 GiB
+          snapshots: rand(0..100),
+          volumes:   rand(0..100),
+        }
+      end
+
+      def query_project_quota_object_storage(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          capacity:  rand(0..(100 << 30)), # max 100 GiB
+        }
+      end
+
+      def query_project_usage_object_storage(domain_id, project_id)
+        # TODO: mock implementation
+        return {
+          capacity:  rand(0..(100 << 30)), # max 100 GiB
+        }
+      end
+
+      def actual_get_project_usage_object_storage(domain_id, project_id)
         connection = get_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id)
 
         # the head_account request is not yet implemented in Fog (TODO: add it),
@@ -44,8 +130,6 @@ module ResourceManagement
         )
         raise "implementation not finished"
       end
-
-      private
 
       def get_service_user_connection(fog_class, domain_id, project_id)
         # establish service user connection to selected domain/project (this is

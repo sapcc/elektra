@@ -17,55 +17,79 @@ module ServiceLayer
       })
     end
 
-    # Discover existing domains and projects, then:
-    # 1. Cleanup Resource objects from local DB for projects that have been deleted.
-    # 2. Create Resource objects in local DB for projects that have been created.
-    def sync_projects
-      known_projects = driver.enumerate_projects
-      is_known_project = {}
-      known_projects.each { |proj| is_known_project[ proj[:id] ] = true }
+    # Discover existing domains, then:
+    # 1. Cleanup Resource objects for deleted domains from local DB.
+    # 2. Use sync_projects() to create and/or update Resource objects for all
+    #    projects in all known domains.
+    def sync_domains
+      # check which domains exist in the DB and in Keystone
+      all_domain_ids = driver.enumerate_domains
+      Rails.logger.info "ResourceManagement > sync_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
+      db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
-      # drop Resource objects for projects that have been deleted
-      ResourceManagement::Resource.select(:project_id).uniq.pluck(:project_id).each do |project_id|
-        next if is_known_project[project_id]
-        # TODO: this loop might run very long, so new projects might be created during its
-        # run; recheck that the project is gone before actually deleting its resource entries
-        ResourceManagement::Resource.where(project_id: project_id).each(&:destroy)
-      end
+      # drop Resource objects for deleted domains
+      old_domain_ids = db_domain_ids - all_domain_ids
+      Rails.logger.info "ResourceManagement > sync_domains: cleaning up deleted domains: #{old_domain_ids.join(' ')}"
+      ResourceManagement::Resource.where(domain_id: old_domain_ids).destroy_all()
 
-      # create missing Resource entries
-      known_projects.each do |proj|
-        KNOWN_RESOURCES.each do |service_name, resource_names|
-          resource_names.each do |resource_name|
-            puts ">>>", proj.inspect
-            ResourceManagement::Resource.where(
-              cluster_id: nil,
-              domain_id:  proj[:domain_id],
-              project_id: proj[:id],
-              service:    service_name,
-              name:       resource_name,
-            ).first_or_create(
-              current_quota:  0,
-              approved_quota: 0,
-              usage:          0,
-            )
-          end
-        end
-      end
+      # call sync_projects on all existing domains
+      all_domain_ids.each { |domain_id| sync_projects(domain_id) }
     end
 
-    # Refresh all existing Resource entries for the given service (e.g. :object_storage) by
-    # querying current quota and usage from the backend.
-    def sync_service(service)
-      # TODO: implementation is too specific (e.g. it relies on the fact that service
-      # :object_storage has only one resource)
-      ResourceManagement::Resource.where(service: service).where.not(project_id: nil).each do |resource|
-        if service == :object_storage
-          data = driver.get_project_usage_swift(resource.domain_id, resource.project_id)
-          resource.current_quota = data[:quota]
-          resource.usage         = data[:capacity]
-          resource.save
-        end
+    # Discover existing projects in a domain, then:
+    # 1. Cleanup Resource objects for deleted projects from local DB.
+    # 2. Create Resource objects for new projects in local DB.
+    def sync_projects(domain_id)
+      # check which projects exist in the DB and in Keystone
+      all_project_ids = driver.enumerate_projects(domain_id)
+      Rails.logger.info "ResourceManagement > sync_projects(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
+      db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).pluck('DISTINCT project_id')
+
+      # drop Resource objects for deleted projects
+      old_project_ids = db_project_ids - all_project_ids
+      Rails.logger.info "ResourceManagement > sync_projects(#{domain_id}): cleaning up deleted projects: #{old_project_ids.join(' ')}"
+      ResourceManagement::Resource.where(domain_id: domain_id, project_id: old_project_ids).destroy_all()
+
+      # initialize Resource objects for new domains (by recursing into sync_project)
+      new_project_ids = all_project_ids - db_project_ids
+      Rails.logger.info "ResourceManagement > sync_projects(#{domain_id}): trigger sync_project for new projects: #{new_project_ids.join(' ')}"
+      new_project_ids.each { |project_id| sync_project(domain_id, project_id) }
+    end
+
+    # Update Resource entries for the given project with fresh current_quota
+    # and usage values (and create missing Resource entries as necessary).
+    def sync_project(domain_id, project_id)
+      # fetch current quotas and usage for this project from all services
+      known_resources = ResourceManagement::Resource::KNOWN_RESOURCES
+      actual_quota = {}
+      actual_usage = {}
+      known_resources.map { |res| res[:service] }.uniq.each do |service|
+        actual_quota[service] = driver.query_project_quota(domain_id, project_id, service)
+        actual_usage[service] = driver.query_project_usage(domain_id, project_id, service)
+      end
+
+      # write values into database
+      known_resources.each do |resource|
+        this_actual_quota = actual_quota[ resource[:service] ][ resource[:name] ] || 0
+        this_actual_usage = actual_usage[ resource[:service] ][ resource[:name] ] || 0
+
+        # create new Resource entry if necessary
+        object = ResourceManagement::Resource.where(
+          cluster_id: nil, # TODO: take cluster assignment into account for brokered services
+          domain_id:  domain_id,
+          project_id: project_id,
+          service:    resource[:service],
+          name:       resource[:name],
+        ).first_or_create(
+          usage:          this_actual_usage,
+          current_quota:  this_actual_quota,
+          approved_quota: 0,
+        )
+
+        # update existing entry
+        object.current_quota = this_actual_quota
+        object.usage         = this_actual_usage
+        object.save if object.changed?
       end
     end
 
