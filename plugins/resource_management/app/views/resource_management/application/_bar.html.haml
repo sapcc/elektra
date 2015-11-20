@@ -47,10 +47,10 @@
               .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-percent[:usage]}%"}
       - else
         .quota
-          %span.text-danger 
-            quota is not set. Current usage:#{quota_data[:usage]}
-          %span.label.label-warning
-            Warning!     
+          .quota-current
+            %span.text-nowrap Unlimited
+          .progress
+            .quota-overcommit &nbsp;
     .col-md-1.quota-request-more
       = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
     .col-md-1.quota-request-more
