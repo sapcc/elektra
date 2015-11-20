@@ -104,39 +104,46 @@ module ResourceManagement
       end
 
       def query_project_quota_object_storage(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          capacity:  rand(0..(100 << 30)), # max 100 GiB
-        }
+        puts "QUOTA FOR #{domain_id} -> #{project_id}"
+        # the "service" role usually means "readonly access to everything",
+        # but not for Swift; here only the reseller-admin role works
+        with_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id, role_name: 'ResellerAdmin') do |connection|
+          # the head_account request is not yet implemented in Fog (TODO: add it),
+          # so let's use request() directly
+          response = connection.request(
+            :expects => [200, 204], # usually 204, but sometimes Swift Kilo inexplicably returns 200
+            :method  => 'HEAD',
+            :path    => '',
+            :query   => { 'format' => 'json' },
+          )
+
+          return { capacity: response.headers.fetch('X-Account-Meta-Quota-Bytes', 0).to_i }
+        end
       end
 
       def query_project_usage_object_storage(domain_id, project_id)
-        connection = get_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id,
-          # the "service" role usually means "readonly access to everything",
-          # but not for Swift; here only the reseller-admin role works
-          role_name: 'ResellerAdmin',
-        )
+        puts "USAGE FOR #{domain_id} -> #{project_id}"
+        # the "service" role usually means "readonly access to everything",
+        # but not for Swift; here only the reseller-admin role works
+        with_service_user_connection(::Fog::Storage::OpenStack, domain_id, project_id, role_name: 'ResellerAdmin') do |connection|
+          # the head_account request is not yet implemented in Fog (TODO: add it),
+          # so let's use request() directly
+          response = connection.request(
+            :expects => [200, 204], # usually 204, but sometimes Swift Kilo inexplicably returns 200
+            :method  => 'HEAD',
+            :path    => '',
+            :query   => { 'format' => 'json' },
+          )
 
-        # the head_account request is not yet implemented in Fog (TODO: add it),
-        # so we use request() directly
-        response = connection.request(
-          :expects => 204,
-          :method  => 'HEAD',
-          :path    => '',
-          :query   => { 'format' => 'json' },
-        )
-
-        return {
-          capacity: response.headers['X-Account-Bytes-Used'].to_i,
-        }
+          return { capacity: response.headers['X-Account-Bytes-Used'].to_i }
+        end
       end
 
-      def get_service_user_connection(fog_class, domain_id, project_id, options={})
+      def with_service_user_connection(fog_class, domain_id, project_id, options={}, &block)
         # establish service user connection to selected domain/project (this is
         # a bit ugly since MonsoonOpenstackAuth does not want to give us the
         # password back, so we have to resort to ENV there)
         auth_params = {
-          provider:                    'openstack',
           openstack_auth_url:          @auth_url,
           openstack_region:            @region,
           openstack_username:          ENV['MONSOON_OPENSTACK_AUTH_API_USERID'],
@@ -146,24 +153,17 @@ module ResourceManagement
           openstack_project_id:        project_id,
         }
 
-        begin
-          connection = fog_class.new(auth_params)
-        rescue Excon::Errors::Unauthorized => e
-          if e.response.body =~ /has no access to the requested project scope/
-            # this is the first time that the dashboard user tries to access
-            # this project -> grant service user role in this project
-            service_role_name = options[:role_name] || 'service'
-            roles = @srv_conn.list_roles(name: service_role_name).body['roles']
-            raise "missing role \"service\" in Keystone" if roles.empty?
-            @srv_conn.grant_project_user_role(project_id, @srv_conn.current_user_id, roles.first['id'])
-          else
-            # re-raise unknown errors
-            raise e
-          end
-        end
+        return yield(fog_class.new(auth_params))
+      rescue Excon::Errors::Unauthorized, Excon::Errors::Forbidden
+        # dashboard user may not have access to this project yet -> grant
+        # service user role in this project
+        service_role_name = options[:role_name] || 'service'
+        roles = @srv_conn.list_roles(name: service_role_name).body['roles']
+        raise "missing role \"service\" in Keystone" if roles.empty?
+        @srv_conn.grant_project_user_role(project_id, @srv_conn.current_user_id, roles.first['id'])
 
-        # try again if we had to grant the service role in the rescue block above
-        return connection || fog_class.new(auth_params)
+        # try again after granting the service role
+        return yield(fog_class.new(auth_params))
       end
 
     end
