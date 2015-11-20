@@ -1,11 +1,13 @@
 module Inquiry
   class InquiriesController < DashboardController
+    before_filter :set_referer, only: [:edit]
+
     def index
       filter = params[:filter] ? params[:filter] : {}
       @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(params[:page] || 1).per(params[:per_page])
       respond_to do |format|
-        format.html {render action: :index}
-        format.js {render template: 'inquiry/inquiries/index.js', layout: false}
+        format.html { render action: :index }
+        format.js { render template: 'inquiry/inquiries/index.js', layout: false }
       end
     end
 
@@ -28,7 +30,6 @@ module Inquiry
 
 
     def edit
-      session[:return_to] ||= request.referer
       @inquiry = services.inquiry.inquiry(params[:id]) rescue nil
     end
 
@@ -40,13 +41,14 @@ module Inquiry
           @inquiry.reject!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
           @inquiry.approve!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
           @inquiry.reopen!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
+          @inquiry.close!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
           flash[:notice] = "Inquiry successfully updated."
-          redirect_to session[:return_to]
+          render 'inquiry/inquiries/update.js' #redirect_to session.delete(:return_to)
         else
           render action: :edit
         end
       else
-        @inquiry.errors.messages[:aasm_state] =  ["Please change status before saving"]
+        @inquiry.errors.messages[:aasm_state] = ["Please change status before saving"]
         render action: :edit
       end
     end
@@ -74,11 +76,17 @@ module Inquiry
       params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
     end
 
+    def set_referer
+      session[:return_to] ||= request.referer
+    end
+
+    # Todo: Only for testing purpose
+
     def callbacks
       callbacks= {
           "approved": {
               "name": "Create",
-              "action": "index"
+              "action": "***REMOVED***_sandbox/compute/instances/new"
           },
           "rejected": {
               "name": "RejectedAction",
