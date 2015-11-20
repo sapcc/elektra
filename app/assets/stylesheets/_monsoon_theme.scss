@@ -39,6 +39,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .content {
+
+  .nav li {
+    background-image: none;
+    padding-left: 0;
+  }
+}
+
+.content, .jumbotron {
   ul {
     padding-left: 0;
     list-style-type: none;
@@ -48,12 +56,8 @@ h1, h2, h3, h4, h5, h6 {
     background: inline-svg('rounded-square-outline.svg') 0 4px no-repeat;
     padding-left: 19px;
   }
-
-  .nav li {
-    background-image: none;
-    padding-left: 0;
-  }
 }
+
 
 .navbar a, a.btn {
   text-decoration: none;
@@ -471,7 +475,20 @@ footer, .footer {
 }
 
 
+// ---------------------------------------------------------------------------------
+// Main Toolbar
+// ---------------------------------------------------------------------------------
 
+.main-toolbar {
+  border-bottom: 1px solid $bright-blue;
+  padding: $line-height-computed;
+
+  h1 {
+    margin: 0;
+    font-family: $font-family-sap-light;
+    font-size: $font-size-large;
+  }
+}
 
 
 // ---------------------------------------------------------------------------------
@@ -523,11 +540,29 @@ blockquote, .bs-callout {
 // Jumbotron
 // ---------------------------------------------------------------------------------
 
-.jumbotron {
+.jumbotron-fancy {
+  background: $medium-blue;
   background: linear-gradient($deep-blue, $bright-blue);
   color: rgba(255, 255, 255, 0.8);
   font-family: $font-family-sap-light;
 
+  h1, h2, h3, h4, h5, h6 {
+    color: #fff;
+  }
+}
+
+.jumbotron-plain {
+  padding: $line-height-computed*1.5 $line-height-computed $line-height-computed $line-height-computed;
+
+  h1 {
+    font-size: $font-size-h1;
+    margin-top: 0;
+    margin-bottom: $line-height-computed;
+  }
+
+  p {
+    font-size: $font-size-base;
+  }
 }
 
 

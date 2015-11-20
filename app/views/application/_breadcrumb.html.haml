@@ -13,7 +13,7 @@
           %ul.dropdown-menu{:role => "menu"}
             - @user_domain_projects.each do |project|
               %li{class: ("active" if project.id == @scoped_project_id)}
-                = link_to "#{project.name}", plugin('identity').project_path(project.friendly_id)
+                = link_to "#{project.name}", main_app.project_home_path(project_id: project.friendly_id)
 
 
     - if @scoped_project_id
