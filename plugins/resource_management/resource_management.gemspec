@@ -7,11 +7,11 @@ require "resource_management/version"
 Gem::Specification.new do |s|
   s.name        = "resource_management"
   s.version     = ResourceManagement::VERSION
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of ResourceManagement."
-  s.description = "TODO: Description of ResourceManagement."
+  s.authors     = ["Stefan Majewsky", "Hans-Georg Winkler"]
+  s.email       = ["stefan.majewsky@sap.com", "hans-georg.winkler@sap.com"]
+  s.homepage    = ""
+  s.summary     = "Manage quotas and resource usage in your cloud/domain/project."
+  s.description = "Manage quotas and resource usage in your cloud/domain/project."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
