@@ -49,7 +49,6 @@ module ResourceManagement
     def calculate_quotas_usage(quotas,from_usage = 0,danger_level = 100)
        usage_data = []
        quotas.each do |data|
-         resource_data = {}
          resource_config = data.attributes || {}
          if resource_config
 
@@ -66,13 +65,8 @@ module ResourceManagement
            end
 
            if (approved_quota < current_quota and usage_percent >= approved_quota) or usage_percent >= from_usage
-             resource_data[:service] = data.service
-             resource_data[:name] = data.name
-             resource_data[:danger_level] = danger_level
-             resource_data[:record] = data
+             usage_data.push(data)
            end
-
-           usage_data.push(resource_data)
          end
        end
        usage_data
