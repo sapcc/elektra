@@ -28,5 +28,6 @@ en:
       name: Name
       public_key: Public Key
   resource_management:
+    floating_ips: Floating IPs
     capacity: Capacity (GiB)
     ram: RAM (GiB)
