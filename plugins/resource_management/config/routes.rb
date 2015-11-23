@@ -1,9 +1,9 @@
 ResourceManagement::Engine.routes.draw do
   scope '/', as: 'resources' do
-    get '/' => 'application#index'
-    get ':area',  to: 'application#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
-    get 'details'  => 'application#details'
-    get 'request'  => 'application#resource_request'
+    get '/' => 'project_resources#index'
+    get ':area',  to: 'project_resources#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
+    get 'details'  => 'project_resources#details'
+    get 'request'  => 'project_resources#resource_request'
   end
 
   scope 'admin', as: 'admin' do
