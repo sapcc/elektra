@@ -12,9 +12,9 @@
   .col-md-7
     - if data.current_quota > 0
       - display_unit = data.attributes[:display_unit] || 1
-      - usage          = data.usage          / display_unit
-      - current_quota  = data.current_quota  / display_unit
-      - approved_quota = data.approved_quota / display_unit
+      - usage            = data.usage          / display_unit
+      - current_quota    = data.current_quota  / display_unit
+      - approved_quota   = data.approved_quota / display_unit
       - usage_percent    = ((data.usage.to_f / data.current_quota.to_f) *100).to_i
       - approved_percent = ((data.approved_quota.to_f / data.current_quota.to_f) *100).to_i
       - usage_level      = data.usage.to_f / [data.current_quota, data.approved_quota].min.to_f
@@ -28,9 +28,9 @@
           %span.text-nowrap #{current_quota}
 
         .progress
-          - if usage_level >= 0.95
+          - if usage_level >= @usage_stage[:danger]
             .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
-          - elsif usage_level >= 0.8
+          - elsif usage_level >= @usage_stage[:warning]
             .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
           - else
             .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage

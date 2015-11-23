@@ -1,6 +1,8 @@
 module ResourceManagement
   class ApplicationController < DashboardController
 
+    before_filter :usage_stage, :only => [:index,:show_area]
+
     def index
       # resources are critical if they have a quota, and either one of the quotas is 95% used up
       @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).
@@ -20,19 +22,6 @@ module ResourceManagement
       @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
     end
 
-    def compute
-      @compute_quotas = get_quotas("compute")
-    end
-
-    def network
-      @network_quotas = get_quotas("network")
-    end
-
-    def storage
-      @block_storage_quotas = get_quotas("block_storage")
-      @object_storage_quotas = get_quotas("object_storage")
-    end
-
     def manual_sync
       service = services.resource_management
       service.sync_domains
@@ -46,8 +35,8 @@ module ResourceManagement
 
     private
 
-    def get_quotas(service)
-      ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => service)
+    def usage_stage
+      @usage_stage = { :danger => 0.95, :warning => 0.8 }
     end
 
   end
