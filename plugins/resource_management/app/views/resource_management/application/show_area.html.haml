@@ -2,18 +2,17 @@
 %ul{:class => "nav nav-tabs"}
   = render :partial => 'tabs', :locals => { :tab => @area.to_s }
 
-.container
-  .row.quota-row
-    .col-md-9
-      - @area_services.each do |service|
-        - if @area_services.size > 1
-          %h3= t(service)
-        - resources = @resources.select { |r| r.service == service.to_s }.sort_by { |r| r.name }
-        - if resources.empty?
-          .bs-callout
-            No #{t(service)} Quotas found!
-        - else
-          - resources.each do |resource|
-            = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
-    .col-md-3
-      = render :partial => 'good_to_know'
+.row.quota-row
+  .col-md-9
+    - @area_services.each do |service|
+      - if @area_services.size > 1
+        %h3= t(service)
+      - resources = @resources.select { |r| r.service == service.to_s }.sort_by { |r| r.name }
+      - if resources.empty?
+        .bs-callout
+          No #{t(service)} Quotas found!
+      - else
+        - resources.each do |resource|
+          = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
+  .col-md-3
+    = render :partial => 'good_to_know'
