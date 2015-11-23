@@ -1,14 +1,11 @@
 ResourceManagement::Engine.routes.draw do
   get '/' => 'application#index'
 
+  # maybe we can remove resources here?
   get 'resources'          => 'application#index'
   get 'resources/:area',  to: 'application#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'resources_area'
   get 'resources/details'  => 'application#details'
   get 'resources/request'  => 'application#resource_request'
-
-  get '/'        => 'application#index'
-  get ':area',  to: 'application#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
-  get 'request'  => 'application#resource_request'
 
   get 'admin'          => 'domain_admin#index'
   get 'admin/:area',  to: 'domain_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'admin_area'
