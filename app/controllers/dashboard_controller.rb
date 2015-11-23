@@ -34,7 +34,7 @@ class DashboardController < ScopeController
       redirect_to "/#{@scoped_domain_fid}/onboarding" and return
     end
   end
-  
+
   # render new user template
   def new_user
   end
@@ -46,7 +46,7 @@ class DashboardController < ScopeController
       Admin::OnboardingService.register_user(current_user)
 
       # redirect to sandbox (friendly url)
-      redirect_to main_app.domain_start_path
+      redirect_to main_app.domain_home_path
     else
       render action: :new
     end
@@ -65,7 +65,7 @@ class DashboardController < ScopeController
   end
 
   ######################## ERROR HANDLING ########################
-  # For the case that the dashboard is reconnected to another keystone the keys of 
+  # For the case that the dashboard is reconnected to another keystone the keys of
   # friendly id entries are outdated and should be reseted.
   def reset_domain_friendly_id
     #
@@ -86,7 +86,7 @@ class DashboardController < ScopeController
 
   def handle_api_error(exception)
     return if reset_domain_friendly_id
-  
+
     @errors = DomainModelServiceLayer::ApiErrorHandler.parse(exception)
     render template: 'dashboard/error'
   end

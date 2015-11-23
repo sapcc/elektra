@@ -1,47 +1,64 @@
+- date = Time.new(2015,11,20)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Esther Schmitz - #{date}"
+  :markdown
+    * <code>pages/home</code> is new domain home page (renamed from <code>start</code>)
+    * there is a new project home page <code>pages/project_home</code>
+    * Trying a new pattern for page headings. Remove <code>%h1.page-header</code> if you used them and instead use the new main_toolbar. You can add content to the toolbar (the area directly underneath the breadcrumb navigation) by using
+      ```
+      = content_for :main_toolbar do
+      ```
+      in your views. This is optional. If you don't do this then the main toolbar will show a humanized version of your controller name. For an example see <code>main_app/pages/home.html.haml</code>
+    * Start of pattern for including info content from a plugin on the home page (you need to create a partial in your plugin in <code>/views/[plugin_name]/application/homepage_info_content</code>)
+      **Important:** If you need to query your controller for information this needs to be done via Ajax. Andreas and Torsten are currently developing a pattern for this (will take a few more days)
+
+
+
 - date = Time.new(2015,11,19)
 .new.bs-callout.bs-callout-info{data:{date: date}}
   %p
     %b= "Andreas Pfau - #{date}"
-    
-  %h4 SASS instead of Sprockets!  
+
+  %h4 SASS instead of Sprockets!
   %ul
-    %li 
-      Plugins should use SASS directives to import files. 
+    %li
+      Plugins should use SASS directives to import files.
       %code.language-html
         @import "file_name";
     %li
-      %b DO NOT USE 
+      %b DO NOT USE
       require, require_tree, and require_self.
 
   %h4 Namespace for Plugin's CCS classes
   %ul
-    %li 
-      All css classes inside a plugin are embedded in a namespace. 
+    %li
+      All css classes inside a plugin are embedded in a namespace.
       %br
-      css class inside a plugin called my_plugin  
+      css class inside a plugin called my_plugin
       %code.language-html
-        %span .test { ... } 
-      becomes 
+        %span .test { ... }
+      becomes
       %code.language-html
         %span .my_plugin .test { ... }
-  
+
   %h4 Closures for Plugin's JS files
   %ul
-    %li 
-      Every javascript file inside a plugin is embedded in a closure. 
+    %li
+      Every javascript file inside a plugin is embedded in a closure.
       For a plugin called my_plugin the closure looks as follows
       %code.language-html
         %span window.my_plugin = window.my_plugin || {};
         %br
         %span (function(){ <br/>
-        %span &nbsp;&nbsp; //... content of the file <br/>     
+        %span &nbsp;&nbsp; //... content of the file <br/>
         %span }).call(this);
-    %li All functions are visible inside the file     
-    %li 
+    %li All functions are visible inside the file
+    %li
       To make a function visible to outsie you should bind it to the variable my_plugin (replace my_plugin with the name of your plugin)
       %code.language-html my_plugin.test = function() { ... }
 
-    
+
 - date = Time.new(2015,11,18)
 .new.bs-callout.bs-callout-info{data:{date: date}}
   %p

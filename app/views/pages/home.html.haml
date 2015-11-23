@@ -1,0 +1,20 @@
+= content_for :main_toolbar do
+  %h1
+    Home:
+    = @scoped_domain_name
+
+
+= render "application/context_selection"
+
+.row
+  .col-sm-4
+    %h3 Your projects
+    .list-group
+      - @user_domain_projects.each do |project|
+        = link_to "#{project.name}", main_app.project_home_path(project_id: project.friendly_id), class: "list-group-item"
+
+  .col-sm-8
+    %h3 Info Center
+
+    - PluginsManager.available_plugins.each do |plugin|
+      = render "#{plugin.name}/application/homepage_info_content" rescue nil

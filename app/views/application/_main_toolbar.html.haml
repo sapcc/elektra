@@ -1,0 +1,6 @@
+.main-toolbar
+  .container
+    - if content_for? :main_toolbar
+      = yield :main_toolbar
+    - else
+      %h1= processed_controller_name
