@@ -1,12 +1,12 @@
 module ResourceManagement
   class ApplicationController < DashboardController
 
-    before_filter :usage_stage, :only => [:index,:show_area]
+    before_filter :set_usage_stage, :only => [:index,:show_area]
 
     def index
       # resources are critical if they have a quota, and either one of the quotas is 95% used up
       @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).
-        where("(current_quota > 0 OR approved_quota > 0) AND (usage > 0.95 * approved_quota OR usage > 0.95 * current_quota)")
+        where("(current_quota > 0 OR approved_quota > 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
     end
 
     def resource_request
@@ -35,7 +35,7 @@ module ResourceManagement
 
     private
 
-    def usage_stage
+    def set_usage_stage
       @usage_stage = { :danger => 0.95, :warning => 0.8 }
     end
 
