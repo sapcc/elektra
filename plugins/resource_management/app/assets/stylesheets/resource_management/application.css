@@ -90,6 +90,7 @@
 
 .progress-bar-empty {
     background: transparent;
+    box-shadow: none;
 }
 
 .quota {

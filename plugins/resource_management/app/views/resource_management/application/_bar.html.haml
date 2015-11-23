@@ -42,12 +42,12 @@
         .quota-current
           %span.text-nowrap Unlimited
         .progress
-          .quota-overcommit &nbsp;
+          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}
 
   .col-md-1.quota-request-more
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
   .col-md-1.quota-request-more
-    - if data.current_quota >= 0
+    - if data.current_quota > 0 
       = link_to 'Request more',plugin('resource_management').resources_request_path(:service => data.service, :resource => data.name ), data: {modal: true}, class: 'btn btn-primary btn-sm'
     - else
       = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
