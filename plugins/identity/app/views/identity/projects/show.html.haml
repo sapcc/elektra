@@ -21,9 +21,10 @@
     /   - if current_user.is_allowed?("identity:project_update", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
     /     = link_to "Edit Project", edit_project_path(id:@current_project.friendly_id), class: "btn btn-primary", data: { modal: true }
 
+    -# where to put this? ask esther
     .col-sm-6
       %p 
         Usage and Quotas
-      = link_to "Quotas(2)", plugin('resource_management').resources_path()
-      %span.label.label-danger danger
+      = link_to "Quotas(X)", plugin('resource_management').resources_path()
+      %span.label.label-danger Critical
 
