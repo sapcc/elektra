@@ -1,0 +1,59 @@
+= content_for :title do
+  Agent on instance
+  %b
+    = @instance_name
+
+
+.modal-body
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Facts', '#facts', aria: {controls:"facts"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'Jobs', '#jobs', aria: {controls:"jobs"}, role: "tab", data: {toggle:"tab"}
+
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"facts"}
+      %table.table.datatable
+        %tbody
+          - @facts.attributes.each do |k,v|
+            %tr
+              %th= k
+              %td= v
+
+    .tab-pane{role:"tabpanel", id:"jobs"}
+      %table.table.datatable
+        %tbody
+          - @jobs.each do |job|
+            %tr
+              %td
+                .row
+                  .col-md-9
+                  .col-md-3
+                    = link_to("Open Log in new window", show_log_instances_path(id: job.request_id), target: "_blank")
+                .row
+                  .col-md-6
+                    %b Job Id:
+                    = " #{job.request_id}"
+                  .col-md-6
+                    %b Status:
+                    = " #{job.status}"
+                .row
+                  .col-md-6
+                    %b Agent:
+                    = " #{job.agent}"
+                  .col-md-6
+                    %b Action:
+                    = " #{job.action}"
+                .row
+                  .col-md-6
+                    %b Created at:
+                    = " #{job.created_at}"
+                  .col-md-6
+                    %b Updated at:
+                    = " #{job.updated_at}"
+                %b Payload:
+                = " #{job.payload}"
+
+.modal-footer
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+  - else
+    = link_to "Close", instances_url(), class: 'btn btn-default'

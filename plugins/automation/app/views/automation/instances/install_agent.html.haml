@@ -1,0 +1,23 @@
+= content_for :title do
+  Install agent on instance
+  %b
+    = @agent_name
+
+.modal-body
+  %h3
+    Follow this steps to install the automation agent:
+
+  %ol
+    %li
+      Copy the below script to the clipboard.
+
+    %li
+      Log in into the instance and paste the script as super user.
+      = @ip
+
+  %pre
+    = preserve do
+      :escaped
+        curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/linux/amd64
+        chmod +x /opt/arc/arc
+        /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url #{@url}

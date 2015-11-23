@@ -1,0 +1,12 @@
+.page-header
+  %h1
+    Job log
+
+%b
+  Job id:
+= @job_id
+
+%pre
+  %code
+    = preserve do
+      = @log
