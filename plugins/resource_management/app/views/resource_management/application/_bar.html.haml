@@ -35,7 +35,8 @@
           - else
             .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage
           -if approved_quota < current_quota
-            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-usage_percent}%"}
+            .progress-bar.progress-bar-empty{:style => "width:#{approved_percent-usage_percent}%"}
+            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-approved_quota}%"}
     - else
       .quota
         .quota-current

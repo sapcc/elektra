@@ -6,7 +6,7 @@ module ResourceManagement
     def index
       # resources are critical if they have a quota, and either one of the quotas is 95% used up
       @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).
-        where("(current_quota > 0 OR approved_quota > 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
+        where("(current_quota > 0 AND approved_quota > 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
     end
 
     def resource_request
