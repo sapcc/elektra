@@ -16,7 +16,7 @@ ResourceManagement::Engine.routes.draw do
   # this is only for demo, I have no idea where I can put the cloudadmin views
   scope 'cloud_admin', as: 'cloud_admin' do
     get '/'        => 'cloud_admin#index'
-    get ':area',  to: 'cloud_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'cloud_admin_area'
+    get ':area',  to: 'cloud_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
     get 'details'  => 'cloud_admin#details'
     get 'request'  => 'cloud_admin#resource_request'
   end
