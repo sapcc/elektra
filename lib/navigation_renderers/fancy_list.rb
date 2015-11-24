@@ -36,7 +36,6 @@ module SimpleNavigation
 
           if icon_options
             li_content << content_tag(:span, "", class: icon_options << " dropdown-icon")
-            # li_content << content_tag(:div, icon, {class: "dropdown-icon"})
           end
 
           li_content << tag_for(item)

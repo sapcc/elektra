@@ -1,0 +1,35 @@
+= content_for :main_toolbar do
+  %h1
+    Home:
+    = @scoped_domain_name
+
+
+= render "application/context_selection"
+
+.row
+  .col-sm-12
+    %h3 Inquiries
+    %ul.nav.nav-tabs
+      %li.active{role: "presentation"}= link_to 'My Inquiries', '#myinquiries', aria: {controls:"myinquiries"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Open inquiries', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
+
+    .tab-content
+      #myinquiries.tab-pane.active{role: "tabpanel"}
+        = remote_inquiries(per_page: 3, filter: {requester_id:current_user.id})
+      #openinquiries.tab-pane{role: "tabpanel"}
+        = remote_inquiries(per_page: 3, filter: {state: 'open'})
+
+
+.row
+  .col-sm-4
+    %h3 Your projects
+    .list-group
+      - @user_domain_projects.each do |project|
+        = link_to "#{project.name}", main_app.project_home_path(project_id: project.friendly_id), class: "list-group-item"
+
+  .col-sm-8
+    %h3 Info Center
+
+    - PluginsManager.available_plugins.each do |plugin|
+      = render "#{plugin.name}/application/homepage_info_content" rescue nil
+      
