@@ -98,6 +98,14 @@ PATH
     image (0.0.1)
 
 PATH
+  remote: plugins/inquiry
+  specs:
+    inquiry (0.0.1)
+      aasm
+      bootstrap-kaminari-views
+      kaminari
+
+PATH
   remote: plugins/networking
   specs:
     networking (0.0.1)
@@ -107,6 +115,7 @@ GEM
   remote: https://localhost/
   specs:
     CFPropertyList (2.3.2)
+    aasm (4.5.0)
     actionmailer (4.2.4)
       actionpack (= 4.2.4)
       actionview (= 4.2.4)
@@ -157,6 +166,9 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootstrap-kaminari-views (0.0.5)
+      kaminari (>= 0.13)
+      rails (>= 3.1)
     bootstrap-sass (3.3.5.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.3.0)
@@ -359,6 +371,9 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.3)
+    kaminari (0.16.3)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     launchy (2.4.3)
       addressable (~> 2.3)
     listen (3.0.4)
@@ -484,7 +499,7 @@ GEM
     slop (3.6.0)
     spinners (1.1.0)
       sass (~> 3.2)
-    spring (1.4.0)
+    spring (1.4.1)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -547,6 +562,7 @@ DEPENDENCIES
   high_voltage
   identity!
   image!
+  inquiry!
   jquery-rails
   monsoon-fog!
   monsoon-openstack-auth!
@@ -570,6 +586,3 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
-
-BUNDLED WITH
-   1.10.5

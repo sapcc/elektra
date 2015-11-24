@@ -1,0 +1,11 @@
+.page-header
+  %h1
+    = @active_project ?  @active_project.name : @scoped_domain_fid
+    \-
+    Inquiries
+
+- if true #current_user.is_allowed?("network:network_create", {network: {user_id: current_user.id} })
+  .toolbar
+    = link_to 'Create new', new_inquiry_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+= render partial: 'index', locals: {inquiries: @inquiries}

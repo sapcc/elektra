@@ -65,8 +65,9 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :access_managment, 'Access Management', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" } do |access_management_nav|
-      access_management_nav.item :volumes, 'Authorization', '#'
-      access_management_nav.item :volumes, 'Audit', '#'
+      access_management_nav.item :authorizations, 'Authorization', '#'
+      access_management_nav.item :audits, 'Audit', '#'
+      access_management_nav.item :inquiries, 'Inquiry', plugin('inquiry').inquiries_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|

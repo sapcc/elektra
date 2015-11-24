@@ -13,7 +13,7 @@
     %label
       = check_box_tag "subnet", "1", true, data:{ toggle: "collapse", target: "#collapseExample"}
       Create subnet
-      
+
     %fieldset.collapse.in{id: "collapseExample"}      
       = f.simple_fields_for :subnets do |subnets|
         = subnets.input :name, {label: "Subnet Name"}

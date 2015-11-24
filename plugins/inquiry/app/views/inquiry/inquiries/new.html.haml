@@ -1,0 +1,20 @@
+= simple_form_for @inquiry, url: inquiries_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @inquiry.errors["message"].blank?
+      %p.alert.alert-error= @inquiry.errors.full_messages.to_sentence
+
+    %fieldset
+      = f.input :kind, { label: "Request for",
+        as:         :select,
+        include_blank: false,
+        collection: [["Project","project"],["Domain","domain"]] }
+      = f.input :description, as: :text
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", inquiries_url(), class: 'btn btn-default'
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Create

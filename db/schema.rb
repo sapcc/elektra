@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151029104241) do
+ActiveRecord::Schema.define(version: 20151119104208) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,46 @@ ActiveRecord::Schema.define(version: 20151029104241) do
   add_index "friendly_id_entries", ["key"], name: "index_friendly_id_entries_on_key", using: :btree
   add_index "friendly_id_entries", ["scope"], name: "index_friendly_id_entries_on_scope", using: :btree
   add_index "friendly_id_entries", ["slug"], name: "index_friendly_id_entries_on_slug", using: :btree
+
+  create_table "inquiry_inquiries", force: :cascade do |t|
+    t.string   "kind"
+    t.string   "requester_id"
+    t.text     "description"
+    t.json     "payload"
+    t.string   "aasm_state"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "project_id"
+    t.string   "domain_id"
+    t.json     "callbacks"
+  end
+
+  create_table "inquiry_inquiries_processors", id: false, force: :cascade do |t|
+    t.integer "inquiry_id",   null: false
+    t.integer "processor_id", null: false
+  end
+
+  add_index "inquiry_inquiries_processors", ["inquiry_id", "processor_id"], name: "index_inquiry_processor", using: :btree
+  add_index "inquiry_inquiries_processors", ["processor_id", "inquiry_id"], name: "index_processor_inquiry", using: :btree
+
+  create_table "inquiry_process_steps", force: :cascade do |t|
+    t.string   "from_state"
+    t.string   "to_state"
+    t.string   "event"
+    t.string   "processor_id"
+    t.text     "description"
+    t.integer  "inquiry_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "inquiry_process_steps", ["inquiry_id"], name: "index_inquiry_process_steps_on_inquiry_id", using: :btree
+
+  create_table "inquiry_processors", force: :cascade do |t|
+    t.string   "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false

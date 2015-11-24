@@ -1,0 +1,8 @@
+class CreateJoinTableInquiryProcessor < ActiveRecord::Migration
+  def change
+    create_join_table(:inquiries, :processors, {:table_name => "inquiry_inquiries_processors"}) do |t|
+      t.index [:inquiry_id, :processor_id], name: 'index_inquiry_processor'
+      t.index [:processor_id, :inquiry_id], name: 'index_processor_inquiry'
+    end
+  end
+end

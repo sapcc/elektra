@@ -1,0 +1,26 @@
+%tr{id: "inquiry_#{inquiry.id}"}
+  %td
+    - if true #current_user.is_allowed?("network:network_get", {})
+      = link_to inquiry.kind, inquiry_path(id: inquiry.id), data: {modal: true}
+  %td{:width => "500"}= inquiry.description
+  %td= inquiry.requester_id
+  %td= inquiry.created_at.getlocal
+  %td= inquiry.aasm_state
+
+  %td.snug
+    - if true #current_user.is_allowed?("network:network_delete", {}) or current_user.is_allowed?("network:network_update", {})
+      .btn-group
+        %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+          %span.glyphicon.glyphicon-cog
+        -# %span.spinner
+
+        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+          - if true #current_user.is_allowed?("network:network_update", {})
+            - if inquiry.actions_allowed.length > 1
+              %li= link_to 'Change state', edit_inquiry_path(id: inquiry.id), data: {modal: true}
+            - if get_allowed_custom_actions(inquiry)
+              %li= link_to "#{get_allowed_custom_actions(inquiry)['name']}", "#{get_allowed_custom_actions(inquiry)['action']}"
+            %li= link_to 'Show', inquiry_path(id: inquiry.id), data: {modal: true}
+            %li.divider
+          - if true #current_user.is_allowed?("network:network_delete", {})
+            %li= link_to 'Delete', inquiry_path(id: inquiry.id), method: :delete, data: { confirm: 'Are you sure you want to delete this network?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

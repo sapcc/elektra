@@ -1,0 +1,62 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"} 
+    %li{role: "presentation"}
+      = link_to '#payload', aria: {controls:"payload"}, role: "tab", data: {toggle:"tab"} do
+        Payload
+    %li{role: "presentation"}
+      = link_to '#process_steps', aria: {controls:"process_steps"}, role: "tab", data: {toggle:"tab"} do
+        Process Steps
+        %span.badge= @inquiry.process_steps.length
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"overview"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Kind
+            %td= @inquiry.kind
+          %tr
+            %th Requested by
+            %td= @inquiry.requester_id
+          %tr
+            %th Reason for Request
+            %td= @inquiry.description
+          %tr
+            %th State
+            %td= @inquiry.aasm_state
+
+    .tab-pane{role:"tabpanel", id:"payload"}
+      %table.table.datatable
+      %tbody
+        %tr
+          %td
+            %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
+
+    .tab-pane{role:"tabpanel", id:"process_steps"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Processor
+            %th From state
+            %th To State
+            %th Date
+            %th Reason
+          - @inquiry.process_steps.each do |step|
+            %tr
+              %td= step.processor_id
+              %td= step.from_state
+              %td= step.to_state
+              %td= step.created_at.getlocal
+              %td{:width => "400"}= step.description
+
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", inquiries_url(), class: 'btn btn-default'
+    

@@ -1,0 +1,19 @@
+%table.table
+  %thead
+    %tr
+      %th Request for
+      %th Description
+      %th Requester
+      %th Date
+      %th Status
+      %th.snug
+  %tbody
+    - if @inquiries.length==0
+      %tr
+        %td{colspa: 6} No inquiries available
+    - else
+      - @inquiries.each do | inquiry |
+        = render partial: 'item', locals: {inquiry: inquiry}
+
+.pagination
+  = paginate @inquiries, :window => 1, :outer_window => 1, :remote => false, :theme => 'twitter-bootstrap-3'
