@@ -1,3 +1,25 @@
+- date = Time.new(2015,11,24)
+.new.bs-callout.bs-callout-info{data:{date: date}}
+  %p
+    %b= "Arturo Reuschenbach - #{date}"
+  %h4
+    Copy to Clipboard
+  %p
+    There is a new copy to clipboard functionality binded to the <code>pre</code> tag.
+  %h4
+    Usage
+  %code
+    = preserve do
+      :escaped
+        <pre class="snippet">
+          <code>Your code/text to copy to the clipboard</code>
+        </pre>
+  %h4
+    Example
+  %pre.snippet
+    %code Your code/text to copy to the clipboard
+
+
 - date = Time.new(2015,11,20)
 .new.bs-callout.bs-callout-info{data:{date: date}}
   %p
@@ -12,7 +34,6 @@
       in your views. This is optional. If you don't do this then the main toolbar will show a humanized version of your controller name. For an example see <code>main_app/pages/home.html.haml</code>
     * Start of pattern for including info content from a plugin on the home page (you need to create a partial in your plugin in <code>/views/[plugin_name]/application/homepage_info_content</code>)
       **Important:** If you need to query your controller for information this needs to be done via Ajax. Andreas and Torsten are currently developing a pattern for this (will take a few more days)
-
 
 
 - date = Time.new(2015,11,19)
