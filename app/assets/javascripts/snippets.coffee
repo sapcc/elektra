@@ -26,6 +26,7 @@ showTooltip = (elem, msg) ->
   $(elem).tooltip('show')
   $(elem).on 'hidden.bs.tooltip', ->
     $(this).tooltip('destroy')
+    $(this).blur()
   return
 
 $ ->
