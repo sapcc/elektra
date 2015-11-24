@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
   
   scope '(/:domain_id)' do
+    Logger.new(STDOUT).debug("Mount plugin docs as docs_plugin")
     mount Docs::Engine => '/docs', as: 'docs_plugin'
   end
 
@@ -16,6 +17,7 @@ Rails.application.routes.draw do
       get 'onboarding' => 'dashboard#new_user'
       post 'register' => 'dashboard#register_user'
       
+      Logger.new(STDOUT).debug("Mount plugin identity as identity_plugin")
       mount Identity::Engine => '/identity', as: :identity_plugin
       
       ###################### MOUNT PLUGINS #####################

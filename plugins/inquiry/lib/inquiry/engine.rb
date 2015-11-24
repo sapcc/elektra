@@ -9,6 +9,12 @@ module Inquiry
         end
       end
     end
+    
+    initializer 'inquiry.action_controller' do |app|
+      ActiveSupport.on_load :action_controller do
+        helper Inquiry::InquiriesHelper
+      end
+    end
   end
 
 end

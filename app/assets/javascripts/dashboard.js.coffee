@@ -19,6 +19,8 @@ class @Dashboard
     $("form select[data-trigger=change]").change Dashboard.showFormDetails
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
+    
+    
 
 # Initialize Dashboard App
 $ ->

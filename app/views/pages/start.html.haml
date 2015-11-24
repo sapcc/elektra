@@ -7,18 +7,7 @@
   %li{role: "presentation"}= link_to 'Open inquiries', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
 
 .tab-content
-  .tab-pane.active#myinquiries{role: "tabpanel"}
-  .tab-pane#openinquiries{role: "tabpanel"}
-
-:javascript
-  $.ajax({
-    url: "#{plugin('inquiry').inquiries_path()}",
-    data: {"container_id":"myinquiries", "per_page":4, "filter": {"requester_id": "#{current_user.id}"}},
-    dataType: 'script'
-  });
-  $.ajax({
-    url: "#{plugin('inquiry').inquiries_path()}",
-    data: {"container_id":"openinquiries","per_page":2, "filter": {"state": "open"}},
-    dataType: 'script'
-  });
-  // $("#openinquiries").loadInquiries({"filter":{}});
+  #myinquiries.tab-pane.active{role: "tabpanel"}
+    = remote_inquiries(per_page: 3, filter: {requester_id:current_user.id})
+  #openinquiries.tab-pane{role: "tabpanel"}
+    = remote_inquiries(per_page: 3, filter: {state: 'open'})
