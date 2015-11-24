@@ -17,7 +17,9 @@
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if true #current_user.is_allowed?("network:network_update", {})
             - if inquiry.actions_allowed.length > 1
-              %li= link_to 'Edit', edit_inquiry_path(id: inquiry.id), data: {modal: true}
+              %li= link_to 'Change state', edit_inquiry_path(id: inquiry.id), data: {modal: true}
+            - if get_allowed_custom_actions(inquiry)
+              %li= link_to "#{get_allowed_custom_actions(inquiry)['name']}", "#{get_allowed_custom_actions(inquiry)['action']}"
             %li= link_to 'Show', inquiry_path(id: inquiry.id), data: {modal: true}
             %li.divider
           - if true #current_user.is_allowed?("network:network_delete", {})

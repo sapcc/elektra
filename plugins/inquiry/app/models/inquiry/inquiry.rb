@@ -21,6 +21,7 @@ module Inquiry
       state :open, :initial => true, :before_enter => :set_process_step_description
       state :approved
       state :rejected
+      state :closed
 
       #after_all_transitions Proc.new {|*args| log_process_step(*args)}
 
@@ -36,10 +37,15 @@ module Inquiry
         transitions :from => :rejected, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_reopen?]
       end
 
+      event :close do
+        transitions :to => :closed, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_close?]
+      end
+
     end
 
-    def set_process_step_description
+    def set_process_step_description(options = {})
       self.process_step_description = "Initial creation"
+      #log_process_step({ :description => "Initial creation" })
     end
 
     def log_process_step(options = {})
@@ -64,10 +70,27 @@ module Inquiry
       self.open?
     end
 
-    def actions_allowed
-      actions = self.aasm.states(:permitted => true).map(&:name)
-      actions.unshift(self.aasm_state)
+    def can_close?
+      true
+    end
+
+    def events_allowed
+      actions = self.aasm.events.map(&:name)
       return actions
+    end
+
+    def actions_allowed
+      states = self.aasm.states(:permitted => true).map(&:name)
+      #states.unshift(self.aasm_state)
+      return states
+    end
+
+    def get_callback_action
+      if self.callbacks.nil? || self.callbacks[self.aasm_state].nil?
+        return nil
+      else
+        self.callbacks[self.aasm_state].name
+      end
     end
 
   end
