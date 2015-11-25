@@ -1,0 +1,58 @@
+.row
+  .col-md-2.quota-label
+    .text-muted
+      - if overview
+        = link_to t("resource_management.#{data[:name]}"), plugin('resource_management').send("resources_area_path", data.attributes[:area])
+      - else
+        = t("resource_management.#{data[:name]}")
+      - if overview
+        .small
+          .small= t(service)
+
+  .col-md-7
+    - if data[:current_project_quota_sum] > 0
+      - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
+      - current_project_quota_sum = (data[:current_project_quota_sum]  / display_unit).to_i
+      - limit                     = (data[:domain_quota].approved_quota / display_unit).to_i
+      - usage_percent             = ((data[:current_project_quota_sum].to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
+      - approved_percent          = ((data[:domain_quota].approved_quota.to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
+      - usage_level               = data[:current_project_quota_sum].to_f / [data[:current_project_quota_sum], data[:domain_quota].approved_quota].max.to_f
+      
+      - overcommit = usage_percent-100
+      - if overcommit > 0
+        - usage_percent = 100-overcommit
+      
+      .quota
+        - if limit < current_project_quota_sum
+          .quota-approved{:style => "right:#{overcommit}%"} 
+            %span.text-nowrap
+              Limit: #{limit}
+
+        .quota-current
+          - if limit < current_project_quota_sum
+            %span.text-nowrap #{current_project_quota_sum}
+          - else 
+            %span.text-nowrap #{limit}
+        .progress
+          - if usage_level >= @usage_stage[:danger]
+            .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= current_project_quota_sum
+          - elsif usage_level >= @usage_stage[:warning]
+            .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= current_project_quota_sum
+          - else
+            .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= current_project_quota_sum
+          -if limit < current_project_quota_sum
+            .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{overcommit}%"}
+    - else
+      .quota
+        .quota-current
+          %span.text-nowrap Unlimited
+        .progress
+          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}
+
+  .col-md-1.quota-request-more
+    = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
+  .col-md-1.quota-request-more
+    - if data[:current_project_quota_sum] > 0 
+      = link_to 'Request more',plugin('resource_management').resources_request_path(:service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
+    - else
+      = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
