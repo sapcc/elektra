@@ -22,13 +22,10 @@ Rails.application.routes.draw do
     scope "(/:project_id)" do
       get 'onboarding' => 'dashboard#new_user'
       post 'register' => 'dashboard#register_user'
-      
-      Logger.new(STDOUT).debug("Mount plugin identity as identity_plugin")
-      mount Identity::Engine => '/identity', as: :identity_plugin
 
       ###################### MOUNT PLUGINS #####################
       PluginsManager.mountable_plugins.each do |plugin|
-        next if ['docs','identity'].include?(plugin.name)
+        next if ['docs'].include?(plugin.name)
         Logger.new(STDOUT).debug("Mount plugin #{plugin.mount_point} as #{plugin.name}_plugin")
         mount plugin.engine_class => "/#{plugin.mount_point}", as: "#{plugin.name}_plugin"
       end
