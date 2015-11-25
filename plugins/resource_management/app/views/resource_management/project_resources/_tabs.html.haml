@@ -1,0 +1,35 @@
+- if tab.eql? "overview"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Overview
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_path()}
+      Overview
+
+- if tab.eql? "compute"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Compute
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_area_path('compute')}
+      Compute
+
+- if tab.eql? "network"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Network
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_area_path('network')}
+      Network
+
+- if tab.eql? "storage"
+  %li{:role => "presentation", :class => "active"}
+    %a{:href => '#'}
+      Storage
+- else
+  %li{:role => "presentation"}
+    %a{:href => plugin('resource_management').resources_area_path('storage')}
+      Storage

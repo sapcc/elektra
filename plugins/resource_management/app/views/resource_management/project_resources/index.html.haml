@@ -1,0 +1,16 @@
+=render :partial => 'header'
+%ul{:class => "nav nav-tabs"}
+  = render :partial => 'tabs', :locals => { :tab => 'overview'}
+
+.row.quota-row
+  .col-md-9   
+    - if @resources.blank?
+      .bs-callout.bs-callout-info
+        Nothing to report! Everything is fine...
+    - else
+      -# sort resources by name (and by service for resources with the same name)
+      - @resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
+        = render :partial => 'bar', :locals => { :overview => true, :data => resource }
+  .col-md-3
+    = render :partial => 'good_to_know'      
+

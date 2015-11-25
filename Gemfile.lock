@@ -110,6 +110,11 @@ PATH
   specs:
     networking (0.0.1)
 
+PATH
+  remote: plugins/resource_management
+  specs:
+    resource_management (0.0.1)
+
 GEM
   remote: http://localhost:8080/rubygemsorg/
   remote: https://localhost/
@@ -573,6 +578,7 @@ DEPENDENCIES
   pry-rails
   rails (= 4.2.4)
   redcarpet
+  resource_management!
   responders
   rspec
   rspec-rails
@@ -586,3 +592,6 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6
