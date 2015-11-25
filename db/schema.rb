@@ -73,6 +73,21 @@ ActiveRecord::Schema.define(version: 20151119104208) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "resource_management_resources", force: :cascade do |t|
+    t.string   "cluster_id"
+    t.string   "domain_id"
+    t.string   "project_id"
+    t.string   "service"
+    t.string   "name"
+    t.integer  "current_quota",  limit: 8
+    t.integer  "approved_quota", limit: 8
+    t.integer  "usage",          limit: 8
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "resource_management_resources", ["domain_id", "project_id", "service", "name"], name: "resource_management_resources_master_index", using: :btree
+
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false
     t.text     "data"
