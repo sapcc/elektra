@@ -10,29 +10,28 @@
           .small= t(service)
 
   .col-md-7
-    - if data[:current_project_quota_sum] > 0
+    - if data[:current_project_quota_sum] > 0 and data[:domain_quota].approved_quota >= 0
       - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
       - current_project_quota_sum = (data[:current_project_quota_sum]  / display_unit).to_i
-      - limit                     = (data[:domain_quota].approved_quota / display_unit).to_i
+      - approved_quota_for_domain = (data[:domain_quota].approved_quota / display_unit).to_i
       - usage_percent             = ((data[:current_project_quota_sum].to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
       - approved_percent          = ((data[:domain_quota].approved_quota.to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
       - usage_level               = data[:current_project_quota_sum].to_f / [data[:current_project_quota_sum], data[:domain_quota].approved_quota].max.to_f
-      
       - overcommit = usage_percent-100
       - if overcommit > 0
         - usage_percent = 100-overcommit
       
       .quota
-        - if limit < current_project_quota_sum
+        - if approved_quota_for_domain < current_project_quota_sum
           .quota-approved{:style => "right:#{overcommit}%"} 
             %span.text-nowrap
-              Limit: #{limit}
+              approved quota for domain: #{approved_quota_for_domain}
 
         .quota-current
-          - if limit < current_project_quota_sum
+          - if approved_quota_for_domain < current_project_quota_sum
             %span.text-nowrap #{current_project_quota_sum}
           - else 
-            %span.text-nowrap #{limit}
+            %span.text-nowrap #{approved_quota_for_domain}
         .progress
           - if usage_level >= @usage_stage[:danger]
             .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= current_project_quota_sum
@@ -40,7 +39,7 @@
             .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= current_project_quota_sum
           - else
             .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= current_project_quota_sum
-          -if limit < current_project_quota_sum
+          -if approved_quota_for_domain < current_project_quota_sum
             .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{overcommit}%"}
     - else
       .quota

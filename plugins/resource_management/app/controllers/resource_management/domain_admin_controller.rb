@@ -61,14 +61,7 @@ module ResourceManagement
     private
 
     def set_usage_stage
-      @usage_stage = { :danger => 0.95, :warning => 0.8 }
-    end
-
-    def get_domain_quota 
-      #quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil)
-      #quotas.each do |quota|
-      #    @domain_quotas[quota.service.to_sym]
-      #end
+      @usage_stage = { :danger => 1.0, :warning => 0.8 }
     end
 
     def get_resource_status()
@@ -84,7 +77,7 @@ module ResourceManagement
         domain_service_quota = @domain_quotas.find { |q| q.service == service && q.name == name }
         # when no domain quota exists yet, use an empty mock object
         domain_service_quota ||= ResourceManagement::Resource.new(
-          service: service, name: name, approved_quota: 1, # TODO: 0
+          service: service, name: name, approved_quota: -1,
         )
         #@domain_quotas.each do |domain_quota| 
         #  domain_service_quota = domain_quota if domain_quota.service == service
