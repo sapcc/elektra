@@ -13,12 +13,6 @@ Rails.application.routes.draw do
   scope "/:domain_id" do
     match '/', to: 'pages#show', id: 'landing', via: :get
 
-    scope "/:project_id" do
-      scope module: 'dashboard' do
-        get 'home' => 'pages#show', id: 'project_home', as: :project_home
-      end
-    end
-
     scope "(/:project_id)" do
       get 'onboarding' => 'dashboard#new_user'
       post 'register' => 'dashboard#register_user'
