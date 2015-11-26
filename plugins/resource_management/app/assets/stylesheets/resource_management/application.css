@@ -39,7 +39,7 @@
   box-shadow: 0 0 1px #d9534f; 
 }
 
-.quota-current span, .quota-approved span, .quota-usage span {
+.quota-current span, .quota-approved span, .quota-usage span , .quota-current-danger span{
     display: block;
     position: absolute;
     right: 0;
@@ -69,8 +69,14 @@
     padding-top:20px;
 }
 
-.quota-current span {
+.quota-current span{
     color: #777;
+    font-weight: bold;
+    top: 0;
+}
+
+.quota-current-danger span {
+    color: #a94442;
     font-weight: bold;
     top: 0;
 }

@@ -3,7 +3,6 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class DomainAdminController < ApplicationController
     before_filter :set_usage_stage, :only => [:index,:show_area]
-    before_filter :get_domain_quota, :only => [:index,:show_area]
 
     def index
       stats = ResourceManagement::Resource.
@@ -79,9 +78,6 @@ module ResourceManagement
         domain_service_quota ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
         )
-        #@domain_quotas.each do |domain_quota| 
-        #  domain_service_quota = domain_quota if domain_quota.service == service
-        #end
         @resource_status[service.to_sym] ||= []
         @resource_status[service.to_sym] << { 
           :name => name,
