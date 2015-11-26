@@ -8,10 +8,10 @@ module ResourceManagement
       # If "enabled" is false, no data will be gathered and the service will be hidden from the UI.
       # (This can be used to restrict unfinished service bindings to development mode, or to
       # activate capabilities based on the available OpenStack services in the service catalog.)
-      { service: :compute,        { area: :compute, enabled: Rails.env.development? },
-      { service: :network,        { area: :network, enabled: Rails.env.development? },
-      { service: :block_storage,  { area: :storage, enabled: Rails.env.development? },
-      { service: :object_storage, { area: :storage, enabled: true },
+      { service: :compute,        area: :compute, enabled: Rails.env.development? },
+      { service: :network,        area: :network, enabled: Rails.env.development? },
+      { service: :block_storage,  area: :storage, enabled: Rails.env.development? },
+      { service: :object_storage, area: :storage, enabled: true },
     ]
 
     KNOWN_RESOURCES = [
