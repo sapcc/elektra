@@ -10,17 +10,19 @@
           .small= t(service)
 
   .col-md-7
-    - if data[:current_project_quota_sum] > 0 and data[:domain_quota].approved_quota >= 0
-      - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
-      - current_project_quota_sum = (data[:current_project_quota_sum]  / display_unit).to_i
-      - approved_quota_for_domain = (data[:domain_quota].approved_quota / display_unit).to_i
-      - usage_percent             = ((data[:current_project_quota_sum].to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
-      - approved_percent          = ((data[:domain_quota].approved_quota.to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
-      - usage_level               = data[:current_project_quota_sum].to_f / [data[:current_project_quota_sum], data[:domain_quota].approved_quota].max.to_f
+    - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
+    - active_project_quota     = data[:active_project_quota]
+    - current_project_quota_sum = (data[:current_project_quota_sum]  / display_unit).to_i
+    -# increment because we lost -1 in the controller quota summary
+    - current_project_quota_sum = current_project_quota_sum.next if not active_project_quota
+    - approved_quota_for_domain = (data[:domain_quota].approved_quota / display_unit).to_i
+    - usage_percent             = ((data[:current_project_quota_sum].to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
+    - approved_percent          = ((data[:domain_quota].approved_quota.to_f / data[:domain_quota].approved_quota.to_f) *100).to_i
+    - usage_level               = data[:current_project_quota_sum].to_f / [data[:current_project_quota_sum], data[:domain_quota].approved_quota].max.to_f
+    - if active_project_quota and approved_quota_for_domain >= 0 
       - overcommit = usage_percent-100
       - if overcommit > 0
         - usage_percent = 100-overcommit
-      
       .quota
         - if approved_quota_for_domain < current_project_quota_sum
           .quota-approved{:style => "right:#{overcommit}%"} 
@@ -42,16 +44,24 @@
           -if approved_quota_for_domain < current_project_quota_sum
             .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{overcommit}%"}
     - else
+      -# Handle unlimted quota  
       .quota
-        .quota-current
-          %span.text-nowrap Unlimited
-        .progress
-          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}
+        - if not active_project_quota and approved_quota_for_domain > 0
+          .quota-current-danger
+            %span.text-nowrap one or more projects are currently unlimited but approved quota for domain is #{approved_quota_for_domain}
+          .progress
+            .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:100%"}
+              quota summary #{current_project_quota_sum}
+        - else  
+          .quota-current
+            %span.text-nowrap unlimited
+          .progress
+            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}
 
   .col-md-1.quota-request-more
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
   .col-md-1.quota-request-more
-    - if data[:current_project_quota_sum] > 0 
+    - if data[:current_project_quota_sum] > 0 and data[:domain_quota].approved_quota >= 0
       = link_to 'Request more',plugin('resource_management').resources_request_path(:service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
     - else
       = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'

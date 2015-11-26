@@ -23,8 +23,8 @@
 }
 
 .quota-approved {
-   top: 0;
-   bottom: calc(1.5rem - 2px);
+   bottom: 0;
+   top: calc(1.5rem - 2px);
 }
 
 .quota-usage {
@@ -54,7 +54,7 @@
 }
 
 .quota-approved span {
-   top: 0;
+   bottom: 0;
 }
 
 .quota-label {

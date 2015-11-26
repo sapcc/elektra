@@ -42,6 +42,8 @@ module ResourceManagement
      # raise
       # load quota and usage for all projects within these domain
       get_resource_status()
+      pp @resource_status
+
 
      # raise
     end
@@ -64,16 +66,31 @@ module ResourceManagement
     end
 
     def get_resource_status()
+
+      # get data for currently existing quota 
       stats = ResourceManagement::Resource.
                 where(:domain_id => @scoped_domain_id, :service => @area_services).
                 where.not(project_id: nil).
                 group("service,name").
                 pluck("service,name,SUM(current_quota)")
 
+      # get unlimited quotas
+      unlimited = ResourceManagement::Resource.
+          where(:domain_id => @scoped_domain_id, :service => @area_services).
+          where.not(project_id: nil).
+          where(:current_quota => -1) 
+pp unlimited
       @resource_status = {}
       stats.each do |stat|
         service, name, current_project_quota_sum = *stat
         domain_service_quota = @domain_quotas.find { |q| q.service == service && q.name == name }
+        # search for unlimited current quotas
+        unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
+       
+        active_project_quota = false
+        if unlimited_project_quota_found.nil?
+          active_project_quota = true
+        end
         # when no domain quota exists yet, use an empty mock object
         domain_service_quota ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
@@ -82,6 +99,7 @@ module ResourceManagement
         @resource_status[service.to_sym] << { 
           :name => name,
           :current_project_quota_sum => current_project_quota_sum,
+          :active_project_quota => active_project_quota,
           :domain_quota => domain_service_quota,
         } 
       end
