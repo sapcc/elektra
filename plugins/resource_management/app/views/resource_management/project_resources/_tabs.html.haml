@@ -7,29 +7,13 @@
     %a{:href => plugin('resource_management').resources_path()}
       Overview
 
-- if tab.eql? "compute"
-  %li{:role => "presentation", :class => "active"}
-    %a{:href => '#'}
-      Compute
-- else
-  %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_area_path('compute')}
-      Compute
-
-- if tab.eql? "network"
-  %li{:role => "presentation", :class => "active"}
-    %a{:href => '#'}
-      Network
-- else
-  %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_area_path('network')}
-      Network
-
-- if tab.eql? "storage"
-  %li{:role => "presentation", :class => "active"}
-    %a{:href => '#'}
-      Storage
-- else
-  %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_area_path('storage')}
-      Storage
+- list_areas_with_enabled_services.each do |area|
+  - area_str = area.to_s
+  - if tab.eql? area_str
+    %li{:role => "presentation", :class => "active"}
+      %a{:href => '#'}
+        = area_str.humanize
+  - else
+    %li{:role => "presentation"}
+      %a{:href => plugin('resource_management').resources_area_path(area_str)}
+        = area_str.humanize
