@@ -10,16 +10,24 @@
           .small= t(data.service)
 
   .col-md-7
-    - if data.current_quota > 0
-      - display_unit = data.attributes[:display_unit] || 1
-      - usage            = data.usage          / display_unit
-      - current_quota    = data.current_quota  / display_unit
-      - approved_quota   = data.approved_quota / display_unit
-      - usage_percent    = ((data.usage.to_f / data.current_quota.to_f) *100).to_i
+    - display_unit = data.attributes[:display_unit] || 1
+    - usage            = data.usage          / display_unit
+    - current_quota    = data.current_quota  / display_unit
+    - approved_quota   = data.approved_quota / display_unit
+
+    - if data.current_quota > -1
       - approved_percent = ((data.approved_quota.to_f / data.current_quota.to_f) *100).to_i
+      - usage_percent    = ((data.usage.to_f / data.current_quota.to_f) *100).to_i
       - usage_level      = data.usage.to_f / [data.current_quota, data.approved_quota].min.to_f
+    - else 
+      -# Handle Unlimited current quota
+      - approved_percent = ((data.approved_quota.to_f / 100.0)*100).to_i
+      - usage_percent    = ((data.usage.to_f / data.approved_quota.to_f) *100).to_i
+      - usage_level      = data.usage.to_f / data.approved_quota.to_f
+    
+    - if current_quota > 0 
       .quota
-        - if approved_quota < current_quota
+        - if approved_quota < current_quota 
           .quota-approved{:style => "right:#{100-approved_percent}%"} 
             %span.text-nowrap
               Approved quota: #{approved_quota}
@@ -36,13 +44,37 @@
             .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage
           -if approved_quota < current_quota
             .progress-bar.progress-bar-empty{:style => "width:#{approved_percent-usage_percent}%"}
-            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-approved_quota}%"}
+            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-approved_percent}%"}
     - else
+      -# Handle Unlimited quotas
       .quota
-        .quota-current
-          %span.text-nowrap Unlimited
-        .progress
-          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}
+        - if current_quota == -1 and approved_quota >= usage
+          .quota-current-danger
+            %span.text-nowrap Unlimited/Approved #{approved_quota}
+          .progress
+            - if usage_level >= @usage_stage[:danger]
+              .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
+            - elsif usage_level >= @usage_stage[:warning]
+              .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
+            - else
+              .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage
+            
+            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-usage_percent}%"}
+        - elsif current_quota == -1 and approved_quota < usage
+          .quota-approved{:style => "right:#{100-approved_percent}%"} 
+            %span.text-nowrap
+              Approved quota: #{approved_quota}
+          .quota-current-danger
+            %span.text-nowrap Unlimited
+          .progress
+            .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{approved_percent}%"}=usage
+            .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{100-approved_percent}%"}
+        - else
+          .quota-current
+            %span.text-nowrap Unlimited
+          .progress
+            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}= usage
+          
 
   .col-md-1.quota-request-more
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
