@@ -26,8 +26,7 @@ module ResourceManagement
 
     def manual_sync
       service = services.resource_management
-      service.sync_domains
-      ResourceManagement::Resource.pluck('DISTINCT domain_id, project_id').each { |d,p| service.sync_project(d,p) }
+      service.sync_domains(sync_all_projects: true)
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError
