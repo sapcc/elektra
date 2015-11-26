@@ -30,7 +30,7 @@
         - if approved_quota < current_quota 
           .quota-approved{:style => "right:#{100-approved_percent}%"} 
             %span.text-nowrap
-              Approved quota: #{approved_quota}
+              approved quota: #{approved_quota}
 
         .quota-current
           %span.text-nowrap #{current_quota}
@@ -50,7 +50,7 @@
       .quota
         - if current_quota == -1 and approved_quota >= usage
           .quota-current-danger
-            %span.text-nowrap Unlimited/Approved #{approved_quota}
+            %span.text-nowrap unlimited/approved #{approved_quota}
           .progress
             - if usage == approved_quota
               .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
@@ -63,15 +63,15 @@
         - elsif current_quota == -1 and usage > approved_quota
           .quota-approved{:style => "right:#{(usage_level*100)-100}%"} 
             %span.text-nowrap
-              Approved quota: #{approved_quota}
+              aproved quota: #{approved_quota}
           .quota-current-danger
-            %span.text-nowrap Unlimited
+            %span.text-nowrap unlimited
           .progress
             .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{100-((usage_level*100)-100)}%"}=usage
             .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{(usage_level*100)-100}%"}
         - else
           .quota-current
-            %span.text-nowrap Unlimited
+            %span.text-nowrap unlimited
           .progress
             .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}= usage
           
