@@ -69,7 +69,6 @@ module ServiceLayer
       driver.grant_project_user_role(project_id,@current_user.id,role.id)
     end
 
-
     ##################### CREDENTIALS #########################
     def new_credential(attributes={})
       Identity::OsCredential.new(@driver,attributes)      
@@ -110,6 +109,10 @@ module ServiceLayer
       driver.validate(token) rescue false
     end
     
+    ###################### USERS ##########################
+    def find_user(id)
+      driver.get_user(id)
+    end
   end
 end
   

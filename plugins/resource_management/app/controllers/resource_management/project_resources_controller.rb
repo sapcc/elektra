@@ -20,7 +20,7 @@ module ResourceManagement
       @area = params.require(:area).to_sym
 
       # which services belong to this area?
-      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv,attr| attr[:area] == @area && attr[:enabled] }.keys
+      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:area] == @area && srv[:enabled] }.map { |srv| srv[:service] }
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
 
       # load all resources for these services

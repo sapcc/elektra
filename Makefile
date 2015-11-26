@@ -141,7 +141,7 @@ postgres:
 .PHONY: 
 migrate-%: postgres 
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE) \
-		bundle exec rake db:create db:schema:load db:migrate db:seed
+		bundle exec rake environment db:create db:schema:load db:migrate db:seed
 
 # ----------------------------------------------------------------------------------
 #   clean 
