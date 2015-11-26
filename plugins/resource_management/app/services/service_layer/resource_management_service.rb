@@ -57,16 +57,17 @@ module ServiceLayer
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
       # fetch current quotas and usage for this project from all services
-      known_resources = ResourceManagement::Resource::KNOWN_RESOURCES
+      enabled_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:enabled] }.map { |srv| srv[:service] }
       actual_quota = {}
       actual_usage = {}
-      known_resources.map { |res| res[:service] }.uniq.each do |service|
+      enabled_services.each do |service|
         actual_quota[service] = driver.query_project_quota(domain_id, project_id, service)
         actual_usage[service] = driver.query_project_usage(domain_id, project_id, service)
       end
 
       # write values into database
-      known_resources.each do |resource|
+      enabled_resources = ResourceManagement::Resource::KNOWN_RESOURCES.select { |res| enabled_services.include?(res[:service]) }
+      enabled_resources.each do |resource|
         this_actual_quota = actual_quota[ resource[:service] ][ resource[:name] ] || 0
         this_actual_usage = actual_usage[ resource[:service] ][ resource[:name] ] || 0
 
