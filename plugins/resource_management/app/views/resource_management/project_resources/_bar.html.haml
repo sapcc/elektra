@@ -36,7 +36,7 @@
           %span.text-nowrap #{current_quota}
 
         .progress
-          - if usage_level >= @usage_stage[:danger]
+          - if usage > approved_quota or usage_level >= @usage_stage[:danger]
             .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
           - elsif usage_level >= @usage_stage[:warning]
             .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
@@ -52,7 +52,7 @@
           .quota-current-danger
             %span.text-nowrap Unlimited/Approved #{approved_quota}
           .progress
-            - if usage_level >= @usage_stage[:danger]
+            - if usage == approved_quota
               .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
             - elsif usage_level >= @usage_stage[:warning]
               .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
@@ -60,15 +60,15 @@
               .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage
             
             .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-usage_percent}%"}
-        - elsif current_quota == -1 and approved_quota < usage
-          .quota-approved{:style => "right:#{100-approved_percent}%"} 
+        - elsif current_quota == -1 and usage > approved_quota
+          .quota-approved{:style => "right:#{(usage_level*100)-100}%"} 
             %span.text-nowrap
               Approved quota: #{approved_quota}
           .quota-current-danger
             %span.text-nowrap Unlimited
           .progress
-            .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{approved_percent}%"}=usage
-            .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{100-approved_percent}%"}
+            .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{100-((usage_level*100)-100)}%"}=usage
+            .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:#{(usage_level*100)-100}%"}
         - else
           .quota-current
             %span.text-nowrap Unlimited
