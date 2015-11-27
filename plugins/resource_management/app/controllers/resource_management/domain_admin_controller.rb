@@ -71,9 +71,10 @@ module ResourceManagement
         domain_service_quota ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
         )
-        if critical 
-            next unless active_project_quota
-            next if current_project_quota_sum < domain_service_quota.approved_quota
+
+        # filter critical quotas
+        if critical
+          next if current_project_quota_sum < domain_service_quota.approved_quota and active_project_quota
         end
  
         @resource_status[service.to_sym] ||= []
