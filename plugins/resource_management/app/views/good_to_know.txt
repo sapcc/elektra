@@ -1,71 +1,32 @@
 PROJECT
 -------
-Quota are seperated in 
-
-1) Approved quota: these quota are granted from your domain admin
-2) Current quota: these quota should be the same as approved quota and represents the real quota in the backend
-3) Usage: these represents real usage of the resource and is shown as the filling level of the quota bar
-
-Exiting usecases are
-
-1) approved and curent quota are the same (normal/warning)
-2) current quota are higher than current quota (critical)
-3) current quota is unlimited (critical)
-
-Usage Levels are
-
-Normal) resource usage below 80%
-Warning) resource usage between 81% and 100%
-Critical) resource usage above 100%
-
-
-DOMAIN
-------
-Quota are seperated in 
-
-1) Approved quota: these quota are granted from your cloud admin
-2) Usage: these represents the summary over all projects and current quota inside this domain
-
-Exiting usecases are
-
-1) currently used quotas are lower than approved quota (normal/warning)
-2) currently used quotas are the same ore higher than approved quota (critical)
-3) one ore more current project quotas are unlimited (critical)
-
-Usage Levels are
-
-Normal)  quota usage below 80%
-Warning) quota usage between 81% and 95%
-Critical) quota usage above 100%
-
-DOMAIN
-------
-Resources are seperated in 
-
-1) Capacity: this is our real resource capacity, Capacity can be limited by real physlical limits (like RAM or Cores) or, if they are no real limits, it will be unlimited (like Instances or Security Groups)
-2) Usage: these represents the usage summary over all projects
-
-Exiting usecases are
-
-1) current usage are lower than  the capcity (normal/warning)
-2) current usasge are the same ore higher than capacity (critical)
-3) unlimited because the resource has no limits
-
-Usage Levels are
-
-Normal) resource usage below 80%
-Warning) resource usage between 81% and 95%
-Critical) resource usage above 100%
-
-PROJECT (alternate variant)
--------
-
-These bars show the current resource usage in your project. The total length of each
+These bars shown the current resource usage in your project. The total length of each
 bar indicates the quota that you have been granted by your domain administrator.
-If you need more resources, you can request a larger quota from your domain
-administrator.
 
-As a project administrator, you can also set your quota directly using the
-OpenStack API. If you set the current quota to exceed your approved quota, the
-approved quota will appear as an extra mark on the bar to the left, and an
-automatic alert might be issued to your domain administrator.
+To exceed your approved quota please request more resources from you project administrator.
+
+Note: as a project administrator, it is possible (but not preferred) to set your quota directly 
+using the OpenStack API. If you set the current quota to exceed your approved quota, the
+approved quota will appear as an extra mark on the bar to the left. For this case an automatic alert 
+is issued to your domain administrator.
+
+DOMAIN
+------
+These bars shown the summarized current quota usage over all projects in this domain. 
+The total length of each bar indicates the quota that you have been granted by your cloud administrator.
+
+If you need more resources, you can request a larger quota from your cloud administrator.
+
+Note: your project administrators has the possibility to exceed their approved quota manually using the 
+OpenStack API. So it is possible that the summary of all quotas are higher than the quota
+that was granted by your cloud administrator. If that is the case the
+approved quota will appear as an extra mark on the bar to the left and the overcommit will shown as
+a red striped bar (a automatic alert is issued to your cloud administrator).
+
+CLOUD
+-----
+These bars shown the summarized resource usage over all projects in this cloud. 
+The total length of each bar shows the real capacity. Capacity can be limited by real 
+physlical limits (like RAM or Cores) or, if they are no real limits, it will be 
+unlimited (like Instances or Security Groups).
+
