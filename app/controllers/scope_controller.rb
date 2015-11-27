@@ -48,7 +48,7 @@ class ScopeController < ::ApplicationController
       end
     else
       @errors = {"domain" => "Not found"}
-      render template: 'core/application/error'
+      render template: 'application/error'
     end
     #p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     #p "@scoped_domain_id: #{@scoped_domain_id}"
