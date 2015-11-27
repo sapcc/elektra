@@ -18,11 +18,9 @@ module Admin
         unless entry
           # assume domain_fid_id_or_key is domain id
           domain = begin 
-            #driver.get_domain(domain_fid_id_or_key)
             Admin::IdentityService.find_domain(domain_fid_id_or_key)
-          rescue
+          rescue => e
             # assume domain_fid_id_or_key is domain name  
-            #driver.domains(:name => domain_fid_id_or_key).first
             Admin::IdentityService.domains(:name => domain_fid_id_or_key).first
           end
 

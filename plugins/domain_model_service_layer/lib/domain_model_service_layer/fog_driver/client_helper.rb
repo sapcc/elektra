@@ -13,7 +13,7 @@ module DomainModelServiceLayer
         result[:openstack_project_id] = @project_id if @project_id
     
         # remove this shit after the certificates for endpoints are configured correctly! 
-        result[:connection_options]= { ssl_verify_peer: false, debug: false }
+        result[:connection_options]= { ssl_verify_peer: false, debug: true }
     
         result  
       end
