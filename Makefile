@@ -138,6 +138,14 @@ postgres:
 #
 # Prepare the database by running the db tasks for the given environment. 
 #
+# Added environment task in front of db:create, please do not remove it!
+# We expand the migration path of main app by adding the migrations defined in plugins.
+# This happens in an initializer. rake db:create does not execute initializers but
+# it initializes the migration path variable as singleton variable. This results in that the 
+# plugin migrations are invisible for the following tasks. Which in turn leads to erroneous entries 
+# in the schema_migrations table. "rake environment" executes the initializers!
+#
+#
 .PHONY: 
 migrate-%: postgres 
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE) \
