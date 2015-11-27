@@ -15,23 +15,49 @@ module Admin
           super
         end
       end
-    
-      def list_project_admins(project_id)
-      
+
+      # Returns admins for the given scope (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID)
+      # This method looks recursively for project, parent_projects and domain admins until it finds at least one. 
+      # It should always return a non empty list (at least the domain admins).
+      def list_scope_admins(scope={})
+        role = admin_identity.find_role_by_name('admin') rescue nil
+        list_scope_assigned_users(scope.merge(role: role))
       end
-    
-      # def list_domain_admins(domain_id)
-      #
-      # end
-      #
-      # def list_project_and_domain_admins(project_id,domain_id)
-      #
-      # end
       
-      # def list_project_users(project_id,role_name)
-      #
-      # end
-      #
+      # Returns assigned users for the given scope and role (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID, role: ROLE)
+      # This method looks recursively for assigned users of project, parent_projects and domain. 
+      def list_scope_assigned_users(options={})
+        admins      = []
+        project_id  = options[:project_id]
+        domain_id   = options[:domain_id]
+        role        = options[:role]
+        
+        # do nothing if role is nil
+        return admins if role.nil?
+        
+        if project_id # project_id is presented
+          # get role_assignments for this project_id
+          role_assignments = admin_identity.role_assignments("scope.project.id"=>project_id,"role.id"=>role.id) rescue []
+          # load users (not very performant but there is no other option to get users by ids)
+          role_assignments.collect{|r| admins << admin_identity.find_user(r.user_id)  }
+          
+          if admins.length==0 # no admins for this project_id found
+            # load project
+            project = admin_identity.find_project(project_id) rescue nil
+            if project 
+              # try to get admins recursively by parent_id 
+              admins = list_scope_assigned_users(project_id: project.parent_id, domain_id: project.domain_id, role: role)
+            end  
+          end
+        elsif domain_id # project_id is nil but domain_id is presented
+          # get role_assignments for this domain_id
+          role_assignments = admin_identity.role_assignments("scope.domain.id"=>domain_id,"role.id"=>role.id) rescue []
+          # load users
+          role_assignments.collect{|r|  admins << admin_identity.find_user(r.user_id) }       
+        end
+        
+        return admins
+      end
       
       def admin_identity
         region = MonsoonOpenstackAuth.configuration.default_region
