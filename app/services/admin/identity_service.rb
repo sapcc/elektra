@@ -32,7 +32,7 @@ module Admin
       #
       # end
       #
-      protected
+      
       def admin_identity
         region = MonsoonOpenstackAuth.configuration.default_region
         servce_user_connection = MonsoonOpenstackAuth.api_client(region).connection_driver.connection
