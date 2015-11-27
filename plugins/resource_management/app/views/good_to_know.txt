@@ -56,3 +56,16 @@ Usage Levels are
 Normal) resource usage below 80%
 Warning) resource usage between 81% and 95%
 Critical) resource usage above 100%
+
+PROJECT (alternate variant)
+-------
+
+These bars show the current resource usage in your project. The total length of each
+bar indicates the quota that you have been granted by your domain administrator.
+If you need more resources, you can request a larger quota from your domain
+administrator.
+
+As a project administrator, you can also set your quota directly using the
+OpenStack API. If you set the current quota to exceed your approved quota, the
+approved quota will appear as an extra mark on the bar to the left, and an
+automatic alert might be issued to your domain administrator.
