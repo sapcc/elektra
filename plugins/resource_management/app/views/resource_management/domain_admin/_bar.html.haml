@@ -46,12 +46,12 @@
     - else
       -# Handle unlimted quota  
       .quota
-        - if not active_project_quota and approved_quota_for_domain > 0
+        - if not active_project_quota and approved_quota_for_domain > 1
           .quota-current-danger
-            %span.text-nowrap one or more projects are currently unlimited but approved quota for this domain is #{approved_quota_for_domain}
+            %span.text-nowrap one or more projects are currently unlimited! approved quota for domain #{approved_quota_for_domain}
           .progress
             .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:100%"}
-              quota summary #{current_project_quota_sum}
+              used quota #{current_project_quota_sum}
         - else  
           .quota-current
             %span.text-nowrap unlimited

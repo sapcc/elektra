@@ -50,7 +50,7 @@
       .quota
         - if current_quota == -1 and approved_quota >= usage
           .quota-current-danger
-            %span.text-nowrap quota currently unlimited but approved from domain is #{approved_quota}
+            %span.text-nowrap quota currently unlimited! approved from domain #{approved_quota}
           .progress
             - if usage == approved_quota
               .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage

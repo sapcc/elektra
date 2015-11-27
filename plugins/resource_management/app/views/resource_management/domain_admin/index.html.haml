@@ -4,12 +4,14 @@
 
 .row.quota-row
   .col-md-9   
-    - if @resources.blank?
+    - if @resource_status.blank?
       .bs-callout.bs-callout-info
         Nothing to report! Everything is fine...
     - else
-      -# sort resources by name (and by service for resources with the same name)
-      - @resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
-        = render :partial => 'bar', :locals => { :overview => true, :data => resource }
+      - @area_services.each do |service|
+        - resources = @resource_status[service] || nil
+        - unless resources.nil?
+          - resources.each do |resource|
+            = render :partial => 'bar', :locals => { :overview => false,  :data => resource, :service => service }
   .col-md-3
     = render :partial => 'good_to_know'      
