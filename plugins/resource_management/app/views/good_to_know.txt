@@ -23,7 +23,7 @@ DOMAIN
 ------
 Quota are seperated in 
 
-1) Approved quota: these quota are granted from your domain cloud admin
+1) Approved quota: these quota are granted from your cloud admin
 2) Usage: these represents the summary over all projects and current quota inside this domain
 
 Exiting usecases are
