@@ -13,7 +13,7 @@
         %td{colspa: 6} No inquiries available
     - else
       - @inquiries.each do | inquiry |
-        = render partial: 'item', locals: {inquiry: inquiry}
+        = render partial: 'item', locals: {inquiry: inquiry, remote: remote}
 
 .pagination
-  = paginate @inquiries, :window => 1, :outer_window => 1, :remote => false, :theme => 'twitter-bootstrap-3'
+  = paginate @inquiries, :window => 1, :outer_window => 1, :remote => remote, :theme => 'twitter-bootstrap-3'
