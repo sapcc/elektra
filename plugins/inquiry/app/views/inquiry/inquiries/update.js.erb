@@ -2,3 +2,4 @@
 $('#modal-holder .modal').modal('hide')
 // reload remote inquries
 //Inquiry.reload_current()
+$($("#inquiry_<%=@inquiry.id%>").closest('[data-widget=inquiry]')).inquiryWidget('reload');

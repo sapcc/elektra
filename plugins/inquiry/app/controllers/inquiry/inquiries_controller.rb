@@ -4,7 +4,8 @@ module Inquiry
 
     def index
       filter = params[:filter] ? params[:filter] : {}
-      @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(params[:page] || 1).per(params[:per_page])
+      @page = params[:page] || 1
+      @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
       respond_to do |format|
         format.html { render action: :index }
         format.js { render template: 'inquiry/inquiries/index.js', layout: false }
