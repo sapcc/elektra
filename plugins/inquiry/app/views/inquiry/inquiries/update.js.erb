@@ -1,5 +1,5 @@
 // close modal window
-$('#modal-holder .modal').modal('hide')
+// $('#modal-holder .modal').modal('hide')
+Dashboard.hideModal();
 // reload remote inquries
-//Inquiry.reload_current()
 $($("#inquiry_<%=@inquiry.id%>").closest('[data-widget=inquiry]')).inquiryWidget('reload');
