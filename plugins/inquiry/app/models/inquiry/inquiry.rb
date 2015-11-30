@@ -3,7 +3,7 @@ module Inquiry
     include Filterable
     paginates_per 3
 
-    has_many :process_steps
+    has_many :process_steps, dependent: :destroy
     has_and_belongs_to_many :processors
 
     attr_accessor :process_step_description
@@ -53,7 +53,7 @@ module Inquiry
       step.from_state = aasm.from_state
       step.to_state = aasm.to_state
       step.event = aasm.current_event
-      step.processor_id = options[:user_id]
+      step.processor = Processor.find_by_uid(options[:user].id)
       step.description = options[:description]
       self.process_steps << step
     end

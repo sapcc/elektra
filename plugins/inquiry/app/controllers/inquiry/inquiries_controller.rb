@@ -21,7 +21,7 @@ module Inquiry
     end
 
     def create
-      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, [current_user.id], callbacks
+      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, [current_user], callbacks
         flash[:notice] = "Inquiry successfully created."
         redirect_to inquiries_path
       else
@@ -39,15 +39,16 @@ module Inquiry
       if @inquiry.aasm_state != inquiry_params[:aasm_state]
         @inquiry.process_step_description = inquiry_params[:process_step_description]
         if @inquiry.valid?
-          @inquiry.reject!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
-          @inquiry.approve!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
-          @inquiry.reopen!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
-          @inquiry.close!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
+          @inquiry.reject!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
+          @inquiry.approve!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
+          @inquiry.reopen!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
+          @inquiry.close!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
           flash[:notice] = "Inquiry successfully updated."
-          respond_to do |format|
-            format.js {render 'inquiry/inquiries/update.js'} #redirect_to session.delete(:return_to) 
-            format.html {redirect_to '/'}
-          end
+          render 'inquiry/inquiries/update.js'
+          # respond_to do |format|
+          #   format.js {render 'inquiry/inquiries/update.js'} #redirect_to session.delete(:return_to)
+          #   format.html {redirect_to '/'}
+          # end
         else
           render action: :edit
         end

@@ -9,16 +9,20 @@ module ServiceLayer
       Inquiry::Inquiry.filter(filter)
     end
 
-    def inquiry_create(kind, description, request_user, payload, processor_uids, callbacks={})
-      domain_id = request_user.domain_id
-      project_id = request_user.project_id
+    def inquiry_create(kind, description, requester_user, payload, processor_users, callbacks={})
+      domain_id = requester_user.domain_id
+      project_id = requester_user.project_id
 
       processors = []
-      processor_uids.each do |puid|
-        processors << Inquiry::Processor.find_or_create_by(uid: puid)
+      processor_users.each do |user|
+        processors << Inquiry::Processor.find_or_create_by(uid: user.id) do |p|
+          p.email = user.email
+          p.full_name = user.full_name
+        end
       end
       inq = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
-                                 requester_id: request_user.id, payload: payload, processors: processors, callbacks: callbacks)
+                                 requester_id: requester_user.id, requester_email: requester_user.email, requester_full_name: requester_user.full_name, \
+                                 payload: payload, processors: processors, callbacks: callbacks)
       inq.save
       return inq
     end
