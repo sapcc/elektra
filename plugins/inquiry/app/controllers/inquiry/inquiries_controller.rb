@@ -48,10 +48,6 @@ module Inquiry
           @inquiry.close!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
           flash[:notice] = "Inquiry successfully updated."
           render 'inquiry/inquiries/update.js'
-          # respond_to do |format|
-          #   format.js {render 'inquiry/inquiries/update.js'} #redirect_to session.delete(:return_to)
-          #   format.html {redirect_to '/'}
-          # end
         else
           render action: :edit
         end
