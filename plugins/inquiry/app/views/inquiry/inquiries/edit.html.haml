@@ -53,7 +53,7 @@
             %th Reason
           - @inquiry.process_steps.each do |step|
             %tr
-              %td= step.processor.full_name
+              %td= step.processor.try(:full_name)
               %td= step.from_state
               %td= step.to_state
               %td= step.created_at.getlocal.strftime("%F %T")
