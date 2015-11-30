@@ -12,6 +12,8 @@ module Inquiry
     scope :id, -> (id) { where id: id }
     scope :state, -> (state) { where aasm_state: state }
     scope :requester_id, -> (requester_id) { where requester_id: requester_id }
+    scope :processor_id, -> (processor_id) {Inquiry.joins(:processors).where(inquiry_processors: {uid: processor_id}).includes(:processors)}
+    #scope :processor_id, -> (processor_id) { where processor_id: Processor.find_by_uid(processor_id)}
     scope :kind, -> (kind) { where kind: kind }
 
 

@@ -20,7 +20,7 @@
             %td= @inquiry.kind
           %tr
             %th Requested by
-            %td= @inquiry.requester_id
+            %td= "#{@inquiry.requester_full_name} (#{@inquiry.requester_email})"
           %tr
             %th Reason for Request
             %td= @inquiry.description

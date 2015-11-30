@@ -21,7 +21,10 @@ module Inquiry
     end
 
     def create
-      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, [current_user], callbacks
+      # get the admins
+      admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id}).delete_if{|u| u.id.blank?}
+
+      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks
         flash[:notice] = "Inquiry successfully created."
         redirect_to inquiries_path
       else
