@@ -25,10 +25,6 @@ Rails.application.routes.draw do
       end
       ######################## END ############################
     end
-
-    scope module: 'dashboard' do
-      get 'home' => 'pages#show', id: 'home', as: :domain_home
-    end
   end
 
   # route for overwritten High Voltage Pages controller
