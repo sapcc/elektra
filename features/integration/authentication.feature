@@ -11,15 +11,15 @@ Feature: Authentication
   Scenario: User is not logged in and tries to visit domain landing page
     Given I am on the root page
      And I am not logged in
-    When I visit "/monsooncc_test/home"
+    When I visit "/monsooncc_test/identity/home"
     Then I am redirected to login page
      And I see login form
 
   Scenario: User is not logged in but already registered
     Given I am not logged in
-    When I visit "/monsooncc_test/home"
+    When I visit "/monsooncc_test/identity/home"
      And Login as test_admin
-    Then I am redirected to "/monsooncc_test/home"
+    Then I am redirected to "/monsooncc_test/identity/home"
      And I click on user navigation
      And I see a "Log out" button
 

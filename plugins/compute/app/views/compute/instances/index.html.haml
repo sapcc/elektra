@@ -5,7 +5,7 @@
 - if @scoped_project_id
   - if current_user.is_allowed?("identity:instance_create", {instance: {user_id: current_user.id} })
     .toolbar
-      = link_to 'Create new', new_instance_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
+      = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
   %table.table
     %thead

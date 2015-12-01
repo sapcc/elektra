@@ -57,8 +57,4 @@ class ScopeController < ::ApplicationController
     #p "@scoped_project_id: #{@scoped_project_id}"
     #p "@scoped_project_fid: #{@scoped_project_fid}"
   end
-
-  def default_url_options
-    { domain_id: @scoped_domain_fid, project_id: @scoped_project_fid }.merge(super)
-  end
 end

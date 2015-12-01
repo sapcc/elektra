@@ -1,7 +1,7 @@
 @javascript
 Feature: Credentials
   Background:
-    Given I visit "/monsooncc_test/home"
+    Given I visit "/monsooncc_test/identity/home"
      And Login as test_admin
 
   Scenario: Credentials page is reachable
