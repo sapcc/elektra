@@ -17,12 +17,12 @@
 
     - if current_quota >= 0
       -# case 1: finite current quota
-      =render partial: 'resource_bar', locals: { fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+      = resource_bar( fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit )
     - else
       -if usage > approved_quota
-        =render partial: 'resource_bar', locals: { fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+        = resource_bar( fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit )
       -else
-        =render partial: 'resource_bar', locals: { fill: usage, maximum: { value: -1, label: "Quota currently unlimited (approved quota: #{approved_quota/display_unit})" }, threshold: approved_quota, display_unit: display_unit }
+        = resource_bar( fill: usage, maximum: { value: -1, label: "Quota currently unlimited (approved quota: #{approved_quota/display_unit})" }, threshold: approved_quota, display_unit: display_unit )
 
   .col-md-1.quota-request-more
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'

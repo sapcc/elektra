@@ -2,30 +2,27 @@
 -# for development and debugging.
 
 %h3 Empty
-=render :partial => 'resource_bar', :locals => { fill:   0, maximum:   0 }
+= resource_bar( fill:   0, maximum:   0 )
 %h3 Regular
-=render :partial => 'resource_bar', :locals => { fill:   0, maximum: 100 }
-=render :partial => 'resource_bar', :locals => { fill:   4, maximum: 100 }
-=render :partial => 'resource_bar', :locals => { fill:  40, maximum: 100 }
-=render :partial => 'resource_bar', :locals => { fill:  80, maximum: 100 }
-=render :partial => 'resource_bar', :locals => { fill: 100, maximum: 100 }
+= resource_bar( fill:   0, maximum: 100 )
+= resource_bar( fill:   4, maximum: 100 )
+= resource_bar( fill:  40, maximum: 100 )
+= resource_bar( fill:  80, maximum: 100 )
+= resource_bar( fill: 100, maximum: 100 )
 %h3 Undercommit (threshold = 200)
-=render :partial => 'resource_bar', :locals => { fill:   0, maximum: 100, threshold: 200 }
-=render :partial => 'resource_bar', :locals => { fill:   4, maximum: 100, threshold: 200 }
-=render :partial => 'resource_bar', :locals => { fill:  40, maximum: 100, threshold: 200 }
-=render :partial => 'resource_bar', :locals => { fill:  80, maximum: 100, threshold: 200 }
-=render :partial => 'resource_bar', :locals => { fill: 100, maximum: 100, threshold: 200 }
+= resource_bar( fill:   0, maximum: 100, threshold: 200 )
+= resource_bar( fill:   4, maximum: 100, threshold: 200 )
+= resource_bar( fill:  40, maximum: 100, threshold: 200 )
+= resource_bar( fill:  80, maximum: 100, threshold: 200 )
+= resource_bar( fill: 100, maximum: 100, threshold: 200 )
 %h3 Overcommit
-=render :partial => 'resource_bar', :locals => { fill:   0, maximum: 100, threshold:  50 }
-=render :partial => 'resource_bar', :locals => { fill:   4, maximum: 100, threshold:  50 }
-=render :partial => 'resource_bar', :locals => { fill:  40, maximum: 100, threshold:  50 }
-=render :partial => 'resource_bar', :locals => { fill:  50, maximum: 100, threshold:  50 }
-=render :partial => 'resource_bar', :locals => { fill:  80, maximum: 100, threshold:  50 }
-=render :partial => 'resource_bar', :locals => { fill: 100, maximum: 100, threshold:  50 }
-%h3 Infinite maximum, no threshold
-=render :partial => 'resource_bar', :locals => { fill:   0, maximum: -1 }
-=render :partial => 'resource_bar', :locals => { fill: 100, maximum: -1 }
+= resource_bar( fill:   0, maximum: 100, threshold:  50 )
+= resource_bar( fill:   4, maximum: 100, threshold:  50 )
+= resource_bar( fill:  40, maximum: 100, threshold:  50 )
+= resource_bar( fill:  50, maximum: 100, threshold:  50 )
+= resource_bar( fill:  80, maximum: 100, threshold:  50 )
+= resource_bar( fill: 100, maximum: 100, threshold:  50 )
 %h3 Infinite maximum with threshold
-=render :partial => 'resource_bar', :locals => { fill:   0, maximum: -1, threshold: 50 }
-=render :partial => 'resource_bar', :locals => { fill:  50, maximum: -1, threshold: 50 }
-=render :partial => 'resource_bar', :locals => { fill: 100, maximum: -1, threshold: 50 }
+= resource_bar( fill:   0, maximum: -1, threshold: 50 )
+= resource_bar( fill:  50, maximum: -1, threshold: 50 )
+= resource_bar( fill: 100, maximum: -1, threshold: 50 )
