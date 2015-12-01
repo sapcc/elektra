@@ -87,6 +87,7 @@
 
 .quota-overcommit {
     background: repeating-linear-gradient( -55deg, transparent,  transparent 3px, #DCDCDC 3px, #DCDCDC 5px );
+    color: inherit;
 }
 
 .progress-bar-quota {
@@ -95,8 +96,11 @@
 }
 
 .progress-bar-empty {
-    background: transparent;
+    background: none;
     box-shadow: none;
+    color: inherit;
+    text-align: left;
+    padding-left:5px;
 }
 
 .quota {
