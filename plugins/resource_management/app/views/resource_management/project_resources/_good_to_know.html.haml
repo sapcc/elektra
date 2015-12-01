@@ -1,20 +1,22 @@
 
 .bs-callout.bs-callout-primary
   - if tab == "overview"
-    These bars shown the 
+    These bars show the 
     %strong critical 
     resource usage for all quota types in your project. 
   - else
-    These bars shown the resource usage for 
+    These bars show the resource usage for 
     %strong=tab
     quota in your project.
-
+  
   The total length of each bar indicates the quota that you have been granted by your domain administrator.
+  %br
+  %br
   To exceed your approved quota please request more resources from you project administrator.
-  .text-muted.quota
-    %strong Note: 
-    as a project administrator, it is possible (but not preferred) to set your quota directly 
-    using the OpenStack API. If you set the current quota to exceed your approved quota, the
-    approved quota will appear as an extra mark on the bar to the left. For this case an automatic alert 
-    is issued to your domain administrator.
- 
+
+  - if @warning
+    .text-muted.quota
+      %strong Note: 
+      Some of your current quotas exceed your approved quota. The approved quota will
+      appear as an extra mark on the bar to the left. For this case an
+      automatic alert is issued to your domain administrator.
