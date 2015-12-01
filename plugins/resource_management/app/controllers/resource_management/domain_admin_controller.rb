@@ -66,6 +66,9 @@ module ResourceManagement
         active_project_quota = false
         if unlimited_project_quota_found.nil?
           active_project_quota = true
+        else
+          # increment because we lost -1 in the quota summary
+          current_project_quota_sum = current_project_quota_sum += 1 
         end
         # when no domain quota exists yet, use an empty mock object
         domain_service_quota ||= ResourceManagement::Resource.new(
