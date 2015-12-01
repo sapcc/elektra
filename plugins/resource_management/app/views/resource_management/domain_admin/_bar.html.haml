@@ -2,7 +2,7 @@
   .col-md-2.quota-label
     .text-muted
       - if overview
-        = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').send("resources_area_path", data[:domain_quota].attributes[:area])
+        = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').send("admin_area_path", data[:domain_quota].attributes[:area])
       - else
         = t("resource_management.#{data[:domain_quota][:name]}")
       - if overview
@@ -25,6 +25,6 @@
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
   .col-md-1.quota-request-more
     - if current_project_quota_sum > 0 and data[:domain_quota].approved_quota >= 0 and active_project_quota
-      = link_to 'Request more',plugin('resource_management').resources_request_path(:service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
+      = link_to 'Request more',plugin('resource_management').admin_request_path(:service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
     - else
       = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
