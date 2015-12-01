@@ -12,7 +12,7 @@ module ResourceManagement
     end
 
     def resource_request
-      @resource_type = params.require(:resource_type)
+      @resource = params.require(:resource)
       @service = params.require(:service)
     end
 

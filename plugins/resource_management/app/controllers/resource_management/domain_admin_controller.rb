@@ -26,8 +26,8 @@ module ResourceManagement
 
 
     def resource_request
-      @resource_type = params[:resource_type]
-      @level = params[:level]
+      @resource = params[:resource]
+      @service = params[:service]
     end
 
     def details
