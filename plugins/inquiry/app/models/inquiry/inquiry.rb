@@ -4,7 +4,9 @@ module Inquiry
     paginates_per 3
 
     has_many :process_steps, dependent: :destroy
+
     has_and_belongs_to_many :processors
+    validates :processors, presence: true
 
     attr_accessor :process_step_description
     validates :process_step_description, presence: {message: 'Please provide a description for the process action'}
@@ -13,7 +15,6 @@ module Inquiry
     scope :state, -> (state) { where aasm_state: state }
     scope :requester_id, -> (requester_id) { where requester_id: requester_id }
     scope :processor_id, -> (processor_id) {Inquiry.joins(:processors).where(inquiry_processors: {uid: processor_id}).includes(:processors)}
-    #scope :processor_id, -> (processor_id) { where processor_id: Processor.find_by_uid(processor_id)}
     scope :kind, -> (kind) { where kind: kind }
 
 
