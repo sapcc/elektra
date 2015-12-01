@@ -31,8 +31,8 @@ module ResourceManagement
     end
 
     def details
-      @resource_type = params[:resource_type]
-      @level = params[:level]
+      @resource = params[:resource]
+      @service = params[:service]
     end
 
     private

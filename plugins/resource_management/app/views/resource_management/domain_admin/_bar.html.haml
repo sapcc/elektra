@@ -22,7 +22,7 @@
       = render partial: 'resource_bar', locals: { fill: current_project_quota_sum, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
   
   .col-md-1.quota-request-more
-    = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
+    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name]),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
   .col-md-1.quota-request-more
     - if current_project_quota_sum > 0 and data[:domain_quota].approved_quota >= 0 and active_project_quota
       = link_to 'Request more',plugin('resource_management').admin_request_path(:service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
