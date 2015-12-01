@@ -17,4 +17,4 @@
         - resources.each do |resource|
           = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
   .col-md-3
-    = render :partial => 'good_to_know'
+    = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }
