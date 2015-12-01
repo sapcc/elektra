@@ -22,12 +22,13 @@ module Inquiry
 
     def create
       # get the admins
-      admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id}).delete_if{|u| u.id.blank?}
-
-      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks
+      admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id}).delete_if{|u| u.id.blank?}
+      @inquiry = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
+      if @inquiry.valid?
         flash[:notice] = "Inquiry successfully created."
         redirect_to inquiries_path
       else
+        Rails.logger.error "Inquiry: Error creating inquiry: #{@inquiry.errors.full_messages}"
         render action: :new
       end
     end

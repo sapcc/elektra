@@ -6,7 +6,8 @@ module Inquiry
     has_many :process_steps, dependent: :destroy
 
     has_and_belongs_to_many :processors
-    validates :processors, presence: true
+    validates :processors, presence: {message: 'missing. Please contact an administrator!'}
+    validates :description, presence: true
 
     attr_accessor :process_step_description
     validates :process_step_description, presence: {message: 'Please provide a description for the process action'}
