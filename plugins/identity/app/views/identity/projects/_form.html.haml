@@ -6,10 +6,11 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"information"} 
     %fieldset
-      = form.input :name,
-        input_html:  { maxlength: 255 },
-        placeholder: "Enter name",
-        autofocus:   true,
-        label:       true
+      %p
+        = form.input :name,
+          input_html:  { maxlength: 255 },
+          placeholder: "Enter name",
+          autofocus:   true,
+          label:       'Name'
         
-  .tab-pane.active{role:"tabpanel", id:"network"} No content yet!       
+  .tab-pane{role:"tabpanel", id:"network"} No content yet!       

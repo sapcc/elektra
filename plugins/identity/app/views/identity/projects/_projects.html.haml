@@ -1,7 +1,7 @@
 - if current_user.is_allowed?("identity:project_request",{project: {user_id: current_user.id}})
   .toolbar
     %b Your projects
-    = link_to 'Request new project', wizard_projects_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    = link_to 'Request new project', plugin('identity').wizard_projects_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
     
 %table.table
   %thead
