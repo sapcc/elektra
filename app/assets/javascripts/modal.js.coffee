@@ -50,11 +50,17 @@ class @MoModal
 
   handleAjaxSuccess= (event, data, status, xhr)->  
       url = xhr.getResponseHeader('Location')
-      
-      if url
+      response_type = (xhr.getResponseHeader("content-type") || "")
+            
+      if url # url is presented
         # Redirect to url
         window.location = url
+      else if response_type.indexOf('javascript') > -1
+        # response is javascript
+        # Remove old modal backdrop
+        $('.modal-backdrop').remove()
       else
+        # assume response is a html
         # modal has the fade effect 
         if $($(modal_holder_selector).find(modal_selector)).hasClass('fade')
           # replace content of old modal
@@ -66,6 +72,7 @@ class @MoModal
           $('.modal-backdrop').remove()
           # Replace old modal with new one
           $(modal_holder_selector).html(data).find(modal_selector).modal()
+          
         Dashboard.initForm()  
       return false
 

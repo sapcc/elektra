@@ -4,7 +4,8 @@ module Inquiry
 
     def index
       filter = params[:filter] ? params[:filter] : {}
-      @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(params[:page] || 1).per(params[:per_page])
+      @page = params[:page] || 1
+      @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
       respond_to do |format|
         format.html { render action: :index }
         format.js { render template: 'inquiry/inquiries/index.js', layout: false }
@@ -20,7 +21,10 @@ module Inquiry
     end
 
     def create
-      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, [current_user.id], callbacks
+      # get the admins
+      admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id}).delete_if{|u| u.id.blank?}
+
+      if services.inquiry.inquiry_create inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks
         flash[:notice] = "Inquiry successfully created."
         redirect_to inquiries_path
       else
@@ -38,12 +42,12 @@ module Inquiry
       if @inquiry.aasm_state != inquiry_params[:aasm_state]
         @inquiry.process_step_description = inquiry_params[:process_step_description]
         if @inquiry.valid?
-          @inquiry.reject!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
-          @inquiry.approve!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
-          @inquiry.reopen!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
-          @inquiry.close!({user_id: current_user.id, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
+          @inquiry.reject!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
+          @inquiry.approve!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
+          @inquiry.reopen!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
+          @inquiry.close!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
           flash[:notice] = "Inquiry successfully updated."
-          render 'inquiry/inquiries/update.js' #redirect_to session.delete(:return_to)
+          render 'inquiry/inquiries/update.js'
         else
           render action: :edit
         end

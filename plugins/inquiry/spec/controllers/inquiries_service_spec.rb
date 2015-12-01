@@ -16,7 +16,7 @@ describe Inquiry::InquiriesController, type: :controller do
     stub_authentication
     stub_admin_services
     @payload = { :key1 => "value1", :key2 => "value2" }.to_json
-    @processors = ['s-00001', 's-00002', 's-00003']
+    @processors = [controller.current_user]
   end
 
 

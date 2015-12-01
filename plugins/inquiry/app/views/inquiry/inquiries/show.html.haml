@@ -20,7 +20,7 @@
             %td= @inquiry.kind
           %tr
             %th Requested by
-            %td= @inquiry.requester_id
+            %td= "#{@inquiry.requester_full_name} (#{@inquiry.requester_email})"
           %tr
             %th Reason for Request
             %td= @inquiry.description
@@ -46,11 +46,11 @@
             %th Reason
           - @inquiry.process_steps.each do |step|
             %tr
-              %td= step.processor_id
+              %td= step.processor.try :full_name
               %td= step.from_state
               %td= step.to_state
-              %td= step.created_at.getlocal
-              %td{:width => "400"}= step.description
+              %td= step.created_at.getlocal.strftime("%F %T")
+              %td{:width => "300"}= step.description
 
 
 - if modal?

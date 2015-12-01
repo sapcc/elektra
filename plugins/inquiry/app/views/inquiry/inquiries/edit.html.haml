@@ -19,7 +19,8 @@
           %fieldset
             %fieldset
             = f.input :kind, label: "Kind", disabled: true
-            = f.input :requester_id, label: "Requested by", disabled: true
+            = f.input :requester_full_name, label: "Requested by", disabled: true
+            = f.input :requester_email, label: "Requester email", disabled: true
             = f.input :description, label: "Reason for Request", as: :text, disabled: true
             = f.input :aasm_state, { label: "Set new State",
               as: :select,
@@ -52,8 +53,8 @@
             %th Reason
           - @inquiry.process_steps.each do |step|
             %tr
-              %td= step.processor_id
+              %td= step.processor.try(:full_name)
               %td= step.from_state
               %td= step.to_state
-              %td= step.created_at.getlocal
-              %td{:width => "400"}= step.description
+              %td= step.created_at.getlocal.strftime("%F %T")
+              %td{:width => "300"}= step.description

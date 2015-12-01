@@ -8,4 +8,5 @@
   .toolbar
     = link_to 'Create new', new_inquiry_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-= render partial: 'index', locals: {inquiries: @inquiries}
+.inquiry-widget#inquiries{data: {widget: :inquiry}}
+  = render partial: 'index', locals: {inquiries: @inquiries, remote: false}
