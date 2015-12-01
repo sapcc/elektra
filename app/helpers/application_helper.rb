@@ -1,27 +1,61 @@
 module ApplicationHelper
-  # # for the case a url or path helper method from the main app is needed
-  # def method_missing method, *args, &block
-  #   p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-  #   p method
-  #   if (method.to_s.end_with?('_path') or method.to_s.end_with?('_url')) and main_app.respond_to?(method)
-  #     main_app.send(method, *args)
-  #   else
-  #     super
-  #   end
-  # end
+
+  # This class is used to create scoped urls for plugin url helpers
+  class PluginUrlHelper
+    # caching, do not create a plugin helper twice
+    def self.plugin_helper(helper,plugin_name,scope)
+      @@plugin_helpers ||= {}
+      @@plugin_helpers[plugin_name] ||= new(helper,plugin_name,scope)  
+    end
+    
+    # helper is ApplicationHelper, scope is a hash ({domain_id: DOMAIN_ID, project_id: PROJECT_ID})
+    def initialize(helper,plugin_name,scope)
+      @plugin_name     = plugin_name
+      @plugin          = helper.send("#{plugin_name}_plugin")
+      @main_app        = helper.main_app
+      @scope           = scope
+    end
+    
+    # delegate all methods to the plugin_helper. Clean the scope before.
+    def method_missing(method,*args,&block)
+      if method.to_s.ends_with?('_path') or method.to_s.ends_with?('_url')
+        options = args.first || {}
+
+        if options.is_a?(String) or options.is_a?(Fixnum)
+          options = case method.to_s
+            when 'project_path' then {project_id: options}
+            when 'domain_path' then {domain_id: options}
+            else {id: options}
+          end
+        end
+
+        @scope[:domain_id] = options.delete(:domain_id) if options.has_key?(:domain_id)
+        @scope[:project_id] = options.delete(:project_id) if options.has_key?(:project_id)
+        @scope.delete_if{|key, value| value.nil? }
+
+        options[:script_name] = @main_app.send("#{@plugin_name}_plugin_path",@scope)
+
+        @plugin.send(method,options)
+      else
+        @plugin.send(method,*args,&block)
+      end
+    end
+  end
+  
+  def plugin(name)
+    if plugin_available?(name)
+      PluginUrlHelper.plugin_helper(self,name,{domain_id: @scoped_domain_fid, project_id: @scoped_project_fid})
+    end
+  end
+  
+  def plugin_available?(name)
+    self.respond_to?("#{name}_plugin".to_sym)
+  end  
   
   # ---------------------------------------------------------------------------------------------------
   # Favicon Helpers
   # ---------------------------------------------------------------------------------------------------
   
-  def plugin_available?(name)
-    self.respond_to?("#{name}_plugin".to_sym)
-  end
-  
-  def plugin(name)
-    plugin_available?(name) ? send("#{name}_plugin") : nil
-  end
-
   def favicon_png
     capture_haml do
       haml_tag :link, rel: "icon", type: "image", href: image_path("favicon.png")
