@@ -504,7 +504,7 @@ GEM
     slop (3.6.0)
     spinners (1.1.0)
       sass (~> 3.2)
-    spring (1.4.1)
+    spring (1.4.0)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
