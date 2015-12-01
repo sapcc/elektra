@@ -4,21 +4,14 @@
 
 .row.quota-row
   .col-md-9
-    -#raise
     - @area_services.each do |service|
       - if @area_services.size > 1
         %h3= t(service)
-      -# resources = @domain_quotas.select { |r| r.service == service.to_s }.sort_by { |r| r.name }
-      -# raise
-      -# if resources.empty?
-        .bs-callout
-          No #{t(service)} Quotas found!
-      -# else
-        - resources.each do |resource|
-          - raise
-          = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
       - if @resource_status[service]
         - @resource_status[service].each do |resource|
           = render :partial => 'bar', :locals => { :overview => false,  :data => resource, :service => service }
+      - else
+        .bs-callout
+          No #{t(service)} Quotas found!
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }

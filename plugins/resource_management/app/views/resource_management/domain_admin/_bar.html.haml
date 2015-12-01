@@ -2,20 +2,19 @@
   .col-md-2.quota-label
     .text-muted
       - if overview
-        = link_to t("resource_management.#{data[:name]}"), plugin('resource_management').send("resources_area_path", data.attributes[:area])
+        = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').send("resources_area_path", data[:domain_quota].attributes[:area])
       - else
-        = t("resource_management.#{data[:name]}")
+        = t("resource_management.#{data[:domain_quota][:name]}")
       - if overview
         .small
           .small= t(service)
-
+  
   .col-md-7
     - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
     - current_project_quota_sum = data[:current_project_quota_sum]
     - active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
     - approved_quota_for_domain = data[:domain_quota].approved_quota
 
-    -#raise
     - if active_project_quota and approved_quota_for_domain >= 0
       -# all project quotas are limited
       = render partial: 'resource_bar', locals: { fill: current_project_quota_sum, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }

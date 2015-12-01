@@ -12,6 +12,6 @@
         - resources = @resource_status[service] || nil
         - unless resources.nil?
           - resources.each do |resource|
-            = render :partial => 'bar', :locals => { :overview => false,  :data => resource, :service => service }
+            = render :partial => 'bar', :locals => { :overview => true,  :data => resource, :service => service }
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => 'overview'}   
