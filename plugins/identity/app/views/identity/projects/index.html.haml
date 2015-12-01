@@ -1,9 +1,2 @@
-.row
-  .col-md-6
-    .list-group
-      - @projects.each do |project|
-        = link_to project.name, plugin('identity').project_path(id:project.friendly_id), class: "list-group-item"
-
-  / - if current_user.is_allowed?("identity:project_create", { project: {domain_id: @scoped_domain_id} })
-  /   .col-md-6
-  /     = link_to 'New Project', plugin('identity').new_project_path, class: 'btn btn-primary btn-md', data: { modal: true }
+%h3 Projects
+= render partial: 'identity/projects/projects', locals: {projects: @projects}

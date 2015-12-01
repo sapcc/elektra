@@ -1,6 +1,15 @@
-%fieldset
-  = form.input :name,
-    input_html:  { maxlength: 255 },
-    placeholder: "Enter name",
-    autofocus:   true,
-    label:       false
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} 
+  %li{role: "presentation"}= link_to 'Network', '#network', aria: {controls:"network"}, role: "tab", data: {toggle:"tab"}  
+
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"information"} 
+    %fieldset
+      = form.input :name,
+        input_html:  { maxlength: 255 },
+        placeholder: "Enter name",
+        autofocus:   true,
+        label:       true
+        
+  .tab-pane.active{role:"tabpanel", id:"network"} No content yet!       

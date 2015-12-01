@@ -1,10 +1,13 @@
-= simple_form_for @forms_project, url: plugin('identity').projects_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= content_for :modal_title do 
+  Request new project
+  
+= simple_form_for @project, url: plugin('identity').wizard_projects_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @forms_project.errors["message"].blank?
-      %p.alert.alert-error= @forms_project.errors.full_messages.to_sentence
+    - unless @project.errors["message"].blank?
+      %p.alert.alert-error= @project.errors.full_messages.to_sentence
     
     = render partial: 'form', locals: { form: f }
-
+    
   %div{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     = f.submit 'Create Project', class: 'btn btn-primary', data: { disable_with: "Please wait..." }
