@@ -1,9 +1,0 @@
-= simple_form_for @forms_project, url: project_path(id: @forms_project.id), method: :put, remote: modal?, html: {data: {modal: modal?} }  do |f|
-  %div{class: modal? ? 'modal-body' : ''}
-    - unless @forms_project.errors["message"].blank?
-      %p.alert.alert-error= @forms_project.errors.full_messages.to_sentence
-    = render partial: 'form', locals: { form: f }
-
-  %div{class: modal? ? 'modal-footer' : ''}
-    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-    = f.submit 'Update Project', class: 'btn btn-primary', data: { disable_with: "Please wait..." }

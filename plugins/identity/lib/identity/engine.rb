@@ -2,10 +2,10 @@ module Identity
   class Engine < ::Rails::Engine
     isolate_namespace Identity
     
-    # initializer 'identity.action_controller' do |app|
-    #   ActiveSupport.on_load :action_controller do
-    #     helper Identity::ProjectsHelper
-    #   end
-    # end
+    initializer 'identity.action_controller' do |app|
+      ActiveSupport.on_load :action_controller do
+        helper Identity::ProjectsHelper
+      end
+    end
   end
 end

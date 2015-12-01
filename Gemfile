@@ -25,9 +25,9 @@ gem 'font-awesome-sass'
 
 gem 'responders'
 
-# gem "aasm"
-# gem "kaminari"
-# gem "bootstrap-kaminari-views"
+gem "aasm"
+gem "kaminari"
+gem "bootstrap-kaminari-views"
 
 
 # Database

@@ -1,5 +1,5 @@
 
-= simple_form_for @inquiry, url: inquiries_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @inquiry, url: plugin('inquiry').inquiries_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
   = render partial: 'error', locals: { object: @inquiry, exclude: [:description] }
   %div{class: modal? ? 'modal-body' : ''}
     - unless @inquiry.errors["message"].blank?
