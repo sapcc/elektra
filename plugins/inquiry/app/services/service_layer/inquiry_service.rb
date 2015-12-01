@@ -13,13 +13,7 @@ module ServiceLayer
       domain_id = requester_user.domain_id
       project_id = requester_user.project_id
 
-      processors = []
-      processor_users.each do |user|
-        processors << Inquiry::Processor.find_or_create_by(uid: user.id) do |p|
-          p.email = user.email
-          p.full_name = user.full_name
-        end
-      end
+      processors = Inquiry::Processor.from_users(processor_users)
       inq = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
                                  requester_id: requester_user.id, requester_email: requester_user.email, requester_full_name: requester_user.full_name, \
                                  payload: payload, processors: processors, callbacks: callbacks)

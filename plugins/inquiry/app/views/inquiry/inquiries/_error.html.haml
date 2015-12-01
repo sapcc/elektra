@@ -1,0 +1,5 @@
+- unless object.errors.blank?
+  - object.errors.each do |attr, err|
+    - next if exclude.include? attr
+    %p{class: "alert alert-error"}
+      = object.errors.full_message attr, err

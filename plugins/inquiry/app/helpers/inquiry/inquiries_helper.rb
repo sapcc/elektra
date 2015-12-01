@@ -17,5 +17,10 @@ module Inquiry
         filter: (options[:filter] || {}).to_json
       })
     end
+
+    def render_errors inquiry
+
+
+    end
   end
 end
