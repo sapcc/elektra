@@ -24,42 +24,22 @@ module Identity
     
     def wizard_create
       @project = services.identity.new_project
+      @project.attributes=params.fetch(:project,{}).merge(domain_id: @scoped_domain_id)
+      
+      inq = services.inquiry.inquiry_create(
+        'project', 
+        'Create a project', 
+        current_user, 
+        @project.attributes.to_json, 
+        Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id,project_id:@scoped_project_id), 
+        nil
+      )
+      if inq.save
+        render template: 'identity/projects/wizard_create.js'
+      else
+        render action: :wizard
+      end
     end
-
-    # def new
-    #   @forms_project = services.identity.project
-    # end
-    #
-    # def create
-    #   @forms_project = services.identity.new_project
-    #   @forms_project.attributes = params.fetch(:forms_project,{}).merge(domain_id: @scoped_domain_id)
-    #
-    #   if @forms_project.save
-    #     services.identity.grant_project_role(@forms_project.model,'admin')
-    #     flash[:notice] = "Project #{@forms_project.name} successfully created."
-    #     redirect_to projects_path(project_id: nil)
-    #   else
-    #     flash[:error] = @forms_project.errors.full_messages.to_sentence
-    #     render action: :new
-    #   end
-    # end
-    #
-    # def edit
-    #   @forms_project = services.identity.find_project(@project_id)
-    # end
-    #
-    # def update
-    #   @forms_project = services.identity.find_project(@project_id)
-    #   @forms_project.attributes = params[:forms_project]
-    #
-    #   if @forms_project.save
-    #     flash[:notice] = "Project #{@forms_project.name} successfully updated."
-    #     redirect_to projects_path(project_id: nil)
-    #   else
-    #     flash[:error] = @forms_project.errors.full_messages.join(', ')
-    #     render action: :edit
-    #   end
-    # end
 
     def destroy
       project = services.identity.find_project(@project_id)
