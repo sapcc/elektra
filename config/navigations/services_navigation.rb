@@ -61,7 +61,7 @@ SimpleNavigation::Configuration.run do |navigation|
       compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
       compute_nav.item :volumes, 'Volumes', '#'
       compute_nav.item :snapshots, 'Snapshots', '#'
-      compute_nav.item :automation, 'Monsoon Automation', '#'
+      compute_nav.item :automation, 'Monsoon Automation', plugin('automation').instances_path, if: Proc.new { plugin_available?('automation') }
     end
 
     primary.item :access_managment, 'Access Management', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" } do |access_management_nav|
