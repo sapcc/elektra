@@ -16,7 +16,7 @@ module ApplicationHelper
       @scope           = scope
     end
     
-    # delegate all methods to the plugin_helper. Clean the scope before.
+    # delegate all methods to the plugin_helper. Clean the scope parameters before delegation!
     def method_missing(method,*args,&block)
       if method.to_s.ends_with?('_path') or method.to_s.ends_with?('_url')
         options = args.first || {}
