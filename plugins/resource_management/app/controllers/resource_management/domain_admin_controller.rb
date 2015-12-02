@@ -34,7 +34,7 @@ module ResourceManagement
       @resource = params[:resource]
       @service = params[:service]
       @area_services = [@service.to_sym]
-      @overview = true if params[:overview] == "true"
+      @show_all_button = true if params[:overview].eql?("true")
 
       @domain_quotas = ResourceManagement::Resource.where(
           :domain_id => @scoped_domain_id, 
@@ -63,6 +63,7 @@ module ResourceManagement
                      group("service,name").
                      pluck("service,name,SUM(current_quota),SUM(usage)")
       
+      # this is used for details view
       @projects = quotas.where.not(project_id: nil) if projects
 
       # get unlimited quotas

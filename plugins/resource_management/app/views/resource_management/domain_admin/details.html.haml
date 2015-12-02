@@ -25,15 +25,27 @@
         %th Edit
     %tbody
       - @projects.each do |project|
-        %tr
-          %td=project.project_id
-          %td=project.approved_quota
-          %td=project.current_quota
-          %td=project.usage
-          %td
+        - display_unit = project.attributes[:display_unit] || 1
+        - current_quota = project.current_quota / display_unit
+        - current_quota = "unlimited" if project.current_quota == -1
+        - if current_quota == "unlimited"
+          %tr.danger
+            %td=project.project_id
+            %td=project.approved_quota / display_unit
+            %td=current_quota
+            %td=project.usage / display_unit
+            %td -
+        - else
+          %tr
+            %td=project.project_id
+            %td=project.approved_quota / display_unit
+            %td=current_quota
+            %td=project.usage / display_unit
+            %td -
+
 - if modal?
   .modal-footer
-    - if @service and @overview
+    - if @service and @show_all_button
       = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(@service), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
    
