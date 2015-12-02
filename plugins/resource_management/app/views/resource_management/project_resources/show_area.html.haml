@@ -15,6 +15,6 @@
           No #{t(service)} Quotas found!
       - else
         - resources.each do |resource|
-          = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
+          = render :partial => 'bar', :locals => {:data => resource }
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }

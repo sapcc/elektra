@@ -34,6 +34,7 @@ module ResourceManagement
       @resource = params[:resource]
       @service = params[:service]
       @area_services = [@service.to_sym]
+      @overview = true if params[:overview] == "true"
 
       @domain_quotas = ResourceManagement::Resource.where(
           :domain_id => @scoped_domain_id, 
@@ -41,7 +42,7 @@ module ResourceManagement
           :service => @service.to_sym, 
           :name => @resource.to_sym)
       
-      get_resource_status(false, @resource)
+      get_resource_status(false, @resource, true)
     end
 
     private
@@ -50,7 +51,7 @@ module ResourceManagement
       @usage_stage = { :danger => 1.0, :warning => 0.8 }
     end
 
-    def get_resource_status(critical = false, resource = nil)
+    def get_resource_status(critical = false, resource = nil, projects = false)
 
       # get data for currently existing quota
       quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
@@ -61,6 +62,8 @@ module ResourceManagement
       stats = quotas.where.not(project_id: nil).
                      group("service,name").
                      pluck("service,name,SUM(current_quota),SUM(usage)")
+      
+      @projects = quotas.where.not(project_id: nil) if projects
 
       # get unlimited quotas
       unlimited = ResourceManagement::Resource.

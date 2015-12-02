@@ -32,9 +32,9 @@
   
   - unless render_bar_only
     .col-md-1.quota-request-more
-      = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name]),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
+      = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
     .col-md-1.quota-request-more
       - if current_project_quota_sum > 0 and data[:domain_quota].approved_quota >= 0 and active_project_quota
-        = link_to 'Request more',plugin('resource_management').admin_request_path( :service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
+        = link_to 'Request more',plugin('resource_management').admin_request_path( :service => service, :resource => data[:name]), data: {modal: true}, class: 'btn btn-primary btn-sm'
       - else
         = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'

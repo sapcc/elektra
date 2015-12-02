@@ -13,45 +13,29 @@
     .col-md-10
       = render :partial => 'bar', :locals => { :overview => false, :render_bar_only => true, :render_usage => true ,:data => @resource_status[@service.to_sym][0], :service => @service }   
  
-
   %h2
     %small Details
-  -#raise
-  -#%table.table
+  %table.table
     %thead
       %tr
         %th Project
-        %th granted Quota
+        %th approved Quota
         %th current Quota
         %th Usage
         %th Edit
     %tbody
-      %tr
-        %th ***REMOVED***_sandbox
-        %th 50
-        %th 
-          .text-danger 100
-        %th 
-          .text-danger 80
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
-      %tr
-        %th bla_sandbox
-        %th 100
-        %th 
-          .text-danger 250
-        %th 
-          .text-danger 120
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
-  
-
+      - @projects.each do |project|
+        %tr
+          %td=project.project_id
+          %td=project.approved_quota
+          %td=project.current_quota
+          %td=project.usage
+          %td
 - if modal?
   .modal-footer
-    - if modal?
-      - if @service
-        = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(@service), class: 'btn btn-primary btn-sm'
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - if @service and @overview
+      = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(@service), class: 'btn btn-primary btn-sm'
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
    
 
 
