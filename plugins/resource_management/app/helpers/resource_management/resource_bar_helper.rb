@@ -87,7 +87,7 @@ module ResourceManagement
 
       if fill[:value] > 0
         # render normal bar
-        fill_level = fill[:value].to_f / [ threshold[:value], maximum[:value] ].min.to_f
+        fill_level = fill[:value].to_f / [ threshold[:value], maximum[:value] ].select { |x| x > 0 }.min.to_f
         bar_type   = fill_level >= 1.0           ? 'danger'
                    : fill_level >= warning_level ? 'warning' : 'default'
         # the normal bar may not exceed the threshold mark
