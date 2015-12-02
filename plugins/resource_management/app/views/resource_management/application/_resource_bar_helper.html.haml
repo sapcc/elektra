@@ -2,7 +2,15 @@
   - if threshold[:value] >= 0 && threshold[:value] < upper_bound
     .label-threshold{ style: "right:#{100-threshold[:percent]}%"}
       %span.text-nowrap= threshold[:label]
-  .label-maximum.text-nowrap{ class: maximum[:value] < 0 ? 'text-danger' : 'text-muted' }= maximum[:label]
+  - if maximum[:value] >= 0
+    -# upper_bound is maximum
+    .label-maximum.text-nowrap.text-muted= maximum[:label]
+  - elsif upper_bound == threshold[:value]
+    -# upper_bound is threshold
+    .label-maximum.text-nowrap.text-danger #{maximum[:label]} &ndash; #{threshold[:label]}
+  - else
+    -# upper_bound is fill level (but don't show fill label twice)
+    .label-maximum.text-nowrap.text-danger= maximum[:label]
   .progress
     - bars.each do |bar|
       - bar_class = bar[:type] == 'default' ? '' : "progress-bar-#{bar[:type]}"
