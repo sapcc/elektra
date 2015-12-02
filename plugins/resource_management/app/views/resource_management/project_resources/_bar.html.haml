@@ -2,7 +2,7 @@
   .col-md-2.quota-label
     .text-muted
       - if overview
-        = link_to t("resource_management.#{data.name}"), plugin('resource_management').send("resources_area_path", data.attributes[:area])
+        = link_to t("resource_management.#{data.name}"), plugin('resource_management').resources_area_path(area: data.attributes[:area])
       - else
         = t("resource_management.#{data.name}")
       - if overview
