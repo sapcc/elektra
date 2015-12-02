@@ -3,8 +3,8 @@ module ResourceManagement
 
     # GUI component for a resource usage bar.
     #
-    # Accepts via :locals the following arguments:
-    #     fill:      { value: NUMBER, label: STRING }   - Size value and label for the usage display.
+    # Accepts the following options:
+    #     fill:      { value: NUMBER, label: STRING }   - Size value and label for the usage display (required).
     #     maximum:   { value: NUMBER, label: STRING }   - Maximum value (determines scale), and label for the right edge.
     #     threshold: { value: NUMBER, label: STRING }   - Value and label for threshold mark.
     #     display_unit: NUMBER                          - Values will be divided by this unit when being interpolated into their label.
