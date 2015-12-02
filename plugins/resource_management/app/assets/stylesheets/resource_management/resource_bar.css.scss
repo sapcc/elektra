@@ -37,12 +37,11 @@
     padding-left: 5px;
 
     &.progress-bar-danger-overcommit {
-       /* TODO: FIXME: Esther says this has to be done differently */
-       background: repeating-linear-gradient( -55deg, #D8504C, #D8504C 3px, #AB2A26 3px, #AB2A26 5px );
+      @include background(repeating-linear-gradient( -55deg, #D8504C, #D8504C 3px, #AB2A26 3px, #AB2A26 5px ));
     }
 
     &.progress-bar-empty-overcommit {
-      background: repeating-linear-gradient( -55deg, transparent,  transparent 3px, #DCDCDC 3px, #DCDCDC 5px );
+      @include background(repeating-linear-gradient( -55deg, transparent,  transparent 3px, #DCDCDC 3px, #DCDCDC 5px ));
       color: inherit;
     }
 
