@@ -1,6 +1,5 @@
 module Inquiry
   class InquiriesController < DashboardController
-    before_filter :set_referer, only: [:edit]
 
     def index
       filter = params[:filter] ? params[:filter] : {}
@@ -79,10 +78,6 @@ module Inquiry
 
     def inquiry_params
       params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
-    end
-
-    def set_referer
-      session[:return_to] ||= request.referer
     end
 
     # Todo: Only for testing purpose
