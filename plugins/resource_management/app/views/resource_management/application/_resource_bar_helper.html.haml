@@ -1,0 +1,17 @@
+.resource-bar
+  - if threshold[:value] >= 0 && threshold[:value] < upper_bound
+    .label-threshold{ style: "right:#{100-threshold[:percent]}%"}
+      %span.text-nowrap= threshold[:label]
+  - if maximum[:value] >= 0
+    -# upper_bound is maximum
+    .label-maximum.text-nowrap.text-muted= maximum[:label]
+  - elsif upper_bound == threshold[:value]
+    -# upper_bound is threshold
+    .label-maximum.text-nowrap.text-danger #{maximum[:label]} &ndash; #{threshold[:label]}
+  - else
+    -# upper_bound is fill level (but don't show fill label twice)
+    .label-maximum.text-nowrap.text-danger= maximum[:label]
+  .progress
+    - bars.each do |bar|
+      - bar_class = bar[:type] == 'default' ? '' : "progress-bar-#{bar[:type]}"
+      .progress-bar{ class: bar_class, style: bar.has_key?(:percent) ? "width: #{bar[:percent]}%" : '' }= bar.fetch(:label, '')

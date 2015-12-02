@@ -10,39 +10,16 @@
           .small= t(data.service)
 
   .col-md-7
-    - if data.current_quota > 0
-      - display_unit = data.attributes[:display_unit] || 1
-      - usage            = data.usage          / display_unit
-      - current_quota    = data.current_quota  / display_unit
-      - approved_quota   = data.approved_quota / display_unit
-      - usage_percent    = ((data.usage.to_f / data.current_quota.to_f) *100).to_i
-      - approved_percent = ((data.approved_quota.to_f / data.current_quota.to_f) *100).to_i
-      - usage_level      = data.usage.to_f / [data.current_quota, data.approved_quota].min.to_f
-      .quota
-        - if approved_quota < current_quota
-          .quota-approved{:style => "right:#{100-approved_percent}%"} 
-            %span.text-nowrap
-              Approved quota: #{approved_quota}
+    - display_unit   = data.attributes[:display_unit] || 1
+    - usage          = data.usage
+    - current_quota  = data.current_quota
+    - approved_quota = data.approved_quota
 
-        .quota-current
-          %span.text-nowrap #{current_quota}
-
-        .progress
-          - if usage_level >= @usage_stage[:danger]
-            .progress-bar.progress-bar-quota.progress-bar-danger{:style => "width:#{usage_percent}%"}= usage
-          - elsif usage_level >= @usage_stage[:warning]
-            .progress-bar.progress-bar-quota.progress-bar-warning{:style => "width:#{usage_percent}%"}= usage
-          - else
-            .progress-bar.progress-bar-quota{:style => "width:#{usage_percent}%"}= usage
-          -if approved_quota < current_quota
-            .progress-bar.progress-bar-empty{:style => "width:#{approved_percent-usage_percent}%"}
-            .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:#{100-approved_quota}%"}
+    - if current_quota >= 0
+      -# case 1: finite current quota
+      = resource_bar( fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit )
     - else
-      .quota
-        .quota-current
-          %span.text-nowrap Unlimited
-        .progress
-          .progress-bar.progress-bar-quota.quota-overcommit{:style => "width:100%"}
+      = resource_bar( fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit )
 
   .col-md-1.quota-request-more
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
