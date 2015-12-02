@@ -5,7 +5,7 @@
     .col-md-2.quota-label
       .text-muted
         - if overview
-          = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').send("admin_area_path", data[:domain_quota].attributes[:area])
+          = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').admin_area_path(area: data[:domain_quota].attributes[:area])
         - else
           = t("resource_management.#{data[:domain_quota][:name]}")
         - if overview
@@ -23,11 +23,14 @@
     - fill = current_project_quota_sum
     - fill = usage_project_sum if render_usage
 
+
     - if active_project_quota and approved_quota_for_domain >= 0
       -# all project quotas are limited
-      = render partial: 'resource_bar', locals: { fill: fill, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+      = resource_bar(fill: fill, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+    - elsif approved_quota_for_domain == -1
+      = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: current_project_quota_sum, label: "Quota unlimited!" }, display_unit: display_unit )
     - else
-      = render partial: 'resource_bar', locals: { fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+      = resource_bar( fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit )
 
   
   - unless render_bar_only
