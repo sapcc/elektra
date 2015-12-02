@@ -104,5 +104,83 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
 
   end
 
+  describe '#resbar_compile_bars' do
+
+    def bars_for(options)
+      fill, maximum, threshold, _, warning_level = helper.send(:resbar_prepare_options, options)
+      return helper.send(:resbar_compile_bars, fill, maximum, threshold, warning_level)
+    end
+
+    it 'renders a single plain bar for fill < maximum and no threshold' do
+      [
+        [  40, 'default' ],
+        [  79, 'default' ],
+        [  80, 'warning' ],
+        [  99, 'warning' ],
+        [ 100, 'danger'  ],
+      ].each do |fill, type|
+        expect(bars_for(fill: fill, maximum: 100, warning_level: 0.8)).to contain_exactly(
+          { type: type, label: fill.to_s, percent: fill },
+        )
+      end
+    end
+
+    it 'renders the label next to the bar for short bars' do
+      expect(bars_for(fill: 0, maximum: 100)).to contain_exactly(
+        { type: 'empty', label: '0' },
+      )
+      expect(bars_for(fill: 1, maximum: 100)).to contain_exactly(
+        { type: 'default', percent: 1 },
+        { type: 'empty',   label: '1' },
+      )
+    end
+
+    it 'marks the empty area beyond the threshold for threshold < maximum' do
+      expect(bars_for(fill: 25, maximum: 100, threshold: 100)).to contain_exactly(
+        { type: 'default', percent: 25, label: '25' },
+      )
+      expect(bars_for(fill: 25, maximum: 100, threshold:  60)).to contain_exactly(
+        { type: 'default',          percent: 25, label: '25' },
+        { type: 'empty',            percent: 35 }, # skip forward to where the threshold starts
+        { type: 'empty-overcommit', percent: 40 },
+      )
+      expect(bars_for(fill: 60, maximum: 100, threshold:  60)).to contain_exactly(
+        { type: 'danger',           percent: 60, label: '60' }, # danger because fill approached threshold
+        { type: 'empty-overcommit', percent: 40 },
+      )
+    end
+
+    it 'marks the filled area beyond the threshold' do
+      expect(bars_for(fill: 85, maximum: 100, threshold:  60)).to contain_exactly(
+        { type: 'danger',            percent: 60, label: '85' },
+        { type: 'danger-overcommit', percent: 25 },
+        { type: 'empty-overcommit',  percent: 15 },
+      )
+      expect(bars_for(fill: 100, maximum: 100, threshold:  60)).to contain_exactly(
+        { type: 'danger',            percent: 60, label: '100' },
+        { type: 'danger-overcommit', percent: 40 },
+      )
+    end
+
+    it 'uses the threshold as upper bound when maximum < 0' do
+      expect(bars_for(fill: 0, maximum: -1, threshold: 50)).to contain_exactly(
+        # for maximum < 0, mark all empty area as overcommit
+        { type: 'empty-overcommit', percent: 100, label: '0' },
+      )
+      expect(bars_for(fill: 10, maximum: -1, threshold: 50)).to contain_exactly(
+        { type: 'default',          percent: 20, label: '10' },
+        { type: 'empty-overcommit', percent: 80 },
+      )
+      expect(bars_for(fill: 50, maximum: -1, threshold: 50)).to contain_exactly(
+        { type: 'danger',            percent: 100, label: '50' },
+      )
+      expect(bars_for(fill: 200, maximum: -1, threshold: 50)).to contain_exactly(
+        { type: 'danger',            percent: 25, label: '200' },
+        { type: 'danger-overcommit', percent: 75 },
+      )
+    end
+
+  end
+
 end
 
