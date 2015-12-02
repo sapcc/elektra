@@ -19,13 +19,6 @@ module ResourceManagement
       fill, maximum, threshold, upper_bound, warning_level = resbar_prepare_options(options)
       bars = resbar_compile_bars(fill, maximum, threshold, warning_level)
 
-      # render the threshold mark
-      threshold_html = ""
-      if threshold[:value] >= 0 && threshold[:value] < upper_bound
-        threshold_html = content_tag('div', threshold[:label],
-        )
-      end
-
       return render('resource_bar_helper',
         bars:        bars,
         maximum:     maximum,
