@@ -201,7 +201,7 @@ module ResourceManagement
           rescue Excon::Errors::Unauthorized, Excon::Errors::Forbidden
             # same pattern as in with_service_user_connection(): if service user
             # does not have the ResellerAdmin role yet, grant it
-            role_name = ENV.fetch['SWIFT_RESELLERADMIN_ROLE', 'ResellerAdmin']
+            role_name = ENV.fetch('SWIFT_RESELLERADMIN_ROLE', 'ResellerAdmin')
             roles = @srv_conn.list_roles(name: role_name).body['roles']
             raise "missing role \"#{role_name}\" in Keystone" if roles.empty?
             @srv_conn.grant_project_user_role(@service_project_id, @srv_conn.current_user_id, roles.first['id'])

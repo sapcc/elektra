@@ -10,11 +10,17 @@ module Inquiry
 
     # This method loads remote inquiries via ajax into a new created div.
     def remote_inquiries(options={})
-      content_tag(:div, '',class: 'remote_inquiries', id: SecureRandom.hex, data: {
+      content_tag(:div, '',class: 'inquiry-widget', id: SecureRandom.hex, data: {
+        widget: 'inquiry',
         url: plugin('inquiry').inquiries_path(),
         per_page: options[:per_page] || 3,
         filter: (options[:filter] || {}).to_json
       })
+    end
+
+    def render_errors inquiry
+
+
     end
   end
 end

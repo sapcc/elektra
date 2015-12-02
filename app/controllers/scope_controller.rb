@@ -34,6 +34,12 @@ class ScopeController < ::ApplicationController
       end
 
       if domain_id!=@scoped_domain_fid or project_id!=@scoped_project_fid
+        p ">>>>>>>>>>>>>>>>domain_id!=@scoped_domain_fid or project_id!=@scoped_project_fid"
+        p "domain_id: #{domain_id}"
+        p "@scoped_domain_fid: #{@scoped_domain_fid}"
+        p "project_id: #{project_id}"
+        p "@scoped_project_fid: #{@scoped_project_fid}"
+        p params
         #redirect_to url_for(params.merge(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid))
 
         # url_for does not work for plugins. Use path instead!
@@ -43,12 +49,13 @@ class ScopeController < ::ApplicationController
           # replace project_id with freindly id if given
           new_path = new_path.gsub(@scoped_project_id,@scoped_project_fid) if @scoped_project_id
 
+          p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>redirect"
           redirect_to new_path
         end       
       end
     else
       @errors = {"domain" => "Not found"}
-      render template: 'core/application/error'
+      render template: 'application/error'
     end
     #p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     #p "@scoped_domain_id: #{@scoped_domain_id}"
@@ -56,9 +63,5 @@ class ScopeController < ::ApplicationController
     #p "@scoped_domain_name: #{@scoped_domain_name}"
     #p "@scoped_project_id: #{@scoped_project_id}"
     #p "@scoped_project_fid: #{@scoped_project_fid}"
-  end
-
-  def default_url_options
-    { domain_id: @scoped_domain_fid, project_id: @scoped_project_fid }.merge(super)
   end
 end

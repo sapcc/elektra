@@ -5,11 +5,11 @@ module Identity
     end
 
     def new
-      @credential = services.identity.credential
+      @credential = services.identity.new_credential
     end
 
     def create
-      @credential = services.identity.credential
+      @credential = services.identity.new_credential
       @credential.attributes = params.fetch(:identity_os_credential,{}).merge(user_id: current_user.id)
 
       if @credential.save
@@ -21,7 +21,7 @@ module Identity
     end
 
     def destroy
-      @credential = services.identity.credential(params[:id])
+      @credential = services.identity.find_credential(params[:id])
   
       if @credential.destroy
         flash[:notice] = "Credential deleted."

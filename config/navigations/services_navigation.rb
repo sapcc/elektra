@@ -61,13 +61,13 @@ SimpleNavigation::Configuration.run do |navigation|
       compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
       compute_nav.item :volumes, 'Volumes', '#'
       compute_nav.item :snapshots, 'Snapshots', '#'
-      compute_nav.item :automation, 'Monsoon Automation', '#'
+      compute_nav.item :automation, 'Monsoon Automation', plugin('automation').instances_path, if: Proc.new { plugin_available?('automation') }
     end
 
     primary.item :access_managment, 'Access Management', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" } do |access_management_nav|
       access_management_nav.item :authorizations, 'Authorization', '#'
       access_management_nav.item :audits, 'Audit', '#'
-      access_management_nav.item :inquiries, 'Inquiry', plugin('inquiry').inquiries_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
+      access_management_nav.item :inquiries, 'Inquiry', plugin('inquiry').inquiries_path, if: Proc.new { plugin_available?('inquiry') }
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|
@@ -85,8 +85,8 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-area-chart fa-fw" } do |monitoring_nav|
       monitoring_nav.item :metrics, 'Metrics', '#'
       monitoring_nav.item :logs, 'Logs', '#'
-      monitoring_nav.item :quotas, 'Quotas', plugin('resource_management').resources_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_id)
- 
+      monitoring_nav.item :quotas, 'Quotas', plugin('resource_management').resources_path, if: Proc.new { plugin_available?('resource_management') }
+
     end
 
     primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
