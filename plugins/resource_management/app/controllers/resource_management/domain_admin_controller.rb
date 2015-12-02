@@ -33,6 +33,15 @@ module ResourceManagement
     def details
       @resource = params[:resource]
       @service = params[:service]
+      @area_services = [@service.to_sym]
+
+      @domain_quotas = ResourceManagement::Resource.where(
+          :domain_id => @scoped_domain_id, 
+          :project_id => nil, 
+          :service => @service.to_sym, 
+          :name => @resource.to_sym)
+      
+      get_resource_status(false, @resource)
     end
 
     private
@@ -41,14 +50,17 @@ module ResourceManagement
       @usage_stage = { :danger => 1.0, :warning => 0.8 }
     end
 
-    def get_resource_status(critical = false)
+    def get_resource_status(critical = false, resource = nil)
 
-      # get data for currently existing quota 
-      stats = ResourceManagement::Resource.
-                where(:domain_id => @scoped_domain_id, :service => @area_services).
-                where.not(project_id: nil).
-                group("service,name").
-                pluck("service,name,SUM(current_quota)")
+      # get data for currently existing quota
+      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
+      # get only the quotas for one resource
+      if resource 
+          quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services, :name => resource)
+      end
+      stats = quotas.where.not(project_id: nil).
+                     group("service,name").
+                     pluck("service,name,SUM(current_quota),SUM(usage)")
 
       # get unlimited quotas
       unlimited = ResourceManagement::Resource.
@@ -58,7 +70,7 @@ module ResourceManagement
 
       @resource_status = {}
       stats.each do |stat|
-        service, name, current_project_quota_sum = *stat
+        service, name, current_project_quota_sum, usage_project_sum = *stat
         domain_service_quota = @domain_quotas.find { |q| q.service == service && q.name == name }
         # search for unlimited current quotas
         unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
@@ -84,6 +96,7 @@ module ResourceManagement
         @resource_status[service.to_sym] << { 
           :name => name,
           :current_project_quota_sum => current_project_quota_sum,
+          :usage_project_sum => usage_project_sum,
           :active_project_quota => active_project_quota,
           :domain_quota => domain_service_quota,
         } 

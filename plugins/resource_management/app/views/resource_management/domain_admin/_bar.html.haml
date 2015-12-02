@@ -1,32 +1,40 @@
+- render_bar_only = false if !render_bar_only
+- render_usage = false if !render_usage
 .row
-  .col-md-2.quota-label
-    .text-muted
-      - if overview
-        = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').send("admin_area_path", data[:domain_quota].attributes[:area])
-      - else
-        = t("resource_management.#{data[:domain_quota][:name]}")
-      - if overview
-        .small
-          .small= t(service)
-  
+  - unless render_bar_only
+    .col-md-2.quota-label
+      .text-muted
+        - if overview
+          = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').send("admin_area_path", data[:domain_quota].attributes[:area])
+        - else
+          = t("resource_management.#{data[:domain_quota][:name]}")
+        - if overview
+          .small
+            .small= t(service)
+    
   .col-md-7
     - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
     - current_project_quota_sum = data[:current_project_quota_sum]
     - active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
     - approved_quota_for_domain = data[:domain_quota].approved_quota
+    - usage_project_sum         = data[:usage_project_sum]
     -# to render the warning in good_to_know partial
     - @warning = true if current_project_quota_sum > approved_quota_for_domain or not active_project_quota 
+    - fill = current_project_quota_sum
+    - fill = usage_project_sum if render_usage
 
     - if active_project_quota and approved_quota_for_domain >= 0
       -# all project quotas are limited
-      = render partial: 'resource_bar', locals: { fill: current_project_quota_sum, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+      = render partial: 'resource_bar', locals: { fill: fill, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
     - else
-      = render partial: 'resource_bar', locals: { fill: current_project_quota_sum, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+      = render partial: 'resource_bar', locals: { fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit }
+
   
-  .col-md-1.quota-request-more
-    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name]),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
-  .col-md-1.quota-request-more
-    - if current_project_quota_sum > 0 and data[:domain_quota].approved_quota >= 0 and active_project_quota
-      = link_to 'Request more',plugin('resource_management').admin_request_path(:service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
-    - else
-      = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
+  - unless render_bar_only
+    .col-md-1.quota-request-more
+      = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name]),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
+    .col-md-1.quota-request-more
+      - if current_project_quota_sum > 0 and data[:domain_quota].approved_quota >= 0 and active_project_quota
+        = link_to 'Request more',plugin('resource_management').admin_request_path( :service => service, :resource => data[:name] ), data: {modal: true}, class: 'btn btn-primary btn-sm'
+      - else
+        = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'

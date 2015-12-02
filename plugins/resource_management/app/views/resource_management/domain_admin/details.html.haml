@@ -5,17 +5,18 @@
       .text-muted
         Quota usage
     .col-md-10
-      .quota
+      = render :partial => 'bar', :locals => { :overview => false, :render_bar_only => true, :data => @resource_status[@service.to_sym][0], :service => @service }   
   .row
     .col-md-2.quota-label
       .text-muted
         Resource usage
     .col-md-10
-      .quota
+      = render :partial => 'bar', :locals => { :overview => false, :render_bar_only => true, :render_usage => true ,:data => @resource_status[@service.to_sym][0], :service => @service }   
+ 
 
   %h2
     %small Details
-
+  -#raise
   -#%table.table
     %thead
       %tr
