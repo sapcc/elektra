@@ -19,12 +19,8 @@ module ServiceLayer
     end
 
     ##################### DOMAINS #########################
-    def find_domain id_or_name
-      begin
-        driver.map_to(Identity::Domain).get_domain(id_or_name)
-      rescue
-        driver.map_to(Identity::Domain).domains(:name => id_or_name).first rescue nil
-      end
+    def find_domain id
+      driver.map_to(Identity::Domain).get_domain(id)
     end
     
     def new_domain(attributes={})
@@ -36,7 +32,7 @@ module ServiceLayer
     end
     
     def domains(filter={})
-      driver.map_to(Domain).domains(:name => domain_fid_id_or_key).first
+      driver.map_to(Identity::Domain).domains(filter)
     end
 
     ##################### PROJECTS #########################    
@@ -111,7 +107,7 @@ module ServiceLayer
     
     ###################### USERS ##########################
     def find_user(id)
-      driver.get_user(id)
+      driver.map_to(Identity::User).get_user(id)
     end
   end
 end

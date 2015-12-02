@@ -19,7 +19,7 @@ module Identity
       return nil if id.nil?
       return id if domain_id.blank? or name.blank?
 
-      friendly_id_entry = FriendlyIdEntry.where(class_name: 'Project', scope: domain_id, key:id).first_or_create(name:name)
+      friendly_id_entry = FriendlyIdEntry.find_or_create_entry('Project',domain_id,id,name)
       friendly_id_entry.slug
     end
   end

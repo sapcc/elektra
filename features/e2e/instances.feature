@@ -1,7 +1,7 @@
 @javascript
 Feature: Instances
   Background:
-    Given I visit "/monsooncc_test/home"
+    Given I visit "/monsooncc_test/identity/home"
      And Login as test_admin
 
   Scenario: Instances page is reachable
