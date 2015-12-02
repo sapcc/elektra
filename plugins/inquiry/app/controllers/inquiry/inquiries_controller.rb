@@ -80,10 +80,6 @@ module Inquiry
       params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
     end
 
-    def set_referer
-      session[:return_to] ||= request.referer
-    end
-
     # Todo: Only for testing purpose
 
     def callbacks
