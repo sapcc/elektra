@@ -1,13 +1,12 @@
 module Inquiry
   class InquiriesController < DashboardController
-    before_filter :set_referer, only: [:edit]
 
     def index
       filter = params[:filter] ? params[:filter] : {}
       @page = params[:page] || 1
       @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
       respond_to do |format|
-        format.html { render action: :index }
+        format.html { render template: 'inquiry/inquiries/index.html' }
         format.js { render template: 'inquiry/inquiries/index.js', layout: false }
       end
     end
@@ -79,10 +78,6 @@ module Inquiry
 
     def inquiry_params
       params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
-    end
-
-    def set_referer
-      session[:return_to] ||= request.referer
     end
 
     # Todo: Only for testing purpose
