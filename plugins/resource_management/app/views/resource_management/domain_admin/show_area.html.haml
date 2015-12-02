@@ -9,7 +9,7 @@
         %h3= t(service)
       - if @resource_status[service]
         - @resource_status[service].each do |resource|
-          = render :partial => 'bar', :locals => { :overview => false,  :data => resource, :service => service }
+          = render :partial => 'bar_row', :locals => { :overview => false,  :data => resource, :service => service }
       - else
         .bs-callout
           No #{t(service)} Quotas found!
