@@ -66,7 +66,7 @@ module ResourceManagement
       # prepare labels
       [ fill, maximum, threshold ].each do |param|
         display_value = (param[:value].to_f / display_unit).to_i
-        param[:label] = param[:label].gsub("$VALUE", display_value.to_s)
+        param[:label] = (param[:label] || '$VALUE').gsub("$VALUE", display_value.to_s)
       end
 
       # calculate percentages relative to maximum (for CSS)
