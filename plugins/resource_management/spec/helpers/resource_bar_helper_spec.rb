@@ -55,17 +55,17 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       expect(result[:threshold]).to include(value: 2)
     end
 
-    it 'uses the display_unit option to calculate labels' do
+    it 'uses the data_type option to render labels' do
       result = call_with(
-        fill:         23552,
-        maximum:      { value: 43008 },
-        threshold:    { value: 66560, label: 'foo$VALUEbar' },
-        display_unit: 1024,
+        fill:      23552,
+        maximum:   { value: 43008 },
+        threshold: { value: 66560, label: 'foo bar: $VALUE' },
+        data_type: :bytes,
       )
 
-      expect(     result[:fill]).to include(label: '23')
-      expect(  result[:maximum]).to include(label: '42')
-      expect(result[:threshold]).to include(label: 'foo65bar')
+      expect(     result[:fill]).to include(label: '23 KiB')
+      expect(  result[:maximum]).to include(label: '42 KiB')
+      expect(result[:threshold]).to include(label: 'foo bar: 65 KiB')
     end
 
     it 'recognizes the warning_level option' do

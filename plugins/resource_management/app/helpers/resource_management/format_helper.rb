@@ -14,7 +14,7 @@ module ResourceManagement
         #   "1020 KB"
         return format_bytes_value(value)
       else
-        raise ArgumentError, "unknown data_type: #{data_type.inspect}"
+        raise ArgumentError, "unknown data_type: #{data_type.class.to_s} #{data_type.inspect}"
       end
     end
 
@@ -25,7 +25,7 @@ module ResourceManagement
         # is this unit large enough?
         if value < 1024
           str = "%.2f" % value
-          str.sub!(/.?0+$/, '') if str =~ /[.]/ # strip trailing zeros after dot
+          str.sub!(/[.]?0+$/, '') if str =~ /[.]/ # strip trailing zeros after dot
           return "#{str} #{unit}"
         end
         # if not, obtain the value for the next unit

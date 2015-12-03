@@ -18,6 +18,7 @@ RSpec.describe ResourceManagement::FormatHelper, type: :helper do
         [ 1024, "1 KiB" ],
         [ 1234567, "1.18 MiB" ],
         [ 1234567890, "1.15 GiB" ],
+        [ 45421255555, "42.3 GiB" ],
         [ 1234567890123, "1.12 TiB" ],
       ].each do |value, string|
         expect(helper.format_usage_or_quota_value(value, :bytes)).to eq(string)
