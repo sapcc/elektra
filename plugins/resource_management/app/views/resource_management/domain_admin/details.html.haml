@@ -1,4 +1,4 @@
-= content_for(:title, "Details for quota #{@resource_type}")
+= content_for(:title, "Details for quota #{@resource}")
 .modal-body
   .row
     .col-md-2.quota-label
@@ -6,32 +6,17 @@
         Quota usage
     .col-md-10
       .quota
-        .quota-approved{:style => "right:20%"} 
-          %span.text-nowrap
-            Approved quota: 300
-        .quota-current
-          %span.text-nowrap
-            350
-        .progress
-          .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:80%"} 350
-          .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:20%"}
-
   .row
     .col-md-2.quota-label
       .text-muted
         Resource usage
     .col-md-10
       .quota
-        .quota-current
-          %span.text-nowrap
-            350
-        .progress
-          .progress-bar.progress-bar-quota{:style => "width:57%"} 200
 
   %h2
     %small Details
 
-  %table.table
+  -#%table.table
     %thead
       %tr
         %th Project
@@ -63,14 +48,8 @@
 - if modal?
   .modal-footer
     - if modal?
-      - case @level
-      - when "compute"
-        = link_to 'Show all compute quotas', plugin('resource_management').admin_compute_path(), class: 'btn btn-primary btn-sm'
-      - when "network"
-        = link_to 'Show all network quotas', plugin('resource_management').admin_network_path(), class: 'btn btn-primary btn-sm'
-      - when "storage"
-        = link_to 'Show all storage quotas', plugin('resource_management').admin_storage_path(), class: 'btn btn-primary btn-sm'
-
+      - if @service
+        = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(@service), class: 'btn btn-primary btn-sm'
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
    
 

@@ -14,6 +14,8 @@
     - usage          = data.usage
     - current_quota  = data.current_quota
     - approved_quota = data.approved_quota
+    -# to render the warning in good_to_know partial
+    - @warning       = true if current_quota > approved_quota or current_quota == -1
 
     - if current_quota >= 0
       -# case 1: finite current quota

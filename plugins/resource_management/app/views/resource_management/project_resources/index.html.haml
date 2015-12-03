@@ -12,5 +12,5 @@
       - @resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
         = render :partial => 'bar', :locals => { :overview => true, :data => resource }
   .col-md-3
-    = render :partial => 'good_to_know'      
+    = render :partial => 'good_to_know', :locals => { :tab => 'overview'}      
 
