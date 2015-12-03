@@ -1,1 +1,21 @@
+- render_usage = false if !render_usage
+
+- display_unit              = data[:domain_quota].attributes[:display_unit] || 1
+- current_project_quota_sum = data[:current_project_quota_sum]
+- active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
+- approved_quota_for_domain = data[:domain_quota].approved_quota
+- usage_project_sum         = data[:usage_project_sum]
+-# to render the warning in good_to_know partial
+- @warning = true if current_project_quota_sum > approved_quota_for_domain or not active_project_quota 
+- fill = current_project_quota_sum
+- fill = usage_project_sum if render_usage
+
+- if active_project_quota and approved_quota_for_domain >= 0
+  -# all project quotas are limited
+  = resource_bar(fill: fill, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+- elsif approved_quota_for_domain == -1
+  = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: current_project_quota_sum, label: "Quota unlimited!" }, display_unit: display_unit )
+- else
+  = resource_bar( fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit )
+
 
