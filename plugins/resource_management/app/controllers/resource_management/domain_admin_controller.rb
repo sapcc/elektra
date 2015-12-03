@@ -31,6 +31,8 @@ module ResourceManagement
     end
 
     def details
+
+      @page = params[:page] || 1
       @resource = params[:resource]
       @service = params[:service]
       @area_services = [@service.to_sym]
@@ -43,6 +45,11 @@ module ResourceManagement
           :name => @resource.to_sym)
       
       get_resource_status(false, @resource, true)
+      respond_to do |format|
+        format.html #{ render action: :index }
+        format.js #{ render template: '', layout: false }
+      end
+ 
     end
 
     private
@@ -64,7 +71,7 @@ module ResourceManagement
                      pluck("service,name,SUM(current_quota),SUM(usage)")
       
       # this is used for details view
-      @projects = quotas.where.not(project_id: nil).page(params[:page]).per(6) if projects
+      @projects = quotas.where.not(project_id: nil).page(@page).per(6) if projects
 
       # get unlimited quotas
       unlimited = ResourceManagement::Resource.
