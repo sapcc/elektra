@@ -1,5 +1,5 @@
-= render :partial => 'header'
-= render :partial => 'tabs', :locals => { :tab => @area.to_s }
+=render partial: 'header'
+=render partial: 'tabs', locals: { scope: 'admin', tab: @area.to_s }
 
 .row.quota-row
   .col-md-9
