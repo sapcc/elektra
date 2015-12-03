@@ -64,7 +64,7 @@ module ResourceManagement
                      pluck("service,name,SUM(current_quota),SUM(usage)")
       
       # this is used for details view
-      @projects = quotas.where.not(project_id: nil) if projects
+      @projects = quotas.where.not(project_id: nil).page(params[:page]).per(6) if projects
 
       # get unlimited quotas
       unlimited = ResourceManagement::Resource.

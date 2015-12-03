@@ -12,41 +12,48 @@
         Resource usage
     .col-md-10
       = render :partial => 'bar_row', :locals => { :overview => false, :render_bar_only => true, :render_usage => true ,:data => @resource_status[@service.to_sym][0], :service => @service }   
- 
-  %h2
-    %small Details
-  %table.table
-    %thead
-      %tr
-        %th Project
-        %th approved Quota
-        %th current Quota
-        %th Usage
-        %th Edit
-    %tbody
-      - @projects.each do |project|
-        - display_unit = project.attributes[:display_unit] || 1
-        - current_quota = project.current_quota / display_unit
-        - current_quota = "unlimited" if project.current_quota == -1
-        - if current_quota == "unlimited"
-          %tr.danger
-            %td=project.project_id
-            %td=project.approved_quota / display_unit
-            %td=current_quota
-            %td=project.usage / display_unit
-            %td -
-        - else
-          %tr
-            %td=project.project_id
-            %td=project.approved_quota / display_unit
-            %td=current_quota
-            %td=project.usage / display_unit
-            %td -
 
+  .row
+    .col-md-12
+      %h2
+        %small Details
+      %table.table
+        %thead
+          %tr
+            %th Project
+            %th approved Quota
+            %th current Quota
+            %th Usage
+            %th Edit
+        %tbody
+          - @projects.each do |project|
+            - display_unit = project.attributes[:display_unit] || 1
+            - current_quota = project.current_quota / display_unit
+            - current_quota = "unlimited" if project.current_quota == -1
+            - if current_quota == "unlimited"
+              %tr.danger
+                %td=project.project_id
+                %td=project.approved_quota / display_unit
+                %td=current_quota
+                %td=project.usage / display_unit
+                %td -
+            - else
+              %tr
+                %td=project.project_id
+                %td=project.approved_quota / display_unit
+                %td=current_quota
+                %td=project.usage / display_unit
+                %td -
+      - remote = false
+      - remote = true if modal?
+      .pagination
+        = paginate @projects, :window => 1, :outer_window => 1, :theme => 'twitter-bootstrap-3', :remote => remote
+  
 - if modal?
   .modal-footer
     - if @service and @show_all_button
-      = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(@service), class: 'btn btn-primary btn-sm'
+      -# TODO: @service -> @area
+      = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(area: @service), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
    
 
