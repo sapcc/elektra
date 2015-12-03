@@ -1,6 +1,6 @@
 %nav
   %ul.nav.nav-tabs
-    - if tab.eql? "overview"
+    - if tab == "overview"
       %li.active{:role => "presentation"}
         = link_to 'Overview', '#'
     - else
@@ -9,9 +9,9 @@
 
     - list_areas_with_enabled_services.each do |area|
       - area_str = area.to_s
-      - if tab.eql? area_str
+      - if tab == area_str
         %li.active{:role => "presentation"}
           = link_to area_str.humanize, '#'
       - else
         %li{:role => "presentation"}
-          = link_to area_str.humanize, plugin('resource_management').resources_area_path(area_str)
+          = link_to area_str.humanize, plugin('resource_management').resources_area_path(admin: area_str)
