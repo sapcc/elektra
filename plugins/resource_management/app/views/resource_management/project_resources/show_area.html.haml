@@ -1,6 +1,5 @@
-= render :partial => 'header'
-%ul{:class => "nav nav-tabs"}
-  = render :partial => 'tabs', :locals => { :tab => @area.to_s }
+=render :partial => 'header'
+=render :partial => 'tabs', :locals => { :tab => @area.to_s }
 
 .row.quota-row
   .col-md-9
@@ -16,5 +15,6 @@
       - else
         - resources.each do |resource|
           = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
+    = render :partial => 'data_age'
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }

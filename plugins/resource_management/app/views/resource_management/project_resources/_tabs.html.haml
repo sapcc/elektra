@@ -1,19 +1,17 @@
-- if tab.eql? "overview"
-  %li{:role => "presentation", :class => "active"}
-    %a{:href => '#'}
-      Overview
-- else
-  %li{:role => "presentation"}
-    %a{:href => plugin('resource_management').resources_path()}
-      Overview
+%nav
+  %ul.nav.nav-tabs
+    - if tab.eql? "overview"
+      %li.active{:role => "presentation"}
+        = link_to 'Overview', '#'
+    - else
+      %li{:role => "presentation"}
+        = link_to 'Overview', plugin('resource_management').resources_path()
 
-- list_areas_with_enabled_services.each do |area|
-  - area_str = area.to_s
-  - if tab.eql? area_str
-    %li{:role => "presentation", :class => "active"}
-      %a{:href => '#'}
-        = area_str.humanize
-  - else
-    %li{:role => "presentation"}
-      %a{:href => plugin('resource_management').resources_area_path(area: area_str)}
-        = area_str.humanize
+    - list_areas_with_enabled_services.each do |area|
+      - area_str = area.to_s
+      - if tab.eql? area_str
+        %li.active{:role => "presentation"}
+          = link_to area_str.humanize, '#'
+      - else
+        %li{:role => "presentation"}
+          = link_to area_str.humanize, plugin('resource_management').resources_area_path(area_str)

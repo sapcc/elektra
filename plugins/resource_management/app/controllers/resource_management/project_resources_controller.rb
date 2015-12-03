@@ -6,9 +6,11 @@ module ResourceManagement
     before_filter :set_usage_stage, :only => [:index,:show_area]
 
     def index
+      @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)
+      # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
+      @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
       # resources are critical if they have a quota, and either one of the quotas is 95% used up
-      @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).
-        where("(current_quota > 0 AND approved_quota > 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
+      @resources = @all_resources.where("(current_quota > 0 AND approved_quota > 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
     end
 
     def resource_request
@@ -25,6 +27,7 @@ module ResourceManagement
 
       # load all resources for these services
       @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
+      @min_updated_at, @max_updated_at = @resources.pluck("MIN(updated_at), MAX(updated_at)").first
     end
 
     def manual_sync
