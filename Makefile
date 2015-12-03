@@ -6,7 +6,7 @@ IMAGE       := $(REPOSITORY):$(TAG)
 ### Executables
 DOCKER      = docker
 BUILD_IMAGE = localhost/monsoon/docker-build:1.5.0 
-WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(BUILD_IMAGE) wait $(WAIT_OPTS) || $(DOCKER) logs $(WAIT_ID) && false
+WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(BUILD_IMAGE) wait $(WAIT_OPTS) || ($(DOCKER) logs $(WAIT_ID) && false)
 MTIMES      = $(DOCKER) run --rm $(MTIMES_OPTS)         $(BUILD_IMAGE) reset_mtimes
 
 ### Variables that are expanded dynamically
@@ -129,6 +129,7 @@ webapp: migrate-production
 # Start postgres database and wait for it to become available. 
 #
 postgres: WAIT_ID = $$(cat postgres)
+postgres: WAIT_OPTS =
 postgres: 
 	$(DOCKER) run -d postgres > postgres 
 	$(WAIT)
@@ -139,18 +140,10 @@ postgres:
 #
 # Prepare the database by running the db tasks for the given environment. 
 #
-# Added environment task in front of db:create, please do not remove it!
-# We expand the migration path of main app by adding the migrations defined in plugins.
-# This happens in an initializer. rake db:create does not execute initializers but
-# it initializes the migration path variable as singleton variable. This results in that the 
-# plugin migrations are invisible for the following tasks. Which in turn leads to erroneous entries 
-# in the schema_migrations table. "rake environment" executes the initializers!
-#
-#
 .PHONY: 
 migrate-%: postgres 
 	$(DOCKER) run --rm --link $(postgres):postgres -e RAILS_ENV=$* $(IMAGE) \
-		bundle exec rake environment db:create db:schema:load db:migrate db:seed
+		bundle exec rake db:create db:schema:load db:migrate db:seed
 
 # ----------------------------------------------------------------------------------
 #   clean 

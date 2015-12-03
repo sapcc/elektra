@@ -1,0 +1,23 @@
+.bs-callout.bs-callout-primary
+  - if tab == "overview"
+    These bars show the 
+    %strong critical
+    quota usage over all projects in this domain. 
+  - else
+    These bars show the summarized current quota usage for 
+    %strong=tab
+    over all projects in this domain. 
+  
+  The total length of each bar indicates the quota that you have been granted by your cloud administrator.
+  %br
+  %br
+  If you need more resources, you can request a larger quota from your cloud administrator.
+  - if @warning
+    .text-muted.quota
+      %strong Note:
+      Project administrators may set their current quota to exceed the approved
+      quota.  So it is possible that the summary of all quotas is higher than the
+      quota that was granted by your cloud administrator. If that is the case the
+      approved quota will appear as an extra mark on the bar to the left and the overcommit will shown as
+      a red striped bar. For this case an automatic alert is issued to your domain administrator. 
+ 

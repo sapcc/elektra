@@ -42,9 +42,8 @@ class ScopeController < ::ApplicationController
           new_path = "/#{@scoped_domain_fid}#{new_path}" unless new_path.include?(@scoped_domain_fid)
           # replace project_id with freindly id if given
           new_path = new_path.gsub(@scoped_project_id,@scoped_project_fid) if @scoped_project_id
-
           redirect_to new_path
-        end       
+        end     
       end
     else
       @errors = {"domain" => "Not found"}
@@ -56,9 +55,5 @@ class ScopeController < ::ApplicationController
     #p "@scoped_domain_name: #{@scoped_domain_name}"
     #p "@scoped_project_id: #{@scoped_project_id}"
     #p "@scoped_project_fid: #{@scoped_project_fid}"
-  end
-
-  def default_url_options
-    { domain_id: @scoped_domain_fid, project_id: @scoped_project_fid }.merge(super)
   end
 end

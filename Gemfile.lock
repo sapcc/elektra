@@ -540,11 +540,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm
   activerecord-session_store
   automation!
   better_errors
-  bootstrap-kaminari-views
   bootstrap-sass
   byebug
   capybara
@@ -571,7 +569,6 @@ DEPENDENCIES
   image!
   inquiry!
   jquery-rails
-  kaminari
   monsoon-fog!
   monsoon-openstack-auth!
   networking!

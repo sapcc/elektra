@@ -1,1 +1,2 @@
-$("#inquiry_<%=params[:id]%>").remove();
+// update content
+$($("#inquiry_<%=@inquiry.id%>").closest('[data-widget=inquiry]')).inquiryWidget('reload');

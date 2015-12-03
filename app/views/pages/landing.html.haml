@@ -5,7 +5,7 @@
         .col-sm-8
           %h1 SAP Converged Cloud
           %p Infrastructure as a Service (IaaS) powered by Openstack, SAP HANA & Monsoon automation
-          = link_to "Enter the cloud", main_app.domain_home_path, class: "btn btn-outline-negative btn-lg"
+          = link_to "Enter the cloud", plugin('identity').domain_path(project_id:nil), class: "btn btn-outline-negative btn-lg"
         .col-sm-4
           .row
             .col-sm-6.hero-info

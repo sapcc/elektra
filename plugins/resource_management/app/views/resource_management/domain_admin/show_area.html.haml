@@ -1,0 +1,17 @@
+= render :partial => 'header'
+%ul{:class => "nav nav-tabs"}
+  = render :partial => 'tabs', :locals => { :tab => @area.to_s }
+
+.row.quota-row
+  .col-md-9
+    - @area_services.each do |service|
+      - if @area_services.size > 1
+        %h3= t(service)
+      - if @resource_status[service]
+        - @resource_status[service].each do |resource|
+          = render :partial => 'bar', :locals => { :overview => false,  :data => resource, :service => service }
+      - else
+        .bs-callout
+          No #{t(service)} Quotas found!
+  .col-md-3
+    = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }
