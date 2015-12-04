@@ -30,6 +30,15 @@ module ResourceManagement
       @min_updated_at, @max_updated_at = @resources.pluck("MIN(updated_at), MAX(updated_at)").first
     end
 
+    def sync_now
+      services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id)
+      begin
+        redirect_to :back
+      rescue ActionController::RedirectBackError
+        redirect_to resources_url()
+      end
+    end
+
     def manual_sync
       service = services.resource_management
       service.sync_domains(sync_all_projects: true)

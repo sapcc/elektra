@@ -66,7 +66,11 @@ module ResourceManagement
 
       # calculate percentages relative to maximum (for CSS)
       [ fill, threshold ].each do |param|
-        param[:percent] = param[:value] <= 0 ? 0 : (param[:value].to_f / upper_bound * 100).to_i
+        if upper_bound == 0
+          param[:percent] = param[:value] <= 0 ? 0 : (param[:value].to_i << 10) # avoid division by zero, just scale very large
+        else
+          param[:percent] = param[:value] <= 0 ? 0 : (param[:value].to_f / upper_bound * 100).to_i
+        end
       end
 
       return [ fill, maximum, threshold, upper_bound, warning_level ]
@@ -99,7 +103,7 @@ module ResourceManagement
         end
       end
 
-      if maximum[:value] >= 0
+      if maximum[:value] > 0
         # for finite maximum, mark empty area beyond the threshold as "overcommit"
         if threshold[:value] < maximum[:value]
           if fill[:value] >= threshold[:value]

@@ -87,7 +87,11 @@ module ServiceLayer
         # update existing entry
         object.current_quota = this_actual_quota
         object.usage         = this_actual_usage
-        object.save if object.changed?
+        if object.changed?
+          object.save
+        else
+          object.touch # set the updated_at timestamp that's displayed as data age
+        end
       end
     end
 
