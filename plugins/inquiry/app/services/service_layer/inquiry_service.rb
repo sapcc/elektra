@@ -9,6 +9,15 @@ module ServiceLayer
       Inquiry::Inquiry.filter(filter)
     end
 
+    def payload(id)
+      i = Inquiry::Inquiry.find_by_id(id)
+      if i
+        return i.payload
+      else
+        return nil
+      end
+    end
+
     def inquiry_create(kind, description, requester_user, payload, processor_users, callbacks={})
       domain_id = requester_user.domain_id
       project_id = requester_user.project_id
@@ -21,7 +30,6 @@ module ServiceLayer
       inq.save
       return inq
     end
-
 
 
   end
