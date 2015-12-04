@@ -113,7 +113,7 @@ module ResourceManagement
             bars << { type: 'empty-overcommit', percent: 100 - threshold[:percent] }
           end
         elsif outside_label != ""
-          bars << { type: 'empty', label: outside_label }
+          bars << { type: 'empty', percent: 100 - fill[:percent], label: outside_label }
         end
       else
         # for infinite maximum, mark all empty area as "overcommit"

@@ -133,11 +133,11 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
 
     it 'renders the label next to the bar for short bars' do
       expect(bars_for(fill: 0, maximum: 100)).to contain_exactly(
-        { type: 'empty', label: '0' },
+        { type: 'empty', percent: 100, label: '0' },
       )
       expect(bars_for(fill: 1, maximum: 100)).to contain_exactly(
         { type: 'default', percent: 1 },
-        { type: 'empty',   label: '1' },
+        { type: 'empty',   percent: 99, label: '1' },
       )
     end
 
