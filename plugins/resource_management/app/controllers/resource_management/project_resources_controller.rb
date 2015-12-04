@@ -35,7 +35,7 @@ module ResourceManagement
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError
-        redirect_to plugin('resource_management').resources_url()
+        redirect_to resources_url()
       end
     end
 

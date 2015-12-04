@@ -12,6 +12,7 @@ ResourceManagement::Engine.routes.draw do
     get ':area',  to: 'domain_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
     get 'details'  => 'domain_admin#details'
     get 'request'  => 'domain_admin#resource_request'
+    get 'sync_now' => 'domain_admin#sync_now'
   end
 
   # this is only for demo, I have no idea where I can put the cloudadmin views
