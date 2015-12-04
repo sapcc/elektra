@@ -1,5 +1,4 @@
 en:
   resource_management:
     floating_ips: Floating IPs
-    capacity: Capacity (GiB)
-    ram: RAM (GiB)
+    ram: RAM

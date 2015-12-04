@@ -17,19 +17,21 @@ module ResourceManagement
     KNOWN_RESOURCES = [
       # "name" identifies the resource within its service.
       # "service" identifies the service from which we pull this resource.
+      # "data_type" can be used to render quota/usage values for this resource
+      # in a certain way, e.g. "bytes" will render a value of 10240 as "10 KiB".
       { service: :compute,        name: :cores           },
       { service: :compute,        name: :instances       },
-      { service: :compute,        name: :ram             },
+      { service: :compute,        name: :ram,            data_type: :bytes },
       { service: :network,        name: :floating_ips    },
       { service: :network,        name: :networks        },
       { service: :network,        name: :ports           },
       { service: :network,        name: :routers         },
       { service: :network,        name: :security_groups },
       { service: :network,        name: :subnets         },
-      { service: :block_storage,  name: :capacity,       display_unit: 1 << 30 }, # stored in bytes, displayed in GiB
+      { service: :block_storage,  name: :capacity,       data_type: :bytes },
       { service: :block_storage,  name: :snapshots       },
       { service: :block_storage,  name: :volumes         },
-      { service: :object_storage, name: :capacity,       display_unit: 1 << 30 }, # stored in bytes, displayed in GiB
+      { service: :object_storage, name: :capacity,       data_type: :bytes },
     ]
 
     def attributes

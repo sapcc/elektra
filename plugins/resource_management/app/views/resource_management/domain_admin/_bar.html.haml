@@ -10,7 +10,7 @@
           .small= t(service)
   
   .col-md-7
-    - display_unit              = data[:domain_quota].attributes[:display_unit] || 1
+    - data_type                 = data[:domain_quota].attributes[:data_type]
     - current_project_quota_sum = data[:current_project_quota_sum]
     - active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
     - approved_quota_for_domain = data[:domain_quota].approved_quota
@@ -19,11 +19,11 @@
 
     - if active_project_quota and approved_quota_for_domain >= 0
       -# all project quotas are limited
-      = resource_bar(fill: current_project_quota_sum, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+      = resource_bar(fill: current_project_quota_sum, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
     - elsif approved_quota_for_domain == -1
-      = resource_bar( fill: current_project_quota_sum, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: current_project_quota_sum, label: "Quota unlimited!" }, display_unit: display_unit )
+      = resource_bar( fill: current_project_quota_sum, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: current_project_quota_sum, label: "Quota unlimited!" }, data_type: data_type )
     - else
-      = resource_bar( fill: current_project_quota_sum, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit )
+      = resource_bar( fill: current_project_quota_sum, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type )
 
   
   .col-md-1.quota-request-more
