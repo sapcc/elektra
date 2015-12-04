@@ -52,6 +52,18 @@ Rails.application.configure do
     puts "=> Trusted IP #{ENV['TRUSTED_IP']}"
   end
 
+  # Mailer configuration
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      address:              'localhost',
+      port:                 25,
+      enable_starttls_auto: false }
+  config.action_mailer.default_options = {
+      from: 'do.not.reply@sap.com'
+  }
+  config.action_mailer.perform_deliveries = true
+
   puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
 
 end

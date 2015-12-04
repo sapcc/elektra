@@ -1,7 +1,7 @@
 module ServiceLayer
   class InquiryService < DomainModelServiceLayer::Service
 
-    def inquiry(id)
+    def find_by_id(id)
       Inquiry::Inquiry.find(id)
     end
 
@@ -13,13 +13,16 @@ module ServiceLayer
       domain_id = requester_user.domain_id
       project_id = requester_user.project_id
 
+
+      requester = Inquiry::Processor.from_users([requester_user]).first
       processors = Inquiry::Processor.from_users(processor_users)
       inq = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
-                                 requester_id: requester_user.id, requester_email: requester_user.email, requester_full_name: requester_user.full_name, \
-                                 payload: payload, processors: processors, callbacks: callbacks)
+                                 requester: requester, payload: payload, processors: processors, callbacks: callbacks)
       inq.save
       return inq
     end
+
+
 
   end
 end

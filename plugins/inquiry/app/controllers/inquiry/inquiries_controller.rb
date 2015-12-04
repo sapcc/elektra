@@ -16,7 +16,7 @@ module Inquiry
     end
 
     def show
-      @inquiry = Inquiry.find(params[:id]) rescue nil
+      @inquiry = services.inquiry.find_by_id(params[:id])
     end
 
     def create
@@ -34,11 +34,11 @@ module Inquiry
 
 
     def edit
-      @inquiry = services.inquiry.inquiry(params[:id]) rescue nil
+      @inquiry = services.inquiry.find_by_id(params[:id])
     end
 
     def update
-      @inquiry = Inquiry.find(params[:id]) rescue nil
+      @inquiry = services.inquiry.find_by_id(params[:id])
       if @inquiry.aasm_state != inquiry_params[:aasm_state]
         @inquiry.process_step_description = inquiry_params[:process_step_description]
         if @inquiry.valid?
@@ -58,7 +58,7 @@ module Inquiry
     end
 
     def destroy
-      @inquiry = Inquiry.find(params[:id]) rescue nil
+      @inquiry = services.inquiry.find_by_id(params[:id])
 
       if @inquiry
         if @inquiry.destroy

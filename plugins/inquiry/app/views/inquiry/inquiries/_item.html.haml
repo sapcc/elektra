@@ -3,9 +3,9 @@
     - if true #current_user.is_allowed?("network:network_get", {})
       = link_to inquiry.kind, inquiry_path(id: inquiry.id), data: {modal: true}
   %td{:width => "500"}= inquiry.description
-  %td= inquiry.requester_full_name
-  %td= inquiry.created_at.getlocal
-  %td= inquiry.aasm_state
+  %td= inquiry.requester.full_name
+  %td= inquiry.created_at.getlocal.strftime("%F %T")
+  %td= inquiry.aasm.human_state
 
   %td.snug
     - if true #current_user.is_allowed?("network:network_delete", {}) or current_user.is_allowed?("network:network_update", {})
@@ -16,7 +16,7 @@
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if true #current_user.is_allowed?("network:network_update", {})
-            - if inquiry.actions_allowed.length > 1
+            - if inquiry.states_allowed(current_user).length > 1
               %li= link_to 'Change state', plugin('inquiry').edit_inquiry_path(id: inquiry.id), data: {modal: true}
             - if get_allowed_custom_actions(inquiry)
               %li= link_to "#{get_allowed_custom_actions(inquiry)['name']}", "#{get_allowed_custom_actions(inquiry)['action']}"
