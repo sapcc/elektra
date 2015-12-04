@@ -1,0 +1,20 @@
+- display_unit = project.attributes[:display_unit] || 1
+- current_quota = project.current_quota / display_unit
+- current_quota = "unlimited" if project.current_quota == -1
+
+- class_name = ""
+- if current_quota == "unlimited"
+  - class_name = "danger"
+- else
+  - class_name = "danger" if project.approved_quota > current_quota
+  - class_name = "danger" if project.approved_quota < project.usage
+  - class_name = "warning" if project.approved_quota < current_quota
+
+%tr{ class: class_name  }
+  %td=project.project_id
+  %td=project.approved_quota / display_unit
+  %td=current_quota
+  %td=project.usage / display_unit
+  %td -
+
+
