@@ -121,14 +121,12 @@ module ResourceManagement
       required_size_for_label = 1.5 * fill[:label].size
       bar_for_label = bars.find { |bar| bar[:percent] > required_size_for_label }
       bar_for_label[:label] = fill[:label]
-      # remove unused trailing empty space
-      last_bar = bars.last
-      if last_bar[:type] == 'empty' and not last_bar.has_key?(:label)
-        bars.pop
-      end
+
+      # remove unused trailing spacer
+      bars.pop if bars.last[:type] == 'empty' and not bars.last.has_key?(:label)
 
       # remove all bars with fixed width that was calculated to be non-positive
-      return bars.reject { |bar| bar.has_key?(:percent) && bar[:percent] <= 0 }
+      return bars.reject { |bar| bar[:percent] <= 0 }
     end
 
   end
