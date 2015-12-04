@@ -168,6 +168,19 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       )
     end
 
+    it 'can skip multiple bars when looking for where to put the label' do
+      expect(bars_for(fill: 1, threshold: 3, maximum: 100)).to contain_exactly(
+        { type: 'default',          percent: 1  },
+        { type: 'empty',            percent: 2, label: '1' },
+        { type: 'empty-overcommit', percent: 97 },
+      )
+      expect(bars_for(fill: 1, threshold: 2, maximum: 100)).to contain_exactly(
+        { type: 'default',          percent: 1 },
+        { type: 'empty',            percent: 1 },
+        { type: 'empty-overcommit', percent: 98, label: '1' },
+      )
+    end
+
     it 'uses the threshold as upper bound when maximum < 0' do
       expect(bars_for(fill: 0, maximum: -1, threshold: 50)).to contain_exactly(
         # for maximum < 0, mark all empty area as overcommit

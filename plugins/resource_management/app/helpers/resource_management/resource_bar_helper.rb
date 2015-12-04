@@ -81,9 +81,6 @@ module ResourceManagement
     def resbar_compile_bars(fill, maximum, threshold, warning_level)
       bars = []
 
-      # place label next to bar instead of on bar?
-      outside_label = fill[:percent] < 5 ? fill[:label] : ''
-
       if fill[:value] > 0
         # render normal bar
         fill_level = fill[:value].to_f / [ threshold[:value], maximum[:value] ].select { |x| x > 0 }.min.to_f
@@ -95,7 +92,7 @@ module ResourceManagement
         else
           percent = fill[:percent]
         end
-        bars << { type: bar_type, percent: percent, label: outside_label == '' ? fill[:label] : '' }
+        bars << { type: bar_type, percent: percent } # label will be added at the end
 
         # mark the filled part beyond the threshold as "overcommit"
         if fill[:value] > threshold[:value]
@@ -107,21 +104,29 @@ module ResourceManagement
         # for finite maximum, mark empty area beyond the threshold as "overcommit"
         if threshold[:value] < maximum[:value]
           if fill[:value] >= threshold[:value]
-            bars << { type: 'empty-overcommit', percent:                 100 - fill[:percent], label: outside_label }
+            bars << { type: 'empty-overcommit', percent:                 100 - fill[:percent] }
           else
-            bars << { type: 'empty',            percent: threshold[:percent] - fill[:percent], label: outside_label }
+            bars << { type: 'empty',            percent: threshold[:percent] - fill[:percent] }
             bars << { type: 'empty-overcommit', percent: 100 - threshold[:percent] }
           end
-        elsif outside_label != ""
-          bars << { type: 'empty', percent: 100 - fill[:percent], label: outside_label }
+        else
+          bars << { type: 'empty', percent: 100 - fill[:percent] }
         end
       else
         # for infinite maximum, mark all empty area as "overcommit"
-        bars << { type: 'empty-overcommit', percent: 100 - fill[:percent], label: outside_label }
+        bars << { type: 'empty-overcommit', percent: 100 - fill[:percent] }
       end
 
-      # remove all empty labels
-      bars.each { |bar| bar.delete(:label) if bar[:label] == '' }
+      # place the fill label on the first bar that is not small
+      required_size_for_label = 1.5 * fill[:label].size
+      bar_for_label = bars.find { |bar| bar[:percent] > required_size_for_label }
+      bar_for_label[:label] = fill[:label]
+      # remove unused trailing empty space
+      last_bar = bars.last
+      if last_bar[:type] == 'empty' and not last_bar.has_key?(:label)
+        bars.pop
+      end
+
       # remove all bars with fixed width that was calculated to be non-positive
       return bars.reject { |bar| bar.has_key?(:percent) && bar[:percent] <= 0 }
     end
