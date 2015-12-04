@@ -35,13 +35,29 @@ module ServiceLayer
     # 1. Cleanup Resource objects for deleted projects from local DB.
     # 2. Create Resource objects for new projects in local DB.
     def sync_projects(domain_id, options={})
+      # foreach resource in an enabled service...
+      enabled_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:enabled] }.map { |srv| srv[:service] }
+      enabled_resources = ResourceManagement::Resource::KNOWN_RESOURCES.select { |res| enabled_services.include?(res[:service]) }
+      enabled_resources.each do |resource|
+        # ...initialize the Resource entry of the domain with approved_quota=0
+        # (this is useful if the domain was created outside of the dashboard
+        # and no quota has been approved for it yet)
+        ResourceManagement::Resource.where(
+          cluster_id: nil, # TODO: take cluster assignment into account for brokered services
+          domain_id:  domain_id,
+          project_id: nil,
+          service:    resource[:service],
+          name:       resource[:name],
+        ).first_or_create(approved_quota: 0)
+      end
+
       # check which projects exist in the DB and in Keystone
       all_project_ids = driver.enumerate_projects(domain_id)
       Rails.logger.info "ResourceManagement > sync_projects(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
       db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).pluck('DISTINCT project_id')
 
-      # drop Resource objects for deleted projects
-      old_project_ids = db_project_ids - all_project_ids
+      # drop Resource objects for deleted projects (exclude project_id = nil which marks domain-level resource data)
+      old_project_ids = db_project_ids - all_project_ids - [nil]
       Rails.logger.info "ResourceManagement > sync_projects(#{domain_id}): cleaning up deleted projects: #{old_project_ids.join(' ')}"
       ResourceManagement::Resource.where(domain_id: domain_id, project_id: old_project_ids).destroy_all()
 
