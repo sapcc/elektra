@@ -48,7 +48,7 @@ module ResourceManagement
         return {
           cores:     rand(50..100),
           instances: rand(50..100),
-          ram:       rand(50..100),
+          ram:       rand((50 << 30)..(100 << 30)), # max 100 GiB
         }
       end
 
@@ -57,7 +57,7 @@ module ResourceManagement
         return {
           cores:     rand(0..50),
           instances: rand(0..50),
-          ram:       rand(0..50),
+          ram:       rand(0..(50 << 30)), # max 50 GiB
         }
       end
 
