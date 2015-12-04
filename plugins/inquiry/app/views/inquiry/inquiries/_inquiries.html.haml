@@ -16,4 +16,4 @@
         = render partial: 'item', locals: {inquiry: inquiry, remote_links: remote_links}
 
 .pagination
-  = paginate @inquiries, :window => 1, :outer_window => 1, remote_links: remote_links, :theme => 'twitter-bootstrap-3'
+  = paginate @inquiries, :window => 1, :outer_window => 1, remote: remote_links, :theme => 'twitter-bootstrap-3'
