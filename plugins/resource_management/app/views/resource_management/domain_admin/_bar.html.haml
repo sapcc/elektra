@@ -11,11 +11,18 @@
 - fill = usage_project_sum if render_usage
 
 - if active_project_quota and approved_quota_for_domain >= 0
-  -# all project quotas are limited
-  = resource_bar(fill: fill, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+  -# all project quotas are limited (that should be the normal case, hopefully)
+  - if approved_quota_for_domain < fill
+    -# special case where the project admins overrun the approved quotas for the domain
+    = resource_bar(fill: fill, maximum: { value: fill, label: "" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+  - else 
+    -# in this case everything is fine :-)
+    = resource_bar(fill: fill, maximum: [fill,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
 - elsif approved_quota_for_domain == -1
-  = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: current_project_quota_sum, label: "Quota unlimited!" }, display_unit: display_unit )
+  -# special case if dpmain quota unlimited (that should never be the case ;-))
+  = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: fill, label: "Quota unlimited!" }, display_unit: display_unit )
 - else
+  -# one or more project quotas are unlimited (in that case the project admins are the bad guys)
   = resource_bar( fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit )
 
 
