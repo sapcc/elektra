@@ -1,22 +1,13 @@
-
 .bs-callout.bs-callout-primary
-  - if tab == "overview"
-    These bars show the 
-    %strong critical 
-    resource usage for all quota types in your project. 
-  - else
-    These bars show the resource usage for 
-    %strong=tab
-    quota in your project.
-  
-  The total length of each bar indicates the quota that you have been granted by your domain administrator.
   %p
-  To exceed your approved quota please request more resources from you project administrator.
-
+    These bars show the current resource usage in your project. The total
+    length of each bar indicates the quota that you have been granted by your
+    domain administrator.
+  %p
+    To extend your approved quota, please request more resources from your project administrator.
   - if @warning
-    .text-muted.quota
-      %p
-      %strong Note: 
+    %p.text-danger
+      %strong Note:
       Some of your current quotas exceed your approved quota. The approved quota will
       appear as an extra mark on the bar to the left. For this case an
       automatic alert is issued to your domain administrator.

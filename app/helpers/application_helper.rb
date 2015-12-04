@@ -21,23 +21,20 @@ module ApplicationHelper
     # delegate all methods to the plugin_helper. Clean the scope parameters before delegation!
     def method_missing(method,*args,&block)
       if method.to_s.ends_with?('_path') or method.to_s.ends_with?('_url')
-        options = args.first || {}
+        # extract options (last args hash member)
+        options = args.extract_options!
 
-        if options.is_a?(String) or options.is_a?(Fixnum)
-          options = case method.to_s
-            when 'project_path' then {project_id: options}
-            when 'domain_path' then {domain_id: options}
-            else {id: options}
-          end
-        end
-
+        # build the scope (delete scope values from options)
         @scope[:domain_id] = options.delete(:domain_id) if options.has_key?(:domain_id)
         @scope[:project_id] = options.delete(:project_id) if options.has_key?(:project_id)
         @scope.delete_if{|key, value| value.nil? }
-
+        
+        # add prefix to the path 
         options[:script_name] = @main_app.send("#{@plugin_name}_plugin_path",@scope)
+        args << options
 
-        @plugin.send(method,options)
+        # build the path
+        @plugin.send(method,*args)
       else
         @plugin.send(method,*args,&block)
       end
