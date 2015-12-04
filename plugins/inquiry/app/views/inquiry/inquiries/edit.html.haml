@@ -18,21 +18,25 @@
 
           %fieldset
             %fieldset
-            = f.input :kind, label: "Kind", disabled: true
-            = f.input :requester_full_name, label: "Requested by", disabled: true
-            = f.input :requester_email, label: "Requester email", disabled: true
-            = f.input :description, label: "Reason for Request", as: :text, disabled: true
-            = f.input :aasm_state, { label: "Set new State",
+            = f.input :kind, label: "This is a request for a ", disabled: true
+            = f.fields_for :requester, @inquiry.requester do |requester_fields|
+              = requester_fields.input :full_name, label: "Request user", disabled: true, required: false
+              = requester_fields.input :email, label: "Email", disabled: true, required: false
+            = f.input :description, label: "The reason for request", as: :text, disabled: true
+            = f.input :aasm_state, { label: "Please set a new State",
               as: :select,
               :include_blank => false,
-              collection: @inquiry.actions_allowed }
-            = f.input :process_step_description, label: "Reason for State Change", as: :text, required: true
+              collection: @inquiry.states_allowed(current_user),
+              label_method: Proc.new { |s| s[:name] },
+              value_method: Proc.new { |s| s[:state] } }
+            = f.input :process_step_description, label: "Reason for your state decision", as: :text, required: true
 
         %div.buttons{class: modal? ? 'modal-footer' : ''}
           - if modal?
             %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
           - else
             = link_to "Cancel", inquiries_url(), class: 'btn btn-default'
+
           %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save
 
     .tab-pane{role:"tabpanel", id:"payload"}

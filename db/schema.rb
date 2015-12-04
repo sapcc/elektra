@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151127102349) do
+ActiveRecord::Schema.define(version: 20151204095543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,17 +35,15 @@ ActiveRecord::Schema.define(version: 20151127102349) do
 
   create_table "inquiry_inquiries", force: :cascade do |t|
     t.string   "kind"
-    t.string   "requester_id"
     t.text     "description"
     t.json     "payload"
     t.string   "aasm_state"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
     t.string   "project_id"
     t.string   "domain_id"
     t.json     "callbacks"
-    t.string   "requester_email"
-    t.string   "requester_full_name"
+    t.integer  "requester_id"
   end
 
   create_table "inquiry_inquiries_processors", id: false, force: :cascade do |t|

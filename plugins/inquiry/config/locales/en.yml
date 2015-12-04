@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    events:
+      inquiry/inquiry:
+        reopen: "reopen"
+        approve: "approve"
+        reject: "reject"
+        close: "close"
+
+    attributes:
+      inquiry/inquiry:
+        aasm_state:
+          open: Open
+          approved: Approved
+          rejected: Rejected
+          closed: Closed
