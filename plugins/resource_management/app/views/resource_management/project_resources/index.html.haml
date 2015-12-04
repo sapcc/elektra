@@ -10,7 +10,7 @@
       -# sort resources by name (and by service for resources with the same name)
       - @resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
         = render :partial => 'bar', :locals => { :overview => true, :data => resource }
-    = render :partial => 'data_age'
+    = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_url }
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => 'overview'}
 

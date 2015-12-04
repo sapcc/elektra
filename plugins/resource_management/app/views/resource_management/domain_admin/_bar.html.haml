@@ -1,6 +1,6 @@
 - render_usage = false if !render_usage
 
-- display_unit              = data[:domain_quota].attributes[:display_unit] || 1
+- data_type                 = data[:domain_quota].attributes[:data_type]
 - current_project_quota_sum = data[:current_project_quota_sum]
 - active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
 - approved_quota_for_domain = data[:domain_quota].approved_quota
@@ -16,15 +16,41 @@
   -# all project quotas are limited (that should be the normal case, hopefully)
   - if approved_quota_for_domain < fill
     -# special case where the project admins overrun the approved quotas for the domain
-    = resource_bar(fill: fill, maximum: { value: fill, label: "" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+    = resource_bar(fill: fill, maximum: { value: fill, label: "" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
   - else 
     -# in this case everything is fine :-)
-    = resource_bar(fill: fill, maximum: [fill,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit)
+    = resource_bar(fill: fill, maximum: [fill,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
 - elsif approved_quota_for_domain == -1
   -# special case if dpmain quota unlimited (that should never be the case ;-))
-  = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: fill, label: "Quota unlimited!" }, display_unit: display_unit )
+  = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: fill, label: "Quota unlimited!" }, data_type: data_type )
 - else
   -# one or more project quotas are unlimited (in that case the project admins are the bad guys)
-  = resource_bar( fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, display_unit: display_unit )
+  = resource_bar( fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type )
 
+-#.row
+  .col-md-2.quota-label
+    .text-muted
+      - if overview
+        = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').admin_area_path(area: data[:domain_quota].attributes[:area])
+      - else
+        = t("resource_management.#{data[:domain_quota][:name]}")
+      - if overview
+        .small
+          .small= t(service)
+  
+  .col-md-7
+    - data_type                 = data[:domain_quota].attributes[:data_type]
+    - current_project_quota_sum = data[:current_project_quota_sum]
+    - active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
+    - approved_quota_for_domain = data[:domain_quota].approved_quota
+    -# to render the warning in good_to_know partial
+    - @warning = true if current_project_quota_sum > approved_quota_for_domain or not active_project_quota 
+
+    - if active_project_quota and approved_quota_for_domain >= 0
+      -# all project quotas are limited
+      = resource_bar(fill: current_project_quota_sum, maximum: [current_project_quota_sum,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
+    - elsif approved_quota_for_domain == -1
+      = resource_bar( fill: current_project_quota_sum, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: current_project_quota_sum, label: "Quota unlimited!" }, data_type: data_type )
+    - else
+      = resource_bar( fill: current_project_quota_sum, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type )
 

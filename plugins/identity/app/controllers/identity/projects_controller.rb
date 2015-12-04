@@ -18,29 +18,6 @@ module Identity
       @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
     end
     
-    def wizard
-      @project = services.identity.new_project
-    end
-    
-    def wizard_create
-      @project = services.identity.new_project
-      @project.attributes=params.fetch(:project,{}).merge(domain_id: @scoped_domain_id)
-      
-      inq = services.inquiry.inquiry_create(
-        'project', 
-        'Create a project', 
-        current_user, 
-        @project.attributes.to_json, 
-        Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id,project_id:@scoped_project_id), 
-        nil
-      )
-      if inq.save
-        render template: 'identity/projects/wizard_create.js'
-      else
-        render action: :wizard
-      end
-    end
-
     def destroy
       project = services.identity.find_project(@project_id)
       

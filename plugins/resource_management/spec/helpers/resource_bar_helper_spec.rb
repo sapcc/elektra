@@ -55,17 +55,17 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       expect(result[:threshold]).to include(value: 2)
     end
 
-    it 'uses the display_unit option to calculate labels' do
+    it 'uses the data_type option to render labels' do
       result = call_with(
-        fill:         23552,
-        maximum:      { value: 43008 },
-        threshold:    { value: 66560, label: 'foo$VALUEbar' },
-        display_unit: 1024,
+        fill:      23552,
+        maximum:   { value: 43008 },
+        threshold: { value: 66560, label: 'foo bar: $VALUE' },
+        data_type: :bytes,
       )
 
-      expect(     result[:fill]).to include(label: '23')
-      expect(  result[:maximum]).to include(label: '42')
-      expect(result[:threshold]).to include(label: 'foo65bar')
+      expect(     result[:fill]).to include(label: '23 KiB')
+      expect(  result[:maximum]).to include(label: '42 KiB')
+      expect(result[:threshold]).to include(label: 'foo bar: 65 KiB')
     end
 
     it 'recognizes the warning_level option' do
@@ -100,6 +100,12 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       expect(result[:upper_bound]).to eq(50)
       expect(result[:fill]).to      include(value: 20, percent:  40)
       expect(result[:threshold]).to include(value: 50, percent: 100)
+
+      # upper_bound = 0 is possible if maximum = 0
+      result = call_with(fill: 0, maximum: 0, threshold: 10)
+
+      expect(result[:upper_bound]).to eq(0)
+      expect(result[:fill]).to include(value: 0, percent: 0)
     end
 
   end
@@ -177,6 +183,16 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       expect(bars_for(fill: 200, maximum: -1, threshold: 50)).to contain_exactly(
         { type: 'danger',            percent: 25, label: '200' },
         { type: 'danger-overcommit', percent: 75 },
+      )
+    end
+
+    it 'shows an empty bar with overcommit indication for fill = maximum = 0' do
+      expect(bars_for(fill: 0, maximum: 0)).to contain_exactly(
+        { type: 'empty-overcommit', percent: 100, label: '0' },
+      )
+
+      expect(bars_for(fill: 0, maximum: 0, threshold: 1)).to contain_exactly(
+        { type: 'empty-overcommit', percent: 100, label: '0' },
       )
     end
 

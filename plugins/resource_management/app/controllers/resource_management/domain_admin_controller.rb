@@ -52,6 +52,15 @@ module ResourceManagement
  
     end
 
+    def sync_now
+      services.resource_management.sync_projects(@scoped_domain_id, sync_all_projects: true) # TODO: this method should be called sync_domain()
+      begin
+        redirect_to :back
+      rescue ActionController::RedirectBackError
+        redirect_to admin_url()
+      end
+    end
+
     private
 
     def set_usage_stage

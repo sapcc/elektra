@@ -10,7 +10,7 @@
           .small= t(data.service)
 
   .col-md-7
-    - display_unit   = data.attributes[:display_unit] || 1
+    - data_type      = data.attributes[:data_type]
     - usage          = data.usage
     - current_quota  = data.current_quota
     - approved_quota = data.approved_quota
@@ -18,10 +18,9 @@
     - @warning       = true if current_quota > approved_quota or current_quota == -1
 
     - if current_quota >= 0
-      -# case 1: finite current quota
-      = resource_bar( fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit )
+      = resource_bar(fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
     - else
-      = resource_bar( fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, display_unit: display_unit )
+      = resource_bar(fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
 
   .col-md-1.quota-request-more
     = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
