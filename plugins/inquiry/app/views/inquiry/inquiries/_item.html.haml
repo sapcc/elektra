@@ -18,8 +18,9 @@
           - if true #current_user.is_allowed?("network:network_update", {})
             - if inquiry.states_allowed(current_user).length > 1
               %li= link_to 'Change state', plugin('inquiry').edit_inquiry_path(id: inquiry.id), data: {modal: true}
-            - if get_allowed_custom_actions(inquiry)
-              %li= link_to "#{get_allowed_custom_actions(inquiry)['name']}", "#{get_allowed_custom_actions(inquiry)['action']}"
+            - allowed_actions = get_allowed_custom_actions(inquiry)
+            - if allowed_actions
+              %li= link_to "#{allowed_actions['name']}", "#{allowed_actions['action']}"
             %li= link_to 'Show', plugin('inquiry').inquiry_path(id: inquiry.id), data: {modal: true}
             %li.divider
           - if remote_links && true #current_user.is_allowed?("network:network_delete", {})
