@@ -13,5 +13,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
+  
 
 end
