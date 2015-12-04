@@ -25,6 +25,10 @@ RSpec.describe ResourceManagement::FormatHelper, type: :helper do
       end
     end
 
+    it 'handles float values correctly' do 
+      expect(helper.format_usage_or_quota_value(5.0, nil)).to eq("5")
+    end
+
   end
 
 end
