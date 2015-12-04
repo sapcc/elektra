@@ -5,8 +5,10 @@
 - active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
 - approved_quota_for_domain = data[:domain_quota].approved_quota
 - usage_project_sum         = data[:usage_project_sum]
+
 -# to render the warning in good_to_know partial
 - @warning = true if current_project_quota_sum > approved_quota_for_domain or not active_project_quota 
+
 - fill = current_project_quota_sum
 - fill = usage_project_sum if render_usage
 

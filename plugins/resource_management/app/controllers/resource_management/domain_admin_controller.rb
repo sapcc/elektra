@@ -60,7 +60,7 @@ module ResourceManagement
 
     def get_resource_status(critical = false, resource = nil, projects = false)
 
-      # get data for currently existing quota
+      # get data for currently existing quotas
       quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
       # get only the quotas for one resource
       if resource 
@@ -71,7 +71,10 @@ module ResourceManagement
                      pluck("service,name,SUM(current_quota),SUM(usage)")
       
       # this is used for details view
-      @projects = quotas.where.not(project_id: nil).page(@page).per(6) if projects
+      projects_data = quotas.where.not(project_id: nil)
+      @projects = projects_data.page(@page).per(6) if projects
+      # get min and max update of all quotas (for one resource or all)
+      @min_updated_at, @max_updated_at = projects_data.pluck("MIN(updated_at), MAX(updated_at)").first
 
       # get unlimited quotas
       unlimited = ResourceManagement::Resource.
