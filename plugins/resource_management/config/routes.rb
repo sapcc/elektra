@@ -4,6 +4,7 @@ ResourceManagement::Engine.routes.draw do
     get ':area',  to: 'project_resources#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
     get 'details'  => 'project_resources#details'
     get 'request'  => 'project_resources#resource_request'
+    get 'sync_now' => 'project_resources#sync_now'
   end
 
   scope 'admin', as: 'admin' do
@@ -21,6 +22,7 @@ ResourceManagement::Engine.routes.draw do
     get 'request'  => 'cloud_admin#resource_request'
   end
  
+  # TODO: remove (or move into cloud admin scope)
   get 'manual_sync' => 'project_resources#manual_sync'
 
 end
