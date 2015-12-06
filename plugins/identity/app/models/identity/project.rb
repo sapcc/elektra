@@ -1,5 +1,7 @@
 module Identity
   class Project < ::DomainModelServiceLayer::Model
+    validates :name, presence: {message: 'Name should not be empty'}
+    
     def is_sandbox?
       self.name.end_with? "_sandbox"
     end

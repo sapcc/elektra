@@ -2,6 +2,7 @@
 # All subclasses which require modal views should inherit from this class.
 class ApplicationController < ActionController::Base
   layout 'application'
+  include ApplicationHelper
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
