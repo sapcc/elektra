@@ -50,13 +50,18 @@ handleUrl= (url) ->
     # replace // with /
     href = href.replace(/\/\//g,'/')
     # look fo the anker with this href
-    $anker = $("[href$='#{href}']")
-    # if found then open the overlay. Otherwise hide current overlay
-    if $anker.length>0 
-      unless ($("#modal-holder .modal").data('bs.modal') || {}).isShown
-        #console.log 'handleUrl->trigger click on ', href
-        MoModal.load($anker)
-        hidden=false
+
+    MoModal.load(href)
+    hidden=false
+    
+      
+    # $anker = $("[href$='#{href}']")
+    # # if found then open the overlay. Otherwise hide current overlay
+    # if $anker.length>0
+    #   unless ($("#modal-holder .modal").data('bs.modal') || {}).isShown
+    #     #console.log 'handleUrl->trigger click on ', href
+    #     MoModal.load($anker)
+    #     hidden=false
     
   if hidden 
     $('#modal-holder .modal').modal('hide')

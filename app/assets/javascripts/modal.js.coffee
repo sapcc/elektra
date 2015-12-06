@@ -20,12 +20,14 @@ class @MoModal
     $(document).on 'ajax:success', 'form[data-modal=true]', handleAjaxSuccess
       
   @load= (anker)->
-    $button = $(anker)
+    if jQuery.type(anker) == "string"
+      location = anker
+    else   
+      $button = $(anker)
+      #$button.addClass('loading')
+      location = $(anker).attr('href')
     
-    #$button.addClass('loading')
-    location = $(anker).attr('href')
     #Load modal dialog from server
-
     InfoDialog.showLoading()
     
     $.get location, {modal:true}, (data, status, xhr)->
@@ -49,31 +51,31 @@ class @MoModal
   
 
   handleAjaxSuccess= (event, data, status, xhr)->  
-      url = xhr.getResponseHeader('Location')
-      response_type = (xhr.getResponseHeader("content-type") || "")
-            
-      if url # url is presented
-        # Redirect to url
-        window.location = url
-      else if response_type.indexOf('javascript') > -1
-        # response is javascript
+    url = xhr.getResponseHeader('Location')
+    response_type = (xhr.getResponseHeader("content-type") || "")
+          
+    if url # url is presented
+      # Redirect to url
+      window.location = url
+    else if response_type.indexOf('javascript') > -1
+      # response is javascript
+      # Remove old modal backdrop
+      $('.modal-backdrop').remove()
+    else
+      # assume response is a html
+      # modal has the fade effect 
+      if $($(modal_holder_selector).find(modal_selector)).hasClass('fade')
+        # replace content of old modal
+        $oldModal = $(modal_holder_selector)
+        $newContent = $(data)
+        $oldModal.find(selector).replaceWith( $newContent.find(selector) ) for selector in ['.modal-body','.modal-footer']
+      else  
         # Remove old modal backdrop
         $('.modal-backdrop').remove()
-      else
-        # assume response is a html
-        # modal has the fade effect 
-        if $($(modal_holder_selector).find(modal_selector)).hasClass('fade')
-          # replace content of old modal
-          $oldModal = $(modal_holder_selector)
-          $newContent = $(data)
-          $oldModal.find(selector).replaceWith( $newContent.find(selector) ) for selector in ['.modal-body','.modal-footer']
-        else  
-          # Remove old modal backdrop
-          $('.modal-backdrop').remove()
-          # Replace old modal with new one
-          $(modal_holder_selector).html(data).find(modal_selector).modal()
-          
-        Dashboard.initForm()  
-      return false
+        # Replace old modal with new one
+        $(modal_holder_selector).html(data).find(modal_selector).modal()
+        
+      Dashboard.initForm()  
+    return false
 
 $ -> MoModal.init()           
