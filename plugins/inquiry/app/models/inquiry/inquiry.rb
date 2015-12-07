@@ -61,7 +61,6 @@ module Inquiry
 
     def set_process_step_description(options = {})
       self.process_step_description = "Initial creation!"
-      #log_process_step({ :description => "Initial creation" })
     end
 
     def log_process_step(options = {})

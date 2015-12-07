@@ -18,7 +18,7 @@
       #myinquiries.tab-pane.active{role: "tabpanel"}
         = remote_inquiries(per_page: 3, filter: {requester_id:current_user.id})
       #openinquiries.tab-pane{role: "tabpanel"}
-        = remote_inquiries(per_page: 3, filter: {processor_id: current_user.id})
+        = remote_inquiries(per_page: 3, filter: {processor_id: current_user.id, state: ['open']})
       #allinquiries.tab-pane{role: "tabpanel"}
         = remote_inquiries(per_page: 3)
 
