@@ -1,5 +1,7 @@
 = content_for(:title, "Details for quota #{@resource}")
 .modal-body
+  %p.alert.alert-danger{style: "display:none"}
+  %p.alert.alert-success{style: "display:none"}
   .row
     .col-md-2.quota-label
       .text-muted
@@ -26,6 +28,6 @@
       -# TODO: @service -> @area
       = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(area: @service), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-   
+
 
 

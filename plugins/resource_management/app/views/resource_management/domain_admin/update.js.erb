@@ -1,0 +1,5 @@
+$("#<%=@project%>_approved_quota").html("<%=@new_value%>");
+$("#<%=@project%>_edit").html("<%= escape_javascript( link_to 'Edit', plugin('resource_management').admin_edit_path( :project => @project, :value => @new_value ) , class: 'btn btn-primary btn-sm', remote: true )%>");
+$('.alert-danger').css('display','none');
+$(".alert.alert-success").html("Update quota for project <b><%=@project%></b> to <%=@new_value%> successfull.");
+$(".alert.alert-success").css('display', 'block');

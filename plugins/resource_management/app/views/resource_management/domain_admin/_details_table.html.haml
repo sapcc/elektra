@@ -9,6 +9,24 @@
   %tbody
     - @projects.each do |project|
       = render :partial => 'details_table_row', :locals => { :project => project }
-
+  
 = paginate @projects, :theme => 'twitter-bootstrap-3', :remote => true
- 
+
+= content_for :javascripts do
+  :javascript
+    function update(PROJECT){
+      $.ajax({
+        url: "#{plugin('resource_management').admin_update_path()}",
+        dataType: 'script',
+        data: { 
+           project: PROJECT, 
+           new_value: $("#"+PROJECT+"_edit_value").val(),
+           resource: "#{@resource}",
+        },
+        error: function(xhr) {
+                  $('.alert-success').css('display','none');
+                  $('.alert-danger').html(xhr.responseText); 
+                  $('.alert-danger').css('display','block')
+               }
+      });
+    };

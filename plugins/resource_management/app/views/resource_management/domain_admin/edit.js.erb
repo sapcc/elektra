@@ -1,0 +1,2 @@
+$("#<%=@project%>_approved_quota").html("<input id='<%=@project%>_edit_value' type='text' class='form-control' value='<%=@value%>' autofocus>");
+$("#<%=@project%>_edit").html("<%= escape_javascript( link_to 'Update', '#', onclick: "update('#{@project}');" , class: 'btn btn-primary btn-sm')%>")

@@ -24,6 +24,28 @@ module ResourceManagement
       get_resource_status()
     end
 
+    def edit
+      @project = params[:project]
+      @value = params[:value]
+    end
+
+    def update
+      @project   = params.require(:project)
+      @new_value = params.require(:new_value)
+      @resource  = params.require(:resource)
+      
+      unless is_numeric? @new_value
+        render text: "Value #{@new_value} not correct!", status:400
+      else
+        # TODO: UPDATE...
+
+        respond_to do |format|
+          format.js
+        end
+      end
+
+   
+    end
 
     def resource_request
       @resource = params[:resource]
@@ -62,7 +84,11 @@ module ResourceManagement
     end
 
     private
-
+    # http://stackoverflow.com/questions/4589968/ruby-rails-how-to-check-if-a-var-is-an-integer
+    def is_numeric?(obj) 
+       obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+    end
+ 
     def set_usage_stage
       @usage_stage = { :danger => 1.0, :warning => 0.8 }
     end

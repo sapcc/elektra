@@ -10,11 +10,15 @@
   - class_name = "danger" if project.approved_quota < project.usage
   - class_name = "warning" if project.approved_quota < current_quota
 
-%tr{ class: class_name  }
-  %td=project.project_id
-  %td=project.approved_quota / display_unit
-  %td=current_quota
-  %td=project.usage / display_unit
-  %td -
+%tr{ class: class_name }
+  %td= project.project_id
+  %td
+    %div{ id: "#{project.project_id}_approved_quota", class: "input-group input-group-sm" }
+      = project.approved_quota / display_unit
+  %td= current_quota
+  %td= project.usage / display_unit
+  %td
+    %div{ id: "#{project.project_id}_edit" }
+      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project.project_id, :value => project.approved_quota/display_unit ) , class: 'btn btn-primary btn-sm', remote: true
 
 
