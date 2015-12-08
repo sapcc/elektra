@@ -1,4 +1,5 @@
 module ServiceLayer
+
   class InquiryService < DomainModelServiceLayer::Service
 
     def find_by_id(id)
@@ -7,6 +8,10 @@ module ServiceLayer
 
     def inquiries(filter={})
       Inquiry::Inquiry.filter(filter)
+    end
+
+    def get_inquiry(id)
+      return Delegates::Inquiry.new(find_by_id(id))
     end
 
     def payload(id)
@@ -41,4 +46,5 @@ module ServiceLayer
     end
 
   end
+
 end
