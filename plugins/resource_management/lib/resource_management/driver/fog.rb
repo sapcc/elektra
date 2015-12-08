@@ -146,6 +146,7 @@ module ResourceManagement
           openstack_api_key:           ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
           openstack_project_domain_id: domain_id,
           openstack_project_id:        project_id,
+          connection_options:          { ssl_verify_peer: false },
         }
 
         return yield(fog_class.new(auth_params))
@@ -178,6 +179,7 @@ module ResourceManagement
           openstack_api_key:           ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
           openstack_project_domain_id: domain_id,
           openstack_project_id:        @service_project_id,
+          connection_options:          { ssl_verify_peer: false },
         )
 
         # extract original storage URL from connection object, and store it
