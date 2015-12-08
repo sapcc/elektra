@@ -133,11 +133,11 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
 
     it 'renders the label next to the bar for short bars' do
       expect(bars_for(fill: 0, maximum: 100)).to contain_exactly(
-        { type: 'empty', label: '0' },
+        { type: 'empty', percent: 100, label: '0' },
       )
       expect(bars_for(fill: 1, maximum: 100)).to contain_exactly(
         { type: 'default', percent: 1 },
-        { type: 'empty',   label: '1' },
+        { type: 'empty',   percent: 99, label: '1' },
       )
     end
 
@@ -168,6 +168,19 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       )
     end
 
+    it 'can skip multiple bars when looking for where to put the label' do
+      expect(bars_for(fill: 1, threshold: 3, maximum: 100)).to contain_exactly(
+        { type: 'default',          percent: 1  },
+        { type: 'empty',            percent: 2, label: '1' },
+        { type: 'empty-overcommit', percent: 97 },
+      )
+      expect(bars_for(fill: 1, threshold: 2, maximum: 100)).to contain_exactly(
+        { type: 'default',          percent: 1 },
+        { type: 'empty',            percent: 1 },
+        { type: 'empty-overcommit', percent: 98, label: '1' },
+      )
+    end
+
     it 'uses the threshold as upper bound when maximum < 0' do
       expect(bars_for(fill: 0, maximum: -1, threshold: 50)).to contain_exactly(
         # for maximum < 0, mark all empty area as overcommit
@@ -193,6 +206,13 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
 
       expect(bars_for(fill: 0, maximum: 0, threshold: 1)).to contain_exactly(
         { type: 'empty-overcommit', percent: 100, label: '0' },
+      )
+    end
+
+    it 'handles threshold = 0 correctly' do
+      expect(bars_for(fill: 10, threshold: 0, maximum: 25)).to contain_exactly(
+        { type: 'danger-overcommit', percent: 40, label: '10' },
+        { type: 'empty-overcommit', percent: 60 },
       )
     end
 
