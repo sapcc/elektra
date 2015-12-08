@@ -7,36 +7,15 @@
 
 %p
   This is the project home page. We will display a nicely rendered list of all available services here soon. For now please use the services dropdown menu above.
+  %table
+    %tr
+      %th Name
+      %td= @active_project.name
+    %tr
+      %th Description&nbsp;
+      %td= @active_project.description
+    %tr
+      %th Enabled?
+      %td= @active_project.enabled
 
-  
-  
-/ = render "application/context_selection"
-/
-/ .page-header
-/   %h1
-/     Project:
-/     = @current_project.name
-/
-/   .row
-/     .col-sm-6
-/       %p Show super interesting information about this project here.
-/       - if plugin_available?('compute')
-/         %p= link_to "Instances (#{@instances.length})", plugin('compute').instances_path
-/
-/       - if @current_project.subtree.count>0
-/         - @current_project.subtree.each do |sub_project|
-/           = link_to sub_project.name, project_path(sub_project.friendly_id), class: "list-group-item"
-/     / .col-sm-6
-/     /   - if current_user.is_allowed?("identity:project_delete", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
-/     /     = link_to "Delete Project", project_path(id:@current_project.friendly_id), method: :delete, class: "btn btn-danger", data: { confirm: 'Are you sure?' }
-/     /
-/     /   - if current_user.is_allowed?("identity:project_update", {trarget: {project: @current_project} }) and !@current_project.is_sandbox?
-/     /     = link_to "Edit Project", edit_project_path(id:@current_project.friendly_id), class: "btn btn-primary", data: { modal: true }
-/
-/     -# where to put this? ask esther
-/     .col-sm-6
-/       %p
-/         Usage and Quotas
-/       = link_to "Quotas(X)", plugin('resource_management').resources_path()
-/       %span.label.label-danger Critical
 

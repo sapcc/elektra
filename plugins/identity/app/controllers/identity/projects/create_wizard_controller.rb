@@ -2,17 +2,11 @@ module Identity
   module Projects
     # This controller implemnts the workflow to create a project
     class CreateWizardController < DashboardController
+      before_filter :load_and_authorize_inquiry
+      
       def new
         @project = services.identity.new_project
-        
-        # GOOD
-        payload = services.inquiry.payload(params[:inquiry_id])
-        @project.attributes = payload
-        @project.inquiry_id = params[:inquiry_id]
-        
-        # BAD (test)
-        #payload = Inquiry::Inquiry.first.payload
-        #@project.attributes=payload
+        @project.attributes = @inquiry.payload
       end
       
       def create
@@ -22,7 +16,8 @@ module Identity
         @project.attributes = params.fetch(:project,{}).merge(domain_id: @scoped_domain_id)
 
         if @project.save
-          services.inquiry.status_close(params[:project][:inquiry_id], "Project #{@project.name} successfully created.")
+          services.inquiry.status_close(@inquiry.id, "Project #{@project.name} successfully created.")
+
           Admin::IdentityService.grant_project_role(current_user.id,@project.id,'admin')
           flash[:notice] = "Project #{@project.name} successfully created."
           redirect_to plugin('identity').project_path(project_id: @project.friendly_id)
@@ -30,6 +25,18 @@ module Identity
           flash[:error] = @project.errors.full_messages.to_sentence
           render action: :new
         end
+      end
+      
+      def load_and_authorize_inquiry
+        @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
+        
+        if @inquiry
+          unless current_user.is_allowed?("identity:create_wizard_create",{inquiry: {requester_uid: @inquiry.requester.uid} })
+            render template: '/dashboard/not_authorized' 
+          end
+        else
+          render template: '/identity/projects/create_wizard/not_found'
+        end 
       end
     end
   end
