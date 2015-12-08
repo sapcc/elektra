@@ -4,10 +4,6 @@ module Identity
 
     attr_accessor :inquiry_id # to close inquiry after creation
     
-    def is_sandbox?
-      self.name.end_with? "_sandbox"
-    end
-    
     def subtree
       unless @sub_projects 
         @sub_projects = []

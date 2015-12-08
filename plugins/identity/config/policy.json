@@ -4,5 +4,8 @@
   "identity:project_request": "role:admin or role:Member or role:member",
   "identity:project_create": "role:admin",
   "identity:project_update": "role:admin",
-  "identity:project_delete": "role:admin"
+  "identity:project_delete": "role:admin",
+  
+  "identity:create_wizard_new": "user_id:%(inquiry.requestor_uid)s",
+  "identity:create_wizard_create": "user_id:%(inquiry.requestor_uid)s"
 }
