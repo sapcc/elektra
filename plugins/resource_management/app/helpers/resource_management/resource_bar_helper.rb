@@ -87,7 +87,7 @@ module ResourceManagement
         bar_type   = fill_level >= 1.0           ? 'danger'
                    : fill_level >= warning_level ? 'warning' : 'default'
         # the normal bar may not exceed the threshold mark
-        if threshold[:value] > 0
+        if threshold[:value] >= 0
           percent = [ fill[:percent], threshold[:percent] ].min
         else
           percent = fill[:percent]

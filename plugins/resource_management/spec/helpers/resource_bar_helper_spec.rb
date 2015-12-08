@@ -209,6 +209,13 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       )
     end
 
+    it 'handles threshold = 0 correctly' do
+      expect(bars_for(fill: 10, threshold: 0, maximum: 25)).to contain_exactly(
+        { type: 'danger-overcommit', percent: 40, label: '10' },
+        { type: 'empty-overcommit', percent: 60 },
+      )
+    end
+
   end
 
 end
