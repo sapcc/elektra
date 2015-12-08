@@ -5,17 +5,8 @@ module Identity
       before_filter :load_and_authorize_inquiry
       
       def new
-        @inquiry_id = params[:inquiry_id]
-        
-        
-        #if current_user.is_allowed?("identity:create_wizard_new",{inquiry: {requestor_uid: "u-6eeb6ad5c"} })
-        
-          @project = services.identity.new_project
-        
-          # GOOD
-          payload = services.inquiry.payload(@inquiry_id)
-          @project.attributes = payload
-        # end
+        @project = services.identity.new_project
+        @project.attributes = @inquiry.payload
       end
       
       def create
@@ -25,10 +16,8 @@ module Identity
         @project.attributes = params.fetch(:project,{}).merge(domain_id: @scoped_domain_id)
 
         if @project.save
-          @inquiry_id = params[:inquiry_id]
-          if @inquiry_id
-            services.inquiry.status_close(@inquiry_id, "Project #{@project.name} successfully created.")
-          end
+          services.inquiry.status_close(@inquiry.id, "Project #{@project.name} successfully created.")
+
           Admin::IdentityService.grant_project_role(current_user.id,@project.id,'admin')
           flash[:notice] = "Project #{@project.name} successfully created."
           redirect_to plugin('identity').project_path(project_id: @project.friendly_id)
@@ -39,10 +28,15 @@ module Identity
       end
       
       def load_and_authorize_inquiry
-        #@inquiry = services.inquiry.inquiry(params[:inquiry_id])
-        unless current_user.is_allowed?("identity:create_wizard_new",{inquiry: {requestor_uid: "bad"} })
-          render template: '/dashboard/not_authorized' 
-        end  
+        @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
+        
+        if @inquiry
+          unless current_user.is_allowed?("identity:create_wizard_create",{inquiry: {requester_uid: @inquiry.requester.uid} })
+            render template: '/dashboard/not_authorized' 
+          end
+        else
+          render template: '/identity/projects/create_wizard/not_found'
+        end 
       end
     end
   end

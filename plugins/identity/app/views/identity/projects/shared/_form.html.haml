@@ -8,8 +8,7 @@
   .tab-pane.active{role:"tabpanel", id:"information"} 
     %p
       %fieldset
-        - if @inquiry_id
-          = hidden_field_tag :inquiry_id, @inquiry_id
+        = hidden_field_tag :inquiry_id, params[:inquiry_id]
           
         = form.input :name,
           input_html:  { maxlength: 255 },
