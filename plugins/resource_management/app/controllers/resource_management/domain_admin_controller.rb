@@ -31,33 +31,37 @@ module ResourceManagement
 
     def update
       @project   = params.require(:project)
-      @new_value = params.require(:new_value)
+      @new_value = params.require(:new_value).to_i 
       @resource  = params.require(:resource)
       @service = params.require(:service)
 
       unless is_numeric? @new_value
-        render text: "Value #{@new_value} not correct!", status:400
+        render text: "value #{@new_value} not correct!", status:400
       else
         # TODO: UPDATE...
         #       recalc value for data type
         puts @scoped_domain_id
         data = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
-        data[0].approved_quota = @new_value.to_i
-        data[0].current_quota = @new_value.to_i
-        data[0].save
-
-        # get new data to render the usage partial
-        @area_services = [@service.to_sym]
-        @domain_quotas = ResourceManagement::Resource.where(
-            :domain_id => @scoped_domain_id, 
-            :project_id => nil, 
-            :service => @service.to_sym, 
-            :name => @resource.to_sym)
-        
-        get_resource_status(false, @resource, true)
-
-        respond_to do |format|
-          format.js
+        if @new_value < data[0].usage
+            render text: "new approved quota lower than usage!", status:400
+        else
+          data[0].approved_quota = @new_value
+          data[0].current_quota = @new_value
+          data[0].save
+  
+          # get new data to render the usage partial
+          @area_services = [@service.to_sym]
+          @domain_quotas = ResourceManagement::Resource.where(
+              :domain_id => @scoped_domain_id, 
+              :project_id => nil, 
+              :service => @service.to_sym, 
+              :name => @resource.to_sym)
+          
+          get_resource_status(false, @resource, true)
+  
+          respond_to do |format|
+            format.js
+          end
         end
       end
 
