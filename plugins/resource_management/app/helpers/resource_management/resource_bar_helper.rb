@@ -117,6 +117,9 @@ module ResourceManagement
         bars << { type: 'empty-overcommit', percent: 100 - fill[:percent] }
       end
 
+      # remove all bars with fixed width that was calculated to be non-positive
+      bars = bars.reject { |bar| bar[:percent] <= 0 }
+
       # place the fill label on the first bar that is not small
       required_size_for_label = 1.5 * fill[:label].size
       bar_for_label = bars.find { |bar| bar[:percent] > required_size_for_label }
@@ -125,8 +128,12 @@ module ResourceManagement
       # remove unused trailing spacer
       bars.pop if bars.last[:type] == 'empty' and not bars.last.has_key?(:label)
 
-      # remove all bars with fixed width that was calculated to be non-positive
-      return bars.reject { |bar| bar[:percent] <= 0 }
+      # if all the bars add up to 100%, make the last one ever so slightly
+      # slimmer to avoid a line break (which might occur if there are rounding
+      # errors in the browser's rendering engine)
+      bars.last[:percent] -= 0.1 if bars.map { |bar| bar[:percent] }.sum > 99.99
+
+      return bars
     end
 
   end
