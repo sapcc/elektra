@@ -31,13 +31,14 @@ module ResourceManagement
 
     def update
       @project   = params.require(:project)
-      @new_value = params.require(:new_value).to_i 
+      @new_value = params.require(:new_value) 
       @resource  = params.require(:resource)
       @service = params.require(:service)
 
       unless is_numeric? @new_value
         render text: "value #{@new_value} not correct!", status:400
       else
+        @new_value = @new_value.to_i
         # TODO: UPDATE...
         #       recalc value for data type
         puts @scoped_domain_id

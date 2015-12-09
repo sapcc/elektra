@@ -3,3 +3,4 @@ $("#<%=@project%>_current_quota").html("<%=@new_value%>");
 $("#<%=@project%>_edit").html("<%= escape_javascript( link_to 'Edit', plugin('resource_management').admin_edit_path( :project => @project, :value => @new_value ) , class: 'btn btn-primary btn-sm', remote: true )%>");
 $("#usage_bars").html("<%= escape_javascript(render :partial => "details_usage_bar")%>");
 $('.alert-danger').css('display','none');
+$("#<%=@project%>_quota_row").removeClass();

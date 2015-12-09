@@ -8,7 +8,7 @@
   - class_name = "danger" if project.approved_quota < project.usage
   - class_name = "danger" if project.approved_quota < project.current_quota
 
-%tr{ class: class_name }
+%tr{ id: "#{project.project_id}_quota_row", class: class_name }
   %td.col-md-3
     = project.project_id
   %td.col-md-3
