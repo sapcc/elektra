@@ -34,7 +34,7 @@ gem 'monsoon-fog', git: 'git://localhost/monsoon/monsoon-fog.git', :ref => '52f4
 gem 'fog', git: 'git://localhost/monsoon/fog.git', branch:'master', :ref => 'b3c62'
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
-#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+# gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_bootstrap.git'
 #gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
@@ -104,6 +104,8 @@ group :development, :test do
 
   gem "better_errors"
   gem 'pry-rails'
+  
+  gem 'puma'
 end
 
 group :test do
