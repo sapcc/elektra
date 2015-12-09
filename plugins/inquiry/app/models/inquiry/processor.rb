@@ -7,7 +7,15 @@ module Inquiry
       res = []
       users.each do |user|
         p = Processor.find_by(uid: user.id)
-        p = Processor.new(uid: user.id, email: user.email, full_name: user.full_name) unless p
+        if p
+          if p.email != user.email || p.full_name != user.full_name
+            p.email = user.email
+            p.full_name = user.full_name
+            p.save
+          end
+        else
+          p = Processor.new(uid: user.id, email: user.email, full_name: user.full_name) unless p
+        end
         res << p
       end
       return res

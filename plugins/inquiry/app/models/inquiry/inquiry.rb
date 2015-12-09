@@ -82,17 +82,14 @@ module Inquiry
     end
 
     def can_reopen? options={}
-      user = options[:user]
       return self.rejected? && user_is_requester?(get_user_id(options[:user]))
     end
 
     def can_reject? options={}
-      user = options[:user]
       return self.open? && user_is_processor?(get_user_id(options[:user]))
     end
 
     def can_close? options={}
-      user = options[:user]
       return user_is_processor?(get_user_id(options[:user])) || user_is_requester?(get_user_id(options[:user]))
     end
 

@@ -59,7 +59,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: b011d977a010fa900fb9c0da0eb1d6440c713e6a
+  revision: 1164d07b544a7531cd9c45058b87462ebd550c4f
   branch: master
   specs:
     monsoon-openstack-auth (0.7.15)
@@ -592,3 +592,6 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6

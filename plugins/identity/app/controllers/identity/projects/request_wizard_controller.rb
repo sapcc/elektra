@@ -22,7 +22,7 @@ module Identity
             {
               "approved": {
                 "name": "Create",
-                "action": "#{request.protocol}#{request.host_with_port}#{plugin('identity').domain_path}?overlay=#{plugin('identity').projects_create_path}"
+                "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').projects_create_path}"
               }
             }
           )
