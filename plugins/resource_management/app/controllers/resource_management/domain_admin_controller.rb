@@ -147,6 +147,7 @@ module ResourceManagement
           active_project_quota = true
         else
           # increment because we lost -1 in the quota summary
+          # TODO: that is not correct and is only working if we have only one unlimited quota!
           current_project_quota_sum = current_project_quota_sum += 1 
         end
         # when no domain quota exists yet, use an empty mock object
