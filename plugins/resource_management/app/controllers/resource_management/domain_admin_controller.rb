@@ -33,11 +33,17 @@ module ResourceManagement
       @project   = params.require(:project)
       @new_value = params.require(:new_value)
       @resource  = params.require(:resource)
-      
+      @service = params.require(:service)
+ 
       unless is_numeric? @new_value
         render text: "Value #{@new_value} not correct!", status:400
       else
         # TODO: UPDATE...
+        #       recalc value for data type
+        puts @scoped_domain_id
+        data = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
+        data[0].approved_quota = @new_value.to_i
+        data[0].save
 
         respond_to do |format|
           format.js

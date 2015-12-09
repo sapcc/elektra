@@ -23,6 +23,6 @@
     = format_usage_or_quota_value(project.usage,data_type)
   %td.col-md-2
     %div{ id: "#{project.project_id}_edit" }
-      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project.project_id, :value => project.approved_quota ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
+      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project.project_id, :value =>  project.approved_quota ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
 
 
