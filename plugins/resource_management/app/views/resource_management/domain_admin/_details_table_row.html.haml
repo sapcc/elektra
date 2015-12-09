@@ -1,27 +1,28 @@
-- display_unit = project.attributes[:display_unit] || 1
-- current_quota = project.current_quota / display_unit
-- current_quota = "unlimited" if project.current_quota == -1
+- data_type = project.attributes[:data_type]
 
 - class_name = ""
-- if current_quota == "unlimited"
+- if project.current_quota == -1
   - class_name = "danger"
 - else
-  - class_name = "danger" if project.approved_quota > current_quota
+  - class_name = "danger" if project.approved_quota > project.current_quota
   - class_name = "danger" if project.approved_quota < project.usage
-  - class_name = "warning" if project.approved_quota < current_quota
+  - class_name = "warning" if project.approved_quota < project.current_quota
 
 %tr{ class: class_name }
   %td.col-md-3
     = project.project_id
   %td.col-md-3
     %div{ id: "#{project.project_id}_approved_quota", class: "input-group input-group-sm" }
-      = project.approved_quota / display_unit
+      = format_usage_or_quota_value(project.approved_quota,data_type )
   %td.col-md-2
-    = current_quota
+    - if project.current_quota == -1
+      unlimited
+    - else
+      = format_usage_or_quota_value(project.current_quota,data_type )
   %td.col-md-2
-    = project.usage / display_unit
+    = format_usage_or_quota_value(project.usage,data_type)
   %td.col-md-2
     %div{ id: "#{project.project_id}_edit" }
-      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project.project_id, :value => project.approved_quota/display_unit ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
+      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project.project_id, :value => project.approved_quota ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
 
 
