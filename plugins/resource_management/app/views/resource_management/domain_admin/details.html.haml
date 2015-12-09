@@ -1,20 +1,9 @@
 = content_for(:title, "Details for quota #{@resource}")
 .modal-body
   %p.alert.alert-danger{style: "display:none"}
-  %p.alert.alert-success{style: "display:none"}
-  .row
-    .col-md-2.quota-label
-      .text-muted
-        Quota usage
-    .col-md-9
-      = render :partial => 'bar', :locals => { :overview => false, :render_bar_only => true, :data => @resource_status[@service.to_sym][0], :service => @service }   
-  .row
-    .col-md-2.quota-label
-      .text-muted
-        Resource usage
-    .col-md-9
-      = render :partial => 'bar', :locals => { :overview => false, :render_bar_only => true, :render_usage => true ,:data => @resource_status[@service.to_sym][0], :service => @service }   
-
+  %div#usage_bars
+    = render :partial => "details_usage_bar"
+  
   .row
     .col-md-12
       %h2
