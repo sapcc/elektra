@@ -40,17 +40,23 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.content, .jumbotron {
-  ul {
-    padding-left: 0;
-    list-style-type: none;
-  }
+
+ul.content-list {
+  padding-left: 0;
+  list-style-type: none;
 
   li {
     background: inline-svg('rounded-square-outline.svg') 0 4px no-repeat;
     padding-left: 19px;
   }
 }
+
+.text-copy, .well {
+  ul {
+    @extend .content-list;
+  }
+}
+
 
 
 .navbar a, a.btn {
@@ -850,4 +856,27 @@ input[type='checkbox'], input[type='radio'] {
 
 .js-target-hiddenform {
   display: none;
+}
+
+
+
+
+// ---------------------------------------------------------------------------------
+// News
+// ---------------------------------------------------------------------------------
+
+.news {
+  .new {
+    margin-bottom: $line-height-computed * 3;
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: $line-height-computed * 1.5;
+    }
+  }
+
+  .author-title {
+    font-weight: bold;
+    border-bottom: 2px solid $bright-blue;
+    margin: $line-height-computed 0;
+  }
 }

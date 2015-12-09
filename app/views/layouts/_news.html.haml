@@ -1,111 +1,152 @@
-- date = Time.new(2015,11,26)
-.new.bs-callout.bs-callout-info{data:{date: date}}
-  %p
-    %b= "Andreas Pfau - #{date}"
-  %h4 Add plugin's db/migration paths to main app
-  %p
-    You don't need to add ypur migrations manually to main app's path. It is done automatically now!
-    
-- date = Time.new(2015,11,24)
-.new.bs-callout.bs-callout-info{data:{date: date}}
-  %p
-    %b= "Arturo Reuschenbach - #{date}"
-  %h4
-    Copy to Clipboard
-  %p
-    There is a new copy to clipboard functionality binded to the <code>pre</code> tag.
-  %h4
-    Usage
-  %code
-    = preserve do
-      :escaped
-        <pre class="snippet">
-          <code>Your code/text to copy to the clipboard</code>
-        </pre>
-  %h4
-    Example
-  %pre.snippet
-    %code Your code/text to copy to the clipboard
+.news
+
+  - date = Time.new(2015,12,06)
+  .new{data:{date: date}}
+    .author-title= "Andreas Pfau- #{date}"
+
+    :markdown
+      #### Use plugin url helper
+      
+      Please use plugin url helper instead of generated url helpers. 
+      Instead of using <code>identity_plugin.projects_path</code> use <code>plugin('identity').projects_path</code>.
+      The plugin helper retains the scope. It is possible to override the scope parameters by providing domain_id or project_id parameters.
+      For example, to call domain path without including project_id in the scope you should call plugin('identity').domain_path(project_id: nil).
+      
+  - date = Time.new(2015,12,04)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      #### Global list style removed
+
+      I removed the global content list style with the neat blue boxes. It was causing too much trouble. If you want this for your lists add the class <code>.content-list</code> to your ul. Like this:
+
+    %ul.content-list
+      %li Fancy
+      %li List
+      %li Items
 
 
-- date = Time.new(2015,11,20)
-.new.bs-callout.bs-callout-info{data:{date: date}}
-  %p
-    %b= "Esther Schmitz - #{date}"
-  :markdown
-    * <code>pages/home</code> is new domain home page (renamed from <code>start</code>)
-    * there is a new project home page <code>pages/project_home</code>
-    * Trying a new pattern for page headings. Remove <code>%h1.page-header</code> if you used them and instead use the new main_toolbar. You can add content to the toolbar (the area directly underneath the breadcrumb navigation) by using
+  - date = Time.new(2015,12,04)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      #### New format for news
+
+      You can now use markdown for news items. The new format for a news item is:
+
       ```
-      = content_for :main_toolbar do
+      - date = Time.new(2015,12,04)
+      .new{data:{date: date}}
+        .author-title= "Firstname Lastname - \#{date}"
+
+        :markdown
+          #### Your markdown header here
+          And some text
       ```
-      in your views. This is optional. If you don't do this then the main toolbar will show a humanized version of your controller name. For an example see <code>main_app/pages/home.html.haml</code>
-    * Start of pattern for including info content from a plugin on the home page (you need to create a partial in your plugin in <code>/views/[plugin_name]/application/homepage_info_content</code>)
-      **Important:** If you need to query your controller for information this needs to be done via Ajax. Andreas and Torsten are currently developing a pattern for this (will take a few more days)
 
 
-- date = Time.new(2015,11,19)
-.new.bs-callout.bs-callout-info{data:{date: date}}
-  %p
-    %b= "Andreas Pfau - #{date}"
+  - date = Time.new(2015,11,26)
+  .new{data:{date: date}}
+    .author-title= "Andreas Pfau - #{date}"
 
-  %h4 SASS instead of Sprockets!
-  %ul
-    %li
-      Plugins should use SASS directives to import files.
-      %code.language-html
-        @import "file_name";
-    %li
-      %b DO NOT USE
-      require, require_tree, and require_self.
+    :markdown
+      #### Add plugin's db/migration paths to main app
 
-  %h4 Namespace for Plugin's CCS classes
-  %ul
-    %li
-      All css classes inside a plugin are embedded in a namespace.
-      %br
-      css class inside a plugin called my_plugin
-      %code.language-html
-        %span .test { ... }
-      becomes
-      %code.language-html
-        %span .my_plugin .test { ... }
-
-  %h4 Closures for Plugin's JS files
-  %ul
-    %li
-      Every javascript file inside a plugin is embedded in a closure.
-      For a plugin called my_plugin the closure looks as follows
-      %code.language-html
-        %span window.my_plugin = window.my_plugin || {};
-        %br
-        %span (function(){ <br/>
-        %span &nbsp;&nbsp; //... content of the file <br/>
-        %span }).call(this);
-    %li All functions are visible inside the file
-    %li
-      To make a function visible to outsie you should bind it to the variable my_plugin (replace my_plugin with the name of your plugin)
-      %code.language-html my_plugin.test = function() { ... }
+      You don't need to add your migrations manually to main app's path. It is done automatically now!
 
 
-- date = Time.new(2015,11,18)
-.new.bs-callout.bs-callout-info{data:{date: date}}
-  %p
-    %b= "Arturo Reuschenbach - #{date}"
-  %p Please use following format to add more news:
-  %code.language-html
-    %span date = Time.new(2015,11,18)
-    %span <br>
-    %span .bs-callout.bs-callout-info{data:{date: date}}
-    %span <br>
-    %span %p
-    %span <br>
-    %span %b= 'Your username - #{date}'
-    %span <br>
-    %span %p Add the news text here
+  - date = Time.new(2015,11,24)
+  .new{data:{date: date}}
+    .author-title= "Arturo Reuschenbach - #{date}"
 
-- date = Time.new(2015,11,17)
-.new.bs-callout.bs-callout-info{data:{date: date}}
-  %p
-    %b= "Arturo Reuschenbach - #{date}"
-  %p News overview page added.
+    :markdown
+      #### Copy to Clipboard
+
+      There is a new copy to clipboard functionality binded to the <code>pre</code> tag.
+
+      #### Usage
+
+      ```
+      <pre class="snippet">
+        <code>Your code/text to copy to the clipboard</code>
+      </pre>
+      ```
+
+      #### Example
+      <pre class="snippet">
+        <code>Your code/text to copy to the clipboard</code>
+      </pre>
+
+
+  - date = Time.new(2015,11,20)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+    :markdown
+      * <code>pages/home</code> is new domain home page (renamed from <code>start</code>)
+      * there is a new project home page <code>pages/project_home</code>
+      * Trying a new pattern for page headings. Remove <code>%h1.page-header</code> if you used them and instead use the new main_toolbar. You can add content to the toolbar (the area directly underneath the breadcrumb navigation) by using
+        ```
+        = content_for :main_toolbar do
+        ```
+        in your views. This is optional. If you don't do this then the main toolbar will show a humanized version of your controller name. For an example see <code>main_app/pages/home.html.haml</code>
+      * Start of pattern for including info content from a plugin on the home page (you need to create a partial in your plugin in <code>/views/[plugin_name]/application/homepage_info_content</code>)
+        **Important:** If you need to query your controller for information this needs to be done via Ajax. Andreas and Torsten are currently developing a pattern for this (will take a few more days)
+
+
+  - date = Time.new(2015,11,19)
+  .new{data:{date: date}}
+    .author-title= "Andreas Pfau - #{date}"
+
+    :markdown
+      #### SASS instead of Sprockets!
+
+      * Plugins should use SASS directives to import files.
+        <code>
+            @import "file_name";
+        </code>
+      * **DO NOT USE** <code>require</code>, <code>require_tree</code>, and <code>require_self</code>
+
+
+      #### Namespace for Plugin's CCS classes
+
+      All css classes inside a plugin are embedded in a namespace. So for example for a plugin called <code>my_plugin</code> the css class <code class="language-html">.test { ... }</code> becomes <code class="language-html">.my_plugin .test { ... }</code>
+
+      #### Closures for Plugin's JS files
+      * Every javascript file inside a plugin is embedded in a closure.
+        For a plugin called my_plugin the closure looks as follows
+
+        ```
+        window.my_plugin = window.my_plugin || {};
+        (function(){
+          //... content of the file
+        }).call(this);
+
+        ```
+
+      * All functions are visible inside the file
+
+      * To make a function visible to outsie you should bind it to the variable my_plugin (replace my_plugin with the name of your plugin)
+        <code> my_plugin.test = function() { ... } </code>
+
+
+  - date = Time.new(2015,11,18)
+  .new{data:{date: date}}
+    .author-title= "Arturo Reuschenbach - #{date}"
+    %p Please use following format to add more news:
+    %code.language-html
+      %span date = Time.new(2015,11,18)
+      %span <br>
+      %span .bs-callout.bs-callout-info{data:{date: date}}
+      %span <br>
+      %span %p
+      %span <br>
+      %span %b= 'Your username - #{date}'
+      %span <br>
+      %span %p Add the news text here
+
+  - date = Time.new(2015,11,17)
+  .new{data:{date: date}}
+    .author-title= "Arturo Reuschenbach - #{date}"
+    %p News overview page added.

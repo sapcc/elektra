@@ -48,7 +48,7 @@ module ResourceManagement
         return {
           cores:     rand(50..100),
           instances: rand(50..100),
-          ram:       rand(50..100),
+          ram:       rand((50 << 30)..(100 << 30)), # max 100 GiB
         }
       end
 
@@ -57,7 +57,7 @@ module ResourceManagement
         return {
           cores:     rand(0..50),
           instances: rand(0..50),
-          ram:       rand(0..50),
+          ram:       rand(0..(50 << 30)), # max 50 GiB
         }
       end
 
@@ -146,6 +146,7 @@ module ResourceManagement
           openstack_api_key:           ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
           openstack_project_domain_id: domain_id,
           openstack_project_id:        project_id,
+          connection_options:          { ssl_verify_peer: false },
         }
 
         return yield(fog_class.new(auth_params))
@@ -178,6 +179,7 @@ module ResourceManagement
           openstack_api_key:           ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
           openstack_project_domain_id: domain_id,
           openstack_project_id:        @service_project_id,
+          connection_options:          { ssl_verify_peer: false },
         )
 
         # extract original storage URL from connection object, and store it

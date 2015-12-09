@@ -4,23 +4,29 @@ module Inquiry
       if inquiry.callbacks.nil? || inquiry.callbacks[inquiry.aasm_state].nil?
         return nil
       else
-        inquiry.callbacks[inquiry.aasm_state]
+        callback = inquiry.callbacks[inquiry.aasm_state]
+        if callback.include?("?")
+          callback['action'] += "&inquiry_id=#{inquiry.id}"
+        else
+          callback['action'] += "?inquiry_id=#{inquiry.id}"
+        end
+        return callback
       end
     end
 
     # This method loads remote inquiries via ajax into a new created div.
     def remote_inquiries(options={})
-      content_tag(:div, '',class: 'inquiry-widget', id: SecureRandom.hex, data: {
-        widget: 'inquiry',
-        url: plugin('inquiry').inquiries_path(),
-        per_page: options[:per_page] || 3,
-        filter: (options[:filter] || {}).to_json
+      content_tag(:div, '', class: 'inquiry-widget', id: SecureRandom.hex, data: {
+          widget: 'inquiry',
+          url: plugin('inquiry').inquiries_path(),
+          per_page: options[:per_page] || 3,
+          filter: (options[:filter] || {}).to_json
       })
     end
 
     def render_errors inquiry
 
-
     end
+
   end
 end

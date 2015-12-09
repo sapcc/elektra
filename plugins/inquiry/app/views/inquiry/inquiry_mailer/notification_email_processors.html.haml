@@ -1,0 +1,39 @@
+!!!
+%html
+  %head
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+
+  %body
+    %p
+      = "Hello SAP Converged Cloud project administrator,"
+
+    %p
+      a request for a
+      = "#{@inquiry_step.inquiry.kind} needs your attention."
+
+    %p
+      %strong= "The status of the request is #{@inquiry_step.inquiry.aasm.human_state}."
+
+    %p
+      Details on the request can be found below. The requester will be informed automatically on status changes.
+
+    %p
+      Request details:
+      %br
+      = "---"
+      %br
+      %strong Resource:
+      = @inquiry_step.inquiry.kind
+      %br
+      %strong Request reason:
+      %br
+      %pre= @inquiry_step.inquiry.description
+      %br
+      %strong Request specific data:
+      %pre= JSON.pretty_generate(@inquiry_step.inquiry.payload) rescue "Error during rendering of JSON payload!"
+      = "---"
+
+    %p
+      Kind regards,
+      %br
+      The SAP Converged Cloud Team
