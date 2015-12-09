@@ -4,9 +4,9 @@
 - if project.current_quota == -1
   - class_name = "danger"
 - else
-  - class_name = "danger" if project.approved_quota > project.current_quota
+  - class_name = "warning" if project.approved_quota > project.current_quota
   - class_name = "danger" if project.approved_quota < project.usage
-  - class_name = "warning" if project.approved_quota < project.current_quota
+  - class_name = "danger" if project.approved_quota < project.current_quota
 
 %tr{ class: class_name }
   %td.col-md-3
