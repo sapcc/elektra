@@ -33,7 +33,7 @@ module ResourceManagement
       @project   = params.require(:project)
       @new_value = params.require(:new_value) 
       @resource  = params.require(:resource)
-      @service = params.require(:service)
+      @service   = params.require(:service)
 
       unless is_numeric? @new_value
         render text: "value #{@new_value} not correct!", status:400
@@ -115,7 +115,7 @@ module ResourceManagement
       @usage_stage = { :danger => 1.0, :warning => 0.8 }
     end
 
-    def get_resource_status(critical = false, resource = nil, projects = false)
+    def get_resource_status(critical = false, resource = nil, render_projects = false)
 
       # get data for currently existing quotas
       quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
@@ -129,7 +129,7 @@ module ResourceManagement
       
       # this is used for details view
       projects_data = quotas.where.not(project_id: nil)
-      @projects = projects_data.page(@page).per(6) if projects
+      @projects = projects_data.page(@page).per(6) if render_projects
       # get min and max update of all quotas (for one resource or all)
       @min_updated_at, @max_updated_at = projects_data.pluck("MIN(updated_at), MAX(updated_at)").first
 
