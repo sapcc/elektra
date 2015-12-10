@@ -1,7 +1,10 @@
 .resource-bar
-  - if threshold[:value] > 0 && threshold[:value] < upper_bound
-    .label-threshold{ style: "right:#{100-threshold[:percent]}%"}
-      %span.text-nowrap= threshold[:label]
+  - if threshold[:value] < upper_bound
+    - if threshold[:value] > 0
+      .label-threshold{ style: "right:#{100-threshold[:percent]}%"}
+        %span.text-nowrap= threshold[:label]
+    - else
+      .label-threshold-missing.text-nowrap.text-danger= threshold[:label]
   - if maximum[:value] >= 0
     -# upper_bound is maximum
     .label-maximum.text-nowrap.text-muted= maximum[:label]
