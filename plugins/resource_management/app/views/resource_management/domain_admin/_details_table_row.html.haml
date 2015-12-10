@@ -1,28 +1,28 @@
-- data_type = project.attributes[:data_type]
+- data_type = project_resource.attributes[:data_type]
 
 - class_name = ""
-- if project.current_quota == -1
+- if project_resource.current_quota == -1
   - class_name = "danger"
 - else
-  - class_name = "warning" if project.approved_quota > project.current_quota
-  - class_name = "danger" if project.approved_quota < project.usage
-  - class_name = "danger" if project.approved_quota < project.current_quota
+  - class_name = "warning" if project_resource.approved_quota > project_resource.current_quota
+  - class_name = "danger" if project_resource.approved_quota < project_resource.usage
+  - class_name = "danger" if project_resource.approved_quota < project_resource.current_quota
 
-%tr{ id: "#{project.project_id}_quota_row", class: class_name }
+%tr{ id: "#{project_resource.project_id}_quota_row", class: class_name }
   %td.col-md-3
-    = project.project_id
+    = project_resource.project_id
   %td.col-md-3
-    %div{ id: "#{project.project_id}_approved_quota", class: "input-group input-group-sm" }
-      = format_usage_or_quota_value(project.approved_quota,data_type )
+    %div{ id: "#{project_resource.project_id}_approved_quota", class: "input-group input-group-sm" }
+      = format_usage_or_quota_value(project_resource.approved_quota,data_type )
   %td.col-md-2
-    %div{ id: "#{project.project_id}_current_quota" }
-      - if project.current_quota == -1
+    %div{ id: "#{project_resource.project_id}_current_quota" }
+      - if project_resource.current_quota == -1
         unlimited
       - else
-        = format_usage_or_quota_value(project.current_quota,data_type )
+        = format_usage_or_quota_value(project_resource.current_quota,data_type )
   %td.col-md-2
-    = format_usage_or_quota_value(project.usage,data_type)
+    = format_usage_or_quota_value(project_resource.usage,data_type)
   %td.col-md-2
-    %div{ id: "#{project.project_id}_edit" }
-      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project.project_id, :value =>  project.approved_quota ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
+    %div{ id: "#{project_resource.project_id}_edit" }
+      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project_resource.project_id, :value =>  project_resource.approved_quota ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
 

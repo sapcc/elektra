@@ -7,8 +7,8 @@
       %th Usage
       %th Edit
   %tbody
-    - @projects.each do |project|
-      = render :partial => 'details_table_row', :locals => { :project => project }
+    - @projects.each do |project_resource|
+      = render :partial => 'details_table_row', :locals => { :project_resource => project_resource }
   
 = paginate @projects, :theme => 'twitter-bootstrap-3', :remote => true
 
