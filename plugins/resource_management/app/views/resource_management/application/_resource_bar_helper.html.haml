@@ -15,5 +15,3 @@
     - bars.each do |bar|
       - bar_class = bar[:type] == 'default' ? '' : "progress-bar-#{bar[:type]}"
       .progress-bar{ class: bar_class, style: bar.has_key?(:percent) ? "width: #{bar[:percent]}%" : '' }= bar.fetch(:label, '')
-
--#raise
