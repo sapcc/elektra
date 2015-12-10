@@ -1,56 +1,22 @@
 = content_for(:title, "Details for quota #{@resource}")
 .modal-body
-  .row
-    .col-md-2.quota-label
-      .text-muted
-        Quota usage
-    .col-md-10
-      .quota
-  .row
-    .col-md-2.quota-label
-      .text-muted
-        Resource usage
-    .col-md-10
-      .quota
-
-  %h2
-    %small Details
-
-  -#%table.table
-    %thead
-      %tr
-        %th Project
-        %th granted Quota
-        %th current Quota
-        %th Usage
-        %th Edit
-    %tbody
-      %tr
-        %th ***REMOVED***_sandbox
-        %th 50
-        %th 
-          .text-danger 100
-        %th 
-          .text-danger 80
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
-      %tr
-        %th bla_sandbox
-        %th 100
-        %th 
-          .text-danger 250
-        %th 
-          .text-danger 120
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
+  %p.alert.alert-danger{style: "display:none"}
+  %div#usage_bars
+    = render :partial => "details_usage_bar"
   
-
+  .row
+    .col-md-12
+      %h2
+        %small Details
+      %div{:id => "details_table"}
+        = render partial: "details_table"
+  
 - if modal?
   .modal-footer
-    - if modal?
-      - if @service
-        = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(@service), class: 'btn btn-primary btn-sm'
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-   
+    - if @service and @show_all_button
+      -# TODO: @service -> @area
+      = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(area: @service), class: 'btn btn-primary btn-sm'
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+
 
 

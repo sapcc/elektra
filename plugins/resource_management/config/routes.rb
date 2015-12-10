@@ -13,6 +13,8 @@ ResourceManagement::Engine.routes.draw do
     get 'details'  => 'domain_admin#details'
     get 'request'  => 'domain_admin#resource_request'
     get 'sync_now' => 'domain_admin#sync_now'
+    get 'edit'     => 'domain_admin#edit'
+    get 'update'  => 'domain_admin#update'
   end
 
   # this is only for demo, I have no idea where I can put the cloudadmin views

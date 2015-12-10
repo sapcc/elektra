@@ -3,7 +3,7 @@ module ResourceManagement
 
     def format_usage_or_quota_value(value, data_type=nil)
       if data_type.nil?
-        return value.to_s
+        return value.to_i.to_s
       elsif data_type == :bytes
         # There is number_to_human_size() in Rails, but it is ridiculously
         # broken, even when you leave aside that they confuse SI and IEC units.

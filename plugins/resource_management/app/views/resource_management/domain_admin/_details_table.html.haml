@@ -1,0 +1,33 @@
+%table.table
+  %thead
+    %tr
+      %th Project
+      %th approved Quota
+      %th current Quota
+      %th Usage
+      %th Edit
+  %tbody
+    - @projects.each do |project_resource|
+      = render :partial => 'details_table_row', :locals => { :project_resource => project_resource }
+  
+= paginate @projects, :theme => 'twitter-bootstrap-3', :remote => true
+
+= content_for :javascripts do
+  :javascript
+    function update(PROJECT){
+      $.ajax({
+        url: "#{plugin('resource_management').admin_update_path()}",
+        dataType: 'script',
+        data: { 
+           project: PROJECT, 
+           new_value: $("#"+PROJECT+"_edit_value").val(),
+           resource: "#{@resource}",
+           service: "#{@service}"
+        },
+        error: function(xhr) {
+                  $('.alert-success').css('display','none');
+                  $('.alert-danger').html(xhr.responseText); 
+                  $('.alert-danger').css('display','block')
+               }
+      });
+    };

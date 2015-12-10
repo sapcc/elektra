@@ -24,6 +24,49 @@ module ResourceManagement
       get_resource_status()
     end
 
+    def edit
+      @project = params[:project]
+      @value = params[:value]
+    end
+
+    def update
+      @project   = params.require(:project)
+      @new_value = params.require(:new_value) 
+      @resource  = params.require(:resource)
+      @service   = params.require(:service)
+
+      unless is_numeric? @new_value
+        render text: "value #{@new_value} not correct!", status:400
+      else
+        @new_value = @new_value.to_i
+        # TODO: UPDATE...
+        #       recalc value for data type
+        data = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
+        if @new_value < data[0].usage
+            render text: "new approved quota lower than usage!", status:400
+        else
+          data[0].approved_quota = @new_value
+          data[0].current_quota = @new_value
+          data[0].save
+  
+          # get new data to render the usage partial
+          @area_services = [@service.to_sym]
+          @domain_quotas = ResourceManagement::Resource.where(
+              :domain_id => @scoped_domain_id, 
+              :project_id => nil, 
+              :service => @service.to_sym, 
+              :name => @resource.to_sym)
+          
+          get_resource_status(false, @resource, true)
+  
+          respond_to do |format|
+            format.js
+          end
+        end
+      end
+
+   
+    end
 
     def resource_request
       @resource = params[:resource]
@@ -31,8 +74,26 @@ module ResourceManagement
     end
 
     def details
+
+      @page = params[:page] || 1
       @resource = params[:resource]
       @service = params[:service]
+      @area_services = [@service.to_sym]
+      @show_all_button = true if params[:overview].eql?("true")
+
+      @domain_quotas = ResourceManagement::Resource.where(
+          :domain_id => @scoped_domain_id, 
+          :project_id => nil, 
+          :service => @service.to_sym, 
+          :name => @resource.to_sym)
+      
+      get_resource_status(false, @resource, true)
+
+      respond_to do |format|
+        format.html 
+        format.js
+      end
+ 
     end
 
     def sync_now
@@ -45,19 +106,32 @@ module ResourceManagement
     end
 
     private
-
+    # http://stackoverflow.com/questions/4589968/ruby-rails-how-to-check-if-a-var-is-an-integer
+    def is_numeric?(obj) 
+       obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+    end
+ 
     def set_usage_stage
       @usage_stage = { :danger => 1.0, :warning => 0.8 }
     end
 
-    def get_resource_status(critical = false)
+    def get_resource_status(critical = false, resource = nil, render_projects = false)
 
-      # get data for currently existing quota 
-      stats = ResourceManagement::Resource.
-                where(:domain_id => @scoped_domain_id, :service => @area_services).
-                where.not(project_id: nil).
-                group("service,name").
-                pluck("service,name,SUM(current_quota)")
+      # get data for currently existing quotas
+      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
+      # get only the quotas for one resource
+      if resource 
+          quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services, :name => resource)
+      end
+      stats = quotas.where.not(project_id: nil).
+                     group("service,name").
+                     pluck("service,name,SUM(current_quota),SUM(usage)")
+      
+      # this is used for details view
+      projects_data = quotas.where.not(project_id: nil)
+      @projects = projects_data.page(@page).per(6) if render_projects
+      # get min and max update of all quotas (for one resource or all)
+      @min_updated_at, @max_updated_at = projects_data.pluck("MIN(updated_at), MAX(updated_at)").first
 
       # get unlimited quotas
       unlimited = ResourceManagement::Resource.
@@ -67,7 +141,7 @@ module ResourceManagement
 
       @resource_status = {}
       stats.each do |stat|
-        service, name, current_project_quota_sum = *stat
+        service, name, current_project_quota_sum, usage_project_sum = *stat
         domain_service_quota = @domain_quotas.find { |q| q.service == service && q.name == name }
         # search for unlimited current quotas
         unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
@@ -77,6 +151,7 @@ module ResourceManagement
           active_project_quota = true
         else
           # increment because we lost -1 in the quota summary
+          # TODO: that is not correct and is only working if we have only one unlimited quota!
           current_project_quota_sum = current_project_quota_sum += 1 
         end
         # when no domain quota exists yet, use an empty mock object
@@ -93,6 +168,7 @@ module ResourceManagement
         @resource_status[service.to_sym] << { 
           :name => name,
           :current_project_quota_sum => current_project_quota_sum,
+          :usage_project_sum => usage_project_sum,
           :active_project_quota => active_project_quota,
           :domain_quota => domain_service_quota,
         } 

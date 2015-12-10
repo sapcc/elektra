@@ -1,0 +1,21 @@
+.row
+  .col-md-2.quota-label
+    .text-muted
+      - if overview
+        = link_to t("resource_management.#{data[:domain_quota][:name]}"), plugin('resource_management').admin_area_path(area: data[:domain_quota].attributes[:area])
+      - else
+        = t("resource_management.#{data[:domain_quota][:name]}")
+      - if overview
+        .small
+          .small= t(service)
+    
+  .col-md-7
+    = render :partial => 'bar', :locals => { :data => data }
+  
+  .col-md-1.quota-request-more
+    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
+  .col-md-1.quota-request-more
+    - if data[:current_project_quota_sum] > 0 and data[:domain_quota].approved_quota >= 0 and data[:active_project_quota]
+      = link_to 'Request more',plugin('resource_management').admin_request_path( :service => service, :resource => data[:name]), data: {modal: true}, class: 'btn btn-primary btn-sm'
+    - else
+      = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
