@@ -42,3 +42,4 @@ version
 precompile
 build
 .procfile
+tags
