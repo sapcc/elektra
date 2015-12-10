@@ -1,5 +1,5 @@
 .resource-bar
-  - if threshold[:value] >= 0 && threshold[:value] < upper_bound
+  - if threshold[:value] > 0 && threshold[:value] < upper_bound
     .label-threshold{ style: "right:#{100-threshold[:percent]}%"}
       %span.text-nowrap= threshold[:label]
   - if maximum[:value] >= 0
@@ -15,3 +15,5 @@
     - bars.each do |bar|
       - bar_class = bar[:type] == 'default' ? '' : "progress-bar-#{bar[:type]}"
       .progress-bar{ class: bar_class, style: bar.has_key?(:percent) ? "width: #{bar[:percent]}%" : '' }= bar.fetch(:label, '')
+
+-#raise
