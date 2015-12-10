@@ -10,7 +10,7 @@ module ResourceManagement
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
       @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
       # resources are critical if they have a quota, and either one of the quotas is 95% used up
-      @resources = @all_resources.where("(current_quota > 0 AND approved_quota > 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
+      @resources = @all_resources.where("((current_quota = -1 OR current_quota > 0) AND approved_quota >= 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
     end
 
     def resource_request
