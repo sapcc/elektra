@@ -41,7 +41,6 @@ module ResourceManagement
         @new_value = @new_value.to_i
         # TODO: UPDATE...
         #       recalc value for data type
-        puts @scoped_domain_id
         data = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
         if @new_value < data[0].usage
             render text: "new approved quota lower than usage!", status:400
