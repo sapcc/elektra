@@ -4,7 +4,15 @@
       - if overview
         = link_to t("resource_management.#{data.name}"), plugin('resource_management').resources_area_path(area: data.attributes[:area])
       - else
-        = t("resource_management.#{data.name}")
+        - case @area
+          - when :storage
+            = link_to t("resource_management.#{data.name}"), '#', data: { confirm: "storage service not implemented yet." }, title: "open #{data.name} service"
+          - when :compute
+            = link_to t("resource_management.#{data.name}"), plugin('compute').instances_path(), title: "open #{data.name} service"
+          - when :network
+            = link_to t("resource_management.#{data.name}"), plugin('networking').networks_path(), title: "open #{data.name} service"
+          - else
+            = t("resource_management.#{data.name}")
       - if overview
         .small
           .small= t(data.service)
@@ -22,8 +30,6 @@
     - else
       = resource_bar(fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
 
-  .col-md-1.quota-request-more
-    = link_to 'Details', '#', class: 'btn btn-primary btn-sm', title: 'open related service'
   .col-md-1.quota-request-more
     - if data.current_quota >= 0
       = link_to 'Request more',plugin('resource_management').resources_request_path(:service => data.service, :resource => data.name ), data: {modal: true}, class: 'btn btn-primary btn-sm'
