@@ -45,7 +45,7 @@ module ServiceLayer
     end
     
     def projects_by_user_id(user_id)
-      driver.user_projects(user_id)
+      driver.map_to(Identity::Project).user_projects(user_id)
     end
 
     def auth_projects(domain_id=nil)
@@ -57,7 +57,7 @@ module ServiceLayer
     end
     
     def projects(filter={})
-      driver.projects(filter)
+      driver.map_to(Identity::Project).projects(filter)
     end
 
     def grant_project_role(user_id,project_id,role_name)
