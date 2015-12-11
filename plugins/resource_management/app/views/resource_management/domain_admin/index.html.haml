@@ -12,6 +12,6 @@
         - unless resources.nil?
           - resources.each do |resource|
             = render :partial => 'bar_row', :locals => { :overview => true,  :data => resource, :service => service }
-      = render :partial => 'data_age'  
+      = render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
   .col-md-3
-    = render :partial => 'good_to_know', :locals => { :tab => 'overview'}   
+    = render :partial => 'good_to_know', :locals => { :tab => 'overview'}
