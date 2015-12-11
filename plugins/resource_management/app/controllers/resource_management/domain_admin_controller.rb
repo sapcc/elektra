@@ -7,8 +7,9 @@ module ResourceManagement
     def index
       @area_services = []
       ResourceManagement::Resource::KNOWN_SERVICES.each do |service_config|
-         @area_services << service_config[:service]
+        @area_services << service_config[:service]
       end
+      
       @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
       get_resource_status(true)
     end
@@ -64,8 +65,6 @@ module ResourceManagement
           end
         end
       end
-
-   
     end
 
     def resource_request
@@ -75,17 +74,25 @@ module ResourceManagement
 
     def details
 
-      @page = params[:page] || 1
-      @resource = params[:resource]
-      @service = params[:service]
+      @page     = params[:page] || 1
+      @resource = params.require(:resource)
+      @service  = params.require(:service)
       @area_services = [@service.to_sym]
       @show_all_button = true if params[:overview].eql?("true")
 
       @domain_quotas = ResourceManagement::Resource.where(
-          :domain_id => @scoped_domain_id, 
+          :domain_id  => @scoped_domain_id, 
           :project_id => nil, 
-          :service => @service.to_sym, 
-          :name => @resource.to_sym)
+          :service    => @service.to_sym, 
+          :name       => @resource.to_sym)
+      
+      if @domain_quotas.length > 0
+        @area = @domain_quotas[0].attributes[:area]
+      else
+        # fallback if no quota was found (that should not happen)
+        service_cfg = ResourceManagement::Resource::KNOWN_SERVICES. find{ |s| s[:service] == @service.to_sym }
+        @area = service_cfg[:area] 
+      end
       
       get_resource_status(false, @resource, true)
 
