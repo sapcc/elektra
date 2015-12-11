@@ -15,7 +15,7 @@
   .modal-footer
     - if @service and @show_all_button
       -# TODO: @service -> @area
-      = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(area: @service), class: 'btn btn-primary btn-sm'
+      = link_to "Show all #{@service} quotas", plugin('resource_management').admin_area_path(area: @area), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
 

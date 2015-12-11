@@ -13,7 +13,7 @@
     = render :partial => 'bar', :locals => { :data => data }
   
   .col-md-1.quota-request-more
-    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
+    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :area => data[:domain_quota].attributes[:area], :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
   .col-md-1.quota-request-more
     - if data[:current_project_quota_sum] > 0 and data[:domain_quota].approved_quota >= 0 and data[:active_project_quota]
       = link_to 'Request more',plugin('resource_management').admin_request_path( :service => service, :resource => data[:name]), data: {modal: true}, class: 'btn btn-primary btn-sm'
