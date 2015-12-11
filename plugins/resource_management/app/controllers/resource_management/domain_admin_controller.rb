@@ -146,10 +146,7 @@ module ResourceManagement
         # search for unlimited current quotas
         unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
        
-        active_project_quota = false
-        if unlimited_project_quota_found.nil?
-          active_project_quota = true
-        end
+        active_project_quota = unlimited_project_quota_found.nil?
         # when no domain quota exists yet, use an empty mock object
         domain_service_quota ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
