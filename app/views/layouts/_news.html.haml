@@ -1,5 +1,37 @@
 .news
 
+  - date = Time.new(2015,12,11)
+  .new{data:{date: date}}
+    .author-title= "Andreas Pfau- #{date}"
+
+    :markdown
+      #### Polling Service 
+      
+      It is now possible to get DOM elements updated automatically (polling).
+      To use polling service you have to modify your code on two places, in view and controller.
+      View: 
+        You should set two data attributes. 
+        * update_path, this path should return a piece of html without layout
+        * update_interval, delay in seconds between updates (5 seconds steps, e.g. 5, 10, 15, 60)
+        
+        Example
+        <code>.inquiries-container{data: {update_path: plugin('inquiry').inquiries_path(params.merge(partial:true)), update_interval: 30}}</code>
+      Controller:
+      
+        Controller should return a piece of html. For example you can provide an additional attribute on the url (partial) and react to it in the controller action to disable the layout.
+         
+        Example 
+        <code>respond_to do |format|
+          format.html { 
+            if params[:partial]
+              render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
+            else
+              render action: :index 
+            end
+          }
+          format.js
+        end</code>
+      
   - date = Time.new(2015,12,06)
   .new{data:{date: date}}
     .author-title= "Andreas Pfau- #{date}"

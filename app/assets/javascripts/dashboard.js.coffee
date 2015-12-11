@@ -35,6 +35,8 @@ $ ->
 
   # update items which has the update attribute
   $('[data-update-url]').update()
+  
+  PollingService.init( selector: '*[data-update-path]', interval: 5)
 
   # initialize buttons with loading status
   $(document).on 'click', 'tr [data-loading-status]', () -> $(this).closest('tr').addClass('updating')

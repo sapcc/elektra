@@ -6,8 +6,14 @@ module Inquiry
       @page = params[:page] || 1
       @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
       respond_to do |format|
-        format.html #{ render action: :index }
-        format.js #{ render template: 'inquiry/inquiries/index.js', layout: false }
+        format.html { 
+          if params[:partial]
+            render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
+          else
+            render action: :index 
+          end
+        }
+        format.js
       end
     end
 
