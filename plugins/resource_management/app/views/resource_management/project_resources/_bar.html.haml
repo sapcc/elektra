@@ -6,11 +6,11 @@
       - else
         - case @area
           - when :storage
-            = link_to t("resource_management.#{data.name}"), '#', data: { confirm: "storage service not implemented yet." }, title: "open #{data.name} service"
+            = link_to t("resource_management.#{data.name}"), '#', data: { confirm: "storage service not implemented yet." }, title: "open #{@area} service"
           - when :compute
-            = link_to t("resource_management.#{data.name}"), plugin('compute').instances_path(), title: "open #{data.name} service"
+            = link_to t("resource_management.#{data.name}"), plugin('compute').instances_path(), title: "open #{@area} service"
           - when :network
-            = link_to t("resource_management.#{data.name}"), plugin('networking').networks_path(), title: "open #{data.name} service"
+            = link_to t("resource_management.#{data.name}"), plugin('networking').networks_path(), title: "open #{@area} service"
           - else
             = t("resource_management.#{data.name}")
       - if overview

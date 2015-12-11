@@ -1,4 +1,17 @@
 en:
   resource_management:
+    compute: Compute
+    storage: Storage
+    network: Network
     floating_ips: Floating IPs
-    ram: RAM
+    ram: RAM (GiB)
+    instances: Instances
+    cores: Cores
+    networks: Networks
+    subnets: Subnets
+    routers: Routers
+    ports: Ports
+    security_groups: Sercurity Groups
+    volumes: Volumes
+    snapshots: Snapshots
+    capacity: Capacity (GiB)
