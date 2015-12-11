@@ -1,6 +1,23 @@
 require 'spec_helper'
 
 describe ResourceManagement::ApplicationHelper, type: :helper do
+
+  describe '#list_areas_with_enabled_services' do
+    after :all do
+      ResourceManagement::Resource.unmock!
+    end
+
+    it 'lists areas with enabled services' do
+      list = helper.list_areas_with_enabled_services
+      expect(list).to be_an(Array)
+      expect(list.size).to be > 0
+      expect(list).to all(be_a(Symbol))
+
+      ResourceManagement::Resource.mock!
+      expect(helper.list_areas_with_enabled_services).to eql([ :mock_area ])
+    end
+  end
+
   describe '#data_age_as_string' do
     it "stringifies data ages" do
       # no granularity smaller than 1 minute
