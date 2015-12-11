@@ -4,7 +4,7 @@ en:
     storage: Storage
     network: Network
     floating_ips: Floating IPs
-    ram: RAM (GiB)
+    ram: RAM
     instances: Instances
     cores: Cores
     networks: Networks
@@ -14,4 +14,4 @@ en:
     security_groups: Sercurity Groups
     volumes: Volumes
     snapshots: Snapshots
-    capacity: Capacity (GiB)
+    capacity: Capacity
