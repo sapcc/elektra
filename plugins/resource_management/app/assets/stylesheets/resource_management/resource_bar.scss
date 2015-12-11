@@ -4,7 +4,7 @@
   padding: 1.6rem 0;
   position: relative; /* enable absolute positioning of ancestors */
 
-  .label-threshold, .label-maximum {
+  .label-threshold, .label-threshold-missing, .label-maximum {
     position: absolute;
     line-height: 1.6rem;
     font-size: 0.9rem;
@@ -13,7 +13,7 @@
   .label-threshold {
     top: 1.6rem;
     bottom: 0;
-    border-right: 2px solid #2A2A2A; /* TODO: clarify: where does this color come from? */
+    border-right: 2px solid #2A2A2A;
     overflow: visible;
 
     span {
@@ -22,6 +22,12 @@
       right: 0.3rem;
       bottom: 0;
     }
+  }
+
+  .label-threshold-missing {
+    left: 0;
+    bottom: 0;
+    font-weight: bold;
   }
 
   .label-maximum {
