@@ -125,7 +125,7 @@ module ResourceManagement
       end
       stats = quotas.where.not(project_id: nil).
                      group("service,name").
-                     pluck("service,name,SUM(current_quota),SUM(usage)")
+                     pluck("service,name,SUM(GREATEST(current_quota,0)),SUM(usage)")
       
       # this is used for details view
       projects_data = quotas.where.not(project_id: nil)
@@ -146,14 +146,7 @@ module ResourceManagement
         # search for unlimited current quotas
         unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
        
-        active_project_quota = false
-        if unlimited_project_quota_found.nil?
-          active_project_quota = true
-        else
-          # increment because we lost -1 in the quota summary
-          # TODO: that is not correct and is only working if we have only one unlimited quota!
-          current_project_quota_sum = current_project_quota_sum += 1 
-        end
+        active_project_quota = unlimited_project_quota_found.nil?
         # when no domain quota exists yet, use an empty mock object
         domain_service_quota ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
@@ -166,11 +159,11 @@ module ResourceManagement
  
         @resource_status[service.to_sym] ||= []
         @resource_status[service.to_sym] << { 
-          :name => name,
+          :name                      => name,
           :current_project_quota_sum => current_project_quota_sum,
-          :usage_project_sum => usage_project_sum,
-          :active_project_quota => active_project_quota,
-          :domain_quota => domain_service_quota,
+          :usage_project_sum         => usage_project_sum,
+          :active_project_quota      => active_project_quota,
+          :domain_quota              => domain_service_quota,
         } 
       end
     end
