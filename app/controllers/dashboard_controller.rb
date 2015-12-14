@@ -26,7 +26,17 @@ class DashboardController < ::ScopeController
   rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :handle_auth_error
 
   def check_terms_of_use
-    if Admin::OnboardingService.new_user?(current_user)
+    # Consider that every plugin controller inhertis from dashboard controller
+    # and check_terms_of_use method is called on every request.
+    # In order to reduce api calls we cache the result of new_user?
+    # in the session for one minute.
+    if session[:last_request_timestamp].nil? or (session[:last_request_timestamp] < Time.now-1.minute)
+      session[:last_request_timestamp] = Time.now
+      session[:is_new_dashboard_user] = Admin::OnboardingService.new_user?(current_user) 
+    end
+    
+    #if Admin::OnboardingService.new_user?(current_user)
+    if session[:is_new_dashboard_user]
       # new user: user has not a role for requested domain or user has no project yet.
       # save current_url in session
       session[:requested_url] = request.env['REQUEST_URI']
