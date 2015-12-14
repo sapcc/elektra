@@ -12,6 +12,16 @@ module ServiceLayer
       })
     end
 
+    def mock!
+      @driver = ResourceManagement::Driver::Mock.new()
+      return self
+    end
+
+    def unmock!
+      @driver = nil # will be reinitialized in the next #driver call
+      return self
+    end
+
     # Discover existing domains, then:
     # 1. Cleanup Resource objects for deleted domains from local DB.
     # 2. Use sync_projects() to create and/or update Resource objects for all
