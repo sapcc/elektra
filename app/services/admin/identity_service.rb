@@ -51,12 +51,12 @@ module Admin
           end
         elsif domain_id # project_id is nil but domain_id is presented
           # get role_assignments for this domain_id
-          role_assignments = admin_identity.role_assignments("scope.domain.id"=>domain_id,"role.id"=>role.id) rescue []
+          role_assignments = admin_identity.role_assignments("scope.domain.id"=>domain_id,"role.id"=>role.id, effective: true) rescue []
           # load users
           role_assignments.collect{|r|  admins << admin_identity.find_user(r.user_id) }       
         end
         
-        return admins
+        return admins.delete_if {|a| a.id == nil} # delete crap
       end
       
       def admin_identity

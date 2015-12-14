@@ -20,6 +20,7 @@ module Inquiry
     scope :requester_id, -> (requester_id) { Inquiry.joins(:requester).where(inquiry_processors: {uid: requester_id}).includes(:requester) }
     scope :processor_id, -> (processor_id) { Inquiry.joins(:processors).where(inquiry_processors: {uid: processor_id}).includes(:processors) }
     scope :kind, -> (kind) { where kind: kind }
+    scope :domain_id, -> (domain_id) { where domain_id: domain_id }
 
     after_create :transition_to_open
 
@@ -38,10 +39,16 @@ module Inquiry
       end
 
       event :approve, :after => :notify_requester, :guards => Proc.new { |*args| can_approve?(*args) } do
+        before do
+          #run_automatically('approved')
+        end
         transitions :from => :open, :to => :approved, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_approve?]
       end
 
       event :reject, :after => :notify_requester, :guards => Proc.new { |*args| can_reject?(*args) } do
+        before do
+          #run_automatically('rejected')
+        end
         transitions :from => :open, :to => :rejected, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
@@ -61,6 +68,17 @@ module Inquiry
 
     def set_process_step_description(options = {})
       self.process_step_description = "Initial creation!"
+    end
+
+    def run_automatically(state)
+      if self.callbacks[state] && self.callbacks[state]['autorun'] && self.callbacks[state]['action']
+        begin
+          ret = eval(self.callbacks[state]['action'])
+          puts ret
+        rescue => e
+          puts "ERROR"
+        end
+      end
     end
 
     def log_process_step(options = {})

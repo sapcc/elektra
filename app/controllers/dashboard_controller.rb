@@ -13,10 +13,10 @@ class DashboardController < ::ScopeController
                           rescope: false # do not rescope after authentication
 
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use, except: [:new_user,:register_user]
+  before_filter :check_terms_of_use, except: [:new_user, :new_user_request, :register_user, :register_user_request]
   # rescope token
-  before_filter :authentication_rescope_token, except: [:new_user,:register_user]
-  before_filter :load_user_projects, except: [:new_user,:register_user]
+  before_filter :authentication_rescope_token, except: [:new_user, :new_user_request, :register_user, :register_user_request]
+  before_filter :load_user_projects, except: [:new_user, :new_user_request, :register_user, :register_user_request]
 
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
@@ -24,6 +24,8 @@ class DashboardController < ::ScopeController
   rescue_from "Excon::Errors::Unauthorized", with: :handle_api_error
   rescue_from "MonsoonOpenstackAuth::ApiError", with: :handle_auth_error
   rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :handle_auth_error
+
+  DOMAIN_ACCESS_INQUIRY = 'domain-access'
 
   def check_terms_of_use
     # Consider that every plugin controller inhertis from dashboard controller
@@ -41,7 +43,21 @@ class DashboardController < ::ScopeController
       # save current_url in session
       session[:requested_url] = request.env['REQUEST_URI']
       # redirect to user onboarding page.
-      redirect_to "/#{@scoped_domain_fid}/onboarding" and return
+      if @scoped_domain_fid == 'sap_default'
+        redirect_to "/#{@scoped_domain_fid}/onboarding" and return
+      else
+        # check for approved inquiry
+        if id = services.inquiry.inquiry_exists?(DOMAIN_ACCESS_INQUIRY, current_user.id, ['approved'])
+          # user has an accepted inquiry for that domain -> onboard user
+          params[:terms_of_use] = true
+          register_user
+          services.inquiry.status_close(id, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
+        elsif services.inquiry.inquiry_exists?(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open', 'rejected'])
+          render template: 'dashboard/new_user_request_message'
+        else
+          redirect_to "/#{@scoped_domain_fid}/onboarding_request" and return
+        end
+      end
     end
   end
 
@@ -49,17 +65,61 @@ class DashboardController < ::ScopeController
   def new_user
   end
 
+  # render new user template
+  def new_user_request
+  end
+
   # onboard new user
   def register_user
     if params[:terms_of_use]
       # user has accepted terms of use -> onboard user
       Admin::OnboardingService.register_user(current_user)
-
-      # redirect to sandbox (friendly url)
-      redirect_to main_app.domain_home_path
+      # redirect to domain path
+      if plugin_available?('identity')
+        redirect_to plugin('identity').domain_path
+      else
+        redirect_to main_app.root_path
+      end
     else
-      render action: :new
+      render action: :new_user
     end
+  end
+
+  # new user request
+  def register_user_request
+
+    inquiry_id = nil
+
+    if params[:terms_of_use]
+      processors = Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id)
+      unless processors.blank?
+        inquiry_id = services.inquiry.inquiry_create(
+            DOMAIN_ACCESS_INQUIRY,
+            'Grant user access to Domain',
+            current_user,
+            current_user.context[:user].to_json,
+            processors,
+            {},
+            @scoped_domain_id
+        )
+        message = "Error during inquiry creation"
+      else
+        message = "Couldn't find any administrators for this domain!"
+      end
+    else
+      message = "Please accept the terms of use!"
+    end
+    if inquiry_id
+      flash[:notice] = 'Your inquiry was send for further processing'
+      render template: 'dashboard/new_user_request_message'
+    else
+      flash[:error] = "Your inquiry could not be created because: #{message}"
+      render action: :new_user_request
+    end
+  end
+
+  def register_user_approval
+    puts "register_user_approval"
   end
 
   protected
@@ -120,5 +180,6 @@ class DashboardController < ::ScopeController
       format.js { render "dashboard/forbidden.js" }
     end
   end
+
   ################################ END ################################
 end

@@ -21,6 +21,7 @@
         = remote_inquiries(per_page: 3, filter: {processor_id: current_user.id, state: ['open']})
       #allinquiries.tab-pane{role: "tabpanel"}
         = remote_inquiries(per_page: 3)
+        =# remote_inquiries(per_page: 3,filter: {domain_id: current_user.domain_id})
 
 .row
   .col-sm-12

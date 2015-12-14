@@ -33,18 +33,26 @@ module ServiceLayer
       end
     end
 
-    def inquiry_create(kind, description, requester_user, payload, processor_users, callbacks={})
-      domain_id = requester_user.domain_id
+    def inquiry_create(kind, description, requester_user, payload, processor_users, callbacks={}, register_domain_id=nil)
+      domain_id = requester_user.domain_id || register_domain_id
       project_id = requester_user.project_id
 
       requester = Inquiry::Processor.from_users([requester_user]).first
       processors = Inquiry::Processor.from_users(processor_users)
       inq = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
                                  requester: requester, payload: payload, processors: processors, callbacks: callbacks)
-      inq.save
+      inq.save!
       return inq
     end
 
+    def inquiry_exists?(kind, requester_id, states=[])
+      i = inquiries({kind: kind, state: states, requester_id: requester_id})
+      if i.count == 1
+        return i.first.id
+      else
+        return nil
+      end
+    end
   end
 
 end

@@ -9,11 +9,11 @@ module Identity
       def create
         @project = services.identity.new_project
         @project.attributes=params.fetch(:project,{}).merge(domain_id: @scoped_domain_id)
-        
-        success = false
+
+        inquiry_id = nil
         
         if @project.valid?
-          inq = services.inquiry.inquiry_create(
+          inquiry_id = services.inquiry.inquiry_create(
             'project', 
             'Create a project', 
             current_user, 
@@ -26,10 +26,9 @@ module Identity
               }
             }
           )
-          success = inq.save
         end
         
-        if success
+        if inquiry_id
           render template: 'identity/projects/request_wizard/create.js'
         else
           render action: :new

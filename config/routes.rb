@@ -15,7 +15,11 @@ Rails.application.routes.draw do
 
     scope "(/:project_id)" do
       get 'onboarding' => 'dashboard#new_user'
+      get 'onboarding_request' => 'dashboard#new_user_request'
+      get 'onboarding_request_message' => 'dashboard#new_user_request_message'
       post 'register' => 'dashboard#register_user'
+      post 'register_request' => 'dashboard#register_user_request'
+      get 'register_approval' => 'dashboard#register_user_approval'
 
       ###################### MOUNT PLUGINS #####################
       PluginsManager.mountable_plugins.each do |plugin|
