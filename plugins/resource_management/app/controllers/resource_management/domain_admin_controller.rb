@@ -37,33 +37,35 @@ module ResourceManagement
       @service   = params.require(:service)
 
       unless is_numeric? @new_value
-        render text: "value #{@new_value} not correct!", status:400
-      else
-        @new_value = @new_value.to_i
-        # TODO: UPDATE...
-        #       recalc value for data type
-        data = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
-        if @new_value < data[0].usage
-            render text: "new approved quota lower than usage!", status:400
-        else
-          data[0].approved_quota = @new_value
-          data[0].current_quota = @new_value
-          data[0].save
-  
-          # get new data to render the usage partial
-          @area_services = [@service.to_sym]
-          @domain_quotas = ResourceManagement::Resource.where(
-              :domain_id => @scoped_domain_id, 
-              :project_id => nil, 
-              :service => @service.to_sym, 
-              :name => @resource.to_sym)
-          
-          get_resource_status(false, @resource, true)
-  
-          respond_to do |format|
-            format.js
-          end
-        end
+        render text: "value #{@new_value} not correct!", status: :bad_request
+        return
+      end
+
+      @new_value = @new_value.to_i
+      # TODO: UPDATE...
+      #       recalc value for data type
+      @project_record = ResourceManagement::Resource.find(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
+      if @new_value < @project_record.usage
+        render text: "new approved quota lower than usage!", status: :bad_request
+        return
+      end
+
+      @project_record.approved_quota = @new_value
+      @project_record.current_quota = @new_value
+      @project_record.save
+
+      # get new data to render the usage partial
+      @area_services = [@service.to_sym]
+      @domain_quotas = ResourceManagement::Resource.where(
+          :domain_id => @scoped_domain_id, 
+          :project_id => nil, 
+          :service => @service.to_sym, 
+          :name => @resource.to_sym)
+
+      get_resource_status(false, @resource, true)
+
+      respond_to do |format|
+        format.js
       end
     end
 
