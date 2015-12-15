@@ -62,12 +62,13 @@ SimpleNavigation::Configuration.run do |navigation|
       compute_nav.item :volumes, 'Volumes', '#'
       compute_nav.item :snapshots, 'Snapshots', '#'
       compute_nav.item :automation, 'Monsoon Automation', plugin('automation').instances_path, if: Proc.new { plugin_available?('automation') }
+      compute_nav.item :web_console, 'Web Console', plugin('identity').projects_web_console_path, if: Proc.new { plugin_available?('identity')}
     end
 
     primary.item :access_managment, 'Access Management', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" } do |access_management_nav|
       access_management_nav.item :authorizations, 'Authorization', '#'
       access_management_nav.item :audits, 'Audit', '#'
-      access_management_nav.item :inquiries, 'Inquiry', plugin('inquiry').inquiries_path, if: Proc.new { plugin_available?('inquiry') }
+      access_management_nav.item :inquiries, 'Requests', plugin('inquiry').inquiries_path, if: Proc.new { plugin_available?('inquiry') }
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|

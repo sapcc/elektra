@@ -92,6 +92,15 @@ section {
   display: block;
 }
 
+.spinner {
+  @include spinner(background rgba(0, 0, 0, 0.2));
+  margin: 0 5px;
+}
+
+.info-text {
+  color: #888;
+}
+
 .scrollable-text {
   @include border-radius;
   background: $input-bg-disabled;
