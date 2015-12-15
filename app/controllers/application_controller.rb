@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   helper_method :modal?, :plugin_name
-
+  
   def modal?
     if @modal.nil?
       @modal = (request.xhr? and params[:modal]) ? true : false
@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to(options)
-    if modal?
+    if modal? or params[:polling_service]
       head :ok, location: url_for(options)
     else
       super options
