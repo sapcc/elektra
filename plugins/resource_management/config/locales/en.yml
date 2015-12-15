@@ -3,6 +3,8 @@ en:
     compute: Compute
     storage: Storage
     network: Network
+    block_storage: Block Storage
+    object_storage: Object Storage
     floating_ips: Floating IPs
     ram: RAM
     instances: Instances
