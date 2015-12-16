@@ -15,13 +15,12 @@
         -# %span.spinner
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if true #current_user.is_allowed?("network:network_update", {})
-            - if inquiry.states_allowed(current_user).length > 1
-              %li= link_to 'Change state', plugin('inquiry').edit_inquiry_path(id: inquiry.id), data: {modal: true}
-            - allowed_actions = get_allowed_custom_actions(inquiry)
-            - if allowed_actions
-              %li= link_to "#{allowed_actions['name']}", "#{allowed_actions['action']}"
-            %li= link_to 'Show', plugin('inquiry').inquiry_path(id: inquiry.id), data: {modal: true}
+          %li= link_to 'Show', plugin('inquiry').inquiry_path(id: inquiry.id), data: {modal: true}
+          - allowed_actions = get_allowed_actions(inquiry)
+          - if allowed_actions.count > 0
             %li.divider
-          - if remote_links && true #current_user.is_allowed?("network:network_delete", {})
+            - allowed_actions.each do |action|
+              %li= action[:link]
+          - if remote_links && current_user.is_allowed?("inquiry:inquiry_delete", {})
+            %li.divider
             %li= link_to 'Delete', plugin('inquiry').inquiry_path(id: inquiry.id), method: :delete, data: { confirm: 'Are you sure you want to delete this network?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

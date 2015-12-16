@@ -14,22 +14,19 @@ module ServiceLayer
       return Delegates::Inquiry.new(find_by_id(id))
     end
 
-    def payload(id)
+    def set_state(id, state, description)
       inquiry = Inquiry::Inquiry.find_by_id(id)
-      if inquiry
-        return inquiry.payload
-      else
-        return nil
-      end
+      set_state_for_inquiry(inquiry, state, description)
+      return Delegates::Inquiry.new(inquiry)
     end
 
-    def status_close(id, description)
-      inquiry = Inquiry::Inquiry.find_by_id(id)
+    def set_state_for_inquiry(inquiry, state, description)
       inquiry.process_step_description = description
       if inquiry.valid?
-        return inquiry.close!({user: current_user, description: description})
-      else
-        return false
+        inquiry.reject!({user: current_user, description: description}) if state == :rejected
+        inquiry.approve!({user: current_user, description: description}) if state == :approved
+        inquiry.reopen!({user: current_user, description: description}) if state == :open
+        inquiry.close!({user: current_user, description: description}) if state == :closed
       end
     end
 
@@ -39,16 +36,16 @@ module ServiceLayer
 
       requester = Inquiry::Processor.from_users([requester_user]).first
       processors = Inquiry::Processor.from_users(processor_users)
-      inq = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
+      inquiry = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
                                  requester: requester, payload: payload, processors: processors, callbacks: callbacks)
-      inq.save!
-      return inq
+      inquiry.save!
+      return Delegates::Inquiry.new(inquiry)
     end
 
-    def inquiry_exists?(kind, requester_id, states=[])
+    def find_by_kind_user_states(kind, requester_id, states=[])
       i = inquiries({kind: kind, state: states, requester_id: requester_id})
       if i.count == 1
-        return i.first.id
+        return Delegates::Inquiry.new(i.first)
       else
         return nil
       end

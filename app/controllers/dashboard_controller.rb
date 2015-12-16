@@ -47,12 +47,13 @@ class DashboardController < ::ScopeController
         redirect_to "/#{@scoped_domain_fid}/onboarding" and return
       else
         # check for approved inquiry
-        if id = services.inquiry.inquiry_exists?(DOMAIN_ACCESS_INQUIRY, current_user.id, ['approved'])
+        if inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['approved'])
           # user has an accepted inquiry for that domain -> onboard user
           params[:terms_of_use] = true
           register_user
-          services.inquiry.status_close(id, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
-        elsif services.inquiry.inquiry_exists?(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open', 'rejected'])
+          # close inquiry
+          services.inquiry.status_close(inquiry.id, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
+        elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open', 'rejected'])
           render template: 'dashboard/new_user_request_message'
         else
           redirect_to "/#{@scoped_domain_fid}/onboarding_request" and return
@@ -88,12 +89,12 @@ class DashboardController < ::ScopeController
   # new user request
   def register_user_request
 
-    inquiry_id = nil
+    inquiry = nil
 
     if params[:terms_of_use]
       processors = Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id)
       unless processors.blank?
-        inquiry_id = services.inquiry.inquiry_create(
+        inquiry = services.inquiry.inquiry_create(
             DOMAIN_ACCESS_INQUIRY,
             'Grant user access to Domain',
             current_user,
@@ -109,11 +110,11 @@ class DashboardController < ::ScopeController
     else
       message = "Please accept the terms of use!"
     end
-    if inquiry_id
+    unless inquiry.errors
       flash[:notice] = 'Your inquiry was send for further processing'
       render template: 'dashboard/new_user_request_message'
     else
-      flash[:error] = "Your inquiry could not be created because: #{message}"
+      flash[:error] = "Your inquiry could not be created because: #{inquiry.errors}"
       render action: :new_user_request
     end
   end

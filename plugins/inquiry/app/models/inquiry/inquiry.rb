@@ -3,7 +3,7 @@ module Inquiry
     include Filterable
     paginates_per 3
 
-    has_many :process_steps, dependent: :destroy
+    has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
     belongs_to :requester, class_name: "Inquiry::Processor"
     has_and_belongs_to_many :processors
@@ -57,7 +57,7 @@ module Inquiry
       end
 
       event :close, :guards => Proc.new { |*args| can_close?(*args) } do
-        transitions :to => :closed, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_close?]
+        transitions :from => [:approved, :rejected], :to => :closed, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_close?]
       end
 
     end
@@ -83,7 +83,7 @@ module Inquiry
 
     def log_process_step(options = {})
       step = ProcessStep.new
-      step.from_state = aasm.from_state
+      step.from_state = self.aasm_state
       step.to_state = aasm.to_state
       step.event = aasm.current_event
       if options[:user]
@@ -131,19 +131,24 @@ module Inquiry
 
     def events_allowed user
       self.current_user = user
-      events = []
-      self.aasm.events(user).each do |e|
-        events << {event: e.name, name: Inquiry.aasm.human_event_name(e.name)}
+      events = {}
+      self.aasm.events(:permitted => true).each do |e|
+        e.transitions.each do |t|
+          events[t.to.to_sym] ||= []
+          events[t.to.to_sym] << {event: e.name, name: Inquiry.aasm.human_event_name(e.name)}
+        end
       end
       return events
     end
 
     def states_allowed user
       self.current_user = user
+      events = events_allowed user
       states = []
       self.aasm.states(:permitted => true).each do |s|
-        states << {state: s.name, name: s.display_name}
+        states << {state: s.name, name: s.display_name, events: events[s.name]}
       end
+
       return states
     end
 
@@ -172,6 +177,10 @@ module Inquiry
 
     def notify_processors
       InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self.process_steps.last).deliver_later
+    end
+
+    def errors?
+      return !self.errors.blank?
     end
 
   end

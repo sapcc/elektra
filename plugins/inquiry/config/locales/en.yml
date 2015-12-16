@@ -2,10 +2,10 @@ en:
   activerecord:
     events:
       inquiry/inquiry:
-        reopen: "reopen"
-        approve: "approve"
-        reject: "reject"
-        close: "close"
+        reopen: "Reopen"
+        approve: "Approve"
+        reject: "Reject"
+        close: "Close"
 
     attributes:
       inquiry/inquiry:

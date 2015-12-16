@@ -11,17 +11,18 @@
     %h3 Inquiries
     %ul.nav.nav-tabs
       %li.active{role: "presentation"}= link_to 'My Inquiries', '#myinquiries', aria: {controls:"myinquiries"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'Pending inquiries', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
-      %li{role: "presentation"}= link_to 'All inquiries', '#allinquiries', aria: {controls:"allinquiries"}, role: "tab", data: {toggle:"tab"}
+      - if current_user.is_allowed?("identity:inquiry_all_list")
+        %li{role: "presentation"}= link_to 'Pending inquiries', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
+        %li{role: "presentation"}= link_to 'All inquiries', '#allinquiries', aria: {controls:"allinquiries"}, role: "tab", data: {toggle:"tab"}
 
     .tab-content
       #myinquiries.tab-pane.active{role: "tabpanel"}
         = remote_inquiries(per_page: 3, filter: {requester_id:current_user.id})
-      #openinquiries.tab-pane{role: "tabpanel"}
-        = remote_inquiries(per_page: 3, filter: {processor_id: current_user.id, state: ['open']})
-      #allinquiries.tab-pane{role: "tabpanel"}
-        = remote_inquiries(per_page: 3)
-        =# remote_inquiries(per_page: 3,filter: {domain_id: current_user.domain_id})
+      - if current_user.is_allowed?("identity:inquiry_all_list")
+        #openinquiries.tab-pane{role: "tabpanel"}
+          = remote_inquiries(per_page: 3, filter: {processor_id: current_user.id, state: ['open']})
+        #allinquiries.tab-pane{role: "tabpanel"}
+          = remote_inquiries(per_page: 3,filter: {domain_id: current_user.domain_id})
 
 .row
   .col-sm-12

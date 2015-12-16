@@ -2,16 +2,18 @@
   .toolbar
     %b Your projects
     = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
-
+    
 %table.table
   %thead
     %tr
       %th Name
       %th ID
+      %th Description
       %th Status
   %tbody
     - @projects.each do |project|
       %tr
-        %td= link_to project.name, plugin('identity').project_path(project_id: project.friendly_id)
+        %td= link_to project.name, plugin('identity').project_path(project_id:project.friendly_id)
         %td= project.id
+        %td= project.description
         %td= project.enabled ? 'enabled' : 'disabled'

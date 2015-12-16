@@ -29,29 +29,10 @@
             %td= @inquiry.aasm_state
 
     .tab-pane{role:"tabpanel", id:"payload"}
-      %table.table.datatable
-      %tbody
-        %tr
-          %td
-            %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
+      = render partial: 'payload', locals: {inquiry: @inquiry}
 
     .tab-pane{role:"tabpanel", id:"process_steps"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Processor
-            %th From state
-            %th To State
-            %th Date
-            %th Reason
-          - @inquiry.process_steps.each do |step|
-            %tr
-              %td= step.processor.try :full_name
-              %td= step.from_state
-              %td= step.to_state
-              %td= step.created_at.getlocal.strftime("%F %T")
-              %td{:width => "300"}= step.description
-
+      = render partial: 'process_steps', locals: {inquiry: @inquiry}
 
 - if modal?
   .modal-footer

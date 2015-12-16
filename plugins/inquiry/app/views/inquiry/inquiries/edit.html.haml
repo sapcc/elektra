@@ -23,7 +23,8 @@
               = requester_fields.input :full_name, label: "Request user", disabled: true, required: false
               = requester_fields.input :email, label: "Email", disabled: true, required: false
             = f.input :description, label: "The reason for request", as: :text, disabled: true
-            = f.input :aasm_state, { label: "Please set a new State",
+            = f.input :aasm_state, readonly: true, label: "New State"
+            =# f.input :aasm_state, { label: "Please set a new State",
               as: :select,
               :include_blank => false,
               collection: @inquiry.states_allowed(current_user),
@@ -40,25 +41,7 @@
           %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save
 
     .tab-pane{role:"tabpanel", id:"payload"}
-      %table.table.datatable
-      %tbody
-        %tr
-          %td
-            %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
+      = render partial: 'payload', locals: {inquiry: @inquiry}
 
     .tab-pane{role:"tabpanel", id:"process_steps"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Processor
-            %th From state
-            %th To State
-            %th Date
-            %th Reason
-          - @inquiry.process_steps.each do |step|
-            %tr
-              %td= step.processor.try(:full_name)
-              %td= step.from_state
-              %td= step.to_state
-              %td= step.created_at.getlocal.strftime("%F %T")
-              %td{:width => "300"}= step.description
+      = render partial: 'process_steps', locals: {inquiry: @inquiry}

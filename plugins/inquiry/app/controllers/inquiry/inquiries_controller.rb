@@ -6,11 +6,11 @@ module Inquiry
       @page = params[:page] || 1
       @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
       respond_to do |format|
-        format.html { 
+        format.html {
           if params[:partial]
             render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
           else
-            render action: :index 
+            render action: :index
           end
         }
         format.js
@@ -28,12 +28,12 @@ module Inquiry
     def create
       # get the admins
       admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
-      inquiry_id = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
-      if inquiry_id
+      inquiry = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
+      unless inquiry.errors
         flash[:notice] = "Inquiry successfully created."
         redirect_to inquiries_path
       else
-        Rails.logger.error "Inquiry: Error creating inquiry: #{@inquiry.errors.full_messages}"
+        Rails.logger.error "Inquiry: Error creating inquiry: #{inquiry.errors.full_messages}"
         render action: :new
       end
     end
@@ -41,25 +41,18 @@ module Inquiry
 
     def edit
       @inquiry = services.inquiry.find_by_id(params[:id])
+      @inquiry.aasm_state = params[:state] if params[:state]
     end
 
     def update
       @inquiry = services.inquiry.find_by_id(params[:id])
-      if @inquiry.aasm_state != inquiry_params[:aasm_state]
-        @inquiry.process_step_description = inquiry_params[:process_step_description]
-        if @inquiry.valid?
-          @inquiry.reject!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "rejected"
-          @inquiry.approve!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "approved"
-          @inquiry.reopen!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "open"
-          @inquiry.close!({user: current_user, description: inquiry_params[:process_step_description]}) if inquiry_params[:aasm_state] == "closed"
-          flash[:notice] = "Inquiry successfully updated."
-          render 'inquiry/inquiries/update.js'
-        else
-          render action: :edit
-        end
+      services.inquiry.set_state_for_inquiry(@inquiry, inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description])
+      unless @inquiry.errors?
+        flash[:notice] = "Inquiry successfully updated."
+        render 'inquiry/inquiries/update.js'
       else
-        @inquiry.errors.messages[:aasm_state] = ["Please change status before saving"]
-        render action: :edit
+        @inquiry.aasm_state = inquiry_params[:aasm_state]
+       render action: :edit
       end
     end
 
@@ -83,7 +76,7 @@ module Inquiry
     private
 
     def inquiry_params
-      params.require(:inquiry).permit(:kind, :description, :aasm_state, :process_step_description)
+      params.require(:inquiry).permit(:kind, :description, :aasm_state, :new_state, :process_step_description)
     end
 
     # Todo: Only for testing purpose

@@ -6,5 +6,7 @@
   "identity:project_update": "role:admin",
   "identity:project_delete": "role:admin",
   
-  "identity:create_wizard_create": "user_id:%(inquiry.requester_uid)s"
+  "identity:create_wizard_create": "role:admin",
+
+  "identity:inquiry_all_list": "role:admin"
 }

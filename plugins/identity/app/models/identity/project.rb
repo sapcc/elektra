@@ -1,6 +1,7 @@
 module Identity
   class Project < ::DomainModelServiceLayer::Model
     validates :name, presence: {message: 'Name should not be empty'}
+    validates :description, presence: {message: 'Please enter a description'}
 
     attr_accessor :inquiry_id # to close inquiry after creation
     

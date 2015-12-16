@@ -1,0 +1,15 @@
+%table.table.datatable
+  %tbody
+    %tr
+      %th Processor
+      %th From state
+      %th To State
+      %th Date
+      %th Reason
+    - inquiry.process_steps.each do |step|
+      %tr
+        %td= step.processor.try :full_name
+        %td= step.from_state
+        %td= step.to_state
+        %td{:width => "150"}= step.created_at.getlocal.strftime("%F %T")
+        %td{:width => "300"}= step.description
