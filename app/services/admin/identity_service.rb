@@ -60,16 +60,38 @@ module Admin
       end
       
       def admin_identity
+        return @admin_identity if @admin_identity_expires_at and @admin_identity_expires_at>Time.now
+
+        # get default region
         region = MonsoonOpenstackAuth.configuration.default_region
-        servce_user_connection = MonsoonOpenstackAuth.api_client(region).connection_driver.connection
-    
-        if @admin_identity.nil? or @admin_identity.token!=servce_user_connection.auth_token      
-          @admin_identity = DomainModelServiceLayer::ServicesManager.service(:identity,{
-            region: region,
-            token: servce_user_connection.auth_token
-          })
+        # authenticate service user
+        service_user = MonsoonOpenstackAuth.api_client(region).auth_user(
+          ENV['MONSOON_OPENSTACK_AUTH_API_USERID'],
+          ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
+          domain_name: ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN'],
+          scoped_token: true # fog requires a domain scoped token -> scope: { domain: {name: DOMAIN} }
+        )
+        
+        @admin_identity = DomainModelServiceLayer::ServicesManager.service(:identity, {
+          region: region,
+          token: service_user.token
+        })
+
+        if @admin_identity
+          @admin_identity_expires_at = service_user.token_expires_at
         end
         @admin_identity
+                  
+        # region = MonsoonOpenstackAuth.configuration.default_region
+        # servce_user_connection = MonsoonOpenstackAuth.api_client(region).connection_driver.connection
+        #
+        # if @admin_identity.nil? or @admin_identity.token!=servce_user_connection.auth_token
+        #   @admin_identity = DomainModelServiceLayer::ServicesManager.service(:identity,{
+        #     region: region,
+        #     token: servce_user_connection.auth_token
+        #   })
+        # end
+        # @admin_identity
       end
     end
   end
