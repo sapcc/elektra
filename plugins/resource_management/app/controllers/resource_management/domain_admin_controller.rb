@@ -2,7 +2,6 @@ require_dependency "resource_management/application_controller"
 
 module ResourceManagement
   class DomainAdminController < ApplicationController
-    before_filter :set_usage_stage, :only => [:index,:show_area]
 
     def index
       @area_services = []
@@ -129,10 +128,6 @@ module ResourceManagement
        obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
     end
  
-    def set_usage_stage
-      @usage_stage = { :danger => 1.0, :warning => 0.8 }
-    end
-
     def get_resource_status(critical = false, resource = nil, render_projects = false)
 
       # get data for currently existing quotas
