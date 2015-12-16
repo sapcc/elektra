@@ -47,6 +47,8 @@ module ResourceManagement
       return (resource_attrs || {}).merge(service_attrs || {})
     end
 
+    # Change KNOWN_SERVICES so that only a mock service is enabled. Use this
+    # for unit tests only.
     def self.mock!
       # disable all actual services, enable :mock_service
       KNOWN_SERVICES.each do |srv|
@@ -55,6 +57,8 @@ module ResourceManagement
       end
     end
 
+    # Reset KNOWN_SERVICES to the default state. Use this to clean up at the
+    # end of a unit test that used mock!.
     def self.unmock!
       # was mocked?
       return unless KNOWN_SERVICES.find { |srv| srv[:service] == :mock_service }[:enabled]
