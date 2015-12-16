@@ -2,8 +2,6 @@ module Inquiry
   class InquiriesController < DashboardController
 
     def index
-      p ":::::::::::::::::::::"
-      p params
       filter = params[:filter] ? params[:filter] : {}
       @page = params[:page] || 1
       @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
