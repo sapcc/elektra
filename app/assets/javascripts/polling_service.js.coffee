@@ -3,6 +3,34 @@ class @PollingService
   selector = null 
   interval = null
    
+  updateElement= (element) ->
+    $element = $(element)
+    url = $element.data('updatePath')
+    return unless url
+         
+    $.ajax
+      url: url,
+      dataType: 'html',
+      data: {'polling_service': true},
+      success: ( data, textStatus, jqXHR ) ->
+        console.log 'success'
+        # try to get loacation from response header 
+        redirectTo = jqXHR.getResponseHeader('Location')
+        # response is a redirect
+        if redirectTo 
+          # redirect url is equal to auth path
+          if redirectTo.indexOf('/auth/login/')>-1
+            # just reload to avoid redirect to a no layout page after login
+            window.location.reload()
+          else
+            # redirect to the redirectTo url
+            window.location = redirectTo
+        else
+          # no redirect -> replace content with html from response
+          #exists = $.contains(document.documentElement, $element)
+          $element.replaceWith(data)
+          
+     
   # update method which is called periodically 
   update= () ->    
     # get current timestamp
@@ -11,12 +39,6 @@ class @PollingService
     # for each element found by selector do
     $(selector).each () ->
       $element  = $(this)
-      
-      # data-updateUrl is set by server
-      url       = $element.data('updatePath')
-
-      # return if no update url defined
-      return this unless url
 
       # element's own update interval
       updateInterval = $element.data('updateInterval') || 10
@@ -24,29 +46,9 @@ class @PollingService
       
       # modulo operation: rest of current timestamp divided by element's interval should be zero
       shouldUpdate = (timestamp % Math.round(updateInterval/ interval))==0
-
-      if shouldUpdate
-        # update content
-        $.ajax
-          url: url,
-          dataType: 'html',
-          data: {'polling_service': true},
-          success: ( data, textStatus, jqXHR ) ->
-            # try to get loacation from response header 
-            redirectTo = jqXHR.getResponseHeader('Location')
-            # response is a redirect
-            if redirectTo 
-              # redirect url is equal to auth path
-              if redirectTo.indexOf('/auth/login/')>-1
-                # just reload to avoid redirect to a no layout page after login
-                window.location.reload()
-              else
-                # redirect to the redirectTo url
-                window.location = redirectTo
-            else
-              # no redirect -> replace content with html from response
-              #exists = $.contains(document.documentElement, $element)
-              $element.replaceWith(data)
+      
+      updateElement($element) if shouldUpdate
+          
             
   # initialize the service          
   @init= (options={}) ->
@@ -62,3 +64,9 @@ class @PollingService
     
     # start update with interval
     setInterval update, interval
+    
+  @update= (name) ->
+    $("*[data-update-path*='#{name}']").each () -> updateElement(this)
+
+      
+    
