@@ -17,7 +17,6 @@ module ResourceManagement
       @area = params.require(:area).to_sym
       # which services belong to this area?
       @area_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:area] == @area }.map { |srv| srv[:service] }
-      pp @area_services
       # load domain quota for these services
       @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
       # load quota and usage for all projects within these domain
