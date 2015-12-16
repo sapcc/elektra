@@ -28,6 +28,14 @@ module ResourceManagement
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
 
+      # Set quotas for the given project in the given service. `values` must be
+      # a hash with resource names as keys. The service argument and resource
+      # names are symbols, with acceptable values defined in
+      # ResourceManagement::ResourceManagement::KNOWN_RESOURCES.
+      def set_project_quota(domain_id, project_id, service, values)
+        raise DomainModelServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end

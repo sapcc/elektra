@@ -56,6 +56,7 @@ module ResourceManagement
 
       @project_record.approved_quota = value
       @project_record.current_quota  = value
+      services.resource_management.apply_current_quota(@project_record) # apply quota in target service
       @project_record.save
 
       # prepare the data for rendering

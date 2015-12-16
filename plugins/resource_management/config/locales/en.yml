@@ -13,7 +13,7 @@ en:
     subnets: Subnets
     routers: Routers
     ports: Ports
-    security_groups: Sercurity Groups
+    security_groups: Security Groups
     volumes: Volumes
     snapshots: Snapshots
     capacity: Capacity

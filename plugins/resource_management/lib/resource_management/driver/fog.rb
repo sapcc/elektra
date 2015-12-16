@@ -51,6 +51,21 @@ module ResourceManagement
         end
       end
 
+      # Set quotas for the given project in the given service. `values` must be
+      # a hash with resource names as keys. The service argument and resource
+      # names are symbols, with acceptable values defined in
+      # ResourceManagement::ResourceManagement::KNOWN_RESOURCES.
+      def set_project_quota(domain_id, project_id, service, values)
+        # dispatch into the private implementation methods for each service
+        method = "set_project_quota_#{service}".to_sym
+        if respond_to?(method, true)
+          return send(method, domain_id, project_id, values)
+        else
+          # ignore a missing implementation in development mode (where mock data is used)
+          raise DomainModelServiceLayer::Errors::NotImplemented unless Rails.env.development?
+        end
+      end
+
       private
 
       def mock_implementation
@@ -65,6 +80,23 @@ module ResourceManagement
       def query_project_usage_object_storage(domain_id, project_id)
         metadata = get_swift_account_metadata(domain_id, project_id)
         return { capacity: metadata['X-Account-Bytes-Used'].to_i }
+      end
+
+      def set_project_quota_object_storage(domain_id, project_id, values)
+        return unless values.has_key?(:capacity)
+
+        with_service_user_connection_for_swift(domain_id, project_id) do |connection|
+          # the post_account request is not yet implemented in Fog (TODO: add it),
+          # so let's use request() directly
+          connection.request(
+            expects: [200, 204],
+            method:  'POST',
+            path:    '',
+            query:   { format: 'json' },
+            headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
+          )
+          return
+        end
       end
 
       # The query for quota and usage in Swift use the same request, so this
