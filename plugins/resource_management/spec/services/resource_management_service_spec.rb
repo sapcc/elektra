@@ -23,38 +23,38 @@ RSpec.describe ServiceLayer::ResourceManagementService do
   end
 
 
-  describe '#sync_domains' do
+  describe '#sync_all_domains' do
 
     it 'syncs all domains' do
       all_domains = service.driver.mock_domains_projects.keys.sort
 
-      service.sync_domains
+      service.sync_all_domains
 
       expect(ResourceManagement::Resource.pluck(:domain_id).uniq.sort).to eq(all_domains)
     end
 
-    it 'syncs projects in known domains only with sync_all_projects = true' do
+    it 'syncs projects in known domains only for with_projects = true' do
       all_projects = service.driver.mock_domains_projects.values.flatten.sort
 
-      service.sync_domains
+      service.sync_all_domains
       ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
 
-      service.sync_domains # this should be a no-op since there are no new domains/projects
+      service.sync_all_domains # this should be a no-op since there are no new domains/projects
 
       updated_projects = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
       expect(updated_projects).to eq([])
 
-      service.sync_domains(sync_all_projects: true)
+      service.sync_all_domains(with_projects: true)
 
       updated_projects = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
       expect(updated_projects).to eq(all_projects)
     end
 
-    # This assertion ensures that all assertions about sync_projects and sync_project also hold for sync_domains.
+    # This assertion ensures that all assertions about sync_projects and sync_project also hold for sync_all_domains.
     it 'uses #sync_projects to do the heavy lifting' do
       allow(service).to receive(:sync_projects) { |domain_id, options={}| nil } # stub
 
-      service.sync_domains
+      service.sync_all_domains
 
       # since we stubbed the part that's doing all the work, nothing was created
       expect(ResourceManagement::Resource.count).to eq(0)
@@ -81,7 +81,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
         )
       end
 
-      service.sync_domains
+      service.sync_all_domains
       expect(ResourceManagement::Resource.where(domain_id: old_domain_id).count).to eq(0)
     end
 
@@ -113,7 +113,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       end
     end
 
-    it 'syncs existing projects in this domain only with sync_all_projects = true' do
+    it 'syncs existing projects in this domain only for with_projects = true' do
       service.sync_projects(domain_id)
 
       ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
@@ -123,7 +123,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       updated_records = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago)
       expect(updated_records.size).to eq(0)
 
-      service.sync_projects(domain_id, sync_all_projects: true)
+      service.sync_projects(domain_id, with_projects: true)
 
       updated_projects = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
       expect(updated_projects).to eq(domain_projects)
