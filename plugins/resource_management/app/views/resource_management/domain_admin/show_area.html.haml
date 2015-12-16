@@ -9,10 +9,10 @@
       - if @resource_status[service]
         - @resource_status[service].each do |resource|
           = render :partial => 'bar_row', :locals => { :overview => false,  :data => resource, :service => service }
-        = render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
       - else
         .bs-callout
           No #{t("resource_management.#{service}")} Quotas found!
+    = render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }
 
