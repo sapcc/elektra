@@ -3,14 +3,15 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ApplicationController
 
-    before_filter :set_usage_stage, :only => [:index,:show_area]
-
     def index
       @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
       @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
-      # resources are critical if they have a quota, and either one of the quotas is 95% used up
-      @resources = @all_resources.where("((current_quota = -1 OR current_quota > 0) AND approved_quota >= 0) AND (usage > #{@usage_stage[:danger]} * approved_quota OR usage > #{@usage_stage[:danger]} * current_quota)")
+
+      # resources are critical if the usage exceeds the approved quota
+      @critical_resources = @all_resources.where("usage > approved_quota").to_a
+      # warn about resources where current_quota was set to exceed the approved value
+      @warning_resources = @all_resources.where("usage <= approved_quota AND current_quota > approved_quota").to_a
     end
 
     def resource_request
@@ -47,12 +48,6 @@ module ResourceManagement
       rescue ActionController::RedirectBackError
         render text: "Synced!"
       end
-    end
-
-    private
-
-    def set_usage_stage
-      @usage_stage = { :danger => 0.95, :warning => 0.8 }
     end
 
   end
