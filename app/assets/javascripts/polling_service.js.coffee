@@ -13,7 +13,6 @@ class @PollingService
       dataType: 'html',
       data: {'polling_service': true},
       success: ( data, textStatus, jqXHR ) ->
-        console.log 'success'
         # try to get loacation from response header 
         redirectTo = jqXHR.getResponseHeader('Location')
         # response is a redirect
@@ -28,7 +27,7 @@ class @PollingService
         else
           # no redirect -> replace content with html from response
           #exists = $.contains(document.documentElement, $element)
-          $element.replaceWith(data)
+          $element.replaceWith(data)   
           
      
   # update method which is called periodically 
@@ -55,6 +54,10 @@ class @PollingService
     # selector is a string which identifies DOM elements to be updated
     selector = options["selector"]    
     
+    # update elements immediately if they have the corresponding attribute
+    $("#{selector}[data-update-immediately='true']").each () -> updateElement(this)
+    
+    
     # Interval in seconds or milliseconds between polling calls.
     # The polling service runs regularly and tries to update all the elements found by selector.
     # Each element (found by selector) can define its own interval. The element is only updated 
@@ -64,9 +67,8 @@ class @PollingService
     
     # start update with interval
     setInterval update, interval
-    
+
+  # fire an update event. All elements which data-update-path matches the given name will be updated!
+  # For example, update('inquiries') will update data-update-path='inquiriy/inquiries/list'.    
   @update= (name) ->
     $("*[data-update-path*='#{name}']").each () -> updateElement(this)
-
-      
-    

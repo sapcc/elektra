@@ -21,10 +21,18 @@ module Identity
 
     def index
       @projects = services.identity.auth_projects(@scoped_domain_id)
+      
       respond_to do |format|
+        format.html { 
+          if params[:partial]
+            render partial: 'projects', locals: {projects: @projects, remote_links: true}, layout: false
+          else
+            render action: :index 
+          end
+        }
         format.js
-        format.html
       end
+
     end
 
     def show

@@ -30,14 +30,21 @@ module Inquiry
 
     end
 
-    # This method loads remote inquiries via ajax into a new created div.
-    def remote_inquiries(options={})
-      content_tag(:div, '', class: 'inquiry-widget', id: SecureRandom.hex, data: {
-          widget: 'inquiry',
-          url: plugin('inquiry').inquiries_path(),
-          per_page: options[:per_page] || 3,
-          filter: (options[:filter] || {}).to_json
-      })
+    # This method creates a div with data needed attributes. The content is loaded via ajax by PollingService
+    def remote_inquiries(options={})  
+      container_id = SecureRandom.hex
+      
+      content_tag(:div, id: container_id) do
+        content_tag(:div, '', data: {
+          update_path: plugin('inquiry').inquiries_path({
+            container_id: container_id, 
+            per_page: (options[:per_page] || 3), 
+            filter: (options[:filter] || {}), 
+            partial: true 
+          }),
+          update_immediately: true
+        })
+      end
     end
 
     def render_errors inquiry

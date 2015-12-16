@@ -1,3 +1,1 @@
 $("#<%=params[:container_id]%>").html("<%= escape_javascript(render(partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true})) %>");
-// update url
-// $("#<%=params[:container_id]%>").inquiryWidget('update',{"url": '<%=plugin("inquiry").inquiries_path(page:@page)%>'})

@@ -1,4 +1,4 @@
 // close modal window
 Dashboard.hideModal();
 // reload remote inquries
-$($("#inquiry_<%=@inquiry.id%>").closest('[data-widget=inquiry]')).inquiryWidget('reload');
+PollingService.update('inquiries');
