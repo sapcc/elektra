@@ -8,10 +8,12 @@ module ResourceManagement
       # If "enabled" is false, no data will be gathered and the service will be hidden from the UI.
       # (This can be used to restrict unfinished service bindings to development mode, or to
       # activate capabilities based on the available OpenStack services in the service catalog.)
-      { service: :compute,        area: :compute, enabled: Rails.env.development? },
-      { service: :network,        area: :network, enabled: Rails.env.development? },
-      { service: :block_storage,  area: :storage, enabled: Rails.env.development? },
-      { service: :object_storage, area: :storage, enabled: true },
+      { service: :compute,        area: :compute,   enabled: Rails.env.development? },
+      { service: :network,        area: :network,   enabled: Rails.env.development? },
+      { service: :block_storage,  area: :storage,   enabled: Rails.env.development? },
+      { service: :object_storage, area: :storage,   enabled: true },
+      # :mock_service can be enabled with .mock!
+      { service: :mock_service,   area: :mock_area, enabled: false },
     ]
 
     KNOWN_RESOURCES = [
@@ -32,6 +34,9 @@ module ResourceManagement
       { service: :block_storage,  name: :snapshots       },
       { service: :block_storage,  name: :volumes         },
       { service: :object_storage, name: :capacity,       data_type: :bytes },
+      # :mock_service can be enabled with .mock!
+      { service: :mock_service,   name: :things          },
+      { service: :mock_service,   name: :capacity,       data_type: :bytes },
     ]
 
     def attributes
@@ -40,6 +45,25 @@ module ResourceManagement
       # merge attributes for the resource's services
       service_attrs = KNOWN_SERVICES.find { |s| s[:service] == service.to_sym }
       return (resource_attrs || {}).merge(service_attrs || {})
+    end
+
+    # Change KNOWN_SERVICES so that only a mock service is enabled. Use this
+    # for unit tests only.
+    def self.mock!
+      # disable all actual services, enable :mock_service
+      KNOWN_SERVICES.each do |srv|
+        srv[:was_enabled] = srv[:enabled] # remember for .unmock!
+        srv[:enabled]     = srv[:service] == :mock_service
+      end
+    end
+
+    # Reset KNOWN_SERVICES to the default state. Use this to clean up at the
+    # end of a unit test that used mock!.
+    def self.unmock!
+      # was mocked?
+      return unless KNOWN_SERVICES.find { |srv| srv[:service] == :mock_service }[:enabled]
+      # disable :mock_service, enable all actual services
+      KNOWN_SERVICES.each { |srv| srv[:enabled] = srv.delete(:was_enabled) }
     end
 
   end

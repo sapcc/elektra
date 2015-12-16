@@ -29,7 +29,12 @@ module ResourceManagement
       # defined in ResourceManagement::Resource::KNOWN_RESOURCES.
       def query_project_quota(domain_id, project_id, service)
         # dispatch into the private implementation methods for each service
-        return send("query_project_quota_#{service}", domain_id, project_id)
+        method = "query_project_quota_#{service}".to_sym
+        if respond_to?(method, true)
+          return send(method, domain_id, project_id)
+        else
+          return mock_implementation.query_project_quota(domain_id, project_id, service)
+        end
       end
 
       # Query usage values for the given project from the given service.
@@ -38,69 +43,18 @@ module ResourceManagement
       # defined in ResourceManagement::Resource::KNOWN_RESOURCES.
       def query_project_usage(domain_id, project_id, service)
         # dispatch into the private implementation methods for each service
-        return send("query_project_usage_#{service}", domain_id, project_id)
+        method = "query_project_usage_#{service}".to_sym
+        if respond_to?(method, true)
+          return send(method, domain_id, project_id)
+        else
+          return mock_implementation.query_project_usage(domain_id, project_id, service)
+        end
       end
 
       private
 
-      def query_project_quota_compute(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          cores:     rand(50..100),
-          instances: rand(50..100),
-          ram:       rand((50 << 30)..(100 << 30)), # max 100 GiB
-        }
-      end
-
-      def query_project_usage_compute(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          cores:     rand(0..50),
-          instances: rand(0..50),
-          ram:       rand(0..(50 << 30)), # max 50 GiB
-        }
-      end
-
-      def query_project_quota_network(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          floating_ips:    rand(50..100),
-          networks:        rand(50..100),
-          ports:           rand(50..100),
-          routers:         rand(50..100),
-          security_groups: rand(50..100),
-          subnets:         rand(50..100),
-        }
-      end
-
-      def query_project_usage_network(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          floating_ips:    rand(0..50),
-          networks:        rand(0..50),
-          ports:           rand(0..50),
-          routers:         rand(0..50),
-          security_groups: rand(0..50),
-          subnets:         rand(0..50),
-        }
-      end
-
-      def query_project_quota_block_storage(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          capacity:  rand((50 << 30)..(100 << 30)), # max 100 GiB
-          snapshots: rand(50..100),
-          volumes:   rand(50..100),
-        }
-      end
-
-      def query_project_usage_block_storage(domain_id, project_id)
-        # TODO: mock implementation
-        return {
-          capacity:  rand(0..(50 << 30)), # max 100 GiB
-          snapshots: rand(0..50),
-          volumes:   rand(0..50),
-        }
+      def mock_implementation
+        @mocker ||= ResourceManagement::Driver::Mock.new
       end
 
       def query_project_quota_object_storage(domain_id, project_id)
