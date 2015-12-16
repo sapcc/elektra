@@ -2,10 +2,10 @@
   %thead
     %tr
       %th Project
-      %th approved Quota
-      %th current Quota
+      %th Approved Quota
+      %th Current Quota
       %th Usage
-      %th Edit
+      %th Actions
   %tbody
     - @projects.each do |project_resource|
       = render :partial => 'details_table_row', :locals => { :project_resource => project_resource }

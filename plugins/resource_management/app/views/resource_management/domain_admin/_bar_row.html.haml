@@ -7,7 +7,7 @@
         = t("resource_management.#{data[:domain_quota][:name]}")
       - if overview
         .small
-          .small= t(service)
+          .small= t("resource_management.#{service}")
     
   .col-md-7
     = render :partial => 'bar', :locals => { :data => data }
