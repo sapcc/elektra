@@ -31,39 +31,49 @@ module ResourceManagement
     end
 
     def update
-      @project   = params.require(:project)
-      @new_value = params.require(:new_value) 
-      @resource  = params.require(:resource)
-      @service   = params.require(:service)
+      @project  = params.require(:project)
+      @service  = params.require(:service)
+      @resource = params.require(:resource)
 
-      unless is_numeric? @new_value
-        render text: "value #{@new_value} not correct!", status:400
-      else
-        @new_value = @new_value.to_i
-        # TODO: UPDATE...
-        #       recalc value for data type
-        data = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @project, :service => @service, :name => @resource)
-        if @new_value < data[0].usage
-            render text: "new approved quota lower than usage!", status:400
-        else
-          data[0].approved_quota = @new_value
-          data[0].current_quota = @new_value
-          data[0].save
-  
-          # get new data to render the usage partial
-          @area_services = [@service.to_sym]
-          @domain_quotas = ResourceManagement::Resource.where(
-              :domain_id => @scoped_domain_id, 
-              :project_id => nil, 
-              :service => @service.to_sym, 
-              :name => @resource.to_sym)
-          
-          get_resource_status(false, @resource, true)
-  
-          respond_to do |format|
-            format.js
-          end
-        end
+      # load Resource record for project
+      @project_record = ResourceManagement::Resource.where(
+        domain_id:  @scoped_domain_id,
+        project_id: @project,
+        service:    @service,
+        name:       @resource,
+      ).first
+      data_type = @project_record.attributes[:data_type]
+
+      # validate new quota value
+      value = params.require(:new_value)
+      begin
+        value = view_context.parse_usage_or_quota_value(value, data_type)
+        raise ArgumentError, 'new quota may not be lower than current usage' if value < @project_record.usage
+      rescue ArgumentError => e
+        render text: e.message, status: :bad_request
+        return
+      end
+
+      @project_record.approved_quota = value
+      @project_record.current_quota  = value
+      @project_record.save
+
+      # prepare the data for rendering
+      @project   = @project_record.project_id
+      @new_value = view_context.format_usage_or_quota_value(value, data_type) # TODO: this should be done in the view
+
+      # get new data to render the usage partial
+      @area_services = [ @service.to_sym ]
+      @domain_quotas = ResourceManagement::Resource.where(
+          domain_id:  @scoped_domain_id,
+          project_id: nil,
+          service:    @service,
+          name:       @resource,
+      )
+      get_resource_status(false, @resource, true)
+
+      respond_to do |format|
+        format.js
       end
     end
 
