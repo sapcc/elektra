@@ -2,7 +2,6 @@ require_dependency "resource_management/application_controller"
 
 module ResourceManagement
   class DomainAdminController < ApplicationController
-    before_filter :set_usage_stage, :only => [:index,:show_area]
 
     def index
       @area_services = []
@@ -18,7 +17,6 @@ module ResourceManagement
       @area = params.require(:area).to_sym
       # which services belong to this area?
       @area_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:area] == @area }.map { |srv| srv[:service] }
-      pp @area_services
       # load domain quota for these services
       @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
       # load quota and usage for all projects within these domain
@@ -129,10 +127,6 @@ module ResourceManagement
        obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
     end
  
-    def set_usage_stage
-      @usage_stage = { :danger => 1.0, :warning => 0.8 }
-    end
-
     def get_resource_status(critical = false, resource = nil, render_projects = false)
 
       # get data for currently existing quotas

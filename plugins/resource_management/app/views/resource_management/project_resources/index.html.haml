@@ -2,13 +2,19 @@
 =render partial: 'tabs', locals: { scope: 'resources', tab: 'overview' }
 
 .row.quota-row
-  .col-md-9   
-    - if @resources.blank?
+  .col-md-9
+    - if @critical_resources.blank? and @warning_resources.blank?
       .bs-callout.bs-callout-info
-        Nothing to report! Everything is fine.
-    - else
+        No signs of critical resource usage found.
+    - unless @critical_resources.blank?
+      %h3 Usage exceeds approved quota
       -# sort resources by name (and by service for resources with the same name)
-      - @resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
+      - @critical_resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
+        = render :partial => 'bar', :locals => { :overview => true, :data => resource }
+    - unless @warning_resources.blank?
+      %h3 Current quota exceeds approved quota
+      -# sort resources by name (and by service for resources with the same name)
+      - @warning_resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
         = render :partial => 'bar', :locals => { :overview => true, :data => resource }
     = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_url }
   .col-md-3
