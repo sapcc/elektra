@@ -24,29 +24,26 @@ module ResourceManagement
     end
 
     def edit
-      @project = params[:project]
-      @value = params[:value]
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
     end
 
     def update
-      @project  = params.require(:project)
-      @service  = params.require(:service)
-      @resource = params.require(:resource)
+      # load Resource record to modify
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
 
-      # load Resource record for project
-      @project_record = ResourceManagement::Resource.where(
-        domain_id:  @scoped_domain_id,
-        project_id: @project,
-        service:    @service,
-        name:       @resource,
-      ).first
-      data_type = @project_record.attributes[:data_type]
+      # legacy @-variables
+      @project  = @project_resource.project_id
+      @service  = @project_resource.service
+      @resource = @project_resource.name
+      @project_record = @project_resource
 
       # validate new quota value
-      value = params.require(:new_value)
+      value = params.require(:value)
       begin
-        value = view_context.parse_usage_or_quota_value(value, data_type)
-        raise ArgumentError, 'new quota may not be lower than current usage' if value < @project_record.usage
+        value = view_context.parse_usage_or_quota_value(value, @project_record.attributes[:data_type])
+        raise ArgumentError, 'New quota may not be lower than current usage!' if value < @project_record.usage
       rescue ArgumentError => e
         render text: e.message, status: :bad_request
         return
@@ -56,10 +53,6 @@ module ResourceManagement
       @project_record.current_quota  = value
       services.resource_management.apply_current_quota(@project_record) # apply quota in target service
       @project_record.save
-
-      # prepare the data for rendering
-      @project   = @project_record.project_id
-      @new_value = view_context.format_usage_or_quota_value(value, data_type) # TODO: this should be done in the view
 
       # get new data to render the usage partial
       @area_services = [ @service.to_sym ]

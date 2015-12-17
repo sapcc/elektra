@@ -1,4 +1,4 @@
-%table.table.resource-details{ data: { service: @service, resource: @resource } }
+%table.table.resource-details
   %thead
     %tr
       %th Project
@@ -15,20 +15,15 @@
 = content_for :javascripts do
   :javascript
     function set_approved_quota(button) {
-      // project ID is annotated on the row
+      // resource ID is annotated on the row
       row = $(button).closest('tr');
-      project_id = row.data('project');
-      // resource/service is annotated on the table
-      table = row.closest('table');
 
       $.ajax({
         url: "#{plugin('resource_management').admin_update_path()}",
         dataType: 'script',
         data: {
-          project:   project_id,
-          new_value: row.find('.resource-approved-quota-edit').val(),
-          resource:  table.data('resource'),
-          service:   table.data('service'),
+          id:    row.data('resource'),
+          value: row.find('.resource-approved-quota-edit').val(),
         },
         error: function(xhr) {
           $('.alert-success').css('display','none');
