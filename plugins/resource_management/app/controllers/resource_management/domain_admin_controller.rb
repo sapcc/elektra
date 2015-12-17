@@ -129,6 +129,9 @@ module ResourceManagement
  
     def get_resource_status(critical = false, resource = nil, render_projects = false)
 
+      # load project names for details table
+      @project_names = services.resource_management.driver.enumerate_projects(@scoped_domain_id) if @resource
+
       # get data for currently existing quotas
       quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
       # get only the quotas for one resource

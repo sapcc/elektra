@@ -10,7 +10,8 @@
 
 %tr{ id: "#{project_resource.project_id}_quota_row", class: class_name }
   %td.col-md-3
-    = project_resource.project_id
+    - pid = project_resource.project_id
+    = @project_names[pid] || pid
   %td.col-md-3
     %div{ id: "#{project_resource.project_id}_approved_quota", class: "input-group input-group-sm" }
       = format_usage_or_quota_value(project_resource.approved_quota,data_type )
