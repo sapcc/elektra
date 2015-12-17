@@ -1,8 +1,12 @@
-= content_for :page_lead do
-  .jumbotron
-    .container
-      %h2
-        Welcome
-        = current_user.full_name
-      %p Your request has been send to the responsibe administrators for the domain. You'll receive an email on your request status after approval or rejection.
-      %p Thank you!
+= content_for :main_toolbar do
+  Domain Access
+%h1.page-header Domain access request submitted!
+
+%p.lead
+  Welcome
+  = current_user.full_name
+  %br
+  your request has been send to the responsibe administrators for the domain. You will receive an email after the request got approved or rejected.
+  %br
+  %br
+  Thank you

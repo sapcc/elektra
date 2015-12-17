@@ -13,10 +13,10 @@ class DashboardController < ::ScopeController
                           rescope: false # do not rescope after authentication
 
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use, except: [:new_user, :new_user_request, :register_user, :register_user_request]
+  before_filter :check_terms_of_use, except: [:new_user, :new_user_request, :new_user_request_message, :register_user, :register_user_request]
   # rescope token
-  before_filter :authentication_rescope_token, except: [:new_user, :new_user_request, :register_user, :register_user_request]
-  before_filter :load_user_projects, except: [:new_user, :new_user_request, :register_user, :register_user_request]
+  before_filter :authentication_rescope_token, except: [:new_user, :new_user_request, :new_user_request_message, :register_user, :register_user_request]
+  before_filter :load_user_projects, except: [:new_user, :new_user_request, :register_user, :register_user_request, :new_user_request_message]
 
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
@@ -52,9 +52,12 @@ class DashboardController < ::ScopeController
           params[:terms_of_use] = true
           register_user
           # close inquiry
-          services.inquiry.status_close(inquiry.id, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
-        elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open', 'rejected'])
+          services.inquiry.set_state(inquiry.id, :closed, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
+        elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open'])
           render template: 'dashboard/new_user_request_message'
+        elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['rejected'])
+          @processors = Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id)
+          render template: 'dashboard/new_user_reject_message'
         else
           redirect_to "/#{@scoped_domain_fid}/onboarding_request" and return
         end
@@ -68,6 +71,9 @@ class DashboardController < ::ScopeController
 
   # render new user template
   def new_user_request
+  end
+
+  def new_user_request_message
   end
 
   # onboard new user
@@ -91,12 +97,17 @@ class DashboardController < ::ScopeController
 
     inquiry = nil
 
+    # checkif there is an request already open (can be resubmitted via browser back)
+    if services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open'])
+      redirect_to :controller=>'dashboard', :action => 'new_user_request_message' and return
+    end
+
     if params[:terms_of_use]
       processors = Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id)
       unless processors.blank?
         inquiry = services.inquiry.inquiry_create(
             DOMAIN_ACCESS_INQUIRY,
-            'Grant user access to Domain',
+            "Grant access for user #{current_user.full_name} to Domain #{@scoped_domain_name}",
             current_user,
             current_user.context[:user].to_json,
             processors,
@@ -110,11 +121,11 @@ class DashboardController < ::ScopeController
     else
       message = "Please accept the terms of use!"
     end
-    unless inquiry.errors
+    unless inquiry.errors?
       flash[:notice] = 'Your inquiry was send for further processing'
-      render template: 'dashboard/new_user_request_message'
+      redirect_to :controller=>'dashboard', :action => 'new_user_request_message'
     else
-      flash[:error] = "Your inquiry could not be created because: #{inquiry.errors}"
+      flash.now[:error] = "Your inquiry could not be created because: #{inquiry.errors.full_messages.to_sentence}"
       render action: :new_user_request
     end
   end

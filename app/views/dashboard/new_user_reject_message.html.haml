@@ -1,0 +1,16 @@
+= content_for :main_toolbar do
+  Domain Access
+%h1.page-header Domain access was rejected!
+
+%p.lead
+  Welcome
+  = current_user.full_name
+  %br
+  = "your request for the domain #{@scoped_domain_name} was rejected by one of the domain administrators."
+%p.lead
+  Please contact one of the administrators below before you try to get access again and let her/him know why it's needed.
+%ul
+- @processors.each do |p|
+  %li= "#{p.full_name} - #{p.email}"
+
+

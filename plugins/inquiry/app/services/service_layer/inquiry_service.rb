@@ -44,7 +44,7 @@ module ServiceLayer
 
     def find_by_kind_user_states(kind, requester_id, states=[])
       i = inquiries({kind: kind, state: states, requester_id: requester_id})
-      if i.count == 1
+      if i.count > 0
         return Delegates::Inquiry.new(i.first)
       else
         return nil

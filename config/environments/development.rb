@@ -62,7 +62,7 @@ Rails.application.configure do
   config.action_mailer.default_options = {
       from: 'do.not.reply@sap.com'
   }
-  config.action_mailer.perform_deliveries = false
+  config.action_mailer.perform_deliveries = true
 
   puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
 
