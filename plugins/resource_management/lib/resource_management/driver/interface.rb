@@ -7,7 +7,8 @@ module ResourceManagement
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
 
-      # List all project IDs that exist in the given domain.
+      # List all projects that exist in the given domain,
+      # as a hash of { id => name }.
       def enumerate_projects(domain_id)
         raise DomainModelServiceLayer::Errors::NotImplemented
       end

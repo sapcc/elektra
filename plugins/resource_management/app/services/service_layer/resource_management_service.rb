@@ -62,7 +62,7 @@ module ServiceLayer
       end
 
       # check which projects exist in the DB and in Keystone
-      all_project_ids = driver.enumerate_projects(domain_id)
+      all_project_ids = driver.enumerate_projects(domain_id).keys
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
       db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).pluck('DISTINCT project_id')
 

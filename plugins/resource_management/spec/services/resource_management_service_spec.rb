@@ -34,7 +34,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
     end
 
     it 'syncs projects in known domains only for with_projects = true' do
-      all_projects = service.driver.mock_domains_projects.values.flatten.sort
+      all_projects = service.driver.mock_domains_projects.values.map(&:keys).flatten.sort
 
       service.sync_all_domains
       ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
@@ -91,9 +91,9 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
     let(:domain_id) do
       domains_projects = service.driver.mock_domains_projects
-      domains_projects.select { |domain_id, project_ids| project_ids.size > 1 }.keys.sort.first
+      domains_projects.select { |domain_id, projects| projects.size > 1 }.keys.sort.first
     end
-    let(:domain_projects) { service.driver.mock_domains_projects[domain_id].sort }
+    let(:domain_projects) { service.driver.mock_domains_projects[domain_id].keys.sort }
 
     it 'syncs exactly this domain and its projects' do
       service.sync_domain(domain_id)
@@ -163,9 +163,9 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
     let(:domain_id) do
       domains_projects = service.driver.mock_domains_projects
-      domains_projects.select { |domain_id, project_ids| project_ids.size > 1 }.keys.sort.first
+      domains_projects.select { |domain_id, projects| projects.size > 1 }.keys.sort.first
     end
-    let(:project_id) { service.driver.mock_domains_projects[domain_id].first }
+    let(:project_id) { service.driver.mock_domains_projects[domain_id].keys.sort.first }
 
     it 'touches only the given project' do
       service.sync_project(domain_id, project_id)
