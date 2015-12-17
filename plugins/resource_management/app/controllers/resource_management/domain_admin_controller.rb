@@ -128,9 +128,7 @@ module ResourceManagement
     end
  
     def get_resource_status(critical = false, resource = nil, render_projects = false)
-
-      # load project names for details table
-      @project_names = services.resource_management.driver.enumerate_projects(@scoped_domain_id) if @resource
+      # TODO FIXME: refactor this method (there are too many concerns in here)
 
       # get data for currently existing quotas
       quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
@@ -144,7 +142,16 @@ module ResourceManagement
       
       # this is used for details view
       projects_data = quotas.where.not(project_id: nil)
-      @projects = projects_data.page(@page).per(6) if render_projects
+      if render_projects
+        @project_names = services.resource_management.driver.enumerate_projects(@scoped_domain_id) if @resource
+        projects = projects_data.to_a.sort_by do |project_resource|
+          project_id = project_resource.project_id
+          project_name = (@project_names[project_id] || project_id).downcase
+          # sort projects by name
+          project_name
+        end
+        @projects = Kaminari.paginate_array(projects).page(@page).per(6)
+      end
       # get min and max update of all quotas (for one resource or all)
       @min_updated_at, @max_updated_at = projects_data.pluck("MIN(updated_at), MAX(updated_at)").first
 
