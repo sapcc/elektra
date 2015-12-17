@@ -147,8 +147,10 @@ module ResourceManagement
         projects = projects_data.to_a.sort_by do |project_resource|
           project_id = project_resource.project_id
           project_name = (@project_names[project_id] || project_id).downcase
-          # sort projects by name
-          project_name
+          warning_level = view_context.warning_level_for_project(project_resource)
+          sort_order = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
+          # sort projects by warning level, then by name
+          [ sort_order, project_name ]
         end
         @projects = Kaminari.paginate_array(projects).page(@page).per(6)
       end
