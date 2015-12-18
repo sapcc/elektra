@@ -30,9 +30,6 @@ module ResourceManagement
       @project_resource = ResourceManagement::Resource.find(params.require(:id))
       raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
 
-      # legacy @-variables (TODO: remove from views)
-      @service  = @project_resource.service.to_sym
-
       # validate new quota value
       value = params.require(:value)
       begin
@@ -49,7 +46,7 @@ module ResourceManagement
       @project_resource.save
 
       # prepare data for view
-      prepare_data_for_details_view(@service, @project_resource.name.to_sym)
+      prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
 
       respond_to do |format|
         format.js
@@ -104,10 +101,6 @@ module ResourceManagement
     end
 
     private
-    # http://stackoverflow.com/questions/4589968/ruby-rails-how-to-check-if-a-var-is-an-integer
-    def is_numeric?(obj) 
-       obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
-    end
  
     def prepare_data_for_resource_list(services, options={})
       # load resources for domain and projects within this domain
@@ -171,15 +164,11 @@ module ResourceManagement
         pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
 
       @resource_status = {
-        service => [ # TODO: wonky structure
-          {
-            name:                      resource,
-            current_project_quota_sum: current_quota_sum,
-            usage_project_sum:         usage_sum,
-            active_project_quota:      min_current_quota >= 0, # TODO: wonky name, should be inversed, then called "has_infinite_project_quota"
-            domain_quota:              domain_resource,
-          },
-        ],
+        name:                      resource,
+        current_project_quota_sum: current_quota_sum,
+        usage_project_sum:         usage_sum,
+        active_project_quota:      min_current_quota >= 0, # TODO: wonky name, should be inversed, then called "has_infinite_project_quota"
+        domain_quota:              domain_resource,
       }
 
       return project_resources # this is used for further data collection by details()

@@ -6,7 +6,7 @@
 - approved_quota_for_domain = data[:domain_quota].approved_quota
 - usage_project_sum         = data[:usage_project_sum]
 
--# to render the warning in good_to_know partial
+-# to render the warning in good_to_know partial (TODO: breaks encapsulation)
 - @warning = true if current_project_quota_sum > approved_quota_for_domain or not active_project_quota 
 
 - fill = current_project_quota_sum
