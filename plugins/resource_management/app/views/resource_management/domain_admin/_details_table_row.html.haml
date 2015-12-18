@@ -1,14 +1,14 @@
 - data_type = project_resource.attributes[:data_type]
 
-%tr{ id: "#{project_resource.project_id}_quota_row", class: warning_level_for_project(project_resource) }
+%tr{ class: warning_level_for_project(project_resource), data: { project: project_resource.project_id, resource: project_resource.id } }
   %td.col-md-3
     - pid = project_resource.project_id
     = @project_names[pid] || pid
   %td.col-md-3
-    %div{ id: "#{project_resource.project_id}_approved_quota", class: "input-group input-group-sm" }
+    .resource-approved-quota.input-group.input-group-sm
       = format_usage_or_quota_value(project_resource.approved_quota,data_type )
   %td.col-md-2
-    %div{ id: "#{project_resource.project_id}_current_quota" }
+    .resource-current-quota
       - if project_resource.current_quota == -1
         Unlimited
       - else
@@ -16,6 +16,6 @@
   %td.col-md-2
     = format_usage_or_quota_value(project_resource.usage,data_type)
   %td.col-md-2
-    %div{ id: "#{project_resource.project_id}_edit" }
-      = link_to 'Edit', plugin('resource_management').admin_edit_path( :project => project_resource.project_id, :value =>  format_usage_or_quota_value(project_resource.approved_quota,data_type ) ) , data: { disable_with: 'Loading'}, class: 'btn btn-primary btn-sm', remote: true
+    .resource-actions
+      = link_to 'Edit', plugin('resource_management').admin_edit_path(id: project_resource.id), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
 

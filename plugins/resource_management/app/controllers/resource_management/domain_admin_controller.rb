@@ -4,72 +4,49 @@ module ResourceManagement
   class DomainAdminController < ApplicationController
 
     def index
-      @area_services = []
-      ResourceManagement::Resource::KNOWN_SERVICES.each do |service_config|
-        @area_services << service_config[:service]
-      end
-      
-      @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
-      get_resource_status(true)
+      @all_services = ResourceManagement::Resource::KNOWN_SERVICES.
+        select { |srv| srv[:enabled] }.
+        map    { |srv| srv[:service] }
+
+      prepare_data_for_resource_list(@all_services, overview: true)
     end
 
     def show_area
       @area = params.require(:area).to_sym
-      # which services belong to this area?
-      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:area] == @area }.map { |srv| srv[:service] }
-      # load domain quota for these services
-      @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
-      # load quota and usage for all projects within these domain
-      get_resource_status()
+      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.
+        select { |srv| srv[:enabled] && srv[:area] == @area }.
+        map    { |srv| srv[:service] }
+
+      prepare_data_for_resource_list(@area_services)
     end
 
     def edit
-      @project = params[:project]
-      @value = params[:value]
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
     end
 
     def update
-      @project  = params.require(:project)
-      @service  = params.require(:service)
-      @resource = params.require(:resource)
-
-      # load Resource record for project
-      @project_record = ResourceManagement::Resource.where(
-        domain_id:  @scoped_domain_id,
-        project_id: @project,
-        service:    @service,
-        name:       @resource,
-      ).first
-      data_type = @project_record.attributes[:data_type]
+      # load Resource record to modify
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
 
       # validate new quota value
-      value = params.require(:new_value)
+      value = params.require(:value)
       begin
-        value = view_context.parse_usage_or_quota_value(value, data_type)
-        raise ArgumentError, 'new quota may not be lower than current usage' if value < @project_record.usage
+        value = view_context.parse_usage_or_quota_value(value, @project_resource.attributes[:data_type])
+        raise ArgumentError, 'New quota may not be lower than current usage!' if value < @project_resource.usage
       rescue ArgumentError => e
         render text: e.message, status: :bad_request
         return
       end
 
-      @project_record.approved_quota = value
-      @project_record.current_quota  = value
-      services.resource_management.apply_current_quota(@project_record) # apply quota in target service
-      @project_record.save
+      @project_resource.approved_quota = value
+      @project_resource.current_quota  = value
+      services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
+      @project_resource.save
 
-      # prepare the data for rendering
-      @project   = @project_record.project_id
-      @new_value = view_context.format_usage_or_quota_value(value, data_type) # TODO: this should be done in the view
-
-      # get new data to render the usage partial
-      @area_services = [ @service.to_sym ]
-      @domain_quotas = ResourceManagement::Resource.where(
-          domain_id:  @scoped_domain_id,
-          project_id: nil,
-          service:    @service,
-          name:       @resource,
-      )
-      get_resource_status(false, @resource, true)
+      # prepare data for view
+      prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
 
       respond_to do |format|
         format.js
@@ -82,28 +59,30 @@ module ResourceManagement
     end
 
     def details
+      @show_all_button = true if params[:overview] == 'true'
 
-      @page     = params[:page] || 1
-      @resource = params.require(:resource)
-      @service  = params.require(:service)
-      @area_services = [@service.to_sym]
-      @show_all_button = true if params[:overview].eql?("true")
+      @service  = params.require(:service).to_sym
+      @resource = params.require(:resource).to_sym
+      @area     = ResourceManagement::Resource::KNOWN_SERVICES.find { |s| s[:service] == @service }[:area]
 
-      @domain_quotas = ResourceManagement::Resource.where(
-          :domain_id  => @scoped_domain_id, 
-          :project_id => nil, 
-          :service    => @service.to_sym, 
-          :name       => @resource.to_sym)
-      
-      if @domain_quotas.length > 0
-        @area = @domain_quotas[0].attributes[:area]
-      else
-        # fallback if no quota was found (that should not happen)
-        service_cfg = ResourceManagement::Resource::KNOWN_SERVICES. find{ |s| s[:service] == @service.to_sym }
-        @area = service_cfg[:area] 
+      # some parts of data collection are shared with update()
+      project_resources = prepare_data_for_details_view(@service, @resource)
+
+      # get mapping of project IDs to names
+      @project_names = services.resource_management.driver.enumerate_projects(@scoped_domain_id)
+
+      # prepare the projects table
+      projects = project_resources.to_a.sort_by do |project_resource|
+        # find project name
+        project_id   = project_resource.project_id
+        project_name = (@project_names[project_id] || project_id).downcase
+        # find warning level for project
+        warning_level = view_context.warning_level_for_project(project_resource)
+        sort_order    = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
+        # sort projects by warning level, then by name
+        [ sort_order, project_name ]
       end
-      
-      get_resource_status(false, @resource, true)
+      @projects = Kaminari.paginate_array(projects).page(params[:page]).per(6)
 
       respond_to do |format|
         format.html 
@@ -122,74 +101,82 @@ module ResourceManagement
     end
 
     private
-    # http://stackoverflow.com/questions/4589968/ruby-rails-how-to-check-if-a-var-is-an-integer
-    def is_numeric?(obj) 
-       obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
-    end
  
-    def get_resource_status(critical = false, resource = nil, render_projects = false)
-      # TODO FIXME: refactor this method (there are too many concerns in here)
+    def prepare_data_for_resource_list(services, options={})
+      # load resources for domain and projects within this domain
+      resources = ResourceManagement::Resource.
+        where(domain_id: @scoped_domain_id, service: services)
 
-      # get data for currently existing quotas
-      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
-      # get only the quotas for one resource
-      if resource 
-          quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services, :name => resource)
-      end
-      stats = quotas.where.not(project_id: nil).
-                     group("service,name").
-                     pluck("service,name,SUM(GREATEST(current_quota,0)),SUM(usage)")
-      
-      # this is used for details view
-      projects_data = quotas.where.not(project_id: nil)
-      if render_projects
-        @project_names = services.resource_management.driver.enumerate_projects(@scoped_domain_id) if @resource
-        projects = projects_data.to_a.sort_by do |project_resource|
-          project_id = project_resource.project_id
-          project_name = (@project_names[project_id] || project_id).downcase
-          warning_level = view_context.warning_level_for_project(project_resource)
-          sort_order = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
-          # sort projects by warning level, then by name
-          [ sort_order, project_name ]
-        end
-        @projects = Kaminari.paginate_array(projects).page(@page).per(6)
-      end
-      # get min and max update of all quotas (for one resource or all)
-      @min_updated_at, @max_updated_at = projects_data.pluck("MIN(updated_at), MAX(updated_at)").first
+      domain_resources  = resources.where(project_id: nil).to_a
+      project_resources = resources.where.not(project_id: nil)
 
-      # get unlimited quotas
-      unlimited = ResourceManagement::Resource.
-          where(:domain_id => @scoped_domain_id, :service => @area_services).
-          where.not(project_id: nil).
-          where(:current_quota => -1) 
+      # check data age (see _data_age partial view)
+      @min_updated_at, @max_updated_at = project_resources.pluck("MIN(updated_at), MAX(updated_at)").first
 
-      @resource_status = {}
+      # examine project quotas and usage
+      stats = project_resources.
+        group("service, name").
+        pluck("service, name, MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)")
+
+      # prepare data for each resource for display
+      @resource_status = Hash.new { |h,k| h[k] = [] }
       stats.each do |stat|
-        service, name, current_project_quota_sum, usage_project_sum = *stat
-        domain_service_quota = @domain_quotas.find { |q| q.service == service && q.name == name }
-        # search for unlimited current quotas
-        unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
-       
-        active_project_quota = unlimited_project_quota_found.nil?
-        # when no domain quota exists yet, use an empty mock object
-        domain_service_quota ||= ResourceManagement::Resource.new(
+        service, name, min_current_quota, current_quota_sum, usage_sum = *stat
+        has_infinite_current_quota = min_current_quota < 0
+
+        # use existing domain resource, or create an empty mock object as a placeholder
+        domain_resource = domain_resources.find { |q| q.service == service && q.name == name }
+        domain_resource ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
         )
 
-        # filter critical quotas
-        if critical
-          next if current_project_quota_sum < domain_service_quota.approved_quota and active_project_quota
+        # on overview, show only critical quotas
+        is_critical = current_quota_sum > domain_resource.approved_quota or has_infinite_current_quota
+        if options[:overview]
+          next unless is_critical
         end
+
+        # show warning in infobox when there are critical quotas
+        @show_warning = true if is_critical
  
-        @resource_status[service.to_sym] ||= []
-        @resource_status[service.to_sym] << { 
-          :name                      => name,
-          :current_project_quota_sum => current_project_quota_sum,
-          :usage_project_sum         => usage_project_sum,
-          :active_project_quota      => active_project_quota,
-          :domain_quota              => domain_service_quota,
-        } 
+        @resource_status[service.to_sym] << {
+          name:                       name,
+          current_quota_sum:          current_quota_sum,
+          usage_sum:                  usage_sum,
+          has_infinite_current_quota: has_infinite_current_quota,
+          domain_resource:            domain_resource,
+        }
       end
     end
+
+    # Some data collection that's shared between the details() and update() actions.
+    def prepare_data_for_details_view(service, resource)
+      # load domain resource and corresponding project resources
+      resources = ResourceManagement::Resource.
+        where(domain_id: @scoped_domain_id, service: service, name: resource)
+
+      domain_resource   = resources.where(project_id: nil).first
+      project_resources = resources.where.not(project_id: nil)
+
+      # when no domain resource record exists yet, use an empty mock object
+      domain_resource ||= ResourceManagement::ResourceManagement.new(
+        domain_id: @scoped_domain_id, service: service, name: resource, approved_quota: 0,
+      )
+
+      # statistics over project resources
+      min_current_quota, current_quota_sum, usage_sum = project_resources.
+        pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
+
+      @resource_status = {
+        name:                       resource,
+        current_quota_sum:          current_quota_sum,
+        usage_sum:                  usage_sum,
+        has_infinite_current_quota: min_current_quota < 0,
+        domain_resource:            domain_resource,
+      }
+
+      return project_resources # this is used for further data collection by details()
+    end
+
   end
 end
