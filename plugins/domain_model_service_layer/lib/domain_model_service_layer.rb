@@ -7,14 +7,12 @@ require_relative 'domain_model_service_layer/model'
 # implements service layer
 module DomainModelServiceLayer
   
-  def self.keystone_endpoint
-    MonsoonOpenstackAuth.configuration.connection_driver.endpoint rescue nil
+  def self.keystone_auth_endpoint
+    endpoint = Rails.application.config.keystone_endpoint rescue ''
+    endpoint += '/' if endpoint.last!='/' 
+    endpoint += 'auth/tokens'
   end
-  
-  def self.default_region
-    MonsoonOpenstackAuth.configuration.default_region
-  end
-  
+
   # this module is included in controllers.
   # the controller should respond_to current_user (monsoon-openstack-auth gem)
   module Services
@@ -25,14 +23,9 @@ module DomainModelServiceLayer
 
     module InstanceMethods
       # load services provider
-      def services(region=nil)
+      def services(region=Rails.application.config.default_region)
         # initialize services unless already initialized
         unless @services
-          region ||= auth_session.region if auth_session
-          region ||= current_user.services_region if current_user
-          # remove it after refactoring admin identity
-          region ||= DomainModelServiceLayer.default_region
-
           @services = DomainModelServiceLayer::ServicesManager.new(
             region,
             current_user
@@ -75,7 +68,7 @@ module DomainModelServiceLayer
         # create an instance of the service class
         if klazz 
           klazz.new(
-            DomainModelServiceLayer.keystone_endpoint,
+            DomainModelServiceLayer.keystone_auth_endpoint,
             params.delete(:region),
             params.delete(:token),
             params
@@ -102,7 +95,7 @@ module DomainModelServiceLayer
       unless service    
         # create a DomainModelServiceLayer::Service  
         params = {
-          auth_url: DomainModelServiceLayer.keystone_endpoint,
+          auth_url: DomainModelServiceLayer.keystone_auth_endpoint,
           region: @region,
         }
         if @current_user

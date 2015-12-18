@@ -2,7 +2,6 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
-
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -31,5 +30,25 @@ module MonsoonDashboard
     config.middleware.insert_before Rack::Sendfile, "DebugEnvMiddleware"
     config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
     config.middleware.use "RevisionMiddleware"
+    
+    
+    ############# KEYSTONE ENDPOINT ##############
+    config.keystone_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
+            proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
+            host  = ENV['AUTHORITY_SERVICE_HOST']
+            port  = ENV['AUTHORITY_SERVICE_PORT']
+            "#{proto}://#{host}:#{port}/v3"
+          else
+            ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
+          end
+    config.debug_api_calls = true        
+    ############## REGION ###############       
+    config.default_region = ENV['MONSOON_DASHBOARD_REGION']
+    
+    #############ä SERVICE USER #############
+    config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
+    config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
+    config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
+
   end
 end
