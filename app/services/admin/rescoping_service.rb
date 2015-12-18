@@ -4,12 +4,6 @@ module Admin
     class << self
     
       ########################## FRIENDLY_ID_ENTRIES #########################
-      def reset_domain_friendly_id(domain_id)
-        sql = ["class_name=? and (slug=? or key=?)",'Domain',domain_id,domain_id]
-        entry = FriendlyIdEntry.where(sql).first
-        entry.delete if entry
-      end
-  
       # find or create friendly_id entry for domain
       def domain_friendly_id(domain_fid_id_or_key)
         # try to find an entry by given fid or key
@@ -26,7 +20,7 @@ module Admin
 
           # create friendly_id entry
           if domain
-            entry = FriendlyIdEntry.create(class_name: 'Domain', key: domain.id, name: domain.name)
+            entry = FriendlyIdEntry.find_or_create_entry('Domain', nil, domain.id, domain.name)
           end
         end
         entry
@@ -54,7 +48,7 @@ module Admin
     
         # create friendly_id entry
         if project
-          entry = FriendlyIdEntry.create(class_name: 'Project', scope: project.domain_id, key: project.id, name: project.name)
+          entry = FriendlyIdEntry.find_or_create_entry('Project', project.domain_id, project.id, project.name)
         end
         entry
       end  

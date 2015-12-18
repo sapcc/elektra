@@ -146,36 +146,12 @@ class DashboardController < ::ScopeController
     end
   end
 
-  ######################## ERROR HANDLING ########################
-  # For the case that the dashboard is reconnected to another keystone the keys of
-  # friendly id entries are outdated and should be reseted.
-  def reset_domain_friendly_id
-    #
-    # domain = services.admin_identity.domain(@scoped_domain_id)
-    # p ":::::::::::::::::::::::DOMAIN"
-    # p domain
-    # # delete cached frienly ids and reload page.
-    # unless domain
-    #   services.admin_identity.reset_domain_friendly_id(@scoped_domain_fid)
-    #   #services.admin_identity.domain_friendly_id(@scoped_domain_id)
-    #   redirect_to url_for(params)
-    #   return true
-    # else
-    #   return false
-    # end
-    false
-  end
-
   def handle_api_error(exception)
-    return if reset_domain_friendly_id
-
     @errors = DomainModelServiceLayer::ApiErrorHandler.parse(exception)
     render template: 'dashboard/error'
   end
 
   def handle_auth_error(exception)
-    return if reset_domain_friendly_id
-
     # the user token can be invaild if for example the domain permission has been modified in backend.
     # in this case redirect user to login form
     valid_token = Admin::IdentityService.validate_token(current_user.token) if current_user
