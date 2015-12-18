@@ -7,11 +7,10 @@
       .bs-callout.bs-callout-info
         Nothing to report! Everything is fine.
     - else
-      - @area_services.each do |service|
-        - resources = @resource_status[service] || nil
-        - unless resources.nil?
-          - resources.each do |resource|
-            = render :partial => 'bar_row', :locals => { :overview => true,  :data => resource, :service => service }
+      - @all_services.sort.each do |service|
+        - resources = @resource_status[service] || []
+        - resources.sort_by { |r| r[:name] }.each do |resource|
+          = render :partial => 'bar_row', :locals => { :overview => true,  :data => resource, :service => service }
       = render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
   .col-md-3
     = render :partial => 'good_to_know', :locals => { :tab => 'overview'}

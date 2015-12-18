@@ -1,29 +1,22 @@
 - render_usage = false if !render_usage
 
-- data_type                 = data[:domain_quota].attributes[:data_type]
-- current_project_quota_sum = data[:current_project_quota_sum]
-- active_project_quota      = data[:active_project_quota] # if true all project quotas are limited
-- approved_quota_for_domain = data[:domain_quota].approved_quota
-- usage_project_sum         = data[:usage_project_sum]
+- data_type                  = data[:domain_resource].attributes[:data_type]
+- current_quota_sum          = data[:current_quota_sum]
+- has_infinite_current_quota = data[:has_infinite_current_quota]
+- approved_quota_for_domain  = data[:domain_resource].approved_quota
+- usage_sum                  = data[:usage_sum]
 
--# to render the warning in good_to_know partial
-- @warning = true if current_project_quota_sum > approved_quota_for_domain or not active_project_quota 
+- fill = render_usage ? usage_sum : current_quota_sum
 
-- fill = current_project_quota_sum
-- fill = usage_project_sum if render_usage
-
-- if active_project_quota and approved_quota_for_domain >= 0
-  -# all project quotas are limited (that should be the normal case, hopefully)
-  - if approved_quota_for_domain < fill
-    -# special case where the project admins overrun the approved quotas for the domain
-    = resource_bar(fill: fill, maximum: { value: fill, label: "" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
-  - else 
-    -# in this case everything is fine :-)
-    = resource_bar(fill: fill, maximum: [fill,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
-- elsif approved_quota_for_domain == -1
+- if approved_quota_for_domain < 0
   -# special case if dpmain quota unlimited (that should never be the case ;-))
   = resource_bar( fill: fill, maximum: { value: -1, label: "No approved quota found" }, threshold: { value: fill, label: "Quota unlimited!" }, data_type: data_type )
-- else
+- elsif has_infinite_current_quota
   -# one or more project quotas are unlimited (in that case the project admins are the bad guys)
   = resource_bar( fill: fill, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type )
-
+- elsif approved_quota_for_domain < fill
+  -# special case where the project admins overrun the approved quotas for the domain
+  = resource_bar(fill: fill, maximum: { value: fill, label: "" }, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)
+- else
+  -# in this case everything is fine :-)
+  = resource_bar(fill: fill, maximum: [fill,approved_quota_for_domain].max, threshold: { value: approved_quota_for_domain, label: "Approved quota: $VALUE" }, data_type: data_type)

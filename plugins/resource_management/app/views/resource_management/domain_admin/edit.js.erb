@@ -1,2 +1,4 @@
-$("#<%=@project%>_approved_quota").html("<input id='<%=@project%>_edit_value' type='text' class='form-control' value='<%=@value%>' autofocus>");
-$("#<%=@project%>_edit").html("<%= escape_javascript( link_to 'Update', '#', onclick: "update('#{@project}');" , class: 'btn btn-primary btn-sm')%>")
+<% value = format_usage_or_quota_value(@project_resource.approved_quota, @project_resource.attributes[:data_type]) %>
+var row = $('.resource-details tr[data-project="<%= @project_resource.project_id %>"]');
+row.find('.resource-approved-quota').html('<input type="text" class="form-control resource-approved-quota-edit" value="<%= value %>" autofocus>');
+row.find('.resource-actions').html("<%= escape_javascript( link_to 'Save', '#', onclick: "set_approved_quota(this);" , class: 'btn btn-primary btn-sm')%>")

@@ -18,9 +18,13 @@ module ResourceManagement
         @srv_conn.list_domains.body['domains'].map { |domain| domain['id'] }
       end
 
-      # List all project IDs that exist in the given domain.
+      # List all projects that exist in the given domain, as a hash of { id => name }.:
       def enumerate_projects(domain_id)
-        @srv_conn.list_projects(domain_id: domain_id).body['projects'].map { |domain| domain['id'] }
+        result = {}
+        @srv_conn.list_projects(domain_id: domain_id).body['projects'].each do |project|
+          result[ project['id'] ] = project['name']
+        end
+        return result
       end
 
       # Query quotas for the given project from the given service.
