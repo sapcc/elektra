@@ -1,23 +1,16 @@
 - data_type = project_resource.attributes[:data_type]
 
-- class_name = ""
-- if project_resource.current_quota == -1
-  - class_name = "danger"
-- else
-  - class_name = "warning" if project_resource.approved_quota > project_resource.current_quota
-  - class_name = "danger" if project_resource.approved_quota < project_resource.usage
-  - class_name = "danger" if project_resource.approved_quota < project_resource.current_quota
-
-%tr{ id: "#{project_resource.project_id}_quota_row", class: class_name }
+%tr{ id: "#{project_resource.project_id}_quota_row", class: warning_level_for_project(project_resource) }
   %td.col-md-3
-    = project_resource.project_id
+    - pid = project_resource.project_id
+    = @project_names[pid] || pid
   %td.col-md-3
     %div{ id: "#{project_resource.project_id}_approved_quota", class: "input-group input-group-sm" }
       = format_usage_or_quota_value(project_resource.approved_quota,data_type )
   %td.col-md-2
     %div{ id: "#{project_resource.project_id}_current_quota" }
       - if project_resource.current_quota == -1
-        unlimited
+        Unlimited
       - else
         = format_usage_or_quota_value(project_resource.current_quota,data_type )
   %td.col-md-2
