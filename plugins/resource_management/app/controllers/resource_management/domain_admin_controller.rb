@@ -136,11 +136,11 @@ module ResourceManagement
         end
  
         @resource_status[service.to_sym] << { 
-          name:                      name,
-          current_project_quota_sum: current_quota_sum,
-          usage_project_sum:         usage_sum,
-          active_project_quota:      !has_infinite_current_quota, # TODO: wonky name
-          domain_quota:              domain_resource,
+          name:                       name,
+          current_quota_sum:          current_quota_sum,
+          usage_sum:                  usage_sum,
+          has_infinite_current_quota: has_infinite_current_quota,
+          domain_resource:            domain_resource,
         } 
       end
     end
@@ -164,11 +164,11 @@ module ResourceManagement
         pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
 
       @resource_status = {
-        name:                      resource,
-        current_project_quota_sum: current_quota_sum,
-        usage_project_sum:         usage_sum,
-        active_project_quota:      min_current_quota >= 0, # TODO: wonky name, should be inversed, then called "has_infinite_project_quota"
-        domain_quota:              domain_resource,
+        name:                       resource,
+        current_quota_sum:          current_quota_sum,
+        usage_sum:                  usage_sum,
+        has_infinite_current_quota: min_current_quota < 0,
+        domain_resource:            domain_resource,
       }
 
       return project_resources # this is used for further data collection by details()
