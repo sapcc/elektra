@@ -7,7 +7,7 @@
       .bs-callout.bs-callout-info
         Nothing to report! Everything is fine.
     - else
-      - @area_services.each do |service|
+      - @all_services.each do |service|
         - resources = @resource_status[service] || nil
         - unless resources.nil?
           - resources.each do |resource|

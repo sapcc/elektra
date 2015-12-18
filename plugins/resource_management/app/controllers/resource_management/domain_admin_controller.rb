@@ -4,23 +4,20 @@ module ResourceManagement
   class DomainAdminController < ApplicationController
 
     def index
-      @area_services = []
-      ResourceManagement::Resource::KNOWN_SERVICES.each do |service_config|
-        @area_services << service_config[:service]
-      end
-      
-      @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
-      get_resource_status(true)
+      @all_services = ResourceManagement::Resource::KNOWN_SERVICES.
+        select { |srv| srv[:enabled] }.
+        map    { |srv| srv[:service] }
+
+      prepare_data_for_resource_list(@all_services, overview: true)
     end
 
     def show_area
       @area = params.require(:area).to_sym
-      # which services belong to this area?
-      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:area] == @area }.map { |srv| srv[:service] }
-      # load domain quota for these services
-      @domain_quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => nil, :service => @area_services)
-      # load quota and usage for all projects within these domain
-      get_resource_status()
+      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.
+        select { |srv| srv[:enabled] && srv[:area] == @area }.
+        map    { |srv| srv[:service] }
+
+      prepare_data_for_resource_list(@area_services)
     end
 
     def edit
@@ -112,51 +109,45 @@ module ResourceManagement
        obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
     end
  
-    def get_resource_status(critical = false, resource = nil, render_projects = false)
-      # TODO FIXME: refactor this method (there are too many concerns in here)
+    def prepare_data_for_resource_list(services, options={})
+      # load resources for domain and projects within this domain
+      resources = ResourceManagement::Resource.
+        where(domain_id: @scoped_domain_id, service: services)
 
-      # get data for currently existing quotas
-      quotas = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :service => @area_services)
-      stats = quotas.where.not(project_id: nil).
-                     group("service,name").
-                     pluck("service,name,SUM(GREATEST(current_quota,0)),SUM(usage)")
-      
-      # this is used for details view
-      projects_data = quotas.where.not(project_id: nil)
-      # get min and max update of all quotas (for one resource or all)
-      @min_updated_at, @max_updated_at = projects_data.pluck("MIN(updated_at), MAX(updated_at)").first
+      domain_resources  = resources.where(project_id: nil).to_a
+      project_resources = resources.where.not(project_id: nil)
 
-      # get unlimited quotas
-      unlimited = ResourceManagement::Resource.
-          where(:domain_id => @scoped_domain_id, :service => @area_services).
-          where.not(project_id: nil).
-          where(:current_quota => -1) 
+      # check data age (see _data_age partial view)
+      @min_updated_at, @max_updated_at = project_resources.pluck("MIN(updated_at), MAX(updated_at)").first
 
-      @resource_status = {}
+      # examine project quotas and usage
+      stats = project_resources.
+        group("service, name").
+        pluck("service, name, MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)")
+
+      # prepare data for each resource for display
+      @resource_status = Hash.new { |h,k| h[k] = [] }
       stats.each do |stat|
-        service, name, current_project_quota_sum, usage_project_sum = *stat
-        domain_service_quota = @domain_quotas.find { |q| q.service == service && q.name == name }
-        # search for unlimited current quotas
-        unlimited_project_quota_found = unlimited.find{|q| q.service == service && q.name == name}
-       
-        active_project_quota = unlimited_project_quota_found.nil?
-        # when no domain quota exists yet, use an empty mock object
-        domain_service_quota ||= ResourceManagement::Resource.new(
+        service, name, min_current_quota, current_quota_sum, usage_sum = *stat
+        has_infinite_current_quota = min_current_quota < 0
+
+        # use existing domain resource, or create an empty mock object as a placeholder
+        domain_resource = domain_resources.find { |q| q.service == service && q.name == name }
+        domain_resource ||= ResourceManagement::Resource.new(
           service: service, name: name, approved_quota: -1,
         )
 
-        # filter critical quotas
-        if critical
-          next if current_project_quota_sum < domain_service_quota.approved_quota and active_project_quota
+        # on overview, show only critical quotas
+        if options[:overview]
+          next if current_quota_sum < domain_resource.approved_quota and !has_infinite_current_quota
         end
  
-        @resource_status[service.to_sym] ||= []
         @resource_status[service.to_sym] << { 
-          :name                      => name,
-          :current_project_quota_sum => current_project_quota_sum,
-          :usage_project_sum         => usage_project_sum,
-          :active_project_quota      => active_project_quota,
-          :domain_quota              => domain_service_quota,
+          name:                      name,
+          current_project_quota_sum: current_quota_sum,
+          usage_project_sum:         usage_sum,
+          active_project_quota:      !has_infinite_current_quota, # TODO: wonky name
+          domain_quota:              domain_resource,
         } 
       end
     end
