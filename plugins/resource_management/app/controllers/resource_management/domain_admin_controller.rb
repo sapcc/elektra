@@ -135,13 +135,13 @@ module ResourceManagement
           next if current_quota_sum < domain_resource.approved_quota and !has_infinite_current_quota
         end
  
-        @resource_status[service.to_sym] << { 
+        @resource_status[service.to_sym] << {
           name:                       name,
           current_quota_sum:          current_quota_sum,
           usage_sum:                  usage_sum,
           has_infinite_current_quota: has_infinite_current_quota,
           domain_resource:            domain_resource,
-        } 
+        }
       end
     end
 
