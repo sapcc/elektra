@@ -29,11 +29,13 @@ module Inquiry
       # get the admins
       admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
       inquiry = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
-      unless inquiry.errors
+      unless inquiry.errors?
         flash[:notice] = "Inquiry successfully created."
         redirect_to inquiries_path
       else
+        flash[:error] = "Error creating inquiry: #{inquiry.errors.full_messages.to_sentence}."
         Rails.logger.error "Inquiry: Error creating inquiry: #{inquiry.errors.full_messages}"
+        @inquiry = Inquiry.new(requester_id: current_user.id)
         render action: :new
       end
     end
@@ -52,7 +54,7 @@ module Inquiry
         render 'inquiry/inquiries/update.js'
       else
         @inquiry.aasm_state = inquiry_params[:aasm_state]
-       render action: :edit
+        render action: :edit
       end
     end
 
