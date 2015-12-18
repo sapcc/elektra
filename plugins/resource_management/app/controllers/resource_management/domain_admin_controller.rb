@@ -131,9 +131,13 @@ module ResourceManagement
         )
 
         # on overview, show only critical quotas
+        is_critical = current_quota_sum > domain_resource.approved_quota or has_infinite_current_quota
         if options[:overview]
-          next if current_quota_sum < domain_resource.approved_quota and !has_infinite_current_quota
+          next unless is_critical
         end
+
+        # show warning in infobox when there are critical quotas
+        @show_warning = true if is_critical
  
         @resource_status[service.to_sym] << {
           name:                       name,
