@@ -10,18 +10,8 @@ end
 MonsoonOpenstackAuth.configure do |auth|
   # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
   # auth.connection_driver = DriverClass
-
-  auth.connection_driver.api_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
-                                            proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
-                                            host  = ENV['AUTHORITY_SERVICE_HOST']
-                                            port  = ENV['AUTHORITY_SERVICE_PORT']
-                                            "#{proto}://#{host}:#{port}/v3/auth/tokens"
-                                          else
-                                            ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
-                                          end
-  auth.connection_driver.api_userid   = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
-  auth.connection_driver.api_domain   = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
-  auth.connection_driver.api_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
+  
+  auth.connection_driver.api_endpoint = Rails.application.config.keystone_endpoint
   auth.connection_driver.ssl_verify_peer = false
 
   # optional, default=true
@@ -35,8 +25,6 @@ MonsoonOpenstackAuth.configure do |auth|
 
   # optional, default=false
   auth.access_key_auth_allowed = false
-
-  auth.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'europe'
 
   # optional, default=sap_default
   auth.default_domain_name = 'sap_default'
@@ -60,6 +48,6 @@ MonsoonOpenstackAuth.configure do |auth|
   }
 
   # optional, default=false
-  auth.debug=true
+  auth.debug=Rails.application.config.debug_api_calls
 end
 
