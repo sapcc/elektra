@@ -2,3 +2,9 @@
 var row = $('.resource-details tr[data-project="<%= @project_resource.project_id %>"]');
 row.find('.resource-approved-quota').html('<input type="text" class="form-control resource-approved-quota-edit" value="<%= value %>" autofocus>');
 row.find('.resource-actions').html("<%= escape_javascript( render partial: 'edit_buttons')%>")
+
+row.find('.resource-approved-quota input.form-control.resource-approved-quota-edit').keyup(function(event){
+  if(event.keyCode == 13){
+     row.find('div.resource-actions a.btn.btn-primary.btn-sm').click();
+  }
+});
