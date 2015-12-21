@@ -1,14 +1,6 @@
 <% approved_value = format_usage_or_quota_value(@project_resource.approved_quota, @project_resource.attributes[:data_type]) %>
-<% current_value = format_usage_or_quota_value(@project_resource.current_quota, @project_resource.attributes[:data_type]) %>
 
 var row = $('.resource-details tr[data-resource="<%= @project_resource.id %>"]');
 // render table
 row.find('.resource-approved-quota').html('<%= approved_value %>');
-row.find('.resource-current-quota').html('<%= current_value %>');
 row.find('.resource-actions').html("<%= escape_javascript( link_to 'Edit', plugin('resource_management').admin_edit_path(id: @project_resource.id), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true )%>");
-// render usage bars
-$("#usage_bars").html("<%= escape_javascript(render :partial => "details_usage_bar")%>");
-// hide alerts 
-$('.alert-danger').css('display','none');
-// remove danger or warning classes from row
-row.removeClass("danger").removeClass("warning");

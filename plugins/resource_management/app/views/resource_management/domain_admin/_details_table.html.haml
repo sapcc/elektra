@@ -32,3 +32,17 @@
         }
       });
     };
+
+    function cancel(button) {
+      // resource ID is annotated on the row
+      row = $(button).closest('tr');
+
+      $.ajax({
+        url: "#{plugin('resource_management').admin_cancel_path()}",
+        dataType: 'script',
+        data: {
+          id:    row.data('resource'),
+        }
+      });
+    };
+        
