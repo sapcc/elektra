@@ -14,6 +14,6 @@
           No #{t("resource_management.#{service}")} Quotas found!
     = render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
   .col-md-3
-    = render :partial => 'good_to_know', :locals => { :tab => @area.to_s }
+    = render partial: 'good_to_know'
 
 
