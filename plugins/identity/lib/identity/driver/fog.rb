@@ -10,7 +10,8 @@ module Identity
           @fog = params_or_driver 
         else
           super(params_or_driver)
-          @fog = ::Fog::IdentityV3::OpenStack.new(auth_params)
+          @fog = ::Fog::Identity::OpenStack::V3.new(auth_params)
+          # @fog = ::Fog::IdentityV3::OpenStack.new(auth_params)
         end
       end  
     

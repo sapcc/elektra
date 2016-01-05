@@ -30,8 +30,9 @@ gem 'pg'
 gem 'activerecord-session_store'
 
 # Openstack
-gem 'monsoon-fog', git: 'git://localhost/monsoon/monsoon-fog.git', :ref => '52f4b2'
-gem 'fog', git: 'git://localhost/monsoon/fog.git', branch: 'master', :ref => 'b3c62'
+gem 'net-ssh'
+# gem 'monsoon-fog', git: 'git://localhost/monsoon/monsoon-fog.git'#, :ref => '52f4b2'
+gem 'fog', git: 'git://localhost/monsoon/fog.git', branch: 'master'#, :ref => 'b3c62'
 
 #gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: "no-fog"
