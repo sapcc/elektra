@@ -18,15 +18,12 @@ ResourceManagement::Engine.routes.draw do
     get 'cancel'  => 'domain_admin#cancel'
   end
 
-  # this is only for demo, I have no idea where I can put the cloudadmin views
   scope 'cloud_admin', as: 'cloud_admin' do
     get '/'        => 'cloud_admin#index'
     get ':area',  to: 'cloud_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
     get 'details'  => 'cloud_admin#details'
     get 'request'  => 'cloud_admin#resource_request'
+    get 'sync_now' => 'cloud_admin#sync_now'
   end
  
-  # TODO: remove (or move into cloud admin scope)
-  get 'manual_sync' => 'project_resources#manual_sync'
-
 end

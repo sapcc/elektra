@@ -1,0 +1,17 @@
+- cloud_resource = data[:cloud_resource]
+.row
+  .col-md-2.quota-label
+    .text-muted
+      - if overview
+        = link_to t("resource_management.#{cloud_resource[:name]}"), plugin('resource_management').cloud_admin_area_path(area: cloud_resource.attributes[:area])
+      - else
+        = t("resource_management.#{cloud_resource[:name]}")
+      - if overview
+        .small
+          .small= t("resource_management.#{service}")
+
+  .col-md-7
+    = render partial: 'bar', locals: { data: data }
+
+  .col-md-1.quota-request-more
+    = link_to 'Details', plugin('resource_management').cloud_admin_details_path(service: service, resource: data[:name], overview: overview), data: { modal: true }, class: 'btn btn-primary btn-sm', title: 'Open related service'
