@@ -1,19 +1,10 @@
 .row
-  .col-md-2.quota-label
-    .text-muted
-      - if overview
-        = link_to t("resource_management.#{data[:domain_resource][:name]}"), plugin('resource_management').admin_area_path(area: data[:domain_resource].attributes[:area])
-      - else
-        = t("resource_management.#{data[:domain_resource][:name]}")
-      - if overview
-        .small
-          .small= t("resource_management.#{service}")
-    
+  = render partial: 'resource_name', locals: { resource: data[:domain_resource], scope: 'admin', overview: overview }
   .col-md-7
-    = render :partial => 'bar', :locals => { :data => data }
-  
+    = render partial: 'bar', locals: { data: data }
+
   .col-md-1.quota-request-more
-    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'open related service'
+    = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'Open related service'
   .col-md-1.quota-request-more
     - if data[:current_quota_sum] > 0 and data[:domain_resource].approved_quota >= 0 and not data[:has_infinite_project_quota]
       = link_to 'Request more',plugin('resource_management').admin_request_path( :service => service, :resource => data[:name]), data: {modal: true}, class: 'btn btn-primary btn-sm'

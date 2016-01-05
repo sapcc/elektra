@@ -1,0 +1,26 @@
+-# This partial renders the resource name left of a resource bar. Locals:
+-# * resource: a Resource record (required)
+-# * scope: one of "resources", "admin", "cloud_admin" (required)
+-# * overview: if true, render the service name below the resource name (for views that mix multiple services)
+
+.col-md-2.quota-label
+  .text-muted
+    - area = resource.attributes[:area]
+    - if overview
+      = link_to t("resource_management.#{resource.name}"), plugin('resource_management').send("#{scope}_area_path", area: area)
+      .small
+        .small= t("resource_management.#{resource.service}")
+    - else
+      - translated_name = t("resource_management.#{resource.name}")
+      - if scope == 'resources'
+        - case area
+          - when :storage
+            = link_to translated_name, '#', resource: { confirm: "Storage service not implemented yet." }, title: "Open #{area} service"
+          - when :compute
+            = link_to translated_name, plugin('compute').instances_path(), title: "Open #{area} service"
+          - when :network
+            = link_to translated_name, plugin('networking').networks_path(), title: "Open #{area} service"
+          - else
+            = translated_name
+      - else
+        = translated_name

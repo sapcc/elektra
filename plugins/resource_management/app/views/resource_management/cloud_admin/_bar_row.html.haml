@@ -1,15 +1,5 @@
-- cloud_resource = data[:cloud_resource]
 .row
-  .col-md-2.quota-label
-    .text-muted
-      - if overview
-        = link_to t("resource_management.#{cloud_resource[:name]}"), plugin('resource_management').cloud_admin_area_path(area: cloud_resource.attributes[:area])
-      - else
-        = t("resource_management.#{cloud_resource[:name]}")
-      - if overview
-        .small
-          .small= t("resource_management.#{service}")
-
+  = render partial: 'resource_name', locals: { resource: data[:cloud_resource], scope: 'cloud_admin', overview: overview }
   .col-md-7
     = render partial: 'bar', locals: { data: data }
 
