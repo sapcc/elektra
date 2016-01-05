@@ -40,15 +40,5 @@ module ResourceManagement
       end
     end
 
-    def manual_sync
-      service = services.resource_management
-      service.sync_all_domains(with_projects: true)
-      begin
-        redirect_to :back
-      rescue ActionController::RedirectBackError
-        render text: "Synced!"
-      end
-    end
-
   end
 end
