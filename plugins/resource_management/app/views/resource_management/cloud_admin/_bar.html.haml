@@ -1,12 +1,11 @@
-- cloud_resource = data[:cloud_resource]
-- data_type      = cloud_resource.attributes[:data_type]
+- capacity = data[:capacity]
+- data_type      = capacity.attributes[:data_type]
 - usage_sum      = data[:usage_sum]
-- capacity       = cloud_resource.approved_quota
 
-- if capacity < 0
+- if capacity.value < 0
   -# special case if capacity was not yet maintained
   = resource_bar(fill: usage_sum, maximum: { value: -1, label: "No total capacity maintained" }, threshold: { value: usage_sum, label: "" }, data_type: data_type)
 - else
   -# normal case (capacity is also given as threshold to account for the case
   -# that usage_sum > capacity for overcommittable resources)
-  = resource_bar(fill: usage_sum, maximum: [usage_sum, capacity].max, threshold: { value: capacity, label: "Capacity: $VALUE" }, data_type: data_type)
+  = resource_bar(fill: usage_sum, maximum: [usage_sum, capacity.value].max, threshold: { value: capacity.value, label: "Capacity: $VALUE" }, data_type: data_type)

@@ -1,6 +1,6 @@
 module ResourceManagement
   class Resource < ActiveRecord::Base
-    #validates [:service, :name], presence: true
+    validates_presence_of :domain_id, :service, :name
 
     KNOWN_SERVICES = [
       # "service" is the service from which we pull this resource.
