@@ -29,7 +29,7 @@ module ResourceManagement
       @project_resource = ResourceManagement::Resource.find(params.require(:id))
       raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
       respond_to do |format|
-        format.js
+        format.js { render action: 'update' }
       end
     end
 
