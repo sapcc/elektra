@@ -1,4 +1,13 @@
 <% value = format_usage_or_quota_value(@project_resource.approved_quota, @project_resource.attributes[:data_type]) %>
 var row = $('.resource-details tr[data-project="<%= @project_resource.project_id %>"]');
 row.find('.resource-approved-quota').html('<input type="text" class="form-control resource-approved-quota-edit" value="<%= value %>" autofocus>');
-row.find('.resource-actions').html("<%= escape_javascript( link_to 'Save', '#', onclick: "set_approved_quota(this);" , class: 'btn btn-primary btn-sm')%>")
+row.find('.resource-actions').html("<%= escape_javascript( render partial: 'edit_buttons')%>")
+
+//finish editing when Enter key pressed
+row.find('input.form-control').keyup(function(event) {
+  if (event.keyCode == 13) {
+     row.find('a.btn-primary').click();
+  }
+});
+//focus first input field
+row.find('input.form-control').eq(0).focus().select();

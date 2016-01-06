@@ -25,6 +25,14 @@ module ResourceManagement
       raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
     end
 
+    def cancel
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
+      respond_to do |format|
+        format.js { render action: 'update' }
+      end
+    end
+
     def update
       # load Resource record to modify
       @project_resource = ResourceManagement::Resource.find(params.require(:id))
@@ -40,11 +48,14 @@ module ResourceManagement
         return
       end
 
-      @project_resource.approved_quota = value
-      @project_resource.current_quota  = value
-      services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
-      @project_resource.save
-
+      # do only a upgrade if the values are different otherwise it meaningless
+      if @project_resource.approved_quota != value
+        @project_resource.approved_quota = value
+        @project_resource.current_quota  = value
+        services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
+        @project_resource.save
+      end
+      
       # prepare data for view
       prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
 
