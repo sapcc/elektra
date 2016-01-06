@@ -10,7 +10,7 @@
     .label-maximum.text-nowrap.text-muted= maximum[:label]
   - elsif upper_bound == threshold[:value]
     -# upper_bound is threshold
-    .label-maximum.text-nowrap.text-danger #{maximum[:label]} &ndash; #{threshold[:label]}
+    .label-maximum.text-nowrap.text-danger= [ maximum[:label], threshold[:label] ].reject(&:blank?).join(" – ")
   - else
     -# upper_bound is fill level (but don't show fill label twice)
     .label-maximum.text-nowrap.text-danger= maximum[:label]

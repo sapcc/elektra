@@ -1,0 +1,7 @@
+.row
+  = render partial: 'resource_name', locals: { resource: data[:cloud_resource], scope: 'cloud_admin', overview: overview }
+  .col-md-7
+    = render partial: 'bar', locals: { data: data }
+
+  .col-md-1.quota-request-more
+    = link_to 'Details', plugin('resource_management').cloud_admin_details_path(service: service, resource: data[:name], overview: overview), data: { modal: true }, class: 'btn btn-primary btn-sm', title: 'Open related service'
