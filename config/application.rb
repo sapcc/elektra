@@ -2,7 +2,6 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
-
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -42,7 +41,7 @@ module MonsoonDashboard
           else
             ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
           end
-    config.debug_api_calls = true        
+    config.debug_api_calls = false        
     ############## REGION ###############       
     config.default_region = ENV['MONSOON_DASHBOARD_REGION']
     

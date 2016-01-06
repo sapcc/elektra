@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20160106132424) do
     t.string   "key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "endpoint"
   end
 
   add_index "friendly_id_entries", ["class_name", "key"], name: "index_friendly_id_entries_on_class_name_and_key", using: :btree
