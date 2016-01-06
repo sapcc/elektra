@@ -1,17 +1,18 @@
--# This partial renders the resource name left of a resource bar. Locals:
--# * resource: a Resource record (required)
+-# This partial renders the attr[:name] left of a resource bar. Locals:
+-# * resource: a Resource or Capacity record (required)
 -# * scope: one of "resources", "admin", "cloud_admin" (required)
--# * overview: if true, render the service name below the resource name (for views that mix multiple services)
+-# * overview: if true, render the service name below the attr[:name] (for views that mix multiple services)
 
 .col-md-2.quota-label
   .text-muted
-    - area = resource.attributes[:area]
+    - attr = resource.attributes
+    - area = attr[:area]
     - if overview
-      = link_to t("resource_management.#{resource.name}"), plugin('resource_management').send("#{scope}_area_path", area: area)
+      = link_to t("resource_management.#{attr[:name]}"), plugin('resource_management').send("#{scope}_area_path", area: area)
       .small
-        .small= t("resource_management.#{resource.service}")
+        .small= t("resource_management.#{attr[:service]}")
     - else
-      - translated_name = t("resource_management.#{resource.name}")
+      - translated_name = t("resource_management.#{attr[:name]}")
       - if scope == 'resources'
         - case area
           - when :storage

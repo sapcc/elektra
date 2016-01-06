@@ -1,5 +1,5 @@
 .row
-  = render partial: 'resource_name', locals: { resource: data[:cloud_resource], scope: 'cloud_admin', overview: overview }
+  = render partial: 'resource_name', locals: { resource: data[:capacity], scope: 'cloud_admin', overview: overview }
   .col-md-7
     = render partial: 'bar', locals: { data: data }
 
