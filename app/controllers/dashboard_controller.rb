@@ -94,7 +94,6 @@ class DashboardController < ::ScopeController
 
   # new user request
   def register_user_request
-
     inquiry = nil
 
     # checkif there is an request already open (can be resubmitted via browser back)
@@ -121,12 +120,18 @@ class DashboardController < ::ScopeController
     else
       message = "Please accept the terms of use!"
     end
-    unless inquiry.errors?
-      flash[:notice] = 'Your inquiry was send for further processing'
-      redirect_to :controller=>'dashboard', :action => 'new_user_request_message'
-    else
-      flash.now[:error] = "Your inquiry could not be created because: #{inquiry.errors.full_messages.to_sentence}"
+    
+    if message
+      flash.now[:error] = message
       render action: :new_user_request
+    else
+      unless inquiry.errors?
+        flash[:notice] = 'Your inquiry was send for further processing'
+        redirect_to :controller=>'dashboard', :action => 'new_user_request_message'
+      else
+        flash.now[:error] = "Your inquiry could not be created because: #{inquiry.errors.full_messages.to_sentence}"
+        render action: :new_user_request
+      end
     end
   end
 
@@ -146,36 +151,12 @@ class DashboardController < ::ScopeController
     end
   end
 
-  ######################## ERROR HANDLING ########################
-  # For the case that the dashboard is reconnected to another keystone the keys of
-  # friendly id entries are outdated and should be reseted.
-  def reset_domain_friendly_id
-    #
-    # domain = services.admin_identity.domain(@scoped_domain_id)
-    # p ":::::::::::::::::::::::DOMAIN"
-    # p domain
-    # # delete cached frienly ids and reload page.
-    # unless domain
-    #   services.admin_identity.reset_domain_friendly_id(@scoped_domain_fid)
-    #   #services.admin_identity.domain_friendly_id(@scoped_domain_id)
-    #   redirect_to url_for(params)
-    #   return true
-    # else
-    #   return false
-    # end
-    false
-  end
-
   def handle_api_error(exception)
-    return if reset_domain_friendly_id
-
     @errors = DomainModelServiceLayer::ApiErrorHandler.parse(exception)
     render template: 'dashboard/error'
   end
 
   def handle_auth_error(exception)
-    return if reset_domain_friendly_id
-
     # the user token can be invaild if for example the domain permission has been modified in backend.
     # in this case redirect user to login form
     valid_token = Admin::IdentityService.validate_token(current_user.token) if current_user

@@ -9,8 +9,7 @@ RSpec.describe Admin::RescopingService do
       
     context 'entry exists' do
       let!(:key) {'1234-5678'}
-      let!(:entry) { FriendlyIdEntry.create(class_name:'Domain',key: key, name: 'Test Domain') }
-    
+      let!(:entry) { FriendlyIdEntry.find_or_create_entry('Domain', nil, key, 'Test Domain') }
       
       it "should find entry by key" do
         expect(Admin::RescopingService.domain_friendly_id(key)).to eq(entry)
@@ -53,7 +52,7 @@ RSpec.describe Admin::RescopingService do
     context 'entry exists' do
 
       let!(:key) {'1234-5678'}
-      let!(:entry) { FriendlyIdEntry.create(class_name:'Project', scope: domain_id, key: key, name: 'Project 1') }
+      let!(:entry) { FriendlyIdEntry.find_or_create_entry('Project', domain_id, key, 'Project 1') }
 
 
       it "should find entry by key" do

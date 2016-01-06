@@ -59,16 +59,30 @@ module Admin
         return admins.delete_if {|a| a.id == nil} # delete crap
       end
       
+      def service_user_token
+        # create a new service user unless already created or if token is expired
+        unless (@service_user and @service_user_expires_at and @service_user_expires_at>Time.now)
+          @service_user = MonsoonOpenstackAuth.api_client.auth_user(
+            Rails.application.config.service_user_id,
+            Rails.application.config.service_user_password,
+            domain_name: Rails.application.config.service_user_domain_name,
+            scoped_token: true # fog requires a domain scoped token -> scope: { domain: {name: DOMAIN} }
+          )
+          # remember the token
+          @service_user_expires_at = @service_user.token_expires_at if @service_user
+        end
+        @service_user.token rescue nil
+      end
+      
       def admin_identity
-        region = MonsoonOpenstackAuth.configuration.default_region
-        servce_user_connection = MonsoonOpenstackAuth.api_client(region).connection_driver.connection
-    
-        if @admin_identity.nil? or @admin_identity.token!=servce_user_connection.auth_token      
-          @admin_identity = DomainModelServiceLayer::ServicesManager.service(:identity,{
-            region: region,
-            token: servce_user_connection.auth_token
+        # create new admin_identity unless already created or token has changed
+        unless (@admin_identity and @admin_identity.token==service_user_token)
+          @admin_identity = DomainModelServiceLayer::ServicesManager.service(:identity, {
+            region: Rails.application.config.default_region,
+            token: service_user_token
           })
         end
+          
         @admin_identity
       end
     end
