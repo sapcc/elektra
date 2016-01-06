@@ -1,6 +1,0 @@
-<% approved_value = format_usage_or_quota_value(@project_resource.approved_quota, @project_resource.attributes[:data_type]) %>
-
-var row = $('.resource-details tr[data-resource="<%= @project_resource.id %>"]');
-// render table
-row.find('.resource-approved-quota').html('<%= approved_value %>');
-row.find('.resource-actions').html("<%= escape_javascript( link_to 'Edit', plugin('resource_management').admin_edit_path(id: @project_resource.id), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true )%>");
