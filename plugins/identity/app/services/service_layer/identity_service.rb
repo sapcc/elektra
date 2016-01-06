@@ -10,7 +10,7 @@ module ServiceLayer
         region:     self.region,
         token:      self.token,
         domain_id:  self.domain_id,
-        project_id: self.project_id  
+        project_id: self.project_id
       })
     end
 
