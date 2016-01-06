@@ -5,35 +5,23 @@ module ResourceManagement
     class Fog < Interface
       include DomainModelServiceLayer::FogDriver::ClientHelper
 
-      def initialize(params)
+      def initialize(params)        
         super(params)
         # get existing service user connection (we need this to enumerate all
         # existing domains and projects, and to authorize the service user's
         # access to new domains and projects where necessary)
+
+        # set service_user_token given by params (see app/services/service_layer/resource_management_service.rb)
+        @service_user_token = params[:service_user_token]
         
-        # DO NOT USE SERVICE USER FROM AUTH GEM!!! The support for service user in auth gem will be removed soon.
-        # @srv_conn = MonsoonOpenstackAuth.api_client(@region).connection_driver.connection
-        # Instead create a new client for service user
-        @srv_conn = self.class.service_user_connection
-      end
+        # create service_user_connection
+        @srv_conn = self.class.service_user_connection(@service_user_token,auth_params)
+      end  
       
-      # it changes with the next version of dashboard
-      def self.service_user_connection
-        endpoint = Rails.application.config.keystone_endpoint rescue ''
-        endpoint += '/' if endpoint.last!='/' 
-        endpoint += 'auth/tokens'
-                    
-        @service_user_connection ||= ::Fog::IdentityV3::OpenStack.new({
-          openstack_auth_url:     endpoint,
-          openstack_domain_name:  Rails.application.config.service_user_domain_name,
-          openstack_api_key:      Rails.application.config.service_user_password,
-          openstack_username:     Rails.application.config.service_user_id,
-          openstack_region:       Rails.application.config.default_region,
-          connection_options:     { ssl_verify_peer: false, debug: true },
-          openstack_service_type: ["identityv3"]
-        })   
-      end
-      
+      def self.service_user_connection(service_user_token,auth_params)
+        params = auth_params.select{|k,v| [:provider, :openstack_auth_url, :openstack_region, :connection_options].include?(k)}.merge(openstack_auth_token: service_user_token)
+        @service_user_connection ||= ::Fog::Identity::OpenStack::V3.new(params)
+      end    
 
       # List all domain IDs that exist.
       def enumerate_domains
@@ -153,9 +141,9 @@ module ResourceManagement
         auth_params = {
           openstack_auth_url:          @auth_url,
           openstack_region:            @region,
-          openstack_username:          ENV['MONSOON_OPENSTACK_AUTH_API_USERID'],
-          openstack_user_domain:       ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN'],
-          openstack_api_key:           ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
+          openstack_username:          Rails.application.config.service_user_id,
+          openstack_user_domain:       Rails.application.config.service_user_domain_name,
+          openstack_api_key:           Rails.application.config.service_user_password,
           openstack_project_domain_id: domain_id,
           openstack_project_id:        project_id,
           connection_options:          { ssl_verify_peer: false },
@@ -184,15 +172,17 @@ module ResourceManagement
         # can store and reuse the connection object)
         @service_project_id ||= @srv_conn.auth_projects.body['projects'].first['id']
         @swift_conn         ||= ::Fog::Storage::OpenStack.new(
+          provider:                    'openstack', 
           openstack_auth_url:          @auth_url,
           openstack_region:            @region,
-          openstack_username:          ENV['MONSOON_OPENSTACK_AUTH_API_USERID'],
-          openstack_user_domain:       ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN'],
-          openstack_api_key:           ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
+          openstack_username:          Rails.application.config.service_user_id,
+          openstack_user_domain:       Rails.application.config.service_user_domain_name,
+          openstack_api_key:           Rails.application.config.service_user_password,
           openstack_project_domain_id: domain_id,
           openstack_project_id:        @service_project_id,
           connection_options:          { ssl_verify_peer: false },
         )
+        
 
         # extract original storage URL from connection object, and store it
         # since we're going to modify it now
