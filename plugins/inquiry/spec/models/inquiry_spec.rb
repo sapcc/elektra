@@ -5,7 +5,7 @@ describe 'Inquiry' do
   before(:all) do
     @payload = {:key1 => "value1", :key2 => "value2"}.to_json
     token = AuthenticationStub.test_token
-    @user = MonsoonOpenstackAuth::Authentication::AuthUser.new('europe', token)
+    @user = ApplicationController::CurrentUserWrapper.new(MonsoonOpenstackAuth::Authentication::AuthUser.new(token),{})
     @processors = Inquiry::Processor.from_users([@user])
   end
 
