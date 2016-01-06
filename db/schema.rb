@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204095543) do
+ActiveRecord::Schema.define(version: 20160106132424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,17 @@ ActiveRecord::Schema.define(version: 20151204095543) do
     t.string   "email"
     t.string   "full_name"
   end
+
+  create_table "resource_management_capacities", force: :cascade do |t|
+    t.string   "cluster_id"
+    t.string   "service"
+    t.string   "resource"
+    t.integer  "value",      limit: 8
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "resource_management_capacities", ["service", "resource"], name: "resource_management_capacities_master_index", using: :btree
 
   create_table "resource_management_resources", force: :cascade do |t|
     t.string   "cluster_id"
