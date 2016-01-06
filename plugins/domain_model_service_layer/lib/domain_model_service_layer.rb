@@ -13,6 +13,7 @@ module DomainModelServiceLayer
       endpoint += '/' if endpoint.last!='/' 
       endpoint += 'auth/tokens'
     end
+    endpoint
   end
 
   # this module is included in controllers.
