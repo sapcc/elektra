@@ -69,6 +69,13 @@ RSpec.configure do |config|
   end
   config.before(:all) do
     DatabaseCleaner.start
+    
+    # set test environment variables
+    ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT'] = "http://localhost:8183/v3/auth/tokens"
+    ENV['MONSOON_DASHBOARD_REGION'] = 'europe'
+    ENV['MONSOON_OPENSTACK_AUTH_API_USERID'] = 'test'
+    ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'] = 'test'
+    ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN'] = 'test'
   end
   config.after(:all) do
     DatabaseCleaner.clean
