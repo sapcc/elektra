@@ -1,0 +1,15 @@
+%table.table.resource-details
+  %thead
+    %tr
+      %th Domain
+      %th granted Quota
+      %th current Quota
+      %th Usage
+      %th Edit
+  %tbody
+    - @domain_resources.each do |domain_resource|
+      = render :partial => 'details_table_row', :locals => { :domain_resource => domain_resource }
+  
+-#= paginate @domains, :theme => 'twitter-bootstrap-3', :remote => true
+
+       

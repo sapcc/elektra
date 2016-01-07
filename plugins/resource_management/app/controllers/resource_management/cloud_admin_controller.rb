@@ -36,13 +36,17 @@ module ResourceManagement
       @service  = params.require(:service).to_sym
       @resource = params.require(:resource).to_sym
       @area     = ResourceManagement::Resource::KNOWN_SERVICES.find { |s| s[:service] == @service }[:area]
-      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.
-        select { |srv| srv[:enabled] && srv[:area] == @area }.
-        map    { |srv| srv[:service] }
-      # some parts of data collection are shared with update()
-      prepare_data_for_resource_list(@area_services)
-
       
+      @domain_resources = ResourceManagement::Resource.
+        where(cluster_id: nil, name: @resource).
+        where(project_id: nil)
+
+      @domain_resources.each do |domain| 
+        usage = ResourceManagement::Resource.
+          where(domain_id: domain.domain_id, name: @resource).
+          where.not(project_id: nil).pluck("SUM(usage)")
+        domain.usage = usage[0]
+      end
     end
 
     private

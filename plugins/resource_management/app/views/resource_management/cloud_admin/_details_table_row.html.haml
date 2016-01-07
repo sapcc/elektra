@@ -1,0 +1,15 @@
+- data_type = domain_resource.attributes[:data_type]
+
+%tr
+  %td.col-md-3
+    = domain_resource.domain_id
+  %td.col-md-3
+    = format_usage_or_quota_value(domain_resource.approved_quota,data_type )
+  %td.col-md-2
+    = format_usage_or_quota_value(domain_resource.current_quota,data_type )
+  %td.col-md-2
+    = format_usage_or_quota_value(domain_resource.usage,data_type )
+  %td.col-md-2
+    .resource-actions
+      = link_to 'Edit', '#', class: 'btn btn-primary btn-sm', remote: true
+
