@@ -267,6 +267,12 @@ section {
   margin: 0 auto;
 }
 
+@media (min-width: $grid-float-breakpoint) {
+  .navbar-right {
+    margin-right: 0;
+  }
+}
+
 // ---------------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------------
@@ -352,7 +358,7 @@ footer, .footer {
   .context-container {
     position: relative;
 
-    .dropdown {
+    .dropdown-mega {
       position: static;
     }
   }
@@ -371,6 +377,19 @@ footer, .footer {
     margin-bottom: 0;
     padding: 0;
 
+    &.pull-right:last-child {
+      margin-right: 0;
+
+      > li {
+        border-right: none;
+
+        > .dropdown-menu {
+          right: -1px;
+          left: auto;
+        }
+      }
+    }
+
     > li {
       border-right: 1px solid rgba(51, 51, 51, 0.4);
       display: block;
@@ -379,9 +398,17 @@ footer, .footer {
       float: left;
       padding: 0 0 0 $context-breadcrumb-padding-horizontal;
 
+      &.context-admin {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
       &.open, &:hover {
         background-color: $dropdown-bg;
         border-color: $dropdown-border;
+      }
+
+      .fa {
+        margin-right: 5px;
       }
 
       > .dropdown-menu {
@@ -395,7 +422,7 @@ footer, .footer {
           @include container-width-responsive;
           @include column-count(3);
 
-          left: 0;
+          left: -1px;
           padding: $line-height-computed 0;
 
           a {
@@ -437,7 +464,7 @@ footer, .footer {
         padding: (($context-breadcrumb-height - 1px - ($context-breadcrumb-font-size - $font-size-base) - $line-height-computed) / 2) 0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
         padding-right: $context-breadcrumb-padding-horizontal;
 
-        &:active {
+        &:active, &:focus {
           text-decoration: none;
         }
       }

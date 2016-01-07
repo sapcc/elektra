@@ -7,9 +7,9 @@ module ApplicationHelper
       @@plugin_helpers ||= {}
       helper = @@plugin_helpers[plugin_name] ||= new(helper,plugin_name)
       helper.scope=scope
-      helper  
+      helper
     end
-    
+
     attr_accessor :scope
     # helper is ApplicationHelper, scope is a hash ({domain_id: DOMAIN_ID, project_id: PROJECT_ID})
     def initialize(helper,plugin_name)
@@ -17,7 +17,7 @@ module ApplicationHelper
       @plugin          = helper.send("#{plugin_name}_plugin")
       @main_app        = helper.main_app
     end
-    
+
     # delegate all methods to the plugin_helper. Clean the scope parameters before delegation!
     def method_missing(method,*args,&block)
       if method.to_s.ends_with?('_path') or method.to_s.ends_with?('_url')
@@ -28,8 +28,8 @@ module ApplicationHelper
         @scope[:domain_id] = options.delete(:domain_id) if options.has_key?(:domain_id)
         @scope[:project_id] = options.delete(:project_id) if options.has_key?(:project_id)
         @scope.delete_if{|key, value| value.nil? }
-        
-        # add prefix to the path 
+
+        # add prefix to the path
         options[:script_name] = @main_app.send("#{@plugin_name}_plugin_path",@scope)
         args << options
 
@@ -40,21 +40,21 @@ module ApplicationHelper
       end
     end
   end
-  
+
   def plugin(name)
     if plugin_available?(name)
       PluginUrlHelper.plugin_helper(self,name,{domain_id: @scoped_domain_fid, project_id: @scoped_project_fid})
     end
   end
-  
+
   def plugin_available?(name)
     self.respond_to?("#{name}_plugin".to_sym)
-  end  
-  
+  end
+
   # ---------------------------------------------------------------------------------------------------
   # Favicon Helpers
   # ---------------------------------------------------------------------------------------------------
-  
+
   def favicon_png
     capture_haml do
       haml_tag :link, rel: "icon", type: "image", href: image_path("favicon.png")
@@ -99,6 +99,14 @@ module ApplicationHelper
       haml_tag :span, class: "fa fa-external-link"
       haml_concat name
     end
+  end
+
+  def context_name
+    context = "Domain"
+    if @scoped_project_id
+      context = "Project"
+    end
+    context
   end
 
 end
