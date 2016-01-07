@@ -70,12 +70,13 @@ RSpec.configure do |config|
   config.before(:all) do
     DatabaseCleaner.start
     
-    # set test environment variables
-    ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT'] = "http://localhost:8183/v3/auth/tokens"
-    ENV['MONSOON_DASHBOARD_REGION'] = 'europe'
-    ENV['MONSOON_OPENSTACK_AUTH_API_USERID'] = 'test'
-    ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'] = 'test'
-    ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN'] = 'test'
+    # set test config variables
+    Rails.configuration.keystone_endpoint = "http://localhost:8183/v3/auth/tokens"
+    Rails.configuration.default_region = "europe"
+    Rails.configuration.service_user_id = "test"
+    Rails.configuration.service_user_password = "test"
+    Rails.configuration.service_user_domain_name = "test"
+    
   end
   config.after(:all) do
     DatabaseCleaner.clean
