@@ -33,9 +33,10 @@ module MonsoonDashboard
     
     
     ############# KEYSTONE ENDPOINT ##############
-    p "::::::::::::::::::::::::::::::"
+    p "::::::::::::::::::::::::::::::APPLICATION"
     p "ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT'] -> #{ENV['AUTHORITY_SERVICE_HOST']} && #{ENV['AUTHORITY_SERVICE_PORT']} -> #{ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']}"
     p "ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT'] -> #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}"
+    p ENV
     config.keystone_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
             proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
             host  = ENV['AUTHORITY_SERVICE_HOST']
