@@ -1,0 +1,8 @@
+.row
+  .col-md-2.quota-label
+    .text-muted
+      Resources usage
+  .col-md-9
+    = render partial: 'bar', locals: { data: @resource_status[@service][0] }
+
+

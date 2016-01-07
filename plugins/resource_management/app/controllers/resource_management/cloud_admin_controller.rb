@@ -30,6 +30,20 @@ module ResourceManagement
       end
     end
 
+    def details 
+      @show_all_button = true if params[:overview] == 'true'
+
+      @service  = params.require(:service).to_sym
+      @resource = params.require(:resource).to_sym
+      @area     = ResourceManagement::Resource::KNOWN_SERVICES.find { |s| s[:service] == @service }[:area]
+      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.
+        select { |srv| srv[:enabled] && srv[:area] == @area }.
+        map    { |srv| srv[:service] }
+      # some parts of data collection are shared with update()
+      prepare_data_for_resource_list(@area_services)
+
+      
+    end
 
     private
 
