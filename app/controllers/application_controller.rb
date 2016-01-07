@@ -81,6 +81,18 @@ class ApplicationController < ActionController::Base
     def full_name
       @session[:current_user_details]["description"] if @session[:current_user_details]
     end
+    
+    def cloud_admin?
+      @current_user.admin? and (@current_user.user_domain_name=='monsooncc')
+    end
+    
+    def domain_admin?
+      @current_user.admin? and !@current_user.domain_id.nil?
+    end
+    
+    def project_admin?
+      @current_user.admin? and !@current_user.project_id.nil?
+    end
   end
 
 end
