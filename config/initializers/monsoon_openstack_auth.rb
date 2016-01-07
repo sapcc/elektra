@@ -10,7 +10,12 @@ end
 MonsoonOpenstackAuth.configure do |auth|
   # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
   # auth.connection_driver = DriverClass
+
+  p "::::::::::::::::::::::::::::::APPLICATION"
+  p "ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT'] -> #{ENV['AUTHORITY_SERVICE_HOST']} && #{ENV['AUTHORITY_SERVICE_PORT']} -> #{ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']}"
+  p "ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT'] -> #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}"
   
+    
   auth.connection_driver.api_endpoint = Rails.application.config.keystone_endpoint
   auth.connection_driver.ssl_verify_peer = false
 
