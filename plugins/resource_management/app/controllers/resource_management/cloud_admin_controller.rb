@@ -34,7 +34,7 @@ module ResourceManagement
 
       # statistics for the whole cloud
       @cloud_status = {
-        capacity:         ResourceManagement::Capacity.where(service: @service, resource: @resource),
+        capacity:         ResourceManagement::Capacity.find_by(service: @service, resource: @resource),
         usage_sum:        project_resources.pluck("SUM(usage)").first,
         domain_quota_sum: domain_resources.pluck("SUM(approved_quota)").first,
       }
