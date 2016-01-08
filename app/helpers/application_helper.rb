@@ -86,6 +86,31 @@ module ApplicationHelper
     name.humanize
   end
 
+  def selected_service_name
+    name = active_navigation_item_name(context: :services, :level => :all)
+    if name.blank?
+      name = "Choose a Service"
+    end
+    name
+  end
+
+  def selected_admin_service_name
+    name = active_navigation_item_name(context: :admin, :level => :all)
+    if name.blank?
+      name = "Admin"
+    end
+    name
+  end
+
+  def active_service_breadcrumb
+    active_service = active_navigation_item_name(context: :services, :level => :all)
+    crumb = ""
+    unless active_service.blank?
+      crumb = "/ #{active_service}"
+    end
+    crumb
+  end
+
   def body_class
     css_class = controller.controller_name
     page_id = params[:id].split('/').last if params[:id]

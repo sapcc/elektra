@@ -1,6 +1,13 @@
 .main-toolbar
   .container
-    - if content_for? :main_toolbar
-      = yield :main_toolbar
-    - else
-      %h1= processed_controller_name
+    %h1
+      = @scoped_domain_name
+      - if @active_project
+        \/
+        = @active_project.name
+
+      - if content_for? :main_toolbar
+        \/
+        = yield :main_toolbar
+      - else
+        = "#{active_service_breadcrumb}"
