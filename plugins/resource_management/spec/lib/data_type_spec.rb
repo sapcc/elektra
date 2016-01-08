@@ -5,7 +5,7 @@ RSpec.describe ResourceManagement::DataType do
   let(:datatype_number) { ResourceManagement::DataType.new(:number) }
   let(:datatype_bytes)  { ResourceManagement::DataType.new(:bytes)  }
 
-  describe '#format_usage_or_quota_value' do
+  describe '#format' do
 
     it 'renders number values as plain numbers' do
       expect(datatype_number.format(42)).to eq('42')

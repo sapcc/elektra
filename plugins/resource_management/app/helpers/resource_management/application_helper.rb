@@ -2,7 +2,6 @@ module ResourceManagement
   module ApplicationHelper
 
     include ResourceBarHelper
-    include FormatHelper
 
     def list_areas_with_enabled_services
       services = ResourceManagement::Resource::KNOWN_SERVICES

@@ -2,7 +2,7 @@
   = render partial: 'resource_name', locals: { resource: data, scope: 'resources', overview: overview }
 
   .col-md-7
-    - data_type      = data.attributes[:data_type]
+    - data_type      = data.data_type
     - usage          = data.usage
     - current_quota  = data.current_quota
     - approved_quota = data.approved_quota
