@@ -38,8 +38,8 @@ MonsoonOpenstackAuth.configure do |auth|
 
 
   #auth.authorization.trace_enabled = true
-  auth.authorization.reload_policy = false
-  auth.authorization.trace_enabled = false
+  auth.authorization.reload_policy = true
+  auth.authorization.trace_enabled = true
 
   auth.authorization.controller_action_map = {
     :index   => 'list',

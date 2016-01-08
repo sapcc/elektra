@@ -67,6 +67,14 @@ class ApplicationController < ActionController::Base
       end
     end
     
+    def try(method_name)
+      if self.respond_to?(method_name)
+        super(method_name)
+      else
+        @current_user.try(method_name)
+      end
+    end
+    
     # delegate all methods to wrapped current user  
     def method_missing(name, *args, &block)
       @current_user.send(name,*args,&block)
@@ -83,15 +91,15 @@ class ApplicationController < ActionController::Base
     end
     
     def cloud_admin?
-      @current_user.admin? and (@current_user.user_domain_name=='monsooncc')
+      @current_user.is_allowed?("cloud_admin")
     end
     
     def domain_admin?
-      @current_user.admin? and !@current_user.domain_id.nil?
+      @current_user.is_allowed?("domain_admin")
     end
     
     def project_admin?
-      @current_user.admin? and !@current_user.project_id.nil?
+      @current_user.is_allowed?("project_admin")
     end
   end
 

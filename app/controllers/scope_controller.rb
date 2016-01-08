@@ -10,7 +10,7 @@ class ScopeController < ::ApplicationController
   prepend_before_filter do
     # initialize scoped domain's and project's friendly id 
     # use existing, user's or default domain
-    domain_id = (params[:domain_id] || current_user.try(:user_domain_id) || MonsoonOpenstackAuth.configuration.default_domain_name) 
+    domain_id = (params[:domain_id] || current_user.try(:user_domain_id) || MonsoonOpenstackAuth.configuration.default_domain_name)     
     project_id = params[:project_id]
   
     @scoped_domain_fid = @scoped_domain_id = domain_id 
