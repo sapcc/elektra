@@ -59,40 +59,44 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :compute, 'Compute & Monsoon Automation', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "icon moo-cloud" } do |compute_nav|
       compute_nav.item :instances, 'Instances', plugin('compute').instances_path, if: Proc.new { plugin_available?('compute') }
       compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
-      compute_nav.item :volumes, 'Volumes', '#'
-      compute_nav.item :snapshots, 'Snapshots', '#'
-      compute_nav.item :automation, 'Monsoon Automation', plugin('automation').instances_path, if: Proc.new { plugin_available?('automation') }
+      # compute_nav.item :volumes, 'Volumes', '#'
+      # compute_nav.item :snapshots, 'Snapshots', '#'
       compute_nav.item :web_console, 'Web Console', plugin('identity').projects_web_console_path, if: Proc.new { plugin_available?('identity')}
     end
 
+    primary.item :automation, 'Automation', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-gears fa-fw" } do |automation_nav|
+      automation_nav.item :automation, 'Monsoon Automation', plugin('automation').instances_path, if: Proc.new { plugin_available?('automation') }
+
+    end
+
     primary.item :access_managment, 'Access Management', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" } do |access_management_nav|
-      access_management_nav.item :authorizations, 'Authorization', '#'
-      access_management_nav.item :audits, 'Audit', '#'
+      # access_management_nav.item :authorizations, 'Authorization', '#'
+      # access_management_nav.item :audits, 'Audit', '#'
       access_management_nav.item :inquiries, 'Requests', plugin('inquiry').inquiries_path, if: Proc.new { plugin_available?('inquiry') }
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" } do |networking_nav|
       networking_nav.item :networks, 'Networks', plugin('networking').networks_path, if: Proc.new { plugin_available?('networking') }
-      networking_nav.item :loadbalancing, 'Loadbalancing', '#'
-      networking_nav.item :dns, 'DNS', '#'
+      # networking_nav.item :loadbalancing, 'Loadbalancing', '#'
+      # networking_nav.item :dns, 'DNS', '#'
     end
 
-    primary.item :storage, 'Storage', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-database fa-fw" } do |storage_nav|
-      storage_nav.item :shared_storage, 'Shared Object Storage', '#'
-      storage_nav.item :filesystem_storage, 'File System Storage', '#'
-      storage_nav.item :repositories, 'Repositories', '#'
-    end
+    # primary.item :storage, 'Storage', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-database fa-fw" } do |storage_nav|
+    #   storage_nav.item :shared_storage, 'Shared Object Storage', '#'
+    #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
+    #   storage_nav.item :repositories, 'Repositories', '#'
+    # end
 
     primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-area-chart fa-fw" } do |monitoring_nav|
-      monitoring_nav.item :metrics, 'Metrics', '#'
-      monitoring_nav.item :logs, 'Logs', '#'
+      # monitoring_nav.item :metrics, 'Metrics', '#'
+      # monitoring_nav.item :logs, 'Logs', '#'
       monitoring_nav.item :quotas, 'Quotas', plugin('resource_management').resources_path, if: Proc.new { plugin_available?('resource_management') }
 
     end
 
-    primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
-      account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
-    end
+    # primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
+    #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
+    # end
 
 
     # Add an item which has a sub navigation (same params, but with block)
