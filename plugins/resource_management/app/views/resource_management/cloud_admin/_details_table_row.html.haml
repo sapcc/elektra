@@ -1,14 +1,15 @@
+- domain_resource = domain_status[:domain_resource]
 - data_type = domain_resource.data_type
 
 %tr
   %td.col-md-3
-    = domain_resource.domain_id
+    = domain_status[:name]
   %td.col-md-3
     = data_type.format(domain_resource.approved_quota)
   %td.col-md-2
-    = data_type.format(domain_resource.current_quota)
+    = data_type.format(domain_status[:project_quota_sum])
   %td.col-md-2
-    = data_type.format(domain_resource.usage)
+    = data_type.format(domain_status[:usage_sum])
   %td.col-md-2
     .resource-actions
       = link_to 'Edit', '#', class: 'btn btn-primary btn-sm', remote: true

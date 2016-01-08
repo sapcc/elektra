@@ -1,14 +1,14 @@
 = content_for(:title, "Details for resource #{@resource}")
 .modal-body
   %p.alert.alert-danger{style: "display:none"}
-  %div#usage_bars
+  #usage_bars
     = render :partial => "details_usage_bar"
 
   .row
     .col-md-12
       %h2
         %small Details
-      %div{:id => "details_table"}
+      #details_table
         = render partial: "details_table"
  
 - if modal?
