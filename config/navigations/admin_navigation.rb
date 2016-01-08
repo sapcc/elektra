@@ -57,27 +57,27 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
     if plugin_available?('resource_management')
-      primary.item :cloud_quota_admin, 'Cloud Quota Admin', plugin('resource_management').cloud_admin_path, if: -> { 
+      primary.item :cloud_quota_admin, 'Cloud Resources Admin', plugin('resource_management').cloud_admin_path, if: -> {
         current_user.is_allowed?('resource_management:cloud_admin_list')
       }
-    
-      primary.item :domain_quota_admin, 'Domain Quota Admin', plugin('resource_management').admin_path, if: -> { 
+
+      primary.item :domain_quota_admin, 'Domain Resources Admin', plugin('resource_management').admin_path, if: -> {
         current_user.is_allowed?('resource_management:domain_admin_list')
       }
-    
-      primary.item :project_quota_admin, 'Project Quota Admin', plugin('resource_management').resources_path, if: -> {
+
+      primary.item :project_quota_admin, 'Project Resources Admin', plugin('resource_management').resources_path, if: -> {
         current_user.is_allowed?('resource_management:project_resource_list')
       }
     end
 
     if plugin_available?('inquiry')
-      primary.item :requests, 'Manage Requests', plugin('inquiry').inquiries_path, if: -> { 
+      primary.item :requests, 'Manage Requests', plugin('inquiry').inquiries_path, if: -> {
         current_user.is_allowed?('inquiry:inquiry_all_list')
       }
     end
-    
+
     if plugin_available?('identity')
-      primary.item :domain, 'Manage Domains', plugin('identity').domains_path, if: -> { 
+      primary.item :domain, 'Manage Domains', plugin('identity').domains_path, if: -> {
         current_user.is_allowed?('identity:domain_list')
       }
     end

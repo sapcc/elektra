@@ -1,5 +1,16 @@
 .news
 
+  - date = Time.new(2016,1,8)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      #### Main Toolbar Content
+
+      I have changed how the Maintoolbar content works. It is now more of a breadcrumb which renders the current hierarchy. <code>content_for :main_toolbar</code> now only affects the last crumb of the hierarchy. Therefore it can't contain <code>h1</code> anymore. Also, if no content for the main toolbar is defined in the view then I will print the selected service name.
+
+
+
   - date = Time.new(2015,12,15)
   .new{data:{date: date}}
     .author-title= "Esther Schmitz - #{date}"
