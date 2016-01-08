@@ -8,8 +8,9 @@ require_relative 'domain_model_service_layer/model'
 module DomainModelServiceLayer
   
   def self.keystone_auth_endpoint
-    endpoint = Rails.application.config.keystone_endpoint rescue ''
-    unless endpoint.include?('auth/tokens')
+    endpoint = Rails.configuration.keystone_endpoint rescue ''
+
+    unless endpoint and endpoint.include?('auth/tokens')
       endpoint += '/' if endpoint.last!='/' 
       endpoint += 'auth/tokens'
     end

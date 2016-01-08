@@ -1,4 +1,4 @@
-<% value = format_usage_or_quota_value(@project_resource.approved_quota, @project_resource.attributes[:data_type]) %>
+<% value = @project_resource.data_type.format(@project_resource.approved_quota) %>
 var row = $('.resource-details tr[data-project="<%= @project_resource.project_id %>"]');
 row.find('.resource-approved-quota').html('<input type="text" class="form-control resource-approved-quota-edit" value="<%= value %>" autofocus>');
 row.find('.resource-actions').html("<%= escape_javascript( render partial: 'edit_buttons')%>")

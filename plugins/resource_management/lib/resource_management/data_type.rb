@@ -1,39 +1,35 @@
 module ResourceManagement
-  module FormatHelper
+  class DataType
 
-    def format_usage_or_quota_value(value, data_type=nil)
-      if data_type.nil?
-        return value.to_i.to_s
-      elsif data_type == :bytes
-        # There is number_to_human_size() in Rails, but it is ridiculously
-        # broken, even when you leave aside that they confuse SI and IEC units.
-        #
-        #   >> number_to_human_size(1024 * 1024)
-        #   "1 MB"
-        #   >> number_to_human_size(1024 * 1024 - 1)
-        #   "1020 KB"
-        return format_bytes_value(value)
-      else
-        raise ArgumentError, "unknown data_type: #{data_type.class.to_s} #{data_type.inspect}"
-      end
+    ALLOWED_DATA_TYPES = [ :number, :bytes ]
+
+    def initialize(data_type)
+      raise ArgumentError, "unknown data type: #{data_type.inspect}" unless ALLOWED_DATA_TYPES.include?(data_type)
+      @type = data_type
     end
 
-    def parse_usage_or_quota_value(value, data_type=nil)
-      if data_type.nil?
-        # value must be a positive integer (or 0), but ignore surrounding whitespace
-        value = value.sub(/\A\s+/, '').sub(/\s+\Z/, '')
-        raise ArgumentError, "value #{value} is not numeric" unless value.match(/\A\d+\Z/)
-        return value.to_i
-      elsif data_type == :bytes
-        return parse_bytes_value(value)
-      else
-        raise ArgumentError, "unknown data_type: #{data_type.class.to_s} #{data_type.inspect}"
-      end
+    def format(value)
+      send("format_#{@type}", value)
+    end
+
+    def parse(value)
+      send("parse_#{@type}", value)
     end
 
     private
 
-    def format_bytes_value(value)
+    def format_number(value)
+      return value.to_i.to_s
+    end
+
+    def format_bytes(value)
+      # There is number_to_human_size() in Rails, but it is ridiculously
+      # broken, even when you leave aside that they confuse SI and IEC units.
+      #
+      #   >> number_to_human_size(1024 * 1024)
+      #   "1 MB"
+      #   >> number_to_human_size(1024 * 1024 - 1)
+      #   "1020 KB"
       %w[ Bytes KiB MiB GiB TiB PiB EiB ].each do |unit|
         # is this unit large enough?
         if value < 1024
@@ -46,7 +42,13 @@ module ResourceManagement
       end
     end
 
-    def parse_bytes_value(value)
+    def parse_number(value)
+      value = value.sub(/\A\s+/, '').sub(/\s+\Z/, '')
+      raise ArgumentError, "value #{value} is not numeric" unless value.match(/\A\d+\Z/)
+      return value.to_i
+    end
+
+    def parse_bytes(value)
       # get rid of all whitespace, e.g. "  12 GiB " => "12GiB"
       value = value.gsub(/\s*/, '')
 

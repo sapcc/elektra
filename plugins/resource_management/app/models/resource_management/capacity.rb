@@ -10,5 +10,9 @@ module ResourceManagement
       return (resource_attrs || {}).merge(service_attrs || {})
     end
 
+    def data_type
+      ResourceManagement::DataType.new(attributes[:data_type] || :number)
+    end
+
   end
 end
