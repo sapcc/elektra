@@ -34,6 +34,7 @@ MonsoonOpenstackAuth.configure do |auth|
 
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
+  # auth.authorization.context = "identity"
   auth.authorization.context = "identity"
 
 

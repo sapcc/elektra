@@ -56,12 +56,31 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item :cloud_quota_admin, 'Cloud Quota Admin', plugin('resource_management').cloud_admin_path, if: Proc.new { plugin_available?('resource_management') && current_user.cloud_admin? }
-    primary.item :domain_quota_admin, 'Domain Quota Admin', plugin('resource_management').admin_path, if: Proc.new { plugin_available?('resource_management') && current_user.domain_admin? }
-    primary.item :project_quota_admin, 'Project Quota Admin', plugin('resource_management').resources_path, if: Proc.new { plugin_available?('resource_management') && current_user.project_admin? }
+    if plugin_available?('resource_management')
+      primary.item :cloud_quota_admin, 'Cloud Quota Admin', plugin('resource_management').cloud_admin_path, if: -> { 
+        current_user.is_allowed?('resource_management:cloud_admin_list')
+      }
+    
+      primary.item :domain_quota_admin, 'Domain Quota Admin', plugin('resource_management').admin_path, if: -> { 
+        current_user.is_allowed?('resource_management:domain_admin_list')
+      }
+    
+      primary.item :project_quota_admin, 'Project Quota Admin', plugin('resource_management').resources_path, if: -> {
+        current_user.is_allowed?('resource_management:project_resource_list')
+      }
+    end
 
-
-    primary.item :requests, 'Requests', plugin('inquiry').inquiries_path, if: Proc.new { plugin_available?('inquiry') && current_user.admin? }
+    if plugin_available?('inquiry')
+      primary.item :requests, 'Manage Requests', plugin('inquiry').inquiries_path, if: -> { 
+        current_user.is_allowed?('inquiry:inquiry_all_list')
+      }
+    end
+    
+    if plugin_available?('identity')
+      primary.item :domain, 'Manage Domains', plugin('identity').domains_path, if: -> { 
+        current_user.is_allowed?('identity:domain_list')
+      }
+    end
 
 
     # Add an item which has a sub navigation (same params, but with block)

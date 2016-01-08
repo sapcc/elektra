@@ -13,7 +13,12 @@ describe ResourceManagement::DomainAdminController, type: :controller do
   end
   
   before :each do
-    stub_authentication
+    stub_authentication do |token|
+      # domain admin
+      token["roles"] << {"id"=>"2", "name"=>"admin"}
+      token["domain"] = {"id"=>"1", "name"=>"test"}  
+    end
+    
     stub_admin_services
     
     identity_driver = double('identity_service_driver').as_null_object

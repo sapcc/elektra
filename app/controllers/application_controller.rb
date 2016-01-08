@@ -89,18 +89,6 @@ class ApplicationController < ActionController::Base
     def full_name
       @session[:current_user_details]["description"] if @session[:current_user_details]
     end
-    
-    def cloud_admin?
-      @current_user.is_allowed?("cloud_admin")
-    end
-    
-    def domain_admin?
-      @current_user.is_allowed?("domain_admin")
-    end
-    
-    def project_admin?
-      @current_user.is_allowed?("project_admin")
-    end
   end
 
 end
