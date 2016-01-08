@@ -20,6 +20,22 @@ module ResourceManagement
       prepare_data_for_resource_list(@area_services)
     end
 
+    def edit_capacity
+      @capacity = ResourceManagement::Capacity.find(params[:id])
+    end
+
+    def update_capacity
+      @capacity = ResourceManagement::Capacity.find(params[:id])
+
+      if @capacity.update(params.require(:capacity).permit(:value))
+        flash[:notice] = 'Resource updated.'
+        render 'resource_management/cloud_admin/update_capacity.js'
+      else
+        @has_errors = true
+        render action: :edit_capacity
+      end
+    end
+
     def sync_now
       service = services.resource_management
       service.sync_all_domains(with_projects: true)
@@ -51,9 +67,9 @@ module ResourceManagement
       stats.each do |stat|
         service, resource, usage_sum = *stat
 
-        # use existing domain resource, or create an empty mock object as a placeholder
+        # ensure that Capacity records exist for all resources
         capacity = capacities.find { |q| q.service == service && q.resource == resource }
-        capacity ||= ResourceManagement::Capacity.new(
+        capacity ||= ResourceManagement::Capacity.create(
           service: service, resource: resource, value: -1,
         )
 
