@@ -101,12 +101,4 @@ module ApplicationHelper
     end
   end
 
-  def context_name
-    context = "Domain"
-    if @scoped_project_id
-      context = "Project"
-    end
-    context
-  end
-
 end
