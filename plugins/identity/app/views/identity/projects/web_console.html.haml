@@ -1,3 +1,32 @@
 #web-console
-  %span.info-text Loading web console
-  %span.spinner
+  - if @webcli_endpoint
+    #loading-hint
+      %span.info-text Loading web console
+      %span.spinner
+    #terminal{:style => 'position:absolute; width: 1140px; height: 500px; margin: 0px'}
+    - content_for :javascripts do
+      %script{:type => "text/javascript", :src=> @webcli_endpoint + "/js/hterm.js"}
+      %script{:type => "text/javascript", :src=> @webcli_endpoint + "/js/gotty.js"}
+      :javascript
+        $(document).ready(function() {
+          $.ajax({
+            url: "#{@webcli_endpoint}/auth",
+            xhrFields: {
+              withCredentials: true
+            },
+            beforeSend: function (request) {
+              request.setRequestHeader("X-Auth-Token", "#{current_user.token}");
+            },
+            dataType: "json",
+            success: function( data ) {
+              openCLIWebsocket(data.url, ['#{current_user.token}', '#{Rails.configuration.keystone_endpoint}'], function() { $('#loading-hint').remove() })
+            },
+            error: function(xhr, bleep, error) {
+              console.log("error: " + error)
+            }
+          });
+        })
+
+  - else
+    %span.info-text Web console service not configured.
+
