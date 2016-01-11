@@ -1,13 +1,17 @@
 - domain_resource = domain_status[:domain_resource]
-- data_type = domain_resource.data_type
+- data_type       = domain_resource.data_type
+- warning_level   = warning_level_for_domain(domain_resource, domain_status[:usage_sum], domain_status[:project_quota_sum])
 
-%tr
+%tr{ class: warning_level, data: { domain: domain_resource.domain_id, resource: domain_resource.id } }
   %td.col-md-3
-    = domain_status[:name]
+    .resource-domain-name
+      = domain_status[:name]
   %td.col-md-3
-    = data_type.format(domain_resource.approved_quota)
+    .resource-approved-quota.input-group.input-group-sm
+      = data_type.format(domain_resource.approved_quota)
   %td.col-md-2
-    = data_type.format(domain_status[:project_quota_sum])
+    .resource-current-quota
+      = data_type.format(domain_status[:project_quota_sum])
   %td.col-md-2
     = data_type.format(domain_status[:usage_sum])
   %td.col-md-2
