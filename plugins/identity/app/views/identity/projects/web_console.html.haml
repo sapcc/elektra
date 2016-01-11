@@ -19,7 +19,7 @@
             },
             dataType: "json",
             success: function( data ) {
-              openCLIWebsocket(data.url, ['#{current_user.token}', '#{Rails.configuration.keystone_endpoint}'], function() { $('#loading-hint').remove() })
+              openCLIWebsocket(data.url, ['#{current_user.token}', '#{URI.parse(Rails.configuration.keystone_endpoint).tap{|u|u.path='/v3'}.to_s}'], function() { $('#loading-hint').remove() })
             },
             error: function(xhr, bleep, error) {
               console.log("error: " + error)
