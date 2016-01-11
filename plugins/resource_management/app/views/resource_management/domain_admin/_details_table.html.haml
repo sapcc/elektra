@@ -12,6 +12,7 @@
   
 = paginate @projects, :theme => 'twitter-bootstrap-3', :remote => true
 
+-# TODO: code duplication with same view for cloud_admin controller
 = content_for :javascripts do
   :javascript
     function set_approved_quota(button) {
