@@ -19,7 +19,7 @@
       %ul.nav.navbar-nav.navbar-right
         - unless logged_in?
           %li
-            = link_to "Log in", monsoon_openstack_auth.login_path(domain_id:@scoped_domain_id), id: "navbar-login-btn"
+            = link_to "Log in", monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name), id: "navbar-login-btn"
         - else
           %li.dropdown
             %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
