@@ -27,6 +27,9 @@ module ResourceManagement
       @resource = params.require(:resource).to_sym
       @area     = ResourceManagement::Resource::KNOWN_SERVICES.find { |s| s[:service] == @service }[:area]
 
+      # get mapping of domain IDs to names
+      domain_names = services.resource_management.driver.enumerate_domains()
+
       # load resources
       resources = ResourceManagement::Resource.where(service: @service, name: @resource)
       domain_resources  = resources.where.not(domain_id: nil).where(project_id: nil)
@@ -42,12 +45,14 @@ module ResourceManagement
       # statistics per domain
       domain_status = []
       domain_resources.each do |domain_resource|
+        domain_id = domain_resource.domain_id
+
         project_quota_sum, usage_sum = resources.
-          where(domain_id: domain_resource.domain_id).where.not(project_id: nil).
+          where(domain_id: domain_id).where.not(project_id: nil).
           pluck("SUM(approved_quota), SUM(usage)").first
 
         domain_status << {
-          name:              domain_resource.domain_id, # TODO: retrieve domain names
+          name:              domain_names[domain_id] || domain_id,
           domain_resource:   domain_resource,
           project_quota_sum: project_quota_sum || 0,
           usage_sum:         usage_sum || 0,

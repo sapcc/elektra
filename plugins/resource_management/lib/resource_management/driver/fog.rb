@@ -23,9 +23,13 @@ module ResourceManagement
         @service_user_connection ||= ::Fog::Identity::OpenStack::V3.new(params)
       end    
 
-      # List all domain IDs that exist.
+      # List all domains that exist, as a hash of { id => name }.
       def enumerate_domains
-        @srv_conn.list_domains.body['domains'].map { |domain| domain['id'] }
+        result = {}
+        @srv_conn.list_domains.body['domains'].each do |domain|
+          result[ domain['id'] ] = domain['name']
+        end
+        return result
       end
 
       # List all projects that exist in the given domain, as a hash of { id => name }.:
