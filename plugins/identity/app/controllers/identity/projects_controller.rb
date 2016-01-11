@@ -53,7 +53,9 @@ module Identity
     end
 
     def web_console
+      @token = current_user.token
       @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
     end
 
     private
