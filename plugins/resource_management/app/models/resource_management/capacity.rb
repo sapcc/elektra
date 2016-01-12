@@ -1,6 +1,7 @@
 module ResourceManagement
   class Capacity < ActiveRecord::Base
     validates_presence_of :service, :resource, :value
+    validate :validate_value
 
     def attributes
       # get attributes for this resource
@@ -12,6 +13,26 @@ module ResourceManagement
 
     def data_type
       ResourceManagement::DataType.new(attributes[:data_type] || :number)
+    end
+
+    def value=(new_value)
+      if new_value.is_a?(String)
+        begin
+          new_value = data_type.parse(new_value)
+          @value_validation_error = nil
+        rescue ArgumentError => e
+          # errors.add() only works during validation, so store this error for later
+          @value_validation_error = e.message
+          return
+        end
+      end
+      super(new_value)
+    end
+
+    private
+
+    def validate_value
+      errors.add(:value, "is invalid: #{@value_validation_error}") if @value_validation_error
     end
 
   end
