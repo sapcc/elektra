@@ -1,4 +1,7 @@
 {
+  "identity:domain_list": "rule:cloud_admin",
+  "identity:domain_get": "(role:admin or role:Member or role:member) and (domain_id:%(domain_id)s or domain_name:%(domain_id)s)",
+  
   "identity:project_get": "role:admin or role:Member or role:member",
   "identity:project_list": "role:admin or role:Member or role:member",
   "identity:project_request": "role:admin or role:Member or role:member",
@@ -8,5 +11,15 @@
   
   "identity:create_wizard_create": "role:admin",
 
-  "identity:inquiry_all_list": "role:admin"
+  "identity:credential_get": "rule:admin_required",
+  "identity:credential_list": "rule:cloud_admin or domain_id:%(domain_id)s",
+  "identity:credential_create": "rule:admin_required or user_id:%(credential.user_id)s",
+  "identity:credential_update": "rule:admin_required",
+  "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
+
+  "identity:instance_get": "role:admin or role:Member or role:member",
+  "identity:instance_list": "role:admin or role:Member or role:member",
+  "identity:instance_create": "role:admin",
+  "identity:instance_update": "role:admin",
+  "identity:instance_delete": "role:admin"
 }

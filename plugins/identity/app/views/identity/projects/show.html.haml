@@ -1,10 +1,3 @@
-= content_for :main_toolbar do
-  %h1
-    Home:
-    = @active_project.name
-
-= render "application/context_selection"
-
 %p
   This is the project home page. We will display a nicely rendered list of all available services here soon. For now please use the services dropdown menu above.
   %table
@@ -17,5 +10,3 @@
     %tr
       %th Enabled?
       %td= @active_project.enabled
-
-

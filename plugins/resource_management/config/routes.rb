@@ -27,6 +27,9 @@ ResourceManagement::Engine.routes.draw do
     get 'edit'     => 'cloud_admin#edit'
     get 'update'   => 'cloud_admin#update'
     get 'cancel'   => 'cloud_admin#cancel'
+
+    get 'capacity/:id' => 'cloud_admin#edit_capacity',   as: 'edit_capacity'
+    put 'capacity/:id' => 'cloud_admin#update_capacity', as: 'update_capacity'
   end
  
 end

@@ -4,4 +4,6 @@
     = render partial: 'bar', locals: { data: data }
 
   .col-md-1.quota-request-more
-    = link_to 'Details', plugin('resource_management').cloud_admin_details_path(service: service, resource: data[:name], overview: overview), data: { modal: true, resource:data[:name], overview:true, service:service }, class: 'btn btn-primary btn-sm'
+    = link_to 'Details', plugin('resource_management').cloud_admin_details_path(service: service, resource: data[:name], overview: overview), data: { modal: true }, class: 'btn btn-primary btn-sm', title: 'Show usage/quotas per domain'
+  .col-md-1.quota-request-more
+    = link_to 'Configure', plugin('resource_management').cloud_admin_edit_capacity_path(data[:capacity].id), data: { modal: true }, class: 'btn btn-default btn-sm', title: 'Manage capacity data'

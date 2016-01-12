@@ -67,6 +67,14 @@ class ApplicationController < ActionController::Base
       end
     end
     
+    def try(method_name)
+      if self.respond_to?(method_name)
+        super(method_name)
+      else
+        @current_user.try(method_name)
+      end
+    end
+    
     # delegate all methods to wrapped current user  
     def method_missing(name, *args, &block)
       @current_user.send(name,*args,&block)
@@ -80,18 +88,6 @@ class ApplicationController < ActionController::Base
     # Fullname is not provided by current_user. So add it here.
     def full_name
       @session[:current_user_details]["description"] if @session[:current_user_details]
-    end
-    
-    def cloud_admin?
-      @current_user.admin? and (@current_user.user_domain_name=='monsooncc')
-    end
-    
-    def domain_admin?
-      @current_user.admin? and !@current_user.domain_id.nil?
-    end
-    
-    def project_admin?
-      @current_user.admin? and !@current_user.project_id.nil?
     end
   end
 

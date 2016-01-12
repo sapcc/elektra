@@ -3,15 +3,20 @@
 
     = form_tag(sessions_path, class: "form-signin") do
       = hidden_field_tag :domain_id, @domain_id
+      = hidden_field_tag :domain_name, @domain_name
 
       %h2.form-signin-heading Please sign in
 
       = render "application/flashes"
 
+      %label.sr-only{:for => "domain"} Domain
+      - if @domain_name
+        = text_field_tag :domain, @domain_name, placeholder: "Domain", class: "form-control top-input", disabled: "true"
+
       %label.sr-only{:for => "username"} User ID
       = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
 
       %label.sr-only{:for => "password"} Password
-      = password_field_tag :password, nil, placeholder: "Passwort", required: "", class: "form-control"
+      = password_field_tag :password, nil, placeholder: "Passwort", required: "", class: "form-control bottom-input"
 
       %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in

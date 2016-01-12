@@ -1,5 +1,8 @@
 module Inquiry
   class InquiriesController < DashboardController
+    
+    authorization_context 'inquiry'
+    authorization_required
 
     def index
       filter = params[:filter] ? params[:filter] : {}

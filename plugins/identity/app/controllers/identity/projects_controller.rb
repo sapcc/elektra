@@ -52,6 +52,12 @@ module Identity
       redirect_to projects_path
     end
 
+    def web_console
+      @token = current_user.token
+      @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
+    end
+
     private
 
     def get_project_id

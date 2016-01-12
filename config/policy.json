@@ -1,26 +1,16 @@
 {
   "admin_required": " role:admin or is_admin:1",
-  "cloud_admin": "rule:admin_required and domain_id:default",
+  
+  "cloud_admin": "rule:admin_required and domain_name:'monsooncc'",
+  "domain_admin": "rule:admin_required and not domain_id:nil",
+  "project_admin": "rule:admin_required and not project_id:nil",
+  
+  "default": "rule:admin_required",
+  
   "service_role": "role:service",
   "service_or_admin": "rule:admin_required or rule:service_role",
   "owner": "user_id:%(user_id)s",
   "admin_or_owner": "rule:admin_required or rule:owner",
   "token_subject": "user_id:%(target.token.user_id)s",
-  "admin_or_token_subject": "rule:admin_required or rule:token_subject",
-  "default": "rule:admin_required",
-  "identity:project_get": "rule:cloud_admin or rule:admin_required or project_id:%(target.project.id)s",
-  "identity:project_list": "rule:cloud_admin or rule:admin_required or domain_id:%(domain_id)s",
-  "identity:project_create": "rule:cloud_admin or (rule:admin_required and domain_id:%(project.domain_id)s)",
-  "identity:project_update": "rule:cloud_admin or rule:admin_required",
-  "identity:project_delete": "rule:cloud_admin or rule:admin_required",
-  "identity:credential_get": "rule:admin_required",
-  "identity:credential_list": "rule:cloud_admin or domain_id:%(domain_id)s",
-  "identity:credential_create": "rule:admin_required or user_id:%(credential.user_id)s",
-  "identity:credential_update": "rule:admin_required",
-  "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
-  "identity:instance_get": "role:admin or role:Member or role:member",
-  "identity:instance_list": "role:admin or role:Member or role:member",
-  "identity:instance_create": "role:admin",
-  "identity:instance_update": "role:admin",
-  "identity:instance_delete": "role:admin"
+  "admin_or_token_subject": "rule:admin_required or rule:token_subject"
 }

@@ -30,8 +30,11 @@ module MonsoonDashboard
     config.middleware.insert_before Rack::Sendfile, "DebugEnvMiddleware"
     config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
     config.middleware.use "RevisionMiddleware"
-    
-    
+
+    ############# ENSURE EDGE MODE FOR IE ###############
+    config.action_dispatch.default_headers["X-UA-Compatible"]="IE=edge,chrome=1"
+
+
     ############# KEYSTONE ENDPOINT ##############
     config.keystone_endpoint = if ENV['AUTHORITY_SERVICE_HOST'] && ENV['AUTHORITY_SERVICE_PORT']
             proto = ENV['AUTHORITY_SERVICE_PROTO'] || 'http'
@@ -42,10 +45,10 @@ module MonsoonDashboard
             ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
           end
 
-    config.debug_api_calls = false     
-    ############## REGION ###############       
+    config.debug_api_calls = false
+    ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'europe'
-    
+
     #############ä SERVICE USER #############
     config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
     config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']

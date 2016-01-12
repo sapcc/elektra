@@ -1,4 +1,6 @@
 Identity::Engine.routes.draw do
+  resources :domains, only: [:index]
+  
   resources :projects, only:[:index]
 
   namespace :projects  do

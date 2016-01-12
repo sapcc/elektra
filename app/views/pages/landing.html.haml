@@ -46,19 +46,19 @@
       %span.moo-cloud
     %h5.fancy-header Compute & Block Storage
     %ul.content-list
-      %li Create vms with up to 256 GB Ram
+      %li Create virtual machines with up to 256 GB RAM
       %li Snapshot running vms and create images on VMWare or KVM.
       %li Create volumes, attach them to vms and take snapshots.
-      %li Schedule backups or run ad-hoc backup and restore.
 
   %li
     .fancy-icon
       %span.fa.fa-sitemap.fa-fw
     %h5.fancy-header Networking & Load Balancing
     %ul.content-list
-      %li Manage private networks, subnets, routers, elastic IPs, firewalls and security groups
-      %li Configure access from zone 2, the internet or via VPN.
-      %li Setup loadbalancing and use blue-green deployment strategies.
+      %li Manage networks, routers, floating IPs and security groups
+      %li Apply load balancing services (LBaaS)
+      %li Implement blue-green deployment strategies
+      %li Configure access from Intranet, Internet or via VPN
 
   %li
     .fancy-icon
@@ -150,9 +150,6 @@
     %ul.content-list
       %li Choose from CoreOS, Debian, RHEL, SAP Suse, Suse, Ubuntu or Windows flavors.
 
-
-
-
 %h1.page-header Getting Started
 .row
   .col-sm-8.text-copy
@@ -177,8 +174,11 @@
 
   .col-sm-4
     .bs-callout.bs-callout-primary
-      %h4 Are you an exisiting customer of GMP, Monsoon or AWS?
+      %h4 Are you an exisiting customer of Monsoon or GMP?
       = link_to "Learn how you can adopt SAP Converged Cloud", "#existing-customer"
+    .bs-callout.bs-callout-primary
+      %h4 Are you new to Converged Cloud?
+      = link_to "Get Started", "#existing-customer"
 
 
 %a#existing-customer
@@ -186,26 +186,28 @@
 
 .row
   .col-sm-8
-    %p Here goes the official Board Mandate. SAP Converged Cloud Adoption plan.
+    %p In order to be ready for the fast growing SAP Cloud Business, the SAP Converged Cloud will provide one global and state-of-the-art Cloud Infrastructure for all SAP products and services.
 
-    %p Here goes the pitch summery, that we provide capabilities for Monsoon, GMP and AWS customers to move as simple as possible.
+    %p SAP Converged Cloud not only supports SAP’s current and future Cloud Business, but will also incorporate existing “legacy” infrastructures such as Monsoon and GMP.
 
 .row
   .col-sm-4
     %h3.page-header Monsoon
 
-    %p Provides subset of AWS API on top of vmware hypervisor and a powerfull automation API for configuration management with chef in SAPs own datacenters.
+    %p Provides subset of AWS API on top of VMWare vSphere hypervisor and a powerfull automation API for configuration management with Chef in SAPs own datacenters, e.g. HCP, S4/Hana, B1 Cloud, Success Factors, ...
 
     %h4 No migration required
-    %p Monsoon's subset of AWS API including the monsoon automation API will be provided in converged cloud. All monsoon datacenters will be upgraded to converged cloud during 2016.
+    %p Monsoon's subset of AWS API including the monsoon automation API will be provided in converged cloud.
+    %p All Monsoon datacenters will be upgraded to Converged Cloud during 2016.
 
-    Link to transition guide with all details.
+    Link to transition guide with all details will be provided.
 
   .col-sm-4
     %h3.page-header GMP
-    %p Provides strong automation for SAP Abab based solutions and databases and provides operations tooling and processes on Xen hypervisor.
+    %p Provides strong automation for ABAP based SAP solutions and databases.
+    %p And provides operations tooling and processes on Xen hypervisor.
 
     %h4 GMP CC provider
     %p You can keep managing your application through GMP and deploy your computing power in converged cloud.
 
-    Link to transition guide with all details.
+    Link to transition guide with all details will be provided.

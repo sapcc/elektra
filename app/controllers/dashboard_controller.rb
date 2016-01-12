@@ -9,6 +9,7 @@ class DashboardController < ::ScopeController
 
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
+                          domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
                           project: -> c { c.instance_variable_get('@scoped_project_id') },
                           rescope: false # do not rescope after authentication
 
