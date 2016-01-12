@@ -112,9 +112,11 @@ module ApplicationHelper
   end
 
   def body_class
-    css_class = controller.controller_name
+    css_class = "#{controller.controller_name} #{action_name}"
+
     page_id = params[:id].split('/').last if params[:id]
     css_class = "#{css_class} #{page_id}" if css_class == "pages"
+
     css_class
   end
 

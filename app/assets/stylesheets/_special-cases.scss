@@ -1,0 +1,26 @@
+// ---------------------------------------------------------------------------------
+// SPECIAL STYLES FOR VERY LIMITED USECASES ONLY
+// ---------------------------------------------------------------------------------
+
+
+// set all parents of web console to height 100% so that the console can go to 100% as well
+// the padding to account for the footer is mandatory on both wrapper elements for some reason
+// CAREFUL: This will break normal pages!
+.web_console {
+  height: 100%;
+  margin: 0;
+  padding-bottom: $footer-height;
+
+  > .container {
+    height: 100%;
+    padding-bottom: $footer-height;
+  }
+
+  .content {
+    height: 100%;
+    margin: 0;
+    padding: $line-height-computed 0;
+
+  }
+
+}
