@@ -145,7 +145,8 @@ module ResourceManagement
 
       # statistics for the whole cloud
       @cloud_status = {
-        capacity:         ResourceManagement::Capacity.find_by(service: service, resource: resource),
+        # special case if no capacity was found create a dummy object that the view can handle
+        capacity:         ResourceManagement::Capacity.find_by(service: service, resource: resource) || ResourceManagement::Capacity.new(service: service, resource: resource, value: -1),
         usage_sum:        project_resources.pluck("SUM(usage)").first,
         domain_quota_sum: domain_resources.pluck("SUM(approved_quota)").first,
       }
