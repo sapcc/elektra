@@ -13,8 +13,7 @@
         = f.input :value, label: 'Available capacity'
       - else
         - previous_value = params[:capacity] ? params[:capacity][:value] : nil
-        - puts ">>>>>>>>>>> #{@capacity.value} in #{data_type || "nothing"}"
-        = f.input :value, label: 'Available capacity', as: :string, input_html: { value: previous_value || format_usage_or_quota_value(@capacity.value, data_type) }
+        = f.input :value, label: 'Available capacity', as: :string, input_html: { value: previous_value || @capacity.data_type.format(@capacity.value) }
       %p.help-block
         In some cases, capacity values can be measured by an appropriate tool. In other cases, it comes down to counting the hardware that's there. Use your own judgment.
 

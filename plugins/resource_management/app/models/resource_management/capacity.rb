@@ -18,7 +18,7 @@ module ResourceManagement
     def value=(new_value)
       if new_value.is_a?(String)
         begin
-          new_value = ResourceManagement.parse_usage_or_quota_value(new_value, attributes[:data_type])
+          new_value = data_type.parse(new_value)
           @value_validation_error = nil
         rescue ArgumentError => e
           # errors.add() only works during validation, so store this error for later
