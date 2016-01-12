@@ -8,7 +8,7 @@ module Identity
     
     rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :not_member_error
 
-    authentication_required
+    authorization_required(context:'identity')
       
     def not_member_error(exception)
       if params[:action]=='index'
