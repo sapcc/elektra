@@ -1,82 +1,21 @@
-= content_for(:title, "Details for quota #{@resource_type}")
+= content_for(:title, "Details for resource #{@resource}")
 .modal-body
-  .row
-    .col-md-2.quota-label
-      .text-muted
-        Resource usage
-    .col-md-10
-      .quota
-        .quota-current
-          %span.text-nowrap
-            4000
-        .progress
-          .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:65%"} 2600
+  %p.alert.alert-danger{style: "display:none"}
+  #usage_bars
+    = render :partial => "details_usage_bar"
 
   .row
-    .col-md-2.quota-label
-      .text-muted
-        Quota usage
-    .col-md-10
-      .quota
-        .quota-approved{:style => "right:25%"} 
-          %span.text-nowrap
-            Granted quota: 3000
-        .quota-current
-          %span.text-nowrap
-            4000
-        .progress
-          .progress-bar.progress-bar-danger.progress-bar-quota{:style => "width:75%"} 3500
-          .progress-bar.progress-bar-quota.quota-overcommit-danger{:style => "width:12%"}
-
-  %h2
-    %small Details
-
-  %table.table
-    %thead
-      %tr
-        %th Domain
-        %th granted Quota
-        %th current Quota
-        %th Usage
-        %th Edit
-    %tbody
-      %tr
-        %th foo
-        %th 1000
-        %th 1000
-        %th 800
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
-      %tr
-        %th bla
-        %th 1700
-        %th 
-          .text-danger 2150
-        %th 1600
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
-      %tr
-        %th sap_default
-        %th 300
-        %th 
-          .text-danger 350
-        %th 200
-        %th 
-          = link_to "Edit", '#', class: 'btn btn-primary btn-xs'
+    .col-md-12
+      %h2
+        %small Details
+      #details_table
+        = render partial: "details_table"
  
-
 - if modal?
   .modal-footer
-    - if modal?
-      - case @level
-      - when "compute"
-        = link_to 'Show all compute quotas', plugin('resource_management').cloud_admin_compute_path(), class: 'btn btn-primary btn-sm'
-      - when "network"
-        = link_to 'Show all network quotas', plugin('resource_management').cloud_admin_network_path(), class: 'btn btn-primary btn-sm'
-      - when "storage"
-        = link_to 'Show all storage quotas', plugin('resource_management').cloud_admin_storage_path(), class: 'btn btn-primary btn-sm'
+    - if @service and @show_all_button
+      = link_to "Show all #{t("resource_management.#{@service}")} quotas", plugin('resource_management').cloud_admin_area_path(area: @area), class: 'btn btn-primary btn-sm'
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-   
 
 

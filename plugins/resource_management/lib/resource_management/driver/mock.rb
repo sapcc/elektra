@@ -7,21 +7,31 @@ module ResourceManagement
         @mock_domains_projects = {
           # hash of domain_id => { hash of project_id => project_name }
           '7d11af29-7055-40a5-a575-c5de2e6b5973' => {
-            '25301b18-d7ee-4fe0-a360-8d5280bec593' => 'fooproject',
-            '92ceb1f6-c5e1-4001-9893-f321f34eb6b9' => 'barproject',
+            name: 'foodomain',
+            projects: {
+              '25301b18-d7ee-4fe0-a360-8d5280bec593' => 'fooproject',
+              '92ceb1f6-c5e1-4001-9893-f321f34eb6b9' => 'barproject',
+            },
           },
           'f45b7b16-e6ec-4255-9fc5-90304c1f3b57' => {
-            '0b9147f6-5454-4afd-8e03-39e44f2b2842' => 'quxproject',
+            name: 'quxdomain',
+            projects: {
+              '0b9147f6-5454-4afd-8e03-39e44f2b2842' => 'quxproject',
+            },
           },
         }
       end
 
       def enumerate_domains
-        @mock_domains_projects.keys
+        result = {}
+        @mock_domains_projects.each_pair do |id,hash|
+          result[id] = hash[:name]
+        end
+        return result
       end
 
       def enumerate_projects(domain_id)
-        @mock_domains_projects[domain_id] || {}
+        @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {})
       end
 
       def query_project_quota(domain_id, project_id, service)

@@ -2,7 +2,7 @@ module ResourceManagement
   module Driver
     class Interface < DomainModelServiceLayer::Driver::Base
 
-      # List all domain IDs that exist.
+      # List all domains that exist, as a hash of { id => name }.
       def enumerate_domains
         raise DomainModelServiceLayer::Errors::NotImplemented
       end

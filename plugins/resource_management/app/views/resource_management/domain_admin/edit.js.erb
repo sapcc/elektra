@@ -1,13 +1,1 @@
-<% value = @project_resource.data_type.format(@project_resource.approved_quota) %>
-var row = $('.resource-details tr[data-project="<%= @project_resource.project_id %>"]');
-row.find('.resource-approved-quota').html('<input type="text" class="form-control resource-approved-quota-edit" value="<%= value %>" autofocus>');
-row.find('.resource-actions').html("<%= escape_javascript( render partial: 'edit_buttons')%>")
-
-//finish editing when Enter key pressed
-row.find('input.form-control').keyup(function(event) {
-  if (event.keyCode == 13) {
-     row.find('a.btn-primary').click();
-  }
-});
-//focus first input field
-row.find('input.form-control').eq(0).focus().select();
+<%= render partial: 'edit_js', locals: { resource_id: @project_resource.id, value: @project_resource.data_type.format(@project_resource.approved_quota) } %>

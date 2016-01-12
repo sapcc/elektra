@@ -29,7 +29,7 @@ module ServiceLayer
     #    projects in all known domains.
     def sync_all_domains(options={})
       # check which domains exist in the DB and in Keystone
-      all_domain_ids = driver.enumerate_domains
+      all_domain_ids = driver.enumerate_domains.keys
       Rails.logger.info "ResourceManagement > sync_all_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
       db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
