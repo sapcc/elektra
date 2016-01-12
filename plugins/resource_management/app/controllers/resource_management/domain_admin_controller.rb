@@ -43,7 +43,7 @@ module ResourceManagement
       # validate new quota value
       value = params.require(:value)
       begin
-        value = view_context.parse_usage_or_quota_value(value, @project_resource.attributes[:data_type])
+        value = @project_resource.data_type.parse(value)
         raise ArgumentError, 'New quota may not be lower than current usage!' if value < @project_resource.usage
       rescue ArgumentError => e
         render text: e.message, status: :bad_request

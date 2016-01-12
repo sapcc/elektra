@@ -47,6 +47,10 @@ module ResourceManagement
       return (resource_attrs || {}).merge(service_attrs || {})
     end
 
+    def data_type
+      ResourceManagement::DataType.new(attributes[:data_type] || :number)
+    end
+
     # Change KNOWN_SERVICES so that only a mock service is enabled. Use this
     # for unit tests only.
     def self.mock!

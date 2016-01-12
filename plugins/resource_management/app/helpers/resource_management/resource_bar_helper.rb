@@ -1,15 +1,13 @@
 module ResourceManagement
   module ResourceBarHelper
 
-    include FormatHelper
-
     # GUI component for a resource usage bar.
     #
     # Accepts the following options:
     #     fill:      { value: NUMBER, label: STRING }   - Size value and label for the usage display (required).
     #     maximum:   { value: NUMBER, label: STRING }   - Maximum value (determines scale), and label for the right edge.
     #     threshold: { value: NUMBER, label: STRING }   - Value and label for threshold mark.
-    #     data_type:     SYMBOL                         - If given, render values with format_usage_or_quota_value().
+    #     data_type:     ResourceManagement::DataType   - If given, render values with its format() method.
     #     warning_level: NUMBER                         - A number between 0 and 1. Beyond this ratio, fill levels will be rendered in warning color.
     # The hash arguments (fill, maximum, threshold) can also be given as a single number. Then the label is just the display value.
     #
@@ -40,7 +38,7 @@ module ResourceManagement
       fill          = options[:fill]
       maximum       = options.fetch(:maximum,       fill)
       threshold     = options.fetch(:threshold,     maximum)
-      data_type     = options.fetch(:data_type,     nil)
+      data_type     = options.fetch(:data_type,     nil) || ResourceManagement::DataType.new(:number)
       warning_level = options.fetch(:warning_level, 0.8)
 
       # when only a number is given for some parameter, use the default label "$VALUE
@@ -60,7 +58,7 @@ module ResourceManagement
 
       # prepare labels
       [ fill, maximum, threshold ].each do |param|
-        display_value = format_usage_or_quota_value(param[:value], data_type)
+        display_value = data_type.format(param[:value])
         param[:label] = (param[:label] || '$VALUE').gsub("$VALUE", display_value)
       end
 
