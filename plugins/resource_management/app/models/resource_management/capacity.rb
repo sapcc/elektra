@@ -1,6 +1,3 @@
-require 'resource_management/value_formatting'
-require 'resource_management/value_parsing'
-
 module ResourceManagement
   class Capacity < ActiveRecord::Base
     validates_presence_of :service, :resource, :value
