@@ -10,3 +10,7 @@
     %tr
       %th Enabled?
       %td= @active_project.enabled
+
+/ - if @current_project.subprojects and !@current_project.subprojects.empty?
+/   %h4 Subprojects
+/   %p= subprojects_tree(@current_project.subprojects,@user_domain_projects, class: 'subprojects')

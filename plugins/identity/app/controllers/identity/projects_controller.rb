@@ -1,12 +1,15 @@
 module Identity
   class ProjectsController < DashboardController
+  
     before_filter :get_project_id,  except: [:index, :create, :new]
     before_filter do
       @scoped_project_fid = params[:project_id] || @project_id
     end
     
     rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :not_member_error
-    
+
+    authentication_required
+      
     def not_member_error(exception)
       if params[:action]=='index'
         @projects = Admin::IdentityService.projects_by_user_id(current_user.id)  
@@ -36,7 +39,7 @@ module Identity
     end
 
     def show
-      @current_project = services.identity.find_project(@project_id, :subtree_as_list)
+      @current_project = services.identity.find_project(@project_id, :subtree_as_ids)
       @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
     end
     
