@@ -14,10 +14,10 @@ class DashboardController < ::ScopeController
                           rescope: false # do not rescope after authentication
 
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use#, except: [:new_user, :new_user_request, :new_user_request_message, :register_user, :register_user_request]
+  before_filter :check_terms_of_use
   # rescope token
-  before_filter :authentication_rescope_token#, except: [:new_user, :new_user_request, :new_user_request_message, :register_user, :register_user_request]
-  before_filter :load_user_projects#, except: [:new_user, :new_user_request, :register_user, :register_user_request, :new_user_request_message]
+  before_filter :authentication_rescope_token
+  before_filter :load_user_projects
 
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
