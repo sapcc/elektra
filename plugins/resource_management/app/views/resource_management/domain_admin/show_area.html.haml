@@ -4,7 +4,7 @@
 .row.quota-row
   .col-md-9
     - @area_services.each do |service|
-      - if @area_services.size > 1
+      - if @area != service
         %h3= t("resource_management.#{service}")
       - if @resource_status[service]
         - @resource_status[service].sort_by { |data| data[:domain_resource].name }.each do |data|
