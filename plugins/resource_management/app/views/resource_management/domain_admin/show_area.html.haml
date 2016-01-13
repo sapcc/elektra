@@ -4,11 +4,11 @@
 .row.quota-row
   .col-md-9
     - @area_services.each do |service|
-      - if @area_services.size > 1
+      - if @area != service
         %h3= t("resource_management.#{service}")
       - if @resource_status[service]
-        - @resource_status[service].each do |resource|
-          = render :partial => 'bar_row', :locals => { :overview => false,  :data => resource, :service => service }
+        - @resource_status[service].sort_by { |data| data[:domain_resource].name }.each do |data|
+          = render :partial => 'bar_row', :locals => { :overview => false,  :data => data, :service => service }
       - else
         .bs-callout
           No #{t("resource_management.#{service}")} Quotas found!

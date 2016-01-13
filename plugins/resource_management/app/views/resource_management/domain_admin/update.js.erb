@@ -1,13 +1,8 @@
-//TODO: code duplication with same view for cloud_admin controller
 // re-render the edited row
-var row = $('.resource-details tr[data-resource="<%= @project_resource.id %>"]');
-// we don't have the project name right now (because the backend call is
-// expensive), but we can read it from the previous row
-var name = row.find('.resource-project-name').text();
-row.replaceWith("<%= escape_javascript(render partial: 'details_table_row', locals: { project_resource: @project_resource }) %>");
-// locate the new row and re-insert the project name
-row = $('.resource-details tr[data-resource="<%= @project_resource.id %>"]');
-row.find('.resource-project-name').text(name);
+update_resource_row(
+    '<%= escape_javascript(@project_resource.id) %>',
+    '<%= escape_javascript(render partial: 'details_table_row', locals: { project_resource: @project_resource }) %>'
+);
 
 // if data has been changed...
 <% if @resource_status %>
