@@ -1,6 +1,6 @@
 // re-render the edited row
 update_resource_row(
-    '<%= escape_javascript(@domain_resource.id) %>',
+    '<%= escape_javascript(@domain_resource.id.to_s) %>',
     '<%= escape_javascript(render partial: 'details_table_row', locals: { domain_status: @domain_status }) %>'
 );
 

@@ -1,6 +1,6 @@
 // re-render the edited row
 update_resource_row(
-    '<%= escape_javascript(@project_resource.id) %>',
+    '<%= escape_javascript(@project_resource.id.to_s) %>',
     '<%= escape_javascript(render partial: 'details_table_row', locals: { project_resource: @project_resource }) %>'
 );
 

@@ -1,8 +1,7 @@
 - domain_resource = domain_status[:domain_resource]
 - data_type       = domain_resource.data_type
-- warning_level   = warning_level_for_domain(domain_resource, domain_status[:usage_sum], domain_status[:project_quota_sum])
 
-%tr{ class: warning_level, data: { domain: domain_resource.domain_id, resource: domain_resource.id } }
+%tr{ class: domain_status[:warning_level], data: { domain: domain_resource.domain_id, resource: domain_resource.id } }
   %td.col-md-3
     .resource-object-name
       = domain_status[:name]
