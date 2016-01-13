@@ -9,8 +9,14 @@ module ResourceManagement
       @all_services = ResourceManagement::Resource::KNOWN_SERVICES.
         select { |srv| srv[:enabled] }.
         map    { |srv| srv[:service] }
-
+      
       prepare_data_for_resource_list(@all_services, overview: true)
+
+      respond_to do |format|
+        format.html
+        format.js # update only status bars 
+      end
+
     end
 
     def show_area
@@ -20,6 +26,12 @@ module ResourceManagement
         map    { |srv| srv[:service] }
 
       prepare_data_for_resource_list(@area_services)
+
+      respond_to do |format|
+        format.html
+        format.js # update only status bars
+      end
+ 
     end
 
     def edit

@@ -1,0 +1,11 @@
+- @area_services.each do |service|
+  - if @area != service
+    %h3= t("resource_management.#{service}")
+  - if @resource_status[service]
+    - @resource_status[service].sort_by { |data| data[:domain_resource].name }.each do |data|
+      = render :partial => 'bar_row', :locals => { :overview => false,  :data => data, :service => service }
+  - else
+    .bs-callout
+      No #{t("resource_management.#{service}")} Quotas found!
+= render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
+
