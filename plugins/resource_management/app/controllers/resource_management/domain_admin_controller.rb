@@ -63,7 +63,7 @@ module ResourceManagement
       end
 
       # do only a upgrade if the values are different otherwise it meaningless
-      if @project_resource.approved_quota != value
+      if @project_resource.approved_quota != value || @project_resource.current_quota != value
         @project_resource.approved_quota = value
         @project_resource.current_quota  = value
         services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
