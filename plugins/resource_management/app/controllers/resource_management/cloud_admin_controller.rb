@@ -10,8 +10,6 @@ module ResourceManagement
         select { |srv| srv[:enabled] }.
         map    { |srv| srv[:service] }
      
-      @overview = true
-
       prepare_data_for_resource_list(@all_services, overview: true)
 
       respond_to do |format|
