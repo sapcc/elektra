@@ -12,38 +12,6 @@
   
 = paginate @projects, :theme => 'twitter-bootstrap-3', :remote => true
 
--# TODO: code duplication with same view for cloud_admin controller
 = content_for :javascripts do
   :javascript
-    function set_approved_quota(button) {
-      // resource ID is annotated on the row
-      row = $(button).closest('tr');
-
-      $.ajax({
-        url: "#{plugin('resource_management').admin_update_path()}",
-        dataType: 'script',
-        data: {
-          id:    row.data('resource'),
-          value: row.find('.resource-approved-quota-edit').val(),
-        },
-        error: function(xhr) {
-          $('.alert-success').css('display','none');
-          $('.alert-danger').html(xhr.responseText);
-          $('.alert-danger').css('display','block')
-        }
-      });
-    };
-
-    function cancel(button) {
-      // resource ID is annotated on the row
-      row = $(button).closest('tr');
-
-      $.ajax({
-        url: "#{plugin('resource_management').admin_cancel_path()}",
-        dataType: 'script',
-        data: {
-          id: row.data('resource'),
-        }
-      });
-    };
-        
+    #{render partial: 'details_table_script.js', locals: { scope: 'admin'} }
