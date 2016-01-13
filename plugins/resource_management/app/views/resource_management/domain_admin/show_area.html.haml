@@ -1,21 +1,9 @@
 =render partial: 'header'
 =render partial: 'tabs', locals: { scope: 'admin', tab: @area.to_s }
+=render partial: 'refresh_view_on_modal_close', locals: { url: plugin('resource_management').admin_area_path(area: @area.to_s) }
 
 .row.quota-row
   .col-md-9#status-bars
     = render partial: 'area_status_bars'
   .col-md-3
     = render partial: 'good_to_know'
-:javascript
-  // reload/update status bars after closing the modal window
-  $( document ).ready(function() {
-    $('#modal-holder').on('hidden.bs.modal', 
-      function (e) {
-        $.ajax({
-          url: "#{plugin('resource_management').admin_area_path(area: @area.to_s)}",
-          dataType: 'script'
-        }
-        )
-      }
-    );
-  });
