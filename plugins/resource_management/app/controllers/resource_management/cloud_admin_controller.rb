@@ -101,8 +101,10 @@ module ResourceManagement
         domain_status << prepare_domain_data_for_details_view(domain_resource, resources, domain_names)
       end
 
+      # sort domain entries by warning level, then by name
+      sort_order_for = { 'danger' => 0, 'warning' => 1, '' => 2 }
+      domains = domain_status.sort_by { |entry| [ sort_order_for[ entry[:warning_level] ], entry[:name] ] }
       # prepare the domains table
-      domains = domain_status.sort_by { |entry| entry[:name] }
       @domains = Kaminari.paginate_array(domains).page(params[:page]).per(6)
     end
 
@@ -183,11 +185,21 @@ module ResourceManagement
         where(domain_id: domain_id).where.not(project_id: nil).
         pluck("SUM(approved_quota), SUM(usage)").first
 
+      # if there were no project resources...
+      usage_sum ||= 0
+      project_quota_sum ||= 0
+
+      # usage exceeding approved quota is critical
+      warning_level = 'danger'  if domain_resource.approved_quota < usage_sum
+      # project quotas exceeding domain quota is dubious
+      warning_level = 'warning' if domain_resource.approved_quota < project_quota_sum
+
       return {
         name:              domain_names[domain_id] || domain_id,
         domain_resource:   domain_resource,
-        project_quota_sum: project_quota_sum || 0,
-        usage_sum:         usage_sum || 0,
+        project_quota_sum: project_quota_sum,
+        usage_sum:         usage_sum,
+        warning_level:     warning_level || '',
       }
     end
 
