@@ -7,7 +7,7 @@
       - if @area_services.size > 1
         %h3= t("resource_management.#{service}")
       - if @resource_status[service]
-        - @resource_status[service].each do |resource|
+        - @resource_status[service].sort_by { |data| data[:capacity].resource }.each do |resource|
           = render partial: 'bar_row', locals: { overview: false,  data: resource, service: service }
       - else
         .bs-callout
