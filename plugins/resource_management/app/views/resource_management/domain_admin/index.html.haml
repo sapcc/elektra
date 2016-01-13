@@ -2,9 +2,8 @@
 =render partial: 'tabs', locals: { scope: 'admin', tab: 'overview' }
 
 .row.quota-row
-  .col-md-9   
-    #status-bars
-      = render :partial => 'index_status_bars'
+  .col-md-9#status-bars
+    = render partial: 'index_status_bars'
   .col-md-3
     = render partial: 'good_to_know'
 :javascript

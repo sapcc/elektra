@@ -2,9 +2,8 @@
 =render partial: 'tabs', locals: { scope: 'admin', tab: @area.to_s }
 
 .row.quota-row
-  .col-md-9
-    #status-bars
-      = render :partial => 'area_status_bars'
+  .col-md-9#status-bars
+    = render partial: 'area_status_bars'
   .col-md-3
     = render partial: 'good_to_know'
 :javascript
