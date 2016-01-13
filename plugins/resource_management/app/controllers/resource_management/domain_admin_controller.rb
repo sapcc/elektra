@@ -3,7 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class DomainAdminController < ApplicationController
 
-    authorization_required only: [:index, :show_area, :sync_now]
+    authorization_required
     
     def index
       @all_services = ResourceManagement::Resource::KNOWN_SERVICES.

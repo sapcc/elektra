@@ -5,17 +5,17 @@ module Identity
 
     attr_accessor :inquiry_id # to close inquiry after creation
     
-    def subtree
-      unless @sub_projects 
-        @sub_projects = []
-        projects = read(:subtree)
-        if projects 
-          @sub_projects = projects.collect{|project_attrs| Identity::Project.new(self.driver,project_attrs["project"])}
-        end 
+    def subprojects
+      return @subprojetcs if @subprojetcs
+      
+      @subprojects = read(:subtree)
+      if @subprojects.is_a?(Array)
+        @subprojects = @subprojects.collect{|project_attrs| self.class.new(self.driver,project_attrs["project"])} 
       end
-      @sub_projects
+      @subprojects
     end
-  
+        
+      
     def friendly_id
       return nil if id.nil?
       return id if domain_id.blank? or name.blank?

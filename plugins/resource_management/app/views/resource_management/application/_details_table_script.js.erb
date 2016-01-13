@@ -1,0 +1,45 @@
+function set_approved_quota(button) {
+  // resource ID is annotated on the row
+  row = $(button).closest('tr');
+
+  $.ajax({
+    url: '<%= escape_javascript(plugin('resource_management').send("#{scope}_update_path")) %>',
+    dataType: 'script',
+    data: {
+      id:    row.data('resource'),
+      value: row.find('.resource-approved-quota-edit').val(),
+    },
+    error: function(xhr) {
+      $('.alert-success').css('display','none');
+      $('.alert-danger').html(xhr.responseText);
+      $('.alert-danger').css('display','block')
+    }
+  });
+};
+
+function reset_approved_quota(button) {
+  // resource ID is annotated on the row
+  row = $(button).closest('tr');
+
+  $.ajax({
+    url: '<%= escape_javascript(plugin('resource_management').send("#{scope}_cancel_path")) %>',
+    dataType: 'script',
+    data: {
+      id: row.data('resource'),
+    }
+  });
+};
+
+function update_resource_row(resource_id, row_html) {
+  //extract the object name from the existing row (it's not included in the
+  //updated `row_html` because the name lookup is expensive)
+  var row = $('.resource-details tr[data-resource="' + resource_id + '"]');
+  var name = row.find('.resource-object-name').text();
+
+  //replace the existing row with the new one
+  row.replaceWith(row_html);
+
+  //write the object name back in place
+  row = $('.resource-details tr[data-resource="' + resource_id + '"]');
+  row.find('.resource-domain-name').text(name);
+}

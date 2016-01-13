@@ -2,7 +2,8 @@ require_dependency "resource_management/application_controller"
 
 module ResourceManagement
   class ProjectResourcesController < ApplicationController
-    authorization_required only: [:index, :show_area, :sync_now]
+
+    authorization_required
     
     def index
       @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)

@@ -2,7 +2,7 @@
 
 %tr{ class: warning_level_for_project(project_resource), data: { project: project_resource.project_id, resource: project_resource.id } }
   %td.col-md-3
-    .resource-project-name
+    .resource-object-name
       - pid = project_resource.project_id
       = (@project_names ||= {})[pid] || pid
   %td.col-md-3

@@ -1,18 +1,13 @@
-//TODO: code duplication with same view for domain_admin controller
 // re-render the edited row
-var row = $('.resource-details tr[data-resource="<%= @domain_resource.id %>"]');
-// we don't have the domain name right now (because the backend call is
-// expensive), but we can read it from the previous row
-var name = row.find('.resource-domain-name').text();
-row.replaceWith("<%= escape_javascript(render partial: 'details_table_row', locals: { domain_status: @domain_status }) %>");
-// locate the new row and re-insert the domain name
-row = $('.resource-details tr[data-resource="<%= @domain_resource.id %>"]');
-row.find('.resource-domain-name').text(name);
+update_resource_row(
+    '<%= escape_javascript(@domain_resource.id) %>',
+    '<%= escape_javascript(render partial: 'details_table_row', locals: { domain_status: @domain_status }) %>'
+);
 
 // if data has been changed...
 <% if @cloud_status %>
     // render usage bars
-    $("#usage_bars").html("<%= escape_javascript(render :partial => "details_usage_bar")%>");
+    $("#usage_bars").html("<%= escape_javascript(render :partial => "details_usage_bar") %>");
     // hide alerts 
     $('.alert-danger').css('display','none');
 <% end %>
