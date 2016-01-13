@@ -3,15 +3,20 @@
 
 .row.quota-row
   .col-md-9
-    - @area_services.each do |service|
-      - if @area_services.size > 1
-        %h3= t("resource_management.#{service}")
-      - if @resource_status[service]
-        - @resource_status[service].each do |resource|
-          = render partial: 'bar_row', locals: { overview: false,  data: resource, service: service }
-      - else
-        .bs-callout
-          No #{t("resource_management.#{service}")} Quotas found!
-    = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').cloud_admin_sync_now_url }
+    #status-bars
+      = render partial: "status_bars"
   .col-md-3
     = render partial: 'good_to_know'
+:javascript
+  // reload/update status bars after closing the modal window
+  $( document ).ready(function() {
+    $('#modal-holder').on('hidden.bs.modal', 
+      function (e) {
+        $.ajax({
+          url: "#{plugin('resource_management').cloud_admin_area_path(area: @area.to_s)}",
+          dataType: 'script'
+        }
+        )
+      }
+    );
+  });

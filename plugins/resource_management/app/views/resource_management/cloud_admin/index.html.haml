@@ -2,15 +2,21 @@
 =render partial: 'tabs', locals: { scope: 'cloud_admin', tab: 'overview' }
 
 .row.quota-row
-  .col-md-9   
-    - if @resource_status.blank?
-      .bs-callout.bs-callout-info
-        Nothing to report! Everything is fine.
-    - else
-      - @all_services.sort.each do |service|
-        - resources = @resource_status[service] || []
-        - resources.sort_by { |r| r[:name] }.each do |resource|
-          = render partial: 'bar_row', locals: { overview: true,  data: resource, service: service }
-      = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').cloud_admin_sync_now_url }
+  .col-md-9
+    #status-bars
+      = render partial: "status_bars"
   .col-md-3
     = render partial: 'good_to_know'
+:javascript
+  // reload/update status bars after closing the modal window
+  $( document ).ready(function() {
+    $('#modal-holder').on('hidden.bs.modal', 
+      function (e) {
+        $.ajax({
+          url: "#{plugin('resource_management').cloud_admin_path()}",
+          dataType: 'script'
+        }
+        )
+      }
+    );
+  });
