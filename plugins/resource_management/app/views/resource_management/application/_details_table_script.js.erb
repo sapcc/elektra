@@ -29,3 +29,17 @@ function reset_approved_quota(button) {
     }
   });
 };
+
+function update_resource_row(resource_id, row_html) {
+  //extract the object name from the existing row (it's not included in the
+  //updated `row_html` because the name lookup is expensive)
+  var row = $('.resource-details tr[data-resource="' + resource_id + '"]');
+  var name = row.find('.resource-object-name').text();
+
+  //replace the existing row with the new one
+  row.replaceWith(row_html);
+
+  //write the object name back in place
+  row = $('.resource-details tr[data-resource="' + resource_id + '"]');
+  row.find('.resource-domain-name').text(name);
+}
