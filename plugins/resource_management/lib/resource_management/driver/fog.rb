@@ -103,7 +103,7 @@ module ResourceManagement
       def set_project_quota_object_storage(domain_id, project_id, values)
         return unless values.has_key?(:capacity)
 
-        with_service_user_connection_for_swift(domain_id, project_id) do |connection|
+        with_service_user_connection_for_swift(project_id) do |connection|
           # the post_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
           connection.request(
@@ -121,7 +121,7 @@ module ResourceManagement
       # method caches it.
       def get_swift_account_metadata(domain_id, project_id)
         @swift_account_metadata_cache ||= {}
-        @swift_account_metadata_cache[project_id] ||= with_service_user_connection_for_swift(domain_id, project_id) do |connection|
+        @swift_account_metadata_cache[project_id] ||= with_service_user_connection_for_swift(project_id) do |connection|
           # the head_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
           connection.request(
@@ -163,7 +163,12 @@ module ResourceManagement
         return yield(fog_class.new(auth_params))
       end
 
-      def with_service_user_connection_for_swift(domain_id, project_id, options={}, &block)
+      # NOTE: Use like this:
+      #
+      # with_service_user_connection_for_swift(project_id) do |connection|
+      #    ...
+      # end
+      def with_service_user_connection_for_swift(project_id, options={}, &block)
         # the "service" role usually means "readonly access to everything",
         # but not for Swift; here only the reseller-admin role works; but stuff
         # gets easier again since we only need the reseller-admin role on the
@@ -178,7 +183,6 @@ module ResourceManagement
           openstack_auth_url:          @auth_url,
           openstack_region:            @region,
           openstack_auth_token:        @service_user_token,
-          openstack_project_domain_id: domain_id,
           openstack_project_id:        @service_project_id,
           connection_options:          { ssl_verify_peer: false },
         )
@@ -203,8 +207,8 @@ module ResourceManagement
           begin
             yield(@swift_conn)
           rescue Excon::Errors::Unauthorized, Excon::Errors::Forbidden
-            # same pattern as in with_service_user_connection(): if service user
-            # does not have the ResellerAdmin role yet, grant it
+            # if service user does not have the ResellerAdmin role yet, grant
+            # it, then retry the request
             role_name = ENV.fetch('SWIFT_RESELLERADMIN_ROLE', 'ResellerAdmin')
             roles = @srv_conn.list_roles(name: role_name).body['roles']
             raise "missing role \"#{role_name}\" in Keystone" if roles.empty?
@@ -217,7 +221,7 @@ module ResourceManagement
 
             # retry, but set options[:retrying] to make sure that we don't try
             # to grant the role again
-            with_service_user_connection_for_swift(domain_id, project_id, options.merge(retrying: true), &block)
+            with_service_user_connection_for_swift(project_id, options.merge(retrying: true), &block)
           end
         end
       end
