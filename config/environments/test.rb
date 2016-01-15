@@ -51,5 +51,11 @@ Rails.application.configure do
       from: 'do.not.reply@sap.com'
   }
   config.action_mailer.perform_deliveries = false
+  
+  # Enable stdout logger
+  #config.logger = Logger.new(STDOUT)
+
+  # Set log level
+  #config.log_level = :ERROR
 
 end

@@ -1,15 +1,21 @@
-%p
-  This is the project home page. We will display a nicely rendered list of all available services here soon. For now please use the services dropdown menu above.
-  %table
-    %tr
-      %th Name
-      %td= @active_project.name
-    %tr
-      %th Description&nbsp;
-      %td= @active_project.description
-    %tr
-      %th Enabled?
-      %td= @active_project.enabled
+.row
+  .col-sm-6
+    %p
+      This is the project home page. We will display a nicely rendered list of all available services here soon. For now please use the services dropdown menu above.
+      %table
+        %tr
+          %th Name
+          %td= @active_project.name
+        %tr
+          %th Description&nbsp;
+          %td= @active_project.description
+        %tr
+          %th Enabled?
+          %td= @active_project.enabled
+  .col-sm-6
+    %ul
+      %li= link_to 'Edit Project', plugin('identity').edit_project_path        
+      %li= link_to 'Manage Project Members', plugin('identity').projects_members_path        
 
 
 %h4 Sub Projects

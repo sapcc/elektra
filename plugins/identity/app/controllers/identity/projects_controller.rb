@@ -43,6 +43,22 @@ module Identity
       @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
     end
     
+    def edit
+      @project = services.identity.find_project(@project_id)
+    end
+    
+    def update
+      @project = services.identity.find_project(@project_id)
+      @project.attributes = params[:project]
+      if @project.save
+        flash[:notice] = "Project #{@project.name} successfully updated."
+        redirect_to plugin('identity').project_path
+      else
+        flash[:error] = @project.errors.full_messages.to_sentence
+        render action: :edit
+      end
+    end
+    
     def destroy
       project = services.identity.find_project(@project_id)
       

@@ -1,0 +1,35 @@
+- if modal?
+  = content_for :title do 
+    Manage Project Members   
+- else
+  = content_for :main_toolbar do
+    Manage Project Members   
+  
+= simple_form_for :role_assignments, url: plugin('identity').projects_members_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    - if current_user.is_allowed?("identity:project_update",{project: {user_id: current_user.id}})
+      .toolbar
+        %button.btn.btn-primary.btn-lg New Member
+        
+    - role_ids = @roles.keys.sort
+    
+    %table.table
+      %thead
+        %tr
+          %th User
+          - role_ids.each do |role_id|
+            %th= @roles[role_id].name
+      %tbody
+        - @user_roles.each do |user_id, values|
+          = f.simple_fields_for user_id do |user_role|
+            %tr
+              %td= values[:user].name
+              - role_ids.each do |role_id|
+                %td= user_role.input role_id, as: :boolean, label: false, input_html: { checked: values[:role_ids].include?(role_id) }
+      
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'  
+    = f.submit 'Save', class: 'btn btn-primary', data: { disable_with: "Please wait..." }
