@@ -14,6 +14,7 @@ module Identity
         # so use admin identity for that!
         @project = services.identity.new_project
         @project.attributes = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
+        
         if @project.save
           inquiry = services.inquiry.set_state(@inquiry.id, :approved, "Project #{@project.name} approved and created by #{current_user.full_name}")
           services.identity.grant_project_role(inquiry.requester.uid, @project.id, 'admin')

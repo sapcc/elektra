@@ -5,12 +5,12 @@ module Identity
       def new
         @project = services.identity.new_project
         @project.enabled = true
+        @project.parent_id = @scoped_project_id if @scoped_project_id
       end
 
       def create
         @project = services.identity.new_project
         @project.attributes=params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
-        @project.attributes[:parent_id] = @scoped_project_id if @scoped_project_id
 
         inquiry = nil
 

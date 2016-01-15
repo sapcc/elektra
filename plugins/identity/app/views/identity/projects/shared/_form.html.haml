@@ -10,12 +10,12 @@
       %fieldset
         = hidden_field_tag :inquiry_id, params[:inquiry_id]
         
-        - if @scoped_project_id  
+        - if @project.parent_id
           = form.input :parent_id,
-            input_html:  { maxlength: 255, value: @scoped_project_name },
+            input_html:  { maxlength: 255, value: @scoped_project_name, name: nil, id: nil },
             disabled:    true,
             label:       'Parent Project'
-          
+          = form.input :parent_id, :as => :hidden, :input_html => { value: @project.parent_id }
              
         = form.input :name,
           input_html:  { maxlength: 255 },
