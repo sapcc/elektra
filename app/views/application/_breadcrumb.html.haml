@@ -6,24 +6,28 @@
           = link_to plugin('identity').domain_path(project_id:nil) do
             %i.fa.fa-home
 
-    - if @user_domain_projects
-      %ol.context-list
-        %li.dropdown
-          %span.glyphicon.glyphicon-th
-          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            - if @active_project
-              = @active_project.name
-            - else
-              Choose a Project
-            %span.caret
-          %ul.dropdown-menu{:role => "menu"}
-            - @user_domain_projects.each do |project|
-              %li{class: ("active" if project.id == @scoped_project_id)}
-                = link_to "#{project.name}", plugin('identity').project_path(project_id:project.friendly_id)
+    -# - if @user_domain_projects
+    -#   %ol.context-list
+    -#     %li.dropdown
+    -#       %span.glyphicon.glyphicon-th
+    -#       %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+    -#         - if @active_project
+    -#           = @active_project.name
+    -#         - else
+    -#           Choose a Project
+    -#         %span.caret
+    -#       %ul.dropdown-menu{:role => "menu"}
+    -#         - @user_domain_projects.each do |project|
+    -#           %li{class: ("active" if project.id == @scoped_project_id)}
+    -#             = link_to "#{project.name}", plugin('identity').project_path(project_id:project.friendly_id)
 
 
 
     - if @scoped_project_id
+      %ol.context-list
+        %li
+          = link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_id)
+
       %ol.context-list
         %li.dropdown.dropdown-mega
           %span.glyphicon.glyphicon-cloud

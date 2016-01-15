@@ -11,6 +11,12 @@
       %th Enabled?
       %td= @active_project.enabled
 
-/ - if @current_project.subprojects and !@current_project.subprojects.empty?
-/   %h4 Subprojects
-/   %p= subprojects_tree(@current_project.subprojects,@user_domain_projects, class: 'subprojects')
+
+%h4 Sub Projects
+
+- unless @current_project.subprojects.blank?
+  %p= subprojects_tree(@current_project.subprojects,@user_domain_projects, class: 'content-list subprojects')
+- else
+  %p This project doesn't have any sub projects
+
+= link_to 'Request new sub project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'

@@ -3,6 +3,16 @@
 
 %p
   This is the domain start page. More interesting content will show up here soon (TM) ...
+
+%h3 Your projects
+- if @root_projects
+  %ul.content-list
+    - @root_projects.each do |project|
+      %li
+        = link_to "#{project.name}", plugin('identity').project_path(project_id:project.friendly_id)
+
+= link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
+
 / .row
 /   .col-sm-12
 /     %h3 Inquiries
