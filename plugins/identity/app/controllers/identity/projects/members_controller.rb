@@ -3,6 +3,10 @@ module Identity
     class MembersController < ::DashboardController  
       before_filter :load_project, :load_roles
       
+      def new
+        
+      end
+      
       def index
         load_role_assignments
       end
