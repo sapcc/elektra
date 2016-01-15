@@ -9,12 +9,19 @@
     %p
       %fieldset
         = hidden_field_tag :inquiry_id, params[:inquiry_id]
+        
+        - if @scoped_project_id  
+          = form.input :parent_id,
+            input_html:  { maxlength: 255, value: @scoped_project_name },
+            disabled:    true,
+            label:       'Parent Project'
           
+             
         = form.input :name,
           input_html:  { maxlength: 255 },
           placeholder: "Enter name",
           autofocus:   true,
-          label:       'Name'
+          label:       'Name'  
       
         = form.input :description, as: :text
         = form.input :enabled, as: :boolean

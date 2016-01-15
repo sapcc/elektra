@@ -29,8 +29,9 @@ class ScopeController < ::ApplicationController
 
       if project_friendly_id
         # set scoped project parameters
-        @scoped_project_id  = project_friendly_id.key
-        @scoped_project_fid = project_friendly_id.slug
+        @scoped_project_id   = project_friendly_id.key
+        @scoped_project_fid  = project_friendly_id.slug
+        @scoped_project_name = project_friendly_id.name
       end
 
       if domain_id!=@scoped_domain_fid or project_id!=@scoped_project_fid
