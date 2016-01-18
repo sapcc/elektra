@@ -1,0 +1,7 @@
+%tr
+  %td
+    = user.description
+    %small.bg-success= " #{user.name}"
+  - role_ids.each do |role_id|
+    %td
+      = check_box("role_assignments[#{user.id}]", role_id, {checked: user_role_ids.include?(role_id)}, "1", "0")

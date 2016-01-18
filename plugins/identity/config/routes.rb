@@ -1,7 +1,9 @@
 Identity::Engine.routes.draw do
   resources :domains, only: [:index]
   
-  resources :projects, only:[:index] 
+  resources :projects, only:[:index] do
+    delete '/' => 'projects#destroy', on: :member, as: :delete
+  end 
 
   namespace :projects  do
 

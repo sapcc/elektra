@@ -68,7 +68,7 @@ module Identity
         flash[:error] = project.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
       end
 
-      redirect_to projects_path
+      redirect_to plugin('identity').projects_path
     end
 
     def web_console
