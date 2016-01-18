@@ -8,6 +8,7 @@
   "identity:project_create": "role:admin",
   "identity:project_update": "role:admin",
   "identity:project_delete": "role:admin",
+  "identity:project_web_console": "role:admin or role:Member or role:member",
   
   "identity:create_wizard_create": "role:admin",
 
