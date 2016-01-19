@@ -9,12 +9,25 @@
       %tr
         %th Name
         %th ID
+        %th Parent
         %th Description
         %th Status
+        %th Actions
     %tbody
       - @projects.each do |project|
         %tr
           %td= link_to project.name, plugin('identity').project_path(project_id:project.friendly_id)
           %td= project.id
+          %td= project.parent_id
           %td= project.description
           %td= project.enabled ? 'enabled' : 'disabled'
+          %td.snug
+            - if current_user.is_allowed?("identity:project_delete", {})
+              .btn-group
+                %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+                  %span.glyphicon.glyphicon-cog
+                  -# %span.spinner
+
+                %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+                  - if current_user.is_allowed?("identity:project_delete", {})
+                    %li= link_to 'Delete Project', plugin('identity').delete_project_path(id:project.id), method: :delete, data: { confirm: 'Are you sure you want to delete this network?' }    

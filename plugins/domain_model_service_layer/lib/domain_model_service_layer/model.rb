@@ -151,6 +151,10 @@ module DomainModelServiceLayer
       JSON.pretty_generate(@attributes)
     end
     
+    def to_s
+      pretty_attributes  
+    end
+    
     def attribute_to_object(attribute_name,klass)
       value = read(attribute_name)
 

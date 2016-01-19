@@ -60,9 +60,17 @@ module ServiceLayer
       driver.map_to(Identity::Project).projects(filter)
     end
 
-    def grant_project_role(user_id,project_id,role_name)
+    def grant_project_user_role_by_role_name(project_id,user_id,role_name)
       role = Admin::IdentityService.find_role_by_name(role_name)
       driver.grant_project_user_role(project_id,user_id,role.id)
+    end
+    
+    def grant_project_user_role(project_id,user_id,role_id)
+      driver.grant_project_user_role(project_id,user_id,role_id)
+    end
+    
+    def revoke_project_user_role(project_id,user_id,role_id)
+      driver.revoke_project_user_role(project_id,user_id,role_id)
     end
 
     ##################### CREDENTIALS #########################
@@ -100,12 +108,20 @@ module ServiceLayer
       driver.grant_domain_user_role(domain_id, user_id, role_id)
     end
     
+    def revoke_domain_user_role(domain_id,user_id,role_id)
+      driver.revoke_domain_user_role(domain_id,user_id,role_id)
+    end
+    
     ###################### TOKENS ###########################
     def validate_token(token)
       driver.validate(token) rescue false
     end
     
     ###################### USERS ##########################
+    def users(filter={})
+      driver.map_to(Identity::User).users(filter)
+    end
+    
     def find_user(id)
       driver.map_to(Identity::User).get_user(id)
     end

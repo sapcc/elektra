@@ -7,8 +7,8 @@
   "identity:project_request": "role:admin or role:Member or role:member",
   "identity:project_create": "role:admin",
   "identity:project_update": "role:admin",
-  "identity:project_delete": "role:admin",
   "identity:project_web_console": "role:admin or role:Member or role:member",
+  "identity:project_delete": "rule:admin_required or (project_id:nil and (role:member or role:Member))",
   
   "identity:create_wizard_create": "role:admin",
 
@@ -22,5 +22,7 @@
   "identity:instance_list": "role:admin or role:Member or role:member",
   "identity:instance_create": "role:admin",
   "identity:instance_update": "role:admin",
-  "identity:instance_delete": "role:admin"
+  "identity:instance_delete": "role:admin",
+  
+  "identity:member_list": "rule:admin_required"
 }

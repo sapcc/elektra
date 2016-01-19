@@ -1,0 +1,12 @@
+- class_name = ''
+- class_name += 'active' if current_user.id==user.id
+- class_name += 'warning' if local_assigns.has_key?(:highlight)
+- class_name += 'danger' if local_assigns.has_key?(:new_member)
+%tr{class: class_name}
+  %td
+    = user.description
+    %mark.small.highlight
+      = " #{user.name}"
+  - role_ids.each do |role_id|
+    %td
+      = check_box("role_assignments[#{user.id}]", role_id, {checked: user_role_ids.include?(role_id), disabled: current_user.id==user.id ? 'disabled' : false}, "1", "0")

@@ -1,5 +1,6 @@
 module Identity
   class RoleAssignment < DomainModelServiceLayer::Model
+    attr_accessor :role_name, :user_name, :group_name, :domain_name
     
     def user_id
       (read("user") || {})["id"]
@@ -16,5 +17,6 @@ module Identity
     def role_id
       (read("role") || {})["id"]
     end
+    
   end
 end

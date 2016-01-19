@@ -33,6 +33,7 @@ module Identity
           subprojects.each do |k,v|
             result <<  content_tag(:li, id: k) do
               project = auth_projects[k]
+              next if project.nil?
               capture do
                 concat link_to project.name, plugin('identity').project_path(project_id: project.id)
                 if v.is_a?(Hash)
