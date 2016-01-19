@@ -16,9 +16,8 @@ Identity::Engine.routes.draw do
       post 'create' => 'create_wizard#create'
     end
     
-    resources :members, only: [:index] do
+    resources :members, only: [:index,:new, :create] do
       put '/' => 'members#update', on: :collection
-      get '/new' => 'members#new', on: :collection
     end
   end
 

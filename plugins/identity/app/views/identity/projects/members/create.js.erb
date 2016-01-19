@@ -1,4 +1,4 @@
 // close modal window
 Dashboard.hideModal();
 // reload remote inquries
-$("table#project_members tbody").append("<%= escape_javascript(render(partial: 'member', locals: {user: @user, role_ids: @roles.keys.sort, user_role_ids: []})) %>");
+$("table#project_members tbody").append("<%= escape_javascript(render(partial: 'member', locals: {user: @user, role_ids: @roles.keys.sort, user_role_ids: [], new_member: true})) %>");

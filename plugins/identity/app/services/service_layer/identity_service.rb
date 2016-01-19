@@ -118,6 +118,10 @@ module ServiceLayer
     end
     
     ###################### USERS ##########################
+    def users(filter={})
+      driver.map_to(Identity::User).users(filter)
+    end
+    
     def find_user(id)
       driver.map_to(Identity::User).get_user(id)
     end
