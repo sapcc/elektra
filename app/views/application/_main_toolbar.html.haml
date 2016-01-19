@@ -1,13 +1,16 @@
 .main-toolbar
   .container
     %h1
-      = @scoped_domain_name
-      - if @active_project
-        \/
-        = @active_project.name
+      .small
+        = link_to @scoped_domain_name, plugin('identity').domain_path(project_id:nil)
+        - if @active_project
+          \/
+          = link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_id)
+          -# \/
 
-      - if content_for? :main_toolbar
-        \/
-        = yield :main_toolbar
-      - else
-        = "#{active_service_breadcrumb}"
+      .page-title
+        %i.fa.fa-angle-right
+        - if content_for? :main_toolbar
+          = yield :main_toolbar
+        - else
+          = active_service_breadcrumb

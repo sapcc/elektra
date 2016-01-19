@@ -104,9 +104,9 @@ module ApplicationHelper
 
   def active_service_breadcrumb
     active_service = active_navigation_item_name(context: :services, :level => :all)
-    crumb = ""
+    crumb = "Home"
     unless active_service.blank?
-      crumb = "/ #{active_service}"
+      crumb = active_service
     end
     crumb
   end

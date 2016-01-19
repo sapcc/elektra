@@ -506,13 +506,28 @@ footer, .footer {
 // ---------------------------------------------------------------------------------
 
 .main-toolbar {
-  border-bottom: 1px solid $bright-blue;
+  // border-bottom: 1px solid $bright-blue;
   padding: $line-height-computed;
 
   h1 {
     margin: 0;
-    font-family: $font-family-sap-light;
-    font-size: $font-size-large;
+    font-size: $font-size-h2;
+
+    .small {
+      font-size: 45%;
+      a {
+        color: #888;
+      }
+    }
+
+    .page-title {
+      font-family: $font-family-sap-book;
+      padding-top: $line-height-computed / 3;
+
+      .fa {
+        @include opacity(0.8);
+      }
+    }
   }
 }
 
