@@ -1,0 +1,5 @@
+%h1
+  Requests for processing
+%br
+.inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
+  = render partial: 'inquiries_widget', locals: {admin_view: true, remote_links: false}

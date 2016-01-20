@@ -9,6 +9,10 @@ module Inquiry
     end
   end
 
+  class InquiryError < StandardError
+
+  end
+
 end
 
 

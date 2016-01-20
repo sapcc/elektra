@@ -71,7 +71,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     if plugin_available?('inquiry')
-      primary.item :requests, 'Manage Requests', plugin('inquiry').inquiries_path, if: -> {
+      primary.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path, if: -> {
         current_user.is_allowed?('inquiry:inquiry_all_list')
       }
     end

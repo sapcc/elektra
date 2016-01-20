@@ -1,6 +1,5 @@
-- if true #current_user.is_allowed?("network:network_create", {network: {user_id: current_user.id} })
-  .toolbar
-    = link_to 'Create new', plugin('inquiry').new_inquiry_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid), data: {modal: true}, class: 'btn btn-primary btn-lg'
-
+%h1
+  Your Requests
+%br
 .inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
-  = render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: false}
+  = render partial: 'inquiries_widget', locals: {admin_view: false, remote_links: false}

@@ -2,7 +2,7 @@
   "inquiry:inquiry_list": "@",
   "inquiry:inquiry_get": "@",
   "inquiry:inquiry_delete": "rule:admin_required",
-  "inquiry:inquiry_all_list": "rule:admin_required",
+  "inquiry:inquiry_admin_list": "rule:admin_required",
   "inquiry:inquiry_update": "rule:admin_required",
   "inquiry:inquiry_create": "rule:admin_required",
   "inquiry:inquiry_edit": "rule:admin_required"

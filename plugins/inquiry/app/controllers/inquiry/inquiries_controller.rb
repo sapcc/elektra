@@ -1,22 +1,22 @@
 module Inquiry
   class InquiriesController < DashboardController
-    
+
     authorization_context 'inquiry'
     authorization_required
 
     def index
-      filter = params[:filter] ? params[:filter] : {}
-      @page = params[:page] || 1
-      @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
-      respond_to do |format|
-        format.html {
-          if params[:partial]
-            render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
-          else
-            render action: :index
-          end
-        }
-        format.js
+      if params[:partial]
+        filter = params[:filter] ? params[:filter] : {}
+        @page = params[:page] || 1
+        @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
+        respond_to do |format|
+          format.html {
+              render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
+          }
+          format.js
+        end
+      else
+        render action: :index
       end
     end
 

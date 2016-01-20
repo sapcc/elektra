@@ -15,22 +15,26 @@ module Identity
         inquiry = nil
 
         if @project.valid?
-          inquiry = services.inquiry.inquiry_create(
-              'project',
-              @project.description,
-              current_user,
-              @project.attributes.to_json,
-              Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id, project_id: @scoped_project_id),
-              {
-                  "approved": {
-                      "name": "Approve",
-                      "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').projects_create_path}"
-                  }
-              }
-          )
-          unless inquiry.errors?
-            render template: 'identity/projects/request_wizard/create.js'
-          else
+          begin
+            inquiry = services.inquiry.inquiry_create(
+                'project',
+                "#{@project.name} - #{@project.description}",
+                current_user,
+                @project.attributes.to_json,
+                Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id, project_id: @scoped_project_id),
+                {
+                    "approved": {
+                        "name": "Approve",
+                        "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').projects_create_path}"
+                    }
+                }
+            )
+            unless inquiry.errors?
+              render template: 'identity/projects/request_wizard/create.js'
+            else
+              render action: :new
+            end
+          rescue
             render action: :new
           end
         else

@@ -39,7 +39,7 @@ module Identity
                 if v.is_a?(Hash)
                   concat subprojects_tree(v,auth_projects)
                 end
-              end
+              end if project
             end
           end
           result.join("\n").html_safe
