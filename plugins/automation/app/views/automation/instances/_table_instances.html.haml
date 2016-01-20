@@ -2,13 +2,14 @@
   %thead
     %tr
       %th Name
-      %th OS
       %th IP
-      %th Action
+      %th Online
+      %th Status history
+      %th Actions
   %tbody
     - if instances.empty?
       %tr
-        %td{colspa: 4} No instances available
+        %td{colspa: 5} No instances available
     - else
       -instances.values.each do | instance |
         = render partial: 'table_instances_item', locals: {instance: instance}

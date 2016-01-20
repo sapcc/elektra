@@ -1,17 +1,19 @@
 module Automation
 
   class InstancesController < Automation::ApplicationController
-    before_filter :init_automation
 
     def index
-      @instances = services.compute.servers || []
-      @instanceAgents = @automation.instanceAgents(current_user.token, @instances)
+      # get all severs (max limit is 1000)
+      servers = services.compute.servers
+      agents = services.automation.agents("", ['online', 'hostname', 'os', 'ipaddress'], 1, 10)
+      @instances = Instance.create_instances(servers, agents)
+      @external_instances = Instance.create_external_instances(servers, agents)
     end
 
     def show
       @instance_name = params[:name]
-      @facts = @automation.list_agent_facts(current_user.token, params[:id])
-      @jobs = @automation.list_jobs(current_user.token, params[:id])
+      @facts = services.automation.agent_facts(params[:id])
+      @jobs = services.automation.agent_jobs(params[:id], 1, 100)
     rescue ::RestClient::ResourceNotFound => exception
       Rails.logger.error "Automation-plugin: list_agent_facts: #{exception.message}"
       render "error_resource_not_found"
@@ -25,7 +27,7 @@ module Automation
 
     def show_section
       @instances = services.compute.servers || []
-      @instanceAgents = @automation.instanceAgents(current_user.token, @instances)
+      @instanceAgents = ArcAutomation.new().instanceAgents(current_user.token, @instances)
     end
 
     def install_agent
@@ -43,10 +45,6 @@ module Automation
       # convert to hash
       response_hash = JSON.parse(response)
       @url = response_hash['url']
-    end
-
-    def init_automation
-      @automation = ArcAutomation.new()
     end
 
   end
