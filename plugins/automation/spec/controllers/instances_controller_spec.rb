@@ -25,11 +25,11 @@ describe Automation::InstancesController, type: :controller do
     allow_any_instance_of(Automation::ArcAutomation).to receive(:instanceAgents).and_return([])
   end
 
-  describe "GET 'index'" do
-    it "returns http success" do
-      get :index, default_params
-      expect(response).to be_success
-    end
-  end
+  # describe "GET 'index'" do
+  #   it "returns http success" do
+  #     get :index, default_params
+  #     expect(response).to be_success
+  #   end
+  # end
 
 end
