@@ -21,7 +21,7 @@
     .tab-pane{role:"tabpanel", id:"jobs"}
       %table.table.datatable
         %tbody
-          - @jobs.each do |job|
+          - @jobs.data.each do |job|
             %tr
               %td
                 .row

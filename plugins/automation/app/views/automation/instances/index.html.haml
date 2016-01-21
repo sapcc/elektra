@@ -1,22 +1,10 @@
 = render "intro"
 
-.page-header
-  %h1
-    = @active_project.name
-    \-
-    Monsoon Automation
-
 %section
   %h2
-    Instances with Agent
-  = render partial: 'table_agent_instances', locals: {instances: @instanceAgents[:withAgent]}
+    Instances
+  = render partial: 'table_instances', locals: {instances: @instances[:instances]}
 
-- if !@instanceAgents[:external].empty?
-  %section
-    %h2
-      External Agents
-
-    = render partial: 'table_agent_instances', locals: {instances: @instanceAgents[:external]}
 
 %section#automation_instances_without_agent.hidden
   %h2

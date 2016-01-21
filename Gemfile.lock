@@ -465,7 +465,7 @@ GEM
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    ruby-arc-client (0.2.0)
+    ruby-arc-client (0.3.0)
       rest-client (~> 1.8)
     ruby_parser (3.7.2)
       sexp_processor (~> 4.1)
@@ -569,7 +569,7 @@ DEPENDENCIES
   responders
   rspec
   rspec-rails
-  ruby-arc-client (~> 0.2.0)!
+  ruby-arc-client (~> 0.3.0)!
   sass-rails
   sass_inline_svg
   sdoc (~> 0.4.0)
@@ -579,3 +579,6 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.5

@@ -78,7 +78,7 @@ module Automation
 
       # map instances with agents
       agents = list_agents(token)
-      agents.each do |agent|
+      agents.data.each do |agent|
         if withoutAgentMap.has_key?(agent.agent_id)
           # update instance with agent attributes
           instanceAgent = withoutAgentMap[agent.agent_id]
@@ -111,7 +111,7 @@ module Automation
 
     def list_agent_facts(token, agent_id)
       client = RubyArcClient::Client.new(ARC_API_URL)
-      InstanceAgentFacts.new( client.list_agent_facts!(token, agent_id) )
+      InstanceAgentFacts.new( client.show_agent_facts!(token, agent_id) )
     end
 
     def list_jobs(token, agent_id)

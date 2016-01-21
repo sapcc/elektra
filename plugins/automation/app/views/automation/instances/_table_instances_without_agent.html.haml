@@ -4,12 +4,11 @@
       %th Name
       %th OS
       %th IP
-      %th Agent Version
-      %th Online
+      %th Action
   %tbody
     - if instances.empty?
       %tr
-        %td{colspa: 6} No instances available
+        %td{colspa: 4} No instances available
     - else
       -instances.values.each do | instance |
-        = render partial: 'table_agent_instances_item', locals: {instance: instance}
+        = render partial: 'table_instances_without_agent_item', locals: {instance: instance}

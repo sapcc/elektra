@@ -1,6 +1,8 @@
-%tr{class: "", id: "instance_#{instance.id}"}
-  %td= instance.name
-  %td= instance.os
-  %td= instance.ip
+%tr{id: "instance_#{instance.id}"}
   %td
-    = link_to("Install Agent", install_agent_instances_path(id: instance.id, name: instance.name, ip: instance.ip), data: {modal: true}, class: 'btn btn-default')
+    = instance.id.nil? ? instance.name : link_to(instance.name, instance_path(id: instance.id, name: instance.name), data: {modal: true})
+  %td= instance.ip
+  %td{class: "snug #{'automation_status_alarm' if instance.online == false}"}
+    = instance.online_to_string
+  %td
+  %td
