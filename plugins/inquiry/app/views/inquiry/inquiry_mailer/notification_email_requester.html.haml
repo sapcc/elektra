@@ -12,6 +12,9 @@
       = "#{@inquiry_step.inquiry.kind}."
 
     %p
+      %a(href="#{inquiries_url(domain_id: "#{@inquiry_step.inquiry.domain_id}")}") Click here to look at the request.
+
+    %p
       %strong= "The status of your request has been changed to #{@inquiry_step.inquiry.aasm.human_state}."
 
     - unless @inquiry_step.description.blank?

@@ -4,6 +4,8 @@ module Inquiry
     authorization_context 'inquiry'
     authorization_required
 
+    before_filter :set_mailer_host
+
     def index
       if params[:partial]
         filter = params[:filter] ? params[:filter] : {}
@@ -79,6 +81,11 @@ module Inquiry
     end
 
     private
+
+    def set_mailer_host
+      ActionMailer::Base.default_url_options[:host] = request.host_with_port
+    end
+
 
     def inquiry_params
       params.require(:inquiry).permit(:kind, :description, :aasm_state, :new_state, :process_step_description)

@@ -28,38 +28,44 @@ module Inquiry
     include AASM
     aasm do
 
+      #error_on_all_events :error_on_all_events
+
       state :new, :initial => true, :before_enter => :set_process_step_description
       state :open
       state :approved
       state :rejected
       state :closed
 
-      event :open, :after => :notify_processors do
+      event :open, :after => :notify_processors, :error => :error_on_event do
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
-      event :approve, :after => :notify_requester, :guards => Proc.new { |*args| can_approve?(*args) } do
+      event :approve, :after => :notify_requester, :error => :error_on_event, :guards => Proc.new { |*args| can_approve?(*args) } do
         before do
           #run_automatically('approved')
         end
         transitions :from => :open, :to => :approved, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_approve?]
       end
 
-      event :reject, :after => :notify_requester, :guards => Proc.new { |*args| can_reject?(*args) } do
+      event :reject, :after => :notify_requester, :error => :error_on_event, :guards => Proc.new { |*args| can_reject?(*args) } do
         before do
           #run_automatically('rejected')
         end
         transitions :from => :open, :to => :rejected, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
-      event :reopen, :after => :notify_processors, :guards => Proc.new { |*args| can_reopen?(*args) } do
+      event :reopen, :after => :notify_processors, :error => :error_on_event, :guards => Proc.new { |*args| can_reopen?(*args) } do
         transitions :from => :rejected, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_reopen?]
       end
 
-      event :close, :guards => Proc.new { |*args| can_close?(*args) } do
+      event :close, :error => :error_on_event, :guards => Proc.new { |*args| can_close?(*args) } do
         transitions :from => [:approved, :rejected], :to => :closed, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_close?]
       end
 
+    end
+
+    def error_on_event args
+      raise args
     end
 
     def transition_to_open
@@ -172,11 +178,25 @@ module Inquiry
 
 
     def notify_requester
-      InquiryMailer.notification_email_requester(self.requester.email, self.requester.full_name, self.process_steps.last).deliver_later
+      begin
+        InquiryMailer.notification_email_requester(self.requester.email, self.requester.full_name, self.process_steps.last).deliver_later
+      rescue Net::SMTPFatalError => e
+        Rails.logger.error "InquiryMailer: Could not send email to requester #{@user_email}. Exception: #{e.message}"
+      end
     end
 
     def notify_processors
-      InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self.process_steps.last).deliver_later
+      begin
+        InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self.process_steps.last).deliver_later
+      rescue Net::SMTPFatalError => e
+        self.processors.each do |p|
+          begin
+            InquiryMailer.notification_email_processors([p.email], self.process_steps.last).deliver_later
+          rescue Net::SMTPFatalError => ex
+            Rails.logger.error "InquiryMailer: Could not send email to requester #{p.email}. Exception: #{ex.message}"
+          end
+        end
+      end
     end
 
     def errors?
