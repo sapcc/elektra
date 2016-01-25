@@ -17,6 +17,7 @@ describe Inquiry::InquiriesController, type: :controller do
     stub_admin_services
     @payload = { :key1 => "value1", :key2 => "value2" }.to_json
     @processors = [controller.current_user]
+    ActionMailer::Base.default_url_options[:host] = request.host_with_port
   end
 
 
