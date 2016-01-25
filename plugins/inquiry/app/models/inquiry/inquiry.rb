@@ -36,7 +36,7 @@ module Inquiry
       state :rejected
       state :closed
 
-      event :open, :after => :notify_processors, :error => :error_on_event do
+      event :open, :after => [:notify_requester,:notify_processors], :error => :error_on_event do
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 
