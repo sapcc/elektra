@@ -14,9 +14,10 @@
           %td= @active_project.enabled
   .col-sm-6
     %ul
-      %li= link_to 'Edit Project', plugin('identity').edit_project_path if current_user.is_allowed?('identity:project_edit')        
-      %li= link_to 'Manage Project Members', plugin('identity').projects_members_path if current_user.is_allowed?('identity:member_index')        
-
+      - if current_user.is_allowed?('identity:project_edit')
+        %li= link_to 'Edit Project', plugin('identity').edit_project_path
+      - if current_user.is_allowed?('identity:member_index')
+        %li= link_to 'Manage Project Members', plugin('identity').projects_members_path
 
 %h4 Sub Projects
 
