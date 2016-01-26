@@ -39,7 +39,8 @@ module Identity
     end
 
     def show
-      @current_project = services.identity.find_project(@project_id, :subtree_as_ids)
+      #@current_project = services.identity.find_project(@project_id, [:subtree_as_ids, :parents_as_list])
+      @current_project = services.identity.find_project(@project_id, [:subtree_as_ids, :parents_as_ids])
       @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
     end
     

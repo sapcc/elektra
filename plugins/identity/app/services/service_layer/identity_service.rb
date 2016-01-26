@@ -56,6 +56,10 @@ module ServiceLayer
       @auth_projects.select {|project| project.domain_id==domain_id}
     end
     
+    # def auth_projects_tree
+    #
+    # end
+    
     def projects(filter={})
       driver.map_to(Identity::Project).projects(filter)
     end
