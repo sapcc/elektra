@@ -9,4 +9,5 @@
       = " #{user.name}"
   - role_ids.each do |role_id|
     %td
-      = check_box("role_assignments[#{user.id}]", role_id, {checked: user_role_ids.include?(role_id), disabled: current_user.id==user.id ? 'disabled' : false}, "1", "0")
+      =# check_box("role_assignments[#{user.id}]", role_id, {checked: user_role_ids.include?(role_id), disabled: current_user.id==user.id ? 'disabled' : false}, "1", "0")
+      = check_box("role_assignments[#{user.id}]", role_id, {checked: user_role_ids.include?(role_id), disabled: false}, "1", "0")
