@@ -18,6 +18,7 @@ class DashboardController < ::ScopeController
   # rescope token
   before_filter :authentication_rescope_token
   before_filter :load_user_projects
+  before_filter :set_mailer_host
 
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
@@ -108,4 +109,10 @@ class DashboardController < ::ScopeController
   def reset_last_request_cache
     session[:last_request_timestamp]=nil
   end
+
+  def set_mailer_host
+    ActionMailer::Base.default_url_options[:host] = request.host_with_port
+    ActionMailer::Base.default_url_options[:protocol] = request.protocol
+  end
+
 end
