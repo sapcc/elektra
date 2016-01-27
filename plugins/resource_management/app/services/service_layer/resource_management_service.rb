@@ -124,7 +124,7 @@ module ServiceLayer
              name:           resource[:name],
              usage:          0,
              current_quota:  this_actual_quota,
-             approved_quota: 0,
+             approved_quota: this_actual_quota,
           )
 
           apply_current_quota(object)
