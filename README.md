@@ -1,7 +1,7 @@
 Elektra
 =================
 
-New service based Converged Cloud dashboard.
+A new service based Converged Cloud dashboard.
 
 
 Prerequisites
