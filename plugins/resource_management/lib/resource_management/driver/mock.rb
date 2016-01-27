@@ -50,6 +50,14 @@ module ResourceManagement
         return result
       end
 
+      def set_project_quota(domain_id, project_id, service, values)
+        result = {}
+        resources_for(service).each do |resource, data_type|
+          result[resource] = values[resource.to_sym]
+        end
+        return result
+      end
+
       private
 
       def resources_for(service)
