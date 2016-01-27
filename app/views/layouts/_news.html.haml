@@ -1,5 +1,22 @@
 .news
 
+  - date = Time.new(2016,1,27)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      #### Stylesheets
+
+      Made a change that stylesheets in engines are partials (name starts with underscore). This ensures that imports in the core application stylesheets are also available in the engines.
+
+      **What does it mean?**
+
+      You won't have to import compass or variables or other stylesheets from the core app to reuse them in your engine anymore.
+
+      I have cleaned out al existing plugin stylesheets to reflect this.
+
+
+
   - date = Time.new(2016,1,8)
   .new{data:{date: date}}
     .author-title= "Esther Schmitz - #{date}"

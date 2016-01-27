@@ -20,3 +20,13 @@
   ***************************************************
 
 */
+
+
+.remote_inquiries {
+  .ajax-load {
+    position: relative;
+    left: 50%;
+    margin-left: -3em;
+    @include spinner(6em);
+  }
+}
