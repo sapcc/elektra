@@ -58,7 +58,7 @@ SimpleNavigation::Configuration.run do |navigation|
     #
     primary.item :compute, 'Compute & Monsoon Automation', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "icon moo-cloud" } do |compute_nav|
       compute_nav.item :instances, 'Instances', plugin('compute').instances_path, if: Proc.new { plugin_available?('compute') }
-      compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
+      # compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
       # compute_nav.item :volumes, 'Volumes', '#'
       # compute_nav.item :snapshots, 'Snapshots', '#'
       compute_nav.item :web_console, 'Web Console', plugin('identity').projects_web_console_path, if: Proc.new { plugin_available?('identity')}
