@@ -14,13 +14,12 @@ Rails.application.routes.draw do
     match '/', to: 'pages#show', id: 'landing', via: :get
 
     scope "(/:project_id)" do
-      scope module: 'dashboard' do 
-        get 'onboarding' => 'onboarding#new_user'
-        get 'onboarding_request' => 'onboarding#new_user_request'
-        get 'onboarding_request_message' => 'onboarding#new_user_request_message'
-        post 'register' => 'onboarding#register_user'
-        post 'register_request' => 'onboarding#register_user_request'
-        get 'register_approval' => 'onboarding#register_user_approval'
+      scope module: 'dashboard' do
+        scope module: 'onboarding' do
+          get 'onboarding'
+          post 'register_without_inquiry'
+          post 'register_with_inquiry'
+        end
       end
 
       ###################### MOUNT PLUGINS #####################

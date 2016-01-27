@@ -1,14 +1,13 @@
 = content_for :page_lead do
   .jumbotron
     .container
-      %h1
+      %h2
         Welcome
         = current_user.full_name
-      %p Please accept the terms of use for this domain before you continue. Once you have accepted the terms your user will be registered to the domain.
-      %p Thank you and enjoy your stay!
+      %p Please accept the terms of use for this domain and request access to it. Once you have accepted the terms a request to the responsible Domain administrator will be created. You will receive an email on your request status after approval or rejection.
 
 
-= form_tag main_app.register_path, method: :post do
+= form_tag main_app.register_with_inquiry_path, method: :post do
   .row
     .col-sm-8
       .form-group
@@ -34,4 +33,4 @@
             I have read and agree to the terms of use
 
       .form-group
-        = submit_tag "Register", class: "btn btn-primary btn-lg", id: "register-button", disabled: true
+        = submit_tag "Request access", class: "btn btn-primary btn-lg", id: "register-button", disabled: true
