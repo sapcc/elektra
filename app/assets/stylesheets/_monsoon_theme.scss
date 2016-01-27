@@ -409,6 +409,10 @@ footer, .footer {
 
       .fa {
         margin-right: 5px;
+
+        &.icon-link {
+          margin-right: 0;
+        }
       }
 
       > .dropdown-menu {

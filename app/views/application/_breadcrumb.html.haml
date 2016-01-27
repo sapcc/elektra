@@ -4,7 +4,12 @@
       %ol.context-list
         %li.dropdown
           = link_to plugin('identity').domain_path(project_id:nil) do
-            %i.fa.fa-home
+            %i.icon-link.fa.fa-home
+
+      %ol.context-list
+        %li.dropdown
+          = link_to plugin('identity').projects_path, data: {modal: true} do
+            %i.icon-link.fa.fa-th-list
 
     -# - if @user_domain_projects
     -#   %ol.context-list
