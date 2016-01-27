@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   end
 
   scope "/:domain_id" do
-    match '/', to: 'pages#show', id: 'landing', via: :get
+    match '/', to: 'pages#show', id: 'landing', via: :get, as: :landing_page
 
     scope "(/:project_id)" do
       scope module: 'dashboard' do
