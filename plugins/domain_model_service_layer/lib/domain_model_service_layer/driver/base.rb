@@ -26,6 +26,7 @@ module DomainModelServiceLayer
     end
     
     # Base Driver Class
+    # TODO catch other errors (depending on driver)
     class Base
       def initialize(params={})
         @auth_url   = params[:auth_url]
@@ -41,7 +42,7 @@ module DomainModelServiceLayer
 
         response
       rescue => e
-        raise DomainModelServiceLayer::Errors::ApiError.new(e)  
+        raise DomainModelServiceLayer::Errors::ApiError.new(e)
       end
       
       # use a mapper for response
