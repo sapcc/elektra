@@ -1,5 +1,10 @@
-= content_for :title do
-  Jump to Project
+- if modal?
+  = content_for :title do
+    Jump to Project
+- else
+  = content_for :main_toolbar do
+    Your Projects
+
 
 %div{class: modal? ? 'modal-body' : ''}
   .projects{ data: {update_path: plugin('identity').projects_path(params.merge(partial:true)), update_interval: 1000*60*30} }
