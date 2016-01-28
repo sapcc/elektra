@@ -6,7 +6,7 @@ module Dashboard
 
     def onboarding
       # redirect to user onboarding page.
-      if @scoped_domain_name == 'sap_default'
+      if @scoped_domain_name == Rails.configuration.default_domain
         render 'onboarding_without_inquiry' and return
       else
         # check for approved inquiry
