@@ -15,7 +15,7 @@ webapp   = $(shell cat webapp 2> /dev/null)
 # ----------------------------------------------------------------------------------
 #   image 
 # ----------------------------------------------------------------------------------
-image: build precompile
+image: build
 	echo $(IMAGE) > image
 
 # ----------------------------------------------------------------------------------
@@ -34,21 +34,6 @@ build:
 	$(DOCKER) pull $(REPOSITORY):latest || true
 	$(DOCKER) build -t $(IMAGE) --rm . 
 	echo $(IMAGE) > build
-
-# ----------------------------------------------------------------------------------
-#   precompile 
-# ----------------------------------------------------------------------------------
-#
-# Precompiles the assets for this application. 
-#
-# In order to do so we first need to start the application container. Then we
-# execute the precompile rake task.  And finally we commit and tag the
-# resulting container, which now contains all precompiled assets.
-#
-precompile: webapp
-	$(DOCKER) exec $(webapp) \
-		env RAILS_ENV=production bundle exec rake assets:precompile
-	$(DOCKER) commit $(webapp) $(IMAGE) > precompile
 
 # ----------------------------------------------------------------------------------
 #   test 
