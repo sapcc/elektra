@@ -7,7 +7,6 @@ IMAGE       := $(REPOSITORY):$(TAG)
 DOCKER      = docker
 BUILD_IMAGE = localhost/monsoon/docker-build:1.5.0 
 WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(BUILD_IMAGE) wait $(WAIT_OPTS) || ($(DOCKER) logs $(WAIT_ID) && false)
-MTIMES      = $(DOCKER) run --rm $(MTIMES_OPTS)         $(BUILD_IMAGE) reset_mtimes
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -31,9 +30,7 @@ image: build precompile
 # hand does not. Without this the cache will be busted by Git and is basically
 # useless.
 #
-build: MTIMES_OPTS = -v $(shell pwd):/src
 build: 
-	$(MTIMES)
 	$(DOCKER) pull $(REPOSITORY):latest || true
 	$(DOCKER) build -t $(IMAGE) --rm . 
 	echo $(IMAGE) > build
