@@ -13,6 +13,7 @@ module ServiceLayer
     
     ##################### CREDENTIALS #########################
     def find_server(id)
+      return nil if id.blank?
       driver.map_to(Compute::Server).get_server(id)
     end
     
@@ -29,6 +30,7 @@ module ServiceLayer
     end
     
     def image(id)
+      return nil if id.blank?
       driver.map_to(Compute::Image).get_image(id)
     end
     
@@ -37,6 +39,7 @@ module ServiceLayer
     end
     
     def flavor(id)
+      return nil if id.blank?
       driver.map_to(Compute::Flavor).get_flavor(id)
     end
     

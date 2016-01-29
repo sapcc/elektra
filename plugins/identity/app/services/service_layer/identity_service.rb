@@ -20,6 +20,7 @@ module ServiceLayer
 
     ##################### DOMAINS #########################
     def find_domain id
+      return nil if id.blank?
       driver.map_to(Identity::Domain).get_domain(id)
     end
     
@@ -41,6 +42,7 @@ module ServiceLayer
     end
       
     def find_project(id=nil,options=[])
+      return nil if id.blank?
       driver.map_to(Identity::Project).get_project(id,options)
     end
     
@@ -83,6 +85,7 @@ module ServiceLayer
     end
     
     def find_credential(id=nil)
+      return nil if id.blank?
       driver.map_to(Identity::OsCredential).get_os_credential(id)
     end
 
@@ -97,6 +100,7 @@ module ServiceLayer
     end
     
     def find_role(id)
+      return nil if id.blank?
       roles.select { |r| r.id==id }.first
     end
     
