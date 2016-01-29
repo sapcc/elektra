@@ -5,7 +5,7 @@ RSpec.describe Dashboard::OnboardingController, type: :controller do
   include AuthenticationStub
 
   before(:all) do
-    @domain_default_friendly_id = FriendlyIdEntry.find_or_create_entry('Domain', nil, 'o-sap_default', 'sap_default')
+    @domain_default_friendly_id = FriendlyIdEntry.find_or_create_entry('Domain', nil, 'o-sap_default', Rails.configuration.default_domain)
     @domain_abc_friendly_id = FriendlyIdEntry.find_or_create_entry('Domain', nil, 'o-abc', 'abc')
 
   end
@@ -19,7 +19,7 @@ RSpec.describe Dashboard::OnboardingController, type: :controller do
 
     describe "GET 'onboarding'" do
 
-      it "onboards without inquiry for sap_default domain" do
+      it "onboards without inquiry for default domain" do
         stub_authentication do |token|
           # no role user
           token["roles"] = {}
@@ -35,7 +35,7 @@ RSpec.describe Dashboard::OnboardingController, type: :controller do
 
       end
 
-      it "onboards with inquiry for NON sap_default domain" do
+      it "onboards with inquiry for NON default domain" do
         stub_authentication do |token|
           # no role user
           token["roles"] = {}
