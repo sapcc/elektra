@@ -120,7 +120,7 @@ module ServiceLayer
             end
           end
         end
-        
+
         # update existing entry
         object.current_quota = this_actual_quota
         object.usage         = this_actual_usage
