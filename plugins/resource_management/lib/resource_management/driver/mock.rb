@@ -20,6 +20,8 @@ module ResourceManagement
             },
           },
         }
+
+        @fixed_quota_values = {}
       end
 
       def enumerate_domains
@@ -37,7 +39,8 @@ module ResourceManagement
       def query_project_quota(domain_id, project_id, service)
         result = {}
         resources_for(service).each do |resource, data_type|
-          result[resource] = random_value(50, 100, data_type)
+          value = @fixed_quota_values[fixed_quota_key(service, resource, project_id)]
+          result[resource] = value.nil? ? random_value(50, 100, data_type) : value
         end
         return result
       end
@@ -51,21 +54,17 @@ module ResourceManagement
       end
 
       def set_project_quota(domain_id, project_id, service, values)
-        @set_calls ||= []
-        @set_calls.push(
-          domain_id: domain_id,
-          project_id: project_id,
-          service: service,
-          values: values,
-        )
+        values.each do |resource, value|
+          @fixed_quota_values[fixed_quota_key(service, resource, project_id)] = value
+        end
         return
       end
 
-      def set_call_history
-        return @set_calls
-      end
-
       private
+
+      def fixed_quota_key(service, resource, project_id)
+        "#{service}:#{resource}:#{project_id}"
+      end
 
       def resources_for(service)
         ResourceManagement::Resource::KNOWN_RESOURCES.
@@ -75,7 +74,7 @@ module ResourceManagement
 
       def random_value(min, max, data_type)
         if data_type == :bytes
-          return rand(min .. (max << 30)) # between min and max GiB
+          return rand((min << 30) .. (max << 30)) # between min and max GiB
         else
           return rand(min .. max)
         end
