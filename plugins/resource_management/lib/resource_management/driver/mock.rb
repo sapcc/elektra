@@ -50,21 +50,6 @@ module ResourceManagement
         return result
       end
 
-      def set_project_quota(domain_id, project_id, service, values)
-        @set_calls ||= []
-        @set_calls.push(
-          domain_id: domain_id,
-          project_id: project_id,
-          service: service,
-          values: values,
-        )
-        return
-      end
-
-      def set_call_history
-        return @set_calls
-      end
-
       private
 
       def resources_for(service)

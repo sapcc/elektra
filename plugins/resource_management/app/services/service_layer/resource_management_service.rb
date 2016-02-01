@@ -105,30 +105,11 @@ module ServiceLayer
           project_id: project_id,
           service:    resource[:service],
           name:       resource[:name],
-        ).first
-        
-        if object
-          object.usage          = this_actual_usage
-          object.current_quota  = this_actual_quota
-          object.approved_quota = 0
-        else
-          # special case to set default quotas for newly created projects on swift (mock_service is for test case)
-          if resource[:service] == :object_storage || resource[:service] == :mock_service && resource[:name] == :capacity
-            this_actual_quota = 1 << 30 #1GB default quota
-          end
-
-          object = ResourceManagement::Resource.create(
-             domain_id:      domain_id,
-             project_id:     project_id,
-             service:        resource[:service],
-             name:           resource[:name],
-             usage:          0,
-             current_quota:  this_actual_quota,
-             approved_quota: this_actual_quota,
-          )
-
-          apply_current_quota(object)
-        end
+        ).first_or_create(
+          usage:          this_actual_usage,
+          current_quota:  this_actual_quota,
+          approved_quota: 0,
+        )
 
         # update existing entry
         object.current_quota = this_actual_quota

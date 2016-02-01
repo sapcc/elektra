@@ -182,34 +182,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       expect(synced_resources).to eq(expected_resources)
     end
 
-    it 'create new resource with default value', :focus => true  do
-       service.sync_project(domain_id, project_id)
-       set_project_quota_call = service.driver.set_call_history
-
-       set_project_quota_call.each do |call|
-         expect(call[:domain_id]).to eq(domain_id)
-         expect(call[:project_id]).to eq(project_id)
-         
-         if call.key?(:values)
-           if call[:values].key?(:capacity)
-             # check that capacity was created with 1GB quota
-             expect(call[:values][:capacity]).to eq(1<<30)
-           end
-           # check DB entry
-           name = call[:values].keys.first.to_s
-           resource = ResourceManagement::Resource.where(
-             domain_id:      domain_id,
-             project_id:     project_id,
-             name:           name,
-           ).first
-
-           expect(resource.current_quota).to eq(call[:values][name.to_sym])
-         end
-       end
-    end
-
     it 'creates missing records, but also updates existing records' do
-      # pry-populate *some* resources, to check that only the missing ones are created
+      # pre-populate *some* resources, to check that only the missing ones are created
       enabled_resources.sample(enabled_resources.size / 2).each do |res|
         ResourceManagement::Resource.create(
           domain_id:      domain_id,
@@ -224,7 +198,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
 
       service.sync_project(domain_id, project_id)
-     
+
       # all records should have been touched
       untouched_records = ResourceManagement::Resource.where('updated_at < ?', 1.minute.ago)
       expect(untouched_records.size).to eq(0)
