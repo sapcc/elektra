@@ -5,8 +5,7 @@ IMAGE       := $(REPOSITORY):$(TAG)
 
 ### Executables
 DOCKER      = docker
-BUILD_IMAGE = localhost/monsoon/docker-build:1.5.0 
-WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(BUILD_IMAGE) wait $(WAIT_OPTS) || ($(DOCKER) logs $(WAIT_ID) && false)
+WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(WAIT_OPTS) localhost/monsoon-docker/wait || ($(DOCKER) logs $(WAIT_ID) && false)
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
@@ -99,7 +98,7 @@ cucumber: postgres migrate-test
 # listening on port 80
 #
 webapp: WAIT_ID = $$(cat webapp)
-webapp: WAIT_OPTS = -p 80
+webapp: WAIT_OPTS = -e PORT=80
 webapp: migrate-production
 	$(DOCKER) run --link $(postgres):postgres -d $(IMAGE) > webapp 
 	$(WAIT)
@@ -111,9 +110,8 @@ webapp: migrate-production
 # Start postgres database and wait for it to become available. 
 #
 postgres: WAIT_ID = $$(cat postgres)
-postgres: WAIT_OPTS =
 postgres: 
-	$(DOCKER) run -d postgres > postgres 
+	$(DOCKER) run -d localhost/monsoon/postgres:9.4-alpine > postgres 
 	$(WAIT)
 
 # ----------------------------------------------------------------------------------
