@@ -111,7 +111,6 @@ module ServiceLayer
           approved_quota: 0,
         ) do |obj|
           # special case to set default quotas for newly created projects on swift (mock_service is for test case)
-          #puts this_actual_quota
           if this_actual_quota == -1
             this_actual_quota = 1 << 30
             if resource[:service] == :object_storage || resource[:service] == :mock_service && resource[:name] == :capacity
