@@ -165,8 +165,8 @@ module ResourceManagement
     def prepare_data_for_details_view(service, resource)
       # load resources
       resources = ResourceManagement::Resource.where(service: service, name: resource)
-      domain_resources  = resources.where.not(domain_id: nil).where(project_id: nil)
-      project_resources = resources.where.not(domain_id: nil).where.not(project_id: nil)
+      domain_resources  = resources.where(project_id: nil)
+      project_resources = resources.where.not(project_id: nil)
 
       # statistics for the whole cloud
       @cloud_status = {
