@@ -182,6 +182,23 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       expect(synced_resources).to eq(expected_resources)
     end
 
+    it 'enforces default quotas on newly discovered projects that lack one', :focus => true  do
+      # override the mock driver's usual logic of returning a random non-zero quota
+      service.driver.set_project_quota(domain_id, project_id, :mock_service, { capacity: -1 })
+
+      service.sync_project(domain_id, project_id)
+
+      # the default quota should be visible in the resource record
+      resource = ResourceManagement::Resource.find_by(name: :capacity)
+      default  = resource.approved_quota
+      expect(default).to be >= 0
+      expect(resource.current_quota).to eq(default)
+
+      # the default quota should also be set in the driver
+      quota = service.driver.query_project_quota(domain_id, project_id, :mock_service)
+      expect(quota).to include(capacity: default)
+    end
+
     it 'creates missing records, but also updates existing records' do
       # pre-populate *some* resources, to check that only the missing ones are created
       enabled_resources.sample(enabled_resources.size / 2).each do |res|

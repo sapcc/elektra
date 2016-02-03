@@ -33,10 +33,10 @@ module ResourceManagement
       { service: :block_storage,  name: :capacity,       data_type: :bytes },
       { service: :block_storage,  name: :snapshots       },
       { service: :block_storage,  name: :volumes         },
-      { service: :object_storage, name: :capacity,       data_type: :bytes },
+      { service: :object_storage, name: :capacity,       data_type: :bytes, default_quota: 1 << 30 },
       # :mock_service can be enabled with .mock!
       { service: :mock_service,   name: :things          },
-      { service: :mock_service,   name: :capacity,       data_type: :bytes },
+      { service: :mock_service,   name: :capacity,       data_type: :bytes, default_quota: 1 << 30 },
     ]
 
     def attributes

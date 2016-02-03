@@ -109,7 +109,15 @@ module ServiceLayer
           usage:          this_actual_usage,
           current_quota:  this_actual_quota,
           approved_quota: 0,
-        )
+        ) do |obj|
+          # enforce default quotas for newly created projects, if not done by the responsible service itself
+          if this_actual_quota == -1 && resource.has_key?(:default_quota)
+            this_actual_quota = resource[:default_quota]
+            obj.current_quota = this_actual_quota
+            obj.approved_quota = this_actual_quota
+            apply_current_quota(obj)
+          end
+        end
 
         # update existing entry
         object.current_quota = this_actual_quota
