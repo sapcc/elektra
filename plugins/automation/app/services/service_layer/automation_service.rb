@@ -1,18 +1,20 @@
 module ServiceLayer
   class AutomationService < DomainModelServiceLayer::Service
 
-    ARC_API_URL = "https://localhost/"
-
     def initialize(auth_url,region,token, options={})
       super(auth_url,region,token, options={})
 
       # Initialize ruby-arc-client
-      @client = RubyArcClient::Client.new(ARC_API_URL)
+      @client = RubyArcClient::Client.new(AUTOMATION_CONF['arc_api_url'])
     end
 
 
     def agents(filter="", show_facts=[], page=0, per_page=0)
-      @client.list_agents!(current_user.token, filter, show_facts, page, per_page)
+      Automation::Agent.create_agents(@client.list_agents!(current_user.token, filter, show_facts, page, per_page))
+    end
+
+    def agent(agent_id="", show_facts=[])
+      Automation::Agent.new(@client.find_agent!(current_user.token, agent_id, show_facts))
     end
 
     def agent_facts(agent_id = "")

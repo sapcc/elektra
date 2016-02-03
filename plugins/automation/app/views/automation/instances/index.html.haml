@@ -2,9 +2,9 @@
 
 %section
   %h2
-    Instances
-  = render partial: 'table_instances', locals: {instances: @instances[:instances]}
-
+    Agents
+  = render partial: 'table_instances', locals: {instances: @agents}
+  = paginate @agents, :theme => 'twitter-bootstrap-3'
 
 %section#automation_instances_without_agent.hidden
   %h2

@@ -6,6 +6,7 @@ module DomainModelServiceLayer
           provider: 'openstack',
           openstack_auth_token: @token,
           openstack_auth_url: @auth_url,
+          openstack_service_type: ['identity'],
           openstack_region: @region
         }
     

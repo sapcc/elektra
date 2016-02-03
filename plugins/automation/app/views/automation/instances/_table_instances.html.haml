@@ -11,5 +11,5 @@
       %tr
         %td{colspa: 5} No instances available
     - else
-      -instances.values.each do | instance |
+      -instances.each do | instance |
         = render partial: 'table_instances_item', locals: {instance: instance}

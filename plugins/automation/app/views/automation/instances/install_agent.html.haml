@@ -1,23 +1,17 @@
 = content_for :title do
-  Install agent on instance
-  %b
-    = @agent_name
+  Install new agent
 
 .modal-body
-  %h3
-    Follow this steps to install the automation agent:
 
-  %ol
-    %li
-      Copy the below script to the clipboard.
+  .section#search_instance
 
-    %li
-      Log in into the instance and paste the script as super user.
-      = @ip
+    %p
+      Please enter the instance ID where the agent should be installed
 
-  %pre
-    = preserve do
-      :escaped
-        curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/linux/amd64
-        chmod +x /opt/arc/arc
-        /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url #{@url}
+    = form_tag show_instructions_instances_path, :class => 'form-inline', :remote => true do
+      .form-group
+        = label_tag 'instance_id', 'Instance ID', class: 'sr-only'
+        = text_field_tag 'instance_id', '', :maxlength => "256", :placeholder => "Enter instance ID", class: 'form-control'
+        = button_tag "Get instructions", class: 'btn btn-primary', data: { disable_with: "Please wait..." }
+
+  .section#search_instance_results
