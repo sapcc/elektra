@@ -180,7 +180,6 @@ module ResourceManagement
       # validate payload (these are all validations that I never expect to
       # fail, so I don't spend much time on presenting the errors)
       data = @inquiry.payload.symbolize_keys
-      puts ">>>>>>> #{data.inspect}"
 
       @resource = ResourceManagement::Resource.find(data[:resource_id])
       if (not @resource) or @resource.domain_id.nil? or not @resource.project_id.nil?
