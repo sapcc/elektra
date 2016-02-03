@@ -56,9 +56,6 @@ module ResourceManagement
     end
 
     def cancel
-      @domain_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @domain_resource.domain_id.nil? or not @domain_resource.project_id.nil?
-
       # prepare data for view
       resources = ResourceManagement::Resource.where(service: @domain_resource.service, name: @domain_resource.name)
       @domain_status = prepare_domain_data_for_details_view(@domain_resource, resources, {})
@@ -69,10 +66,6 @@ module ResourceManagement
     end
 
     def update
-      # load Resource record to modify
-      @domain_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @domain_resource.domain_id.nil? or not @domain_resource.project_id.nil?
-
       # set new quota value
       value = params.require(:value)
       begin
