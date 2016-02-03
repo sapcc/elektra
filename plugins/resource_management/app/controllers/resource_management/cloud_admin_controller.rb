@@ -3,6 +3,9 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class CloudAdminController < ApplicationController
 
+    before_filter :load_domain_resource, only: [:edit, :cancel, :update]
+    before_filter :load_inquiry, only: [:review_request, :approve_request]
+
     authorization_required
 
     def index
@@ -50,8 +53,6 @@ module ResourceManagement
     end
 
     def edit
-      @domain_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @domain_resource.domain_id.nil? or not @domain_resource.project_id.nil?
     end
 
     def cancel
@@ -93,6 +94,36 @@ module ResourceManagement
       end
     end
 
+    def review_request
+      # prepare data for view
+      _, _ = prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+
+      # calculate projected @cloud_status after approval
+      @desired_quota = @inquiry.payload['desired_quota']
+      @cloud_status_new = {
+        capacity:         @cloud_status[:capacity],
+        usage_sum:        @cloud_status[:usage_sum],
+        domain_quota_sum: @cloud_status[:domain_quota_sum] - @resource.approved_quota + @desired_quota,
+      }
+    end
+
+    def approve_request
+      # set new quota value
+      value = params.require(:resource).require(:approved_quota)
+      begin
+        @resource.approved_quota = @resource.data_type.parse(value)
+      rescue ArgumentError => e
+        @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+      end
+
+      if @resource.save
+        services.inquiry.set_state(@inquiry.id, :approved, "New domain quota is #{@resource.data_type.format(@resource.approved_quota)}")
+      else
+        self.review_request
+        render action: 'review_request'
+      end
+    end
+
     def details 
       @show_all_button = true if params[:overview] == 'true'
 
@@ -130,6 +161,48 @@ module ResourceManagement
     end
 
     private
+
+    def load_domain_resource
+      @domain_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @domain_resource.domain_id.nil? or not @domain_resource.project_id.nil?
+    end
+
+    def load_inquiry
+      @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
+
+      unless @inquiry
+        render html: 'Could not find inquiry!'
+        return
+      end
+
+      unless current_user.is_allowed?("resource:management:cloud_admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
+        render template: '/dashboard/not_authorized'
+        return
+      end
+
+      # validate payload (these are all validations that I never expect to
+      # fail, so I don't spend much time on presenting the errors)
+      data = @inquiry.payload.symbolize_keys
+      puts ">>>>>>> #{data.inspect}"
+
+      @resource = ResourceManagement::Resource.find(data[:resource_id])
+      if (not @resource) or @resource.domain_id.nil? or not @resource.project_id.nil?
+        render html: 'Invalid resource record ID specified in inquiry payload!', status: :unprocessable_entity
+        return
+      end
+
+      unless @resource.service.to_s == data[:service].to_s || @resource.name.to_s == data[:resource].to_s
+        render html: 'Inquiry payload contains inconsistent data!', status: :unprocessable_entity
+        return
+      end
+
+      if @resource.approved_quota >= data[:desired_quota].to_i
+        render html: 'Approved quota is already larger than the requested value. Is this an old inquiry?', status: :unprocessable_entity
+        return
+      end
+
+      @domain_name = services.identity.find_domain(@resource.domain_id).name
+    end
 
     def prepare_data_for_resource_list(services, options={})
       # load capacities

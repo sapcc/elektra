@@ -18,9 +18,9 @@
         - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
         = f.input :approved_quota, label: 'Desired quota', as: :string, input_html: { value: previous_value || current_value }
 
-    %div.buttons{class: modal? ? 'modal-footer' : ''}
-      - if modal?
-        %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
-      - else
-        = link_to "Cancel", inquiries_url(), class: 'btn btn-default'
-      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Submit
+  .buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+    - else
+      = link_to "Cancel", inquiries_url(), class: 'btn btn-default'
+    %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Submit

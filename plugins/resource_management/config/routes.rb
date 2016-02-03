@@ -19,14 +19,16 @@ ResourceManagement::Engine.routes.draw do
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do
-    get '/'        => 'cloud_admin#index'
-    get ':area',  to: 'cloud_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
-    get 'details'  => 'cloud_admin#details'
-    get 'request'  => 'cloud_admin#resource_request'
-    get 'sync_now' => 'cloud_admin#sync_now'
-    get 'edit'     => 'cloud_admin#edit'
-    get 'update'   => 'cloud_admin#update'
-    get 'cancel'   => 'cloud_admin#cancel'
+    get  '/'               => 'cloud_admin#index'
+    get  ':area',         to: 'cloud_admin#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
+    get  'details'         => 'cloud_admin#details'
+    get  'request'         => 'cloud_admin#resource_request'
+    get  'sync_now'        => 'cloud_admin#sync_now'
+    get  'edit'            => 'cloud_admin#edit'
+    get  'update'          => 'cloud_admin#update'
+    get  'cancel'          => 'cloud_admin#cancel'
+    get  'review_request'  => 'cloud_admin#review_request'
+    post 'approve_request' => 'cloud_admin#approve_request'
 
     get 'capacity/:id' => 'cloud_admin#edit_capacity',   as: 'edit_capacity'
     put 'capacity/:id' => 'cloud_admin#update_capacity', as: 'update_capacity'

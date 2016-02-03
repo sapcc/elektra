@@ -104,9 +104,13 @@ module ResourceManagement
       end
 
       # create inquiry
+      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.attributes[:area].to_s, domain_id: nil)
+      overlay_url = plugin('resource_management').cloud_admin_review_request_path()
+      domain_name = services.identity.find_domain(@scoped_domain_id).name
+
       inquiry = services.inquiry.inquiry_create(
         'domain_quota',
-        "#{@resource.service}/#{@resource.name}: add #{@resource.data_type.format(value - old_value)}",
+        "#{@resource.service}/#{@resource.name} for domain #{domain_name}: add #{@resource.data_type.format(value - old_value)}",
         current_user,
         {
           resource_id: @resource.id,
@@ -118,7 +122,7 @@ module ResourceManagement
         {
           "approved": {
             "name": "Approve",
-            "action": "/TODO", # TODO: URL
+            "action": "#{base_url}?overlay=#{overlay_url}",
           },
         },
       )
