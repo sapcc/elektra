@@ -98,7 +98,7 @@ module ResourceManagement
       end
 
       # create inquiry
-      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.attributes[:area].to_s, domain_id: nil)
+      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.config.service.area.to_s, domain_id: nil)
       overlay_url = plugin('resource_management').cloud_admin_review_request_path()
       domain_name = services.identity.find_domain(@scoped_domain_id).name
 

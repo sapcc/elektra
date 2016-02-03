@@ -11,7 +11,7 @@
       %p.alert.alert-error= @resource.errors.full_messages.to_sentence
 
     %fieldset
-      - if @resource.attributes[:data_type].nil?
+      - if @resource.data_type.to_sym == :number
         = f.input :approved_quota, label: 'Desired quota'
       - else
         - current_value = @resource.data_type.format(@resource.approved_quota)
