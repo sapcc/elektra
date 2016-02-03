@@ -117,7 +117,11 @@ module ResourceManagement
       end
 
       if @resource.save
-        services.inquiry.set_state(@inquiry.id, :approved, "New domain quota is #{@resource.data_type.format(@resource.approved_quota)}")
+        comment = "New domain quota is #{@resource.data_type.format(@resource.approved_quota)}"
+        if params[:resource][:comment].present?
+          comment += ", comment from approver: #{params[:resource][:comment]}"
+        end
+        services.inquiry.set_state(@inquiry.id, :approved, comment)
       else
         self.review_request
         render action: 'review_request'

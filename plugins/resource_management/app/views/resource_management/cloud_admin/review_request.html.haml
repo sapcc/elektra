@@ -23,12 +23,15 @@
       .col-md-9= render partial: 'bar', locals: { data: @cloud_status_new, render_quota: true }
 
     %fieldset
+      - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
       - if @resource.attributes[:data_type].nil?
-        = f.input :approved_quota, label: 'New domain quota', input_html: { value: @desired_quota }
+        = f.input :approved_quota, label: 'New domain quota', input_html: { value: previous_value || @desired_quota }
       - else
         - requested_value = @resource.data_type.format(@desired_quota)
-        - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
         = f.input :approved_quota, label: 'New domain quota', as: :string, input_html: { value: previous_value || requested_value }
+
+      - previous_comment = params[:resource] ? params[:resource][:comment] : nil
+      = f.input :comment, label: 'Comment', as: :string, input_html: { value: previous_comment, placeholder: 'Optional'}
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
