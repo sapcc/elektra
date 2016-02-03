@@ -2,8 +2,8 @@ require 'spec_helper'
 
 RSpec.describe ServiceLayer::ResourceManagementService do
 
-  before(:all) { ResourceManagement::Resource.mock!   }
-  after (:all) { ResourceManagement::Resource.unmock! }
+  before(:all) { ResourceManagement::ServiceConfig.mock!   }
+  after (:all) { ResourceManagement::ServiceConfig.unmock! }
 
   before :each do
     ResourceManagement::Resource.delete_all
@@ -15,9 +15,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
   let(:old_project_id) { '07bdb713-d5db-422a-9b90-85f255b00789' }
 
   let(:enabled_resources) do
-    enabled_services = ResourceManagement::Resource::KNOWN_SERVICES.
-      select { |srv| srv[:enabled] }.map { |srv| srv[:service] }
-    result = ResourceManagement::Resource::KNOWN_RESOURCES.select { |res| enabled_services.include?(res[:service]) }
+    result = ResourceManagement::ResourceConfig.all
     expect(result.size).to be > 0
     result
   end
@@ -66,15 +64,15 @@ RSpec.describe ServiceLayer::ResourceManagementService do
         ResourceManagement::Resource.create(
           domain_id:      old_domain_id,
           project_id:     nil,
-          service:        res[:service],
-          name:           res[:name],
+          service:        res.service_name,
+          name:           res.name,
           approved_quota: 42,
         )
         ResourceManagement::Resource.create(
           domain_id:      old_domain_id,
           project_id:     old_project_id,
-          service:        res[:service],
-          name:           res[:name],
+          service:        res.service_name,
+          name:           res.name,
           current_quota:  42,
           approved_quota: 42,
           usage:          23,
@@ -107,7 +105,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       service.sync_domain(domain_id)
 
       enabled_resources.each do |res|
-        r = ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, service: res[:service], name: res[:name]).to_a
+        r = ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, service: res.service_name, name: res.name).to_a
         expect(r.size).to eq(1)
         expect(r.first.approved_quota).to eq(0)
       end
@@ -135,8 +133,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
         ResourceManagement::Resource.create(
           domain_id:      domain_id,
           project_id:     old_project_id,
-          service:        res[:service],
-          name:           res[:name],
+          service:        res.service_name,
+          name:           res.name,
           current_quota:  42,
           approved_quota: 42,
           usage:          23,
@@ -178,7 +176,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       service.sync_project(domain_id, project_id)
 
       synced_resources   = ResourceManagement::Resource.pluck(:service, :name).sort
-      expected_resources = enabled_resources.map { |res| [ res[:service].to_s, res[:name].to_s ] }.sort
+      expected_resources = enabled_resources.map { |res| [ res.service_name.to_s, res.name.to_s ] }.sort
       expect(synced_resources).to eq(expected_resources)
     end
 
@@ -205,8 +203,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
         ResourceManagement::Resource.create(
           domain_id:      domain_id,
           project_id:     project_id,
-          service:        res[:service],
-          name:           res[:name],
+          service:        res.service_name,
+          name:           res.name,
           current_quota:  42,
           approved_quota: 42,
           usage:          23,
@@ -222,7 +220,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
       # each resource should have exactly one record
       enabled_resources.each do |res|
-        records = ResourceManagement::Resource.where(service: res[:service], name: res[:name])
+        records = ResourceManagement::Resource.where(service: res.service_name, name: res.name)
         expect(records.size).to eq(1)
       end
 

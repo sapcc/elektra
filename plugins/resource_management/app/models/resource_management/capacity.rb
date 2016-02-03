@@ -3,16 +3,14 @@ module ResourceManagement
     validates_presence_of :service, :resource, :value
     validate :validate_value
 
-    def attributes
-      # get attributes for this resource
-      resource_attrs = ResourceManagement::Resource::KNOWN_RESOURCES.find { |r| r[:service] == service.to_sym and r[:name] == resource.to_sym }
-      # merge attributes for the resource's services
-      service_attrs = ResourceManagement::Resource::KNOWN_SERVICES.find { |s| s[:service] == service.to_sym }
-      return (resource_attrs || {}).merge(service_attrs || {})
+    def config
+      sn = service.to_sym
+      rn = resource.to_sym
+      ResourceManagement::ResourceConfig.all.find { |r| r.service_name == sn && r.name == rn }
     end
 
     def data_type
-      ResourceManagement::DataType.new(attributes[:data_type] || :number)
+      config.data_type
     end
 
     def value=(new_value)

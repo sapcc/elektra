@@ -4,7 +4,7 @@ describe ResourceManagement::ApplicationHelper, type: :helper do
 
   describe '#list_areas_with_enabled_services' do
     after :all do
-      ResourceManagement::Resource.unmock!
+      ResourceManagement::ServiceConfig.unmock!
     end
 
     it 'lists areas with enabled services' do
@@ -13,7 +13,7 @@ describe ResourceManagement::ApplicationHelper, type: :helper do
       expect(list.size).to be > 0
       expect(list).to all(be_a(Symbol))
 
-      ResourceManagement::Resource.mock!
+      ResourceManagement::ServiceConfig.mock!
       expect(helper.list_areas_with_enabled_services).to eql([ :mock_area ])
     end
   end

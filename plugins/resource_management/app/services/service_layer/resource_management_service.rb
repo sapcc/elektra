@@ -47,9 +47,7 @@ module ServiceLayer
     # 2. Create Resource objects for new projects in local DB.
     def sync_domain(domain_id, options={})
       # foreach resource in an enabled service...
-      enabled_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:enabled] }.map { |srv| srv[:service] }
-      enabled_resources = ResourceManagement::Resource::KNOWN_RESOURCES.select { |res| enabled_services.include?(res[:service]) }
-      enabled_resources.each do |resource|
+      ResourceManagement::ResourceConfig.all.each do |resource|
         # ...initialize the Resource entry of the domain with approved_quota=0
         # (this is useful if the domain was created outside of the dashboard
         # and no quota has been approved for it yet)
@@ -57,8 +55,8 @@ module ServiceLayer
           cluster_id: nil, # TODO: take cluster assignment into account for brokered services
           domain_id:  domain_id,
           project_id: nil,
-          service:    resource[:service],
-          name:       resource[:name],
+          service:    resource.service_name,
+          name:       resource.name,
         ).first_or_create(approved_quota: 0)
       end
 
@@ -84,35 +82,33 @@ module ServiceLayer
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
       # fetch current quotas and usage for this project from all services
-      enabled_services = ResourceManagement::Resource::KNOWN_SERVICES.select { |srv| srv[:enabled] }.map { |srv| srv[:service] }
       actual_quota = {}
       actual_usage = {}
-      enabled_services.each do |service|
+      ResourceManagement::ServiceConfig.all.map(&:name).each do |service|
         actual_quota[service] = driver.query_project_quota(domain_id, project_id, service)
         actual_usage[service] = driver.query_project_usage(domain_id, project_id, service)
       end
 
       # write values into database
-      enabled_resources = ResourceManagement::Resource::KNOWN_RESOURCES.select { |res| enabled_services.include?(res[:service]) }
-      enabled_resources.each do |resource|
-        this_actual_quota = actual_quota[ resource[:service] ][ resource[:name] ] || 0
-        this_actual_usage = actual_usage[ resource[:service] ][ resource[:name] ] || 0
+      ResourceManagement::ResourceConfig.all.each do |resource|
+        this_actual_quota = actual_quota[resource.service_name][resource.name] || 0
+        this_actual_usage = actual_usage[resource.service_name][resource.name] || 0
 
         # create new Resource entry if necessary
         object = ResourceManagement::Resource.where(
           cluster_id: nil, # TODO: take cluster assignment into account for brokered services
           domain_id:  domain_id,
           project_id: project_id,
-          service:    resource[:service],
-          name:       resource[:name],
+          service:    resource.service_name,
+          name:       resource.name,
         ).first_or_create(
           usage:          this_actual_usage,
           current_quota:  this_actual_quota,
           approved_quota: 0,
         ) do |obj|
           # enforce default quotas for newly created projects, if not done by the responsible service itself
-          if this_actual_quota == -1 && resource.has_key?(:default_quota)
-            this_actual_quota = resource[:default_quota]
+          if this_actual_quota == -1 and not resource.default_quota.nil?
+            this_actual_quota = resource.default_quota
             obj.current_quota = this_actual_quota
             obj.approved_quota = this_actual_quota
             apply_current_quota(obj)

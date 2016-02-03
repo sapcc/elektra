@@ -6,10 +6,7 @@ module ResourceManagement
     authorization_required
 
     def index
-      @all_services = ResourceManagement::Resource::KNOWN_SERVICES.
-        select { |srv| srv[:enabled] }.
-        map    { |srv| srv[:service] }
-     
+      @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
       prepare_data_for_resource_list(@all_services, overview: true)
 
       respond_to do |format|
@@ -21,10 +18,7 @@ module ResourceManagement
 
     def show_area
       @area = params.require(:area).to_sym
-      @area_services = ResourceManagement::Resource::KNOWN_SERVICES.
-        select { |srv| srv[:enabled] && srv[:area] == @area }.
-        map    { |srv| srv[:service] }
-
+      @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
       prepare_data_for_resource_list(@area_services)
 
       respond_to do |format|
@@ -98,7 +92,7 @@ module ResourceManagement
 
       @service  = params.require(:service).to_sym
       @resource = params.require(:resource).to_sym
-      @area     = ResourceManagement::Resource::KNOWN_SERVICES.find { |s| s[:service] == @service }[:area]
+      @area     = ResourceManagement::ServiceConfig.find(@service).area
 
       # get mapping of domain IDs to names
       domain_names = services.resource_management.driver.enumerate_domains()

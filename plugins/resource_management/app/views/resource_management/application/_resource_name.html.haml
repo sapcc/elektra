@@ -5,14 +5,14 @@
 
 .col-md-2.quota-label
   .text-muted
-    - attr = resource.attributes
-    - area = attr[:area]
+    - conf = resource.config
+    - area = conf.service.area
     - if overview
-      = link_to t("resource_management.#{attr[:name]}"), plugin('resource_management').send("#{scope}_area_path", area: area)
+      = link_to t("resource_management.#{conf.name}"), plugin('resource_management').send("#{scope}_area_path", area: area)
       .small
-        .small= t("resource_management.#{attr[:service]}")
+        .small= t("resource_management.#{conf.service_name}")
     - else
-      - translated_name = t("resource_management.#{attr[:name]}")
+      - translated_name = t("resource_management.#{conf.name}")
       - if scope == 'resources'
         - case area
           - when :storage

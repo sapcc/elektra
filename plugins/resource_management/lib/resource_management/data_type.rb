@@ -8,6 +8,10 @@ module ResourceManagement
       @type = data_type
     end
 
+    def to_sym
+      @type
+    end
+
     def format(value)
       send("format_#{@type}", value)
     end

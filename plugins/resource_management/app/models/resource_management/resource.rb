@@ -1,73 +1,18 @@
+require "resource_management/resource_config"
+require "resource_management/service_config"
+
 module ResourceManagement
   class Resource < ActiveRecord::Base
     validates_presence_of :domain_id, :service, :name
 
-    KNOWN_SERVICES = [
-      # "service" is the service from which we pull this resource.
-      # "area" identifies the tab in which to display resources for this service.
-      # If "enabled" is false, no data will be gathered and the service will be hidden from the UI.
-      # (This can be used to restrict unfinished service bindings to development mode, or to
-      # activate capabilities based on the available OpenStack services in the service catalog.)
-      { service: :compute,        area: :compute,   enabled: Rails.env.development? },
-      { service: :network,        area: :network,   enabled: Rails.env.development? },
-      { service: :block_storage,  area: :storage,   enabled: Rails.env.development? },
-      { service: :object_storage, area: :storage,   enabled: true },
-      # :mock_service can be enabled with .mock!
-      { service: :mock_service,   area: :mock_area, enabled: false },
-    ]
-
-    KNOWN_RESOURCES = [
-      # "name" identifies the resource within its service.
-      # "service" identifies the service from which we pull this resource.
-      # "data_type" can be used to render quota/usage values for this resource
-      # in a certain way, e.g. "bytes" will render a value of 10240 as "10 KiB".
-      { service: :compute,        name: :cores           },
-      { service: :compute,        name: :instances       },
-      { service: :compute,        name: :ram,            data_type: :bytes },
-      { service: :network,        name: :floating_ips    },
-      { service: :network,        name: :networks        },
-      { service: :network,        name: :ports           },
-      { service: :network,        name: :routers         },
-      { service: :network,        name: :security_groups },
-      { service: :network,        name: :subnets         },
-      { service: :block_storage,  name: :capacity,       data_type: :bytes },
-      { service: :block_storage,  name: :snapshots       },
-      { service: :block_storage,  name: :volumes         },
-      { service: :object_storage, name: :capacity,       data_type: :bytes, default_quota: 1 << 30 },
-      # :mock_service can be enabled with .mock!
-      { service: :mock_service,   name: :things          },
-      { service: :mock_service,   name: :capacity,       data_type: :bytes, default_quota: 1 << 30 },
-    ]
-
-    def attributes
-      # get attributes for this resource
-      resource_attrs = KNOWN_RESOURCES.find { |r| r[:service] == service.to_sym and r[:name] == name.to_sym }
-      # merge attributes for the resource's services
-      service_attrs = KNOWN_SERVICES.find { |s| s[:service] == service.to_sym }
-      return (resource_attrs || {}).merge(service_attrs || {})
+    def config
+      sn = service.to_sym
+      rn = name.to_sym
+      ResourceManagement::ResourceConfig.all.find { |r| r.service_name == sn && r.name == rn }
     end
 
     def data_type
-      ResourceManagement::DataType.new(attributes[:data_type] || :number)
-    end
-
-    # Change KNOWN_SERVICES so that only a mock service is enabled. Use this
-    # for unit tests only.
-    def self.mock!
-      # disable all actual services, enable :mock_service
-      KNOWN_SERVICES.each do |srv|
-        srv[:was_enabled] = srv[:enabled] # remember for .unmock!
-        srv[:enabled]     = srv[:service] == :mock_service
-      end
-    end
-
-    # Reset KNOWN_SERVICES to the default state. Use this to clean up at the
-    # end of a unit test that used mock!.
-    def self.unmock!
-      # was mocked?
-      return unless KNOWN_SERVICES.find { |srv| srv[:service] == :mock_service }[:enabled]
-      # disable :mock_service, enable all actual services
-      KNOWN_SERVICES.each { |srv| srv[:enabled] = srv.delete(:was_enabled) }
+      config.data_type
     end
 
   end

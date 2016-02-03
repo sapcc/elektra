@@ -16,7 +16,7 @@ module ResourceManagement
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
-      # defined in ResourceManagement::Resource::KNOWN_RESOURCES.
+      # defined in ResourceManagement::{ResourceConfig,ServiceConfig}.
       def query_project_quota(domain_id, project_id, service)
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
@@ -24,7 +24,7 @@ module ResourceManagement
       # Query usage values for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
-      # defined in ResourceManagement::Resource::KNOWN_RESOURCES.
+      # defined in ResourceManagement::{ResourceConfig,ServiceConfig}.
       def query_project_usage(domain_id, project_id, service)
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
@@ -32,7 +32,7 @@ module ResourceManagement
       # Set quotas for the given project in the given service. `values` must be
       # a hash with resource names as keys. The service argument and resource
       # names are symbols, with acceptable values defined in
-      # ResourceManagement::ResourceManagement::KNOWN_RESOURCES.
+      # ResourceManagement::{ResourceConfig,ServiceConfig}.
       def set_project_quota(domain_id, project_id, service, values)
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
