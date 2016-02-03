@@ -4,8 +4,7 @@ module ResourceManagement
     include ResourceBarHelper
 
     def list_areas_with_enabled_services
-      services = ResourceManagement::Resource::KNOWN_SERVICES
-      services.select { |srv| srv[:enabled] }.map { |srv| srv[:area] }.uniq
+      ResourceManagement::ServiceConfig.all.map(&:area).uniq
     end
 
     # Given a number of timestamps from ResourceManagement::Resource#updated_at,

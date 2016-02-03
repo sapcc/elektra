@@ -67,13 +67,11 @@ module ResourceManagement
       end
 
       def resources_for(service)
-        ResourceManagement::Resource::KNOWN_RESOURCES.
-          select { |res| res[:service] == service }.
-          map    { |res| [ res[:name], res[:data_type] ] }
+        ResourceManagement::ServiceConfig.find(service).resources.map { |res| [ res.name, res.data_type ] }
       end
 
       def random_value(min, max, data_type)
-        if data_type == :bytes
+        if data_type.to_sym == :bytes
           return rand((min << 30) .. (max << 30)) # between min and max GiB
         else
           return rand(min .. max)
