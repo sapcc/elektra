@@ -2,10 +2,10 @@
 # All subclasses which require a logged in user should inherit from this class.
 class DashboardController < ::ScopeController
   # load region, domain and project if given
-  prepend_before_filter do
-    # initialize session unless loaded yet
-    session[:init] = true unless session.loaded?
-  end
+  # prepend_before_filter do
+  #   # initialize session unless loaded yet
+  #   session[:init] = true unless session.loaded?
+  # end
 
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
@@ -76,9 +76,15 @@ class DashboardController < ::ScopeController
     # Consider that every plugin controller inhertis from dashboard controller
     # and check_terms_of_use method is called on every request.
     # In order to reduce api calls we cache the result of new_user?
-    # in the session for one minute.
-    if session[:last_request_timestamp].nil? or (session[:last_request_timestamp] < Time.now-10000000.minute)
+    # in the session for 5 minutes.
+    
+    is_cache_expired = current_user.id!=session[:last_user_id] or 
+      session[:last_request_timestamp].nil? or 
+      (session[:last_request_timestamp] < Time.now-5.minute)
+    
+    if is_cache_expired
       session[:last_request_timestamp] = Time.now
+      session[:last_user_id] = current_user.id
       session[:is_new_dashboard_user] = Admin::OnboardingService.new_user?(current_user)
     end
     session[:is_new_dashboard_user]
@@ -86,6 +92,7 @@ class DashboardController < ::ScopeController
 
   def reset_last_request_cache
     session[:last_request_timestamp]=nil
+    session[:last_user_id]=nil
   end
 
   def set_mailer_host

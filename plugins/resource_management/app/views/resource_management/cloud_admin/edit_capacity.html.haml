@@ -8,8 +8,8 @@
       %p.alert.alert-error= @capacity.errors.full_messages.to_sentence
 
     %fieldset
-      - data_type = @capacity.attributes[:data_type]
-      - if data_type.nil?
+      - data_type = @capacity.data_type
+      - if data_type.to_sym == :number
         = f.input :value, label: 'Available capacity'
       - else
         - previous_value = params[:capacity] ? params[:capacity][:value] : nil

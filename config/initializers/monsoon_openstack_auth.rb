@@ -26,9 +26,6 @@ MonsoonOpenstackAuth.configure do |auth|
   # optional, default=false
   auth.access_key_auth_allowed = false
 
-  # optional, default=sap_default
-  auth.default_domain_name = 'sap_default'
-
   # optional, default= last url before redirected to form
   #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
 

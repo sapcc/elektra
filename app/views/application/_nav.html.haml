@@ -6,10 +6,9 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      = link_to "/#{@scoped_domain_fid ? @scoped_domain_fid : 'sap_default'}", class: "navbar-brand" do
+      = link_to main_app.landing_page_url(@scoped_domain_fid ? @scoped_domain_fid : Rails.configuration.default_domain), class: "navbar-brand" do
         .logo
         Converged Cloud
-
 
     .collapse.navbar-collapse#main-nav-collapse
       %ul.nav.navbar-nav
@@ -34,7 +33,7 @@
               -#
               -# %li.divider
               %li
-                = link_to 'Log out', monsoon_openstack_auth.logout_path
+                = link_to 'Log out', monsoon_openstack_auth.logout_path(redirect_to: main_app.landing_page_url)
 
         -# %li.dropdown
         -#   %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
