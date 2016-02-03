@@ -21,8 +21,6 @@ describe Automation::InstancesController, type: :controller do
     
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::ComputeService).to receive(:driver).and_return(compute_driver)
-    
-    allow_any_instance_of(Automation::ArcAutomation).to receive(:instanceAgents).and_return([])
   end
 
   # describe "GET 'index'" do

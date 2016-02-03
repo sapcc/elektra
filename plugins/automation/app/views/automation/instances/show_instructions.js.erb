@@ -1,0 +1,5 @@
+<% unless @error.nil? %>
+$("#search_instance_results").html("<%= escape_javascript(render partial: "automation/instances/install_agent_error", locals: {error: @error}) %>");
+<% else %>
+$("#search_instance_results").html("<%= escape_javascript(render partial: "automation/instances/install_agent_instructions") %>");
+<% end %>

@@ -8,17 +8,7 @@ class DashboardController < ::ScopeController
   # end
 
   # authenticate user -> current_user is available
-  authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
-                          domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
-                          project: -> c { c.instance_variable_get('@scoped_project_id') },
-                          rescope: false # do not rescope after authentication
 
-  # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use
-  # rescope token
-  before_filter :authentication_rescope_token
-  before_filter :load_user_projects
-  before_filter :set_mailer_host
 
 
   rescue_from "Excon::Errors::Forbidden", with: :handle_api_error

@@ -17,6 +17,15 @@ module Automation
       attr
     end
 
+    def online_to_string
+      case self.online
+        when State::ONLINE then "Online"
+        when State::OFFLINE then "Offline"
+        else
+          State::MISSING
+      end
+    end
+
   end
 
 end

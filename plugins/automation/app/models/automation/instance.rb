@@ -3,23 +3,15 @@ require 'ostruct'
 
 module Automation
 
+  # TODO: implement search
   class Instance
+    include State
 
     attr_accessor :id, :name, :os, :ip, :online, :external
 
-    module OnlineState
-      ONLINE  = true
-      OFFLINE = false
-    end
-
-    module State
-      MISSING = "-"
-    end
-
-    # TODO: implement search
     # TODO: sort by name not possible
     # TODO: paginate over instances?
-    def self.create_instances(instances=[], agents=[])
+    def self.create_instances_with_agents(instances=[], agents=[])
       agentsMap = {}
 
       # create new objects from the agents
@@ -27,7 +19,7 @@ module Automation
         instanceAgent = Instance.new
         instanceAgent.id = agent.agent_id
         instanceAgent.name = agent.agent_id
-        instanceAgent.ip = agent.facts.ipaddress || State::MISSING
+        instanceAgent.ip = agent.facts.ipaddress || State::IP_MISSING
         instanceAgent.online = agent.facts.online
         instanceAgent.external = true
         agentsMap[agent.agent_id] = instanceAgent
@@ -50,7 +42,7 @@ module Automation
       {instances: agentsMap, total_elements: agents.pagination.total_elements}
     end
 
-    def self.create_external_instances(instances=[], agent_ids=[])
+    def self.create_instances_without_agents(instances=[], agent_ids=[])
       instancesMap = {}
 
       # create new objets from the instances
@@ -75,8 +67,8 @@ module Automation
 
     def online_to_string
       case self.online
-        when OnlineState::ONLINE then "Online"
-        when OnlineState::OFFLINE then "Offline"
+        when State::ONLINE then "Online"
+        when State::OFFLINE then "Offline"
         else
           State::MISSING
       end

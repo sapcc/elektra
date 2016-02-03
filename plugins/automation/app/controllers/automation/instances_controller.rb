@@ -3,11 +3,13 @@ module Automation
   class InstancesController < Automation::ApplicationController
 
     def index
-      # get all severs (max limit is 1000)
-      servers = services.compute.servers
-      agents = services.automation.agents("", ['online', 'hostname', 'os', 'ipaddress'], 1, 10)
-      @instances = Instance.create_instances(servers, agents)
-      @external_instances = Instance.create_external_instances(servers, agents)
+      result = services.automation.agents("", ['online', 'hostname', 'os', 'ipaddress'], 1, 10)
+      page = params[:page]||1
+      per_page = 5
+
+      @agents = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).
+        page(page).
+        per(per_page)
     end
 
     def show
@@ -26,25 +28,59 @@ module Automation
     end
 
     def show_section
-      @instances = services.compute.servers || []
-      @instanceAgents = ArcAutomation.new().instanceAgents(current_user.token, @instances)
+      servers = services.compute.servers
+      agents = services.automation.agents("", ['online', 'hostname', 'os', 'ipaddress'], 1, 100)
+      @instances = Instance.create_instances_without_agents(servers, agents)
     end
 
     def install_agent
-      @agent_id = params[:id]
-      @agent_name = params[:name]
-      @ip = params[:ip]
+    end
+
+    def show_instructions
+      instance_id = params[:instance_id]
+
+      # get instance
+      server = begin
+        services.compute.find_server(instance_id)
+      rescue DomainModelServiceLayer::Errors::ApiError => e
+        case e.type
+        when 'NotFound'
+          nil
+        else
+          raise e
+        end
+      end
+
+      # check if instance exists
+      if server.nil?
+        return @error = {key: "warning", message: "Instance with id '#{instance_id}' not found"}
+      end
+
+      # check image info
+      if server.image.metadata.os_family.blank? || server.image.metadata.os_version.blank?
+        @version = ""
+      end
+
+
+      # check if agent already exists
+      agent_found = ((services.automation.agent(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
+      if agent_found
+        return @error = "Agent already exists on instance id '#{server.id}' (#{server.image.name})"
+      end
 
       # get url
       response = RestClient::Request.new(method: :post,
-                                         url: "https://localhost:8443/api/v1/token",
+                                         url: AUTOMATION_CONF['arc_pki_url'],
                                          headers: {'X-Auth-Token': current_user.token},
                                          timeout: 5,
-                                         payload: {"CN": @agent_id, "names": [{"OU": @active_project.id, "O": @active_project.domain_id}] }.to_json).execute
+                                         payload: {"CN": instance_id, "names": [{"OU": @active_project.id, "O": @active_project.domain_id}] }.to_json).execute
 
-      # convert to hash
+      #convert to hash
       response_hash = JSON.parse(response)
       @url = response_hash['url']
+    rescue => exception
+      logger.error "Automation-plugin: show_instructions: #{exception.message}"
+      return @error = {key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}
     end
 
   end
