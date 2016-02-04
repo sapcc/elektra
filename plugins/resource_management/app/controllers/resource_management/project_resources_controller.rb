@@ -16,9 +16,11 @@ module ResourceManagement
       @warning_resources = @all_resources.where("usage <= approved_quota AND current_quota > approved_quota").to_a
     end
 
-    def resource_request
-      @resource = params.require(:resource)
-      @service = params.require(:service)
+    def new_request
+      #@resource = params.require(:resource)
+      @resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @resource.id.nil? or @resource.project_id.nil?
+      #@service = params.require(:service)
     end
 
     def show_area
