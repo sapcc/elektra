@@ -2,7 +2,9 @@ require_dependency "resource_management/application_controller"
 
 module ResourceManagement
   class ProjectResourcesController < ApplicationController
-
+   
+    before_filter :load_project_resource, only: [:new_request, :create_request]
+    
     authorization_required
     
     def index
@@ -17,10 +19,9 @@ module ResourceManagement
     end
 
     def new_request
-      #@resource = params.require(:resource)
-      @resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @resource.id.nil? or @resource.project_id.nil?
-      #@service = params.require(:service)
+    end
+
+    def create_request
     end
 
     def show_area
@@ -42,6 +43,13 @@ module ResourceManagement
       rescue ActionController::RedirectBackError
         redirect_to resources_url()
       end
+    end
+
+    private
+
+    def load_project_resource
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.id.nil? or @project_resource.project_id.nil?
     end
 
   end
