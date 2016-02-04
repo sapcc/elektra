@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160106132424) do
+ActiveRecord::Schema.define(version: 20160203152117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(version: 20160106132424) do
 
   create_table "resource_management_resources", force: :cascade do |t|
     t.string   "cluster_id"
-    t.string   "domain_id"
+    t.string   "domain_id",                null: false
     t.string   "project_id"
     t.string   "service"
     t.string   "name"
