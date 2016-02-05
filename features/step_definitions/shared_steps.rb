@@ -1,8 +1,12 @@
-And(/^Login as test_admin/) do
-  fill_in "username", :with => "test_admin"
-  fill_in "password", :with => "secret"
+And(/^Login as test_user/) do
+  fill_in "username", :with => "dashboard_test_user"
+  fill_in "password", :with => "dashboard_test_user"
   click_on 'Sign in'
   expect(page.driver.status_code.should).to eq(200)
+end
+
+Then(/^the page status code is successful$/) do
+  expect(page.status_code).to be(200)
 end
 
 Given(/I am on the root page$/) do
