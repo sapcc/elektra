@@ -14,6 +14,8 @@ module ResourceManagement
       @critical_resources = @all_resources.where("usage > approved_quota").to_a
       # warn about resources where current_quota was set to exceed the approved value
       @warning_resources = @all_resources.where("usage <= approved_quota AND current_quota > approved_quota").to_a
+      # also warn about resources where usage approaches the current_quota
+      @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota").to_a
     end
 
     def resource_request
