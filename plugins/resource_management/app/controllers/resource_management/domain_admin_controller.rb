@@ -5,6 +5,7 @@ module ResourceManagement
 
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
     before_filter :load_domain_resource, only: [:new_request, :create_request]
+    before_filter :load_inquiry, only: [:review_request, :approve_request]
 
     authorization_required
 
@@ -65,6 +66,23 @@ module ResourceManagement
       respond_to do |format|
         format.js
       end
+    end
+
+    def review_request
+      # prepare data for view
+      _, _ = prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+
+      # calculate projected @project_status after approval
+      @desired_quota = @inquiry.payload['desired_quota']
+      @project_status_new = {
+        usage_sum:                  @resource_status[:usage_sum],
+        current_quota_sum:          @resource_status[:current_quota_sum] - @resource.approved_quota + @desired_quota,
+        domain_resource:            @resource,
+        has_infinite_current_quota: @resource_status[:has_infinite_current_quota],
+      }
+    end
+
+    def approve_request
     end
 
     def new_request
@@ -185,6 +203,25 @@ module ResourceManagement
     def load_domain_resource
       @resource = ResourceManagement::Resource.find(params.require(:id))
       raise ActiveRecord::RecordNotFound if @resource.domain_id != @scoped_domain_id or not @resource.project_id.nil?
+    end
+
+    def load_inquiry
+      @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
+      # Error Handling
+      unless @inquiry
+        render html: 'Could not find inquiry!'
+        return
+      end
+      unless current_user.is_allowed?("resource:management:admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
+        render template: '/dashboard/not_authorized'
+        return
+      end
+
+      # load additional data
+      data = @inquiry.payload.symbolize_keys
+      @resource = ResourceManagement::Resource.find(data[:resource_id])
+      @project_name = services.identity.find_project(@resource.project_id).name
+ 
     end
  
     def prepare_data_for_resource_list(services, options={})

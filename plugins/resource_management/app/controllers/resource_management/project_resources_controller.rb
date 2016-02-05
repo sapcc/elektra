@@ -60,7 +60,7 @@ module ResourceManagement
           resource: @project_resource.name,
           desired_quota: new_value,
         },
-        Admin::IdentityService.list_cloud_admins(),
+        Admin::IdentityService.list_scope_admins({domain_id: @scoped_domain_id}),
         {
           "approved": {
             "name": "Approve",
