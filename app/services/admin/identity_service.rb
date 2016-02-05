@@ -1,7 +1,8 @@
 module Admin
   class IdentityService
-      
-    class << self  
+    @@service_cache_mutex = Mutex.new
+
+    class << self
       def create_user_domain_role(current_user,role_name)
         return false if current_user.nil? or role_name.nil?
         member_role = admin_identity.find_role_by_name(role_name)
@@ -58,21 +59,64 @@ module Admin
         
         return admins.delete_if {|a| a.id == nil} # delete crap
       end
-      
+
+
       def service_user_token
-        # create a new service user unless already created or if token is expired
-        unless (@service_user and @service_user_expires_at and @service_user_expires_at>Time.now)
-          @service_user = MonsoonOpenstackAuth.api_client.auth_user(
-            Rails.application.config.service_user_id,
-            Rails.application.config.service_user_password,
-            domain_name: Rails.application.config.service_user_domain_name,
-            scoped_token: true # fog requires a domain scoped token -> scope: { domain: {name: DOMAIN} }
-          )
-          # remember the token
-          @service_user_expires_at = @service_user.token_expires_at if @service_user
+        # init cache
+        @@service_cache_mutex.synchronize do
+          @service_cache = @service_cache || {}
         end
+
+        # get service user from cache
+        @service_user = @service_cache.fetch(Thread.current[:domain], {}).fetch(:user, nil)
+        @service_user_expires_at = @service_cache.fetch(Thread.current[:domain], {}).fetch(:expires, nil)
+        unless (@service_user and @service_user_expires_at and @service_user_expires_at>Time.now)
+          @sevice_user = begin
+            MonsoonOpenstackAuth.api_client.auth_user(
+              Rails.application.config.service_user_id,
+              Rails.application.config.service_user_password,
+              domain_name: Rails.application.config.service_user_domain_name,
+              scoped_token: {domain: {name: Thread.current[:domain]}} # fog requires a domain scoped token -> scope: { domain: {name: DOMAIN} }
+            )
+          rescue
+            MonsoonOpenstackAuth.api_client.auth_user(
+              Rails.application.config.service_user_id,
+              Rails.application.config.service_user_password,
+              domain_name: Rails.application.config.service_user_domain_name,
+              scoped_token: {domain: {id: Thread.current[:domain]}} # fog requires a domain scoped token -> scope: { domain: {name: DOMAIN} }
+            )
+          end
+
+          if @sevice_user
+            # remember the token
+            @service_user_expires_at = @sevice_user.token_expires_at
+
+            # save to cache
+            @@service_cache_mutex.synchronize do
+              @service_cache[Thread.current[:domain]] = {user: @sevice_user, expires: @service_user_expires_at}
+            end
+          end
+        end
+
         @service_user.token rescue nil
       end
+
+
+
+      # def service_user_token
+      #   # create a new service user unless already created or if token is expired
+      #   unless (@service_user and @service_user_expires_at and @service_user_expires_at>Time.now)
+      #     @service_user = MonsoonOpenstackAuth.api_client.auth_user(
+      #       Rails.application.config.service_user_id,
+      #       Rails.application.config.service_user_password,
+      #       domain_name: Rails.application.config.service_user_domain_name,
+      #       scoped_token: true # fog requires a domain scoped token -> scope: { domain: {name: DOMAIN} }
+      #     )
+      #     # remember the token
+      #     @service_user_expires_at = @service_user.token_expires_at if @service_user
+      #   end
+      #   @service_user.token rescue nil
+      # end
       
       def admin_identity
         # create new admin_identity unless already created or token has changed

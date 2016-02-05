@@ -50,7 +50,7 @@ class DashboardController < ::ScopeController
   def handle_api_error(exception)
     reset_last_request_cache
     @errors = DomainModelServiceLayer::ApiErrorHandler.parse(exception)
-    render template: 'dashboard/error'
+    render template: 'dashboard/error', status: :internal_server_error
   end
 
   def handle_auth_error(exception)
@@ -61,13 +61,14 @@ class DashboardController < ::ScopeController
     redirect_to_login_form and return unless valid_token
 
     @errors = {exception.class.name => exception.message}
-    render template: 'dashboard/error'
+    render template: 'dashboard/error', status: :unauthorized
+
   end
 
   def authorization_forbidden exception
     @exception = exception
     respond_to do |format|
-      format.html { render "dashboard/forbidden", :status => 403 }
+      format.html { render "dashboard/forbidden", :status => :forbidden }
       format.js { render "dashboard/forbidden.js" }
     end
   end
@@ -78,10 +79,10 @@ class DashboardController < ::ScopeController
     # In order to reduce api calls we cache the result of new_user?
     # in the session for 5 minutes.
     
-    is_cache_expired = current_user.id!=session[:last_user_id] or 
-      session[:last_request_timestamp].nil? or 
+    is_cache_expired = current_user.id!=session[:last_user_id] ||
+      session[:last_request_timestamp].nil? ||
       (session[:last_request_timestamp] < Time.now-5.minute)
-    
+
     if is_cache_expired
       session[:last_request_timestamp] = Time.now
       session[:last_user_id] = current_user.id
