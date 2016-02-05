@@ -70,19 +70,39 @@ module ResourceManagement
 
     def review_request
       # prepare data for view
-      _, _ = prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+      _, _ = prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
 
       # calculate projected @project_status after approval
       @desired_quota = @inquiry.payload['desired_quota']
-      @project_status_new = {
+      @domain_status_new = {
         usage_sum:                  @resource_status[:usage_sum],
-        current_quota_sum:          @resource_status[:current_quota_sum] - @resource.approved_quota + @desired_quota,
-        domain_resource:            @resource,
+        current_quota_sum:          @resource_status[:current_quota_sum] - @project_resource.approved_quota + @desired_quota,
+        domain_resource:            @domain_resource,
         has_infinite_current_quota: @resource_status[:has_infinite_current_quota],
       }
     end
 
     def approve_request
+      value = params.require(:resource).require(:approved_quota)
+      # check new value a last time
+      begin
+        @project_resource.approved_quota = @project_resource.data_type.parse(value)
+        @project_resource.current_quota = @project_resource.data_type.parse(value)
+      rescue ArgumentError => e
+        @project_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+      end
+
+      if @project_resource.save
+        comment = "New project quota is #{@project_resource.data_type.format(@project_resource.approved_quota)}"
+        if params[:resource][:comment].present?
+          comment += ", comment from approver: #{params[:resource][:comment]}"
+        end
+        services.inquiry.set_state(@inquiry.id, :approved, comment)
+        # TODO: add sync to backend
+      else
+        self.review_request
+        render action: 'review_request'
+      end
     end
 
     def new_request
@@ -219,8 +239,9 @@ module ResourceManagement
 
       # load additional data
       data = @inquiry.payload.symbolize_keys
-      @resource = ResourceManagement::Resource.find(data[:resource_id])
-      @project_name = services.identity.find_project(@resource.project_id).name
+      @project_resource = ResourceManagement::Resource.find(data[:resource_id])
+      @project_name = services.identity.find_project(@project_resource.project_id).name
+      @domain_resource = ResourceManagement::Resource.where(domain_id:@scoped_domain_id, project_id:nil, service:data[:service], name:data[:resource]).first
  
     end
  

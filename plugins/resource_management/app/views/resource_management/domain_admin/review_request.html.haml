@@ -1,7 +1,7 @@
 = content_for :title do
-  Review Request for more: #{t("resource_management.#{@resource.service}")} &gt; #{t("resource_management.#{@resource.name}")}
+  Review Request for more: #{t("resource_management.#{@project_resource.service}")} &gt; #{t("resource_management.#{@project_resource.name}")}
 
-= simple_form_for @resource, url: plugin('resource_management').admin_approve_request_path, method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
+= simple_form_for @project_resource, url: plugin('resource_management').admin_approve_request_path, method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
   =hidden_field_tag :inquiry_id, params[:inquiry_id]
 
   %div{class: modal? ? 'modal-body' : ''}
@@ -12,22 +12,22 @@
       The project
       %strong= @project_name
       requests that their quota be extended from
-      %strong= @resource.data_type.format(@resource.approved_quota)
+      %strong= @project_resource.data_type.format(@project_resource.approved_quota)
       to
       = succeed '.' do
-        %strong>= @resource.data_type.format(@desired_quota)
+        %strong>= @project_resource.data_type.format(@desired_quota)
       This will increase quota usage to:
 
     .row
       .col-md-2.quota-label.text-muted Preview
-      .col-md-9= render partial: 'bar', locals: { data: @project_status_new, render_quota: true }
+      .col-md-9= render partial: 'bar', locals: { data: @domain_status_new, render_quota: true }
 
     %fieldset
       - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
-      - if @resource.data_type.to_sym == :number
+      - if @project_resource.data_type.to_sym == :number
         = f.input :approved_quota, label: 'New domain quota', input_html: { value: previous_value || @desired_quota }
       - else
-        - requested_value = @resource.data_type.format(@desired_quota)
+        - requested_value = @project_resource.data_type.format(@desired_quota)
         = f.input :approved_quota, label: 'New domain quota', as: :string, input_html: { value: previous_value || requested_value }
 
       - previous_comment = params[:resource] ? params[:resource][:comment] : nil
