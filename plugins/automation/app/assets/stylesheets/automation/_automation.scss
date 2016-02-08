@@ -1,3 +1,5 @@
+// Index
+
 .loading-spinner-section {
   margin-left: 10px;
   @include spinner(background rgba(0,0,0,0.2));
@@ -9,4 +11,15 @@
 
 .automation_status_alarm {
   color: $alarm-red;
+}
+
+
+// Install Agent
+
+.section {
+  padding: 0 0 20px 0;
+}
+
+.section_separator {
+
 }

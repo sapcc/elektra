@@ -1,6 +1,0 @@
-%tr{class: "", id: "instance_#{instance.id}"}
-  %td= instance.name
-  %td= instance.os
-  %td= instance.ip
-  %td
-    = link_to("Install Agent", install_agent_instances_path(id: instance.id, name: instance.name, ip: instance.ip), data: {modal: true}, class: 'btn btn-default')
