@@ -97,8 +97,8 @@ module ResourceManagement
         if params[:resource][:comment].present?
           comment += ", comment from approver: #{params[:resource][:comment]}"
         end
+        services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
         services.inquiry.set_state(@inquiry.id, :approved, comment)
-        # TODO: add sync to backend
       else
         self.review_request
         render action: 'review_request'
