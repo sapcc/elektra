@@ -58,29 +58,65 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       expect(ResourceManagement::Resource.count).to eq(0)
     end
 
-    it 'cleans up data for deleted domains' do
-      # simulate data from a domain that has been deleted
-      enabled_resources.each do |res|
-        ResourceManagement::Resource.create(
-          domain_id:      old_domain_id,
-          project_id:     nil,
-          service:        res.service_name,
-          name:           res.name,
-          approved_quota: 42,
-        )
-        ResourceManagement::Resource.create(
-          domain_id:      old_domain_id,
-          project_id:     old_project_id,
-          service:        res.service_name,
-          name:           res.name,
-          current_quota:  42,
-          approved_quota: 42,
-          usage:          23,
-        )
+    context 'when talking to a standard Keystone' do
+      before(:each) { ENV['HAS_KEYSTONE_ROUTER'] = '0' }
+
+      it 'cleans up data for deleted domains' do
+        # simulate data from a domain that has been deleted
+        enabled_resources.each do |res|
+          ResourceManagement::Resource.create(
+            domain_id:      old_domain_id,
+            project_id:     nil,
+            service:        res.service_name,
+            name:           res.name,
+            approved_quota: 42,
+          )
+          ResourceManagement::Resource.create(
+            domain_id:      old_domain_id,
+            project_id:     old_project_id,
+            service:        res.service_name,
+            name:           res.name,
+            current_quota:  42,
+            approved_quota: 42,
+            usage:          23,
+          )
+        end
+
+        service.sync_all_domains
+        expect(ResourceManagement::Resource.where(domain_id: old_domain_id).count).to eq(0)
       end
 
-      service.sync_all_domains
-      expect(ResourceManagement::Resource.where(domain_id: old_domain_id).count).to eq(0)
+    end
+
+    context 'when talking to a Keystone router' do
+      before(:each) { ENV['HAS_KEYSTONE_ROUTER'] = '1' }
+
+      it 'retains data for a domain not included in the domain listing' do
+        # simulate data from a domain that has been deleted
+        enabled_resources.each do |res|
+          ResourceManagement::Resource.create(
+            domain_id:      old_domain_id,
+            project_id:     nil,
+            service:        res.service_name,
+            name:           res.name,
+            approved_quota: 42,
+          )
+          ResourceManagement::Resource.create(
+            domain_id:      old_domain_id,
+            project_id:     old_project_id,
+            service:        res.service_name,
+            name:           res.name,
+            current_quota:  42,
+            approved_quota: 42,
+            usage:          23,
+          )
+        end
+
+        service.sync_all_domains
+        expect(ResourceManagement::Resource.where(domain_id: old_domain_id, project_id: nil).count).to eq(enabled_resources.count)
+        expect(ResourceManagement::Resource.where(domain_id: old_domain_id, project_id: old_project_id).count).to eq(enabled_resources.count)
+      end
+
     end
 
   end
