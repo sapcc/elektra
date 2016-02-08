@@ -53,6 +53,6 @@ module MonsoonDashboard
     config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
     config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
     config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
-    config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon3'
+    config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon2'
   end
 end
