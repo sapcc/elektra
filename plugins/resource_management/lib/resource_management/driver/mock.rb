@@ -5,7 +5,6 @@ module ResourceManagement
 
       def initialize
         @mock_domains_projects = {
-          # hash of domain_id => { hash of project_id => project_name }
           '7d11af29-7055-40a5-a575-c5de2e6b5973' => {
             name: 'foodomain',
             projects: {
@@ -37,6 +36,8 @@ module ResourceManagement
       end
 
       def query_project_quota(domain_id, project_id, service)
+        return {} unless project_exists?(domain_id, project_id)
+
         result = {}
         resources_for(service).each do |resource, data_type|
           value = @fixed_quota_values[fixed_quota_key(service, resource, project_id)]
@@ -46,6 +47,8 @@ module ResourceManagement
       end
 
       def query_project_usage(domain_id, project_id, service)
+        return {} unless project_exists?(domain_id, project_id)
+
         result = {}
         resources_for(service).each do |resource, data_type|
           result[resource] = random_value(0, 50, data_type)
@@ -54,6 +57,8 @@ module ResourceManagement
       end
 
       def set_project_quota(domain_id, project_id, service, values)
+        return unless project_exists?(domain_id, project_id)
+
         values.each do |resource, value|
           @fixed_quota_values[fixed_quota_key(service, resource, project_id)] = value
         end
@@ -61,6 +66,11 @@ module ResourceManagement
       end
 
       private
+
+      def project_exists?(domain_id, project_id)
+        return false unless @mock_domains_projects.has_key?(domain_id)
+        return @mock_domains_projects[domain_id][:projects].has_key?(project_id)
+      end
 
       def fixed_quota_key(service, resource, project_id)
         "#{service}:#{resource}:#{project_id}"

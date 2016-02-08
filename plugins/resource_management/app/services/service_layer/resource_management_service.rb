@@ -33,10 +33,19 @@ module ServiceLayer
       Rails.logger.info "ResourceManagement > sync_all_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
       db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
-      # drop Resource objects for deleted domains
-      old_domain_ids = db_domain_ids - all_domain_ids
-      Rails.logger.info "ResourceManagement > sync_all_domains: cleaning up deleted domains: #{old_domain_ids.join(' ')}"
-      ResourceManagement::Resource.where(domain_id: old_domain_ids).destroy_all()
+      # drop Resource objects for deleted domains (unless we are using a
+      # Keystone router, in which case enumerate_domains() is not guaranteed to
+      # return a full domain list since it only queries one of potentially many
+      # backend Keystones)
+      if has_keystone_router?
+        additional_domain_ids = (all_domain_ids + db_domain_ids).uniq - all_domain_ids
+        all_domain_ids = (all_domain_ids + db_domain_ids).uniq
+        Rails.logger.warn "ResourceManagement > sync_all_domains: will not trust domain list; also looking at known domains: #{additional_domain_ids.join(' ')}"
+      else
+        old_domain_ids = db_domain_ids - all_domain_ids
+        Rails.logger.info "ResourceManagement > sync_all_domains: cleaning up deleted domains: #{old_domain_ids.join(' ')}"
+        ResourceManagement::Resource.where(domain_id: old_domain_ids).destroy_all()
+      end
 
       # call sync_domain on all existing domains
       all_domain_ids.each { |domain_id| sync_domain(domain_id, options) }
@@ -63,10 +72,19 @@ module ServiceLayer
       # check which projects exist in the DB and in Keystone
       all_project_ids = driver.enumerate_projects(domain_id).keys
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
-      db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).pluck('DISTINCT project_id')
+      db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).where.not(project_id: nil).pluck('DISTINCT project_id')
 
-      # drop Resource objects for deleted projects (exclude project_id = nil which marks domain-level resource data)
-      old_project_ids = db_project_ids - all_project_ids - [nil]
+      # if using a Keystone router, don't trust an empty project list; it could
+      # mean that we're querying the wrong backend and can thus not see the
+      # domain (TODO: account for that in the driver by selecting the proper
+      # backend)
+      if has_keystone_router? and all_project_ids.empty?
+        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will not trust empty project list; also looking at known projects: #{db_project_ids.join(' ')}"
+        all_project_ids = db_project_ids
+      end
+
+      # drop Resource objects for deleted projects
+      old_project_ids = db_project_ids - all_project_ids
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): cleaning up deleted projects: #{old_project_ids.join(' ')}"
       ResourceManagement::Resource.where(domain_id: domain_id, project_id: old_project_ids).destroy_all()
 
@@ -91,8 +109,10 @@ module ServiceLayer
 
       # write values into database
       ResourceManagement::ResourceConfig.all.each do |resource|
-        this_actual_quota = actual_quota[resource.service_name][resource.name] || 0
-        this_actual_usage = actual_usage[resource.service_name][resource.name] || 0
+        # only update if the driver reported any values for this project
+        this_actual_quota = actual_quota[resource.service_name][resource.name]
+        this_actual_usage = actual_usage[resource.service_name][resource.name]
+        next if this_actual_quota.nil? or this_actual_usage.nil?
 
         # create new Resource entry if necessary
         object = ResourceManagement::Resource.where(
@@ -149,6 +169,14 @@ module ServiceLayer
 
       res = resources.first
       driver.set_project_quota(res.domain_id, res.project_id, res.service.to_sym, values)
+    end
+
+    private
+
+    def has_keystone_router?
+      value = ENV.fetch('HAS_KEYSTONE_ROUTER', '0')
+      Rails.logger.debug "HAS_KEYSTONE_ROUTER = '#{value}'"
+      return value == '1'
     end
 
   end
