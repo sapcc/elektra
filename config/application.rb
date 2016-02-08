@@ -47,7 +47,7 @@ module MonsoonDashboard
 
     config.debug_api_calls = false
     ############## REGION ###############
-    config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'europe'
+    config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || 'eu-de-1'
 
     #############ä SERVICE USER #############
     config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']

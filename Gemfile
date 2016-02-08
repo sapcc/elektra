@@ -31,7 +31,8 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'fog', git: 'git://localhost/monsoon/fog.git', branch: 'master'#, :ref => 'b3c62'
+gem 'fog', git: 'git://localhost/monsoon/fog.git', branch: 'master'
+#gem 'fog', path: '../fog'
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
