@@ -9,7 +9,7 @@ class ScopeController < ::ApplicationController
 
   prepend_before_filter do
     # TODO: fix hack the domain to be used in identity service
-    Thread.current[:domain] = params[:domain]
+    Thread.current[:domain] = params[:domain_id]
 
     # initialize scoped domain's and project's friendly id 
     # use existing, user's or default domain
