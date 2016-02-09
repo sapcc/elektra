@@ -3,8 +3,11 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class DomainAdminController < ApplicationController
 
+    before_filter :load_project_resource, only: [:edit, :cancel, :update]
+    before_filter :load_domain_resource, only: [:new_request, :create_request]
+
     authorization_required
-    
+
     def index
       @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
       prepare_data_for_resource_list(@all_services, overview: true)
@@ -29,23 +32,15 @@ module ResourceManagement
     end
 
     def edit
-      @project_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
     end
 
     def cancel
-      @project_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
       respond_to do |format|
         format.js { render action: 'update' }
       end
     end
 
     def update
-      # load Resource record to modify
-      @project_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
-
       # validate new quota value
       value = params.require(:value)
       begin
@@ -72,9 +67,70 @@ module ResourceManagement
       end
     end
 
-    def resource_request
-      @resource = params[:resource]
-      @service = params[:service]
+    def new_request
+      # prepare data for usage display
+      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+    end
+
+    def create_request
+      # parse and validate value
+      old_value = @resource.approved_quota
+      data_type = @resource.data_type
+      value = params.require(:resource).require(:approved_quota)
+      begin
+        value = data_type.parse(value)
+        @resource.approved_quota = value
+        if value <= old_value || data_type.format(value) == data_type.format(old_value)
+          # the second condition catches slightly larger values that round to the same representation, e.g. 100.000001 GiB
+          @resource.add_validation_error(:approved_quota, 'must be larger than current value')
+        end
+      rescue ArgumentError => e
+        @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+      end
+
+      # back to square one if validation failed
+      unless @resource.validate
+        @has_errors = true
+        # prepare data for usage display
+        prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+        render action: :new_request
+        return
+      end
+
+      # create inquiry
+      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.config.service.area.to_s, domain_id: nil)
+      overlay_url = plugin('resource_management').cloud_admin_review_request_path()
+      domain_name = services.identity.find_domain(@scoped_domain_id).name
+
+      inquiry = services.inquiry.inquiry_create(
+        'domain_quota',
+        "#{@resource.service}/#{@resource.name} for domain #{domain_name}: add #{@resource.data_type.format(value - old_value)}",
+        current_user,
+        {
+          resource_id: @resource.id,
+          service: @resource.service,
+          resource: @resource.name,
+          desired_quota: value,
+        },
+        Admin::IdentityService.list_cloud_admins(),
+        {
+          "approved": {
+            "name": "Approve",
+            "action": "#{base_url}?overlay=#{overlay_url}",
+          },
+        },
+      )
+      if inquiry.errors?
+        @has_errors = true
+        # prepare data for usage display
+        prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+        render action: :new_request
+        return
+      end
+
+      respond_to do |format|
+        format.js
+      end
     end
 
     def details
@@ -120,6 +176,16 @@ module ResourceManagement
     end
 
     private
+
+    def load_project_resource
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
+    end
+
+    def load_domain_resource
+      @resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @resource.domain_id != @scoped_domain_id or not @resource.project_id.nil?
+    end
  
     def prepare_data_for_resource_list(services, options={})
       # load resources for domain and projects within this domain

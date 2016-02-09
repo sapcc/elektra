@@ -17,6 +17,18 @@ module Admin
         end
       end
 
+      # A special case of list_scope_admins that returns a list of cloud admins.
+      # This logic is hardcoded for now since the concept of a cloud admin will only
+      # be introduced formally in the next Keystone release (Mitaka).
+      def list_cloud_admins
+        unless @admin_domain_id
+          domain_name = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'monsooncc')
+          @admin_domain_id = admin_identity.domains(name: domain_name).first.id
+        end
+
+        return list_scope_admins({ domain_id: @admin_domain_id })
+      end
+
       # Returns admins for the given scope (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID)
       # This method looks recursively for project, parent_projects and domain admins until it finds at least one. 
       # It should always return a non empty list (at least the domain admins).

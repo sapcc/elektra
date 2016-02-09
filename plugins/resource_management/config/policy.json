@@ -8,6 +8,8 @@
   "resource_management:cloud_admin_cancel": "rule:cloud_admin",
   "resource_management:cloud_admin_edit_capacity": "rule:cloud_admin",
   "resource_management:cloud_admin_update_capacity": "rule:cloud_admin",
+  "resource_management:cloud_admin_review_request": "rule:cloud_admin",
+  "resource_management:cloud_admin_approve_request": "rule:cloud_admin",
   
   "resource_management:domain_admin_list": "rule:domain_admin",
   "resource_management:domain_admin_show_area": "rule:domain_admin",
@@ -16,7 +18,8 @@
   "resource_management:domain_admin_edit": "rule:domain_admin",
   "resource_management:domain_admin_update": "rule:domain_admin",
   "resource_management:domain_admin_cancel": "rule:domain_admin",
-  "resource_management:domain_admin_resource_request": "rule:domain_admin",
+  "resource_management:domain_admin_new_request": "rule:domain_admin",
+  "resource_management:domain_admin_create_request": "rule:domain_admin",
 
   "resource_management:project_resource_list": "rule:project_admin",
   "resource_management:project_resource_show_area": "rule:project_admin",

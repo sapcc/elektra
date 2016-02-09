@@ -1,4 +1,4 @@
-= content_for(:title, "Details for resource #{@resource}")
+= content_for(:title, "Details for resource: #{t("resource_management.#{@service}")} > #{t("resource_management.#{@resource}")}")
 .modal-body
   %p.alert.alert-danger{style: "display:none"}
   #usage_bars
