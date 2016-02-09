@@ -23,7 +23,7 @@ module Identity
     end
 
     def index
-      @projects = services.identity.auth_projects(@scoped_domain_id)
+      @projects = @user_domain_projects
 
       respond_to do |format|
         format.html {

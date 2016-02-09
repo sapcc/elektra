@@ -39,7 +39,7 @@ class DashboardController < ::ScopeController
 
   def load_user_projects
     # get all projects for user (this might be expensive, might need caching, ajaxifying, ...)
-    @user_domain_projects ||= services.identity.auth_projects
+    @user_domain_projects ||= services.identity.auth_projects(@scoped_domain_id).sort_by { |project| project.name }
 
     # load active project
     if @scoped_project_id
