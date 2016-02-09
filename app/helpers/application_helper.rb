@@ -51,6 +51,133 @@ module ApplicationHelper
     self.respond_to?("#{name}_plugin".to_sym)
   end
 
+
+
+
+  # ---------------------------------------------------------------------------------------------------
+  # Breadcrumb/Hierarchy Helpers
+  # ---------------------------------------------------------------------------------------------------
+
+
+  def hierarchical_breadcrumb(active_project, auth_projects)
+    unless active_project.blank?
+      parents_project_ids = active_project.parents_project_ids
+      breadcrumb_projects = Array.new
+
+      # blank check necessary for root projects
+      unless parents_project_ids.blank?
+        parents_project_ids.compact!
+        auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash)
+
+        breadcrumb_projects = parents_project_ids.reverse.inject([]) do |array,project_id|
+          project = auth_projects[project_id]
+          if project
+            yield(project) if block_given? # if block given do this
+            array << project               # this is for the case that no block is given: just add to array
+          end
+          array
+        end
+      end
+
+      # add active project to the end of the project list
+      yield(active_project) if block_given?
+      breadcrumb_projects << active_project
+    end
+  end
+
+  def active_project_tree(active_project, auth_projects, options={})
+    tree = active_project.subprojects_ids
+    tree = {active_project.id => tree}
+    parent_ids = active_project.parents_project_ids
+    unless parent_ids.blank?
+      parent_ids.compact.each{|key| tree = {key=>tree}}
+    end
+
+    capture do
+      concat subprojects_tree(tree,auth_projects,options.merge(active_project: active_project))
+    end
+  end
+
+  # render project tree
+  def subprojects_tree(subprojects,auth_projects, options={})
+    auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash)
+
+    content_tag(:ul, class: options.delete(:class) ) do
+      if subprojects.is_a?(Array)
+        subprojects = subprojects.compact
+        subprojects.map do |subproject_id|
+          project = auth_projects[subproject_id]
+          next if project.nil? or project.id.nil?
+          if options[:active_project] and options[:active_project].id==project.id
+            content_tag(:li, options[:active_project].name, class: 'current-project')
+          else
+            content_tag(:li, link_to( subproject.name, plugin('identity').project_path(project_id: subproject.id)), id: subproject.id)
+          end
+        end.join("\n").html_safe
+
+      elsif subprojects.is_a?(Hash)
+        result = []
+
+        # remove unauthorized project keys. Empty
+        subprojects = subprojects.inject({}) do |hash,(k,v)|
+          auth_projects[k].nil? ? (v.each{|sub_k,sub_v| hash[sub_k]=sub_v} if v.is_a?(Hash)) : hash[k]=v
+          hash
+        end
+
+        subprojects.each do |k,v|
+          project = auth_projects[k]
+
+          if project or v.is_a?(Hash)
+            is_active_project = (options[:active_project] and options[:active_project].id==project.id)
+
+            result <<  content_tag(:li, id: k, class: is_active_project ? 'current-project' : '') do
+              capture do
+                if is_active_project
+                  concat project.name
+                else
+                  concat link_to project.name, plugin('identity').project_path(project_id: project.id)
+                end
+                if v.is_a?(Hash)
+                  concat subprojects_tree(v,auth_projects,options)
+                end
+              end
+            end if project
+          end
+        end
+        result.join("\n").html_safe
+      end
+    end
+  end
+
+  def parents_tree(parents_project_ids,auth_projects, options={})
+    unless parents_project_ids.blank?
+      parents_project_ids = parents_project_ids.compact
+      auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash)
+
+      if parents_project_ids and parents_project_ids.length>0
+        content_tag(:ul, class: options[:class] ) do
+          project_id = parents_project_ids.last
+          new_parents_project_ids = parents_project_ids[0..-2]
+          project = auth_projects[project_id]
+
+          project = nil if (project and project.name=='Project 1_1_1')
+
+          capture do
+            if options[:active_project] and options[:active_project].id==project.id
+              concat content_tag(:li, options[:active_project].name, class: 'current-project')
+            else
+              concat content_tag(:li, link_to( project.name, plugin('identity').project_path(project_id: project.id)), id: project.id) if project
+            end
+            concat parents_tree(new_parents_project_ids, auth_projects)
+          end
+        end
+      end
+    end
+  end
+
+
+
+
   # ---------------------------------------------------------------------------------------------------
   # Favicon Helpers
   # ---------------------------------------------------------------------------------------------------
@@ -104,9 +231,11 @@ module ApplicationHelper
 
   def active_service_breadcrumb
     active_service = active_navigation_item_name(context: :services, :level => :all)
-    crumb = "Home"
-    unless active_service.blank?
-      crumb = active_service
+    crumb = "Home" # Default case, only visible on domain home page
+    if active_service.blank?
+      crumb = "Project Overview" unless @active_project.blank? # no service selected, if project is available this is the project home page -> print project name
+    else
+      crumb = active_service # print active service name
     end
     crumb
   end

@@ -25,30 +25,28 @@
 
 
 %h4 Sub Projects
-- unless @current_project.subprojects_ids.blank?
-  %p= subprojects_tree(@current_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
+- unless @active_project.subprojects_ids.blank?
+  %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
 - else
   %p This project doesn't have any sub projects
 
 = link_to 'Request new sub project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
 
-/ - unless @current_project.parents_project_ids.blank?
-/   %h4 Parents
-/   %p= parents_tree(@current_project.parents_project_ids, @user_domain_projects)
-  
-/ %h4 Project tree
-/ %p= current_project_tree(@current_project,@user_domain_projects,class: 'content-list subprojects')
-/
-/ %h4 Breadcrumb
-/ %p
-/   - breadcrumb(@current_project,@user_domain_projects) do |project,is_first|
-/     = " / " unless is_first
-/     = link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id))
-/
-/ %p
-/   - breadcrumb_projects = breadcrumb(@current_project,@user_domain_projects)
-/   - breadcrumb = breadcrumb_projects.collect{|project| link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id)) }
-/   = raw breadcrumb.join(' / ')
-/
-    
-  
+
+-# - unless @active_project.parents_project_ids.blank?
+-#   %h4 Parents
+-#   %p= parents_tree(@active_project.parents_project_ids, @user_domain_projects)
+-#
+-#   %h4 Project tree
+-#   %p= active_project_tree(@active_project,@user_domain_projects,class: 'content-list subprojects')
+-#
+-#   %h4 Breadcrumb
+-#   %p
+-#     - hierarchical_breadcrumb(@active_project,@user_domain_projects) do |project|
+-#       \/
+-#       = link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id))
+-#
+-#   %p
+-#     - breadcrumb_projects = hierarchical_breadcrumb(@active_project,@user_domain_projects)
+-#     - crumb = breadcrumb_projects.collect{|project| link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id)) }
+-#     = raw crumb.join(' / ')

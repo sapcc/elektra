@@ -135,12 +135,12 @@ module Compute
       end
     end
     
-    def current_project_id 
-      unless @current_project_id
+    def active_project_id 
+      unless @active_project_id
         local_project = Project.find_by_domain_fid_and_fid(@scoped_domain_fid,@scoped_project_fid)
-        @current_project_id = local_project.key if local_project
+        @active_project_id = local_project.key if local_project
       end
-      return @current_project_id
+      return @active_project_id
     end
   end
 end

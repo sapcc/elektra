@@ -1,18 +1,18 @@
 module Identity
   class ProjectsController < DashboardController
-  
+
     before_filter :get_project_id,  except: [:index, :create, :new]
     before_filter do
       @scoped_project_fid = params[:project_id] || @project_id
     end
-    
+
     rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :not_member_error
 
     authorization_required(context:'identity')
-      
+
     def not_member_error(exception)
       if params[:action]=='index'
-        @projects = Admin::IdentityService.projects_by_user_id(current_user.id)  
+        @projects = Admin::IdentityService.projects_by_user_id(current_user.id)
         respond_to do |format|
           format.js {render action: params[:action], formats:[:js]}
           format.html {render action: params[:action]}
@@ -20,17 +20,17 @@ module Identity
       else
         raise(exception)
       end
-    end 
+    end
 
     def index
       @projects = services.identity.auth_projects(@scoped_domain_id)
-      
+
       respond_to do |format|
-        format.html { 
+        format.html {
           if params[:partial]
             render partial: 'projects', locals: {projects: @projects, remote_links: true}, layout: false
           else
-            render action: :index 
+            render action: :index
           end
         }
         format.js
@@ -39,15 +39,13 @@ module Identity
     end
 
     def show
-      #@current_project = services.identity.find_project(@project_id, [:subtree_as_ids, :parents_as_list])
-      @current_project = services.identity.find_project(@project_id, [:subtree_as_ids, :parents_as_ids])
-      @instances = services.compute.servers(tenant_id: @current_project.id) rescue []
+      @instances = services.compute.servers(tenant_id: @active_project.id) rescue []
     end
-    
+
     def edit
       @project = services.identity.find_project(@project_id)
     end
-    
+
     def update
       @project = services.identity.find_project(@project_id)
       @project.attributes = params[:project]
@@ -59,10 +57,10 @@ module Identity
         render action: :edit
       end
     end
-    
+
     def destroy
       project = services.identity.find_project(@project_id)
-      
+
       if project.destroy
         flash[:notice] = "Project successfully deleted."
       else

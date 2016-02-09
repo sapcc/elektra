@@ -43,7 +43,9 @@ class DashboardController < ::ScopeController
 
     # load active project
     if @scoped_project_id
-      @active_project ||= @user_domain_projects.find { |project| project.id == @scoped_project_id }
+      # @active_project ||= @user_domain_projects.find { |project| project.id == @scoped_project_id }
+      @active_project = services.identity.find_project(@scoped_project_id, [:subtree_as_ids, :parents_as_ids])
+
     end
   end
 
@@ -78,7 +80,7 @@ class DashboardController < ::ScopeController
     # and check_terms_of_use method is called on every request.
     # In order to reduce api calls we cache the result of new_user?
     # in the session for 5 minutes.
-    
+
     is_cache_expired = current_user.id!=session[:last_user_id] ||
       session[:last_request_timestamp].nil? ||
       (session[:last_request_timestamp] < Time.now-5.minute)
