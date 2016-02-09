@@ -18,7 +18,7 @@ Feature: Authentication
   Scenario: User is not logged in but already registered
     Given I am not logged in
     When I visit "/monsoon2/identity/home"
-     And Login as test_user
+     And I log as test_user
     Then I am redirected to "/monsoon2/identity/home"
      And I click on user navigation
      And I see a "Log out" button
@@ -27,5 +27,5 @@ Feature: Authentication
   Scenario: User is redirected to the requested url after login
     Given I am not logged in
     When I visit "/monsoon2/identity/credentials"
-     And Login as test_user
+     And I log as test_user
     Then I am redirected to "/monsoon2/identity/credentials"
