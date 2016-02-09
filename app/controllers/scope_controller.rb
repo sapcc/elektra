@@ -8,13 +8,13 @@ class ScopeController < ::ApplicationController
   include DomainModelServiceLayer::Services
 
   prepend_before_filter do
-    # TODO: fix hack the domain to be used in identity service
-    Thread.current[:domain] = params[:domain_id]
-
     # initialize scoped domain's and project's friendly id 
     # use existing, user's or default domain
     domain_id = (params[:domain_id] || current_user.try(:user_domain_id) || Rails.configuration.default_domain)     
     project_id = params[:project_id]
+
+    # TODO: fix hack the domain to be used in identity service
+    Thread.current[:domain] = domain_id
   
     @scoped_domain_fid = @scoped_domain_id = domain_id 
     @scoped_project_fid = @scoped_project_id = project_id
