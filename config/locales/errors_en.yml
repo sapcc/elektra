@@ -1,0 +1,23 @@
+en:
+  exception:
+    show:
+      not_found:
+        title: "Not Found"
+        subtitle: "The page you were looking for does not exists"
+        description: ""
+      internal_server_error:
+        title: "Internal Server Error"
+        subtitle: "Something went wrong while processing your request"
+        description: "Please contact an Administrator. The error has been logged with the id <code>%{token}</code>."
+      bad_request:
+        title: "Bad Request"
+        subtitle: "The server did not understand your request. It may have been malformed."
+        description: ""
+      forbidden:
+        title: "Forbidden"
+        subtitle: "You are not authorized to access this page"
+        description: "Please contact your project owner to request the required permissions."
+      authentication_error:
+        title: "Authentication Failed"
+        subtitle: "Something went wrong while processing your authentication"
+        description: "Please check if you supplied to correct credentials."
