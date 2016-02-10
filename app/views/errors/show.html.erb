@@ -1,0 +1,30 @@
+<div class="hero-unit">
+  <h1><%= details[:title] %></h1>
+  <p><%= details[:subtitle] %></p>
+</div>
+
+<p>
+  <%= details[:description] %>
+</p>
+
+<% if debug_visible? %>
+  <h3>Staff Info</h3>
+
+  <h4>Backtrace</h4>
+  <pre><%= details[:name] %> (<%= details[:message] %>):
+  <%= details[:source] -%>
+  <%= details[:backtrace] -%>
+  </pre>
+
+  <h4>Rack Enviroment</h4>
+  <table class="table table-striped table-bordered">
+    <% details[:env].each_pair do |k, v| %>
+      <tr>
+        <th style="width: 300px"><%= k %></th>
+        <td>
+          <div style="word-break: break-all; overflow: auto; max-height: 100px"><%= v %></div>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
