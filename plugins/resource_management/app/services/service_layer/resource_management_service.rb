@@ -12,6 +12,10 @@ module ServiceLayer
         service_user_token: Admin::IdentityService.service_user_token  
       })
     end
+    
+    def available?(action_name_sym=nil)
+      not current_user.service_url('identity',region: region).nil?  
+    end
 
     def mock!
       @driver = ResourceManagement::Driver::Mock.new()

@@ -1,6 +1,10 @@
 module ServiceLayer
 
   class InquiryService < DomainModelServiceLayer::Service
+    
+    def available?(action_name_sym=nil)
+      true
+    end
 
     def find_by_id(id)
       Inquiry::Inquiry.find(id)

@@ -10,6 +10,10 @@ module ServiceLayer
         project_id: self.project_id  
       })
     end
+    
+    def available?(action_name_sym=nil)
+      not current_user.service_url('network',region: region).nil?  
+    end
 
     def networks(filter={})
       driver..map_to(Networking::Network).networks(filter)  

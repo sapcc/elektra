@@ -11,6 +11,10 @@ module ServiceLayer
       })
     end
     
+    def available?(action_name_sym=nil)
+      not current_user.service_url('compute',region: region).nil?  
+    end
+    
     ##################### CREDENTIALS #########################
     def find_server(id)
       return nil if id.blank?
