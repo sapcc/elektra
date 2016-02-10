@@ -83,7 +83,7 @@ module Admin
         @service_user = @service_cache.fetch(Thread.current[:domain], {}).fetch(:user, nil)
         @service_user_expires_at = @service_cache.fetch(Thread.current[:domain], {}).fetch(:expires, nil)
         unless (@service_user and @service_user_expires_at and @service_user_expires_at>Time.now)
-          @sevice_user = begin
+          @service_user = begin
             MonsoonOpenstackAuth.api_client.auth_user(
               Rails.application.config.service_user_id,
               Rails.application.config.service_user_password,
@@ -99,13 +99,13 @@ module Admin
             )
           end
 
-          if @sevice_user
+          if @service_user
             # remember the token
-            @service_user_expires_at = @sevice_user.token_expires_at
+            @service_user_expires_at = @service_user.token_expires_at
 
             # save to cache
             @@service_cache_mutex.synchronize do
-              @service_cache[Thread.current[:domain]] = {user: @sevice_user, expires: @service_user_expires_at}
+              @service_cache[Thread.current[:domain]] = {user: @service_user, expires: @service_user_expires_at}
             end
           end
         end
