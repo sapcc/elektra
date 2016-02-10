@@ -7,7 +7,11 @@ module ServiceLayer
       # Initialize ruby-arc-client
       @client = RubyArcClient::Client.new(AUTOMATION_CONF['arc_api_url'])
     end
-
+    
+    
+    def available?(action_name_sym=nil)
+      not current_user.service_url('arc',region: region).nil?  
+    end
 
     def agents(filter="", show_facts=[], page=0, per_page=0)
       Automation::Agent.create_agents(@client.list_agents!(current_user.token, filter, show_facts, page, per_page))

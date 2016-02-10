@@ -13,7 +13,11 @@ module ServiceLayer
         project_id: self.project_id
       })
     end
-
+    
+    def available?(action_name_sym=nil)
+      not current_user.service_url('identity',region: region).nil?  
+    end
+    
     def has_projects?
       driver.auth_projects.count>0
     end

@@ -86,6 +86,14 @@ module DomainModelServiceLayer
       @current_user = current_user
     end 
     
+    def available?(service_name,action_name)
+      begin 
+        self.send(service_name.to_sym).send(:available?,action_name.to_sym) 
+      rescue
+        false
+      end
+    end
+    
     # this method is called every time the services.identity or services.volume ect. in controller is requested.
     # See InstanceMethods#services
     def method_missing(method_sym, *arguments, &block)
@@ -134,6 +142,10 @@ module DomainModelServiceLayer
       @domain_id        = options[:domain_id]
       @project_id       = options[:project_id]
       @service_catalog  = options[:service_catalog] || []
+    end
+    
+    def available?(action_name_sym=nil)
+      false
     end
     
     def service_url(type, options={})
