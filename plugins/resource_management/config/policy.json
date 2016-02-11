@@ -26,7 +26,6 @@
   "resource_management:project_resource_list": "rule:project_admin",
   "resource_management:project_resource_show_area": "rule:project_admin",
   "resource_management:project_resource_sync_now": "rule:project_admin",
-  "resource_management:project_resource_resource_request": "rule:project_admin",
   "resource_management:project_resource_new_request": "rule:project_admin",
   "resource_management:project_resource_create_request": "rule:project_admin"
 }
