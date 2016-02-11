@@ -1,9 +1,10 @@
 ResourceManagement::Engine.routes.draw do
   scope '/', as: 'resources' do
-    get '/' => 'project_resources#index'
-    get ':area',  to: 'project_resources#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
-    get 'request'  => 'project_resources#resource_request'
-    get 'sync_now' => 'project_resources#sync_now'
+    get  '/' => 'project_resources#index'
+    get  ':area',  to: 'project_resources#show_area', constraints: { area: /(?:compute|network|storage)/ }, as: 'area'
+    get  'request'  => 'project_resources#new_request', as: 'new_request'
+    post 'request'  => 'project_resources#create_request', as: 'create_request'
+    get  'sync_now' => 'project_resources#sync_now'
   end
 
   scope 'admin', as: 'admin' do
@@ -16,6 +17,8 @@ ResourceManagement::Engine.routes.draw do
     get  'edit'     => 'domain_admin#edit'
     get  'update'   => 'domain_admin#update'
     get  'cancel'   => 'domain_admin#cancel'
+    get  'review_request'  => 'domain_admin#review_request'
+    post 'approve_request' => 'domain_admin#approve_request'
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do

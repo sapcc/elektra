@@ -2,7 +2,9 @@ require_dependency "resource_management/application_controller"
 
 module ResourceManagement
   class ProjectResourcesController < ApplicationController
-
+   
+    before_filter :load_project_resource, only: [:new_request, :create_request]
+    
     authorization_required
     
     def index
@@ -18,9 +20,67 @@ module ResourceManagement
       @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota").to_a
     end
 
-    def resource_request
-      @resource = params.require(:resource)
-      @service = params.require(:service)
+    def new_request
+    end
+
+    def create_request
+      old_value = @project_resource.approved_quota
+      data_type = @project_resource.data_type
+      new_value = params.require(:resource).require(:approved_quota)
+     
+      # parse and validate value
+      begin
+        new_value = data_type.parse(new_value)
+        @project_resource.approved_quota = new_value
+        # check that the value is higher the the old value
+        if new_value <= old_value || data_type.format(new_value) == data_type.format(old_value)
+          @project_resource.add_validation_error(:approved_quota, 'must be larger than current value')
+        end
+      rescue ArgumentError => e
+        @project_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+      end
+      # back to square one if validation failed
+      unless @project_resource.validate
+        @has_errors = true
+        # prepare data for usage display
+        render action: :new_request
+        return
+      end
+
+      # now we can create the inquiry
+      base_url    = plugin('resource_management').admin_area_path(area: @project_resource.config.service.area.to_s, domain_id: @scoped_domain_id)
+      overlay_url = plugin('resource_management').admin_review_request_path()
+      domain_name = services.identity.find_domain(@scoped_domain_id).name
+
+      inquiry = services.inquiry.inquiry_create(
+        'project_quota',
+        "#{@project_resource.service}/#{@project_resource.name} for domain #{domain_name}: add #{@project_resource.data_type.format(new_value - old_value)}",
+        current_user,
+        {
+          resource_id: @project_resource.id,
+          service: @project_resource.service,
+          resource: @project_resource.name,
+          desired_quota: new_value,
+        },
+        Admin::IdentityService.list_scope_admins({domain_id: @scoped_domain_id}),
+        {
+          "approved": {
+            "name": "Approve",
+            "action": "#{base_url}?overlay=#{overlay_url}",
+          },
+        },
+      )
+      if inquiry.errors?
+        @has_errors = true
+        # prepare data for usage display
+        prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
+        render action: :new_request
+        return
+      end
+
+      respond_to do |format|
+        format.js
+      end
     end
 
     def show_area
@@ -42,6 +102,13 @@ module ResourceManagement
       rescue ActionController::RedirectBackError
         redirect_to resources_url()
       end
+    end
+
+    private
+
+    def load_project_resource
+      @project_resource = ResourceManagement::Resource.find(params.require(:id))
+      raise ActiveRecord::RecordNotFound if @project_resource.id.nil? or @project_resource.project_id.nil?
     end
 
   end
