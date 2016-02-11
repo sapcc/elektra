@@ -3,7 +3,7 @@
 
 .row.quota-row
   .col-md-9
-    - if @critical_resources.blank? and @warning_resources.blank?
+    - if @critical_resources.blank? and @warning_resources.blank? and @nearly_full_resources.blank?
       .bs-callout.bs-callout-info
         No signs of critical resource usage found.
     - unless @critical_resources.blank?
