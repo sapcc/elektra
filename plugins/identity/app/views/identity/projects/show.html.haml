@@ -1,20 +1,7 @@
 .row
   .col-sm-6
-    %p
-      This is the project home page. We will display a nicely rendered list of all available services here soon. For now please use the services dropdown menu above.
-      %table
-        %tr
-          %th ID
-          %td= @active_project.id
-        %tr
-          %th Name
-          %td= @active_project.name
-        %tr
-          %th Description&nbsp;
-          %td= @active_project.description
-        %tr
-          %th Enabled?
-          %td= @active_project.enabled
+    %p= @active_project.description
+
   .col-sm-6
     %ul
       - if current_user.is_allowed?('identity:project_edit')
@@ -23,12 +10,17 @@
         %li= link_to 'Manage Project Members', plugin('identity').projects_members_path
 
 
+.row
+  .col-md-8
+    %h4 Available Services
+    = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
 
-%h4 Sub Projects
-- unless @active_project.subprojects_ids.blank?
-  %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
-- else
-  %p This project doesn't have any sub projects
+  .col-md-4
+    %h4 Sub Projects
+    - unless @active_project.subprojects_ids.blank?
+      %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
+    - else
+      %p This project doesn't have any sub projects
 
 = link_to 'Request new sub project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm' if current_user.is_allowed?('identity:project_request')
 

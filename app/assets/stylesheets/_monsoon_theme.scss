@@ -148,11 +148,11 @@ section {
   height: 32px;
 }
 
-.dropdown-icon {
-  @include background-size(16px);
-  width: 16px;
-  height: 16px;
-  font-size: $font-size-base;
+.fancy-nav-icon {
+  @include background-size($font-size-medium);
+  width: $font-size-medium;
+  height: $font-size-medium;
+  font-size: $font-size-medium;
 }
 
 // ---------------------------------------------------------------------------------
@@ -272,6 +272,50 @@ section {
 //     margin-right: 0;
 //   }
 // }
+
+
+.fancy-nav {
+  @include column-count(2);
+  padding-left: 0;
+  margin-top: $line-height-computed;
+
+
+  a {
+    padding-left: 0;
+  }
+
+  > li {
+    @include column-break(inside, avoid);
+    padding-left: $grid-gutter-width;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0 0 $line-height-computed 0;
+  }
+
+  .fancy-nav-header {
+    @include column-break(after, avoid);
+    position: relative;
+    display: block;
+    padding-top: 0;
+    padding-bottom: $line-height-computed / 4;
+
+    > span {
+      font-size: $font-size-medium;
+
+      &.fancy-nav-icon {
+        font-size: $font-size-large;
+      }
+    }
+
+    .fancy-nav-icon {
+      position: absolute;
+      left: 0;
+      color: $bright-blue;
+    }
+  }
+}
 
 // ---------------------------------------------------------------------------------
 // Header
@@ -420,47 +464,38 @@ footer, .footer {
         left: -1px;
         border-top: none;
         margin-top: 0;
+      }
+
+      > .fancy-nav {
+        @extend .dropdown-menu; // extend TWBS dropdown-menu class
 
         // Megaflyout (full-width, requires context-container wrapper)
-        &.dropdown-menu-mega {
-          @include container-width-responsive;
-          @include column-count(3);
+        @include container-width-responsive;
+        @include column-count(3);
 
-          left: -1px;
-          padding: $line-height-computed 0;
+        left: -1px;
+        padding: $line-height-computed 0;
 
-          a {
-            padding-left: 0;
-          }
 
-          > li {
-            @include column-break(inside, avoid);
-            padding-left: $grid-gutter-width * 1.5;
-          }
 
-          ul {
-            list-style-type: none;
-            padding: 0 0 $line-height-computed 0;
-          }
+        > li {
+          padding-left: $grid-gutter-width * 1.5;
+        }
 
-          .dropdown-header-fancy {
-            @include column-break(after, avoid);
-            position: relative;
-            display: block;
-            padding-top: 0;
-            padding-bottom: $line-height-computed / 4;
+
+        .fancy-nav-header {
+          > span {
             font-size: $font-size-base;
 
-            .dropdown-icon {
-              position: absolute;
-              left: $grid-gutter-width / 2;
-              color: $bright-blue;
-              font-size: $font-size-base;
+            &.fancy-nav-icon {
+              font-size: $font-size-medium;
+            left: $grid-gutter-width / 2;
+
             }
           }
         }
-
       }
+
 
       > a {
         color: #333;

@@ -216,7 +216,7 @@ module ApplicationHelper
   def selected_service_name
     name = active_navigation_item_name(context: :services, :level => :all)
     if name.blank?
-      name = "Choose a Service"
+      name = "Services"
     end
     name
   end

@@ -56,47 +56,43 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-
-    primary.item :compute, 'Compute & Monsoon Automation', nil, 
-      html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "icon moo-cloud" },
-      if: -> {services.available?(:compute,:instances) or services.available?(:identity,:web_console)} do |compute_nav|
+    primary.item :compute, 'Compute & Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "icon moo-cloud"},
+    if: -> {services.available?(:compute,:instances) or services.available?(:identity,:web_console)} do |compute_nav|
       compute_nav.item :instances, 'Instances', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }
       # compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
       # compute_nav.item :volumes, 'Volumes', '#'
       # compute_nav.item :snapshots, 'Snapshots', '#'
       compute_nav.item :web_console, 'Web Console', -> { plugin('identity').projects_web_console_path}, if: -> { services.available?(:identity,:web_console)}
-    end 
+    end
 
-    primary.item :automation, 'Automation', nil, 
-      html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-gears fa-fw" },
-      if: -> {services.available?(:automation,:instances) } do |automation_nav|
+    primary.item :automation, 'Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:instances) } do |automation_nav|
       automation_nav.item :automation, 'Monsoon Automation', -> {plugin('automation').instances_path}, if: -> { services.available?(:automation,:instances) }
     end
 
-    primary.item :access_managment, 'Access Management', nil, 
-      html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-lock fa-fw" },
+    primary.item :access_managment, 'Access Management', nil,
+      html: {class: "fancy-nav-header", 'data-icon': "fa fa-lock fa-fw" },
       if: -> {services.available?(:inquiry,:inquiries)} do |access_management_nav|
       # access_management_nav.item :authorizations, 'Authorization', '#'
       # access_management_nav.item :audits, 'Audit', '#'
       access_management_nav.item :inquiries, 'Requests', -> {plugin('inquiry').inquiries_path}, if: -> { services.available?(:inquiry,:inquiries) }
     end
 
-    primary.item :networking, 'Networking & Loadbalancing', nil, 
-      html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-sitemap fa-fw" },
+    primary.item :networking, 'Networking & Loadbalancing', nil,
+      html: {class: "fancy-nav-header", 'data-icon': "fa fa-sitemap fa-fw" },
       if: -> {services.available?(:networking,:networks)} do |networking_nav|
       networking_nav.item :networks, 'Networks', -> {plugin('networking').networks_path}, if: -> { services.available?(:networking,:networks) }
       # networking_nav.item :loadbalancing, 'Loadbalancing', '#'
       # networking_nav.item :dns, 'DNS', '#'
     end
 
-    # primary.item :storage, 'Storage', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-database fa-fw" } do |storage_nav|
+    # primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-database fa-fw" } do |storage_nav|
     #   storage_nav.item :shared_storage, 'Shared Object Storage', '#'
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
     # end
 
-    primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil, 
-      html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-area-chart fa-fw" },
+    primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil,
+      html: {class: "fancy-nav-header", 'data-icon': "fa fa-area-chart fa-fw" },
       if: -> {services.available?(:resource_management,:resources)} do |monitoring_nav|
       # monitoring_nav.item :metrics, 'Metrics', '#'
       # monitoring_nav.item :logs, 'Logs', '#'
@@ -104,7 +100,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     end
 
-    # primary.item :account, 'Account', nil, html: {class: "dropdown-header dropdown-header-fancy", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
+    # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
     #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
     # end
 
@@ -123,7 +119,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # you can also specify html attributes to attach to this particular level
     # works for all levels of the menu
-    primary.dom_attributes = {class: 'dropdown-menu dropdown-menu-mega', role: 'menu'}
+    primary.dom_attributes = {class: 'fancy-nav', role: 'menu'}
 
     # You can turn off auto highlighting for a specific level
     #primary.auto_highlight = false

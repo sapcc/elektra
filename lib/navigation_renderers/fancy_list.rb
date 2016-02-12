@@ -35,7 +35,7 @@ module SimpleNavigation
           icon_options = li_options.delete(:"data-icon")
 
           if icon_options
-            li_content << content_tag(:span, "", class: icon_options << " dropdown-icon")
+            li_content << content_tag(:span, "", class: icon_options << " fancy-nav-icon")
           end
 
           li_content << tag_for(item)
