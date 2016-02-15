@@ -15,6 +15,10 @@
       - else
         - resources.each do |resource|
           = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
-    = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_url }
+
+    - if current_user.is_allowed?('resource_management:project_resource_sync_now')
+      = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_url }
+    - else
+      = render partial: 'data_age'
   .col-md-3
     = render partial: 'good_to_know'
