@@ -1,11 +1,33 @@
 module Swift
   module Driver
-    # Neutron calls
     class Interface < DomainModelServiceLayer::Driver::Base
-      ###################### NETWORKS #######################
-      def test(filter={})
+
+      ##### containers
+
+      def containers(filter={})
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
+
+      def get_container(name)
+        raise DomainModelServiceLayer::Errors::NotImplemented
+      end
+
+      def create_container(name, params={})
+        raise DomainModelServiceLayer::Errors::NotImplemented
+      end
+
+      def update_container(name, params={})
+        raise DomainModelServiceLayer::Errors::NotImplemented
+      end
+
+      def delete_container(name)
+        raise DomainModelServiceLayer::Errors::NotImplemented
+      end
+
+      ##### objects
+
+      # TODO
+
     end
   end
 end

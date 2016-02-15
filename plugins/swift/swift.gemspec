@@ -5,12 +5,12 @@ $:.push File.expand_path("../lib", __FILE__)
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "swift"
-  s.version     = Swift::VERSION
-  s.authors     = [" Write your name"]
-  s.email       = [" Write your email address"]
+  s.version     = "0.0.1"
+  s.authors     = ["Stefan Majewsky", "Hans-Georg Winkler"]
+  s.email       = ["stefan.majewsky@sap.com", "hans-georg.winkler@sap.com"]
   s.homepage    = ""
-  s.summary     = " Summary of Swift."
-  s.description = " Description of Swift."
+  s.summary     = "Manage OpenStack object storage (Swift) containers and objects."
+  s.description = "Manage OpenStack object storage (Swift) containers and objects."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]

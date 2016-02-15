@@ -1,1 +1,10 @@
-%h1 Swift Index
+=content_for :main_toolbar do
+  Object Storage Containers
+
+- if @containers.size > 0
+  %p The following containers exist:
+  %ul
+    - @containers.each do |container|
+      %li #{container.name} (contains #{container.object_count} objects, using #{container.bytes_used} bytes)
+- else
+  No containers found.
