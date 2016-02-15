@@ -1,0 +1,7 @@
+=content_for :main_toolbar do
+  Object Storage Container: #{@container.name}
+
+%p Here's what I know about this thing:
+%ul
+  %li contains #{@container.object_count} objects
+  %li contains #{@container.bytes_used} bytes of data

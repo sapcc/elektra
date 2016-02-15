@@ -5,6 +5,8 @@
   %p The following containers exist:
   %ul
     - @containers.each do |container|
-      %li #{container.name} (contains #{container.object_count} objects, using #{container.bytes_used} bytes)
+      %li
+        = link_to container.name, plugin('swift').container_path(container.name)
+        (contains #{container.object_count} objects, using #{container.bytes_used} bytes)
 - else
   No containers found.

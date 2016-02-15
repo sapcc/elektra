@@ -1,0 +1,11 @@
+{
+  "access_to_swift": "not project_id:nil",
+
+  "swift:container_get": "rule:access_to_swift",
+  "swift:container_list": "rule:access_to_swift",
+  "swift:container_new": "rule:access_to_swift",
+  "swift:container_create": "rule:access_to_swift",
+  "swift:container_edit": "rule:access_to_swift",
+  "swift:container_update": "rule:access_to_swift",
+  "swift:container_delete": "rule:access_to_swift"
+}
