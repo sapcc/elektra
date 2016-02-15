@@ -232,7 +232,7 @@ module ResourceManagement
         render html: 'Could not find inquiry!'
         return
       end
-      unless current_user.is_allowed?("resource:management:admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
+      unless current_user.is_allowed?("resource_management:admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
         render template: '/dashboard/not_authorized'
         return
       end

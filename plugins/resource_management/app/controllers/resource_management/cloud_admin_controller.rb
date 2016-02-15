@@ -166,7 +166,7 @@ module ResourceManagement
         return
       end
 
-      unless current_user.is_allowed?("resource:management:cloud_admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
+      unless current_user.is_allowed?("resource_management:cloud_admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
         render template: '/dashboard/not_authorized'
         return
       end
