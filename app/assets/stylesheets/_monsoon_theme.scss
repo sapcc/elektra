@@ -148,6 +148,23 @@ section {
   height: 32px;
 }
 
+.moo-cloud-white {
+  background: inline-svg('monsoon_logo_flat_white.svg') 0 0px no-repeat;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+}
+
+.jumbotron .moo-cloud-white {
+  @include opacity(0.2);
+  width: 256px;
+  height: 256px;
+  background-size: 256px;
+  position: absolute;
+  top: -20px;
+  right: 60px;
+}
+
 .fancy-nav-icon {
   @include background-size($font-size-medium);
   width: $font-size-medium;
