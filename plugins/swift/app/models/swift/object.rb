@@ -36,5 +36,10 @@ module Swift
       path.sub(/\/?[^\/]*\/?$/, '')
     end
 
+    # Returns the actual file contents, using a separate API call to Swift.
+    def file_contents
+      @driver.get_object_contents(container_name, path)
+    end
+
   end
 end

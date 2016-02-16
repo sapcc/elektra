@@ -10,7 +10,10 @@ module Swift
     end
 
     def download
-      # TODO
+      headers['Content-Type'] = @object.content_type
+      disposition = params[:inline] == '1' ? 'inline' : 'attachment'
+      headers['Content-Disposition'] = "#{disposition}; filename=\"#{@object.basename}\""
+      render body: @object.file_contents
     end
 
     private
@@ -25,7 +28,9 @@ module Swift
 
     def load_object
       @object = services.swift.find_object(@container_name, params[:path])
-      raise ActiveRecord::RecordNotFound, "object #{params[:object]} not found in container #{@container_name}" unless @object
+      if (not @object) or @object.is_directory?
+        raise ActiveRecord::RecordNotFound, "object #{params[:object]} not found in container #{@container_name}"
+      end
     end
 
   end

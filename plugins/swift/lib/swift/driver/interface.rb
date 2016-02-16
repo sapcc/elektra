@@ -38,6 +38,10 @@ module Swift
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
 
+      def get_object_contents(container_name, path)
+        raise DomainModelServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end

@@ -12,4 +12,4 @@
           = link_to object.basename, plugin('swift').list_objects_path(@container_name, object.path)
           (directory)
         - else
-          = link_to object.basename, plugin('swift').download_object_path(@container_name, object.path)
+          = link_to object.basename, plugin('swift').download_object_path(@container_name, object.path, inline: 1)

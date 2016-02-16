@@ -77,7 +77,11 @@ module Swift
       def objects(container_name, options={})
         handle_response do
           list = @fog.get_container(container_name, options).body
-          list.map { |o| map_attribute_names(o, OBJECTS_ATTRMAP) }
+          list.map do |o|
+            object = map_attribute_names(o, OBJECTS_ATTRMAP)
+            object['container_name'] = container_name
+            object
+          end
         end
       end
 
@@ -88,10 +92,15 @@ module Swift
 
       def get_object(container_name, path)
         handle_response do
-          data = map_attribute_names(@fog.head_object(container_name, path).headers, CONTAINER_ATTRMAP)
+          data = map_attribute_names(fog_head_object(container_name, path).headers, CONTAINER_ATTRMAP)
           data['id'] = path
+          data['container_name'] = container_name
           data
         end
+      end
+
+      def get_object_contents(container_name, path)
+        handle_response { fog_get_object(container_name, path).body }
       end
 
       private
@@ -99,6 +108,24 @@ module Swift
       # Rename keys in `data` using the `attribute_map` and delete unknown keys.
       def map_attribute_names(data, attribute_map)
         data.transform_keys { |k| attribute_map.fetch(k, nil) }.reject { |key,_| key.nil? }
+      end
+
+      # Like @fog.get_object(), but encodes the `path` correctly. TODO: fix in Fog
+      def fog_get_object(container_name, path)
+        @fog.request({
+          :expects  => 200,
+          :method   => 'GET',
+          :path     => "#{::Fog::OpenStack.escape(container_name)}/#{path}"
+        }, false)
+      end
+
+      # Like @fog.head_object(), but encodes the `path` correctly. TODO: fix in Fog
+      def fog_head_object(container_name, path)
+        @fog.request({
+          :expects  => 200,
+          :method   => 'HEAD',
+          :path     => "#{::Fog::OpenStack.escape(container_name)}/#{path}"
+        }, false)
       end
 
     end
