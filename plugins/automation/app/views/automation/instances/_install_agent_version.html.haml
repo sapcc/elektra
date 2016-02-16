@@ -1,9 +1,27 @@
-.dropdown
-  %button.btn.btn-default.dropdown-toggle{type: 'button', id: 'arc_version_dropdown', 'data-toggle' => 'dropdown', 'aria-haspopup' => 'true', 'aria-expanded' => 'true'}
-    Select Arc Version
-    %span.caret
-  %ul.dropdown-menu{'aria-labelledby' => 'arc_version_dropdown'}
-    %li
-      %a{href: '#'} Linux
-    %li
-      %a{href: '#'} Windows
+%p
+  Found instance:
+
+%table.table
+  %tbody
+    %tr
+      %th Name
+      %td= @instance.name
+    %tr
+      %th ID
+      %td= @instance.id
+
+%p
+  Please specify the instance's operating system:
+
+= form_tag show_instructions_instances_path, :class => '', :remote => true do
+  = hidden_field_tag 'instance_id', @instance.id
+  .form-group.clearfix
+    = label_tag 'instance_os', 'OS', class: "col-sm-3 control-label"
+    .col-sm-9
+      %select.form-control{name: 'instance_os'}
+        - @os_types.each do |key, value|
+          %option{value: key}
+            = value
+
+  .form-group.clearfix
+    = button_tag "Send", class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." }

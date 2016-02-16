@@ -6,12 +6,15 @@
   .section#search_instance
 
     %p
-      Please enter the instance ID where the agent should be installed
+      Please enter the instance ID where the agent should be installed:
 
-    = form_tag show_instructions_instances_path, :class => 'form-inline', :remote => true do
+    = form_tag show_instructions_instances_path, remote: true do
       .form-group
         = label_tag 'instance_id', 'Instance ID', class: 'sr-only'
         = text_field_tag 'instance_id', '', :maxlength => "256", :placeholder => "Enter instance ID", class: 'form-control'
-        = button_tag "Get instructions", class: 'btn btn-primary', data: { disable_with: "Please wait..." }
+
+      .form-group
+        .clearfix
+          = button_tag "Get instructions", class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." }
 
   .section#search_instance_results

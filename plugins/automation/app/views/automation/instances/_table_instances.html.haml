@@ -9,7 +9,7 @@
   %tbody
     - if instances.empty?
       %tr
-        %td{colspa: 5} No instances available
+        %td{colspa: 5} No agents available
     - else
       -instances.each do | instance |
         = render partial: 'table_instances_item', locals: {instance: instance}
