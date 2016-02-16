@@ -1,13 +1,20 @@
 %tr
   %td
     - if object.is_directory?
-      %span.glyphicon.glyphicon-folder-open
+      %span.glyphicon.glyphicon-folder-open{ title: 'Directory' }
       = link_to object.basename, plugin('swift').list_objects_path(@container_name, object.path)
     - else
-      %span.glyphicon.glyphicon-file
+      -if object.content_type.start_with?('image/')
+        %span.glyphicon.glyphicon-picture{ title: 'Object' }
+      - else
+        %span.glyphicon.glyphicon-file{ title: 'Object' }
       = link_to object.basename, plugin('swift').download_object_path(@container_name, object.path, inline: 1)
-  %td= object.size_bytes    # TODO: format
-  %td= object.last_modified # TODO: format
+  %td
+    - unless object.is_directory?
+      = "#{object.size_bytes} bytes" # TODO: format
+  %td
+    - unless object.is_directory?
+      = object.last_modified         # TODO: format
   %td.snug
     - if object.is_directory?
       -# for dirs, render a hidden button to ensure consistent row height

@@ -1,12 +1,20 @@
 =content_for :main_toolbar do
   Object Storage Containers
 
-- if @containers.size > 0
-  %p The following containers exist:
-  %ul
-    - @containers.each do |container|
-      %li
-        = link_to container.name, plugin('swift').container_path(container.name)
-        (contains #{container.object_count} objects, using #{container.bytes_used} bytes)
-- else
-  No containers found.
+.toolbar
+  = link_to 'Create container', '#', class: 'btn btn-primary btn-lg disabled'
+
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Total size
+      %th Object count
+      %th.snug
+  %tbody
+    - if @containers.empty?
+      %tr
+        %td{colspan: 4} No containers found.
+    - else
+      - @containers.sort_by(&:name).each do |container|
+        = render partial: 'item', locals: { container: container }

@@ -92,7 +92,7 @@ module Swift
 
       def get_object(container_name, path)
         handle_response do
-          data = map_attribute_names(fog_head_object(container_name, path).headers, CONTAINER_ATTRMAP)
+          data = map_attribute_names(fog_head_object(container_name, path).headers, OBJECT_ATTRMAP)
           data['id'] = path
           data['container_name'] = container_name
           data
