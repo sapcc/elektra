@@ -6,7 +6,7 @@ $.fn.initSnippetCopyToClipboard = () ->
     $element.prepend('<button class="btn btn-default" data-clipboard-snippet><i class="fa fa-clipboard"></i></button>')
 
     clipboardSnippets = new Clipboard('[data-clipboard-snippet]', target: (trigger) ->
-      code = $(trigger).siblings( "code" ).get(0)
+      $(trigger).siblings( "code" ).get(0)
     )
 
     clipboardSnippets.on 'success', (e) ->
@@ -30,7 +30,4 @@ showTooltip = (elem, msg) ->
   return
 
 $ ->
-# -----------
-# Automation
-# -----------
   $('.snippet').initSnippetCopyToClipboard()
