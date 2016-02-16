@@ -28,6 +28,16 @@ module ServiceLayer
 
     ##### objects
 
+    def find_object(container_name, path)
+      return nil if container_name.blank? or path.blank?
+      return driver.map_to(Swift::Object).get_object(container_name, path)
+    end
+
+    def list_objects_at_path(container_name, path)
+      return [] if container_name.blank?
+      return driver.map_to(Swift::Object).objects_at_path(container_name, path)
+    end
+
     # TODO
 
   end

@@ -16,7 +16,7 @@ module Swift
       ##### containers
 
       CONTAINERS_ATTRMAP = {
-        # name in response => name in result (that is part of this class's interface)
+        # name in API response => name in our model (that is part of this class's interface)
         'bytes' => 'bytes_used',
         'count' => 'object_count',
         'name'  => 'id', # because DomainModelServiceLayer::Model needs an id() attribute
@@ -53,13 +53,45 @@ module Swift
       end
 
       def delete_container(name)
-        # TODO: map attribute names
         handle_response { @fog.delete_container(name) }
       end
 
       ##### objects
 
-      # TODO (also update interface.rb accordingly!)
+      OBJECTS_ATTRMAP = {
+        # name in API response => name in our model (that is part of this class's interface)
+        'bytes'         => 'size_bytes',
+        'content_type'  => 'content_type',
+        'hash'          => 'md5_hash',
+        'last_modified' => 'last_modified',
+        'name'          => 'id', # because DomainModelServiceLayer::Model needs an id() attribute
+      }
+      OBJECT_ATTRMAP = {
+        'Content-Length' => 'size_bytes',
+        'Content-Type'   => 'content_type',
+        'Etag'           => 'md5_hash',
+        'Last-Modified'  => 'last_modified',
+      }
+
+      def objects(container_name, options={})
+        handle_response do
+          list = @fog.get_container(container, options)
+          list.map { |o| map_attribute_names(o, OBJECTS_ATTRMAP) }
+        end
+      end
+
+      def objects_at_path(container_name, path, filter={})
+        path += '/' unless path.end_with?('/')
+        return objects(container_name, filter.merge(prefix: path, delimiter: '/'))
+      end
+
+      def get_object(container_name, path)
+        handle_response do
+          data = map_attribute_names(@fog.head_object(container_name, path).headers, CONTAINER_ATTRMAP)
+          data['id'] = path
+          data
+        end
+      end
 
       private
 
