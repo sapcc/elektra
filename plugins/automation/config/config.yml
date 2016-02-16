@@ -1,5 +1,4 @@
 defaults: &defaults
-  arc_api_url: <%if ENV['ARC_API_URL'] %>"<%=ENV['ARC_API_URL']%>/cps"<% else %>"https://localhost"<% end %>
   arc_update_site_url:  <%if ENV['ARC_UPDATE_URL'] %>"<%=ENV['ARC_UPDATE_URL']%>/cps"<% else %>"http://localhost:8080/builds/latest/arc/"<% end %>
   arc_pki_url: <%if ENV['ARC_PKI_URL'] %>"<%=ENV['ARC_PKI_URL']%>/cps"<% else %>"https://localhost:8443/api/v1/token"<% end %>
 

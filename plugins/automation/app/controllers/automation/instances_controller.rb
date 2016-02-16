@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module Automation
 
   class InstancesController < Automation::ApplicationController
@@ -27,45 +29,52 @@ module Automation
       render :layout => false
     end
 
-    def show_section
-      servers = services.compute.servers
-      agents = services.automation.agents("", ['online', 'hostname', 'os', 'ipaddress'], 1, 100)
-      @instances = Instance.create_instances_without_agents(servers, agents)
-    end
-
     def install_agent
     end
 
     def show_instructions
-      instance_id = params[:instance_id]
+      @error = nil
+      @instance = nil
+      @instance_id = params[:instance_id]
+      @version = params[:instance_os]
+      @os_types = Agent.os_types
+
+      if @instance_id.blank?
+        return @error = {key: "warning", message: "Instance id is empty"}
+      end
 
       # get instance
-      server = begin
-        services.compute.find_server(instance_id)
+      @instance = begin
+        services.compute.find_server(@instance_id)
       rescue DomainModelServiceLayer::Errors::ApiError => e
         case e.type
-        when 'NotFound'
-          nil
-        else
-          raise e
+          when 'NotFound'
+            nil
+          else
+            raise e
         end
       end
 
-      # check if instance exists
-      if server.nil?
-        return @error = {key: "warning", message: "Instance with id '#{instance_id}' not found"}
+      # check if we got an instance
+      if @instance.nil?
+        return @error = {key: "warning", message: "Instance with id '#{@instance_id}' not found"}
       end
 
-      # check image info
-      if server.image.metadata.os_family.blank? || server.image.metadata.os_version.blank?
-        @version = ""
+      # if version is not given then we check the metadata or we ask for
+      if @version.blank?
+        # check image metadata
+        if @instance.image.metadata.nil? || @instance.image.metadata['os_family'].blank?
+          return
+        else
+          # TODO need to check os version data
+          @version = @instance.image.metadata['os_family']
+        end
       end
-
 
       # check if agent already exists
-      agent_found = ((services.automation.agent(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
+      agent_found = ((services.automation.agent(@instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
       if agent_found
-        return @error = "Agent already exists on instance id '#{server.id}' (#{server.image.name})"
+        return @error = "Agent already exists on instance id '#{@instance.id}' (#{@instance.image.name})"
       end
 
       # get url
@@ -73,11 +82,13 @@ module Automation
                                          url: AUTOMATION_CONF['arc_pki_url'],
                                          headers: {'X-Auth-Token': current_user.token},
                                          timeout: 5,
-                                         payload: {"CN": instance_id, "names": [{"OU": @active_project.id, "O": @active_project.domain_id}] }.to_json).execute
+                                         payload: {"CN": @instance_id, "names": [{"OU": @active_project.id, "O": @active_project.domain_id}] }.to_json).execute
 
       #convert to hash
       response_hash = JSON.parse(response)
       @url = response_hash['url']
+      @ip = @instance.addresses.values.blank? ? "" : @instance.addresses.values.first.find{|i| i['addr']}['addr']
+
     rescue => exception
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
       return @error = {key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}

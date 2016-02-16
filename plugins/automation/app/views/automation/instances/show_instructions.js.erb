@@ -1,5 +1,9 @@
-<% unless @error.nil? %>
+<% if !@error.nil? %>
 $("#search_instance_results").html("<%= escape_javascript(render partial: "automation/instances/install_agent_error", locals: {error: @error}) %>");
+<% elsif @version.nil?%>
+$("#search_instance").html("<%= escape_javascript(render partial: "automation/instances/install_agent_version") %>");
 <% else %>
-$("#search_instance_results").html("<%= escape_javascript(render partial: "automation/instances/install_agent_instructions") %>");
+$("#search_instance").html("<%= escape_javascript(render partial: "automation/instances/install_agent_instructions") %>");
 <% end %>
+
+$('.snippet').initSnippetCopyToClipboard()

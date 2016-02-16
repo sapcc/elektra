@@ -16,6 +16,10 @@ module Automation
       {elements: agentsMap, total_elements: _agents.pagination.total_elements}
     end
 
+    def self.os_types
+      {"linux" => 'Linux', 'windows' => 'Windows'}
+    end
+
   end
 
 end
