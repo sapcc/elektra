@@ -20,7 +20,7 @@ vendor/bundle
 rerun.txt
 pickle-email-*.html
 *.log
-.env
+.env*
 .idea
 /bin
 !/bin/rails
