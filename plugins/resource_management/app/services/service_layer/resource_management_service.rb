@@ -33,7 +33,7 @@ module ServiceLayer
     #    projects in all known domains.
     def sync_all_domains(options={})
       # check which domains exist in the DB and in Keystone
-      all_domain_ids = driver.enumerate_domains.keys
+      all_domain_ids = enumerate_domains.keys
       Rails.logger.info "ResourceManagement > sync_all_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
       db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
@@ -132,10 +132,18 @@ module ServiceLayer
         ) do |obj|
           # enforce default quotas for newly created projects, if not done by the responsible service itself
           if this_actual_quota == -1 and not resource.default_quota.nil?
-            this_actual_quota = resource.default_quota
-            obj.current_quota = this_actual_quota
-            obj.approved_quota = this_actual_quota
-            apply_current_quota(obj)
+            # TODO: HACK: default quotas are only enforced in monsoon2, and only for legacy
+            # projects (id starts with "p-"), not for legacy organizations (id starts with "o-"),
+            # also inside the unit test; the intention is to replace this with a domain-specific
+            # defualt quota
+            domain_name = enumerate_domains.fetch(domain_id, '')
+            apply_default_quota = (domain_name == 'monsoon2' && /^p-/.match(project_id)) || resource.service_name == :mock_service
+            if apply_default_quota
+              this_actual_quota = resource.default_quota
+              obj.current_quota = this_actual_quota
+              obj.approved_quota = this_actual_quota
+              apply_current_quota(obj)
+            end
           end
         end
 
@@ -176,6 +184,11 @@ module ServiceLayer
     end
 
     private
+
+    def enumerate_domains
+      # driver.enumerate_domains plus caching
+      @enumerate_domains ||= driver.enumerate_domains
+    end
 
     def has_keystone_router?
       value = ENV.fetch('HAS_KEYSTONE_ROUTER', '0')

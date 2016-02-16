@@ -40,7 +40,7 @@ module ResourceManagement
         new(:block_storage,  :capacity,       data_type: :bytes),
         new(:block_storage,  :snapshots      ),
         new(:block_storage,  :volumes        ),
-        new(:object_storage, :capacity,       data_type: :bytes, default_quota: 1 << 30),
+        new(:object_storage, :capacity,       data_type: :bytes, default_quota: 0),
         # :mock_service can be enabled with ResourceManagement::ServiceConfig.mock!
         new(:mock_service,   :things         ),
         new(:mock_service,   :capacity,       data_type: :bytes, default_quota: 1 << 30),
