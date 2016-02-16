@@ -5,3 +5,6 @@
 %ul
   %li contains #{@container.object_count} objects
   %li contains #{@container.bytes_used} bytes of data
+
+%p
+  = link_to 'List contents', plugin('swift').list_objects_path(@container.name, path: '')

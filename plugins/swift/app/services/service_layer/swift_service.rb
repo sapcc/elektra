@@ -38,7 +38,5 @@ module ServiceLayer
       return driver.map_to(Swift::Object).objects_at_path(container_name, path)
     end
 
-    # TODO
-
   end
 end

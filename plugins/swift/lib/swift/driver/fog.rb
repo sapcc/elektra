@@ -65,6 +65,7 @@ module Swift
         'hash'          => 'md5_hash',
         'last_modified' => 'last_modified',
         'name'          => 'id', # because DomainModelServiceLayer::Model needs an id() attribute
+        'subdir'        => 'id', # for directories, only this single attribute is given
       }
       OBJECT_ATTRMAP = {
         'Content-Length' => 'size_bytes',
@@ -75,13 +76,13 @@ module Swift
 
       def objects(container_name, options={})
         handle_response do
-          list = @fog.get_container(container, options)
+          list = @fog.get_container(container_name, options).body
           list.map { |o| map_attribute_names(o, OBJECTS_ATTRMAP) }
         end
       end
 
       def objects_at_path(container_name, path, filter={})
-        path += '/' unless path.end_with?('/')
+        path += '/' if !path.end_with?('/') && !path.empty?
         return objects(container_name, filter.merge(prefix: path, delimiter: '/'))
       end
 

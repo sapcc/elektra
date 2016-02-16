@@ -1,0 +1,15 @@
+=content_for :main_toolbar do
+  Object Storage: #{@container_name}/#{params[:path]}
+
+- if @objects.size == 0
+  No objects found.
+- else
+  %p The following objects exist at this level:
+  %ul
+    - @objects.each do |object|
+      %li
+        - if object.is_directory?
+          = link_to object.basename, plugin('swift').list_objects_path(@container_name, object.path)
+          (directory)
+        - else
+          = link_to object.basename, plugin('swift').download_object_path(@container_name, object.path)

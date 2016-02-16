@@ -34,8 +34,8 @@ module Swift
     private
 
     def load_container
-      @container = services.swift.find_container(params[:id])
-      raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found" unless @container
+      @container = services.swift.find_container(params[:container])
+      raise ActiveRecord::RecordNotFound, "container #{params[:container]} not found" unless @container
     end
 
   end
