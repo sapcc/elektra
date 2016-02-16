@@ -1,27 +1,30 @@
 %h3
   Instructions
 
-  %p
-    Follow these steps to install the automation agent on instance XXX
+%p
+  Follow these steps to install the automation agent on instance
+  %b= @instance.name
 
-  %ol
-    %li
-      Copy the below script to the clipboard.
+%ol
+  %li
+    Copy the below script to the clipboard.
 
-    %li
-      Log in into the instance and paste the script as super user.
-      -#= @ip
+  %li
+    Log in into the instance:
+    %pre.snippet
+      %code
+        = preserve do
+          :escaped
+            ssh #{@ip}
 
-  %pre
-    = preserve do
-      :escaped
-        curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/linux/amd64
-        chmod +x /opt/arc/arc
-        /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url
 
-  -#%pre
-  -#  = preserve do
-  -#    :escaped
-  -#      curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/linux/amd64
-  -#      chmod +x /opt/arc/arc
-  -#      /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url #{@url}
+  %li
+    And paste following the script as super user:
+
+    %pre.snippet
+      %code
+        = preserve do
+          :escaped
+            curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/#{@version}/amd64
+            chmod +x /opt/arc/arc
+            /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url #{@url}
