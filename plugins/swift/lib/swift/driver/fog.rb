@@ -41,7 +41,8 @@ module Swift
         end
       end
 
-      def create_container(name, params={})
+      def create_container(params={})
+        name = params.delete(:id)
         # TODO: map attribute names
         handle_response { @fog.put_container(name, params) }
       end

@@ -12,7 +12,7 @@ module Swift
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
 
-      def create_container(name, params={})
+      def create_container(params={})
         raise DomainModelServiceLayer::Errors::NotImplemented
       end
 
