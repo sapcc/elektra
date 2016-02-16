@@ -12,6 +12,10 @@ module ServiceLayer
       })
     end
 
+    def available?(action_name_sym=nil)
+      not current_user.service_url('object-store',region: region).nil?
+    end
+
     ##### containers
 
     def find_container(name)
