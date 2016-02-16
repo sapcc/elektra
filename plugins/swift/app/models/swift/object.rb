@@ -41,5 +41,10 @@ module Swift
       @driver.get_object_contents(container_name, path)
     end
 
+    def ui_sort_order
+      # sort directories above files
+      (is_directory? ? 'a' : 'b') + self.basename
+    end
+
   end
 end

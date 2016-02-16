@@ -1,15 +1,20 @@
 =content_for :main_toolbar do
   Object Storage: #{@container_name}/#{params[:path]}
 
-- if @objects.size == 0
-  No objects found.
-- else
-  %p The following objects exist at this level:
-  %ul
-    - @objects.each do |object|
-      %li
-        - if object.is_directory?
-          = link_to object.basename, plugin('swift').list_objects_path(@container_name, object.path)
-          (directory)
-        - else
-          = link_to object.basename, plugin('swift').download_object_path(@container_name, object.path, inline: 1)
+.toolbar
+  = link_to 'Upload file', '#', class: 'btn btn-default btn-lg disabled'
+  = link_to 'Create directory', '#', class: 'btn btn-default btn-lg disabled'
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Size
+      %th Last Modified
+      %th.snug
+  %tbody
+    - if @objects.empty?
+      %tr
+        %td{colspan: 4} No objects found.
+    - else
+      - @objects.sort_by(&:ui_sort_order).each do |object|
+        = render partial: 'item', locals: { object: object }
