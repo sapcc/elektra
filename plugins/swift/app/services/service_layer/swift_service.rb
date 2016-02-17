@@ -1,6 +1,6 @@
 module ServiceLayer
 
-  class SwiftService < DomainModelServiceLayer::Service
+  class SwiftService < Core::ServiceLayer::Service
 
     def driver
       @driver ||= Swift::Driver::Fog.new({

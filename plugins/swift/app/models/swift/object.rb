@@ -1,5 +1,5 @@
 module Swift
-  class Object < DomainModelServiceLayer::Model
+  class Object < Core::ServiceLayer::Model
 
     # The following properties are known:
     #   - id (= path)
@@ -8,7 +8,7 @@ module Swift
     #   - md5_hash
     #   - size_bytes
 
-    # The DomainModelServiceLayer::Model expects the object to be identified by
+    # The Core::ServiceLayer::Model expects the object to be identified by
     # the `id` attribute. But Swift objects are identified by their path (which
     # is confusingly called "name" in Swift). The driver maps the `name`
     # attribute to "id" so that the Model base class can grok it. This alias

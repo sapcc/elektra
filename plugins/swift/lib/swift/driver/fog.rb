@@ -1,7 +1,7 @@
 module Swift
   module Driver
     class Fog < Interface
-      include DomainModelServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::FogDriver::ClientHelper
 
       def initialize(params_or_driver)
         # support initialization by given driver
@@ -19,7 +19,7 @@ module Swift
         # name in API response => name in our model (that is part of this class's interface)
         'bytes' => 'bytes_used',
         'count' => 'object_count',
-        'name'  => 'id', # because DomainModelServiceLayer::Model needs an id() attribute
+        'name'  => 'id', # because Core::ServiceLayer::Model needs an id() attribute
       }
       CONTAINER_ATTRMAP = {
         'X-Container-Object-Count' => 'object_count',
@@ -64,7 +64,7 @@ module Swift
         'content_type'  => 'content_type',
         'hash'          => 'md5_hash',
         'last_modified' => 'last_modified',
-        'name'          => 'id', # because DomainModelServiceLayer::Model needs an id() attribute
+        'name'          => 'id', # because Core::ServiceLayer::Model needs an id() attribute
         'subdir'        => 'id', # for directories, only this single attribute is given
       }
       OBJECT_ATTRMAP = {

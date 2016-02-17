@@ -46,7 +46,7 @@ module Automation
       # get instance
       @instance = begin
         services.compute.find_server(@instance_id)
-      rescue DomainModelServiceLayer::Errors::ApiError => e
+      rescue Core::ServiceLayer::Errors::ApiError => e
         case e.type
           when 'NotFound'
             nil
