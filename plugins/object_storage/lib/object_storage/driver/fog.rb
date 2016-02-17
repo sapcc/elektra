@@ -1,4 +1,4 @@
-module Swift
+module ObjectStorage
   module Driver
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper

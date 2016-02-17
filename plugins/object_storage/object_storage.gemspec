@@ -4,7 +4,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "swift"
+  s.name        = "object_storage"
   s.version     = "0.0.1"
   s.authors     = ["Stefan Majewsky", "Hans-Georg Winkler"]
   s.email       = ["stefan.majewsky@sap.com", "hans-georg.winkler@sap.com"]

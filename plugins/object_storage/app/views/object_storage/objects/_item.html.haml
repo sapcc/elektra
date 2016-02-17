@@ -2,13 +2,13 @@
   %td
     - if object.is_directory?
       %span.glyphicon.glyphicon-folder-open{ title: 'Directory' }
-      = link_to object.basename, plugin('swift').list_objects_path(@container_name, object.path)
+      = link_to object.basename, plugin('object_storage').list_objects_path(@container_name, object.path)
     - else
       -if object.content_type.start_with?('image/')
         %span.glyphicon.glyphicon-picture{ title: 'Object' }
       - else
         %span.glyphicon.glyphicon-file{ title: 'Object' }
-      = link_to object.basename, plugin('swift').download_object_path(@container_name, object.path, inline: 1)
+      = link_to object.basename, plugin('object_storage').download_object_path(@container_name, object.path, inline: 1)
   %td
     - unless object.is_directory?
       = "#{object.size_bytes} bytes" # TODO: format
@@ -26,6 +26,6 @@
           %span.glyphicon.glyphicon-cog
 
         %ul.dropdown-menu.dropdown-menu-right{ role: 'menu' }
-          %li= link_to 'Download', plugin('swift').download_object_path(@container_name, object.path)
+          %li= link_to 'Download', plugin('object_storage').download_object_path(@container_name, object.path)
           %li.divider
-          %li= link_to 'Properties', plugin('swift').object_path(@container_name, object.path), data: { modal: true }
+          %li= link_to 'Properties', plugin('object_storage').object_path(@container_name, object.path), data: { modal: true }

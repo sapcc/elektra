@@ -1,5 +1,5 @@
 =content_for :main_toolbar do
-  #{link_to 'Object Storage', plugin('swift').containers_path}: #{make_breadcrumb(@container_name, params[:path])}
+  #{link_to 'Object Storage', plugin('object_storage').containers_path}: #{make_breadcrumb(@container_name, params[:path])}
 
 .toolbar
   = link_to 'Upload file', '#', class: 'btn btn-primary btn-lg disabled'

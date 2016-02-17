@@ -1,4 +1,4 @@
-module Swift
+module ObjectStorage
   class Object < Core::ServiceLayer::Model
 
     # The following properties are known:
@@ -36,7 +36,7 @@ module Swift
       path.sub(/\/?[^\/]*\/?$/, '')
     end
 
-    # Returns the actual file contents, using a separate API call to Swift.
+    # Returns the actual file contents, using a separate API call.
     def file_contents
       @driver.get_object_contents(container_name, path)
     end

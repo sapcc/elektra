@@ -1,11 +1,11 @@
-module Swift
+module ObjectStorage
   class ContainersController < ApplicationController
 
     authorization_required
     before_filter :load_container, except: [ :index, :new, :create ]
 
     def index
-      @containers = services.swift.containers
+      @containers = services.object_storage.containers
     end
 
     def show
@@ -34,7 +34,7 @@ module Swift
     private
 
     def load_container
-      @container = services.swift.find_container(params[:container])
+      @container = services.object_storage.find_container(params[:container])
       raise ActiveRecord::RecordNotFound, "container #{params[:container]} not found" unless @container
     end
 

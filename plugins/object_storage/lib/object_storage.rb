@@ -1,5 +1,5 @@
-require "swift/engine"
-require_relative "swift/driver"
+require "object_storage/engine"
+require_relative "object_storage/driver"
 
-module Swift
+module ObjectStorage
 end

@@ -13,7 +13,7 @@
 // Every Plugin file is surrounded with a closure by dashboard.
 // It means that your plugin js code runs in own namespace and can't 
 // break any code of other plugins. If you want to make your code available 
-// outside this closure you should bind functions to swift. 
+// outside this closure you should bind functions to object_storage. 
 //  
 //       
 //= require_tree .   
@@ -23,9 +23,9 @@ function test() {
   //...  
 }    
 
-// This function is available from everywhere by calling swift.name()
-swift.name = function() {
-  "swift"
+// This function is available from everywhere by calling object_storage.name()
+object_storage.name = function() {
+  "object_storage"
 } 
 
 // This is always executed on page load.
@@ -33,5 +33,5 @@ $(document).ready(function(){
   // ...
 }); 
     
-// Call function from other files inside this plugin using the variable swift
-//swift.anyFunction()    
+// Call function from other files inside this plugin using the variable object_storage
+//object_storage.anyFunction()    

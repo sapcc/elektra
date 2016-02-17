@@ -1,4 +1,4 @@
-module Swift
+module ObjectStorage
   module Driver
     class Interface < Core::ServiceLayer::Driver::Base
 

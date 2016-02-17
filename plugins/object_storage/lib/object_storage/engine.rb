@@ -1,5 +1,5 @@
-module Swift
+module ObjectStorage
   class Engine < ::Rails::Engine
-    isolate_namespace Swift
+    isolate_namespace ObjectStorage
   end
 end

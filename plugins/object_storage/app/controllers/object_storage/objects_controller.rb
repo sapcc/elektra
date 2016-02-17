@@ -1,4 +1,4 @@
-module Swift
+module ObjectStorage
   class ObjectsController < ApplicationController
 
     authorization_required
@@ -6,7 +6,7 @@ module Swift
     before_filter :load_object, except: [ :index ]
 
     def index
-      @objects = services.swift.list_objects_at_path(@container_name, params[:path])
+      @objects = services.object_storage.list_objects_at_path(@container_name, params[:path])
     end
 
     def show
@@ -30,7 +30,7 @@ module Swift
     end
 
     def load_object
-      @object = services.swift.find_object(@container_name, params[:path])
+      @object = services.object_storage.find_object(@container_name, params[:path])
       if (not @object) or @object.is_directory?
         raise ActiveRecord::RecordNotFound, "object #{params[:object]} not found in container #{@container_name}"
       end

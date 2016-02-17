@@ -1,4 +1,4 @@
-module Swift
+module ObjectStorage
   class Container < Core::ServiceLayer::Model
 
     # The following properties are known:

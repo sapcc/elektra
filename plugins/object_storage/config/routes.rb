@@ -1,4 +1,4 @@
-Swift::Engine.routes.draw do
+ObjectStorage::Engine.routes.draw do
 
   resources 'containers', param: :container
 
