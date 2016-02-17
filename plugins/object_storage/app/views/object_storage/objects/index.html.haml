@@ -1,0 +1,21 @@
+=content_for :main_toolbar do
+  #{link_to 'Object Storage', plugin('object_storage').containers_path}: #{make_breadcrumb(@container_name, params[:path])}
+
+.toolbar
+  = link_to 'Upload file', '#', class: 'btn btn-primary btn-lg disabled'
+  = link_to 'Create directory', '#', class: 'btn btn-primary btn-lg disabled'
+
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Size
+      %th Last Modified
+      %th.snug
+  %tbody
+    - if @objects.empty?
+      %tr
+        %td{colspan: 4} No objects found.
+    - else
+      - @objects.sort_by(&:ui_sort_order).each do |object|
+        = render partial: 'item', locals: { object: object }

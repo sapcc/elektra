@@ -1,0 +1,11 @@
+= content_for :title do
+  Container: #{@container.name}
+
+.modal-body
+  .row
+    .col-md-3 Object count
+    .col-md-9= @container.object_count
+  .row
+    .col-md-3 Total size
+    -# TODO: format
+    .col-md-9 #{@container.bytes_used} bytes
