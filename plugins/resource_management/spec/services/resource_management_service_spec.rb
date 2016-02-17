@@ -9,7 +9,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
     ResourceManagement::Resource.delete_all
   end
 
-  let(:service) { DomainModelServiceLayer::ServicesManager.service(:resource_management).mock! }
+  let(:service) { Core::ServiceLayer::ServicesManager.service(:resource_management).mock! }
 
   let(:old_domain_id ) { '32cf6ff5-e0dd-4e8f-a264-7ebdaf3fd25b' }
   let(:old_project_id) { '07bdb713-d5db-422a-9b90-85f255b00789' }

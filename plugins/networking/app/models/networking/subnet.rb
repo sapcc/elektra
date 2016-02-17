@@ -1,5 +1,5 @@
 module Networking
-  class Subnet < DomainModelServiceLayer::Model
+  class Subnet < Core::ServiceLayer::Model
     validates :name, presence: {message: 'Please provide a name'}
     
     def ip_version

@@ -2,7 +2,7 @@ module Identity
   module Driver
     # Compute calls
     class Fog < Interface
-      include DomainModelServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::FogDriver::ClientHelper
     
       def initialize(params_or_driver)
         # support initialization by given driver
@@ -158,19 +158,19 @@ module Identity
       end
     
       # def domain_group_roles(domain_id,group_id)
-      #   raise DomainModelServiceLayer::Errors::NotImplemented
+      #   raise ServiceLayer::Errors::NotImplemented
       # end
       #
       # def grant_domain_group_role(domain_id,group_id,role_id)
-      #   raise DomainModelServiceLayer::Errors::NotImplemented
+      #   raise ServiceLayer::Errors::NotImplemented
       # end
       #
       # def check_domain_group_role(domain_id,group_id,role_id)
-      #   raise DomainModelServiceLayer::Errors::NotImplemented
+      #   raise ServiceLayer::Errors::NotImplemented
       # end
       #
       # def revoke_domain_group_role(domain_id,group_id,role_id)
-      #   raise DomainModelServiceLayer::Errors::NotImplemented
+      #   raise ServiceLayer::Errors::NotImplemented
       # end
     
       def auth_domains(filter={})
@@ -237,7 +237,7 @@ module Identity
       end
     
       def create_role(params={})
-        raise DomainModelServiceLayer::Errors::NotImplemented
+        raise ServiceLayer::Errors::NotImplemented
       end
     
       def get_role(id)

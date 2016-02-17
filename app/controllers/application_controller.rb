@@ -41,7 +41,7 @@ class ApplicationController < ActionController::Base
   def plugin_name
     if @plugin_name.blank?
       tokens = self.class.name.split('::').collect{|token| token.underscore}
-      @plugin_name = tokens.find{|t| PluginsManager.plugin?(t)}
+      @plugin_name = tokens.find{|t| Core::PluginsManager.plugin?(t)}
     end
     @plugin_name
   end

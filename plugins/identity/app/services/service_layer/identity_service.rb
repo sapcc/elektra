@@ -1,6 +1,6 @@
 module ServiceLayer
 
-  class IdentityService < DomainModelServiceLayer::Service
+  class IdentityService < Core::ServiceLayer::Service
 
     attr_reader :region
 

@@ -1,5 +1,5 @@
 module ServiceLayer
-  class ImageService < DomainModelServiceLayer::Service
+  class ImageService < Core::ServiceLayer::Service
   
     def driver
       @driver ||= Image::Driver::Fog.new({

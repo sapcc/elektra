@@ -1,6 +1,6 @@
 module ServiceLayer
 
-  class ResourceManagementService < DomainModelServiceLayer::Service
+  class ResourceManagementService < Core::ServiceLayer::Service
 
     def driver
       @driver ||= ResourceManagement::Driver::Fog.new({

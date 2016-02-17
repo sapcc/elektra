@@ -133,7 +133,7 @@ module Admin
       def admin_identity
         # create new admin_identity unless already created or token has changed
         unless (@admin_identity and @admin_identity.token==service_user_token)
-          @admin_identity = DomainModelServiceLayer::ServicesManager.service(:identity, {
+          @admin_identity = Core::ServiceLayer::ServicesManager.service(:identity, {
             region: Rails.application.config.default_region,
             token: service_user_token
           })

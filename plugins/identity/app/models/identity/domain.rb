@@ -1,5 +1,5 @@
 module Identity
-  class Domain < DomainModelServiceLayer::Model
+  class Domain < Core::ServiceLayer::Model
     
     def friendly_id
       return nil if id.nil?

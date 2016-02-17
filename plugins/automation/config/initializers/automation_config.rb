@@ -10,4 +10,4 @@ RestClient.log =
   end
 
 # Read automation related configuration
-AUTOMATION_CONF = YAML.load(ERB.new(File.read(File.join(PluginsManager.plugin("automation").path, 'config/config.yml'))).result)[Rails.env]
+AUTOMATION_CONF = YAML.load(ERB.new(File.read(File.join(Core::PluginsManager.plugin("automation").path, 'config/config.yml'))).result)[Rails.env]

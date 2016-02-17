@@ -1,9 +1,9 @@
 module ServiceLayer
+<<<<<<< 76bc08050055b1e226e77781d6109e4ab1de4d2b
 
   class ServiceNotAvailable < StandardError; end
 
-  class AutomationService < DomainModelServiceLayer::Service
-
+  class AutomationService < Core::ServiceLayer::Service
     attr_reader :client
 
     def available?(action_name_sym=nil)
