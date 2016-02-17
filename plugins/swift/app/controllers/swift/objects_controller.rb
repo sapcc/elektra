@@ -9,6 +9,9 @@ module Swift
       @objects = services.swift.list_objects_at_path(@container_name, params[:path])
     end
 
+    def show
+    end
+
     def download
       headers['Content-Type'] = @object.content_type
       disposition = params[:inline] == '1' ? 'inline' : 'attachment'

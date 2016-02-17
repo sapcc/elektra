@@ -9,6 +9,7 @@
   "swift:container_update": "rule:access_to_swift",
   "swift:container_delete": "rule:access_to_swift",
 
+  "swift:object_get": "rule:access_to_swift",
   "swift:object_list": "rule:access_to_swift",
   "swift:object_download": "rule:access_to_swift"
 }
