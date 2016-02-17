@@ -17,6 +17,27 @@ module Core
       end
       endpoint
     end
+    
+    def self.locate_region(auth_user,default_region=Rails.configuration.default_region)
+      if default_region.nil?
+        # default region is nil -> return default region from catalog or nil
+        return auth_user.nil? ? nil : auth_user.default_services_region
+      else
+        default_regions = default_region
+        # make default_region to an array
+        default_regions = [default_regions] unless default_regions.is_a?(Array)
+        # compare default regions with regions from catalog
+        regions = auth_user.nil? ? default_regions : (default_regions & auth_user.available_services_regions) 
+        
+        if regions and regions.length>0 
+          # regions match found -> return first
+          regions.first
+        else
+          # return default region from configuration or from catalog or nil 
+          return auth_user.nil? ? default_regions.first : auth_user.default_services_region
+        end
+      end
+    end
 
     # this module is included in controllers.
     # the controller should respond_to current_user (monsoon-openstack-auth gem)
@@ -43,24 +64,7 @@ module Core
         
         # try to find a region based on catalog and default region
         def current_region
-          if Rails.configuration.default_region.nil?
-            # default region is nil -> return default region from catalog or nil
-            return current_user.nil? ? nil : current_user.default_services_region
-          else
-            default_regions = Rails.configuration.default_region
-            # make default_region to an array
-            default_regions = [default_regions] unless default_regions.is_a?(Array)
-            # compare default regions with regions from catalog
-            regions = current_user.nil? ? default_regions : (default_regions & current_user.available_services_regions) 
-            
-            if regions and regions.length>0 
-              # regions match found -> return first
-              regions.first
-            else
-              # return default region from configuration or from catalog or nil 
-              return current_user.nil? ? default_regions.first : current_user.default_services_region
-            end
-          end
+          ::Core::ServiceLayer.locate_region(current_user)
         end
       end
     end

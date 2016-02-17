@@ -46,6 +46,6 @@ MonsoonOpenstackAuth.configure do |auth|
   }
 
   # optional, default=false
-  auth.debug=Rails.application.config.debug_api_calls
+  auth.debug=auth.debug_api_calls=Rails.configuration.debug_api_calls
 end
 
