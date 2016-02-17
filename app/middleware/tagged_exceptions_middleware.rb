@@ -5,8 +5,8 @@ class TaggedExceptionsMiddleware
 
   def call(env)
     @app.call(env)
-  rescue 
-    env['exception.token'] ||= SecureRandom.hex(4).upcase
+  rescue
+    env['exception.token'] ||=  env['action_dispatch.request_id'] || SecureRandom.hex(4).upcase
     raise $!, "[#{env['exception.token']}] #{$!}", $!.backtrace
   end
 end
