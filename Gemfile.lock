@@ -97,14 +97,14 @@ PATH
     networking (0.0.1)
 
 PATH
+  remote: plugins/object_storage
+  specs:
+    object_storage (0.0.1)
+
+PATH
   remote: plugins/resource_management
   specs:
     resource_management (0.0.1)
-
-PATH
-  remote: plugins/swift
-  specs:
-    swift (0.0.1)
 
 GEM
   remote: http://localhost:8080/rubygemsorg/
@@ -557,6 +557,7 @@ DEPENDENCIES
   monsoon-openstack-auth!
   net-ssh
   networking!
+  object_storage!
   pg
   phantomjs
   poltergeist
@@ -576,6 +577,8 @@ DEPENDENCIES
   simple_form
   spinners
   spring
-  swift!
   uglifier
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6
