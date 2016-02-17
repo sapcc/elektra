@@ -1,7 +1,7 @@
 module Image
   module Driver
     class Fog < Interface
-      include DomainModelServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::FogDriver::ClientHelper
     
       def initialize(params)
         super(params)

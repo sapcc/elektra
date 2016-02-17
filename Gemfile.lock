@@ -74,11 +74,6 @@ PATH
     docs (0.0.1)
 
 PATH
-  remote: plugins/domain_model_service_layer
-  specs:
-    domain_model_service_layer (0.0.1)
-
-PATH
   remote: plugins/identity
   specs:
     identity (0.0.1)
@@ -541,7 +536,6 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   docs!
-  domain_model_service_layer!
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog!

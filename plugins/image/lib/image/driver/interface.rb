@@ -1,15 +1,15 @@
 module Image
   # Compute calls
   module Driver
-    class Interface < DomainModelServiceLayer::Driver::Base
+    class Interface < Core::ServiceLayer::Driver::Base
         
       ########################### IMAGES #############################
       def images(filter={})
-        raise DomainModelServiceLayer::Errors::NotImplemented
+        raise ServiceLayer::Errors::NotImplemented
       end
     
       def get_image(image_id)
-        raise DomainModelServiceLayer::Errors::NotImplemented
+        raise ServiceLayer::Errors::NotImplemented
       end
     end
   end

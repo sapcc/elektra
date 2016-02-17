@@ -1,6 +1,6 @@
 module ServiceLayer
 
-  class InquiryService < DomainModelServiceLayer::Service
+  class InquiryService < Core::ServiceLayer::Service
     
     def available?(action_name_sym=nil)
       true

@@ -1,5 +1,5 @@
 module Compute
-  class Flavor < DomainModelServiceLayer::Model
+  class Flavor < Core::ServiceLayer::Model
 
   end
 end

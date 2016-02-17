@@ -1,5 +1,5 @@
 module Networking
-  class Network < DomainModelServiceLayer::Model
+  class Network < Core::ServiceLayer::Model
     
     validates :name, presence: {message: 'Please provide a name'}
 

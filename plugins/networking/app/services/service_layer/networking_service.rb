@@ -1,5 +1,5 @@
 module ServiceLayer
-  class NetworkingService < DomainModelServiceLayer::Service
+  class NetworkingService < Core::ServiceLayer::Service
   
     def driver
       @driver ||= Networking::Driver::Fog.new({

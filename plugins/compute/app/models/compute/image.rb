@@ -1,5 +1,5 @@
 module Compute
-  class Image < DomainModelServiceLayer::Model
+  class Image < Core::ServiceLayer::Model
 
   end
 end

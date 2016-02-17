@@ -42,10 +42,6 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /s.add_dependency "rails"[^\n]*\n/, ''
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /s.add_development_dependency "sqlite3"/, ''
-
-    #inject_into_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", after: "s.test_files = Dir[\"test/**/*\"]\n" do
-    #  "s.add_dependency \"domain_model_service_layer\""
-    #end
   end
 
   def create_service_layer_service
@@ -72,7 +68,6 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     gsub_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/my_driver.rb", '%{PLUGIN_NAME}', name.classify
 
     inject_into_file "#{PLUGINS_PATH}/#{name}/lib/#{name}.rb", after: "require \"#{name}/engine\"\n" do
-      "require \"domain_model_service_layer\"\n" +
       "require_relative \"#{name}/driver\"\n"
     end
   end

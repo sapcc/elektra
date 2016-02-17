@@ -1,5 +1,5 @@
 module Identity
-  class Role < DomainModelServiceLayer::Model
+  class Role < Core::ServiceLayer::Model
     
   end
 end
