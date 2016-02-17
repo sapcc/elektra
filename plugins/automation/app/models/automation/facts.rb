@@ -1,6 +1,3 @@
-require 'ruby-arc-client'
-require 'ostruct'
-
 module Automation
 
   class Facts < RubyArcClient::Facts
