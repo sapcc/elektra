@@ -2,10 +2,12 @@
   Container: #{@container.name}
 
 .modal-body
-  .row
-    .col-md-3 Object count
-    .col-md-9= @container.object_count
-  .row
-    .col-md-3 Total size
-    -# TODO: format
-    .col-md-9 #{@container.bytes_used} bytes
+  %table.table
+    %tbody
+      %tr
+        %th Object count
+        %td= @container.object_count
+      %tr
+        %th Total size
+        -# TODO: format
+        %td #{@container.bytes_used} bytes

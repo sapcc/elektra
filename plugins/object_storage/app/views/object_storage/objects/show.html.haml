@@ -5,16 +5,19 @@
     File: #{@object.path}
 
 .modal-body
-  .row
-    .col-md-3 Size
-    -# TODO: format
-    .col-md-9 #{@object.size_bytes} bytes
-  .row
-    .col-md-3 Last Modified
-    .col-md-9= @object.last_modified
-  .row
-    .col-md-3 Content type
-    .col-md-9= @object.content_type
-  .row
-    .col-md-3 MD5 checksum
-    .col-md-9= @object.md5_hash
+  %table.table
+    %tbody
+      %tr
+        %th Size
+        -# TODO: format
+        %td #{@object.size_bytes} bytes
+      %tr
+        %th Last Modified
+        -# TODO: format
+        %td= @object.last_modified
+      %tr
+        %th Content type
+        %td= @object.content_type
+      %tr
+        %th MD5 checksum
+        %td= @object.md5_hash
