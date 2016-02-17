@@ -1,5 +1,5 @@
 {
-  "access_to_swift": "not project_id:nil",
+  "access_to_swift": "role:admin or role:swiftoperator",
 
   "swift:container_get": "rule:access_to_swift",
   "swift:container_list": "rule:access_to_swift",
