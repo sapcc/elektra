@@ -23,12 +23,12 @@ module Core
     module Services
       def self.included(base)
         base.send :include, InstanceMethods
-        base.send :helper_method, :services
+        base.send :helper_method, :services, :current_region
       end
 
       module InstanceMethods
         # load services provider
-        def services(region=Rails.application.config.default_region)
+        def services(region=current_region)
           # initialize services unless already initialized
           unless @services
             @services = Core::ServiceLayer::ServicesManager.new(
@@ -39,6 +39,28 @@ module Core
           # update current_user
           @services.current_user = current_user 
           @services
+        end
+        
+        # try to find a region based on catalog and default region
+        def current_region
+          if Rails.configuration.default_region.nil?
+            # default region is nil -> return default region from catalog or nil
+            return current_user.nil? ? nil : current_user.default_services_region
+          else
+            default_regions = Rails.configuration.default_region
+            # make default_region to an array
+            default_regions = [default_regions] unless default_regions.is_a?(Array)
+            # compare default regions with regions from catalog
+            regions = current_user.nil? ? default_regions : (default_regions & current_user.available_services_regions) 
+            
+            if regions and regions.length>0 
+              # regions match found -> return first
+              regions.first
+            else
+              # return default region from configuration or from catalog or nil 
+              return current_user.nil? ? default_regions.first : current_user.default_services_region
+            end
+          end
         end
       end
     end
