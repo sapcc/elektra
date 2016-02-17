@@ -1,5 +1,5 @@
 module Identity
-  class Project < ::DomainModelServiceLayer::Model
+  class Project < Core::ServiceLayer::Model
     validates :name, presence: {message: 'Name should not be empty'}
     validates :description, presence: {message: 'Please enter a description'}
 

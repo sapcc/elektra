@@ -1,6 +1,6 @@
 def policy_paths
   paths = ["config/policy.json"]
-  PluginsManager.available_plugins.each do |p|
+  Core::PluginsManager.available_plugins.each do |p|
     paths << p.policy_file_path if p.has_policy_file?
   end
   paths

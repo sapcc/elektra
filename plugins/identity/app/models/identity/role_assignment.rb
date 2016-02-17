@@ -1,5 +1,5 @@
 module Identity
-  class RoleAssignment < DomainModelServiceLayer::Model
+  class RoleAssignment < Core::ServiceLayer::Model
     attr_accessor :role_name, :user_name, :group_name, :domain_name
     
     def user_id

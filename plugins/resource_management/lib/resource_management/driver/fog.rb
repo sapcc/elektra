@@ -3,7 +3,7 @@ require 'fog/openstack/storage'
 module ResourceManagement
   module Driver
     class Fog < Interface
-      include DomainModelServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::FogDriver::ClientHelper
 
       def initialize(params)        
         super(params)
@@ -80,7 +80,7 @@ module ResourceManagement
           return send(method, domain_id, project_id, values)
         else
           # ignore a missing implementation in development mode (where mock data is used)
-          raise DomainModelServiceLayer::Errors::NotImplemented unless Rails.env.development?
+          raise ServiceLayer::Errors::NotImplemented unless Rails.env.development?
         end
       end
 

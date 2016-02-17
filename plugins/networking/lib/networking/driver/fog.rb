@@ -2,7 +2,7 @@ module Networking
   module Driver
     # Compute calls
     class Fog < Interface
-      include DomainModelServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::FogDriver::ClientHelper
     
       def initialize(params)
         super(params)

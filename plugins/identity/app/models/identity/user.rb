@@ -1,5 +1,5 @@
 module Identity
-  class User < DomainModelServiceLayer::Model
+  class User < Core::ServiceLayer::Model
     def full_name
       (description.nil? or description.empty?) ? name : description
     end

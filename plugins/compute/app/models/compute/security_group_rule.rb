@@ -1,5 +1,5 @@
 module Compute
-  class SecurityGroupRule < DomainModelServiceLayer::Model
+  class SecurityGroupRule < Core::ServiceLayer::Model
 
   end
 end

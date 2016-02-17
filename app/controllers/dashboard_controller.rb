@@ -51,7 +51,7 @@ class DashboardController < ::ScopeController
 
   def handle_api_error(exception)
     reset_last_request_cache
-    @errors = DomainModelServiceLayer::ApiErrorHandler.parse(exception)
+    @errors = Core::ServiceLayer::ApiErrorHandler.parse(exception)
     render template: 'dashboard/error', status: :internal_server_error
   end
 

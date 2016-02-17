@@ -1,5 +1,5 @@
 module ServiceLayer
-  class ComputeService < DomainModelServiceLayer::Service
+  class ComputeService < Core::ServiceLayer::Service
     
     def driver
       @driver ||= Compute::Driver::Fog.new({
