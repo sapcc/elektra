@@ -9,7 +9,6 @@ module Swift
     end
 
     def show
-      redirect_to plugin('swift').list_objects_path(@container.name, path: '')
     end
 
     def new
