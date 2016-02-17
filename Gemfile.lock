@@ -49,10 +49,10 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: dec8321b0036c95ac6b07dac25a23fb20c3a701a
+  revision: d1f3b69c2c822df91e5255c0c76629c23a03c7f9
   branch: master
   specs:
-    monsoon-openstack-auth (0.8.5)
+    monsoon-openstack-auth (0.8.6)
       excon
       hashie
       rails
