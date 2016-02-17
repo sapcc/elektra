@@ -1,5 +1,10 @@
 =content_for :main_toolbar do
-  #{link_to 'Object Storage', plugin('object_storage').containers_path}: #{make_breadcrumb(@container_name, params[:path])}
+  Object Storage
+
+%p
+  = link_to 'All containers', plugin('object_storage').containers_path
+  &gt;
+  = make_breadcrumb(@container_name, params[:path])
 
 .toolbar
   = link_to 'Upload file', '#', class: 'btn btn-primary btn-lg disabled'
@@ -8,7 +13,7 @@
 %table.table
   %thead
     %tr
-      %th Name
+      %th Object name
       %th Size
       %th Last Modified
       %th.snug
