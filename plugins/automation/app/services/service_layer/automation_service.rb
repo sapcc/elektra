@@ -1,5 +1,4 @@
 module ServiceLayer
-<<<<<<< 76bc08050055b1e226e77781d6109e4ab1de4d2b
 
   class ServiceNotAvailable < StandardError; end
 
