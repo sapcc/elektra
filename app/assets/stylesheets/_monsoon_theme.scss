@@ -166,10 +166,11 @@ section {
 }
 
 .fancy-nav-icon {
-  @include background-size($font-size-medium);
-  width: $font-size-medium;
-  height: $font-size-medium;
-  font-size: $font-size-medium;
+  @include background-size($font-size-h3);
+  width: $font-size-h3;
+  height: $font-size-h3;
+  font-size: $font-size-h3;
+  font-weight: normal;
 }
 
 // ---------------------------------------------------------------------------------
@@ -303,7 +304,7 @@ section {
 
   > li {
     @include column-break(inside, avoid);
-    padding-left: $grid-gutter-width;
+    padding-left: $grid-gutter-width * 1.4;
   }
 
   ul {
@@ -319,10 +320,12 @@ section {
     padding-bottom: $line-height-computed / 4;
 
     > span {
-      font-size: $font-size-medium;
+      // font-size: $font-size-medium;
+      font-weight: bold;
 
       &.fancy-nav-icon {
-        font-size: $font-size-large;
+        font-size: $font-size-h3;
+        font-weight: normal;
       }
     }
 
@@ -505,9 +508,11 @@ footer, .footer {
             font-size: $font-size-base;
 
             &.fancy-nav-icon {
+              @include background-size($font-size-medium);
               font-size: $font-size-medium;
-            left: $grid-gutter-width / 2;
-
+              left: $grid-gutter-width / 2;
+              width: $font-size-medium;
+              height: $font-size-medium;
             }
           }
         }

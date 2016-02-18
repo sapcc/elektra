@@ -62,15 +62,21 @@ SimpleNavigation::Configuration.run do |navigation|
       # compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
       # compute_nav.item :volumes, 'Volumes', '#'
       # compute_nav.item :snapshots, 'Snapshots', '#'
+
+      # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :automation, 'Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:instances) } do |automation_nav|
       automation_nav.item :automation, 'Monsoon Automation', -> {plugin('automation').instances_path}, if: -> { services.available?(:automation,:instances) }
+
+      # automation_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "icon moo-cloud"},
+    primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-code fa-fw"},
     if: -> {services.available?(:identity,:web_console)} do |api_nav|
       api_nav.item :web_console, 'Web Console', -> { plugin('identity').projects_web_console_path}, if: -> { services.available?(:identity,:web_console)}
+
+      # api_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :access_managment, 'Access Management', nil,
@@ -79,6 +85,8 @@ SimpleNavigation::Configuration.run do |navigation|
       # access_management_nav.item :authorizations, 'Authorization', '#'
       # access_management_nav.item :audits, 'Audit', '#'
       access_management_nav.item :inquiries, 'Requests', -> {plugin('inquiry').inquiries_path}, if: -> { services.available?(:inquiry,:inquiries) }
+
+      # access_management_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil,
@@ -87,13 +95,17 @@ SimpleNavigation::Configuration.run do |navigation|
       networking_nav.item :networks, 'Networks', -> {plugin('networking').networks_path}, if: -> { services.available?(:networking,:networks) }
       # networking_nav.item :loadbalancing, 'Loadbalancing', '#'
       # networking_nav.item :dns, 'DNS', '#'
+
+      # networking_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-database fa-fw" },
-    if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
+      if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
       storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').containers_path}, if: -> { services.available?(:object_storage,:containers) }
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
+    #
+    #   storage_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil,
@@ -103,10 +115,13 @@ SimpleNavigation::Configuration.run do |navigation|
       # monitoring_nav.item :logs, 'Logs', '#'
       monitoring_nav.item :resource_management, 'Resource Management', ->{plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }
 
+      # monitoring_nav.dom_attributes = {class: 'content-list'}
     end
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
     #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
+    #
+    #   account_nav.dom_attributes = {class: 'content-list'}
     # end
 
 
