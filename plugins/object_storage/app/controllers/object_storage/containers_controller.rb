@@ -19,6 +19,7 @@ module ObjectStorage
       name = params.require(:container).require(:name)
       new_container = services.object_storage.new_container(name: name)
       new_container.save
+      @containers = services.object_storage.containers
     end
 
     def edit

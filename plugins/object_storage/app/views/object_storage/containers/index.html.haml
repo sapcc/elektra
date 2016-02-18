@@ -4,17 +4,6 @@
 .toolbar
   = link_to 'Create container', plugin('object_storage').new_container_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
 
-%table.table
-  %thead
-    %tr
-      %th Container name
-      %th Total size
-      %th Object count
-      %th.snug
-  %tbody
-    - if @containers.empty?
-      %tr
-        %td{colspan: 4} No containers found.
-    - else
-      - @containers.sort_by(&:name).each do |container|
-        = render partial: 'item', locals: { container: container }
+= render partial: 'list'
+
+
