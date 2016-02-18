@@ -7,7 +7,7 @@
   = make_breadcrumb(@container_name, params[:path])
 
 .toolbar
-  = link_to 'Upload file', '#', class: 'btn btn-primary btn-lg disabled'
+  = link_to 'Upload file', plugin('object_storage').upload_object_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
   = link_to 'Create directory', '#', class: 'btn btn-primary btn-lg disabled'
 
 %table.table

@@ -42,6 +42,18 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      # `contents` is expected to be an IO object. If you got a string, call like
+      #
+      #   driver.create_object(container_name, path, StringIO.new(contents))
+      #
+      # To create a pseudo-directory, append a slash to the path and give empty contents:
+      #
+      #   driver.create_object("mycontainer", "foo/bar/", StringIO.new(""))
+      #
+      def create_object(container_name, path, contents)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end

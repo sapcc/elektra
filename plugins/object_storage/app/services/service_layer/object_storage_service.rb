@@ -27,7 +27,7 @@ module ServiceLayer
     end
 
     def new_container(attributes={})
-      ObjectStorage::Container.new(@driver, attributes)
+      ObjectStorage::Container.new(driver, attributes)
     end
 
     ##### objects
@@ -40,6 +40,12 @@ module ServiceLayer
     def list_objects_at_path(container_name, path)
       return [] if container_name.blank?
       return driver.map_to(ObjectStorage::Object).objects_at_path(container_name, path)
+    end
+
+    # `contents` is expected to be an IO object. Wrap strings with `StringIO.new(the_string)`.
+    def create_object(container_name, path, contents)
+      driver.create_object(container_name, path, contents)
+      return
     end
 
   end

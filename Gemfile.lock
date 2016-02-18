@@ -100,6 +100,7 @@ PATH
   remote: plugins/object_storage
   specs:
     object_storage (0.0.1)
+      hashie
 
 PATH
   remote: plugins/resource_management
@@ -579,3 +580,6 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6

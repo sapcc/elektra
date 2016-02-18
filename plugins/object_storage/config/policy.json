@@ -11,5 +11,7 @@
 
   "object_storage:object_get": "rule:object_storage_admin",
   "object_storage:object_list": "rule:object_storage_admin",
-  "object_storage:object_download": "rule:object_storage_admin"
+  "object_storage:object_download": "rule:object_storage_admin",
+  "object_storage:object_upload_form": "rule:object_storage_admin",
+  "object_storage:object_upload": "rule:object_storage_admin"
 }
