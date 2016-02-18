@@ -91,6 +91,7 @@ class DashboardController < ::ScopeController
       session[:is_new_dashboard_user] = Admin::OnboardingService.new_user?(current_user)
     end
     session[:is_new_dashboard_user]
+    # Admin::OnboardingService.new_user?(current_user)
   end
 
   def reset_last_request_cache
