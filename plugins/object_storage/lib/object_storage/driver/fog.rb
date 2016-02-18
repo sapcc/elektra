@@ -19,37 +19,49 @@ module ObjectStorage
         # name in API response => name in our model (that is part of this class's interface)
         'bytes' => 'bytes_used',
         'count' => 'object_count',
-        'name'  => 'id', # because Core::ServiceLayer::Model needs an id() attribute
+        'name'  => 'name',
       }
       CONTAINER_ATTRMAP = {
         'X-Container-Object-Count' => 'object_count',
         'X-Container-Bytes-Used'   => 'bytes_used',
       }
+      CONTAINER_WRITE_ATTRMAP = {
+        # name in our model => name in create/update API request
+      }
 
       def containers(filter={})
         handle_response do
           list = @fog.get_containers.body
-          list.map { |c| map_attribute_names(c, CONTAINERS_ATTRMAP) }
+          list.map do |c|
+            container = map_attribute_names(c, CONTAINERS_ATTRMAP)
+            container['id'] = container['name'] # name also serves as id() for Core::ServiceLayer::Model
+            container
+          end
         end
       end
 
       def get_container(name)
         handle_response do
           data = map_attribute_names(@fog.head_container(name).headers, CONTAINER_ATTRMAP)
-          data['id'] = name
+          data['id'] = data['name'] = name
           data
         end
       end
 
       def create_container(params={})
-        name = params.delete(:id)
-        # TODO: map attribute names
-        handle_response { @fog.put_container(name, params) }
+        handle_response do
+          request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
+          @fog.put_container(params[:name], request_params)
+          return params.merge(id: params[:name])
+        end
       end
 
       def update_container(name, params={})
-        # TODO: map attribute names
-        handle_response { @fog.put_container(name, params) }
+        handle_response do
+          request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
+          @fog.put_container(name, request_params)
+          return # nothing
+        end
       end
 
       def delete_container(name)
@@ -64,8 +76,8 @@ module ObjectStorage
         'content_type'  => 'content_type',
         'hash'          => 'md5_hash',
         'last_modified' => 'last_modified',
-        'name'          => 'id', # because Core::ServiceLayer::Model needs an id() attribute
-        'subdir'        => 'id', # for directories, only this single attribute is given
+        'name'          => 'path',
+        'subdir'        => 'path', # for subdirectories, only this single attribute is given
       }
       OBJECT_ATTRMAP = {
         'Content-Length' => 'size_bytes',
@@ -73,12 +85,16 @@ module ObjectStorage
         'Etag'           => 'md5_hash',
         'Last-Modified'  => 'last_modified',
       }
+      OBJECT_WRITE_ATTRMAP = {
+        # name in our model => name in create/update API request
+      }
 
       def objects(container_name, options={})
         handle_response do
           list = @fog.get_container(container_name, options).body
           list.map do |o|
             object = map_attribute_names(o, OBJECTS_ATTRMAP)
+            object['id'] = object['path'] # path also serves as id() for Core::ServiceLayer::Model
             object['container_name'] = container_name
             object
           end
@@ -93,7 +109,7 @@ module ObjectStorage
       def get_object(container_name, path)
         handle_response do
           data = map_attribute_names(fog_head_object(container_name, path).headers, OBJECT_ATTRMAP)
-          data['id'] = path
+          data['id'] = data['path'] = path
           data['container_name'] = container_name
           data
         end

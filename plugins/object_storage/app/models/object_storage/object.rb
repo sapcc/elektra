@@ -2,20 +2,12 @@ module ObjectStorage
   class Object < Core::ServiceLayer::Model
 
     # The following properties are known:
-    #   - id (= path)
+    #   - path
     #   - content_type
     #   - last_modified
     #   - md5_hash
     #   - size_bytes
-
-    # The Core::ServiceLayer::Model expects the object to be identified by
-    # the `id` attribute. But Swift objects are identified by their path (which
-    # is confusingly called "name" in Swift). The driver maps the `name`
-    # attribute to "id" so that the Model base class can grok it. This alias
-    # here should make high-level code using the model class more readable.
-    def path
-      self.id
-    end
+    # The id() is identical to the path() if the object is persisted.
 
     def is_directory?
       path.end_with?('/')

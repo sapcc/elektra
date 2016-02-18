@@ -27,7 +27,7 @@ module ServiceLayer
     end
 
     def new_container(attributes={})
-      ObjectStorage::Container.new(@driver, attributes)
+      ObjectStorage::Container.new(driver, attributes)
     end
 
     ##### objects

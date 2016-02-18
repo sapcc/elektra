@@ -12,12 +12,12 @@ module ObjectStorage
     end
 
     def new
-      @container = services.object_storage.new_container(id: "")
+      @container = services.object_storage.new_container(name: '')
     end
 
     def create
       name = params.require(:container).require(:name)
-      new_container = services.object_storage.new_container(id: name)
+      new_container = services.object_storage.new_container(name: name)
       new_container.save
     end
 
