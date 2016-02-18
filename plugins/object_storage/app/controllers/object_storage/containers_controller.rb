@@ -12,7 +12,7 @@ module ObjectStorage
     end
 
     def new
-      # TODO
+      @container = ObjectStorage::Container.new(name: 'new_container')
     end
 
     def create
