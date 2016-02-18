@@ -9,7 +9,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   helper_method :modal?, :plugin_name
-
+  
+  # check if the requested domain is the same as that of the current user.
+  before_filter :same_domain_check
+  
   def modal?
     if @modal.nil?
       @modal = (request.xhr? and params[:modal]) ? true : false
@@ -48,8 +51,22 @@ class ApplicationController < ActionController::Base
   
   protected
   
+  def same_domain_check
+    if current_user and current_user.user_domain_id and Admin::IdentityService.service_user and Admin::IdentityService.service_user.domain_id
+      if current_user.user_domain_id!=Admin::IdentityService.service_user.domain_id
+        # requested domain differs from the domain of current user
+        @current_domain_name = current_user.user_domain_name
+        @new_domain_name = Admin::IdentityService.service_user.domain_name
+
+        # render domain switch view
+        render template: 'application/domain_switch'
+      end
+    end
+  end
+  
   # Wrapper for current user
   class CurrentUserWrapper
+    attr_reader :current_user
     def initialize(current_user, session)
       @current_user = current_user
       @session = session
