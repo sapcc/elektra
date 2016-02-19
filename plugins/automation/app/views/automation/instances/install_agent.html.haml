@@ -13,8 +13,12 @@
     = form_tag show_instructions_instances_path, remote: true do
       .form-group
         = label_tag 'instance_id', 'Instance ID', class: 'sr-only'
-        = text_field_tag 'instance_id', '', :maxlength => "256", :placeholder => "Enter instance ID", class: 'form-control'
+        = text_field_tag 'instance_id', '', :maxlength => "256", :placeholder => "Enter instance ID", class: 'form-control', autofocus: true
 
       .form-group
         .clearfix
           = button_tag "Get instructions", class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." }
+
+= content_for :javascript do
+  :javascript
+    $('#instance_id').focus();
