@@ -1,14 +1,14 @@
 .row
-  .col-sm-6
+  .col-sm-12
     %p= @active_project.description
 
-  .col-sm-6
-    %ul
-      - if current_user.is_allowed?('identity:project_edit')
-        %li= link_to 'Edit Project', plugin('identity').edit_project_path
+.row
+  .col-sm-12  
+    %p 
+      - if current_user.is_allowed?('identity:project_update')
+        = link_to 'Edit Project', plugin('identity').edit_project_path, class: 'btn btn-outline btn-sm'
       - if current_user.is_allowed?('identity:member_index')
-        %li= link_to 'Manage Project Members', plugin('identity').projects_members_path
-
+        = link_to 'Manage Project Members', plugin('identity').projects_members_path, class: 'btn btn-outline btn-sm'
 
 .row
   .col-md-8

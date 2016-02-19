@@ -13,6 +13,7 @@ module Identity
 
     def not_member_error
       # just catch the error and continue rendering
+      @root_projects = services.identity.auth_projects.reject{ |project| !project.parent.blank? }
       render action: :show
     end
   end

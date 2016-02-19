@@ -6,21 +6,7 @@ module Identity
       @scoped_project_fid = params[:project_id] || @project_id
     end
 
-    rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :not_member_error
-
     authorization_required(context:'identity')
-
-    def not_member_error(exception)
-      if params[:action]=='index'
-        @projects = Admin::IdentityService.projects_by_user_id(current_user.id)
-        respond_to do |format|
-          format.js {render action: params[:action], formats:[:js]}
-          format.html {render action: params[:action]}
-        end
-      else
-        raise(exception)
-      end
-    end
 
     def index
       @projects = @user_domain_projects

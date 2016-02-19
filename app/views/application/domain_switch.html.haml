@@ -1,0 +1,12 @@
+.content
+  .container
+    .page-header
+      %h1
+        Domain switch
+        
+    %p
+      = "You are logged on in #{@current_domain_name} domain. Do you really want to switch to #{@new_domain_name}?" 
+
+    %p
+      = link_to "No", main_app.landing_page_path(@current_domain_name), class: 'btn'
+      = link_to "Yes, sign me out of here", monsoon_openstack_auth.login_url(domain_name:@new_domain_name), class: 'btn'

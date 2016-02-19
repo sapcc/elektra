@@ -31,10 +31,10 @@ module Core
         
         if regions and regions.length>0 
           # regions match found -> return first
-          regions.first
+          return regions.first
         else
-          # return default region from configuration or from catalog or nil 
-          return auth_user.nil? ? default_regions.first : auth_user.default_services_region
+          # return default region from configuration or from catalog or nil
+          return (auth_user.nil? or auth_user.default_services_region.nil?) ? default_regions.first : auth_user.default_services_region
         end
       end
     end
