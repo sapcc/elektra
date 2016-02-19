@@ -15,10 +15,13 @@
 
 = form_tag show_instructions_instances_path, :class => '', :remote => true do
   = hidden_field_tag 'instance_id', @instance.id
+  = hidden_field_tag 'from', 'select_os'
   .form-group.clearfix
     = label_tag 'instance_os', 'OS', class: "col-sm-3 control-label"
     .col-sm-9
-      %select.form-control{name: 'instance_os'}
+      %select.form-control{name: 'instance_os', id: 'instance_os', autofocus: 'autofocus'}
+        %option{disabled: true, selected:true}
+          Please choose OS
         - @os_types.each do |key, value|
           %option{value: key}
             = value
