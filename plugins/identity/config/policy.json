@@ -18,11 +18,5 @@
   "identity:credential_update": "rule:admin_required",
   "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
 
-  "identity:instance_get": "role:admin or role:Member or role:member",
-  "identity:instance_list": "role:admin or role:Member or role:member",
-  "identity:instance_create": "role:admin",
-  "identity:instance_update": "role:admin",
-  "identity:instance_delete": "role:admin",
-
   "identity:member_list": "rule:admin_required"
 }

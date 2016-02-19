@@ -57,7 +57,7 @@ module Identity
       
       def load_roles
         ignore_roles = ['service', 'monasca-agent',	'monasca-user',	'cloud_admin', 'domain_admin', 'project_admin']
-        @roles = (Admin::IdentityService.roles rescue []).inject({}) do |available_roles, role| 
+        @roles = (services.identity.roles rescue []).inject({}) do |available_roles, role| 
           available_roles[role.id]=role unless ignore_roles.include?(role.name)
           available_roles
         end
@@ -70,10 +70,10 @@ module Identity
       
       def user_roles(role_assignments={})
         role_assignments.inject({}) do |assignments, ra|
-          user = ra.user_id.nil? ? nil : Admin::IdentityService.find_user(ra.user_id)
+          user = ra.user_id.nil? ? nil : services.identity.find_user(ra.user_id)
           if user and user.id
             assignments[ra.user_id] ||= {}
-            assignments[ra.user_id][:user] ||= Admin::IdentityService.find_user(ra.user_id)
+            assignments[ra.user_id][:user] ||= services.identity.find_user(ra.user_id)
             assignments[ra.user_id][:role_ids] ||= []
             assignments[ra.user_id][:role_ids] << ra.role_id
           end
