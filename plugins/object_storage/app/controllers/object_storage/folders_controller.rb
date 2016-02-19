@@ -15,6 +15,11 @@ module ObjectStorage
       file          = upload_params.require(:file)
       filename      = upload_params[:filename] || file.original_filename
       services.object_storage.create_object(@container_name, @object.path + filename, file)
+
+      respond_to do |format|
+        format.js
+        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
+      end
     rescue ActionController::ParameterMissing
       @new_object = Core::ServiceLayer::Model.new(nil, file: '', filename: filename || '')
       @missing_file = true
