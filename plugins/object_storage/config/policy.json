@@ -1,17 +1,18 @@
 {
   "object_storage_admin": "role:admin or role:swiftoperator",
 
-  "object_storage:container_get": "rule:object_storage_admin",
-  "object_storage:container_list": "rule:object_storage_admin",
-  "object_storage:container_new": "rule:object_storage_admin",
+  "object_storage:container_get":    "rule:object_storage_admin",
+  "object_storage:container_list":   "rule:object_storage_admin",
+  "object_storage:container_new":    "rule:object_storage_admin",
   "object_storage:container_create": "rule:object_storage_admin",
-  "object_storage:container_edit": "rule:object_storage_admin",
+  "object_storage:container_edit":   "rule:object_storage_admin",
   "object_storage:container_update": "rule:object_storage_admin",
   "object_storage:container_delete": "rule:object_storage_admin",
 
-  "object_storage:object_get": "rule:object_storage_admin",
-  "object_storage:object_list": "rule:object_storage_admin",
-  "object_storage:object_download": "rule:object_storage_admin",
-  "object_storage:object_upload_form": "rule:object_storage_admin",
-  "object_storage:object_upload": "rule:object_storage_admin"
+  "object_storage:object_get":           "rule:object_storage_admin",
+  "object_storage:object_list":          "rule:object_storage_admin",
+  "object_storage:object_download":      "rule:object_storage_admin",
+
+  "object_storage:folder_new_files":     "rule:object_storage_admin",
+  "object_storage:folder_create_file":   "rule:object_storage_admin"
 }

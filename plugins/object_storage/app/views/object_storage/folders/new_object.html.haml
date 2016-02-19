@@ -4,7 +4,7 @@
   - else
     Upload file to: #{@object.clean_path}
 
-= simple_form_for @new_object, url: plugin('object_storage').upload_object_path(@container_name, @object.path), method: :post, remote: request.xhr?, authenticity_token: true, html: { data: { modal: true } } do |f|
+= simple_form_for @new_object, url: plugin('object_storage').create_object_path(@container_name, @object.path), method: :post, remote: request.xhr?, authenticity_token: true, html: { data: { modal: true } } do |f|
   %div{class: modal? ? 'modal-body' : ''}
 
     %p.alert.alert-warning
