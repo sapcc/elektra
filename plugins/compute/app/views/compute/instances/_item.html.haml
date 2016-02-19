@@ -18,7 +18,7 @@
     - if current_user.is_allowed?("identity:instance_delete", {}) or current_user.is_allowed?("identity:instance_update", {})
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
-          %span.glyphicon.glyphicon-cog
+          %span.fa.fa-cog
           -# %span.spinner
           
         - unless instance.os_ext_sts_task_state
