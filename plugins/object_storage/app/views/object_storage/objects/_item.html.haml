@@ -1,13 +1,15 @@
 %tr
   %td.name-with-icon
     - if object.is_directory?
-      %span.glyphicon.glyphicon-folder-open{ title: 'Directory' }
+      %span.fa.fa-fw.fa-folder-open{ title: 'Directory' }
       = link_to object.basename, plugin('object_storage').list_objects_path(@container_name, object.path), title: 'List contents'
     - else
-      -if object.content_type.start_with?('image/')
-        %span.glyphicon.glyphicon-picture{ title: 'Object' }
+      - if object.content_type.start_with?('image/')
+        %span.fa.fa-fw.fa-file-image-o{ title: 'Object' }
+      - elsif object.content_type.start_with?('text/')
+        %span.fa.fa-fw.fa-file-text-o{ title: 'Object' }
       - else
-        %span.glyphicon.glyphicon-file{ title: 'Object' }
+        %span.fa.fa-fw.fa-file-o{ title: 'Object' }
       = link_to object.basename, plugin('object_storage').download_object_path(@container_name, object.path, inline: 1), title: 'Show file contents in browser'
   %td
     - unless object.is_directory?

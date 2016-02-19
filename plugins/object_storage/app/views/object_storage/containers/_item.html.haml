@@ -1,6 +1,6 @@
 %tr
   %td.name-with-icon
-    %span.glyphicon.glyphicon-hdd{ title: 'Container' }
+    %span.fa.fa-fw.fa-hdd-o{ title: 'Container' }
     =link_to container.name, plugin('object_storage').list_objects_path(container.name), title: 'List contents'
   %td= "#{container.bytes_used} bytes" # TODO: format
   %td= container.object_count
