@@ -9,7 +9,7 @@ module ObjectStorage
     end
 
     def create_object
-      @form = ObjectStorage::Forms::CreateFolder.new(params.require(:forms_create_object))
+      @form = ObjectStorage::Forms::CreateObject.new(params.require(:forms_create_object))
       @form.name = @form.file.original_filename if @form.file and not @form.name
       unless @form.validate
         render action: 'new_object'

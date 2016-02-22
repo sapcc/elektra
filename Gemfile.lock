@@ -100,7 +100,6 @@ PATH
   remote: plugins/object_storage
   specs:
     object_storage (0.0.1)
-      hashie
 
 PATH
   remote: plugins/resource_management
