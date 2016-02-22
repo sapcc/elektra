@@ -87,7 +87,10 @@ module ObjectStorage
 
       def objects_at_path(container_name, path, filter={})
         path += '/' if !path.end_with?('/') && !path.empty?
-        return objects(container_name, filter.merge(prefix: path, delimiter: '/'))
+        result = objects(container_name, filter.merge(prefix: path, delimiter: '/'))
+        # if there is a pseudo-folder at `path`, it will be in the result, too;
+        # filter this out since we only want stuff below `path`
+        return result.reject { |obj| obj['id'] == path }
       end
 
       def get_object(container_name, path)
