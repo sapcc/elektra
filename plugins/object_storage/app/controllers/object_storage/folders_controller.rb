@@ -5,25 +5,23 @@ module ObjectStorage
     before_filter :load_params
 
     def new_object
-      @new_object = Core::ServiceLayer::Model.new(nil, file: '', filename: '')
+      @form = ObjectStorage::Forms::CreateObject.new(file: nil, name: '')
     end
 
     def create_object
-      # because we use a Core::ServiceLayer::Model object as a shim for the
-      # simple_form, the params are named accordingly
-      upload_params = params.require(:core_service_layer_model)
-      file          = upload_params.require(:file)
-      filename      = upload_params[:filename] || file.original_filename
-      services.object_storage.create_object(@container_name, @object.path + filename, file)
+      @form = ObjectStorage::Forms::CreateFolder.new(params.require(:forms_create_object))
+      @form.name = @form.file.original_filename if @form.file and not @form.name
+      unless @form.validate
+        render action: 'new_object'
+        return
+      end
+
+      services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
 
       respond_to do |format|
         format.js
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
       end
-    rescue ActionController::ParameterMissing
-      @new_object = Core::ServiceLayer::Model.new(nil, file: '', filename: filename || '')
-      @missing_file = true
-      render action: 'new_object'
     end
 
     def new_folder
@@ -37,8 +35,6 @@ module ObjectStorage
         return
       end
 
-      # a pseudo-folder is created by writing an empty object at its path, with
-      # a "/" suffix to indicate the folder-ness
       services.object_storage.create_folder(@container_name, @object.path + @form.name)
 
       respond_to do |format|

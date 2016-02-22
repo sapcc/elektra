@@ -4,7 +4,7 @@
   - else
     Upload file to: #{@object.clean_path}
 
-= simple_form_for @new_object, url: plugin('object_storage').create_object_path(@container_name, @object.path), method: :post, remote: request.xhr?, authenticity_token: true, html: { data: { modal: true } } do |f|
+= simple_form_for @form, url: plugin('object_storage').create_object_path(@container_name, @object.path), method: :post, remote: request.xhr?, authenticity_token: true, html: { data: { modal: true } } do |f|
   %div{class: modal? ? 'modal-body' : ''}
 
     %p.alert.alert-warning
@@ -25,8 +25,8 @@
 
     %fieldset
       -# NOTE: <input type="file"> requires `authenticity_token: true` on the (simple_)form_for() to work
-      = f.input :file,     as: :file,   input_html: { id: 'object_storage_upload_file' },     label: 'Select file'
-      = f.input :filename, as: :string, input_html: { id: 'object_storage_upload_filename' }, label: 'File name'
+      = f.input :file, as: :file,   label: 'Select file'
+      = f.input :name, as: :string, label: 'File name'
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
@@ -40,9 +40,9 @@
     $('#linkto_webconsole').on('click', Dashboard.hideModal);
 
     //when a file has been selected, put its name into the filename input as a default
-    $('#object_storage_upload_file').on('change', function() {
+    $('#forms_create_object_file').on('change', function() {
       var file = this.files[0];
       if (file) {
-        $('#object_storage_upload_filename').val(file.name);
+        $('#forms_create_object_name').val(file.name);
       }
     });
