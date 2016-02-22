@@ -5,7 +5,7 @@
     .row.quota-row
       .col-md-6
         %fieldset
-        = f.input :name, label: 'Container Name'
+          = f.input :name, label: 'Container Name'
       .col-md-6
         .bs-callout.bs-callout-primary
           %p
@@ -29,5 +29,5 @@
         %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
       - else
         = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
-      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Submit
+      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Create
 
