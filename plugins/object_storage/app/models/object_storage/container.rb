@@ -1,19 +1,18 @@
 module ObjectStorage
   class Container < Core::ServiceLayer::Model
 
-    # The following properties are known:
-    #   - id (= name)
-    #   - object_count
-    #   - bytes_used
+      # The following properties are known:
+      #   - name
+      #   - object_count
+      #   - bytes_used
+      # The id() is identical to the name() if the container is persisted.
 
-    # The Core::ServiceLayer::Model expects the object to be identified by
-    # the `id` attribute. But Swift containers are identified by their name.
-    # The driver maps the `name` attribute to "id" so that the Model base class
-    # can grok it. This alias here should make high-level code using the model
-    # class more readable.
-    def name
-      self.id
-    end
+      validates_presence_of :name
+      validate do
+        # http://developer.openstack.org/api-ref-objectstorage-v1.html#createContainer
+        errors[:name] << 'may not contain slashes' if name.include?('/')
+        errors[:name] << 'may not contain more than 256 characters' if name.size > 256 
+      end
 
   end
 end

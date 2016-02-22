@@ -12,11 +12,16 @@ module ObjectStorage
     end
 
     def new
-      # TODO
+      @container = services.object_storage.new_container(name: "")
     end
 
     def create
-      # TODO
+      @container = services.object_storage.new_container(params.require(:container))
+      unless @container.save
+        render action: 'new'
+        return
+      end
+      @containers = services.object_storage.containers
     end
 
     def edit

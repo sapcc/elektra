@@ -1,0 +1,20 @@
+= simple_form_for @container, url: plugin('object_storage').containers_path, method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @error
+      %p.alert.alert-error= @error
+    .row.quota-row
+      .col-md-6
+        %fieldset
+          = f.input :name, label: 'Container Name'
+      .col-md-6
+        .bs-callout.bs-callout-primary
+          %p
+            Inside a project, objects are stored in containers. Containers are where you define access permissions and quotas.
+          
+    .buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+      - else
+        = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
+      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Create
+
