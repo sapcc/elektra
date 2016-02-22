@@ -9,6 +9,7 @@ ObjectStorage::Engine.routes.draw do
     get 'list(/*path)' => 'objects#index',    as: 'list_objects'
     get 'raw/*path'    => 'objects#download', as: 'download_object'
     get 'show/*path'   => 'objects#show',     as: 'object'
+    get 'confirm_deletion' => 'containers#confirm_deletion'
   end
 
 end

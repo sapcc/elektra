@@ -8,6 +8,10 @@ module ObjectStorage
       @containers = services.object_storage.containers
     end
 
+    def confirm_deletion
+      @form = ObjectStorage::Forms::ConfirmContainer.new()
+    end
+
     def show
     end
 
