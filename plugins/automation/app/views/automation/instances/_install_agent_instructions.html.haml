@@ -22,6 +22,6 @@
       %code
         = preserve do
           :escaped
-            curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/#{@version}/amd64
+            curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/#{@instance_os}/amd64
             chmod +x /opt/arc/arc
             /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url #{@url}

@@ -11,7 +11,8 @@
       %li
         = link_to "#{project.name}", plugin('identity').project_path(project_id:project.friendly_id)
 
-= link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
+- if current_user.is_allowed?('identity:project_request')
+  = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
 
 / .row
 /   .col-sm-12

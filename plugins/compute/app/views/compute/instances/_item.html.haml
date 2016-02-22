@@ -5,7 +5,7 @@
 
 %tr{class: "state-#{instance.status.downcase} #{'task-state ' + instance.task_state if instance.task_state}", data: data, id: "instance_#{instance.id}"}
   %td    
-    - if current_user.is_allowed?("identity:instance_get", {})
+    - if current_user.is_allowed?("compute:instance_get", {})
       = link_to instance.name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
 
   %td= instance.image.name
@@ -15,10 +15,10 @@
   %td= instance.task_state.nil? ? instance.status.capitalize : instance.task_state
   
   %td.snug
-    - if current_user.is_allowed?("identity:instance_delete", {}) or current_user.is_allowed?("identity:instance_update", {})
+    - if current_user.is_allowed?("compute:instance_delete", {}) or current_user.is_allowed?("compute:instance_update", {})
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
-          %span.glyphicon.glyphicon-cog
+          %span.fa.fa-cog
           -# %span.spinner
           
         - unless instance.os_ext_sts_task_state
@@ -30,7 +30,7 @@
                   
                         
               %li.divider
-            - if current_user.is_allowed?("identity:instance_update", {})
+            - if current_user.is_allowed?("compute:instance_update", {})
               - if instance.power_state==Compute::Server::RUNNING
                 %li= link_to 'Stop', plugin('compute').stop_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true  
 
@@ -38,5 +38,5 @@
 
                 %li= link_to 'Suspend', plugin('compute').suspend_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to suspend this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true  
 
-            - if current_user.is_allowed?("identity:instance_delete", {})
+            - if current_user.is_allowed?("compute:instance_delete", {})
               %li= link_to 'Terminate', plugin('compute').instance_path(id: instance.id), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: "Yes, terminate it", confirmed: :loading_status}, remote: true
