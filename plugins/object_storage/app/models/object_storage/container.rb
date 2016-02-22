@@ -6,6 +6,7 @@ module ObjectStorage
       #   - object_count
       #   - bytes_used
       # The id() is identical to the name() if the container is persisted.
+
       validates_presence_of :name
       validate do
         # http://developer.openstack.org/api-ref-objectstorage-v1.html#createContainer
