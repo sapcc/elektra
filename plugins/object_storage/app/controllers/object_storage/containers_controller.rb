@@ -12,21 +12,25 @@ module ObjectStorage
     end
 
     def new
-      @form = ObjectStorage::Forms::CreateContainer.new()
+      @container = services.object_storage.new_container(id: "")
     end
 
     def create
      # check container name
-     @form = ObjectStorage::Forms::CreateContainer.new(params.require(:forms_create_container))
-      unless @form.validate
+     #@form = ObjectStorage::Forms::CreateContainer.new(params.require(:forms_create_container))
+     # unless @form.validate
+     #   render action: 'new'
+     #   return
+     # end
+
+      name = params[:container][:name]
+      @container = services.object_storage.new_container(name: name)
+      unless @container.save
         render action: 'new'
         return
       end
-
-      name = params.require(:forms_create_container).require(:name)
-      new_container = services.object_storage.new_container(name: name)
-      new_container.save
       @containers = services.object_storage.containers
+
     end
 
     def edit
