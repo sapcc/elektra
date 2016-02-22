@@ -1,5 +1,24 @@
-module ResourceManagement
+module Core
   class DataType
+
+    # This class provides formatting for values presented to the user, and
+    # parsing of user input for the same data types.
+    #
+    #     >> Core::DataType.new(:bytes).format(1048576)
+    #     "1 MiB"
+    #     >> Core::DataType.new(:bytes).parse("1 MiB")
+    #     1048576
+    #
+    # Parsing is intended to be very forgiving. For example, the user could
+    # also abbreviate "1 MiB" as "1m" for the :bytes data type.
+    #
+    # The following data types are known currently:
+    #
+    #   :number     - for values that don't have a unit (format is just #to_s and parse is just #to_i)
+    #   :bytes      - for storage capacity values
+    #
+    # To add a new datatype (e.g. "foo"), add the private methods "parse_foo"
+    # and "format_foo", and extend ALLOWED_DATATYPES accordingly.
 
     ALLOWED_DATA_TYPES = [ :number, :bytes ]
 

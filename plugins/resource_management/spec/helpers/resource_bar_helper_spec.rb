@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'resource_management/data_type'
+require 'core/data_type'
 
 # Specs in this file have access to a helper object that includes
 # the ResourceManagement::ResourceBarHelper.
@@ -61,7 +61,7 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
         fill:      23552,
         maximum:   { value: 43008 },
         threshold: { value: 66560, label: 'foo bar: $VALUE' },
-        data_type: ResourceManagement::DataType.new(:bytes),
+        data_type: Core::DataType.new(:bytes),
       )
 
       expect(     result[:fill]).to include(label: '23 KiB')
