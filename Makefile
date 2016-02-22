@@ -53,6 +53,10 @@ beta: CAPYBARA_APP_HOST=https://localhost
 beta: CUCUMBER_PROFILE=e2e
 beta: cucumber
 
+#target for testing pull requests from the ci pipeline
+.PHONY:
+pr: build rspec
+
 # ----------------------------------------------------------------------------------
 #   rspec 
 # ----------------------------------------------------------------------------------
