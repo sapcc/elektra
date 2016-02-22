@@ -12,6 +12,8 @@ ObjectStorage::Engine.routes.draw do
 
     get  'upload(/*path)'        => 'folders#new_object',    as: 'new_object'
     post 'upload(/*path)'        => 'folders#create_object', as: 'create_object'
+    get  'create_folder(/*path)' => 'folders#new_folder',    as: 'new_folder'
+    post 'create_folder(/*path)' => 'folders#create_folder', as: 'create_folder'
   end
 
 end

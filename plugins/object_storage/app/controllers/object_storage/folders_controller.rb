@@ -26,6 +26,27 @@ module ObjectStorage
       render action: 'new_object'
     end
 
+    def new_folder
+      @form = ObjectStorage::Forms::CreateFolder.new(name: '')
+    end
+
+    def create_folder
+      @form = ObjectStorage::Forms::CreateFolder.new(params.require(:forms_create_folder))
+      unless @form.validate
+        render action: 'new_folder'
+        return
+      end
+
+      # a pseudo-folder is created by writing an empty object at its path, with
+      # a "/" suffix to indicate the folder-ness
+      services.object_storage.create_object(@container_name, @object.path + @form.name + '/', StringIO.new(''))
+
+      respond_to do |format|
+        format.js
+        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
+      end
+    end
+
     private
 
     def load_params
