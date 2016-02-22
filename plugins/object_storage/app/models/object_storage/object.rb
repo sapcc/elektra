@@ -17,6 +17,11 @@ module ObjectStorage
       self.id
     end
 
+    # Same as path(), but removes the trailing slash for directories.
+    def clean_path
+      path.end_with?('/') ? path.chop : path
+    end
+
     def is_directory?
       path.end_with?('/')
     end
