@@ -39,7 +39,7 @@ module ObjectStorage
 
       # a pseudo-folder is created by writing an empty object at its path, with
       # a "/" suffix to indicate the folder-ness
-      services.object_storage.create_object(@container_name, @object.path + @form.name + '/', StringIO.new(''))
+      services.object_storage.create_folder(@container_name, @object.path + @form.name)
 
       respond_to do |format|
         format.js

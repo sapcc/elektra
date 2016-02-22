@@ -44,8 +44,25 @@ module ServiceLayer
 
     # `contents` is expected to be an IO object. Wrap strings with `StringIO.new(the_string)`.
     def create_object(container_name, path, contents)
-      driver.create_object(container_name, path, contents)
+      driver.create_object(container_name, sanitize_path(path), contents)
       return
+    end
+
+    def create_folder(container_name, path)
+      # a pseudo-folder is created by writing an empty object at its path, with
+      # a "/" suffix to indicate the folder-ness
+      driver.create_object(container_name, sanitize_path(path) + '/', StringIO.new(''))
+    end
+
+    ##### helpers
+
+    def sanitize_path(path)
+      # remove duplicate slashes that might have been created by naive path
+      # joining (e.g. `foo + "/" + bar`)
+      path = path.gsub(/^\/+/, '/')
+
+      # remove leading and trailing slash
+      return path.sub(/^\//, '').sub(/\/$/, '')
     end
 
   end
