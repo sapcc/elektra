@@ -9,21 +9,8 @@
       .col-md-6
         .bs-callout.bs-callout-primary
           %p
-            %strong Description:
-            A container provides a way for you to organize your data. You can think of a container as a folder in Windows or a directory in UNIX/LINUX. The primary difference between folders/directorys amd containers is, that containers cannot be nested. You can create an unlimited number of containers within your account. In any case data must be stored in a container so in the end you need to create a container prior to uploading data.
+            Inside a project, objects are stored in containers. Containers are where you define access permissions and quotas.
           
-          %p
-            %strong Naming: 
-            The container name must be from 
-            %strong 1 to 256 
-            characters long. Except the 
-            %strong slash 
-            (because this character delimits the container and object name) you can start with any character and use any pattern.
-          
-          %p
-            %strong Note: 
-            A Public Container will allow anyone with the Public URL to gain access to your objects in the container.
-
     .buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
         %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
