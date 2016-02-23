@@ -41,6 +41,28 @@ module ResourceManagement
         return result
       end
 
+      # extrawurst for monsoon2 legacy: List all projects in this domain where
+      # the given role is assigned.
+      def enumerate_projects_with_role_assignment(domain_id, role_name)
+        # resolve role name into ID
+        role_id = @srv_conn.list_roles(name: role_name).body['roles'].first['id']
+
+        # which project IDs are valid?
+        in_this_domain = {}
+        @srv_conn.list_projects(domain_id: domain_id).body['projects'].each do |project|
+          in_this_domain[ project['id'] ] = true
+        end
+
+        # iterate over role assignments
+        result = []
+        @srv_conn.list_role_assignments("role.id" => role_id).body['role_assignments'].each do |assignment|
+          if project_id = assignment['scope'].fetch('project', {})['id']
+            result << project_id
+          end
+        end
+        return result.uniq
+      end
+
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values

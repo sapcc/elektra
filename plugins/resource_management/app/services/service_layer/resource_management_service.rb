@@ -91,6 +91,22 @@ module ServiceLayer
       old_project_ids = db_project_ids - all_project_ids
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): cleaning up deleted projects: #{old_project_ids.join(' ')}"
       ResourceManagement::Resource.where(domain_id: domain_id, project_id: old_project_ids).destroy_all()
+      db_project_ids = db_project_ids - old_project_ids
+
+      # extrawurst for legacy monsoon2: sync only relevant projects
+      # 1. skip legacy organizations (= Keystone projects with ID starting with "o-")
+      # 2. skip legacy projects that are not Swift-enabled (by checking for role assignments to "swiftoperator")
+      # This radically reduces the syncing time (since only about half of the
+      # Keystone projects are legacy projects, and only a small fraction of
+      # those actually use Swift).
+      domain_name = enumerate_domains.fetch(domain_id, '')
+      if domain_name == 'monsoon2'
+        swift_project_ids = driver.enumerate_projects_with_role_assignment(domain_id, 'swiftoperator').
+          select { |project_id| project_id.start_with?('p-') }
+        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with swiftoperator role assignment: #{swift_project_ids.join(' ')}"
+        # make sure that we sync existing projects, even if Swift access has been disabled again
+        all_project_ids = (swift_project_ids + db_project_ids).uniq
+      end
 
       # initialize Resource objects for new domains (by recursing into sync_project)
       # or refresh all projects when options[:with_projects] is given
