@@ -1,6 +1,6 @@
 module ObjectStorage
   module Forms
-    class ConfirmContainer < Core::ServiceLayer::Model
+    class ConfirmContainerAction < Core::ServiceLayer::Model
 
       def initialize(attributes={})
         super(nil, attributes) # no driver
@@ -8,7 +8,7 @@ module ObjectStorage
 
       validates_presence_of :name
       validate do
-        errors[:name] << "not correct! please type #{container_name}" if name != container_name
+        errors[:name] << "not correct!" if name != container_name
       end
 
     end

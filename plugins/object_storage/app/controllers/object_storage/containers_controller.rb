@@ -9,7 +9,7 @@ module ObjectStorage
     end
 
     def confirm_deletion
-      @form = ObjectStorage::Forms::ConfirmContainer.new()
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new()
     end
 
     def show
@@ -37,7 +37,7 @@ module ObjectStorage
     end
 
     def destroy
-      @form = ObjectStorage::Forms::ConfirmContainer.new(params.require(:forms_confirm_container))
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
       unless @form.validate
         render action: 'confirm_deletion'
         return
