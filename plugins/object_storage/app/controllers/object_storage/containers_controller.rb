@@ -26,6 +26,9 @@ module ObjectStorage
         return
       end
       @containers = services.object_storage.containers
+      respond_to do |format|
+        format.js { render action: 'reload_container_list' }
+      end
     end
 
     def edit
@@ -44,6 +47,10 @@ module ObjectStorage
       end
       @container.destroy
       @containers = services.object_storage.containers
+
+      respond_to do |format|
+        format.js { render action: 'reload_container_list' }
+      end
     end
 
     private
