@@ -20,5 +20,9 @@ module ObjectStorage
       return result + " > " + crumbs.join('/').html_safe
     end
 
+    def format_bytes(value_in_bytes)
+      content_tag(:span, title: "#{value_in_bytes} bytes") { Core::DataType.new(:bytes).format(value_in_bytes) }
+    end
+
   end
 end

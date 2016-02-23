@@ -13,7 +13,7 @@
       = link_to object.basename, plugin('object_storage').download_object_path(@container_name, object.path, inline: 1), title: 'Show file contents in browser'
   %td
     - unless object.is_directory?
-      = "#{object.size_bytes} bytes" # TODO: format
+      = format_bytes(object.size_bytes)
   %td
     - unless object.is_directory?
       = object.last_modified         # TODO: format

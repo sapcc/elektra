@@ -9,8 +9,7 @@
     %tbody
       %tr
         %th Size
-        -# TODO: format
-        %td #{@object.size_bytes} bytes
+        %td= format_bytes(@object.size_bytes)
       %tr
         %th Last Modified
         -# TODO: format
