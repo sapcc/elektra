@@ -9,6 +9,10 @@ module ObjectStorage
     #   - size_bytes
     # The id() is identical to the path() if the object is persisted.
 
+    def size_bytes
+      read(:size_bytes).to_i
+    end
+
     # Same as path(), but removes the trailing slash for directories.
     def clean_path
       path.end_with?('/') ? path.chop : path

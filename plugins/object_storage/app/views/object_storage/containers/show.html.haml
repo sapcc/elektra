@@ -9,5 +9,4 @@
         %td= @container.object_count
       %tr
         %th Total size
-        -# TODO: format
-        %td #{@container.bytes_used} bytes
+        %td= format_bytes(@container.bytes_used)

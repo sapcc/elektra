@@ -14,5 +14,13 @@ module ObjectStorage
         errors[:name] << 'may not contain more than 256 characters' if name.size > 256 
       end
 
+      def object_count
+        read(:object_count).to_i
+      end
+
+      def bytes_used
+        read(:bytes_used).to_i
+      end
+
   end
 end
