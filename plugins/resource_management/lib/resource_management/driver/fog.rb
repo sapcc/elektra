@@ -177,7 +177,13 @@ module ResourceManagement
         # establish service user token for service project (same basic
         # methodology as above, but since it's always the same token scope, we
         # can store and reuse the connection object)
-        @service_project_id ||= @srv_conn.auth_projects.body['projects'].first['id']
+        unless @service_project_id
+          service_project = @srv_conn.auth_projects.body['projects'].first
+          unless service_project
+            raise ::Fog::Storage::OpenStack::NotFound, "cannot find service user project to use for Swift quota/usage management"
+          end
+          @service_project_id = service_project['id']
+        end
         @swift_conn         ||= ::Fog::Storage::OpenStack.new(
           provider:                    'openstack', 
           openstack_auth_url:          @auth_url,
