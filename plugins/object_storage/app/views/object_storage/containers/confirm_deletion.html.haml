@@ -4,7 +4,7 @@
       .col-md-6
         %fieldset
           = f.input :name, label: 'Type the name of the container to confirm a deletion!'
-          = f.hidden_field :delete_container_name, value: @container.name
+          = f.hidden_field :container_name, value: @container.name
       .col-md-6
         .bs-callout.bs-callout-warning
           %p 

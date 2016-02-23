@@ -40,7 +40,10 @@ module ObjectStorage
       @form = ObjectStorage::Forms::ConfirmContainer.new(params.require(:forms_confirm_container))
       unless @form.validate
         render action: 'confirm_deletion'
+        return
       end
+      @container.destroy
+      @containers = services.object_storage.containers
     end
 
     private
