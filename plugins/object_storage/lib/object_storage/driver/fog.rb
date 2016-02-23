@@ -65,6 +65,9 @@ module ObjectStorage
       end
 
       def delete_container(name)
+        # TODO: this works only for empty containers 
+        #       If the container exists but is not empty, the response is "There was a conflict when trying to complete
+        #       your request."
         handle_response { @fog.delete_container(name) }
       end
 
