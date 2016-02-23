@@ -3,15 +3,13 @@ require 'ostruct'
 module Automation
 
   class InstancesController < Automation::ApplicationController
+    before_action :agents_with_jobs, only: [:index, :index_update]
 
     def index
-      result = services.automation.agents("", ['online', 'hostname', 'os', 'ipaddress'], 1, 10)
-      page = params[:page]||1
-      per_page = 5
+    end
 
-      @agents = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).
-        page(page).
-        per(per_page)
+    def index_update
+      render partial: 'table_instances', locals: {instances: @agents, jobs: @jobs}, layout: false
     end
 
     def show
@@ -55,6 +53,20 @@ module Automation
     rescue => exception
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
       return @error = {key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}
+    end
+
+
+    private
+
+    def agents_with_jobs
+      page = params[:page]||1
+      per_page = 5
+      result = IndexAgentsService.new(services.automation).list_agents(page, per_page)
+
+      @agents = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).
+        page(page).
+        per(per_page)
+      @jobs = result[:jobs]
     end
 
   end
