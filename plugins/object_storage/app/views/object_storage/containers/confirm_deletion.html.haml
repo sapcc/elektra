@@ -1,16 +1,21 @@
+= content_for :title do
+  Delete container: #{@container.name}
+
 = simple_form_for @form, url: plugin('object_storage').container_path(@container.name), method: :delete, remote: request.xhr?, html: { data: { modal: true } } do |f|
   %div{class: modal? ? 'modal-body' : ''}
+    -#.bs-callout.bs-callout-warning
+      All objects in this container will be deleted. This cannot be undone.
     .row.quota-row
       .col-md-6
         %fieldset
-          = f.input :name, label: 'Type the name of the container to confirm a deletion!'
+          = f.input :name, label: 'Type container name to confirm'
           = f.hidden_field :container_name, value: @container.name
       .col-md-6
         .bs-callout.bs-callout-warning
           %p 
-            Deleting this container and its objects cannot be undone. Are you sure you want to delete container
-            %strong #{@container.name}
-            ?
+            All objects in this container will be deleted.
+            %strong This cannot be undone.
+            Are you sure?
     .buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
         %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
