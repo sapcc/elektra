@@ -1,8 +1,6 @@
 = simple_form_for @form, url: plugin('object_storage').containers_path, method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
   %div{class: modal? ? 'modal-body' : ''}
-    - if @error
-      %p.alert.alert-error= @error
-    .row.quota-row
+   .row.quota-row
       .col-md-6
         %fieldset
           = f.input :name, label: 'Container Name'
