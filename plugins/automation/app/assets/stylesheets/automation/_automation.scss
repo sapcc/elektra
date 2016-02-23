@@ -6,13 +6,37 @@
 }
 
 .table th:not(:last-child){
-  width: 25%;
+  width: 20%;
 }
 
 .automation_status_alarm {
   color: $alarm-red;
 }
 
+.job_success {
+  color: $deep-green;
+}
+
+.job_failed {
+  color: $alarm-red;
+}
+
+.job_queued {
+  color: $bright-orange;
+}
+
+// Job popover
+
+a[data-popover-type='job-history'] {
+  text-decoration: none;
+}
+
+.head_title {
+  padding: 3px 6px;
+}
+.close-button {
+  padding: 1px 6px;
+}
 
 // Install Agent
 

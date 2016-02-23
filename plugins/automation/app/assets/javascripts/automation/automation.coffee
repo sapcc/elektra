@@ -1,29 +1,45 @@
-$.fn.initLoadingSection = () ->
-  this.each () ->
-    $element = $(this)
+job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
 
-    target = $element.data('loadingTargetId')
-    if typeof target == "undefined"
-      return
+@init_history_popover= () ->
+  # init popovers
+  $(job_popover_matcher).popover
+    placement: 'top'
+    html: true
 
-    text = $element.data('loadingText')
-    if typeof text == "undefined"
-      text = "Retrieving data..."
+  # hide popover if other popover is clicked
+  $(job_popover_matcher).on 'click', job_popover_close_other_popovers_handler
 
-    $("#"+target).append('<span>' + text + '</span><span class="loading-spinner-section"></span>')
-    $("#"+target).addClass('hidden')
+  # add click handler to the html element to close popovers when clicking outside of the elements
+  $('html').unbind('click', job_popover_outside_click_handler)
+  if $(job_popover_matcher).length > 0
+    $('html').bind('click', job_popover_outside_click_handler)
 
-    $element.click ->
-      $("#"+target).removeClass('hidden')
-      $('html, body').animate({ scrollTop: $("#"+target).offset().top }, 500)
-      return
+@close_popover= () ->
+  $(job_popover_matcher).popover 'hide'
 
-    return this
+@job_popover_close_other_popovers_handler= (e) ->
+  e.stopPropagation()
+  e.preventDefault()
+  $(job_popover_matcher).not(this).popover 'hide'
 
+@job_popover_outside_click_handler= (e) ->
+  if $(e.target).data('popover-type') != 'job-history' and $(e.target).parents('.popover.in').length == 0
+    close_popover()
 
 $ ->
 # -----------
 # Automation
 # -----------
-  $('.loading_section').initLoadingSection()
+  $(document).on('polling:update_complete', init_history_popover)
 
+  # init popovers elements
+  $(job_popover_matcher).popover
+    placement: 'top'
+    html: true
+
+  # add click handler to the popovers to hide popover if other popover is clicked
+  $(job_popover_matcher).on 'click', job_popover_close_other_popovers_handler
+
+  # add click handler to the html element to close popovers when clicking outside of the elements
+  if $(job_popover_matcher).length > 0
+    $('html').bind('click', job_popover_outside_click_handler)

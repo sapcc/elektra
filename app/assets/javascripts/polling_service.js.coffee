@@ -5,6 +5,8 @@ class @PollingService
    
   updateElement= (element) ->
     $element = $(element)
+    return if $element.data('polling_is_updating') == true
+    $element.data( 'polling_is_updating', true );
     url = $element.data('updatePath')
     return unless url
          
@@ -27,22 +29,26 @@ class @PollingService
         else
           # no redirect -> replace content with html from response
           #exists = $.contains(document.documentElement, $element)
-          $element.replaceWith(data)   
-          
-     
-  # update method which is called periodically 
-  update= () ->    
+          $element.replaceWith(data)
+      error: () ->
+        $element.data( 'polling_is_updating', false );
+      complete: () ->
+        $('body').trigger( 'polling:update_complete' );
+
+
+  # update method which is called periodically
+  update= () ->
     # get current timestamp
     timestamp = Math.round((new Date().getTime())/ 1000)
-    
+
     # for each element found by selector do
     $(selector).each () ->
       $element  = $(this)
-
+    
       # element's own update interval
       updateInterval = $element.data('updateInterval') || 10
-      updateInterval = updateInterval*1000 if updateInterval < 1000
-      
+      updateInterval = updateInterval*1000
+    
       # modulo operation: rest of current timestamp divided by element's interval should be zero
       shouldUpdate = (timestamp % Math.round(updateInterval/ interval))==0
       
