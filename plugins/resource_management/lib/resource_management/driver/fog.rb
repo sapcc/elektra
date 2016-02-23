@@ -135,36 +135,6 @@ module ResourceManagement
 
       # NOTE: Use like this:
       #
-      # with_service_user_connection(::Fog::Compute::OpenStack, domain_id, project_id) do |connection|
-      #    ...
-      # end
-      def with_service_user_connection(fog_class, domain_id, project_id, &block)
-        # establish service user connection to selected domain/project (this is
-        # a bit ugly since MonsoonOpenstackAuth does not want to give us the
-        # password back, so we have to resort to ENV there)
-        auth_params = {
-          openstack_auth_url:          @auth_url,
-          openstack_region:            @region,
-          openstack_auth_token:        @service_user_token,   
-          openstack_project_domain_id: domain_id,
-          openstack_project_id:        project_id,
-          connection_options:          { ssl_verify_peer: false },
-        }
-
-        return yield(fog_class.new(auth_params))
-      rescue Excon::Errors::Unauthorized, Excon::Errors::Forbidden
-        # dashboard user may not have access to this project yet -> grant
-        # service user role in this project
-        roles = @srv_conn.list_roles(name: 'service').body['roles']
-        raise "missing role \"service\" in Keystone" if roles.empty?
-        @srv_conn.grant_project_user_role(project_id, @srv_conn.current_user_id, roles.first['id'])
-
-        # try again after granting the service role
-        return yield(fog_class.new(auth_params))
-      end
-
-      # NOTE: Use like this:
-      #
       # with_service_user_connection_for_swift(project_id) do |connection|
       #    ...
       # end
