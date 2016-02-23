@@ -1,5 +1,5 @@
 = content_for :title do
-  Delete container: #{@container.name}
+  Emptying container: #{@container.name}
 
 = simple_form_for @form, url: plugin('object_storage').container_path(@container.name), method: :delete, remote: request.xhr?, html: { data: { modal: true } } do |f|
   %div{class: modal? ? 'modal-body' : ''}
@@ -13,7 +13,7 @@
       .col-md-6
         .bs-callout.bs-callout-warning
           %p 
-            The container and All included objects will be deleted.
+            All objects in this container will be deleted.
             %strong This cannot be undone.
             Are you sure?
     .buttons{class: modal? ? 'modal-footer' : ''}

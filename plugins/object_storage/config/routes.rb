@@ -11,6 +11,7 @@ ObjectStorage::Engine.routes.draw do
     get  'show/*path'          => 'objects#show',        as: 'object'
 
     get 'confirm_deletion' => 'containers#confirm_deletion'
+    get 'confirm_emptying' => 'containers#confirm_emptying'
 
     get  'upload(/*path)'        => 'folders#new_object',    as: 'new_object'
     post 'upload(/*path)'        => 'folders#create_object', as: 'create_object'

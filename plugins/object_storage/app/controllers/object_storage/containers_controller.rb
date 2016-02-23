@@ -12,6 +12,10 @@ module ObjectStorage
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
     end
 
+    def confirm_emptying
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new()
+    end
+
     def show
     end
 
