@@ -103,7 +103,10 @@ module ObjectStorage
 
       def objects_at_path(container_name, path, filter={})
         path += '/' if !path.end_with?('/') && !path.empty?
-        return objects(container_name, filter.merge(prefix: path, delimiter: '/'))
+        result = objects(container_name, filter.merge(prefix: path, delimiter: '/'))
+        # if there is a pseudo-folder at `path`, it will be in the result, too;
+        # filter this out since we only want stuff below `path`
+        return result.reject { |obj| obj['id'] == path }
       end
 
       def get_object(container_name, path)
@@ -117,6 +120,15 @@ module ObjectStorage
 
       def get_object_contents(container_name, path)
         handle_response { fog_get_object(container_name, path).body }
+      end
+
+      def create_object(container_name, path, contents)
+        handle_response do
+          # `contents` is an IO object to allow for easy for future expansion to
+          # more clever upload strategies (e.g. SLO); for now, we just send
+          # everything at once
+          @fog.put_object(container_name, path, contents.read)
+        end
       end
 
       private

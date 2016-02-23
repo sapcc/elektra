@@ -16,18 +16,15 @@ module ObjectStorage
     end
 
     def new
-      @container = services.object_storage.new_container(name: '')
+      @container = services.object_storage.new_container(name: "")
     end
 
     def create
-      # TODO: How to do error handling?
-      #  * check existing container
-      #  * not allowed characters?
-      #  * empty name
-
-      name = params.require(:container).require(:name)
-      new_container = services.object_storage.new_container(name: name)
-      new_container.save
+      @container = services.object_storage.new_container(params.require(:container))
+      unless @container.save
+        render action: 'new'
+        return
+      end
       @containers = services.object_storage.containers
     end
 

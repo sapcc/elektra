@@ -32,7 +32,7 @@ module ObjectStorage
     def load_object
       @object = services.object_storage.find_object(@container_name, params[:path])
       if (not @object) or @object.is_directory?
-        raise ActiveRecord::RecordNotFound, "object #{params[:object]} not found in container #{@container_name}"
+        raise ActiveRecord::RecordNotFound, "object #{params[:path]} not found in container #{@container_name}"
       end
     end
 

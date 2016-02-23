@@ -4,6 +4,7 @@
 .toolbar
   = link_to 'Create container', plugin('object_storage').new_container_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
 
-= render partial: 'list'
+#container_list
+  = render partial: 'list'
 
 
