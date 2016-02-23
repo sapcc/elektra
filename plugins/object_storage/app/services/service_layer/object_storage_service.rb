@@ -39,6 +39,7 @@ module ServiceLayer
 
     def list_objects_at_path(container_name, path)
       return [] if container_name.blank?
+      path = '' if path == '/' # treat container root correctly
       return driver.map_to(ObjectStorage::Object).objects_at_path(container_name, path)
     end
 

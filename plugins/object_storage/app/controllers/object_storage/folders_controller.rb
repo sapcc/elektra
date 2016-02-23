@@ -19,7 +19,10 @@ module ObjectStorage
       services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
 
       respond_to do |format|
-        format.js
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(@container_name, @object.path)
+          render template: '/object_storage/objects/reload_index'
+        end
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
       end
     end
@@ -38,7 +41,10 @@ module ObjectStorage
       services.object_storage.create_folder(@container_name, @object.path + @form.name)
 
       respond_to do |format|
-        format.js
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(@container_name, @object.path)
+          render template: '/object_storage/objects/reload_index'
+        end
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
       end
     end
