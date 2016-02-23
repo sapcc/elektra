@@ -7,6 +7,9 @@ module ObjectStorage
       end
 
       validates_presence_of :name
+      validate do
+        errors[:name] << "not correct! please type #{delete_container_name}" if name != delete_container_name
+      end
 
     end
   end

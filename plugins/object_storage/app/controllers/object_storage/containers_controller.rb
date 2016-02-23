@@ -37,7 +37,10 @@ module ObjectStorage
     end
 
     def destroy
-      # TODO
+      @form = ObjectStorage::Forms::ConfirmContainer.new(params.require(:forms_confirm_container))
+      unless @form.validate
+        render action: 'confirm_deletion'
+      end
     end
 
     private
