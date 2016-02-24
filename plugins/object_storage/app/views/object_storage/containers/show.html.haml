@@ -7,10 +7,10 @@
       %tbody
         %tr
           %th Object count
-          %td{ colspan: 2 }= @container.object_count
+          %td= @container.object_count
         %tr
           %th Total size
-          %td{ colspan: 2 }= format_bytes(@container.bytes_used)
+          %td= format_bytes(@container.bytes_used)
         %tr
           %th Custom metadata
           %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
