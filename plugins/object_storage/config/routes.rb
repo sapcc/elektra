@@ -1,5 +1,7 @@
 ObjectStorage::Engine.routes.draw do
 
+  get '/' => 'entry#index', as: 'entry'
+
   resources 'containers', param: :container, except: :edit do
     member do
       get :confirm_deletion

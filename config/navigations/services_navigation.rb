@@ -101,7 +101,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-database fa-fw" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
-      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').containers_path}, if: -> { services.available?(:object_storage,:containers) }
+      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
     #
