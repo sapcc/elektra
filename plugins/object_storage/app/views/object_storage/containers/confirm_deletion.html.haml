@@ -4,7 +4,7 @@
 = simple_form_for @form, url: plugin('object_storage').container_path(@container.name), method: :delete, remote: request.xhr?, html: { data: { modal: true } } do |f|
   %div{class: modal? ? 'modal-body' : ''}
     .bs-callout.bs-callout-danger
-      %span{ class:"fa fa-exclamation-circle"}
+      %span.fa.fa-exclamation-circle
       %strong Are you sure? 
       The container and All included objects will be deleted. This cannot be undone.
     .row.quota-row
