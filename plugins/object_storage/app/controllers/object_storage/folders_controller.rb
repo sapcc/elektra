@@ -63,7 +63,7 @@ module ObjectStorage
       # folder identified by params[:path] need not necessarily exist as an
       # object (i.e. find_object() might fail with 404)
       params[:path] += '/' unless params[:path].end_with?('/')
-      @object = ObjectStorage::Object.new(nil, id: params[:path])
+      @object = ObjectStorage::Object.new(nil, path: params[:path])
     end
 
   end
