@@ -7,6 +7,7 @@ module ObjectStorage
     #   - last_modified
     #   - md5_hash
     #   - size_bytes
+    #   - metadata (Hash)
     # The id() is identical to the path() if the object is persisted.
 
     def size_bytes
