@@ -16,3 +16,8 @@
         = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
       %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Create
 
+=content_for :javascripts do
+  :javascript
+    setTimeout(function(){
+      $('#container_name').focus().select();
+    }, 0)
