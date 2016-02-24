@@ -29,6 +29,12 @@ module ObjectStorage
         render action: 'confirm_emptying'
         return
       end
+      services.object_storage.empty_container(params.require(:forms_confirm_container_action).require(:name))
+
+      @containers = services.object_storage.containers
+      respond_to do |format|
+        format.js { render action: 'reload_container_list' }
+      end
     end
 
     def create

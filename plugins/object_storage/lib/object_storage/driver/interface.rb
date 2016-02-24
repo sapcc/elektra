@@ -24,6 +24,10 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def empty_container(name)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
       ##### objects
 
       def objects(container_name, filter={})
