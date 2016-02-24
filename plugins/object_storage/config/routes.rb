@@ -12,7 +12,8 @@ ObjectStorage::Engine.routes.draw do
     # put all action names etc. before it
     get  'list(/*path)'        => 'objects#index',       as: 'list_objects'
     get  'raw/*path'           => 'objects#download',    as: 'download_object'
-    get  'show/*path'          => 'objects#show',        as: 'object'
+    get  'object/*path'        => 'objects#show',        as: 'object'
+    post 'object/*path'        => 'objects#update',      as: 'update_object'
 
     get  'upload(/*path)'        => 'folders#new_object',    as: 'new_object'
     post 'upload(/*path)'        => 'folders#create_object', as: 'create_object'

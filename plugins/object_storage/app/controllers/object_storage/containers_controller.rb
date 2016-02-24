@@ -33,16 +33,7 @@ module ObjectStorage
       # TODO: conflict: params[:container] comes from the route, but may in the
       # future also come from SimpleForm input elements
 
-      # read metadata from params
-      metadata_keys   = params.require(:metadata).require(:keys)
-      metadata_values = params.require(:metadata).require(:values)
-      metadata = {}
-      metadata_keys.each_with_index do |key, index|
-        next if key.blank? # skip empty rows
-        metadata[key] = metadata_values[index]
-      end
-
-      @container.metadata = metadata
+      @container.metadata = self.metadata_params
       unless @container.save
         render action: 'show' # "edit" view is covered by "show"
         return

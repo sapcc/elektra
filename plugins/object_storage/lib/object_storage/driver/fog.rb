@@ -51,7 +51,10 @@ module ObjectStorage
       end
 
       def create_container(params={})
-        update_container(params[:name], params)
+        handle_response do
+          update_container(params[:name], params)
+          params
+        end
       end
 
       def update_container(name, params={})
@@ -64,19 +67,19 @@ module ObjectStorage
           if old_metadata.nil? && !new_metadata.nil?
             raise InputError, 'cannot update metadata without knowing the current metadata'
           end
-          old_metadata.each do |key, value|
+          (old_metadata || {}).each do |key, value|
             unless new_metadata.has_key?(key)
               request_params["X-Remove-Container-Meta-#{key}"] = "1"
             end
           end
-          new_metadata.each do |key, value|
+          (new_metadata || {}).each do |key, value|
             if old_metadata[key] != value
               request_params["X-Container-Meta-#{key}"] = value
             end
           end
 
           @fog.put_container(name, headers: request_params)
-          return # nothing
+          nil # return nothing
         end
       end
 
@@ -130,9 +133,11 @@ module ObjectStorage
 
       def get_object(container_name, path)
         handle_response do
-          data = map_attribute_names(fog_head_object(container_name, path).headers, OBJECT_ATTRMAP)
+          headers = fog_head_object(container_name, path).headers
+          data = map_attribute_names(headers, OBJECT_ATTRMAP)
           data['id'] = data['path'] = path
           data['container_name'] = container_name
+          data['metadata'] = extract_metadata_tags(headers, 'X-Object-Meta-')
           data
         end
       end
@@ -147,6 +152,19 @@ module ObjectStorage
           # more clever upload strategies (e.g. SLO); for now, we just send
           # everything at once
           @fog.put_object(container_name, path, contents.read)
+        end
+      end
+
+      def update_object(path, params)
+        handle_response do
+          request_params = map_attribute_names(params, OBJECT_WRITE_ATTRMAP)
+
+          (params['metadata'] || {}).each do |key, value|
+            request_params["X-Object-Meta-#{key}"] = value
+          end
+
+          fog_post_object(params[:container_name], path, request_params)
+          nil # return nothing
         end
       end
 
@@ -182,6 +200,16 @@ module ObjectStorage
           :expects  => 200,
           :method   => 'HEAD',
           :path     => "#{::Fog::OpenStack.escape(container_name)}/#{path}"
+        }, false)
+      end
+
+      # TODO This request is missing in Fog.
+      def fog_post_object(container_name, path, headers={})
+        @fog.request({
+          expects: [ 201, 202 ],
+          method:  'POST',
+          path:    "#{::Fog::OpenStack.escape(container_name)}/#{path}",
+          headers: headers,
         }, false)
       end
 

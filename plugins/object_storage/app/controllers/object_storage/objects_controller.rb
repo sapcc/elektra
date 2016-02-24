@@ -19,6 +19,22 @@ module ObjectStorage
       render body: @object.file_contents
     end
 
+    def update
+      @object.metadata = self.metadata_params
+      unless @object.save
+        render action: 'show' # "edit" view is covered by "show"
+        return
+      end
+
+      respond_to do |format|
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(@container_name, @object.dirname)
+          render template: '/object_storage/objects/reload_index'
+        end
+        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.dirname) }
+      end
+    end
+
     private
 
     def load_params
