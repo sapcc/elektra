@@ -6,12 +6,13 @@
     .bs-callout.bs-callout-danger
       %span.fa.fa-exclamation-circle
       %strong Are you sure? 
-      The container and All included objects will be deleted. This cannot be undone.
+      The container will be deleted. This cannot be undone.
     .row.quota-row
       .col-md-6
         %fieldset
           = f.input :name, label: 'Type container name to confirm'
           = f.hidden_field :container_name, value: @container.name
+          = f.hidden_field :reload_list, value: params[:reload_list]
     .buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
         %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
@@ -24,3 +25,10 @@
     setTimeout(function(){
       $('#forms_confirm_container_action_name').focus().select();
     }, 0)
+
+    // to keep the button disabled after the action is done, because the browser 
+    // needs time to load the new view
+    $('button.btn.btn-danger').click(
+       function(){
+         $('button.btn.btn-danger').addClass('disabled');
+    });

@@ -14,5 +14,6 @@
         %li.divider
         - if container.object_count > 0
           %li= link_to 'Empty', plugin('object_storage').confirm_emptying_container_path(container.name), data: { modal: true }
-        %li= link_to 'Delete', plugin('object_storage').confirm_deletion_container_path(container.name), data: {modal: true}
+        - else
+          %li= link_to 'Delete', plugin('object_storage').confirm_deletion_container_path(container.name, reload_list: true), data: { modal: true }
 

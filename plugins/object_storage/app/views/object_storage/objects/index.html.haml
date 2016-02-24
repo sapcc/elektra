@@ -7,6 +7,10 @@
   = make_breadcrumb(@container_name, params[:path])
 
 .toolbar
+  - if @objects.empty?
+    = link_to 'Delete Container', plugin('object_storage').confirm_deletion_container_path(@container_name), class: 'btn btn-danger btn-lg', data: { modal: true }
+  - else
+    = link_to 'Empty Container', plugin('object_storage').confirm_emptying_container_path(@container_name), class: 'btn btn-danger btn-lg', data: { modal: true }
   = link_to 'Upload file', plugin('object_storage').new_object_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
   = link_to 'Create folder', plugin('object_storage').new_folder_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
 

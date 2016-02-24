@@ -23,4 +23,11 @@
   :javascript
     setTimeout(function(){
       $('#forms_confirm_container_action_name').focus().select();
-    }, 0)
+    }, 0);
+
+    // to keep the button disabled after the action is done, because the browser 
+    // needs time to load the new view
+    $('button.btn.btn-danger').click(
+       function(){
+         $('button.btn.btn-danger').addClass('disabled');
+    });

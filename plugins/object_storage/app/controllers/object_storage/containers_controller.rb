@@ -29,12 +29,8 @@ module ObjectStorage
         render action: 'confirm_emptying'
         return
       end
-      services.object_storage.empty_container(params.require(:forms_confirm_container_action).require(:name))
-
-      @containers = services.object_storage.containers
-      respond_to do |format|
-        format.js { render action: 'reload_container_list' }
-      end
+      services.object_storage.empty_container(@form.name)
+      redirect_to plugin('object_storage').list_objects_path(@form.name, "")
     end
 
     def create
@@ -63,11 +59,15 @@ module ObjectStorage
         render action: 'confirm_deletion'
         return
       end
+      
       @container.destroy
       @containers = services.object_storage.containers
-
-      respond_to do |format|
-        format.js { render action: 'reload_container_list' }
+      if @form.reload_list == "true"
+        respond_to do |format|
+          format.js { render action: 'reload_container_list' }
+        end
+      else
+        redirect_to plugin('object_storage').containers_path()
       end
     end
 
