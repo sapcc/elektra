@@ -41,6 +41,28 @@ module ResourceManagement
         return result
       end
 
+      # extrawurst for monsoon2 legacy: List all projects in this domain where
+      # the given role is assigned.
+      def enumerate_projects_with_role_assignment(domain_id, role_name)
+        # resolve role name into ID
+        role_id = @srv_conn.list_roles(name: role_name).body['roles'].first['id']
+
+        # which project IDs are valid?
+        in_this_domain = {}
+        @srv_conn.list_projects(domain_id: domain_id).body['projects'].each do |project|
+          in_this_domain[ project['id'] ] = true
+        end
+
+        # iterate over role assignments
+        result = []
+        @srv_conn.list_role_assignments("role.id" => role_id).body['role_assignments'].each do |assignment|
+          if project_id = assignment['scope'].fetch('project', {})['id']
+            result << project_id
+          end
+        end
+        return result.uniq
+      end
+
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
@@ -144,29 +166,39 @@ module ResourceManagement
         # gets easier again since we only need the reseller-admin role on the
         # service project of the service user
 
-        # establish service user token for service project (same basic
-        # methodology as above, but since it's always the same token scope, we
-        # can store and reuse the connection object)
-        unless @service_project_id
-          service_project = @srv_conn.auth_projects.body['projects'].first
-          unless service_project
-            raise ::Fog::Storage::OpenStack::NotFound, "cannot find service user project to use for Swift quota/usage management"
-          end
-          @service_project_id = service_project['id']
-        end
-        @swift_conn         ||= ::Fog::Storage::OpenStack.new(
-          provider:                    'openstack', 
-          openstack_auth_url:          @auth_url,
-          openstack_region:            @region,
-          openstack_auth_token:        @service_user_token,
-          openstack_project_id:        @service_project_id,
-          connection_options:          { ssl_verify_peer: false },
-        )
-        
+        # establish service user token for service project
+        # FIXME: This section is currently more or less a crude hack since the
+        # service user refactoring is still in progress across the Dashboard,
+        # but we need something functional for our customers *now*.
+        #
+        # The previous implementation can be found by `git show`ing the commit
+        # introducing this comment. The problem with the old implementation is
+        # that, while it was nicer, it was relying on the @srv_conn which is
+        # usually scoped in the wrong domain and thus cannot locate the service
+        # project properly.
+        unless @swift_conn and @swift_project_id
+          swift_auth_params = {
+            openstack_auth_url:       @auth_url,
+            openstack_region:         ENV.fetch('SWIFT_RESELLERADMIN_REGION', @region), # region needs to be configurable since we have clouds with different region setup per cluster
+            openstack_username:       ENV['MONSOON_OPENSTACK_AUTH_API_USERID'],
+            openstack_api_key:        ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD'],
+            openstack_user_domain:    ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN'],
+            openstack_project_name:   ENV['SWIFT_RESELLERADMIN_PROJECT'],
+            openstack_project_domain: ENV['SWIFT_RESELLERADMIN_PROJECT_DOMAIN'],
+            connection_options:       { ssl_verify_peer: false }, # TODO: necessary?
+          }
 
-        # extract original storage URL from connection object, and store it
-        # since we're going to modify it now
-        @swift_conn_path ||= @swift_conn.instance_variable_get(:@path)
+          @swift_identity = ::Fog::Identity::OpenStack::V3.new(swift_auth_params)
+          @swift_domain_id = @swift_identity.list_domains(name: ENV['SWIFT_RESELLERADMIN_PROJECT_DOMAIN']).body['domains'].first['id']
+          @swift_project_id = @swift_identity.list_projects(name: ENV['SWIFT_RESELLERADMIN_PROJECT'], domain_id: @swift_domain_id).body['projects'].first['id']
+
+          @swift_conn = ::Fog::Storage::OpenStack.new(swift_auth_params)
+
+          # extract original storage URL from connection object, and store it
+          # since we're going to modify it now
+          @swift_conn_path = @swift_conn.instance_variable_get(:@path)
+          raise ArgumentError, "spurious storage URL: '#{@swift_conn_path}' does not contain expected service project ID '#{@swift_project_id}'" unless @swift_conn_path.include?(@swift_project_id)
+        end
 
         # adjust the storage URL to point to the desired project (this looks
         # insane, but the admin tasks in the swiftclient also allow to supply a
@@ -174,7 +206,7 @@ module ResourceManagement
         # <http://docs.openstack.org/liberty/config-reference/content/object-storage-account-quotas.html>)
         # (TODO: use that reasoning to get a storage_path reader/writer into
         # Fog::Storage::OpenStack)
-        storage_path = @swift_conn_path.gsub(@service_project_id, project_id)
+        storage_path = @swift_conn_path.gsub(@swift_project_id, project_id)
         @swift_conn.instance_variable_set(:@path, storage_path)
 
         if options[:retrying]
@@ -186,12 +218,13 @@ module ResourceManagement
             # if service user does not have the ResellerAdmin role yet, grant
             # it, then retry the request
             role_name = ENV.fetch('SWIFT_RESELLERADMIN_ROLE', 'ResellerAdmin')
-            roles = @srv_conn.list_roles(name: role_name).body['roles']
+            roles = @swift_identity.list_roles(name: role_name).body['roles']
             raise "missing role \"#{role_name}\" in Keystone" if roles.empty?
-            @srv_conn.grant_project_user_role(@service_project_id, @srv_conn.current_user_id, roles.first['id'])
+            @swift_identity.grant_project_user_role(@swift_project_id, @swift_identity.current_user_id, roles.first['id'])
 
             # clear all relevant instance variables since we need to recreate
             # the service user connection with the new set of roles
+            @swift_identity = nil
             @swift_conn = nil
             @swift_conn_path = nil
 
