@@ -42,24 +42,40 @@ module ObjectStorage
 
       def get_container(name)
         handle_response do
-          data = map_attribute_names(@fog.head_container(name).headers, CONTAINER_ATTRMAP)
+          headers = @fog.head_container(name).headers
+          data = map_attribute_names(headers, CONTAINER_ATTRMAP)
           data['id'] = data['name'] = name
+          data['metadata'] = extract_metadata_tags(headers, 'X-Container-Meta-')
           data
         end
       end
 
       def create_container(params={})
-        handle_response do
-          request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
-          @fog.put_container(params[:name], request_params)
-          return params.merge(id: params[:name])
-        end
+        update_container(params[:name], params)
       end
 
       def update_container(name, params={})
         handle_response do
           request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
-          @fog.put_container(name, request_params)
+
+          # convert difference between old and new metadata into a set of changes
+          old_metadata = params['original_metadata']
+          new_metadata = params['metadata']
+          if old_metadata.nil? && !new_metadata.nil?
+            raise InputError, 'cannot update metadata without knowing the current metadata'
+          end
+          old_metadata.each do |key, value|
+            unless new_metadata.has_key?(key)
+              request_params["X-Remove-Container-Meta-#{key}"] = "1"
+            end
+          end
+          new_metadata.each do |key, value|
+            if old_metadata[key] != value
+              request_params["X-Container-Meta-#{key}"] = value
+            end
+          end
+
+          @fog.put_container(name, headers: request_params)
           return # nothing
         end
       end
@@ -139,6 +155,16 @@ module ObjectStorage
       # Rename keys in `data` using the `attribute_map` and delete unknown keys.
       def map_attribute_names(data, attribute_map)
         data.transform_keys { |k| attribute_map.fetch(k, nil) }.reject { |key,_| key.nil? }
+      end
+
+      def extract_metadata_tags(headers, prefix)
+        result = {}
+        headers.each do |key,value|
+          if key.start_with?(prefix)
+            result[key.sub(prefix, '')] = value
+          end
+        end
+        return result
       end
 
       # Like @fog.get_object(), but encodes the `path` correctly. TODO: fix in Fog

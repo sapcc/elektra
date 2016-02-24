@@ -1,6 +1,6 @@
 ObjectStorage::Engine.routes.draw do
 
-  resources 'containers', param: :container do
+  resources 'containers', param: :container, except: :edit do
     member do
       get :confirm_deletion
     end
