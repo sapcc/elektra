@@ -19,3 +19,8 @@
         = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
       %button.btn.btn-danger{type: "submit", data: { disable_with: 'Please wait...'}} Delete
 
+=content_for :javascripts do
+  :javascript
+    setTimeout(function(){
+      $('#forms_confirm_container_action_name').focus().select();
+    }, 0)
