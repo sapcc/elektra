@@ -8,6 +8,10 @@ module ObjectStorage
       @containers = services.object_storage.containers
     end
 
+    def confirm_deletion
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new()
+    end
+
     def show
     end
 
@@ -22,6 +26,9 @@ module ObjectStorage
         return
       end
       @containers = services.object_storage.containers
+      respond_to do |format|
+        format.js { render action: 'reload_container_list' }
+      end
     end
 
     def edit
@@ -33,7 +40,17 @@ module ObjectStorage
     end
 
     def destroy
-      # TODO
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
+      unless @form.validate
+        render action: 'confirm_deletion'
+        return
+      end
+      @container.destroy
+      @containers = services.object_storage.containers
+
+      respond_to do |format|
+        format.js { render action: 'reload_container_list' }
+      end
     end
 
     private

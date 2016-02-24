@@ -1,6 +1,10 @@
 ObjectStorage::Engine.routes.draw do
 
-  resources 'containers', param: :container
+  resources 'containers', param: :container do
+    member do
+      get :confirm_deletion
+    end
+  end
 
   scope 'containers/:container', format: false do
     # a simple `resources :objects` won't work since the object path shall be

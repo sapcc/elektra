@@ -623,6 +623,19 @@ footer, .footer {
   &.bs-callout-info {
     border-left-color: $btn-info-border;
   }
+
+  &.bs-callout-success {
+    border-left-color: $btn-success-border;
+  }
+
+  &.bs-callout-warning {
+    border-left-color: $btn-warning-border;
+  }
+
+  &.bs-callout-danger {
+    border-left-color: $btn-danger-border;
+  }
+
 }
 
 blockquote, .bs-callout {
