@@ -13,5 +13,5 @@
         %li= link_to 'Properties', plugin('object_storage').container_path(container.name), data: { modal: true }
         %li.divider
         -#%li= link_to 'Empty', '#'
-        %li= link_to 'Delete', plugin('object_storage').confirm_deletion_path(container.name), data: {modal: true}
+        %li= link_to 'Delete', plugin('object_storage').confirm_deletion_container_path(container.name), data: {modal: true}
 

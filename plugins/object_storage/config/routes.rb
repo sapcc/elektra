@@ -1,6 +1,10 @@
 ObjectStorage::Engine.routes.draw do
 
-  resources 'containers', param: :container
+  resources 'containers', param: :container do
+    member do
+      get :confirm_deletion
+    end
+  end
 
   scope 'containers/:container', format: false do
     # a simple `resources :objects` won't work since the object path shall be
@@ -9,8 +13,6 @@ ObjectStorage::Engine.routes.draw do
     get  'list(/*path)'        => 'objects#index',       as: 'list_objects'
     get  'raw/*path'           => 'objects#download',    as: 'download_object'
     get  'show/*path'          => 'objects#show',        as: 'object'
-
-    get 'confirm_deletion' => 'containers#confirm_deletion'
 
     get  'upload(/*path)'        => 'folders#new_object',    as: 'new_object'
     post 'upload(/*path)'        => 'folders#create_object', as: 'create_object'
