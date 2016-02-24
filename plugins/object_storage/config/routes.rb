@@ -4,6 +4,7 @@ ObjectStorage::Engine.routes.draw do
     member do
       get :confirm_deletion
       get :confirm_emptying
+      post :empty
     end
   end
 

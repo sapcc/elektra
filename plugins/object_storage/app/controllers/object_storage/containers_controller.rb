@@ -23,6 +23,14 @@ module ObjectStorage
       @container = services.object_storage.new_container(name: "")
     end
 
+    def empty
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
+      unless @form.validate
+        render action: 'confirm_emptying'
+        return
+      end
+    end
+
     def create
       @container = services.object_storage.new_container(params.require(:container))
       unless @container.save
