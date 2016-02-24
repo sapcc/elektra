@@ -146,7 +146,7 @@ module ObjectStorage
         @fog.request({
           :expects  => 200,
           :method   => 'GET',
-          :path     => "#{::Fog::OpenStack.escape(container_name)}/#{path}"
+          :path     => "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
         }, false)
       end
 
@@ -155,8 +155,12 @@ module ObjectStorage
         @fog.request({
           :expects  => 200,
           :method   => 'HEAD',
-          :path     => "#{::Fog::OpenStack.escape(container_name)}/#{path}"
+          :path     => "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
         }, false)
+      end
+
+      def escape_path(path)
+        return ::Fog::OpenStack.escape(path).gsub('%2F', '/')
       end
 
     end
