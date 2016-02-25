@@ -1,24 +1,28 @@
 %p
   Found instance:
 
-%table.table
-  %tbody
-    %tr
-      %th Name
-      %td= @instance.name
-    %tr
-      %th ID
-      %td= @instance.id
+.row.form_row
+  .col-sm-2
+    %b.pull-right
+      Name
+  .col-sm-10
+    = @instance.name
+.row.form_row
+  .col-sm-2
+    %b.pull-right
+      ID
+  .col-sm-10
+    = @instance.id
 
 %p
   Please specify the instance's operating system:
 
-= form_tag plugin('automation').show_instructions_agents_path, :class => '', :remote => true do
+= form_tag plugin('automation').show_instructions_agents_path, :class => 'form-horizontal', :remote => true do
   = hidden_field_tag 'instance_id', @instance.id
   = hidden_field_tag 'from', 'select_os'
-  .form-group.clearfix
-    = label_tag 'instance_os', 'OS', class: "col-sm-3 control-label"
-    .col-sm-9
+  .form-group
+    = label_tag 'instance_os', 'OS', class: "col-sm-2 control-label"
+    .col-sm-10
       %select.form-control{name: 'instance_os', id: 'instance_os', autofocus: 'autofocus'}
         %option{disabled: true, selected:true}
           Please choose OS
@@ -27,4 +31,5 @@
             = value
 
   .form-group.clearfix
-    = button_tag "Send", class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." }
+    .col-sm-12
+      = button_tag "Send", class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." }

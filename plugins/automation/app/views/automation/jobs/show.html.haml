@@ -1,0 +1,85 @@
+= content_for :title do
+  Job details
+
+.modal-body
+
+  %h3
+    Details
+
+  .job_details
+    .row
+      .col-md-2
+        %b
+          Job Id:
+      .col-md-10
+        = @job.request_id
+
+    .row
+      .col-md-2
+        %b
+          Status:
+      .col-md-4
+        - job_status(@job.status)
+      .col-md-2
+        %b
+          Agent:
+      .col-md-4
+        = " #{@job.agent}"
+
+    .row
+      .col-md-2
+        %b
+          Action:
+      .col-md-4
+        = " #{@job.action}"
+      .col-md-2
+        %b
+          Created at:
+      .col-md-4
+        = " #{@job.created_at}".to_time.strftime('%a %b %d %H:%M:%S %Z %Y')
+
+    .row
+      .col-md-2
+        %b
+          Updated at:
+      .col-md-4
+        = " #{@job.updated_at}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
+      .col-md-2
+        %b
+          Duration:
+      .col-md-4
+        = @duration
+
+  %h3
+    Payload
+
+  %p
+    = "The payload has #{@payload_lines} lines of output. "
+    = link_to("View", plugin('automation').agent_job_show_payload_path(job_id: @job.request_id, agent_id: @agent_id), target: "_blank")
+    full payload.
+
+  %pre.snippet
+    %code
+      = preserve do
+        :escaped
+          #{@payload_outout}
+  %h3
+    Log
+
+  %p
+    = "The generated log has #{@log_lines} lines of output. "
+    = link_to("View", plugin('automation').agent_job_show_log_path(job_id: @job.request_id, agent_id: @agent_id), target: "_blank")
+    full log.
+
+  %pre.snippet
+    %code
+      = preserve do
+        :escaped
+          #{@log_output}
+
+
+.modal-footer
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+  - else
+    = link_to "Close", plugin('automation').agents_url(), class: 'btn btn-default'
