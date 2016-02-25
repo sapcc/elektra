@@ -83,16 +83,6 @@ module ObjectStorage
         end
       end
 
-      def empty_container(name)
-        handle_response do
-          object_list = self.objects(name)
-          object_list.each do |o|
-             @fog.delete_object(name, o["path"])
-          end
-          return # nothing
-        end
-      end
-
       def delete_container(name)
         # TODO: this works only for empty containers 
         #       If the container exists but is not empty, the response is "There was a conflict when trying to complete
