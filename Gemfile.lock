@@ -64,6 +64,11 @@ PATH
     automation (0.0.1)
 
 PATH
+  remote: plugins/block_storage
+  specs:
+    block_storage (0.0.1)
+
+PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
@@ -529,6 +534,7 @@ DEPENDENCIES
   activerecord-session_store
   automation!
   better_errors
+  block_storage!
   bootstrap-sass
   byebug
   capybara
@@ -579,6 +585,3 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
-
-BUNDLED WITH
-   1.10.6
