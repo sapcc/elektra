@@ -5,7 +5,6 @@ class InstallAgentParamError < StandardError
     super("#{_operation}")
   end
 end
-
 class InstallAgentInstanceOSNotFound < StandardError
   attr_accessor :instance, :operation
   def initialize(_instance, _operation)
@@ -13,19 +12,12 @@ class InstallAgentInstanceOSNotFound < StandardError
     super("#{_operation}")
   end
 end
-
 class InstallAgentAlreadyExists < StandardError; end
+class InstallAgentError < StandardError; end
+class InstallAgentNoInstructionsFound < StandardError; end
 
 class InstallAgentService
 
-  # instance_id
-  # instance_os
-  # compute service
-  # automation service
-  # active project
-  # token
-  #
-  # return: {url: '', ip: '', instance: nil}
   def process_request(instance_id, instance_os, compute_service, automation_service, active_project, token)
     # check instance id
     if instance_id.blank?
@@ -64,11 +56,15 @@ class InstallAgentService
         instance_os = instance.image.metadata['os_family']
       end
     end
-    # get the registration url
-    url = registration_url(instance_id, active_project, token)
-    ip = instance.addresses.values.blank? ? "" : instance.addresses.values.first.find{|i| i['addr']}['addr']
 
-    {url: url, ip: ip, instance_os: instance_os,  instance: instance}
+    # get the registration url and log info
+    url = begin
+      registration_url(instance_id, active_project, token)
+    rescue
+      raise InstallAgentError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.")
+    end
+
+    {log_info: create_log_info(instance), instance: instance, script: create_script(url, instance_os)}
   end
 
   private
@@ -79,9 +75,35 @@ class InstallAgentService
                                        headers: {'X-Auth-Token': token},
                                        timeout: 5,
                                        payload: {"CN": instance_id, "names": [{"OU": active_project.id, "O": active_project.domain_id}] }.to_json).execute
-    #convert to hash
     response_hash = JSON.parse(response)
-    response_hash['url']
+    response_hash.fetch('url', "")
+  end
+
+  def create_log_info(instance)
+    ip = instance.addresses.values.blank? ? "" : instance.addresses.values.first.find{|i| i['addr']}['addr']
+    dns_name = !instance.metadata.blank? && !instance.metadata.dns_name.blank? ? instance.metadata.dns_name : ""
+    result = ""
+    if !ip.blank?
+      result << ip
+    end
+    if !dns_name.blank?
+      result << " / #{dns_name}"
+    end
+    result
+  end
+
+  def create_script(url, instance_os)
+    if instance_os == 'linux'
+      return "curl --create-dirs -o /opt/arc/arc #{AUTOMATION_CONF['arc_update_site_url']}/#{instance_os}/amd64
+chmod +x /opt/arc/arc
+/opt/arc/arc init --endpoint #{AUTOMATION_CONF['arc_mqtt_url']} --update-uri #{AUTOMATION_CONF['arc_update_url']} --registration-url #{url}"
+    elsif instance_os == 'windows'
+      return "mkdir C:\\monsoon\\arc
+powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['arc_update_site_url']}/#{instance_os}/amd64','C:\\monsoon\\arc\\arc.exe')
+C:\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_mqtt_url']} --update-uri #{AUTOMATION_CONF['arc_update_url']} --registration-url #{url}"
+    else
+      raise InstallAgentNoInstructionsFound.new("No instructions found for this os #{instance_os}")
+    end
   end
 
 end
