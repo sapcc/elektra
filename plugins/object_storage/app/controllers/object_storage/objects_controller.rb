@@ -46,7 +46,6 @@ module ObjectStorage
 
       unless @form.validate
         @all_container_names = services.object_storage.containers.map(&:name).sort
-        puts "ATTRIBUTES: #{@form.attributes.inspect}"
         render action: 'new_copy'
         return
       end
