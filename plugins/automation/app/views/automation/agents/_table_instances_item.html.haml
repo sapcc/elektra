@@ -1,6 +1,6 @@
 %tr{id: "instance_#{instance.id}"}
   %td
-    = link_to(instance.name, plugin('automation').instance_path(id: instance.id, name: instance.name), data: {modal: true})
+    = link_to(instance.name, plugin('automation').agent_path(id: instance.id, name: instance.name), data: {modal: true})
   %td= "#{instance.facts.platform_family} #{instance.facts.platform_version}"
   %td= instance.facts.ipaddress
   %td{class: "snug #{'automation_status_alarm' if instance.online == false}"}

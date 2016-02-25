@@ -57,8 +57,8 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
     primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "icon moo-cloud"},
-    if: -> {services.available?(:compute,:instances) or services.available?(:identity,:web_console)} do |compute_nav|
-      compute_nav.item :instances, 'Instances', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }
+    if: -> {services.available?(:compute,:agents) or services.available?(:identity,:web_console)} do |compute_nav|
+      compute_nav.item :agents, 'Instances', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:agents) }
       # compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
       # compute_nav.item :volumes, 'Volumes', '#'
       # compute_nav.item :snapshots, 'Snapshots', '#'
@@ -66,8 +66,8 @@ SimpleNavigation::Configuration.run do |navigation|
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :automation, 'Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:instances) } do |automation_nav|
-      automation_nav.item :automation, 'Monsoon Automation', -> {plugin('automation').instances_path}, if: -> { services.available?(:automation,:instances) }
+    primary.item :automation, 'Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:agents) } do |automation_nav|
+      automation_nav.item :automation, 'Monsoon Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents) }
 
       # automation_nav.dom_attributes = {class: 'content-list'}
     end
