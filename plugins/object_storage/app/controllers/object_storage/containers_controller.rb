@@ -10,6 +10,12 @@ module ObjectStorage
 
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
+      @empty = @container.empty?
+    end
+
+    def confirm_emptying
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new()
+      @empty = @container.empty?
     end
 
     def show
@@ -17,6 +23,16 @@ module ObjectStorage
 
     def new
       @container = services.object_storage.new_container(name: "")
+    end
+
+    def empty
+      @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
+      unless @form.validate
+        render action: 'confirm_emptying'
+        return
+      end
+      @container.empty!
+      back_to_container_list
     end
 
     def create
@@ -48,8 +64,8 @@ module ObjectStorage
         render action: 'confirm_deletion'
         return
       end
+      
       @container.destroy
-
       back_to_container_list
     end
 

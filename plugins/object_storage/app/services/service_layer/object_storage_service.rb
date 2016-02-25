@@ -27,6 +27,7 @@ module ServiceLayer
     end
 
     def new_container(attributes={})
+      # maps to create_container in fog.rb
       ObjectStorage::Container.new(driver, attributes)
     end
 

@@ -33,5 +33,13 @@ module ObjectStorage
       super.merge('original_metadata' => @original_metadata)
     end
 
+    def empty?
+      @driver.objects(name, limit: 1).count == 0
+    end
+
+    def empty!
+      @driver.empty_container(name)
+    end
+
   end
 end

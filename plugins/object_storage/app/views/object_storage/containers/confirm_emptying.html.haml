@@ -1,13 +1,13 @@
 = content_for :title do
-  Delete container: #{@container.name}
+  Empty container: #{@container.name}
 
-- if @empty
-  = simple_form_for @form, url: plugin('object_storage').container_path(@container.name), method: :delete, remote: request.xhr?, html: { data: { modal: true } } do |f|
+- unless @empty
+  = simple_form_for @form, url: plugin('object_storage').empty_container_path(@container.name), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
     %div{class: modal? ? 'modal-body' : ''}
       .bs-callout.bs-callout-danger
-        %span.fa.fa-exclamation-circle
+        %span{ class:"fa fa-exclamation-circle"}
         %strong Are you sure? 
-        The container will be deleted. This cannot be undone.
+        All objects in the container will be deleted. This cannot be undone.
       .row.quota-row
         .col-md-6
           %fieldset
@@ -18,23 +18,23 @@
           %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
         - else
           = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
-        %button.btn.btn-danger{type: "submit", data: { disable_with: 'Please wait...'}} Delete
+        %button.btn.btn-danger{type: "submit", data: { disable_with: 'Please wait...'}} Empty
 - else
   %div{class: modal? ? 'modal-body' : ''}
-    .bs-callout.bs-callout-danger
+    .bs-callout.bs-callout-info
       %span.fa.fa-exclamation-circle
-      Cannot delete container because it contains objects. Please empty it first. 
+      Nothing to do. Container is already empty.
     .buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
         %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Got it
       - else
         = link_to "Got it", data: {dismiss:"modal"}, class: 'btn btn-default'
 
-
+  
 
 =content_for :javascripts do
   :javascript
     setTimeout(function(){
       $('#forms_confirm_container_action_name').focus().select();
-    }, 0)
+    }, 0);
 
