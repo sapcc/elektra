@@ -24,5 +24,6 @@
   "object_storage:folder_new_files":     "rule:object_storage_admin",
   "object_storage:folder_create_file":   "rule:object_storage_admin",
   "object_storage:folder_new_folder":    "rule:object_storage_admin",
-  "object_storage:folder_create_folder": "rule:object_storage_admin"
+  "object_storage:folder_create_folder": "rule:object_storage_admin",
+  "object_storage:folder_delete":        "rule:object_storage_admin"
 }

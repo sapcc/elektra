@@ -131,6 +131,11 @@ module ObjectStorage
         return result.reject { |obj| obj['id'] == path }
       end
 
+      def objects_below_path(container_name, path, filter={})
+        path += '/' if !path.end_with?('/') && !path.empty?
+        return objects(container_name, filter.merge(prefix: path))
+      end
+
       def get_object(container_name, path)
         handle_response do
           headers = fog_head_object(container_name, path).headers

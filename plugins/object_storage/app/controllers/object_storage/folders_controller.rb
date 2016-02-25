@@ -17,14 +17,7 @@ module ObjectStorage
       end
 
       services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
-
-      respond_to do |format|
-        format.js do
-          @objects = services.object_storage.list_objects_at_path(@container_name, @object.path)
-          render template: '/object_storage/objects/reload_index'
-        end
-        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
-      end
+      back_to_object_list(@container_name, @object.path)
     end
 
     def new_folder
@@ -39,14 +32,12 @@ module ObjectStorage
       end
 
       services.object_storage.create_folder(@container_name, @object.path + @form.name)
+      back_to_object_list(@container_name, @object.path)
+    end
 
-      respond_to do |format|
-        format.js do
-          @objects = services.object_storage.list_objects_at_path(@container_name, @object.path)
-          render template: '/object_storage/objects/reload_index'
-        end
-        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
-      end
+    def destroy
+      services.object_storage.delete_folder(@container_name, @object.path)
+      back_to_object_list(@container_name, @object.dirname)
     end
 
     private
@@ -64,6 +55,16 @@ module ObjectStorage
       # object (i.e. find_object() might fail with 404)
       params[:path] += '/' unless params[:path].end_with?('/')
       @object = ObjectStorage::Object.new(nil, path: params[:path])
+    end
+
+    def back_to_object_list(container_name, path)
+      respond_to do |format|
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(container_name, path)
+          render template: '/object_storage/objects/reload_index'
+        end
+        format.html { redirect_to plugin('object_storage').list_objects_path(container_name, path) }
+      end
     end
 
   end

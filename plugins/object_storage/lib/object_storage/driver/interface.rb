@@ -34,6 +34,10 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def objects_below_path(container_name, path, filter={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
       def get_object(container_name, path)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
