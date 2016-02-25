@@ -34,7 +34,11 @@ module ObjectStorage
     end
 
     def empty?
-      @driver.objects(read(:name), limit: 1).count == 0
+      @driver.objects(name, limit: 1).count == 0
+    end
+
+    def empty!
+      @driver.empty_container(name)
     end
 
   end

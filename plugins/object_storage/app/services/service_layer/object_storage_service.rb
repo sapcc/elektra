@@ -31,10 +31,6 @@ module ServiceLayer
       ObjectStorage::Container.new(driver, attributes)
     end
 
-    def empty_container(name)
-      driver.map_to(ObjectStorage::Container).empty_container(name)
-    end
-
     ##### objects
 
     def find_object(container_name, path)

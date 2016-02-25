@@ -31,7 +31,7 @@ module ObjectStorage
         render action: 'confirm_emptying'
         return
       end
-      services.object_storage.empty_container(@form.name)
+      @container.empty!
       if @form.reload_list == "true"
         @containers = services.object_storage.containers
         back_to_container_list
