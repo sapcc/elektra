@@ -27,7 +27,7 @@
                 .row
                   .col-md-9
                   .col-md-3
-                    = link_to("Open Log in new window", plugin('automation').show_log_instances_path(id: job.request_id), target: "_blank")
+                    = link_to("Open Log in new window", plugin('automation').show_log_agents_path(id: job.request_id), target: "_blank")
                 .row
                   .col-md-6
                     %b Job Id:
@@ -56,4 +56,4 @@
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
   - else
-    = link_to "Close", plugin('automation').instances_url(), class: 'btn btn-default'
+    = link_to "Close", plugin('automation').agents_url(), class: 'btn btn-default'

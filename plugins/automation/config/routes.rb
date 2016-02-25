@@ -1,8 +1,8 @@
 Automation::Engine.routes.draw do
 
-  resources :instances, only: [:index, :show] do
+  resources :agents, only: [:index, :show] do
     get 'index_update', :on => :collection
-    get 'install_agent', :on => :collection
+    get 'install', :on => :collection
     post 'show_instructions', :on => :collection
     get 'show_log', :on => :collection
   end

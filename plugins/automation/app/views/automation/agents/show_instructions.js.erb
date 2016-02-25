@@ -1,0 +1,14 @@
+<% if !@error.nil? %>
+  $("#flash_messages").html("<%= escape_javascript(render partial: "automation/agents/install_agent_error", locals: {error: @error}) %>");
+<% elsif @instance_os.nil?%>
+  $("#search_instance").html("<%= escape_javascript(render partial: "automation/agents/install_agent_version") %>");
+  $("#flash_messages").html("");
+  $(".modal-dialog .modal-title").html("Install new agent - Select version");
+  $( "#instance_os" ).focus();
+<% else %>
+  $("#flash_messages").html("");
+  $("#search_instance").html("<%= escape_javascript(render partial: "automation/agents/install_agent_instructions") %>");
+  $(".modal-dialog .modal-title").html("Install new agent - Instructions");
+<% end %>
+
+$('.snippet').initSnippetCopyToClipboard();

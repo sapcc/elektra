@@ -1,9 +1,0 @@
-%h2
-  Agents
-
-
-.toolbar
-  = link_to "Install a new Agent", plugin('automation').install_agent_instances_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
-
-= render partial: 'table_instances', locals: {instances: @agents, jobs: @jobs}
-

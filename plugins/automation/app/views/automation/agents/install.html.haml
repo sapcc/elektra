@@ -10,7 +10,7 @@
     %p
       Please enter the instance ID where the agent should be installed:
 
-    = form_tag plugin('automation').show_instructions_instances_path, remote: true do
+    = form_tag plugin('automation').show_instructions_agents_path, remote: true do
       .form-group
         = label_tag 'instance_id', 'Instance ID', class: 'sr-only'
         = text_field_tag 'instance_id', '', :maxlength => "256", :placeholder => "Enter instance ID", class: 'form-control', autofocus: true

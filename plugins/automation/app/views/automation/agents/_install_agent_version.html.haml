@@ -13,7 +13,7 @@
 %p
   Please specify the instance's operating system:
 
-= form_tag plugin('automation').show_instructions_instances_path, :class => '', :remote => true do
+= form_tag plugin('automation').show_instructions_agents_path, :class => '', :remote => true do
   = hidden_field_tag 'instance_id', @instance.id
   = hidden_field_tag 'from', 'select_os'
   .form-group.clearfix

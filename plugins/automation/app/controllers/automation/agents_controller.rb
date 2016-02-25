@@ -2,7 +2,7 @@ require 'ostruct'
 
 module Automation
 
-  class InstancesController < Automation::ApplicationController
+  class AgentsController < Automation::ApplicationController
     before_action :agents_with_jobs, only: [:index, :index_update]
 
     def index
@@ -27,7 +27,7 @@ module Automation
       render :layout => false
     end
 
-    def install_agent
+    def install
     end
 
     def show_instructions
