@@ -33,6 +33,7 @@ module ObjectStorage
       @form = ObjectStorage::Forms::CreateCopy.new(
         container_name: @container_name,
         path:           @object.path,
+        with_metadata:  true,
       )
       @all_container_names = services.object_storage.containers.map(&:name).sort
     end
@@ -45,11 +46,12 @@ module ObjectStorage
 
       unless @form.validate
         @all_container_names = services.object_storage.containers.map(&:name).sort
+        puts "ATTRIBUTES: #{@form.attributes.inspect}"
         render action: 'new_copy'
         return
       end
 
-      @object.copy_to(@form.container_name, @form.path)
+      @object.copy_to(@form.container_name, @form.path, with_metadata: @form.with_metadata == "1")
       back_to_object_list
     end
 

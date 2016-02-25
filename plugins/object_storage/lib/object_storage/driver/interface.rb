@@ -59,7 +59,8 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def copy_object(source_container_name, source_path, target_container_name, target_path)
+      # `options` may set the flag `with_metadata: true` to copy the source object's metadata.
+      def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

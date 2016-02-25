@@ -168,9 +168,12 @@ module ObjectStorage
         end
       end
 
-      def copy_object(source_container_name, source_path, target_container_name, target_path)
+      def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
         handle_response do
-          fog_copy_object(source_container_name, source_path, target_container_name, target_path)
+          headers = {}
+          headers['X-Fresh-Metadata'] = 'True' unless options[:with_metadata]
+
+          fog_copy_object(source_container_name, source_path, target_container_name, target_path, headers)
         end
       end
 
