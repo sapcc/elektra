@@ -10,12 +10,12 @@ module ObjectStorage
 
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
-      @empty = services.object_storage.container_is_empty?(@container.name)
+      @empty = @container.empty?
     end
 
     def confirm_emptying
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
-      @empty = services.object_storage.container_is_empty?(@container.name)
+      @empty = @container.empty?
     end
 
     def show
