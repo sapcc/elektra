@@ -81,10 +81,10 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :access_managment, 'Access Management', nil,
       html: {class: "fancy-nav-header", 'data-icon': "fa fa-lock fa-fw" },
-      if: -> {services.available?(:inquiry,:inquiries)} do |access_management_nav|
-      # access_management_nav.item :authorizations, 'Authorization', '#'
-      # access_management_nav.item :audits, 'Audit', '#'
+      if: -> {services.available?(:inquiry,:inquiries) or plugin_available?(:authorization)} do |access_management_nav|
+      access_management_nav.item :authorization, 'Authorization', -> {plugin('authorization').entry_path}, if: -> { plugin_available?(:authorization) }
       access_management_nav.item :inquiries, 'Requests', -> {plugin('inquiry').inquiries_path}, if: -> { services.available?(:inquiry,:inquiries) }
+      # access_management_nav.item :audits, 'Audit', '#'
 
       # access_management_nav.dom_attributes = {class: 'content-list'}
     end
