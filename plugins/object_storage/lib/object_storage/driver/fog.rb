@@ -128,7 +128,9 @@ module ObjectStorage
             object = map_attribute_names(o, OBJECTS_ATTRMAP)
             object['id'] = object['path'] # path also serves as id() for Core::ServiceLayer::Model
             object['container_name'] = container_name
-            object['last_modified'] = DateTime.iso8601(object['last_modified']) # parse date
+            if object.has_key?('last_modified')
+              object['last_modified'] = DateTime.iso8601(object['last_modified']) # parse date
+            end
             object
           end
         end

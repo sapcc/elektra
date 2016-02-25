@@ -16,7 +16,7 @@
       = format_bytes(object.size_bytes)
   %td
     - unless object.is_directory?
-      = object.last_modified         # TODO: format
+      = format_mtime(object.last_modified)
   %td.snug
     - if object.is_directory?
       -# for dirs, render a hidden button to ensure consistent row height
