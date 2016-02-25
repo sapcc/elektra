@@ -54,6 +54,15 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      # Container must be specified in `params[:container_name]`.
+      def update_object(path, params)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      def copy_object(source_container_name, source_path, target_container_name, target_path)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end

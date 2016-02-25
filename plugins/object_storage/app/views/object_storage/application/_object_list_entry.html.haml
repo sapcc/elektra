@@ -31,3 +31,7 @@
           %li= link_to 'Download', plugin('object_storage').download_object_path(@container_name, object.path)
           %li.divider
           %li= link_to 'Properties', plugin('object_storage').object_path(@container_name, object.path), data: { modal: true }
+          %li.divider
+          %li= link_to 'Copy', plugin('object_storage').new_copy_path(@container_name, object.path), data: { modal: true }
+          -# %li= link_to 'Move', '#'
+          -# %li= link_to 'Rename', '#'

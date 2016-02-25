@@ -168,6 +168,12 @@ module ObjectStorage
         end
       end
 
+      def copy_object(source_container_name, source_path, target_container_name, target_path)
+        handle_response do
+          fog_copy_object(source_container_name, source_path, target_container_name, target_path)
+        end
+      end
+
       private
 
       # Rename keys in `data` using the `attribute_map` and delete unknown keys.
@@ -201,6 +207,17 @@ module ObjectStorage
           :method   => 'HEAD',
           :path     => "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
         }, false)
+      end
+
+      # Like @fog.copy_object(), but encodes the path correctly. TODO: fix in Fog
+      def fog_copy_object(source_container_name, source_object_name, target_container_name, target_object_name, options={})
+        headers = { 'X-Copy-From' => "/#{source_container_name}/#{source_object_name}" }.merge(options)
+        @fog.request({
+          :expects  => 201,
+          :headers  => headers,
+          :method   => 'PUT',
+          :path     => "#{::Fog::OpenStack.escape(target_container_name)}/#{escape_path(target_object_name)}"
+        })
       end
 
       # TODO This request is missing in Fog.

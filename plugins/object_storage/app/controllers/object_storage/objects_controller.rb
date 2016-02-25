@@ -26,13 +26,31 @@ module ObjectStorage
         return
       end
 
-      respond_to do |format|
-        format.js do
-          @objects = services.object_storage.list_objects_at_path(@container_name, @object.dirname)
-          render template: '/object_storage/objects/reload_index'
-        end
-        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.dirname) }
+      back_to_object_list
+    end
+
+    def new_copy
+      @form = ObjectStorage::Forms::CreateCopy.new(
+        container_name: @container_name,
+        path:           @object.path,
+      )
+      @all_container_names = services.object_storage.containers.map(&:name).sort
+    end
+
+    def create_copy
+      @form = ObjectStorage::Forms::CreateCopy.new(params.require(:forms_create_copy).merge(
+        source_container_name: @container_name,
+        source_path:           @object.path,
+      ))
+
+      unless @form.validate
+        @all_container_names = services.object_storage.containers.map(&:name).sort
+        render action: 'new_copy'
+        return
       end
+
+      @object.copy_to(@form.container_name, @form.path)
+      back_to_object_list
     end
 
     private
@@ -49,6 +67,16 @@ module ObjectStorage
       @object = services.object_storage.find_object(@container_name, params[:path])
       if (not @object) or @object.is_directory?
         raise ActiveRecord::RecordNotFound, "object #{params[:path]} not found in container #{@container_name}"
+      end
+    end
+
+    def back_to_object_list
+      respond_to do |format|
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(@container_name, @object.dirname)
+          render template: '/object_storage/objects/reload_index'
+        end
+        format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.dirname) }
       end
     end
 
