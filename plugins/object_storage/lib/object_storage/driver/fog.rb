@@ -22,8 +22,10 @@ module ObjectStorage
         'name'  => 'name',
       }
       CONTAINER_ATTRMAP = {
-        'X-Container-Object-Count' => 'object_count',
-        'X-Container-Bytes-Used'   => 'bytes_used',
+        'X-Container-Object-Count'     => 'object_count',
+        'X-Container-Bytes-Used'       => 'bytes_used',
+        'X-Container-Meta-Quota-Bytes' => 'bytes_quota',
+        'X-Container-Meta-Quota-Count' => 'object_count_quota',
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
@@ -197,8 +199,11 @@ module ObjectStorage
       def extract_metadata_tags(headers, prefix)
         result = {}
         headers.each do |key,value|
-          if key.start_with?(prefix)
-            result[key.sub(prefix, '')] = value
+          # filter Meta tags that are used
+          unless CONTAINER_ATTRMAP[key]
+            if key.start_with?(prefix)
+              result[key.sub(prefix, '')] = value
+            end
           end
         end
         return result
