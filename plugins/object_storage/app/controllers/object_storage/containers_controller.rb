@@ -10,10 +10,12 @@ module ObjectStorage
 
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
+      @empty = services.object_storage.container_is_empty?(@container.name)
     end
 
     def confirm_emptying
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
+      @empty = services.object_storage.container_is_empty?(@container.name)
     end
 
     def show
@@ -30,7 +32,12 @@ module ObjectStorage
         return
       end
       services.object_storage.empty_container(@form.name)
-      redirect_to plugin('object_storage').list_objects_path(@form.name, "")
+      if @form.reload_list == "true"
+        @containers = services.object_storage.containers
+        back_to_container_list
+      else
+       redirect_to plugin('object_storage').list_objects_path(@form.name, "")
+      end
     end
 
     def create
@@ -64,8 +71,8 @@ module ObjectStorage
       end
       
       @container.destroy
-      @containers = services.object_storage.containers
       if @form.reload_list == "true"
+        @containers = services.object_storage.containers
         back_to_container_list
       else
         redirect_to plugin('object_storage').containers_path()

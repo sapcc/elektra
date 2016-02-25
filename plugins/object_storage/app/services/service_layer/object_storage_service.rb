@@ -35,6 +35,10 @@ module ServiceLayer
       driver.map_to(ObjectStorage::Container).empty_container(name)
     end
 
+    def container_is_empty?(name)
+      driver.map_to(ObjectStorage::Container).objects(name, limit: 1).count == 0
+    end
+
     ##### objects
 
     def find_object(container_name, path)
