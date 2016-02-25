@@ -27,7 +27,7 @@
                 .row
                   .col-md-9
                   .col-md-3
-                    = link_to("Open Log in new window", plugin('automation').show_log_agents_path(id: job.request_id), target: "_blank")
+                    = link_to("Open Log in new window", plugin('automation').agent_job_show_log_path(job_id: job.request_id, agent_id: @agent_id), target: "_blank")
                 .row
                   .col-md-6
                     %b Job Id:

@@ -14,17 +14,12 @@ module Automation
 
     def show
       @instance_name = params[:name]
-      @facts = services.automation.agent_facts(params[:id])
-      @jobs = services.automation.agent_jobs(params[:id], 1, 100)
+      @agent_id = params[:id]
+      @facts = services.automation.agent_facts(@agent_id)
+      @jobs = services.automation.jobs(@agent_id, 1, 100)
     rescue ::RestClient::ResourceNotFound => exception
       Rails.logger.error "Automation-plugin: list_agent_facts: #{exception.message}"
       render "error_resource_not_found"
-    end
-
-    def show_log
-      @job_id = params[:id]
-      @log = services.automation.job_log(@job_id)
-      render :layout => false
     end
 
     def install

@@ -25,8 +25,8 @@ RSpec.describe IndexAgentsService do
       agent2_jobs = double('jobs_agent2', data: [{request_id:'agent2_1'}, {request_id:'agent2_2'}, {request_id:'agent2_3'}, {request_id:'agent2_4'}, {request_id:'agent2_5'}])
       automation_service = double('automation_service', agents: {elements: [agent1, agent2]})
 
-      allow(automation_service).to receive(:agent_jobs).with('agent1', 1, 5) { agent1_jobs }
-      allow(automation_service).to receive(:agent_jobs).with('agent2', 1, 5) { agent2_jobs }
+      allow(automation_service).to receive(:jobs).with('agent1', 1, 5) { agent1_jobs }
+      allow(automation_service).to receive(:jobs).with('agent2', 1, 5) { agent2_jobs }
 
       expect(IndexAgentsService.new(automation_service).list_agents(1,5)).to match( {:elements=>[agent1, agent2], :jobs=>{:agent1=>agent1_jobs, :agent2=>agent2_jobs}} )
     end
