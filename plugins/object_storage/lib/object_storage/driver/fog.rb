@@ -172,6 +172,7 @@ module ObjectStorage
         handle_response do
           headers = {}
           headers['X-Fresh-Metadata'] = 'True' unless options[:with_metadata]
+          headers['Content-Type'] = options[:content_type] if options[:content_type]
 
           fog_copy_object(source_container_name, source_path, target_container_name, target_path, headers)
         end

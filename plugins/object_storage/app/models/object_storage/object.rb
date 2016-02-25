@@ -55,6 +55,10 @@ module ObjectStorage
       @driver.copy_object(
         container_name, path, target_container_name, target_path,
         with_metadata: options[:with_metadata],
+        # need to reuse Content-Type from original file, or else Fog inserts
+        # its standard "Content-Type: application/json" which Swift then
+        # interprets as our take on the object's content type
+        content_type:  content_type,
       )
     end
 
