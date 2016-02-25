@@ -32,12 +32,7 @@ module ObjectStorage
         return
       end
       @container.empty!
-      if @form.reload_list == "true"
-        @containers = services.object_storage.containers
-        back_to_container_list
-      else
-       redirect_to plugin('object_storage').list_objects_path(@form.name, "")
-      end
+      back_to_container_list
     end
 
     def create
@@ -71,12 +66,7 @@ module ObjectStorage
       end
       
       @container.destroy
-      if @form.reload_list == "true"
-        @containers = services.object_storage.containers
-        back_to_container_list
-      else
-        redirect_to plugin('object_storage').containers_path()
-      end
+      back_to_container_list
     end
 
     private
