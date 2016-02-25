@@ -1,0 +1,35 @@
+.job-popover-content
+  .row
+    .col-md-12
+      %b Id:
+  .row
+    .col-md-12
+      = " #{job.request_id}"
+  .row
+    .col-md-12
+      %b Status:
+      - job_status(job.status)
+  .row
+    .col-md-12
+      %b Agent:
+      = " #{job.agent}"
+  .row
+    .col-md-12
+      %b Action:
+      = " #{job.action}"
+  .row
+    .col-md-12
+      %b Created at:
+  .row
+    .col-md-12
+      = "#{job.created_at}".to_time
+  .row
+    .col-md-12
+      %b Updated at:
+  .row
+    .col-md-12
+      = "#{job.updated_at}".to_time
+  .row
+    .col-md-12.clearfix
+      %a{href:'#', class:"pull-right"}
+        Show

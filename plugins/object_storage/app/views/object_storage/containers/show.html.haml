@@ -1,13 +1,23 @@
 = content_for :title do
   Container: #{@container.name}
 
-.modal-body
-  %table.table
-    %tbody
-      %tr
-        %th Object count
-        %td= @container.object_count
-      %tr
-        %th Total size
-        -# TODO: format
-        %td #{@container.bytes_used} bytes
+= simple_form_for @container, url: plugin('object_storage').container_path(@container.name), method: :put, remote: request.xhr?, html: { data: { modal: true } } do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    %table.table
+      %tbody
+        %tr
+          %th Object count
+          %td= @container.object_count
+        %tr
+          %th Total size
+          %td= format_bytes(@container.bytes_used)
+        %tr
+          %th Custom metadata
+          %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+      - else
+        = link_to "Cancel", plugin('object_storage').container_path(@container.name), class: 'btn btn-default'
+      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Update container

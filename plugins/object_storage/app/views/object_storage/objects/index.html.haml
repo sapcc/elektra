@@ -14,17 +14,5 @@
   = link_to 'Upload file', plugin('object_storage').new_object_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
   = link_to 'Create folder', plugin('object_storage').new_folder_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
 
-%table.table
-  %thead
-    %tr
-      %th Object name
-      %th Size
-      %th Last Modified
-      %th.snug
-  %tbody
-    - if @objects.empty?
-      %tr
-        %td{colspan: 4} No objects found.
-    - else
-      - @objects.sort_by(&:ui_sort_order).each do |object|
-        = render partial: 'item', locals: { object: object }
+#object_list
+  = render partial: 'object_list'

@@ -7,7 +7,7 @@ module ResourceManagement
     #     fill:      { value: NUMBER, label: STRING }   - Size value and label for the usage display (required).
     #     maximum:   { value: NUMBER, label: STRING }   - Maximum value (determines scale), and label for the right edge.
     #     threshold: { value: NUMBER, label: STRING }   - Value and label for threshold mark.
-    #     data_type:     ResourceManagement::DataType   - If given, render values with its format() method.
+    #     data_type:     Core::DataType                 - If given, render values with its format() method.
     #     warning_level: NUMBER                         - A number between 0 and 1. Beyond this ratio, fill levels will be rendered in warning color.
     # The hash arguments (fill, maximum, threshold) can also be given as a single number. Then the label is just the display value.
     #
@@ -38,7 +38,7 @@ module ResourceManagement
       fill          = options[:fill]
       maximum       = options.fetch(:maximum,       fill)
       threshold     = options.fetch(:threshold,     maximum)
-      data_type     = options.fetch(:data_type,     nil) || ResourceManagement::DataType.new(:number)
+      data_type     = options.fetch(:data_type,     nil) || Core::DataType.new(:number)
       warning_level = options.fetch(:warning_level, 0.8)
 
       # when only a number is given for some parameter, use the default label "$VALUE

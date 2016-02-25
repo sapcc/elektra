@@ -1,8 +1,10 @@
 %tr{id: "instance_#{instance.id}"}
   %td
     = link_to(instance.name, instance_path(id: instance.id, name: instance.name), data: {modal: true})
+  %td= "#{instance.facts.platform_family} #{instance.facts.platform_version}"
   %td= instance.facts.ipaddress
   %td{class: "snug #{'automation_status_alarm' if instance.online == false}"}
     = instance.facts.online_to_string
   %td
+    = render partial: "table_instances_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
   %td

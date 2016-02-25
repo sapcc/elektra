@@ -19,7 +19,10 @@ module ObjectStorage
       services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
 
       respond_to do |format|
-        format.js
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(@container_name, @object.path)
+          render template: '/object_storage/objects/reload_index'
+        end
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
       end
     end
@@ -38,7 +41,10 @@ module ObjectStorage
       services.object_storage.create_folder(@container_name, @object.path + @form.name)
 
       respond_to do |format|
-        format.js
+        format.js do
+          @objects = services.object_storage.list_objects_at_path(@container_name, @object.path)
+          render template: '/object_storage/objects/reload_index'
+        end
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @object.path) }
       end
     end
@@ -57,7 +63,7 @@ module ObjectStorage
       # folder identified by params[:path] need not necessarily exist as an
       # object (i.e. find_object() might fail with 404)
       params[:path] += '/' unless params[:path].end_with?('/')
-      @object = ObjectStorage::Object.new(nil, id: params[:path])
+      @object = ObjectStorage::Object.new(nil, path: params[:path])
     end
 
   end

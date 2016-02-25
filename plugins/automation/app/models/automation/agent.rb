@@ -9,7 +9,7 @@ module Automation
       _agents.data.each do |_agent|
         agent = Agent.new
         agent.id = _agent.agent_id
-        agent.name = _agent.facts.hostname
+        agent.name = Agent.agent_name(_agent)
         agent.facts = Automation::Facts.new(_agent.facts)
         agentsMap << agent
       end
@@ -18,6 +18,15 @@ module Automation
 
     def self.os_types
       {"linux" => 'Linux', 'windows' => 'Windows'}
+    end
+
+    private
+
+    def self.agent_name(_agent)
+      if !_agent.tags.blank? && !_agent.tags['name'].blank?
+        return _agent.tags['name']
+      end
+      _agent.facts.hostname
     end
 
   end

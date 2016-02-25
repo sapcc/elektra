@@ -18,7 +18,7 @@ describe ObjectStorage::Object do
         'ab/cd/ef'  => 'ef',
         'ab/cd/ef/' => 'ef/',
       }.each do |path,basename|
-        expect(ObjectStorage::Object.new(@driver, id: path).basename).to eq(basename)
+        expect(ObjectStorage::Object.new(@driver, path: path).basename).to eq(basename)
       end
     end
   end
@@ -35,7 +35,7 @@ describe ObjectStorage::Object do
         'ab/cd/ef'  => 'ab/cd',
         'ab/cd/ef/' => 'ab/cd',
       }.each do |path,dirname|
-        expect(ObjectStorage::Object.new(@driver, id: path).dirname).to eq(dirname)
+        expect(ObjectStorage::Object.new(@driver, path: path).dirname).to eq(dirname)
       end
     end
   end

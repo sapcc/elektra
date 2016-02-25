@@ -39,18 +39,21 @@ module ObjectStorage
         render action: 'new'
         return
       end
-      @containers = services.object_storage.containers
-      respond_to do |format|
-        format.js { render action: 'reload_container_list' }
-      end
-    end
 
-    def edit
-      # TODO
+      back_to_container_list
     end
 
     def update
-      # TODO
+      # TODO: conflict: params[:container] comes from the route, but may in the
+      # future also come from SimpleForm input elements
+
+      @container.metadata = self.metadata_params
+      unless @container.save
+        render action: 'show' # "edit" view is covered by "show"
+        return
+      end
+
+      back_to_container_list
     end
 
     def destroy
@@ -63,9 +66,7 @@ module ObjectStorage
       @container.destroy
       @containers = services.object_storage.containers
       if @form.reload_list == "true"
-        respond_to do |format|
-          format.js { render action: 'reload_container_list' }
-        end
+        back_to_container_list
       else
         redirect_to plugin('object_storage').containers_path()
       end
@@ -76,6 +77,16 @@ module ObjectStorage
     def load_container
       @container = services.object_storage.find_container(params[:container])
       raise ActiveRecord::RecordNotFound, "container #{params[:container]} not found" unless @container
+    end
+
+    def back_to_container_list
+      respond_to do |format|
+        format.js do
+          @containers = services.object_storage.containers
+          render action: 'reload_container_list'
+        end
+        format.html { redirect_to plugin('object_storage').containers_path }
+      end
     end
 
   end

@@ -18,7 +18,7 @@ module ResourceManagement
     def initialize(service_name, name, options={})
       @name          = name.to_sym
       @service_name  = service_name.to_sym
-      @data_type     = ResourceManagement::DataType.new(options.fetch(:data_type, :number))
+      @data_type     = Core::DataType.new(options.fetch(:data_type, :number))
       @default_quota = options.fetch(:default_quota, nil)
     end
 

@@ -1,9 +1,9 @@
-require 'resource_management/data_type'
+require 'core/data_type'
 
-RSpec.describe ResourceManagement::DataType do
+RSpec.describe Core::DataType do
 
-  let(:datatype_number) { ResourceManagement::DataType.new(:number) }
-  let(:datatype_bytes)  { ResourceManagement::DataType.new(:bytes)  }
+  let(:datatype_number) { Core::DataType.new(:number) }
+  let(:datatype_bytes)  { Core::DataType.new(:bytes)  }
 
   describe '#format' do
 
@@ -30,8 +30,8 @@ RSpec.describe ResourceManagement::DataType do
     end
 
     it 'fails with unknown datatype' do
-      expect { ResourceManagement::DataType.new(:foo) }.to raise_error(ArgumentError)
-      expect { ResourceManagement::DataType.new(23) }.to raise_error(ArgumentError)
+      expect { Core::DataType.new(:foo) }.to raise_error(ArgumentError)
+      expect { Core::DataType.new(23) }.to raise_error(ArgumentError)
     end
 
   end
