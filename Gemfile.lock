@@ -97,6 +97,11 @@ PATH
       kaminari
 
 PATH
+  remote: plugins/loadbalancing
+  specs:
+    loadbalancing (0.0.1)
+
+PATH
   remote: plugins/networking
   specs:
     networking (0.0.1)
@@ -560,6 +565,7 @@ DEPENDENCIES
   image!
   inquiry!
   jquery-rails
+  loadbalancing!
   monsoon-openstack-auth!
   net-ssh
   networking!

@@ -65,8 +65,9 @@ SimpleNavigation::Configuration.run do |navigation|
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
+
     primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:agents) } do |automation_nav|
-      automation_nav.item :automation, 'Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents) }
+      automation_nav.item :automation, 'Automation', -> {plugin('automation').instances_path}, if: -> { services.available?(:automation,:agents) }
 
       # automation_nav.dom_attributes = {class: 'content-list'}
     end
@@ -90,9 +91,9 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :networking, 'Networking & Loadbalancing', nil,
       html: {class: "fancy-nav-header", 'data-icon': "fa fa-sitemap fa-fw" },
-      if: -> {services.available?(:networking,:networks)} do |networking_nav|
+      if: -> {services.available?(:networking,:networks) or plugin_available?(:loadbalancing)} do |networking_nav|
       networking_nav.item :networks, 'Networks', -> {plugin('networking').networks_path}, if: -> { services.available?(:networking,:networks) }
-      # networking_nav.item :loadbalancing, 'Loadbalancing', '#'
+      networking_nav.item :loadbalancing, 'Loadbalancing', -> {plugin('loadbalancing').entry_path}, if: -> { plugin_available?(:loadbalancing) }
       # networking_nav.item :dns, 'DNS', '#'
 
       # networking_nav.dom_attributes = {class: 'content-list'}
