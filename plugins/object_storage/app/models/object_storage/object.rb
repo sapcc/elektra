@@ -58,5 +58,11 @@ module ObjectStorage
       )
     end
 
+    def destroy
+      # the super() implementation does not work because we need to give two
+      # arguments to the driver
+      @driver.delete_object(container_name, path)
+    end
+
   end
 end

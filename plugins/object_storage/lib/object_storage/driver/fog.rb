@@ -187,6 +187,37 @@ module ObjectStorage
         end
       end
 
+      def delete_object(container_name, path)
+        handle_response { fog_delete_object(container_name, path) }
+      end
+
+      def bulk_delete(targets)
+        handle_response do
+          # assemble the request body containing the paths to all targets
+          body = ""
+          targets.each do |target|
+            unless target.has_key?(:container)
+              raise ArgumentError, "malformed target #{target.inspect}"
+            end
+            body += ::Fog::OpenStack.escape(target[:container])
+            if target.has_key?(:object)
+              body += "/" + escape_path(target[:object])
+            end
+            body += "\n"
+          end
+
+          # TODO: the bulk delete request is missing in Fog
+          @fog.request({
+            expects: 200,
+            method:  'DELETE',
+            path:    '',
+            query:   { 'bulk-delete' => 1 },
+            headers: { 'Content-Type' => 'text/plain' },
+            body:    body,
+          })
+        end
+      end
+
       private
 
       # Rename keys in `data` using the `attribute_map` and delete unknown keys.
@@ -240,6 +271,15 @@ module ObjectStorage
           method:  'POST',
           path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}",
           headers: headers,
+        }, false)
+      end
+
+      # Like @fog.head_object(), but encodes the `path` correctly. TODO: fix in Fog
+      def fog_delete_object(container_name, path)
+        @fog.request({
+          expects: 204,
+          method:  'DELETE',
+          path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
         }, false)
       end
 

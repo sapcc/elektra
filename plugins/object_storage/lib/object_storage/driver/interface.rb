@@ -68,6 +68,22 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def delete_object(container_name, path)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      ##### miscellaneous
+
+      # `targets` is an array of hashes like
+      #
+      #   { container: "foo" }                    # delete this container (must be empty!)
+      #   { container: "foo", object: "bar/baz" } # delete this object
+      #
+      # The list of `targets` is ordered. Targets will be deleted from first to last.
+      def bulk_delete(targets)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end
