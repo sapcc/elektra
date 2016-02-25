@@ -128,6 +128,7 @@ module ObjectStorage
             object = map_attribute_names(o, OBJECTS_ATTRMAP)
             object['id'] = object['path'] # path also serves as id() for Core::ServiceLayer::Model
             object['container_name'] = container_name
+            object['last_modified'] = DateTime.iso8601(object['last_modified']) # parse date
             object
           end
         end
@@ -147,6 +148,7 @@ module ObjectStorage
           data = map_attribute_names(headers, OBJECT_ATTRMAP)
           data['id'] = data['path'] = path
           data['container_name'] = container_name
+          data['last_modified'] = DateTime.httpdate(data['last_modified']) # parse date
           data['metadata'] = extract_metadata_tags(headers, 'X-Object-Meta-')
           data
         end
