@@ -48,5 +48,15 @@ module ObjectStorage
       (is_directory? ? 'a' : 'b') + self.basename
     end
 
+    ############################################################################
+    # actions
+
+    def copy_to(target_container_name, target_path, options={})
+      @driver.copy_object(
+        container_name, path, target_container_name, target_path,
+        with_metadata: options[:with_metadata],
+      )
+    end
+
   end
 end

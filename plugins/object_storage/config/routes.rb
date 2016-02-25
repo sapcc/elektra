@@ -16,6 +16,8 @@ ObjectStorage::Engine.routes.draw do
     get  'raw/*path'           => 'objects#download',    as: 'download_object'
     get  'object/*path'        => 'objects#show',        as: 'object'
     post 'object/*path'        => 'objects#update',      as: 'update_object'
+    get  'copy(/*path)'        => 'objects#new_copy',    as: 'new_copy'
+    post 'copy(/*path)'        => 'objects#create_copy', as: 'create_copy'
 
     get  'upload(/*path)'        => 'folders#new_object',    as: 'new_object'
     post 'upload(/*path)'        => 'folders#create_object', as: 'create_object'

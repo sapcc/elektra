@@ -54,6 +54,16 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      # Container must be specified in `params[:container_name]`.
+      def update_object(path, params)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      # `options` may set the flag `with_metadata: true` to copy the source object's metadata.
+      def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end
