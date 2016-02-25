@@ -23,7 +23,7 @@ module Automation
 
     def show_log
       @job_id = params[:id]
-      @log = @automation.find_job_log(current_user.token, @job_id)
+      @log = services.automation.job_log(@job_id)
       render :layout => false
     end
 
@@ -37,9 +37,8 @@ module Automation
 
       result = InstallAgentService.new().process_request(@instance_id, @instance_os, services.compute, services.automation, @active_project, current_user.token)
       @instance = result[:instance]
-      @url = result[:url]
-      @ip = result[:ip]
-      @instance_os = result[:instance_os]
+      @log_info = result[:log_info]
+      @script = result[:script]
 
     rescue InstallAgentParamError => exception
       return @error = {key: "warning", message: exception.message}
@@ -50,6 +49,8 @@ module Automation
       if params[:from] == 'select_os'
         return @error = {key: "warning", message: exception.message}
       end
+    rescue InstallAgentError => exception
+      return @error = {key: "warning", message: exception.message}
     rescue => exception
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
       return @error = {key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}

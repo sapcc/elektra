@@ -4,24 +4,15 @@
 
 %ol
   %li
-    Copy the below script to the clipboard.
-
-  %li
     Log in into the instance:
-    %pre.snippet
-      %code
-        = preserve do
-          :escaped
-            ssh #{@ip}
-
+    %code
+      = "#{@log_info}"
 
   %li
-    And paste following the script as super user:
+    Run the following script in an administrator console as super user:
 
     %pre.snippet
       %code
         = preserve do
           :escaped
-            curl --create-dirs -o /opt/arc/arc http://localhost:8080/builds/latest/arc/#{@instance_os}/amd64
-            chmod +x /opt/arc/arc
-            /opt/arc/arc init --endpoint tls://localhost:8883 --update-uri http://localhost:8080/updates --registration-url #{@url}
+            #{@script}

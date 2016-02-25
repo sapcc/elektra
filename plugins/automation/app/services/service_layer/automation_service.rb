@@ -46,6 +46,11 @@ module ServiceLayer
       @client.list_jobs!(token, agent_id)
     end
 
+    def job_log(job_id)
+      init_client
+      @client.find_job_log!(token, job_id)
+    end
+
     private
 
     def init_client

@@ -1,13 +1,9 @@
-= render "intro"
+%h2
+  Agents
 
-%section
-  %h2
-    Agents
 
-  = render partial: 'table_instances', locals: {instances: @agents, jobs: @jobs}
+.toolbar
+  = link_to "Install a new Agent", plugin('automation').install_agent_instances_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-  -#.instances_table{data: {update_path: plugin('automation').index_update_instances_path(), update_immediately: 'true'}}
-    %p.text-center
-      Loading...
-      %span.loading-spinner-section
+= render partial: 'table_instances', locals: {instances: @agents, jobs: @jobs}
 
