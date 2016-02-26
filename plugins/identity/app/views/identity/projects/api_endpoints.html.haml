@@ -1,0 +1,29 @@
+%h3
+  Use the following parameters to access the project with an openstack client
+
+%table.table.datatable
+  %tbody
+    %tr
+      %th OS_AUTH_URL
+      %td= @identity_url
+    %tr
+      %th OS_IDENTITY_API_VERSION
+      %td= '3'
+    %tr
+      %th OS_REGION_NAME
+      %td= 'Ask Andreas'
+    %tr
+      %th OS_USER_DOMAIN_NAME
+      %td= @scoped_domain_id
+    %tr
+      %th OS_PROJECT_DOMAIN_NAME
+      %td= @scoped_domain_id
+    %tr
+      %th OS_PROJECT_NAME
+      %td= @scoped_project_id
+    %tr
+      %th OS_USERNAME
+      %td= '<Your username>'
+    %tr
+      %th OS_PASSWORD
+      %td= '<Your password>'
