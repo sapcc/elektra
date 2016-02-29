@@ -1,11 +1,12 @@
-require 'spec_helper'
-require 'active_support/core_ext/date_time/calculations'
+require 'core/formatter'
+require 'active_support/core_ext/date_time/calculations' # for DateTime#ago
+require 'active_support/core_ext/numeric/time'           # for Numeric#seconds
 
-describe ObjectStorage::ApplicationHelper, type: :helper do
+describe Core::Formatter do
 
-  describe '#format_mtime' do
+  describe 'format_modification_time' do
     def format_duration_as_mtime(duration)
-      format_mtime(DateTime.now.ago(duration.to_i))
+      Core::Formatter.format_modification_time(DateTime.now.ago(duration.to_i))
     end
 
     it "stringifies data ages" do
