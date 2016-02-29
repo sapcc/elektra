@@ -63,16 +63,16 @@ module ObjectStorage
       return
     end
 
-    def move_to(target_container_name, target_path)
+    def move_to!(target_container_name, target_path)
       @driver.move_object(
         container_name, path, target_container_name, target_path,
         content_type: content_type, # see above for why this is needed
       )
       # after successful move, update attributes to point towards the new location
-      @driver.attributes.merge!(
-        container_name: target_container_name,
-        id:             target_path,
-        path:           target_path,
+      self.attributes = attributes.merge(
+        "container_name" => target_container_name,
+        "id"             => target_path,
+        "path"           => target_path,
       )
       return
     end

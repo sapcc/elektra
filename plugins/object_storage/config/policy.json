@@ -20,6 +20,7 @@
   "object_storage:object_download":      "rule:object_storage_admin",
   "object_storage:object_new_copy":      "rule:object_storage_admin",
   "object_storage:object_create_copy":   "rule:object_storage_admin",
+  "object_storage:object_move":          "rule:object_storage_admin",
 
   "object_storage:folder_new_files":     "rule:object_storage_admin",
   "object_storage:folder_create_file":   "rule:object_storage_admin",

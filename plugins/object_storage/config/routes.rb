@@ -19,14 +19,15 @@ ObjectStorage::Engine.routes.draw do
     get    'object/*path'      => 'objects#show',        as: 'object'
     post   'object/*path'      => 'objects#update',      as: 'update_object'
     delete 'object/*path'      => 'objects#destroy',     as: 'destroy_object'
-    get    'copy(/*path)'      => 'objects#new_copy',    as: 'new_copy'
-    post   'copy(/*path)'      => 'objects#create_copy', as: 'create_copy'
+    get    'copy/*path'        => 'objects#new_copy',    as: 'new_copy'
+    post   'copy/*path'        => 'objects#create_copy', as: 'create_copy'
+    get    'move/*path'        => 'objects#move',        as: 'move_object'
 
     get    'upload(/*path)'        => 'folders#new_object',    as: 'new_object'
     post   'upload(/*path)'        => 'folders#create_object', as: 'create_object'
     get    'create_folder(/*path)' => 'folders#new_folder',    as: 'new_folder'
     post   'create_folder(/*path)' => 'folders#create_folder', as: 'create_folder'
-    delete 'folder(/*path)'        => 'folders#destroy',       as: 'destroy_folder'
+    delete 'folder/*path'          => 'folders#destroy',       as: 'destroy_folder'
   end
 
 end
