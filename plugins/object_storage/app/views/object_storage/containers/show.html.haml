@@ -11,6 +11,14 @@
         %tr
           %th Total size
           %td= format_bytes(@container.bytes_used)
+          %tr
+            %th
+              Quota Object Count
+              = hidden_field_tag 'metadata[keys][]', 'Quota-Count', placeholder: 'Key'
+            %td
+              .row
+                .col-md-6
+                  = text_field_tag 'metadata[values][]', @container.object_count_quota, placeholder: 'Value'
         %tr
           %th Custom metadata
           %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
