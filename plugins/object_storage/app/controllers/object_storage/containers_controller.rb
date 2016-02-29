@@ -46,6 +46,10 @@ module ObjectStorage
     end
 
     def update
+      params.require(:container).each do |key,value|
+        # ensure that validations are executed
+        @container.send("#{key}=", value)
+      end
       @container.metadata = self.metadata_params
       unless @container.save
         render action: 'show' # "edit" view is covered by "show"

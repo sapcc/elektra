@@ -29,6 +29,8 @@ module ObjectStorage
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
+        'bytes_quota'        => 'X-Container-Meta-Quota-Bytes',
+        'object_count_quota' => 'X-Container-Meta-Quota-Count',
       }
 
       def containers(filter={})
