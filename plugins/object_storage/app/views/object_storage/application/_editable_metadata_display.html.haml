@@ -1,13 +1,13 @@
 %div#custom-metadata
   - metadata.each do |key,value|
     .row
-      .col-md-6= text_field_tag 'metadata[keys][]',   key,   placeholder: 'Key'
-      .col-md-6= text_field_tag 'metadata[values][]', value, placeholder: 'Value'
+      .col-md-6= text_field_tag 'metadata[keys][]',   key,   placeholder: 'Key', class:'string optional form-control'
+      .col-md-6= text_field_tag 'metadata[values][]', value, placeholder: 'Value', class:'string optional form-control'
   -# add an empty row for entering new keys (this row will be duplicated once
   -# the user enters values, so that there is always an empty row available)
   .row.duplicate-on-edit
-    .col-md-6= text_field_tag 'metadata[keys][]',   '', placeholder: 'Key'
-    .col-md-6= text_field_tag 'metadata[values][]', '', placeholder: 'Value'
+    .col-md-6= text_field_tag 'metadata[keys][]',   '', placeholder: 'Key', class:'string optional form-control'
+    .col-md-6= text_field_tag 'metadata[values][]', '', placeholder: 'Value', class:'string optional form-control'
 
 =content_for :javascripts do
   :javascript
