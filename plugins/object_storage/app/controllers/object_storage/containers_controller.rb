@@ -46,9 +46,6 @@ module ObjectStorage
     end
 
     def update
-      # TODO: conflict: params[:container] comes from the route, but may in the
-      # future also come from SimpleForm input elements
-
       @container.metadata = self.metadata_params
       unless @container.save
         render action: 'show' # "edit" view is covered by "show"
@@ -64,7 +61,7 @@ module ObjectStorage
         render action: 'confirm_deletion'
         return
       end
-      
+
       @container.destroy
       back_to_container_list
     end
@@ -72,8 +69,8 @@ module ObjectStorage
     private
 
     def load_container
-      @container = services.object_storage.find_container(params[:container])
-      raise ActiveRecord::RecordNotFound, "container #{params[:container]} not found" unless @container
+      @container = services.object_storage.find_container(params[:id])
+      raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found" unless @container
     end
 
     def back_to_container_list

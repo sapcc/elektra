@@ -57,17 +57,17 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
     primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "icon moo-cloud"},
-    if: -> {services.available?(:compute,:agents) or services.available?(:identity,:web_console)} do |compute_nav|
-      compute_nav.item :agents, 'Instances', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:agents) }
-      # compute_nav.item :projects, 'Projects', plugin('identity').projects_path, if: Proc.new { plugin_available?('identity') }
-      # compute_nav.item :volumes, 'Volumes', '#'
-      # compute_nav.item :snapshots, 'Snapshots', '#'
+    if: -> {services.available?(:compute,:instances) or services.available?(:image,:os_images) or plugin_available?(:block_storage)} do |compute_nav|
+      compute_nav.item :instances, 'Instances', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }
+      compute_nav.item :block_storage, 'Block Storage', -> {plugin('block_storage').entry_path}, if: -> { plugin_available?(:block_storage) }
+      compute_nav.item :images, 'Images', -> {plugin('image').os_images_path}, if: -> { services.available?(:image,:os_images) }
 
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :automation, 'Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:agents) } do |automation_nav|
-      automation_nav.item :automation, 'Monsoon Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents) }
+
+    primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:agents) } do |automation_nav|
+      automation_nav.item :automation, 'Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents) }
 
       # automation_nav.dom_attributes = {class: 'content-list'}
     end
@@ -75,25 +75,26 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-code fa-fw"},
     if: -> {services.available?(:identity,:web_console)} do |api_nav|
       api_nav.item :web_console, 'Web Console', -> { plugin('identity').projects_web_console_path}, if: -> { services.available?(:identity,:web_console)}
+    api_nav.item :api_endpoints, 'Api Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
 
       # api_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :access_managment, 'Access Management', nil,
       html: {class: "fancy-nav-header", 'data-icon': "fa fa-lock fa-fw" },
-      if: -> {services.available?(:inquiry,:inquiries)} do |access_management_nav|
-      # access_management_nav.item :authorizations, 'Authorization', '#'
-      # access_management_nav.item :audits, 'Audit', '#'
+      if: -> {services.available?(:inquiry,:inquiries) or plugin_available?(:authorization)} do |access_management_nav|
+      access_management_nav.item :authorization, 'Authorization', -> {plugin('authorization').entry_path}, if: -> { plugin_available?(:authorization) }
       access_management_nav.item :inquiries, 'Requests', -> {plugin('inquiry').inquiries_path}, if: -> { services.available?(:inquiry,:inquiries) }
+      # access_management_nav.item :audits, 'Audit', '#'
 
       # access_management_nav.dom_attributes = {class: 'content-list'}
     end
 
     primary.item :networking, 'Networking & Loadbalancing', nil,
       html: {class: "fancy-nav-header", 'data-icon': "fa fa-sitemap fa-fw" },
-      if: -> {services.available?(:networking,:networks)} do |networking_nav|
+      if: -> {services.available?(:networking,:networks) or plugin_available?(:loadbalancing)} do |networking_nav|
       networking_nav.item :networks, 'Networks', -> {plugin('networking').networks_path}, if: -> { services.available?(:networking,:networks) }
-      # networking_nav.item :loadbalancing, 'Loadbalancing', '#'
+      networking_nav.item :loadbalancing, 'Loadbalancing', -> {plugin('loadbalancing').entry_path}, if: -> { plugin_available?(:loadbalancing) }
       # networking_nav.item :dns, 'DNS', '#'
 
       # networking_nav.dom_attributes = {class: 'content-list'}

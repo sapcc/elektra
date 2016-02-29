@@ -38,7 +38,12 @@ module ObjectStorage
     end
 
     def empty!
-      @driver.empty_container(name)
+      # bulk-delete all objects in the container
+      container_name = self.name
+      targets = @driver.objects(container_name).map do |obj|
+        { container: container_name, object: obj['path'] }
+      end
+      @driver.bulk_delete(targets)
     end
 
   end

@@ -1,5 +1,5 @@
 module Image
-  class OsImagesController < ApplicationController
+  class OsImagesController < Image::ApplicationController
     def index
     end
 

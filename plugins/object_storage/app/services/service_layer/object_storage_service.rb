@@ -56,6 +56,13 @@ module ServiceLayer
       driver.create_object(container_name, sanitize_path(path) + '/', StringIO.new(''))
     end
 
+    def delete_folder(container_name, path)
+      targets = driver.objects_below_path(container_name, sanitize_path(path) + '/').map do |obj|
+        { container: container_name, object: obj['path'] }
+      end
+      driver.bulk_delete(targets)
+    end
+
     ##### helpers
 
     def sanitize_path(path)

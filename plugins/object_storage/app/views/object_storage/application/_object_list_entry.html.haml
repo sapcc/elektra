@@ -16,18 +16,16 @@
       = format_bytes(object.size_bytes)
   %td
     - unless object.is_directory?
-      = object.last_modified         # TODO: format
+      = Core::Formatter.format_modification_time(object.last_modified)
   %td.snug
-    - if object.is_directory?
-      -# for dirs, render a hidden button to ensure consistent row height
-      %button.btn.btn-default.btn-sm.invisible
+    .btn-group
+      %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }
         %span.fa.fa-cog
-    - else
-      .btn-group
-        %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }
-          %span.fa.fa-cog
 
-        %ul.dropdown-menu.dropdown-menu-right{ role: 'menu' }
+      %ul.dropdown-menu.dropdown-menu-right{ role: 'menu' }
+        - if object.is_directory?
+          %li= link_to 'Delete recursively', plugin('object_storage').destroy_folder_path(@container_name, object.path), method: :delete, remote: true
+        - else
           %li= link_to 'Download', plugin('object_storage').download_object_path(@container_name, object.path)
           %li.divider
           %li= link_to 'Properties', plugin('object_storage').object_path(@container_name, object.path), data: { modal: true }
@@ -35,3 +33,4 @@
           %li= link_to 'Copy', plugin('object_storage').new_copy_path(@container_name, object.path), data: { modal: true }
           -# %li= link_to 'Move', '#'
           -# %li= link_to 'Rename', '#'
+          %li= link_to 'Delete', plugin('object_storage').destroy_object_path(@container_name, object.path), method: :delete, remote: true

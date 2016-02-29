@@ -26,6 +26,10 @@ module ServiceLayer
       current_user.service_url('arc')
     end
 
+    #
+    # Agents
+    #
+
     def agents(filter="", show_facts=[], page=0, per_page=0)
       init_client
       Automation::Agent.create_agents(@client.list_agents!(current_user.token, filter, show_facts, page, per_page))
@@ -41,9 +45,18 @@ module ServiceLayer
       Automation::Facts.new(@client.show_agent_facts!(token, agent_id))
     end
 
-    def agent_jobs(agent_id = "", page=0, per_page=100)
+    #
+    # Jobs
+    #
+
+    def jobs(agent_id = "", page=0, per_page=100)
       init_client
-      @client.list_jobs!(token, agent_id)
+      @client.list_jobs!(token, agent_id, page=0, per_page=100)
+    end
+
+    def job(job_id)
+      init_client
+      @client.find_job!(token, job_id)
     end
 
     def job_log(job_id)

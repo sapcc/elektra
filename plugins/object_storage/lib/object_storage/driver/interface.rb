@@ -24,10 +24,6 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def empty_container(name)
-        raise Core::ServiceLayer::Errors::NotImplemented
-      end
-
       ##### objects
 
       def objects(container_name, filter={})
@@ -35,6 +31,10 @@ module ObjectStorage
       end
 
       def objects_at_path(container_name, path, filter={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      def objects_below_path(container_name, path, filter={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
@@ -65,6 +65,22 @@ module ObjectStorage
 
       # `options` may set the flag `with_metadata: true` to copy the source object's metadata.
       def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      def delete_object(container_name, path)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      ##### miscellaneous
+
+      # `targets` is an array of hashes like
+      #
+      #   { container: "foo" }                    # delete this container (must be empty!)
+      #   { container: "foo", object: "bar/baz" } # delete this object
+      #
+      # The list of `targets` is ordered. Targets will be deleted from first to last.
+      def bulk_delete(targets)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

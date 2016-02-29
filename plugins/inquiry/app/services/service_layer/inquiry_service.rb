@@ -24,16 +24,6 @@ module ServiceLayer
       return Delegates::Inquiry.new(inquiry)
     end
 
-    def set_state_for_inquiry(inquiry, state, description)
-      inquiry.process_step_description = description
-      if inquiry.valid?
-        inquiry.reject!({user: current_user, description: description}) if state == :rejected
-        inquiry.approve!({user: current_user, description: description}) if state == :approved
-        inquiry.reopen!({user: current_user, description: description}) if state == :open
-        inquiry.close!({user: current_user, description: description}) if state == :closed
-      end
-    end
-
     def inquiry_create(kind, description, requester_user, payload, processor_users, callbacks={}, register_domain_id=nil)
       # domain_id => user is domain scopr, project_domain_id => is in project scope, register_domain_id => no scope user is doing a registration
       domain_id = requester_user.domain_id || requester_user.project_domain_id || register_domain_id
@@ -58,6 +48,20 @@ module ServiceLayer
         return nil
       end
     end
+
+    private
+
+    def set_state_for_inquiry(inquiry, state, description)
+      sstate = state.to_sym
+      inquiry.process_step_description = description
+      if inquiry.valid?
+        inquiry.reject!({user: current_user, description: description}) if sstate == :rejected
+        inquiry.approve!({user: current_user, description: description}) if sstate == :approved
+        inquiry.reopen!({user: current_user, description: description}) if sstate == :open
+        inquiry.close!({user: current_user, description: description}) if sstate == :closed
+      end
+    end
+
   end
 
 end

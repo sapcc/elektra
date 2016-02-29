@@ -21,7 +21,7 @@ class IndexAgentsService
     agents = @automation_service.agents("", ['online', 'platform_family', 'platform_version', 'hostname', 'os', 'ipaddress'], page, per_page)
     jobs = {}
     agents[:elements].each do |a|
-      jobs[a.id.to_sym] = @automation_service.agent_jobs(a.id, 1, 5)
+      jobs[a.id.to_sym] = @automation_service.jobs(a.id, 1, 5)
     end
     agents[:jobs] = jobs
     agents

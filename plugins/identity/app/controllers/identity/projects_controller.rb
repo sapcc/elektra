@@ -62,6 +62,12 @@ module Identity
       @identity_url = current_user.service_url("identity")
     end
 
+    def api_endpoints
+      @token = current_user.token
+      @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
+    end
+
     private
 
     def get_project_id

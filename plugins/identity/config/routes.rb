@@ -7,7 +7,8 @@ Identity::Engine.routes.draw do
 
   namespace :projects  do
 
-    get 'web-console' 
+    get 'web-console'
+    get 'api-endpoints'
 
     scope :wizard do
       get 'request' => 'request_wizard#new'
@@ -27,4 +28,5 @@ Identity::Engine.routes.draw do
   get 'home' => 'domains#show', as: :domain
 
   resources :credentials
+
 end

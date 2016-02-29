@@ -85,16 +85,6 @@ module ObjectStorage
         end
       end
 
-      def empty_container(name)
-        handle_response do
-          object_list = self.objects(name)
-          object_list.each do |o|
-             @fog.delete_object(name, o["path"])
-          end
-          return # nothing
-        end
-      end
-
       def delete_container(name)
         # TODO: this works only for empty containers 
         #       If the container exists but is not empty, the response is "There was a conflict when trying to complete
@@ -130,6 +120,9 @@ module ObjectStorage
             object = map_attribute_names(o, OBJECTS_ATTRMAP)
             object['id'] = object['path'] # path also serves as id() for Core::ServiceLayer::Model
             object['container_name'] = container_name
+            if object.has_key?('last_modified')
+              object['last_modified'] = DateTime.iso8601(object['last_modified']) # parse date
+            end
             object
           end
         end
@@ -143,12 +136,18 @@ module ObjectStorage
         return result.reject { |obj| obj['id'] == path }
       end
 
+      def objects_below_path(container_name, path, filter={})
+        path += '/' if !path.end_with?('/') && !path.empty?
+        return objects(container_name, filter.merge(prefix: path))
+      end
+
       def get_object(container_name, path)
         handle_response do
           headers = fog_head_object(container_name, path).headers
           data = map_attribute_names(headers, OBJECT_ATTRMAP)
           data['id'] = data['path'] = path
           data['container_name'] = container_name
+          data['last_modified'] = DateTime.httpdate(data['last_modified']) # parse date
           data['metadata'] = extract_metadata_tags(headers, 'X-Object-Meta-')
           data
         end
@@ -184,8 +183,40 @@ module ObjectStorage
         handle_response do
           headers = {}
           headers['X-Fresh-Metadata'] = 'True' unless options[:with_metadata]
+          headers['Content-Type'] = options[:content_type] if options[:content_type]
 
           fog_copy_object(source_container_name, source_path, target_container_name, target_path, headers)
+        end
+      end
+
+      def delete_object(container_name, path)
+        handle_response { fog_delete_object(container_name, path) }
+      end
+
+      def bulk_delete(targets)
+        handle_response do
+          # assemble the request body containing the paths to all targets
+          body = ""
+          targets.each do |target|
+            unless target.has_key?(:container)
+              raise ArgumentError, "malformed target #{target.inspect}"
+            end
+            body += ::Fog::OpenStack.escape(target[:container])
+            if target.has_key?(:object)
+              body += "/" + escape_path(target[:object])
+            end
+            body += "\n"
+          end
+
+          # TODO: the bulk delete request is missing in Fog
+          @fog.request({
+            expects: 200,
+            method:  'DELETE',
+            path:    '',
+            query:   { 'bulk-delete' => 1 },
+            headers: { 'Content-Type' => 'text/plain' },
+            body:    body,
+          })
         end
       end
 
@@ -245,6 +276,15 @@ module ObjectStorage
           method:  'POST',
           path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}",
           headers: headers,
+        }, false)
+      end
+
+      # Like @fog.head_object(), but encodes the `path` correctly. TODO: fix in Fog
+      def fog_delete_object(container_name, path)
+        @fog.request({
+          expects: 204,
+          method:  'DELETE',
+          path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
         }, false)
       end
 

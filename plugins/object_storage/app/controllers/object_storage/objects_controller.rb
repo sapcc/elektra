@@ -29,6 +29,11 @@ module ObjectStorage
       back_to_object_list
     end
 
+    def destroy
+      @object.destroy
+      back_to_object_list
+    end
+
     def new_copy
       @form = ObjectStorage::Forms::CreateCopy.new(
         container_name: @container_name,
