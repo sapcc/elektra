@@ -1,6 +1,7 @@
 module Automation
 
   class JobsController < Automation::ApplicationController
+    LINES_TRUNCATION = 25
 
     def index
     end
@@ -15,12 +16,14 @@ module Automation
 
       # payload
       @payload_lines = @job.payload.lines.count
-      @payload_outout = @job.payload.lines.last(25).join
+      @payload_truncated = @payload_lines > LINES_TRUNCATION
+      @payload_output = @job.payload.lines.last(LINES_TRUNCATION).join
 
       # log
       log = services.automation.job_log(params[:id]) || ""
       @log_lines = log.lines.count
-      @log_output = log.lines.last(25).join
+      @log_truncated = @log_lines > LINES_TRUNCATION
+      @log_output = log.lines.last(LINES_TRUNCATION).join
     end
 
 

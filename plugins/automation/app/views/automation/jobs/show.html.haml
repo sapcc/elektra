@@ -55,6 +55,8 @@
 
   %p
     = "The payload has #{@payload_lines} lines of output. "
+    - if @payload_truncated
+      = "The output is too long and has been truncated to the last lines. "
     = link_to("View", plugin('automation').agent_job_show_payload_path(job_id: @job.request_id, agent_id: @agent_id), target: "_blank")
     full payload.
 
@@ -62,12 +64,14 @@
     %code
       = preserve do
         :escaped
-          #{@payload_outout}
+          #{@payload_output}
   %h3
     Log
 
   %p
     = "The generated log has #{@log_lines} lines of output. "
+    - if @log_truncated
+      = "The output is too long and has been truncated to the last lines. "
     = link_to("View", plugin('automation').agent_job_show_log_path(job_id: @job.request_id, agent_id: @agent_id), target: "_blank")
     full log.
 
