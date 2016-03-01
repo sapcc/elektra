@@ -76,7 +76,16 @@ module Core
 
         return success & after_save
       end
-    
+
+      def update(attributes={})
+        attributes.each do |key, value|
+          send("#{key}=", value)
+        end
+        return save
+      end
+
+      alias_method :update_attributes, :update
+
       def destroy
         requires :id
         # execute before callback

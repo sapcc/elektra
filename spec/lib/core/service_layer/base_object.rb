@@ -180,6 +180,30 @@ describe Core::ServiceLayer::Model do
     end
     
   end
+
+  describe 'update' do
+    before :each do
+      @o = Core::ServiceLayer::Model.new(@driver)
+    end
+
+    it 'calls save method' do
+      expect(@o).to receive(:save)
+      @o.update(foo: 23, bar: 42)
+    end
+
+    it 'updates attributes' do
+      @o.attributes = { foo: 0, bar: 0 }
+      @o.update(foo: 23, bar: 42)
+      expect(@o.foo).to eq(23)
+      expect(@o.bar).to eq(42)
+    end
+
+    it 'does not touch existing attributes unless explicitly instructed to' do
+      @o.attributes = { foo: 23 }
+      @o.update(bar: 42)
+      expect(@o.foo).to eq(23)
+    end
+  end
   
   describe 'destroy' do
     context 'id is nil' do
