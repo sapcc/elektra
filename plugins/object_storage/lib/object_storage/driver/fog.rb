@@ -49,7 +49,10 @@ module ObjectStorage
           headers = @fog.head_container(name).headers
           data = map_attribute_names(headers, CONTAINER_ATTRMAP)
           data['id'] = data['name'] = name
-          data['metadata'] = extract_metadata_tags(headers, 'X-Container-Meta-')
+          data['metadata'] = extract_metadata_tags(headers, 'X-Container-Meta-').reject do |key, value|
+            # skip metadata fields that are recognized by us
+            not CONTAINER_ATTRMAP.has_key?(key)
+          end
           data
         end
       end
@@ -232,11 +235,8 @@ module ObjectStorage
       def extract_metadata_tags(headers, prefix)
         result = {}
         headers.each do |key,value|
-          # filter Meta tags that are used
-          unless CONTAINER_ATTRMAP[key]
-            if key.start_with?(prefix)
-              result[key.sub(prefix, '')] = value
-            end
+          if key.start_with?(prefix)
+            result[key.sub(prefix, '')] = value
           end
         end
         return result
