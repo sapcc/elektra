@@ -31,6 +31,7 @@
   }
 }
 
-.container_bytes_quota, .container_object_count_quota {
+td .form-group {
+  /* remove some unnecessary margin when a simple_form input is embedded in a table layout */
   margin-bottom: 0px;
 }
