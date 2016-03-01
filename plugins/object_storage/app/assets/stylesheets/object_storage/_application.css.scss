@@ -30,3 +30,8 @@
     width: 100%;
   }
 }
+
+td .form-group {
+  /* remove some unnecessary margin when a simple_form input is embedded in a table layout */
+  margin-bottom: 0px;
+}
