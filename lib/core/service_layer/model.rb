@@ -79,7 +79,7 @@ module Core
 
       def update(attributes={})
         attributes.each do |key, value|
-          send("#{key}=", value)
+          send("#{key.to_s}=", value)
         end
         return save
       end
