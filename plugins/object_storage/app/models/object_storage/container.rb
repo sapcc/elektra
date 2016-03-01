@@ -29,7 +29,7 @@ module ObjectStorage
       @original_metadata = metadata
     end
 
-    def update_attributes
+    def attributes_for_update
       super.merge('original_metadata' => @original_metadata)
     end
 

@@ -66,23 +66,23 @@ describe Core::ServiceLayer::Model do
     
   end
   
-  describe 'create_attributes' do
+  describe 'attributes_for_create' do
     before :each do
       @base_object.attributes={'a'=>'test','b'=>'test'}
     end
     
     it 'returns attributes' do
-      expect(@base_object.create_attributes).to eq({'a'=>'test','b'=>'test'})  
+      expect(@base_object.attributes_for_create).to eq({'a'=>'test','b'=>'test'})
     end
   end
   
-  describe 'update_attributes' do
+  describe 'attributes_for_update' do
     before :each do
       @base_object.attributes={'a'=>'test','b'=>'test'}
     end
     
     it 'returns attributes' do
-      expect(@base_object.update_attributes).to eq({'a'=>'test','b'=>'test'})  
+      expect(@base_object.attributes_for_update).to eq({'a'=>'test','b'=>'test'})
     end
   end
   
