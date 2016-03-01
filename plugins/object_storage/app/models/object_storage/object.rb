@@ -60,12 +60,28 @@ module ObjectStorage
         # interprets as our take on the object's content type
         content_type:  content_type,
       )
+      return
+    end
+
+    def move_to!(target_container_name, target_path)
+      @driver.move_object(
+        container_name, path, target_container_name, target_path,
+        content_type: content_type, # see above for why this is needed
+      )
+      # after successful move, update attributes to point towards the new location
+      self.attributes = attributes.merge(
+        "container_name" => target_container_name,
+        "id"             => target_path,
+        "path"           => target_path,
+      )
+      return
     end
 
     def destroy
       # the super() implementation does not work because we need to give two
       # arguments to the driver
       @driver.delete_object(container_name, path)
+      return true
     end
 
   end
