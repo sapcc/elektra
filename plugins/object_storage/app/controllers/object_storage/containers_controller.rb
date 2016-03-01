@@ -46,6 +46,7 @@ module ObjectStorage
     end
 
     def update
+      # set extra container values like quotas
       params.require(:container).each do |key,value|
         # ensure that validations are executed
         @container.send("#{key}=", value)

@@ -9,7 +9,7 @@ module ObjectStorage
     # The id() is identical to the name() if the container is persisted.
 
     validates_presence_of :name
-    validates_numericality_of :object_count_quota, greater_than_or_equal_to: -1
+    validates_numericality_of :object_count_quota, greater_than_or_equal_to: 0, allow_nil:
     validate do
       # http://developer.openstack.org/api-ref-objectstorage-v1.html#createContainer
       errors[:name] << 'may not contain slashes' if name.include?('/')
@@ -22,7 +22,10 @@ module ObjectStorage
     end
 
     def object_count_quota
-      read(:object_count_quota || "-1").to_i
+      value = read(:object_count_quota)
+      return nil unless value
+      # to_i will return 0 if value is nil
+      value.to_i
     end
 
     def bytes_used
@@ -30,14 +33,21 @@ module ObjectStorage
     end
 
     def bytes_quota
-      read(:bytes_quota || "-1").to_i
+      value = read(:bytes_quota)
+      return nil unless value
+      # to_i will return 0 if value is nil
+      value.to_i
     end
 
     def bytes_quota=(new_value)
       if new_value.is_a?(String)
         begin
-          new_value = Core::DataType.new(:bytes).parse(new_value)
-          @bytes_quota_validation_error = nil
+          unless new_value.empty?
+            new_value = Core::DataType.new(:bytes).parse(new_value)
+            @bytes_quota_validation_error = nil
+          else
+            new_value = nil
+          end
         rescue ArgumentError => e
           # errors.add() only works during validation, so store this error for later
           @bytes_quota_validation_error = e.message
