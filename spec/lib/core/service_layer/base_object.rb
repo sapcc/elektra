@@ -146,8 +146,8 @@ describe Core::ServiceLayer::Model do
       end
       
       it 'calls create method' do
-        expect(@o).to receive(:create)
-        expect(@o).not_to receive(:update)
+        expect(@o).to receive(:perform_create)
+        expect(@o).not_to receive(:perform_update)
         @o.save
       end
     end
@@ -157,8 +157,8 @@ describe Core::ServiceLayer::Model do
         @o = Core::ServiceLayer::Model.new(@driver, {'id'=>1})
       end
       it 'calls update method' do
-        expect(@o).to receive(:update)
-        expect(@o).not_to receive(:create)
+        expect(@o).to receive(:perform_update)
+        expect(@o).not_to receive(:perform_create)
         @o.save
       end
       

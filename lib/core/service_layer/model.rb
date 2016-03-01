@@ -68,9 +68,9 @@ module Core
 
         if success
           if self.id.nil?
-            success = create
+            success = perform_create
           else
-            success = update
+            success = perform_update
           end
         end
 
@@ -171,7 +171,7 @@ module Core
     
       protected
     
-      def create
+      def perform_create
         # execute before callback
         before_create
 
@@ -198,7 +198,7 @@ module Core
         return true
       end 
     
-      def update
+      def perform_update
         begin
           update_attrs = update_attributes.with_indifferent_access
           update_attrs.delete(:id)
