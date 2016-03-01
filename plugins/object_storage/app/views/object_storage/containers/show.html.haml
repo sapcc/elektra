@@ -13,7 +13,7 @@
           %td
             .row
               .col-md-6
-                = f.input :object_count_quota, as: :integer, label: false, placeholder: 'number'
+                = f.input :object_count_quota, as: :integer, label: false, placeholder: 'Leave empty to disable'
         %tr
           %th Total size
           %td= format_bytes(@container.bytes_used)
@@ -26,7 +26,7 @@
                 - if @container.bytes_quota
                   - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota)
                 - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
-                = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'value'
+                = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
         %tr
           %th Custom metadata
           %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
