@@ -1,16 +1,9 @@
 = content_for :title do
   Move object: #{@object.path}
 
-= simple_form_for @form, url: plugin('object_storage').update_object_path(@container_name, @object.path), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
-  %div{class: modal? ? 'modal-body' : ''}
+- pl = plugin('object_storage')
 
-    %fieldset
-      = f.input :container_name, as: :select,  label: 'Target container', collection: @all_container_names, include_blank: false
-      = f.input :path,           as: :string,  label: 'Target path'
-
-    %div.buttons{class: modal? ? 'modal-footer' : ''}
-      - if modal?
-        %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
-      - else
-        = link_to "Cancel", plugin('object_storage').list_objects_path(@container_name, @object.path), class: 'btn btn-default'
-      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Move
+= simple_modal_form_for @form, 'Move', url: pl.update_object_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.dirname) do |f|
+  %fieldset
+    = f.input :container_name, as: :select,  label: 'Target container', collection: @all_container_names, include_blank: false
+    = f.input :path,           as: :string,  label: 'Target path'
