@@ -33,11 +33,11 @@ module Inquiry
       admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
       inquiry = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
       unless inquiry.errors?
-        flash[:notice] = "Inquiry successfully created."
+        flash[:notice] = "Request successfully created."
         redirect_to inquiries_path
       else
-        flash[:error] = "Error creating inquiry: #{inquiry.errors.full_messages.to_sentence}."
-        Rails.logger.error "Inquiry: Error creating inquiry: #{inquiry.errors.full_messages}"
+        flash[:error] = "Error creating request: #{inquiry.errors.full_messages.to_sentence}."
+        Rails.logger.error "Inquiry(Request): Error creating inquiry: #{inquiry.errors.full_messages}"
         @inquiry = Inquiry.new(requester_id: current_user.id)
         render action: :new
       end
@@ -53,7 +53,7 @@ module Inquiry
       @inquiry = services.inquiry.find_by_id(params[:id])
       services.inquiry.set_state_for_inquiry(@inquiry, inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description])
       unless @inquiry.errors?
-        flash[:notice] = "Inquiry successfully updated."
+        flash[:notice] = "Request successfully updated."
         render 'inquiry/inquiries/update.js'
       else
         @inquiry.aasm_state = inquiry_params[:aasm_state]
@@ -66,7 +66,7 @@ module Inquiry
 
       if @inquiry
         if @inquiry.destroy
-          flash[:notice] = "Inquiry successfully deleted."
+          flash[:notice] = "Request successfully deleted."
         else
           flash[:error] = @inquiry.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
         end
