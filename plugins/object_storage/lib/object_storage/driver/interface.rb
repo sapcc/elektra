@@ -79,6 +79,15 @@ module ObjectStorage
 
       ##### miscellaneous
 
+      # List capabilities of the backend. The output format is
+      # backend-specific. The only thing that's guaranteed is that a hash is
+      # returned, where the keys are strings that identify the available
+      # capabilities. The values are whatever the backend reports for that
+      # capability.
+      def list_capabilities
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
       # `targets` is an array of hashes like
       #
       #   { container: "foo" }                    # delete this container (must be empty!)

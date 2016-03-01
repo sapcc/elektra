@@ -18,5 +18,9 @@ module ObjectStorage
       end
     end
 
+    def capabilities
+      @capabilities = services.object_storage.capabilities
+    end
+
   end
 end

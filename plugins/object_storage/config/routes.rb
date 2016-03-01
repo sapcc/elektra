@@ -1,6 +1,7 @@
 ObjectStorage::Engine.routes.draw do
 
-  get '/' => 'entry#index', as: 'entry'
+  get '/'             => 'entry#index',        as: 'entry'
+  get '/capabilities' => 'entry#capabilities', as: 'capabilities'
 
   resources 'containers', except: :edit do
     member do
