@@ -1,8 +1,9 @@
 Inquiry::Engine.routes.draw do
-  resources :inquiries
+
+  resources :inquiries, path: '/items'
 
   namespace :admin do
-    resources :inquiries
+    resources :inquiries, path: '/items'
   end
 
 end

@@ -55,14 +55,16 @@ module Core
   
     # Plugin class
     class Plugin
-      attr_reader :name, :path
+      attr_reader :name, :path, :mount_path
 
       def initialize(gemspec)
         @name = gemspec.name
         @path = gemspec.full_gem_path
+        @mount_path = gemspec.metadata['mount_path']
       end
     
       def mount_point
+        return mount_path if mount_path
         name.gsub('_','-')
       end
 

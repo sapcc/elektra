@@ -1,41 +1,33 @@
 = content_for :title do
   Container: #{@container.name}
 
-= simple_form_for @container, url: plugin('object_storage').container_path(@container.name), method: :put, remote: request.xhr?, html: { data: { modal: true } } do |f|
-  %div{class: modal? ? 'modal-body' : ''}
-    %table.table
-      %tbody
-        %tr
-          %th Object count
-          %td= @container.object_count
-        %tr
-          %th Object count quota
-          %td
-            .row
-              .col-md-6
-                = f.input :object_count_quota, as: :integer, label: false, placeholder: 'Leave empty to disable'
-        %tr
-          %th Total size
-          %td= format_bytes(@container.bytes_used)
-        %tr
-          %th Total size quota
-          %td
-            .row
-              .col-md-6
-                - inital_value = nil
-                - if @container.bytes_quota
-                  - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota)
-                - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
-                = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
-        %tr
-          %th Custom metadata
-          %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
+- pl = plugin('object_storage')
 
-    %div.buttons{class: modal? ? 'modal-footer' : ''}
-      - if modal?
-        %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
-      - else
-        = link_to "Cancel", plugin('object_storage').container_path(@container.name), class: 'btn btn-default'
-      %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Update container
-
-
+= simple_modal_form_for @container, 'Update container', url: pl.container_path(@container.name), method: :put, cancel_url: pl.containers_path do |f|
+  %table.table
+    %tbody
+      %tr
+        %th Object count
+        %td= @container.object_count
+      %tr
+        %th Object count quota
+        %td
+          .row
+            .col-md-6
+              = f.input :object_count_quota, as: :integer, label: false, placeholder: 'Leave empty to disable'
+      %tr
+        %th Total size
+        %td= format_bytes(@container.bytes_used)
+      %tr
+        %th Total size quota
+        %td
+          .row
+            .col-md-6
+              - inital_value = nil
+              - if @container.bytes_quota
+                - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota)
+              - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
+              = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
+      %tr
+        %th Custom metadata
+        %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }

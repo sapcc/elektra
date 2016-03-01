@@ -1,13 +1,21 @@
 job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
 
 @init_history_popover= () ->
-  # init popovers
+  # init popovers elements
+  init_job_popover()
+
+@init_job_popover= () ->
+  # init popovers elements
   $(job_popover_matcher).popover
     placement: 'top'
     html: true
 
-  # hide popover if other popover is clicked
+  # add click handler to the popovers to hide popover if other popover is clicked
   $(job_popover_matcher).on 'click', job_popover_close_other_popovers_handler
+
+  # add click handler to close the jobs popover when shown
+  $(job_popover_matcher).on 'shown.bs.popover', ->
+    $('.js-close-popover').on 'click', close_popover
 
   # add click handler to the html element to close popovers when clicking outside of the elements
   $('html').unbind('click', job_popover_outside_click_handler)
@@ -33,13 +41,4 @@ $ ->
   $(document).on('polling:update_complete', init_history_popover)
 
   # init popovers elements
-  $(job_popover_matcher).popover
-    placement: 'top'
-    html: true
-
-  # add click handler to the popovers to hide popover if other popover is clicked
-  $(job_popover_matcher).on 'click', job_popover_close_other_popovers_handler
-
-  # add click handler to the html element to close popovers when clicking outside of the elements
-  if $(job_popover_matcher).length > 0
-    $('html').bind('click', job_popover_outside_click_handler)
+  init_job_popover()

@@ -72,6 +72,11 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def move_object(source_container_name, source_path, target_container_name, target_path, options={})
+        copy_object(source_container_name, source_path, target_container_name, target_path, options.merge(with_metadata: true))
+        delete_object(source_container_name, source_path)
+      end
+
       ##### miscellaneous
 
       # `targets` is an array of hashes like

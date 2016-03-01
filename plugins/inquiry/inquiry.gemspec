@@ -16,5 +16,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "aasm"
   s.add_runtime_dependency "kaminari"
   s.add_runtime_dependency "bootstrap-kaminari-views"
+  s.metadata = { "mount_path" => "request" }
 
 end
