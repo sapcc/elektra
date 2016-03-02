@@ -4,7 +4,8 @@ module ObjectStorage
     # The following properties are known:
     #   - path
     #   - content_type
-    #   - last_modified
+    #   - created_at (DateTime)
+    #   - last_modified_at (DateTime)
     #   - md5_hash
     #   - size_bytes
     #   - metadata (Hash)
@@ -12,6 +13,10 @@ module ObjectStorage
 
     def size_bytes
       read(:size_bytes).to_i
+    end
+
+    def created_at
+      read(:created_at)
     end
 
     # Same as path(), but removes the trailing slash for directories.

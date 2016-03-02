@@ -13,9 +13,11 @@
         %th Size
         %td= format_bytes(@object.size_bytes)
       %tr
+        %th Uploaded
+        %td= @object.created_at.to_time.getlocal.strftime('%F %T')
+      %tr
         %th Last Modified
-        -# TODO: format
-        %td= @object.last_modified
+        %td= @object.last_modified_at.to_time.getlocal.strftime('%F %T')
       %tr
         %th Content type
         %td= @object.content_type
