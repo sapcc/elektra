@@ -83,16 +83,10 @@ module Admin
         @service_user = @service_cache.fetch(Thread.current[:domain], {}).fetch(:user, nil)
         @service_user_expires_at = @service_cache.fetch(Thread.current[:domain], {}).fetch(:expires, nil)
         
-        p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>service_user"
-        p "@service_user.token: #{@service_user.token if @service_user}"
-        p "@service_user_expires_at: #{@service_user_expires_at}"
-        p "@service_user_expires_at>Time.now: #{@service_user_expires_at>Time.now if @service_user_expires_at}"
-        
         #if @service_user.nil? or (@service_user_expires_at and @service_user_expires_at>Time.now)
         #if @service_user.nil? or @service_user_expires_at.nil? or @service_user_expires_at<=Time.now)
         
         unless (@service_user and @service_user_expires_at and @service_user_expires_at>Time.now)
-          p "....................init service user"
           @service_user = begin
             MonsoonOpenstackAuth.api_client.auth_user(
               Rails.application.config.service_user_id,
@@ -109,9 +103,6 @@ module Admin
             )
           end
           
-          p '::::::::::::::::::::::::::::::::::'
-          p @service_user.token if @service_user
-
           if @service_user
             # create friendly_id entry for scope domain
             FriendlyIdEntry.find_or_create_entry('Domain',nil,@service_user.domain_id,@service_user.domain_name)
@@ -136,7 +127,7 @@ module Admin
         # create new admin_identity unless already created or token has changed
         unless (@admin_identity and @admin_identity.token==service_user_token)
           @admin_identity = Core::ServiceLayer::ServicesManager.service(:identity, {
-            region: Core::ServiceLayer.locate_region(service_user),
+            region: Core.locate_region(service_user),
             token: service_user.token
           })
         end

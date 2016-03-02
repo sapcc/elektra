@@ -76,22 +76,22 @@ class DashboardController < ::ScopeController
   end
 
   def new_user?
-    # # Consider that every plugin controller inhertis from dashboard controller
-    # # and check_terms_of_use method is called on every request.
-    # # In order to reduce api calls we cache the result of new_user?
-    # # in the session for 5 minutes.
-    #
-    # is_cache_expired = current_user.id!=session[:last_user_id] ||
-    #   session[:last_request_timestamp].nil? ||
-    #   (session[:last_request_timestamp] < Time.now-5.minute)
-    #
-    # if is_cache_expired
-    #   session[:last_request_timestamp] = Time.now
-    #   session[:last_user_id] = current_user.id
-    #   session[:is_new_dashboard_user] = Admin::OnboardingService.new_user?(current_user)
-    # end
-    # session[:is_new_dashboard_user]
-    Admin::OnboardingService.new_user?(current_user)
+    # Consider that every plugin controller inhertis from dashboard controller
+    # and check_terms_of_use method is called on every request.
+    # In order to reduce api calls we cache the result of new_user?
+    # in the session for 5 minutes.
+
+    is_cache_expired = current_user.id!=session[:last_user_id] ||
+      session[:last_request_timestamp].nil? ||
+      (session[:last_request_timestamp] < Time.now-5.minute)
+
+    if is_cache_expired
+      session[:last_request_timestamp] = Time.now
+      session[:last_user_id] = current_user.id
+      session[:is_new_dashboard_user] = Admin::OnboardingService.new_user?(current_user)
+    end
+    session[:is_new_dashboard_user]
+    #Admin::OnboardingService.new_user?(current_user)
 
   end
 

@@ -3,10 +3,6 @@
 # should inherit from this class.
 class ScopeController < ::ApplicationController
 
-  # includes services method
-  # use: services.SERVICE_NAME.METHOD_NAME (e.g. services.identity.auth_projects)
-  include Core::ServiceLayer::Services
-
   prepend_before_filter do
     # initialize scoped domain's and project's friendly id 
     # use existing, user's or default domain

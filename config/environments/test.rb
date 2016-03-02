@@ -53,9 +53,11 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = false
   
   # Enable stdout logger
-  #config.logger = Logger.new(STDOUT)
+  config.logger = Logger.new(STDOUT)
 
   # Set log level
-  #config.log_level = :ERROR
+  config.log_level = :ERROR
+  
+  config.debug_api_calls = true
 
 end
