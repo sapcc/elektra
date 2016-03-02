@@ -23,5 +23,5 @@
         %th MD5 checksum
         %td= @object.md5_hash
       %tr
-        %th Custom metadata
+        %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @object.metadata }

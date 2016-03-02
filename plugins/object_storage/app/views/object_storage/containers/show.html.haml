@@ -29,5 +29,5 @@
               - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
               = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
       %tr
-        %th Custom metadata
+        %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
