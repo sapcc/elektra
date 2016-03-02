@@ -4,48 +4,7 @@
   Object Storage: Cluster Capabilities
 
 %div{ class: modal? ? 'modal-body' : '' }
-
-  %ul.fa-ul
-    %li{ class: @capabilities.has_key?('account_quotas') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-pie-chart
-      %strong Account quotas
-    %li{ class: @capabilities.has_key?('container_quotas') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-pie-chart
-      %strong Container quotas
-    %li{ class: @capabilities.has_key?('ratelimit') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-hand-stop-o
-      API
-      %strong rate limiting
-    %li{ class: @capabilities.has_key?('bulk_upload') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-file-archive-o
-      %strong Bulk upload
-      of archive files
-    %li{ class: @capabilities.has_key?('bulk_delete') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-eraser
-      Efficient
-      %strong bulk deletion
-    %li{ class: @capabilities.has_key?('container_sync') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-refresh
-      %strong Container syncing
-    %li{ class: @capabilities.has_key?('slo') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-object-group
-      Handling large objects using
-      %strong static large object
-      manifests
-    %li{ class: @capabilities.has_key?('staticweb') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-globe
-      Distribution of container contents as
-      %strong static websites
-    %li{ class: @capabilities.has_key?('tempurl') ? '' : 'missing-capability' }
-      %span.fa-li.fa.fa-clock-o
-      Sharing of objects using
-      %strong temporary URLs
-    - parsed_caps = [ 'swift', 'account_quotas', 'bulk_delete', 'bulk_upload', 'container_quotas', 'container_sync', 'ratelimit', 'slo', 'staticweb', 'tempurl' ]
-    - if (additional_caps = @capabilities.keys - parsed_caps).size > 0
-      %li
-        %span.fa-li.fa.fa-ellipsis-v
-        Additional capabilities:
-        %strong= additional_caps.sort.to_sentence
+  = render partial: 'capabilities'
 
   %button#show_full_capabilities.btn.btn-default Show full report
   #full_capabilities.hidden
