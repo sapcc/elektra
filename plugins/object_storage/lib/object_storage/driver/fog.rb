@@ -36,11 +36,15 @@ module ObjectStorage
         'name'  => 'name',
       }
       CONTAINER_ATTRMAP = {
-        'X-Container-Object-Count' => 'object_count',
-        'X-Container-Bytes-Used'   => 'bytes_used',
+        'X-Container-Object-Count'     => 'object_count',
+        'X-Container-Bytes-Used'       => 'bytes_used',
+        'X-Container-Meta-Quota-Bytes' => 'bytes_quota',
+        'X-Container-Meta-Quota-Count' => 'object_count_quota',
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
+        'bytes_quota'        => 'X-Container-Meta-Quota-Bytes',
+        'object_count_quota' => 'X-Container-Meta-Quota-Count',
       }
 
       def containers(filter={})
@@ -59,7 +63,10 @@ module ObjectStorage
           headers = @fog.head_container(name).headers
           data = map_attribute_names(headers, CONTAINER_ATTRMAP)
           data['id'] = data['name'] = name
-          data['metadata'] = extract_metadata_tags(headers, 'X-Container-Meta-')
+          data['metadata'] = extract_metadata_tags(headers, 'X-Container-Meta-').reject do |key, value|
+            # skip metadata fields that are recognized by us
+            not CONTAINER_ATTRMAP.has_key?(key)
+          end
           data
         end
       end
