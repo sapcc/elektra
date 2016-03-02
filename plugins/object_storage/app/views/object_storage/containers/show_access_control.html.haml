@@ -3,19 +3,34 @@
 
 - pl = plugin('object_storage')
 
-= simple_modal_form_for @container, 'Update Access', url: pl.container_path(@container.name), method: :put, cancel_url: pl.containers_path do |f|
+= simple_modal_form_for @container, 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
   %table.table
     %tbody
       %tr
         %th Read ACLs
         %td
-          = f.input :read_acl, as: :string, label: false, placeholder: 'Leave empty to disable', readonly: @container.public_read_access
+          = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access
           %p
             = f.input :public_read_access, as: :boolean, label: 'Public Read Access'
       %tr
         %th Write ACLs
         %td
-          = f.input :write_acl, as: :string, label: false, placeholder: 'Leave empty to disable', readonly: @container.public_write_access
-          %p
-            = f.input :public_write_access, as: :boolean, label: 'Public Write Access'
+          = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_write_access
+
+:javascript
+  $('#container_public_read_access').change(
+    function() {
+      if ($(this).is(":checked")) {
+        console.log('1');       
+        $('#container_read_acl').data('org', $('#container_read_acl').val());
+        $('#container_read_acl').val('.r:*,.rlistings');
+        $('#container_read_acl').prop('readonly', true);
+     }
+       else {
+        console.log('2');
+        $('#container_read_acl').val($('#container_read_acl').data('org'));
+        $('#container_read_acl').prop('readonly', false);
+      }
+    }
+  );
 

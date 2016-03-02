@@ -19,7 +19,16 @@ module ObjectStorage
     end
 
     def show_access_control
-      #@read_acls = @container.read_acl.split(",")
+    end
+
+    def update_access_control
+      @container.read_acl = params[:container][:read_acl];
+      @container.write_acl = params[:container][:write_acl];
+      unless @container.save
+        render action: 'show_access_control'
+        return
+      end
+      back_to_container_list
     end
 
     def new
