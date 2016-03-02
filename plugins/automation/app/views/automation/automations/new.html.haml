@@ -1,0 +1,52 @@
+= content_for :title do
+  New Automation
+
+.modal-body
+
+  = form_tag plugin('automation').automations_path(), :class => 'form-horizontal', :remote => true, method: :post do
+
+    .form-group
+      = label_tag 'name', 'Name', class: 'col-sm-2 control-label'
+      .col-sm-5
+        = text_field_tag 'name', @automation.attributes[:name], :maxlength => "256", :placeholder => "Enter name", class: 'form-control', autofocus: 'autofocus'
+
+    .form-group
+      = label_tag 'repository', 'Repository', class: 'col-sm-2 control-label'
+      .col-sm-5
+        = text_field_tag 'repository', '', :maxlength => "256", :placeholder => "Enter repository", class: 'form-control'
+
+    .form-group
+      = label_tag 'repository_version', 'Repository version', class: 'col-sm-2 control-label'
+      .col-sm-5
+        = text_field_tag 'repository_version', '', :maxlength => "256", :placeholder => "Enter repository revision", class: 'form-control'
+
+    .form-group
+      = label_tag 'timeout', 'Timeout', class: 'col-sm-2 control-label'
+      .col-sm-5
+        = text_field_tag 'timeout', '', :maxlength => "256", :placeholder => "Enter timeout", class: 'form-control'
+
+    .form-group
+      = label_tag 'tags', 'Tags', class: 'col-sm-2 control-label'
+      .col-sm-10
+        = text_area_tag 'tags', '', :maxlength => "256", class: 'form-control', data: {toggle:'tagEditor'}
+        %p.info-bloc
+          %i.fa.fa-info-circle
+          Please add tags giving key value pairs separated by ':' or '=' and pressing the key enter or coma. You can also copy and paste a string von tags following this pattern: 'key1:value1,key2=value2...'
+
+    .form-group
+      = label_tag 'type', 'Type', class: 'col-sm-2 control-label' #sr-only
+      .col-sm-5
+        %select.form-control{name: 'type', id: 'type'}
+          %option{disabled: true, selected:true}
+            Please choose automation type
+          - @automation_types.each do |key, value|
+            %option{value: key}
+              = value
+
+    %hr
+
+    = render 'chef'
+
+    .form-group.clearfix
+      .col-sm-12
+        = button_tag "Save", class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." }

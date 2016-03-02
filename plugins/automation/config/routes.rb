@@ -12,4 +12,6 @@ Automation::Engine.routes.draw do
     end
   end
 
+  resources :automations, only: [:index, :new, :create]
+
 end
