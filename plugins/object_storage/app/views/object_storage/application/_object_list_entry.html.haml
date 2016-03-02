@@ -16,7 +16,7 @@
       = format_bytes(object.size_bytes)
   %td
     - unless object.is_directory?
-      = Core::Formatter.format_modification_time(object.last_modified)
+      = Core::Formatter.format_modification_time(object.last_modified_at)
   %td.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }

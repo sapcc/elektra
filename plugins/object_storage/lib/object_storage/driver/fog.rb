@@ -104,7 +104,7 @@ module ObjectStorage
         'bytes'         => 'size_bytes',
         'content_type'  => 'content_type',
         'hash'          => 'md5_hash',
-        'last_modified' => 'last_modified',
+        'last_modified' => 'last_modified_at',
         'name'          => 'path',
         'subdir'        => 'path', # for subdirectories, only this single attribute is given
       }
@@ -112,7 +112,8 @@ module ObjectStorage
         'Content-Length' => 'size_bytes',
         'Content-Type'   => 'content_type',
         'Etag'           => 'md5_hash',
-        'Last-Modified'  => 'last_modified',
+        'Last-Modified'  => 'last_modified_at',
+        'X-Timestamp'    => 'created_at',
       }
       OBJECT_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
@@ -125,8 +126,8 @@ module ObjectStorage
             object = map_attribute_names(o, OBJECTS_ATTRMAP)
             object['id'] = object['path'] # path also serves as id() for Core::ServiceLayer::Model
             object['container_name'] = container_name
-            if object.has_key?('last_modified')
-              object['last_modified'] = DateTime.iso8601(object['last_modified']) # parse date
+            if object.has_key?('last_modified_at')
+              object['last_modified_at'] = DateTime.iso8601(object['last_modified_at']) # parse date
             end
             object
           end
@@ -152,7 +153,8 @@ module ObjectStorage
           data = map_attribute_names(headers, OBJECT_ATTRMAP)
           data['id'] = data['path'] = path
           data['container_name'] = container_name
-          data['last_modified'] = DateTime.httpdate(data['last_modified']) # parse date
+          data['last_modified_at'] = DateTime.httpdate(data['last_modified_at']) # parse date
+          data['created_at']       = DateTime.strptime(data['created_at'], '%s') # parse UNIX timestamp
           data['metadata'] = extract_metadata_tags(headers, 'X-Object-Meta-')
           data
         end
