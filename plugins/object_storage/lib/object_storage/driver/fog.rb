@@ -117,6 +117,7 @@ module ObjectStorage
       }
       OBJECT_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
+        'content_type'   => 'Content-Type',
       }
 
       def objects(container_name, options={})

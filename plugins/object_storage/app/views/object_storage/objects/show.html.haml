@@ -20,7 +20,7 @@
         %td= @object.last_modified_at.to_time.getlocal.strftime('%F %T')
       %tr
         %th Content type
-        %td= @object.content_type
+        %td= f.input :content_type, as: :string, label: false
       %tr
         %th MD5 checksum
         %td= @object.md5_hash

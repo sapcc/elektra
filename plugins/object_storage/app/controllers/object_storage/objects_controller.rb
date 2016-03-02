@@ -45,6 +45,10 @@ module ObjectStorage
         @object.move_to!(@form.container_name, @form.path)
       else
         # option 2: coming from show() -> update properties
+        # TODO: use update_attributes once available
+        params.require(:object).each do |key, value|
+          @object.send("#{key}=", value)
+        end
         @object.metadata = self.metadata_params
         unless @object.save
           render action: 'show' # "edit" view is covered by "show"
