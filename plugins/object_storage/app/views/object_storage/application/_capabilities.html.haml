@@ -1,4 +1,4 @@
-%ul.fa-ul
+%ul.fa-ul#capabilities_list
   %li{ class: @capabilities.has_key?('account_quotas') ? '' : 'missing-capability' }
     %span.fa-li.fa.fa-pie-chart
     %strong Account quotas
@@ -39,3 +39,12 @@
       %span.fa-li.fa.fa-ellipsis-v
       Additional capabilities:
       %strong= additional_caps.sort.to_sentence
+
+- if services.available?(:identity, :web_console)
+  %p.help-block
+    For a more detailed report, use the
+    %code swift info
+    command on the
+    = succeed '.' do
+      -# no "link_to" here, it breaks the markup when storing the rendered partial in a HTML attribute in /object_storage/containers/list
+      %a{ href: plugin('identity').projects_web_console_path, target: '_blank' } Web console

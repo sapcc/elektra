@@ -3,9 +3,14 @@
 
 .toolbar
   = link_to 'Create container', plugin('object_storage').new_container_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
-  = link_to 'Cluster capabilities', plugin('object_storage').capabilities_path(), class: 'btn btn-default btn-lg', data: { modal: true }
+  = link_to 'Cluster capabilities', 'javascript:void(0)', class: 'btn btn-default btn-lg', id: 'capabilities_btn', title: 'Cluster capabilities', data: { content: render(partial: 'capabilities') }
 
 #container_list
   = render partial: 'list'
 
-
+= content_for :javascripts do
+  :javascript
+    //enable popover on button
+    var button = $('#capabilities_btn').popover({ html: true });
+    //add custom class to div.popover
+    button.data('bs.popover').tip().addClass('popover-capabilities');
