@@ -1,9 +1,9 @@
 %ul.fa-ul#capabilities_list
   %li{ class: @capabilities.has_key?('account_quotas') ? '' : 'missing-capability' }
-    %span.fa-li.fa.fa-pie-chart
+    %span.fa-li.fa.fa-area-chart
     %strong Account quotas
   %li{ class: @capabilities.has_key?('container_quotas') ? '' : 'missing-capability' }
-    %span.fa-li.fa.fa-pie-chart
+    %span.fa-li.fa.fa-area-chart
     %strong Container quotas
   %li{ class: @capabilities.has_key?('ratelimit') ? '' : 'missing-capability' }
     %span.fa-li.fa.fa-hand-stop-o
@@ -22,7 +22,7 @@
     %strong Container syncing
   %li{ class: @capabilities.has_key?('slo') ? '' : 'missing-capability' }
     %span.fa-li.fa.fa-object-group
-    Handling large objects using
+    Handling of large objects using
     %strong static large object
     manifests
   %li{ class: @capabilities.has_key?('staticweb') ? '' : 'missing-capability' }
