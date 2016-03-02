@@ -22,15 +22,20 @@ module ObjectStorage
         'name'  => 'name',
       }
       CONTAINER_ATTRMAP = {
+        # name in API => name in our model
         'X-Container-Object-Count'     => 'object_count',
         'X-Container-Bytes-Used'       => 'bytes_used',
         'X-Container-Meta-Quota-Bytes' => 'bytes_quota',
         'X-Container-Meta-Quota-Count' => 'object_count_quota',
+        'X-Container-Read'             => 'read_acl',
+        'X-Container-Write'            => 'write_acl',
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
         'bytes_quota'        => 'X-Container-Meta-Quota-Bytes',
         'object_count_quota' => 'X-Container-Meta-Quota-Count',
+        'read_acl'           => 'X-Container-Read',
+        'write_acl'          => 'X-Container-Write',
       }
 
       def containers(filter={})

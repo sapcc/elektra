@@ -18,7 +18,10 @@ module ObjectStorage
       @empty = @container.empty?
     end
 
-    def show
+    def show_permissions
+    end
+
+    def permissions
     end
 
     def new
