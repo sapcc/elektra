@@ -18,10 +18,8 @@ module ObjectStorage
       @empty = @container.empty?
     end
 
-    def show_permissions
-    end
-
-    def permissions
+    def show_access_control
+      #@read_acls = @container.read_acl.split(",")
     end
 
     def new

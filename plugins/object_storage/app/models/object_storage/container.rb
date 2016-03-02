@@ -17,6 +17,18 @@ module ObjectStorage
       errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
     end
 
+    def public_read_access
+      read_acl == ".r:*,.rlistings"
+    end
+
+    def public_write_access
+      write_acl == ".r:*,.rlistings"
+    end
+
+    def read_acl
+       read(:read_acl)
+    end
+
     def object_count
       read(:object_count).to_i
     end
