@@ -1,6 +1,5 @@
 %h1
   Your Requests
-  = nil.nase if @scoped_project_name == 'D003258'
 %br
 .inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
   = render partial: 'inquiries_widget', locals: {admin_view: false, remote_links: false}
