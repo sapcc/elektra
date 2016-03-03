@@ -25,24 +25,33 @@
           %br
           ACL lists are comma seperated.
           %br
-          Use only project and user IDs without "AUTH_".
+          Use only project and user IDs without 
+          %i "AUTH_".
           %br
-          For granting acccess to a project use "project_id :*"
+          For granting acccess to a project use 
+          %i "project_id :*"
         %p 
           %strong Example:
           %br
-          TODO
+          Grand Read access: 
+          %i"-r USER1,USER2"
+          %br
+          Grand Write access:
+          %i "-w USER1,USER2"
+          %br
+          Static Web access:
+          %i ".r:myproject.corp,example.com"
+          grands read access (.r: stands for referer) for domain myproject.corp and example.com
+
 :javascript
   $('#container_public_read_access').change(
     function() {
       if ($(this).is(":checked")) {
-        console.log('1');       
         $('#container_read_acl').data('org', $('#container_read_acl').val());
         $('#container_read_acl').val('.r:*,.rlistings');
         $('#container_read_acl').prop('readonly', true);
      }
        else {
-        console.log('2');
         $('#container_read_acl').val($('#container_read_acl').data('org'));
         $('#container_read_acl').prop('readonly', false);
       }
