@@ -4,9 +4,11 @@ ObjectStorage::Engine.routes.draw do
 
   resources 'containers', except: :edit do
     member do
-      get :confirm_deletion
-      get :confirm_emptying
+      get  :confirm_deletion
+      get  :confirm_emptying
       post :empty
+      get  :show_access_control
+      post :update_access_control
     end
   end
 

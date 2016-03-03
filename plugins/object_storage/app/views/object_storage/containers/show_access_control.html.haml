@@ -1,0 +1,58 @@
+= content_for :title do
+  Access Control Lists for Container: #{@container.name}
+
+- pl = plugin('object_storage')
+
+= simple_modal_form_for @container, 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
+  .row
+    .col-md-6
+      %table.table
+        %tbody
+          %tr
+            %th Read ACLs
+            %td
+              = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
+              %p
+                = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
+          %tr
+            %th Write ACLs
+            %td
+              = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here'
+    .col-md-6
+      .bs-callout.bs-callout-info
+        %p
+          Entries in ACLs are comma-separated. Examples:
+        %dl
+          %dt
+            %code USER_ID
+          %dd Grant access to this user.
+          %dt
+            %code PROJECT_ID:*
+          %dd Grant access to all users with access to this project.
+          %dt
+            %code .r:example.corp
+          %dd Grant read access for this Referer domain.
+          %dt
+            %code .rlistings
+          %dd Allow authorized users to list objects in this container.
+        %p
+          Use plain project and user IDs without the
+          %code AUTH_
+          prefix.
+
+:javascript
+  $('#container_public_read_access').change(
+    function() {
+      var input = $('#container_read_acl');
+      if ($(this).is(":checked")) {
+        input.data('org', input.val());
+        input.val('.r:*,.rlistings');
+        input.prop('readonly', true);
+     }
+       else {
+        input.val(input.data('org'));
+        input.prop('readonly', false);
+      }
+    }
+  );
+

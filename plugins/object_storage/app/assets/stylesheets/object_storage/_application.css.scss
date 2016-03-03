@@ -55,3 +55,14 @@ th.align-with-form-control {
 li.missing-capability {
   opacity: 0.25;
 }
+
+.bs-callout-info dl {
+  margin-bottom: 10px;
+
+  dd {
+    margin-left: 2rem;
+  }
+  dd + dt {
+    margin-top: 10px;
+  }
+}
