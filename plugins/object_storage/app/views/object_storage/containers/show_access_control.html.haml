@@ -21,27 +21,26 @@
     .col-md-6
       .bs-callout.bs-callout-info
         %p
-          %strong Please note:
-          %br
-          ACL lists are comma seperated.
-          %br
+          ACL (access-control lists) are comma-separated.
           Use only project and user IDs without 
-          %i "AUTH_".
-          %br
+          = succeed '.' do
+            %code AUTH_
           For granting acccess to a project use 
-          %i "project_id :*"
+          = succeed '.' do
+            %code PROJECT_ID:*
         %p 
-          %strong Example:
-          %br
-          Grand Read access: 
-          %i"-r USER1,USER2"
-          %br
-          Grand Write access:
-          %i "-w USER1,USER2"
-          %br
-          Static Web access:
-          %i ".r:myproject.corp,example.com"
-          grands read access (.r: stands for referer) for domain myproject.corp and example.com
+          %dl
+            %dt Grant Read and Write access: 
+            %dd 
+              %code USER1,USER2
+          %dl
+            %dt  Static Web access:
+            %dd 
+              %code .r:myproject.corp,example.com
+              grants read access (.r: stands for referer) for domain myproject.corp and example.com
+              Allow listing use
+              = succeed '.' do
+                %code .rlistings
 
 :javascript
   $('#container_public_read_access').change(
