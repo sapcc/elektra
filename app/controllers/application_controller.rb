@@ -13,12 +13,12 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
-
+  
   helper_method :modal?, :plugin_name
   
   # check if the requested domain is the same as that of the current user.
   before_filter :same_domain_check
-  
+
   def modal?
     if @modal.nil?
       @modal = (request.xhr? and params[:modal]) ? true : false

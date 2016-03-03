@@ -8,11 +8,7 @@ module Services
   # load services provider
   def services(region=current_region)
     # initialize services unless already initialized
-    unless @services
-      @services = Core::ServiceLayer::ServicesManager.new(
-        region
-      )  
-    end
+    @services ||= Core::ServiceLayer::ServicesManager.new(region)  
     # update current_user
     @services.service_user = service_user
     @services.current_user = current_user 

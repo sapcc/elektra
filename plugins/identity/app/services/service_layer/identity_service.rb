@@ -12,6 +12,14 @@ module ServiceLayer
         domain_id:  self.domain_id,
         project_id: self.project_id
       })
+    rescue Excon::Errors::Unauthorized => e
+      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERROR"
+      #
+      # p e.response.data rescue nil
+      #
+      # error_body = JSON.parse(e.response.data[:body])
+      # p error_body
+      raise Identity::InvalidToken.new(e)
     end
     
     def available?(action_name_sym=nil)

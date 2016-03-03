@@ -6,7 +6,7 @@ class ScopeController < ::ApplicationController
   prepend_before_filter do
     # initialize scoped domain's and project's friendly id 
     # use existing, user's or default domain
-    domain_id = (params[:domain_id] || current_user.try(:user_domain_id) || Rails.configuration.default_domain)     
+    domain_id = (params[:domain_id] || service_user.try(:domain_id))     
     project_id = params[:project_id]
 
     @scoped_domain_fid = @scoped_domain_id = domain_id 
@@ -48,11 +48,11 @@ class ScopeController < ::ApplicationController
       @errors = {"domain" => "Not found"}
       render template: 'application/error'
     end
-    #p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    #p "@scoped_domain_id: #{@scoped_domain_id}"
-    #p "@scoped_domain_fid: #{@scoped_domain_fid}"
-    #p "@scoped_domain_name: #{@scoped_domain_name}"
-    #p "@scoped_project_id: #{@scoped_project_id}"
-    #p "@scoped_project_fid: #{@scoped_project_fid}"
+    # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+    # p "@scoped_domain_id: #{@scoped_domain_id}"
+    # p "@scoped_domain_fid: #{@scoped_domain_fid}"
+    # p "@scoped_domain_name: #{@scoped_domain_name}"
+    # p "@scoped_project_id: #{@scoped_project_id}"
+    # p "@scoped_project_fid: #{@scoped_project_fid}"
   end
 end
