@@ -16,8 +16,12 @@
         %th Uploaded
         %td= @object.created_at.to_time.getlocal.strftime('%F %T')
       %tr
-        %th Last Modified
+        %th Last modified
         %td= @object.last_modified_at.to_time.getlocal.strftime('%F %T')
+      -if @object.expires_at
+        %tr
+          %th Will be deleted
+          %td= @object.expires_at.to_time.getlocal.strftime('%F %T')
       %tr
         %th Content type
         %td= f.input :content_type, as: :string, label: false

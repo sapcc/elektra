@@ -6,6 +6,7 @@ module ObjectStorage
     #   - content_type
     #   - created_at (DateTime)
     #   - last_modified_at (DateTime)
+    #   - expires_at (DateTime)
     #   - md5_hash
     #   - size_bytes
     #   - metadata (Hash)

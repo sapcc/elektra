@@ -114,6 +114,7 @@ module ObjectStorage
         'Etag'           => 'md5_hash',
         'Last-Modified'  => 'last_modified_at',
         'X-Timestamp'    => 'created_at',
+        'X-Delete-At'    => 'expires_at',
       }
       OBJECT_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
@@ -156,6 +157,7 @@ module ObjectStorage
           data['container_name'] = container_name
           data['last_modified_at'] = DateTime.httpdate(data['last_modified_at']) # parse date
           data['created_at']       = DateTime.strptime(data['created_at'], '%s') # parse UNIX timestamp
+          data['expires_at']       = DateTime.strptime(data['expires_at'], '%s') if data.has_key?('expires_at') # optional!
           data['metadata'] = extract_metadata_tags(headers, 'X-Object-Meta-')
           data
         end
