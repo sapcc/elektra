@@ -49,6 +49,8 @@ class ScopeController < ::ApplicationController
       render template: 'application/error'
     end
     # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+    # p "domain_id: #{domain_id}"
+    # p "project_id: #{project_id}"
     # p "@scoped_domain_id: #{@scoped_domain_id}"
     # p "@scoped_domain_fid: #{@scoped_domain_fid}"
     # p "@scoped_domain_name: #{@scoped_domain_name}"
