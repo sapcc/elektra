@@ -1,5 +1,5 @@
 = content_for :title do
-  Access Control for Container #{@container.name}
+  Access Control Lists for Container: #{@container.name}
 
 - pl = plugin('object_storage')
 
@@ -21,25 +21,24 @@
     .col-md-6
       .bs-callout.bs-callout-info
         %p
-          ACL (access-control lists) are comma-separated.
-          Use only project and user IDs without 
-          = succeed '.' do
-            %code AUTH_
-          For granting acccess to a project use 
-          = succeed '.' do
+          Entries in ACLs are comma-separated. Examples:
+        %dl
+          %dt
+            %code USER_ID
+          %dd Grant access to this user.
+          %dt
             %code PROJECT_ID:*
-        %p 
-          %dl
-            %dt Grant Read and Write access: 
-            %dd 
-              %code USER1,USER2
-          %dl
-            %dt  Static Web access:
-            %dd 
-              %code .r:myproject.corp,example.com
-              grants read access for these two Referer domains. To allow listing, add
-              = succeed '.' do
-                %code .rlistings
+          %dd Grant access to all users with access to this project.
+          %dt
+            %code .r:example.corp
+          %dd Grant read access for this Referer domain.
+          %dt
+            %code .rlistings
+          %dd Allow authorized users to list objects in this container.
+        %p
+          Use plain project and user IDs without the
+          %code AUTH_
+          prefix.
 
 :javascript
   $('#container_public_read_access').change(
