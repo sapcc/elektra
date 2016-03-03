@@ -6,6 +6,7 @@ module ObjectStorage
     #   - content_type
     #   - created_at (DateTime)
     #   - last_modified_at (DateTime)
+    #   - expires_at (DateTime)
     #   - md5_hash
     #   - size_bytes
     #   - metadata (Hash)
@@ -51,6 +52,32 @@ module ObjectStorage
     def ui_sort_order
       # sort directories above files
       (is_directory? ? 'a' : 'b') + self.basename
+    end
+
+    ############################################################################
+    # input validation
+
+    validates_presence_of :content_type
+
+    validate do
+      errors[:expires_at] << "is invalid: #{@expires_at_validation_error}" if @expires_at_validation_error
+    end
+
+    def expires_at=(new_value)
+      if new_value.is_a?(String)
+        begin
+          if new_value.empty?
+            new_value = nil
+          else
+            new_value = Time.parse(new_value + ' UTC') # force UTC
+          end
+          @expires_at_validation_error = nil
+        rescue => e
+          @expires_at_validation_error = e.message
+          return
+        end
+      end
+      super(new_value)
     end
 
     ############################################################################

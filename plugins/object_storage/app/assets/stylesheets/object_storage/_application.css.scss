@@ -33,7 +33,16 @@
 
 td .form-group {
   /* remove some unnecessary margin when a simple_form input is embedded in a table layout */
-  margin-bottom: 0px;
+  margin-bottom: 0;
+
+  .help-block {
+    /* same for error messages */
+    margin-bottom: 0;
+  }
+}
+
+th.align-with-form-control {
+  vertical-align: middle;
 }
 
 .popover-capabilities {

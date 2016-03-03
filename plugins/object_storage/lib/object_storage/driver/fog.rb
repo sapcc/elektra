@@ -128,10 +128,12 @@ module ObjectStorage
         'Etag'           => 'md5_hash',
         'Last-Modified'  => 'last_modified_at',
         'X-Timestamp'    => 'created_at',
+        'X-Delete-At'    => 'expires_at',
       }
       OBJECT_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
         'content_type'   => 'Content-Type',
+        # 'expires_at'     => 'X-Delete-At', # this is special-cased in update_object()
       }
 
       def objects(container_name, options={})
@@ -170,6 +172,7 @@ module ObjectStorage
           data['container_name'] = container_name
           data['last_modified_at'] = DateTime.httpdate(data['last_modified_at']) # parse date
           data['created_at']       = DateTime.strptime(data['created_at'], '%s') # parse UNIX timestamp
+          data['expires_at']       = DateTime.strptime(data['expires_at'], '%s') if data.has_key?('expires_at') # optional!
           data['metadata'] = extract_metadata_tags(headers, 'X-Object-Meta-')
           data
         end
@@ -191,6 +194,10 @@ module ObjectStorage
       def update_object(path, params)
         handle_response do
           request_params = map_attribute_names(params, OBJECT_WRITE_ATTRMAP)
+
+          unless params['expires_at'].nil?
+            request_params['X-Delete-At'] = params['expires_at'].getutc.strftime('%s')
+          end
 
           (params['metadata'] || {}).each do |key, value|
             request_params["X-Object-Meta-#{key}"] = value
