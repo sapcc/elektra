@@ -8,6 +8,13 @@
   margin-bottom: 50px;
 }
 
+.help-hint {
+  font-size: 8px;
+  color: $medium-blue;
+  padding-left: 0px;
+  padding-top: 7px;
+}
+
 // Index
 
 .loading-spinner-section {
@@ -72,9 +79,4 @@ pre {
   padding: 20px 20px;
   border-top: 1px solid #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
-}
-
-.info-bloc {
-  margin-top: 5px;
-  font-size: 12px;
 }

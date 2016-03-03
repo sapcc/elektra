@@ -1,18 +1,31 @@
-.row
-  .col-sm-10.col-sm-offset-2
-    %h3 Chef
+#chef-automation
+  .row
+    .col-sm-10.col-sm-offset-2
+      %h3 Chef
 
-.form-group
-  = label_tag 'runlist', 'Runlist', class: 'col-sm-2 control-label'
-  .col-sm-10
-    = text_area_tag 'runlist', '', :maxlength => "256", :placeholder => "Enter runlist", class: 'form-control'
+  .form-group
+    .col-xs-12.col-sm-2.control-label
+      = label_tag 'runlist', 'Runlist'
+    .col-xs-11.col-sm-9
+      = text_area_tag 'runlist', '', :maxlength => "256", :placeholder => "Enter runlist", class: 'form-control', data: {toggle:'tagEditor'}
+      %span.help-block
+        %i.fa.fa-info-circle
+        Runlist are key-value pairs. See hint for more information.
+    .col-xs-1.col-sm-1.help-hint
+      = render 'key_value_help_hint'
 
-.form-group
-  = label_tag 'attributes', 'Attributes', class: 'col-sm-2 control-label'
-  .col-sm-10
-    = text_area_tag 'attributes', '', :maxlength => "256", :placeholder => "Enter attributes", class: 'form-control'
+  .form-group
+    .col-xs-12.col-sm-2.control-label
+      = label_tag 'attributes', 'Attributes'
+    .col-xs-11.col-sm-9
+      = text_area_tag 'attributes', '', :maxlength => "256", :placeholder => "Enter attributes", class: 'form-control', data: {toggle:'tagEditor'}
+      %span.help-block
+        %i.fa.fa-info-circle
+        Attributes are key-value pairs. See hint for more information.
+    .col-xs-1.col-sm-1.help-hint
+      = render 'key_value_help_hint'
 
-.form-group
-  = label_tag 'log_level', 'Log level', class: 'col-sm-2 control-label'
-  .col-sm-5
-    = text_field_tag 'log_level', '', :maxlength => "256", :placeholder => "Enter log level", class: 'form-control'
+  .form-group
+    = label_tag 'log_level', 'Log level', class: 'col-sm-2 control-label'
+    .col-sm-5
+      = text_field_tag 'log_level', '', :maxlength => "256", :placeholder => "Enter log level", class: 'form-control'

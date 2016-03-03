@@ -26,26 +26,31 @@
         = text_field_tag 'timeout', '', :maxlength => "256", :placeholder => "Enter timeout", class: 'form-control'
 
     .form-group
-      = label_tag 'tags', 'Tags', class: 'col-sm-2 control-label'
-      .col-sm-10
-        = text_area_tag 'tags', '', :maxlength => "256", class: 'form-control', data: {toggle:'tagEditor'}
-        %p.info-bloc
+      .col-xs-12.col-sm-2.control-label
+        = label_tag 'tags', 'Tags'
+      .col-xs-11.col-sm-9
+        = text_area_tag 'tags', '', :maxlength => "256", class: 'form-control', data: {toggle:'tagEditor'}, :placeholder => "Enter tags"
+        %span.help-block
           %i.fa.fa-info-circle
-          Please add tags giving key value pairs separated by ':' or '=' and pressing the key enter or coma. You can also copy and paste a string von tags following this pattern: 'key1:value1,key2=value2...'
+          Tags are key-value pairs. See hint for more information.
+      .col-xs-1.col-sm-1.help-hint
+        = render 'key_value_help_hint'
 
     .form-group
-      = label_tag 'type', 'Type', class: 'col-sm-2 control-label' #sr-only
+      = label_tag 'type', 'Type', class: 'col-sm-2 control-label'
       .col-sm-5
-        %select.form-control{name: 'type', id: 'type'}
-          %option{disabled: true, selected:true}
-            Please choose automation type
+        %select.form-control{name: 'type', id: 'type', data: {toggle: 'automationSwitch'}}
           - @automation_types.each do |key, value|
-            %option{value: key}
+            %option{value: key, selected: (key == 'chef' ? 'true' : 'false')}
               = value
 
     %hr
 
     = render 'chef'
+
+    = render 'script'
+
+    #popover_container
 
     .form-group.clearfix
       .col-sm-12

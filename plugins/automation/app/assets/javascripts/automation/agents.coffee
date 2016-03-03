@@ -5,7 +5,6 @@ job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
   init_job_popover()
 
 @init_job_popover= () ->
-  # init popovers elements
   $(job_popover_matcher).popover
     placement: 'top'
     html: true

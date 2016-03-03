@@ -176,7 +176,9 @@
 
         var li = $(this).closest('li'), tag = li.find('.tag-editor-tag');
         if (o.beforeTagDelete(el, ed, tag_list, tag.text()) === false) return false;
-        tag.addClass('deleted').animate({width: 0}, o.animateDelete, function(){ li.remove(); set_placeholder(); });
+        tag.addClass('deleted')
+        li.remove();
+        set_placeholder();
         update_globals();
         return false;
       });
@@ -187,7 +189,9 @@
           if (e.ctrlKey || e.which > 1) {
             var li = $(this).closest('li'), tag = li.find('.tag-editor-tag');
             if (o.beforeTagDelete(el, ed, tag_list, tag.text()) === false) return false;
-            tag.addClass('deleted').animate({width: 0}, o.animateDelete, function(){ li.remove(); set_placeholder(); });
+            tag.addClass('deleted');
+            li.remove();
+            set_placeholder();
             update_globals();
             return false;
           }

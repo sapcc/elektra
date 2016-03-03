@@ -1,18 +1,31 @@
-.row
-  .col-sm-10.col-sm-offset-2
-    %h3 Script
+#script-automation.hide
+  .row
+    .col-sm-10.col-sm-offset-2
+      %h3 Script
 
-.form-group
-  = label_tag 'paht', 'Path', class: 'col-sm-2 control-label'
-  .col-sm-5
-    = text_area_tag 'paht', '', :maxlength => "256", :placeholder => "Enter path", class: 'form-control'
+  .form-group
+    = label_tag 'paht', 'Path', class: 'col-sm-2 control-label'
+    .col-sm-5
+      = text_field_tag 'paht', '', :maxlength => "256", :placeholder => "Enter path", class: 'form-control'
 
-.form-group
-  = label_tag 'arguments', 'Arguments', class: 'col-sm-2 control-label'
-  .col-sm-10
-    = text_field_tag 'arguments', '', :maxlength => "256", :placeholder => "Enter arguments", class: 'form-control'
+  .form-group
+    .col-xs-12.col-sm-2.control-label
+      = label_tag 'arguments', 'Arguments'
+    .col-xs-11.col-sm-9
+      = text_area_tag 'arguments', '', :maxlength => "256", :placeholder => "Enter arguments", class: 'form-control', data: {toggle:'tagEditor'}
+      %span.help-block
+        %i.fa.fa-info-circle
+        Arguments are key-value pairs. See hint for more information.
+    .col-xs-1.col-sm-1.help-hint
+      = render 'key_value_help_hint'
 
-.form-group
-  = label_tag 'environment', 'Environment', class: 'col-sm-2 control-label'
-  .col-sm-10
-    = text_area_tag 'environment', '', :maxlength => "256", :placeholder => "Enter environment variables", class: 'form-control'
+  .form-group
+    .col-xs-12.col-sm-2.control-label
+      = label_tag 'environment', 'Environment'
+    .col-xs-11.col-sm-9
+      = text_area_tag 'environment', '', :maxlength => "256", :placeholder => "Enter environment variables", class: 'form-control', data: {toggle:'tagEditor'}
+      %span.help-block
+        %i.fa.fa-info-circle
+        Environment are key-value pairs. See hint for more information.
+    .col-xs-1.col-sm-1.help-hint
+      = render 'key_value_help_hint'
