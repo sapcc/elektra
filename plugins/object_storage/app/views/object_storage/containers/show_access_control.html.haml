@@ -4,19 +4,34 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @container, 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
-  %table.table
-    %tbody
-      %tr
-        %th Read ACLs
-        %td
-          = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access
-          %p
-            = f.input :public_read_access, as: :boolean, label: 'Public Read Access'
-      %tr
-        %th Write ACLs
-        %td
-          = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_write_access
-
+  .row
+    .col-md-6
+      %table.table
+        %tbody
+          %tr
+            %th Read ACLs
+            %td
+              = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access
+              %p
+                = f.input :public_read_access, as: :boolean, label: 'Public Read Access'
+          %tr
+            %th Write ACLs
+            %td
+              = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_write_access
+    .col-md-6
+      .bs-callout.bs-callout-info
+        %p
+          %strong Please note:
+          %br
+          ACL lists are comma seperated.
+          %br
+          Use only project and user IDs without "AUTH_".
+          %br
+          For granting acccess to a project use "project_id :*"
+        %p 
+          %strong Example:
+          %br
+          TODO
 :javascript
   $('#container_public_read_access').change(
     function() {
