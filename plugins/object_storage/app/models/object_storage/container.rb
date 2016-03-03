@@ -6,6 +6,8 @@ module ObjectStorage
     #   - object_count
     #   - bytes_used
     #   - metadata (Hash)
+    #   - read_acl
+    #   - write_acl
     # The id() is identical to the name() if the container is persisted.
 
     validates_presence_of :name
@@ -17,16 +19,8 @@ module ObjectStorage
       errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
     end
 
-    def public_read_access
+    def public_read_access?
       read_acl == ".r:*,.rlistings"
-    end
-
-    def public_write_access
-      write_acl == ".r:*,.rlistings"
-    end
-
-    def read_acl
-       read(:read_acl)
     end
 
     def object_count

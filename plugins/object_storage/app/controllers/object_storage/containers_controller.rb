@@ -22,8 +22,9 @@ module ObjectStorage
     end
 
     def update_access_control
-      @container.read_acl = params[:container][:read_acl];
-      @container.write_acl = params[:container][:write_acl];
+      # TODO: use update_attributes
+      @container.read_acl = params[:container][:read_acl]
+      @container.write_acl = params[:container][:write_acl]
       unless @container.save
         render action: 'show_access_control'
         return

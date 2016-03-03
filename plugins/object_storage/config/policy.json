@@ -12,6 +12,7 @@
   "object_storage:container_empty":                 "rule:object_storage_admin",
   "object_storage:container_confirm_deletion":      "rule:object_storage_admin",
   "object_storage:container_confirm_emptying":      "rule:object_storage_admin",
+  "object_storage:container_show_access_control":   "rule:object_storage_admin",
   "object_storage:container_update_access_control": "rule:object_storage_admin",
 
   "object_storage:object_get":           "rule:object_storage_admin",
