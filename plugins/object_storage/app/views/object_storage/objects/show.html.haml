@@ -15,6 +15,10 @@
       %tr
         %th MD5 checksum
         %td= @object.md5_hash
+      - if @container.allows_public_access? and has_capability?(:staticweb)
+        %tr
+          %th URL for public access
+          %td= @object.public_url
       %tr
         %th Uploaded (UTC)
         %td= @object.created_at.to_time.getutc.strftime('%F %T')

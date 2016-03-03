@@ -3,6 +3,7 @@ module ObjectStorage
 
     # The following properties are known:
     #   - path
+    #   - public_url
     #   - content_type
     #   - created_at (DateTime)
     #   - last_modified_at (DateTime)
