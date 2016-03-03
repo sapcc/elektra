@@ -69,7 +69,7 @@ module ObjectStorage
           if new_value.empty?
             new_value = nil
           else
-            new_value = Time.parse(new_value)
+            new_value = Time.parse(new_value + ' UTC') # force UTC
           end
           @expires_at_validation_error = nil
         rescue => e
