@@ -35,3 +35,7 @@ td .form-group {
   /* remove some unnecessary margin when a simple_form input is embedded in a table layout */
   margin-bottom: 0px;
 }
+
+th.align-with-form-control {
+  vertical-align: middle;
+}
