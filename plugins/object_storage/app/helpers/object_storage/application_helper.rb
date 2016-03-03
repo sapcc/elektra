@@ -1,6 +1,10 @@
 module ObjectStorage
   module ApplicationHelper
 
+    def has_capability?(capability)
+      services.object_storage.capabilities.has_key?(capability.to_s)
+    end
+
     def make_breadcrumb(container_name, path='')
       # empty path?
       return container_name if path.gsub('/', '') == ''

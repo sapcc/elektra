@@ -10,6 +10,8 @@ module ObjectStorage
     end
 
     def show
+      # load the container (some UI elements are enabled based on the current ACL)
+      @container = services.object_storage.find_container(@container_name)
     end
 
     def download

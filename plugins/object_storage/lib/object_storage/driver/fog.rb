@@ -175,6 +175,7 @@ module ObjectStorage
           data = map_attribute_names(headers, OBJECT_ATTRMAP)
           data['id'] = data['path'] = path
           data['container_name'] = container_name
+          data['public_url']     = fog_public_url(container_name, path)
           data['last_modified_at'] = DateTime.httpdate(data['last_modified_at']) # parse date
           data['created_at']       = DateTime.strptime(data['created_at'], '%s') # parse UNIX timestamp
           data['expires_at']       = DateTime.strptime(data['expires_at'], '%s') if data.has_key?('expires_at') # optional!
@@ -310,13 +311,21 @@ module ObjectStorage
         }, false)
       end
 
-      # Like @fog.head_object(), but encodes the `path` correctly. TODO: fix in Fog
+      # Like @fog.delete_object(), but encodes the `path` correctly. TODO: fix in Fog
       def fog_delete_object(container_name, path)
         @fog.request({
           expects: 204,
           method:  'DELETE',
           path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
         }, false)
+      end
+
+      # Like @fog.public_url(), but encodes the `object` correctly. TODO: fix in Fog
+      def fog_public_url(container=nil, object=nil)
+        return nil if container.nil?
+        url = @fog.public_url(container)
+        url << "/#{escape_path(object)}" unless object.nil?
+        return url
       end
 
       def escape_path(path)

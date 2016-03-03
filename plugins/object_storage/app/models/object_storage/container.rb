@@ -23,6 +23,11 @@ module ObjectStorage
       read_acl == ".r:*,.rlistings"
     end
 
+    def allows_public_access?
+      # checks whether there is any form of StaticWeb enablement
+      (read_acl || '').match(/[.]r:/)
+    end
+
     def object_count
       read(:object_count).to_i
     end
