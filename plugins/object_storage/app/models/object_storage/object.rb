@@ -55,6 +55,32 @@ module ObjectStorage
     end
 
     ############################################################################
+    # input validation
+
+    validates_presence_of :content_type
+
+    validate do
+      errors[:expires_at] << "is invalid: #{@expires_at_validation_error}" if @expires_at_validation_error
+    end
+
+    def expires_at=(new_value)
+      if new_value.is_a?(String)
+        begin
+          if new_value.empty?
+            new_value = nil
+          else
+            new_value = Time.parse(new_value)
+          end
+          @expires_at_validation_error = nil
+        rescue => e
+          @expires_at_validation_error = e.message
+          return
+        end
+      end
+      super(new_value)
+    end
+
+    ############################################################################
     # actions
 
     def copy_to(target_container_name, target_path, options={})

@@ -21,10 +21,13 @@
       %tr
         %th Last modified
         %td= @object.last_modified_at.to_time.getlocal.strftime('%F %T')
-      -if @object.expires_at
-        %tr
-          %th Will be deleted
-          %td= @object.expires_at.to_time.getlocal.strftime('%F %T')
+      %tr
+        %th.align-with-form-control Will be deleted
+        %td
+          - initial_value = @object.expires_at.nil? ? '' : @object.expires_at.to_time.getlocal.strftime('%F %T')
+          - current_value = params.fetch(:object, {}).fetch(:expires_at, initial_value)
+          - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to enable automatic expiration"
+          = f.input :expires_at, as: :string, label: false, input_html: { value: current_value, placeholder: placeholder }
       %tr
         %th.align-with-form-control Content type
         %td= f.input :content_type, as: :string, label: false
