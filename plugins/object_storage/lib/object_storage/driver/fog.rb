@@ -13,6 +13,20 @@ module ObjectStorage
         end
       end
 
+      def list_capabilities
+        handle_response do
+          # this request is not project-scoped and thus cannot go through
+          # @fog.request(); OTOH it does not need a token which makes stuff
+          # easier for us
+          @capabilities ||= ::Fog::JSON.decode(@fog.instance_variable_get(:@connection).request({
+            expects: 200,
+            headers: { 'Accept' => 'application/json' },
+            method:  'GET',
+            path:    'info',
+          }).body)
+        end
+      end
+
       ##### containers
 
       CONTAINERS_ATTRMAP = {

@@ -35,3 +35,14 @@ td .form-group {
   /* remove some unnecessary margin when a simple_form input is embedded in a table layout */
   margin-bottom: 0px;
 }
+
+.popover-capabilities {
+  max-width: none !important;
+  li {
+    white-space: nowrap;
+  }
+}
+
+li.missing-capability {
+  opacity: 0.25;
+}

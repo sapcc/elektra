@@ -16,6 +16,10 @@ module ServiceLayer
       not current_user.service_url('object-store',region: region).nil?
     end
 
+    def capabilities
+      driver.list_capabilities
+    end
+
     ##### containers
 
     def find_container(name)
