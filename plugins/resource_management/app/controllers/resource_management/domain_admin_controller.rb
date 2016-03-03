@@ -150,7 +150,7 @@ module ResourceManagement
           resource: @resource.name,
           desired_quota: value,
         },
-        Admin::IdentityService.list_cloud_admins(),
+        service_user.list_cloud_admins(),
         {
           "approved": {
             "name": "Approve",

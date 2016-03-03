@@ -21,7 +21,7 @@ module Identity
                 "#{@project.name} - #{@project.description}",
                 current_user,
                 @project.attributes.to_json,
-                Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id, project_id: @scoped_project_id),
+                service_user.list_scope_admins(domain_id: @scoped_domain_id, project_id: @scoped_project_id),
                 {
                     "approved": {
                         "name": "Approve",

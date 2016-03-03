@@ -9,14 +9,13 @@ class ScopeController < ::ApplicationController
     domain_id = (params[:domain_id] || current_user.try(:user_domain_id) || Rails.configuration.default_domain)     
     project_id = params[:project_id]
 
-    # TODO: fix hack the domain to be used in identity service
-    Thread.current[:domain] = domain_id
-  
     @scoped_domain_fid = @scoped_domain_id = domain_id 
     @scoped_project_fid = @scoped_project_id = project_id
   
     # try to find or create friendly_id entry for domain
-    domain_friendly_id = Admin::RescopingService.domain_friendly_id(@scoped_domain_fid)
+    rescoping_service = Dashboard::RescopingService.new(service_user)
+    domain_friendly_id = rescoping_service.domain_friendly_id(@scoped_domain_fid)
+    
     if domain_friendly_id
       # set scoped domain parameters
       @scoped_domain_id   = domain_friendly_id.key
@@ -24,7 +23,7 @@ class ScopeController < ::ApplicationController
       @scoped_domain_name = domain_friendly_id.name
 
       # try to load or create friendly_id entry for project
-      project_friendly_id = Admin::RescopingService.project_friendly_id(@scoped_domain_id, @scoped_project_fid) if @scoped_project_id
+      project_friendly_id = rescoping_service.project_friendly_id(@scoped_domain_id, @scoped_project_fid) if @scoped_project_id
 
       if project_friendly_id
         # set scoped project parameters

@@ -10,11 +10,11 @@ module Services
     # initialize services unless already initialized
     unless @services
       @services = Core::ServiceLayer::ServicesManager.new(
-        region,
-        current_user
+        region
       )  
     end
     # update current_user
+    @services.service_user = service_user
     @services.current_user = current_user 
     @services
   end

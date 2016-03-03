@@ -8,8 +8,8 @@ module ServiceUser
     # search in friendly_ids
     @service_user = Core::ServiceUser::Base.load({
       scope_domain: params[:domain_id],
-      user_id: 'u-monsooncc_admin',#Rails.application.config.service_user_id,
-      password: 'secret',#Rails.application.config.service_user_password,
+      user_id: Rails.application.config.service_user_id, #'u-monsooncc_admin',
+      password: Rails.application.config.service_user_password, #'secret',
       user_domain: Rails.application.config.service_user_domain_name 
     })
     

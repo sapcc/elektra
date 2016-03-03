@@ -9,7 +9,7 @@ module Core
   module ServiceLayer
   
     class ServicesManager
-      attr_accessor :current_user
+      attr_accessor :current_user,:service_user
     
       class << self
         # create a service for given params
@@ -47,9 +47,8 @@ module Core
         end
       end
     
-      def initialize(region,current_user)
+      def initialize(region)
         @region = region
-        @current_user = current_user
       end 
     
       def available?(service_name,action_name)
@@ -85,6 +84,7 @@ module Core
           service = self.class.service(method_sym,params)
           service.services=self
           service.current_user = @current_user
+          service.service_user = @service_user
           # new service is instantiated -> cache it for further use in the same controller request.
           instance_variable_set("@#{method_sym.to_s}", service)
         end
@@ -97,7 +97,7 @@ module Core
     # each service in app/services/service_layer should inherit from this class.
     # It provides the context of current user
     class Service
-      attr_accessor :services, :current_user
+      attr_accessor :services, :current_user, :service_user
       attr_reader :auth_url, :region, :token, :domain_id, :project_id, :service_catalog
 
       def initialize(auth_url,region,token, options={})

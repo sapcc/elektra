@@ -18,7 +18,7 @@ module CurrentUserWrapper
       # check if user id from session differs from current_user id
       if old_user_details["id"]!=current_user.id
         # load user details for current_user
-        new_user_details = Admin::IdentityService.find_user(current_user.id) rescue nil
+        new_user_details = service_user.find_user(current_user.id) rescue nil
         if new_user_details 
           # save user_details in session
           @session[:current_user_details] = new_user_details.nil? ? {} : new_user_details.attributes.merge("id"=>new_user_details.id)

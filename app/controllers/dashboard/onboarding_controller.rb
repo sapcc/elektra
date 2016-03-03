@@ -19,7 +19,7 @@ module Dashboard
         elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open'])
           render 'onboarding_open_message' and return
         elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['rejected'])
-          @processors = Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id)
+          @processors = service_user.list_scope_admins(domain_id: @scoped_domain_id)
           render 'onboarding_reject_message' and return
         else
           render 'onboarding_with_inquiry' and return
@@ -37,7 +37,7 @@ module Dashboard
     def register_without_inquiry
       if params[:terms_of_use]
         # user has accepted terms of use -> onboard user
-        Admin::OnboardingService.register_user(current_user)
+        Dashboard::OnboardingService.new(service_user).register_user(current_user)
         reset_last_request_cache
         # redirect to domain path
         if plugin_available?('identity')
@@ -60,7 +60,7 @@ module Dashboard
       end
 
       if params[:terms_of_use]
-        processors = Admin::IdentityService.list_scope_admins(domain_id: @scoped_domain_id)
+        processors = service_user.list_scope_admins(domain_id: @scoped_domain_id)
         unless processors.blank?
           inquiry = services.inquiry.inquiry_create(
               DOMAIN_ACCESS_INQUIRY,

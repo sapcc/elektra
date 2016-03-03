@@ -115,7 +115,7 @@ module Core
       end
       
       def find_project_by_name_or_id(name_or_id)
-        project = driver_method(:get_project,true,name_or_id)
+        project = driver_method(:get_project,true,name_or_id) rescue nil
         unless project
           project = driver_method(:projects,true,{domain_id: self.domain_id, name: name_or_id}).first rescue nil
         end

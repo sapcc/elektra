@@ -41,6 +41,8 @@
             = service_user.list_cloud_admins.collect{|a|a.name}
             %br
             = service_user.list_scope_admins(domain_id: @scoped_domain_id).collect{|a|a.name}
+            %br
+            = "User name: #{current_user.try(:name)}"
 
         = render "application/flashes"
         = yield

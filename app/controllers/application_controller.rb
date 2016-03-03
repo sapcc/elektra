@@ -51,11 +51,11 @@ class ApplicationController < ActionController::Base
   protected
   
   def same_domain_check
-    if current_user and current_user.user_domain_id and Admin::IdentityService.service_user and Admin::IdentityService.service_user.domain_id
-      if current_user.user_domain_id!=Admin::IdentityService.service_user.domain_id
+    if current_user and current_user.user_domain_id and service_user and service_user.domain_id
+      if current_user.user_domain_id!=service_user.domain_id
         # requested domain differs from the domain of current user
         @current_domain_name = current_user.user_domain_name
-        @new_domain_name = Admin::IdentityService.service_user.domain_name
+        @new_domain_name = service_user.domain_name
 
         # render domain switch view
         render template: 'application/domain_switch'

@@ -21,11 +21,11 @@ class DashboardController < ::ScopeController
   before_filter :set_mailer_host
 
 
-  rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
-  rescue_from "Excon::Errors::InternalServerError", with: :handle_api_error
-  rescue_from "Excon::Errors::Unauthorized", with: :handle_api_error
-  rescue_from "MonsoonOpenstackAuth::ApiError", with: :handle_auth_error
-  rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :handle_auth_error
+  # rescue_from "Excon::Errors::Forbidden", with: :handle_api_error
+  # rescue_from "Excon::Errors::InternalServerError", with: :handle_api_error
+  # rescue_from "Excon::Errors::Unauthorized", with: :handle_api_error
+  #rescue_from "MonsoonOpenstackAuth::ApiError", with: :handle_auth_error
+  #rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :handle_auth_error
 
   DOMAIN_ACCESS_INQUIRY = 'domain-access'
 
@@ -49,23 +49,23 @@ class DashboardController < ::ScopeController
     end
   end
 
-  def handle_api_error(exception)
-    reset_last_request_cache
-    @errors = Core::ServiceLayer::ApiErrorHandler.parse(exception)
-    render template: 'dashboard/error', status: :internal_server_error
-  end
+  # def handle_api_error(exception)
+  #   reset_last_request_cache
+  #   @errors = Core::ServiceLayer::ApiErrorHandler.parse(exception)
+  #   render template: 'dashboard/error', status: :internal_server_error
+  # end
 
-  def handle_auth_error(exception)
-    reset_last_request_cache
-    # the user token can be invaild if for example the domain permission has been modified in backend.
-    # in this case redirect user to login form
-    valid_token = Admin::IdentityService.validate_token(current_user.token) if current_user
-    redirect_to_login_form and return unless valid_token
-
-    @errors = {exception.class.name => exception.message}
-    render template: 'dashboard/error', status: :unauthorized
-
-  end
+  # def handle_auth_error(exception)
+  #   reset_last_request_cache
+  #   # the user token can be invaild if for example the domain permission has been modified in backend.
+  #   # in this case redirect user to login form
+  #   valid_token = Admin::IdentityService.validate_token(current_user.token) if current_user
+  #   redirect_to_login_form and return unless valid_token
+  #
+  #   @errors = {exception.class.name => exception.message}
+  #   render template: 'dashboard/error', status: :unauthorized
+  #
+  # end
 
   def authorization_forbidden exception
     @exception = exception
@@ -88,7 +88,7 @@ class DashboardController < ::ScopeController
     if is_cache_expired
       session[:last_request_timestamp] = Time.now
       session[:last_user_id] = current_user.id
-      session[:is_new_dashboard_user] = Admin::OnboardingService.new_user?(current_user)
+      session[:is_new_dashboard_user] = Dashboard::OnboardingService.new(service_user).new_user?(current_user)
     end
     session[:is_new_dashboard_user]
     #Admin::OnboardingService.new_user?(current_user)

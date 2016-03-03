@@ -9,7 +9,7 @@ module ServiceLayer
         token: self.token,
         domain_id: self.domain_id,
         project_id: self.project_id,
-        service_user_token: Admin::IdentityService.service_user_token  
+        service_user_token: service_user.token  
       })
     end
     

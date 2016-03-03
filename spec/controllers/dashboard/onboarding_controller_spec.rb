@@ -3,16 +3,22 @@ require 'spec_helper'
 RSpec.describe Dashboard::OnboardingController, type: :controller do
 
   include AuthenticationStub
-
+  
   before(:all) do
     @domain_default_friendly_id = FriendlyIdEntry.find_or_create_entry('Domain', nil, 'o-sap_default', Rails.configuration.default_domain)
     @domain_abc_friendly_id = FriendlyIdEntry.find_or_create_entry('Domain', nil, 'o-abc', 'abc')
-
+    
   end
 
   before :each do
     stub_admin_services
-    allow(Admin::IdentityService).to receive(:list_scope_admins).and_return([Hashie::Mash.new({id: '***REMOVED***', email: 'torsten.lesmann@sap.com', full_name: "Torsten Lesmann"})])
+    service_user = double('service_user').as_null_object
+
+    allow(service_user).to receive(:domain_id).and_return(AuthenticationStub.test_token["user"]["domain"]["id"])
+    allow(service_user).to receive(:domain_name).and_return(AuthenticationStub.test_token["user"]["domain"]["name"])
+    allow(controller).to receive(:service_user).and_return(service_user)
+    
+    allow(service_user).to receive(:list_scope_admins).and_return([Hashie::Mash.new({id: '***REMOVED***', email: 'torsten.lesmann@sap.com', full_name: "Torsten Lesmann"})])
   end
 
   context "onboarding flow" do
