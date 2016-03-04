@@ -14,10 +14,11 @@ class @MoModal
     
   @init= () ->
     $(document).on 'click', 'a[data-modal=true]', -> 
-      MoModal.load(this)  
+      MoModal.load(this)
     $(document).on 'ajax:beforeSend','form[data-modal=true]', (event, xhr, settings) -> 
       settings.data += "&modal=true"
     $(document).on 'ajax:success', 'form[data-modal=true]', handleAjaxSuccess
+
       
   @load= (anker)->
     if jQuery.type(anker) == "string"
@@ -44,13 +45,15 @@ class @MoModal
           # open modal with content from ajax response
           $(modal_holder_selector).html(data).
           find(modal_selector).modal()
+          # send event when data is set in place
+          $('body').trigger( 'modal:shown_success' );
           # for the case the response contains a form intialize it
           Dashboard.initForm()
         
     return false
   
 
-  handleAjaxSuccess= (event, data, status, xhr)->  
+  handleAjaxSuccess= (event, data, status, xhr)->
     url = xhr.getResponseHeader('Location')
     response_type = (xhr.getResponseHeader("content-type") || "")
           
@@ -75,7 +78,7 @@ class @MoModal
         # Replace old modal with new one
         $(modal_holder_selector).html(data).find(modal_selector).modal()
         
-      Dashboard.initForm()  
+      Dashboard.initForm()
     return false
 
 $ -> MoModal.init()           

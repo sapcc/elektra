@@ -1,0 +1,3 @@
+%ul.nav.nav-tabs
+  %li{class: ('active' if pane == 'agents'), role: "presentation"}= link_to 'Agents', agents_path, aria: {controls:"agents-pane"}, role: "tab"
+  %li{class: ('active' if pane == 'automations'), role: "presentation"}= link_to 'Automations', automations_path, aria: {controls:"automations-pane"}, role: "tab"

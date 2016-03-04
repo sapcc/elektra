@@ -1,44 +1,33 @@
-job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
+@init_tag_editor_inputs= () ->
+  $('textarea[data-toggle="tagEditor"][data-tageditor-type="key-value"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs' })
+  $('textarea[data-toggle="tagEditor"][data-tageditor-type="tag"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false })
 
-@init_history_popover= () ->
-  # init popovers elements
-  init_job_popover()
-
-@init_job_popover= () ->
-  # init popovers elements
-  $(job_popover_matcher).popover
+@init_hint_popover= () ->
+  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
-    html: true
+    trigger: 'focus'
 
-  # add click handler to the popovers to hide popover if other popover is clicked
-  $(job_popover_matcher).on 'click', job_popover_close_other_popovers_handler
+@switch_automation_type=(event) ->
+  value = event.target.value
+  if value == 'chef'
+    $('#chef-automation').removeClass('hide')
+    $('#script-automation').addClass('hide')
+  else if value == 'script'
+    $('#script-automation').removeClass('hide')
+    $('#chef-automation').addClass('hide')
 
-  # add click handler to close the jobs popover when shown
-  $(job_popover_matcher).on 'shown.bs.popover', ->
-    $('.js-close-popover').on 'click', close_popover
-
-  # add click handler to the html element to close popovers when clicking outside of the elements
-  $('html').unbind('click', job_popover_outside_click_handler)
-  if $(job_popover_matcher).length > 0
-    $('html').bind('click', job_popover_outside_click_handler)
-
-@close_popover= () ->
-  $(job_popover_matcher).popover 'hide'
-
-@job_popover_close_other_popovers_handler= (e) ->
-  e.stopPropagation()
-  e.preventDefault()
-  $(job_popover_matcher).not(this).popover 'hide'
-
-@job_popover_outside_click_handler= (e) ->
-  if $(e.target).data('popover-type') != 'job-history' and $(e.target).parents('.popover.in').length == 0
-    close_popover()
 
 $ ->
-# -----------
-# Automation
-# -----------
-  $(document).on('polling:update_complete', init_history_popover)
+  # add handler to the show modal event
+  $(document).on('modal:shown_success', init_tag_editor_inputs)
 
-  # init popovers elements
-  init_job_popover()
+  # add handler to the show modal event
+  $(document).on('modal:shown_success', init_hint_popover)
+
+  # add handler to the automation type select
+  $(document).on 'change','select[data-toggle="automationSwitch"]', switch_automation_type
+
+  # init tag editors
+  init_tag_editor_inputs()

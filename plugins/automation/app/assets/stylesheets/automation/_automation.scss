@@ -4,6 +4,17 @@
   margin-bottom: 15px;
 }
 
+.nav-tabs {
+  margin-bottom: 50px;
+}
+
+.help-hint {
+  font-size: 8px;
+  color: $medium-blue;
+  padding-left: 0px;
+  padding-top: 7px;
+}
+
 // Index
 
 .loading-spinner-section {
@@ -59,5 +70,20 @@ pre {
 .job_details {
   .row {
     margin-bottom: 5px;
+  }
+}
+
+// Automations
+
+.automation-content {
+  padding: 20px 20px;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.help-block {
+  font-size: 12px;
+  .fa {
+    margin-right: 5px;
   }
 }

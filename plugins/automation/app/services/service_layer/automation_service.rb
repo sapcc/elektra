@@ -6,8 +6,7 @@ module ServiceLayer
     attr_reader :client
 
     def available?(action_name_sym=nil)
-      !service_end_point.blank?
-      true
+      !arc_service_endpoint.blank? && !automation_service_endpoint.blank?
     end
 
     def install_agent_available?
@@ -22,8 +21,12 @@ module ServiceLayer
       AUTOMATION_CONF['arc_pki_url']
     end
 
-    def service_end_point
+    def arc_service_endpoint
       current_user.service_url('arc')
+    end
+
+    def automation_service_endpoint
+      current_user.service_url('automation')
     end
 
     #
@@ -70,7 +73,7 @@ module ServiceLayer
       if @client.nil? && !available?
         raise ServiceNotAvailable
       else
-        @client = RubyArcClient::Client.new(service_end_point)
+        @client = RubyArcClient::Client.new(arc_service_endpoint)
       end
     end
 
