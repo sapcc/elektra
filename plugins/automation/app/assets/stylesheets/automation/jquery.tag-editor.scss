@@ -32,6 +32,10 @@
   padding-right: 0px;
 }
 
+.tag-editor .tag-editor-tag .tag {
+  padding-left: 3px;
+}
+
 /* delete icon */
 .tag-editor .tag-editor-delete { background: $hover-light-blue; cursor: pointer; border-radius: 0 2px 2px 0; padding-left: 3px; padding-right: 4px; }
 .tag-editor .tag-editor-delete i { line-height: 18px; display: inline-block; }

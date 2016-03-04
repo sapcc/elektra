@@ -114,13 +114,17 @@
 
       // creates key value elements from the tag
       function create_tag(tag){
-        var key_value = create_key_value(tag)
-        if (key_value.length == 0) {
-          return false
+        if (o.keyValueEntries) {
+          var key_value = create_key_value(tag)
+          if (key_value.length == 0) {
+            return false
+          }
+          var key = key_value[0];
+          var value = key_value[1];
+          return '<div class="key">' + escape(key) + '</div><div class="value">' + escape(value) + '</div>';
+        } else {
+          return '<div class="tag">' + escape(tag) + '</div>'
         }
-        var key = key_value[0];
-        var value = key_value[1];
-        return '<div class="key">' + escape(key) + '</div><div class="value">' + escape(value) + '</div>';
       }
 
       // check if the key exists already
@@ -376,6 +380,7 @@
 
   $.fn.tagEditor.defaults = {
     initialTags: [],
+    keyValueEntries: true,
     maxTags: 0,
     maxLength: 50,
     delimiter: ',',

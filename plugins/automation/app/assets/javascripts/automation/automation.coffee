@@ -1,6 +1,8 @@
 @init_tag_editor_inputs= () ->
-  $('textarea[data-toggle="tagEditor"]').each ->
+  $('textarea[data-toggle="tagEditor"][data-tageditor-type="key-value"]').each ->
     $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs' })
+  $('textarea[data-toggle="tagEditor"][data-tageditor-type="tag"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false })
 
 @init_hint_popover= () ->
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover

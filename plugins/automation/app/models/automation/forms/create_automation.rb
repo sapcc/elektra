@@ -24,6 +24,10 @@ module Automation
     attribute :arguments, String
     attribute :environment, JSON
 
+    def run_list_to_string
+      self.run_list.join(',')
+    end
+
   end
 
 end
