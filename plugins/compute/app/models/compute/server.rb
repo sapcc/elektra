@@ -31,7 +31,7 @@ module Compute
       end
     end
 
-    def create_attributes
+    def attributes_for_create
       {
         "name"              => read("name"),
         "imageRef"          => read("image_id"),

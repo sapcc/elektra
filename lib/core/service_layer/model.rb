@@ -68,15 +68,24 @@ module Core
 
         if success
           if self.id.nil?
-            success = create
+            success = perform_create
           else
-            success = update
+            success = perform_update
           end
         end
 
         return success & after_save
       end
-    
+
+      def update(attributes={})
+        attributes.each do |key, value|
+          send("#{key.to_s}=", value)
+        end
+        return save
+      end
+
+      alias_method :update_attributes, :update
+
       def destroy
         requires :id
         # execute before callback
@@ -131,11 +140,11 @@ module Core
         Time.parse(value) if value
       end
     
-      def create_attributes
+      def attributes_for_create
         @attributes
       end
     
-      def update_attributes
+      def attributes_for_update
         @attributes
       end
   
@@ -171,11 +180,11 @@ module Core
     
       protected
     
-      def create
+      def perform_create
         # execute before callback
         before_create
 
-        create_attrs = self.create_attributes.with_indifferent_access
+        create_attrs = self.attributes_for_create.with_indifferent_access
         create_attrs.delete(:id)
 
         begin
@@ -198,9 +207,9 @@ module Core
         return true
       end 
     
-      def update
+      def perform_update
         begin
-          update_attrs = update_attributes.with_indifferent_access
+          update_attrs = attributes_for_update.with_indifferent_access
           update_attrs.delete(:id)
           updated_attributes = @driver.send("update_#{@class_name}",id, update_attrs)
           self.attributes=updated_attributes if updated_attributes

@@ -66,23 +66,23 @@ describe Core::ServiceLayer::Model do
     
   end
   
-  describe 'create_attributes' do
+  describe 'attributes_for_create' do
     before :each do
       @base_object.attributes={'a'=>'test','b'=>'test'}
     end
     
     it 'returns attributes' do
-      expect(@base_object.create_attributes).to eq({'a'=>'test','b'=>'test'})  
+      expect(@base_object.attributes_for_create).to eq({'a'=>'test','b'=>'test'})
     end
   end
   
-  describe 'update_attributes' do
+  describe 'attributes_for_update' do
     before :each do
       @base_object.attributes={'a'=>'test','b'=>'test'}
     end
     
     it 'returns attributes' do
-      expect(@base_object.update_attributes).to eq({'a'=>'test','b'=>'test'})  
+      expect(@base_object.attributes_for_update).to eq({'a'=>'test','b'=>'test'})
     end
   end
   
@@ -146,8 +146,8 @@ describe Core::ServiceLayer::Model do
       end
       
       it 'calls create method' do
-        expect(@o).to receive(:create)
-        expect(@o).not_to receive(:update)
+        expect(@o).to receive(:perform_create)
+        expect(@o).not_to receive(:perform_update)
         @o.save
       end
     end
@@ -157,8 +157,8 @@ describe Core::ServiceLayer::Model do
         @o = Core::ServiceLayer::Model.new(@driver, {'id'=>1})
       end
       it 'calls update method' do
-        expect(@o).to receive(:update)
-        expect(@o).not_to receive(:create)
+        expect(@o).to receive(:perform_update)
+        expect(@o).not_to receive(:perform_create)
         @o.save
       end
       
@@ -179,6 +179,32 @@ describe Core::ServiceLayer::Model do
       @base_object.save
     end
     
+  end
+
+  describe 'update' do
+    before :each do
+      @o = Core::ServiceLayer::Model.new(@driver, { 'id' => 1 })
+    end
+
+    it 'calls save method' do
+      expect(@o).to receive(:save)
+      @o.update(foo: 23, bar: 42)
+    end
+
+    it 'updates attributes' do
+      @o.attributes = { foo: 0, bar: 0 }
+      expect(@driver).to receive(:update_model).and_return(nil)
+      @o.update(foo: 23, bar: 42)
+      expect(@o.foo).to eq(23)
+      expect(@o.bar).to eq(42)
+    end
+
+    it 'does not touch existing attributes unless explicitly instructed to' do
+      @o.attributes = { foo: 23 }
+      expect(@driver).to receive(:update_model).and_return(nil)
+      @o.update(bar: 42)
+      expect(@o.foo).to eq(23)
+    end
   end
   
   describe 'destroy' do
@@ -281,7 +307,7 @@ describe Core::ServiceLayer::Model do
   describe 'create' do
     it "calls driver's create method" do
       @base_object.attributes={'a1'=>'test1',a2: 'test2'}
-      expect(@driver).to receive(:create_base_object).with({a1: 'test1',a2: 'test2'}) 
+      expect(@driver).to receive(:create_model).with({a1: 'test1',a2: 'test2'})
       @base_object.save
     end
   end
@@ -289,7 +315,7 @@ describe Core::ServiceLayer::Model do
   describe 'update' do
     it "calls driver's update method" do
       @base_object.attributes={'id'=>1,'a1'=>'test1',a2: 'test2'}
-      expect(@driver).to receive(:update_base_object).with(1,{a1: 'test1',a2: 'test2'}) 
+      expect(@driver).to receive(:update_model).with(1,{a1: 'test1',a2: 'test2'})
       @base_object.save  
     end   
   end

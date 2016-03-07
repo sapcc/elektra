@@ -6,7 +6,7 @@ module Networking
       4
     end
     
-    def create_attributes
+    def attributes_for_create
       {
         "name" => name,
         "ip_version" => ip_version,
