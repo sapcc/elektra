@@ -229,29 +229,40 @@ module ObjectStorage
       end
 
       def bulk_delete(targets)
-        handle_response do
-          # assemble the request body containing the paths to all targets
-          body = ""
+        list_capabilities
+        if @capabilities.has_key?('bulk_delete')
+          handle_response do
+            # assemble the request body containing the paths to all targets
+            body = ""
+            targets.each do |target|
+              unless target.has_key?(:container)
+                raise ArgumentError, "malformed target #{target.inspect}"
+              end
+              body += ::Fog::OpenStack.escape(target[:container])
+              if target.has_key?(:object)
+                body += "/" + escape_path(target[:object])
+              end
+              body += "\n"
+            end
+  
+            # TODO: the bulk delete request is missing in Fog
+            @fog.request({
+              expects: 200,
+              method:  'DELETE',
+              path:    '',
+              query:   { 'bulk-delete' => 1 },
+              headers: { 'Content-Type' => 'text/plain' },
+              body:    body,
+            })
+          end
+        else
+          puts "bulk delete not available, using fallback!" 
           targets.each do |target|
             unless target.has_key?(:container)
               raise ArgumentError, "malformed target #{target.inspect}"
             end
-            body += ::Fog::OpenStack.escape(target[:container])
-            if target.has_key?(:object)
-              body += "/" + escape_path(target[:object])
-            end
-            body += "\n"
+            delete_object(target[:container],target[:object])
           end
-
-          # TODO: the bulk delete request is missing in Fog
-          @fog.request({
-            expects: 200,
-            method:  'DELETE',
-            path:    '',
-            query:   { 'bulk-delete' => 1 },
-            headers: { 'Content-Type' => 'text/plain' },
-            body:    body,
-          })
         end
       end
 
