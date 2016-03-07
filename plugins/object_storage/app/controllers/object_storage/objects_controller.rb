@@ -1,5 +1,5 @@
 module ObjectStorage
-  class ObjectsController < ApplicationController
+  class ObjectsController < ObjectsController::ApplicationController
 
     authorization_required
     before_filter :load_params

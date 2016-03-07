@@ -122,13 +122,13 @@ describe Core::ServiceLayer::Model do
     it 'raises an error if attribute missing' do
       expect{
         @base_object.requires(:test)
-      }.to raise_error
+      }.to raise_error(ArgumentError)
     end
     
     it "raises an 'id missing' error" do
       expect{
         @base_object.requires(:id)
-      }.to raise_error
+      }.to raise_error(Core::ServiceLayer::Errors::MissingAttribute)
     end
     
     it "no error raised" do
@@ -213,7 +213,7 @@ describe Core::ServiceLayer::Model do
         expect{
           expect(@base_object.id).to eq(nil)
           @base_object.destroy
-        }.to raise_error
+        }.to raise_error(Core::ServiceLayer::Errors::MissingAttribute)
       end
     end
     

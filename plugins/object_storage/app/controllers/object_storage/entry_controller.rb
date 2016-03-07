@@ -1,5 +1,5 @@
 module ObjectStorage
-  class EntryController < ApplicationController
+  class EntryController < ObjectStorage::ApplicationController
 
     authorization_required
 

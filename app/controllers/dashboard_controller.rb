@@ -57,18 +57,17 @@ class DashboardController < ::ScopeController
     # In order to reduce api calls we cache the result of new_user?
     # in the session for 5 minutes.
 
-    is_cache_expired = current_user.id!=session[:last_user_id] ||
-      session[:last_request_timestamp].nil? ||
-      (session[:last_request_timestamp] < Time.now-5.minute)
-
-    if is_cache_expired
-      session[:last_request_timestamp] = Time.now
-      session[:last_user_id] = current_user.id
-      session[:is_new_dashboard_user] = Dashboard::OnboardingService.new(service_user).new_user?(current_user)
-    end
-    session[:is_new_dashboard_user]
-    #Admin::OnboardingService.new_user?(current_user)
-
+    # is_cache_expired = current_user.id!=session[:last_user_id] ||
+    #   session[:last_request_timestamp].nil? ||
+    #   (session[:last_request_timestamp] < Time.now-5.minute)
+    #
+    # if is_cache_expired
+    #   session[:last_request_timestamp] = Time.now
+    #   session[:last_user_id] = current_user.id
+    #   session[:is_new_dashboard_user] = Dashboard::OnboardingService.new(service_user).new_user?(current_user)
+    # end
+    # session[:is_new_dashboard_user]
+    Dashboard::OnboardingService.new(service_user).new_user?(current_user)
   end
 
   def reset_last_request_cache
