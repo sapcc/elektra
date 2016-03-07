@@ -43,9 +43,6 @@
           Use plain project and user IDs without the
           %code AUTH_
           prefix.
-  - unless has_capability?('staticweb')
-    %span.label.label-info Note
-    %small static web and public access is not available  
 
 - if has_capability?('staticweb')
   :javascript

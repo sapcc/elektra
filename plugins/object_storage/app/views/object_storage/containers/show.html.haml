@@ -34,6 +34,3 @@
         %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
 
-  - unless has_capability?('container_quotas')
-    %span.label.label-info Note
-    %small containers quotas not available
