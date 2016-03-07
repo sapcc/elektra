@@ -47,7 +47,7 @@ module MonsoonDashboard
             ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
           end
 
-    config.debug_api_calls = (ENV['DEBUG_API_CALLS'] || false)
+    config.debug_api_calls = ENV.has_key?('DEBUG_API_CALLS')
     ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','europe']
 
