@@ -57,6 +57,10 @@ module ObjectStorage
       back_to_container_list
     end
 
+    def show
+      @capabilities = services.object_storage.capabilities
+    end
+
     def update
       # set extra container values like quotas
       params.require(:container).each do |key,value|
