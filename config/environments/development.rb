@@ -12,7 +12,7 @@ Rails.application.configure do
   config.eager_load = false
 
   # Show full error reports and disable caching.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send.
@@ -67,7 +67,7 @@ Rails.application.configure do
   puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
 
 
-  config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
-  config.log_tags = [ :uuid ]
-  config.middleware.use "TaggedExceptionsMiddleware"
+  # config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
+  # config.log_tags = [ :uuid ]
+  # config.middleware.use "TaggedExceptionsMiddleware"
 end
