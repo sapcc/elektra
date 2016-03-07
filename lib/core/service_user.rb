@@ -1,3 +1,3 @@
-require 'core/service_user/driver'
-require 'core/service_user/base'
-require 'core/service_user/errors'
+require_relative 'service_user/driver'
+require_relative 'service_user/base'
+require_relative 'service_user/errors'
