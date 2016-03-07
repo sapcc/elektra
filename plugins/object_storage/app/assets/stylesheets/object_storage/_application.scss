@@ -66,3 +66,19 @@ li.missing-capability {
     margin-top: 10px;
   }
 }
+
+td#container_versions_location {
+  input[type=checkbox] {
+    margin-right: 10px;
+  }
+
+  .form-group {
+    margin-top: 5px;
+  }
+
+  &.collapsed {
+    .form-group, .hide-when-collapsed {
+      display: none;
+    }
+  }
+}
