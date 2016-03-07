@@ -55,6 +55,9 @@ module ObjectStorage
       back_to_container_list
     end
 
+    def show
+    end
+
     def update
       @container.metadata = self.metadata_params
       attrs = params.require(:container).permit(:object_count_quota, :bytes_quota)

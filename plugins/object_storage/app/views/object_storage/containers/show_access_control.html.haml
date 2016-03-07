@@ -11,9 +11,12 @@
           %tr
             %th Read ACLs
             %td
-              = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
-              %p
-                = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
+              - if has_capability?('staticweb')
+                = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
+                %p
+                  = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
+              - else 
+                = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here' 
           %tr
             %th Write ACLs
             %td
@@ -29,30 +32,32 @@
           %dt
             %code PROJECT_ID:*
           %dd Grant access to all users with access to this project.
-          %dt
-            %code .r:example.corp
-          %dd Grant read access for this Referer domain.
-          %dt
-            %code .rlistings
-          %dd Allow authorized users to list objects in this container.
+          - if has_capability?('staticweb')
+            %dt
+              %code .r:example.corp
+            %dd Grant read access for this Referer domain.
+            %dt
+              %code .rlistings
+            %dd Allow authorized users to list objects in this container.
         %p
           Use plain project and user IDs without the
           %code AUTH_
           prefix.
 
-:javascript
-  $('#container_public_read_access').change(
-    function() {
-      var input = $('#container_read_acl');
-      if ($(this).is(":checked")) {
-        input.data('org', input.val());
-        input.val('.r:*,.rlistings');
-        input.prop('readonly', true);
-     }
-       else {
-        input.val(input.data('org'));
-        input.prop('readonly', false);
+- if has_capability?('staticweb')
+  :javascript
+    $('#container_public_read_access').change(
+      function() {
+        var input = $('#container_read_acl');
+        if ($(this).is(":checked")) {
+          input.data('org', input.val());
+          input.val('.r:*,.rlistings');
+          input.prop('readonly', true);
+       }
+         else {
+          input.val(input.data('org'));
+          input.prop('readonly', false);
+        }
       }
-    }
-  );
+    );
 
