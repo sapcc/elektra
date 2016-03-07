@@ -9,7 +9,7 @@
       %tr
         %th Object count
         %td= @container.object_count
-      - if @capabilities.has_key?('container_quotas') 
+      - if has_capability?('container_quotas') 
         %tr
           %th.align-with-form-control Object count quota
           %td
@@ -19,7 +19,7 @@
       %tr
         %th Total size
         %td= format_bytes(@container.bytes_used)
-      - if @capabilities.has_key?('container_quotas') 
+      - if has_capability?('container_quotas') 
         %tr
           %th.align-with-form-control Total size quota
           %td
@@ -33,3 +33,7 @@
       %tr
         %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
+
+  - unless has_capability?('container_quotas')
+    %span.label.label-info Note
+    %small containers quotas not available
