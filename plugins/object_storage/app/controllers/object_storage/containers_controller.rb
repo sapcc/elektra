@@ -1,6 +1,6 @@
 module ObjectStorage
-  class ContainersController < ApplicationController
-
+  class ContainersController < ObjectStorage::ApplicationController
+    
     authorization_required
     before_filter :load_container, except: [ :index, :new, :create ]
 
