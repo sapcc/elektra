@@ -9,6 +9,12 @@ module ObjectStorage
       @capabilities = services.object_storage.capabilities
     end
 
+    def show
+      # for the "Object versioning" feature, we need to offer a selection of container names,
+      # but to avoid confusion, the archive container should be different from the current one
+      @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
+    end
+
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
       @empty = @container.empty?
@@ -60,8 +66,9 @@ module ObjectStorage
 
     def update
       @container.metadata = self.metadata_params
-      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota)
+      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota, :versions_location)
       unless @container.update_attributes(attrs)
+        @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
         render action: 'show' # "edit" view is covered by "show"
         return
       end

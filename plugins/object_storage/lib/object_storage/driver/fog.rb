@@ -43,6 +43,7 @@ module ObjectStorage
         'X-Container-Meta-Quota-Count' => 'object_count_quota',
         'X-Container-Read'             => 'read_acl',
         'X-Container-Write'            => 'write_acl',
+        'X-Versions-Location'          => 'versions_location',
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
@@ -50,6 +51,7 @@ module ObjectStorage
         'object_count_quota' => 'X-Container-Meta-Quota-Count',
         'read_acl'           => 'X-Container-Read',
         'write_acl'          => 'X-Container-Write',
+        'versions_location'  => 'X-Versions-Location',
       }
 
       def containers(filter={})

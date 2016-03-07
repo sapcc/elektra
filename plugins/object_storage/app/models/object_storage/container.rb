@@ -8,6 +8,7 @@ module ObjectStorage
     #   - metadata (Hash)
     #   - read_acl
     #   - write_acl
+    #   - versions_location (container name, see http://docs.openstack.org/developer/swift/api/object_versioning.html)
     # The id() is identical to the name() if the container is persisted.
 
     validates_presence_of :name
@@ -17,6 +18,13 @@ module ObjectStorage
       errors[:name] << 'may not contain slashes' if name.include?('/')
       errors[:name] << 'may not contain more than 256 characters' if name.size > 256
       errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
+
+      unless versions_location.blank?
+        errors[:versions_location] << 'may not be the same container' if versions_location == name
+        unless @driver.map_to(self.class).containers.any? { |c| c.name == versions_location }
+          errors[:versions_location] << 'is not a container name'
+        end
+      end
     end
 
     def public_read_access?

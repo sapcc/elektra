@@ -31,6 +31,11 @@
                 - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
                 = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
       %tr
+        %th.align-with-form-control Object versioning
+        %td
+          .row
+            .col-md-6= f.input :versions_location, collection: [""]+@other_container_names, label: false, prompt: false, label_method: -> (name) { name.blank? ? 'Disabled' : "Store old versions in container \"#{name}\"" }
+      %tr
         %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
 
