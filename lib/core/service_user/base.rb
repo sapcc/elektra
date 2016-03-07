@@ -58,12 +58,16 @@ module Core
             scoped_token: {domain: {name: @scope_domain} } 
           )
         rescue
-          MonsoonOpenstackAuth.api_client.auth_user(
-            @user_id,
-            @password,
-            domain_name: @user_domain_name,
-            scoped_token: {domain: {id: @scope_domain}}
-          )
+          begin
+            MonsoonOpenstackAuth.api_client.auth_user(
+              @user_id,
+              @password,
+              domain_name: @user_domain_name,
+              scoped_token: {domain: {id: @scope_domain}}
+            )
+          rescue MonsoonOpenstackAuth::Authentication::MalformedToken => e
+            raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
+          end
         end
         
         @driver = ::Core::ServiceUser::Driver.new({

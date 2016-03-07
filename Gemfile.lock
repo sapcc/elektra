@@ -620,6 +620,3 @@ DEPENDENCIES
   spring
   uglifier
   web-console (~> 2.0)
-
-BUNDLED WITH
-   1.11.2

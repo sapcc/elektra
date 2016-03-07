@@ -18,6 +18,12 @@ class ApplicationController < ActionController::Base
   
   # check if the requested domain is the same as that of the current user.
   before_filter :same_domain_check
+  
+  # token is expired or was revoked -> redirect to login page
+  rescue_from "Core::ServiceUser::Errors::AuthenticationError" do
+    render 'application/domain_forbidden'
+  end
+  
 
   def modal?
     if @modal.nil?
