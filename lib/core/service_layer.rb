@@ -8,69 +8,8 @@ module Core
   # implements service layer
   module ServiceLayer
   
-    def self.keystone_auth_endpoint
-      endpoint = Rails.configuration.keystone_endpoint rescue ''
-
-      unless endpoint and endpoint.include?('auth/tokens')
-        endpoint += '/' if endpoint.last!='/' 
-        endpoint += 'auth/tokens'
-      end
-      endpoint
-    end
-    
-    def self.locate_region(auth_user,default_region=Rails.configuration.default_region)
-      if default_region.nil?
-        # default region is nil -> return default region from catalog or nil
-        return auth_user.nil? ? nil : auth_user.default_services_region
-      else
-        default_regions = default_region
-        # make default_region to an array
-        default_regions = [default_regions] unless default_regions.is_a?(Array)
-        # compare default regions with regions from catalog
-        regions = auth_user.nil? ? default_regions : (default_regions & auth_user.available_services_regions) 
-        
-        if regions and regions.length>0 
-          # regions match found -> return first
-          return regions.first
-        else
-          # return default region from configuration or from catalog or nil
-          return (auth_user.nil? or auth_user.default_services_region.nil?) ? default_regions.first : auth_user.default_services_region
-        end
-      end
-    end
-
-    # this module is included in controllers.
-    # the controller should respond_to current_user (monsoon-openstack-auth gem)
-    module Services
-      def self.included(base)
-        base.send :include, InstanceMethods
-        base.send :helper_method, :services, :current_region
-      end
-
-      module InstanceMethods
-        # load services provider
-        def services(region=current_region)
-          # initialize services unless already initialized
-          unless @services
-            @services = Core::ServiceLayer::ServicesManager.new(
-              region,
-              current_user
-            )  
-          end
-          # update current_user
-          @services.current_user = current_user 
-          @services
-        end
-        
-        # try to find a region based on catalog and default region
-        def current_region
-          ::Core::ServiceLayer.locate_region(current_user)
-        end
-      end
-    end
-  
     class ServicesManager
-      attr_accessor :current_user
+      attr_accessor :current_user,:service_user
     
       class << self
         # create a service for given params
@@ -99,7 +38,7 @@ module Core
           # create an instance of the service class
           if klazz 
             klazz.new(
-              Core::ServiceLayer.keystone_auth_endpoint,
+              Core.keystone_auth_endpoint,
               params.delete(:region),
               params.delete(:token),
               params
@@ -108,9 +47,8 @@ module Core
         end
       end
     
-      def initialize(region,current_user)
+      def initialize(region)
         @region = region
-        @current_user = current_user
       end 
     
       def available?(service_name,action_name)
@@ -134,7 +72,7 @@ module Core
         unless service    
           # create a Core::ServiceLayer::Service  
           params = {
-            auth_url: Core::ServiceLayer.keystone_auth_endpoint,
+            auth_url: Core.keystone_auth_endpoint,
             region: @region,
           }
           if @current_user
@@ -146,6 +84,7 @@ module Core
           service = self.class.service(method_sym,params)
           service.services=self
           service.current_user = @current_user
+          service.service_user = @service_user
           # new service is instantiated -> cache it for further use in the same controller request.
           instance_variable_set("@#{method_sym.to_s}", service)
         end
@@ -158,7 +97,7 @@ module Core
     # each service in app/services/service_layer should inherit from this class.
     # It provides the context of current user
     class Service
-      attr_accessor :services, :current_user
+      attr_accessor :services, :current_user, :service_user
       attr_reader :auth_url, :region, :token, :domain_id, :project_id, :service_catalog
 
       def initialize(auth_url,region,token, options={})

@@ -76,10 +76,13 @@ RSpec.configure do |config|
     Rails.configuration.service_user_id = "test"
     Rails.configuration.service_user_password = "test"
     Rails.configuration.service_user_domain_name = "test"
-    
   end
   config.after(:all) do
     DatabaseCleaner.clean
+  end
+  
+  config.before(:each) do
+    allow(Core::ServiceUser::Base).to receive(:load).and_return(double('service_user').as_null_object)
   end
 
 end

@@ -13,7 +13,7 @@
     .collapse.navbar-collapse#main-nav-collapse
       %ul.nav.navbar-nav
         %li
-          = link_to @scoped_domain_name, plugin('identity').domain_path(project_id:nil) if @scoped_domain_id
+          = link_to (@scoped_domain_name || params[:domain_id]), plugin('identity').domain_path(project_id:nil) if @scoped_domain_id
 
       %ul.nav.navbar-nav.navbar-right
         - unless logged_in?

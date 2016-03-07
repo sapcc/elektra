@@ -12,6 +12,14 @@ module ServiceLayer
         domain_id:  self.domain_id,
         project_id: self.project_id
       })
+    rescue Excon::Errors::Unauthorized => e
+      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERROR"
+      #
+      # p e.response.data rescue nil
+      #
+      # error_body = JSON.parse(e.response.data[:body])
+      # p error_body
+      raise Identity::InvalidToken.new(e)
     end
     
     def available?(action_name_sym=nil)
@@ -71,7 +79,7 @@ module ServiceLayer
     end
 
     def grant_project_user_role_by_role_name(project_id,user_id,role_name)
-      role = Admin::IdentityService.find_role_by_name(role_name)
+      role = service_user.find_role_by_name(role_name)
       driver.grant_project_user_role(project_id,user_id,role.id)
     end
     

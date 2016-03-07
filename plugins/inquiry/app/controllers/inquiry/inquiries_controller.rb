@@ -30,7 +30,7 @@ module Inquiry
 
     def create
       # get the admins
-      admins = Admin::IdentityService.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
+      admins = service_user.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
       inquiry = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
       unless inquiry.errors?
         flash[:notice] = "Request successfully created."

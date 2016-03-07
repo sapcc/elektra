@@ -3,16 +3,28 @@
 class ApplicationController < ActionController::Base
   layout 'application'
   include ApplicationHelper
+  
+  # includes services method
+  # use: services.SERVICE_NAME.METHOD_NAME (e.g. services.identity.auth_projects)
+  include Services  
+  include ServiceUser
+  include CurrentUserWrapper
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
-
+  
   helper_method :modal?, :plugin_name
   
   # check if the requested domain is the same as that of the current user.
   before_filter :same_domain_check
   
+  # token is expired or was revoked -> redirect to login page
+  rescue_from "Core::ServiceUser::Errors::AuthenticationError" do
+    render 'application/domain_forbidden'
+  end
+  
+
   def modal?
     if @modal.nil?
       @modal = (request.xhr? and params[:modal]) ? true : false
@@ -33,13 +45,6 @@ class ApplicationController < ActionController::Base
       super options
     end
   end
-  
-  # Redefine current_user method which comes from monsoon_openstack_auth gem.
-  # This method wraps current_user and adds some details like email and full_name.
-  def current_user
-    return nil if super.nil?
-    CurrentUserWrapper.new(super,session)
-  end
 
   def plugin_name
     if @plugin_name.blank?
@@ -52,60 +57,15 @@ class ApplicationController < ActionController::Base
   protected
   
   def same_domain_check
-    if current_user and current_user.user_domain_id and Admin::IdentityService.service_user and Admin::IdentityService.service_user.domain_id
-      if current_user.user_domain_id!=Admin::IdentityService.service_user.domain_id
+    if current_user and current_user.user_domain_id and service_user and service_user.domain_id
+      if current_user.user_domain_id!=service_user.domain_id
         # requested domain differs from the domain of current user
         @current_domain_name = current_user.user_domain_name
-        @new_domain_name = Admin::IdentityService.service_user.domain_name
+        @new_domain_name = service_user.domain_name
 
         # render domain switch view
         render template: 'application/domain_switch'
       end
     end
   end
-  
-  # Wrapper for current user
-  class CurrentUserWrapper
-    attr_reader :current_user
-    def initialize(current_user, session)
-      @current_user = current_user
-      @session = session
-      # already saved user details in session
-      old_user_details = (@session[:current_user_details] || {})
-      
-      # check if user id from session differs from current_user id
-      if old_user_details["id"]!=current_user.id
-        # load user details for current_user
-        new_user_details = Admin::IdentityService.find_user(current_user.id) rescue nil
-        if new_user_details 
-          # save user_details in session
-          @session[:current_user_details] = new_user_details.nil? ? {} : new_user_details.attributes.merge("id"=>new_user_details.id)
-        end
-      end
-    end
-    
-    def try(method_name)
-      if self.respond_to?(method_name)
-        super(method_name)
-      else
-        @current_user.try(method_name)
-      end
-    end
-    
-    # delegate all methods to wrapped current user  
-    def method_missing(name, *args, &block)
-      @current_user.send(name,*args,&block)
-    end
-
-    # Email is not provided by current_user. So add it here.
-    def email
-      @session[:current_user_details]["email"] if @session[:current_user_details]
-    end
-    
-    # Fullname is not provided by current_user. So add it here.
-    def full_name
-      @session[:current_user_details]["description"] if @session[:current_user_details]
-    end
-  end
-
 end
