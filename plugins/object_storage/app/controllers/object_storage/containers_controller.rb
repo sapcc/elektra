@@ -23,10 +23,8 @@ module ObjectStorage
     end
 
     def update_access_control
-      # TODO: use update_attributes
-      @container.read_acl = params[:container][:read_acl]
-      @container.write_acl = params[:container][:write_acl]
-      unless @container.save
+      attrs = params.require(:container).permit(:read_acl, :write_acl)
+      unless @container.update_attributes(attrs)
         render action: 'show_access_control'
         return
       end
@@ -58,13 +56,9 @@ module ObjectStorage
     end
 
     def update
-      # set extra container values like quotas
-      params.require(:container).each do |key,value|
-        # ensure that validations are executed
-        @container.send("#{key}=", value)
-      end
       @container.metadata = self.metadata_params
-      unless @container.save
+      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota)
+      unless @container.update_attributes(attrs)
         render action: 'show' # "edit" view is covered by "show"
         return
       end
