@@ -11,7 +11,7 @@
           %tr
             %th Read ACLs
             %td
-              - if @capabilities.has_key?('staticweb')
+              - if has_capability?('staticweb')
                 = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
                 %p
                   = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
@@ -32,7 +32,7 @@
           %dt
             %code PROJECT_ID:*
           %dd Grant access to all users with access to this project.
-          - if @capabilities.has_key?('staticweb')
+          - if has_capability?('staticweb')
             %dt
               %code .r:example.corp
             %dd Grant read access for this Referer domain.
@@ -43,8 +43,11 @@
           Use plain project and user IDs without the
           %code AUTH_
           prefix.
+  - unless has_capability?('staticweb')
+    %span.label.label-info Note
+    %small static web and public access is not available  
 
-- if @capabilities.has_key?('staticweb')
+- if has_capability?('staticweb')
   :javascript
     $('#container_public_read_access').change(
       function() {

@@ -20,7 +20,6 @@ module ObjectStorage
     end
 
     def show_access_control
-      @capabilities = services.object_storage.capabilities
     end
 
     def update_access_control
@@ -59,7 +58,6 @@ module ObjectStorage
     end
 
     def show
-      @capabilities = services.object_storage.capabilities
     end
 
     def update
