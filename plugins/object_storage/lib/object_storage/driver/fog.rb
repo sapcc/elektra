@@ -256,12 +256,16 @@ module ObjectStorage
             })
           end
         else
-          puts "bulk delete not available, using fallback!" 
           targets.each do |target|
             unless target.has_key?(:container)
               raise ArgumentError, "malformed target #{target.inspect}"
             end
-            delete_object(target[:container],target[:object])
+
+            if target.has_key?(:object)
+              delete_object(target[:container],target[:object])
+            else
+              delete_container(target[:container])
+            end
           end
         end
       end
