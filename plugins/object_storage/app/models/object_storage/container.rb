@@ -33,7 +33,7 @@ module ObjectStorage
     end
 
     def allows_public_access?
-      # checks whether there is any form of StaticWeb enablement
+      # checks whether there is any form of public enablement
       (read_acl || '').match(/[.]r:/)
     end
 

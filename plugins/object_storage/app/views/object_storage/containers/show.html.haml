@@ -34,13 +34,22 @@
         %tr
           %th URL for public access
           %td= @container.public_url
+      - if has_capability?('staticweb') and @container.public_read_access?
+        %th.align-with-form-control Static Web
+        %td#container_static_web{class: @container.web_index.blank? ? 'collapsed' : ''}
+          = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select'
+          Serve objects as index
+          %span.hide-when-collapsed with file name
+          .row.hide-when-collapsed
+            .col-md-6
+              = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
       %tr
         %th.align-with-form-control Object versioning
         %td#container_versions_location{ class: @container.versions_location.blank? ? 'collapsed' : '' }
-          = f.input_field :has_versions_location, as: :boolean, checked: @container.versions_location.present?
+          = f.input_field :has_versions_location, as: :boolean, checked: @container.versions_location.present?, class: 'feature-select'
           Store old object versions
           %span.hide-when-collapsed in container
-          .row
+          .row.hide-when-collapsed
             .col-md-6
               = f.input :versions_location, collection: @other_container_names, label: false, prompt: false
       %tr
@@ -50,6 +59,7 @@
 =content_for :javascripts do
   :javascript
 
-    $('#container_versions_location input[type=checkbox]').change(function() {
+    $('input.feature-select[type=checkbox]').change(function() {
       $(this).closest('td').toggleClass('collapsed', !$(this).is(':checked'));
     });
+

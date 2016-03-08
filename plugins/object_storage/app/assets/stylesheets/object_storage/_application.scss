@@ -67,7 +67,7 @@ li.missing-capability {
   }
 }
 
-td#container_versions_location {
+td#container_versions_location, td#container_static_web {
   input[type=checkbox] {
     margin-right: 10px;
   }
@@ -76,9 +76,7 @@ td#container_versions_location {
     margin-top: 5px;
   }
 
-  &.collapsed {
-    .form-group, .hide-when-collapsed {
-      display: none;
-    }
+  &.collapsed .hide-when-collapsed {
+    display: none;
   }
 }

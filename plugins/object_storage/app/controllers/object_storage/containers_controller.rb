@@ -63,11 +63,16 @@ module ObjectStorage
 
     def update
       @container.metadata = self.metadata_params
-      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota, :versions_location, :has_versions_location)
+      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota, :versions_location, :has_versions_location, :has_web_index, :web_index)
 
       if attrs.delete(:has_versions_location) != '1'
         attrs[:versions_location] = '' # disable versions_location if unselected in UI
       end
+
+      if attrs.delete(:has_web_index) != '1'
+        attrs[:web_index] = '' # disable web_index if unselected in UI
+      end
+
 
       unless @container.update_attributes(attrs)
         @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
