@@ -1,7 +1,7 @@
 require_dependency "resource_management/application_controller"
 
 module ResourceManagement
-  class ProjectResourcesController < ResourceManagement::ApplicationController
+  class ProjectResourcesController < ::ResourceManagement::ApplicationController
    
     before_filter :load_project_resource, only: [:new_request, :create_request]
     

@@ -1,5 +1,5 @@
 module ObjectStorage
-  class FoldersController < ObjectStorage::ApplicationController
+  class FoldersController < ::ObjectStorage::ApplicationController
 
     authorization_required
     before_filter :load_params
