@@ -34,10 +34,10 @@
         %tr
           %th URL for public access
           %td= @container.public_url
-      - if has_capability?('staticweb') and @container.public_read_access?
+      - if has_capability?('staticweb')
         %th.align-with-form-control Static Web
         %td#container_static_web{class: @container.web_index.blank? ? 'collapsed' : ''}
-          = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select'
+          = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select', disabled: !@container.public_read_access?
           Serve objects as index
           %span.hide-when-collapsed with file name
           .row.hide-when-collapsed
