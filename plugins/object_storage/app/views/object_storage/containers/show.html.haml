@@ -40,7 +40,7 @@
           = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select', disabled: !@container.public_read_access?
           - unless @container.public_read_access?
             %span.fa.fa-exclamation-circle 
-            To use this feature enable public access in access control panel
+            Enable public access in access control to use this feature
           - else
             Serve objects as index
  
