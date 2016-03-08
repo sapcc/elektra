@@ -8,7 +8,7 @@
     %tbody
       %tr
         %th Object count
-        %td= @container.object_count
+        %td= Core::DataType.new(:number).format(@container.object_count)
       - if has_capability?('container_quotas') 
         %tr
           %th.align-with-form-control Object count quota
