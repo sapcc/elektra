@@ -4,7 +4,7 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @container, 'Update container', url: pl.container_path(@container.name), method: :put, cancel_url: pl.containers_path do |f|
-  %table.table
+  %table.table.table-for-form
     %tbody
       %tr
         %th Object count
