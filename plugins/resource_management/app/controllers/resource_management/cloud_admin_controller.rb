@@ -1,7 +1,7 @@
 require_dependency "resource_management/application_controller"
 
 module ResourceManagement
-  class CloudAdminController < ResourceManagement::ApplicationController
+  class CloudAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_domain_resource, only: [:edit, :cancel, :update]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
