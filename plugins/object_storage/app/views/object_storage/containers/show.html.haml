@@ -36,13 +36,14 @@
           %td= @container.public_url
       %tr
         %th.align-with-form-control Object versioning
-        %td#container_versions_location{ class: @container.versions_location.blank? ? 'collapsed' : '' }
-          = f.input_field :has_versions_location, as: :boolean, checked: @container.versions_location.present?
+        - enabled = @container.versions_location.present? || @container.has_versions_location.present?
+        %td#container_versions_location{ class: enabled ? '' : 'collapsed' }
+          = f.input_field :has_versions_location, as: :boolean, checked: enabled
           Store old object versions
           %span.hide-when-collapsed in container
           .row
             .col-md-6
-              = f.input :versions_location, collection: @other_container_names, label: false, prompt: false
+              = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
       %tr
         %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
