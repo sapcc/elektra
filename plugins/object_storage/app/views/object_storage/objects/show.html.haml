@@ -15,7 +15,7 @@
       %tr
         %th MD5 checksum
         %td= @object.md5_hash
-      - if @container.allows_public_access? and has_capability?(:staticweb)
+      - if @container.allows_public_access?
         %tr
           %th URL for public access
           %td= @object.public_url

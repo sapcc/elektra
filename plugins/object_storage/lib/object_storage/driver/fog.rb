@@ -70,7 +70,8 @@ module ObjectStorage
           headers = @fog.head_container(name).headers
           data = map_attribute_names(headers, CONTAINER_ATTRMAP)
           data['id'] = data['name'] = name
-          data['metadata'] = extract_metadata_tags(headers, 'X-Container-Meta-').reject do |key, value|
+          data['public_url'] = fog_public_url(name)
+          data['metadata']   = extract_metadata_tags(headers, 'X-Container-Meta-').reject do |key, value|
             # skip metadata fields that are recognized by us
             not CONTAINER_ATTRMAP.has_key?(key)
           end
