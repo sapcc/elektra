@@ -1,6 +1,6 @@
 module ObjectStorage
   class ContainersController < ::ObjectStorage::ApplicationController
-    
+
     authorization_required
     before_filter :load_container, except: [ :index, :new, :create ]
 
@@ -59,9 +59,6 @@ module ObjectStorage
       end
 
       back_to_container_list
-    end
-
-    def show
     end
 
     def update
