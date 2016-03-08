@@ -42,7 +42,10 @@ module Core
     private
 
     def format_number(value)
-      return value.to_i.to_s
+      # digit grouping separator: the SI/ISO 31-0 standard recommends to
+      # separate each block of three digits by a thin space; Unicode offers the
+      # narrow no-break space U+202F for this purpose
+      ActiveSupport::NumberHelper.number_to_delimited(value.to_i, delimiter: "\u202F")
     end
 
     def format_bytes(value)

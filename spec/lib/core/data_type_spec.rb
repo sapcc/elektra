@@ -1,3 +1,4 @@
+require 'active_support'
 require 'core/data_type'
 
 RSpec.describe Core::DataType do
@@ -8,7 +9,16 @@ RSpec.describe Core::DataType do
   describe '#format' do
 
     it 'renders number values as plain numbers' do
-      expect(datatype_number.format(42)).to eq('42')
+      expect(datatype_number.format(0)).to    eq('0')
+      expect(datatype_number.format(42)).to   eq('42')
+      expect(datatype_number.format(123)).to  eq('123')
+    end
+
+    it 'inserts spaces to group digits in large numbers' do
+      # NOTE: the patterns need [[:space:]] instead of \s to recognize Unicode whitespace characters
+      expect(datatype_number.format(12345)).to     match(/^12[[:space:]]345$/)
+      expect(datatype_number.format(1234567)).to   match(/^1[[:space:]]234[[:space:]]567$/)
+      expect(datatype_number.format(123456789)).to match(/^123[[:space:]]456[[:space:]]789$/)
     end
 
     it 'renders byte values with appropriate units' do
