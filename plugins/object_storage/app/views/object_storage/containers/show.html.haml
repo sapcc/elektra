@@ -4,7 +4,7 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @container, 'Update container', url: pl.container_path(@container.name), method: :put, cancel_url: pl.containers_path do |f|
-  %table.table
+  %table.table.table-for-form
     %tbody
       %tr
         %th Object count
@@ -50,13 +50,14 @@
               = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
       %tr
         %th.align-with-form-control Object versioning
-        %td#container_versions_location{ class: @container.versions_location.blank? ? 'collapsed' : '' }
-          = f.input_field :has_versions_location, as: :boolean, checked: @container.versions_location.present?, class: 'feature-select'
+        - enabled = @container.versions_location.present? || @container.has_versions_location.present?
+        %td#container_versions_location{ class: enabled ? '' : 'collapsed' }
+          = f.input_field :has_versions_location, as: :boolean, checked: enabled, class: 'feature-select'
           Store old object versions
           %span.hide-when-collapsed in container
           .row.hide-when-collapsed
             .col-md-6
-              = f.input :versions_location, collection: @other_container_names, label: false, prompt: false
+              = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
       %tr
         %th Metadata
         %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }

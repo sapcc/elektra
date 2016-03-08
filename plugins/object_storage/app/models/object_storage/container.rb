@@ -20,7 +20,9 @@ module ObjectStorage
       errors[:name] << 'may not contain more than 256 characters' if name.size > 256
       errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
       errors[:read_acl] << "disabling is invalid because static web is enabled" if !public_read_access? && web_index.present?
-      unless versions_location.blank?
+
+      if versions_location.present? or has_versions_location.present?
+        errors[:versions_location] << 'is missing' if versions_location.blank?
         errors[:versions_location] << 'may not be the same container' if versions_location == name
         unless @driver.map_to(self.class).containers.any? { |c| c.name == versions_location }
           errors[:versions_location] << 'is not a container name'
@@ -84,7 +86,8 @@ module ObjectStorage
     end
 
     def attributes_for_update
-      super.merge('original_metadata' => @original_metadata)
+      super.merge('original_metadata' => @original_metadata).
+        reject { |k,_| k.to_s == 'has_versions_location' }
     end
 
     def empty?
