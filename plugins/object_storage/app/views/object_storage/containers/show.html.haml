@@ -8,7 +8,7 @@
     %tbody
       %tr
         %th Object count
-        %td= @container.object_count
+        %td= Core::DataType.new(:number).format(@container.object_count)
       - if has_capability?('container_quotas') 
         %tr
           %th.align-with-form-control Object count quota
@@ -30,6 +30,10 @@
                   - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota)
                 - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
                 = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
+      - if @container.allows_public_access?
+        %tr
+          %th URL for public access
+          %td= @container.public_url
       %tr
         %th.align-with-form-control Object versioning
         %td#container_versions_location{ class: @container.versions_location.blank? ? 'collapsed' : '' }

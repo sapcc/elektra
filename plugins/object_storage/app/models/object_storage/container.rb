@@ -3,6 +3,7 @@ module ObjectStorage
 
     # The following properties are known:
     #   - name
+    #   - public_url
     #   - object_count
     #   - bytes_used
     #   - metadata (Hash)
