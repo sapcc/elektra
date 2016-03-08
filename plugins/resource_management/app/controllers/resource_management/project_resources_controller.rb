@@ -100,7 +100,7 @@ module ResourceManagement
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError
-        redirect_to resources_url()
+        redirect_to resources_path()
       end
     end
 

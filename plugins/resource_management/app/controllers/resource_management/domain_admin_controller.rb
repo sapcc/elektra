@@ -209,7 +209,7 @@ module ResourceManagement
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError
-        redirect_to admin_url()
+        redirect_to admin_path()
       end
     end
 
