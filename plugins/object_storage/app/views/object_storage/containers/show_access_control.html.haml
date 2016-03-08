@@ -27,22 +27,11 @@
           Entries in ACLs are comma-separated. Examples:
         %dl
           %dt
-            %code USER_ID
-          %dd Grant access to this user.
+            %code PROJECT_ID:USER_ID
+          %dd Grant access to a user from a different project.
           %dt
             %code PROJECT_ID:*
-          %dd Grant access to all users with access to this project.
-          - if has_capability?('staticweb')
-            %dt
-              %code .r:example.corp
-            %dd Grant read access for this Referer domain.
-            %dt
-              %code .rlistings
-            %dd Allow authorized users to list objects in this container.
-        %p
-          Use plain project and user IDs without the
-          %code AUTH_
-          prefix.
+          %dd Grant access to all users from that project.
 
 - if has_capability?('staticweb')
   :javascript
