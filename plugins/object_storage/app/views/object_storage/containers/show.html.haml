@@ -38,7 +38,12 @@
         %th.align-with-form-control Static Web
         %td#container_static_web{class: @container.web_index.blank? ? 'collapsed' : ''}
           = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select', disabled: !@container.public_read_access?
-          Serve objects as index
+          - unless @container.public_read_access?
+            %span.fa.fa-exclamation-circle 
+            To use this feature enable public access in access control panel
+          - else
+            Serve objects as index
+ 
           %span.hide-when-collapsed with file name
           .row.hide-when-collapsed
             .col-md-6
