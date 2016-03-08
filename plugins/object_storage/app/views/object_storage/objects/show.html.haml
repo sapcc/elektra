@@ -7,7 +7,7 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @object, 'Update object', url: pl.update_object_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.dirname) do |f|
-  %table.table
+  %table.table.table-for-form
     %tbody
       %tr
         %th Size
@@ -26,11 +26,11 @@
         %th Last modified (UTC)
         %td= @object.last_modified_at.to_time.getutc.strftime('%F %T')
       %tr
-        %th.align-with-form-control Will be deleted (UTC)
+        %th.align-with-form-control Expires at (UTC)
         %td
           - initial_value = @object.expires_at.nil? ? '' : @object.expires_at.to_time.getutc.strftime('%F %T')
           - current_value = params.fetch(:object, {}).fetch(:expires_at, initial_value)
-          - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to enable automatic expiration"
+          - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to schedule automatic deletion"
           = f.input :expires_at, as: :string, label: false, input_html: { value: current_value, placeholder: placeholder }
       %tr
         %th.align-with-form-control Content type
