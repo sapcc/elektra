@@ -14,9 +14,7 @@ class @MoModal
     
   @init= () ->
     $(document).on 'click', 'a[data-modal=true]', -> MoModal.load(this)
-    $(document).on 'ajax:beforeSend',"#{modal_holder_selector} form", (event, xhr, settings) -> 
-      console.log 'ajax:beforeSend'
-      settings.data += "&modal=true"
+    $(document).on 'ajax:beforeSend',"#{modal_holder_selector} form", (event, xhr, settings) -> settings.data += "&modal=true"
     $(document).on 'ajax:success', "#{modal_holder_selector} form", handleAjaxSuccess
       
   @load= (anker)->
@@ -55,7 +53,6 @@ class @MoModal
     $(document).trigger(type: 'modal:contentUpdated', target: target)
 
   handleAjaxSuccess= (event, data, status, xhr)->
-    console.log 'ajax:success'
     url = xhr.getResponseHeader('Location')
     response_type = (xhr.getResponseHeader("content-type") || "")
           
