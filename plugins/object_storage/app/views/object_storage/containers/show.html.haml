@@ -21,19 +21,21 @@
 
   - if has_capability?('staticweb')
     .form-group#container_static_web
-      %label Static Web
-      - enabled = @container.web_index.present?
-      .row{ class: enabled ? '' : 'collapsed' }
-        .col-md-6
-          = render layout: 'checkbox_with_label', locals: { name: 'container[has_web_index]', checked: enabled, options: { class: 'feature-select', disabled: !@container.public_read_access? } } do
-            - unless @container.public_read_access?
-              %span.fa.fa-exclamation-circle 
-              Enable public access in access control to use this feature
-            - else
+      %label Static website serving
+      - if @container.public_read_access?
+        - enabled = @container.web_index.present?
+        .row{ class: enabled ? '' : 'collapsed' }
+          .col-md-6
+            = render layout: 'checkbox_with_label', locals: { name: 'container[has_web_index]', checked: enabled, options: { class: 'feature-select' } } do
               Serve objects as index
-              %span.hide-when-collapsed with file name
-        .col-md-6.hide-when-collapsed
-          = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
+              %span.hide-when-collapsed when file name is:
+          .col-md-6.hide-when-collapsed
+            = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
+      - else
+        .bs-callout.bs-callout-info
+          Before configuring static website serving, go to
+          = link_to 'Access control', plugin('object_storage').containers_path + "?overlay=" + plugin('object_storage').show_access_control_container_path(@container.name)
+          and enable public read access.
 
   .form-group#container_versions_location
     %label Object versioning
