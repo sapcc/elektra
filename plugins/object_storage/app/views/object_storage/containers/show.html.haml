@@ -31,9 +31,11 @@
               %span.hide-when-collapsed when file name is:
           .col-md-6.hide-when-collapsed
             = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
-        = render layout: 'checkbox_with_label', locals: { name: 'container[web_file_listing]', checked: @container.web_file_listing?, options: { class: 'feature-select' } } do
-          Enable file listing
-          = icon 'question-circle',class: 'help_icon', title: 'If you do not set the index file, the URL displays a list of the objects in the container'
+        .row
+          .col-md-12
+            = render layout: 'checkbox_with_label', locals: { name: 'container[web_file_listing]', checked: @container.web_file_listing?, options: { class: 'feature-select' } } do
+              Enable file listing
+              = icon 'question-circle',class: 'help_icon', title: 'If there is no index file, the URL displays a list of objects in the container.'
       - else
         .bs-callout.bs-callout-info
           Before configuring static website serving, go to

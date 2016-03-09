@@ -50,10 +50,10 @@ li.missing-capability {
 }
 
 .form-group#container_versions_location, .form-group#container_static_web {
-  margin-bottom: 0;
+  margin-bottom: 5px;
 
-  & > .row {
-    min-height: 49px;
+  .form-group {
+    margin-bottom: 0;
   }
 
   .row.collapsed {
@@ -61,10 +61,6 @@ li.missing-capability {
       display: none;
     }
   }
-}
-
-.web-file-listing {
-  margin-top: 10px;
 }
 
 //TODO: should be moved to core?
