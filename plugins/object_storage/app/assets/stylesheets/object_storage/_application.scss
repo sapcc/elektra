@@ -22,32 +22,8 @@
 */
 
 #custom-metadata {
-  .row {
+  .input-group {
     margin-bottom: 0.5rem;
-  }
-
-  input[type=text] {
-    width: 100%;
-  }
-}
-
-table.table-for-form {
-  .form-group {
-    /* remove some unnecessary margin when a simple_form input is embedded in a table layout */
-    margin-bottom: 0;
-  }
-
-  .help-block {
-    /* same for error messages */
-    margin-bottom: 0;
-  }
-
-  th {
-    white-space: nowrap;
-  }
-
-  th.align-with-form-control {
-    vertical-align: middle;
   }
 }
 
@@ -73,17 +49,17 @@ li.missing-capability {
   }
 }
 
-td#container_versions_location, td#container_static_web {
-  input[type=checkbox] {
-    margin-right: 10px;
+.form-group#container_versions_location, .form-group#container_static_web {
+  margin-bottom: 0;
+
+  & > .row {
+    min-height: 49px;
   }
 
-  .form-group {
-    margin-top: 5px;
-  }
-
-  &.collapsed .hide-when-collapsed {
-    display: none;
+  .row.collapsed {
+    .hide-when-collapsed {
+      display: none;
+    }
   }
 }
 

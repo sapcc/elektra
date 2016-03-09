@@ -198,15 +198,23 @@ section {
 
 .toolbar {
   @include pie-clearfix;
+  position: relative;
+  color: #666;
   background-color: #f9f9f9;
   border-top: 2px solid #ddd;
   border-bottom: 1px solid #eee;
-  padding: 5px 8px;
+  padding: $toolbar-vertical-padding 8px;
   margin-top: $line-height-computed * 2.5;
 
   &.toolbar-bottom {
     margin-top: 0;
     margin-bottom: $line-height-computed * 2.5;
+  }
+
+  .main-buttons {
+    position: absolute;
+    right: 8px;
+    top: 3px;
   }
 
   .btn {
@@ -428,9 +436,39 @@ footer, .footer {
     }
   }
 
-  .glyphicon {
-    @include opacity(0.75);
-    margin-right: 5px;
+  .special-crumb {
+    position: absolute;
+    right: 0;
+
+    .context-list {
+      margin-left: $context-breadcrumb-padding-horizontal;
+    }
+  }
+
+  .solo-icon-link {
+    display: block;
+    float: left;
+    padding: ($context-breadcrumb-height - $font-size-small*2)/2 0;
+
+    &:hover, &.active {
+      .fa-stack-2x {
+        @include opacity(0.8);
+      }
+    }
+
+    .fa-stack {
+      font-size: $font-size-small;
+    }
+
+    .fa-stack-2x {
+      @include opacity(0.3);
+      color: #000;
+    }
+
+    .fa-inverse {
+      color: #fff;
+    }
+
   }
 
   .context-list {
@@ -442,19 +480,6 @@ footer, .footer {
     margin-bottom: 0;
     padding: 0;
 
-    &.pull-right:last-child {
-      margin-right: 0;
-
-      > li {
-        border-right: none;
-
-        > .dropdown-menu {
-          right: -1px;
-          left: auto;
-        }
-      }
-    }
-
     > li {
       border-right: 1px solid rgba(51, 51, 51, 0.4);
       display: block;
@@ -465,6 +490,12 @@ footer, .footer {
 
       &.context-admin {
         background: rgba(255, 255, 255, 0.2);
+        border-right: none;
+
+        > .dropdown-menu {
+          right: -1px;
+          left: auto;
+        }
       }
 
       &.open, &:hover {
@@ -984,6 +1015,54 @@ input[type='checkbox'], input[type='radio'] {
   display: none;
 }
 
+
+// ---------------------------------------------------------------------------------
+// Web Console
+// ---------------------------------------------------------------------------------
+
+#fixed-webconsole {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  height: 40vh;
+  width: 100vw;
+  background: #222;
+  color: #fff;
+
+  &.open {
+    display: block;
+  }
+
+  .toolbar {
+    @include pie-clearfix;
+    @include box-shadow(rgba(0, 0, 0, 0.1) 0 -1px 5px);
+    border-top: 1px solid #d3d3d3;
+    border-bottom: 1px solid #000;
+    margin-top: 0;
+    width: 100%;
+    height: $line-height-computed + $toolbar-vertical-padding*2;
+    position: absolute;
+    top: -($line-height-computed + $toolbar-vertical-padding*2);
+
+    a {
+      color: #666;
+      font-size: $font-size-medium;
+    }
+  }
+
+}
+
+#webconsole-container {
+  width: 100%;
+  height: 100%;
+}
+
+#terminal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+}
 
 
 
