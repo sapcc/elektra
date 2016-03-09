@@ -60,8 +60,8 @@
                 %small Enable public access to use this feature
                 )
               - else
-                Enable file listing. 
-                = icon 'question-circle',style: 'cursor: help;', title: 'If you do not set the index file, the URL displays a list of the objects in the container'
+                Enable file listing
+                = icon 'question-circle',class: 'help_icon', title: 'If you do not set the index file, the URL displays a list of the objects in the container'
       %tr
         %th.align-with-form-control Object versioning
         - enabled = @container.versions_location.present? || @container.has_versions_location.present?
