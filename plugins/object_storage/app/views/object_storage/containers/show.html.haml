@@ -4,53 +4,42 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @container, 'Update container', url: pl.container_path(@container.name), method: :put, cancel_url: pl.containers_path do |f|
-  %table.table.table-for-form
-    %tbody
-      %tr
-        %th Object count
-        %td= Core::DataType.new(:number).format(@container.object_count)
-      - if has_capability?('container_quotas') 
-        %tr
-          %th.align-with-form-control Object count quota
-          %td
-            .row
-              .col-md-6
-                = f.input :object_count_quota, as: :integer, label: false, placeholder: 'Leave empty to disable'
-      %tr
-        %th Total size
-        %td= format_bytes(@container.bytes_used)
-      - if has_capability?('container_quotas') 
-        %tr
-          %th.align-with-form-control Total size quota
-          %td
-            .row
-              .col-md-6
-                - inital_value = nil
-                - if @container.bytes_quota
-                  - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota)
-                - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
-                = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
-      - if @container.allows_public_access?
-        %tr
-          %th URL for public access
-          %td= @container.public_url
-      %tr
-        %th.align-with-form-control Object versioning
-        - enabled = @container.versions_location.present? || @container.has_versions_location.present?
-        %td#container_versions_location{ class: enabled ? '' : 'collapsed' }
-          = f.input_field :has_versions_location, as: :boolean, checked: enabled
-          Store old object versions
-          %span.hide-when-collapsed in container
-          .row
-            .col-md-6
-              = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
-      %tr
-        %th Metadata
-        %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
+
+  .row
+    .col-md-6
+      = f.input :object_count, readonly: true, input_html: { value: Core::DataType.new(:number).format(@container.object_count) }
+      = f.input :total_size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@container.bytes_used) }
+    .col-md-6
+      = f.input :object_count_quota, as: :integer, placeholder: 'Leave empty to disable'
+
+      - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota) if @container.bytes_quota
+      - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
+      = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable', label: 'Total size quota'
+
+  - if @container.allows_public_access?
+    = f.input :public_url, readonly: true, label: 'URL for public access'
+
+  .form-group#container_versions_location
+    %label Object versioning
+    - enabled = @container.versions_location.present? || @container.has_versions_location.present?
+    .row{ class: enabled ? '' : 'collapsed' }
+      .col-md-6
+        .checkbox
+          %label
+            = hidden_field_tag 'container[has_versions_location]', '0'
+            = check_box_tag 'container[has_versions_location]', '1'
+            Store old object versions
+            %span.hide-when-collapsed in container:
+      .col-md-6.hide-when-collapsed
+        = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
+
+  .form-group
+    %label Metadata
+    = render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
 
 =content_for :javascripts do
   :javascript
 
     $('#container_versions_location input[type=checkbox]').change(function() {
-      $(this).closest('td').toggleClass('collapsed', !$(this).is(':checked'));
+      $(this).closest('.row').toggleClass('collapsed', !$(this).is(':checked'));
     });
