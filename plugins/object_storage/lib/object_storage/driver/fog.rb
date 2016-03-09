@@ -44,6 +44,7 @@ module ObjectStorage
         'X-Container-Read'             => 'read_acl',
         'X-Container-Write'            => 'write_acl',
         'X-Versions-Location'          => 'versions_location',
+        'X-Container-Meta-Web-Index'   => 'web_index',
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
@@ -52,6 +53,7 @@ module ObjectStorage
         'read_acl'           => 'X-Container-Read',
         'write_acl'          => 'X-Container-Write',
         'versions_location'  => 'X-Versions-Location',
+        'web_index'          => 'X-Container-Meta-Web-Index',
       }
 
       def containers(filter={})

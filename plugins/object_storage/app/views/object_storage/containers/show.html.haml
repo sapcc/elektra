@@ -19,12 +19,30 @@
   - if @container.allows_public_access?
     = f.input :public_url, readonly: true, label: 'URL for public access'
 
+  - if has_capability?('staticweb')
+    .form-group#container_static_web
+      %label Static website serving
+      - if @container.public_read_access?
+        - enabled = @container.web_index.present?
+        .row{ class: enabled ? '' : 'collapsed' }
+          .col-md-6
+            = render layout: 'checkbox_with_label', locals: { name: 'container[has_web_index]', checked: enabled, options: { class: 'feature-select' } } do
+              Serve objects as index
+              %span.hide-when-collapsed when file name is:
+          .col-md-6.hide-when-collapsed
+            = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
+      - else
+        .bs-callout.bs-callout-info
+          Before configuring static website serving, go to
+          = link_to 'Access control', plugin('object_storage').containers_path + "?overlay=" + plugin('object_storage').show_access_control_container_path(@container.name)
+          and enable public read access.
+
   .form-group#container_versions_location
     %label Object versioning
     - enabled = @container.versions_location.present? || @container.has_versions_location.present?
     .row{ class: enabled ? '' : 'collapsed' }
       .col-md-6
-        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]' } do
+        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]', checked: enabled, options: { class: 'feature-select' } } do
           Store old object versions
           %span.hide-when-collapsed in container:
       .col-md-6.hide-when-collapsed
@@ -37,6 +55,7 @@
 =content_for :javascripts do
   :javascript
 
-    $('#container_versions_location input[type=checkbox]').change(function() {
+    $('input.feature-select[type=checkbox]').change(function() {
       $(this).closest('.row').toggleClass('collapsed', !$(this).is(':checked'));
     });
+
