@@ -36,18 +36,32 @@
           %td= @container.public_url
       - if has_capability?('staticweb')
         %th.align-with-form-control Static Web
-        %td#container_static_web{class: @container.web_index.blank? ? 'collapsed' : ''}
+        %td#container_static_web{ class: @container.web_index.blank? ? 'collapsed' : ''}
           = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select', disabled: !@container.public_read_access?
           - unless @container.public_read_access?
+            Serve Objects as index (
             %span.fa.fa-exclamation-circle 
-            Enable public access in access control to use this feature
+            %small Enable public access to use this feature
+            )
           - else
             Serve objects as index
  
           %span.hide-when-collapsed with file name
           .row.hide-when-collapsed
             .col-md-6
-              = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
+              = f.input :web_index, as: :string, input_html: { value: @container.web_index  || 'index.html'}, label: false, placeholder: "index.html"
+
+          .row
+            .col-md-12
+              = f.input_field :web_file_listing, as: :boolean, checked: @container.web_file_listing?, disabled: !@container.public_read_access?, class: "web_file_listing"
+              - unless @container.public_read_access?
+                Turn on file listing (
+                %span.fa.fa-exclamation-circle 
+                %small Enable public access to use this feature
+                )
+              - else
+                Turn on file listing. 
+                -# TODO: Help Text: If you do not set the index file, the URL displays a list of the objects in the container
       %tr
         %th.align-with-form-control Object versioning
         - enabled = @container.versions_location.present? || @container.has_versions_location.present?
@@ -68,4 +82,5 @@
     $('input.feature-select[type=checkbox]').change(function() {
       $(this).closest('td').toggleClass('collapsed', !$(this).is(':checked'));
     });
+
 

@@ -37,14 +37,15 @@ module ObjectStorage
       }
       CONTAINER_ATTRMAP = {
         # name in API => name in our model
-        'X-Container-Object-Count'     => 'object_count',
-        'X-Container-Bytes-Used'       => 'bytes_used',
-        'X-Container-Meta-Quota-Bytes' => 'bytes_quota',
-        'X-Container-Meta-Quota-Count' => 'object_count_quota',
-        'X-Container-Read'             => 'read_acl',
-        'X-Container-Write'            => 'write_acl',
-        'X-Versions-Location'          => 'versions_location',
-        'X-Container-Meta-Web-Index'   => 'web_index',
+        'X-Container-Object-Count'      => 'object_count',
+        'X-Container-Bytes-Used'        => 'bytes_used',
+        'X-Container-Meta-Quota-Bytes'  => 'bytes_quota',
+        'X-Container-Meta-Quota-Count'  => 'object_count_quota',
+        'X-Container-Read'              => 'read_acl',
+        'X-Container-Write'             => 'write_acl',
+        'X-Versions-Location'           => 'versions_location',
+        'X-Container-Meta-Web-Index'    => 'web_index',
+        'X-Container-Meta-Web-Listings' => 'web_file_listing'
       }
       CONTAINER_WRITE_ATTRMAP = {
         # name in our model => name in create/update API request
@@ -54,6 +55,7 @@ module ObjectStorage
         'write_acl'          => 'X-Container-Write',
         'versions_location'  => 'X-Versions-Location',
         'web_index'          => 'X-Container-Meta-Web-Index',
+        'web_file_listing'   => 'X-Container-Meta-Web-Listings',
       }
 
       def containers(filter={})
