@@ -109,6 +109,11 @@ PATH
     loadbalancing (0.0.1)
 
 PATH
+  remote: plugins/monitoring
+  specs:
+    monitoring (0.0.1)
+
+PATH
   remote: plugins/networking
   specs:
     networking (0.0.1)
@@ -595,6 +600,7 @@ DEPENDENCIES
   inquiry!
   jquery-rails
   loadbalancing!
+  monitoring!
   monsoon-openstack-auth!
   net-ssh
   networking!

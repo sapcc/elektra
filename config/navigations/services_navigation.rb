@@ -111,10 +111,11 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil,
       html: {class: "fancy-nav-header", 'data-icon': "fa fa-area-chart fa-fw" },
-      if: -> {services.available?(:resource_management,:resources)} do |monitoring_nav|
+      if: -> {services.available?(:resource_management,:resources) or plugin_available?(:monitoring)} do |monitoring_nav|
       # monitoring_nav.item :metrics, 'Metrics', '#'
       # monitoring_nav.item :logs, 'Logs', '#'
-      monitoring_nav.item :resource_management, 'Resource Management', ->{plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }
+      monitoring_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }
+      monitoring_nav.item :monitoring,          'Monitoring',          -> {plugin('monitoring').entry_path},              if: -> { plugin_available?(:loadbalancing) }
 
       # monitoring_nav.dom_attributes = {class: 'content-list'}
     end
