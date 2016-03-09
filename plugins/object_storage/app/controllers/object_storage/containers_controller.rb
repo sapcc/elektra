@@ -62,7 +62,7 @@ module ObjectStorage
 
     def update
       @container.metadata = self.metadata_params
-      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota, :versions_location, :has_versions_location, :has_web_index, :web_index)
+      attrs = params.require(:container).permit(:object_count_quota, :bytes_quota, :versions_location, :has_versions_location, :has_web_index, :web_index, :web_file_listing)
 
       # normalize "has_versions_location" to Boolean
       attrs[:has_versions_location] = attrs[:has_versions_location] == '1'
@@ -72,6 +72,8 @@ module ObjectStorage
       if attrs.delete(:has_web_index) != '1'
         attrs[:web_index] = '' # disable web_index if unselected in UI
       end
+      
+      attrs[:web_file_listing] = attrs[:web_file_listing] == '1'
 
 
       unless @container.update_attributes(attrs)

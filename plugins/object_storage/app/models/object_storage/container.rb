@@ -19,7 +19,7 @@ module ObjectStorage
       errors[:name] << 'may not contain slashes' if name.include?('/')
       errors[:name] << 'may not contain more than 256 characters' if name.size > 256
       errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
-      errors[:read_acl] << 'may not be disabled because static website serving is enabled' if !public_read_access? && web_index.present?
+      errors[:read_acl] << 'may not be disabled because static website serving is enabled' if !public_read_access? && (web_index.present? || web_file_listing?)
 
       if versions_location.present? or has_versions_location.present?
         errors[:versions_location] << 'is missing' if versions_location.blank?
@@ -28,6 +28,11 @@ module ObjectStorage
           errors[:versions_location] << 'is not a container name'
         end
       end
+    end
+
+
+    def web_file_listing?
+      read(:web_file_listing)
     end
 
     def public_read_access?
