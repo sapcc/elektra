@@ -14,7 +14,7 @@
 
       - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota) if @container.bytes_quota
       - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
-      = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable', label: 'Total size quota'
+      = f.input :bytes_quota, as: :string, input_html: { value: value }, placeholder: 'Leave empty to disable', label: 'Total size quota'
 
   - if @container.allows_public_access?
     = f.input :public_url, readonly: true, label: 'URL for public access'
@@ -24,12 +24,9 @@
     - enabled = @container.versions_location.present? || @container.has_versions_location.present?
     .row{ class: enabled ? '' : 'collapsed' }
       .col-md-6
-        .checkbox
-          %label
-            = hidden_field_tag 'container[has_versions_location]', '0'
-            = check_box_tag 'container[has_versions_location]', '1'
-            Store old object versions
-            %span.hide-when-collapsed in container:
+        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]' } do
+          Store old object versions
+          %span.hide-when-collapsed in container:
       .col-md-6.hide-when-collapsed
         = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
 
