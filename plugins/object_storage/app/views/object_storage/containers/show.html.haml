@@ -52,16 +52,16 @@
               = f.input :web_index, as: :string, input_html: { value: @container.web_index  || 'index.html'}, label: false, placeholder: "index.html"
 
           .row
-            .col-md-12
-              = f.input_field :web_file_listing, as: :boolean, checked: @container.web_file_listing?, disabled: !@container.public_read_access?, class: "web_file_listing"
+            .col-md-12.web-file-listing
+              = f.input_field :web_file_listing, as: :boolean, checked: @container.web_file_listing?, disabled: !@container.public_read_access? 
               - unless @container.public_read_access?
                 Turn on file listing (
                 %span.fa.fa-exclamation-circle 
                 %small Enable public access to use this feature
                 )
               - else
-                Turn on file listing. 
-                -# TODO: Help Text: If you do not set the index file, the URL displays a list of the objects in the container
+                Enable file listing. 
+                = icon 'question-circle',style: 'cursor: help;', title: 'If you do not set the index file, the URL displays a list of the objects in the container'
       %tr
         %th.align-with-form-control Object versioning
         - enabled = @container.versions_location.present? || @container.has_versions_location.present?
