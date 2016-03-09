@@ -24,7 +24,7 @@
     - enabled = @container.versions_location.present? || @container.has_versions_location.present?
     .row{ class: enabled ? '' : 'collapsed' }
       .col-md-6
-        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]', checked: enabled } do
+        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]', checked: enabled, options: { class: 'feature-select' } } do
           Store old object versions
           %span.hide-when-collapsed in container:
       .col-md-6.hide-when-collapsed
@@ -37,6 +37,6 @@
 =content_for :javascripts do
   :javascript
 
-    $('#container_versions_location input[type=checkbox]').change(function() {
+    $('input.feature-select[type=checkbox]').change(function() {
       $(this).closest('.row').toggleClass('collapsed', !$(this).is(':checked'));
     });
