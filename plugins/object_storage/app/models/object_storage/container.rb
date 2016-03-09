@@ -32,7 +32,7 @@ module ObjectStorage
 
 
     def web_file_listing?
-      web_file_listing == "true"
+      read(:web_file_listing)
     end
 
     def public_read_access?
