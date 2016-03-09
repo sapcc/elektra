@@ -11,22 +11,6 @@
           = link_to plugin('identity').projects_path, data: {modal: true} do
             %i.icon-link.fa.fa-th-list
 
-    -# - if @user_domain_projects
-    -#   %ol.context-list
-    -#     %li.dropdown
-    -#       %span.glyphicon.glyphicon-th
-    -#       %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-    -#         - if @active_project
-    -#           = @active_project.name
-    -#         - else
-    -#           Choose a Project
-    -#         %span.caret
-    -#       %ul.dropdown-menu{:role => "menu"}
-    -#         - @user_domain_projects.each do |project|
-    -#           %li{class: ("active" if project.id == @scoped_project_id)}
-    -#             = link_to "#{project.name}", plugin('identity').project_path(project_id:project.friendly_id)
-
-
 
     - if @scoped_project_id
       %ol.context-list
@@ -42,11 +26,18 @@
           = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
 
 
-    - if current_user and current_user.admin?
-      %ol.context-list.pull-right
-        %li.dropdown.context-admin
-          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            %i.fa.fa-sliders
-            Admin
-            %span.caret
-          = render_navigation(context: :"admin", expand_all: true)
+    .special-crumb
+      - if @scoped_project_id
+        = link_to plugin('identity').projects_web_console_path, remote: true, class: "solo-icon-link", data: {trigger: "webconsole"} do
+          %span.fa-stack
+            %i.fa.fa-square.fa-stack-2x
+            %i.fa.fa-terminal.fa-stack-1x.fa-inverse
+
+      - if current_user and !current_user.admin?
+        %ol.context-list
+          %li.dropdown.context-admin
+            %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+              %i.fa.fa-sliders
+              Admin
+              %span.caret
+            = render_navigation(context: :"admin", expand_all: true)

@@ -4,68 +4,56 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @container, 'Update container', url: pl.container_path(@container.name), method: :put, cancel_url: pl.containers_path do |f|
-  %table.table.table-for-form
-    %tbody
-      %tr
-        %th Object count
-        %td= Core::DataType.new(:number).format(@container.object_count)
-      - if has_capability?('container_quotas') 
-        %tr
-          %th.align-with-form-control Object count quota
-          %td
-            .row
-              .col-md-6
-                = f.input :object_count_quota, as: :integer, label: false, placeholder: 'Leave empty to disable'
-      %tr
-        %th Total size
-        %td= format_bytes(@container.bytes_used)
-      - if has_capability?('container_quotas') 
-        %tr
-          %th.align-with-form-control Total size quota
-          %td
-            .row
-              .col-md-6
-                - inital_value = nil
-                - if @container.bytes_quota
-                  - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota)
-                - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
-                = f.input :bytes_quota, as: :string, label: false, input_html: { value: value }, placeholder: 'Leave empty to disable'
-      - if @container.allows_public_access?
-        %tr
-          %th URL for public access
-          %td= @container.public_url
-      - if has_capability?('staticweb')
-        %th.align-with-form-control Static Web
-        %td#container_static_web{class: @container.web_index.blank? ? 'collapsed' : ''}
-          = f.input_field :has_web_index, as: :boolean, checked: @container.web_index.present?, class: 'feature-select', disabled: !@container.public_read_access?
-          - unless @container.public_read_access?
-            %span.fa.fa-exclamation-circle 
-            Enable public access in access control to use this feature
-          - else
-            Serve objects as index
- 
-          %span.hide-when-collapsed with file name
-          .row.hide-when-collapsed
-            .col-md-6
-              = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
-      %tr
-        %th.align-with-form-control Object versioning
-        - enabled = @container.versions_location.present? || @container.has_versions_location.present?
-        %td#container_versions_location{ class: enabled ? '' : 'collapsed' }
-          = f.input_field :has_versions_location, as: :boolean, checked: enabled, class: 'feature-select'
+
+  .row
+    .col-md-6
+      = f.input :object_count, readonly: true, input_html: { value: Core::DataType.new(:number).format(@container.object_count) }
+      = f.input :total_size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@container.bytes_used) }
+    .col-md-6
+      = f.input :object_count_quota, as: :integer, placeholder: 'Leave empty to disable'
+
+      - initial_value = Core::DataType.new(:bytes).format(@container.bytes_quota) if @container.bytes_quota
+      - value = params.fetch(:container, {}).fetch(:bytes_quota, initial_value)
+      = f.input :bytes_quota, as: :string, input_html: { value: value }, placeholder: 'Leave empty to disable', label: 'Total size quota'
+
+  - if @container.allows_public_access?
+    = f.input :public_url, readonly: true, label: 'URL for public access'
+
+  - if has_capability?('staticweb')
+    .form-group#container_static_web
+      %label Static Web
+      - enabled = @container.web_index.present?
+      .row{ class: enabled ? '' : 'collapsed' }
+        .col-md-6
+          = render layout: 'checkbox_with_label', locals: { name: 'container[has_web_index]', checked: enabled, options: { class: 'feature-select', disabled: !@container.public_read_access? } } do
+            - unless @container.public_read_access?
+              %span.fa.fa-exclamation-circle 
+              Enable public access in access control to use this feature
+            - else
+              Serve objects as index
+              %span.hide-when-collapsed with file name
+        .col-md-6.hide-when-collapsed
+          = f.input :web_index, as: :string, input_html: { value: @container.web_index || 'index.html' }, label: false
+
+  .form-group#container_versions_location
+    %label Object versioning
+    - enabled = @container.versions_location.present? || @container.has_versions_location.present?
+    .row{ class: enabled ? '' : 'collapsed' }
+      .col-md-6
+        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]', checked: enabled, options: { class: 'feature-select' } } do
           Store old object versions
-          %span.hide-when-collapsed in container
-          .row.hide-when-collapsed
-            .col-md-6
-              = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
-      %tr
-        %th Metadata
-        %td= render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
+          %span.hide-when-collapsed in container:
+      .col-md-6.hide-when-collapsed
+        = f.input :versions_location, collection: @other_container_names, label: false, prompt: true
+
+  .form-group
+    %label Metadata
+    = render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }
 
 =content_for :javascripts do
   :javascript
 
     $('input.feature-select[type=checkbox]').change(function() {
-      $(this).closest('td').toggleClass('collapsed', !$(this).is(':checked'));
+      $(this).closest('.row').toggleClass('collapsed', !$(this).is(':checked'));
     });
 

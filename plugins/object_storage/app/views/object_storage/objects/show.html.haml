@@ -7,34 +7,23 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @object, 'Update object', url: pl.update_object_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.dirname) do |f|
-  %table.table.table-for-form
-    %tbody
-      %tr
-        %th Size
-        %td= format_bytes(@object.size_bytes)
-      %tr
-        %th MD5 checksum
-        %td= @object.md5_hash
-      - if @container.allows_public_access?
-        %tr
-          %th URL for public access
-          %td= @object.public_url
-      %tr
-        %th Uploaded (UTC)
-        %td= @object.created_at.to_time.getutc.strftime('%F %T')
-      %tr
-        %th Last modified (UTC)
-        %td= @object.last_modified_at.to_time.getutc.strftime('%F %T')
-      %tr
-        %th.align-with-form-control Expires at (UTC)
-        %td
-          - initial_value = @object.expires_at.nil? ? '' : @object.expires_at.to_time.getutc.strftime('%F %T')
-          - current_value = params.fetch(:object, {}).fetch(:expires_at, initial_value)
-          - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to schedule automatic deletion"
-          = f.input :expires_at, as: :string, label: false, input_html: { value: current_value, placeholder: placeholder }
-      %tr
-        %th.align-with-form-control Content type
-        %td= f.input :content_type, as: :string, label: false
-      %tr
-        %th Metadata
-        %td= render partial: 'editable_metadata_display', locals: { metadata: @object.metadata }
+
+  .row
+    .col-md-6= f.input :content_type, required: false
+    .col-md-2= f.input :size_bytes, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@object.size_bytes) }, label: 'Size'
+    .col-md-4= f.input :md5_hash, readonly: true, label: 'MD5 checksum'
+
+  - if @container.allows_public_access?
+    = f.input :public_url, readonly: true, label: 'URL for public access'
+
+  .row
+    .col-md-6= f.input :created_at, as: :string, input_html: { value: @object.created_at.to_time.getutc.strftime('%F %T') }, label: 'Uploaded (UTC)'
+    .col-md-6= f.input :last_modified_at, as: :string, input_html: { value: @object.created_at.to_time.getutc.strftime('%F %T') }, label: 'Last modified (UTC)'
+  - initial_value = @object.expires_at.nil? ? '' : @object.expires_at.to_time.getutc.strftime('%F %T')
+  - current_value = params.fetch(:object, {}).fetch(:expires_at, initial_value)
+  - placeholder   = "Enter a timestamp like \"#{1.month.from_now.strftime('%F %T')}\" to schedule automatic deletion"
+  = f.input :expires_at, as: :string, label: 'Expires at (UTC)', input_html: { value: current_value, placeholder: placeholder }
+
+  .form-group
+    %label Metadata
+    = render partial: 'editable_metadata_display', locals: { metadata: @container.metadata }

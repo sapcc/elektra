@@ -42,6 +42,14 @@
           .col-sm-3
 
 
+    #fixed-webconsole
+      .toolbar
+        Web Console
+        .main-buttons
+          %a{href:"#", data: {trigger: "webconsole-close"}}
+            %i.fa.fa-close
+
+      #webconsole-container
 
     = yield :templates
     = yield :javascripts

@@ -13,12 +13,9 @@ class @MoModal
       """
     
   @init= () ->
-    $(document).on 'click', 'a[data-modal=true]', -> 
-      MoModal.load(this)
-    $(document).on 'ajax:beforeSend','form[data-modal=true]', (event, xhr, settings) -> 
-      settings.data += "&modal=true"
-    $(document).on 'ajax:success', 'form[data-modal=true]', handleAjaxSuccess
-
+    $(document).on 'click', 'a[data-modal=true]', -> MoModal.load(this)
+    $(document).on 'ajax:beforeSend',"#{modal_holder_selector} form", (event, xhr, settings) -> settings.data += "&modal=true"
+    $(document).on 'ajax:success', "#{modal_holder_selector} form", handleAjaxSuccess
       
   @load= (anker)->
     if jQuery.type(anker) == "string"
@@ -43,15 +40,17 @@ class @MoModal
       else  
         if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
           # open modal with content from ajax response
-          $(modal_holder_selector).html(data).
-          find(modal_selector).modal()
-          # send event when data is set in place
-          $('body').trigger( 'modal:shown_success' );
+          $(modal_holder_selector).html(data).find(modal_selector).modal()
           # for the case the response contains a form intialize it
-          Dashboard.initForm()
+          triggerUpdateEvent()
         
     return false
   
+  triggerUpdateEvent= -> 
+    $modalHolder = $(modal_holder_selector)
+    target = {id: $modalHolder.prop('id'), class: $modalHolder.prop('class')}
+    # $(document).trigger('modal:contentUpdated',{id: $modalHolder.prop('id'), class: $modalHolder.prop('class')})
+    $(document).trigger(type: 'modal:contentUpdated', target: target)
 
   handleAjaxSuccess= (event, data, status, xhr)->
     url = xhr.getResponseHeader('Location')
@@ -77,8 +76,8 @@ class @MoModal
         $('.modal-backdrop').remove()
         # Replace old modal with new one
         $(modal_holder_selector).html(data).find(modal_selector).modal()
-        
-      Dashboard.initForm()
+      
+      triggerUpdateEvent()
     return false
 
 $ -> MoModal.init()           
