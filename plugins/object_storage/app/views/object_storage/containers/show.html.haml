@@ -24,7 +24,7 @@
     - enabled = @container.versions_location.present? || @container.has_versions_location.present?
     .row{ class: enabled ? '' : 'collapsed' }
       .col-md-6
-        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]' } do
+        = render layout: 'checkbox_with_label', locals: { name: 'container[has_versions_location]', checked: enabled } do
           Store old object versions
           %span.hide-when-collapsed in container:
       .col-md-6.hide-when-collapsed

@@ -51,9 +51,10 @@ li.missing-capability {
 
 .form-group#container_versions_location {
   margin-bottom: 0;
-  // input[type=checkbox] {
-  //   margin-right: 10px;
-  // }
+
+  & > .row {
+    min-height: 49px;
+  }
 
   .row.collapsed {
     .hide-when-collapsed {

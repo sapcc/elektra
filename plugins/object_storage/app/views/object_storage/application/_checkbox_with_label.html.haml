@@ -4,5 +4,5 @@
 .checkbox
   %label
     = hidden_field_tag(name, '0')
-    = check_box_tag(name, '1')
+    = check_box_tag(name, '1', checked, options ||= {})
     = yield
