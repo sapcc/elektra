@@ -40,6 +40,8 @@ class DashboardController < ::ScopeController
       # @active_project ||= @user_domain_projects.find { |project| project.id == @scoped_project_id }
       @active_project = services.identity.find_project(@scoped_project_id, [:subtree_as_ids, :parents_as_ids])
     end
+
+    @webcli_endpoint = current_user.service_url("webcli")
   end
 
 
