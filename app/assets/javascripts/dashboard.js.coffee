@@ -44,6 +44,14 @@ $ ->
 
   $("#accept_tos").click -> $("#register-button").prop('disabled', not $(this).prop('checked') )
 
+$(document).on 'modal:contentUpdated', (e) -> 
+  try
+    $form = $(e.target.id || e.target.class).find('form')
+    $form.find("select[data-trigger=change]").change Dashboard.showFormDetails
+    # Dynamic Form - Hide/reveal parts of the form following a trigger event
+    $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
+  catch error 
+  
 
   # ------------------------------------------------------------------------------------------
   # Web Console
