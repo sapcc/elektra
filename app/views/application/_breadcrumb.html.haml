@@ -33,7 +33,7 @@
             %i.fa.fa-square.fa-stack-2x
             %i.fa.fa-terminal.fa-stack-1x.fa-inverse
 
-      - if current_user and !current_user.admin?
+      - if current_user and current_user.admin?
         %ol.context-list
           %li.dropdown.context-admin
             %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
