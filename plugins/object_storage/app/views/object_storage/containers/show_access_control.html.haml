@@ -6,21 +6,13 @@
 = simple_modal_form_for @container, 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
   .row
     .col-md-6
-      %table.table
-        %tbody
-          %tr
-            %th Read ACLs
-            %td
-              - if has_capability?('staticweb')
-                = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
-                %p
-                  = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
-              - else 
-                = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here' 
-          %tr
-            %th Write ACLs
-            %td
-              = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here'
+      - if has_capability?('staticweb')
+        = f.input :read_acl, as: :string, label: "Read ACLs", readonly: @container.public_read_access?
+        %p
+          = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
+      - else 
+        = f.input :read_acl, as: :string, label: 'Read ACLs'
+      = f.input :write_acl, as: :string, label: "Write ACLs"
     .col-md-6
       .bs-callout.bs-callout-info
         %p
@@ -32,6 +24,10 @@
           %dt
             %code PROJECT_ID:*
           %dd Grant access to all users from that project.
+        %p
+          For more details, have a look at the
+          = succeed '.' do
+            = link_to "documentation", "http://docs.openstack.org/developer/swift/misc.html#acls", target: "_blank"
 
 - if has_capability?('staticweb')
   :javascript
