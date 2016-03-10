@@ -6,21 +6,15 @@
 = simple_modal_form_for @container, 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
   .row
     .col-md-6
-      %table.table
-        %tbody
-          %tr
-            %th Read ACLs
-            %td
-              - if has_capability?('staticweb')
-                = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
-                %p
-                  = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
-              - else 
-                = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here' 
-          %tr
-            %th Write ACLs
-            %td
-              = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here'
+      %label Read ACLs
+      - if has_capability?('staticweb')
+        = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here', readonly: @container.public_read_access?
+        %p
+          = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
+      - else 
+        = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here' 
+      %label Write ACLs
+      = f.input :write_acl, as: :string, label: false, placeholder: 'Enter ACL here'
     .col-md-6
       .bs-callout.bs-callout-info
         %p
