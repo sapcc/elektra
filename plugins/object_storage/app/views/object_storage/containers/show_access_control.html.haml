@@ -25,8 +25,9 @@
             %code PROJECT_ID:*
           %dd Grant access to all users from that project.
         %p
-          For more detailed information have a look into the 
-          = link_to "documentation", "http://docs.openstack.org/developer/swift/misc.html#acls", target: "_blank"
+          For more detailed information have a look at the 
+          = succeed '.' do
+            = link_to "documentation", "http://docs.openstack.org/developer/swift/misc.html#acls", target: "_blank"
 
 - if has_capability?('staticweb')
   :javascript
