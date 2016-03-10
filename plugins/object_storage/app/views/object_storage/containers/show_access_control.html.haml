@@ -11,7 +11,7 @@
         %p
           = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
       - else 
-        = f.input :read_acl, as: :string, label: false, placeholder: 'Enter ACL here' 
+        = f.input :read_acl, as: :string, label: 'Read ACLs', placeholder: 'Enter ACL here'
       = f.input :write_acl, as: :string, label: "Write ACLs", placeholder: 'Enter ACL here'
     .col-md-6
       .bs-callout.bs-callout-info
@@ -26,7 +26,7 @@
           %dd Grant access to all users from that project.
         %p
           For more detailed information have a look into the 
-          = link_to "dokumentation", "http://docs.openstack.org/developer/swift/misc.html#acls", target: "_blank"
+          = link_to "documentation", "http://docs.openstack.org/developer/swift/misc.html#acls", target: "_blank"
 
 - if has_capability?('staticweb')
   :javascript
