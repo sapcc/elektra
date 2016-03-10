@@ -3,37 +3,13 @@
     .col-sm-10.col-sm-offset-2
       %h3 Chef
 
-  -#.form-group
-  -#  .col-xs-12.col-sm-2.control-label
-  -#    = label_tag 'runlist', 'Runlist'
-  -#  .col-xs-11.col-sm-9
-  -#    = text_area_tag 'runlist', '', :maxlength => "256", :placeholder => "Enter runlist", class: 'form-control', data: {toggle:'tagEditor'}
-  -#    %span.help-block
-  -#      %i.fa.fa-info-circle
-  -#      Runlist are key-value pairs. See hint for more information.
-  -#  .col-xs-1.col-sm-1.help-hint
-  -#    = render 'key_value_help_hint'
-
-  = f.input :run_list_to_string, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag'} }, placeholder: 'Enter runlist',
+  = f.input :run_list, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag'} }, placeholder: 'Enter runlist',
+  required: true,
   icon_hint: 'Runlist is an array of strings. See hint for more information.',
   help_hint: "Array of strings are separated by ','. Start a new entry by hitting the Enter key or ','. You can also copy and paste a string containing strings following this pattern: 'value1,value2...'"
 
-  -#.form-group
-  -#  .col-xs-12.col-sm-2.control-label
-  -#    = label_tag 'attributes', 'Attributes'
-  -#  .col-xs-11.col-sm-9
-  -#    = text_area_tag 'attributes', '', :maxlength => "256", :placeholder => "Enter attributes", class: 'form-control', data: {toggle:'tagEditor'}
-  -#    %span.help-block
-  -#      %i.fa.fa-info-circle
-  -#      Attributes are key-value pairs. See hint for more information.
-  -#  .col-xs-1.col-sm-1.help-hint
-  -#    = render 'key_value_help_hint'
+  = f.input :chef_attributes, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Attributes', placeholder: 'Enter attributes',
+  icon_hint: 'Runlist is JSON based. See hint for more information.',
+  help_hint: "JSON Schema defines seven primitive types for JSON values: array, boolean, integer, number, null, object and string. Example: {'title':'root'}"
 
-  = f.input :chef_attributes, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Attributes', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter attributes',
-  icon_hint: 'Attributes are key-value pairs. See hint for more information.',
-  help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing key value pairs following this pattern: 'key1:value1,key2=value2...'"
-
-  .form-group
-    = label_tag 'log_level', 'Log level', class: 'col-sm-2 control-label'
-    .col-sm-5
-      = text_field_tag 'log_level', '', :maxlength => "256", :placeholder => "Enter log level", class: 'form-control'
+  = f.input :log_level, custom_wrapper_html: {class: 'col-sm-5'}, required: false, label: 'Log level', input_html: {}, placeholder: 'Enter log level'

@@ -1,0 +1,13 @@
+.automations_table
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th Type
+    %tbody
+      - if automations.empty?
+        %tr
+          %td{colspa: 2} No automations available
+      - else
+        -automations.each do | automation |
+          = render partial: 'table_automations_item', locals: {automation: automation}

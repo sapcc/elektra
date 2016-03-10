@@ -3,29 +3,12 @@
     .col-sm-10.col-sm-offset-2
       %h3 Script
 
-  .form-group
-    = label_tag 'paht', 'Path', class: 'col-sm-2 control-label'
-    .col-sm-5
-      = text_field_tag 'paht', '', :maxlength => "256", :placeholder => "Enter path", class: 'form-control'
+  = f.input :path, custom_wrapper_html: {class: 'col-sm-5'}, required: true, label: 'Path', input_html: {}, placeholder: 'Enter path'
 
-  .form-group
-    .col-xs-12.col-sm-2.control-label
-      = label_tag 'arguments', 'Arguments'
-    .col-xs-11.col-sm-9
-      = text_area_tag 'arguments', '', :maxlength => "256", :placeholder => "Enter arguments", class: 'form-control', data: {toggle:'tagEditor'}
-      %span.help-block
-        %i.fa.fa-info-circle
-        Arguments are key-value pairs. See hint for more information.
-    .col-xs-1.col-sm-1.help-hint
-      = render 'key_value_help_hint'
+  = f.input :arguments, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Arguments', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter arguments',
+  icon_hint: 'Arguments are key-value pairs. See hint for more information.',
+  help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing key value pairs following this pattern: 'key1:value1,key2=value2...'"
 
-  .form-group
-    .col-xs-12.col-sm-2.control-label
-      = label_tag 'environment', 'Environment'
-    .col-xs-11.col-sm-9
-      = text_area_tag 'environment', '', :maxlength => "256", :placeholder => "Enter environment variables", class: 'form-control', data: {toggle:'tagEditor'}
-      %span.help-block
-        %i.fa.fa-info-circle
-        Environment are key-value pairs. See hint for more information.
-    .col-xs-1.col-sm-1.help-hint
-      = render 'key_value_help_hint'
+  = f.input :environment, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Environment', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter environment variables',
+  icon_hint: 'Environment variables are key-value pairs. See hint for more information.',
+  help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing key value pairs following this pattern: 'key1:value1,key2=value2...'"

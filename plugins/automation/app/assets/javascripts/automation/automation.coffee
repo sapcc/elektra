@@ -29,5 +29,6 @@ $ ->
   # add handler to the automation type select
   $(document).on 'change','select[data-toggle="automationSwitch"]', switch_automation_type
 
-  # init tag editors
+  # init in case the content is not in modal
   init_tag_editor_inputs()
+  init_hint_popover()
