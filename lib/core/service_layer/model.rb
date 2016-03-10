@@ -103,6 +103,7 @@ module Core
             return false
           end
         rescue => e
+          raise e unless @driver.handle_api_errors?
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
           errors.each do |name, message|
             n = error_names[name] || error_names[message] || name || ' '
@@ -191,6 +192,7 @@ module Core
           created_attributes = @driver.send("create_#{@class_name}", create_attrs)
           self.attributes= created_attributes
         rescue => e
+          raise e unless @driver.handle_api_errors?
           error_names = api_error_name_mapping
 
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
@@ -214,6 +216,7 @@ module Core
           updated_attributes = @driver.send("update_#{@class_name}",id, update_attrs)
           self.attributes=updated_attributes if updated_attributes
         rescue => e
+          raise e unless @driver.handle_api_errors?
           error_names = api_error_name_mapping
 
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)

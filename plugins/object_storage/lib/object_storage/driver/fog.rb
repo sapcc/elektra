@@ -9,8 +9,16 @@ module ObjectStorage
           @fog = params_or_driver
         else
           super(params_or_driver)
-          @fog = ::Fog::Storage::OpenStack.new(auth_params)
+          # don't include useless request/response dumps in exception messages
+          no_debug = { debug: false, debug_request: false, debug_response: false}
+          @fog = ::Fog::Storage::OpenStack.new(auth_params.merge(connection_options: no_debug))
         end
+      end
+
+      def handle_api_errors?
+        # Swift does not follow the normal pattern of reporting errors as JSON
+        # in the response body, so don't clobber the Excon errors
+        false
       end
 
       def list_capabilities
