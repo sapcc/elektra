@@ -5,7 +5,7 @@ describe 'Inquiry' do
   before(:all) do
     @payload = {:key1 => "value1", :key2 => "value2"}.to_json
     token = AuthenticationStub.test_token
-    @user = ApplicationController::CurrentUserWrapper.new(MonsoonOpenstackAuth::Authentication::AuthUser.new(token),{})
+    @user = ApplicationController::CurrentUserWrapper.new(MonsoonOpenstackAuth::Authentication::AuthUser.new(token),{},nil)
   end
 
   before(:each) do
