@@ -93,11 +93,23 @@
       function update_globals(init){
         var old_tags = tag_list.toString();
         tag_list = $('.tag-editor-tag:not(.deleted)', ed).map(function(i, e) {
-          var val = $.trim($(this).hasClass('active') ? $(this).find('input').val() : $(e).text());
+
+          if (o.keyValueEntries) {
+            var val =  $.trim( $(e).find('.key').text() + o.keyValueDelimiter[0] + $(e).find('.value').text() );
+          } else {
+            var val =  $.trim($(e).text());
+          }
+
+          //var val = $.trim($(this).hasClass('active') ? $(this).find('input').val() : $(e).text());
+
           if (val) return val;
         }).get();
         ed.data('tags', tag_list);
+
+
+        // set the values in the original input
         el.val(tag_list.join(o.delimiter[0]));
+
         // change callback except for plugin init
         if (!init) if (old_tags != tag_list.toString()) o.onChange(el, ed, tag_list);
         set_placeholder();
@@ -133,7 +145,12 @@
         if (key_value.length == 0) {
           return false
         }
-        return $this.find('.key').text() == key_value[0];
+
+        if (o.keyValueEntries) {
+          return $this.find('.key').text() == key_value[0];
+        } else {
+          return $this.text() == key_value;
+        }
       }
 
       ed.click(function(e, closest_tag){

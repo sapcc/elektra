@@ -67,6 +67,21 @@ module ServiceLayer
       @client.find_job_log!(token, job_id)
     end
 
+    #
+    # Automations
+    #
+
+    def automation_service
+      Automation::BaseAutomation.site = File.join(automation_service_endpoint, 'api/v1')
+      Automation::BaseAutomation.token = self.token
+      Automation::BaseAutomation
+    end
+
+    def automations
+      service = automation_service
+      service.find(:all)
+    end
+
     private
 
     def init_client

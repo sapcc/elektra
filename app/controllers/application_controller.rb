@@ -38,11 +38,11 @@ class ApplicationController < ActionController::Base
     super *args, options
   end
 
-  def redirect_to(options)
+  def redirect_to(options = {}, response_status = {})
     if modal? or params[:polling_service]
       head :ok, location: url_for(options)
     else
-      super options
+      super options, response_status
     end
   end
 

@@ -1,0 +1,3 @@
+- flash.each_with_index do |(key,value),index|
+  %p{class: "alert alert-#{key.to_s} word-wrap", 'aria-expanded' => 'true', id: "flash_message_#{index}"}
+    = value.to_s

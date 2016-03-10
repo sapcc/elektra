@@ -3,60 +3,24 @@
 
 .modal-body
 
-  = simple_form_for @automation, url: plugin('automation').automations_path(), method: :post, remote: request.xhr?, html: {class: 'form-horizontal' }, wrapper: :horizontal_form_automation do |f|
+  .flashes_area
+    = render "automation/shared/flashes.html"
 
-    -#.form-group
-      = label_tag 'name', 'Name', class: 'col-sm-2 control-label'
-      .col-sm-5
-        = text_field_tag 'name', @automation.attributes[:name], :maxlength => "256", :placeholder => "Enter name", class: 'form-control', autofocus: 'autofocus'
+  = simple_form_for @automation, url: plugin('automation').automations_path(), method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form_automation do |f|
 
     = f.input :name, custom_wrapper_html: {class: 'col-sm-5'}, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
 
-    -#.form-group
-    -#  = label_tag 'repository', 'Repository', class: 'col-sm-2 control-label'
-    -#  .col-sm-5
-    -#    = text_field_tag 'repository', '', :maxlength => "256", :placeholder => "Enter repository", class: 'form-control'
-
     = f.input :repository, custom_wrapper_html: {class: 'col-sm-5'}, required: true, label: 'Repository', input_html: {}, placeholder: 'Enter repository'
 
-    -#.form-group
-    -#  = label_tag 'repository_version', 'Repository version', class: 'col-sm-2 control-label'
-    -#  .col-sm-5
-    -#    = text_field_tag 'repository_version', '', :maxlength => "256", :placeholder => "Enter repository revision", class: 'form-control'
+    = f.input :repository_revision, custom_wrapper_html: {class: 'col-sm-5'}, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
 
-    = f.input :repository_revision, custom_wrapper_html: {class: 'col-sm-5'}, required: true, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
-
-    -#.form-group
-    -#  = label_tag 'timeout', 'Timeout', class: 'col-sm-2 control-label'
-    -#  .col-sm-5
-    -#    = text_field_tag 'timeout', '', :maxlength => "256", :placeholder => "Enter timeout", class: 'form-control'
-
-    = f.input :timeout, custom_wrapper_html: {class: 'col-sm-5'}, required: true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout'
-
-    -#.form-group
-    -#  .col-xs-12.col-sm-2.control-label
-    -#    = label_tag 'tags', 'Tags'
-    -#  .col-xs-11.col-sm-9
-    -#    = text_area_tag 'tags', '', :maxlength => "256", class: 'form-control', data: {toggle:'tagEditor'}, :placeholder => "Enter tags"
-    -#    %span.help-block
-    -#      %i.fa.fa-info-circle
-    -#      Tags are key-value pairs. See hint for more information.
-    -#  .col-xs-1.col-sm-1.help-hint
-    -#    = render 'key_value_help_hint'
+    = f.input :timeout, custom_wrapper_html: {class: 'col-sm-5'}, required:true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout'
 
     = f.input :tags, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter tags',
     icon_hint: 'Tags are key-value pairs. See hint for more information.',
     help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
 
-    -#.form-group
-    -#  = label_tag 'type', 'Type', class: 'col-sm-2 control-label'
-    -#  .col-sm-5
-    -#    %select.form-control{name: 'type', id: 'type', data: {toggle: 'automationSwitch'}}
-    -#      - @automation_types.each do |key, value|
-    -#        %option{value: key, selected: (key == 'chef' ? 'true' : 'false')}
-    -#          = value
-
-    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: 'chef'
+    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: (:type.downcase || 'chef')
 
     %hr
 
