@@ -1017,56 +1017,6 @@ input[type='checkbox'], input[type='radio'] {
 
 
 // ---------------------------------------------------------------------------------
-// Web Console
-// ---------------------------------------------------------------------------------
-
-#fixed-webconsole {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  height: 40vh;
-  width: 100vw;
-  background: #222;
-  color: #fff;
-
-  &.open {
-    display: block;
-  }
-
-  .toolbar {
-    @include pie-clearfix;
-    @include box-shadow(rgba(0, 0, 0, 0.1) 0 -1px 5px);
-    border-top: 1px solid #d3d3d3;
-    border-bottom: 1px solid #000;
-    margin-top: 0;
-    width: 100%;
-    height: $line-height-computed + $toolbar-vertical-padding*2;
-    position: absolute;
-    top: -($line-height-computed + $toolbar-vertical-padding*2);
-
-    a {
-      color: #666;
-      font-size: $font-size-medium;
-    }
-  }
-
-}
-
-#webconsole-container {
-  width: 100%;
-  height: 100%;
-}
-
-#terminal {
-  position: relative;
-  width: 100%;
-  height: 100%;
-
-}
-
-
-
-// ---------------------------------------------------------------------------------
 // News
 // ---------------------------------------------------------------------------------
 

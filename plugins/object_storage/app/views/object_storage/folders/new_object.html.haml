@@ -14,7 +14,7 @@
     - if services.available?(:identity, :web_console)
       To upload larger files, please use a different client, such as the
       = succeed '.' do
-        = link_to 'web console', plugin('identity').projects_web_console_path, target: '_blank', id: 'linkto_webconsole'
+        = link_to 'web console', plugin('webconsole').root_path, target: '_blank', id: 'linkto_webconsole'
     - else
       To upload larger files, please use a different client.
 

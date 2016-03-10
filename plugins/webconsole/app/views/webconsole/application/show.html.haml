@@ -1,0 +1,34 @@
+/ :javascript
+/   var scoped_domain_id = "#{@scoped_domain_id}"
+/   var scoped_project_id = "#{@scoped_project_id}"
+/
+/ - if @webcli_endpoint
+/   #loading-hint
+/     %span.info-text Loading web console
+/     %span.spinner
+/   #terminal
+/   - content_for :javascripts do
+/     %script{:type => "text/javascript", :src=> @webcli_endpoint + "/js/hterm.js"}
+/     %script{:type => "text/javascript", :src=> @webcli_endpoint + "/js/gotty.js"}
+/     :javascript
+/       $(document).ready(function() {
+/         $.ajax({
+/           url: '#{@webcli_endpoint}/auth',
+/           xhrFields: {
+/             withCredentials: true
+/           },
+/           beforeSend: function (request) {
+/             request.setRequestHeader('X-Auth-Token', '#{@token}');
+/           },
+/           dataType: 'json',
+/           success: function( data ) {
+/             openCLIWebsocket(data.url, ['#{@token}', '#{@identity_url}'], function() { $('#loading-hint').remove() })
+/           },
+/           error: function(xhr, bleep, error) {
+/             console.log('error: ' + error)
+/           }
+/         });
+/       })
+/
+/ - else
+/   %span.info-text Web console service not configured.
