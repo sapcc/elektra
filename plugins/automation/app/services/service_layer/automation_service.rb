@@ -72,7 +72,7 @@ module ServiceLayer
     #
 
     def automation_service
-      Automation::BaseAutomation.site = File.join(automation_service_endpoint, 'api/v1')
+      Automation::BaseAutomation.site = File.join(automation_service_endpoint, 'api/v1') # 'http://localhost:3001/api/v1'
       Automation::BaseAutomation.token = self.token
       Automation::BaseAutomation
     end
@@ -80,6 +80,11 @@ module ServiceLayer
     def automations
       service = automation_service
       service.find(:all)
+    end
+
+    def automation(automation_id)
+      service = automation_service
+      service.find(automation_id)
     end
 
     private

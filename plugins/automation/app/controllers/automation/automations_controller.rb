@@ -44,7 +44,9 @@ module Automation
     end
 
     def show
-      
+      @automation_types = automation_types
+      automation = services.automation.automation(params[:id])
+      @automation = ::Automation::Forms::Automation.new( automation.attributes_to_form )
     end
 
     private

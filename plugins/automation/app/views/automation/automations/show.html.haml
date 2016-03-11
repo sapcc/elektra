@@ -1,0 +1,21 @@
+= content_for :title do
+  Automation
+
+.modal-body
+
+  .flashes_area
+    = render "automation/shared/flashes.html"
+
+  = simple_form_for @automation, url: '#', method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form_automation do |f|
+
+    = f.input :name, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Name', input_html: { autofocus: 'autofocus' }
+
+    = f.input :repository, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Repository', input_html: {}
+
+    = f.input :repository_revision, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Repository version', input_html: {}
+
+    -#= f.input :timeout, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Timeout', input_html: {}
+
+    = f.input :tags, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, disabled: true, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }
+
+    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: (:type.downcase || 'chef')

@@ -28,9 +28,6 @@ module Automation
     end
 
     def form_to_attributes(attrs)
-      json_attr = [:tags, :environment]
-      array_attr = [:run_list, :arguments]
-
       attrs.keys.each do |key|
         if json_attr.include? key
           attrs[key] = string_to_json(attrs[key])
@@ -47,25 +44,57 @@ module Automation
         end
       end
 
-      self.attributes = {automation: attrs.stringify_keys}.merge!(attrs.stringify_keys)
+      self.attributes = attrs.stringify_keys
     end
 
     def attributes_to_form
+      attr = self.attributes.clone
+      attr.keys.each do |key|
+      #   if json_attr.include? key
+      #     attrs[key] = string_to_json(attrs[key])
+      #   elsif array_attr.include? key
+      #     attrs[key] = string_to_array(attrs[key])
+      #   elsif key == :type
+      #     unless attrs[key].blank?
+      #       attrs[key] = attrs[key].capitalize
+      #     end
+      #   elsif key == :chef_attributes
+      #     unless attrs[key].blank?
+      #       attrs[key] = attrs[key].to_json
+      #     end
+      #   end
+      end
+      attr
     end
 
     private
 
+    def json_attr
+      [:tags, :environment]
+    end
+
+    def array_attr
+      [:run_list, :arguments]
+    end
+
+    def json_to_string(attr)
+      result_string = []
+      attr.each do |key, value|
+        result_string << "#{key}:#{value}"
+      end
+    end
+
     def string_to_json(attr)
       unless attr.blank?
-        tags_hash = {}
+        result_hash = {}
         attr.split(',').each do |tag|
           tags_array = tag.split(/\:|\=/)
           if tags_array.count == 2
-            tags_hash[tags_array[0]] = tags_array[1]
+            result_hash[tags_array[0]] = tags_array[1]
           end
         end
-        unless tags_hash.empty?
-          return tags_hash.to_json
+        unless result_hash.empty?
+          return result_hash.to_json
         end
       end
     end
