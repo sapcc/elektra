@@ -6,5 +6,5 @@
   %td{class: "snug #{'automation_status_alarm' if instance.online == false}"}
     = instance.facts.online_to_string
   %td
-    = render partial: "table_instances_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
+    = render partial: "table_agents_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
   %td

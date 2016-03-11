@@ -43,6 +43,10 @@ module Automation
       render action: "new"
     end
 
+    def show
+      
+    end
+
     private
 
     def automation_types

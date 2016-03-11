@@ -20,11 +20,14 @@ module Automation
       new_headers
     end
 
-    def headers
-      BaseAutomation.headers
+    def form_attribute(name)
+      unless self.respond_to? name.to_sym
+        return "Unknow attribute ''#{name}''"
+      end
+      self.send(name.to_sym)
     end
 
-      def form_to_attributes(attrs)
+    def form_to_attributes(attrs)
       json_attr = [:tags, :environment]
       array_attr = [:run_list, :arguments]
 

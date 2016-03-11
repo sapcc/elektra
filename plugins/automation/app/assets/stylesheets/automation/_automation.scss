@@ -22,7 +22,7 @@
   @include spinner(background rgba(0,0,0,0.2));
 }
 
-.table th:not(:last-child){
+.agents_table .table th:not(:last-child){
   width: 20%;
 }
 
@@ -74,6 +74,12 @@ pre {
 }
 
 // Automations
+
+.automations_table {
+  .no_wrap {
+    white-space: nowrap;
+  }
+}
 
 .automation-content {
   padding: 20px 20px;

@@ -1,4 +1,4 @@
-.instances_table{data: {update_path: plugin('automation').index_update_agents_path(), update_interval: 30}}
+.agents_table{data: {update_path: plugin('automation').index_update_agents_path(), update_interval: 30}}
   %table.table
     %thead
       %tr
@@ -14,7 +14,7 @@
           %td{colspa: 6} No agents available
       - else
         -instances.each do | instance |
-          = render partial: 'table_instances_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].data}
+          = render partial: 'table_agents_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].data}
 
   = paginate instances, :theme => 'twitter-bootstrap-3'
 
