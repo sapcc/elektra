@@ -20,12 +20,11 @@
     icon_hint: 'Tags are key-value pairs. See hint for more information.',
     help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
 
-    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: (:type.downcase || 'chef')
+    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: selected_automation_type(@automation.type)
 
     %hr
 
     = render partial: 'chef', locals: {f:f}
-
     = render partial: 'script', locals: {f:f}
 
     #popover_container

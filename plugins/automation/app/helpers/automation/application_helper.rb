@@ -33,5 +33,35 @@ module Automation
       end
     end
 
+    def selected_automation_type(type)
+      if type.blank?
+        return 'chef'
+      else
+        type.downcase
+      end
+    end
+
+    def hide_chef_automation(type)
+      if type.blank?
+        return false
+      else
+        if type.downcase == 'chef'
+          return false
+        end
+      end
+      return true
+    end
+
+    def hide_script_automation(type)
+      if type.blank?
+        return true
+      else
+        if type.downcase == 'script'
+          return false
+        end
+      end
+      return true
+    end
+
   end
 end
