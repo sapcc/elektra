@@ -1,3 +1,7 @@
 %tr
-  %td= automation.name
-  %td= automation.type
+  %td= automation.form_attribute('name')
+  %td= automation.form_attribute('type')
+  %td= automation.form_attribute('repository')
+  %td= automation.form_attribute('repository_revision')
+  %td.snug
+    %i.fa.fa-pencil-square-o
