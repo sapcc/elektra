@@ -16,6 +16,6 @@
 
     -#= f.input :timeout, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Timeout', input_html: {}
 
-    = f.input :tags, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, disabled: true, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }
+    -#= f.input :tags, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, disabled: true, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }
 
-    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: (:type.downcase || 'chef')
+    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: selected_automation_type(@automation.type)
