@@ -21,10 +21,10 @@
 
 $ ->
   # add handler to the show modal event
-  $(document).on('modal:shown_success', init_tag_editor_inputs)
+  $(document).on('modal:contentUpdated', init_tag_editor_inputs)
 
   # add handler to the show modal event
-  $(document).on('modal:shown_success', init_hint_popover)
+  $(document).on('modal:contentUpdated', init_hint_popover)
 
   # add handler to the automation type select
   $(document).on 'change','select[data-toggle="automationSwitch"]', switch_automation_type
