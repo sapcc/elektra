@@ -9,7 +9,7 @@ module Automation
     end
 
     def index_update
-      render partial: 'table_instances', locals: {instances: @agents, jobs: @jobs}, layout: false
+      render partial: 'table_agents', locals: {instances: @agents, jobs: @jobs}, layout: false
     end
 
     def show
