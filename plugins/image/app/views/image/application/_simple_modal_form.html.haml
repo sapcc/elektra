@@ -1,0 +1,14 @@
+/ Invoke this using the "simple_modal_form_for" helper!
+
+= simple_form_for model_object, options do |f|
+
+  %div{ class: modal? ? 'modal-body' : '' }
+    = yield f
+
+  .buttons{ class: modal? ? 'modal-footer' : '' }
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', cancel_url, class: 'btn btn-default'
+  -# need this later to make an 'edit' out of the 'show'
+    -# %button.btn.btn-primary{ type: 'submit', data: { disable_with: 'Please wait...'} }= submit_action
