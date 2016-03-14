@@ -7,4 +7,4 @@
     - resources.sort_by { |r| r[:name] }.each do |resource|
       = render :partial => 'bar_row', :locals => { :overview => true,  :data => resource, :service => service }
 -# data age display needs to always be visible! (if there are no warnings it might be because of outdated data)
-= render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
+= render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_path }

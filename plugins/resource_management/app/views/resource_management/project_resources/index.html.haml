@@ -26,7 +26,7 @@
         = render partial: 'bar', locals: { overview: true, data: resource }
 
     - if current_user.is_allowed?('resource_management:project_resource_sync_now')
-      = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_url }
+      = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_path }
     - else
       = render partial: 'data_age'
   .col-md-3

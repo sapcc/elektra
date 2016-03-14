@@ -7,5 +7,5 @@
   - else
     .bs-callout
       No #{t("resource_management.#{service}")} Quotas found!
-= render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_url }
+= render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_path }
 
