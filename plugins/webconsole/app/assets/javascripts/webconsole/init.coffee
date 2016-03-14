@@ -23,5 +23,5 @@ $(document).ready ->
       $('[data-trigger="webconsole:open"]').removeClass("active");  
       
   
-  if plugin_name
-    WebconsoleManager.open()    
+  #if plugin_name
+  #  WebconsoleManager.open()    
