@@ -32,35 +32,34 @@ module ResourceManagement
         return result
       end
 
-      # List all projects that exist in the given domain, as a hash of { id => name }.:
-      def enumerate_projects(domain_id)
-        result = {}
-        @srv_conn.list_projects(domain_id: domain_id).body['projects'].each do |project|
-          result[ project['id'] ] = project['name']
-        end
-        return result
-      end
+      # List all project IDs that exist in the given domain.
+      def enumerate_project_ids(domain_id)
+        # extrawurst for legacy monsoon2: consider only relevant projects
+        # 1. skip legacy organizations (= Keystone projects with ID starting with "o-")
+        # 2. skip legacy projects that are not Swift-enabled (by checking for role assignments to "swiftoperator")
+        # This radically reduces the syncing time (since only about half of the
+        # Keystone projects are legacy projects, and only a small fraction of
+        # those actually use Swift).
+        domain_name = @srv_conn.get_domain(domain_id).body.fetch('domain', {}).fetch('name', '')
+        if domain_name == 'monsoon2'
+          # resolve role name into ID
+          role_name = 'swiftoperator'
+          role_id   = @srv_conn.list_roles(name: role_name).body['roles'].first['id']
+          Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with #{role_name} role assignment"
 
-      # extrawurst for monsoon2 legacy: List all projects in this domain where
-      # the given role is assigned.
-      def enumerate_projects_with_role_assignment(domain_id, role_name)
-        # resolve role name into ID
-        role_id = @srv_conn.list_roles(name: role_name).body['roles'].first['id']
-
-        # which project IDs are valid?
-        in_this_domain = {}
-        @srv_conn.list_projects(domain_id: domain_id).body['projects'].each do |project|
-          in_this_domain[ project['id'] ] = true
-        end
-
-        # iterate over role assignments
-        result = []
-        @srv_conn.list_role_assignments("role.id" => role_id).body['role_assignments'].each do |assignment|
-          if project_id = assignment['scope'].fetch('project', {})['id']
-            result << project_id
+          # iterate over role assignments
+          result = []
+          @srv_conn.list_role_assignments("role.id" => role_id).body['role_assignments'].each do |assignment|
+            if project_id = assignment['scope'].fetch('project', {})['id']
+              # IDs of actual projects start with "p-"; this filters legacy organizations
+              result << project_id if project_id.start_with?('p-')
+            end
           end
+          return result.uniq
         end
-        return result.uniq
+
+        # the usual case: list all projects
+        return @srv_conn.list_projects(domain_id: domain_id).body['projects'].map { |project| project['id'] }
       end
 
       # Query quotas for the given project from the given service.

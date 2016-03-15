@@ -82,23 +82,9 @@ module ServiceLayer
         res.save if res.changed?
       end
 
-      # enumerate projects in Keystone; plus extrawurst for legacy monsoon2: sync only relevant projects
-      # 1. skip legacy organizations (= Keystone projects with ID starting with "o-")
-      # 2. skip legacy projects that are not Swift-enabled (by checking for role assignments to "swiftoperator")
-      # This radically reduces the syncing time (since only about half of the
-      # Keystone projects are legacy projects, and only a small fraction of
-      # those actually use Swift).
-      domain_name = enumerate_domains.fetch(domain_id, '')
-      if domain_name == 'monsoon2'
-        all_project_ids = driver.enumerate_projects_with_role_assignment(domain_id, 'swiftoperator').
-          select { |project_id| project_id.start_with?('p-') }
-        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with swiftoperator role assignment"
-      else
-        all_project_ids = driver.enumerate_projects(domain_id).keys
-      end
+      # check which projects exist in the DB and in Keystone
+      all_project_ids = driver.enumerate_project_ids(domain_id)
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
-
-      # check which projects exist in the DB
       db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).where.not(project_id: nil).pluck('DISTINCT project_id')
 
       # if using a Keystone router, don't trust an empty project list; it could
