@@ -118,6 +118,9 @@ module ServiceLayer
     def sync_project(domain_id, project_id)
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
+      # get the project name
+      project_name = services.identity.find_project(project_id).name
+
       # fetch current quotas and usage for this project from all services
       actual_quota = {}
       actual_usage = {}
@@ -141,6 +144,7 @@ module ServiceLayer
           service:    resource.service_name,
           name:       resource.name,
         ).first_or_create(
+          scope_name:     project_name,
           usage:          this_actual_usage,
           current_quota:  this_actual_quota,
           approved_quota: 0,
@@ -163,6 +167,7 @@ module ServiceLayer
         end
 
         # update existing entry
+        object.scope_name    = project_name
         object.current_quota = this_actual_quota
         object.usage         = this_actual_usage
         if object.changed?
