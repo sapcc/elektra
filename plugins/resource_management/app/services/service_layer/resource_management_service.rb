@@ -94,7 +94,7 @@ module ServiceLayer
           select { |project_id| project_id.start_with?('p-') }
         Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with swiftoperator role assignment"
       else
-        all_project_ids = driver.enumerate_projects(domain_id).keys
+        all_project_ids = driver.enumerate_project_ids(domain_id)
       end
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
 

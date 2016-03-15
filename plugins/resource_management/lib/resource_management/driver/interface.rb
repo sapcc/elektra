@@ -13,6 +13,11 @@ module ResourceManagement
         raise ServiceLayer::Errors::NotImplemented
       end
 
+      # List all project IDs that exist in the given domain.
+      def enumerate_project_ids(domain_id)
+        return enumerate_projects(domain_id).keys
+      end
+
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
