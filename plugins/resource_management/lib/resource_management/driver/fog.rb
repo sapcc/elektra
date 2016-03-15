@@ -32,15 +32,6 @@ module ResourceManagement
         return result
       end
 
-      # List all projects that exist in the given domain, as a hash of { id => name }.:
-      def enumerate_projects(domain_id)
-        result = {}
-        @srv_conn.list_projects(domain_id: domain_id).body['projects'].each do |project|
-          result[ project['id'] ] = project['name']
-        end
-        return result
-      end
-
       # List all project IDs that exist in the given domain.
       def enumerate_project_ids(domain_id)
         # extrawurst for legacy monsoon2: consider only relevant projects

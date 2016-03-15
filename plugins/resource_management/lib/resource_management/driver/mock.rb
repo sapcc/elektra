@@ -31,8 +31,8 @@ module ResourceManagement
         return result
       end
 
-      def enumerate_projects(domain_id)
-        @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {})
+      def enumerate_project_ids(domain_id)
+        @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {}).keys
       end
 
       def query_project_quota(domain_id, project_id, service)
