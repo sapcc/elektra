@@ -3,8 +3,7 @@
 
 %tr{ class: domain_status[:warning_level], data: { domain: domain_resource.domain_id, resource: domain_resource.id } }
   %td.col-md-3
-    .resource-object-name
-      = domain_status[:name]
+    = domain_status[:name]
   %td.col-md-3
     .resource-approved-quota.input-group.input-group-sm
       = data_type.format(domain_resource.approved_quota)
