@@ -59,18 +59,27 @@ module ServiceLayer
     # 1. Cleanup Resource objects for deleted projects from local DB.
     # 2. Create Resource objects for new projects in local DB.
     def sync_domain(domain_id, options={})
+      # get domain name (this is fast because enumerate_domains() has a cache)
+      domain_name = enumerate_domains[domain_id]
+
       # foreach resource in an enabled service...
       ResourceManagement::ResourceConfig.all.each do |resource|
         # ...initialize the Resource entry of the domain with approved_quota=0
         # (this is useful if the domain was created outside of the dashboard
         # and no quota has been approved for it yet)
-        ResourceManagement::Resource.where(
+        res = ResourceManagement::Resource.where(
           cluster_id: nil, # TODO: take cluster assignment into account for brokered services
           domain_id:  domain_id,
           project_id: nil,
           service:    resource.service_name,
           name:       resource.name,
-        ).first_or_create(approved_quota: 0)
+        ).first_or_create(
+          scope_name:     domain_name,
+          approved_quota: 0,
+        )
+
+        res.scope_name = domain_name
+        res.save if res.changed?
       end
 
       # enumerate projects in Keystone; plus extrawurst for legacy monsoon2: sync only relevant projects
@@ -118,6 +127,9 @@ module ServiceLayer
     def sync_project(domain_id, project_id)
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
+      # get the project name
+      project_name = services.identity.find_project(project_id).name
+
       # fetch current quotas and usage for this project from all services
       actual_quota = {}
       actual_usage = {}
@@ -141,6 +153,7 @@ module ServiceLayer
           service:    resource.service_name,
           name:       resource.name,
         ).first_or_create(
+          scope_name:     project_name,
           usage:          this_actual_usage,
           current_quota:  this_actual_quota,
           approved_quota: 0,
@@ -163,6 +176,7 @@ module ServiceLayer
         end
 
         # update existing entry
+        object.scope_name    = project_name
         object.current_quota = this_actual_quota
         object.usage         = this_actual_usage
         if object.changed?

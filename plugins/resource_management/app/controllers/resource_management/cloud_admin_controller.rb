@@ -122,21 +122,18 @@ module ResourceManagement
       @resource = params.require(:resource).to_sym
       @area     = ResourceManagement::ServiceConfig.find(@service).area
 
-      # get mapping of domain IDs to names
-      domain_names = services.resource_management.driver.enumerate_domains()
-
       # some parts of this shared with update()
       resources, domain_resources = prepare_data_for_details_view(@service, @resource)
 
       # statistics per domain
       domain_status = []
       domain_resources.each do |domain_resource|
-        domain_status << prepare_domain_data_for_details_view(domain_resource, resources, domain_names)
+        domain_status << prepare_domain_data_for_details_view(domain_resource, resources)
       end
 
       # sort domain entries by warning level, then by name
       sort_order_for = { 'danger' => 0, 'warning' => 1, '' => 2 }
-      domains = domain_status.sort_by { |entry| [ sort_order_for[ entry[:warning_level] ], entry[:name] ] }
+      domains = domain_status.sort_by { |entry| [ sort_order_for[ entry[:warning_level] ], entry[:name].downcase ] }
       # prepare the domains table
       @domains = Kaminari.paginate_array(domains).page(params[:page]).per(6)
     end
@@ -250,9 +247,8 @@ module ResourceManagement
     end
 
     # Prepare data for a single domain (a row in the "Details" table).
-    # `resources` and `domain_names` are results of previous computations or
-    # API calls.
-    def prepare_domain_data_for_details_view(domain_resource, resources, domain_names)
+    # `resources` is the result of previous computations or API calls.
+    def prepare_domain_data_for_details_view(domain_resource, resources)
       domain_id = domain_resource.domain_id
 
       project_quota_sum, usage_sum = resources.
@@ -269,7 +265,7 @@ module ResourceManagement
       warning_level = 'warning' if domain_resource.approved_quota < project_quota_sum
 
       return {
-        name:              domain_names[domain_id] || domain_id,
+        name:              domain_resource.scope_name || domain_id,
         domain_resource:   domain_resource,
         project_quota_sum: project_quota_sum,
         usage_sum:         usage_sum,

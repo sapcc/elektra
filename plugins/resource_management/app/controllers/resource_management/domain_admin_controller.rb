@@ -181,19 +181,14 @@ module ResourceManagement
       # some parts of data collection are shared with update()
       project_resources = prepare_data_for_details_view(@service, @resource)
 
-      # get mapping of project IDs to names
-      @project_names = services.resource_management.driver.enumerate_projects(@scoped_domain_id)
-
       # prepare the projects table
       projects = project_resources.to_a.sort_by do |project_resource|
-        # find project name
-        project_id   = project_resource.project_id
-        project_name = (@project_names[project_id] || project_id).downcase
         # find warning level for project
         warning_level = view_context.warning_level_for_project(project_resource)
         sort_order    = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
         # sort projects by warning level, then by name
-        [ sort_order, project_name ]
+        project_name = project_resource.scope_name || project_resource.project_id
+        [ sort_order, project_name.downcase ]
       end
       @projects = Kaminari.paginate_array(projects).page(params[:page]).per(6)
 
