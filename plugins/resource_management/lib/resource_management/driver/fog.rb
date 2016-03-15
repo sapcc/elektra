@@ -62,6 +62,10 @@ module ResourceManagement
         return @srv_conn.list_projects(domain_id: domain_id).body['projects'].map { |project| project['id'] }
       end
 
+      def get_project_name(domain_id, project_id)
+        @srv_conn.get_project(project_id).body.fetch('project', {}).fetch('name', nil)
+      end
+
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values

@@ -35,6 +35,10 @@ module ResourceManagement
         @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {}).keys
       end
 
+      def get_project_name(domain_id, project_id)
+        @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {}).fetch(project_id, nil)
+      end
+
       def query_project_quota(domain_id, project_id, service)
         return {} unless project_exists?(domain_id, project_id)
 

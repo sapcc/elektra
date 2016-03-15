@@ -114,7 +114,7 @@ module ServiceLayer
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
       # get the project name
-      project_name = services.identity.find_project(project_id).name
+      project_name = driver.get_project_name(domain_id, project_id)
 
       # fetch current quotas and usage for this project from all services
       actual_quota = {}

@@ -12,6 +12,11 @@ module ResourceManagement
         raise ServiceLayer::Errors::NotImplemented
       end
 
+      # Get the name for this project.
+      def get_project_name(domain_id, project_id)
+        raise ServiceLayer::Errors::NotImplemented
+      end
+
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
