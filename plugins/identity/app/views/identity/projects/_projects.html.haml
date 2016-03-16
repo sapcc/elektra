@@ -13,6 +13,7 @@
     -#     %b Your projects
     -#     = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
+    -#= render 'identity/domains/projects_tree'
     %ul.content-list
       - @projects.each do |project|
         %li
