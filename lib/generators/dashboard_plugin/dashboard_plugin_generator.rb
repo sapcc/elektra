@@ -35,7 +35,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
   def update_dependencies_to_gemspec
     remove_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/version.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", 'NewPlugin::VERSION', '"0.0.1"'
+    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "#{name.classify}::VERSION", '"0.0.1"'
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "# Maintain your gem's version:\n", ''
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "require \"#{name}/version\"", ''
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /TODO:?/, ''

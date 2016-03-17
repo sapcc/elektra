@@ -27,8 +27,8 @@
 
 
     .special-crumb
-      - if @scoped_project_id
-        = link_to plugin('identity').projects_web_console_path, remote: true, class: "solo-icon-link", data: {trigger: "webconsole"} do
+      - if services.available?(:webconsole) and plugin_name!='webconsole'
+        = link_to 'javascript:void(0)', class: 'solo-icon-link', data: {trigger: 'webconsole:open'} do
           %span.fa-stack
             %i.fa.fa-square.fa-stack-2x
             %i.fa.fa-terminal.fa-stack-1x.fa-inverse

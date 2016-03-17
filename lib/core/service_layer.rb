@@ -51,9 +51,9 @@ module Core
         @region = region
       end 
     
-      def available?(service_name,action_name)
+      def available?(service_name,action_name=nil)
         begin 
-          self.send(service_name.to_sym).send(:available?,action_name.to_sym) 
+          self.send(service_name.to_sym).send(:available?,(action_name.nil? ? nil : action_name.to_sym)) 
         rescue
           false
         end

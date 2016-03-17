@@ -56,12 +56,6 @@ module Identity
       redirect_to plugin('identity').projects_path
     end
 
-    def web_console
-      @token = current_user.token
-      @webcli_endpoint = current_user.service_url("webcli")
-      @identity_url = current_user.service_url("identity")
-    end
-
     def api_endpoints
       @token = current_user.token
       @webcli_endpoint = current_user.service_url("webcli")

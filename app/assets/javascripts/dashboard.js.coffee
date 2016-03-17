@@ -53,17 +53,6 @@ $(document).on 'modal:contentUpdated', (e) ->
   catch error 
   
 
-  # ------------------------------------------------------------------------------------------
-  # Web Console
-  # ------------------------------------------------------------------------------------------
-
-  $('[data-trigger=webconsole-close], [data-trigger=webconsole].active').click = (e) ->
-      e.preventDefault()
-      $("#fixed-webconsole").removeClass("open")
-      $('[data-trigger=webconsole]').removeClass("active")
-
-
-
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
 # # React to turbolinks page load events to indicate to the user that something is happening
 # $ =>
