@@ -25,29 +25,16 @@
 // Web Console
 // ---------------------------------------------------------------------------------
 
-#fixed-webconsole {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  height: 40vh;
-  width: 100vw;
+#webconsole-container {
   background: #222;
   color: #fff;
-
-  &.open {
-    display: block;
-  }
-
+  position: relative;
+  
   .toolbar {
     @include pie-clearfix;
     @include box-shadow(rgba(0, 0, 0, 0.1) 0 -1px 5px);
     border-top: 1px solid #d3d3d3;
     border-bottom: 1px solid #000;
-    margin-top: 0;
-    width: 100%;
-    height: $line-height-computed + $toolbar-vertical-padding*2;
-    position: absolute;
-    top: -($line-height-computed + $toolbar-vertical-padding*2);
 
     a {
       color: #666;
@@ -58,18 +45,55 @@
         margin-right: 0px;
       }
     }
+    
+    margin-top: 0;
   }
+  
+  &.popup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    height: 40vh;
+    width: 100vw;
+    
+    .toolbar {
+      margin-top: 0;
+      width: 100%;
+      height: $line-height-computed + $toolbar-vertical-padding*2;
+      position: absolute;
+      top: -($line-height-computed + $toolbar-vertical-padding*2);
+    }
+  }
+  
+  .webconsole-holder {
+    width: 100%;
+    height: 100%;
+    
+    #terminal {
+      position: relative;
+      width: 100%;
+      height: 100%;
 
-}
-
-#webconsole-container {
-  width: 100%;
-  height: 100%;
-}
-
-#terminal {
-  position: relative;
-  width: 100%;
-  height: 100%;
-
+    }
+  }
+  
+  .webconsole-help {
+    
+    position: absolute;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+          
+    .toggle {
+      color: white;
+      margin-right: 5px;
+      position: absolute;
+      left: -15px;
+    }
+    .webconsole-help-content{
+      width: 400px;
+      padding: 15px;
+      color: white ;
+      overflow: scroll;
+    }
+  }
 }

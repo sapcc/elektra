@@ -1,5 +1,5 @@
 !!!
-%html{class: action_name}
+%html
   %head
     %meta(http-equiv="X-UA-Compatible" content="IE=edge")
     %meta(name="viewport" content="width=device-width, initial-scale=1")
@@ -10,9 +10,11 @@
     -# = content_for :javascripts do
     :javascript
       //window.History = { options: { html4Mode: true} };
-      window.plugin_name = "#{plugin_name}"
-      window.scoped_domain_id = "#{@scoped_domain_id}"
-      window.scoped_project_id = "#{@scoped_project_id}"
+      window.pluginName = "#{plugin_name}"
+      window.scopedDomainId = "#{@scoped_domain_id}"
+      window.scopedDomainFid = "#{@scoped_domain_fid}"
+      window.scopedProjectId = "#{@scoped_project_id}"
+      window.scopedProjectFid = "#{@scoped_project_fid}"
        
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = favicon_png

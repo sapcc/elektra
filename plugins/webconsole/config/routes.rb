@@ -1,4 +1,4 @@
 Webconsole::Engine.routes.draw do
   get '/' => 'application#show', as: :root
-  get '/credentials' => 'application#credentials'
+  get '/current-context' => 'application#current_context'
 end
