@@ -1,9 +1,11 @@
-%table.table
-  %thead
-    %tr
-      %th Name
-      %th Visibility
-      %th Status
-  %tbody
-    - @images.each do | image |
-      = render partial: 'item', locals: {image: image}
+.row
+  .col-sm-6
+    %table.table
+      %thead
+        %tr
+          %th Name
+          %th Visibility
+          %th.snug Status
+      %tbody
+        - @images.each do | image |
+          = render partial: 'item', locals: {image: image}
