@@ -6,7 +6,11 @@ module ObjectStorage
     def index
       # if the user is allowed to list containers, continue to the actual UI
       if current_user.is_allowed?('object_storage:container_list')
-        redirect_to plugin('object_storage').containers_path
+        if services.object_storage.account_status.status == 404
+          render action: 'no_swift_account'      
+        else
+          redirect_to plugin('object_storage').containers_path
+        end
         return
       end
 

@@ -20,6 +20,10 @@ module ServiceLayer
       driver.list_capabilities
     end
 
+    def account_status
+      driver.account_status
+    end
+
     ##### containers
 
     def find_container(name)

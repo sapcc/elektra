@@ -286,6 +286,17 @@ module ObjectStorage
         end
       end
 
+      def account_status
+        handle_response do
+          @fog.request({
+            :expects  => [200,204,404],
+            :method   => 'HEAD',
+            :headers  => { 'Content-Type' => 'text/plain' },
+          }, false)
+        end
+      end
+
+
       private
 
       # Rename keys in `data` using the `attribute_map` and delete unknown keys.

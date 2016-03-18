@@ -88,6 +88,10 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def account_status
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
       # `targets` is an array of hashes like
       #
       #   { container: "foo" }                    # delete this container (must be empty!)
