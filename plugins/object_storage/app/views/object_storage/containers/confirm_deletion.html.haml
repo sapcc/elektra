@@ -4,10 +4,10 @@
 - pl = plugin('object_storage')
 
 - if @empty
-  = simple_modal_form_for @form, 'Delete', url: pl.container_path(@container.name), method: :delete, cancel_url: pl.containers_path do |f|
+  = simple_modal_form_for @form, submit_action: 'Delete', url: pl.container_path(@container.name), method: :delete, cancel_url: pl.containers_path do |f|
     .bs-callout.bs-callout-danger
       %span.fa.fa-exclamation-circle
-      %strong Are you sure? 
+      %strong Are you sure?
       The container will be deleted. This cannot be undone.
     .row
       .col-md-6
@@ -19,7 +19,7 @@
   %div{class: modal? ? 'modal-body' : ''}
     .bs-callout.bs-callout-danger
       %span.fa.fa-exclamation-circle
-      Cannot delete container because it contains objects. Please empty it first. 
+      Cannot delete container because it contains objects. Please empty it first.
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Got it
@@ -33,4 +33,3 @@
     setTimeout(function(){
       $('#forms_confirm_container_action_name').focus().select();
     }, 0)
-

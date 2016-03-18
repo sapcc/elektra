@@ -3,14 +3,14 @@
 
 - pl = plugin('object_storage')
 
-= simple_modal_form_for @container, 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
+= simple_modal_form_for @container, submit_action: 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
   .row
     .col-md-6
       - if has_capability?('staticweb')
         = f.input :read_acl, as: :string, label: "Read ACLs", readonly: @container.public_read_access?
         %p
           = f.input :public_read_access?, as: :boolean, label: 'Public Read Access'
-      - else 
+      - else
         = f.input :read_acl, as: :string, label: 'Read ACLs'
       = f.input :write_acl, as: :string, label: "Write ACLs"
     .col-md-6
@@ -45,4 +45,3 @@
         }
       }
     );
-

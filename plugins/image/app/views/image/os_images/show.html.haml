@@ -3,7 +3,7 @@
 
 - pl = plugin('image')
 
-= simple_modal_form_for @image, 'Update Image', url: pl.os_image_path(@image.id), method: :put, cancel_url: pl.os_images_path do |f|
+= simple_modal_form_for @image, url: pl.os_image_path(@image.id), cancel_url: pl.os_images_path do |f|
 
   .row
     .col-md-6
