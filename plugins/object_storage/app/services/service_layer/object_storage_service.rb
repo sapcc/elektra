@@ -24,6 +24,10 @@ module ServiceLayer
       driver.account_status
     end
 
+    def create_account
+      driver.create_account
+    end
+
     ##### containers
 
     def find_container(name)

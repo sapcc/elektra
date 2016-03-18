@@ -1,0 +1,8 @@
+=content_for :main_toolbar do
+  Object Storage
+
+.bs-callout.bs-callout-warning
+  Currently there is no swift account existing on the Object Storage backend.
+
+= link_to 'Cancel', plugin('identity').project_path, class: 'btn btn-default'
+= link_to 'Create Account', plugin('object_storage').create_account_path, class: 'btn btn-primary'

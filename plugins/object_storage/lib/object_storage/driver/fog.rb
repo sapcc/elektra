@@ -296,6 +296,15 @@ module ObjectStorage
         end
       end
 
+      def create_account
+        handle_response do
+          @fog.request({
+            :expects  => [201],
+            :method   => 'PUT',
+            :headers  => { 'Content-Type' => 'text/plain' },
+          }, false)
+        end
+      end
 
       private
 
