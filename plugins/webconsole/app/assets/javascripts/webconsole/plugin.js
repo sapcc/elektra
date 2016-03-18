@@ -7,10 +7,12 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // compiled file.
 //
-// Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
+// Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require_tree .
-  
-// docs.test = function(){};
-// docs.test();
+// Every Plugin file is surrounded with a closure by dashboard.
+// It means that your plugin js code runs in own namespace and can't 
+// break any code of other plugins. If you want to make your code available 
+// outside this closure you should bind functions to webconsole. 
+//  
+//       

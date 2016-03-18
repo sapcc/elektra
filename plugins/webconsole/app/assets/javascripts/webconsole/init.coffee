@@ -2,7 +2,7 @@
 # Init Web Console
 # ------------------------------------------------------------------------------------------
 $(document).ready ->
-
+  console.log 'start'
   if $('#webconsole-container').length>0 
     WebconsoleContainer.init('#webconsole-container')
     WebconsoleContainer.load()

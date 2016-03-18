@@ -9,3 +9,7 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
+
+Core::PluginsManager.plugins_with_plugin_js.each do |plugin|
+  Rails.application.config.assets.precompile += ["#{plugin.name}/#{plugin.class::PLUGIN_JS_FILE_NAME}.js"]
+end

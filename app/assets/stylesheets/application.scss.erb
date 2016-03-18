@@ -32,10 +32,7 @@
 @import "snippets";
 
 <%
-  Core::PluginsManager.available_plugins.each do |plugin|
-    path = resolve("#{plugin.name}/application") rescue nil
-    if path
-      %><%=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }" %><%
-    end
+  Core::PluginsManager.plugins_with_application_css.each do |plugin|
+  %><%=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }"%><% 
   end
 %>
