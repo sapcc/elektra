@@ -4,7 +4,6 @@ module ObjectStorage
     authorization_required
 
     def index
-      raise
       # if the user is allowed to list containers, continue to the actual UI
       if current_user.is_allowed?('object_storage:container_list')
         # check existing account
