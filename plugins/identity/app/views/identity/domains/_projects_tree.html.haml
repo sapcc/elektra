@@ -8,9 +8,9 @@
   - if current_user.is_allowed?('identity:project_request')
     = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
 
-
 =content_for :javascripts do
   :javascript
+    
     var $expandibleTree = $('#projecttree').treeview({
       enableLinks: true,
       levels: 2,
@@ -19,32 +19,14 @@
       color: '#337ab7',
       collapseIcon: 'fa fa-minus',
       expandIcon: 'fa fa-plus',
-      data: [#{projects_tree.to_json}],
-
-      onNodeCollapsed: function(event, node) {
-        //$('#expandible-output').prepend('<p>' + node.text + ' was collapsed</p>');
-      },
-      onNodeExpanded: function (event, node) {
-        //$('#expandible-output').prepend('<p>' + node.text + ' was expanded</p>');
-      }
+      data: [#{projects_tree.to_json}]
     });
-
-    var findExpandibleNodess = function() {
-      return $expandibleTree.treeview('search', [ $('#input-expand-node').val(), { ignoreCase: false, exactMatch: false } ]);
-    };
-    var expandibleNodes = findExpandibleNodess();
-
+    
+    
+    var rootNode = $expandibleTree.treeview('search',['#{projects_tree[:text]}'])[0];
     // Expand/collapse/toggle nodes
     $('#input-expand-node').on('keyup', function (e) {
-      expandibleNodes = findExpandibleNodess();
-      $('.expand-node').prop('disabled', !(expandibleNodes.length >= 1));
-    });
-
-    $('#btn-expand-node.expand-node').on('click', function (e) {
-      var levels = $('#select-expand-node-levels').val();
-      $expandibleTree.treeview('expandNode', [ expandibleNodes, { levels: levels, silent: $('#chk-expand-silent').is(':checked') }]);
-    });
-
-    $('#btn-collapse-node.expand-node').on('click', function (e) {
-      $expandibleTree.treeview('collapseNode', [ expandibleNodes, { silent: $('#chk-expand-silent').is(':checked') }]);
+      $expandibleTree.treeview('collapseAll');
+      $expandibleTree.treeview('expandNode', [rootNode]);
+      expandibleNodes = $expandibleTree.treeview('search', [ $(this).val(), { ignoreCase: true, exactMatch: false } ]);
     });
