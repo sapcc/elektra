@@ -81,11 +81,6 @@ PATH
     compute (0.0.1)
 
 PATH
-  remote: plugins/docs
-  specs:
-    docs (0.0.1)
-
-PATH
   remote: plugins/identity
   specs:
     identity (0.0.1)
@@ -594,7 +589,6 @@ DEPENDENCIES
   converged_cloud_bootstrap!
   cucumber-rails
   database_cleaner
-  docs!
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog!

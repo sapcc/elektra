@@ -1,11 +1,6 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
-  scope '(/:domain_id)' do
-    Logger.new(STDOUT).debug("Mount plugin docs as docs_plugin")
-    mount Docs::Engine => '/docs', as: 'docs_plugin'
-  end
-
   scope "/system" do
     get :health, to: "health#show"
   end
