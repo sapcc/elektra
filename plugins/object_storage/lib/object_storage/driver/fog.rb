@@ -287,6 +287,9 @@ module ObjectStorage
       end
 
       def account_status
+        # 200 success list containers
+        # 202 success but no content found
+        # 404 account is not existing
         handle_response do
           @fog.request({
             :expects  => [200,204,404],
@@ -297,6 +300,7 @@ module ObjectStorage
       end
 
       def create_account
+        # Note: account creation is only possible if the swift proxy is configured with allow_account_management: True
         handle_response do
           @fog.request({
             :expects  => [201],
