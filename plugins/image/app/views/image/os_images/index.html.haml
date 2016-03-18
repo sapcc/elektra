@@ -1,2 +1,11 @@
-%p This is Images (Under construction)
-= image_tag "tmp/under_construction_5.gif"
+.row
+  .col-sm-6
+    %table.table
+      %thead
+        %tr
+          %th Name
+          %th Visibility
+          %th.snug Status
+      %tbody
+        - @images.each do | image |
+          = render partial: 'item', locals: {image: image}

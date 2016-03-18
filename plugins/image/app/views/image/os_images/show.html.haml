@@ -1,0 +1,35 @@
+= content_for :title do
+  Image: #{@image.name}
+
+- pl = plugin('image')
+
+= simple_modal_form_for @image, url: pl.os_image_path(@image.id), cancel_url: pl.os_images_path do |f|
+
+  .row
+    .col-md-6
+      = f.input :name, readonly: true
+      = f.input :created do
+        %br
+        = Core::Formatter.format_modification_time(DateTime.parse(@image.created_at.to_s))
+      = f.input :visibility do
+        = render layout: 'checkbox_with_label', locals: { name: 'image[public]', checked: @image.visibility == 'public', options: { disabled: true } } do
+          public
+          = icon 'question-circle', class: 'help_icon', title: 'A public image is globally visible.'
+      = f.input :size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@image.size) }
+      = f.input :container_format, readonly: true, label: 'Container Format'
+    .col-md-6
+      = f.input :id, readonly: true, label: 'UUID'
+      = f.input :updated do
+        %br
+        = Core::Formatter.format_modification_time(DateTime.parse(@image.updated_at.to_s))
+      = f.input :protection do
+        = render layout: 'checkbox_with_label', locals: { name: 'image[protected]', checked: @image.protected, options: { disabled: true } } do
+          protected
+          = icon 'question-circle', class: 'help_icon', title: 'A protected image can only be edited by an admin.'
+      = f.input :status, readonly: true
+      = f.input :disk_format, readonly: true, label: 'Disk Format'
+
+
+  .form-group
+    %label Additional Properties
+    = render partial: 'show_properties', locals: { properties: @properties }

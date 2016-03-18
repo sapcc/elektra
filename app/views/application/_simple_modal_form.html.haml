@@ -10,4 +10,5 @@
       %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } } Cancel
     - else
       = link_to 'Cancel', cancel_url, class: 'btn btn-default'
-    %button.btn.btn-primary{ type: 'submit', data: { disable_with: 'Please wait...'} }= submit_action
+    - if submit_action
+      %button.btn.btn-primary{ type: 'submit', data: { disable_with: 'Please wait...'} }= submit_action

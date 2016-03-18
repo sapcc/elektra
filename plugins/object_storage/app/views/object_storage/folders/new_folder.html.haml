@@ -6,6 +6,6 @@
 
 - pl = plugin('object_storage')
 
-= simple_modal_form_for @form, 'Create folder', url: pl.create_folder_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.path) do |f|
+= simple_modal_form_for @form, submit_action: 'Create folder', url: pl.create_folder_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.path) do |f|
   %fieldset
     = f.input :name, as: :string, label: 'Folder name'
