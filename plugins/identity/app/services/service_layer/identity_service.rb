@@ -48,7 +48,7 @@ module ServiceLayer
       driver.map_to(Identity::Domain).domains(filter)
     end
 
-    ##################### PROJECTS #########################    
+    ##################### PROJECTS #########################
     def new_project(attributes={})
       Identity::Project.new(@driver, attributes)
     end
@@ -112,7 +112,7 @@ module ServiceLayer
       # process nodes recursive and add them to it's parent
       root.children.each do |c|
         nmap[c.name].each do |n|
-          c << n
+          c << n unless c.include?(n)
           addnodes(c, nmap)
         end if nmap[c.name]
       end
@@ -191,4 +191,3 @@ module ServiceLayer
     end
   end
 end
-  
