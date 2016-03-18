@@ -25,7 +25,6 @@ module Identity
     end
 
     def show
-      @instances = services.compute.servers(tenant_id: @active_project.id) rescue []
     end
 
     def edit
