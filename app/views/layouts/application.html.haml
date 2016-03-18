@@ -21,7 +21,7 @@
     / Load plugin js (plugin_name/plugin.js)
     - plugin = Core::PluginsManager.plugin(plugin_name)
     - if plugin and plugin.has_plugin_js?
-      = javascript_include_tag "#{plugin.name}/#{plugin.class::PLUGIN_JS_FILE_NAME}"  
+      = javascript_include_tag "#{plugin.name}/#{plugin.class::PLUGIN_JS_FILE_NAME}"
     
     = favicon_png
     = favicon_ico

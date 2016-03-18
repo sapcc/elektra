@@ -5,7 +5,7 @@ module Core
     # Core::PluginsManager is a singleton
     include Singleton
   
-    attr_reader :plugins_path, :mountable_plugins, :plugins_with_plugin_js, :plugins_with_global_js
+    attr_reader :plugins_path, :mountable_plugins, :plugins_with_plugin_js, :plugins_with_global_js, :plugins_with_application_css
   
     class << self
       # delegate methods to instance    
@@ -30,6 +30,7 @@ module Core
       @mountable_plugins = []
       @plugins_with_plugin_js = []
       @plugins_with_global_js = []
+      @plugins_with_application_css = []
     
       available_plugin_specs.each do |gemspec| 
         plugin = Plugin.new(gemspec)
@@ -38,6 +39,7 @@ module Core
         @mountable_plugins << plugin if plugin.mountable?
         @plugins_with_plugin_js << plugin if plugin.has_plugin_js? #plugin contains an js asset named plugin.js
         @plugins_with_global_js << plugin if plugin.has_global_js? #plugin contains an js asset named global.js
+        @plugins_with_application_css << plugin if plugin.has_application_css?
       end
     end
   
@@ -87,6 +89,11 @@ module Core
       
       def has_global_js?
         !Dir.glob(File.join(path,"app/assets/javascripts/#{name}/global.*")).empty?
+      end
+      
+      def has_application_css?
+        entries = Dir.entries(File.join(path,"app/assets/stylesheets/#{name}"))
+        entries.any?{|e| e=~/.*application\..+/}
       end
       
       # engine_class looks like Compute::Engine

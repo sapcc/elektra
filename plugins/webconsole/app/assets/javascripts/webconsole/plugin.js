@@ -16,4 +16,3 @@
 // outside this closure you should bind functions to webconsole. 
 //  
 //       
-//= require_tree .   

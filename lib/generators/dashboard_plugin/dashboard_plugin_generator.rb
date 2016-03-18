@@ -53,10 +53,10 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     remove_file "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/application.css"
     remove_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js"
 
-    copy_file "app/assets/application.css.scss", "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/_application.css.scss"
-    copy_file "app/assets/application.js", "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js"
+    copy_file "app/assets/_application.scss", "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/_application.scss"
+    copy_file "app/assets/plugin.js", "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/plugin.js"
 
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js", '%{PLUGIN_NAME}', name
+    gsub_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/plugin.js", '%{PLUGIN_NAME}', name
   end
 
   def create_service_layer_driver
