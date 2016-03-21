@@ -19,6 +19,8 @@ ResourceManagement::Engine.routes.draw do
     get  'cancel'   => 'domain_admin#cancel'
     get  'review_request'  => 'domain_admin#review_request'
     post 'approve_request' => 'domain_admin#approve_request'
+    get  'edit_default_quota' => 'domain_admin#edit_default_quota'
+    get  'update_default_quota' => 'domain_admin#update_default_quota'
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do

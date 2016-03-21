@@ -17,7 +17,10 @@ module ResourceManagement
         format.html
         format.js # update only status bars 
       end
+    end
 
+    def edit_default_quota
+       @resource = ResourceManagement::Resource.find(params.require(:id))
     end
 
     def show_area

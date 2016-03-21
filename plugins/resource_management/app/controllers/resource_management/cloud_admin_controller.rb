@@ -16,7 +16,6 @@ module ResourceManagement
         format.html
         format.js # update only status bars 
       end
-
     end
 
     def show_area

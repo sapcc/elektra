@@ -1,12 +1,15 @@
 .row
   = render partial: 'resource_name', locals: { resource: data[:domain_resource], scope: 'admin', overview: overview }
-  .col-md-7
+  .col-md-6
     = render partial: 'bar', locals: { data: data }
 
   .col-md-1.quota-request-more
     = link_to 'Details', plugin('resource_management').admin_details_path(:service => service, :resource => data[:name], :overview => overview),data: {modal: true},class: 'btn btn-primary btn-sm', title: 'Open related service'
   .col-md-1.quota-request-more
+    = link_to 'Default', plugin('resource_management').admin_edit_default_quota_path(id: data[:domain_resource].id), class: 'btn btn-default btn-sm', data: {modal: true}
+  .col-md-1.quota-request-more
     - if data[:current_quota_sum] > 0 and data[:domain_resource].approved_quota >= 0 and not data[:has_infinite_project_quota]
-      = link_to 'Request more',plugin('resource_management').admin_new_request_path(id: data[:domain_resource].id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+      = link_to 'Request more',plugin('resource_management').admin_new_request_path(id: data[:domain_resource].id), data: {modal: true}, class: 'btn btn-default btn-sm'
     - else
-      = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
+      = link_to 'Request more','#', data: {modal: true}, class: 'btn btn-default btn-sm disabled'
+
