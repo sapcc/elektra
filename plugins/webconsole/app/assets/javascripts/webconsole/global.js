@@ -1,2 +1,2 @@
-//= require ./webconsole_container
-//= require ./init
+//= require ./global/webconsole_container
+//= require ./global/init

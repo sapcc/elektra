@@ -28,6 +28,10 @@ MonsoonOpenstackAuth.configure do |auth|
 
   # optional, default= last url before redirected to form
   #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
+  auth.login_redirect_url = -> referrer_url, current_user do 
+    # redirect user to domain home page after login
+    "/#{current_user.user_domain_id}/identity/home"
+  end
 
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
