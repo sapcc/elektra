@@ -18,6 +18,10 @@ module MonsoonDashboard
     #config.autoload_paths += %W(#{config.root}/plugins)
     config.autoload_paths << Rails.root.join('lib')
 
+    # Use memory for caching, file cache needs some work for working with docker
+    # Not sure if this really makes sense becasue every passenger thread will have it's own cache
+    config.cache_store = :memory_store
+
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'

@@ -71,9 +71,9 @@ module ServiceLayer
     end
 
     def auth_projects_tree(projects: projects)
-      #Rails.cache.fetch("#{current_user.token}/auth_projects_tree", expires_in: 60.seconds) do
+      Rails.cache.fetch("#{current_user.token}/auth_projects_tree", expires_in: 60.seconds) do
         auth_projects_tree_nocache(projects: projects)
-      #end
+      end
     end
 
     def auth_projects_tree_nocache(projects: projects)
