@@ -150,7 +150,11 @@ module ResourceManagement
           # the head_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
           connection.request(
-            :expects => [200, 204], # usually 204, but sometimes Swift Kilo inexplicably returns 200
+            # usually 204, but sometimes Swift Kilo inexplicably returns 200
+            # 404 not found is returned if a project exist but no account was created in swift
+            #     that usualy happens if account autocreate is disabled in swift and the user did not create a account 
+            #     in the object storage plugin of elektra
+            :expects => [200, 204, 404], 
             :method  => 'HEAD',
             :path    => '',
             :query   => { 'format' => 'json' },
