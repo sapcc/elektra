@@ -7,9 +7,17 @@ module ObjectStorage
       # if the user is allowed to list containers, continue to the actual UI
       if current_user.is_allowed?('object_storage:container_list')
         # check existing account
+        # if "account_autocreate" on swift proxy is active and no accout is exsiting it will create a new account here
         if services.object_storage.account_status.status == 404
-          render action: 'no_swift_account'      
+          # check that account management is allowed otherwise we are in trouble
+          capabilities = services.object_storage.capabilities
+          if capabilities['swift']['allow_account_management']
+            render action: 'no_swift_account'
+          else
+            render action: 'no_swift_account_and_account_management'
+          end
         else
+          # check allow_account_management
           redirect_to plugin('object_storage').containers_path
         end
         return
