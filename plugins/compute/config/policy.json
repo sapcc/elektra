@@ -1,7 +1,7 @@
 {
   "compute:instance_get": "role:admin or role:Member or role:member",
   "compute:instance_list": "role:admin or role:Member or role:member",
-  "compute:instance_create": "@ or role:admin or role:Member",
+  "compute:instance_create": "role:admin",
   "compute:instance_update": "role:admin",
   "compute:instance_delete": "role:admin"
 }
