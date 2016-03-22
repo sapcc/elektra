@@ -32,11 +32,12 @@ class ScopeController < ::ApplicationController
         @scoped_project_name = project_friendly_id.name
       end
 
-      if domain_id!=@scoped_domain_fid or project_id!=@scoped_project_fid
+      if (domain_id!=@scoped_domain_fid and domain_id!=@scoped_domain_name) or project_id!=@scoped_project_fid
         #redirect_to url_for(params.merge(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid))
 
         # url_for does not work for plugins. Use path instead!
         if @scoped_domain_id
+          # new_path = request.path.gsub(@scoped_domain_id,@scoped_domain_fid).gsub(@scoped_domain_name,@scoped_domain_fid)
           new_path = request.path.gsub(@scoped_domain_id,@scoped_domain_fid)
           new_path = "/#{@scoped_domain_fid}#{new_path}" unless new_path.include?(@scoped_domain_fid)
           # replace project_id with freindly id if given
