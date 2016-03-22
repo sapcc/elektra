@@ -23,6 +23,7 @@ module Compute
       
       @instance.flavor_id=@flavors.first.id
       @instance.image_id=@images.first.id
+      @instance.security_group_id=@security_groups.first.id
       @instance.network_ids=[{"id"=> @network_zones.first.try(:id)}]
       @instance.availability_zone_id=@availability_zones.first.id
       @instance.max_count = 1

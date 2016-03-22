@@ -46,8 +46,14 @@ $ ->
 
 $(document).on 'modal:contentUpdated', (e) -> 
   try
-    $form = $(e.target.id || e.target.class).find('form')
+    # define target selector dependent on id or class
+    selector = "##{e.target.id}" if e.target.id
+    selector = ".#{e.target.class}" if e.target.class
+    # get form
+    $form = $(selector).find('form')
+    # find triger elements
     $form.find("select[data-trigger=change]").change Dashboard.showFormDetails
+    
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
   catch error 
