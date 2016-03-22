@@ -36,9 +36,23 @@ describe FriendlyIdEntry, type: :model do
     expect(FriendlyIdEntry.where(class_name: 'Project', scope: 'd1', key: 'p3').first).to eq(p1_3)
   end
   
+  describe '::find_by_class_scope_and_key_or_slug' do
+    it "returns an existing entry" do
+      expect(FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project','d1','p3')).to eq(p1_3)
+    end
+    
+    it "returns an existing entry ignoring case" do
+      expect(FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project','D1','P3')).to eq(p1_3)
+    end
+  end
+  
   describe '::find_or_create_entry' do
     it "returns an existing entry" do
       expect(FriendlyIdEntry.find_or_create_entry('Project','d1','p3','project 3')).to eq(p1_3)
+    end
+    
+    it "returns an existing entry ignoring case" do
+      expect(FriendlyIdEntry.find_or_create_entry('Project','D1','P3','project 3')).to eq(p1_3)
     end
     
     context 'an entry with the same name but different url exists already' do
