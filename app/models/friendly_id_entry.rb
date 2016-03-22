@@ -9,11 +9,11 @@ class FriendlyIdEntry < ActiveRecord::Base
     sql = [
       "class_name=? and (lower(key)=? or lower(slug)=?) and endpoint=? #{'and lower(scope)=?' if scope}", 
       class_name, 
-      key_or_slug.downcase, 
-      key_or_slug.downcase, 
+      key_or_slug.to_s.downcase, 
+      key_or_slug.to_s.downcase, 
       Rails.configuration.keystone_endpoint
     ]
-    sql << scope.downcase if scope
+    sql << scope.to_s.downcase if scope
 
     self.where(sql).first
   end
@@ -22,10 +22,10 @@ class FriendlyIdEntry < ActiveRecord::Base
     sql = [
       "class_name=? and lower(key)=? and name=? #{'and lower(scope)=?' if scope}", 
       class_name, 
-      key.downcase, 
+      key.to_s.downcase, 
       name
     ]
-    sql << scope.downcase if scope
+    sql << scope.to_s.downcase if scope
 
     entries = self.where(sql)
 
