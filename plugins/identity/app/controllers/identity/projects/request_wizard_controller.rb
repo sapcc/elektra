@@ -34,7 +34,8 @@ module Identity
             else
               render action: :new
             end
-          rescue
+          rescue => e
+            @project.errors.add("message",e.message)
             render action: :new
           end
         else
