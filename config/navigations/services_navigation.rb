@@ -58,7 +58,7 @@ SimpleNavigation::Configuration.run do |navigation|
     #
     primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "icon moo-cloud"},
     if: -> {services.available?(:compute,:instances) or services.available?(:image,:os_images) or plugin_available?(:block_storage)} do |compute_nav|
-      compute_nav.item :instances, 'Instances', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }
+      compute_nav.item :instances, 'Servers', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }
       compute_nav.item :block_storage, 'Block Storage', -> {plugin('block_storage').entry_path}, if: -> { plugin_available?(:block_storage) }
       compute_nav.item :images, 'Images', -> {plugin('image').os_images_path}, if: -> { services.available?(:image,:os_images) }
 
