@@ -297,7 +297,7 @@ module ObjectStorage
               :method   => 'HEAD',
               :headers  => { 'Content-Type' => 'text/plain' },
             }, false)
-          rescue
+          rescue ::Fog::Storage::OpenStack::NotFound 
             return false
           end
           true
