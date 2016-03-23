@@ -6,8 +6,6 @@ class DashboardController < ::ScopeController
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
                           project: -> c { c.instance_variable_get('@scoped_project_id') },
                           rescope: false # do not rescope after authentication
-
-
                           
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
   before_filter :check_terms_of_use  
@@ -70,6 +68,7 @@ class DashboardController < ::ScopeController
       session[:is_new_dashboard_user] = Dashboard::OnboardingService.new(service_user).new_user?(current_user)
     end
     session[:is_new_dashboard_user]
+    
     #Dashboard::OnboardingService.new(service_user).new_user?(current_user)
   end
 

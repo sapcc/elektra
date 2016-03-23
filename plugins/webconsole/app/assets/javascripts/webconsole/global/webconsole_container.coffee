@@ -1,15 +1,10 @@
 class @WebconsoleContainer
   defaults =
-    scopedDomainId:     window.scopedDomainId
-    scopedDomainFid:     window.scopedDomainFid
-    scopedProjectId:    window.scopedProjectId
-    scopedProjectFid:    window.scopedProjectFid
     toolbarCssClass:    'toolbar'
     buttonsCssClass:    'main-buttons'
     holderCssClass:     'webconsole-holder'
     helpCssClass:       'webconsole-help'
     loadingText:        'Loading web console'
-    pluginName:        null
     toolbar:            'on'
     title:              'Web Console'
     buttons:            null #['help','reload','close']
@@ -81,12 +76,23 @@ class @WebconsoleContainer
   # load credentials for current user (token, identity and webcli endpoints)
   loadWebconsoleData= (settings ) ->
     # console.log 'loadWebconsoleData', settings
+    path = window.location.pathname
+    path = path.substr(1) if path.charAt(0)=='/'
+    arr = path.split('/')
+    scope = "#{arr[0]}/#{arr[1]}"
+    pluginPath = path.substr(path.indexOf(scope)+scope.length)
+    #
+    # console.log 'path', path
+    # console.log 'scope', scope
+    # console.log "lastIndexOf('#{scope}')", path.lastIndexOf(scope)
+    # console.log 'pluginPath', pluginPath
+    #
     options = {
       dataType: 'json',
       type: 'GET',
-      data: {plugin_name: settings.pluginName},
+      data: {plugin_path: pluginPath},
       cache: false,
-      url: "/#{settings.scopedDomainFid}/#{settings.scopedProjectFid}/webconsole/current-context"
+      url: "/#{scope}/webconsole/current-context"
     }
     $.ajax( options );
 
@@ -161,36 +167,44 @@ class @WebconsoleContainer
     $loadingHint.append('<span class="status info-text">0%</span>')
 
     # load token and endpoints
-    loadWebconsoleData(@settings).success ( context, textStatus, jqXHR ) ->
-      $loadingHint.find('.status').text('20%')
+    loadWebconsoleData(@settings)
+      .error (jqXHR, textStatus, errorThrown ) -> 
+        redirectTo = jqXHR.getResponseHeader('Location')
+        # response is a redirect
+        if redirectTo && redirectTo.indexOf('/auth/login/')>-1
+          # just reload to avoid redirect to a no layout page after login
+          window.location.reload()
+          
+      .success ( context, textStatus, jqXHR ) ->
+        $loadingHint.find('.status').text('20%')
 
-      # load lib
-      $.when(
-          cachedScript("#{context.webcli_endpoint}/js/hterm.js"),
-          cachedScript("#{context.webcli_endpoint}/js/gotty.js"),
-          $.Deferred ( deferred ) -> $( deferred.resolve )
+        # load lib
+        $.when(
+            cachedScript("#{context.webcli_endpoint}/js/hterm.js"),
+            cachedScript("#{context.webcli_endpoint}/js/gotty.js"),
+            $.Deferred ( deferred ) -> $( deferred.resolve )
 
-      ).done () ->
-        $loadingHint.find('.status').text('60%')
-        # success
-        # load webcli
-        $.ajax
-          url: "#{context.webcli_endpoint}/auth"
-          xhrFields: { withCredentials: true }
-          beforeSend: (request) -> request.setRequestHeader('X-Auth-Token', context.token)
-          dataType: 'json'
-          success: ( data ) ->
-            $loadingHint.find('.status').text('80%')
-            # success -> add terminal div to container
-            self.$holder.append('<div id="terminal"/>')
-            # open socket
+        ).done () ->
+          $loadingHint.find('.status').text('60%')
+          # success
+          # load webcli
+          $.ajax
+            url: "#{context.webcli_endpoint}/auth"
+            xhrFields: { withCredentials: true }
+            beforeSend: (request) -> request.setRequestHeader('X-Auth-Token', context.token)
+            dataType: 'json'
+            success: ( data ) ->
+              $loadingHint.find('.status').text('80%')
+              # success -> add terminal div to container
+              self.$holder.append('<div id="terminal"/>')
+              # open socket
 
-            openCLIWebsocket data.url, [context.token, context.identity_url], () ->
-              if context.help_html
-                $helpContainer = addHelpContainer(self.$container, self.settings)
-                $helpContainer.html(context.help_html)
+              openCLIWebsocket data.url, [context.token, context.identity_url], () ->
+                if context.help_html
+                  $helpContainer = addHelpContainer(self.$container, self.settings)
+                  $helpContainer.html(context.help_html)
 
-              $loadingHint.remove()
+                $loadingHint.remove()
 
-            self.loaded = true
-          error: (xhr, bleep, error) -> console.log('error: ' + error)
+              self.loaded = true
+            error: (xhr, bleep, error) -> console.log('error: ' + error)
