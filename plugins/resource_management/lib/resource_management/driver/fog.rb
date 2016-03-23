@@ -131,13 +131,17 @@ module ResourceManagement
         with_service_user_connection_for_swift(project_id) do |connection|
           # the post_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
-          connection.request(
-            expects: [200, 204],
-            method:  'POST',
-            path:    '',
-            query:   { format: 'json' },
-            headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
-          )
+          begin
+            connection.request(
+              expects: [200, 204],
+              method:  'POST',
+              path:    '',
+              query:   { format: 'json' },
+              headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
+            )
+          rescue ::Fog::Storage::OpenStack::NotFound
+            return
+          end
           return
         end
       end
