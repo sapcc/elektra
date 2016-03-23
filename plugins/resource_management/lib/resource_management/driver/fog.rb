@@ -149,16 +149,20 @@ module ResourceManagement
         @swift_account_metadata_cache[project_id] ||= with_service_user_connection_for_swift(project_id) do |connection|
           # the head_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
-          connection.request(
-            # usually 204, but sometimes Swift Kilo inexplicably returns 200
+          begin
+            connection.request(
+              # usually 204, but sometimes Swift Kilo inexplicably returns 200
+              :expects => [200, 204], 
+              :method  => 'HEAD',
+              :path    => '',
+              :query   => { 'format' => 'json' },
+            ).headers.to_hash
+          rescue ::Fog::Storage::OpenStack::NotFound
             # 404 not found is returned if a project exist but no account was created in swift
             #     that usualy happens if account autocreate is disabled in swift and the user did not create a account 
-            #     in the object storage plugin of elektra
-            :expects => [200, 204, 404], 
-            :method  => 'HEAD',
-            :path    => '',
-            :query   => { 'format' => 'json' },
-          ).headers.to_hash
+            #     in the object storage plugin of elektra (or somerwhere else with the swift client ;-))
+            return {:headers => {}, :body => "" }
+          end
         end
       end
 
