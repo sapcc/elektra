@@ -88,7 +88,7 @@ module ObjectStorage
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def account_status
+      def account_exsits?
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

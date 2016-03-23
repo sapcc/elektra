@@ -286,16 +286,21 @@ module ObjectStorage
         end
       end
 
-      def account_status
+      def account_exists?
         # 200 success list containers
         # 202 success but no content found
         # 404 account is not existing
         handle_response do
-          @fog.request({
-            :expects  => [200,204,404],
-            :method   => 'HEAD',
-            :headers  => { 'Content-Type' => 'text/plain' },
-          }, false)
+          begin
+            @fog.request({
+              :expects  => [200,204],
+              :method   => 'HEAD',
+              :headers  => { 'Content-Type' => 'text/plain' },
+            }, false)
+          rescue
+            return false
+          end
+          true
         end
       end
 

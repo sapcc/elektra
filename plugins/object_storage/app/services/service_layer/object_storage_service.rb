@@ -20,8 +20,8 @@ module ServiceLayer
       driver.list_capabilities
     end
 
-    def account_status
-      driver.account_status
+    def account_exists?
+      driver.account_exists?
     end
 
     def create_account

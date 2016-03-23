@@ -8,7 +8,7 @@ module ObjectStorage
       if current_user.is_allowed?('object_storage:container_list')
         # check existing account
         # if "account_autocreate" on swift proxy is active and no accout is exsiting it will create a new account here
-        if services.object_storage.account_status.status == 404
+        unless services.object_storage.account_exists?
           # check that account management is allowed otherwise we are in trouble
           capabilities = services.object_storage.capabilities
           if capabilities['swift']['allow_account_management']
