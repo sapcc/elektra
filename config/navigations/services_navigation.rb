@@ -67,7 +67,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
 
     primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:agents) } do |automation_nav|
-      automation_nav.item :automation, 'Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents)}, highlights_on: Proc.new { params[:controller][/agents|automations|audits/] }
+      automation_nav.item :automation, 'Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents)}, highlights_on: Proc.new { params[:controller][/automation\/(agents|automations|audits)/] }
 
       # automation_nav.dom_attributes = {class: 'content-list'}
     end
@@ -102,7 +102,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-database fa-fw" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
-      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }
+      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/(containers|entry|folders|objects)/] }
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
     #
