@@ -6,24 +6,25 @@ class @WebconsoleContainer
     scopedProjectFid:    window.scopedProjectFid
     toolbarCssClass:    'toolbar'
     buttonsCssClass:    'main-buttons'
-    holderCssClass:     'webconsole-holder' 
+    holderCssClass:     'webconsole-holder'
     helpCssClass:       'webconsole-help'
     loadingText:        'Loading web console'
     pluginName:        null
     toolbar:            'on'
     title:              'Web Console'
-    buttons:            null #['reload','close']
+    buttons:            null #['help','reload','close']
     effect:             'slide'
     height:             null #'viewport'
-    closeIcon:          'fa-chevron-down' 
-    reloadIcon:         'fa-refresh' 
-      
-  # create toolbar, buttons and console holder    
+    closeIcon:          'fa fa-close'
+    helpIcon:           'fa fa-question-circle'
+    reloadIcon:         'fa fa-refresh'
+
+  # create toolbar, buttons and console holder
   createDomStructure=($container, settings) ->
     if settings.toolbar=='on' # toolbar is on
       # add toolbar to container
-      $toolbar = $("<div class='#{settings.toolbarCssClass}'/>").appendTo($container)
-        
+      $toolbar = $("<div class='#{settings.toolbarCssClass}'/>").prependTo($container.parent())
+
       if settings.title # title exists
         # add title to toolbar
         $toolbar.append(settings.title)
@@ -31,34 +32,39 @@ class @WebconsoleContainer
         # add buttons container to toolbar
         $buttons = $("<div class='#{settings.buttonsCssClass}'/>").appendTo($toolbar)
 
-        # create and add each button to buttons container   
+        # create and add each button to buttons container
         for button, i in settings.buttons
-          className = if settings.buttons.length==i+1 then 'last' else ''
-          $buttons.append("<a href='#' class='#{className}' data-trigger='webconsole:#{button}'><i class='fa #{settings[button+'Icon']}'/></a>")
-    
+          $buttons.append("<a href='#' data-trigger='webconsole:#{button}'><i class='#{settings[button+'Icon']}'/></a>")
+
     # add webconsole holder to container
     # and return this holder
-    $("<div class='#{settings.holderCssClass}'/>").appendTo($container)    
+    $("<div class='#{settings.holderCssClass}'/>").appendTo($container)
 
   # adds help container to console holder
   addHelpContainer= ($container, settings) ->
     # create a container div for help content
-    $helpContainer = $("<div class='#{settings.helpCssClass}'></div>").appendTo($container)
-    # create a container div for help text and show it  
-    $helpContent = $("<div class='#{settings.helpCssClass}-content'></div>").appendTo($helpContainer).hide().animate({width:'toggle'},350)
+    $helpContainer = $("<div class='#{settings.helpCssClass}'></div>").appendTo($container).hide()
+    # create a container div for help text and show it
+    $helpContent = $("<div class='#{settings.helpCssClass}-content'></div>").appendTo($helpContainer)
+    $helpContainer.animate({width:'toggle'},'400px')
+    # set help button to active
+    $('[data-trigger="webconsole:help"]').addClass('active')
+
     # create toggle button and bind click event
-    $("<a href='#' class='toggle'><i class='fa fa-toggle-right'></i></a>").prependTo($helpContainer).click (e) ->
-      $helpContent.animate({width:'toggle'},350)  
-      $(this).find('i').toggleClass('fa-question-circle').toggleClass('fa-toggle-right')
-    
-    # set height  
-    $webconsoleHolder = $container.find(".#{settings.holderCssClass}")
-    height = $webconsoleHolder.height()
-    $toolbar = $container.find(".#{settings.toolbarCssClass}")    
-    top = if $toolbar.length>0 then $toolbar.position().top+$toolbar.outerHeight(true) else 0 
-    $helpContainer.css(top: top, height: height) 
-    $helpContent              
-    
+    $("<a href='#' class='toggle'><i class='fa fa-close'></i></a>").prependTo($helpContainer).click (e) ->
+      $helpContainer.animate({width:'toggle'},'400px')
+      $('[data-trigger="webconsole:help"]').toggleClass('active')
+
+
+    # set height
+    # $webconsoleHolder = $container.find(".#{settings.holderCssClass}")
+    # height = $webconsoleHolder.height()
+    $toolbar = $container.find(".#{settings.toolbarCssClass}")
+    top = if $toolbar.length>0 then $toolbar.position().top+$toolbar.outerHeight(true) else 0
+    # $helpContainer.css(top: top, height: height)
+    $helpContainer.css(top: top)
+    $helpContent
+
   # load js scripts and cache
   cachedScript= ( url, options ) ->
     # Allow user to set any option except for dataType, cache, and url
@@ -83,19 +89,21 @@ class @WebconsoleContainer
       url: "/#{settings.scopedDomainFid}/#{settings.scopedProjectFid}/webconsole/current-context"
     }
     $.ajax( options );
-  
-  @init= (containerSelector, settings={}) ->  
+
+  @init= (containerSelector, settings={}) ->
     @$container = $(containerSelector)
-    @settings   = $.extend {}, defaults, @$container.data(), settings 
-    @$holder    = createDomStructure(@$container, @settings) 
-    
+    @settings   = $.extend {}, defaults, @$container.data(), settings
+    @$holder    = createDomStructure(@$container, @settings)
+
     height = @settings['height']
     if height
-      height = $(document).height()-@$container.offset().top-$('.footer').outerHeight(true) 
+      height = $(document).height()-@$container.offset().top-$('.footer').outerHeight(true)
       height = 500 if !height or height<500
-      @$container.css(height: height) 
-      
-        
+      @$container.find(".#{@settings.holderCssClass}").css(height: height)
+
+      # @$container.css(height: height)
+
+
     $('[data-trigger="webconsole:open"]').click (e) ->
       e.preventDefault()
       if $(this).hasClass('active')
@@ -109,40 +117,46 @@ class @WebconsoleContainer
       e.preventDefault()
       WebconsoleContainer.reload()
 
+    $('[data-trigger="webconsole:help"]').click (e) =>
+      e.preventDefault()
+      @$container.find(".#{@settings.helpCssClass}").animate({width:'toggle'},'400px')
+      $(e.currentTarget).toggleClass('active')
+
     $('[data-trigger="webconsole:close"]').click (e) ->
       e.preventDefault()
       WebconsoleContainer.close () ->
-        $('[data-trigger="webconsole:open"]').removeClass("active");
-        
+        $('[data-trigger="webconsole:open"]').removeClass("active")
 
-  @open= (callback) -> 
+
+
+  @open= (callback) ->
     console.log 'open'
     # Open console container
-    @$container.slideDown 'slow', () ->
+    @$container.parent().slideDown 'slow', () ->
       WebconsoleContainer.load()
       callback() if callback
-  
-  @close= (callback) -> 
+
+  @close= (callback) ->
     console.log 'close'
-    @$container.slideUp 'slow', () ->
+    @$container.parent().slideUp 'slow', () ->
       console.log('Webconsole closed')
       callback() if callback
-    
-  @reload= () -> 
+
+  @reload= () ->
     console.log 'reload'
     @load(true)
-  
-  @load= (reload=false) -> 
+
+  @load= (reload=false) ->
     if @loaded && reload==false
       console.log 'alredy loaded'
       return
 
     # bind this to self
-    self = this  
+    self = this
     # create loading element
     $loadingHint = $("<div><span class='info-text'>#{@settings.loadingText}</span><span class='spinner'></span></div>")
     # set holder's content to loading
-    @$holder.html($loadingHint)  
+    @$holder.html($loadingHint)
 
     $loadingHint.append('<span class="status info-text">0%</span>')
 
@@ -170,13 +184,13 @@ class @WebconsoleContainer
             # success -> add terminal div to container
             self.$holder.append('<div id="terminal"/>')
             # open socket
-                      
+
             openCLIWebsocket data.url, [context.token, context.identity_url], () ->
               if context.help_html
                 $helpContainer = addHelpContainer(self.$container, self.settings)
                 $helpContainer.html(context.help_html)
-            
+
               $loadingHint.remove()
-              
+
             self.loaded = true
           error: (xhr, bleep, error) -> console.log('error: ' + error)
