@@ -1,15 +1,18 @@
 = content_for(:title, "Edit default quota for resource: #{t("resource_management.#{@resource.service}")} > #{t("resource_management.#{@resource.name}")}")
 .modal-body
   .row
+    - if @has_errors
+      %p.alert.alert-error= @resource.errors.full_messages.to_sentence
+
     .col-md-6
       = simple_form_for @resource, url: admin_update_default_quota_path(@resource.id), method: :put, remote: request.xhr?, html: { data: { modal: true } } do |f|
-        = f.error_notification
-        .form-input
-          = f.input :default_quota
-    
-          %div.buttons{class: modal? ? 'modal-footer' : ''}
-            %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
-            %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Save
+        - data_type = @resource.data_type
+        - previous_value = params[:resource] ? params[:resource][:default_quota] : nil
+        = f.input :default_quota, as: :string, input_html: { value: previous_value || @resource.data_type.format(@resource.default_quota || 0) }
+        
+        %div.buttons{class: modal? ? 'modal-footer' : ''}
+          %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+          %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Save
     .col-md-6
       .bs-callout.bs-callout-primary
         %p 

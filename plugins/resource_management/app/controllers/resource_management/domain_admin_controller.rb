@@ -23,6 +23,18 @@ module ResourceManagement
        @resource = ResourceManagement::Resource.find(params.require(:id))
     end
 
+    def update_default_quota
+      @resource = ResourceManagement::Resource.find(params.require(:id))
+      pp params
+      if @resource.update(params.require(:resource).permit(:default_quota))
+        render 'update_default_quota'
+      else
+        @has_errors = true
+        render action: :edit_default_quota
+      end
+
+    end
+
     def show_area
       @area = params.require(:area).to_sym
       @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
