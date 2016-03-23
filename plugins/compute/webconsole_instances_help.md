@@ -14,4 +14,3 @@
   * openstack server list
   * openstack server stop \<SERVER ID>
   * openstack server start \<SERVER ID>
-  
