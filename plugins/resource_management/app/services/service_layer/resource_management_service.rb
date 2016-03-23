@@ -126,10 +126,11 @@ module ServiceLayer
 
       # write values into database
       ResourceManagement::ResourceConfig.all.each do |resource|
-        # only update if the driver reported any values for this project
+        #only update if the driver reported any values for this project
         this_actual_quota = actual_quota[resource.service_name][resource.name]
         this_actual_usage = actual_usage[resource.service_name][resource.name]
         next if this_actual_quota.nil? or this_actual_usage.nil?
+        domain_resource =  ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, name:resource.name, service:resource.service_name ).first
 
         # create new Resource entry if necessary
         object = ResourceManagement::Resource.where(
@@ -145,19 +146,15 @@ module ServiceLayer
           approved_quota: 0,
         ) do |obj|
           # enforce default quotas for newly created projects, if not done by the responsible service itself
-          if this_actual_quota == -1 and not resource.default_quota.nil?
-            # TODO: HACK: default quotas are only enforced in monsoon2, and only for legacy
-            # projects (id starts with "p-"), not for legacy organizations (id starts with "o-"),
-            # also inside the unit test; the intention is to replace this with a domain-specific
-            # defualt quota
-            domain_name = enumerate_domains.fetch(domain_id, '')
-            apply_default_quota = (domain_name == 'monsoon2' && /^p-/.match(project_id)) || resource.service_name == :mock_service
-            if apply_default_quota
-              this_actual_quota = resource.default_quota
-              obj.current_quota = this_actual_quota
-              obj.approved_quota = this_actual_quota
-              apply_current_quota(obj)
-            end
+          # default quota is used only if it was setuped by the domain admin 
+          puts "#####"
+          puts  resource.service_name
+          puts this_actual_quota
+          if this_actual_quota == -1 and not domain_resource.default_quota.nil?
+            this_actual_quota = domain_resource.default_quota
+            obj.current_quota = this_actual_quota
+            obj.approved_quota = this_actual_quota
+            apply_current_quota(obj)
           end
         end
 
