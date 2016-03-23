@@ -147,9 +147,6 @@ module ServiceLayer
         ) do |obj|
           # enforce default quotas for newly created projects, if not done by the responsible service itself
           # default quota is used only if it was setuped by the domain admin 
-          puts "#####"
-          puts  resource.service_name
-          puts this_actual_quota
           if this_actual_quota == -1 and not domain_resource.default_quota.nil?
             this_actual_quota = domain_resource.default_quota
             obj.current_quota = this_actual_quota
