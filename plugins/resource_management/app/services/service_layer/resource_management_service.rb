@@ -130,7 +130,7 @@ module ServiceLayer
         this_actual_quota = actual_quota[resource.service_name][resource.name]
         this_actual_usage = actual_usage[resource.service_name][resource.name]
         next if this_actual_quota.nil? or this_actual_usage.nil?
-        domain_resource =  ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, name:resource.name, service:resource.service_name ).first
+        domain_resource =  ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, name:resource.name, service:resource.service_name).first
 
         # create new Resource entry if necessary
         object = ResourceManagement::Resource.where(
@@ -147,7 +147,7 @@ module ServiceLayer
         ) do |obj|
           # enforce default quotas for newly created projects, if not done by the responsible service itself
           # default quota is used only if it was setuped by the domain admin 
-          if this_actual_quota == -1 and not domain_resource.default_quota.nil?
+          if this_actual_quota == -1 and not domain_resource.try(:default_quota).nil?
             this_actual_quota = domain_resource.default_quota
             obj.current_quota = this_actual_quota
             obj.approved_quota = this_actual_quota
