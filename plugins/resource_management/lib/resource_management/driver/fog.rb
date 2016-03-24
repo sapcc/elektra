@@ -165,7 +165,7 @@ module ResourceManagement
             # 404 not found is returned if a project exist but no account was created in swift
             #     that usualy happens if account autocreate is disabled in swift and the user did not create a account 
             #     in the object storage plugin of elektra (or somerwhere else with the swift client ;-))
-            return {:headers => {}, :body => "" }
+            return {}
           end
         end
       end
