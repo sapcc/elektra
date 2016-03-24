@@ -28,21 +28,31 @@ class @MoModal
     #Load modal dialog from server
     InfoDialog.showLoading()
     
-    $.get location, {modal:true}, (data, status, xhr)->
-      #$button.removeClass('loading')
-      InfoDialog.hideLoading()
+    $.get(location, {modal:true})
+      .error ( jqXHR, textStatus, errorThrown) -> 
+        # console.log 'Loading error'
+        InfoDialog.hideLoading()
+        # restore url -> remove ?overflow=...
+        window.restoreOriginStateUrl()
+        # show error dialog
+        InfoDialog.showError(errorThrown)
+        
+      .done (data, status, xhr)->
+        # console.log 'done'
+        #$button.removeClass('loading')
+        InfoDialog.hideLoading()
       
-      url = xhr.getResponseHeader('Location')
+        url = xhr.getResponseHeader('Location')
       
-      # got a redirect response
-      if url
-        window.location = url
-      else  
-        if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
-          # open modal with content from ajax response
-          $(modal_holder_selector).html(data).find(modal_selector).modal()
-          # for the case the response contains a form intialize it
-          triggerUpdateEvent()
+        # got a redirect response
+        if url
+          window.location = url
+        else  
+          if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
+            # open modal with content from ajax response
+            $(modal_holder_selector).html(data).find(modal_selector).modal()
+            # for the case the response contains a form intialize it
+            triggerUpdateEvent()
         
     return false
   
