@@ -10,7 +10,7 @@ module Automation
         agent = Agent.new
         agent.id = _agent.agent_id
         agent.name = Agent.agent_name(_agent)
-        agent.facts = Automation::Facts.new(_agent.facts)
+        agent.facts = ::Automation::Facts.new(_agent.facts)
         agentsMap << agent
       end
       {elements: agentsMap, total_elements: _agents.pagination.total_elements}

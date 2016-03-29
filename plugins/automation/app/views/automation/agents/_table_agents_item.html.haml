@@ -3,8 +3,18 @@
     = link_to(instance.name, plugin('automation').agent_path(id: instance.id, name: instance.name), data: {modal: true})
   %td= "#{instance.facts.platform_family} #{instance.facts.platform_version}"
   %td= instance.facts.ipaddress
-  %td{class: "snug #{'automation_status_alarm' if instance.online == false}"}
+  %td{class: "snug #{'automation_status_alarm' if instance.facts.online == false}"}
     = instance.facts.online_to_string
   %td
     = render partial: "table_agents_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
   %td
+    %i.loading-spinner-section.hide{data: {agent_id: instance.id}}
+    .btn-group{data: {agent_id: instance.id}}
+      %button.btn.btn-default.dropdown-toggle{type: "button", data: {toggle: "dropdown"}, "aria-haspopup" => "true", "aria-expanded" => "false"}
+        %i.fa.fa-play
+      %ul.dropdown-menu
+        %li.dropdown-header
+          Run Automation
+        - @automations.each do |automation|
+          %li
+            = link_to(automation.name, "#", data: {toggle: "run_automation_link", agent_id: instance.id, link: plugin('automation').run_automation_agents_path(agent_id: instance.id, automation_id: automation.id, automation_name: automation.name) })

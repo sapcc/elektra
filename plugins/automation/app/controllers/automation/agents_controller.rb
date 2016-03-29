@@ -4,6 +4,7 @@ module Automation
 
   class AgentsController < Automation::ApplicationController
     before_action :agents_with_jobs, only: [:index, :index_update]
+    before_action :automations, only: [:index, :index_update]
 
     def index
     end
@@ -51,8 +52,26 @@ module Automation
       return @error = {key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}
     end
 
+    def run_automation
+      agent_id = params[:agent_id]
+      automation_id = params[:automation_id]
+      automation_name = params[:automation_name]
+      run = services.automation.automation_run_service.new(automation_id: automation_id, selector: "@identity=#{agent_id}")
+      if run.save
+        flash.now[:success] = "Automation #{automation_name} was successfully executed"
+      else
+        flash.now[:error] = "Error executing automation #{automation_name}. #{run.errors}"
+      end
+    rescue => exception
+      logger.error "Automation-plugin: run_automation: #{exception.message}"
+      flash.now[:error] = "Error executing automation '#{automation_name}'. Please try later"
+    end
 
     private
+
+    def automations
+      @automations = services.automation.automations
+    end
 
     def agents_with_jobs
       page = params[:page]||1
