@@ -4,7 +4,7 @@ module ResourceManagement
   class DomainAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
-    before_filter :load_domain_resource, only: [:new_request, :create_request]
+    before_filter :load_domain_resource, only: [:new_request, :create_request, :edit_default_quota]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
 
     authorization_required
@@ -20,7 +20,6 @@ module ResourceManagement
     end
 
     def edit_default_quota
-       @resource = ResourceManagement::Resource.find(params.require(:id))
     end
 
     def update_default_quota
