@@ -112,9 +112,25 @@
       overflow-x: hidden;
       width: 400px;
 
-      h1, h2, h3, h4 {
-        font-size: $font-size-h4;
+      h1 { font-size: $font-size-h3; }
+      h2 { font-size: $font-size-h4; }
+      h3, h4, h5 { font-size: $font-size-h5; font-weight: bold;}
+
+      ul {
+        @extend .content-list;
       }
+
+      .metadata-table {
+        margin-top: 10px;
+        tr:last-child {
+          td, th {
+            border-bottom: 1px solid $table-border-color;
+          }
+        }
+      }
+
+
+
     }
   }
 }
