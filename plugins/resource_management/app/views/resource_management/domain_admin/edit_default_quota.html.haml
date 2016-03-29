@@ -1,4 +1,4 @@
-= content_for(:title, "Edit default quota for resource: #{t("resource_management.#{@resource.service}")} > #{t("resource_management.#{@resource.name}")}")
+= content_for(:title, "Default quota for new projects in this domain: #{t("resource_management.#{@resource.service}")} > #{t("resource_management.#{@resource.name}")}")
 .modal-body
   .row
     .col-md-12
@@ -13,7 +13,7 @@
       .col-md-6
         .bs-callout.bs-callout-primary
           %p 
-            Default quota will be used to enforce quotas for newly created projects.
+            Will be used to enforce a default quota in backend (if there is nothing configured) for newly created projects.
 
       %div.buttons{class: modal? ? 'modal-footer' : ''}
         %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
