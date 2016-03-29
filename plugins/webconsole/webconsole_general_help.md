@@ -16,5 +16,3 @@
 </table>
 
 [See the documentation](http://#) for more web console info
-
-### Quick Help

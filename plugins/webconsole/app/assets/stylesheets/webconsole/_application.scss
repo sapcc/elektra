@@ -25,6 +25,8 @@
 // Web Console
 // ---------------------------------------------------------------------------------
 
+// Variables
+$help-content-width: 420px;
 
 .toolbar {
   @include pie-clearfix;
@@ -91,8 +93,10 @@
     background-color: $hover-light-blue;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-    width: 400px;
+    width: $help-content-width;
     height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 
 
     .toggle {
@@ -106,11 +110,9 @@
     }
 
     .webconsole-help-content{
-      padding: 15px;
+      padding: 15px 20px 15px 20px;
       color: #333 ;
-      overflow-y: auto;
-      overflow-x: hidden;
-      width: 400px;
+      width: $help-content-width;
 
       h1 { font-size: $font-size-h3; }
       h2 { font-size: $font-size-h4; }

@@ -1,11 +1,14 @@
-###Available Clients
+### Available Clients
   * openstack
-  
-###Commands:
-  * openstack server help (shows help for server)
-  * openstack help server stop (shows help for stop command)
-  
-#### Most Used   
-  * openstack server list
-  * openstack server stop \<SERVER ID>
-  * openstack server start \<SERVER ID>
+
+### Quick Help
+`openstack server help`
+
+`openstack help server COMMAND`
+
+### Most Used Commands
+`openstack server list`
+
+`openstack server stop <SERVER_ID>`
+
+`openstack server start <SERVER_ID>`
