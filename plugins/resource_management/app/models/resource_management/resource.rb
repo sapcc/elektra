@@ -17,6 +17,7 @@ module ResourceManagement
     end
 
     def default_quota=(new_value)
+      new_value = nil if new_value == ""
       if new_value.is_a?(String)
         begin
           new_value = data_type.parse(new_value)

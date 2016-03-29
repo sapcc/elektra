@@ -20,18 +20,21 @@ module ResourceManagement
     end
 
     def edit_default_quota
+      @default_quota = nil;
+      if @resource.default_quota
+        previous_value = params[:resource] ? params[:resource][:default_quota] : nil
+        @default_quota = previous_value || @resource.data_type.format(@resource.default_quota)
+      end
     end
 
     def update_default_quota
       @resource = ResourceManagement::Resource.find(params.require(:id))
-      pp params
       if @resource.update(params.require(:resource).permit(:default_quota))
         render 'update_default_quota'
       else
         @has_errors = true
         render action: :edit_default_quota
       end
-
     end
 
     def show_area
