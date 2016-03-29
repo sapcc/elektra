@@ -1,11 +1,7 @@
 =content_for :main_toolbar do
   Object Storage
 
-.bs-callout.bs-callout-warning
-  It is not possible to create a new object storage account for project 
-  %strong=@scoped_project_name
-  \.
-  %p
-    Auto create and account management is disabled on the backend. If that is an error case please contact the object storage operator.
+.bs-callout.bs-callout-danger
+  Object storage cannot be enabled for this project.
 
 = link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'
