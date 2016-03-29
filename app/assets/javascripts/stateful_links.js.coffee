@@ -105,9 +105,13 @@ restoreOriginStateUrl= () ->
     overlayPos = current_url.indexOf('?overlay')
     overlayPos = current_url.indexOf('&overlay') if overlayPos==-1
     current_url = current_url.substr(0,overlayPos) if overlayPos>-1   
+    
     return current_url   
 
 click_drivern=false
+
+@restoreOriginStateUrl = () -> History.pushState(null, null, restoreOriginStateUrl())
+
 # Bind to StateChange Event
 History.Adapter.bind window,'statechange', -> # Note: We are using statechange instead of popstate
   State = History.getState() # Note: We are using History.getState() instead of event.state
@@ -131,7 +135,9 @@ $(document).ready ->
 
   # reset history (url in address bar) after an overlay has been closed.
   $('#modal-holder').on 'hidden.bs.modal', '.modal', () ->
+    console.log 'Modal window closed'
     History.pushState(null, null, restoreOriginStateUrl())
+
 
 
 
