@@ -20,10 +20,8 @@ module ResourceManagement
       if new_value.is_a?(String)
         begin
           new_value = data_type.parse(new_value)
-          @value_validation_error = nil
         rescue ArgumentError => e
-          # errors.add() only works during validation, so store this error for later
-          @value_validation_error = e.message
+          add_validation_error(:default_quota,'is invalid: ' + e.message)
           return
         end
       end
