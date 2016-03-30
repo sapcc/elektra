@@ -20,6 +20,14 @@ module ServiceLayer
       driver.list_capabilities
     end
 
+    def account_exists?
+      driver.account_exists?
+    end
+
+    def create_account
+      driver.create_account
+    end
+
     ##### containers
 
     def find_container(name)

@@ -286,6 +286,35 @@ module ObjectStorage
         end
       end
 
+      def account_exists?
+        # 200 success list containers
+        # 202 success but no content found
+        # 404 account is not existing
+        handle_response do
+          begin
+            @fog.request({
+              :expects  => [200,204],
+              :method   => 'HEAD',
+              :headers  => { 'Content-Type' => 'text/plain' },
+            }, false)
+          rescue ::Fog::Storage::OpenStack::NotFound 
+            return false
+          end
+          true
+        end
+      end
+
+      def create_account
+        # Note: account creation is only possible if the swift proxy is configured with allow_account_management: True
+        handle_response do
+          @fog.request({
+            :expects  => [201],
+            :method   => 'PUT',
+            :headers  => { 'Content-Type' => 'text/plain' },
+          }, false)
+        end
+      end
+
       private
 
       # Rename keys in `data` using the `attribute_map` and delete unknown keys.

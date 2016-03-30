@@ -4,8 +4,8 @@ module ObjectStorage
     before_filter :load_container, except: [ :index, :new, :create ]
 
     def index
-      @containers   = services.object_storage.containers
       @capabilities = services.object_storage.capabilities
+      @containers   = services.object_storage.containers
     end
 
     def show
