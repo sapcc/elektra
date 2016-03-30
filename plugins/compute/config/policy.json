@@ -1,7 +1,7 @@
 {
   "compute:instance_get": "role:admin or role:Member or role:member",
   "compute:instance_list": "role:admin or role:Member or role:member",
-  "compute:instance_create": "role:member and project_id:%(target.project_id)s",
-  "compute:instance_update": "role:admin",
-  "compute:instance_delete": "role:admin"
+  "compute:instance_create": "role:member and (not rule:monsoon2_domain or rule:project_parent)",
+  "compute:instance_update": "role:member and (not rule:monsoon2_domain or rule:project_parent)",
+  "compute:instance_delete": "role:member and (not rule:monsoon2_domain or rule:project_parent)"
 }
