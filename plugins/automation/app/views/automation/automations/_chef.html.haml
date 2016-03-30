@@ -1,14 +1,12 @@
 #chef-automation{class: ('hide' if hide_chef_automation(@automation.type))}
-  .row
-    .col-sm-10.col-sm-offset-2
-      %h3 Chef
+  %h3 Chef
 
-  = f.input :run_list, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag'} }, placeholder: 'Enter runlist',
+  = f.input :run_list, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag'} }, placeholder: 'Enter runlist',
   required: true,
   icon_hint: 'Runlist is an array of strings. See hint for more information.',
   help_hint: "Array of strings are separated by ','. Start a new entry by hitting the Enter key or ','. You can also copy and paste a string containing strings following this pattern: 'value1,value2...'"
 
-  = f.input :chef_attributes, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Attributes', placeholder: 'Enter attributes',
+  = f.input :chef_attributes, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Attributes', placeholder: 'Enter attributes',
   icon_hint: 'Runlist is JSON based. See hint for more information.',
   help_hint: "JSON Schema defines seven primitive types for JSON values: array, boolean, integer, number, null, object and string. Example: {'title':'root'}"
 
