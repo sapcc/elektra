@@ -5,4 +5,4 @@
   Object storage is not enabled for this project, yet.
 
 = link_to 'Cancel', plugin('identity').project_path, class: 'btn btn-default'
-= link_to 'Enable', plugin('object_storage').create_account_path, class: 'btn btn-primary'
+= link_to 'Enable', plugin('object_storage').create_account_path, method: :post ,class: 'btn btn-primary'
