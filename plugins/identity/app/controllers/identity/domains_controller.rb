@@ -1,9 +1,10 @@
 module Identity
   class DomainsController < ::DashboardController
     rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :not_member_error
-    authorization_required
+    authorization_required additional_policy_params: {domain_id: proc {@scoped_domain_id}}
 
     def show
+      @user_domain_projects_tree ||= services.identity.auth_projects_tree(projects: @user_domain_projects) rescue {}
       @root_projects = @user_domain_projects.reject{ |project| !project.parent.blank? }
     end
 
@@ -12,9 +13,9 @@ module Identity
     end
 
     def not_member_error
-      # just catch the error and continue rendering
-      @root_projects = services.identity.auth_projects.reject{ |project| !project.parent.blank? }
-      render action: :show
+      @error_title = "No domain member"
+      @error_message = "You are not a member of the domain #{@scoped_domain_name}."
+      render template: '/application/error'
     end
   end
 end

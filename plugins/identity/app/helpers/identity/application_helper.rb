@@ -3,6 +3,7 @@ module ApplicationHelper
 
     # transfer rubytree into json array for tree plugin
     def projects_tree
+      return {} if @user_domain_projects_tree.blank?
       tree = doit @user_domain_projects_tree
       return tree
       # example json strcture
@@ -12,6 +13,7 @@ module ApplicationHelper
 
     # recursive traversal of tree from root node
     def doit node
+      return unless node
       if node.name != 'domain'
         topnode = {text: node.content.name,
                    href: plugin('identity').project_path(project_id:node.content.friendly_id),

@@ -2,8 +2,13 @@
   .container
     .page-header
       %h1
-        Error occured
+        = @error_title || "Error occured"
 
     %ul
-      - @errors.each do |name,message|
-        %li= "#{name}: #{message}"
+      - if @errors
+        - @errors.each do |name,message|
+          %li= "#{name}: #{message}"
+      - elsif @error_message
+        = @error_message
+      - else
+        Unknown error.      
