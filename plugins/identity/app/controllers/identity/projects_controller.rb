@@ -1,5 +1,5 @@
 module Identity
-  class ProjectsController < DashboardController
+  class ProjectsController < ::DashboardController
 
     before_filter :get_project_id,  except: [:index, :create, :new]
     before_filter do

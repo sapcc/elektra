@@ -46,6 +46,8 @@ class @MoModal
       
         # got a redirect response
         if url
+          # close modal window
+          $('#modal-holder').find('.modal').modal('hide')
           window.location = url
         else  
           if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
@@ -67,6 +69,8 @@ class @MoModal
     response_type = (xhr.getResponseHeader("content-type") || "")
           
     if url # url is presented
+      # close modal window
+      $('#modal-holder').find('.modal').modal('hide')
       # Redirect to url
       window.location = url
     else if response_type.indexOf('javascript') > -1
