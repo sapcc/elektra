@@ -1,4 +1,8 @@
 {
+  "project_parent": "not %(target.project.parent_id)s==nil",
+  "monsoon2_domain": "%(target.scoped_domain_name)s=='monsoon2'",
+  
+  
   "admin_required": " role:admin or is_admin:1",
   
   "cloud_admin": "rule:admin_required and domain_name:'monsooncc'",

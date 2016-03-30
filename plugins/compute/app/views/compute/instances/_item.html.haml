@@ -15,7 +15,7 @@
   %td= instance.task_state.nil? ? instance.status.capitalize : instance.task_state
   
   %td.snug
-    - if current_user.is_allowed?("compute:instance_delete", {}) or current_user.is_allowed?("compute:instance_update", {})
+    - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("compute:instance_update", {})
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog
@@ -23,7 +23,7 @@
           
         - unless instance.os_ext_sts_task_state
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-            - if current_user.is_allowed?("compute:instance_update", {})
+            - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               - added = false
               - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state
                 %li= link_to 'Start', start_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
@@ -38,5 +38,5 @@
 
                 %li= link_to 'Suspend', plugin('compute').suspend_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to suspend this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true  
 
-            - if current_user.is_allowed?("compute:instance_delete", {})
+            - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               %li= link_to 'Terminate', plugin('compute').instance_path(id: instance.id), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: "Yes, terminate it", confirmed: :loading_status}, remote: true

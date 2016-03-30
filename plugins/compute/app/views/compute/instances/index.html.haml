@@ -1,7 +1,7 @@
 = render "intro"
 
 - if @scoped_project_id
-  - if current_user.is_allowed?("compute:instance_create", {target: { project_id: ( (@active_project.domain_id=='o-monsoon2' and @active_project.parent_id.nil?)? nil : @active_project.id) }})
+  - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
     .toolbar
       = link_to 'New Instance', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
