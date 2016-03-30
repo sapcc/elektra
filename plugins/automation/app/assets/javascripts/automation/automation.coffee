@@ -4,11 +4,6 @@
   $('textarea[data-toggle="tagEditor"][data-tageditor-type="tag"]').each ->
     $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false })
 
-@init_hint_popover= () ->
-  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
-    placement: 'top'
-    trigger: 'focus'
-
 @switch_automation_type=(event) ->
   value = event.target.value
   if value == 'chef'
@@ -41,7 +36,7 @@ $ ->
   $(document).on('modal:contentUpdated', init_tag_editor_inputs)
 
   # add handler to the show modal event
-  $(document).on('modal:contentUpdated', init_hint_popover)
+  # $(document).on('modal:contentUpdated', init_hint_popover)
 
   # add handler to the automation type select
   $(document).on 'change','select[data-toggle="automationSwitch"]', switch_automation_type
@@ -50,4 +45,4 @@ $ ->
 
   # init in case the content is not in modal
   init_tag_editor_inputs()
-  init_hint_popover()
+  # init_hint_popover()

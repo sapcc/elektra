@@ -8,26 +8,6 @@
   margin-bottom: 50px;
 }
 
-// Form
-
-.has-help-hint {
-
-  .input-wrapper {
-    position: relative;
-    padding-right: 36px;
-  }
-
-  .help-hint {
-    position: absolute;
-    font-size: $font-size-small;
-    color: $medium-blue;
-    bottom: 5px;
-    right: 0;
-  }
-
-}
-
-
 // Index
 
 .loading-spinner-section {
@@ -98,11 +78,4 @@ pre {
   padding: 20px 20px;
   border-top: 1px solid #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
-}
-
-.help-block {
-  font-size: 12px;
-  .fa {
-    margin-right: 5px;
-  }
 }

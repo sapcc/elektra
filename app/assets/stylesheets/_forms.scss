@@ -1,0 +1,23 @@
+.has-help-hint {
+
+  .input-wrapper {
+    position: relative;
+    padding-right: 36px;
+  }
+
+  .help-hint {
+    position: absolute;
+    font-size: $font-size-small;
+    color: $medium-blue;
+    bottom: 5px;
+    right: 0;
+  }
+
+}
+
+.help-block {
+  font-size: $font-size-small;
+  .fa {
+    margin-right: 5px;
+  }
+}

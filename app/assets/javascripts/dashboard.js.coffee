@@ -23,6 +23,12 @@ class @Dashboard
   @hideModal: () ->
     $('#modal-holder .modal').modal('hide')
 
+
+# define console if not exists (this is a case for IE)
+if (typeof(window.console) == "undefined" || typeof(window.console.log) == "undefined") 
+  window.console = { log: () -> {} }
+
+      
 # Initialize Dashboard App
 $ ->
   # -----------
@@ -43,7 +49,11 @@ $ ->
   $('tr [data-confirmed=loading_status]').attr('data-confirmed',"$(this).closest('tr').addClass('updating')")
 
   $("#accept_tos").click -> $("#register-button").prop('disabled', not $(this).prop('checked') )
-
+  
+  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
+    placement: 'top'
+    trigger: 'focus'
+    
 $(document).on 'modal:contentUpdated', (e) -> 
   try
     # define target selector dependent on id or class
@@ -57,6 +67,11 @@ $(document).on 'modal:contentUpdated', (e) ->
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
   catch error 
+  
+  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
+    placement: 'top'
+    trigger: 'focus'
+  
   
 
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
