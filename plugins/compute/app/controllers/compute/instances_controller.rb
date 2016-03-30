@@ -54,7 +54,6 @@ module Compute
         flash[:notice] = "Instance successfully created."
         redirect_to instances_path
       else
-        puts @instance.pretty_attributes
         @flavors = services.compute.flavors
         @images = services.image.images
         @availability_zones = services.compute.availability_zones

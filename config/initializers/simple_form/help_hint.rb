@@ -7,7 +7,7 @@ module SimpleForm
         @help_hint ||= begin
           if options[:help_hint].present?
             '<div class="help-hint">' \
-              '<a data-container="#popover_container" data-content="' + options[:help_hint].to_s + '" data-placement="top" data-popover-type="help-hint" data-toggle="popover" href="#" role="button" >' \
+              '<a data-content="' + options[:help_hint].to_s + '" data-placement="top" data-popover-type="help-hint" data-toggle="popover" href="#" role="button" >' \
                 '<span class="fa-stack">' \
                   '<i class="fa fa-square fa-stack-2x"></i>' \
                   '<i class="fa fa-info fa-inverse fa-stack-1x"></i>' \
