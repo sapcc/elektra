@@ -8,12 +8,25 @@
   margin-bottom: 50px;
 }
 
-.help-hint {
-  font-size: 8px;
-  color: $medium-blue;
-  padding-left: 0px;
-  padding-top: 7px;
+// Form
+
+.has-help-hint {
+
+  .input-wrapper {
+    position: relative;
+    padding-right: 36px;
+  }
+
+  .help-hint {
+    position: absolute;
+    font-size: $font-size-small;
+    color: $medium-blue;
+    bottom: 5px;
+    right: 0;
+  }
+
 }
+
 
 // Index
 
