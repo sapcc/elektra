@@ -1,7 +1,15 @@
-%div#properties
-  - properties.each do |key, value|
-    - if value.present?
-      .input-group
-        = text_field_tag 'properties[keys][]', key, class: 'string optional form-control'
-        .input-group-addon =
-        = text_field_tag 'properties[values][]', value, readonly: true, placeholder: 'N/A', class: 'string optional form-control'
+-# %div#properties
+-#   - properties.each do |key, value|
+-#     - if value.present?
+-#       .input-group
+-#         = text_field_tag 'properties[keys][]', key, class: 'string optional form-control'
+-#         .input-group-addon =
+-#         = text_field_tag 'properties[values][]', value, readonly: true, placeholder: 'N/A', class: 'string optional form-control'
+
+%table.table.table-striped
+  %tbody
+    - properties.each do |key, value|
+      - if value.present?
+        %tr
+          %th= key
+          %td= value
