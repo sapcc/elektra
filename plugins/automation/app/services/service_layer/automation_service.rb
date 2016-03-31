@@ -52,9 +52,9 @@ module ServiceLayer
     # Jobs
     #
 
-    def jobs(agent_id = "", page=0, per_page=100)
+    def jobs(agent_id = "", page=0, per_page=0)
       init_client
-      @client.list_jobs!(token, agent_id, page=0, per_page=100)
+      @client.list_jobs!(token, agent_id, page, per_page)
     end
 
     def job(job_id)
@@ -84,13 +84,19 @@ module ServiceLayer
     end
 
     def automations
-      service = automation_service
-      service.find(:all)
+      automation_service.find(:all)
     end
 
     def automation(automation_id)
-      service = automation_service
-      service.find(automation_id)
+        automation_service.find(automation_id)
+    end
+
+    def automation_runs
+      automation_run_service.find(:all)
+    end
+
+    def automation_run(run_id)
+      automation_run_service.find()
     end
 
     private

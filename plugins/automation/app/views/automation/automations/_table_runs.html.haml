@@ -1,0 +1,16 @@
+.automations_table
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th Duration
+        %th Owner
+        %th Status
+        %th Jobs
+    %tbody
+      - if runs.empty?
+        %tr
+          %td{colspa: 4} No automation runs available
+      - else
+        -runs.each do | run |
+          = render partial: 'table_runs_item', locals: {run: run}

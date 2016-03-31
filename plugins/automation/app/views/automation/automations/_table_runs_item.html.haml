@@ -1,0 +1,11 @@
+%tr
+  %td
+    -#= link_to(automation.form_attribute('name'), plugin('automation').automation_path(id: automation.id), data: {modal: true})
+    = run.automation_name
+  %td
+    = run.duration
+  %td
+    = run.owner
+  %td
+    - run_state(run.state, run.state_to_string)
+  %td

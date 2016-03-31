@@ -1,6 +1,6 @@
 module Automation
 
-  class JobsController < Automation::ApplicationController
+  class JobsController < ::Automation::ApplicationController
     LINES_TRUNCATION = 25
 
     def index

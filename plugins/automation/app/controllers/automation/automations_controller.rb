@@ -1,9 +1,10 @@
 module Automation
 
-  class AutomationsController < Automation::ApplicationController
+  class AutomationsController < ::Automation::ApplicationController
 
     def index
       @automations = services.automation.automations
+      @runs = services.automation.automation_runs
     end
 
     def new
