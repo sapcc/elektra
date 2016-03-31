@@ -117,7 +117,12 @@ module ResourceManagement
 
       def query_project_quota_object_storage(domain_id, project_id)
         metadata = get_swift_account_metadata(domain_id, project_id)
-        return { capacity: metadata.fetch('X-Account-Meta-Quota-Bytes', -1).to_i }
+        if metadata.empty?
+          # this is the case if account is not accesible or not created
+          return { capacity: nil }
+        else
+          return { capacity: metadata.fetch('X-Account-Meta-Quota-Bytes', -1).to_i }
+        end
       end
 
       def query_project_usage_object_storage(domain_id, project_id)
