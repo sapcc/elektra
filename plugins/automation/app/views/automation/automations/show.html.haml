@@ -6,9 +6,19 @@
   .flashes_area
     = render "automation/shared/flashes.html"
 
+  .form-horizontal
+    .form-group
+      %label.col-sm-2.control-label
+        Name
+      .col-sm-10
+        .form-control-static
+          = @automation.name
+
   = simple_form_for @automation, url: '#', method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form_automation do |f|
 
-    = f.input :name, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Name', input_html: { autofocus: 'autofocus' }
+    = f.input :name, as: :static, custom_wrapper_html: {class: 'col-sm-5'}, label: 'Name'
+
+    = f.input :name, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Name'
 
     = f.input :repository, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Repository', input_html: {}
 

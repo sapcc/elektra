@@ -3,7 +3,17 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"automation-pane"}
 
+    %h3
+      Available Automations
+
     .toolbar
       = link_to "New Automation", plugin('automation').new_automation_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
     = render partial: 'table_automations', locals: {automations: @automations.elements}
+
+
+    %section
+      %h3
+        Automation History
+
+    = render partial: 'table_runs', locals: {runs: @runs.elements}

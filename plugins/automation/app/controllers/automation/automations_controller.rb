@@ -4,6 +4,7 @@ module Automation
 
     def index
       @automations = services.automation.automations
+      @runs = services.automation.automation_runs
     end
 
     def new
