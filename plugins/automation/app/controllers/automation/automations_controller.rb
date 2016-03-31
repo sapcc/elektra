@@ -1,6 +1,6 @@
 module Automation
 
-  class AutomationsController < Automation::ApplicationController
+  class AutomationsController < ::Automation::ApplicationController
 
     def index
       @automations = services.automation.automations

@@ -2,7 +2,7 @@ require 'ostruct'
 
 module Automation
 
-  class AgentsController < Automation::ApplicationController
+  class AgentsController < ::Automation::ApplicationController
     before_action :agents_with_jobs, only: [:index, :index_update]
     before_action :automations, only: [:index, :index_update]
 
