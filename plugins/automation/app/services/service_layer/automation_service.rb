@@ -52,9 +52,9 @@ module ServiceLayer
     # Jobs
     #
 
-    def jobs(agent_id = "", page=0, per_page=100)
+    def jobs(agent_id = "", page=0, per_page=0)
       init_client
-      @client.list_jobs!(token, agent_id, page=0, per_page=100)
+      @client.list_jobs!(token, agent_id, page, per_page)
     end
 
     def job(job_id)
