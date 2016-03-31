@@ -17,7 +17,7 @@ class IndexAgentsService
     @automation_service = _automation_service
   end
 
-  def list_agents(page, per_page)
+  def list_agents_with_jobs(page, per_page)
     agents = @automation_service.agents("", ['online', 'platform_family', 'platform_version', 'hostname', 'os', 'ipaddress'], page, per_page)
     jobs = {}
     agents[:elements].each do |a|

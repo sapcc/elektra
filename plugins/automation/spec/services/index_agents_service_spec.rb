@@ -28,7 +28,7 @@ RSpec.describe IndexAgentsService do
       allow(automation_service).to receive(:jobs).with('agent1', 1, 5) { agent1_jobs }
       allow(automation_service).to receive(:jobs).with('agent2', 1, 5) { agent2_jobs }
 
-      expect(IndexAgentsService.new(automation_service).list_agents(1,5)).to match( {:elements=>[agent1, agent2], :jobs=>{:agent1=>agent1_jobs, :agent2=>agent2_jobs}} )
+      expect(IndexAgentsService.new(automation_service).list_agents_with_jobs(1,5)).to match( {:elements=>[agent1, agent2], :jobs=>{:agent1=>agent1_jobs, :agent2=>agent2_jobs}} )
     end
 
   end

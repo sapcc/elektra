@@ -76,7 +76,7 @@ module Automation
     def agents_with_jobs
       page = params[:page]||1
       per_page = 5
-      result = IndexAgentsService.new(services.automation).list_agents(page, per_page)
+      result = IndexAgentsService.new(services.automation).list_agents_with_jobs(page, per_page)
 
       @agents = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).
         page(page).
