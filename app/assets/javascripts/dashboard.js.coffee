@@ -25,10 +25,10 @@ class @Dashboard
 
 
 # define console if not exists (this is a case for IE)
-if (typeof(window.console) == "undefined" || typeof(window.console.log) == "undefined") 
+if (typeof(window.console) == "undefined" || typeof(window.console.log) == "undefined")
   window.console = { log: () -> {} }
 
-      
+
 # Initialize Dashboard App
 $ ->
   # -----------
@@ -49,12 +49,12 @@ $ ->
   $('tr [data-confirmed=loading_status]').attr('data-confirmed',"$(this).closest('tr').addClass('updating')")
 
   $("#accept_tos").click -> $("#register-button").prop('disabled', not $(this).prop('checked') )
-  
+
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
     trigger: 'focus'
-    
-$(document).on 'modal:contentUpdated', (e) -> 
+
+$(document).on 'modal:contentUpdated', (e) ->
   try
     # define target selector dependent on id or class
     selector = "##{e.target.id}" if e.target.id
@@ -63,16 +63,21 @@ $(document).on 'modal:contentUpdated', (e) ->
     $form = $(selector).find('form')
     # find triger elements
     $form.find("select[data-trigger=change]").change Dashboard.showFormDetails
-    
+
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
-  catch error 
-  
+  catch error
+
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
     trigger: 'focus'
-  
-  
+
+
+
+  # -------------
+  # init tooltips
+  $('[data-toggle="tooltip"]').tooltip()
+
 
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
 # # React to turbolinks page load events to indicate to the user that something is happening
