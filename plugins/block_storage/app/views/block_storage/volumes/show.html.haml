@@ -1,0 +1,52 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} 
+    %li{role: "presentation"}= link_to 'Attachments', '#attachments', aria: {controls:"attachments"}, role: "tab", data: {toggle:"tab"}
+
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"information"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name
+            %td= @volume.name
+          %tr
+            %th Description
+            %td= @volume.description
+          %tr
+            %th ID
+            %td= @volume.id
+          %tr
+            %th Size (GB)
+            %td= @volume.size
+          %tr
+            %th State
+            %td= @volume.status
+          %tr
+            %th Type
+            %td= @volume.volume_type
+
+    .tab-pane{role:"tabpanel", id:"attachments"}
+      %table.table.datatable
+        %thead
+          %tr
+            %th Device Name
+            %th Attached to Server
+            %th.snug
+
+        %tbody
+        - @volume.attachments.each do |att|
+          %tr
+            %td= att['device']
+            %td= att['server_id']
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('block_storage').volumes_url, class: 'btn btn-default'
+    

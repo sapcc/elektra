@@ -1,0 +1,23 @@
+= content_for :title do
+  Detach Volume from Server
+
+%div{class: modal? ? 'modal-body' : ''}
+  %table.table.datatable
+    %thead
+      %tr
+        %th Device Name
+        %th Attached to Server
+        %th.snug
+
+    %tbody
+    - @volume_server.volume.attachments.each do |att|
+      %tr
+        %td= att['device']
+        %td= att['server_id']
+
+%div.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+  - else
+    = link_to "Cancel", volumes_url(), class: 'btn btn-default'
+  -#%button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Detach

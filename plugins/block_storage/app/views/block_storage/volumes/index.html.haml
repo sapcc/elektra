@@ -1,0 +1,24 @@
+
+=render partial: 'tabs', locals: { tab: 'volumes' }
+
+- if @scoped_project_id
+  - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id} })
+    .toolbar
+      = link_to 'Create new', plugin('block_storage').new_volume_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+%table.table
+  %thead
+    %tr
+      %th Volume Name
+      %th Description
+      %th Size(GB)
+      %th State
+      %th.snug
+
+  %tbody
+    %tbody
+    - if @volumes.blank?
+      %tr
+        %td{colspa: 5} No volumes available
+    - else
+      - @volumes.each do | volume |
+        = render partial: 'item', locals: {volume: volume}

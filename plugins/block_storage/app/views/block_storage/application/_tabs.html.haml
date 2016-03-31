@@ -1,0 +1,14 @@
+%ul.nav.nav-tabs
+  - if tab == 'volumes'
+    %li.active{role: 'presentation'}
+      = link_to 'Volumes', '#'
+  - else
+    %li{role: 'presentation'}
+      = link_to 'Volumes', plugin('block_storage').send("volumes_path")
+
+  - if tab == 'snapshots'
+    %li.active{role: 'presentation'}
+      = link_to 'Snapshots', '#'
+  - else
+    %li{role: 'presentation'}
+      = link_to 'Snapshots', plugin('block_storage').send("snapshots_path")

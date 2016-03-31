@@ -1,0 +1,13 @@
+{
+  "block_storage:volume_get": "role:admin or role:Member or role:member",
+  "block_storage:volume_list": "role:admin or role:Member or role:member",
+  "block_storage:volume_create": "@ or role:admin or role:Member",
+  "block_storage:volume_update": "@ or role:admin",
+  "block_storage:volume_delete": "@ or role:admin",
+  "block_storage:volume_assign": "@ or role:admin",
+  "block_storage:snapshot_get": "role:admin or role:Member or role:member",
+  "block_storage:snapshot_list": "role:admin or role:Member or role:member",
+  "block_storage:snapshot_create": "@ or role:admin or role:Member",
+  "block_storage:snapshot_update": "@ or role:admin",
+  "block_storage:snapshot_delete": "@ or role:admin"
+}
