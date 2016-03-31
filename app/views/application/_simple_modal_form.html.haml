@@ -7,8 +7,8 @@
 
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - if modal?
-      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } } Cancel
+      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } }= cancel_text
     - else
-      = link_to 'Cancel', cancel_url, class: 'btn btn-default'
+      = link_to cancel_text, cancel_url, class: 'btn btn-default'
     - if submit_action
       %button.btn.btn-primary{ type: 'submit', data: { disable_with: 'Please wait...'} }= submit_action

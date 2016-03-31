@@ -28,6 +28,7 @@ module ModalHelper
       submit_action: submit_action,
       options:       options,
       cancel_url:    cancel_url,
+      cancel_text:   options.fetch(:cancel_text, 'Cancel')
     }, &block)
   end
 

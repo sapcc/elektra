@@ -32,6 +32,10 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+h5, h6 {
+  font-weight: bold;
+}
+
 .content {
 
   .nav li {
@@ -1004,6 +1008,16 @@ input[type='checkbox'], input[type='radio'] {
   display: none;
   &.visible {
     display: block;
+  }
+}
+
+.form-readonly {
+  .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    @include box-shadow(none);
+    background: #fff;
+    border: none;
+    padding: 0;
+    height: auto;
   }
 }
 
