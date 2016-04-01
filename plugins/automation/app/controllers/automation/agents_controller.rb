@@ -24,32 +24,37 @@ module Automation
     end
 
     def install
+      @compute_instances = services.compute.servers
     end
 
     def show_instructions
-      @instance_id = params[:instance_id]
+      @instance_id = instance_info[:id]
+      @instance_type = instance_info[:type]
       @instance_os = params[:instance_os]
       @os_types = Agent.os_types
 
-      result = InstallAgentService.new().process_request(@instance_id, @instance_os, services.compute, services.automation, @active_project, current_user.token)
+      result = InstallAgentService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation, @active_project, current_user.token)
       @instance = result[:instance]
       @log_info = result[:log_info]
       @script = result[:script]
+      @messages = result[:messages]
 
     rescue InstallAgentParamError => exception
-      return @error = {key: "warning", message: exception.message}
-    rescue InstallAgentAlreadyExists => exception
-      return @error = {key: "warning", message: exception.message}
+      @messages = exception.options[:messages]
+      return @errors = [{key: "warning", message: exception.message}]
     rescue InstallAgentInstanceOSNotFound => exception
-      @instance = exception.instance
+      @messages = exception.options[:messages]
+      @instance = exception.options[:instance]
       if params[:from] == 'select_os'
-        return @error = {key: "warning", message: exception.message}
+        return @errors = [{key: "warning", message: exception.message}]
       end
     rescue InstallAgentError => exception
-      return @error = {key: "warning", message: exception.message}
+      @messages = exception.options[:messages]
+      return @errors = [{key: "danger", message: exception.message}]
     rescue => exception
+      @messages = exception.options[:messages]
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
-      return @error = {key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}
+      return @errors = [{key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}]
     end
 
     def run_automation
@@ -68,6 +73,18 @@ module Automation
     end
 
     private
+
+    def instance_info
+      unless params[:instance_type].nil?
+        return {id: params[:instance_id], type: params[:instance_type]}
+      else
+        if params[:compute_instance_id] != 'external'
+          return {id: params[:compute_instance_id], type: 'compute'}
+        else
+          return {id: params[:external_instance_id], type: 'external'}
+        end
+      end
+    end
 
     def automations
       @automations = services.automation.automations

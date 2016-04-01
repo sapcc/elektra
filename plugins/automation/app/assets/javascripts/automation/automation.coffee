@@ -13,6 +13,13 @@
     $('#script-automation').removeClass('hide')
     $('#chef-automation').addClass('hide')
 
+@select_automation_instance=(event) ->
+  value = event.target.value
+  if value == 'external'
+    $('.js-external-instance').removeClass('hide')
+  else
+    $('.js-external-instance').addClass('hide')
+
 @run_automation_link=(event) ->
   agent_id = $(event.target).data('agent-id')
   spinner = $('i.loading-spinner-section[data-agent-id=' + agent_id + ']')
@@ -37,6 +44,8 @@ $ ->
 
   # add handler to the automation type select
   $(document).on 'change','select[data-toggle="automationSwitch"]', switch_automation_type
+
+  $(document).on 'change','select[data-toggle="selectAutomationInstance"]', select_automation_instance
 
   $(document).on 'click','a[data-toggle="run_automation_link"]', run_automation_link
 

@@ -1,12 +1,15 @@
 %p
   Follow these steps to install the automation agent on instance
-  %b= @instance.name
+  - unless @instance.nil?
+    %b= @instance.name
 
 %ol
   %li
-    Log in into the instance:
-    %code
-      = "#{@log_info}"
+    Log in into the instance
+    - unless @instance.nil?
+      = ":"
+      %code
+        = "#{@log_info}"
 
   %li
     Run the following script in an administrator console as super user:

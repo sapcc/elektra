@@ -1,1 +1,3 @@
-- flash_box(error[:key], error[:message])
+- unless flashes.nil?
+  - flashes.each do |flash|
+    - flash_box(flash[:key], flash[:message])
