@@ -15,4 +15,4 @@
   <tbody>
 </table>
 
-[See the documentation](http://#) for more web console info
+<a href="http://documentation.localhost:8080/docs/api/webcli.html" target="_blank">See the webconsole documentation</a>  for more info

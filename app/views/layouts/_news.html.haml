@@ -1,5 +1,24 @@
 .news
 
+  - date = Time.new(2016,4,1)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      #### WebConsole Help Text for Plugins
+      In your plugin's home folder (i.e. next to the Readme file) create a file
+      `webconsole_help.md`
+
+      If your plugin contains multiple "sub plugins" with different CLIs or commands  (e.g. the Block Storage plugin contains volumes and snapshots) you may also create a file with the following pattern:
+
+      `webconsole_<controller_name>_help.md`
+      e.g. `webconsole_snapshots_help.md`
+
+      The webconsole goes from highest specificity to lowest when figuring out which help to display. So if a file exists named after the current controller it will take that one, otherwise it will take `webconsole_help.md` from the plugin. If neither of those exist it displays a generic help we have created as a fallback.
+
+      And add your help text in the file. Follow the template established in the Compute plugin (which clients are available for this plugin, CLI help commands, often used commands).
+
+
   - date = Time.new(2016,1,27)
   .new{data:{date: date}}
     .author-title= "Esther Schmitz - #{date}"
