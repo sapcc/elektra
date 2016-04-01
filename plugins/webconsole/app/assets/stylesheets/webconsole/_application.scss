@@ -41,7 +41,7 @@ $help-content-width: 420px;
 
     &:hover, &:active, &.active {
       i {
-        color: lighten($medium-blue, 10%);
+        color: $help-info-blue;
       }
     }
   }
@@ -105,7 +105,7 @@ $help-content-width: 420px;
       left: 3px;
 
       &:hover {
-        color: lighten($medium-blue, 10%);
+        color: $help-info-blue;
       }
     }
 
