@@ -5,5 +5,5 @@
 `openstack server help`  
 Show help for server tools
 
-`openstack help server COMMAND`  
+`openstack help server <command>`
 Show help for a specific server command
