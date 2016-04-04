@@ -5,16 +5,14 @@
 `swift help`  
 Show help swift client
 
-`swift capabilities`
-List cluster capabilities (`swift info` is doing the same)
-
-`swift stat`
+`swift stat [CONTAINER] [OBJECT]`
 Displays information for the account, container, or object
 
-`swift list`
-List the container or objects for the account
+`swift list [CONTAINER]`
+List containers or objects
 
-### Most Used Commands
+`swift upload CONTAINER OBJECT`
+Upload object to container
 
-comming soon ;-)
-
+`swift download CONTAINER OBJECT`
+Download object from container
