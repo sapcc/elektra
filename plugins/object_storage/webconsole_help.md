@@ -5,14 +5,14 @@
 `swift help`  
 Show help swift client
 
-`swift stat [CONTAINER] [OBJECT]`
+`swift stat [CONTAINER] [OBJECT]`  
 Displays information for the account, container, or object
 
-`swift list [CONTAINER]`
+`swift list [CONTAINER]`  
 List containers or objects
 
-`swift upload CONTAINER OBJECT`
+`swift upload CONTAINER OBJECT`  
 Upload object to container
 
-`swift download CONTAINER OBJECT`
+`swift download CONTAINER OBJECT`  
 Download object from container
