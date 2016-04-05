@@ -58,6 +58,18 @@ GIT
       rails
       uglifier (>= 1.3.0)
 
+GIT
+  remote: git@localhost:***REMOVED***/fog-openstack-monitoring.git
+  revision: d04dde8aabe977c5be0b61e2fd7863cdba980bb0
+  branch: master
+  specs:
+    fog-openstack-monitoring (0.0.1)
+      fog
+      fog-core (>= 1.35)
+      fog-json (>= 1.0)
+      fog-xml (>= 0.1)
+      ipaddress (>= 0.8)
+
 PATH
   remote: plugins/authorization
   specs:
@@ -592,6 +604,7 @@ DEPENDENCIES
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog!
+  fog-openstack-monitoring!
   font-awesome-sass
   foreman
   friendly_id
@@ -631,3 +644,6 @@ DEPENDENCIES
   uglifier
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2
