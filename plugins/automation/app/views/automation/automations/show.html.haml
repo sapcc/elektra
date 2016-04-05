@@ -14,9 +14,7 @@
         .form-control-static
           = @automation.name
 
-  = simple_form_for @automation, url: '#', method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form_automation do |f|
-
-    = f.input :name, as: :static, custom_wrapper_html: {class: 'col-sm-5'}, label: 'Name'
+  = simple_form_for @automation, url: '#', method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
     = f.input :name, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Name'
 

@@ -4,7 +4,6 @@ Automation::Engine.routes.draw do
     get 'index_update', :on => :collection
     get 'install', :on => :collection
     post 'show_instructions', :on => :collection
-    get 'show_log', :on => :collection
     get 'run_automation', :on => :collection
 
     resources :jobs, only: [:index, :show] do
@@ -14,5 +13,9 @@ Automation::Engine.routes.draw do
   end
 
   resources :automations, only: [:index, :new, :create, :show]
+
+  resources :runs, only: [:show] do
+    get ':id/show_log/', to: 'runs#show_log', :on => :collection, as: 'show_payload'
+  end
 
 end

@@ -1,0 +1,71 @@
+= content_for :title do
+  Run details
+
+.modal-body{data: {update_path: plugin('automation').run_path(params.merge(partial:true, format: 'js')), update_interval: 20}}
+
+  %h3
+    Details
+
+  .job_details
+    .row
+      .col-md-2
+        %b
+          Run Id:
+      .col-md-4
+        = @run.id
+      .col-md-2
+        %b
+          Status:
+      .col-md-4
+        - run_state(@run.state, @run.state_to_string)
+
+    .row
+      .col-md-2
+        %b
+          Owner:
+      .col-md-4
+        = @run.owner
+      .col-md-2
+        %b
+          Duration:
+      .col-md-4
+        = @run.duration
+
+    .row
+      .col-md-2
+        %b
+          Created at:
+      .col-md-4
+        = " #{@run.created_at}".to_time.strftime('%a %b %d %H:%M:%S %Z %Y')
+      .col-md-2
+        %b
+          Updated at:
+      .col-md-4
+        = " #{@run.updated_at}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
+
+  %h3
+    Jobs
+
+
+  %h3
+    Log
+
+  %p
+    = "The generated log has #{@log_lines} lines of output. "
+    - if @log_truncated
+      = "The output is too long and has been truncated to the last lines. "
+    = link_to("View", plugin('automation').show_payload_runs_path(id: @run.id), target: "_blank")
+    full log.
+
+  %pre
+    %code
+      = preserve do
+        :escaped
+          #{@log_output}
+
+
+.modal-footer
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+  - else
+    = link_to "Close", plugin('automation').agents_url(), class: 'btn btn-default'

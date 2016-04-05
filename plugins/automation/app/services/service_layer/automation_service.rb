@@ -96,7 +96,7 @@ module ServiceLayer
     end
 
     def automation_run(run_id)
-      automation_run_service.find()
+      automation_run_service.find(run_id)
     end
 
     private

@@ -63,7 +63,7 @@ module Automation
       automation_name = params[:automation_name]
       run = services.automation.automation_run_service.new(automation_id: automation_id, selector: "@identity=#{agent_id}")
       if run.save
-        flash.now[:success] = "Automation #{automation_name} was successfully executed"
+        flash.now[:success] = "Automation #{automation_name} was successfully executed. Click following #{view_context.link_to('link', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe} to see the details."
       else
         flash.now[:error] = "Error executing automation #{automation_name}. #{run.errors}"
       end
