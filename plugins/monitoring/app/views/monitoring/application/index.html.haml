@@ -1,8 +1,10 @@
-%p This is Monitoring (Under Construction)
-
-%p= image_tag "tmp/under_construction_4.gif"
-
-%p
-  = link_to "https://localhost/", class: "btn btn-primary", target: "_blank" do
-    %i.fa.fa-external-link
-    Access Grafana
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Description
+  %tbody
+  - @alarm_definitions.each do |alarm_definition|
+    %tr
+      %td= alarm_definition.name
+      %td= alarm_definition.description

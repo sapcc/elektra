@@ -3,7 +3,7 @@ module ServiceLayer
   class MonitoringService < Core::ServiceLayer::Service
 
     def driver
-      @driver ||= Monitoring::Driver::MyDriver.new({
+      @driver ||= Monitoring::Driver::Fog.new({
         auth_url:   self.auth_url,
         region:     self.region,
         token:      self.token,
@@ -17,8 +17,8 @@ module ServiceLayer
     end
     
 
-    def test
-      driver.test
+    def alarm_definitions
+      driver.alarm_definitions
     end
   end
 end

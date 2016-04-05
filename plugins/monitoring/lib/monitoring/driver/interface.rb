@@ -1,11 +1,11 @@
 module Monitoring
   module Driver
-    # Neutron calls
     class Interface < Core::ServiceLayer::Driver::Base
-      ###################### NETWORKS #######################
-      def test(filter={})
+      
+      def alarm_definitions
         raise Core::ServiceLayer::Errors::NotImplemented
       end
+    
     end
   end
 end
