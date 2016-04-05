@@ -258,7 +258,7 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
-    domain_name (0.5.25)
+    domain_name (0.5.20160310)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.0.2)
     dotenv-rails (2.0.2)
@@ -503,7 +503,7 @@ GEM
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    ruby-arc-client (0.3.0)
+    ruby-arc-client (0.5.0)
       rest-client (~> 1.8)
     ruby_parser (3.7.2)
       sexp_processor (~> 4.1)
@@ -552,7 +552,7 @@ GEM
       json (>= 1.8.0)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.1)
+    unf_ext (0.0.7.2)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -619,7 +619,7 @@ DEPENDENCIES
   responders
   rspec
   rspec-rails
-  ruby-arc-client (~> 0.3.0)!
+  ruby-arc-client (~> 0.5.0)!
   rubytree
   sass-rails
   sass_inline_svg
@@ -631,3 +631,6 @@ DEPENDENCIES
   uglifier
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2
