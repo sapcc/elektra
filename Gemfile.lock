@@ -625,6 +625,3 @@ DEPENDENCIES
   uglifier
   web-console (~> 2.0)
   webconsole!
-
-BUNDLED WITH
-   1.11.2
