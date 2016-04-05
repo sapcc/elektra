@@ -18,9 +18,6 @@ module Automation
 
       if params[:partial]
         respond_to do |format|
-          format.html {
-            render partial: 'show.html',layout: false
-          }
           format.js {
             render partial: 'show.js'
           }

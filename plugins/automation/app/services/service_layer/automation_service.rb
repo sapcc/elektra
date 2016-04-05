@@ -72,13 +72,13 @@ module ServiceLayer
     #
 
     def automation_service
-      Automation::Automation.site = File.join(automation_service_endpoint, 'api/v1') # 'http://localhost:3001/api/v1' # 'https://localhost/api/v1'
+      Automation::Automation.site = File.join('http://localhost:3005', 'api/v1') # 'http://localhost:3001/api/v1' # 'https://localhost/api/v1'
       Automation::Automation.token = self.token
       Automation::Automation
     end
 
     def automation_run_service
-      Automation::Run.site = File.join(automation_service_endpoint, 'api/v1') # 'http://localhost:3001/api/v1' # 'https://localhost/api/v1'
+      Automation::Run.site = File.join('http://localhost:3005', 'api/v1') # 'http://localhost:3001/api/v1' # 'https://localhost/api/v1'
       Automation::Run.token = self.token
       Automation::Run
     end
