@@ -9,10 +9,10 @@ class @PollingService
     $element.data( 'polling_is_updating', true );
     url = $element.data('updatePath')
     return unless url
-         
+    dataType = if url.search(/^[^\?]+\.js/) >= 0 then 'script' else 'html'
     $.ajax
       url: url,
-      dataType: 'html',
+      dataType: dataType,
       data: {'polling_service': true},
       success: ( data, textStatus, jqXHR ) ->
         # try to get loacation from response header 
@@ -29,7 +29,8 @@ class @PollingService
         else
           # no redirect -> replace content with html from response
           #exists = $.contains(document.documentElement, $element)
-          $element.replaceWith(data)
+          if dataType == 'html'
+            $element.replaceWith(data)
       error: () ->
         $element.data( 'polling_is_updating', false );
       complete: () ->
