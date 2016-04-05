@@ -1,21 +1,23 @@
 .row
-  .col-sm-12
-    %p= @active_project.description
-
-.row
-  .col-sm-12  
-    %p 
-      - if current_user.is_allowed?('identity:project_update')
-        = link_to 'Edit Project', plugin('identity').edit_project_path, class: 'btn btn-outline btn-sm'
-      - if current_user.is_allowed?('identity:member_index')
-        = link_to 'Manage Project Members', plugin('identity').projects_members_path, class: 'btn btn-outline btn-sm'
-
-.row
   .col-md-8
     %h4 Available Services
     = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
 
   .col-md-4
+    %h4 
+      Project Info
+      - if current_user.is_allowed?('identity:project_update')
+        %small
+          = link_to plugin('identity').edit_project_path, data: {modal: true} do 
+            %i.fa.fa-pencil
+    %dl
+      %dt Name
+      %dd= @active_project.name
+      - unless @active_project.description.blank?
+        %dt Description
+        %dd= @active_project.description
+
+    
     %h4 Sub Projects
     - unless @active_project.subprojects_ids.blank?
       %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
@@ -23,22 +25,3 @@
       %p This project doesn't have any sub projects
 
     = link_to 'Request new sub project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm' if current_user.is_allowed?('identity:project_request')
-
-
--# - unless @active_project.parents_project_ids.blank?
--#   %h4 Parents
--#   %p= parents_tree(@active_project.parents_project_ids, @user_domain_projects)
--#
--#   %h4 Project tree
--#   %p= active_project_tree(@active_project,@user_domain_projects,class: 'content-list subprojects')
--#
--#   %h4 Breadcrumb
--#   %p
--#     - hierarchical_breadcrumb(@active_project,@user_domain_projects) do |project|
--#       \/
--#       = link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id))
--#
--#   %p
--#     - breadcrumb_projects = hierarchical_breadcrumb(@active_project,@user_domain_projects)
--#     - crumb = breadcrumb_projects.collect{|project| link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id)) }
--#     = raw crumb.join(' / ')
