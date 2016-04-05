@@ -1,11 +1,6 @@
-
 =render partial: 'tabs', locals: { tab: 'snapshots' }
 
-- if @scoped_project_id
-  - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id} })
-    .toolbar
-      = link_to 'Create new', plugin('block_storage').new_volume_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
-%table.table
+%table.table{:style => "margin-top: 50px"}
   %thead
     %tr
       %th Snapshot Name

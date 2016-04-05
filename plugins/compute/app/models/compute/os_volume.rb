@@ -6,7 +6,8 @@ module Compute
     
     def attachment_device(server_id)
       attachment = attachment_by_server_id(server_id)
-      attachment["device"] if attachment
+      return attachment["device"] if attachment
+      nil
     end
   end
 end

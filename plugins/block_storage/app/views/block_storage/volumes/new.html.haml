@@ -1,1 +1,28 @@
-= render 'form'
+= content_for :title do
+  Create Volume
+
+%div{class: modal? ? 'modal-body' : ''}
+
+  = simple_form_for @volume, url: plugin('block_storage').volumes_path, method: :post, remote: request.xhr?, html: {id: 'form_volume', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+    - unless @volume.errors["message"].blank?
+      %p.alert.alert-error= @volume.errors.full_messages.to_sentence
+
+    = f.input :name
+    = f.input :description
+    = f.input :size, { as: :integer, input_html: { min: '1' }, label: "Size in GB" }
+
+    = f.input :availability_zone, { label: "Availability zone",
+      input_html:         {},
+      as:                 :select,
+      collection:         @availability_zones}
+
+
+
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      - else
+        = link_to "Cancel", volumes_url(), class: 'btn btn-default'
+      = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

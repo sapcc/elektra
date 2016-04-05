@@ -18,6 +18,7 @@
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    = link_to "Detach", detach_volume_url(), class: 'btn btn-danger'
   - else
     = link_to "Cancel", volumes_url(), class: 'btn btn-default'
-  -#%button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Detach
+    = link_to "Detach", detach_volume_url(), class: 'btn btn-default'

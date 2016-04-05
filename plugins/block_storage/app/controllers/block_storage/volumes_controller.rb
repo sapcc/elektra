@@ -2,7 +2,7 @@ require_dependency "block_storage/application_controller"
 
 module BlockStorage
   class VolumesController < ApplicationController
-    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :assign, :attach]
+    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach]
 
     # GET /volumes
     def index
@@ -21,10 +21,6 @@ module BlockStorage
       @availability_zones = services.compute.availability_zones
     end
 
-    # GET /volumes/1/edit
-    def edit
-    end
-
     # POST /volumes
     def create
       @volume = services.block_storage.new_volume
@@ -34,9 +30,21 @@ module BlockStorage
         flash[:notice] = "Volume successfully created."
         redirect_to volumes_path
       else
-        puts @volume.pretty_attributes
         @availability_zones = services.compute.availability_zones
-        render action: :new
+        render :new
+      end
+    end
+
+    # GET /volumes/1/edit
+    def edit
+    end
+
+    # PATCH/PUT /volumes/1
+    def update
+      if @volume.update(volume_params)
+        redirect_to @volume, notice: 'Volume was successfully updated.'
+      else
+        render :edit
       end
     end
 
@@ -57,58 +65,48 @@ module BlockStorage
         flash[:notice] = "Snapshot successfully created."
         redirect_to snapshots_path
       else
-        puts @snapshot.pretty_attributes
         flash[:error] = "Snapshot creation failed!"
         redirect_to volumes_path
       end
     end
 
-    #
-    def assign
-      if @volume.attachments.blank?
-        attach()
-      else
-        detach()
-
-      end
+    def edit_attach
+      @volume_server = VolumeServer.new
+      @volume_server.volume = @volume
+      @volume_server.servers = services.compute.servers
     end
 
     def attach
       @volume_server = VolumeServer.new(params['volume_server'])
       @volume_server.volume = @volume
-      if params['volume_server'] && @volume_server.valid?
-        #todo attachment
+      if @volume_server.valid?
+        services.compute.attach_volume(@volume_server.volume.id, @volume_server.server, @volume_server.device)
         flash[:notice] = "Volume successfully attached"
         redirect_to volumes_path
       else
         @volume_server.servers = services.compute.servers
-        render :attach
+        render :edit_attach
       end
+    end
+
+    def edit_detach
+      @volume_server = VolumeServer.new
+      @volume_server.volume = @volume
+      @volume_server.server = @volume.attachments.first
     end
 
     def detach
-      @volume_server = VolumeServer.new(params['volume_server'])
+      @volume_server = VolumeServer.new
       @volume_server.volume = @volume
-      @instances = services.compute.find_server(@volume.attachments[0]['server_id'])
-      @volume_server.server = @instances[0]
-      if params['volume_server']
-        #todo detach
-        flash[:notice] = "Volume successfully attached"
-        redirect_to volumes_path
+      @volume_server.server = @volume.attachments.first
+      if services.compute.detach_volume(@volume_server.volume.id, @volume_server.server['server_id'])
+        flash[:notice] = "Volume successfully detached"
       else
-        render :detach
+        flash[:error] = "Error during Volume detach"
       end
+      redirect_to volumes_path
     end
 
-
-    # PATCH/PUT /volumes/1
-    def update
-      if @volume.update(volume_params)
-        redirect_to @volume, notice: 'Volume was successfully updated.'
-      else
-        render :edit
-      end
-    end
 
     # DELETE /volumes/1
     def destroy
@@ -117,14 +115,14 @@ module BlockStorage
     end
 
     private
-      # Use callbacks to share common setup or constraints between actions.
-      def set_volume
-        @volume = services.block_storage.get_volume(params[:id])
-      end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_volume
+      @volume = services.block_storage.get_volume(params[:id])
+    end
 
-      # Only allow a trusted parameter "white list" through.
-      def volume_params
-        params[:volume]
-      end
+    # Only allow a trusted parameter "white list" through.
+    def volume_params
+      params[:volume]
+    end
   end
 end

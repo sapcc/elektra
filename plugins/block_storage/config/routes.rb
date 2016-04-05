@@ -3,9 +3,10 @@ BlockStorage::Engine.routes.draw do
     member do
       get 'new_snapshot'
       post 'snapshot', as: 'snapshot'
-      get 'assign'
+      get 'edit_attach'
       post 'attach'
-      post 'detach'
+      get 'edit_detach'
+      get 'detach'
     end
   end
   resources :snapshots, except: [:new, :create] do

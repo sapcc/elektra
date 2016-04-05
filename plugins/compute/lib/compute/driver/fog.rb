@@ -70,8 +70,8 @@ module Compute
         handle_response{ @fog.attach_volume(volume_id, server_id, device)}
       end
     
-      def detach_volume(server_id, attachment_id)
-        handle_response{ @fog.detach_volume(server_id, attachment_id) }
+      def detach_volume(server_id, volume_id)
+        handle_response{ @fog.detach_volume(server_id, volume_id) }
       end
     
       def suspend_server(server_id)

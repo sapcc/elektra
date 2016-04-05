@@ -55,5 +55,13 @@ module ServiceLayer
       driver.map_to(Compute::SecurityGroup).security_groups
     end
 
+    def attach_volume(volume_id, server_id, device)
+      driver.attach_volume(volume_id, server_id, device)
+    end
+
+    def detach_volume(volume_id, server_id)
+      driver.detach_volume(server_id, volume_id)
+    end
+
   end
 end
