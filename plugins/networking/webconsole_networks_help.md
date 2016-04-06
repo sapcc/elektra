@@ -1,15 +1,15 @@
 ### Available Clients
-  * openstack
-  * neutron
+* openstack
+* neutron
 
 ### Quick Help
-`openstack help network`
+`openstack help network`  
 Get list of available network commands
 
-`openstack help network <command>`
+`openstack help network <command>`  
 Show help for a specific network command
 
 ### Most Used Commands
-`openstack network list`
+`openstack network list`  
 
-`openstack network show <network>`
+`openstack network show <network>`  
