@@ -2,6 +2,11 @@
   %td= alarm_definition.name
   %td= alarm_definition.severity
   %td= alarm_definition.description
+  %td
+    - if alarm_definition.notification_action?
+      = icon('check-square')
+    - else
+      %strong -
   %th.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }
