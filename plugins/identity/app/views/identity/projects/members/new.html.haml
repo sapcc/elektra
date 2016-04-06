@@ -1,10 +1,10 @@
 - if modal?
-  = content_for :title do 
-    New Project Member  
+  = content_for :title do
+    New Project Member
 - else
   = content_for :main_toolbar do
     New Project Member
-  
+
 = simple_form_for :member, url: plugin('identity').projects_members_path, method: :post, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - if @error
@@ -18,11 +18,11 @@
             = f.button :submit, 'Add', class: 'btn btn-default'
       .col-lg-6
         .bs-callout.bs-callout-primary
-          You can add users from the same domain as members of this project.      
-                    
+          You can add users from the same domain as members of this project.
+
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
     - else
-      = link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'  
+      = link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'
     / = f.submit 'Save', class: 'btn btn-primary', data: { disable_with: "Please wait..." }

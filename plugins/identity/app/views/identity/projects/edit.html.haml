@@ -5,26 +5,13 @@
   = content_for :main_toolbar do 
     Edit
 
-= simple_form_for @project, url: plugin('identity').update_project_path(id: @project.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @project, url: plugin('identity').update_project_path(id: @project.id), method: :put, remote: request.xhr?, html: {data: {modal: true},  class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - unless @project.errors["message"].blank?
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
     
-    %fieldset
-      = hidden_field_tag :inquiry_id, params[:inquiry_id]
-        
-      = f.input :name,
-        input_html:  { maxlength: 255 },
-        placeholder: "Enter name",
-        autofocus:   true,
-        label:       'Name'
-    
-      = f.input :description, as: :text
-      = f.input :enabled, as: :boolean
-    
+    = render partial: 'identity/projects/shared/form', locals: { form: f }
+   
   %div{class: modal? ? 'modal-footer' : ''}
-    - if modal?
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-    - else
-      = link_to 'Cancel', plugin('identity').project_path, class: 'btn btn-default'  
-    = f.submit 'Update project', class: 'btn btn-primary', data: { disable_with: "Please wait..." }    
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    = f.submit 'Update Project', class: 'btn btn-primary', data: { disable_with: "Please wait..." }

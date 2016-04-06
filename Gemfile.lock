@@ -59,11 +59,6 @@ GIT
       uglifier (>= 1.3.0)
 
 PATH
-  remote: plugins/authorization
-  specs:
-    authorization (0.0.1)
-
-PATH
   remote: plugins/automation
   specs:
     automation (0.0.1)
@@ -574,7 +569,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store
-  authorization!
   automation!
   better_errors
   block_storage!
@@ -631,6 +625,3 @@ DEPENDENCIES
   uglifier
   web-console (~> 2.0)
   webconsole!
-
-BUNDLED WITH
-   1.11.2
