@@ -1,6 +1,7 @@
 class @MoModal 
   modal_holder_selector = '#modal-holder'
   modal_selector = '.modal'
+  modal_is_loading = false
   
   loading = """
       <div class="modal " data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
@@ -18,7 +19,7 @@ class @MoModal
     $(document).on 'ajax:success', "#{modal_holder_selector} form", handleAjaxSuccess
 
   @close= () -> $('#modal-holder').find('.modal').modal('hide')
-      
+
   @load= (anker)->
     if jQuery.type(anker) == "string"
       location = anker
@@ -26,10 +27,17 @@ class @MoModal
       $button = $(anker)
       #$button.addClass('loading')
       location = $(anker).attr('href')
-    
+
+    # do nothing if modal is loading
+    return false if modal_is_loading
+
+    # close in case it was open
+    MoModal.close()
+
     #Load modal dialog from server
     InfoDialog.showLoading()
-    
+
+    modal_is_loading = true
     $.get(location, {modal:true})
       .error ( jqXHR, textStatus, errorThrown) -> 
         # console.log 'Loading error'
@@ -57,7 +65,8 @@ class @MoModal
             $(modal_holder_selector).html(data).find(modal_selector).modal()
             # for the case the response contains a form intialize it
             triggerUpdateEvent()
-        
+      .complete () ->
+        modal_is_loading = false
     return false
   
   triggerUpdateEvent= -> 
