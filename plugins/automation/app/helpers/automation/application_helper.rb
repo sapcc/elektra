@@ -7,6 +7,80 @@ module Automation
       end
     end
 
+    def date_humanize(date)
+      " #{date}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
+    end
+
+    def form_horizontal_static_input(label, value)
+      haml_tag :div, {class: "form-group"} do
+        haml_tag :label, {class: "col-sm-4 control-label"} do
+          haml_concat label
+        end
+        haml_tag :div, {class: "col-sm-8"} do
+          haml_tag :div, {class: "form-control-static"} do
+            haml_concat value
+          end
+        end
+      end
+    end
+
+    def form_horizontal_static_hash(label, data)
+      if !data.blank? && !data.attributes.empty?
+        haml_tag :div, {class: "form-group"} do
+          haml_tag :label, {class: "col-sm-4 control-label"} do
+            haml_concat label
+          end
+          haml_tag :div, {class: "col-sm-8"} do
+            haml_tag :div, {class: "form-control-static"} do
+              haml_tag :div, {class: "static-tags clearfix"} do
+
+                data.attributes.each do |key, value|
+                  haml_tag :div, {class: "tag"} do
+                    haml_tag :div, {class: "key"} do
+                      haml_concat key
+                    end
+                    haml_tag :div, {class: "value"} do
+                      haml_concat value
+                    end
+                  end
+                end
+
+              end
+            end
+          end
+        end
+      end
+    end
+
+    def form_horizontal_static_array(label, data)
+      if !data.blank?
+        haml_tag :div, {class: "form-group"} do
+          haml_tag :label, {class: "col-sm-4 control-label"} do
+            haml_concat label
+          end
+          haml_tag :div, {class: "col-sm-8"} do
+            haml_tag :div, {class: "form-control-static"} do
+              haml_tag :div, {class: "static-tags clearfix"} do
+
+                data.each do |value|
+                  haml_tag :div, {class: "tag"} do
+                    haml_tag :div, {class: "value"} do
+                      haml_concat value
+                    end
+                  end
+                end
+
+              end
+            end
+          end
+        end
+      end
+    end
+
+    #
+    # Jobs
+    #
+
     def job_history_entry(status)
       case status
         when 'queued'
@@ -32,6 +106,10 @@ module Automation
           end
       end
     end
+
+    #
+    # Automations
+    #
 
     def selected_automation_type(type)
       if type.blank?
@@ -63,9 +141,9 @@ module Automation
       return true
     end
 
-    def date_humanize(date)
-      " #{date}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
-    end
+    #
+    # Runs
+    #
 
     def run_state(state, state_string)
       case state
