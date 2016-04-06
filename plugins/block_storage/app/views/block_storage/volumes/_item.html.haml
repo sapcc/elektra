@@ -1,6 +1,12 @@
-- data = {}
 - if volume
-  %tr
+  - transition = false
+  - if local_assigns.has_key?(:target_state) && volume.in_transition?(target_state)
+    - transition = true
+    - data = {}
+    - data[:update_url]=plugin('block_storage').update_item_volume_path(id:volume.id, target_state: local_assigns[:target_state])
+    - data[:interval]=2500
+
+  %tr{class: "state-#{volume.status.downcase} #{'task-state' if transition}", data: data, id: "volume_#{volume.id}"}
     - if current_user.is_allowed?("block_storage:volume_get", {})
       %td
         = link_to volume.name, plugin('block_storage').volume_path(id: volume.id), data: {modal: true}
@@ -13,8 +19,12 @@
     %td.snug
       - if current_user.is_allowed?("block_storage:volume_delete", {}) or current_user.is_allowed?("block_storage:volume_update", {})
         .btn-group
-          %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
-            %span.fa.fa-cog
+          - if transition
+            %button.btn.btn-default.btn-sm.dropdown-toggle{ disabled: true, type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+              %span.fa.fa-cog
+          - else
+            %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+              %span.fa.fa-cog
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if current_user.is_allowed?("block_storage:volume_update", {})
               %li= link_to 'Change', plugin('block_storage').edit_volume_path(id: volume.id), data: {modal: true}

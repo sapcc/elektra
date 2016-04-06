@@ -2,7 +2,8 @@ require_dependency "block_storage/application_controller"
 
 module BlockStorage
   class VolumesController < ApplicationController
-    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach]
+    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach, :update_item]
+    protect_from_forgery except: [:attach, :detach]
 
     # GET /volumes
     def index
@@ -81,8 +82,8 @@ module BlockStorage
       @volume_server.volume = @volume
       if @volume_server.valid?
         services.compute.attach_volume(@volume_server.volume.id, @volume_server.server, @volume_server.device)
-        flash[:notice] = "Volume successfully attached"
-        redirect_to volumes_path
+        @target_state = target_state_for_action 'attach'
+        render template: 'block_storage/volumes/update_item_with_close.js'
       else
         @volume_server.servers = services.compute.servers
         render :edit_attach
@@ -100,18 +101,31 @@ module BlockStorage
       @volume_server.volume = @volume
       @volume_server.server = @volume.attachments.first
       if services.compute.detach_volume(@volume_server.volume.id, @volume_server.server['server_id'])
-        flash[:notice] = "Volume successfully detached"
+        @target_state = target_state_for_action 'detach'
+        render template: 'block_storage/volumes/update_item_with_close.js'
       else
         flash[:error] = "Error during Volume detach"
+        redirect_to volumes_path
       end
-      redirect_to volumes_path
     end
 
 
     # DELETE /volumes/1
     def destroy
       @volume.destroy
-      redirect_to volumes_url, notice: 'Volume was successfully deleted.'
+      redirect_to volumes_url, notice: 'Volume successfully deleted.'
+    end
+
+    # update instance table row (ajax call)
+    def update_item
+      @target_state = params[:target_state]
+      respond_to do |format|
+        format.js do
+          if @volume and @volume.state != @target_state
+            @volume.task_state = @target_state
+          end
+        end
+      end
     end
 
     private

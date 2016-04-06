@@ -16,6 +16,8 @@ class @MoModal
     $(document).on 'click', 'a[data-modal=true]', -> MoModal.load(this)
     $(document).on 'ajax:beforeSend',"#{modal_holder_selector} form", (event, xhr, settings) -> settings.data += "&modal=true"
     $(document).on 'ajax:success', "#{modal_holder_selector} form", handleAjaxSuccess
+
+  @close= () -> $('#modal-holder').find('.modal').modal('hide')
       
   @load= (anker)->
     if jQuery.type(anker) == "string"

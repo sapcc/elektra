@@ -3,7 +3,7 @@
 
 %div{class: modal? ? 'modal-body' : ''}
 
-  = simple_form_for @volume_server, url: plugin('block_storage').attach_volume_path(@volume_server.volume.id), method: :post, remote: request.xhr?, html: {id: 'form_attach', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  = simple_form_for @volume_server, url: plugin('block_storage').attach_volume_path(@volume_server.volume.id), method: :put, remote: request.xhr?, html: {id: 'form_attach', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
     = render partial: 'errors', locals: {data: @volume_server}
 
