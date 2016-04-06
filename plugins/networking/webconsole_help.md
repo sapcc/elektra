@@ -6,7 +6,7 @@
 `neutron help`
 Get list of available networking commands
 
-`openstack help <networking_object>`
+`openstack help <networking_object>`  
 Get list of available commands for networking objects:
 * network
 * subnet
@@ -15,5 +15,5 @@ Get list of available commands for networking objects:
 * router
 * port
 
-`neutron help <command>` | `openstack help <command>`
+`neutron help <command>` | `openstack help <command>`  
 Show help for a specific networking command
