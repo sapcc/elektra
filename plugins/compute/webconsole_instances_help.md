@@ -2,7 +2,7 @@
   * openstack
 
 ### Quick Help
-`openstack server help`
+`openstack help server`
 
 `openstack help server <command>`
 

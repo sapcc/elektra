@@ -2,7 +2,7 @@
   * openstack
 
 ### Quick Help
-`openstack volume help`
+`openstack help volume`
 
 `openstack help volume <command>`
 
