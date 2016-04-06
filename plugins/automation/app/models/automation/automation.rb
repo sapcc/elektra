@@ -2,7 +2,12 @@ require 'active_resource'
 
 module Automation
 
-  class Automation < Automation::BaseAutomation
+  class Automation < ::Automation::BaseAutomation
+    module Types
+      CHEF = 'chef'
+      SCRIPT = 'script'
+    end
+
     self.collection_name = "automations"
 
     def form_attribute(name)
@@ -24,7 +29,7 @@ module Automation
           end
         elsif key == :chef_attributes
           unless attrs[key].blank?
-            attrs[key] = attrs[key].to_json
+            attrs[key] = attrs[key]
           end
         end
       end
@@ -32,24 +37,8 @@ module Automation
       self.attributes = attrs.stringify_keys
     end
 
-    def attributes_to_form
-      attr = self.attributes.clone
-      attr.keys.each do |key|
-      #   if json_attr.include? key
-      #     attrs[key] = string_to_json(attrs[key])
-      #   elsif array_attr.include? key
-      #     attrs[key] = string_to_array(attrs[key])
-      #   elsif key == :type
-      #     unless attrs[key].blank?
-      #       attrs[key] = attrs[key].capitalize
-      #     end
-      #   elsif key == :chef_attributes
-      #     unless attrs[key].blank?
-      #       attrs[key] = attrs[key].to_json
-      #     end
-      #   end
-      end
-      attr
+    def self.types
+      {script: ::Automation::Automation::Types::SCRIPT, chef: ::Automation::Automation::Types::CHEF}
     end
 
     private

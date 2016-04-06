@@ -36,14 +36,14 @@
         %b
           Created at:
       .col-md-4
-        = " #{@job.created_at}".to_time.strftime('%a %b %d %H:%M:%S %Z %Y')
+        = date_humanize(@job.created_at)
 
     .row
       .col-md-2
         %b
           Updated at:
       .col-md-4
-        = " #{@job.updated_at}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
+        = date_humanize(@job.updated_at)
       .col-md-2
         %b
           Duration:

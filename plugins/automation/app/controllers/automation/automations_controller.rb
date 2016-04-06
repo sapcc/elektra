@@ -8,12 +8,12 @@ module Automation
     end
 
     def new
-      @automation_types = automation_types
+      @automation_types = ::Automation::Automation.types
       @automation = ::Automation::Forms::Automation.new()
     end
 
     def create
-      @automation_types = automation_types
+      @automation_types = ::Automation::Automation.types
       @automation = nil
 
       # check automation type
@@ -45,16 +45,12 @@ module Automation
     end
 
     def show
-      @automation_types = automation_types
+      @automation_types = ::Automation::Automation.types
       automation = services.automation.automation(params[:id])
-      @automation = ::Automation::Forms::Automation.new( automation.attributes_to_form )
+      @automation = ::Automation::Forms::Automation.new( automation.attributes )
     end
 
     private
-
-    def automation_types
-      {script: 'Script', chef: 'Chef'}
-    end
 
     def automation_params
       unless params['forms_automation'].blank?
