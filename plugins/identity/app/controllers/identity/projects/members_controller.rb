@@ -7,7 +7,7 @@ module Identity
       end
       
       def create
-        @user = begin 
+        @user = params[:user_name].blank? ? nil : begin 
           services.identity.users(name:params[:user_name]).first 
         rescue
           services.identity.find_user(params[:user_name]) rescue nil
