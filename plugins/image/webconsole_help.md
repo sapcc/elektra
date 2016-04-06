@@ -3,13 +3,13 @@
 * glance
 
 ### Quick Help
-`openstack help image` | `glance help`
+`openstack help image` | `glance help`  
 Get list of available image commands
 
-`openstack help image <command>` | `glance help <command>`
+`openstack help image <command>` | `glance help <command>`  
 Show help for a specific image command
 
 ### Most Used Commands
-`openstack image list`
+`openstack image list`  
 
-`openstack image show <image>`
+`openstack image show <image>`  
