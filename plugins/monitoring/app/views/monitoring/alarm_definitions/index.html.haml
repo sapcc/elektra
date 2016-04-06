@@ -2,13 +2,21 @@
   Monitoring Alarm Definitions
 = render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions' }
 
+.toolbar
+  Definitions (#{@alarm_definitions.length})
+  = link_to "Create", '#', class: 'btn btn-primary btn-lg', data: {modal:true}
 %table.table
   %thead
     %tr
       %th Name
+      %th Severity
       %th Description
+      %th.snug
   %tbody
-  - @alarm_definitions.each do |alarm_definition|
-    %tr
-      %td= alarm_definition.name
-      %td= alarm_definition.description
+    - if @alarm_definitions.empty?
+      %tr
+        %td{colspan: 4} No alarm definitions found.
+    - else 
+      - @alarm_definitions.sort_by(&:name).each do |alarm_definition|
+        = render partial: 'definitions_row', locals: { alarm_definition: alarm_definition } 
+

@@ -5,12 +5,12 @@ module Monitoring
     # name
     # description
     # actions_enabled
-    # alarm_actions
     # expression
     # match_by
+    # alarm_actions
+    # undetermined_actions
     # ok_actions
     # severity
-    # undetermined_actions
 
   end
 end
