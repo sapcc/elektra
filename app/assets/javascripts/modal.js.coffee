@@ -11,7 +11,7 @@ class @MoModal
         </div>
       </div>
       """
-    
+      
   @init= () ->
     $(document).on 'click', 'a[data-modal=true]', -> MoModal.load(this)
     $(document).on 'ajax:beforeSend',"#{modal_holder_selector} form", (event, xhr, settings) -> settings.data += "&modal=true"

@@ -5,20 +5,24 @@
   = content_for :main_toolbar do
     New Project Member
 
-= simple_form_for :member, url: plugin('identity').projects_members_path, method: :post, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
+= simple_form_for :member, url: plugin('identity').projects_members_path, method: :post, remote: request.xhr?, html: {data: {modal: modal?}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - if @error
       %p.alert.alert-error= @error
 
-    .row
-      .col-lg-6
-        .input-group
-          = f.input :name, label: false, error: 'User not found', :placeholder => "User name or ID", input_html: {name: 'user_name', value: params[:user_name]}
-          %span.input-group-btn
-            = f.button :submit, 'Add', class: 'btn btn-default'
-      .col-lg-6
-        .bs-callout.bs-callout-primary
-          You can add users from the same domain as members of this project.
+    .form-group.string.required.member_name
+      %label.string.required.col-sm-4.control-label{for: "member_name"}
+        %abbr{title:"required"} *
+        User name or ID
+      .col-sm-8
+        .input-wrapper
+          .input-group
+            %input{name: "user_name", class: "string required form-control", id: "member_name"}
+            %span.input-group-btn= f.button :submit, 'Add', class: 'btn btn-default'
+        %p.help-block
+          %i.fa.fa-info-circle
+          You can add users from the same domain as members of this project.    
+
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
