@@ -1,0 +1,25 @@
+%ul.nav.nav-tabs
+  - if tab == 'overview'
+    %li.active{role: 'presentation'}
+      = link_to "Overview", '#'
+  - else 
+    %li{role: 'presentation'}
+      = link_to 'Overview', plugin('monitoring').send("entry_path")
+  - if tab == 'alarms'
+    %li.active{role: 'presentation'}
+      = link_to "Alarms", '#'
+  - else 
+    %li{role: 'presentation'}
+      = link_to 'Alarms', plugin('monitoring').send("alarms_path")
+  - if tab == 'alarm_definitions'
+    %li.active{role: 'presentation'}
+      = link_to "Alarm Definitions", '#'
+  - else 
+    %li{role: 'presentation'}
+      = link_to 'Alarm Definitions', plugin('monitoring').send("alarm_definitions_path")
+  - if tab == 'notifications'
+    %li.active{role: 'presentation'}
+      = link_to "Notifications", '#'
+  - else 
+    %li{role: 'presentation'}
+      = link_to 'Notifications', plugin('monitoring').send("notifications_path")

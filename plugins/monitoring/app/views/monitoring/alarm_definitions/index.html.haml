@@ -1,0 +1,14 @@
+= content_for :main_toolbar do 
+  Monitoring Alarm Definitions
+= render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions' }
+
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Description
+  %tbody
+  - @alarm_definitions.each do |alarm_definition|
+    %tr
+      %td= alarm_definition.name
+      %td= alarm_definition.description

@@ -17,7 +17,7 @@ module Monitoring
 
       def alarm_definitions
         handle_response do
-          @fog.alarm_definitions.all
+          @fog.list_alarm_definitions.body["elements"]
         end
       end
     end

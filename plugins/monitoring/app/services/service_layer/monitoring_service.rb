@@ -16,9 +16,8 @@ module ServiceLayer
       true  
     end
     
-
     def alarm_definitions
-      driver.alarm_definitions
+      driver.map_to(Monitoring::AlarmDefinition).alarm_definitions
     end
   end
 end

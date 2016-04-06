@@ -6,8 +6,8 @@ $:.push File.expand_path("../lib", __FILE__)
 Gem::Specification.new do |s|
   s.name        = "monitoring"
   s.version     = "0.0.1"
-  s.authors     = [" Write your name"]
-  s.email       = [" Write your email address"]
+  s.authors     = ["Hans-Georg Winkler"]
+  s.email       = ["hans-georg.winkler@sap.com"]
   s.homepage    = ""
   s.summary     = " Summary of Monitoring."
   s.description = " Description of Monitoring."
