@@ -4,7 +4,7 @@
 
 .toolbar
   Definitions (#{@alarm_definitions.length})
-  = link_to "Create", '#', class: 'btn btn-primary btn-lg', data: {modal:true}
+  = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
 %table.table
   %thead
     %tr
