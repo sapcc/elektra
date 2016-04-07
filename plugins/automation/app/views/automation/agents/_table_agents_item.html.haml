@@ -1,10 +1,10 @@
 %tr{id: "instance_#{instance.id}"}
   %td
     = link_to(instance.name, plugin('automation').agent_path(id: instance.id, name: instance.name), data: {modal: true})
-  %td= "#{instance.facts.platform_family} #{instance.facts.platform_version}"
-  %td= instance.facts.ipaddress
-  %td{class: "snug #{'automation_status_alarm' if instance.facts.online == false}"}
-    = instance.facts.online_to_string
+  %td= "#{instance.automation_facts.platform_family} #{instance.automation_facts.platform_version}"
+  %td= instance.automation_facts.ipaddress
+  %td{class: "snug #{'automation_status_alarm' if instance.automation_facts.online == false}"}
+    = instance.automation_facts.online_to_string
   %td
     = render partial: "table_agents_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
   %td

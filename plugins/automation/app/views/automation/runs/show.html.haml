@@ -4,56 +4,60 @@
 - data = {update_path: plugin('automation').run_path(params.merge(partial:true, format: 'js')), update_interval: 10} if run_polling?(@run.state)
 .modal-body#run-detail-view{  data: data }
 
-  %h3
-    Details
+  .modal-section.first
+    %h3
+      Details
 
-  .job_details
-    .row
-      .col-md-2
-        %b
-          Run Id:
-      .col-md-4
-        = @run.id
-      .col-md-2
-        %b
-          Status:
-      .col-md-4.js-run-state
-        = render partial: 'run_state', locals: {run: @run}
+    .job_details
+      .row
+        .col-md-2
+          %b
+            Run Id:
+        .col-md-4
+          = @run.id
+        .col-md-2
+          %b
+            Status:
+        .col-md-4.js-run-state
+          = render partial: 'run_state', locals: {run: @run}
 
-    .row
-      .col-md-2
-        %b
-          Owner:
-      .col-md-4
-        = @run.owner
-      .col-md-2
-        %b
-          Duration:
-      .col-md-4.js-run-duration
-        = @run.duration
+      .row
+        .col-md-2
+          %b
+            Automation:
+        .col-md-4
+          = @run.automation_name
+        .col-md-2
+          %b
+            Owner:
+        .col-md-4
+          = @run.owner
 
-    .row
-      .col-md-2
-        %b
-          Created at:
-      .col-md-4
-        = date_humanize(@run.created_at)
-      .col-md-2
-        %b
-          Updated at:
-      .col-md-4.js-run-updated_at
-        = date_humanize(@run.updated_at)
 
-  %h3
-    Jobs
+      .row
+        .col-md-2
+          %b
+            Started:
+        .col-md-4
+          = date_humanize(@run.created_at)
+        .col-md-2
+          %b
+            Duration:
+        .col-md-4.js-run-duration
+          = @run.duration
 
-  = render partial: 'table_jobs', locals: {jobs: @jobs}
+  .modal-section
+    %h3
+      Jobs
 
-  %h3
-    Log
+    = render partial: 'table_jobs', locals: {jobs: @jobs}
 
-  .js-run-log
-    = render partial: 'run_log', locals: {log_lines: @log_lines, log_truncated: @log_truncated, run: @run, log_output: @log_output}
+  .modal-section
+    %h3
+      Log
+
+    .js-run-log
+      = render partial: 'run_log', locals: {log_lines: @log_lines, log_truncated: @log_truncated, run: @run, log_output: @log_output}
 
 .modal-footer
   - if modal?

@@ -7,27 +7,35 @@ module Automation
     def self.create_agents(_agents={})
       agentsMap = []
       _agents.data.each do |_agent|
-        agent = Agent.new
-        agent.id = _agent.agent_id
-        agent.name = Agent.agent_name(_agent)
-        agent.facts = ::Automation::Facts.new(_agent.facts)
+        agent = Agent.new(_agent)
         agentsMap << agent
       end
       {elements: agentsMap, total_elements: _agents.pagination.total_elements}
+    end
+
+    def id
+      self.agent_id
+    end
+
+    def automation_facts
+      ::Automation::Facts.new(self.facts)
     end
 
     def self.os_types
       {"linux" => 'Linux', 'windows' => 'Windows'}
     end
 
-    private
-
-    def self.agent_name(_agent)
-      if !_agent.tags.blank? && !_agent.tags['name'].blank?
-        return _agent.tags['name']
+    def name
+      if !self.tags.blank? && !self.tags['name'].blank?
+        return self.tags['name']
       end
-      _agent.facts.hostname
+      if !self.automation_facts.hostname.blank?
+        return self.automation_facts.hostname
+      end
+      self.id
     end
+
+    private
 
   end
 

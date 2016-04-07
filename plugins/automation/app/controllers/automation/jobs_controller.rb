@@ -11,9 +11,12 @@ module Automation
     def show
       @job = services.automation.job(params[:id])
 
-      # duration
-      time_diff = @job.updated_at.to_time - @job.created_at.to_time
-      @duration = Time.at(time_diff.to_i.abs).utc.strftime "%H:%M:%S"
+      # get agent name
+      @agent = begin
+        services.automation.agent(@job.to, ['hostname'])
+      rescue ::RestClient::ResourceNotFound
+        nil
+      end
 
       # payload
       @payload_lines = 1

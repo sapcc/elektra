@@ -2,7 +2,7 @@
   %td
     = link_to(run.automation_name, plugin('automation').run_path(id: run.id), data: {modal: true})
   %td
-    = "#{run.created_at}".to_time.strftime('%a %b %d %H:%M:%S %Z %Y')
+    = date_humanize(run.created_at)
   %td
     = run.duration
   %td

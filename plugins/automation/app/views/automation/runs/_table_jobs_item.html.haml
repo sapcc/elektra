@@ -5,7 +5,5 @@
     - job_state(job.status)
   %td= job.agent
   %td= job.action
-  %td
-    = date_humanize(job.created_at)
-  %td
-    = date_humanize(job.updated_at)
+  %td= date_humanize(job.created_at)
+  %td= job.duration

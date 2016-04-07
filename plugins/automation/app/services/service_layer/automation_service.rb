@@ -54,12 +54,12 @@ module ServiceLayer
 
     def jobs(agent_id = "", page=0, per_page=0)
       init_client
-      @client.list_jobs!(token, agent_id, page, per_page)
+      Automation::Job.create_jobs( @client.list_jobs!(token, agent_id, page, per_page) )
     end
 
     def job(job_id)
       init_client
-      @client.find_job!(token, job_id)
+      Automation::Job.new( @client.find_job!(token, job_id) )
     end
 
     def job_log(job_id)
