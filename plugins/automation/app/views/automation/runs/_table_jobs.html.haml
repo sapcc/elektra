@@ -1,0 +1,17 @@
+.jobs_table
+  %table.table
+    %thead
+      %tr
+        %th Id
+        %th State
+        %th Agent
+        %th Action
+        %th Created at
+        %th Updated at
+    %tbody
+      - if jobs.empty?
+        %tr
+          %td{colspa: 6} No jobs available
+      - else
+        -jobs.each do | job |
+          = render partial: 'table_jobs_item', locals: {job: job}
