@@ -26,6 +26,12 @@ module Monitoring
           @fog.get_alarm_definition(id).body
         end
       end
+
+      def delete_alarm_definition(id)
+        handle_response do
+          @fog.delete_alarm_definition(id)
+        end
+      end
     end
   end
 end
