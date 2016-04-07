@@ -1,7 +1,7 @@
 module Automation
 
   class AutomationsController < ::Automation::ApplicationController
-    before_action :automation, only: [:show, :edit, :update]
+    before_action :automation, only: [:show, :edit]
 
     def index
       @automations = services.automation.automations
@@ -35,7 +35,8 @@ module Automation
 
       # validate and check
       if @automation.save(services.automation.automation_service)
-        redirect_to automations_path, :flash => {success: "automation with name #{@automation.name} was successfully added."}
+        flash[:success] = "Automation #{@automation.name} was successfully added."
+        redirect_to plugin('automation').automations_path
       else
          render action: "new"
       end
@@ -53,7 +54,28 @@ module Automation
     end
 
     def update
-      flash.now[:error] = "Under construction"
+      @automation_form = nil
+      form_params = automation_params
+
+      # check type and create model
+      if form_params['type'] == ::Automation::Automation::Types::CHEF
+        @automation = ::Automation::Forms::ChefAutomation.new(form_params)
+      elsif form_params['type'] == ::Automation::Automation::Types::SCRIPT
+        @automation = ::Automation::Forms::ScriptAutomation.new(form_params)
+      else
+        raise ArgumentError.new("Automation type not known")
+      end
+
+      # validate and save
+      if @automation.update(services.automation.automation_service)
+        flash[:success] = "Automation #{@automation.name} was successfully updated."
+        redirect_to plugin('automation').automations_path
+      else
+        render action: "edit"
+      end
+    rescue Exception => e
+      Rails.logger.error e
+      flash.now[:error] = "Error updating automation."
       render action: "edit"
     end
 

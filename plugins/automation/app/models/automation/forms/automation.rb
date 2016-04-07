@@ -45,6 +45,14 @@ module Automation
       end
     end
 
+    def update(automation_service)
+      if valid?
+        update!(automation_service)
+      else
+        false
+      end
+    end
+
     private
 
     def persist!(automation_service)
@@ -55,6 +63,21 @@ module Automation
       unless success
         messages = !base_automation.errors.blank? || base_automation.errors.messages.blank? ? base_automation.errors.messages : {}
         base_automation.errors.messages.each do |key,value|
+          value.each do |item|
+            self.errors.add key.to_sym, item
+          end
+        end
+      end
+      success
+    end
+
+    def update!(automation_service)
+      automation = automation_service.find(self.id)
+      automation.form_to_attributes(self.attributes)
+      success = automation.save
+      unless success
+        messages = !automation.errors.blank? || automation.errors.messages.blank? ? automation.errors.messages : {}
+        automation.errors.messages.each do |key,value|
           value.each do |item|
             self.errors.add key.to_sym, item
           end

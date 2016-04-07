@@ -15,7 +15,7 @@
 - if form_type == 'new'
   = f.input :type, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: types.sort.map {|k,v| [v,k]}, selected: selected_automation_type(automation.type)
 - elsif form_type == 'edit'
-  = f.input :type, disabled: true
+  = f.input :type, readonly: true
 
 %hr
 
