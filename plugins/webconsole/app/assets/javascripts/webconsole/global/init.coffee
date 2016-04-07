@@ -5,11 +5,8 @@ $(document).ready ->
 
   # stand alone webconsole page
   if $('#webconsole-container').length>0
-    WebconsoleContainer.init('#webconsole-container',{
-      toolbar: 'on'
-      title: 'Web Console'
-      buttons: ['help','reload']
-    })
+    $( "#webconsole-container" ).wrap( "<div class='webconsole'></div>" );
+    WebconsoleContainer.init('#webconsole-container',{})
     WebconsoleContainer.load()
 
   # slide-in webconsole panel
