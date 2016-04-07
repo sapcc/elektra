@@ -4,7 +4,7 @@ module Identity
     authorization_required additional_policy_params: {domain_id: proc {@scoped_domain_id}}
 
     def show
-      @user_domain_projects_tree ||= services.identity.auth_projects_tree(projects: @user_domain_projects) rescue {}
+      @user_domain_projects_tree = services.identity.auth_projects_tree
       @root_projects = @user_domain_projects.reject{ |project| !project.parent.blank? }
     end
 

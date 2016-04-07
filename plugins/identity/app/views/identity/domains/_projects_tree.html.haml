@@ -13,20 +13,18 @@
     
     var $expandibleTree = $('#projecttree').treeview({
       enableLinks: true,
-      levels: 2,
+      levels: 1,
       showBorder: false,
       showTags: true,
       color: '#337ab7',
       collapseIcon: 'fa fa-minus',
       expandIcon: 'fa fa-plus',
-      data: [#{projects_tree.to_json}]
+      data: #{project_tree(@user_domain_projects_tree.root.children).to_json}
     });
     
     
-    var rootNode = $expandibleTree.treeview('search',['#{projects_tree[:text]}'])[0];
     // Expand/collapse/toggle nodes
     $('#input-expand-node').on('keyup', function (e) {
       $expandibleTree.treeview('collapseAll');
-      $expandibleTree.treeview('expandNode', [rootNode]);
       expandibleNodes = $expandibleTree.treeview('search', [ $(this).val(), { ignoreCase: true, exactMatch: false } ]);
     });

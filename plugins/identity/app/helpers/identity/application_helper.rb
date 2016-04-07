@@ -1,36 +1,16 @@
 module Identity
-module ApplicationHelper
+  module ApplicationHelper
 
-    # transfer rubytree into json array for tree plugin
-    def projects_tree
-      return {} if @user_domain_projects_tree.blank?
-      tree = doit @user_domain_projects_tree
-      return tree
-      # example json strcture
-      #return {"text":"abc","href":"#","nodes":[{"text":"torsten_staging","href":"#"},{"text":"D003258","href":"#"}]}
-
+    # creates a tree for projectview based on project_tree delivered by controller 
+    def project_tree(nodes, result=[])
+      nodes = [nodes] unless nodes.is_a?(Array)
+      nodes.collect do |node|
+        attrs = {"text" => node.name}
+        attrs["tags"] = [node.children.length] if node.children.length>0
+        attrs["href"] = plugin('identity').project_path(project_id: node.friendly_id) unless node.root?
+        attrs["nodes"] = project_tree(node.children) if node.children.length>0
+        attrs
+      end
     end
-
-    # recursive traversal of tree from root node
-    def doit node
-      return unless node
-      if node.name != 'domain'
-        topnode = {text: node.content.name,
-                   href: plugin('identity').project_path(project_id:node.content.friendly_id),
-                   tags: [node.children.count]}
-      else
-        topnode = {text: node.content.name}
-      end
-
-      childs = []
-      node.children do |child|
-        childs << doit(child)
-      end
-      unless childs.blank?
-        topnode[:nodes] = []
-        topnode[:nodes] = childs
-      end
-      return topnode
-    end
-end
+  end
 end
