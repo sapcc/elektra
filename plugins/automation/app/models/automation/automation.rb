@@ -4,8 +4,8 @@ module Automation
 
   class Automation < ::Automation::BaseAutomation
     module Types
-      CHEF = 'chef'
-      SCRIPT = 'script'
+      CHEF = 'Chef'
+      SCRIPT = 'Script'
     end
 
     self.collection_name = "automations"
@@ -35,6 +35,28 @@ module Automation
       end
 
       self.attributes = attrs.stringify_keys
+    end
+
+    def attributes_to_form
+      attr = self.attributes.clone
+      attr.keys.each do |key|
+        if key == 'chef_attributes'
+          unless attr[key].blank?
+            if attr[key].respond_to?(:attributes)
+              attr[key] = attr[key].attributes
+            end
+          end
+        end
+      end
+      attr
+    end
+
+    def show_chef_attributes
+      result = nil
+      if !self.chef_attributes.blank? && self.chef_attributes.respond_to?(:attributes)
+        result = self.chef_attributes.attributes
+      end
+      return
     end
 
     def self.types

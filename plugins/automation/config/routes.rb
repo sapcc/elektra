@@ -12,7 +12,7 @@ Automation::Engine.routes.draw do
     end
   end
 
-  resources :automations, only: [:index, :new, :create, :show]
+  resources :automations, only: [:index, :new, :create, :show, :edit, :update]
 
   resources :runs, only: [:show] do
     get ':id/show_log/', to: 'runs#show_log', :on => :collection, as: 'show_payload'

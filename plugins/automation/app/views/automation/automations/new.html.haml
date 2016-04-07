@@ -6,30 +6,35 @@
   .flashes_area
     = render "automation/shared/flashes.html"
 
+
   = simple_form_for @automation, url: plugin('automation').automations_path(), method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
-    = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
-
-    = f.input :repository, required: true, label: 'Repository', input_html: {}, placeholder: 'Enter repository'
-
-    = f.input :repository_revision, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
-
-    = f.input :timeout, required:true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout'
-
-    = f.input :tags, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter tags',
-    icon_hint: 'Tags are key-value pairs. See hint for more information.',
-    help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
-
-    = f.input :type, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: selected_automation_type(@automation.type)
-
-    %hr
-
-    = render partial: 'chef', locals: {f:f}
-    = render partial: 'script', locals: {f:f}
+    = render partial: 'automation_form', locals: {automation: @automation, types: @automation_types, f: f, form_type: 'new'}
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
         %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
       - else
-        = link_to "Cancel", instances_url(), class: 'btn btn-default'
+        = link_to "Cancel", plugin('automation').automations_path(), class: 'btn btn-default'
       = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+
+  -#
+  -#  = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
+  -#
+  -#  = f.input :repository, required: true, label: 'Repository', input_html: {}, placeholder: 'Enter repository'
+  -#
+  -#  = f.input :repository_revision, label: 'Repository version', input_html: {}, placeholder: 'Enter repository revision'
+  -#
+  -#  = f.input :timeout, required:true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout'
+  -#
+  -#  = f.input :tags, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter tags',
+  -#  icon_hint: 'Tags are key-value pairs. See hint for more information.',
+  -#  help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
+  -#
+  -#  = f.input :type, required: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: selected_automation_type(@automation.type)
+  -#
+  -#  %hr
+  -#
+  -#  = render partial: 'chef', locals: {f:f}
+  -#  = render partial: 'script', locals: {f:f}
+  -#

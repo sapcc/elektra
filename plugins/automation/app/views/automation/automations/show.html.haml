@@ -8,7 +8,7 @@
 
   .row
     .col-md-1.col-xs-2.col-md-offset-11.col-xs-offset-10
-      = link_to '#', data: {modal: true}, class: 'btn btn-primary' do
+      = link_to plugin('automation').edit_automation_path(id: @automation.id), data: {modal: true}, class: 'btn btn-primary' do
         %i.fa.fa-pencil
 
   .form-horizontal
@@ -19,13 +19,17 @@
     - form_horizontal_static_hash('Tags', @automation.tags)
     - form_horizontal_static_input('Type', @automation.type)
 
-
-    - form_horizontal_static_array('Runlist', @automation.run_list)
-    - form_horizontal_static_input('Attributes', @automation.chef_attributes.attributes)
-    - form_horizontal_static_input('Log level', @automation.log_level)
+    - if @automation.type == ::Automation::Automation::Types::CHEF
+      - form_horizontal_static_array('Runlist', @automation.run_list)
+      - form_horizontal_static_input('Attributes', @automation.chef_attributes)
+      - form_horizontal_static_input('Log level', @automation.log_level)
+    - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
+      - form_horizontal_static_input('Path', @automation.path)
+      - form_horizontal_static_hash('Arguments', @automation.arguments)
+      - form_horizontal_static_hash('Environment', @automation.environment)
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Close
     - else
-      = link_to "Close", instances_url(), class: 'btn btn-default'
+      = link_to "Close", plugin('automation').automations_path(), class: 'btn btn-default'

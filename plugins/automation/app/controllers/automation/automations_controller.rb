@@ -1,6 +1,7 @@
 module Automation
 
   class AutomationsController < ::Automation::ApplicationController
+    before_action :automation, only: [:show, :edit, :update]
 
     def index
       @automations = services.automation.automations
@@ -46,11 +47,22 @@ module Automation
 
     def show
       @automation_types = ::Automation::Automation.types
-      automation = services.automation.automation(params[:id])
-      @automation = ::Automation::Forms::Automation.new( automation.attributes )
+    end
+
+    def edit
+    end
+
+    def update
+      flash.now[:error] = "Under construction"
+      render action: "edit"
     end
 
     private
+
+    def automation
+      automation = services.automation.automation(params[:id])
+      @automation = ::Automation::Forms::Automation.new( automation.attributes_to_form)
+    end
 
     def automation_params
       unless params['forms_automation'].blank?
