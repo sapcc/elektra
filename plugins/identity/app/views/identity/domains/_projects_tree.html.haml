@@ -10,7 +10,7 @@
 
 =content_for :javascripts do
   :javascript
-    
+
     var $expandibleTree = $('#projecttree').treeview({
       enableLinks: true,
       levels: 1,
@@ -21,10 +21,49 @@
       expandIcon: 'fa fa-plus',
       data: #{project_tree(@user_domain_projects_tree.root.children).to_json}
     });
-    
+
     
     // Expand/collapse/toggle nodes
     $('#input-expand-node').on('keyup', function (e) {
       $expandibleTree.treeview('collapseAll');
       expandibleNodes = $expandibleTree.treeview('search', [ $(this).val(), { ignoreCase: true, exactMatch: false } ]);
     });
+
+
+%ul.tree.tree-expandable
+  %li.has-children.node-expanded
+    %i.node-icon
+    %a{href: "#"} Project 1
+    %ul
+      %li
+        %i.node-icon
+        %a{href: "#"} Child 1.1
+      %li
+        %i.node-icon
+        %a{href: "#"} Child 1.2
+  %li
+    %i.node-icon
+    %a{href: "#"} Project 2
+  %li.has-children.node-expanded
+    %i.node-icon
+    %a{href: "#"} Project 3
+    %ul
+      %li
+        %i.node-icon
+        %a{href: "#"} Child 3.1
+      %li.has-children
+        %i.node-icon
+        %a{href: "#"} Child 3.2
+        %ul
+          %li
+            %i.node-icon
+            %a{href: "#"} Child 3.2.1
+          %li
+            %i.node-icon
+            %a{href: "#"} Child 3.2.2
+      %li
+        %i.node-icon
+        %a{href: "#"} Child 3.3
+      %li
+        %i.node-icon
+        %a{href: "#"} Child 3.4

@@ -983,6 +983,71 @@ tr.task-state {
   }
 }
 
+
+// ---------------------------------------------------------------------------------
+// Tree
+// ---------------------------------------------------------------------------------
+
+.tree-expandable {
+
+  &, ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  li {
+    position: relative;
+    padding-left: 19px;
+
+    a, span {
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+
+    .icon-square-outline {
+      stroke: #ddd;
+    }
+
+    > .node-icon {
+      position: absolute;
+      left: 0;
+      background: inline-svg('rounded-square-outline-grey.svg') 0 3px no-repeat;
+      cursor: pointer;
+      height: 16px;
+      width: 19px;
+      padding-left: 19px;
+
+    }
+
+
+    &.has-children {
+
+      > .node-icon {
+        background-image: inline-svg('angle-right-outline.svg');
+        background-position: 2px 3px;
+
+      }
+
+      > ul {
+        display: none;
+      }
+
+
+      &.node-expanded {
+        > .node-icon {
+          background-image: inline-svg('angle-down-outline.svg');
+          background-position: 0 7px;
+        }
+
+        > ul {
+          display: block;
+        }
+      }
+
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------------
 // Forms
 // ---------------------------------------------------------------------------------

@@ -29,11 +29,11 @@ if (typeof(window.console) == "undefined" || typeof(window.console.log) == "unde
   window.console = { log: () -> {} }
 
 
+# -------------------------------------------------------------------------------------------------------------
 # Initialize Dashboard App
+
 $ ->
-  # -----------
   # Tooltips
-  # -----------
   $('abbr[title], abbr[data-original-title]').tooltip(delay: { "show": 300 })
 
   # init Form
@@ -50,9 +50,24 @@ $ ->
 
   $("#accept_tos").click -> $("#register-button").prop('disabled', not $(this).prop('checked') )
 
+  # init help hint popovers
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
     trigger: 'focus'
+
+  # ---------------------------------------------
+  # Expandable Tree
+
+  $('.tree-expandable .has-children > .node-icon').click (e) ->
+    e.preventDefault()
+    $(this).parent().toggleClass('node-expanded')
+
+
+
+
+
+# -------------------------------------------------------------------------------------------------------------
+# Initialize Modal Windows
 
 $(document).on 'modal:contentUpdated', (e) ->
   try
@@ -71,8 +86,6 @@ $(document).on 'modal:contentUpdated', (e) ->
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
     trigger: 'focus'
-
-
 
   # -------------
   # init tooltips
