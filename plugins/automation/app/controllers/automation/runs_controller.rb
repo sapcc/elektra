@@ -15,15 +15,6 @@ module Automation
         @log_truncated = @log_lines > LINES_TRUNCATION
         @log_output = @run.log.lines.last(LINES_TRUNCATION).join
       end
-
-      # if params[:partial]
-      #   respond_to do |format|
-      #     format.js {
-      #       render partial: 'show.js'
-      #     }
-      #     return
-      #   end
-      # end
     end
 
     def show_log
