@@ -5,3 +5,5 @@
   %td= automation.form_attribute('repository')
   %td= automation.form_attribute('repository_revision')
   %td
+    = link_to plugin('automation').edit_automation_path(id: automation.id), data: {modal: true}, class: 'btn btn-default btn-sm' do
+      %i.fa.fa-pencil

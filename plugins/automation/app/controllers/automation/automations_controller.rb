@@ -2,10 +2,9 @@ module Automation
 
   class AutomationsController < ::Automation::ApplicationController
     before_action :automation, only: [:show, :edit]
+    before_action :automations, only: [:index, :destroy]
 
     def index
-      @automations = services.automation.automations
-      @runs = services.automation.automation_runs
     end
 
     def new
@@ -79,11 +78,27 @@ module Automation
       render action: "edit"
     end
 
+    def destroy
+      automation = services.automation.automation(params[:id])
+      automation.destroy
+      flash.now[:success] = "Automation #{automation.name} removed successfully."
+      render action: "index"
+    rescue Exception => e
+      Rails.logger.error e
+      flash.now[:error] = "Error removing automation."
+      render action: "index"
+    end
+
     private
 
     def automation
       automation = services.automation.automation(params[:id])
       @automation = ::Automation::Forms::Automation.new( automation.attributes_to_form)
+    end
+
+    def automations
+      @automations = services.automation.automations
+      @runs = services.automation.automation_runs
     end
 
     def automation_params

@@ -80,6 +80,12 @@ pre {
   border-bottom: 1px solid #e5e5e5;
 }
 
+.automation-show-actions-bar {
+  .automation-show-actions {
+    margin-left: 5px;
+  }
+}
+
 .static-tags {
   .tag {
     float: left;
