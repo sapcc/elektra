@@ -27,14 +27,10 @@ module Automation
           unless attrs[key].blank?
             attrs[key] = attrs[key].capitalize
           end
-        elsif key == :chef_attributes
-          unless attrs[key].blank?
-            attrs[key] = attrs[key]
-          end
         end
       end
 
-      self.attributes = attrs.stringify_keys
+      self.attributes.merge! attrs.stringify_keys
     end
 
     def attributes_to_form
@@ -43,9 +39,15 @@ module Automation
         if key == 'chef_attributes'
           unless attr[key].blank?
             if attr[key].respond_to?(:attributes)
-              attr[key] = attr[key].attributes
+              attr[key] = attr[key].attributes.to_json
             end
           end
+        elsif key == 'tags'
+          if attr[key].respond_to?(:attributes)
+            attr[key] = json_to_string(attr[key].attributes)
+          end
+        elsif key == 'run_list'
+          attr[key] = array_to_string(attr[key])
         end
       end
       attr
@@ -95,11 +97,32 @@ module Automation
       end
     end
 
+    def json_to_string(attr)
+      result_string = ""
+      unless attr.blank?
+        attr.each do |key, value|
+          result_string << "#{key}:#{value},"
+        end
+      end
+      if result_string.length > 0
+        # remove the last coma
+        result_string = result_string[0..-2]
+      end
+      result_string
+    end
+
     def string_to_array(attr)
       unless attr.blank?
         return attr.split(',')
       end
     end
+
+    def array_to_string(attr)
+      unless attr.blank?
+        return attr.join(',')
+      end
+    end
+
 
   end
 
