@@ -8,6 +8,7 @@ module Automation
 
     attr_accessor :token, :endpoint
 
+    attribute :id, String
     attribute :type, String
     attribute :name, String
     attribute :repository, String

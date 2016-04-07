@@ -25,12 +25,14 @@ module Automation
     end
 
     def form_horizontal_static_hash(label, data)
-      if !data.blank? && !data.attributes.empty?
-        haml_tag :div, {class: "form-group"} do
-          haml_tag :label, {class: "col-sm-4 control-label"} do
-            haml_concat label
-          end
-          haml_tag :div, {class: "col-sm-8"} do
+
+      haml_tag :div, {class: "form-group"} do
+        haml_tag :label, {class: "col-sm-4 control-label"} do
+          haml_concat label
+        end
+        haml_tag :div, {class: "col-sm-8"} do
+
+          if !data.blank? && !data.attributes.empty?
             haml_tag :div, {class: "form-control-static"} do
               haml_tag :div, {class: "static-tags clearfix"} do
 
@@ -48,17 +50,22 @@ module Automation
               end
             end
           end
+
         end
       end
+
+
+
     end
 
     def form_horizontal_static_array(label, data)
-      if !data.blank?
-        haml_tag :div, {class: "form-group"} do
-          haml_tag :label, {class: "col-sm-4 control-label"} do
-            haml_concat label
-          end
-          haml_tag :div, {class: "col-sm-8"} do
+      haml_tag :div, {class: "form-group"} do
+        haml_tag :label, {class: "col-sm-4 control-label"} do
+          haml_concat label
+        end
+        haml_tag :div, {class: "col-sm-8"} do
+
+          if !data.blank?
             haml_tag :div, {class: "form-control-static"} do
               haml_tag :div, {class: "static-tags clearfix"} do
 
@@ -69,10 +76,10 @@ module Automation
                     end
                   end
                 end
-
               end
             end
           end
+
         end
       end
     end
