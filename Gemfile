@@ -42,7 +42,6 @@ gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_b
 
 # Extras
 gem 'config'
-gem 'rubytree'
 
 
 ###################### PLUGINS #####################
