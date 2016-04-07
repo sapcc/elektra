@@ -13,6 +13,7 @@ class @WebconsoleContainer
     closeIcon:          'fa fa-close'
     helpIcon:           'fa fa-question-circle'
     reloadIcon:         'fa fa-refresh'
+    fullscreenIcon:     'fa fa-arrows-alt'
 
   # create toolbar, buttons and console holder
   createDomStructure=($container, settings) ->
@@ -29,6 +30,7 @@ class @WebconsoleContainer
 
         # create and add each button to buttons container
         for button, i in settings.buttons
+          console.log button
           $buttons.append("<a href='#' data-trigger='webconsole:#{button}'><i class='#{settings[button+'Icon']}'/></a>")
 
     # add webconsole holder to container
@@ -138,6 +140,11 @@ class @WebconsoleContainer
       e.preventDefault()
       WebconsoleContainer.close () ->
         $('[data-trigger="webconsole:open"]').removeClass("active")
+        
+    $('[data-trigger="webconsole:fullscreen"]').click (e) ->
+      e.preventDefault()
+      WebconsoleContainer.toogleFullscreen () ->
+        $('[data-trigger="webconsole:fullscreen"]').removeClass("active")
 
 
 
@@ -153,6 +160,21 @@ class @WebconsoleContainer
     @$container.parent().slideUp 'slow', () ->
       console.log('Webconsole closed')
       callback() if callback
+      
+  @toogleFullscreen= (callback) ->
+    console.log 'toogle fullscreen' 
+    $parentContainer = @$container.parent()
+    
+    new_width = $parentContainer.data('width') || $( window ).width()
+    new_left = $parentContainer.data('left') || -$parentContainer.offset().left
+    
+    $parentContainer.data('width',$parentContainer.width())
+    $parentContainer.data('left', if new_left!=0 then 0 else false)
+
+    @$container.parent().css(position: 'relative').animate({
+      width: new_width,
+      left: new_left
+    })  
 
   @reload= () ->
     console.log 'reload'
