@@ -5,14 +5,14 @@ Automation::Engine.routes.draw do
     get 'install', :on => :collection
     post 'show_instructions', :on => :collection
     get 'run_automation', :on => :collection
-
-    resources :jobs, only: [:index, :show] do
-      get 'show_payload', to: 'jobs#show_data', defaults: { attr: 'payload' }
-      get 'show_log', to: 'jobs#show_data', defaults: { attr: 'log' }
-    end
   end
 
-  resources :automations, only: [:index, :new, :create, :show, :edit, :update]
+  resources :jobs, only: [:index, :show] do
+    get ':id/show_payload', to: 'jobs#show_data', defaults: { attr: 'payload' }, :on => :collection, as: 'show_payload'
+    get ':id/show_log', to: 'jobs#show_data', defaults: { attr: 'log' }, :on => :collection, as: 'show_log'
+  end
+
+  resources :automations, only: [:index, :new, :create, :show, :edit, :update, :destroy]
 
   resources :runs, only: [:show] do
     get ':id/show_log/', to: 'runs#show_log', :on => :collection, as: 'show_payload'
