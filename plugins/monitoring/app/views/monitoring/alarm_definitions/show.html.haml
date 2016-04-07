@@ -1,0 +1,25 @@
+= content_for :title do
+  Show details for alarm definition #{@alarm_definition.name}
+
+%div{class: modal? ? 'modal-body' : ''}
+  .row
+    .col-md-3.details-label
+      %strong Name:
+    .col-md-9.details-value= @alarm_definition.name
+    .col-md-3.details-label 
+      %strong Description:
+    .col-md-9.details-value= @alarm_definition.description
+    .col-md-3.details-label 
+      %strong Severity:
+    .col-md-9.details-value= @alarm_definition.severity
+    .col-md-3.details-label 
+      %strong Expression:
+    .col-md-9.details-value= @alarm_definition.expression
+    .col-md-3.details-label 
+      %strong Match by:
+    .col-md-9.details-value= @alarm_definition.match_by.join(',') 
+
+    -# TODO: howto render the ok, alarm and undetermined actions? because I have only the notification IDs
+
+.buttons{class: modal? ? 'modal-footer' : ''} 
+  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close
