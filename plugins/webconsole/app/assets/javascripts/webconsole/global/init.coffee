@@ -9,6 +9,7 @@ $(document).ready ->
     WebconsoleContainer.init('#webconsole-container',{})
     WebconsoleContainer.load()
 
+
   # slide-in webconsole panel
   else if $('[data-trigger="webconsole:open"]').length>0
     $("<div class='webconsole popup'><div id='webconsole-container'/></div>").appendTo('body')
@@ -17,3 +18,5 @@ $(document).ready ->
       title: 'Web Console'
       buttons: ['help','reload','close']
     })
+
+  $('[data-toggle="tooltip"]').tooltip(delay: { "show": 700 }, trigger: "hover")
