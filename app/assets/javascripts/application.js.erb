@@ -13,19 +13,17 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap-sprockets
-//= require plugins  
-//= require dialogs  
-//= require modal 
+//= require plugins
+//= require dialogs
+//= require modal
 //= require jquery.history
 //= require stateful_links
 //= require dashboard
 //= require snippets
-//= require polling_service 
-//= require bootstrap-treeview
+//= require polling_service
   
 <%
 Core::PluginsManager.plugins_with_global_js.each do |plugin|
   require_asset("#{plugin.name}/#{plugin.class::GLOBAL_JS_FILE_NAME}")
 end
 %>
-

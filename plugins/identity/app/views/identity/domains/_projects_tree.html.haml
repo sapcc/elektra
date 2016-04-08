@@ -1,69 +1,33 @@
-.row
-  .col-md-8
-    %div#projecttree
-  .col-md-2
-    .form-group-sm
-      %label.sr-only{:for => "input-expand-node"} Projects:
-      %input#input-expand-node.form-control{:placeholder => "Search project...", :type => "input"}
-  - if current_user.is_allowed?('identity:project_request')
-    = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
+-# .row
+-#   .col-md-8
+-#     %div#projecttree
+-#   .col-md-2
+-#     .form-group-sm
+-#       %label.sr-only{:for => "input-expand-node"} Projects:
+-#       %input#input-expand-node.form-control{:placeholder => "Search project...", :type => "input"}
+-#   - if current_user.is_allowed?('identity:project_request')
+-#     = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
+-#
+-# =content_for :javascripts do
+-#   :javascript
+-#
+-#     var $expandibleTree = $('#projecttree').treeview({
+-#       enableLinks: true,
+-#       levels: 1,
+-#       showBorder: false,
+-#       showTags: true,
+-#       color: '#337ab7',
+-#       collapseIcon: 'fa fa-minus',
+-#       expandIcon: 'fa fa-plus',
+-#       data: #{project_tree(@user_domain_projects_tree.root.children).to_json}
+-#     });
+-#
+-#
+-#     // Expand/collapse/toggle nodes
+-#     $('#input-expand-node').on('keyup', function (e) {
+-#       $expandibleTree.treeview('collapseAll');
+-#       expandibleNodes = $expandibleTree.treeview('search', [ $(this).val(), { ignoreCase: true, exactMatch: false } ]);
+-#     });
 
-=content_for :javascripts do
-  :javascript
 
-    var $expandibleTree = $('#projecttree').treeview({
-      enableLinks: true,
-      levels: 1,
-      showBorder: false,
-      showTags: true,
-      color: '#337ab7',
-      collapseIcon: 'fa fa-minus',
-      expandIcon: 'fa fa-plus',
-      data: #{project_tree(@user_domain_projects_tree.root.children).to_json}
-    });
-
-    
-    // Expand/collapse/toggle nodes
-    $('#input-expand-node').on('keyup', function (e) {
-      $expandibleTree.treeview('collapseAll');
-      expandibleNodes = $expandibleTree.treeview('search', [ $(this).val(), { ignoreCase: true, exactMatch: false } ]);
-    });
-
-
-%ul.tree.tree-expandable
-  %li.has-children.node-expanded
-    %i.node-icon
-    %a{href: "#"} Project 1
-    %ul
-      %li
-        %i.node-icon
-        %a{href: "#"} Child 1.1
-      %li
-        %i.node-icon
-        %a{href: "#"} Child 1.2
-  %li
-    %i.node-icon
-    %a{href: "#"} Project 2
-  %li.has-children.node-expanded
-    %i.node-icon
-    %a{href: "#"} Project 3
-    %ul
-      %li
-        %i.node-icon
-        %a{href: "#"} Child 3.1
-      %li.has-children
-        %i.node-icon
-        %a{href: "#"} Child 3.2
-        %ul
-          %li
-            %i.node-icon
-            %a{href: "#"} Child 3.2.1
-          %li
-            %i.node-icon
-            %a{href: "#"} Child 3.2.2
-      %li
-        %i.node-icon
-        %a{href: "#"} Child 3.3
-      %li
-        %i.node-icon
-        %a{href: "#"} Child 3.4
+- render_project_tree(@user_domain_projects_tree.root.children)
