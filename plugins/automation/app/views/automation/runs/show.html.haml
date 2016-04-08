@@ -12,26 +12,21 @@
       .row
         .col-md-2
           %b
-            Run Id:
-        .col-md-4
-          = @run.id
-        .col-md-2
-          %b
-            Status:
-        .col-md-4.js-run-state
-          = render partial: 'run_state', locals: {run: @run}
-
-      .row
-        .col-md-2
-          %b
             Automation:
         .col-md-4
           = @run.automation_name
+
+      .row
         .col-md-2
           %b
             Owner:
         .col-md-4
           = @run.owner
+        .col-md-2
+          %b
+            Status:
+        .col-md-4.js-run-state
+          = render partial: 'run_state', locals: {run: @run}
 
 
       .row
@@ -50,7 +45,7 @@
     %h3
       Jobs
 
-    = render partial: 'table_jobs', locals: {jobs: @jobs}
+    = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs}
 
   .modal-section
     %h3

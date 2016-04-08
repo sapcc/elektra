@@ -2,7 +2,7 @@ module Automation
 
   class AutomationsController < ::Automation::ApplicationController
     before_action :automation, only: [:show, :edit]
-    before_action :automations, only: [:index, :destroy]
+    before_action :automations, only: [:index]
 
     def index
     end
@@ -81,11 +81,13 @@ module Automation
     def destroy
       automation = services.automation.automation(params[:id])
       automation.destroy
+      automations()
       flash.now[:success] = "Automation #{automation.name} removed successfully."
       render action: "index"
     rescue Exception => e
       Rails.logger.error e
       flash.now[:error] = "Error removing automation."
+      automations()
       render action: "index"
     end
 
@@ -98,7 +100,24 @@ module Automation
 
     def automations
       @automations = services.automation.automations
-      @runs = services.automation.automation_runs
+      @runs = runs_with_jobs
+    end
+
+    def runs_with_jobs
+      runs = services.automation.automation_runs
+      runs.each do |run|
+        unless run.jobs.nil?
+          run.jobs_states = {queued: 0, failed: 0, complete: 0, executing:0}
+          run.jobs.each do |job_id|
+            begin
+              job = services.automation.job(job_id)
+              run.jobs_states[job.status.to_sym] += 1
+            rescue ::RestClient::ResourceNotFound
+            end
+          end
+        end
+      end
+      runs
     end
 
     def automation_params

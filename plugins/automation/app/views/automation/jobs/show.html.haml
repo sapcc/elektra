@@ -18,7 +18,7 @@
       .row
         .col-md-2
           %b
-            Agent:
+            Node:
         .col-md-4
           - unless @agent.nil?
             = link_to(@agent.name, plugin('automation').agent_path(id: @agent.id, name: @agent.name), data: {modal: true})
@@ -34,7 +34,7 @@
       .row
         .col-md-2
           %b
-            Action-agent:
+            Agent:
         .col-md-4
           = " #{@job.agent}"
         .col-md-2
@@ -57,23 +57,6 @@
 
   .modal-section
     %h3
-      Payload
-
-    %p
-      = "The payload has #{@payload_lines} lines of output. "
-      - if @payload_truncated
-        = "The output is too long and has been truncated to the last lines. "
-      = link_to("View", plugin('automation').show_payload_jobs_path(id: @job.request_id), target: "_blank")
-      full payload.
-
-    %pre
-      %code
-        = preserve do
-          :escaped
-            #{@payload_output}
-
-  .modal-section
-    %h3
       Log
 
     %p
@@ -88,6 +71,23 @@
         = preserve do
           :escaped
             #{@log_output}
+
+  .modal-section
+    %h3
+      Payload
+
+    %p
+      = "The payload has #{@payload_lines} lines of output. "
+      - if @payload_truncated
+        = "The output is too long and has been truncated to the last lines. "
+      = link_to("View", plugin('automation').show_payload_jobs_path(id: @job.request_id), target: "_blank")
+      full payload.
+
+    %pre
+      %code
+        = preserve do
+          :escaped
+            #{@payload_output}
 
 
 .modal-footer

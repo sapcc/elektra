@@ -89,13 +89,13 @@ module Automation
 
     def job_history_entry(status)
       case status
-        when 'queued'
+        when ::Automation::State::Job::QUEUED
           haml_tag :i, {class: "fa fa-square state_success", data: {popover_type: 'job-history'}}
-        when 'executing'
+        when ::Automation::State::Job::EXECUTING
           haml_tag :i, {class: "fa fa-spinner fa-spin", data: {popover_type: 'job-history'}}
-        when 'failed'
+        when ::Automation::State::Job::FAILED
           haml_tag :i, {class: "fa fa-square state_failed", data: {popover_type: 'job-history'}}
-        when 'complete'
+        when ::Automation::State::Job::COMPLETED
           haml_tag :i, {class: "fa fa-square state_success", data: {popover_type: 'job-history'}}
       end
     end
@@ -150,6 +150,19 @@ module Automation
     #
     # Runs
     #
+
+    def run_icon_state(state)
+      case state
+        when ::Automation::State::Run::PREPARING
+          haml_tag :i, {class: "fa fa-square state_success", data: {popover_type: 'job-history'}}
+        when ::Automation::State::Run::EXECUTING
+          haml_tag :i, {class: "fa fa-spinner fa-spin", data: {popover_type: 'job-history'}}
+        when ::Automation::State::Run::FAILED
+          haml_tag :i, {class: "fa fa-square state_failed", data: {popover_type: 'job-history'}}
+        when ::Automation::State::Run::COMPLETED
+          haml_tag :i, {class: "fa fa-square state_success", data: {popover_type: 'job-history'}}
+      end
+    end
 
     def run_state(state, state_string)
       case state
