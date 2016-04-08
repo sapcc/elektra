@@ -1,3 +1,9 @@
+<%if @inquiry%>
+$("#inquiry_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'inquiry/inquiries/item', locals: {inquiry: @inquiry, remote_links: false})) %>");
+$("#inquiry_<%=params[:id]%>").update();
+<%else%>
+$("#inquiry_<%=params[:id]%>").remove();
+<%end%>
 // close modal window
 Dashboard.hideModal();
 // reload remote inquries
