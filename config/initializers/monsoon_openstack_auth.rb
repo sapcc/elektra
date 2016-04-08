@@ -30,7 +30,12 @@ MonsoonOpenstackAuth.configure do |auth|
   #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
   auth.login_redirect_url = -> referrer_url, current_user do 
     # redirect user to domain home page after login
-    referrer_url.blank? ? "/#{current_user.user_domain_id}/identity/home" : referrer_url
+    if referrer_url.blank? or (!(referrer_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(referrer_url=~/^[^\?]*#{current_user.user_domain_id}/))
+      "/#{current_user.user_domain_id}/identity/home"
+    else
+      referrer_url
+    end
+    #referrer_url.blank? ? "/#{current_user.user_domain_id}/identity/home" : referrer_url
   end
 
   # authorization policy file
