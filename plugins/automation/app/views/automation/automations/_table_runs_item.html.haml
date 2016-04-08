@@ -17,5 +17,5 @@
       %i.fa.fa-square.state_failed
       %span.state= run.attributes.fetch('jobs_states', {}).fetch('failed',0)
     .run-job
-      %i.fa.fa-spinner.fa-spin
+      %i.fa.fa-refresh
       %span.state= run.attributes.fetch('jobs_states', {}).fetch('executing', 0) + run.attributes.fetch('jobs_states',{}).fetch('queued', 0)

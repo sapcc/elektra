@@ -8,7 +8,7 @@ module Automation
     end
 
     def date_humanize(date)
-      " #{date}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
+      " #{date}".to_time(:local).strftime('%Y-%m-%d %H:%M:%S %Z')
     end
 
     def form_horizontal_static_input(label, value)
