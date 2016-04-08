@@ -10,3 +10,12 @@
   %td
     - run_state(run.state, run.state_to_string)
   %td
+    .run-job
+      %i.fa.fa-square.state_success
+      %span.state= run.attributes.fetch('jobs_states',{}).fetch('complete', 0)
+    .run-job
+      %i.fa.fa-square.state_failed
+      %span.state= run.attributes.fetch('jobs_states', {}).fetch('failed',0)
+    .run-job
+      %i.fa.fa-spinner.fa-spin
+      %span.state= run.attributes.fetch('jobs_states', {}).fetch('executing', 0) + run.attributes.fetch('jobs_states',{}).fetch('queued', 0)

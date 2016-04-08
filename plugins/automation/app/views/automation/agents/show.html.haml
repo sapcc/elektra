@@ -19,42 +19,7 @@
               %td= v
 
     .tab-pane{role:"tabpanel", id:"jobs"}
-      %table.table.datatable
-        %tbody
-          - @jobs[:elements].each do |job|
-            %tr
-              %td
-                .row
-                  .col-md-9
-                  .col-md-3
-                    = link_to("Open Log in new window", plugin('automation').show_log_jobs_path(id: job.request_id), target: "_blank")
-                .row
-                  .col-md-6
-                    %b Job Id:
-                    = " #{job.request_id}"
-                  .col-md-6
-                    %b Status:
-                    = " #{job.status}"
-                .row
-                  .col-md-6
-                    %b Agent:
-                    = " #{job.agent}"
-                  .col-md-6
-                    %b Action:
-                    = " #{job.action}"
-                .row
-                  .col-md-6
-                    %b Created at:
-                    = " #{job.created_at}"
-                  .col-md-6
-                    %b Updated at:
-                    = " #{job.updated_at}"
-                %b Payload:
-                %pre
-                  %code
-                    = preserve do
-                      :escaped
-                        #{job.payload}
+      = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs[:elements]}
 
 .modal-footer
   - if modal?

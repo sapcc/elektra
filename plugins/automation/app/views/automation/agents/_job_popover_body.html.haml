@@ -1,12 +1,6 @@
 .job-popover-content
   .row
     .col-md-12
-      %b Id:
-  .row
-    .col-md-12
-      = " #{job.request_id}"
-  .row
-    .col-md-12
       %b Status:
       - job_state(job.status)
   .row

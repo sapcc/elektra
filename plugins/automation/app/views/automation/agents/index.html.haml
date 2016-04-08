@@ -4,6 +4,6 @@
   .tab-pane.active{role:"tabpanel", id:"agents-pane"}
 
     .toolbar
-      = link_to "Install a new Agent", plugin('automation').install_agents_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+      = link_to "Install a new Node", plugin('automation').install_agents_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
     = render partial: 'table_agents', locals: {instances: @agents, jobs: @jobs}
