@@ -1,8 +1,6 @@
 module Compute
   class InstancesController < Compute::ApplicationController
     def index
-      @active_domain = services.identity.find_domain(@scoped_domain_id)
-
       if @scoped_project_id
         @instances = services.compute.servers
       end

@@ -13,7 +13,7 @@ module BlockStorage
       #
 
       def volumes(filter={})
-        handle_response { @connection.list_volumes(filter).body['volumes'] }
+        handle_response { @connection.list_volumes_detailed(filter).body['volumes'] }
       end
 
       def get_volume(id)
