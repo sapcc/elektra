@@ -52,7 +52,7 @@ module ResourceManagement
       overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
       domain_name = services.identity.find_domain(@scoped_domain_id).name
 
-      inquiry = services.inquiry.inquiry_create(
+      inquiry = services.inquiry.create_inquiry(
         'project_quota',
         "#{@project_resource.service}/#{@project_resource.name} for domain #{domain_name}: add #{@project_resource.data_type.format(new_value - old_value)}",
         current_user,

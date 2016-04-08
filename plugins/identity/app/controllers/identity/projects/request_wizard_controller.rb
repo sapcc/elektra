@@ -16,7 +16,7 @@ module Identity
 
         if @project.valid?
           begin
-            inquiry = services.inquiry.inquiry_create(
+            inquiry = services.inquiry.create_inquiry(
                 'project',
                 "#{@project.name} - #{@project.description}",
                 current_user,
@@ -55,10 +55,10 @@ module Identity
       @project = services.identity.new_project
       @project.attributes = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
       if @project.valid?
-        inquiry = services.inquiry.inquiry_change(
-            @inquiry.id,
-            @project.description,
-            @project.attributes.to_json
+        inquiry = services.inquiry.change_inquiry(
+            id: @inquiry.id,
+            description: @project.description,
+            payload: @project.attributes.to_json
         )
         unless inquiry.errors?
           render template: 'identity/projects/request_wizard/create.js'

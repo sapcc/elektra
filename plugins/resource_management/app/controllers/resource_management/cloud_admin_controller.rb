@@ -107,7 +107,7 @@ module ResourceManagement
         if params[:resource][:comment].present?
           comment += ", comment from approver: #{params[:resource][:comment]}"
         end
-        services.inquiry.set_state(@inquiry.id, :approved, comment)
+        services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
       else
         self.review_request
         render action: 'review_request'

@@ -76,16 +76,6 @@ module ServiceLayer
       end
     end
 
-    def addnodes(root, parentid_map)
-      # process nodes recursive and add them to it's parent
-      root.children.each do |c|
-        parentid_map[c.name].each do |n|
-          c << n unless c.include?(n)
-          addnodes(c, parentid_map)
-        end if parentid_map[c.name]
-      end
-    end
-
     def projects(filter={})
       driver.map_to(Identity::Project).projects(filter)
     end
