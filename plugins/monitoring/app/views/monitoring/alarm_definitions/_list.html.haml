@@ -13,5 +13,5 @@
     - else
       -# TODO: add pagination
       - @alarm_definitions.sort_by(&:name).each do |alarm_definition|
-        = render partial: 'definitions_row', locals: { alarm_definition: alarm_definition } 
+        = render partial: 'list_row', locals: { alarm_definition: alarm_definition } 
 
