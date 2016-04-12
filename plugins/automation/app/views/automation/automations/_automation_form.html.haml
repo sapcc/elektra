@@ -8,7 +8,7 @@
 
 = f.input :timeout, required:true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout'
 
-= f.input :tags, as: :text, label_html: {:class => "col-xs-12"}, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter tags',
+= f.input :tags, as: :text, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter tags',
   icon_hint: 'Tags are key-value pairs. See hint for more information.',
   help_hint: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
 
