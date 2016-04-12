@@ -16,8 +16,8 @@ module Automation
 
     def online_to_string
       case self.online
-        when State::Agent::ONLINE then "Online"
-        when State::Agent::OFFLINE then "Offline"
+        when State::Node::ONLINE then "Online"
+        when State::Node::OFFLINE then "Offline"
         else
           State::MISSING
       end

@@ -12,7 +12,7 @@ module Automation
     attribute :type, String
     attribute :name, String
     attribute :repository, String
-    attribute :repository_revision, String
+    attribute :repository_revision, String, :default => 'master'
     attribute :tags, String #JSON
     attribute :timeout, Integer, :default => 3600
 
@@ -28,10 +28,7 @@ module Automation
 
 
     # validation
-    validates :name, presence: true
-    validates :repository, presence: true
-    validates :type, presence: true
-
+    validates_presence_of :name, :repository, :repository_revision, :type
 
     def persisted?
       false

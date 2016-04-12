@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Automation::AgentsController, type: :controller do
+describe Automation::NodesController, type: :controller do
   routes { Automation::Engine.routes }
   
   include AuthenticationStub

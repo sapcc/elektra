@@ -1,0 +1,17 @@
+<% if !@errors.nil? %>
+  $("#modal_flash_messages").html("<%= escape_javascript(render partial: "automation/nodes/install_node_error", locals: {flashes: @errors}) %>");
+  $("#modal_messages").html("<%= escape_javascript(render partial: "automation/nodes/install_node_error", locals: {flashes: @messages}) %>");
+<% elsif @instance_os.nil?%>
+  $(".modal-dialog .modal-title").html("Install new Node - Select version");
+  $("#modal_flash_messages").html("<%= escape_javascript(render partial: "automation/nodes/install_node_error", locals: {flashes: @errors}) %>");
+  $("#modal_messages").html("<%= escape_javascript(render partial: "automation/nodes/install_node_error", locals: {flashes: @messages}) %>");
+  $("#search_instance").html("<%= escape_javascript(render partial: "automation/nodes/install_node_version") %>");
+  $( "#instance_os" ).focus();
+<% else %>
+  $(".modal-dialog .modal-title").html("Install new Node - Instructions");
+  $("#modal_flash_messages").html("<%= escape_javascript(render partial: "automation/nodes/install_node_error", locals: {flashes: @errors}) %>");
+  $("#modal_messages").html("<%= escape_javascript(render partial: "automation/nodes/install_node_error", locals: {flashes: @messages}) %>");
+  $("#search_instance").html("<%= escape_javascript(render partial: "automation/nodes/install_node_instructions") %>");
+<% end %>
+
+$('.snippet').initSnippetCopyToClipboard();

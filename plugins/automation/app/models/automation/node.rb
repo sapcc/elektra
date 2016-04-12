@@ -1,16 +1,16 @@
 module Automation
 
-  class Agent < RubyArcClient::Agent
+  class Node < RubyArcClient::Agent
 
     attr_accessor :id, :name
 
-    def self.create_agents(_agents={})
-      agentsMap = []
+    def self.create_nodes(_agents={})
+      nodesMap = []
       _agents.data.each do |_agent|
-        agent = Agent.new(_agent)
-        agentsMap << agent
+        node = ::Automation::Node.new(_agent)
+        nodesMap << node
       end
-      {elements: agentsMap, total_elements: _agents.pagination.total_elements}
+      {elements: nodesMap, total_elements: _agents.pagination.total_elements}
     end
 
     def id

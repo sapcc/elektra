@@ -36,18 +36,19 @@ module Automation
     def attributes_to_form
       attr = self.attributes.clone
       attr.keys.each do |key|
-        if key == 'chef_attributes'
+
+        if json_attr.include? key.to_sym
+          if attr[key].respond_to?(:attributes)
+            attr[key] = json_to_string(attr[key].attributes)
+          end
+        elsif array_attr.include? key.to_sym
+          attr[key] = array_to_string(attr[key])
+        elsif key == 'chef_attributes'
           unless attr[key].blank?
             if attr[key].respond_to?(:attributes)
               attr[key] = attr[key].attributes.to_json
             end
           end
-        elsif key == 'tags'
-          if attr[key].respond_to?(:attributes)
-            attr[key] = json_to_string(attr[key].attributes)
-          end
-        elsif key == 'run_list'
-          attr[key] = array_to_string(attr[key])
         end
       end
       attr

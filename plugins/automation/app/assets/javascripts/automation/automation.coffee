@@ -21,10 +21,10 @@
     $('.js-external-instance').addClass('hide')
 
 @run_automation_link=(event) ->
-  agent_id = $(event.target).data('agent-id')
-  spinner = $('i.loading-spinner-section[data-agent-id=' + agent_id + ']')
+  node_id = $(event.target).data('node-id')
+  spinner = $('i.loading-spinner-section[data-node-id=' + node_id + ']')
   spinner.removeClass('hide')
-  btn_group = $('.btn-group[data-agent-id=' + agent_id + ']')
+  btn_group = $('.btn-group[data-node-id=' + node_id + ']')
   btn_group.addClass('hide')
   $.ajax
     url: $(event.target).data('link'),

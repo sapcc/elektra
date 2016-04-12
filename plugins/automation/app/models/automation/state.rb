@@ -4,7 +4,7 @@ module Automation
     MISSING = '-'
     IP_MISSING = '-'
 
-    module Agent
+    module Node
       ONLINE = true
       OFFLINE = false
     end
