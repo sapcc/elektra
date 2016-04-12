@@ -7,7 +7,7 @@ class @WebconsoleContainer
     loadingText:        'Loading web console'
     toolbar:            'on'
     title:              'Web Console'
-    buttons:            null #['help','reload','close']
+    buttons:            null #['help','reload','close', 'fullscreen']
     effect:             'slide'
     height:             null #'viewport'
     closeIcon:          'fa fa-close'
