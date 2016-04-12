@@ -3,6 +3,9 @@ source 'http://localhost:8080/rubygemsorg/'
 source 'https://localhost/' do
   gem 'ruby-arc-client', '~> 0.5.0'
 end
+# Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
+# # unf is pulled in by the ruby-arc-client
+gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '4.2.4'
 
