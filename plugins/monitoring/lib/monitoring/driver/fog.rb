@@ -32,6 +32,12 @@ module Monitoring
           @fog.delete_alarm_definition(id)
         end
       end
+
+      def notifications
+        handle_response do
+          @fog.list_notifications.body["elements"]
+        end
+      end
     end
   end
 end

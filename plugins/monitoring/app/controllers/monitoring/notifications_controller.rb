@@ -3,6 +3,7 @@ module Monitoring
     authorization_context 'monitoring'
 
     def index
+      @notifications = services.monitoring.notifications
     end
 
   end

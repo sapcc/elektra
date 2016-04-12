@@ -1,3 +1,9 @@
 = content_for :main_toolbar do 
   Monitoring Notifications
 = render partial: '/monitoring/application/tabs', locals: { tab: 'notifications' }
+
+.toolbar
+  Definitions (#{@notifications.length})
+  = link_to "Create", plugin('monitoring').new_notification_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+#notification_list
+  = render partial: 'list'
