@@ -66,8 +66,8 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
 
-    primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:agents) } do |automation_nav|
-      automation_nav.item :automation, 'Automation', -> {plugin('automation').agents_path}, if: -> { services.available?(:automation,:agents)}, highlights_on: Proc.new { params[:controller][/automation\/.*/] }
+    primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-gears fa-fw" }, if: -> {services.available?(:automation,:nodes) } do |automation_nav|
+      automation_nav.item :automation, 'Automation', -> {plugin('automation').nodes_path}, if: -> { services.available?(:automation,:nodes)}, highlights_on: Proc.new { params[:controller][/automation\/.*/] }
 
       # automation_nav.dom_attributes = {class: 'content-list'}
     end

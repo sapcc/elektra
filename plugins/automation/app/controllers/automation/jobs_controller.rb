@@ -11,9 +11,9 @@ module Automation
     def show
       @job = services.automation.job(params[:id])
 
-      # get agent name
-      @agent = begin
-        services.automation.agent(@job.to, ['hostname'])
+      # get node name
+      @node = begin
+        services.automation.node(@job.to, ['hostname'])
       rescue ::RestClient::ResourceNotFound
         nil
       end

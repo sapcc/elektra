@@ -21,7 +21,7 @@
             Node:
         .col-md-4
           - unless @agent.nil?
-            = link_to(@agent.name, plugin('automation').agent_path(id: @agent.id, name: @agent.name), data: {modal: true})
+            = link_to(@agent.name, plugin('automation').node_path(id: @agent.id, name: @agent.name), data: {modal: true})
           - else
             = @job.to
         .col-md-2

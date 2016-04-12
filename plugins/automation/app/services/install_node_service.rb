@@ -1,20 +1,20 @@
-class InstallAgentError < StandardError
+class InstallNodeError < StandardError
   attr_accessor :options
   def initialize(_message, _options={})
     @options = _options
     super(_message.to_s)
   end
 end
-class InstallAgentParamError < InstallAgentError; end
-class InstallAgentInstanceOSNotFound < InstallAgentError; end
-class InstallAgentNoInstructionsFound < InstallAgentError; end
+class InstallNodeParamError < InstallNodeError; end
+class InstallNodeInstanceOSNotFound < InstallNodeError; end
+class InstallNodeNoInstructionsFound < InstallNodeError; end
 
-class InstallAgentService
+class InstallNodeService
 
   def process_request(instance_id, instance_type, instance_os, compute_service, automation_service, active_project, token)
     # check instance id
     if instance_id.blank?
-      raise InstallAgentParamError.new('Instance ID empty', {type: 'instance_id'})
+      raise InstallNodeParamError.new('Instance ID empty', {type: 'instance_id'})
     end
 
     # check just in case of compute instance
@@ -45,20 +45,20 @@ class InstallAgentService
 
     # check if we got an instance
     if instance.nil?
-      raise InstallAgentParamError.new("Compute instance with ID #{instance_id} not found", {type: 'instance_id', messages: messages})
+      raise InstallNodeParamError.new("Compute instance with ID #{instance_id} not found", {type: 'instance_id', messages: messages})
     end
 
-    # check if agent already exists
-    agent_found = ((automation_service.agent(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
-    if agent_found == true
-      messages << {key: "warning", message: "Agent already exists on instance #{instance.name} (#{instance.image.name})"}
+    # check if node already exists
+    node_found = ((automation_service.node(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
+    if node_found == true
+      messages << {key: "warning", message: "Node already exists on instance #{instance.name} (#{instance.image.name})"}
     end
 
     # if instance_os is not given then we check the metadata or we ask for
     if instance_os.blank?
       # check image metadata
       if instance.image.metadata.nil? || instance.image.metadata['os_family'].blank? || ( instance.image.metadata['os_family'] != 'windows' && instance.image.metadata['os_family'] != 'linux')
-        raise InstallAgentInstanceOSNotFound.new("Instance OS empty or not known", {instance: instance, messages: messages})
+        raise InstallNodeInstanceOSNotFound.new("Instance OS empty or not known", {instance: instance, messages: messages})
       else
         instance_os = instance.image.metadata['os_family']
       end
@@ -68,29 +68,29 @@ class InstallAgentService
     url = begin
       registration_url(instance_id, active_project, token)
     rescue
-      raise InstallAgentError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.", {instance: instance, messages: messages})
+      raise InstallNodeError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.", {instance: instance, messages: messages})
     end
 
     {log_info: create_login_info(instance), instance: instance, script: create_script(url, instance_os), messages:messages}
   end
 
   def process_request_external(instance_id, instance_os, automation_service, active_project, token)
-    # check if agent already exists
-    agent_found = ((automation_service.agent(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
-    if agent_found == true
-      messages << {key: "warning", message: "Agent already exists with id #{instance_id}"}
+    # check if node already exists
+    node_found = ((automation_service.node(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
+    if node_found == true
+      messages << {key: "warning", message: "Node already exists with id #{instance_id}"}
     end
 
     # check os
     if instance_os.blank?
-      raise InstallAgentInstanceOSNotFound.new("Instance OS empty or not known")
+      raise InstallNodeInstanceOSNotFound.new("Instance OS empty or not known")
     end
 
     # get the registration url and log info
     url = begin
       registration_url(instance_id, active_project, token)
     rescue
-      raise InstallAgentError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.")
+      raise InstallNodeError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.")
     end
 
     {script: create_script(url, instance_os)}
@@ -129,7 +129,7 @@ chmod +x /opt/arc/arc
 powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['arc_update_site_url']}/#{instance_os}/amd64','C:\\monsoon\\arc\\arc.exe')
 C:\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_mqtt_url']} --update-uri #{AUTOMATION_CONF['arc_update_url']} --registration-url #{url}"
     else
-      raise InstallAgentNoInstructionsFound.new("No instructions found for this os #{instance_os}")
+      raise InstallNodeNoInstructionsFound.new("No instructions found for this os #{instance_os}")
     end
   end
 

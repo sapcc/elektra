@@ -9,7 +9,7 @@ module ServiceLayer
       !arc_service_endpoint.blank? && !automation_service_endpoint.blank?
     end
 
-    def install_agent_available?
+    def install_node_available?
       !arc_update_site.blank? && !arc_pki.blank?
     end
 
@@ -30,31 +30,31 @@ module ServiceLayer
     end
 
     #
-    # Agents
+    # Nodes (Agents)
     #
 
-    def agents(filter="", show_facts=[], page=0, per_page=0)
+    def nodes(filter="", show_facts=[], page=0, per_page=0)
       init_client
-      Automation::Agent.create_agents(@client.list_agents!(current_user.token, filter, show_facts, page, per_page))
+      ::Automation::Node.create_nodes(@client.list_agents!(current_user.token, filter, show_facts, page, per_page))
     end
 
-    def agent(agent_id="", show_facts=[])
+    def node(node_id="", show_facts=[])
       init_client
-      Automation::Agent.new(@client.find_agent!(current_user.token, agent_id, show_facts))
+      ::Automation::Node.new(@client.find_agent!(current_user.token, node_id, show_facts))
     end
 
-    def agent_facts(agent_id = "")
+    def node_facts(node_id = "")
       init_client
-      Automation::Facts.new(@client.show_agent_facts!(token, agent_id))
+      ::Automation::Facts.new(@client.show_agent_facts!(token, node_id))
     end
 
     #
     # Jobs
     #
 
-    def jobs(agent_id = "", page=0, per_page=0)
+    def jobs(node_id = "", page=0, per_page=0)
       init_client
-      Automation::Job.create_jobs( @client.list_jobs!(token, agent_id, page, per_page) )
+      Automation::Job.create_jobs( @client.list_jobs!(token, node_id, page, per_page) )
     end
 
     def job(job_id)
