@@ -4,10 +4,10 @@
   %td= alarm_definition.description
   %td
     -# TODO: made it clickable to enable and disable actions_enabled directly in the table
-    - if alarm_definition.notification_action?
-      = icon('check-square')
+    - if alarm_definition.actions_enabled
+      = icon('check-square-o')
     - else
-      %strong -
+      = icon('square-o')
   %th.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }
