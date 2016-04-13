@@ -1,6 +1,11 @@
 %tr
   %td= notification.name
-  %td= notification.type
+  %td 
+    - if notification.type == "EMAIL"
+      %span{title: "email notification", style: "cursor:help"}
+        = icon('envelope-o')
+    - else
+      %strong ?
   %td= notification.address
   %th.snug
     .btn-group
