@@ -1,3 +1,8 @@
 = content_for :main_toolbar do 
   Monitoring Alarms
 = render partial: '/monitoring/application/tabs', locals: { tab: 'alarms' }
+
+.toolbar
+  Alarms (#{@alarms.length})
+#alarms_list
+  = render partial: 'list'

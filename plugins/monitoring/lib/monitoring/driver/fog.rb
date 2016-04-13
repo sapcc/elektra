@@ -21,6 +21,12 @@ module Monitoring
         end
       end
 
+      def alarms
+        handle_response do
+          @fog.list_alarms.body["elements"]
+        end
+      end
+
       def get_alarm_definition(id)
         handle_response do
           @fog.get_alarm_definition(id).body

@@ -20,6 +20,10 @@ module ServiceLayer
       driver.map_to(Monitoring::AlarmDefinition).alarm_definitions
     end
 
+    def alarms
+      driver.map_to(Monitoring::AlarmDefinition).alarms
+    end
+
     def notifications
       driver.map_to(Monitoring::Notification).notifications
     end

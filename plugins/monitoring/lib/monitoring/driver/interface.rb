@@ -17,6 +17,10 @@ module Monitoring
       def notifications
         raise Core::ServiceLayer::Errors::NotImplemented
       end
+
+      def alarms
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
     end
   end
 end
