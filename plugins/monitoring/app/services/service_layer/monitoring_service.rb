@@ -31,5 +31,10 @@ module ServiceLayer
     def get_alarm_definition(id)
       id.blank? ? nil : driver.map_to(Monitoring::AlarmDefinition).get_alarm_definition(id)
     end
+
+    def new_notification(attributes={})
+      Monitoring::Notification.new(driver,attributes)
+    end
+
   end
 end

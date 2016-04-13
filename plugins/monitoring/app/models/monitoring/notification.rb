@@ -5,5 +5,7 @@ module Monitoring
     # address
     # name
     # type
+    #
+    validates_presence_of :name, :address, :type
   end
 end

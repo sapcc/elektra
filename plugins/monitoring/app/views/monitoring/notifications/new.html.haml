@@ -1,9 +1,16 @@
 = content_for :title do
   New Notification
 
-.buttons{class: modal? ? 'modal-footer' : ''}
-  - if modal?
-    %button.btn.btn-default{ type:"button", data: { dismiss:"modal" } } Cancel
-  - else
-    = link_to "Cancel", plugin('monitoring').notifications_path, class: 'btn btn-default'
+
+= simple_modal_form_for @notififcation, submit_action: 'Create', url: plugin('monitoring').notifications_path, method: :post, cancel_url: plugin('monitoring').notifications_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  = f.input :name, placeholder: 'Enter Name'
+  = f.input :type, collection: ['Email'], selected:'Email'
+  = f.input :address , placeholder: 'Enter Email Address', icon_hint: 'To add more than one mail address please seperate with comma'
+
+=content_for :javascripts do
+  :javascript
+    setTimeout(function(){
+      $('#notification_name').focus().select();
+    }, 0)
+
 

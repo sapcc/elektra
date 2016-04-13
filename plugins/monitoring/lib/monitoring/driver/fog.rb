@@ -44,6 +44,12 @@ module Monitoring
           @fog.list_notifications.body["elements"]
         end
       end
+
+      def create_notification(params={})
+        handle_response do
+          @fog.create_notification(params)
+        end
+      end
     end
   end
 end
