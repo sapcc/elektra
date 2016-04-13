@@ -33,6 +33,18 @@ module Monitoring
         end
       end
 
+      def get_notification(id)
+        handle_response do
+          @fog.get_notification(id).body
+        end
+      end
+
+      def delete_notification(id)
+        handle_response do
+          @fog.delete_notification(id)
+        end
+      end
+
       def delete_alarm_definition(id)
         handle_response do
           @fog.delete_alarm_definition(id)

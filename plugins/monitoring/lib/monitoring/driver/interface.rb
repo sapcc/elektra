@@ -25,6 +25,10 @@ module Monitoring
       def create_notification
         raise Core::ServiceLayer::Errors::NotImplemented
       end
+
+      def get_notification(id)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
     end
   end
 end
