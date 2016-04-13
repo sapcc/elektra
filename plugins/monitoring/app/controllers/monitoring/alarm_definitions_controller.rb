@@ -21,7 +21,7 @@ module Monitoring
       respond_to do |format|
         format.js do
           @alarm_definitions = services.monitoring.alarm_definitions
-          render action: 'reload_definitions_list'
+          render action: 'reload_list'
         end
         format.html { redirect_to plugin('monitoring').alarm_definitions_path }
       end

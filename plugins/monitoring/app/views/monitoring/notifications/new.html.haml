@@ -1,9 +1,9 @@
 = content_for :title do
-  Edit Alarm Definition
+  New Notification
 
 .buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{ type:"button", data: { dismiss:"modal" } } Cancel
   - else
-    = link_to "Cancel", plugin('monitoring').alarm_definitions_path, class: 'btn btn-default'
+    = link_to "Cancel", plugin('monitoring').notifications_path, class: 'btn btn-default'
 
