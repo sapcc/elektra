@@ -1,6 +1,9 @@
 = content_for :title do
   New Alarm Definition
 
-.buttons{class: modal? ? 'modal-footer' : ''} 
-  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Cancel
+.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Cancel
+  - else
+    = link_to "Cancel", plugin('monitoring').alarm_definitions_path, class: 'btn btn-default'
 
