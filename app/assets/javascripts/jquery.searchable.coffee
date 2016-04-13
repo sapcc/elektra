@@ -45,6 +45,3 @@ jQuery.fn.searchable= ( options ) ->
           $(this).addClass(settings.searchResultCssClass)
           $(this).parents("*[data-search-name]").addClass(settings.hasSearchResultCssClass)
       
-# init all DOM elements found by css class '.searchable' as searchable
-$ -> $('.searchable').searchable()
-  
