@@ -63,7 +63,8 @@ $ ->
     $(this).parent().toggleClass('node-expanded')
 
 
-
+  # init all DOM elements found by css class '.searchable' as searchable
+  $ -> $('.searchable').searchable()
 
 
 # -------------------------------------------------------------------------------------------------------------
@@ -82,6 +83,9 @@ $(document).on 'modal:contentUpdated', (e) ->
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
   catch error
+  
+  # init all DOM elements found by css class '.searchable' as searchable
+  $("##{e.target.id} .searchable").searchable()
 
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
