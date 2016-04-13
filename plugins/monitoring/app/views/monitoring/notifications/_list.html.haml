@@ -11,6 +11,7 @@
         %td{colspan: 4} No notification definitions found.
     - else
       -# TODO: add pagination
-      - @notifications.sort_by(&:name).each do |notification|
-        = render partial: 'list_row', locals: { notification: notification } 
+      - @notifications.each do |notification|
+        = render partial: 'list_row', locals: { notification: notification }
 
+= paginate @notifications, :theme => 'twitter-bootstrap-3', :remote => true
