@@ -11,7 +11,5 @@ module Monitoring
       render template: '/monitoring/application/backend_error'
     end
 
-
-
   end
 end

@@ -1,9 +1,18 @@
 = content_for :title do
   Edit Notification 
 
-.buttons{class: modal? ? 'modal-footer' : ''}
-  - if modal?
-    %button.btn.btn-default{ type:"button", data: { dismiss:"modal" } } Cancel
-  - else
-    = link_to "Cancel", plugin('monitoring').notifications_path, class: 'btn btn-default'
+= simple_modal_form_for @notification, submit_action: 'Update', url: plugin('monitoring').notification_path(@notification.id), method: :put, cancel_url: plugin('monitoring').notifications_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  
+  #backend_error
+  = f.input :name, placeholder: 'Enter name'
+  = f.input :type, collection: ['Email'], selected:@notification.type
+  = f.input :address , placeholder: 'Enter single email address' 
+
+=content_for :javascripts do
+  :javascript
+    setTimeout(function(){
+      $('#notification_name').focus().select();
+    }, 0)
+
+
 

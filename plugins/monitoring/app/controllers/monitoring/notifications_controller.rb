@@ -17,10 +17,24 @@ module Monitoring
       @notification = services.monitoring.new_notification(name: "")
     end
 
+    def edit
+      @notification = services.monitoring.get_notification(params.require(:id))
+    end
+
     def create
       @notification = services.monitoring.new_notification(params.require(:notification))
       unless @notification.save
         render action: 'new'
+        return
+      end
+      back_to_notification_list
+    end
+
+    def update
+      @notification = services.monitoring.get_notification(params.require(:id))
+      attrs = params.require(:notification).permit(:name, :type, :address)
+      unless @notification.update_attributes(attrs)
+        render action: 'edit'
         return
       end
       back_to_notification_list

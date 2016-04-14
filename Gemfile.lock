@@ -60,10 +60,10 @@ GIT
 
 GIT
   remote: git@localhost:***REMOVED***/fog-openstack-monitoring.git
-  revision: c375c0c01607dc2a698a3d085b3e0dcc4fffd1e2
+  revision: 43bc06eef54f7f4f09302b97ee1b49483db4c5dc
   branch: master
   specs:
-    fog-openstack-monitoring (0.0.3)
+    fog-openstack-monitoring (0.0.4)
       fog
       fog-core (>= 1.35)
       fog-json (>= 1.0)

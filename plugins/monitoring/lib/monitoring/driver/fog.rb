@@ -47,13 +47,21 @@ module Monitoring
 
       def delete_notification(id)
         handle_response do
-          @fog.delete_notification(id)
+          @fog.delete_notification(id).body
+        end
+      end
+
+      def update_notification(id, params={})
+        handle_response do
+          # TODO: use her "map_attribute_names" like we used in object storage?
+          request_params = {"name" => params["name"],"type" => params["type"], "address" => params["address"]}
+          @fog.update_notification(id, request_params).body
         end
       end
 
       def delete_alarm_definition(id)
         handle_response do
-          @fog.delete_alarm_definition(id)
+          @fog.delete_alarm_definition(id).body
         end
       end
 

@@ -3,9 +3,9 @@
 
 = simple_modal_form_for @notification, submit_action: 'Create', url: plugin('monitoring').notifications_path, method: :post, cancel_url: plugin('monitoring').notifications_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   #backend_error
-  = f.input :name, placeholder: 'Enter Name'
+  = f.input :name, placeholder: 'Enter name'
   = f.input :type, collection: ['Email'], selected:'Email'
-  = f.input :address , placeholder: 'Enter Email Address', icon_hint: 'To add more than one mail address please seperate with comma'
+  = f.input :address , placeholder: 'Enter single email address'
 
 =content_for :javascripts do
   :javascript
