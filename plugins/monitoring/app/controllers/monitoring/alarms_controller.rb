@@ -1,5 +1,5 @@
 module Monitoring
-  class AlarmsController < DashboardController
+  class AlarmsController < Monitoring::ApplicationController
     authorization_context 'monitoring'
 
     def index

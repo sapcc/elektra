@@ -1,5 +1,5 @@
 module Monitoring
-  class AlarmDefinitionsController < DashboardController
+  class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_context 'monitoring'
     before_filter :load_alarm_definition, except: [ :index, :new, :create ] 
 
