@@ -159,6 +159,13 @@ section {
   height: 32px;
 }
 
+.moo-cloud-black {
+  background: inline-svg('monsoon_logo_flat_black.svg') 0 0px no-repeat;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+}
+
 .jumbotron .moo-cloud-white {
   @include opacity(0.2);
   width: 256px;
@@ -187,10 +194,25 @@ section {
   @extend .fa-cloud;
 }
 
+
 .compute-icon {
-  @extend .fa;
-  @extend .fa-fw;
-  @extend .fa-cloud;
+  @extend .moo-cloud;
+  background-size: 16px;
+  width: 16px;
+  height: 15px;
+  margin-right: 5px;
+}
+
+.context-breadcrumb {
+  .compute-icon {
+    background-image: inline-svg('monsoon_logo_flat_white.svg');
+  }
+
+  li:hover, li:focus, li:active, li.open {
+    .compute-icon {
+      background-image: inline-svg('monsoon_logo_flat_black.svg');
+    }
+  }
 }
 
 .automation-icon {
@@ -1103,7 +1125,7 @@ tr.task-state {
 .searchable.search-mode {
   a { color: #aaa; }
   .search-result > a { color: red;  }
-  
+
   li.has-search-result ul  {
     display: block;
   }
