@@ -14,16 +14,15 @@ module Monitoring
     end
 
     def new
-      @notififcation = services.monitoring.new_notification(name: "")
+      @notification = services.monitoring.new_notification(name: "")
     end
 
     def create
-      #@notification = services.monitoring.new_notification(params.require(:notification))
-      #unless @notification.save
-      #  render action: 'new'
-      #  return
-      #end
-
+      @notification = services.monitoring.new_notification(params.require(:notification))
+      unless @notification.save
+        render action: 'new'
+        return
+      end
       back_to_notification_list
     end
 
@@ -33,8 +32,6 @@ module Monitoring
        notification.destroy
        back_to_notification_list
     end
-
-    
 
     private
 
@@ -48,8 +45,6 @@ module Monitoring
         format.html { redirect_to plugin('monitoring').notifications_path }
       end
     end
-
-
     
   end
 end

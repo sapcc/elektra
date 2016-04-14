@@ -59,7 +59,7 @@ module Monitoring
 
       def create_notification(params={})
         handle_response do
-          @fog.create_notification(params)
+          @fog.create_notification(params).body
         end
       end
     end
