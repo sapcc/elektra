@@ -181,6 +181,55 @@ section {
   color: $help-info-blue;
 }
 
+.services-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-cloud;
+}
+
+.compute-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-cloud;
+}
+
+.automation-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-gears;
+}
+
+.api-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-code;
+}
+
+.access_management-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-lock;
+}
+
+.networking-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-sitemap;
+}
+
+.storage-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-database;
+}
+
+.monitoring-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-area-chart;
+}
+
+
 // ---------------------------------------------------------------------------------
 // Buttons
 // ---------------------------------------------------------------------------------

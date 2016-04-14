@@ -20,7 +20,7 @@
       %ol.context-list
         %li.dropdown.dropdown-mega
           %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            %i.fa.fa-cloud
+            %i{class: selected_category_icon}
             = selected_service_name
             %span.caret
           = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)

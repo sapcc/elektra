@@ -221,6 +221,15 @@ module ApplicationHelper
     name
   end
 
+  def selected_category_icon
+    active_item = active_navigation_item(context: :services, :level => 1)
+    icon_class = "services-icon"
+    if active_item
+      icon_class = "#{active_item.key}-icon"
+    end
+    icon_class
+  end
+
   def selected_admin_service_name
     name = active_navigation_item_name(context: :admin, :level => :all)
     if name.blank?
