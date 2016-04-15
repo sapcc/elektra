@@ -5,6 +5,10 @@ module Compute
         @instances = services.compute.servers
       end
     end
+    
+    def console
+      @console = services.compute.vnc_console(params[:id])
+    end
 
     def show
       @instance = services.compute.find_server(params[:id])

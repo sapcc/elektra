@@ -29,7 +29,11 @@ module Compute
       def get_server(server_id)
         handle_response{ @fog.get_server_details(server_id).body['server'] }
       end
-    
+
+      def vnc_console(server_id,console_type='novnc')
+        handle_response{ @fog.get_vnc_console(server_id, console_type).body['console'] }
+      end
+          
       def delete_server(server_id)
         handle_response{ @fog.delete_server(server_id) }
       end
