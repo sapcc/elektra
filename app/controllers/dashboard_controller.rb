@@ -5,8 +5,29 @@ class DashboardController < ::ScopeController
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
                           project: -> c { c.instance_variable_get('@scoped_project_id') },
-                          rescope: false # do not rescope after authentication
+                          rescope: false, # do not rescope after authentication
                           
+                          redirect_to: -> current_user, requested_url, referer_url {
+                            # do stuff after user has logged on bevore redirect to requested url
+                            
+                            # if the new scope domain which user has logged in differs from the scope in requested url 
+                            # then redirect user to home page of the new domain.  
+                            if requested_url.blank? or (!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(requested_url=~/^[^\?]*#{current_user.user_domain_id}/))
+                              "/#{current_user.user_domain_id}/identity/home"
+                            else
+                              # new domain is the same but the requested_url contains modal parameter and the referer url contains overlay parameter
+                              # in this case the requested_url came from a modal window. So we do not redirect user to the requested_url
+                              # but to the referer url.
+                              if requested_url=~/(\?|\&)modal=true/ and referer_url=~/(\?|\&)overlay=.+/
+                                referer_url
+                              else
+                                # in all other cases redirect user to requested url
+                                requested_url
+                              end
+                            end
+                          }
+                                            
+                
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
   before_filter :check_terms_of_use  
   # rescope token

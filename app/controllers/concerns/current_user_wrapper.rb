@@ -26,7 +26,7 @@ module CurrentUserWrapper
         end
       end
     end
-  
+
     def try(method_name)
       if self.respond_to?(method_name)
         super(method_name)

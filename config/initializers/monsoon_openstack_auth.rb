@@ -26,18 +26,6 @@ MonsoonOpenstackAuth.configure do |auth|
   # optional, default=false
   auth.access_key_auth_allowed = false
 
-  # optional, default= last url before redirected to form
-  #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
-  auth.login_redirect_url = -> referrer_url, current_user do 
-    # redirect user to domain home page after login
-    if referrer_url.blank? or (!(referrer_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(referrer_url=~/^[^\?]*#{current_user.user_domain_id}/))
-      "/#{current_user.user_domain_id}/identity/home"
-    else
-      referrer_url
-    end
-    #referrer_url.blank? ? "/#{current_user.user_domain_id}/identity/home" : referrer_url
-  end
-
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
   # auth.authorization.context = "identity"
