@@ -37,7 +37,7 @@ jQuery.fn.searchable= ( options ) ->
         $searchableList.addClass(settings.searchModeCssClass)   
         
         # mark each element which matches the value with the css class settings.searchResultCssClass
-        $elements = $('*[data-search-name]').filter () -> 
+        $elements = $searchableList.find('*[data-search-name]').filter () -> 
           $(this).data('searchName').search(new RegExp(value, "i"))>=0
       
         # mark each parent of found element with the css class settings.hasSearchModeCssClass  
