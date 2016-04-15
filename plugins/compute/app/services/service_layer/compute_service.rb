@@ -21,6 +21,10 @@ module ServiceLayer
       driver.map_to(Compute::Server).get_server(id)
     end
     
+    def vnc_console(server_id,console_type='novnc')
+      driver.map_to(Compute::VncConsole).vnc_console(server_id,console_type)      
+    end
+    
     def new_server(params={})
       Compute::Server.new(driver,params)
     end

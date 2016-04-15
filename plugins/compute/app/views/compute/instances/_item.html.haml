@@ -23,6 +23,9 @@
           
         - unless instance.os_ext_sts_task_state
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+            - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+              %li= link_to 'Console', console_instance_path(id: instance.id), data: { modal: true}
+                
             - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               - added = false
               - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state
