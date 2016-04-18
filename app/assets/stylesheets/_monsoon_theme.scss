@@ -373,13 +373,6 @@ section {
   margin: 0 auto;
 }
 
-// @media (min-width: $grid-float-breakpoint) {
-//   .navbar-right {
-//     margin-right: 0;
-//   }
-// }
-
-
 .fancy-nav {
   @include column-count(2);
   padding-left: 0;
@@ -1119,12 +1112,23 @@ tr.task-state {
   }
 }
 
+
+
 // ------------------------------------
 // Searchable
 // ------------------------------------
 .searchable.search-mode {
-  a { color: #aaa; }
-  .search-result > a { color: red;  }
+  a {
+    color: #ccc;
+  }
+
+  .search-result {
+    color: #333;
+    
+    > a {
+      color: $link-color;
+    }
+  }
 
   li.has-search-result ul  {
     display: block;
