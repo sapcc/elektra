@@ -6,8 +6,6 @@ module Automation
     include ActiveModel::Conversion
     include ActiveModel::Validations
 
-    attr_accessor :token, :endpoint
-
     attribute :id, String
     attribute :type, String
     attribute :name, String
@@ -54,16 +52,12 @@ module Automation
 
     def persist!(automation_service)
       # Rest call for creating a autoamtion
-      base_automation = automation_service.new()
-      base_automation.form_to_attributes(self.attributes)
-      success = base_automation.save
+      automation = automation_service.new()
+      automation.form_to_attributes(self.attributes)
+      success = automation.save
       unless success
-        messages = !base_automation.errors.blank? || base_automation.errors.messages.blank? ? base_automation.errors.messages : {}
-        base_automation.errors.messages.each do |key,value|
-          value.each do |item|
-            self.errors.add key.to_sym, item
-          end
-        end
+        messages = !automation.errors.blank? && !automation.errors.messages.blank? ? automation.errors.messages : {}
+        assign_errors(messages)
       end
       success
     end
@@ -73,14 +67,18 @@ module Automation
       automation.form_to_attributes(self.attributes)
       success = automation.save
       unless success
-        messages = !automation.errors.blank? || automation.errors.messages.blank? ? automation.errors.messages : {}
-        automation.errors.messages.each do |key,value|
-          value.each do |item|
-            self.errors.add key.to_sym, item
-          end
-        end
+        messages = !automation.errors.blank? && !automation.errors.messages.blank? ? automation.errors.messages : {}
+        assign_errors(messages)
       end
       success
+    end
+
+    def assign_errors(messages)
+      messages.each do |key,value|
+        value.each do |item|
+          self.errors.add key.to_sym, item
+        end
+      end
     end
 
   end

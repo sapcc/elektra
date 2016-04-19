@@ -1,6 +1,7 @@
 module Automation
 
   class Node < RubyArcClient::Agent
+    include ::Automation::Helpers
 
     attr_accessor :id, :name
 
@@ -33,6 +34,18 @@ module Automation
         return self.automation_facts.hostname
       end
       self.id
+    end
+
+    def attributes_to_form
+      attr = self.marshal_dump.clone
+      attr.keys.each do |key|
+        if key == :tags
+          unless attr[key].blank?
+            attr[key] = json_to_string( attr[key] )
+          end
+        end
+      end
+      attr
     end
 
     private
