@@ -2,7 +2,7 @@ require 'active_resource'
 
 module Automation
 
-  class Run < ::Automation::BaseAutomation
+  class Run < ::Automation::BaseActiveResource
     self.collection_name = "runs"
 
     def duration

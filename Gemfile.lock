@@ -49,7 +49,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: a42b8fad288e1382995c88f1b6c439a83506e81d
+  revision: a14522aa4106744818ac376c9f08f917dcefe6c6
   branch: master
   specs:
     monsoon-openstack-auth (0.8.6)
@@ -498,7 +498,7 @@ GEM
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    ruby-arc-client (0.5.0)
+    ruby-arc-client (0.6.0)
       rest-client (~> 1.8)
     ruby_parser (3.7.2)
       sexp_processor (~> 4.1)
@@ -607,7 +607,7 @@ DEPENDENCIES
   responders
   rspec
   rspec-rails
-  ruby-arc-client (~> 0.5.0)!
+  ruby-arc-client (~> 0.6.0)!
   sass-rails
   sass_inline_svg
   sdoc (~> 0.4.0)

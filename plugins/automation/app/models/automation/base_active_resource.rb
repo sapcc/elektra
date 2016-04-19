@@ -2,7 +2,9 @@ require 'active_resource'
 
 module Automation
 
-  class BaseAutomation < ActiveResource::Base
+  class BaseActiveResource < ActiveResource::Base
+    include ::Automation::Helpers
+
     cattr_accessor :static_headers
     self.static_headers = headers
 

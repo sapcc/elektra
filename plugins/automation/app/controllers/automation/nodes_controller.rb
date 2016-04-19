@@ -14,10 +14,12 @@ module Automation
     end
 
     def show
-      @instance_name = params[:name]
-      @node_id = params[:id]
-      @facts = services.automation.node_facts(@node_id)
-      @jobs = services.automation.jobs(@node_id, 1, 100)
+      node_id = params[:id]
+      @node = services.automation.node(node_id, ['all'])
+      @node_form = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
+      @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
+      @facts = @node.automation_facts
+      @jobs = services.automation.jobs(node_id, 1, 100)
     rescue ::RestClient::ResourceNotFound => exception
       Rails.logger.error "Automation-plugin: show action: #{exception.message}"
       render "error_resource_not_found"
@@ -55,6 +57,25 @@ module Automation
       @messages = exception.options[:messages]
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
       return @errors = [{key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}]
+    end
+
+    def update
+      @node_form = ::Automation::Forms::NodeTags.new(params['forms_node_tags'])
+      @error = false
+
+      # validate and update
+      if @node_form.update(services.automation)
+        flash.now[:success] = "Node was successfully updated."
+      else
+        @error = true
+      end
+
+      # get the original node tags
+      @node = services.automation.node(@node_form.agent_id, ['all'])
+      @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
+    rescue Exception => e
+      Rails.logger.error e
+      flash.now[:error] = "Error updating node."
     end
 
     def run_automation

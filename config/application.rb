@@ -53,7 +53,7 @@ module MonsoonDashboard
 
     config.debug_api_calls = ENV.has_key?('DEBUG_API_CALLS')
     config.debug_policy_engine = ENV.has_key?('DEBUG_POLICY_ENGINE')
-    
+
     ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','staging','europe']
 

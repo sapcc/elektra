@@ -32,8 +32,6 @@
 @import "snippets";
 @import "forms";
 
-@import "fullscreen_modal";
-
 <%
   Core::PluginsManager.plugins_with_application_css.each do |plugin|
   %><%=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }"%><% 
