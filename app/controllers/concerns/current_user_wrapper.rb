@@ -3,7 +3,8 @@ module CurrentUserWrapper
   # This method wraps current_user and adds some details like email and full_name.
   def current_user
     return nil if super.nil?
-    CurrentUserWrapper.new(super,session,service_user)
+    return @current_user_wrapper if @current_user_wrapper and @current_user_wrapper.token==super.token
+    @current_user_wrapper = CurrentUserWrapper.new(super,session,service_user)
   end
 
   # Wrapper for current user
@@ -15,15 +16,14 @@ module CurrentUserWrapper
       @service_user = service_user
       # already saved user details in session
       old_user_details = (@session[:current_user_details] || {})
-    
+      
       # check if user id from session differs from current_user id
       if old_user_details["id"]!=current_user.id
         # load user details for current_user
-        new_user_details = @service_user.find_user(current_user.id) rescue nil        
-        if new_user_details 
-          # save user_details in session
-          @session[:current_user_details] = new_user_details.nil? ? {} : new_user_details.attributes.merge("id"=>new_user_details.id)
-        end
+        
+        new_user_details = @service_user.find_user(current_user.id) rescue nil
+        # save user_details in session
+        @session[:current_user_details] = new_user_details.nil? ? {} : new_user_details.attributes.merge("id"=>new_user_details.id)
       end
     end
 
