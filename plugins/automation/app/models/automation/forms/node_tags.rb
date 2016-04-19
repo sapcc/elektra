@@ -16,7 +16,7 @@ module Automation
       false
     end
 
-    def save()
+    def save(service_automation)
       if valid?
         update_tags(service_automation)
       else
@@ -39,7 +39,7 @@ module Automation
       node = service_automation.node(self.agent_id)
       old_tags = node.tags
       # transform the given tags
-      new_tags = JSON.parse(self.string_to_json(self.tags))
+      new_tags = JSON.parse(string_to_json(self.tags))
 
       # Get just the keys to add or update
       diff_tags = new_tags.to_a - old_tags.to_a

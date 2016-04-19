@@ -2,6 +2,7 @@
   Node details
 
 .modal-body
+
   %ul.nav.nav-tabs
     %li.active{role: "presentation"}= link_to 'Details', '#details', aria: {controls:"facts"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Jobs', '#jobs', aria: {controls:"jobs"}, role: "tab", data: {toggle:"tab"}
@@ -9,6 +10,9 @@
   .tab-content
 
     .tab-pane.active{role:"tabpanel", id:"details"}
+      .flashes_area
+        = render "automation/shared/dismissible_flashes.html"
+
       = render partial: 'show_details'
 
     .tab-pane{role:"tabpanel", id:"jobs"}

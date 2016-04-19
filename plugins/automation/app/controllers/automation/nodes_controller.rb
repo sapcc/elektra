@@ -63,9 +63,9 @@ module Automation
       @node_form = ::Automation::Forms::NodeTags.new(params['forms_node_tags'])
       @error = false
 
-      # validate and save
+      # validate and update
       if @node_form.update(services.automation)
-        flash[:success] = "Node was successfully updated."
+        flash.now[:success] = "Node was successfully updated."
       else
         @error = true
       end
