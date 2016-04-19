@@ -121,9 +121,12 @@ SimpleForm.setup do |config|
     b.optional :readonly
     b.use :label, class: 'sr-only'
 
-    b.use :input, class: 'form-control'
+    b.wrapper tag: 'div', class: 'input-wrapper' do |i|
+      i.use :input, class: 'form-control'
+      i.use :help_hint
+    end
     b.use :error, wrap_with: { tag: 'span', class: 'help-block' }
-    b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    b.use :icon_hint,  wrap_with: { tag: 'p', class: 'help-block' }
   end
 
   # Wrappers for forms and inputs using the Bootstrap toolkit.

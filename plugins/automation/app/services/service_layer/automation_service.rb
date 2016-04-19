@@ -48,6 +48,18 @@ module ServiceLayer
       ::Automation::Facts.new(@client.show_agent_facts!(token, node_id))
     end
 
+    def node_add_tags(node_id = "", tags = {})
+      init_client
+      response = @client.add_agent_tags!(token, node_id, tags)
+      !response.nil?
+    end
+
+    def node_delete_tag(node_id = "", key = "")
+      init_client
+      response = @client.delete_agent_tag!(token, node_id, key)
+      !response.nil?
+    end
+
     #
     # Jobs
     #

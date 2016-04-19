@@ -33,25 +33,30 @@ module Automation
 
           if !data.blank?
             haml_tag :div, {class: "form-control-static"} do
-              haml_tag :div, {class: "static-tags clearfix"} do
+              form_static_hash_value(data)
+            end
+          end
 
-                data.split(',').each do |element|
-                  elements_array = element.split(/\:|\=/)
-                  if elements_array.count == 2
-                    haml_tag :div, {class: "tag"} do
-                      haml_tag :div, {class: "key"} do
-                        haml_concat elements_array[0]
-                      end
-                      haml_tag :div, {class: "value"} do
-                        haml_concat elements_array[1]
-                      end
-                    end
-                  end
+        end
+      end
+    end
+
+    def form_static_hash_value(data)
+      unless data.blank?
+        haml_tag :div, {class: "static-tags clearfix"} do
+          data.split(',').each do |element|
+            elements_array = element.split(/\:|\=/)
+            if elements_array.count == 2
+              haml_tag :div, {class: "tag"} do
+                haml_tag :div, {class: "key"} do
+                  haml_concat elements_array[0]
+                end
+                haml_tag :div, {class: "value"} do
+                  haml_concat elements_array[1]
                 end
               end
             end
           end
-
         end
       end
     end
@@ -80,6 +85,18 @@ module Automation
           end
 
         end
+      end
+    end
+
+    #
+    # Nodes
+    #
+
+    def node_form_inline_tags(data)
+      if data.blank? || data.empty?
+        haml_concat 'No tags available'
+      else
+        form_static_hash_value(data)
       end
     end
 
