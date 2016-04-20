@@ -262,7 +262,6 @@ section {
 .fancy-nav-icon {
   @include background-size($font-size-h3);
   width: $font-size-h3;
-  height: $font-size-h3;
   font-size: $font-size-h3;
   font-weight: normal;
 }
@@ -705,7 +704,6 @@ footer, .footer {
               font-size: $font-size-medium;
               left: $grid-gutter-width / 2;
               width: $font-size-medium;
-              height: $font-size-medium;
             }
           }
         }
