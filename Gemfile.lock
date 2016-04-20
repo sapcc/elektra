@@ -66,6 +66,11 @@ PATH
       virtus
 
 PATH
+  remote: plugins/bare_metal_hana
+  specs:
+    bare_metal_hana (0.0.1)
+
+PATH
   remote: plugins/block_storage
   specs:
     block_storage (0.0.1)
@@ -74,6 +79,11 @@ PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
+
+PATH
+  remote: plugins/dns_service
+  specs:
+    dns_service (0.0.1)
 
 PATH
   remote: plugins/identity
@@ -117,6 +127,11 @@ PATH
   remote: plugins/resource_management
   specs:
     resource_management (0.0.1)
+
+PATH
+  remote: plugins/shared_filesystem_storage
+  specs:
+    shared_filesystem_storage (0.0.1)
 
 PATH
   remote: plugins/webconsole
@@ -564,6 +579,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-session_store
   automation!
+  bare_metal_hana!
   better_errors
   block_storage!
   bootstrap-sass
@@ -577,6 +593,7 @@ DEPENDENCIES
   converged_cloud_bootstrap!
   cucumber-rails
   database_cleaner
+  dns_service!
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog!
@@ -611,6 +628,7 @@ DEPENDENCIES
   sass-rails
   sass_inline_svg
   sdoc (~> 0.4.0)
+  shared_filesystem_storage!
   simple-navigation
   simple_form
   spinners

@@ -72,6 +72,10 @@ SimpleNavigation::Configuration.run do |navigation|
       # automation_nav.dom_attributes = {class: 'content-list'}
     end
 
+   primary.item :hana, 'Bare Metal Data Processing & HANA', nil, html: {class: "fancy-nav-header", 'data-icon': "automation-icon" }, if: -> {services.available?(:bare_metal_hana,:nodes) } do |bare_metal_hana_nav|
+     bare_metal_hana_nav.item :bare_metal_hana, 'HANA Servers', -> {plugin('bare_metal_hana').entry_path}, if: -> { services.available?(:bare_metal_hana,:nodes)}, highlights_on: Proc.new { params[:controller][/bare_metal_hana\/.*/] }
+   end
+
     primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "api-icon"},
     if: -> {services.available?(:webconsole)} do |api_nav|
       api_nav.item :web_console, 'Web Console', -> { plugin('webconsole').root_path}, if: -> { services.available?(:webconsole)}, highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
@@ -95,6 +99,7 @@ SimpleNavigation::Configuration.run do |navigation|
       if: -> {services.available?(:networking,:networks) or plugin_available?(:loadbalancing)} do |networking_nav|
       networking_nav.item :networks, 'Networks', -> {plugin('networking').networks_path}, if: -> { services.available?(:networking,:networks) }, highlights_on: Proc.new { params[:controller][/networking\/.*/] }
       networking_nav.item :loadbalancing, 'Loadbalancing', -> {plugin('loadbalancing').entry_path}, if: -> { plugin_available?(:loadbalancing) }, highlights_on: Proc.new { params[:controller][/loadbalancing\/.*/] }
+      networking_nav.item :dns_service, 'DNS', -> {plugin('dns_service').entry_path}, if: -> { plugin_available?(:dns_service) }, highlights_on: Proc.new { params[:controller][/dns_service\/.*/] }
       # networking_nav.item :dns, 'DNS', '#'
 
       # networking_nav.dom_attributes = {class: 'content-list'}
@@ -103,6 +108,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
       storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
+      storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').entry_path}, if: -> { services.available?(:shared_filesystem_storage) }, highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
     #

@@ -3,6 +3,8 @@
 * neutron
 
 ### Quick Help
+[Openstack neutron command line tool](http://docs.openstack.org/developer/python-neutronclient)
+
 `openstack help network`  
 Get list of available network commands
 

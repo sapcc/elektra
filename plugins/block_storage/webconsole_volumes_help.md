@@ -2,6 +2,8 @@
   * openstack
 
 ### Quick Help
+[Openstack openstack command line tool](http://docs.openstack.org/developer/python-openstackclient)
+
 `openstack help volume`
 
 `openstack help volume <command>`
