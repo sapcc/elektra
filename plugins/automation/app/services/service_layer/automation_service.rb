@@ -95,16 +95,16 @@ module ServiceLayer
       Automation::Run
     end
 
-    def automations
-      automation_service.find(:all)
+    def automations(page=0, per_page=0)
+      automation_service.find(:all, :params => { page: page, per_page: per_page })
     end
 
     def automation(automation_id)
         automation_service.find(automation_id)
     end
 
-    def automation_runs
-      automation_run_service.find(:all)
+    def automation_runs(page=0, per_page=0)
+      automation_run_service.find(:all, :params => { page: page, per_page: per_page })
     end
 
     def automation_run(run_id)

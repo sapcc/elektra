@@ -2,9 +2,20 @@ module Automation
 
   class AutomationsController < ::Automation::ApplicationController
     before_action :automation, only: [:show, :edit]
-    before_action :automations, only: [:index]
+
+    PER_PAGE = 10
 
     def index
+      if request.xhr?
+        if params[:model] == 'run'
+          runs_with_jobs(params[:page])
+        elsif params[:model] == 'automation'
+          automations(params[:page])
+        end
+      else
+        automations(params[:page])
+        runs_with_jobs(params[:page])
+      end
     end
 
     def new
@@ -98,13 +109,15 @@ module Automation
       @automation = ::Automation::Forms::Automation.new( automation.attributes_to_form)
     end
 
-    def automations
-      @automations = services.automation.automations
-      @runs = runs_with_jobs
+    def automations(page)
+      automations = services.automation.automations(page, PER_PAGE)
+      @automations = Kaminari.paginate_array(automations, total_count: automations.http_response['Pagination-Elements'].to_i).
+        page(automations.http_response['Pagination-Page'].to_i).
+        per(automations.http_response['Pagination-Per-Page'].to_i)
     end
 
-    def runs_with_jobs
-      runs = services.automation.automation_runs
+    def runs_with_jobs(page)
+      runs = services.automation.automation_runs(page, PER_PAGE)
       runs.each do |run|
         unless run.jobs.nil?
           run.jobs_states = {queued: 0, failed: 0, complete: 0, executing:0}
@@ -117,7 +130,9 @@ module Automation
           end
         end
       end
-      runs
+      @runs = Kaminari.paginate_array(runs, total_count: runs.http_response['Pagination-Elements'].to_i).
+        page(runs.http_response['Pagination-Page'].to_i).
+        per(runs.http_response['Pagination-Per-Page'].to_i)
     end
 
     def automation_params
