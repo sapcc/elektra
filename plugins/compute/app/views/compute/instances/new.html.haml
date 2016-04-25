@@ -41,8 +41,11 @@
         required:           true}
     - else
       %p.alert.alert-warning
-        = 'No private network available'
-        = link_to 'New Network', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+        = 'No private network available.'
+        - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })
+          = link_to 'New Network', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+        - else
+          = 'Please contact your project admin.'
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
