@@ -1,24 +1,24 @@
 = simple_form_for @instance, url: plugin('compute').instances_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @instance.errors.empty? 
+    - if @instance.errors.present?
       %p.alert.alert-error= @instance.errors.full_messages.to_sentence
 
     = f.input :name
     = f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
-    
+
     = f.input :availability_zone_id, {label: "Availability zone",
       input_html:         {},
       as:                 :select,
       collection:         @availability_zones,
       required:           true}
-      
+
     = f.input :security_group_id, { label: "Security group",
       input_html:         {},
       as:                 :select,
       collection:         @security_groups,
       required:           true}
-               
+
     = f.input :flavor_id, { label: "Flavor",
       as:                 :select,
       required:           true,
@@ -30,14 +30,19 @@
       collection:         @images,
       required:           true,
       label_method:       -> (image) { "#{image.name}  (Size: #{image.size}, Format: #{image.disk_format})" }}
-    
-    = f.input :network_ids, { label: "Network",
-      input_html:         {multiple: true, name: "#{@instance.model_name.param_key}[network_ids][][id]", include_hidden: false },
-      as:                 :select,
-      collection:         @network_zones,
-      selected:           (@instance.network_ids || []).collect{|n| n['id']},
-      include_hidden:     false,
-      required:           true} 
+
+    - if @private_networks.present?
+      = f.input :network_ids, { label: "Private Network",
+        input_html:         {multiple: true, name: "#{@instance.model_name.param_key}[network_ids][][id]", include_hidden: false },
+        as:                 :select,
+        collection:         @private_networks,
+        selected:           (@instance.network_ids || []).collect{|n| n['id']},
+        include_hidden:     false,
+        required:           true}
+    - else
+      %p.alert.alert-warning
+        = 'No private network available'
+        = link_to 'New Network', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

@@ -1,34 +1,34 @@
 module ServiceLayer
   class NetworkingService < Core::ServiceLayer::Service
-  
+
     def driver
       @driver ||= Networking::Driver::Fog.new({
         auth_url:   self.auth_url,
         region:     self.region,
         token:      self.token,
         domain_id:  self.domain_id,
-        project_id: self.project_id  
+        project_id: self.project_id
       })
     end
-    
+
     def available?(action_name_sym=nil)
-      not current_user.service_url('network',region: region).nil?  
+      not current_user.service_url('network',region: region).nil?
     end
 
     def networks(filter={})
-      driver..map_to(Networking::Network).networks(filter)  
+      driver..map_to(Networking::Network).networks(filter)
     end
-  
+
     def project_networks(project_id)
       result = []
-      driver.networks.each do |n| 
-        if n["shared"]==true or n["tenant_id"]==project_id
-          result << Networking::Network.new(driver,n)
+      driver.networks.each do |n|
+        if n['router:external'] == false && (n['shared'] == true || n['tenant_id'] == project_id)
+          result << Networking::Network.new(driver, n)
         end
       end
       result
     end
-  
+
     def network(id=nil)
       if id
         driver.map_to(Networking::Network).get_network(id)
@@ -36,7 +36,7 @@ module ServiceLayer
         Networking::Network.new(driver)
       end
     end
-  
+
     def subnet(id=nil)
       if id
         driver.map_to(Networking::Subnet).get_subnet(id)
@@ -44,11 +44,11 @@ module ServiceLayer
         Networking::Subnet.new(driver)
       end
     end
-  
+
     def subnets(network_id)
       driver.map_to(Networking::Subnet).subnets(network_id)
     end
-  
+
     def ports(network_id)
       driver.map_to(Networking::Port).ports(network_id)
     end
