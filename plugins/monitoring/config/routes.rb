@@ -7,6 +7,6 @@ Monitoring::Engine.routes.draw do
   resources 'alarm_definitions' do
   end
   
-  resources 'notifications' do
+  resources 'notification_methods' do
   end
 end

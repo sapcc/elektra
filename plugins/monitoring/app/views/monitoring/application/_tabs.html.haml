@@ -17,9 +17,9 @@
   - else 
     %li{role: 'presentation'}
       = link_to 'Alarm Definitions', plugin('monitoring').send("alarm_definitions_path")
-  - if tab == 'notifications'
+  - if tab == 'notification_methods'
     %li.active{role: 'presentation'}
-      = link_to "Notifications", '#'
+      = link_to "Notification Methods", '#'
   - else 
     %li{role: 'presentation'}
-      = link_to 'Notifications', plugin('monitoring').send("notifications_path")
+      = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")
