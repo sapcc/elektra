@@ -1,5 +1,2 @@
 vendor/bundle
 .env
-.bundle/
-tmp/
-log/*.log
