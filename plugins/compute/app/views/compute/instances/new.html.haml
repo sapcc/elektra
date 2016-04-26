@@ -50,7 +50,8 @@
       as:                 :select,
       collection:         @private_networks,
       selected:           (@instance.network_ids || []).collect{|n| n[:id]},
-      required:           true}
+      required:           true,
+      label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" }}
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
