@@ -12,13 +12,9 @@ module ServiceLayer
                                                 domain_id: self.domain_id,
                                                 project_id: self.project_id
                                             })
-    rescue Excon::Errors::Unauthorized => e
-      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERROR"
-      #
-      # p e.response.data rescue nil
-      #
-      # error_body = JSON.parse(e.response.data[:body])
-      # p error_body
+    # catch token expired errors                                        
+    rescue Excon::Errors::Unauthorized, Excon::Errors::NotFound => e
+      # and raise InvalidToken error
       raise Identity::InvalidToken.new(e)
     end
 

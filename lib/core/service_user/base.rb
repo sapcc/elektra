@@ -4,7 +4,7 @@ module Core
       @@service_user_mutex = Mutex.new
       
       # # delegate some methods to auth_users
-      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, to: :@auth_user
+      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, to: :@auth_user
       
       # Class methods    
       class << self
@@ -114,8 +114,7 @@ module Core
       end
       
       def role_assignments(filter={})
-        # scope.domain.id filter should be presented
-        filter["scope.domain.id"] = self.domain_id unless filter["scope.domain.id"]
+        filter["scope.domain.id"]=self.domain_id unless filter["scope.domain.id"]
         driver_method(:role_assignments,true,filter)
       end
       
