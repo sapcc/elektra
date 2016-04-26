@@ -114,6 +114,7 @@ module Core
       end
       
       def role_assignments(filter={})
+        filter["scope.domain.id"]=self.domain_id unless filter["scope.domain.id"]
         driver_method(:role_assignments,true,filter)
       end
       
