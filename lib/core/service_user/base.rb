@@ -4,7 +4,7 @@ module Core
       @@service_user_mutex = Mutex.new
       
       # # delegate some methods to auth_users
-      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, to: :@auth_user
+      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, to: :@auth_user
       
       # Class methods    
       class << self
