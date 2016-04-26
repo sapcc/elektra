@@ -24,20 +24,20 @@ module ServiceLayer
       driver.map_to(Monitoring::AlarmDefinition).alarms
     end
 
-    def notifications
-      driver.map_to(Monitoring::Notification).notifications
+    def notification_methods
+      driver.map_to(Monitoring::NotificationMethod).notification_methods
     end
 
-    def get_alarm_definition(id)
-      id.blank? ? nil : driver.map_to(Monitoring::AlarmDefinition).get_alarm_definition(id)
+    def get_alarm_definition_method(id)
+      id.blank? ? nil : driver.map_to(Monitoring::AlarmDefinition).get_alarm_definition_method(id)
     end
 
-    def get_notification(id)
-      id.blank? ? nil : driver.map_to(Monitoring::Notification).get_notification(id)
+    def get_notification_method(id)
+      id.blank? ? nil : driver.map_to(Monitoring::NotificationMethod).get_notification_method(id)
     end
 
-    def new_notification(attributes={})
-      Monitoring::Notification.new(driver,attributes)
+    def new_notification_method(attributes={})
+      Monitoring::NotificationMethod.new(driver,attributes)
     end
 
   end

@@ -39,23 +39,23 @@ module Monitoring
         end
       end
 
-      def get_notification(id)
+      def get_notification_method(id)
         handle_response do
-          @fog.get_notification(id).body
+          @fog.get_notification_method(id).body
         end
       end
 
-      def delete_notification(id)
+      def delete_notification_method(id)
         handle_response do
-          @fog.delete_notification(id).body
+          @fog.delete_notification_method(id).body
         end
       end
 
-      def update_notification(id, params={})
+      def update_notification_method(id, params={})
         handle_response do
           # TODO: use her "map_attribute_names" like we used in object storage?
           request_params = {"name" => params["name"],"type" => params["type"], "address" => params["address"]}
-          @fog.update_notification(id, request_params).body
+          @fog.update_notification_method(id, request_params).body
         end
       end
 
@@ -65,15 +65,15 @@ module Monitoring
         end
       end
 
-      def notifications
+      def notification_methods
         handle_response do
-          @fog.list_notifications.body["elements"]
+          @fog.list_notification_methods.body["elements"]
         end
       end
 
-      def create_notification(params={})
+      def create_notification_method(params={})
         handle_response do
-          @fog.create_notification(params).body
+          @fog.create_notification_method(params).body
         end
       end
     end

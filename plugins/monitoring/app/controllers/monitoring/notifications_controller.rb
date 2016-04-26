@@ -3,7 +3,7 @@ module Monitoring
     authorization_context 'monitoring'
 
     def index
-      notifications = services.monitoring.notifications
+      notifications = services.monitoring.notification_methods
       sorted_notifications = []
       # sort by name
       notifications.sort_by(&:name).each do |notification|
@@ -14,15 +14,15 @@ module Monitoring
     end
 
     def new
-      @notification = services.monitoring.new_notification(name: "")
+      @notification = services.monitoring.new_notification_method(name: "")
     end
 
     def edit
-      @notification = services.monitoring.get_notification(params.require(:id))
+      @notification = services.monitoring.get_notification_method(params.require(:id))
     end
 
     def create
-      @notification = services.monitoring.new_notification(params.require(:notification))
+      @notification = services.monitoring.new_notification_method(params.require(:notification_method))
       unless @notification.save
         render action: 'new'
         return
@@ -31,8 +31,8 @@ module Monitoring
     end
 
     def update
-      @notification = services.monitoring.get_notification(params.require(:id))
-      attrs = params.require(:notification).permit(:name, :type, :address)
+      @notification = services.monitoring.get_notification_method(params.require(:id))
+      attrs = params.require(:notification_method).permit(:name, :type, :address)
       unless @notification.update_attributes(attrs)
         render action: 'edit'
         return
@@ -41,7 +41,7 @@ module Monitoring
     end
 
     def destroy 
-       notification = services.monitoring.get_notification(params.require(:id))
+       notification = services.monitoring.get_notification_method(params.require(:id))
        raise ActiveRecord::RecordNotFound, "Notification with id #{params[:id]} not found" unless notification
        notification.destroy
        back_to_notification_list
@@ -52,7 +52,7 @@ module Monitoring
     def back_to_notification_list
       respond_to do |format|
         format.js do
-          notifications = services.monitoring.notifications
+          notifications = services.monitoring.notification_methods
           @notifications = Kaminari.paginate_array(notifications).page(params[:page]).per(10)
           render action: 'reload_list'
         end

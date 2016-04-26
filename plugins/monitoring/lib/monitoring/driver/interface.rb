@@ -14,7 +14,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def notifications
+      def notification_methods
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
@@ -22,15 +22,15 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def create_notification
+      def create_notification_method
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def get_notification(id)
+      def get_notification_method(id)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def update_notification(id,params)
+      def update_notification_method(id,params)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
     end

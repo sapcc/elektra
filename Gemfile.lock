@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/fog.git
-  revision: 2c82118b0eb66492441cf524b04c87154698ad47
+  revision: 5b4b39aed1b3c5a08ab6b3c99cd96a4a264390d2
   branch: master
   specs:
     fog (1.34.0)
@@ -60,10 +60,10 @@ GIT
 
 GIT
   remote: git@localhost:***REMOVED***/fog-openstack-monitoring.git
-  revision: 43bc06eef54f7f4f09302b97ee1b49483db4c5dc
+  revision: e4d014f51f0188957c29cd3ad8f1c9b59749092b
   branch: master
   specs:
-    fog-openstack-monitoring (0.0.4)
+    fog-openstack-monitoring (0.0.6)
       fog
       fog-core (>= 1.35)
       fog-json (>= 1.0)
@@ -300,9 +300,9 @@ GEM
       fog-core (~> 1.22)
       fog-json
       inflecto (~> 0.0.2)
-    fog-core (1.37.0)
+    fog-core (1.38.0)
       builder
-      excon (~> 0.45)
+      excon (~> 0.49)
       formatador (~> 0.2)
     fog-dynect (0.0.3)
       fog-core
@@ -311,7 +311,7 @@ GEM
     fog-ecloud (0.3.0)
       fog-core
       fog-xml
-    fog-google (0.2.0)
+    fog-google (0.3.0)
       fog-core
       fog-json
       fog-xml
@@ -429,7 +429,7 @@ GEM
     mime-types (2.6.2)
     mini_portile2 (2.0.0)
     minitest (5.8.2)
-    multi_json (1.11.2)
+    multi_json (1.11.3)
     multi_test (0.1.2)
     nenv (0.2.0)
     net-ssh (3.0.2)
