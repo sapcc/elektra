@@ -40,7 +40,7 @@ module Core
       def token
         @driver.auth_token
       end
-      
+
       def initialize(user_id,password,user_domain_name,scope_domain)
         @user_id = user_id
         @password = password
@@ -50,12 +50,15 @@ module Core
       end
       
       def authenticate
+        # @scope_domain is a freindly id. So it can be the name or id
+        # That's why we try to load the service user by name and if it 
+        # raises an error then we try again by id. 
         @auth_user = begin
           MonsoonOpenstackAuth.api_client.auth_user(
             @user_id,
             @password,
             domain_name: @user_domain_name,
-            scoped_token: {domain: {name: @scope_domain} } 
+            scoped_token: {domain: {name: @scope_domain} }
           )
         rescue
           begin
@@ -69,18 +72,18 @@ module Core
             raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
           end
         end
-        
+
+        # Unfortunately we can't use Fog directly. Fog tries to authenticate the user
+        # by credentials and region using the service catalog. Our backends all uses other regions.
+        # Therefore we use the auth gem to authenticate the user get the service catalog and then 
+        # we initialize the fog object. 
         @driver = ::Core::ServiceUser::Driver.new({
-          # openstack_auth_url:   ::Core.keystone_auth_endpoint,
-          # openstack_region:      Rails.application.config.default_region,#::Core.locate_region(@auth_user),
-          # openstack_user_domain: Rails.application.config.service_user_domain_name,
-          # openstack_username:    Rails.application.config.service_user_id,
-          # openstack_api_key:     Rails.application.config.service_user_password,
-          # openstack_domain_name: scope_domain
-          openstack_auth_url:   ::Core.keystone_auth_endpoint,
-          openstack_region:     Core.locate_region(@auth_user),
-          openstack_auth_token: @auth_user.token,
+          auth_url: ::Core.keystone_auth_endpoint,
+          region: Core.locate_region(@auth_user),
+          token: @auth_user.token,
+          domain_id: @auth_user.domain_id
         })
+        @driver
       end
       
       # execute driver method. Catch 401 errors (token invalid -> expired or revoked)
@@ -111,6 +114,8 @@ module Core
       end
       
       def role_assignments(filter={})
+        # scope.domain.id filter should be presented
+        filter["scope.domain.id"] = self.domain_id unless filter["scope.domain.id"]
         driver_method(:role_assignments,true,filter)
       end
       
