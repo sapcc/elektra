@@ -1,8 +1,17 @@
-= simple_form_for @instance, url: plugin('compute').instances_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+- wrapper = @instance.errors.present? ? :horizontal_form_disabled : :horizontal_form
+= simple_form_for @instance, url: plugin('compute').instances_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: wrapper do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @instance.errors.present?
-      %p.alert.alert-error= @instance.errors.full_messages.to_sentence
+      %p.alert.alert-error
+        = @instance.errors.full_messages.to_sentence + '.'
+        - if network_error = @instance.errors[:private_network]
+          - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })
+            = link_to 'New Network', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary'
+          - else
+            = 'Please read '
+            -# TODO: fill this with life and a real sub-target
+            = link_to 'how to get a private network.', 'https://localhost/docs/network/'
 
     = f.input :name
     = f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
@@ -11,41 +20,37 @@
       input_html:         {},
       as:                 :select,
       collection:         @availability_zones,
+      selected:           @instance.availability_zone_id,
       required:           true}
 
-    = f.input :security_group_id, { label: "Security group",
-      input_html:         {},
+    = f.input :security_group_id, { label: "Security groups",
+      input_html:         {multiple: true},
       as:                 :select,
       collection:         @security_groups,
+      selected:           (@instance.security_group_ids || []).collect{|sg| sg[:id]},
       required:           true}
 
     = f.input :flavor_id, { label: "Flavor",
       as:                 :select,
       required:           true,
       collection:         @flavors,
+      selected:           @instance.flavor_id,
       label_method:       -> (flavor) { "#{flavor.name}  (RAM: #{flavor.ram}MB, VCPUs: #{flavor.vcpus}, Disk: #{flavor.disk}GB)" }}
 
     = f.input :image_id, { label: "Image",
       as:                 :select,
       collection:         @images,
+      selected:           @instance.image_id,
       required:           true,
       label_method:       -> (image) { "#{image.name}  (Size: #{image.size}, Format: #{image.disk_format})" }}
 
-    - if @private_networks.present?
-      = f.input :network_ids, { label: "Private Network",
-        input_html:         {multiple: true, name: "#{@instance.model_name.param_key}[network_ids][][id]", include_hidden: false },
-        as:                 :select,
-        collection:         @private_networks,
-        selected:           (@instance.network_ids || []).collect{|n| n['id']},
-        include_hidden:     false,
-        required:           true}
-    - else
-      %p.alert.alert-warning
-        = 'No private network available.'
-        - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })
-          = link_to 'New Network', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
-        - else
-          = 'Please contact your project admin.'
+    = f.input :network_ids, { label: "Private Network",
+      wrapper_html:       { class: ('has-error' if network_error) },
+      input_html:         {name: "#{@instance.model_name.param_key}[network_ids][][id]" },
+      as:                 :select,
+      collection:         @private_networks,
+      selected:           (@instance.network_ids || []).collect{|n| n[:id]},
+      required:           true}
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

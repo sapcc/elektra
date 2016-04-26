@@ -17,20 +17,22 @@ module Compute
     def new
       @instance = services.compute.new_server
 
-      @flavors = services.compute.flavors
-      @images = services.image.images
+      @flavors            = services.compute.flavors
+      @images             = services.image.images
       @availability_zones = services.compute.availability_zones
-      @security_groups= services.compute.security_groups
-      @private_networks = services.networking.project_networks(@scoped_project_id)
+      @security_groups    = services.compute.security_groups
+      @private_networks   = services.networking.project_networks(@scoped_project_id)
 
-      @instance.flavor_id=@flavors.first.id
-      @instance.image_id=@images.first.id
-      @instance.security_group_id=@security_groups.first.id
-      @instance.network_ids=[{"id"=> @private_networks.first.try(:id)}]
-      @instance.availability_zone_id=@availability_zones.first.id
+      @instance.errors.add :private_network,  'not available' if @private_networks.blank?
+      @instance.errors.add :image,            'not available' if @images.blank?
+
+      @instance.flavor_id             = @flavors.first.try(:id)
+      @instance.image_id              = @images.first.try(:id)
+      @instance.availability_zone_id  = @availability_zones.first.try(:id)
+      @instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
+      @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
+
       @instance.max_count = 1
-
-      puts @instance.pretty_attributes
     end
 
 
@@ -60,7 +62,7 @@ module Compute
         @images = services.image.images
         @availability_zones = services.compute.availability_zones
         @security_groups= services.compute.security_groups
-        @network_zones = services.networking.project_networks(@scoped_project_id)
+        @private_networks = services.networking.project_networks(@scoped_project_id)
         render action: :new
       end
     end
