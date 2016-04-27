@@ -14,8 +14,7 @@ module Core
 
           # remove this shit after the certificates for endpoints are configured correctly!
           result[:connection_options]= { ssl_verify_peer: false, :debug_request => Rails.configuration.debug_api_calls, 
-            :debug_response => Rails.configuration.debug_api_calls, 
-            debug: Rails.configuration.debug_api_calls 
+            :debug_response => Rails.configuration.debug_api_calls
           }
 
           result
