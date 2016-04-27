@@ -94,15 +94,31 @@ SimpleNavigation::Configuration.run do |navigation|
       # access_management_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :networking, 'Networking & Loadbalancing', nil,
-      html: {class: "fancy-nav-header", 'data-icon': "networking-icon" },
-      if: -> {services.available?(:networking,:networks) or plugin_available?(:loadbalancing)} do |networking_nav|
-      networking_nav.item :networks, 'Networks', -> {plugin('networking').networks_path}, if: -> { services.available?(:networking,:networks) }, highlights_on: Proc.new { params[:controller][/networking\/.*/] }
-      networking_nav.item :loadbalancing, 'Loadbalancing', -> {plugin('loadbalancing').entry_path}, if: -> { plugin_available?(:loadbalancing) }, highlights_on: Proc.new { params[:controller][/loadbalancing\/.*/] }
-      networking_nav.item :dns_service, 'DNS', -> {plugin('dns_service').entry_path}, if: -> { plugin_available?(:dns_service) }, highlights_on: Proc.new { params[:controller][/dns_service\/.*/] }
-      # networking_nav.item :dns, 'DNS', '#'
-
-      # networking_nav.dom_attributes = {class: 'content-list'}
+    primary.item :networking,
+                 'Networking & Loadbalancing',
+                 nil,
+                 html: { class: 'fancy-nav-header', 'data-icon': 'networking-icon' },
+                 if: -> { plugin_available?(:networking) || plugin_available?(:loadbalancing) || plugin_available?(:dns_service) } do |networking_nav|
+      networking_nav.item :networks,
+                          'Networks',
+                          -> { plugin('networking').networks_path },
+                          if: -> { plugin_available?(:networking) },
+                          highlights_on: %r{networking/networks.*}
+      networking_nav.item :floating_ips,
+                          'Floating IPs',
+                          -> { plugin('networking').floating_ips_path },
+                          if: -> { plugin_available?(:networking) },
+                          highlights_on: %r{networking/floating_ips.*}
+      networking_nav.item :loadbalancing,
+                          'Loadbalancing',
+                          -> { plugin('loadbalancing').entry_path },
+                          if: -> { plugin_available?(:loadbalancing) },
+                          highlights_on: -> { params[:controller][%r{loadbalancing/.*}] }
+      networking_nav.item :dns_service,
+                          'DNS',
+                          -> { plugin('dns_service').entry_path },
+                          if: -> { plugin_available?(:dns_service) },
+                          highlights_on: -> { params[:controller][%r{dns_service/.*}] }
     end
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
