@@ -3,14 +3,8 @@ module Monitoring
     authorization_context 'monitoring'
 
     def index
-      notification_methods = services.monitoring.notification_methods
-      sorted_notification_methods = []
-      # sort by name
-      notification_methods.sort_by(&:name).each do |notification_method|
-        sorted_notification_methods << notification_method
-      end
-
-      @notification_methods = Kaminari.paginate_array(sorted_notification_methods).page(params[:page]).per(10)
+      notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+      @notification_methods = Kaminari.paginate_array(notification_methods).page(params[:page]).per(10)
     end
 
     def new
@@ -52,8 +46,7 @@ module Monitoring
     def back_to_notification_method_list
       respond_to do |format|
         format.js do
-          notification_methods = services.monitoring.notification_methods
-          @notification_methods = Kaminari.paginate_array(notification_methods).page(params[:page]).per(10)
+          index
           render action: 'reload_list'
         end
         format.html { redirect_to plugin('monitoring').notification_methods_path }
