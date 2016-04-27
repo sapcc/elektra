@@ -13,9 +13,5 @@ module Monitoring
     # ok_actions
     # severity
 
-    def notification_action?
-      actions_enabled && ( alarm_actions.length > 0 || ok_actions.length > 0 || undetermined_actions.length > 0 )
-    end
-
   end
 end
