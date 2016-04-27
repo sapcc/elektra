@@ -136,3 +136,9 @@ The following diagram illustrates how plugins are structured and which core clas
 ![Plugins](docs/dashboard_plugins_tree.jpg?raw=true)
 
 [Click this link for a detailed class diagram](docs/dashboard_services.pdf)
+
+Adding gem dependencies with native extensions
+----------------------------------------------
+The dashboard Docker image does not contain the build chain for compiling ruby extensions. Gems which contain native extensions need to be pre-build and packaged as alpine packages (apk).
+
+Building alpine packages and publishing to an internal repository is easy and documented here: https://localhost/monsoon/alpine-packages
