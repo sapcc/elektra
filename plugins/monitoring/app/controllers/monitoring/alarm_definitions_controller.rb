@@ -4,14 +4,8 @@ module Monitoring
     before_filter :load_alarm_definition, except: [ :index, :new, :create ] 
 
     def index
-      alarm_definitions = services.monitoring.alarm_definitions
-      sorted_alarm_definitions = []
-      # sort by name
-      alarm_definitions.sort_by(&:name).each do |alarm_definition|
-        sorted_alarm_definitions << alarm_definition
-      end
-
-      @alarm_definitions = Kaminari.paginate_array(sorted_alarm_definitions).page(params[:page]).per(10)
+      alarm_definitions = services.monitoring.alarm_definitions.sort_by(&:name)
+      @alarm_definitions = Kaminari.paginate_array(alarm_definitions).page(params[:page]).per(10)
     end
 
     def show
@@ -27,7 +21,7 @@ module Monitoring
     def back_to_definition_list
       respond_to do |format|
         format.js do
-          @alarm_definitions = services.monitoring.alarm_definitions
+          index
           render action: 'reload_list'
         end
         format.html { redirect_to plugin('monitoring').alarm_definitions_path }
