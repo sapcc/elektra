@@ -6,15 +6,19 @@
     .col-md-3.details-label
       %strong Name:
     .col-md-9.details-value= @alarm_definition.name
+  .row
     .col-md-3.details-label 
       %strong Description:
     .col-md-9.details-value= @alarm_definition.description
+  .row
     .col-md-3.details-label 
       %strong Severity:
     .col-md-9.details-value= @alarm_definition.severity
+  .row
     .col-md-3.details-label 
       %strong Expression:
     .col-md-9.details-value= @alarm_definition.expression
+  .row
     .col-md-3.details-label 
       %strong Match by:
     .col-md-9.details-value= @alarm_definition.match_by.join(',') 
