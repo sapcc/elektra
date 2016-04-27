@@ -5,8 +5,7 @@ module Core
 
       def initialize(params)
         super(params)
-        #@fog = ::Fog::Identity::OpenStack::V3.new(auth_params)
-        @fog = ::Fog::Identity::OpenStack::V3.new(params)
+        @fog = ::Fog::Identity::OpenStack::V3.new(auth_params)
       end  
 
       def auth_token 

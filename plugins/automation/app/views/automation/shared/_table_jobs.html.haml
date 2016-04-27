@@ -1,0 +1,17 @@
+.jobs_table
+  %table.table
+    %thead
+      %tr
+        %th Agent
+        %th Action
+        %th Started
+        %th Duration
+        %th State
+        %th
+    %tbody
+      - if jobs.empty?
+        %tr
+          %td{colspa: 6} No jobs available
+      - else
+        -jobs.each do | job |
+          = render partial: 'automation/shared/table_jobs_item', locals: {job: job}

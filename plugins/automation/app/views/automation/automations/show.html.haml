@@ -1,31 +1,38 @@
 = content_for :title do
-  Automation
+  Automation details
 
 .modal-body
 
   .flashes_area
     = render "automation/shared/flashes.html"
 
+  .row
+    .col-md-2.col-xs-2.col-md-offset-10.col-xs-offset-10.clearfix.automation-show-actions-bar
+      = link_to plugin('automation').edit_automation_path(id: @automation.id), data: {modal: true}, class: 'btn btn-primary pull-right automation-show-actions' do
+        %i.fa.fa-pencil
+      = link_to plugin('automation').automation_path(id: @automation.id), class: 'btn btn-danger pull-right automation-show-actions', :method => 'delete' do
+        %i.fa.fa-trash
+
   .form-horizontal
-    .form-group
-      %label.col-sm-2.control-label
-        Name
-      .col-sm-10
-        .form-control-static
-          = @automation.name
+    - form_horizontal_static_input('Name', @automation.name)
+    - form_horizontal_static_input('Repository', @automation.repository)
+    - form_horizontal_static_input('Repository version', @automation.repository_revision)
+    - form_horizontal_static_input('Timeout', @automation.timeout)
+    - form_horizontal_static_hash('Tags', @automation.tags)
+    - form_horizontal_static_input('Type', @automation.type)
 
-  = simple_form_for @automation, url: '#', method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form_automation do |f|
+    - if @automation.type == ::Automation::Automation::Types::CHEF
+      - form_horizontal_static_array('Runlist', @automation.run_list)
+      - form_horizontal_static_input('Attributes', @automation.chef_attributes)
+      - form_horizontal_static_input('Log level', @automation.log_level)
+    - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
+      - form_horizontal_static_input('Path', @automation.path)
+      - form_horizontal_static_hash('Arguments', @automation.arguments)
+      - form_horizontal_static_hash('Environment', @automation.environment)
 
-    = f.input :name, as: :static, custom_wrapper_html: {class: 'col-sm-5'}, label: 'Name'
 
-    = f.input :name, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Name'
-
-    = f.input :repository, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Repository', input_html: {}
-
-    = f.input :repository_revision, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Repository version', input_html: {}
-
-    -#= f.input :timeout, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, label: 'Timeout', input_html: {}
-
-    -#= f.input :tags, custom_wrapper_html: {class: 'col-xs-11 col-sm-9'}, as: :text, label_html: {:class => "col-xs-12"}, disabled: true, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }
-
-    = f.input :type, custom_wrapper_html: {class: 'col-sm-5'}, disabled: true, input_html: {data: {toggle: 'automationSwitch'}}, collection: @automation_types.sort.map {|k,v| [v,k]}, selected: selected_automation_type(@automation.type)
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Close
+    - else
+      = link_to "Close", plugin('automation').automations_path(), class: 'btn btn-default'

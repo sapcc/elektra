@@ -21,6 +21,10 @@ module ServiceLayer
       driver.map_to(Compute::Server).get_server(id)
     end
     
+    def vnc_console(server_id,console_type='novnc')
+      driver.map_to(Compute::VncConsole).vnc_console(server_id,console_type)      
+    end
+    
     def new_server(params={})
       Compute::Server.new(driver,params)
     end
@@ -53,6 +57,14 @@ module ServiceLayer
     
     def security_groups
       driver.map_to(Compute::SecurityGroup).security_groups
+    end
+
+    def attach_volume(volume_id, server_id, device)
+      driver.attach_volume(volume_id, server_id, device)
+    end
+
+    def detach_volume(volume_id, server_id)
+      driver.detach_volume(server_id, volume_id)
     end
 
   end

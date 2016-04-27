@@ -8,6 +8,13 @@
   margin-bottom: 50px;
 }
 
+.modal-section {
+  padding: 20px 0;
+}
+.modal-section.first {
+  padding: 0;
+}
+
 // Index
 
 .loading-spinner-section {
@@ -78,4 +85,40 @@ pre {
   padding: 20px 20px;
   border-top: 1px solid #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
+}
+
+.automation-show-actions-bar {
+  .automation-show-actions {
+    margin-left: 5px;
+  }
+}
+
+.static-tags {
+  .tag {
+    float: left;
+    margin-right: 10px;
+    border-radius: 2px 0 0 2px;
+    background-color: $hover-light-blue;
+    color: #46799b;
+    margin-bottom: 5px;
+    overflow: hidden;
+
+    .key, .value {
+      float: left;
+      padding: 0 4px;
+    }
+    .key {
+      background-color: #46799b;
+      color: white;
+    }
+  }
+}
+
+.run-job {
+  .icon {
+
+  }
+  .state {
+    margin-left: 5px;
+  }
 }

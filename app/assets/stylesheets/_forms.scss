@@ -9,7 +9,7 @@
     position: absolute;
     font-size: $font-size-small;
     color: $medium-blue;
-    bottom: 5px;
+    top: 3px;
     right: 0;
   }
 
@@ -19,5 +19,13 @@
   font-size: $font-size-small;
   .fa {
     margin-right: 5px;
+  }
+}
+
+.inline-form-buttons {
+  text-align: right;
+  .btn {
+    margin-left: 5px;
+    margin-bottom: 0;
   }
 }

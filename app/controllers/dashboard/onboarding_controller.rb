@@ -10,15 +10,17 @@ module Dashboard
         render 'onboarding_without_inquiry' and return
       else
         # check for approved inquiry
-        if inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['approved'])
+        inquiries = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['approved'])
+        if inquiries.count > 0
+          inquiry = inquiries.first
           # user has an accepted inquiry for that domain -> onboard user
           params[:terms_of_use] = true
           register_without_inquiry
           # close inquiry
-          services.inquiry.set_state(inquiry.id, :closed, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
-        elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open'])
+          services.inquiry.set_inquiry_state(inquiry.id, :closed, "Domain membership for domain/user #{current_user.id}/#{@scoped_domain_id} granted")
+        elsif services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['open']).count > 0
           render 'onboarding_open_message' and return
-        elsif inquiry = services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['rejected'])
+        elsif services.inquiry.find_by_kind_user_states(DOMAIN_ACCESS_INQUIRY, current_user.id, ['rejected']).count > 0
           @processors = service_user.list_scope_admins(domain_id: @scoped_domain_id)
           render 'onboarding_reject_message' and return
         else
@@ -62,7 +64,7 @@ module Dashboard
       if params[:terms_of_use]
         processors = service_user.list_scope_admins(domain_id: @scoped_domain_id)
         unless processors.blank?
-          inquiry = services.inquiry.inquiry_create(
+          inquiry = services.inquiry.create_inquiry(
               DOMAIN_ACCESS_INQUIRY,
               "Grant access for user #{current_user.full_name} to Domain #{@scoped_domain_name}",
               current_user,

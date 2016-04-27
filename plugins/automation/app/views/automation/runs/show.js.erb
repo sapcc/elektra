@@ -1,0 +1,7 @@
+$(".js-run-state").html("<%= escape_javascript( render partial: 'run_state', locals: {run: @run} ) %>");
+$(".js-run-duration").html("<%= @run.duration %>");
+$(".js-run-updated_at").html("<%= date_humanize(@run.updated_at) %>");
+$(".js-run-log").html("<%= escape_javascript( render partial: 'run_log', locals: {log_lines: @log_lines, log_truncated: @log_truncated, run: @run, log_output: @log_output} ) %>");
+<% if @run.state == Automation::State::Run::FAILED || @run.state == Automation::State::Run::COMPLETED%>
+  PollingService.disableElement("#run-detail-view")
+<% end %>

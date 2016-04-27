@@ -5,14 +5,21 @@ class @PollingService
    
   updateElement= (element) ->
     $element = $(element)
-    return if $element.data('polling_is_updating') == true
-    $element.data( 'polling_is_updating', true );
+
+    # Ignore update if update already in the update queue
+    return if $element.data('queuedForPolling') == true
+
+    # Ignore update if element disabled
+    return if $element.data('pollingIsDisabled') == true
+
+    $element.data( 'queuedForPolling', true );
     url = $element.data('updatePath')
     return unless url
-         
+    dataType = if url.search(/^[^\?]+\.js/) >= 0 then 'script' else 'html'
+
     $.ajax
       url: url,
-      dataType: 'html',
+      dataType: dataType,
       data: {'polling_service': true},
       success: ( data, textStatus, jqXHR ) ->
         # try to get loacation from response header 
@@ -29,10 +36,11 @@ class @PollingService
         else
           # no redirect -> replace content with html from response
           #exists = $.contains(document.documentElement, $element)
-          $element.replaceWith(data)
+          if dataType == 'html'
+            $element.replaceWith(data)
       error: () ->
-        $element.data( 'polling_is_updating', false );
       complete: () ->
+        $element.data( 'queuedForPolling', false );
         $('body').trigger( 'polling:update_complete' );
 
 
@@ -51,7 +59,6 @@ class @PollingService
     
       # modulo operation: rest of current timestamp divided by element's interval should be zero
       shouldUpdate = (timestamp % Math.round(updateInterval/ interval))==0
-      
       updateElement($element) if shouldUpdate
           
             
@@ -78,3 +85,13 @@ class @PollingService
   # For example, update('inquiries') will update data-update-path='inquiriy/inquiries/list'.    
   @update= (name) ->
     $("*[data-update-path*='#{name}']").each () -> updateElement(this)
+
+  # Pop element from the update queue.
+  # Element selector -> css selector
+  @disableElement= (elementSelector) ->
+    $(elementSelector).data('pollingIsDisabled', true)
+
+  # Push element to the update queue.
+  # Element selector -> css selector
+  @enableElement= (elementSelector) ->
+    $(elementSelector).data('pollingIsDisabled', false)

@@ -3,83 +3,91 @@
 
 .modal-body
 
-  %h3
-    Details
+  .modal-section.first
+    %h3
+      Details
 
-  .job_details
-    .row
-      .col-md-2
-        %b
-          Job Id:
-      .col-md-10
-        = @job.request_id
+    .job_details
+      .row
+        .col-md-2
+          %b
+            Job Id:
+        .col-md-10
+          = @job.request_id
 
-    .row
-      .col-md-2
-        %b
-          Status:
-      .col-md-4
-        - job_state(@job.status)
-      .col-md-2
-        %b
-          Agent:
-      .col-md-4
-        = " #{@job.agent}"
+      .row
+        .col-md-2
+          %b
+            Node:
+        .col-md-4
+          - unless @agent.nil?
+            = link_to(@agent.name, plugin('automation').node_path(id: @agent.id, name: @agent.name), data: {modal: true})
+          - else
+            = @job.to
+        .col-md-2
+          %b
+            Status:
+        .col-md-4
+          - job_state(@job.status)
 
-    .row
-      .col-md-2
-        %b
-          Action:
-      .col-md-4
-        = " #{@job.action}"
-      .col-md-2
-        %b
-          Created at:
-      .col-md-4
-        = " #{@job.created_at}".to_time.strftime('%a %b %d %H:%M:%S %Z %Y')
 
-    .row
-      .col-md-2
-        %b
-          Updated at:
-      .col-md-4
-        = " #{@job.updated_at}".to_time(:local).strftime('%a %b %d %H:%M:%S %Z %Y')
-      .col-md-2
-        %b
-          Duration:
-      .col-md-4
-        = @duration
+      .row
+        .col-md-2
+          %b
+            Agent:
+        .col-md-4
+          = " #{@job.agent}"
+        .col-md-2
+          %b
+            Action:
+        .col-md-4
+          = " #{@job.action}"
 
-  %h3
-    Payload
+      .row
+        .col-md-2
+          %b
+            Started:
+        .col-md-4
+          = date_humanize(@job.created_at)
+        .col-md-2
+          %b
+            Duration:
+        .col-md-4
+          = @job.duration
 
-  %p
-    = "The payload has #{@payload_lines} lines of output. "
-    - if @payload_truncated
-      = "The output is too long and has been truncated to the last lines. "
-    = link_to("View", plugin('automation').agent_job_show_payload_path(job_id: @job.request_id, agent_id: @agent_id), target: "_blank")
-    full payload.
+  .modal-section
+    %h3
+      Log
 
-  %pre.snippet
-    %code
-      = preserve do
-        :escaped
-          #{@payload_output}
-  %h3
-    Log
+    %p
+      = "The generated log has #{@log_lines} lines of output. "
+      - if @log_truncated
+        = "The output is too long and has been truncated to the last lines. "
+      = link_to("View", plugin('automation').show_log_jobs_path(id: @job.request_id), target: "_blank")
+      full log.
 
-  %p
-    = "The generated log has #{@log_lines} lines of output. "
-    - if @log_truncated
-      = "The output is too long and has been truncated to the last lines. "
-    = link_to("View", plugin('automation').agent_job_show_log_path(job_id: @job.request_id, agent_id: @agent_id), target: "_blank")
-    full log.
+    %pre
+      %code
+        = preserve do
+          :escaped
+            #{@log_output}
 
-  %pre.snippet
-    %code
-      = preserve do
-        :escaped
-          #{@log_output}
+  .modal-section
+    %h3
+      Payload
+
+    %p
+      = "The payload has #{@payload_lines} lines of output. "
+      - if @payload_truncated
+        = "The output is too long and has been truncated to the last lines. "
+      = link_to("View", plugin('automation').show_payload_jobs_path(id: @job.request_id), target: "_blank")
+      full payload.
+
+    %pre
+      %code
+        = preserve do
+          :escaped
+            #{@payload_output}
 
 
 .modal-footer

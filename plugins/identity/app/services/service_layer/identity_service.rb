@@ -12,13 +12,9 @@ module ServiceLayer
                                                 domain_id: self.domain_id,
                                                 project_id: self.project_id
                                             })
-    rescue Excon::Errors::Unauthorized => e
-      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ERROR"
-      #
-      # p e.response.data rescue nil
-      #
-      # error_body = JSON.parse(e.response.data[:body])
-      # p error_body
+    # catch token expired errors                                        
+    rescue Excon::Errors::Unauthorized, Excon::Errors::NotFound => e
+      # and raise InvalidToken error
       raise Identity::InvalidToken.new(e)
     end
 
@@ -69,55 +65,10 @@ module ServiceLayer
       return @auth_projects if domain_id.nil?
       @auth_projects.select { |project| project.domain_id==domain_id }
     end
-
-    def auth_projects_tree(projects: projects)
-      Rails.cache.fetch("#{current_user.token}/auth_projects_tree", expires_in: 60.seconds) do
-        auth_projects_tree_nocache(projects: projects)
-      end
-    end
-
-    def auth_projects_tree_nocache(projects: projects)
-
-      #projects = auth_projects(domain_id)
-      root = Tree::TreeNode.new('domain', Hashie::Mash.new(current_user.context['domain']))
-
-      projectid_map = {}
-      parentid_map = {}
-
-      if projects
-        # Build node hash for quick access via id
-        projects.each { |p| projectid_map[p.id] = Tree::TreeNode.new(p.id, p) }
-
-        projects.each_with_index do |p, i|
-          # check if node is root. true if parent is nil or if parent isn't part of project array
-          isroot = false
-          if p.parent_id == nil
-            isroot = true
-          elsif projectid_map[p.parent_id] == nil
-            isroot = true
-          end
-          # add root nodes directly to root or build hash with parent/childs relation for quick access via parent id
-          if isroot
-            root << projectid_map[p.id]
-          else
-            parentid_map[projectid_map[p.id].content.parent_id] = [] unless parentid_map[projectid_map[p.id].content.parent_id]
-            parentid_map[projectid_map[p.id].content.parent_id] << projectid_map[p.id]
-          end
-        end
-      end
-      # add parentid_map nodes to tree
-      addnodes(root, parentid_map)
-      Rails.logger.debug root.print_tree
-      return root
-    end
-
-    def addnodes(root, parentid_map)
-      # process nodes recursive and add them to it's parent
-      root.children.each do |c|
-        parentid_map[c.name].each do |n|
-          c << n unless c.include?(n)
-          addnodes(c, parentid_map)
-        end if parentid_map[c.name]
+    
+    def auth_projects_tree
+      @projects_tree ||= Rails.cache.fetch("#{current_user.token}/auth_projects_tree", expires_in: 60.seconds) do
+        Identity::ProjectTree.new(auth_projects)
       end
     end
 

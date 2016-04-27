@@ -7,12 +7,18 @@ class @WebconsoleContainer
     loadingText:        'Loading web console'
     toolbar:            'on'
     title:              'Web Console'
-    buttons:            null #['help','reload','close']
+    buttons:            null #['help','reload','close', 'fullscreen']
     effect:             'slide'
     height:             null #'viewport'
     closeIcon:          'fa fa-close'
     helpIcon:           'fa fa-question-circle'
     reloadIcon:         'fa fa-refresh'
+    fullscreenIcon:     'fa fa-expand'
+    compressIcon:       'fa fa-compress'
+    closeText:          'Close web console'
+    helpText:           'Show help'
+    reloadText:         'Reload console'
+    fullscreenText:     'Toggle full width'
 
   # create toolbar, buttons and console holder
   createDomStructure=($container, settings) ->
@@ -29,7 +35,8 @@ class @WebconsoleContainer
 
         # create and add each button to buttons container
         for button, i in settings.buttons
-          $buttons.append("<a href='#' data-trigger='webconsole:#{button}'><i class='#{settings[button+'Icon']}'/></a>")
+          console.log button
+          $buttons.append("<a href='#' data-trigger='webconsole:#{button}' data-toggle='tooltip' title='#{settings[button+'Text']}'><i class='#{settings[button+'Icon']}'/></a>")
 
     # add webconsole holder to container
     # and return this holder
@@ -38,26 +45,32 @@ class @WebconsoleContainer
   # adds help container to console holder
   addHelpContainer= ($container, settings) ->
     # create a container div for help content
-    $helpContainer = $("<div class='#{settings.helpCssClass}'></div>").appendTo($container).hide()
-    # create a container div for help text and show it
-    $helpContent = $("<div class='#{settings.helpCssClass}-content'></div>").appendTo($helpContainer)
-    $helpContainer.animate({width:'toggle'},'400px')
-    # set help button to active
-    $('[data-trigger="webconsole:help"]').addClass('active')
+    $helpContainer = $container.find(".#{settings.helpCssClass}")
+    if $helpContainer.length==0
+      $helpContainer = $("<div class='#{settings.helpCssClass}'></div>").appendTo($container).hide()
 
-    # create toggle button and bind click event
-    $("<a href='#' class='toggle'><i class='fa fa-close'></i></a>").prependTo($helpContainer).click (e) ->
+      # create a container div for help text and show it
+      $helpContent = $("<div class='#{settings.helpCssClass}-content'></div>").appendTo($helpContainer)
       $helpContainer.animate({width:'toggle'},'400px')
-      $('[data-trigger="webconsole:help"]').toggleClass('active')
+      # set help button to active
+      $('[data-trigger="webconsole:help"]').addClass('active')
+
+      # create toggle button and bind click event
+      $("<a href='#' class='toggle'><i class='fa fa-close'></i></a>").prependTo($helpContainer).click (e) ->
+        $helpContainer.animate({width:'toggle'},'400px')
+        $('[data-trigger="webconsole:help"]').toggleClass('active')
 
 
-    # set height
-    # $webconsoleHolder = $container.find(".#{settings.holderCssClass}")
-    # height = $webconsoleHolder.height()
-    $toolbar = $container.find(".#{settings.toolbarCssClass}")
-    top = if $toolbar.length>0 then $toolbar.position().top+$toolbar.outerHeight(true) else 0
-    # $helpContainer.css(top: top, height: height)
-    $helpContainer.css(top: top)
+      # set height
+      # $webconsoleHolder = $container.find(".#{settings.holderCssClass}")
+      # height = $webconsoleHolder.height()
+      $toolbar = $container.find(".#{settings.toolbarCssClass}")
+      top = if $toolbar.length>0 then $toolbar.position().top+$toolbar.outerHeight(true) else 0
+      # $helpContainer.css(top: top, height: height)
+      $helpContainer.css(top: top)
+    else
+      $helpContent = $helpContainer.find(".#{settings.helpCssClass}-content")
+
     $helpContent
 
   # load js scripts and cache
@@ -71,7 +84,7 @@ class @WebconsoleContainer
 
     # Use $.ajax() since it is more flexible than $.getScript
     # Return the jqXHR object so we can chain callbacks
-    $.ajax( options );
+    $.ajax( options )
 
   # load credentials for current user (token, identity and webcli endpoints)
   loadWebconsoleData= (settings ) ->
@@ -133,6 +146,20 @@ class @WebconsoleContainer
       WebconsoleContainer.close () ->
         $('[data-trigger="webconsole:open"]').removeClass("active")
 
+    $('[data-trigger="webconsole:fullscreen"]').click (e) =>
+      e.preventDefault()
+      icon = $(e.currentTarget).find(".fa")
+
+      if icon.hasClass("#{@settings.fullscreenIcon}")
+        icon.removeClass("#{@settings.fullscreenIcon}")
+        icon.addClass("#{@settings.compressIcon}")
+      else
+        icon.removeClass("#{@settings.compressIcon}")
+        icon.addClass("#{@settings.fullscreenIcon}")
+
+      WebconsoleContainer.toogleFullscreen()
+
+
 
 
   @open= (callback) ->
@@ -147,6 +174,21 @@ class @WebconsoleContainer
     @$container.parent().slideUp 'slow', () ->
       console.log('Webconsole closed')
       callback() if callback
+
+  @toogleFullscreen= (callback) ->
+    console.log 'toogle fullscreen'
+    $parentContainer = @$container.parent()
+
+    new_width = $parentContainer.data('width') || $( window ).width()
+    new_left = $parentContainer.data('left') || -$parentContainer.offset().left
+
+    $parentContainer.data('width',$parentContainer.width())
+    $parentContainer.data('left', if new_left!=0 then 0 else false)
+
+    @$container.parent().css(position: 'relative').animate({
+      width: new_width,
+      left: new_left
+    })
 
   @reload= () ->
     console.log 'reload'
@@ -168,23 +210,18 @@ class @WebconsoleContainer
 
     # load token and endpoints
     loadWebconsoleData(@settings)
-      .error (jqXHR, textStatus, errorThrown ) -> 
+      .error (jqXHR, textStatus, errorThrown ) ->
         redirectTo = jqXHR.getResponseHeader('Location')
         # response is a redirect
         if redirectTo && redirectTo.indexOf('/auth/login/')>-1
           # just reload to avoid redirect to a no layout page after login
           window.location.reload()
-          
+
       .success ( context, textStatus, jqXHR ) ->
         $loadingHint.find('.status').text('20%')
 
-        # load lib
-        $.when(
-            cachedScript("#{context.webcli_endpoint}/js/hterm.js"),
-            cachedScript("#{context.webcli_endpoint}/js/gotty.js"),
-            $.Deferred ( deferred ) -> $( deferred.resolve )
-
-        ).done () ->
+        # define function which implements the webconsole load procedure
+        loadConsole = () ->
           $loadingHint.find('.status').text('60%')
           # success
           # load webcli
@@ -208,3 +245,15 @@ class @WebconsoleContainer
 
               self.loaded = true
             error: (xhr, bleep, error) -> console.log('error: ' + error)
+
+        # check if lib is already loaded
+        if(typeof lib=='undefined')
+          # lib is not loaded yet -> load lib
+          $.when(
+              cachedScript("#{context.webcli_endpoint}/js/hterm.js"),
+              cachedScript("#{context.webcli_endpoint}/js/gotty.js"),
+              $.Deferred ( deferred ) -> $( deferred.resolve )
+          ).done () -> loadConsole()
+        else
+          # lib already loaded -> load console
+          loadConsole()

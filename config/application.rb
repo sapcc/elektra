@@ -52,6 +52,8 @@ module MonsoonDashboard
           end
 
     config.debug_api_calls = ENV.has_key?('DEBUG_API_CALLS')
+    config.debug_policy_engine = ENV.has_key?('DEBUG_POLICY_ENGINE')
+
     ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','staging','europe']
 
@@ -59,6 +61,6 @@ module MonsoonDashboard
     config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
     config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
     config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
-    config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon2'
+    config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon3'
   end
 end

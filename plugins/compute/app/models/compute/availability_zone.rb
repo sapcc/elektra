@@ -5,7 +5,7 @@ module Compute
     end
     
     def name
-      read("zoneLabel")
+      read("zoneName")
     end
   end
 end

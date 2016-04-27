@@ -1,8 +1,11 @@
 # encoding: UTF-8
 source 'http://localhost:8080/rubygemsorg/'
 source 'https://localhost/' do
-  gem 'ruby-arc-client', '~> 0.3.0'
+  gem 'ruby-arc-client', '~> 0.6.0'
 end
+# Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
+# # unf is pulled in by the ruby-arc-client
+gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '4.2.4'
 
@@ -31,18 +34,17 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'fog', git: 'git://localhost/monsoon/fog.git', branch: 'master'
+gem 'fog-openstack'
 gem 'fog-openstack-monitoring', git: 'git://localhost/***REMOVED***/fog-openstack-monitoring.git', branch: 'master'
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
-gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_bootstrap.git'
+#gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_bootstrap.git'
 #gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
 
 # Extras
 gem 'config'
-gem 'rubytree'
 
 
 ###################### PLUGINS #####################
@@ -74,6 +76,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+#
+group :development do
+  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem 'web-console', '~> 2.0'
+end
 
 group :development, :test do
   # load .env
@@ -81,9 +88,6 @@ group :development, :test do
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'

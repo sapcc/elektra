@@ -3,9 +3,10 @@
     %thead
       %tr
         %th Name
+        %th Started
         %th Duration
         %th Owner
-        %th Status
+        %th State
         %th Jobs
     %tbody
       - if runs.empty?
@@ -14,3 +15,5 @@
       - else
         -runs.each do | run |
           = render partial: 'table_runs_item', locals: {run: run}
+
+= paginate runs, :theme => 'twitter-bootstrap-3', :remote => true, :params => {model: 'run'}

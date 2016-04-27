@@ -1,32 +1,8 @@
 .row
-  .col-md-8
-    %div#projecttree
-  .col-md-2
-    .form-group-sm
-      %label.sr-only{:for => "input-expand-node"} Projects:
-      %input#input-expand-node.form-control{:placeholder => "Search project...", :type => "input"}
-  - if current_user.is_allowed?('identity:project_request')
-    = link_to 'Request new project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm'
-
-=content_for :javascripts do
-  :javascript
-    
-    var $expandibleTree = $('#projecttree').treeview({
-      enableLinks: true,
-      levels: 2,
-      showBorder: false,
-      showTags: true,
-      color: '#337ab7',
-      collapseIcon: 'fa fa-minus',
-      expandIcon: 'fa fa-plus',
-      data: [#{projects_tree.to_json}]
-    });
-    
-    
-    var rootNode = $expandibleTree.treeview('search',['#{projects_tree[:text]}'])[0];
-    // Expand/collapse/toggle nodes
-    $('#input-expand-node').on('keyup', function (e) {
-      $expandibleTree.treeview('collapseAll');
-      $expandibleTree.treeview('expandNode', [rootNode]);
-      expandibleNodes = $expandibleTree.treeview('search', [ $(this).val(), { ignoreCase: true, exactMatch: false } ]);
-    });
+  .col-md-4
+    .form-group.has-feedback
+      = text_field_tag 'search-input', '', class: "form-control", placeholder: 'project name'
+      %i.glyphicon.glyphicon-search.form-control-feedback
+          
+.row
+  .col-md-12= render_project_tree(@user_domain_projects_tree.root.children, html: {class: 'searchable', data:{search_input: '#search-input'} })

@@ -1,7 +1,7 @@
 module Inquiry
   class Inquiry < ActiveRecord::Base
     include Filterable
-    paginates_per 3
+    paginates_per 10
 
     has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
@@ -156,6 +156,25 @@ module Inquiry
       end
 
       return states
+    end
+
+    def change_state(state, description, user)
+      sstate = state.to_sym
+      self.process_step_description = description
+      result = false
+      begin
+        if self.valid?
+          result = self.reject!({user: user, description: description}) if sstate == :rejected
+          result = self.approve!({user: user, description: description}) if sstate == :approved
+          result = self.reopen!({user: user, description: description}) if sstate == :open
+          result = self.close!({user: user, description: description}) if sstate == :closed
+        end
+      rescue => e
+        self.errors.add(:aasm_state, e.message)
+        raise e
+      end
+
+      return result
     end
 
     def get_user_id user

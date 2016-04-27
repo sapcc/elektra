@@ -4,11 +4,13 @@ module Inquiry
     authorization_context 'inquiry'
     authorization_required
 
+    before_action :set_inquiry, only: [:show, :edit, :update, :destroy]
+
     def index
       if params[:partial]
         filter = params[:filter] ? params[:filter] : {}
         @page = params[:page] || 1
-        @inquiries = services.inquiry.inquiries(filter).order(created_at: :desc).page(@page).per(params[:per_page])
+        @inquiries = ::Inquiry::Inquiry.filter(filter).order(created_at: :desc).page(@page).per(params[:per_page])
         respond_to do |format|
           format.html {
               render partial: 'inquiries', locals: {inquiries: @inquiries, remote_links: true}, layout: false
@@ -25,34 +27,42 @@ module Inquiry
     end
 
     def show
-      @inquiry = services.inquiry.find_by_id(params[:id])
     end
 
     def create
+      # not really needed because inquiries are always created from somewhere else (projects, ....)
       # get the admins
+      @inquiry = Inquiry.new
       admins = service_user.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
-      inquiry = services.inquiry.inquiry_create(inquiry_params[:kind], inquiry_params[:description], current_user, payload, admins, callbacks)
-      unless inquiry.errors?
+
+      @inquiry.kind = inquiry_params[:kind]
+      @inquiry.description = inquiry_params[:description]
+      @inquiry.domain_id = current_user.domain_id || current_user.project_domain_id
+      @inquiry.project_id = current_user.project_id
+      @inquiry.requester = Processor.from_users([current_user]).first
+      @inquiry.processors = Processor.from_users(admins)
+      @inquiry.payload = payload
+      @inquiry.callbacks = callbacks
+
+      if @inquiry.save
         flash[:notice] = "Request successfully created."
         redirect_to inquiries_path
       else
         flash[:error] = "Error creating request: #{inquiry.errors.full_messages.to_sentence}."
         Rails.logger.error "Inquiry(Request): Error creating inquiry: #{inquiry.errors.full_messages}"
-        @inquiry = Inquiry.new(requester_id: current_user.id)
         render action: :new
       end
     end
 
 
     def edit
-      @inquiry = services.inquiry.find_by_id(params[:id])
       @inquiry.aasm_state = params[:state] if params[:state]
     end
 
     def update
-      @inquiry = services.inquiry.find_by_id(params[:id])
-      services.inquiry.set_state_for_inquiry(@inquiry, inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description])
-      unless @inquiry.errors?
+      #@inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
+      result = @inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
+      if result
         flash[:notice] = "Request successfully updated."
         render 'inquiry/inquiries/update.js'
       else
@@ -62,7 +72,6 @@ module Inquiry
     end
 
     def destroy
-      @inquiry = services.inquiry.find_by_id(params[:id])
 
       if @inquiry
         if @inquiry.destroy
@@ -83,6 +92,11 @@ module Inquiry
     def inquiry_params
       params.require(:inquiry).permit(:kind, :description, :aasm_state, :new_state, :process_step_description)
     end
+
+    def set_inquiry
+      @inquiry = Inquiry.find(params[:id])
+    end
+
 
     # Todo: Only for testing purpose
 

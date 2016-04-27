@@ -6,12 +6,11 @@ module Automation
     include ActiveModel::Conversion
     include ActiveModel::Validations
 
-    attr_accessor :token, :endpoint
-
+    attribute :id, String
     attribute :type, String
     attribute :name, String
     attribute :repository, String
-    attribute :repository_revision, String
+    attribute :repository_revision, String, :default => 'master'
     attribute :tags, String #JSON
     attribute :timeout, Integer, :default => 3600
 
@@ -27,10 +26,7 @@ module Automation
 
 
     # validation
-    validates :name, presence: true
-    validates :repository, presence: true
-    validates :type, presence: true
-
+    validates_presence_of :name, :repository, :repository_revision, :type
 
     def persisted?
       false
@@ -44,22 +40,45 @@ module Automation
       end
     end
 
+    def update(automation_service)
+      if valid?
+        update!(automation_service)
+      else
+        false
+      end
+    end
+
     private
 
     def persist!(automation_service)
       # Rest call for creating a autoamtion
-      base_automation = automation_service.new()
-      base_automation.form_to_attributes(self.attributes)
-      success = base_automation.save
+      automation = automation_service.new()
+      automation.form_to_attributes(self.attributes)
+      success = automation.save
       unless success
-        messages = !base_automation.errors.blank? || base_automation.errors.messages.blank? ? base_automation.errors.messages : {}
-        base_automation.errors.messages.each do |key,value|
-          value.each do |item|
-            self.errors.add key.to_sym, item
-          end
-        end
+        messages = !automation.errors.blank? && !automation.errors.messages.blank? ? automation.errors.messages : {}
+        assign_errors(messages)
       end
       success
+    end
+
+    def update!(automation_service)
+      automation = automation_service.find(self.id)
+      automation.form_to_attributes(self.attributes)
+      success = automation.save
+      unless success
+        messages = !automation.errors.blank? && !automation.errors.messages.blank? ? automation.errors.messages : {}
+        assign_errors(messages)
+      end
+      success
+    end
+
+    def assign_errors(messages)
+      messages.each do |key,value|
+        value.each do |item|
+          self.errors.add key.to_sym, item
+        end
+      end
     end
 
   end

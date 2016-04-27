@@ -1,0 +1,20 @@
+%tr{id: "instance_#{instance.id}"}
+  %td
+    = link_to(instance.name, plugin('automation').node_path(id: instance.id), data: {modal: true})
+  %td= "#{instance.automation_facts.platform_family} #{instance.automation_facts.platform_version}"
+  %td= instance.automation_facts.ipaddress
+  %td{class: "snug #{'automation_status_alarm' if instance.automation_facts.online == false}"}
+    = instance.automation_facts.online_to_string
+  %td
+    = render partial: "table_nodes_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
+  %td
+    %i.loading-spinner-section.hide{data: {node_id: instance.id}}
+    .btn-group{data: {node_id: instance.id}}
+      %button.btn.btn-default.btn-sm.dropdown-toggle{type: "button", data: {toggle: "dropdown"}, "aria-haspopup" => "true", "aria-expanded" => "false"}
+        %i.fa.fa-gears
+      %ul.dropdown-menu
+        %li.dropdown-header
+          Run Automation
+        - @automations.each do |automation|
+          %li
+            = link_to(automation.name, "#", data: {toggle: "run_automation_link", node_id: instance.id, link: plugin('automation').run_automation_nodes_path(node_id: instance.id, automation_id: automation.id, automation_name: automation.name) })

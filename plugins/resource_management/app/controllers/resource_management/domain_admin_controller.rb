@@ -114,7 +114,7 @@ module ResourceManagement
           comment += ", comment from approver: #{params[:resource][:comment]}"
         end
         services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
-        services.inquiry.set_state(@inquiry.id, :approved, comment)
+        services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
       else
         self.review_request
         render action: 'review_request'
@@ -156,7 +156,7 @@ module ResourceManagement
       overlay_url = plugin('resource_management').cloud_admin_review_request_path()
       domain_name = services.identity.find_domain(@scoped_domain_id).name
 
-      inquiry = services.inquiry.inquiry_create(
+      inquiry = services.inquiry.create_inquiry(
         'domain_quota',
         "#{@resource.service}/#{@resource.name} for domain #{domain_name}: add #{@resource.data_type.format(value - old_value)}",
         current_user,

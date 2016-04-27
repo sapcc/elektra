@@ -1,9 +1,0 @@
-= render partial: 'automation/shared/nav.html', locals: {pane: 'agents'}
-
-.tab-content
-  .tab-pane.active{role:"tabpanel", id:"agents-pane"}
-
-    .toolbar
-      = link_to "Install a new Agent", plugin('automation').install_agents_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
-
-    = render partial: 'table_agents', locals: {instances: @agents, jobs: @jobs}

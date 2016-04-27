@@ -24,7 +24,7 @@
               = requester_fields.input :email, label: "Email", disabled: true, required: false
             = f.input :description, label: "The reason for request", as: :text, disabled: true
             = f.input :aasm_state, readonly: true, label: "New State"
-            =# f.input :aasm_state, { label: "Please set a new State",
+            -#= f.input :aasm_state, { label: "Please set a new State",
               as: :select,
               :include_blank => false,
               collection: @inquiry.states_allowed(current_user),

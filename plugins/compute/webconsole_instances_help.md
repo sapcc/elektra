@@ -2,7 +2,9 @@
   * openstack
 
 ### Quick Help
-`openstack server help`
+[OpenStack openstack command line tool](http://docs.openstack.org/developer/python-openstackclient)
+
+`openstack help server`
 
 `openstack help server <command>`
 

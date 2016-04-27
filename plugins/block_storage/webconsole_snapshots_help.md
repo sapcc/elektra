@@ -2,7 +2,9 @@
   * openstack
 
 ### Quick Help
-`openstack snapshot help`
+[OpenStack openstack command line tool](http://docs.openstack.org/developer/python-openstackclient)
+
+`openstack help snapshot`
 
 `openstack help snapshot <command>`
 

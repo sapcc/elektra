@@ -20,14 +20,14 @@
       %ol.context-list
         %li.dropdown.dropdown-mega
           %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-            %i.fa.fa-cloud
+            %i{class: selected_category_icon}
             = selected_service_name
             %span.caret
           = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
 
 
     .special-crumb
-      - if services.available?(:webconsole) and plugin_name!='webconsole'
+      - if services.available?(:webconsole) and plugin_name!='webconsole' and plugin_name!='loadbalancing'
         = link_to 'javascript:void(0)', class: 'solo-icon-link', data: {trigger: 'webconsole:open'} do
           %span.fa-stack
             %i.fa.fa-square.fa-stack-2x

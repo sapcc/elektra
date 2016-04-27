@@ -1,0 +1,21 @@
+.agents_table{data: {update_path: plugin('automation').index_update_nodes_path(), update_interval: 30}}
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th Platform
+        %th IP
+        %th Online
+        %th Job history
+        %th
+    %tbody
+      - if instances.empty?
+        %tr
+          %td{colspa: 6} No agents available
+      - else
+        -instances.each do | instance |
+          = render partial: 'table_nodes_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].fetch(:elements, {})}
+
+  = paginate instances, :theme => 'twitter-bootstrap-3'
+
+  #popover_container

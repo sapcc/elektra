@@ -1,0 +1,21 @@
+%p
+  Follow these steps to install the automation node on instance
+  - unless @instance.nil?
+    %b= @instance.name
+
+%ol
+  %li
+    Log in into the instance
+    - unless @instance.nil?
+      = ":"
+      %code
+        = "#{@log_info}"
+
+  %li
+    Run the following script in an administrator console as super user:
+
+    %pre.snippet
+      %code
+        = preserve do
+          :escaped
+            #{@script}

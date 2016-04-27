@@ -1,7 +1,8 @@
 %tr
   %td
-    -#= link_to(automation.form_attribute('name'), plugin('automation').automation_path(id: automation.id), data: {modal: true})
-    = run.automation_name
+    = link_to(run.automation_name, plugin('automation').run_path(id: run.id), data: {modal: true})
+  %td
+    = date_humanize(run.created_at)
   %td
     = run.duration
   %td
@@ -9,3 +10,12 @@
   %td
     - run_state(run.state, run.state_to_string)
   %td
+    .run-job
+      %i.fa.fa-square.state_success
+      %span.state= run.attributes.fetch('jobs_states',{}).fetch('complete', 0)
+    .run-job
+      %i.fa.fa-square.state_failed
+      %span.state= run.attributes.fetch('jobs_states', {}).fetch('failed',0)
+    .run-job
+      %i.fa.fa-refresh
+      %span.state= run.attributes.fetch('jobs_states', {}).fetch('executing', 0) + run.attributes.fetch('jobs_states',{}).fetch('queued', 0)

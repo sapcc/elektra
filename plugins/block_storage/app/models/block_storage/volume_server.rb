@@ -6,6 +6,7 @@ module BlockStorage
 
     attr_accessor :server, :volume
     attr_accessor :servers
+    attr_accessor :device
 
     validates_presence_of :server
 

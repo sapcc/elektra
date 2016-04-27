@@ -1,0 +1,9 @@
+= render partial: 'automation/shared/nav.html', locals: {pane: 'nodes'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"nodes-pane"}
+
+    .toolbar
+      = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+    = render partial: 'table_nodes', locals: {instances: @nodes, jobs: @jobs}

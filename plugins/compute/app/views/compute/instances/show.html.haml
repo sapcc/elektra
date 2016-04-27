@@ -69,7 +69,7 @@
     .tab-pane{role:"tabpanel", id:"security_groups"}  
       %table.table.datatable
         %tbody
-          - @instance.security_groups.each do |sg| 
+          - (@instance.security_groups || []).each do |sg| 
             %tr
               %th= sg.name
               %td
@@ -91,19 +91,23 @@
               %th= k
               %td= v.blank? ? "N/A" : v
 
-    .tab-pane{role:"tabpanel", id:"volumes"}  
+    .tab-pane{role:"tabpanel", id:"volumes"}
       %table.table.datatable
-        %tbody 
+        %thead
+          %tr
+            %th Volume Name
+            %th Device Name
+            %th.snug
+        %tbody
           - if @instance.attached_volumes.empty?
             %tr
-              %th Volume
-              %td No volumes attached. 
-          - @instance.attached_volumes.each do |vol|           
-            %tr
-              %th Attached To
-              %td
-                = "#{vol.name} on #{vol.attachment_device(@instance.id)}"
-                  
+              %td No volumes attached.
+          - else
+            - @instance.attached_volumes.each do |vol|
+              %tr
+                %td= vol.name
+                %td= vol.attachment_device(@instance.id).blank? ? "NO device name" : vol.attachment_device(@instance.id)
+
 - if modal?
   .modal-footer
     - if modal?

@@ -26,13 +26,6 @@ MonsoonOpenstackAuth.configure do |auth|
   # optional, default=false
   auth.access_key_auth_allowed = false
 
-  # optional, default= last url before redirected to form
-  #auth.login_redirect_url = -> referrer_url, current_user { after_login_url(referrer_url, current_user)}
-  auth.login_redirect_url = -> referrer_url, current_user do 
-    # redirect user to domain home page after login
-    referrer_url.blank? ? "/#{current_user.user_domain_id}/identity/home" : referrer_url
-  end
-
   # authorization policy file
   auth.authorization.policy_file_path = policy_paths
   # auth.authorization.context = "identity"
@@ -40,8 +33,8 @@ MonsoonOpenstackAuth.configure do |auth|
 
 
   #auth.authorization.trace_enabled = true
-  auth.authorization.reload_policy = true
-  auth.authorization.trace_enabled = true
+  auth.authorization.reload_policy = Rails.configuration.debug_policy_engine
+  auth.authorization.trace_enabled = Rails.configuration.debug_policy_engine
 
   auth.authorization.controller_action_map = {
     :index   => 'list',
