@@ -28,8 +28,8 @@ module ServiceLayer
       driver.map_to(Monitoring::NotificationMethod).notification_methods
     end
 
-    def get_alarm_definition_method(id)
-      id.blank? ? nil : driver.map_to(Monitoring::AlarmDefinition).get_alarm_definition_method(id)
+    def get_alarm_definition(id)
+      id.blank? ? nil : driver.map_to(Monitoring::AlarmDefinition).get_alarm_definition(id)
     end
 
     def get_notification_method(id)
