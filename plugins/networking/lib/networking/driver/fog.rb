@@ -112,6 +112,11 @@ module Networking
       def floating_ips(filter = {})
         handle_response { @fog.list_floating_ips(filter).body['floatingips'] }
       end
+
+      ###################### SECURITY GROUPS #######################
+      def security_groups(filter = {})
+        handle_response { @fog.list_security_groups(filter).body['security_groups'] }
+      end
     end
   end
 end

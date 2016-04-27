@@ -109,6 +109,11 @@ SimpleNavigation::Configuration.run do |navigation|
                           -> { plugin('networking').floating_ips_path },
                           if: -> { plugin_available?(:networking) },
                           highlights_on: %r{networking/floating_ips.*}
+      networking_nav.item :security_groups,
+                          'Security Groups',
+                          -> { plugin('networking').security_groups_path },
+                          if: -> { plugin_available?(:networking) },
+                          highlights_on: %r{networking/security_groups.*}
       networking_nav.item :loadbalancing,
                           'Loadbalancing',
                           -> { plugin('loadbalancing').entry_path },

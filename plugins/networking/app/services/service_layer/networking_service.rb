@@ -62,5 +62,15 @@ module ServiceLayer
       end
       result
     end
+
+    def project_security_groups(project_id)
+      result = []
+      driver.security_groups.each do |sg|
+        if sg['tenant_id'] == project_id
+          result << Networking::SecurityGroup.new(driver, sg)
+        end
+      end
+      result
+    end
   end
 end
