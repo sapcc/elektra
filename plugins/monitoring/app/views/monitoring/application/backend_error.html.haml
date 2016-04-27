@@ -6,5 +6,5 @@
     Monitoring
 
 %div{ class: modal? ? 'modal-body' : '' }
-  %p An error was encountered while executing an Monitoring (Monasca) API call:
-  %p.alert.alert-error= @exception_msg
+  = render partial: 'error_message'
+
