@@ -1,0 +1,26 @@
+%tr{id: "floating_ip_#{floating_ip.id}"}
+  %td
+    - if current_user.is_allowed?("networking:floating_ip_get", {})
+      = link_to floating_ip.floating_ip_address, plugin('networking').floating_ip_path(id: floating_ip.id), data: {modal: true}
+    - else
+      = floating_ip.floating_ip_address
+  %td= floating_ip.fixed_ip_address.present? ? floating_ip.fixed_ip_address : '-'
+  %td= floating_ip.status
+
+  %td.snug
+    - if current_user.is_allowed?("networking:floating_ip_delete", {})
+      .btn-group
+        %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+          %span.fa.fa-cog
+
+        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+          - if current_user.is_allowed?("networking:floating_ip_delete", {})
+            %li= link_to 'Delete',
+              plugin('networking').floating_ip_path(id: floating_ip.id),
+              method: :delete,
+              data: { confirm: 'Are you sure you want to delete this Floating IP?',
+                ok: "Yes, delete it",
+                confirmed: :loading_status},
+              remote: true
+          - if current_user.is_allowed?("networking:floating_ip_associate", {})
+            %li= link_to 'Associate'

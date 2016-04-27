@@ -69,7 +69,7 @@
     .tab-pane{role:"tabpanel", id:"security_groups"}  
       %table.table.datatable
         %tbody
-          - @instance.security_groups.each do |sg| 
+          - (@instance.security_groups || []).each do |sg| 
             %tr
               %th= sg.name
               %td

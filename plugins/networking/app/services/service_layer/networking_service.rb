@@ -11,8 +11,8 @@ module ServiceLayer
       })
     end
 
-    def available?(action_name_sym=nil)
-      not current_user.service_url('network',region: region).nil?
+    def available?(_action_name_sym = nil)
+      driver.available
     end
 
     def networks(filter={})
@@ -51,6 +51,26 @@ module ServiceLayer
 
     def ports(network_id)
       driver.map_to(Networking::Port).ports(network_id)
+    end
+
+    def project_floating_ips(project_id)
+      result = []
+      driver.floating_ips.each do |fip|
+        if fip['tenant_id'] == project_id
+          result << Networking::FloatingIp.new(driver, fip)
+        end
+      end
+      result
+    end
+
+    def project_security_groups(project_id)
+      result = []
+      driver.security_groups.each do |sg|
+        if sg['tenant_id'] == project_id
+          result << Networking::SecurityGroup.new(driver, sg)
+        end
+      end
+      result
     end
   end
 end

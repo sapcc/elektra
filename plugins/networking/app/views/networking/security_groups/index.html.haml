@@ -1,0 +1,23 @@
+= render "intro"
+
+- if @scoped_project_id
+  - if current_user.is_allowed?("networking:security_group_create", {security_group: {user_id: current_user.id} })
+    .toolbar
+      = link_to 'Create new', plugin('networking').new_security_group_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+  - if current_user.is_allowed?("networking:security_group_list", {security_group: {user_id: current_user.id} })
+    %table.table
+      %thead
+        %tr
+          %th Name
+          %th Description
+          %th.snug
+      %tbody
+        - if @security_groups.length==0
+          %tr
+            %td{colspa: 5} No Security Group available
+        - else
+          - @security_groups.each do | security_group |
+            = render partial: 'item', locals: {security_group: security_group}
+- else
+  = render "application/projects_list"
