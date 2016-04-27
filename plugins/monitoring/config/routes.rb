@@ -1,12 +1,7 @@
 Monitoring::Engine.routes.draw do
   get '/' => 'application#index', as: :entry
 
-  resources 'alarms', except: [:new, :create] do
-  end
-  
-  resources 'alarm_definitions' do
-  end
-  
-  resources 'notification_methods' do
-  end
+  resources 'alarms', except: [:new, :create]
+  resources 'alarm_definitions'
+  resources 'notification_methods'
 end
