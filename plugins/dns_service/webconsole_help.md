@@ -2,7 +2,7 @@
   * designate
 
 ### Quick Help
-[Openstack designate command line tool](http://docs.openstack.org/developer/python-designateclient)
+[OpenStack designate command line tool](http://docs.openstack.org/developer/python-designateclient)
 
 `designate help`
 

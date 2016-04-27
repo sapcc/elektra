@@ -3,7 +3,7 @@
 * glance
 
 ### Quick Help
-[Openstack openstack command line tool](http://docs.openstack.org/developer/python-openstackclient)
+[OpenStack openstack command line tool](http://docs.openstack.org/developer/python-openstackclient)
 
 `openstack help image` | `glance help`  
 Get list of available image commands
