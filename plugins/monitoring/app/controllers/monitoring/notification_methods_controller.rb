@@ -1,6 +1,7 @@
 module Monitoring
   class NotificationMethodsController < Monitoring::ApplicationController
     authorization_context 'monitoring'
+    before_filter :load_notification_method, except: [ :index, :new, :create ]
 
     def index
       notification_methods = services.monitoring.notification_methods.sort_by(&:name)
@@ -9,10 +10,6 @@ module Monitoring
 
     def new
       @notification_method = services.monitoring.new_notification_method(name: "")
-    end
-
-    def edit
-      @notification_method = services.monitoring.get_notification_method(params.require(:id))
     end
 
     def create
@@ -51,6 +48,11 @@ module Monitoring
         end
         format.html { redirect_to plugin('monitoring').notification_methods_path }
       end
+    end
+
+    def load_notification_method
+      @notification_method = services.monitoring.get_notification_method(params.require(:id))
+      raise ActiveRecord::RecordNotFound, "notification method with id #{params[:id]} not found" unless @notification_method
     end
     
   end
