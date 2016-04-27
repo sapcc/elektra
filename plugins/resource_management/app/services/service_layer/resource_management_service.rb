@@ -123,13 +123,16 @@ module ServiceLayer
         actual_quota[service] = driver.query_project_quota(domain_id, project_id, service)
         actual_usage[service] = driver.query_project_usage(domain_id, project_id, service)
       end
-
+      
       # write values into database
       ResourceManagement::ResourceConfig.all.each do |resource|
-        #only update if the driver reported any values for this project
+        # only update if the driver reported any values for this project
         this_actual_quota = actual_quota[resource.service_name][resource.name]
         this_actual_usage = actual_usage[resource.service_name][resource.name]
+
+        # this is the case if account is not accesible or not created 
         next if this_actual_quota.nil? or this_actual_usage.nil?
+
         domain_resource =  ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, name:resource.name, service:resource.service_name).first
 
         # create new Resource entry if necessary

@@ -4,11 +4,11 @@
 ### Quick Help
 `openstack server help`
 
-`openstack help server COMMAND`
+`openstack help server <command>`
 
 ### Most Used Commands
 `openstack server list`
 
-`openstack server stop <SERVER_ID>`
+`openstack server stop <server>`
 
-`openstack server start <SERVER_ID>`
+`openstack server start <server>`
