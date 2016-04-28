@@ -1,8 +1,15 @@
-.row
-  .col-md-4
-    .form-group.has-feedback
-      = text_field_tag 'search-input', '', class: "form-control", placeholder: 'project name'
+.projects-tree
+  .toolbar.toolbar-aligntop.toolbar-fancy
+    %h4
+      Your Projects
+      = "(#{@user_domain_projects.count})"
+    .main-buttons
+      %i.fa.fa-search{data: {trigger: "show-searchable-search"}}
+
+  .toolbar-secondary.searchable-input
+    .has-feedback
+      = text_field_tag 'search-input', '', class: "form-control", placeholder: 'Search project name'
       %i.glyphicon.glyphicon-search.form-control-feedback
-          
-.row
-  .col-md-12= render_project_tree(@user_domain_projects_tree.root.children, html: {class: 'searchable', data:{search_input: '#search-input'} })
+
+
+  = render_project_tree(@user_domain_projects_tree.root.children, html: {class: 'searchable', data:{search_input: '#search-input'} })
