@@ -1,6 +1,6 @@
 {
   "identity:domain_list": "rule:cloud_admin",
-  "identity:domain_get": "(role:admin or role:Member or role:member) and domain_id:%(target.domain_id)s",
+  "identity:domain_get": "rule:admin_required",
 
   "identity:project_get": "role:admin or role:Member or role:member",
   "identity:project_list": "role:admin or role:Member or role:member",
