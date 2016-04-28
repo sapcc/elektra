@@ -50,6 +50,9 @@ gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-au
 # Extras
 gem 'config'
 
+# Prometheus instrumentation
+gem 'prometheus-client'
+
 
 ###################### PLUGINS #####################
 # backlist plugins 

@@ -35,6 +35,11 @@ module MonsoonDashboard
 
     config.middleware.insert_before Rack::Sendfile, "DebugEnvMiddleware"
     config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
+    require 'prometheus/client/rack/collector'
+    config.middleware.insert_after ActionDispatch::DebugExceptions, Prometheus::Client::Rack::Collector 
+    require 'prometheus/client/rack/exporter'
+    config.middleware.insert_after  Prometheus::Client::Rack::Collector, Prometheus::Client::Rack::Exporter
+
     config.middleware.use "RevisionMiddleware"
 
     ############# ENSURE EDGE MODE FOR IE ###############
