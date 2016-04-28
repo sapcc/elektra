@@ -1,0 +1,18 @@
+%table.table
+  %thead
+    %tr
+      %th Status
+      %th Severity
+      %th Definition
+      %th.snug
+  %tbody
+    - if @alarms.empty?
+      %tr
+        %td{colspan: 4} 
+          No alarms found. Everything seems to be fine
+          %span= icon('smile-o')
+    - else
+      - @alarms.each do |alarm|
+        = render partial: 'list_row', locals: { notification: alarm }
+
+= paginate @alarms, :theme => 'twitter-bootstrap-3', :remote => true

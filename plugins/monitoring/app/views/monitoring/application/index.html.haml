@@ -1,8 +1,3 @@
-%p This is Monitoring (Under Construction)
-
-%p= image_tag "tmp/under_construction_4.gif"
-
-%p
-  = link_to sap_url_for('grafana'), class: "btn btn-primary", target: "_blank" do
-    %i.fa.fa-external-link
-    Access Grafana
+= content_for :main_toolbar do 
+  Monitoring Overview
+= render partial: 'tabs', locals: { tab: 'overview' }

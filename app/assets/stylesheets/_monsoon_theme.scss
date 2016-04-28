@@ -262,7 +262,6 @@ section {
 .fancy-nav-icon {
   @include background-size($font-size-h3);
   width: $font-size-h3;
-  height: $font-size-h3;
   font-size: $font-size-h3;
   font-weight: normal;
 }
@@ -276,27 +275,6 @@ section {
   @extend .fa-fw;
   @extend .fa-cloud;
 }
-
-
-// .compute-icon {
-//   @extend .moo-cloud;
-//   background-size: 16px;
-//   width: 16px;
-//   height: 15px;
-//   margin-right: 5px;
-// }
-//
-// .context-breadcrumb {
-//   .compute-icon {
-//     background-image: inline-svg('monsoon_logo_flat_white.svg');
-//   }
-//
-//   li:hover, li:focus, li:active, li.open {
-//     .compute-icon {
-//       background-image: inline-svg('monsoon_logo_flat_black.svg');
-//     }
-//   }
-// }
 
 .compute-icon {
   @extend .icon-monsoon;
@@ -374,15 +352,52 @@ section {
   padding: $toolbar-vertical-padding 8px;
   margin-top: $line-height-computed * 2.5;
 
+  &.toolbar-aligntop {
+    margin-top: 0;
+  }
+
   &.toolbar-bottom {
     margin-top: 0;
     margin-bottom: $line-height-computed * 2.5;
+  }
+
+  &.toolbar-fancy {
+    background: none;
+    border-top: 10px solid $bright-blue;
+    padding: 0;
+    margin-bottom: 10px;
+    color: #333;
+
+    .main-buttons {
+      top: 0;
+      right: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: $line-height-computed / 2;
+      margin-bottom: $line-height-computed / 2;
+    }
   }
 
   .main-buttons {
     position: absolute;
     right: 8px;
     top: 3px;
+
+    [data-trigger="show-searchable-search"] {
+      margin-top: $line-height-computed / 2;
+      margin-right: 2px;
+      font-size: 15px;
+      cursor: pointer;
+
+      &.active {
+        color: #ddd;
+
+        &:hover {
+          color: #333;
+        }
+      }
+    }
   }
 
   .btn {
@@ -392,6 +407,24 @@ section {
   .btn-primary {
     float: right;
     margin-left: 5px;
+  }
+
+  h3, h4 {
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+}
+
+.toolbar-secondary {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+
+  &.searchable-input {
+    display: none;
+
+    &.expanded {
+      display: block;
+    }
   }
 }
 
@@ -705,7 +738,6 @@ footer, .footer {
               font-size: $font-size-medium;
               left: $grid-gutter-width / 2;
               width: $font-size-medium;
-              height: $font-size-medium;
             }
           }
         }
@@ -829,11 +861,38 @@ footer, .footer {
     border-left-color: $btn-danger-border;
   }
 
+  table {
+    margin-bottom: 0;
+  }
+
 }
 
 blockquote, .bs-callout {
   h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------------
+// Infobox
+// ---------------------------------------------------------------------------------
+
+.infobox {
+  border-top: 10px solid $sapgold;
+
+
+  h1, h2, h3, h4, h5, h6 {
+    // margin-top: 0;
+  }
+
+  .table {
+    th, td {
+
+
+      &:first-child {
+        padding-left: 0;
+      }
+    }
   }
 }
 
@@ -900,6 +959,11 @@ blockquote, .bs-callout {
 td, th {
   &.snug {
     width: 1px;
+  }
+
+  &.snug-nowrap {
+    @extend .snug;
+    white-space: nowrap;
   }
 }
 
@@ -1164,7 +1228,7 @@ tr.task-state {
     > .node-icon {
       position: absolute;
       left: 0;
-      background: inline-svg('rounded-square-outline-grey.svg') 0 3px no-repeat;
+      background: inline-svg('rounded-square-outline-grey.svg') 0 5px no-repeat;
       cursor: pointer;
       height: 16px;
       width: 19px;
@@ -1177,7 +1241,7 @@ tr.task-state {
 
       > .node-icon {
         background-image: inline-svg('angle-right-outline.svg');
-        background-position: 2px 3px;
+        background-position: 2px 4px;
 
       }
 
@@ -1189,7 +1253,7 @@ tr.task-state {
       &.node-expanded {
         > .node-icon {
           background-image: inline-svg('angle-down-outline.svg');
-          background-position: 0 7px;
+          background-position: 0 8px;
         }
 
         > ul {
@@ -1198,6 +1262,13 @@ tr.task-state {
       }
 
     }
+  }
+}
+
+.projects-tree {
+
+  .tree {
+    margin-top: ($line-height-computed / 2);
   }
 }
 

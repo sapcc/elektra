@@ -1,0 +1,10 @@
+- if modal?
+  = content_for :title do
+    Backend error
+- else
+  = content_for :main_toolbar do
+    Monitoring
+
+%div{ class: modal? ? 'modal-body' : '' }
+  = render partial: 'error_message'
+
