@@ -97,7 +97,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # you can also specify html attributes to attach to this particular level
     # works for all levels of the menu
-    primary.dom_attributes = {class: 'dropdown-menu', role: 'menu'}
+    primary.dom_attributes = {class: 'content-list'}
 
     # You can turn off auto highlighting for a specific level
     #primary.auto_highlight = false

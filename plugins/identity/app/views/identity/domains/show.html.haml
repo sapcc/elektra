@@ -1,6 +1,69 @@
 
-= render "intro_section"
+-# = render "intro_section"
 
-%h3
-  Your projects
-= render 'projects_tree'
+.row
+  .col-md-3
+    .toolbar.toolbar-aligntop.toolbar-fancy
+      %h4= @scoped_domain_name
+
+    %p
+      = @domain.description if @domain
+
+
+  .col-md-3
+    - if current_user and current_user.admin?
+      .toolbar.toolbar-aligntop.toolbar-fancy
+        %h4
+          = @scoped_domain_name
+          Admin
+
+      = render_navigation(context: :"admin", expand_all: true)
+
+      %ul.content-list
+        %li
+          Create a New Project (coming soon)
+        %li
+          = link_to 'Request a New Project', plugin('identity').projects_request_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
+
+    - else
+      .toolbar.toolbar-aligntop.toolbar-fancy
+        %h4
+          = @scoped_domain_name
+          Actions
+
+      %ul.content-list
+        %li
+          = link_to 'Request a New Project', plugin('identity').projects_request_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
+
+  .col-md-3
+    = render 'projects_tree'
+
+
+  .col-md-3
+    .infobox
+      %h4 Infobox
+      %table.table
+        %tbody
+          %tr
+            %th.snug-nowrap
+              Region:
+            %td
+              = current_region
+          %tr
+            %th.snug-nowrap
+              Domain:
+            %td
+              = @scoped_domain_name
+
+
+      %h5 Helpful Links
+
+      %ul.content-list
+        %li
+          %a(href="#{sap_url_for('documentation')}intro/getting-started/prerequisites.html") Getting Started
+        %li
+          %a(href="#{sap_url_for('documentation')}docs/trouble/") Troubleshooting & FAQ
+        %li
+          %a(href="#{sap_url_for('documentation')}docs/monitor/") Monitoring and Cost Control
+        %li
+          %a(href="#{sap_url_for('documentation')}network/") Networks

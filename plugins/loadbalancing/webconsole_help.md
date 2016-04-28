@@ -2,7 +2,7 @@
 This platform will support the **lbaas v2 api**. Therefore only **neutron lbaas v2 commands** must be used.
 
 ### Quick Help
-[Openstack neutron command line tool](http://docs.openstack.org/developer/python-neutronclient)
+[OpenStack neutron command line tool](http://docs.openstack.org/developer/python-neutronclient)
 
 `neutron help | grep lbaas`
 Filters the neutron cli help for relevant lbaas v2 commands

@@ -10,7 +10,7 @@ module ObjectStorage
         else
           super(params_or_driver)
           # don't include useless request/response dumps in exception messages
-          no_debug = { debug: false, debug_request: false, debug_response: false}
+          no_debug = { debug_request: false, debug_response: false}
           @fog = ::Fog::Storage::OpenStack.new(auth_params.merge(connection_options: no_debug))
         end
       end

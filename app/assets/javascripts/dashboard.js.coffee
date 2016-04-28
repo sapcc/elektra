@@ -66,6 +66,11 @@ $ ->
   # init all DOM elements found by css class '.searchable' as searchable
   $ -> $('.searchable').searchable()
 
+  # show search form for searchable
+  $('[data-trigger="show-searchable-search"]').click (e) ->
+    $(this).toggleClass('active')
+    $('.searchable-input').toggleClass('expanded').find('#search-input').focus()
+
 
 # -------------------------------------------------------------------------------------------------------------
 # Initialize Modal Windows
@@ -83,7 +88,7 @@ $(document).on 'modal:contentUpdated', (e) ->
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
   catch error
-  
+
   # init all DOM elements found by css class '.searchable' as searchable
   $("##{e.target.id} .searchable").searchable()
 

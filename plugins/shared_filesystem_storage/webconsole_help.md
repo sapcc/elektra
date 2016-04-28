@@ -2,7 +2,7 @@
   * manila
 
 ### Quick Help
-[Openstack manila command line tool](http://docs.openstack.org/developer/python-manilaclient)
+[OpenStack manila command line tool](http://docs.openstack.org/developer/python-manilaclient)
 
 `manila help`
 
