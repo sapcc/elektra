@@ -29,9 +29,9 @@
               -# %li
               -#   %a{:href => "#"} View Profile
               -#
-              -# %li= link_to "Credentials", plugin('identity').credentials_path
-              -#
-              -# %li.divider
+              - if current_user.is_allowed?("compute:keypair_list", {target: {scoped_domain_name: @scoped_domain_name}})
+                %li= link_to "Key Pairs", plugin('compute').keypairs_path
+                %li.divider
               %li
                 = link_to 'Log out', monsoon_openstack_auth.logout_path(redirect_to: main_app.landing_page_url)
 

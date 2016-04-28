@@ -22,6 +22,7 @@ module Compute
       @availability_zones = services.compute.availability_zones
       @security_groups    = services.compute.security_groups
       @private_networks   = services.networking.project_networks(@scoped_project_id)
+      @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
       @instance.errors.add :private_network,  'not available' if @private_networks.blank?
       @instance.errors.add :image,            'not available' if @images.blank?
@@ -31,6 +32,7 @@ module Compute
       @instance.availability_zone_id  = @availability_zones.first.try(:id)
       @instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
       @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
+      @instance.keypair_id = @keypairs.first['name'] unless @keypairs.blank?
 
       @instance.max_count = 1
     end
@@ -63,6 +65,7 @@ module Compute
         @availability_zones = services.compute.availability_zones
         @security_groups= services.compute.security_groups
         @private_networks = services.networking.project_networks(@scoped_project_id)
+        @keypairs = services.compute.keypairs.collect {|kp| {id: kp.name, name: kp.name}}
         render action: :new
       end
     end

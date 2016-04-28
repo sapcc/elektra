@@ -41,7 +41,8 @@ module Compute
         # Optional
         "networks"          => read("network_ids"),
         #"security_groups"   => read("security_groups"),
-        "availability_zone" => read("availability_zone_id")
+        "availability_zone" => read("availability_zone_id"),
+        "key_name"          => read("keypair_id")
         }.delete_if { |k, v| v.nil? }
     end
     

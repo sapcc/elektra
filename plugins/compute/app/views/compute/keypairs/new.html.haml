@@ -1,0 +1,15 @@
+= simple_form_for @keypair, url: plugin('compute').keypairs_path(), method: :post, remote: request.xhr?, html: {id: 'form_keypair', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @keypair.errors.empty?
+      %p.alert.alert-error= @keypair.errors.full_messages.to_sentence
+
+    = render partial: 'form', locals: {form: f} 
+  
+  %div.buttons{class: modal? ? 'modal-footer' : ''}  
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", keypairs_path(), class: 'btn btn-default'
+      
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save

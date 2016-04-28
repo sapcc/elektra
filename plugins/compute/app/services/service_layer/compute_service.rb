@@ -15,7 +15,6 @@ module ServiceLayer
       not current_user.service_url('compute',region: region).nil?  
     end
     
-    ##################### CREDENTIALS #########################
     def find_server(id)
       return nil if id.blank?
       driver.map_to(Compute::Server).get_server(id)
@@ -66,6 +65,37 @@ module ServiceLayer
     def detach_volume(volume_id, server_id)
       driver.detach_volume(server_id, volume_id)
     end
+
+    ##################### KEYPAIRS #########################
+    def new_keypair(attributes={})
+      Compute::Keypair.new(driver, attributes)
+    end
+
+    def find_keypair(name=nil)
+      return nil if name.blank?
+      driver.map_to(Compute::Keypair).get_keypair(name)
+    end
+
+    def delete_keypair(name=nil)
+      return nil if name.blank?
+      driver.map_to(Compute::Keypair).delete_keypair(name)
+    end
+
+    def keypairs(options={})
+      # keypair structure different to others, so manual effort needed
+      unless @user_keypairs
+        @user_keypairs = []
+        keypairs = driver.map_to(Compute::Keypair).keypairs(user_id: @current_user.id)
+        keypairs.each do |k|
+          kp = Compute::Keypair.new(@driver)
+          kp.attributes = k.keypair if k.keypair
+          @user_keypairs << kp if kp
+        end
+      end
+      return @user_keypairs
+    end
+
+
 
   end
 end

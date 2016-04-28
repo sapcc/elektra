@@ -12,6 +12,12 @@
             = 'Please read '
             -# TODO: fill this with life and a real sub-target
             = link_to 'how to get a private network.', "#{sap_url_for('documentation')}docs/guides/advanced_private-network.html", target: '_blank'
+    - if @keypairs.blank?
+      %p.alert.alert-warning
+        There are no key pairs defined for your account. Without that, you can't access the server via ssh.
+        You can define one
+        = link_to 'here', keypairs_url()
+
 
     = f.input :name
     = f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
@@ -29,6 +35,12 @@
       collection:         @security_groups,
       selected:           (@instance.security_group_ids || []).collect{|sg| sg[:id]},
       required:           true}
+
+    = f.input :keypair_id, { label: "Key pair",
+      input_html:         {},
+      as:                 :select,
+      collection:         @keypairs,
+      required:           false}
 
     = f.input :flavor_id, { label: "Flavor",
       as:                 :select,

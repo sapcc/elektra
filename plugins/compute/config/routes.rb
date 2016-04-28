@@ -11,4 +11,6 @@ Compute::Engine.routes.draw do
       put 'reboot'
     end
   end
+
+  resources :keypairs
 end
