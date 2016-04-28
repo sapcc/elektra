@@ -6,7 +6,7 @@ module Identity
     def show
       @user_domain_projects_tree  = services.identity.auth_projects_tree
       @root_projects              = @user_domain_projects.reject{ |project| !project.parent.blank? }
-      @domain                     = services.identity.find_domain(@scoped_domain_id) if current_user.is_allowed?('identity:domain_get')
+      @domain                     = service_user.find_domain(@scoped_domain_id) if current_user.is_allowed?('identity:domain_get')
     end
 
     def index

@@ -2,10 +2,10 @@ module Core
   module ServiceUser
     class Base
       @@service_user_mutex = Mutex.new
-      
+
       # # delegate some methods to auth_users
       delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, to: :@auth_user
-      
+
       # Class methods    
       class << self
         def load(params={})
@@ -18,55 +18,55 @@ module Core
           # puts ">>>>>Rails.configuration.service_user_password: #{Rails.configuration.service_user_password}"
           # puts ">>>>>Rails.configuration.service_user_domain_name: #{Rails.configuration.service_user_domain_name}"
           # puts ">>>>>scope_domain: #{scope_domain}"
-    
+
           @@service_user_mutex.synchronize do
             @service_users ||= {}
-          
+
             service_user = @service_users[scope_domain]
             if service_user.nil?
               @service_users[scope_domain] = self.new(
-                params[:user_id],
-                params[:password],
-                params[:user_domain],
-                scope_domain
+                  params[:user_id],
+                  params[:password],
+                  params[:user_domain],
+                  scope_domain
               )
             end
           end
-          
+
           @service_users[scope_domain]
         end
       end
-      
+
       def token
         @driver.auth_token
       end
 
-      def initialize(user_id,password,user_domain_name,scope_domain)
+      def initialize(user_id, password, user_domain_name, scope_domain)
         @user_id = user_id
         @password = password
         @user_domain_name = user_domain_name
         @scope_domain = scope_domain
         authenticate
       end
-      
+
       def authenticate
         # @scope_domain is a freindly id. So it can be the name or id
         # That's why we try to load the service user by name and if it 
         # raises an error then we try again by id. 
         @auth_user = begin
           MonsoonOpenstackAuth.api_client.auth_user(
-            @user_id,
-            @password,
-            domain_name: @user_domain_name,
-            scoped_token: {domain: {name: @scope_domain} }
+              @user_id,
+              @password,
+              domain_name: @user_domain_name,
+              scoped_token: {domain: {name: @scope_domain}}
           )
         rescue
           begin
             MonsoonOpenstackAuth.api_client.auth_user(
-              @user_id,
-              @password,
-              domain_name: @user_domain_name,
-              scoped_token: {domain: {id: @scope_domain}}
+                @user_id,
+                @password,
+                domain_name: @user_domain_name,
+                scoped_token: {domain: {id: @scope_domain}}
             )
           rescue MonsoonOpenstackAuth::Authentication::MalformedToken => e
             raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
@@ -78,77 +78,81 @@ module Core
         # Therefore we use the auth gem to authenticate the user get the service catalog and then 
         # we initialize the fog object. 
         @driver = ::Core::ServiceUser::Driver.new({
-          auth_url: ::Core.keystone_auth_endpoint,
-          region: Core.locate_region(@auth_user),
-          token: @auth_user.token,
-          domain_id: @auth_user.domain_id
-        })
+                                                      auth_url: ::Core.keystone_auth_endpoint,
+                                                      region: Core.locate_region(@auth_user),
+                                                      token: @auth_user.token,
+                                                      domain_id: @auth_user.domain_id
+                                                  })
         @driver
       end
-      
+
       # execute driver method. Catch 401 errors (token invalid -> expired or revoked)
-      def driver_method(method_sym,map,*arguments)
-        if map 
-          @driver.map_to(Core::ServiceLayer::Model).send(method_sym,*arguments)
+      def driver_method(method_sym, map, *arguments)
+        if map
+          @driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
-          @driver.send(method_sym,*arguments)
-        end  
+          @driver.send(method_sym, *arguments)
+        end
       rescue Core::ServiceLayer::Errors::ApiError => e
         # reauthenticate
         authenticate
         # and try again 
-        if map 
-          @driver.map_to(Core::ServiceLayer::Model).send(method_sym,*arguments)
+        if map
+          @driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
-          @driver.send(method_sym,*arguments)
-        end 
+          @driver.send(method_sym, *arguments)
+        end
       end
-        
-      
+
+
       def find_user(user_id)
-        driver_method(:get_user,true,user_id)
+        driver_method(:get_user, true, user_id)
       end
-      
+
+      def find_domain(domain_id)
+        driver_method(:get_domain, true, domain_id)
+      end
+
       def roles(filter={})
-        driver_method(:roles,true,filter)
+        driver_method(:roles, true, filter)
       end
-      
+
       def role_assignments(filter={})
         filter["scope.domain.id"]=self.domain_id unless filter["scope.domain.id"]
-        driver_method(:role_assignments,true,filter)
+        driver_method(:role_assignments, true, filter)
       end
-      
+
       def find_role_by_name(name)
         roles.select { |r| r.name==name }.first
       end
-      
+
       def find_project_by_name_or_id(name_or_id)
-        project = driver_method(:get_project,true,name_or_id) rescue nil
+        project = driver_method(:get_project, true, name_or_id) rescue nil
         unless project
-          project = driver_method(:projects,true,{domain_id: self.domain_id, name: name_or_id}).first rescue nil
+          project = driver_method(:projects, true, {domain_id: self.domain_id, name: name_or_id}).first rescue nil
         end
         project
       end
-      
+
       # def find_project(id)
       #   driver_method(:get_project,true,id)
       # end
-      
-      def grant_user_domain_member_role(user_id,role_name)
+
+      def grant_user_domain_member_role(user_id, role_name)
         role = self.find_role_by_name(role_name)
-        driver_method(:grant_domain_user_role,false,self.domain_id, user_id, role.id)
+        driver_method(:grant_domain_user_role, false, self.domain_id, user_id, role.id)
       end
-      
+
       # A special case of list_scope_admins that returns a list of cloud admins.
       # This logic is hardcoded for now since the concept of a cloud admin will only
       # be introduced formally in the next Keystone release (Mitaka).
       def list_cloud_admins
         unless @admin_domain_id
           domain_name = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'monsooncc')
-          @admin_domain_id = driver_method(:domains,true, {name: domain_name}).first.id
+          @admin_domain_id = driver_method(:domains, true, {name: domain_name}).first.id
         end
 
-        return list_scope_admins({ domain_id: @admin_domain_id })
+        return list_scope_admins({domain_id: @admin_domain_id})
       end
 
       # Returns admins for the given scope (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID)
@@ -158,50 +162,50 @@ module Core
         role = self.find_role_by_name('admin') rescue nil
         list_scope_assigned_users(scope.merge(role: role))
       end
-      
+
       def list_scope_assigned_users!(options={})
-        list_scope_assigned_users(options.merge(raise_error: true))  
+        list_scope_assigned_users(options.merge(raise_error: true))
       end
-      
+
       # Returns assigned users for the given scope and role (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID, role: ROLE)
       # This method looks recursively for assigned users of project, parent_projects and domain. 
       def list_scope_assigned_users(options={})
-        admins      = []
-        project_id  = options[:project_id]
-        domain_id   = options[:domain_id]
-        role        = options[:role]
+        admins = []
+        project_id = options[:project_id]
+        domain_id = options[:domain_id]
+        role = options[:role]
         raise_error = options[:raise_error]
-        
+
         # do nothing if role is nil
         return admins if role.nil?
-        
+
         begin
-        
+
           if project_id # project_id is presented
             # get role_assignments for this project_id
-            role_assignments = self.role_assignments("scope.project.id"=>project_id,"role.id"=>role.id,effective:true) #rescue []
+            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, effective: true) #rescue []
             # load users (not very performant but there is no other option to get users by ids)
-            role_assignments.collect{|r| admins << self.find_user(r.user["id"])  }
-          
+            role_assignments.collect { |r| admins << self.find_user(r.user["id"]) }
+
             if admins.length==0 # no admins for this project_id found
               # load project
               project = self.find_project(project_id) rescue nil
-              if project 
+              if project
                 # try to get admins recursively by parent_id 
                 admins = list_scope_assigned_users(project_id: project.parent_id, domain_id: project.domain_id, role: role)
-              end  
+              end
             end
           elsif domain_id # project_id is nil but domain_id is presented
             # get role_assignments for this domain_id
-            role_assignments = self.role_assignments("scope.domain.id"=>domain_id,"role.id"=>role.id, effective: true) #rescue []
+            role_assignments = self.role_assignments("scope.domain.id" => domain_id, "role.id" => role.id, effective: true) #rescue []
             # load users
-            role_assignments.collect{|r|  admins << self.find_user(r.user["id"]) }       
+            role_assignments.collect { |r| admins << self.find_user(r.user["id"]) }
           end
         rescue => e
           raise e if raise_error
         end
-        
-        return admins.delete_if {|a| a.id == nil} # delete crap
+
+        return admins.delete_if { |a| a.id == nil } # delete crap
       end
     end
   end
