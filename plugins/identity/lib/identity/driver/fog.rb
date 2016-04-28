@@ -256,6 +256,11 @@ module Identity
         handle_response{ @fog.delete_role(id); true }
       end
 
+      ##################### GROUPS ####################
+      def user_groups(user_id)
+        handle_response{@fog.list_user_groups(user_id)}
+      end
+
       ######################### TOKENS ########################
       def authenticate(auth)
         handle_response{
