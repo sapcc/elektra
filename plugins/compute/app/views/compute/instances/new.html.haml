@@ -10,7 +10,6 @@
             = link_to 'New Network', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary'
           - else
             = 'Please read '
-            -# TODO: fill this with life and a real sub-target
             = link_to 'how to get a private network.', "#{sap_url_for('documentation')}docs/guides/advanced_private-network.html", target: '_blank'
     - if @keypairs.blank?
       %p.alert.alert-warning
