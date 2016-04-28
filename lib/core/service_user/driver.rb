@@ -157,6 +157,19 @@ module Core
       def auth_domains(filter={})
         handle_response{ @fog.auth_domains(filter).body['domains'] }
       end
+      
+      ####################### GROUPS ###########################
+      def groups(filter={})
+        handle_response{@fog.list_groups(filter).body['groups']}
+      end
+      
+      def user_groups(user_id)
+        handle_response{@fog.list_user_groups(user_id).body['groups']}
+      end
+      
+      def add_user_to_group(user_id,group_id)
+        handle_response{@fog.add_user_to_group(group_id, user_id)}
+      end
   
       ##################### CREDENTIALS #########################
       def os_credentials(filter={})

@@ -142,6 +142,12 @@ module Core
         role = self.find_role_by_name(role_name)
         driver_method(:grant_domain_user_role, false, self.domain_id, user_id, role.id)
       end
+      
+      def add_user_to_group(user_id,group_name)
+        groups = driver_method(:groups,true,{domain_id: self.domain_id,name: group_name}) rescue []
+        group = groups.first
+        driver_method(:add_user_to_group, false, user_id, group.id) rescue false
+      end
 
       # A special case of list_scope_admins that returns a list of cloud admins.
       # This logic is hardcoded for now since the concept of a cloud admin will only
