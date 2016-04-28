@@ -12,7 +12,7 @@
   "networking:security_group_delete": "!",
   "networking:network_get": "role:admin or role:Member or role:member",
   "networking:network_list": "role:admin or role:Member or role:member",
-  "networking:network_create": "!",
-  "networking:network_update": "!",
-  "networking:network_delete": "!"
+  "networking:network_create": "role:admin",
+  "networking:network_update": "role:admin",
+  "networking:network_delete": "role:admin"
 }
