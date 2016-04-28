@@ -1,4 +1,16 @@
 GIT
+  remote: git://localhost/***REMOVED***/fog-openstack-monitoring.git
+  revision: b6fc08c31349d173d76feaaaedb7a947566eb22b
+  branch: master
+  specs:
+    fog-openstack-monitoring (0.0.6)
+      fog-core (>= 1.35)
+      fog-json (>= 1.0)
+      fog-openstack
+      fog-xml (>= 0.1)
+      ipaddress (>= 0.8)
+
+GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
   revision: a14522aa4106744818ac376c9f08f917dcefe6c6
   branch: master
@@ -494,6 +506,7 @@ DEPENDENCIES
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog-openstack
+  fog-openstack-monitoring!
   font-awesome-sass
   foreman
   friendly_id
@@ -534,3 +547,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2

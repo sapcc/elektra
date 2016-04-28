@@ -1,0 +1,18 @@
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Severity
+      %th Description
+      %th Notification
+      %th.snug
+  %tbody
+    - if @alarm_definitions.empty?
+      %tr
+        %td{colspan: 4} No alarm definitions found.
+    - else
+      - @alarm_definitions.each do |alarm_definition|
+        = render partial: 'list_row', locals: { alarm_definition: alarm_definition } 
+
+= paginate @alarm_definitions, :theme => 'twitter-bootstrap-3', :remote => true
+

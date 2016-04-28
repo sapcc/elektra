@@ -1,0 +1,9 @@
+= content_for :main_toolbar do 
+  Monitoring 
+= render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions' }
+
+.toolbar
+  Definitions (#{@alarm_definitions.length})
+  = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+#definitions_list
+  = render partial: 'list'
