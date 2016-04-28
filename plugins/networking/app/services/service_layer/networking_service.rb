@@ -22,8 +22,8 @@ module ServiceLayer
     def project_networks(project_id)
       result = []
       driver.networks.each do |n|
-        if n["shared"]==true or n["tenant_id"]==project_id
-          result << Networking::Network.new(driver,n)
+        if n['router:external'] == false && (n['shared'] == true || n['tenant_id'] == project_id)
+          result << Networking::Network.new(driver, n)
         end
       end
       result
