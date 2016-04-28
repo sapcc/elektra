@@ -34,8 +34,9 @@ gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'fog-openstack'
-gem 'fog-openstack-monitoring', git: 'git://localhost/***REMOVED***/fog-openstack-monitoring.git', branch: 'master'
+#gem 'fog-openstack'
+#gem 'fog-openstack-monitoring', git: 'git://localhost/***REMOVED***/fog-openstack-monitoring.git', branch: 'master'
+gem 'fog', git: 'git://localhost/monsoon/fog.git', branch: 'master'
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
