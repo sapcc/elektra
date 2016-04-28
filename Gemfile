@@ -9,6 +9,9 @@ gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '4.2.4'
 
+gem 'puma'
+gem 'rails_stdout_logging'
+
 # Views and Assets
 gem 'compass-rails'
 gem 'sass-rails'
@@ -111,8 +114,6 @@ group :development, :test do
 
   gem "better_errors"
   gem 'pry-rails'
-  
-  gem 'puma'
 end
 
 group :test do
