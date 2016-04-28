@@ -12,6 +12,9 @@ module Monitoring
       @notification_method = services.monitoring.new_notification_method(name: "")
     end
 
+    def edit
+    end
+
     def create
       @notification_method = services.monitoring.new_notification_method(params.require(:notification_method))
       unless @notification_method.save
@@ -22,7 +25,6 @@ module Monitoring
     end
 
     def update
-      @notification_method = services.monitoring.get_notification_method(params.require(:id))
       attrs = params.require(:notification_method).permit(:name, :type, :address)
       unless @notification_method.update_attributes(attrs)
         render action: 'edit'
@@ -32,9 +34,7 @@ module Monitoring
     end
 
     def destroy 
-       notification_method = services.monitoring.get_notification_method(params.require(:id))
-       raise ActiveRecord::RecordNotFound, "Notification with id #{params[:id]} not found" unless notification_method
-       notification_method.destroy
+       @notification_method.destroy
        back_to_notification_method_list
     end
 

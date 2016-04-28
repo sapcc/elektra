@@ -8,6 +8,9 @@ module Monitoring
       @alarm_definitions = Kaminari.paginate_array(alarm_definitions).page(params[:page]).per(10)
     end
 
+    def show
+    end
+
     def destroy 
        @alarm_definition.destroy
        back_to_definition_list
