@@ -34,8 +34,18 @@ module ServiceLayer
       driver.map_to(Monitoring::AlarmDefinition).alarms
     end
 
-    def notification_methods
-      driver.map_to(Monitoring::NotificationMethod).notification_methods
+    def notification_methods(search = nil)
+      notification_methods = driver.map_to(Monitoring::NotificationMethod).notification_methods
+      if search
+        notification_methods_search_results = []
+        notification_methods.each do |notification_method|
+          if notification_method.name.match search or notification_method.address.match search
+            notification_methods_search_results << notification_method
+          end
+        end
+        notification_methods = notification_methods_search_results
+      end
+      notification_methods
     end
 
     def get_alarm_definition(id)

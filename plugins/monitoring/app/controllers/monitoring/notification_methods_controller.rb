@@ -1,7 +1,7 @@
 module Monitoring
   class NotificationMethodsController < Monitoring::ApplicationController
     authorization_context 'monitoring'
-    before_filter :load_notification_method, except: [ :index, :new, :create ]
+    before_filter :load_notification_method, except: [ :index, :new, :create, :search ]
 
     def index
       notification_methods = services.monitoring.notification_methods.sort_by(&:name)
@@ -16,6 +16,17 @@ module Monitoring
     end
 
     def show
+    end
+
+    def search
+       search = params[:search]
+       notification_methods = services.monitoring.notification_methods(search)
+       @notification_methods = Kaminari.paginate_array(notification_methods).page(params[:page]).per(10)
+       respond_to do |format|
+         format.js do
+           render action: 'search_results'
+         end
+       end
     end
 
     def create
