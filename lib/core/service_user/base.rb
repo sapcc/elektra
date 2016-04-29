@@ -51,14 +51,14 @@ module Core
 
       def authenticate
         # @scope_domain is a freindly id. So it can be the name or id
-        # That's why we try to load the service user by name and if it 
-        # raises an error then we try again by id. 
+        # That's why we try to load the service user by id and if it 
+        # raises an error then we try again by name. 
         @auth_user = begin
           MonsoonOpenstackAuth.api_client.auth_user(
               @user_id,
               @password,
               domain_name: @user_domain_name,
-              scoped_token: {domain: {name: @scope_domain}}
+              scoped_token: {domain: {id: @scope_domain}}
           )
         rescue
           begin
@@ -66,7 +66,7 @@ module Core
                 @user_id,
                 @password,
                 domain_name: @user_domain_name,
-                scoped_token: {domain: {id: @scope_domain}}
+                scoped_token: {domain: {name: @scope_domain}}
             )
           rescue MonsoonOpenstackAuth::Authentication::MalformedToken => e
             raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
