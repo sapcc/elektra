@@ -114,6 +114,10 @@ h1, h2, h3, h4, h5, h6 {
     font-family: $font-family-sap-light;
   }
 
+  &.heading-top {
+    margin-top: 0;
+  }
+
   &.action-heading {
     position: relative;
   }
@@ -405,21 +409,6 @@ section {
     position: absolute;
     right: 8px;
     top: 3px;
-
-    [data-trigger="show-searchable-search"] {
-      margin-top: $line-height-computed / 2;
-      margin-right: 2px;
-      font-size: 15px;
-      cursor: pointer;
-
-      &.active {
-        color: #ddd;
-
-        &:hover {
-          color: #333;
-        }
-      }
-    }
   }
 
   .btn {
@@ -1314,6 +1303,16 @@ tr.task-state {
 
   li.has-search-result ul  {
     display: block;
+  }
+}
+
+[data-trigger="show-searchable-search"] {
+  &.active {
+    color: #ddd;
+
+    &:hover {
+      color: #333;
+    }
   }
 }
 
