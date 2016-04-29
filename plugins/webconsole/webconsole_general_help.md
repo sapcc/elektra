@@ -15,4 +15,4 @@
   <tbody>
 </table>
 
-<a href="http://documentation.localhost:8080/docs/api/webcli.html" target="_blank">See the webconsole documentation</a>  for more info
+<a href="#{@sap_docu_url}docs/api/webcli.html" target="_blank">See the webconsole documentation</a>  for more info
