@@ -113,6 +113,22 @@ h1, h2, h3, h4, h5, h6 {
   small, .small {
     font-family: $font-family-sap-light;
   }
+
+  &.action-heading {
+    position: relative;
+  }
+
+  .header-action {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    color: #666;
+    cursor: pointer;
+
+    &:hover {
+      color: $bright-blue;
+    }
+  }
 }
 
 h5, h6 {
@@ -879,11 +895,6 @@ blockquote, .bs-callout {
 
 .infobox {
   border-top: 10px solid $sapgold;
-
-
-  h1, h2, h3, h4, h5, h6 {
-    // margin-top: 0;
-  }
 
   .table {
     th, td {
