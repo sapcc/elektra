@@ -8,7 +8,7 @@
       Definitions (#{@alarm_definitions.length})
     .col-sm-2
 
-      %input{id: "alarm_definition_filter", type:"text", class:"form-control string", placeholder:"Filter"}
+      %input{id: "alarm_definition_search", type:"text", class:"form-control string", placeholder:"Search"}
     .col-sm-1
       = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
 #definitions_list
@@ -16,9 +16,9 @@
 
 :javascript
   $(function() {
-    $('#alarm_definition_filter').keypress(function (e) {
+    $('#alarm_definition_search').keypress(function (e) {
       if (e.which == 13) {
-        $.get("#{plugin('monitoring').alarm_definitions_filter_path()}", {filter: $('#alarm_definition_filter').val()});
+        $.get("#{plugin('monitoring').alarm_definitions_search_path()}", {search: $('#alarm_definition_search').val()});
       }
     });
   });

@@ -1,20 +1,20 @@
 module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_context 'monitoring'
-    before_filter :load_alarm_definition, except: [ :index, :new, :create, :filter ] 
+    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search ] 
 
     def index
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Kaminari.paginate_array(alarm_definitions).page(params[:page]).per(10)
     end
 
-    def filter
-       filter = params[:filter]
-       alarm_definitions = services.monitoring.alarm_definitions(filter)
+    def search
+       search = params[:search]
+       alarm_definitions = services.monitoring.alarm_definitions(search)
        @alarm_definitions = Kaminari.paginate_array(alarm_definitions).page(params[:page]).per(10)
        respond_to do |format|
          format.js do
-           render action: 'filter'
+           render action: 'search_results'
          end
        end
     end

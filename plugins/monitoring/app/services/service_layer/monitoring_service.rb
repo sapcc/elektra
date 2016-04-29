@@ -16,16 +16,16 @@ module ServiceLayer
       true  
     end
     
-    def alarm_definitions(filter = nil)
+    def alarm_definitions(search = nil)
       alarm_definitions = driver.map_to(Monitoring::AlarmDefinition).alarm_definitions.sort_by(&:name)
-      if filter
-        filtered_alarm_definitons = []
+      if search
+        alarm_definitons_search_results = []
         alarm_definitions.each do |alarm_definition|
-          if alarm_definition.name.match filter or alarm_definition.description.match filter
-            filtered_alarm_definitons << alarm_definition
+          if alarm_definition.name.match search or alarm_definition.description.match search
+            alarm_definitons_search_results << alarm_definition
           end
         end
-        alarm_definitions = filtered_alarm_definitons
+        alarm_definitions = alarm_definitons_search_results
       end
       alarm_definitions
     end
