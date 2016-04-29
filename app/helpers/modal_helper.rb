@@ -21,12 +21,10 @@ module ModalHelper
     html_hash = options[:html] ||= {}
     data_hash = html_hash[:data] ||= {}
     data_hash[:modal] = true unless data_hash.key?(:modal)
-    autofocus = options[:autofocus] || nil
 
     # the actual work is done in a layout; the helper is just there to resemble simple_form_for()
     render(layout: 'simple_modal_form', locals: {
       model_object:  model_object,
-      autofocus:     autofocus,
       submit_action: submit_action,
       options:       options,
       cancel_url:    cancel_url,

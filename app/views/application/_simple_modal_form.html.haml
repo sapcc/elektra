@@ -13,11 +13,10 @@
     - if submit_action
       %button.btn.btn-primary{ type: 'submit', data: { disable_with: 'Please wait...'} }= submit_action
 
-= if autofocus
-  =content_for :javascripts do
-    :javascript
-      setTimeout(function(){
-        $('##{autofocus}').focus().select();
-      }, 0)
+=content_for :javascripts do
+  :javascript
+    setTimeout(function(){
+      $("[data-focus=autofocus]").focus().select();
+    }, 0)
 
 
