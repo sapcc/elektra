@@ -3,7 +3,23 @@
 = render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions' }
 
 .toolbar
-  Definitions (#{@alarm_definitions.length})
-  = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+  .row
+    .col-sm-9
+      Definitions (#{@alarm_definitions.length})
+    .col-sm-2
+
+      %input{id: "alarm_definition_filter", type:"text", class:"form-control string", placeholder:"Filter"}
+    .col-sm-1
+      = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
 #definitions_list
   = render partial: 'list'
+
+:javascript
+  $(function() {
+    $('#alarm_definition_filter').keypress(function (e) {
+      if (e.which == 13) {
+        $.get("#{plugin('monitoring').alarm_definitions_filter_path()}", {filter: $('#alarm_definition_filter').val()});
+      }
+    });
+  });
+

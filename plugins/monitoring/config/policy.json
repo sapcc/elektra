@@ -1,0 +1,18 @@
+{
+
+  "monitoring_admin": "role:project_admin",
+
+  "monitoring:notification_method_create": "rule:monitoring_admin",
+  "monitoring:notification_method_delete": "rule:monitoring_admin",
+  "monitoring:notification_method_update": "rule:monitoring_admin",
+  "monitoring:notification_method_new": "rule:monitoring_admin",
+
+  "monitoring:alarm_definition_create": "rule:monitoring_admin",
+  "monitoring:alarm_definition_delete": "rule:monitoring_admin",
+  "monitoring:alarm_definition_update": "rule:monitoring_admin",
+  "monitoring:alarm_definition_new": "rule:monitoring_admin"
+
+}
+
+
+ 

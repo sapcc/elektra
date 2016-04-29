@@ -16,8 +16,18 @@ module ServiceLayer
       true  
     end
     
-    def alarm_definitions
-      driver.map_to(Monitoring::AlarmDefinition).alarm_definitions
+    def alarm_definitions(filter = nil)
+      alarm_definitions = driver.map_to(Monitoring::AlarmDefinition).alarm_definitions.sort_by(&:name)
+      if filter
+        filtered_alarm_definitons = []
+        alarm_definitions.each do |alarm_definition|
+          if alarm_definition.name.match filter or alarm_definition.description.match filter
+            filtered_alarm_definitons << alarm_definition
+          end
+        end
+        alarm_definitions = filtered_alarm_definitons
+      end
+      alarm_definitions
     end
 
     def alarms

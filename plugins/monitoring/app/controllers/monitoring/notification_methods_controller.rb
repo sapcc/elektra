@@ -15,6 +15,9 @@ module Monitoring
     def edit
     end
 
+    def show
+    end
+
     def create
       @notification_method = services.monitoring.new_notification_method(params.require(:notification_method))
       unless @notification_method.save
