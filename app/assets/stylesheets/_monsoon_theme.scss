@@ -304,6 +304,12 @@ section {
   @extend .fa-gears;
 }
 
+.hana-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-hdd-o;
+}
+
 .api-icon {
   @extend .fa;
   @extend .fa-fw;
