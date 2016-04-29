@@ -3,7 +3,7 @@
 
 = simple_modal_form_for @alarm_definition, submit_action: 'Create', url: plugin('monitoring').alarm_definitions_path, method: :post, cancel_url: plugin('monitoring').alarm_definitions_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form, autofocus: 'alarm_definition_name' do |f|
   #backend_error
-  = f.input :name, placeholder: 'Enter name'
+  = f.input :name, placeholder: 'Enter name', :input_html => {:"data-focus" => 'autofocus'}
   = f.input :description, placeholder: 'Enter Description'
   = f.input :expression, placeholder: 'Enter Expression'
   = f.input :severity, collection: ['Low','Medium','High','Critical'], selected:'Low'
