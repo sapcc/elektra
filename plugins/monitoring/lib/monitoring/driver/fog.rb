@@ -54,8 +54,26 @@ module Monitoring
       def update_notification_method(id, params={})
         handle_response do
           # TODO: use her "map_attribute_names" like we used in object storage?
-          request_params = {"name" => params["name"],"type" => params["type"], "address" => params["address"]}
+          request_params = {
+            "name" => params["name"],
+            "type" => params["type"], 
+            "address" => params["address"],
+          }
           @fog.update_notification_method(id, request_params).body
+        end
+      end
+
+      def update_alarm_definition(id, params={})
+        handle_response do
+          # TODO: use her "map_attribute_names" like we used in object storage?
+          request_params = {
+            "name" => params["name"],
+            "description" => params["description"], 
+            "expression" => params["expression"], 
+            "severity" => params["severity"], 
+            "match_by" => ["match_by"],
+          }
+          @fog.update_alarm_definition(id, request_params).body
         end
       end
 

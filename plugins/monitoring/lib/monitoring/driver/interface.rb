@@ -37,6 +37,10 @@ module Monitoring
       def update_notification_method(id,params)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
+
+      def update_alarm_definition(id,params)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
     end
   end
 end

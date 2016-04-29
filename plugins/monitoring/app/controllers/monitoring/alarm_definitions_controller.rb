@@ -39,6 +39,16 @@ module Monitoring
       back_to_alarm_definition_list
     end
 
+    def update
+      attrs = params.require(:alarm_definition).permit(:name, :description, :expression, :severity, :match_by)
+      unless @alarm_definition.update_attributes(attrs)
+        render action: 'edit'
+        return
+      end
+      back_to_alarm_definition_list
+    end
+
+
     def destroy 
        @alarm_definition.destroy
        back_to_alarm_definition_list
