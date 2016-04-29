@@ -8,11 +8,3 @@
   = f.input :type, collection: ['Email'], selected:@notification_method.type
   = f.input :address , placeholder: 'Enter single email address' 
 
-=content_for :javascripts do
-  :javascript
-    setTimeout(function(){
-      $('#notification_method_name').focus().select();
-    }, 0)
-
-
-
