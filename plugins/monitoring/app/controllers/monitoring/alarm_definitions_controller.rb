@@ -1,6 +1,7 @@
 module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
-    authorization_context 'monitoring'
+    authorization_required
+    
     before_filter :load_alarm_definition, except: [ :index, :new, :create, :search ] 
 
     def index
@@ -26,6 +27,7 @@ module Monitoring
     end
 
     def new
+      @alarm_definition = services.monitoring.new_alarm_definition(name: "")
     end
 
     def create

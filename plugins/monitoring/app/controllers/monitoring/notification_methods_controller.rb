@@ -1,6 +1,7 @@
 module Monitoring
   class NotificationMethodsController < Monitoring::ApplicationController
-    authorization_context 'monitoring'
+    authorization_required
+
     before_filter :load_notification_method, except: [ :index, :new, :create, :search ]
 
     def index
