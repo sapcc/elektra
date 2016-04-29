@@ -1,6 +1,6 @@
 {
 
-  "monitoring_admin": "role:project_admin",
+  "monitoring_admin": "role:admin or role:project_admin",
 
   "monitoring:notification_method_create": "rule:monitoring_admin",
   "monitoring:notification_method_delete": "rule:monitoring_admin",

@@ -76,6 +76,12 @@ module Monitoring
           @fog.create_notification_method(params).body
         end
       end
+
+      def create_alarm_definition(params={})
+        handle_response do
+          @fog.create_alarm_definition(params).body
+        end
+      end
     end
   end
 end

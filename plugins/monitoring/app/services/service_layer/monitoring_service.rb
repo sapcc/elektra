@@ -60,5 +60,10 @@ module ServiceLayer
       Monitoring::NotificationMethod.new(driver,attributes)
     end
 
+    def new_alarm_definition(attributes={})
+      Monitoring::AlarmDefinition.new(driver,attributes)
+    end
+
+
   end
 end

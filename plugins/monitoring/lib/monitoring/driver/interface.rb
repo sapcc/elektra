@@ -22,7 +22,11 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def create_notification_method
+      def create_notification_method(params={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      def create_alarm_definition(params={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

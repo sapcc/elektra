@@ -31,16 +31,22 @@ module Monitoring
     end
 
     def create
+      @alarm_definition = services.monitoring.new_alarm_definition(params.require(:alarm_definition))
+      unless @alarm_definition.save
+        render action: 'new'
+        return
+      end
+      back_to_alarm_definition_list
     end
 
     def destroy 
        @alarm_definition.destroy
-       back_to_definition_list
+       back_to_alarm_definition_list
     end
 
     private
 
-    def back_to_definition_list
+    def back_to_alarm_definition_list
       respond_to do |format|
         format.js do
           index

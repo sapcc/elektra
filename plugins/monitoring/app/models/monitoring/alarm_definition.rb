@@ -13,5 +13,6 @@ module Monitoring
     # ok_actions
     # severity
 
+    validates_presence_of :name, :expression, :severity
   end
 end
