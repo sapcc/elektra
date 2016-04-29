@@ -10,7 +10,6 @@ gem 'unf', '>= 0.2.0beta2'
 gem 'rails', '4.2.4'
 
 gem 'puma'
-gem 'rails_stdout_logging'
 
 # Views and Assets
 gem 'compass-rails'
@@ -75,15 +74,12 @@ end
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+# Avoid double log lines in development
+# See: https://github.com/heroku/rails_stdout_logging/issues/1
+group :production do
+  gem 'rails_stdout_logging'
+end
 
-# Use Unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-#
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
