@@ -1,0 +1,19 @@
+- if @scoped_project_id
+  - if current_user.is_allowed?("networking:router_create", {router: {user_id: current_user.id} })
+    .toolbar
+      = link_to 'Create new', plugin('networking').new_router_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+  %table.table
+    %thead
+      %tr
+        %th Data
+    %tbody
+      - if @routers.length==0
+        %tr
+          %td{colspa: 5} No router available
+      - else
+        - @routers.each do | router |
+          %tr
+            %td= router.attributes
+- else
+  = render "application/projects_list"
