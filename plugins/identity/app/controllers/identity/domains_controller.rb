@@ -1,7 +1,7 @@
 module Identity
   class DomainsController < ::DashboardController
     rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized", with: :not_member_error
-    authorization_required additional_policy_params: {domain_id: proc {@scoped_domain_id}}
+    authorization_required additional_policy_params: {domain_id: proc {@scoped_domain_id}}, except: [:show]
 
     def show
       @user_domain_projects_tree  = services.identity.auth_projects_tree
