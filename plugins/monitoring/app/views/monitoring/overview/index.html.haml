@@ -1,0 +1,8 @@
+= content_for :main_toolbar do
+  Monitoring Overview
+= render partial: 'tabs', locals: { tab: 'overview' }
+
+%p
+-#= link_to sap_url_for('grafana'), class: "btn btn-primary", target: "_blank" do
+  %i.fa.fa-external-link
+  Access Grafana

@@ -1,5 +1,5 @@
 Monitoring::Engine.routes.draw do
-  get '/' => 'application#index', as: :entry
+  get '/' => 'overview#index', as: :entry
 
   get 'alarm_definitions/search/' => 'alarm_definitions#search'
   get 'notification_methods/search/' => 'notification_methods#search'
