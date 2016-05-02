@@ -1,12 +1,23 @@
 {
 
-  "monitoring_admin": "role:admin or role:project_admin",
+  "monitoring_admin": "role:monasca-user",
 
+  "monitoring:overview_list": "not project_id:nil",
+  
+  "monitoring:alarm_list": "rule:monitoring_admin",  
+  "monitoring:alarm_get": "rule:monitoring_admin",
+  "monitoring:alarm_delete": "rule:monitoring_admin",
+  "monitoring:alarm_update": "rule:monitoring_admin",
+
+  "monitoring:notification_method_list": "rule:monitoring_admin",
+  "monitoring:notification_method_get": "rule:monitoring_admin",
   "monitoring:notification_method_create": "rule:monitoring_admin",
   "monitoring:notification_method_delete": "rule:monitoring_admin",
   "monitoring:notification_method_update": "rule:monitoring_admin",
   "monitoring:notification_method_new": "rule:monitoring_admin",
 
+  "monitoring:alarm_definition_list": "rule:monitoring_admin",
+  "monitoring:alarm_definition_get": "rule:monitoring_admin",
   "monitoring:alarm_definition_create": "rule:monitoring_admin",
   "monitoring:alarm_definition_delete": "rule:monitoring_admin",
   "monitoring:alarm_definition_update": "rule:monitoring_admin",
