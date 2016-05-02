@@ -4,9 +4,9 @@ module UrlHelper
     case servicename
     when 'documentation'
       # TODO: remove special treatment once prod is on the production cluster with the proper certificates
-      return "http://#{servicename}.#{ENV['MONSOON_DASHBOARD_REGION']}.cloud.sap:8080/"
+      return "http://#{servicename}.#{current_region}.cloud.sap:8080/"
     else
-      return "https://#{servicename}.#{ENV['MONSOON_DASHBOARD_REGION']}.cloud.sap/"
+      return "https://#{servicename}.#{current_region}.cloud.sap/"
     end
   end
 end
