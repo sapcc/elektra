@@ -9,14 +9,24 @@ module Networking
     
     
     def index
-      @routers = services.networking.routers
+      @routers = services.networking.routers(tenant_id:@scoped_project_id)
+      # @router_gateway_ports = services.networking.ports(device_owner: "network:router_gateway")
+      # @router_interface_ports = services.networking.ports(device_owner: "network:router_interface")
+      # router_ids = []
     end
-    #
-    # def show
-    #   @network = services.networking.network(params[:id])
-    #   @subnets = services.networking.subnets(@network.id)
-    #   @ports   = services.networking.ports(@network.id)
-    # end
+
+    def show
+      @router = services.networking.find_router(params[:id])
+      @router_gateway_ports = services.networking.ports(device_id: params[:id])
+      @router_interface_ports = services.networking.ports(device_id: params[:id])
+      
+      
+      @topology_graph = {
+        name: @router.name,
+        children: @router_gateway_ports.collect{|port| {name: port.name}} + @router_gateway_ports.collect{|port| {name: port.name}}
+      }
+    end
+
     #
     # def new
     #   @network = services.networking.network

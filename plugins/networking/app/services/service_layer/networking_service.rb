@@ -49,8 +49,8 @@ module ServiceLayer
       driver.map_to(Networking::Subnet).subnets(network_id)
     end
 
-    def ports(network_id)
-      driver.map_to(Networking::Port).ports(network_id)
+    def ports(filter={})
+      driver.map_to(Networking::Port).ports(filter)
     end
 
     def project_floating_ips(project_id)

@@ -1,19 +1,30 @@
+<script src="//d3js.org/d3.v3.min.js"></script>
 - if @scoped_project_id
   - if current_user.is_allowed?("networking:router_create", {router: {user_id: current_user.id} })
     .toolbar
       = link_to 'Create new', plugin('networking').new_router_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
+      
   %table.table
     %thead
       %tr
-        %th Data
+        %th Name
+        %th Status
+        %th External Network
+        %th External IPs
+        %th Actions
     %tbody
       - if @routers.length==0
         %tr
-          %td{colspa: 5} No router available
+          %td{colspa: 5} No routers available.
       - else
         - @routers.each do | router |
           %tr
-            %td= router.attributes
+            %td= link_to router.name, plugin('networking').router_path(router.id), data: {modal: true}
+            %td= router.status
+            %td= router.external_gateway_info["network_id"]
+            %td= router.external_gateway_info["external_fixed_ips"].collect{|ip| ip["ip_address"]}.join(", ")
+            %td
+                      
 - else
   = render "application/projects_list"

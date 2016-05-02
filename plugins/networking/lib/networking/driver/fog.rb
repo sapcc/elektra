@@ -76,9 +76,9 @@ module Networking
       end
 
       ###################### SUBNETS #######################
-      def subnets(network_id)
+      def subnets(filter={})
         handle_response{
-          @fog.list_subnets(network_id: network_id).body['subnets']
+          @fog.list_subnets(filter).body['subnets']
         }
       end
 
