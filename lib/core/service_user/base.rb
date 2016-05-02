@@ -189,7 +189,7 @@ module Core
 
           if project_id # project_id is presented
             # get role_assignments for this project_id
-            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, effective: true) #rescue []
+            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, "scope.domain.id"=>domain_id, effective: true) #rescue []
             # load users (not very performant but there is no other option to get users by ids)
             role_assignments.collect { |r| admins << self.find_user(r.user["id"]) }
 
