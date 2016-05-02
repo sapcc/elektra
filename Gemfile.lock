@@ -453,7 +453,7 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
-    puma (3.4.0)
+    puma (2.16.0)
     quantile (0.2.0)
     rack (1.6.4)
     rack-test (0.6.3)
@@ -623,7 +623,7 @@ DEPENDENCIES
   poltergeist
   prometheus-client
   pry-rails
-  puma
+  puma (~> 2.16)
   rails (= 4.2.4)
   rails_stdout_logging
   redcarpet
@@ -644,3 +644,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2

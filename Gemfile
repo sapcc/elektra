@@ -9,7 +9,6 @@ gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '4.2.4'
 
-gem 'puma'
 
 # Views and Assets
 gem 'compass-rails'
@@ -83,6 +82,9 @@ end
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
+  # We stick to 2.x until this is fixed:
+  # https://github.com/banister/binding_of_caller/issues/59
+  gem 'puma', '~> 2.16'
 end
 
 group :development, :test do
