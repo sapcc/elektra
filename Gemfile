@@ -79,7 +79,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Avoid double log lines in development
 # See: https://github.com/heroku/rails_stdout_logging/issues/1
 group :production do
-  gem 'rails_stdout_logging'
+  # We are not using the railtie because it comes to late,
+  # we are setting the logger in production.rb
+  gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
 end
 
 group :development do
