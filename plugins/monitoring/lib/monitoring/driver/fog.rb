@@ -53,10 +53,10 @@ module Monitoring
 
       def update_notification_method(id, params={})
         handle_response do
-          # TODO: use her "map_attribute_names" like we used in object storage?
+          # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-10
           request_params = {
             "name" => params["name"],
-            "type" => params["type"], 
+            "type" => params["type"].upcase, 
             "address" => params["address"],
           }
           @fog.update_notification_method(id, request_params).body
@@ -65,7 +65,7 @@ module Monitoring
 
       def update_alarm_definition(id, params={})
         handle_response do
-          
+          # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
           request_params = {
             "name"        => params["name"],
             "description" => params["description"], 
@@ -103,12 +103,14 @@ module Monitoring
       end
 
       def create_notification_method(params={})
+        # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-7
         handle_response do
           @fog.create_notification_method(params).body
         end
       end
 
       def create_alarm_definition(params={})
+        # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-12
         # not allowed paramters are deleted here
         params.delete('actions_enabled')
         handle_response do

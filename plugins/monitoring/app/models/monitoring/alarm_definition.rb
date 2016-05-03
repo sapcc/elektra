@@ -18,5 +18,9 @@ module Monitoring
     validates :name, length: { maximum: 255 }
     validates :description, length: { maximum: 255 }
 
+    def severity
+      read(:severity).upcase
+    end
+
   end
 end
