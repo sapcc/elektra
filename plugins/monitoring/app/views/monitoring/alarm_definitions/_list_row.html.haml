@@ -1,12 +1,6 @@
 %tr
   %td= alarm_definition.name
-  %td
-    - if alarm_definition.severity == 'LOW' || alarm_definition.severity == 'MEDIUM'
-      .text-warning= alarm_definition.severity.capitalize
-    - elsif alarm_definition.severity == 'HIGH' || alarm_definition.severity == 'CRTIICAL'
-      .text-danger= alarm_definition.severity.capitalize
-    - else
-      =alarm_definition.severity.capitalize
+  %td= render partial: 'severity', locals: { alarm_definition:alarm_definition }
   %td= alarm_definition.description
   %td
     -# TODO: made it clickable to enable and disable actions_enabled directly in the table
