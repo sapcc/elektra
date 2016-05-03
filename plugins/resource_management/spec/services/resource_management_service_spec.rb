@@ -2,6 +2,46 @@ require 'spec_helper'
 
 RSpec.describe ServiceLayer::ResourceManagementService do
 
+  class ServicesIdentityMock
+    @@domains = nil
+
+    def initialize
+      unless @@domains
+        dFooID = SecureRandom.uuid
+        dQuxID = SecureRandom.uuid
+        @@domains = [
+          Core::ServiceLayer::Model.new(nil, { id: dFooID, name: 'foodomain' }),
+          Core::ServiceLayer::Model.new(nil, { id: dQuxID, name: 'quxdomain' }),
+        ]
+        @@projects = [
+          Core::ServiceLayer::Model.new(nil, { id: SecureRandom.uuid, name: 'fooproject', domain_id: dFooID }),
+          Core::ServiceLayer::Model.new(nil, { id: SecureRandom.uuid, name: 'barproject', domain_id: dFooID }),
+          Core::ServiceLayer::Model.new(nil, { id: SecureRandom.uuid, name: 'quxproject', domain_id: dQuxID }),
+        ]
+      end
+    end
+
+    def domains
+      return @@domains
+    end
+
+    def projects(filter={})
+      if filter.has_key?(:domain_id)
+        return @@projects.select { |p| p.domain_id == filter[:domain_id] }
+      else
+        return @@projects.clone
+      end
+    end
+
+    def find_domain(id)
+      return @@domains.find { |d| d.id == id }
+    end
+
+    def find_project(id)
+      return @@projects.find { |p| p.id == id }
+    end
+  end
+
   before(:all) { ResourceManagement::ServiceConfig.mock!   }
   after (:all) { ResourceManagement::ServiceConfig.unmock! }
 
@@ -9,10 +49,10 @@ RSpec.describe ServiceLayer::ResourceManagementService do
     ResourceManagement::Resource.delete_all
   end
 
-  let(:service) { Core::ServiceLayer::ServicesManager.service(:resource_management).mock! }
+  let(:service) { Core::ServiceLayer::ServicesManager.service(:resource_management).mock!(ServicesIdentityMock.new) }
 
-  let(:old_domain_id ) { '32cf6ff5-e0dd-4e8f-a264-7ebdaf3fd25b' }
-  let(:old_project_id) { '07bdb713-d5db-422a-9b90-85f255b00789' }
+  let(:old_domain_id ) { SecureRandom.uuid }
+  let(:old_project_id) { SecureRandom.uuid }
 
   let(:enabled_resources) do
     result = ResourceManagement::ResourceConfig.all
@@ -24,7 +64,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
   describe '#sync_all_domains' do
 
     it 'syncs all domains' do
-      all_domains = service.driver.mock_domains_projects.keys.sort
+      all_domains = service.services_identity.domains.map(&:id).sort
 
       service.sync_all_domains
 
@@ -32,7 +72,7 @@ RSpec.describe ServiceLayer::ResourceManagementService do
     end
 
     it 'syncs projects in known domains only for with_projects = true' do
-      all_projects = service.driver.mock_domains_projects.values.map { |data| data[:projects] }.map(&:keys).flatten.sort
+      all_projects = service.services_identity.projects.map(&:id).sort
 
       service.sync_all_domains
       ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
@@ -123,11 +163,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
   describe '#sync_domain' do
 
-    let(:domain_id) do
-      domains_projects = service.driver.mock_domains_projects
-      domains_projects.select { |domain_id, data| data[:projects].size > 1 }.keys.sort.first
-    end
-    let(:domain_projects) { service.driver.mock_domains_projects[domain_id][:projects].keys.sort }
+    let(:domain_id)       { service.services_identity.domains.first.id }
+    let(:domain_projects) { service.services_identity.projects(domain_id: domain_id).map(&:id).sort }
 
     it 'syncs exactly this domain and its projects' do
       service.sync_domain(domain_id)
@@ -195,11 +232,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
   describe '#sync_project' do
 
-    let(:domain_id) do
-      domains_projects = service.driver.mock_domains_projects
-      domains_projects.select { |domain_id, data| data[:projects].size > 1 }.keys.sort.first
-    end
-    let(:project_id) { service.driver.mock_domains_projects[domain_id][:projects].keys.sort.first }
+    let(:domain_id)  { service.services_identity.domains.first.id }
+    let(:project_id) { service.services_identity.projects(domain_id: domain_id).first.id }
 
     it 'touches only the given project' do
       service.sync_project(domain_id, project_id)

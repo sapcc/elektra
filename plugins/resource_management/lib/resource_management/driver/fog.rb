@@ -5,67 +5,6 @@ module ResourceManagement
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
-      def initialize(params)        
-        super(params)
-        # get existing service user connection (we need this to enumerate all
-        # existing domains and projects, and to authorize the service user's
-        # access to new domains and projects where necessary)
-
-        # set service_user_token given by params (see app/services/service_layer/resource_management_service.rb)
-        @service_user_token = params[:service_user_token]
-        
-        # create service_user_connection
-        @srv_conn = self.class.service_user_connection(@service_user_token,auth_params)
-      end  
-      
-      def self.service_user_connection(service_user_token,auth_params)
-        params = auth_params.select{|k,v| [:provider, :openstack_auth_url, :openstack_region, :connection_options].include?(k)}.merge(openstack_auth_token: service_user_token)
-        @service_user_connection ||= ::Fog::Identity::OpenStack::V3.new(params)
-      end    
-
-      # List all domains that exist, as a hash of { id => name }.
-      def enumerate_domains
-        result = {}
-        @srv_conn.list_domains.body['domains'].each do |domain|
-          result[ domain['id'] ] = domain['name']
-        end
-        return result
-      end
-
-      # List all project IDs that exist in the given domain.
-      def enumerate_project_ids(domain_id)
-        # extrawurst for legacy monsoon2: consider only relevant projects
-        # 1. skip legacy organizations (= Keystone projects with ID starting with "o-")
-        # 2. skip legacy projects that are not Swift-enabled (by checking for role assignments to "swiftoperator")
-        # This radically reduces the syncing time (since only about half of the
-        # Keystone projects are legacy projects, and only a small fraction of
-        # those actually use Swift).
-        domain_name = @srv_conn.get_domain(domain_id).body.fetch('domain', {}).fetch('name', '')
-        if domain_name == 'monsoon2'
-          # resolve role name into ID
-          role_name = 'swiftoperator'
-          role_id   = @srv_conn.list_roles(name: role_name).body['roles'].first['id']
-          Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with #{role_name} role assignment"
-
-          # iterate over role assignments
-          result = []
-          @srv_conn.list_role_assignments("role.id" => role_id).body['role_assignments'].each do |assignment|
-            if project_id = assignment['scope'].fetch('project', {})['id']
-              # IDs of actual projects start with "p-"; this filters legacy organizations
-              result << project_id if project_id.start_with?('p-')
-            end
-          end
-          return result.uniq
-        end
-
-        # the usual case: list all projects
-        return @srv_conn.list_projects(domain_id: domain_id).body['projects'].map { |project| project['id'] }
-      end
-
-      def get_project_name(domain_id, project_id)
-        @srv_conn.get_project(project_id).body.fetch('project', {}).fetch('name', nil)
-      end
-
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
@@ -212,10 +151,10 @@ module ResourceManagement
             openstack_project_domain: ENV['SWIFT_RESELLERADMIN_PROJECT_DOMAIN'],
             connection_options:       { ssl_verify_peer: false }, # TODO: necessary?
           }
-
           @swift_identity = ::Fog::Identity::OpenStack::V3.new(swift_auth_params)
-          @swift_domain_id = @swift_identity.list_domains(name: ENV['SWIFT_RESELLERADMIN_PROJECT_DOMAIN']).body['domains'].first['id']
-          @swift_project_id = @swift_identity.list_projects(name: ENV['SWIFT_RESELLERADMIN_PROJECT'], domain_id: @swift_domain_id).body['projects'].first['id']
+          # find the project ID for the given project name
+          auth_projects = @swift_identity.auth_projects.body['projects']
+          @swift_project_id = auth_projects.find { |project| project['name'] == ENV['SWIFT_RESELLERADMIN_PROJECT'] }['id']
 
           @swift_conn = ::Fog::Storage::OpenStack.new(swift_auth_params)
 
