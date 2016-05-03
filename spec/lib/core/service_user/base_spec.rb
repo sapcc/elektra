@@ -342,13 +342,13 @@ describe Core::ServiceUser::Base do
         expect(service_user.list_scope_assigned_users!(domain_id: "o-#{scope_test_domain}", role: role).class).to be(Array)
       end
 
-      it 'returns two admins' do
-        expect(service_user.list_scope_assigned_users!(domain_id: "o-#{scope_test_domain}", role: role).length).to eq(2)
+      it 'returns one admin' do
+        expect(service_user.list_scope_assigned_users!(domain_id: "o-#{scope_test_domain}", role: role).length).to eq(1)
       end
 
-      it 'returns monsoon2_admin and dashboard' do
+      it 'returns monsoon2_admin' do
         admins = service_user.list_scope_assigned_users!(domain_id: "o-#{scope_test_domain}", role: role)
-        expect(admins.collect{|a|a.id}.sort).to eq(["u-dashboard","u-monsoon2_admin"])
+        expect(admins.collect{|a|a.id}.sort).to eq(["u-monsoon2_admin"])
       end
     end
   end
