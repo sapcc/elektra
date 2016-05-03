@@ -21,6 +21,9 @@ module Monitoring
     end
 
     def show
+      notification_methods = services.monitoring.notification_methods
+      @notification_methods_hash = {}
+      notification_methods.each{|notification_method| @notification_methods_hash[notification_method.id] = notification_method }
     end
 
     def edit
