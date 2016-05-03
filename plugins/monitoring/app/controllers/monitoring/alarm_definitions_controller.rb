@@ -61,6 +61,7 @@ module Monitoring
       )
 
       unless @alarm_definition.update_attributes(attrs)
+        @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
         render action: 'edit'
         return
       end
