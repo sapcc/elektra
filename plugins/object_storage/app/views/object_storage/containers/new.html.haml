@@ -4,14 +4,8 @@
   .row
     .col-md-6
       %fieldset
-        = f.input :name, label: 'Container Name'
+        = f.input :name, label: 'Container Name', input_html: { autofocus: true }
     .col-md-6
       .bs-callout.bs-callout-info
         %p
           Inside a project, objects are stored in containers. Containers are where you define access permissions and quotas.
-
-=content_for :javascripts do
-  :javascript
-    setTimeout(function(){
-      $('#container_name').focus().select();
-    }, 0)
