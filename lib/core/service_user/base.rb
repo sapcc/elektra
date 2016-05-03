@@ -4,7 +4,7 @@ module Core
       @@service_user_mutex = Mutex.new
 
       # # delegate some methods to auth_users
-      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, to: :@auth_user
+      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, :id, to: :@auth_user
 
       # Class methods    
       class << self
@@ -142,9 +142,9 @@ module Core
         role = self.find_role_by_name(role_name)
         driver_method(:grant_domain_user_role, false, self.domain_id, user_id, role.id)
       end
-      
-      def add_user_to_group(user_id,group_name)
-        groups = driver_method(:groups,true,{domain_id: self.domain_id,name: group_name}) rescue []
+
+      def add_user_to_group(user_id, group_name)
+        groups = driver_method(:groups, true, {domain_id: self.domain_id, name: group_name}) rescue []
         group = groups.first
         driver_method(:add_user_to_group, false, user_id, group.id) rescue false
       end
@@ -189,10 +189,14 @@ module Core
 
           if project_id # project_id is presented
             # get role_assignments for this project_id
-            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, "scope.domain.id"=>domain_id, effective: true) #rescue []
+            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, "scope.domain.id" => domain_id, effective: true) #rescue []
             # load users (not very performant but there is no other option to get users by ids)
-            role_assignments.collect { |r| admins << self.find_user(r.user["id"]) }
-
+            role_assignments.each do |r|
+              unless r.user["id"] == self.id
+                admin = self.find_user(r.user["id"]) rescue nil
+                admins << admin if admin
+              end
+            end
             if admins.length==0 # no admins for this project_id found
               # load project
               project = self.find_project(project_id) rescue nil
@@ -205,7 +209,12 @@ module Core
             # get role_assignments for this domain_id
             role_assignments = self.role_assignments("scope.domain.id" => domain_id, "role.id" => role.id, effective: true) #rescue []
             # load users
-            role_assignments.collect { |r| admins << self.find_user(r.user["id"]) }
+            role_assignments.each do |r|
+              unless r.user["id"] == self.id
+                admin = self.find_user(r.user["id"]) rescue nil
+                admins << admin if admin
+              end
+            end
           end
         rescue => e
           raise e if raise_error
