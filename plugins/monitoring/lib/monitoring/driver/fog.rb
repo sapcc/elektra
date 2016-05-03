@@ -65,14 +65,27 @@ module Monitoring
 
       def update_alarm_definition(id, params={})
         handle_response do
-          # TODO: use her "map_attribute_names" like we used in object storage?
+          
           request_params = {
-            "name" => params["name"],
+            "name"        => params["name"],
             "description" => params["description"], 
-            "expression" => params["expression"], 
-            "severity" => params["severity"], 
-            "match_by" => ["match_by"],
+            "expression"  => params["expression"], 
+            "severity"    => params["severity"], 
+            "match_by"    => params["match_by"],
           }
+          
+          if params['actions_enabled'] == '1' 
+            request_params['actions_enabled'] = true
+            request_params['ok_actions'] = params['ok_actions'] 
+            request_params['alarm_actions'] = params['alarm_actions']
+            request_params['undetermined_actions'] = params['undetermined_actions'] 
+          else  
+            request_params['actions_enabled'] = false
+            request_params['ok_actions'] = []
+            request_params['alarm_actions'] = []
+            request_params['undetermined_actions'] = []
+          end
+
           @fog.update_alarm_definition(id, request_params).body
         end
       end

@@ -27,6 +27,7 @@ module Monitoring
     end
 
     def edit
+      @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
 
     def new
@@ -45,7 +46,20 @@ module Monitoring
     end
 
     def update
-      attrs = params.require(:alarm_definition).permit(:name, :description, :expression, :severity, :match_by)
+      attrs = params.require(:alarm_definition).permit(
+        :name, 
+        :description, 
+        :expression, 
+        :severity, 
+        :match_by, 
+        :actions_enabled, 
+        # http://stackoverflow.com/questions/16549382/how-to-permit-an-array-with-strong-parameters
+        # To declare that the value in params must be an array of permitted scalar values map the key to an empty array
+        { ok_actions: [] },
+        { alarm_actions: [] },
+        { undetermined_actions: [] },
+      )
+
       unless @alarm_definition.update_attributes(attrs)
         render action: 'edit'
         return
