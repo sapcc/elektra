@@ -96,6 +96,8 @@ module Monitoring
       end
 
       def create_alarm_definition(params={})
+        # not allowed paramters are deleted here
+        params.delete('actions_enabled')
         handle_response do
           @fog.create_alarm_definition(params).body
         end

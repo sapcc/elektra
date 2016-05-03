@@ -28,11 +28,13 @@ module Monitoring
 
     def new
       @alarm_definition = services.monitoring.new_alarm_definition(name: "")
+      @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
 
     def create
       @alarm_definition = services.monitoring.new_alarm_definition(params.require(:alarm_definition))
       unless @alarm_definition.save
+        @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
         render action: 'new'
         return
       end

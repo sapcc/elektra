@@ -9,4 +9,27 @@
   = f.input :severity, collection: ['Low','Medium','High','Critical'], selected:'Low', icon_hint: 'Defines the severity level for the alarm'
   = f.input :match_by, icon_hint: 'Comma seperated list of dimensions, A separate Alarm will be created for every single dimension value'
   %hr
+  .row
+    .col-md-3
+    .col-md-8
+      = f.input :actions_enabled, as: :boolean, label: 'Enable/Disable actions'
+      %div{id: 'alarm_actions'}
+        = f.input :ok_actions, collection: @notification_methods.map{|s| [s.name, s.id ]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
+        = f.input :alarm_actions, collection: @notification_methods.map{|s| [s.name, s.id ]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
+        = f.input :undetermined_actions, collection: @notification_methods.map{|s| [s.name, s.id ]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
+
+= content_for :javascripts do
+  :javascript
+    $(function() {
+      if ( $('#alarm_definition_actions_enabled').is(':checked') ) {
+        $('#alarm_actions').css('display','inline');
+      }
+      else {
+        $('#alarm_actions').css('display','none')
+      }
+  
+      $('#alarm_definition_actions_enabled').change(function(){
+         $('#alarm_actions').toggle('fast');
+      });
+    });
 
