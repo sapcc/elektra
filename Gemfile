@@ -51,6 +51,9 @@ gem 'config'
 # Prometheus instrumentation
 gem 'prometheus-client'
 
+# Sentry client
+gem 'sentry-raven'
+gem 'httpclient' # The only faraday backend that handled no_proxy :|
 
 ###################### PLUGINS #####################
 # backlist plugins 
