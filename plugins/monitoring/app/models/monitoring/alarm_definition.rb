@@ -14,6 +14,9 @@ module Monitoring
     # severity
 
     validates_presence_of :name, :expression, :severity, :match_by
+    # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-12
+    validates :name, length: { maximum: 255 }
+    validates :description, length: { maximum: 255 }
 
   end
 end
