@@ -8,8 +8,7 @@
 
 %hr
 .row
-  .col-md-3
-  .col-md-8
+  .col-md-8.col-md-offset-3
     = f.input :actions_enabled, as: :boolean, label: 'Enable/Disable actions'
     %div{id: 'alarm_actions'}
       = f.input :ok_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
@@ -19,13 +18,8 @@
 = content_for :javascripts do
   :javascript
     $(function() {
-      if ( $('#alarm_definition_actions_enabled').is(':checked') ) {
-        $('#alarm_actions').css('display','inline');
-      }
-      else {
-        $('#alarm_actions').css('display','none')
-      }
-  
+      $('#alarm_actions').toggle($('#alarm_definition_actions_enabled').is(':checked'))
+ 
       $('#alarm_definition_actions_enabled').change(function(){
          $('#alarm_actions').toggle('fast');
       });
