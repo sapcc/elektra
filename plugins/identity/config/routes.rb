@@ -1,23 +1,25 @@
 Identity::Engine.routes.draw do
-  resources :domains, only: [:index]
-  
-  resources :projects, only:[:index] do
-    delete '/' => 'projects#destroy', on: :member, as: :delete
-  end 
 
-  namespace :projects  do
+  resources :domains, only: [:index]
+  namespace :domains do
+    scope :wizard do
+      get 'request_project' => 'request_wizard#new'
+      post 'request_project' => 'request_wizard#create'
+      get 'create_project' => 'create_wizard#new'
+      post 'create_project' => 'create_wizard#create'
+    end
+  end
+
+  resources :projects, only: [:index] do
+    delete '/' => 'projects#destroy', on: :member, as: :delete
+  end
+
+  namespace :projects do
 
     get 'web-console'
     get 'api-endpoints'
 
-    scope :wizard do
-      get 'request' => 'request_wizard#new'
-      post 'request' => 'request_wizard#create'
-      get 'create' => 'create_wizard#new'
-      post 'create' => 'create_wizard#create'
-    end
-    
-    resources :members, only: [:index,:new, :create] do
+    resources :members, only: [:index, :new, :create] do
       put '/' => 'members#update', on: :collection
     end
   end

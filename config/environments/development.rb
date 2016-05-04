@@ -60,7 +60,7 @@ Rails.application.configure do
       port:                 25,
       enable_starttls_auto: false }
   config.action_mailer.default_options = {
-      from: 'do.not.reply@sap.com'
+      from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
   }
   config.action_mailer.perform_deliveries = true
 

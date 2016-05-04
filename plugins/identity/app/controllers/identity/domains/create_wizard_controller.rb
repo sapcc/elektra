@@ -1,5 +1,5 @@
 module Identity
-  module Projects
+  module Domains
     # This controller implemnts the workflow to create a project
     class CreateWizardController < DashboardController
       before_filter :load_and_authorize_inquiry
@@ -21,7 +21,7 @@ module Identity
           services.identity.grant_project_user_role_by_role_name(@project.id, inquiry.requester.uid, 'admin')
           services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
           flash[:notice] = "Project #{@project.name} successfully created."
-          render 'identity/projects/create_wizard/create.js'
+          render 'identity/domains/create_wizard/create.js'
         else
           flash[:error] = @project.errors.full_messages.to_sentence
           render action: :new
@@ -36,7 +36,7 @@ module Identity
             render template: '/dashboard/not_authorized'
           end
         else
-          render template: '/identity/projects/create_wizard/not_found'
+          render template: '/identity/domains/create_wizard/not_found'
         end
       end
     end

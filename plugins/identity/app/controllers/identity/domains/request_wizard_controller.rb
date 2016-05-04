@@ -1,11 +1,12 @@
 module Identity
-  module Projects
+  module Domains
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
       def new
         @project = services.identity.new_project
         @project.enabled = true
-        @project.parent_id = @scoped_project_id if @scoped_project_id
+        @project.parent_id = params[:parent_project_id] if params[:parent_project_id]
+        @project.parent_name = params[:parent_project_name] if params[:parent_project_name]
       end
 
       def create
@@ -21,17 +22,17 @@ module Identity
                 "#{@project.name} - #{@project.description}",
                 current_user,
                 @project.attributes.to_json,
-                service_user.list_scope_admins(domain_id: @scoped_domain_id, project_id: @scoped_project_id),
+                service_user.list_scope_admins(domain_id: @scoped_domain_id),
                 {
                     "approved": {
                         "name": "Approve",
-                        "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').projects_create_path}"
+                        "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path}"
                     }
                 }
             )
             unless inquiry.errors?
               flash.now[:notice] = "Project request successfully created"
-              render template: 'identity/projects/request_wizard/create.js'
+              render template: 'identity/domains/request_wizard/create.js'
             else
               render action: :new
             end
@@ -62,7 +63,7 @@ module Identity
             payload: @project.attributes.to_json
         )
         unless inquiry.errors?
-          render template: 'identity/projects/request_wizard/create.js'
+          render template: 'identity/domains/request_wizard/create.js'
         else
           render action: :edit
         end
@@ -79,7 +80,7 @@ module Identity
           render template: '/dashboard/not_authorized'
         end
       else
-        render template: '/identity/projects/create_wizard/not_found'
+        render template: '/identity/domains/create_wizard/not_found'
       end
     end
 

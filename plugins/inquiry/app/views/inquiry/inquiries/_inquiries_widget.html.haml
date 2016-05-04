@@ -6,8 +6,8 @@
         %li{role: "presentation"}= link_to 'All inquiries', '#allinquiries', aria: {controls:"allinquiries"}, role: "tab", data: {toggle:"tab"}
       .tab-content
         #openinquiries.tab-pane.active{role: "tabpanel"}
-          = remote_inquiries(per_page: 2, filter: {processor_id: current_user.id, state: ['open']})
+          = remote_inquiries(per_page: 10, filter: {processor_id: current_user.id, state: ['open']})
         #allinquiries.tab-pane{role: "tabpanel"}
-          = remote_inquiries(per_page: 4,filter: {domain_id: current_user.domain_id})
+          = remote_inquiries(per_page: 10,filter: {domain_id: current_user.domain_id})
     - else
-      = remote_inquiries(per_page: 6, filter: {requester_id:current_user.id})
+      = remote_inquiries(per_page: 10, filter: {requester_id:current_user.id})

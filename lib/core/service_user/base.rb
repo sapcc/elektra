@@ -118,7 +118,7 @@ module Core
       end
 
       def role_assignments(filter={})
-        filter["scope.domain.id"]=self.domain_id unless filter["scope.domain.id"]
+        #filter["scope.domain.id"]=self.domain_id unless filter["scope.domain.id"]
         driver_method(:role_assignments, true, filter)
       end
 
@@ -187,7 +187,7 @@ module Core
 
           if project_id # project_id is presented
             # get role_assignments for this project_id
-            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, "scope.domain.id" => domain_id, effective: true) #rescue []
+            role_assignments = self.role_assignments("scope.project.id" => project_id, "role.id" => role.id, effective: true, include_subtree: true) #rescue []
             # load users (not very performant but there is no other option to get users by ids)
             role_assignments.each do |r|
               unless r.user["id"] == self.id

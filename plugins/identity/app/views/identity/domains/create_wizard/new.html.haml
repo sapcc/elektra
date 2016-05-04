@@ -1,12 +1,12 @@
 = content_for :title do 
   Create new project
 
-= simple_form_for @project, url: plugin('identity').projects_create_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @project, url: plugin('identity').domains_create_project_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - unless @project.errors["message"].blank?
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
     
-    = render partial: 'identity/projects/shared/form', locals: { form: f }
+    = render partial: 'identity/domains/shared/form', locals: { form: f }
     
   %div{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

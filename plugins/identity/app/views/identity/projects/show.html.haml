@@ -29,7 +29,7 @@
       - if current_user.is_allowed?('identity:project_request')
         %h4.action-heading
           Sub Projects
-          = link_to plugin('identity').projects_request_path, class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
+          = link_to plugin('identity').domains_request_project_path(project_id: nil, parent_project_id: @active_project.id,  parent_project_name: @active_project.name), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
             %i.fa.fa-plus-square-o
 
         %p None available.
@@ -39,7 +39,7 @@
       %h4.action-heading
         Sub Projects
         - if current_user.is_allowed?('identity:project_request')
-          = link_to plugin('identity').projects_request_path, class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
+          = link_to plugin('identity').domains_request_project_path(project_id: nil, parent_project_id: @active_project.id, parent_project_name: @active_project.name), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
             %i.fa.fa-plus-square-o
 
       %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')

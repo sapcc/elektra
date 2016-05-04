@@ -6,7 +6,7 @@ module Dashboard
     end
       
     def new_user?(current_user)
-      @service_user.role_assignments("user.id"=>current_user.id,"scope.domain.id"=>current_user.domain_id, effective: true).empty?      
+      @service_user.role_assignments("user.id"=>current_user.id,"scope.domain.id"=>@service_user.domain_id, effective: true).empty?
     end
 
     def register_user(current_user)
