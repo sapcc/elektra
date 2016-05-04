@@ -20,10 +20,161 @@ module Networking
       @router_gateway_ports = services.networking.ports(device_id: params[:id])
       @router_interface_ports = services.networking.ports(device_id: params[:id])
       
+      @router_gateway_ports.each do |port|
+        puts port.pretty_attributes
+      end  
+      
+      @router_interface_ports.each do |port|
+        puts port.pretty_attributes
+      end  
+
+      # {
+      #   "status": "ACTIVE",
+      #   "created_at": "2016-04-29T08:59:50",
+      #   "binding:host_id": "rtmolab3",
+      #   "description": "",
+      #   "allowed_address_pairs": [
+      #
+      #   ],
+      #   "admin_state_up": true,
+      #   "network_id": "f2de9a68-a69e-420a-985f-65f148c72fb7",
+      #   "tenant_id": "",
+      #   "extra_dhcp_opts": [
+      #
+      #   ],
+      #   "updated_at": "2016-04-29T08:59:57",
+      #   "name": "",
+      #   "binding:vif_type": "asr",
+      #   "device_owner": "network:router_gateway",
+      #   "mac_address": "fa:16:3e:11:14:6e",
+      #   "binding:vif_details": {
+      #     "port_filter": false
+      #   },
+      #   "binding:profile": {
+      #   },
+      #   "binding:vnic_type": "normal",
+      #   "fixed_ips": [
+      #     {
+      #       "subnet_id": "99bd0479-d4ab-49c9-bd01-a5c1f9fc521f",
+      #       "ip_address": "10.44.32.30"
+      #     }
+      #   ],
+      #   "security_groups": [
+      #
+      #   ],
+      #   "device_id": "9c562f2a-f329-40e3-95ed-65f6c9cf8eb2"
+      # }
+      # {
+      #   "status": "DOWN",
+      #   "created_at": "2016-04-29T09:16:41",
+      #   "binding:host_id": "",
+      #   "description": "",
+      #   "allowed_address_pairs": [
+      #
+      #   ],
+      #   "admin_state_up": true,
+      #   "network_id": "6d6e66b4-a063-4d66-a641-15c14669f92a",
+      #   "tenant_id": "a92d0be7175d4544bab86dd5d6c6ca6a",
+      #   "extra_dhcp_opts": [
+      #
+      #   ],
+      #   "updated_at": "2016-04-29T09:16:41",
+      #   "name": "",
+      #   "binding:vif_type": "unbound",
+      #   "device_owner": "network:router_interface",
+      #   "mac_address": "fa:16:3e:e1:98:12",
+      #   "binding:vif_details": {
+      #   },
+      #   "binding:profile": {
+      #   },
+      #   "binding:vnic_type": "normal",
+      #   "fixed_ips": [
+      #     {
+      #       "subnet_id": "4d44a66b-af53-4e1a-9117-ac6e9f7f2283",
+      #       "ip_address": "192.168.3.1"
+      #     }
+      #   ],
+      #   "security_groups": [
+      #
+      #   ],
+      #   "device_id": "9c562f2a-f329-40e3-95ed-65f6c9cf8eb2"
+      # }
+      # {
+      #   "status": "ACTIVE",
+      #   "created_at": "2016-04-29T08:59:50",
+      #   "binding:host_id": "rtmolab3",
+      #   "description": "",
+      #   "allowed_address_pairs": [
+      #
+      #   ],
+      #   "admin_state_up": true,
+      #   "network_id": "f2de9a68-a69e-420a-985f-65f148c72fb7",
+      #   "tenant_id": "",
+      #   "extra_dhcp_opts": [
+      #
+      #   ],
+      #   "updated_at": "2016-04-29T08:59:57",
+      #   "name": "",
+      #   "binding:vif_type": "asr",
+      #   "device_owner": "network:router_gateway",
+      #   "mac_address": "fa:16:3e:11:14:6e",
+      #   "binding:vif_details": {
+      #     "port_filter": false
+      #   },
+      #   "binding:profile": {
+      #   },
+      #   "binding:vnic_type": "normal",
+      #   "fixed_ips": [
+      #     {
+      #       "subnet_id": "99bd0479-d4ab-49c9-bd01-a5c1f9fc521f",
+      #       "ip_address": "10.44.32.30"
+      #     }
+      #   ],
+      #   "security_groups": [
+      #
+      #   ],
+      #   "device_id": "9c562f2a-f329-40e3-95ed-65f6c9cf8eb2"
+      # }
+      # {
+      #   "status": "DOWN",
+      #   "created_at": "2016-04-29T09:16:41",
+      #   "binding:host_id": "",
+      #   "description": "",
+      #   "allowed_address_pairs": [
+      #
+      #   ],
+      #   "admin_state_up": true,
+      #   "network_id": "6d6e66b4-a063-4d66-a641-15c14669f92a",
+      #   "tenant_id": "a92d0be7175d4544bab86dd5d6c6ca6a",
+      #   "extra_dhcp_opts": [
+      #
+      #   ],
+      #   "updated_at": "2016-04-29T09:16:41",
+      #   "name": "",
+      #   "binding:vif_type": "unbound",
+      #   "device_owner": "network:router_interface",
+      #   "mac_address": "fa:16:3e:e1:98:12",
+      #   "binding:vif_details": {
+      #   },
+      #   "binding:profile": {
+      #   },
+      #   "binding:vnic_type": "normal",
+      #   "fixed_ips": [
+      #     {
+      #       "subnet_id": "4d44a66b-af53-4e1a-9117-ac6e9f7f2283",
+      #       "ip_address": "192.168.3.1"
+      #     }
+      #   ],
+      #   "security_groups": [
+      #
+      #   ],
+      #   "device_id": "9c562f2a-f329-40e3-95ed-65f6c9cf8eb2"
+      # }
       
       @topology_graph = {
         name: @router.name,
-        children: @router_gateway_ports.collect{|port| {name: port.name}} + @router_gateway_ports.collect{|port| {name: port.name}}
+        type: 'router',
+        children: @router_gateway_ports.collect{|port| {name: port.name, type: 'gateway'}} + @router_interface_ports.collect{|port| {name: port.name, type: 'network'}}
       }
     end
 
