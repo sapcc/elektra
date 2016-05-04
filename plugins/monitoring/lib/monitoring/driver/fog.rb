@@ -64,28 +64,26 @@ module Monitoring
       end
 
       def update_alarm_definition(id, params={})
-        handle_response do
-          # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
-          request_params = {
-            "name"        => params["name"],
-            "description" => params["description"], 
-            "expression"  => params["expression"], 
-            "severity"    => params["severity"], 
-            "match_by"    => params["match_by"],
-          }
-          
-          if params['actions_enabled'] == '1' 
-            request_params['actions_enabled'] = true
-            request_params['ok_actions'] = params['ok_actions'] 
-            request_params['alarm_actions'] = params['alarm_actions']
-            request_params['undetermined_actions'] = params['undetermined_actions'] 
-          else  
-            request_params['actions_enabled'] = false
-            request_params['ok_actions'] = []
-            request_params['alarm_actions'] = []
-            request_params['undetermined_actions'] = []
-          end
+        pp params
+        # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
+        request_params = {
+          "name"        => params["name"],
+          "description" => params["description"], 
+          "expression"  => params["expression"], 
+          "severity"    => params["severity"], 
+          "match_by"    => params["match_by"],
+        }
+        
+        if params['actions_enabled'] == '1' or params['actions_enabled'] == true
+          request_params['actions_enabled'] = true
+        else  
+          request_params['actions_enabled'] = false
+        end
+        request_params['ok_actions'] = params['ok_actions'] 
+        request_params['alarm_actions'] = params['alarm_actions']
+        request_params['undetermined_actions'] = params['undetermined_actions'] 
 
+        handle_response do
           @fog.update_alarm_definition(id, request_params).body
         end
       end

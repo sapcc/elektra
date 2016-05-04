@@ -1,5 +1,5 @@
 #backend_error
-= f.input :name, placeholder: 'Enter name', :input_html => { autofocus: 'autofocus' }
+= f.input :name, placeholder: 'Enter name', :input_html => { autofocus: true }
 = f.input :description, placeholder: 'Enter Description'
 = f.input :expression, placeholder: 'Enter Expression', icon_hint: "If the expressions is true, a notification will be sent. See #{link_to 'Description', 'https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions'} how to write a expression"
 - severity = @alarm_definition.severity || 'LOW'

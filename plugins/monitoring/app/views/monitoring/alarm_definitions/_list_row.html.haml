@@ -3,11 +3,8 @@
   %td= render partial: 'severity', locals: { alarm_definition:alarm_definition }
   %td= alarm_definition.description
   %td
-    -# TODO: made it clickable to enable and disable actions_enabled directly in the table
-    - if alarm_definition.actions_enabled
-      = icon('check-square-o')
-    - else
-      = icon('square-o')
+    %div{ id: "alarm_actions_#{alarm_definition.id}"}
+      = render partial: 'actions_enabled', locals: { alarm_definition: alarm_definition }
   %th.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }

@@ -58,7 +58,7 @@ module Monitoring
         { ok_actions: [] },
         { alarm_actions: [] },
         { undetermined_actions: [] },
-      )
+      ) 
 
       unless @alarm_definition.update_attributes(attrs)
         @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
@@ -72,6 +72,16 @@ module Monitoring
     def destroy 
        @alarm_definition.destroy
        back_to_alarm_definition_list
+    end
+
+    def toggle_alarm_actions
+      attrs = { 
+        actions_enabled: !@alarm_definition.actions_enabled,
+      } 
+      
+      if @alarm_definition.update_attributes(attrs)
+        #@alarm_definition.actions_enabled = @alarm_definition.actions_enabled
+      end
     end
 
     private
