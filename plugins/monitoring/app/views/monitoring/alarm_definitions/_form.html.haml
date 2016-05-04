@@ -2,8 +2,8 @@
 = f.input :name, placeholder: 'Enter name', :input_html => { autofocus: 'autofocus' }
 = f.input :description, placeholder: 'Enter Description'
 = f.input :expression, placeholder: 'Enter Expression', icon_hint: "If the expressions is true, a notification will be sent. See #{link_to 'Description', 'https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions'} how to write a expression"
-- severity = @alarm_definition.severity || 'Low'
-= f.input :severity, collection: ['Low','Medium','High','Critical'], selected: severity.capitalize, icon_hint: 'Defines the severity level for the alarm'
+- severity = @alarm_definition.severity || 'LOW'
+= f.input :severity, collection: @alarm_definition.supported_severitys, selected: severity, icon_hint: 'Defines the severity level for the alarm'
 = f.input :match_by, icon_hint: 'Comma seperated list of dimensions, A separate Alarm will be created for every single dimension value'
 
 %hr

@@ -18,10 +18,8 @@ module Monitoring
     validates :name, length: { maximum: 255 }
     validates :description, length: { maximum: 255 }
 
-    def severity
-      if read(:severity)
-        return read(:severity).upcase
-      end
+    def supported_severitys
+      [['Low','LOW'],['Medium','MEDIUM'],['High','HIGH'],['Critical','CRITICAL']] 
     end
 
   end
