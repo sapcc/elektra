@@ -64,7 +64,6 @@ module Monitoring
       end
 
       def update_alarm_definition(id, params={})
-        pp params
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
         request_params = {
           "name"        => params["name"],
