@@ -18,7 +18,7 @@ module Monitoring
     validates :name, length: { maximum: 255 }
     validates :description, length: { maximum: 255 }
 
-    def supported_severitys
+    def supported_severities
       [['Low','LOW'],['Medium','MEDIUM'],['High','HIGH'],['Critical','CRITICAL']] 
     end
 
