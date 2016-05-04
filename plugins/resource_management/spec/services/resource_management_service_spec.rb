@@ -79,12 +79,12 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
       service.sync_all_domains # this should be a no-op since there are no new domains/projects
 
-      updated_projects = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
+      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
       expect(updated_projects).to eq([])
 
       service.sync_all_domains(with_projects: true)
 
-      updated_projects = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
+      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
       expect(updated_projects).to eq(all_projects)
     end
 
@@ -191,12 +191,12 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
       service.sync_domain(domain_id)
 
-      updated_records = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago)
+      updated_records = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago)
       expect(updated_records.size).to eq(0)
 
       service.sync_domain(domain_id, with_projects: true)
 
-      updated_projects = ResourceManagement::Resource.where('updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
+      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
       expect(updated_projects).to eq(domain_projects)
     end
 

@@ -149,12 +149,10 @@ module Core
         driver_method(:add_user_to_group, false, user_id, group.id) rescue false
       end
 
-      # A special case of list_scope_admins that returns a list of cloud admins.
-      # This logic is hardcoded for now since the concept of a cloud admin will only
-      # be introduced formally in the next Keystone release (Mitaka).
-      def list_cloud_admins
+      # A special case of list_scope_admins that returns a list of CC admins.
+      def list_ccadmins
         unless @admin_domain_id
-          domain_name = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'monsooncc')
+          domain_name = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'ccadmin')
           @admin_domain_id = driver_method(:domains, true, {name: domain_name}).first.id
         end
 

@@ -166,7 +166,7 @@ module ResourceManagement
           resource: @resource.name,
           desired_quota: value,
         },
-        service_user.list_cloud_admins(),
+        service_user.list_ccadmins(),
         {
           "approved": {
             "name": "Approve",
