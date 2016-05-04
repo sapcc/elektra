@@ -70,7 +70,7 @@ module Monitoring
             "name"        => params["name"],
             "description" => params["description"], 
             "expression"  => params["expression"], 
-            "severity"    => params["severity"], 
+            "severity"    => params["severity"].upcase, 
             "match_by"    => params["match_by"],
           }
           
