@@ -5,7 +5,8 @@
   
   "admin_required": " role:admin or is_admin:1",
   
-  "cloud_admin": "rule:admin_required and domain_name:'monsooncc'",
+  "cloud_admin": "rule:admin_required and domain_name:'Default'",
+  "ccadmin": "rule:admin_required and domain_name:'ccadmin'",
   "domain_admin": "rule:admin_required and not domain_id:nil",
   "project_admin": "rule:admin_required and not project_id:nil",
   
