@@ -89,7 +89,7 @@ module ServiceLayer
         )
 
         res.scope_name = domain_name
-        res.save if res.changed?
+        res.touch # includes res.save if res.changed?
       end
 
       # check which projects exist in the DB and in Keystone
