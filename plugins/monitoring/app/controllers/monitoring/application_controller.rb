@@ -4,7 +4,7 @@ module Monitoring
     # Only put code in here that is shared across controllers.
     authorization_context 'monitoring'
 
-    rescue_from Excon::Errors::Error do |exception|
+    rescue_from Excon::Errors::HTTPStatusError do |exception|
       # get exception message
       response = JSON.parse(exception.response.body)
       reason = response.keys[0] || ""

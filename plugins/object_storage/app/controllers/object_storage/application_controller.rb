@@ -3,7 +3,7 @@ module ObjectStorage
     # This is the base class of all controllers in this plugin. Only put code in here that is shared across controllers.
     authorization_context 'object_storage'
 
-    rescue_from Excon::Errors::Error do |exception|
+    rescue_from Excon::Errors::HTTPStatusError do |exception|
       # get exception message
       @exception_msg = exception.to_s
 
