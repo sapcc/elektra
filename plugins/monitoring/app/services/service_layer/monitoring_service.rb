@@ -19,13 +19,7 @@ module ServiceLayer
     def alarm_definitions(search = nil)
       alarm_definitions = driver.map_to(Monitoring::AlarmDefinition).alarm_definitions.sort_by(&:name)
       if search
-        alarm_definitons_search_results = []
-        alarm_definitions.each do |alarm_definition|
-          if alarm_definition.name.match search or alarm_definition.description.match search
-            alarm_definitons_search_results << alarm_definition
-          end
-        end
-        alarm_definitions = alarm_definitons_search_results
+        alarm_definitions = alarm_definitions.select { |ad| ad.name.match(search) or ad.description.match(search) }
       end
       alarm_definitions
     end
@@ -37,13 +31,7 @@ module ServiceLayer
     def notification_methods(search = nil)
       notification_methods = driver.map_to(Monitoring::NotificationMethod).notification_methods
       if search
-        notification_methods_search_results = []
-        notification_methods.each do |notification_method|
-          if notification_method.name.match search or notification_method.address.match search
-            notification_methods_search_results << notification_method
-          end
-        end
-        notification_methods = notification_methods_search_results
+        notification_methods = notification_methods.select { |nm| nm.name.match(search) or nm.address.match(search) }
       end
       notification_methods
     end

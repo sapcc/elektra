@@ -22,7 +22,7 @@
   $(function() {
     $('#notification_method_search').keypress(function (e) {
       if (e.which == 13) {
-        $.get("#{plugin('monitoring').notification_methods_search_path()}", {search: $('#notification_method_search').val()});
+        $.get("#{plugin('monitoring').search_notification_methods_path()}", {search: $('#notification_method_search').val()});
       }
     });
   });

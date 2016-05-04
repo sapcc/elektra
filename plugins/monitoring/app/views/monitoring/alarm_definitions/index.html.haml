@@ -22,7 +22,7 @@
   $(function() {
     $('#alarm_definition_search').keypress(function (e) {
       if (e.which == 13) {
-        $.get("#{plugin('monitoring').alarm_definitions_search_path()}", {search: $('#alarm_definition_search').val()});
+        $.get("#{plugin('monitoring').search_alarm_definitions_path()}", {search: $('#alarm_definition_search').val()});
       }
     });
   });

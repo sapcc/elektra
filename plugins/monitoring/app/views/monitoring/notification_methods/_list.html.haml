@@ -8,7 +8,7 @@
   %tbody
     - if @notification_methods.empty?
       %tr
-        %td{colspan: 4} No notification_method definitions found.
+        %td{colspan: 4} No notification methods found.
     - else
       - @notification_methods.each do |notification_method|
         = render partial: 'list_row', locals: { notification_method: notification_method }
