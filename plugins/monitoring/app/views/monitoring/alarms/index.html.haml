@@ -2,7 +2,9 @@
   Monitoring
 = render partial: '/monitoring/application/tabs', locals: { tab: 'alarms' }
 
-.toolbar
+%p{style: 'margin:20px'}
+  Comming Soon! ;-)
+-#.toolbar
   Alarms (#{@alarms.length})
-#alarms_list
+-#alarms_list
   = render partial: 'list'
