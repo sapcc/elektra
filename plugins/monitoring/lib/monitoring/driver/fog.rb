@@ -56,7 +56,7 @@ module Monitoring
           # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-10
           request_params = {
             "name" => params["name"],
-            "type" => params["type"].upcase, 
+            "type" => params["type"], 
             "address" => params["address"],
           }
           @fog.update_notification_method(id, request_params).body

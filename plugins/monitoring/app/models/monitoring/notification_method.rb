@@ -14,14 +14,8 @@ module Monitoring
     validates :name, length: { maximum: 250 }
     validates :type, length: { maximum: 100 }
 
-    def type
-      if read(:type)
-        return read(:type).upcase
-      end
-    end
-
     def supported_types
-      ['Email']
+      [['Email','EMAIL']]
     end
   end
 end
