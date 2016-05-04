@@ -13,8 +13,5 @@ module Monitoring
       render template: '/monitoring/application/backend_error'
     end
 
-    def index
-    end
-
   end
 end
