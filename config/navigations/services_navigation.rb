@@ -138,11 +138,11 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
-      if: -> {services.available?(:resource_management,:resources) or plugin_available?(:monitoring)} do |monitoring_nav|
+      if: -> {services.available?(:resource_management,:resources) or (current_user.is_allowed?('monitoring:overview_list') and plugin_available?(:monitoring))} do |monitoring_nav|
       # monitoring_nav.item :metrics, 'Metrics', '#'
       # monitoring_nav.item :logs, 'Logs', '#'
       monitoring_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
-      monitoring_nav.item :monitoring,          'Monitoring',          -> {plugin('monitoring').entry_path},              if: -> { plugin_available?(:monitoring) }, highlights_on: Proc.new { params[:controller][/monitoring\/.*/] }
+      monitoring_nav.item :monitoring,          'Monitoring',          -> {plugin('monitoring').entry_path},              if: -> { current_user.is_allowed?('monitoring:overview_list') and plugin_available?(:monitoring) }, highlights_on: Proc.new { params[:controller][/monitoring\/.*/] }
 
       # monitoring_nav.dom_attributes = {class: 'content-list'}
     end
