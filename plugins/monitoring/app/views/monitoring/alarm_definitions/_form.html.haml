@@ -10,7 +10,7 @@
 .row
   .col-md-8.col-md-offset-3
     = f.input :actions_enabled, as: :boolean, label: 'Enable/Disable actions'
-    %div{id: 'alarm_actions'}
+    #alarm_actions
       = f.input :ok_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
       = f.input :alarm_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
       = f.input :undetermined_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
