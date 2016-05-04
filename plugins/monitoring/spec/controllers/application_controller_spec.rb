@@ -21,10 +21,4 @@ describe Monitoring::ApplicationController, type: :controller do
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
   end
 
-  describe "GET 'index'" do
-    it "returns http success" do
-      get :index, default_params
-      expect(response).to be_success
-    end
-  end
 end

@@ -1,0 +1,6 @@
+#backend_error
+= f.input :name, placeholder: 'Enter name', :input_html => { autofocus: true }
+- type = @notification_method.type || 'EMAIL'
+= f.input :type, collection: @notification_method.supported_types, selected:type
+= f.input :address , placeholder: 'Enter single email address' 
+

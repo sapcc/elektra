@@ -22,6 +22,25 @@
     .col-md-3.details-label 
       %strong Match by:
     .col-md-9.details-value= @alarm_definition.match_by.join(',') 
+  %hr
+  .row
+    .col-md-3.details-label 
+      %strong Actions Enabled:
+    .col-md-9.details-value= @alarm_definition.actions_enabled 
+  .row
+    .col-md-3.details-label 
+      %strong OK Actions:
+    .col-md-9.details-value= @alarm_definition.ok_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',')
+  .row
+    .col-md-3.details-label 
+      %strong Alarm Actions:
+    .col-md-9.details-value= @alarm_definition.alarm_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',') 
+  .row
+    .col-md-3.details-label 
+      %strong Undetermined Actions:
+    .col-md-9.details-value= @alarm_definition.undetermined_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',') 
+  
+
 
     -# TODO: howto render the ok, alarm and undetermined actions? because I have only the notification IDs
 

@@ -16,16 +16,24 @@ module ServiceLayer
       true  
     end
     
-    def alarm_definitions
-      driver.map_to(Monitoring::AlarmDefinition).alarm_definitions
+    def alarm_definitions(search = nil)
+      alarm_definitions = driver.map_to(Monitoring::AlarmDefinition).alarm_definitions.sort_by(&:name)
+      if search
+        alarm_definitions = alarm_definitions.select { |ad| ad.name.match(search) or ad.description.match(search) }
+      end
+      alarm_definitions
     end
 
     def alarms
       driver.map_to(Monitoring::AlarmDefinition).alarms
     end
 
-    def notification_methods
-      driver.map_to(Monitoring::NotificationMethod).notification_methods
+    def notification_methods(search = nil)
+      notification_methods = driver.map_to(Monitoring::NotificationMethod).notification_methods
+      if search
+        notification_methods = notification_methods.select { |nm| nm.name.match(search) or nm.address.match(search) }
+      end
+      notification_methods
     end
 
     def get_alarm_definition(id)
@@ -39,6 +47,11 @@ module ServiceLayer
     def new_notification_method(attributes={})
       Monitoring::NotificationMethod.new(driver,attributes)
     end
+
+    def new_alarm_definition(attributes={})
+      Monitoring::AlarmDefinition.new(driver,attributes)
+    end
+
 
   end
 end

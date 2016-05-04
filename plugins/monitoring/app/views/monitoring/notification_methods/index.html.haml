@@ -3,7 +3,27 @@
 = render partial: '/monitoring/application/tabs', locals: { tab: 'notification_methods' }
 
 .toolbar
-  Definitions (#{@notification_methods.length})
-  = link_to "Create", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
-#notification_method_list
+  .row
+    - if current_user.is_allowed?("monitoring:notification_method_create")
+      .col-sm-9
+        Definitions (#{@notification_methods.length})
+    - else
+      .col-sm-10
+        Definitions (#{@notification_methods.length})
+    .col-sm-2
+      %input{id: "notification_method_search", type:"text", class:"form-control string", placeholder:"Search"}
+    - if current_user.is_allowed?("monitoring:notification_method_create")
+      .col-sm-1
+        = link_to "Create", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+#notification_methods_list
   = render partial: 'list'
+
+:javascript
+  $(function() {
+    $('#notification_method_search').keypress(function (e) {
+      if (e.which == 13) {
+        $.get("#{plugin('monitoring').search_notification_methods_path()}", {search: $('#notification_method_search').val()});
+      }
+    });
+  });
+

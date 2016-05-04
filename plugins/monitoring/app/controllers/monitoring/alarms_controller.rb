@@ -1,6 +1,6 @@
 module Monitoring
   class AlarmsController < Monitoring::ApplicationController
-    authorization_context 'monitoring'
+    authorization_required
 
     def index
       alarms = services.monitoring.alarms

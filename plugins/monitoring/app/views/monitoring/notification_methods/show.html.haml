@@ -1,0 +1,19 @@
+= content_for :title do
+  Show details for alarm definition #{@notification_method.name}
+
+%div{class: modal? ? 'modal-body' : ''}
+  .row
+    .col-md-3.details-label
+      %strong Name:
+    .col-md-9.details-value= @notification_method.name
+  .row
+    .col-md-3.details-label 
+      %strong Address:
+    .col-md-9.details-value= @notification_method.address
+  .row
+    .col-md-3.details-label 
+      %strong Type:
+    .col-md-9.details-value= @notification_method.type
+
+.buttons{class: modal? ? 'modal-footer' : ''} 
+  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close
