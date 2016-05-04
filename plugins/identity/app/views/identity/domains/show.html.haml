@@ -25,7 +25,7 @@
         %li
           Create a New Project (coming soon)
         %li
-          =# link_to 'Request a New Project', plugin('identity').projects_request_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
+          = link_to 'Request a New Project', plugin('identity').domains_request_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
 
     - else
       %h4.heading-top
@@ -38,7 +38,7 @@
 
       %ul.content-list
         %li
-          = link_to 'Request a New Project', plugin('identity').projects_request_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
+          = link_to 'Request a New Project', plugin('identity').domains_request_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
 
   .col-md-3
     = render 'projects_tree'
