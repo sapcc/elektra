@@ -79,9 +79,7 @@ module Monitoring
         actions_enabled: !@alarm_definition.actions_enabled,
       } 
       
-      if @alarm_definition.update_attributes(attrs)
-        #@alarm_definition.actions_enabled = @alarm_definition.actions_enabled
-      end
+      @alarm_definition.update_attributes(attrs)
     end
 
     private
