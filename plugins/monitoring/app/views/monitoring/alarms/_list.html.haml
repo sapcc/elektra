@@ -13,6 +13,6 @@
           %span= icon('smile-o')
     - else
       - @alarms.each do |alarm|
-        = render partial: 'list_row', locals: { notification: alarm }
+        = render partial: 'list_row', locals: { alarm: alarm }
 
 = paginate @alarms, :theme => 'twitter-bootstrap-3', :remote => true
