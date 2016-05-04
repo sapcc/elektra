@@ -113,6 +113,26 @@ h1, h2, h3, h4, h5, h6 {
   small, .small {
     font-family: $font-family-sap-light;
   }
+
+  &.heading-top {
+    margin-top: 0;
+  }
+
+  &.action-heading {
+    position: relative;
+  }
+
+  .header-action {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    color: #666;
+    cursor: pointer;
+
+    &:hover {
+      color: $bright-blue;
+    }
+  }
 }
 
 h5, h6 {
@@ -288,6 +308,12 @@ section {
   @extend .fa-gears;
 }
 
+.hana-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-hdd-o;
+}
+
 .api-icon {
   @extend .fa;
   @extend .fa-fw;
@@ -383,21 +409,6 @@ section {
     position: absolute;
     right: 8px;
     top: 3px;
-
-    [data-trigger="show-searchable-search"] {
-      margin-top: $line-height-computed / 2;
-      margin-right: 2px;
-      font-size: 15px;
-      cursor: pointer;
-
-      &.active {
-        color: #ddd;
-
-        &:hover {
-          color: #333;
-        }
-      }
-    }
   }
 
   .btn {
@@ -880,11 +891,6 @@ blockquote, .bs-callout {
 .infobox {
   border-top: 10px solid $sapgold;
 
-
-  h1, h2, h3, h4, h5, h6 {
-    // margin-top: 0;
-  }
-
   .table {
     th, td {
 
@@ -964,6 +970,11 @@ td, th {
   &.snug-nowrap {
     @extend .snug;
     white-space: nowrap;
+  }
+
+  &.big-data-cell {
+    word-break: break-all;
+    word-break: break-word;
   }
 }
 
@@ -1292,6 +1303,16 @@ tr.task-state {
 
   li.has-search-result ul  {
     display: block;
+  }
+}
+
+[data-trigger="show-searchable-search"] {
+  &.active {
+    color: #ddd;
+
+    &:hover {
+      color: #333;
+    }
   }
 }
 

@@ -32,6 +32,7 @@ class DashboardController < ::ScopeController
   before_filter :check_terms_of_use  
   # rescope token
   before_filter :authentication_rescope_token
+  before_filter :raven_context
   before_filter :load_user_projects
   before_filter :set_mailer_host
   
@@ -49,6 +50,28 @@ class DashboardController < ::ScopeController
   end
 
   protected
+
+  def raven_context
+    Raven.user_context(
+      ip_address: request.ip,
+      id: current_user.id,
+      email: current_user.email,
+      username: current_user.name,
+      domain: current_user.user_domain_name
+    )
+
+    tags = {}
+    if current_user.domain_id
+      tags[:domain_id] = current_user.domain_id
+      tags[:domain_name] = current_user.domain_name
+    elsif current_user.project_id
+      tags[:project_id] = current_user.project_id
+      tags[:project_name] = current_user.project_name
+      tags[:project_domain_id] = current_user.project_domain_id
+      tags[:project_domain_name] = current_user.project_domain_name
+    end
+    Raven.tags_context(tags)
+  end
 
   def load_user_projects
     # get all projects for user (this might be expensive, might need caching, ajaxifying, ...)

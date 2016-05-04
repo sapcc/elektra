@@ -38,7 +38,7 @@ module Identity
         flash[:notice] = "Project #{@project.name} successfully updated."
         redirect_to plugin('identity').project_path
       else
-        flash[:error] = @project.errors.full_messages.to_sentence
+        flash.now[:error] = @project.errors.full_messages.to_sentence
         render action: :edit
       end
     end

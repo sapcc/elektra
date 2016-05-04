@@ -1,3 +1,6 @@
+self_registration_domains:
+  - monsoon3
+  
 credentials:
   types:
     - ec2

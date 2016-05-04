@@ -108,6 +108,10 @@ module ServiceLayer
     def roles
       @roles ||= driver.map_to(Identity::Role).roles
     end
+    
+    def groups
+      driver.map_to(Identity::Group).user_groups(@current_user.id)
+    end
 
     def find_role(id)
       return nil if id.blank?

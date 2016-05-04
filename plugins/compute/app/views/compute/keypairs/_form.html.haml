@@ -1,0 +1,9 @@
+= form.input :name,
+  label:              t('keypair.name'),
+  input_html:         { maxlength: 255, name: "#{form.object_name}[name]", value: @keypair.name },
+  required:           true
+= form.input :public_key,
+  as:                 :text,
+  label:              t('keypair.public_key'),
+  input_html:         { rows: 15, name: "#{form.object_name}[public_key]", value: @keypair.public_key },
+  required:           true

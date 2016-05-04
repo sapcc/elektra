@@ -12,14 +12,15 @@ module Core
           result[:openstack_domain_id]  = @domain_id if @domain_id
           result[:openstack_project_id] = @project_id if @project_id
 
-          # remove this shit after the certificates for endpoints are configured correctly!
-          result[:connection_options]= { ssl_verify_peer: false, :debug_request => Rails.configuration.debug_api_calls, 
-            :debug_response => Rails.configuration.debug_api_calls
+          result[:connection_options] = {
+            # remove this shit after the certificates for endpoints are configured correctly!
+            ssl_verify_peer:  false,
+            debug_request:    Rails.configuration.debug_api_calls,
+            debug_response:   Rails.configuration.debug_api_calls
           }
 
           result
         end
-
       end
     end
   end

@@ -12,7 +12,7 @@
     .row
       .col-md-6
         %fieldset
-          = f.input :name, label: 'Type container name to confirm'
+          = f.input :name, label: 'Type container name to confirm', input_html: { autofocus: true }
           = f.hidden_field :container_name, value: @container.name
 
 - else
@@ -25,11 +25,3 @@
       %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Got it
     - else
       = link_to "Got it", pl.containers_path, class: 'btn btn-default'
-
-
-
-=content_for :javascripts do
-  :javascript
-    setTimeout(function(){
-      $('#forms_confirm_container_action_name').focus().select();
-    }, 0);

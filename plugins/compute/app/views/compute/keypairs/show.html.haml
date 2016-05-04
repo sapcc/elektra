@@ -1,0 +1,24 @@
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th Name
+        %td= @keypair.name
+      %tr
+        %th User ID
+        %td= @keypair.user_id
+      %tr
+        %th Fingerprint
+        %td= @keypair.fingerprint
+      %tr
+        %th Public Key
+        %td.big-data-cell
+          = @keypair.public_key
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('compute').keypairs_url, class: 'btn btn-default'

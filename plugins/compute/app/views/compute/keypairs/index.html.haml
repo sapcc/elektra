@@ -1,0 +1,21 @@
+= content_for :main_toolbar do
+  Key Pairs
+
+- if current_user.is_allowed?("compute:keypair_create", {target: {scoped_domain_name: @scoped_domain_name, user_id: current_user.id}})
+  .toolbar
+    = link_to 'Create new', new_keypair_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Fingerprint
+      %th
+  %tbody#keypairs_table
+    - if @user_keypairs.blank?
+      %tr
+        %td(colspan="4")
+          No keypairs available
+    - else
+      - @user_keypairs.each do |keypair|
+        = render partial: 'item', locals: {keypair: keypair}

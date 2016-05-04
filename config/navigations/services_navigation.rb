@@ -72,7 +72,7 @@ SimpleNavigation::Configuration.run do |navigation|
       # automation_nav.dom_attributes = {class: 'content-list'}
     end
 
-   primary.item :hana, 'Bare Metal Data Processing & HANA', nil, html: {class: "fancy-nav-header", 'data-icon': "automation-icon" }, if: -> {services.available?(:bare_metal_hana,:nodes) } do |bare_metal_hana_nav|
+   primary.item :hana, 'Bare Metal Data Processing & HANA', nil, html: {class: "fancy-nav-header", 'data-icon': "hana-icon" }, if: -> {services.available?(:bare_metal_hana,:nodes) } do |bare_metal_hana_nav|
      bare_metal_hana_nav.item :bare_metal_hana, 'HANA Servers', -> {plugin('bare_metal_hana').entry_path}, if: -> { services.available?(:bare_metal_hana,:nodes)}, highlights_on: Proc.new { params[:controller][/bare_metal_hana\/.*/] }
    end
 

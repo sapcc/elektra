@@ -4,47 +4,47 @@ module Core
       extend ActiveModel::Naming
       include ActiveModel::Conversion
       include ActiveModel::Validations
-  
+
       attr_reader :errors, :attributes
-    
-      ERRORS_TO_IGNORE = ["code","title"]
-    
+
+      ERRORS_TO_IGNORE = ["code", "title"]
+
       def initialize(driver, params=nil)
         @driver = driver
         self.attributes=params
         # get just the name of class without namespaces
-        @class_name = self.class.name.split('::').last.underscore      
+        @class_name = self.class.name.split('::').last.underscore
 
         # create errors object
-        @errors = ActiveModel::Errors.new(self)     
-        
+        @errors = ActiveModel::Errors.new(self)
+
         # execute after callback
-        after_initialize      
+        after_initialize
       end
-    
+
       def id
         @id
       end
 
       # look in attributes if a method is missing  
-      def method_missing(method_sym, *arguments, &block)      
+      def method_missing(method_sym, *arguments, &block)
         attribute_name = method_sym.to_s
         attribute_name = attribute_name.chop if attribute_name.ends_with?('=')
-      
+
         if arguments.count>1
-          write(attribute_name,arguments)
+          write(attribute_name, arguments)
         elsif arguments.count>0
-          write(attribute_name,arguments.first)
+          write(attribute_name, arguments.first)
         else
           read(attribute_name)
         end
       end
-    
+
       def respond_to?(method_name, include_private = false)
         keys = @attributes.keys
         keys.include?(method_name.to_s) or keys.include?(method_name.to_sym) or super
       end
-    
+
       def requires(*attrs)
         attrs.each do |attribute|
           if self.send(attribute.to_s).nil?
@@ -52,14 +52,14 @@ module Core
           end
         end
       end
-    
-      def api_error_name_mapping 
+
+      def api_error_name_mapping
         {
-          #"message": " ",
-          "Message": "message"
+            #"message": " ",
+            "Message": "message"
         }
       end
-    
+
       def save
         # execute before callback
         before_save
@@ -94,7 +94,7 @@ module Core
         error_names = api_error_name_mapping
         begin
           if id
-            @driver.send("delete_#{@class_name}",id)
+            @driver.send("delete_#{@class_name}", id)
             return true
           else
             name = error_names['message'] || ' '
@@ -114,73 +114,93 @@ module Core
           return false
         end
       end
-    
+
       def attributes=(new_attributes)
-        @attributes = (new_attributes || {}).clone   
+        @attributes = (new_attributes || {}).clone
         # delete id from attributes!
-        new_id = (@attributes.delete("id") or @attributes.delete(:id))
+        new_id = nil
+        if @attributes["id"] or @attributes[:id]
+          new_id = (@attributes.delete("id") or @attributes.delete(:id))
+        end
         # if current_id is nil then overwrite it with new_id.
         @id ||= new_id
       end
 
       # callbacks
-      def before_create;    return true;  end
-      def before_destroy;   return true;  end
-      def before_save;      return true;  end
-      def after_initialize; return true;  end
-      def after_create;     return true;  end
-      def after_save;       return true; end
-    
+      def before_create;
+        return true;
+      end
+
+      def before_destroy;
+        return true;
+      end
+
+      def before_save;
+        return true;
+      end
+
+      def after_initialize;
+        return true;
+      end
+
+      def after_create;
+        return true;
+      end
+
+      def after_save;
+        return true;
+      end
+
       def created_at
         value = read("created") || read("created_at")
         Time.parse(value) if value
       end
-    
+
       def updated_at
         value = read("updated") || read("updated_at")
         Time.parse(value) if value
       end
-    
+
       def attributes_for_create
         @attributes
       end
-    
+
       def attributes_for_update
         @attributes
       end
-  
 
-      def write(attribute_name,value)
+
+      def write(attribute_name, value)
         @attributes[attribute_name.to_s] = value
       end
-  
+
       def read(attribute_name)
         @attributes[attribute_name.to_s] || @attributes[attribute_name.to_sym]
       end
-    
+
       def pretty_attributes
         JSON.pretty_generate(@attributes)
       end
-    
+
       def to_s
-        pretty_attributes  
+        pretty_attributes
       end
-    
-      def attribute_to_object(attribute_name,klass)
+
+      def attribute_to_object(attribute_name, klass)
         value = read(attribute_name)
 
         if value
           if value.is_a?(Hash)
-            return klass.new(@driver,value)
+            return klass.new(@driver, value)
           elsif value.is_a?(Array)
-            return value.collect{|attrs| klass.new(@driver,attrs)}
+            return value.collect { |attrs| klass.new(@driver, attrs) }
           end
         end
         return nil
       end
-    
+
       protected
-    
+
       def perform_create
         # execute before callback
         before_create
@@ -192,7 +212,10 @@ module Core
           created_attributes = @driver.send("create_#{@class_name}", create_attrs)
           self.attributes= created_attributes
         rescue => e
-          raise e unless @driver.handle_api_errors?
+          unless defined?(@driver.handle_api_errors?)
+            raise e
+          end
+          @driver.handle_api_errors?
           error_names = api_error_name_mapping
 
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
@@ -207,16 +230,19 @@ module Core
         #self.attributes = @model.attributes
         after_create
         return true
-      end 
-    
+      end
+
       def perform_update
         begin
           update_attrs = attributes_for_update.with_indifferent_access
           update_attrs.delete(:id)
-          updated_attributes = @driver.send("update_#{@class_name}",id, update_attrs)
+          updated_attributes = @driver.send("update_#{@class_name}", id, update_attrs)
           self.attributes=updated_attributes if updated_attributes
         rescue => e
-          raise e unless @driver.handle_api_errors?
+          unless defined?(@driver.handle_api_errors?)
+            raise e
+          end
+          @driver.handle_api_errors?
           error_names = api_error_name_mapping
 
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)

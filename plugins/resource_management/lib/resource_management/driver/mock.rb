@@ -1,42 +1,9 @@
 module ResourceManagement
   module Driver
     class Mock < Interface
-      attr_reader :mock_domains_projects
-
-      def initialize
-        @mock_domains_projects = {
-          '7d11af29-7055-40a5-a575-c5de2e6b5973' => {
-            name: 'foodomain',
-            projects: {
-              '25301b18-d7ee-4fe0-a360-8d5280bec593' => 'fooproject',
-              '92ceb1f6-c5e1-4001-9893-f321f34eb6b9' => 'barproject',
-            },
-          },
-          'f45b7b16-e6ec-4255-9fc5-90304c1f3b57' => {
-            name: 'quxdomain',
-            projects: {
-              '0b9147f6-5454-4afd-8e03-39e44f2b2842' => 'quxproject',
-            },
-          },
-        }
-
+      def initialize(known_projects = nil)
         @fixed_quota_values = {}
-      end
-
-      def enumerate_domains
-        result = {}
-        @mock_domains_projects.each_pair do |id,hash|
-          result[id] = hash[:name]
-        end
-        return result
-      end
-
-      def enumerate_project_ids(domain_id)
-        @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {}).keys
-      end
-
-      def get_project_name(domain_id, project_id)
-        @mock_domains_projects.fetch(domain_id, {}).fetch(:projects, {}).fetch(project_id, nil)
+        @known_projects = known_projects
       end
 
       def query_project_quota(domain_id, project_id, service)
@@ -72,8 +39,8 @@ module ResourceManagement
       private
 
       def project_exists?(domain_id, project_id)
-        return false unless @mock_domains_projects.has_key?(domain_id)
-        return @mock_domains_projects[domain_id][:projects].has_key?(project_id)
+        return true if @known_projects.nil?
+        return @known_projects.find { |p| p.id == project_id && p.domain_id == domain_id }
       end
 
       def fixed_quota_key(service, resource, project_id)

@@ -7,7 +7,8 @@
     %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}  
     %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}  
     %li{role: "presentation"}= link_to 'Security Groups', '#security_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}  
-    %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}  
+    %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Volumes Attached ', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}  
   
   .tab-content
@@ -79,7 +80,14 @@
                   %ul
                     - sg.security_group_rules.each do |rule|
                       %li= rule.attributes
-            
+
+    .tab-pane{role:"tabpanel", id:"keypairs"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Keypair
+            %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
+
     .tab-pane{role:"tabpanel", id:"metadata"}  
       %table.table.datatable
         %tbody 

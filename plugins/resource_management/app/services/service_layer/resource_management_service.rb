@@ -3,27 +3,30 @@ module ServiceLayer
   class ResourceManagementService < Core::ServiceLayer::Service
 
     def driver
-      @driver ||= ResourceManagement::Driver::Fog.new({
+      @driver ||= ResourceManagement::Driver::Fog.new(
         auth_url: self.auth_url,
-        region: self.region,
-        token: self.token,
-        domain_id: self.domain_id,
-        project_id: self.project_id,
-        service_user_token: service_user.token  
-      })
-    end
-    
-    def available?(action_name_sym=nil)
-      not current_user.service_url('identity',region: region).nil?  
+        region:   self.region,
+      )
     end
 
-    def mock!
-      @driver = ResourceManagement::Driver::Mock.new()
+    # This is used in the unit test to replace services.identity by a mock.
+    def services_identity
+      @services_identity || services.identity
+    end
+
+    def available?(action_name_sym=nil)
+      services.identity.available?
+    end
+
+    def mock!(services_identity)
+      @driver            = ResourceManagement::Driver::Mock.new(services_identity.projects)
+      @services_identity = services_identity
       return self
     end
 
     def unmock!
-      @driver = nil # will be reinitialized in the next #driver call
+      @driver            = nil # will be reinitialized in the next #driver call
+      @services_identity = nil
       return self
     end
 
@@ -32,15 +35,21 @@ module ServiceLayer
     # 2. Use sync_domain() to create and/or update Resource objects for all
     #    projects in all known domains.
     def sync_all_domains(options={})
+      # list all domains
+      domain_name_by_id = {}
+      services_identity.domains.each do |domain|
+        domain_name_by_id[domain.id] = domain.name
+      end
+
       # check which domains exist in the DB and in Keystone
-      all_domain_ids = enumerate_domains.keys
+      all_domain_ids = domain_name_by_id.keys
       Rails.logger.info "ResourceManagement > sync_all_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
       db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
       # drop Resource objects for deleted domains (unless we are using a
-      # Keystone router, in which case enumerate_domains() is not guaranteed to
-      # return a full domain list since it only queries one of potentially many
-      # backend Keystones)
+      # Keystone router, in which case services_identity.domains() is not
+      # guaranteed to return a full domain list since it only queries one of
+      # potentially many backend Keystones)
       if has_keystone_router?
         additional_domain_ids = (all_domain_ids + db_domain_ids).uniq - all_domain_ids
         all_domain_ids = (all_domain_ids + db_domain_ids).uniq
@@ -49,18 +58,19 @@ module ServiceLayer
         old_domain_ids = db_domain_ids - all_domain_ids
         Rails.logger.info "ResourceManagement > sync_all_domains: cleaning up deleted domains: #{old_domain_ids.join(' ')}"
         ResourceManagement::Resource.where(domain_id: old_domain_ids).destroy_all()
+        all_domain_ids = all_domain_ids - old_domain_ids
       end
 
       # call sync_domain on all existing domains
-      all_domain_ids.each { |domain_id| sync_domain(domain_id, options) }
+      all_domain_ids.each { |domain_id| sync_domain(domain_id, options.merge(domain_name: domain_name_by_id[domain_id])) }
     end
 
     # Discover existing projects in a domain, then:
     # 1. Cleanup Resource objects for deleted projects from local DB.
     # 2. Create Resource objects for new projects in local DB.
     def sync_domain(domain_id, options={})
-      # get domain name (this is fast because enumerate_domains() has a cache)
-      domain_name = enumerate_domains[domain_id]
+      # get domain name
+      domain_name = options[:domain_name] || services_identity.find_domain(domain_id).name rescue ''
 
       # foreach resource in an enabled service...
       ResourceManagement::ResourceConfig.all.each do |resource|
@@ -79,11 +89,12 @@ module ServiceLayer
         )
 
         res.scope_name = domain_name
-        res.save if res.changed?
+        res.touch # includes res.save if res.changed?
       end
 
       # check which projects exist in the DB and in Keystone
-      all_project_ids = driver.enumerate_project_ids(domain_id)
+      project_name_for_id = enumerate_projects(domain_id, domain_name)
+      all_project_ids = project_name_for_id.keys
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
       db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).where.not(project_id: nil).pluck('DISTINCT project_id')
 
@@ -105,16 +116,16 @@ module ServiceLayer
       # initialize Resource objects for new domains (by recursing into sync_project)
       # or refresh all projects when options[:with_projects] is given
       project_ids_to_update = options[:with_projects] ? all_project_ids : (all_project_ids - db_project_ids)
-      project_ids_to_update.each { |project_id| sync_project(domain_id, project_id) }
+      project_ids_to_update.each { |project_id| sync_project(domain_id, project_id, project_name_for_id[project_id]) }
     end
 
     # Update Resource entries for the given project with fresh current_quota
     # and usage values (and create missing Resource entries as necessary).
-    def sync_project(domain_id, project_id)
+    def sync_project(domain_id, project_id, project_name=nil)
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
       # get the project name
-      project_name = driver.get_project_name(domain_id, project_id)
+      project_name ||= services_identity.find_project(project_id).name rescue ''
 
       # fetch current quotas and usage for this project from all services
       actual_quota = {}
@@ -123,7 +134,7 @@ module ServiceLayer
         actual_quota[service] = driver.query_project_quota(domain_id, project_id, service)
         actual_usage[service] = driver.query_project_usage(domain_id, project_id, service)
       end
-      
+
       # write values into database
       ResourceManagement::ResourceConfig.all.each do |resource|
         # only update if the driver reported any values for this project
@@ -197,15 +208,43 @@ module ServiceLayer
 
     private
 
-    def enumerate_domains
-      # driver.enumerate_domains plus caching
-      @enumerate_domains ||= driver.enumerate_domains
-    end
-
     def has_keystone_router?
       value = ENV.fetch('HAS_KEYSTONE_ROUTER', '0')
       Rails.logger.debug "HAS_KEYSTONE_ROUTER = '#{value}'"
       return value == '1'
+    end
+
+    # List all projects that exist in the given domain, as a hash of { id => name_or_nil }.
+    def enumerate_projects(domain_id, domain_name)
+      # extrawurst for legacy monsoon2: consider only relevant projects
+      # 1. skip legacy organizations (= Keystone projects with ID starting with "o-")
+      # 2. skip legacy projects that are not Swift-enabled (by checking for role assignments to "swiftoperator")
+      # This radically reduces the syncing time (since only about half of the
+      # Keystone projects are legacy projects, and only a small fraction of
+      # those actually use Swift).
+      if domain_name == 'monsoon2'
+        # resolve role name into ID
+        role_name = 'swiftoperator'
+        role_id   = services_identity.find_role_by_name(role_name).id
+        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with #{role_name} role assignment"
+
+        # iterate over role assignments
+        result = {}
+        services_identity.role_assignments("role.id" => role_id).each do |assignment|
+          if project_id = assignment.scope.fetch('project', {})['id']
+            # IDs of actual projects start with "p-"; this filters legacy organizations
+            result[project_id] = nil if project_id.start_with?('p-')
+          end
+        end
+        return result
+      end
+
+      # the usual case: list all projects
+      result = {}
+      services_identity.projects(domain_id: domain_id).each do |project|
+        result[project.id] = project.name
+      end
+      return result
     end
 
   end

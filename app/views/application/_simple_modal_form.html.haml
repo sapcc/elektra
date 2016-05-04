@@ -12,3 +12,13 @@
       = link_to cancel_text, cancel_url, class: 'btn btn-default'
     - if submit_action
       %button.btn.btn-primary{ type: 'submit', data: { disable_with: 'Please wait...'} }= submit_action
+
+/ When rendering the simple modal form on a normal page, the <input autofocus>
+/ attribute will fire automatically. But when loading the form into a modal
+/ window, this behavior must be emulated with JS.
+- if modal?
+  =content_for :javascripts do
+    :javascript
+      setTimeout(function() {
+        $("[autofocus]").focus().select();
+      }, 0);

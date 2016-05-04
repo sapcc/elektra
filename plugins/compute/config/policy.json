@@ -3,5 +3,10 @@
   "compute:instance_list": "role:admin or role:Member or role:member",
   "compute:instance_create": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
   "compute:instance_update": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
-  "compute:instance_delete": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)"
+  "compute:instance_delete": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
+  "compute:keypair_list": "(role:admin or role:member) and (not rule:monsoon2_domain)",
+  "compute:keypair_create": "(role:admin or role:member) and (not rule:monsoon2_domain)",
+  "compute:keypair_get": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
+  "compute:keypair_update": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
+  "compute:keypair_delete": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)"
 }

@@ -1,12 +1,13 @@
 {
+  "admin_and_matching_target_project_domain_id": "role:admin and domain_id:%(target.project.domain_id)s",
   "identity:domain_list": "rule:cloud_admin",
   "identity:domain_get": "(role:admin or role:Member or role:member) and domain_id:%(target.domain_id)s",
 
   "identity:project_get": "role:admin or role:Member or role:member",
   "identity:project_list": "role:admin or role:Member or role:member",
-  "identity:project_request": "role:admin",
+  "identity:project_request": "role:member or role:Member",
   "identity:project_create": "role:admin",
-  "identity:project_update": "role:admin",
+  "identity:project_update": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id",
   "identity:project_web_console": "role:admin or role:Member or role:member",
   "identity:project_api_endpoints": "role:admin or role:Member or role:member",
   "identity:project_delete": "rule:admin_required or (project_id:nil and (role:member or role:Member))",

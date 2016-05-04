@@ -1,0 +1,32 @@
+= simple_form_for @network, url: plugin('networking').networks_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @network.errors["message"].blank?
+      %p.alert.alert-error= @network.errors.full_messages.to_sentence
+
+    %fieldset
+      = f.input :name, { label: "Network Name" }
+      = f.input :admin_state_up, { label: "Admin State",
+        as:         :select,
+        collection: [["UP",true],["DOWN",false]] }
+    
+    %label
+      = check_box_tag "subnet", "1", true, data:{ toggle: "collapse", target: "#collapseExample"}
+      Create subnet
+
+    %fieldset.collapse.in{id: "collapseExample"}      
+      = f.simple_fields_for :subnets do |subnets|
+        = subnets.input :name, {label: "Subnet Name"}
+        = subnets.input :cidr, {label: "Network Address", placeholder: "192.168.0.0/24"}
+        
+        = subnets.input :enable_dhcp, {label: "Enable DHCP",
+          as:        :boolean} 
+          
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Create

@@ -10,7 +10,7 @@ module Identity
 
     def create
       @credential = services.identity.new_credential
-      @credential.attributes = params.fetch(:identity_os_credential,{}).merge(user_id: current_user.id)
+      @credential.attributes = params.fetch(:os_credential,{}).merge(user_id: current_user.id)
 
       if @credential.save
         flash[:notice] = "Credential created."

@@ -1,27 +1,45 @@
 .row
-  .col-md-8
-    %h4 Available Services
+  .col-md-9
     = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
 
-  .col-md-4
-    %h4 
-      Project Info
-      - if current_user.is_allowed?('identity:project_update')
-        %small
-          = link_to plugin('identity').edit_project_path, data: {modal: true} do 
-            %i.fa.fa-pencil
-    %dl
-      %dt Name
-      %dd= @active_project.name
-      - unless @active_project.description.blank?
-        %dt Description
-        %dd= @active_project.description
+  .col-md-3
+    .infobox
+      %h4.action-heading
+        Project Info
+        - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project.attributes}})
+          = link_to plugin('identity').edit_project_path, class: "header-action", title: "Edit project info", data: {modal: true, toggle: "tooltip", placement: "left"} do
+            %i.fa.fa-edit
 
-    
-    %h4 Sub Projects
-    - unless @active_project.subprojects_ids.blank?
-      %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
+      %table.table
+        %tbody
+          %tr
+            %th.snug-nowrap
+              Name:
+            %td
+              = @active_project.name
+          %tr
+            %th.snug-nowrap
+              Description:
+            %td
+              = @active_project.description
+
+
+
+    - if @active_project.subprojects_ids.blank?
+      - if current_user.is_allowed?('identity:project_request')
+        %h4.action-heading
+          Sub Projects
+          = link_to plugin('identity').projects_request_path, class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
+            %i.fa.fa-plus-square-o
+
+        %p None available.
+
+
     - else
-      %p This project doesn't have any sub projects
+      %h4.action-heading
+        Sub Projects
+        - if current_user.is_allowed?('identity:project_request')
+          = link_to plugin('identity').projects_request_path, class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
+            %i.fa.fa-plus-square-o
 
-    = link_to 'Request new sub project', plugin('identity').projects_request_path, data: {modal: true}, class: 'btn btn-outline btn-sm' if current_user.is_allowed?('identity:project_request')
+      %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')

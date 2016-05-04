@@ -51,6 +51,7 @@ SimpleForm.setup do |config|
     b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
   end
 
+  # please keep in sync with :horizontal_form_disabled
   config.wrappers :horizontal_form, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
     b.use :placeholder
@@ -63,6 +64,27 @@ SimpleForm.setup do |config|
     b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
       ba.wrapper tag: 'div', class: 'input-wrapper' do |i|
         i.use :input, class: 'form-control'
+        i.use :help_hint
+      end
+
+      ba.use :error, wrap_with: { tag: 'span', class: 'help-block' }
+      ba.use :icon_hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    end
+  end
+
+  # please keep in sync with :horizontal_form
+  config.wrappers :horizontal_form_disabled, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
+    b.use :html5
+    b.use :placeholder
+    b.optional :maxlength
+    b.optional :pattern
+    b.optional :min_max
+    b.optional :readonly
+    b.use :label, class: 'col-sm-4 control-label'
+
+    b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
+      ba.wrapper tag: 'div', class: 'input-wrapper' do |i|
+        i.use :input, class: 'form-control', readonly: true, disabled: true
         i.use :help_hint
       end
 

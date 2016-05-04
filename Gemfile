@@ -9,6 +9,7 @@ gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '4.2.4'
 
+
 # Views and Assets
 gem 'compass-rails'
 gem 'sass-rails'
@@ -47,6 +48,12 @@ gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-au
 # Extras
 gem 'config'
 
+# Prometheus instrumentation
+gem 'prometheus-client'
+
+# Sentry client
+gem 'sentry-raven'
+gem 'httpclient' # The only faraday backend that handled no_proxy :|
 
 ###################### PLUGINS #####################
 # backlist plugins 
@@ -69,18 +76,20 @@ end
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+# Avoid double log lines in development
+# See: https://github.com/heroku/rails_stdout_logging/issues/1
+group :production do
+  # We are not using the railtie because it comes to late,
+  # we are setting the logger in production.rb
+  gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
+end
 
-# Use Unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-#
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
+  # We stick to 2.x until this is fixed:
+  # https://github.com/banister/binding_of_caller/issues/59
+  gem 'puma', '~> 2.16'
 end
 
 group :development, :test do
@@ -111,8 +120,6 @@ group :development, :test do
 
   gem "better_errors"
   gem 'pry-rails'
-  
-  gem 'puma'
 end
 
 group :test do

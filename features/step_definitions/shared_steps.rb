@@ -9,6 +9,7 @@ And(/^I log as test_user/) do
   expect(page.driver.status_code.should).to eq(200)
 end
 
+
 Given(/^I am not logged in$/) do
   visit monsoon_openstack_auth.logout_path
 end

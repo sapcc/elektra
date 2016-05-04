@@ -3,8 +3,7 @@
 
 .row
   .col-md-3
-    .toolbar.toolbar-aligntop.toolbar-fancy
-      %h4= @scoped_domain_name
+    %h4.heading-top= @scoped_domain_name
 
     %p
       = @domain.description if @domain
@@ -12,10 +11,9 @@
 
   .col-md-3
     - if current_user and current_user.admin?
-      .toolbar.toolbar-aligntop.toolbar-fancy
-        %h4
-          = @scoped_domain_name
-          Admin
+      %h4.heading-top
+        = @scoped_domain_name
+        Admin
 
       = render_navigation(context: :"admin", expand_all: true)
 
@@ -26,10 +24,9 @@
           = link_to 'Request a New Project', plugin('identity').projects_request_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
 
     - else
-      .toolbar.toolbar-aligntop.toolbar-fancy
-        %h4
-          = @scoped_domain_name
-          Actions
+      %h4.heading-top
+        = @scoped_domain_name
+        Actions
 
       %ul.content-list
         %li
@@ -60,10 +57,10 @@
 
       %ul.content-list
         %li
-          %a(href="http://documentation.localhost:8080/intro/getting-started/prerequisites.html") Getting Started
+          %a(href="#{sap_url_for('documentation')}intro/getting-started/prerequisites.html") Getting Started
         %li
-          %a(href="http://documentation.localhost:8080/docs/trouble/") Troubleshooting & FAQ
+          %a(href="#{sap_url_for('documentation')}docs/trouble/") Troubleshooting & FAQ
         %li
-          %a(href="http://documentation.localhost:8080/docs/monitor/") Monitoring and Cost Control
+          %a(href="#{sap_url_for('documentation')}docs/monitor/") Monitoring and Cost Control
         %li
-          %a(href="http://documentation.localhost:8080/network/") Networks
+          %a(href="#{sap_url_for('documentation')}docs/guides/") Tutorials
