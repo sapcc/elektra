@@ -86,7 +86,7 @@ module ObjectStorage
           data['web_file_listing'] = data['web_file_listing'] == 'true' # convert to Boolean
           data['metadata']   = extract_metadata_tags(headers, 'X-Container-Meta-').reject do |key, value|
             # skip metadata fields that are recognized by us
-            not CONTAINER_ATTRMAP.has_key?(key)
+            CONTAINER_ATTRMAP.has_key?('X-Container-Meta-' + key)
           end
           data
         end
