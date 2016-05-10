@@ -206,10 +206,14 @@ module ObjectStorage
 
       def create_object(container_name, path, contents)
         handle_response do
-          # `contents` is an IO object to allow for easy for future expansion to
+          # content type "application/directory" is needed on pseudo-dirs for
+          # staticweb container listing to work correctly
+          options = {}
+          options['Content-Type'] = 'application/directory' if path.end_with?('/')
+          # `contents` is an IO object to allow for easy future expansion to
           # more clever upload strategies (e.g. SLO); for now, we just send
           # everything at once
-          @fog.put_object(container_name, path, contents.read)
+          @fog.put_object(container_name, path, contents.read, options)
         end
       end
 
