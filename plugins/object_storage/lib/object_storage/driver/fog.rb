@@ -384,7 +384,12 @@ module ObjectStorage
       def fog_public_url(container=nil, object=nil)
         return nil if container.nil?
         url = @fog.public_url(container)
-        url << "/#{escape_path(object)}" unless object.nil?
+        if object.nil?
+          # path to container listing needs a trailing slash to work in a browser
+          url << '/'
+        else
+          url << "/#{escape_path(object)}"
+        end
         return url
       end
 
