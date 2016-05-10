@@ -24,7 +24,7 @@ module ObjectStorage
       end
 
       # special case for monsoon2 legacy: explain how to enable Swift for legacy projects
-      if services.identity.find_domain(@scoped_domain_id).name == 'monsoon2'
+      if @scoped_domain_name == 'monsoon2'
         render action: 'howtoenable_monsoon2'
       else
         render action: 'howtoenable'
