@@ -7,5 +7,9 @@ module Monitoring
       @alarms = Kaminari.paginate_array(alarms).page(params[:page]).per(10)
     end
 
+    def filter
+      alarms = services.monitoring.alarms
+      @alarms = Kaminari.paginate_array(alarms).page(params[:page]).per(10)
+    end
   end
 end

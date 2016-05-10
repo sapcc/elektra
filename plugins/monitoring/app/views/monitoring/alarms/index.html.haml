@@ -4,6 +4,11 @@
 
 %p{style: 'margin:20px'}
 .toolbar
-  Alarms (#{@alarms.length})
+  .row
+    .col-md-2
+      .headline Alarms (#{@alarms.length})
+    .col-md-10
+      = render partial: 'filter'
+      
 #alarms_list
   = render partial: 'list'

@@ -22,5 +22,9 @@ module Monitoring
       [['Low','LOW'],['Medium','MEDIUM'],['High','HIGH'],['Critical','CRITICAL']] 
     end
 
+    def supported_states
+      [['OK','ok'],['Alarm'],['Undetermined','undetermined']]
+    end
+
   end
 end
