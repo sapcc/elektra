@@ -25,7 +25,7 @@
 
   %fieldset
     -# NOTE: <input type="file"> requires `authenticity_token: true` on the (simple_)form_for() to work
-    = f.input :file, as: :file,   label: 'Select file'
+    = f.input :file, as: :file,   label: 'Select file', input_html: { autofocus: true }
     = f.input :name, as: :string, label: 'File name'
 
 =content_for :javascripts do
