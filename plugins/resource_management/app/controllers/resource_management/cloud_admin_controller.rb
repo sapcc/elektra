@@ -51,7 +51,7 @@ module ResourceManagement
     def cancel
       # prepare data for view
       resources = ResourceManagement::Resource.where(service: @domain_resource.service, name: @domain_resource.name)
-      @domain_status = prepare_domain_data_for_details_view(@domain_resource, resources, {})
+      @domain_status = prepare_domain_data_for_details_view(@domain_resource, resources)
 
       respond_to do |format|
         format.js { render action: 'update' }
@@ -73,7 +73,7 @@ module ResourceManagement
 
       # prepare data for view
       resources, _ = prepare_data_for_details_view(@domain_resource.service.to_sym, @domain_resource.name.to_sym)
-      @domain_status = prepare_domain_data_for_details_view(@domain_resource, resources, {})
+      @domain_status = prepare_domain_data_for_details_view(@domain_resource, resources)
 
       respond_to do |format|
         format.js
