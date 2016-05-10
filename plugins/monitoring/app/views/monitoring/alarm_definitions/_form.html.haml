@@ -1,19 +1,45 @@
 #backend_error
-= f.input :name, placeholder: 'Enter name', :input_html => { autofocus: true }
-= f.input :description, placeholder: 'Enter Description'
-= f.input :expression, placeholder: 'Enter Expression', icon_hint: "If the expressions is true, a notification will be sent. See #{link_to 'Description', 'https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions'} how to write a expression"
-- severity = @alarm_definition.severity || 'LOW'
-= f.input :severity, collection: @alarm_definition.supported_severities, selected: severity, icon_hint: 'Defines the severity level for the alarm'
-= f.input :match_by, icon_hint: 'Comma seperated list of dimensions, A separate Alarm will be created for every single dimension value'
+  = f.input :name, 
+    placeholder: 'Enter name', 
+    input_html: { autofocus: true }
 
-%hr
+= f.input :description, 
+    placeholder: 'Enter Description'
+
+= f.input :expression, 
+    placeholder: 'Enter Expression', 
+    icon_hint: "If the expressions is true, and the alarm actions are enabled and configured a notification will be sent. See #{link_to 'Description', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} how to write a expression"
+
+- severity = @alarm_definition.severity || 'LOW'
+= f.input :severity, 
+    collection: @alarm_definition.supported_severities, 
+    selected: severity, 
+    icon_hint: 'Defines the severity level for the alarm'
+
+= f.input :match_by, 
+    icon_hint: 'Comma seperated list of dimensions, A separate Alarm will be created for every single dimension value'
+
 .row
   .col-md-8.col-md-offset-3
-    = f.input :actions_enabled, as: :boolean, label: 'Enable/Disable actions'
+    = f.input :actions_enabled, as: :boolean, label: 'Alarm notifications' 
     #alarm_actions
-      = f.input :ok_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
-      = f.input :alarm_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
-      = f.input :undetermined_actions, collection: @notification_methods.map{|s| [s.name, s.id]}, input_html: { multiple: true, size: 3 }, :include_hidden => false
+      = f.input :ok_actions, 
+          label: 'OK',collection: @notification_methods.map{|s| [s.name, s.id]}, 
+          input_html: { multiple: true, size: 3 }, 
+          include_hidden: false, 
+          icon_hint: 'Notification will be send if alarm turns to status OK'
+      = f.input :alarm_actions, 
+          label: 'Alarm',
+          collection: @notification_methods.map{|s| [s.name, s.id]}, 
+          input_html: { multiple: true, size: 3 }, 
+          include_hidden: false, 
+          icon_hint: 'Notification will be send if alarm turns to status Alarm'
+      = f.input :undetermined_actions, 
+          label: 'Undetermined',
+          collection: @notification_methods.map{|s| [s.name, s.id]}, 
+          input_html: { multiple: true, size: 3 }, 
+          include_hidden: false, 
+          icon_hint: 'Notification will be send if alarm turns to status Undetermined'
 
 = content_for :javascripts do
   :javascript
