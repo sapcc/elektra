@@ -22,9 +22,9 @@ module ResourceManagement
       return @all if @all
 
       @all = []
-      @all << new(:compute,        :compute) if Rails.env.development?
-      @all << new(:network,        :network) if Rails.env.development?
-      @all << new(:block_storage,  :storage) if Rails.env.development?
+      @all << new(:compute,        :compute)    if Rails.env.development?
+      @all << new(:networking,     :networking) if Rails.env.development?
+      @all << new(:block_storage,  :storage)    if Rails.env.development?
       @all << new(:object_storage, :storage)
       return @all
     end

@@ -16,10 +16,10 @@
       - if scope == 'resources'
         - case area
           - when :storage
-            = link_to translated_name, '#', resource: { confirm: "Storage service not implemented yet." }, title: "Open #{area} service"
+            = link_to translated_name, plugin('block_storage').volumes_path, title: "Open #{area} service"
           - when :compute
             = link_to translated_name, plugin('compute').instances_path(), title: "Open #{area} service"
-          - when :network
+          - when :networking
             = link_to translated_name, plugin('networking').networks_path(), title: "Open #{area} service"
           - else
             = translated_name
