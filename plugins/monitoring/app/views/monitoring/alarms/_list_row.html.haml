@@ -1,9 +1,8 @@
 %tr
-  %td= alarm.status
-  -# TODO render OK, ALARM and Unknown
+  %td= alarm.state
   %td= alarm.severity
-  -# TODO use color here
-  %td= alarm.definition
+  %td= @alarm_definitions[alarm.alarm_definition_id].name
+  %td= alarm.state_updated_timestamp
   %th.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }

@@ -29,12 +29,15 @@ Filtered by:
   function set_filter(TYPE,VALUE) {
     $("#"+TYPE.toLowerCase()+"_filter").text(TYPE+":"+VALUE);
     $("#"+TYPE.toLowerCase()+"_filter").data('filter',VALUE);
+    apply_filter();
   }
 
   function apply_filter() {
+    $('#alarms_list').empty();
     alarm_severity = $('#severity_filter').data('filter') || 'All'
     alarm_status = $('#alarm_filter').data('filter') || 'All' 
-    $.get( "#{plugin('monitoring').filter_alarms_path()}", function(data) {
+    $.get( "#{plugin('monitoring').filter_alarms_path()}", { severity: alarm_severity, status: alarm_status }, function(data) {
+      console.log('dasdasd');
       $('#alarms_list').html(data);
     });
   }
