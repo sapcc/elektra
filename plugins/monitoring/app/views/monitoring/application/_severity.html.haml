@@ -1,0 +1,10 @@
+%strong
+  - if severity == 'LOW'
+    .text-info= severity.capitalize
+  - elsif severity == 'MEDIUM'
+    .text-warning= severity.capitalize
+  - elsif severity == 'HIGH' || severity == 'CRTIICAL'
+    .text-danger= severity.capitalize
+  - else
+    = severity.capitalize
+
