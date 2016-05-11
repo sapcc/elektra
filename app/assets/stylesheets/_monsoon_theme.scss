@@ -376,7 +376,7 @@ section {
   border-top: 2px solid #ddd;
   border-bottom: 1px solid #eee;
   padding: $toolbar-vertical-padding 8px;
-  margin-top: $line-height-computed * 2.5;
+  margin-top: $line-height-computed;
 
   &.toolbar-aligntop {
     margin-top: 0;
@@ -600,8 +600,8 @@ footer, .footer {
 // ---------------------------------------------------------------------------------
 
 .breadcrumb {
-  margin-top: 20px;
-  margin-bottom: 50px;
+  margin-top: $line-height-computed;
+  margin-bottom: $line-height-computed;
 
   > li {
 
