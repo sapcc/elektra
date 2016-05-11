@@ -4,17 +4,19 @@
 = simple_form_for @volume, url: plugin('block_storage').volumes_path, method: :post, remote: request.xhr?, html: {id: 'form_volume', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   %div{class: modal? ? 'modal-body' : ''}
 
-    - unless @volume.errors.empty? 
+    - if @volume.errors.present?
       %p.alert.alert-error= @volume.errors.full_messages.to_sentence
     
     = f.input :name
     = f.input :description
     = f.input :size, { as: :integer, input_html: { min: '1' }, label: "Size in GB" }
+    = f.input :snapshot_id, :as => :hidden, :input_html => { value: @volume.snapshot_id } unless @volume.snapshot_id.blank?
 
-    = f.input :availability_zone, { label: "Availability zone",
-      input_html:         {},
-      as:                 :select,
-      collection:         @availability_zones}
+    - unless @volume.snapshot_id
+      = f.input :availability_zone, { label: "Availability zone",
+        input_html:         {},
+        as:                 :select,
+        collection:         @availability_zones}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

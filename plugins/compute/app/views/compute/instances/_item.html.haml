@@ -3,14 +3,14 @@
   - data[:update_url]=plugin('compute').update_item_instance_path(id:instance.id, target_state: local_assigns[:target_state])
   - data[:interval]=2500 
 
-%tr{class: "state-#{instance.status.downcase} #{'task-state ' + instance.task_state if instance.task_state}", data: data, id: "instance_#{instance.id}"}
+%tr{class: "state-#{instance.status.downcase if instance.status} #{'task-state ' + instance.task_state if instance.task_state}", data: data, id: "instance_#{instance.id}"}
   %td    
     - if current_user.is_allowed?("compute:instance_get", {})
       = link_to instance.name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
 
   %td= instance.image.name
   %td= instance.ip_addresses.join(', ')
-  %td= instance.flavor.name     
+  %td= instance.flavor.name
   %td= instance.power_state_string
   %td= instance.task_state.nil? ? instance.status.capitalize : instance.task_state
   

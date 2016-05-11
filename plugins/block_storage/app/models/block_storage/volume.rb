@@ -5,11 +5,19 @@ module BlockStorage
 
     def in_transition? target_state
       Rails.logger.info { "Checking state transition for volume #{self.name} : target state: #{target_state} - actual state: #{self.status}" }
-      if target_state == self.status
+      if target_state.include? self.status
         return false
       else
         return true
       end
+    end
+
+    def deletable?
+      return self.status != 'in-use'
+    end
+
+    def snapshotable?
+      return self.status == 'available'
     end
 
   end

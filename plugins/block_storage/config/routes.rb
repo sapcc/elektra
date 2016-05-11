@@ -11,6 +11,8 @@ BlockStorage::Engine.routes.draw do
     end
   end
   resources :snapshots, except: [:new, :create] do
-
+    member do
+      get 'create_volume'
+    end
   end
 end

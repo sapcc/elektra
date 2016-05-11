@@ -1,0 +1,3 @@
+$("table.instances").prepend("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>");
+$("#instance_<%=@instance.id%>").update()
+MoModal.close();

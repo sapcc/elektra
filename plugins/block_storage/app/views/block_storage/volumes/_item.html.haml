@@ -3,7 +3,7 @@
   - if local_assigns.has_key?(:target_state) && volume.in_transition?(target_state)
     - transition = true
     - data = {}
-    - data[:update_url]=plugin('block_storage').update_item_volume_path(id:volume.id, target_state: local_assigns[:target_state])
+    - data[:update_url]=plugin('block_storage').update_item_volume_path(id:volume.id, target_state: target_state)
     - data[:interval]=2500
 
   %tr{class: "state-#{volume.status.downcase} #{'task-state' if transition}", data: data, id: "volume_#{volume.id}"}
@@ -28,13 +28,13 @@
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if current_user.is_allowed?("block_storage:volume_update", {})
               %li= link_to 'Change', plugin('block_storage').edit_volume_path(id: volume.id), data: {modal: true}
-              %li= link_to 'Create Snapshot', plugin('block_storage').new_snapshot_volume_path(id: volume.id), data: {modal: true}
+              %li= link_to 'Create Snapshot', plugin('block_storage').new_snapshot_volume_path(id: volume.id), data: {modal: true} if volume.snapshotable?
             - if current_user.is_allowed?("block_storage:volume_assign", {})
               %li.divider
               - if volume.attachments.blank?
                 %li= link_to 'Attach', plugin('block_storage').edit_attach_volume_path(id: volume.id), data: {modal: true}
               - else
                 %li= link_to 'Detach', plugin('block_storage').edit_detach_volume_path(id: volume.id), data: {modal: true}
-            - if current_user.is_allowed?("block_storage:volume_delete", {})
+            - if current_user.is_allowed?("block_storage:volume_delete", {}) and volume.deletable?
               %li.divider
-              %li= link_to 'Delete', plugin('block_storage').volume_path(id: volume.id), method: :delete, data: { confirm: 'Are you sure you want to delete this volume?' }
+              %li= link_to 'Delete', plugin('block_storage').volume_path(id: volume.id), method: :delete, data: { confirm: 'Are you sure you want to delete this volume?' }, remote: true

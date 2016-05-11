@@ -2,7 +2,7 @@ require_dependency "block_storage/application_controller"
 
 module BlockStorage
   class SnapshotsController < ApplicationController
-    before_action :set_snapshot, only: [:show, :edit, :update, :destroy]
+    before_action :set_snapshot, except: [:index]
 
     # GET /snapshots
     def index
@@ -33,6 +33,16 @@ module BlockStorage
       @snapshot.destroy
       redirect_to snapshots_url, notice: 'Snapshot was successfully deleted.'
     end
+
+    def create_volume
+      @volume = services.block_storage_.new_volume
+      @volume.name = "vol-" + @snapshot.name
+      @volume.description = @snapshot.description
+      @volume.size = @snapshot.size
+      @volume.snapshot_id = @snapshot.id
+      render 'block_storage/volumes/new.html'
+    end
+
 
     private
     # Use callbacks to share common setup or constraints between actions.

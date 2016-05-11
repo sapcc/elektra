@@ -58,7 +58,8 @@ module Compute
 
       if @instance.save
         flash[:notice] = "Instance successfully created."
-        redirect_to instances_path
+        @instance = services.compute.find_server(@instance.id)
+        render template: 'compute/instances/create.js'
       else
         @flavors = services.compute.flavors
         @images = services.image.images
