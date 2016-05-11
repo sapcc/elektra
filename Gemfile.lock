@@ -1,6 +1,6 @@
 GIT
   remote: git://localhost/***REMOVED***/fog-openstack-monitoring.git
-  revision: e4d014f51f0188957c29cd3ad8f1c9b59749092b
+  revision: 87dd295ad8b156b359d4f077a030ed4a6af3eee4
   branch: based-on-old-fog-gem
   specs:
     fog-openstack-monitoring (0.0.6)
