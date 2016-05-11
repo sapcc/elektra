@@ -40,6 +40,10 @@ module ServiceLayer
       id.blank? ? nil : driver.map_to(Monitoring::AlarmDefinition).get_alarm_definition(id)
     end
 
+    def get_alarm(id)
+      id.blank? ? nil : driver.map_to(Monitoring::Alarm).get_alarm(id)
+    end
+
     def get_notification_method(id)
       id.blank? ? nil : driver.map_to(Monitoring::NotificationMethod).get_notification_method(id)
     end

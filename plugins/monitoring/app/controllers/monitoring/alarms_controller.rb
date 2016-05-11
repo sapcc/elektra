@@ -16,5 +16,12 @@ module Monitoring
       @alarms_count = all_alarms.length
       @alarms = Kaminari.paginate_array(all_alarms).page(params[:page]).per(10)
     end
+
+    def show
+      @alarm = services.monitoring.get_alarm(params.require(:id))
+      @alarm_name = params[:name] || ''
+      raise ActiveRecord::RecordNotFound, "alarm with id #{params[:id]} not found" unless @alarm
+    end
+
   end
 end

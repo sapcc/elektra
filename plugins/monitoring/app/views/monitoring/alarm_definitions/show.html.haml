@@ -40,9 +40,5 @@
       %strong Undetermined Actions:
     .col-md-9.details-value= @alarm_definition.undetermined_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',') 
   
-
-
-    -# TODO: howto render the ok, alarm and undetermined actions? because I have only the notification IDs
-
 .buttons{class: modal? ? 'modal-footer' : ''} 
   %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close

@@ -1,0 +1,53 @@
+= content_for :title do
+  Show details for alarm #{@alarm_name}
+
+%div{class: modal? ? 'modal-body' : ''}
+  .row
+    .col-md-3.details-label
+      %strong Status:
+    .col-md-9.details-value= @alarm.state
+  .row
+    .col-md-3.details-label
+      %strong Severity:
+    .col-md-9.details-value= @alarm.severity
+  .row
+    .col-md-3.details-label
+      %strong Created:
+    .col-md-9.details-value= @alarm.created_timestamp
+  .row
+    .col-md-3.details-label
+      %strong Updated:
+    .col-md-9.details-value= @alarm.updated_timestamp
+  .row
+    .col-md-3.details-label
+      %strong State Updated:
+    .col-md-9.details-value= @alarm.state_updated_timestamp
+  %hr
+  .row
+    .col-md-3.details-label
+      %strong Metrics:
+    .col-md-9.details-value
+      - @alarm.metrics.each do |metric|
+        .row
+          .col-md-2=metric["name"]
+          .col-md-1=icon 'arrow-right'
+          .col-md-8
+            - metric["dimensions"].each do |key, value|
+              .row
+                .col-md-3= key
+                .col-md-1=icon 'arrow-right'
+                .col-md-8=value
+
+
+        
+
+
+
+
+
+
+
+
+
+.buttons{class: modal? ? 'modal-footer' : ''} 
+  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close

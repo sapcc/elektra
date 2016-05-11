@@ -33,6 +33,13 @@ module Monitoring
         end
       end
 
+      def get_alarm(id)
+        handle_response do
+          # TODO: remove options?
+          @fog.get_alarm(id,{}).body
+        end
+      end
+
       def get_alarm_definition(id)
         handle_response do
           @fog.get_alarm_definition(id).body
