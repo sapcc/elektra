@@ -1,14 +1,10 @@
 = content_for :main_toolbar do 
   Monitoring
-= render partial: '/monitoring/application/tabs', locals: { tab: 'alarms' }
+= render partial: '/monitoring/application/tabs', locals: { tab: 'alarms', count: @alarms_count }
 
 %p{style: 'margin:20px'}
 .toolbar
-  .row
-    .col-md-2
-      .headline Alarms (#{@alarms.length})
-    .col-md-10
-      = render partial: 'filter'
+  = render partial: 'filter'
       
 #alarms_list
   = render partial: 'list'

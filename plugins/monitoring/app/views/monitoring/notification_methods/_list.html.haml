@@ -13,4 +13,4 @@
       - @notification_methods.each do |notification_method|
         = render partial: 'list_row', locals: { notification_method: notification_method }
 
-= paginate @notification_methods, :theme => 'twitter-bootstrap-3', :remote => true
+= paginate @notification_methods, :theme => 'twitter-bootstrap-3', :remote => false
