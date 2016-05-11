@@ -1,1 +1,2 @@
-$('#definitions_list').html("<%= escape_javascript(render partial: 'list') %>")
+$('#count').html("Alarms (<%= @alarm_definitions_count %>)");
+$('#definitions_list').html("<%= escape_javascript(render partial: 'list') %>");
