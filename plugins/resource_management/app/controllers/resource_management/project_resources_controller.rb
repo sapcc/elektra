@@ -50,11 +50,10 @@ module ResourceManagement
       # now we can create the inquiry
       base_url    = plugin('resource_management').admin_area_path(area: @project_resource.config.service.area.to_s, domain_id: @scoped_domain_id, project_id: nil)
       overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
-      domain_name = services.identity.find_domain(@scoped_domain_id).name
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota',
-        "#{@project_resource.service}/#{@project_resource.name} for domain #{domain_name}: add #{@project_resource.data_type.format(new_value - old_value)}",
+        "#{@project_resource.service}/#{@project_resource.name} for domain #{@scoped_domain_name}: add #{@project_resource.data_type.format(new_value - old_value)}",
         current_user,
         {
           resource_id: @project_resource.id,
