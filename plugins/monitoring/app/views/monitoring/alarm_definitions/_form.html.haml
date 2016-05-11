@@ -8,7 +8,7 @@
 
 = f.input :expression, 
     placeholder: 'Enter Expression', 
-    icon_hint: "If the expressions is true, and the alarm actions are enabled and configured a notification will be sent. See #{link_to 'Description', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} how to write a expression"
+    icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression."
 
 - severity = @alarm_definition.severity || 'LOW'
 = f.input :severity, 
@@ -17,7 +17,7 @@
     icon_hint: 'Defines the severity level for the alarm'
 
 = f.input :match_by, 
-    icon_hint: 'Comma seperated list of dimensions, A separate Alarm will be created for every single dimension value'
+    icon_hint: 'Comma-separated list of dimensions, A separate alarm will be created for every single dimension value.'
 
 .row
   .col-md-8.col-md-offset-3
@@ -27,19 +27,19 @@
           label: 'OK',collection: @notification_methods.map{|s| [s.name, s.id]}, 
           input_html: { multiple: true, size: 3 }, 
           include_hidden: false, 
-          icon_hint: 'Notification will be send if alarm turns to status OK'
+          icon_hint: 'Notification will be sent if alarm turns to status OK'
       = f.input :alarm_actions, 
           label: 'Alarm',
           collection: @notification_methods.map{|s| [s.name, s.id]}, 
           input_html: { multiple: true, size: 3 }, 
           include_hidden: false, 
-          icon_hint: 'Notification will be send if alarm turns to status Alarm'
+          icon_hint: 'Notification will be sent if alarm turns to status Alarm'
       = f.input :undetermined_actions, 
           label: 'Undetermined',
           collection: @notification_methods.map{|s| [s.name, s.id]}, 
           input_html: { multiple: true, size: 3 }, 
           include_hidden: false, 
-          icon_hint: 'Notification will be send if alarm turns to status Undetermined'
+          icon_hint: 'Notification will be sent if alarm turns to status Undetermined'
 
 = content_for :javascripts do
   :javascript
