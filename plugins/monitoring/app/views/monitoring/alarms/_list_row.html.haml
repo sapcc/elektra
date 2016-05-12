@@ -1,6 +1,6 @@
 %tr
-  %td= render partial: '/monitoring/application/state', locals: { state: alarm.state }
-  %td= render partial: '/monitoring/application/severity', locals: { severity: alarm.severity }
+  %td= show_state(alarm.state)
+  %td= show_severity(alarm.severity)
   %td= @alarm_definitions[alarm.alarm_definition_id].name
   %td= @alarm_definitions[alarm.alarm_definition_id].description
   %td= alarm.state_updated_timestamp
