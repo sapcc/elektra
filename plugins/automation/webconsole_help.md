@@ -8,9 +8,6 @@
 Show help
 
 ### Most Used Commands
-`lyra authenticate --identity-endpoint={endpoint} --username={name} --user-domain-name={name} --project-name={name} --project-domain-name={name}}`
-Get an authentication token and automation and arc endpoints
-
 `lyra automation list`
 Get all available automations
 
