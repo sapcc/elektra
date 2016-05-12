@@ -21,15 +21,16 @@ module Monitoring
     end
 
     def search
-       search = params[:search]
-       searched_notification_methods = services.monitoring.notification_methods(search)
-       @notification_methods_count = searched_notification_methods.length
-       @notification_methods = Kaminari.paginate_array(searched_notification_methods).page(params[:page]).per(10)
-       respond_to do |format|
-         format.js do
-           render action: 'search_results'
-         end
-       end
+      # TODO: use queries here 
+      search = params[:search]
+      searched_notification_methods = services.monitoring.notification_methods(search)
+      @notification_methods_count = searched_notification_methods.length
+      @notification_methods = Kaminari.paginate_array(searched_notification_methods).page(params[:page]).per(10)
+      respond_to do |format|
+        format.js do
+          render action: 'search_results'
+        end
+      end
     end
 
     def create
