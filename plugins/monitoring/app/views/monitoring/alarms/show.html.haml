@@ -29,9 +29,9 @@
     .col-md-9.details-value
       - @alarm.metrics.each do |metric|
         .row
-          .col-md-2=metric["name"]
+          .col-md-3=metric["name"]
           .col-md-1=icon 'arrow-right'
-          .col-md-8
+          .col-md-7
             - metric["dimensions"].each do |key, value|
               .row
                 .col-md-3= key

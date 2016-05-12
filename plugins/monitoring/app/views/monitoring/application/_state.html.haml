@@ -1,7 +1,7 @@
 %strong
   - if state == 'OK'
     .text-success= state.capitalize
-  - elsif state == 'UNDERDETERMINED'
+  - elsif state == 'UNDETERMINED'
     .text-warning= state.capitalize
   - elsif state == 'ALARM'
     .text-danger= state.capitalize
