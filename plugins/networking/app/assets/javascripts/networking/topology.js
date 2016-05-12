@@ -1,55 +1,45 @@
-
 networking.topology = function(container, data) {
   var w = Math.max($(container).innerWidth(), 900),
   h = Math.max($(container).innerHeight(), 500);
     
   console.log("width",w,"height",h);
 
-  var focus_node = null,
-    highlight_node = null;
+  var focusNode = null,
+    highlightNode = null;
 
-  var text_center = false;
-  var outline = false;
-
-  var min_score = 0;
+  var minScore = 0;
   var max_score = 1;
 
   var color = d3.scale.linear()
-    .domain([min_score, (min_score + max_score) / 2, max_score])
+    .domain([minScore, (minScore + max_score) / 2, max_score])
     .range(["lime", "yellow", "red"]);
 
-  var highlight_color = "blue";
-  var highlight_trans = 0.4;
+  var highlightColor = "blue";
 
   var size = d3.scale.pow().exponent(1)
     .domain([1, 100])
     .range([8, 24]);
 
   var force = d3.layout.force()
-    .linkDistance(60)
+    .linkDistance(80)
     .charge(-300)
     .size([w, h]);
 
-  var default_node_color = "#ccc";
-  //var default_node_color = "rgb(3,190,100)";
-  var default_link_color = "#888";
-  var nominal_base_node_size = 8;
-  var nominal_text_size = 10;
-  var max_text_size = 24;
-  var nominal_stroke = 1.5;
-  var max_stroke = 4.5;
-  var max_base_node_size = 36;
-  var min_zoom = 0.1;
-  var max_zoom = 7;
+  var nominalBaseNodeSize = 8;
+  var nominalTextSize = 10;
+  var maxTextSize = 24;
+  var nominalStroke = 1.5;
+  var maxStroke = 4.5;
+  var maxBaseNodeSize = 36;
+  var minZoom = 0.1;
+  var maxZoom = 7;
   var svg = d3.select(container).append("svg").attr("width", w).attr("height", h);
-  var zoom = d3.behavior.zoom().scaleExtent([min_zoom, max_zoom])
+  var zoom = d3.behavior.zoom().scaleExtent([minZoom, maxZoom])
   var g = svg.append("g");
   svg.style("cursor", "move");
-
   
   var nodes = flatten(data),
       links = d3.layout.tree().links(nodes);
-  
 
   var linkedByIndex = {};
   links.forEach(function(d) {
@@ -67,6 +57,30 @@ networking.topology = function(container, data) {
     }
     return false;
   }
+  
+  function getLook(node){
+    switch(node.type){
+    case 'router':
+      return 'square';
+    default: 
+      return 'circle';    
+    }
+  } 
+  
+  function getSize(node){
+    switch(node.type){
+    case 'router':
+      return 14;
+    case 'gateway':
+      return 12;  
+    case 'network':
+      return 10;
+    case 'server':
+      return 8;    
+    default: 
+      return 8;    
+    }
+  }
 
   force
     .nodes(nodes)
@@ -77,166 +91,114 @@ networking.topology = function(container, data) {
     .data(links)
     .enter().append("line")
     .attr("class", "link")
-    .style("stroke-width", nominal_stroke);
+    .style("stroke-width", nominalStroke);
 
 
   var node = g.selectAll(".node")
     .data(nodes)
     .enter().append("g")
-    .attr("class", "node")
+    .attr("class", function(d,i){ return "node " + d.type;})
     .call(force.drag)
 
 
   var tocolor = "fill";
   var towhite = "stroke";
-  if (outline) {
-    tocolor = "stroke"
-    towhite = "fill"
-  }
 
-
-  // var circle = node.append('text')
-  //   .attr('font-family', 'FontAwesome')
-  //   .attr('font-size', function(d) { return d.size+'em'} )
-  //   .text(function(d) { return '\f0c2' });
   
   var circle = node.append("path")
     .attr("d", d3.svg.symbol()
-    .size(function(d) {
-      return Math.PI * Math.pow(size(d.size) || nominal_base_node_size, 2);
-    })
-    .type(function(d) {
-      return d.type;
-    }))
-    .style(tocolor, function(d) {
-      if (isNumber(d.score) && d.score >= 0) return color(d.score);
-      else return default_node_color;
-    })
-    //.attr("r", function(d) { return size(d.size)||nominal_base_node_size; })
-    .style("stroke-width", nominal_stroke)
-    .style(towhite, "white");
-
+    .size(function(d){ return Math.PI * Math.pow(getSize(d) , 2)})
+    .type(getLook))
 
   var text = g.selectAll(".text")
     .data(nodes)
     .enter().append("text")
-    .attr("dy", ".35em")
-    .style("font-size", nominal_text_size + "px")
-
-  if (text_center)
-    text.text(function(d) {
-      return d.name;
+    .text(function(node){ return node.name;})
+    .attr("class", function(node){return node.type;})
+    .attr("dx", function(d) {
+      return (getSize(d)+3);
     })
-      .style("text-anchor", "middle");
-  else
-    text.attr("dx", function(d) {
-      return (size(d.size) || nominal_base_node_size);
-    })
-      .text(function(d) {
-        return '\u2002' + d.name;
-      });
 
   node.on("mouseover", function(d) {
-    set_highlight(d);
+    setHighlight(d);
   })
   .on("mousedown", function(d) {
     d3.event.stopPropagation();
-    focus_node = d;
-    set_focus(d)
-    if (highlight_node === null) set_highlight(d)
+    focusNode = d;
+    setFocus(d)
+    if (highlightNode === null) setHighlight(d)
   }).on("mouseout", function(d) {
-    exit_highlight();
+    exitHighlight();
   });
 
   d3.select(window).on("mouseup", function() {
-    if (focus_node !== null) {
-      focus_node = null;
-      if (highlight_trans < 1) {
-        circle.style("opacity", 1);
-        text.style("opacity", 1);
-        link.style("opacity", 1);
-      }
+    if (focusNode !== null) {
+      focusNode = null;
+      circle.style("opacity", 1);
+      text.style("opacity", 1);
+      link.style("opacity", 1);
     }
 
-    if (highlight_node === null) exit_highlight();
+    if (highlightNode === null) exitHighlight();
   });
 
-  function exit_highlight() {
-    highlight_node = null;
-    if (focus_node === null) {
+  function exitHighlight() {
+    highlightNode = null;
+    if (focusNode === null) {
       svg.style("cursor", "move");
-      if (highlight_color != "white") {
-        circle.style(towhite, "white");
-        text.style("font-weight", "normal");
-        link.style("stroke", function(o) {
-          return (isNumber(o.score) && o.score >= 0) ? color(o.score) : default_link_color
-        });
-      }
-
+      text.style("font-weight", "normal");
     }
   }
 
-  function set_focus(d) {
-    if (highlight_trans < 1) {
-      circle.style("opacity", function(o) {
-        return isConnected(d, o) ? 1 : highlight_trans;
-      });
+  function setFocus(d) {
+    circle.style("opacity", function(o) {
+      return isConnected(d, o) ? 1 : 0.4;
+    });
 
-      text.style("opacity", function(o) {
-        return isConnected(d, o) ? 1 : highlight_trans;
-      });
+    text.style("opacity", function(o) {
+      return isConnected(d, o) ? 1 : 0.4;
+    });
 
-      link.style("opacity", function(o) {
-        return o.source.index == d.index || o.target.index == d.index ? 1 : highlight_trans;
-      });
-    }
+    link.style("opacity", function(o) {
+      return o.source.index == d.index || o.target.index == d.index ? 1 : 0.4;
+    });
   }
 
 
-  function set_highlight(d) {
+  function setHighlight(d) {
     svg.style("cursor", "pointer");
-    if (focus_node !== null) d = focus_node;
-    highlight_node = d;
+    if (focusNode !== null) d = focusNode;
+    highlightNode = d;
 
-    if (highlight_color != "white") {
-      circle.style(towhite, function(o) {
-        return isConnected(d, o) ? highlight_color : "white";
-      });
-      text.style("font-weight", function(o) {
-        return isConnected(d, o) ? "bold" : "normal";
-      });
-      link.style("stroke", function(o) {
-        return o.source.index == d.index || o.target.index == d.index ? highlight_color : ((isNumber(o.score) && o.score >= 0) ? color(o.score) : default_link_color);
-
-      });
-    }
+    text.style("font-weight", function(o) {
+      return isConnected(d, o) ? "bold" : "normal";
+    });
   }
 
 
   zoom.on("zoom", function() {
 
-    var stroke = nominal_stroke;
-    if (nominal_stroke * zoom.scale() > max_stroke) stroke = max_stroke / zoom.scale();
+    var stroke = nominalStroke;
+    if (nominalStroke * zoom.scale() > maxStroke) stroke = maxStroke / zoom.scale();
     link.style("stroke-width", stroke);
     circle.style("stroke-width", stroke);
 
-    var base_radius = nominal_base_node_size;
-    if (nominal_base_node_size * zoom.scale() > max_base_node_size) base_radius = max_base_node_size / zoom.scale();
+    var base_radius = nominalBaseNodeSize;
+    if (nominalBaseNodeSize * zoom.scale() > maxBaseNodeSize) base_radius = maxBaseNodeSize / zoom.scale();
+    
     circle.attr("d", d3.svg.symbol()
       .size(function(d) {
-        return Math.PI * Math.pow(size(d.size) * base_radius / nominal_base_node_size || base_radius, 2);
+        return Math.PI * Math.pow(getSize(d) * base_radius / nominalBaseNodeSize || base_radius, 2);
       })
-      .type(function(d) {
-        return d.type;
-      }))
+      .type(getLook)
+    )
 
-    //circle.attr("r", function(d) { return (size(d.size)*base_radius/nominal_base_node_size||base_radius); })
-    if (!text_center) text.attr("dx", function(d) {
-      return (size(d.size) * base_radius / nominal_base_node_size || base_radius);
+    text.attr("dx", function(d) {
+      return ( (getSize(d) +3)* base_radius / nominalBaseNodeSize || base_radius);
     });
 
-    var text_size = nominal_text_size;
-    if (nominal_text_size * zoom.scale() > max_text_size) text_size = max_text_size / zoom.scale();
+    var text_size = nominalTextSize;
+    if (nominalTextSize * zoom.scale() > maxTextSize) text_size = maxTextSize / zoom.scale();
     text.style("font-size", text_size + "px");
 
     g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -244,9 +206,9 @@ networking.topology = function(container, data) {
 
   svg.call(zoom);
 
-  //resize();
+  resize();
   //window.focus();
-  //d3.select(window).on("resize", resize);
+  d3.select(window).on("resize", resize);
 
   force.on("tick", function() {
 
@@ -279,8 +241,9 @@ networking.topology = function(container, data) {
   });
 
   function resize() {
-    var width = window.innerWidth,
-      height = window.innerHeight;
+    var width = Math.max($(container).innerWidth(), 900),
+    height = Math.max($(container).innerHeight(), 500);
+
     svg.attr("width", width).attr("height", height);
 
     force.size([force.size()[0] + (width - w) / zoom.scale(), force.size()[1] + (height - h) / zoom.scale()]).resume();
