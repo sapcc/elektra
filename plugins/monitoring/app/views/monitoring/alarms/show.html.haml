@@ -25,8 +25,9 @@
   %hr
   .row
     .col-md-3.details-label
-      %strong Metrics:
-    .col-md-9.details-value
+      %input{type: 'checkbox', id:'show_metrics'} 
+      Show Metrics:
+    .col-md-9.details-value{id:'metrics'}
       - @alarm.metrics.each do |metric|
         .row
           .col-md-3=metric["name"]
@@ -38,7 +39,14 @@
                 .col-md-1=icon 'arrow-right'
                 .col-md-8=value
 
-
+= content_for :javascripts do
+  :javascript
+    $(function() {
+      $('#metrics').toggle($('#show_metrics').is(':checked'))
+      $('#show_metrics').change(function(){
+         $('#metrics').toggle('fast');
+      });
+    });
         
 
 
