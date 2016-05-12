@@ -8,7 +8,7 @@
       .col-sm-2.col-sm-offset-9
         %input.form-control.string#alarm_definition_search{type:"text", placeholder:"Search"}
     - else
-      .col-sm-2.col-sm-offset-9
+      .col-sm-2.col-sm-offset-10
         %input.form-control.string#alarm_definition_search{type:"text", placeholder:"Search"}
     - if current_user.is_allowed?("monitoring:alarm_definition_create")  
       .col-sm-1

@@ -24,7 +24,12 @@ Filter by:
     %li.divider{ role: 'separator' }
     %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","All")'
 
+%span{style:"margin-left:5px; display:none", id:"loading"}= icon('spinner', class: 'fa-pulse')
+
 :javascript
+
+  $(function(){ set_filter('Status','Alarm') });
+
   function set_filter(TYPE,VALUE) {
     $("#"+TYPE.toLowerCase()+"_filter").text(TYPE+":"+VALUE);
     $("#"+TYPE.toLowerCase()+"_filter").data('filter',VALUE);
@@ -32,15 +37,16 @@ Filter by:
   }
 
   function apply_filter() {
-    $('#alarms_list').html('<div class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom" style="margin:10px"></div>');
     alarm_severity = $('#severity_filter').data('filter') || 'All'
     alarm_status = $('#status_filter').data('filter') || 'All'
     $.ajax({ 
       url: "#{plugin('monitoring').filter_alarms_path()}",
       data: { 
         severity: alarm_severity, 
-        state: alarm_status 
+        state: alarm_status
       },
+      beforeSend: function() { $('#loading').show() },
+      complete: function() { $('#loading').hide() },
       dataType: 'script'
     });
   }
