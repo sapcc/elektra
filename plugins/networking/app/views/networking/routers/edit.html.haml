@@ -1,18 +1,29 @@
-= simple_form_for @network, url: network_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid, id:@network.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
+- wrapper = @router.errors.present? ? :horizontal_form_disabled : :horizontal_form
+= simple_form_for @router, url: plugin('networking').router_path(@router.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: wrapper do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @network.errors["message"].blank?
-      %p.alert.alert-error= @network.errors.full_messages.to_sentence
+    - if @router.errors.present?
+      %p.alert.alert-error
+        = @router.errors.full_messages.to_sentence + '.'
 
-    %fieldset
-      = f.input :name, { label: "Network Name" }
-      = f.input :admin_state_up, { label: "Admin State",
-        as:         :select,
-        collection: [["UP",true],["DOWN",false]] }
+    = f.input :name
+    = f.input :external_gateway_info, {input_html: {value: @external_network.name, disabled:true}}
+    = f.input :admin_state_up, {label: 'Admin State',
+      as:                 :select,
+      collection:         [['UP', 'true'],['DOWN', 'false']]}
+
+    = f.input :internal_subnets, {label: "Internal Networks",
+      input_html:         {multiple: true}, 
+      include_blank:      true,
+      as:                 :select,
+      collection:         @internal_subnets,
+      selected:           @selected_internal_subnet_ids,
+      required:           true}    
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
       = link_to "Cancel", instances_url(), class: 'btn btn-default'
-    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save
+    = button_tag "Update", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+

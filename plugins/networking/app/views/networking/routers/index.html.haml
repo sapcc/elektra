@@ -1,19 +1,46 @@
+<script src="//d3js.org/d3.v3.min.js"></script>
 - if @scoped_project_id
   - if current_user.is_allowed?("networking:router_create", {router: {user_id: current_user.id} })
     .toolbar
       = link_to 'Create new', plugin('networking').new_router_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
+      
   %table.table
     %thead
       %tr
-        %th Data
+        %th Name
+        %th Status
+        %th External Network
+        %th External IPs
+        %th.snug
     %tbody
       - if @routers.length==0
         %tr
-          %td{colspa: 5} No router available
+          %td{colspa: 5} No routers available.
       - else
         - @routers.each do | router |
-          %tr
-            %td= router.attributes
+          %tr{id: "router_#{router.id}"}
+            %td= link_to router.name, plugin('networking').router_path(router.id), data: {modal: true}
+            %td= router.status
+            %td= router.external_gateway_info["network_id"]
+            %td= router.external_gateway_info["external_fixed_ips"].collect{|ip| ip["ip_address"]}.join(", ")
+            %td.snug
+              .btn-group
+                %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+                  %span.fa.fa-cog
+                  -# %span.spinner
+        
+                %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+                  - if current_user.is_allowed?("networking:router_get")
+                    %li= link_to 'Show', plugin('networking').router_path(id: router.id), data: { modal: true}
+                    / %li= link_to 'Topology', plugin('networking').router_topology_path(router_id: router.id), data: { modal: true }
+            
+                  - if current_user.is_allowed?("networking:router_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+                    %li.divider
+                    %li= link_to 'Edit', plugin('networking').edit_router_path(id: router.id), data: { modal: true }  
+                  - if current_user.is_allowed?("networking:router_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+                    %li= link_to 'Delete', plugin('networking').router_path(id: router.id), method: :delete, data: { confirm: 'Are you sure you want to delete this router?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+            
+                      
 - else
   = render "application/projects_list"

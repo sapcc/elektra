@@ -14,5 +14,10 @@
   "networking:network_list": "role:admin or role:Member or role:member",
   "networking:network_create": "role:admin",
   "networking:network_update": "role:admin",
-  "networking:network_delete": "role:admin"
+  "networking:network_delete": "role:admin",
+  
+  "networking:router_create": "role:admin",
+  "networking:router_update": "role:admin",
+  "networking:router_get":    "role:admin or role:Member or role:member",
+  "networking:router_delete": "role:admin"
 }

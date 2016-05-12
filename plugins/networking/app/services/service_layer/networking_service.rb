@@ -16,13 +16,13 @@ module ServiceLayer
     end
 
     def networks(filter={})
-      driver..map_to(Networking::Network).networks(filter)
+      driver.map_to(Networking::Network).networks(filter)
     end
 
     def project_networks(project_id)
       result = []
       driver.networks.each do |n|
-        if n['router:external'] == false && (n['shared'] == true || n['tenant_id'] == project_id)
+        if n['shared'] == true || n['tenant_id'] == project_id
           result << Networking::Network.new(driver, n)
         end
       end
@@ -45,12 +45,12 @@ module ServiceLayer
       end
     end
 
-    def subnets(network_id)
-      driver.map_to(Networking::Subnet).subnets(network_id)
+    def subnets(filter)
+      driver.map_to(Networking::Subnet).subnets(filter)
     end
 
-    def ports(network_id)
-      driver.map_to(Networking::Port).ports(network_id)
+    def ports(filter={})
+      driver.map_to(Networking::Port).ports(filter)
     end
 
     def project_floating_ips(project_id)
@@ -80,6 +80,22 @@ module ServiceLayer
     
     def find_router(id)
       driver.map_to(Networking::Router).get_router(id)
+    end
+    
+    def new_router(params={})
+      Networking::Router.new(driver,params)
+    end
+    
+    def add_router_interfaces(router_id,interface_ids)
+      interface_ids.each do |interface_id|
+        driver.add_router_interface(router_id, interface_id)
+      end
+    end
+    
+    def remove_router_interfaces(router_id, interface_ids,options={})
+      interface_ids.each do |interface_id|
+        driver.remove_router_interface(router_id, interface_id,options)
+      end
     end
     
     ####################### PORTS #############################

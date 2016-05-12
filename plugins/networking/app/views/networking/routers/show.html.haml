@@ -4,84 +4,77 @@
 .modal-body
   %ul.nav.nav-tabs
     %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}
-      = link_to '#subnets', aria: {controls:"subnets"}, role: "tab", data: {toggle:"tab"} do
-        Subnets
-        %span.badge= @subnets.length
+    %li{role: "presentation"}= link_to 'External Network', '#external_network', aria: {controls:"external_network"}, role: "tab", data: {toggle:"tab"} 
 
     %li{role: "presentation"}
-      = link_to '#ports', aria: {controls:"ports"}, role: "tab", data: {toggle:"tab"} do
-        Ports
-        %span.badge= @ports.length
-
+      = link_to '#internal_networks', aria: {controls:"internal_networks"}, role: "tab", data: {toggle:"tab"} do
+        Internal Networks
+        %span.badge= @router_interface_ports.length
+  
   .tab-content
     .tab-pane.active{role:"tabpanel", id:"overview"}
       %table.table.datatable
         %tbody
           %tr
             %th Name
-            %td= @network.name
+            %td= @router.name
           %tr
             %th ID
-            %td= @network.id
+            %td= @router.id
+          %tr
+            %th Project ID
+            %td= @router.tenant_id  
           %tr
             %th Status
-            %td= @network.status
+            %td= @router.status
           %tr
             %th Admin State
-            %td= @network.admin_state_up ? 'UP' : 'DOWN'
-          %tr
-            %th Shared
-            %td= @network.shared ? 'Yes' : 'No'
-          %tr
-            %th External Network
-            %td= @network.external ? 'Yes' : 'No'
-          %tr
-            %th Provider Network
-            %td
-              = "Network Type: #{@network.provider_network_type}"
-              - unless (phys_net = @network.provider_physical_network).blank?
-                %br
-                = "Physical Network: #{@network.phys_net}"
-              - unless (seg_id = @network.provider_segmentation_id).blank?
-                %br
-                = "Segmentation ID: #{seg_id}"
+            %td= @router.admin_state_up ? 'UP' : 'DOWN'
+        
 
-    .tab-pane{role:"tabpanel", id:"subnets"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Name
-            %th CIDR
-            %th Gateway IP
-            %th Actions
-          - @subnets.each do |subnet|
+    .tab-pane{role:"tabpanel", id:"external_network"}
+      - @router_gateway_ports.each do |port|
+        %table.table.datatable
+          %tbody
             %tr
-              %td= subnet.name
-              %td= subnet.cidr
-              %td= subnet.gateway_ip
-              %td
-
-    .tab-pane{role:"tabpanel", id:"ports"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th ID
-            %th Fixed IPs
-            %th Attached Device
-            %th Status
-            %th Admin State
-          - @ports.each do |port|
+              %th Network Name
+              %td= port.network_object.name
             %tr
-              %td= port.id
+              %th Network ID
+              %td= port.network_id
+            %tr
+              %th External Fixed IPs
               %td
-                - port.fixed_ips.each do |ip|
-                  = ip["ip_address"]
+                - (port.fixed_ips || []).each do |fixed_ip|
+                  = fixed_ip["ip_address"]
                   %br
-              %td= port.device_owner
-              %td= port.status
-              %td= port.admin_state_up ? 'UP' : 'DOWN'
+
+              
+                    
+    .tab-pane{role:"tabpanel", id:"internal_networks"}
+      %table.table.datatable
+        %thead
+          %tr
+            %th	Name	
+            %th Fixed IPs	
+            %th Status	
+            %th Type	
+            %th Admin State
+            
+        %tbody   
+          - @router_interface_ports.each do |port|
+            %tr
+              %td= port.network_object.name
               %td
+                - (port.fixed_ips || []).each do |fixed_ip|
+                  = fixed_ip["ip_address"]
+                  %br
+                  
+              %td= port.status
+              %td= port.device_owner
+              %td= port.admin_state_up ? 'UP' : 'DOWN'
+           
+              
 
 - if modal?
   .modal-footer

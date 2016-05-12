@@ -76,9 +76,9 @@ module Networking
       end
 
       ###################### SUBNETS #######################
-      def subnets(network_id)
+      def subnets(filter={})
         handle_response{
-          @fog.list_subnets(network_id: network_id).body['subnets']
+          @fog.list_subnets(filter).body['subnets']
         }
       end
 
@@ -123,11 +123,20 @@ module Networking
         handle_response { @fog.list_routers(filter).body['routers']}
       end
       
+      def add_router_interface(router_id, subnet_id_or_options)
+        handle_response { @fog.add_router_interface(router_id, subnet_id_or_options)}
+      end
+      
+      def remove_router_interface(router_id, subnet_id, options = {})
+        handle_response{ @fog.remove_router_interface(router_id, subnet_id, options)}
+      end
+      
       def get_router(router_id)
         handle_response { @fog.get_router(router_id).body['router']}
       end
       
-      def create_router(name,params)
+      def create_router(params)
+        name = params.delete("name")
         handle_response { @fog.create_router(name, params).body['router'] } 
       end
       

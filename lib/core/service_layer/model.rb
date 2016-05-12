@@ -179,7 +179,7 @@ module Core
       end
 
       def pretty_attributes
-        JSON.pretty_generate(@attributes)
+        JSON.pretty_generate(@attributes.merge(id: self.id))
       end
 
       def to_s

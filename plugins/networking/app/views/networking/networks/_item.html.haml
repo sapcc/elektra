@@ -9,6 +9,7 @@
       &nbsp;
       = subnet.cidr
   %td= network.shared
+  %td= network.attributes["router:external"]
   %td= network.status
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'
   

@@ -19,11 +19,11 @@ module Networking
     end
 
     def subnet_objects
-      @driver.map_to(::Networking::Subnet).subnets(id)
+     @subnet_objects ||=  @driver.map_to(::Networking::Subnet).subnets(network_id: self.id)
     end
 
     def port_objects
-      @driver.map_to(::Networking::Port).ports(id)
+      @port_objects ||= @driver.map_to(::Networking::Port).ports(network_id: self.id)
     end
   end
 end
