@@ -1,0 +1,39 @@
+//.overlay {
+//  fill: none;
+//  pointer-events: all;
+//}
+
+.node path {
+  fill: gray;
+}
+
+.node.router path {
+  fill: red;
+}
+
+.node.gateway path {
+  fill: blue;
+}
+  
+.node.network path{
+  fill: green;
+}
+.node.server path{
+  fill: lime;
+}
+.node circle {
+  cursor: pointer;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
+}
+
+g text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}

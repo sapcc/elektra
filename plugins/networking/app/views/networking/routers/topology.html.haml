@@ -3,61 +3,9 @@
 
 .modal-body
   #graph
-  :css
-    .overlay {
-      fill: none;
-      pointer-events: all;
-    }
-    .node circle {
-      cursor: pointer;
-      stroke: #3182bd;
-      stroke-width: 1.5px;
-    }
-
-    .node text {
-      font: 10px sans-serif;
-      pointer-events: none;
-      text-anchor: middle;
-    }
-
-    line.link {
-      fill: none;
-      stroke: #9ecae1;
-      stroke-width: 1.5px;
-    }
-
+  
   :javascript
-    networking.topology("#graph",#{@topology_graph.to_json});
-
-
-  /
-  / %table.table.datatable
-  /   %tbody
-  /     %tr
-  /       %th Router
-  /     %tr
-  /       %td
-  /         %pre= JSON.pretty_generate(@router.attributes)
-  /
-  / %table.table.datatable
-  /   %tbody
-  /     %tr
-  /       %th Gateway Ports
-  /     - @router_gateway_ports.each do |port|
-  /       %tr
-  /         %td
-  /           %pre= JSON.pretty_generate(port.attributes)
-  /
-  / %table.table.datatable
-  /   %tbody
-  /     %tr
-  /       %th Interface Ports
-  /     - @router_interface_ports.each do |port|
-  /       %tr
-  /         %td
-  /           %pre= JSON.pretty_generate(port.attributes)
-          
-                     
+    networking.topology("#graph",#{@topology_graph.to_json});                 
 
 - if modal?
   .modal-footer

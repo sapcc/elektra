@@ -78,6 +78,13 @@ describe Core::ServiceUser::Base do
       scoped_token: {domain: {name: scope_test_domain} }
     ).and_return(MonsoonOpenstackAuth::Authentication::AuthUser.new(service_user_test_token))
 
+    allow(MonsoonOpenstackAuth.api_client).to receive(:auth_user).with(
+      Rails.configuration.service_user_id,
+      Rails.configuration.service_user_password,
+      domain_name: Rails.configuration.service_user_domain_name,
+      scoped_token: {domain: {id: scope_test_domain} }
+    ).and_return(MonsoonOpenstackAuth::Authentication::AuthUser.new(service_user_test_token))
+    
     # stub driver and return a null object
     allow(Fog::Identity::OpenStack::V3).to receive(:new).and_return(double("service user driver").as_null_object)
     #allow(Core::ServiceUser::Driver).to receive(:new).and_return(service_user_driver)
