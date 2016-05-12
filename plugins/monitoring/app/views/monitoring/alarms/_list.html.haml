@@ -3,10 +3,16 @@
     %tr
       %th Status
       %th Severity
-      %th Definition
+      %th Name
+      %th Description
+      %th Last Status Change
       %th.snug
   %tbody
-    - if @alarms.empty?
+    - if @index
+      %tr
+        %td{colspan: 4} 
+          Loading...
+    - elsif @alarms.empty?
       %tr
         %td{colspan: 4} 
           No alarms found. Everything seems to be fine
@@ -15,4 +21,6 @@
       - @alarms.each do |alarm|
         = render partial: 'list_row', locals: { alarm: alarm }
 
-= paginate @alarms, :theme => 'twitter-bootstrap-3', :remote => true
+- if @alarms
+  = paginate @alarms, :theme => 'twitter-bootstrap-3', :remote => false
+

@@ -5,8 +5,9 @@ module Monitoring
     before_filter :load_notification_method, except: [ :index, :new, :create, :search ]
 
     def index
-      notification_methods = services.monitoring.notification_methods.sort_by(&:name)
-      @notification_methods = Kaminari.paginate_array(notification_methods).page(params[:page]).per(10)
+      all_notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+      @notification_methods_count = all_notification_methods.length
+      @notification_methods = Kaminari.paginate_array(all_notification_methods).page(params[:page]).per(10)
     end
 
     def new
@@ -20,14 +21,11 @@ module Monitoring
     end
 
     def search
-       search = params[:search]
-       notification_methods = services.monitoring.notification_methods(search)
-       @notification_methods = Kaminari.paginate_array(notification_methods).page(params[:page]).per(10)
-       respond_to do |format|
-         format.js do
-           render action: 'search_results'
-         end
-       end
+      # TODO: use queries here 
+      search = params[:search]
+      searched_notification_methods = services.monitoring.notification_methods(search)
+      @notification_methods_count = searched_notification_methods.length
+      @notification_methods = Kaminari.paginate_array(searched_notification_methods).page(params[:page]).per(10)
     end
 
     def create

@@ -5,19 +5,21 @@ module Monitoring
     before_filter :load_alarm_definition, except: [ :index, :new, :create, :search ] 
 
     def index
-      alarm_definitions = services.monitoring.alarm_definitions
-      @alarm_definitions = Kaminari.paginate_array(alarm_definitions).page(params[:page]).per(10)
+      all_alarm_definitions = services.monitoring.alarm_definitions
+      @alarm_definitions_count = all_alarm_definitions.length
+      @alarm_definitions = Kaminari.paginate_array(all_alarm_definitions).page(params[:page]).per(10)
     end
 
     def search
-       search = params[:search]
-       alarm_definitions = services.monitoring.alarm_definitions(search)
-       @alarm_definitions = Kaminari.paginate_array(alarm_definitions).page(params[:page]).per(10)
-       respond_to do |format|
-         format.js do
-           render action: 'search_results'
-         end
-       end
+      # TODO: use queries here
+      search = params[:search]
+      searched_alarm_definitions = services.monitoring.alarm_definitions(search)
+      @alarm_definitions_count = searched_alarm_definitions.length
+      @alarm_definitions = Kaminari.paginate_array(searched_alarm_definitions).page(params[:page]).per(10)
+      respond_to do |format|
+        format.js
+        format.html { render action: 'index' }
+      end
     end
 
     def show

@@ -10,7 +10,15 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def get_alarm(id)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
       def delete_alarm_definition(id)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
+      def delete_alarm(id)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
@@ -18,7 +26,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def alarms
+      def alarms(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

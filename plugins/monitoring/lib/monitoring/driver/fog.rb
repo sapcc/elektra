@@ -27,9 +27,16 @@ module Monitoring
         end
       end
 
-      def alarms
+      def alarms(options = {})
         handle_response do
-          @fog.list_alarms.body["elements"]
+          @fog.list_alarms(options).body["elements"]
+        end
+      end
+
+      def get_alarm(id)
+        handle_response do
+          # TODO: remove options?
+          @fog.get_alarm(id,{}).body
         end
       end
 
@@ -65,6 +72,8 @@ module Monitoring
 
       def update_alarm_definition(id, params={})
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
+        # TODO: if the alarm definition was created with no match_by it cannot be updated and hangs with message
+        #       "match_by must not change"
         request_params = {
           "name"        => params["name"],
           "description" => params["description"], 
@@ -72,7 +81,7 @@ module Monitoring
           "severity"    => params["severity"], 
           "match_by"    => params["match_by"],
         }
-        
+         
         if params['actions_enabled'] == '1' or params['actions_enabled'] == true
           request_params['actions_enabled'] = true
         else  
@@ -93,6 +102,12 @@ module Monitoring
         end
       end
 
+      def delete_alarm(id)
+        handle_response do
+          @fog.delete_alarm(id).body
+        end
+      end
+
       def notification_methods
         handle_response do
           @fog.list_notification_methods.body["elements"]
@@ -109,7 +124,11 @@ module Monitoring
       def create_alarm_definition(params={})
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-12
         # not allowed paramters are deleted here
+        if params["match_by"].empty?
+          params.delete("match_by")
+        end
         params.delete('actions_enabled')
+        
         handle_response do
           @fog.create_alarm_definition(params).body
         end

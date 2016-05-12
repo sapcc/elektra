@@ -1,6 +1,6 @@
 %tr
   %td= alarm_definition.name
-  %td= render partial: 'severity', locals: { alarm_definition:alarm_definition }
+  %td= show_severity(alarm_definition.severity)
   %td= alarm_definition.description
   %td
     %div{ id: "alarm_actions_#{alarm_definition.id}"}
