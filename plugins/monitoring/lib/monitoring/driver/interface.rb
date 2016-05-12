@@ -26,7 +26,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def alarms
+      def alarms(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

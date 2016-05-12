@@ -24,8 +24,8 @@ module ServiceLayer
       alarm_definitions
     end
 
-    def alarms
-      driver.map_to(Monitoring::Alarm).alarms
+    def alarms(options = {})
+      driver.map_to(Monitoring::Alarm).alarms(options)
     end
 
     def notification_methods(search = nil)

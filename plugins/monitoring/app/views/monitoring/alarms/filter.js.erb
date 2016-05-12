@@ -1,1 +1,2 @@
-<%=escape_javascript(render partial: 'list')%>
+$('#count').html("Alarms (<%= @alarms_count %>)");
+$('#alarms_list').html("<%=escape_javascript(render partial: 'list')%>")

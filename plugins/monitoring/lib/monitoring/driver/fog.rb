@@ -27,9 +27,9 @@ module Monitoring
         end
       end
 
-      def alarms
+      def alarms(options = {})
         handle_response do
-          @fog.list_alarms.body["elements"]
+          @fog.list_alarms(options).body["elements"]
         end
       end
 

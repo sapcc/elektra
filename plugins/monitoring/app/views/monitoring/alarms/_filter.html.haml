@@ -24,7 +24,6 @@ Filtered by:
     %li.divider{ role: 'separator' }
     %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","All")'
 
-
 :javascript
   function set_filter(TYPE,VALUE) {
     $("#"+TYPE.toLowerCase()+"_filter").text(TYPE+":"+VALUE);
@@ -33,12 +32,16 @@ Filtered by:
   }
 
   function apply_filter() {
-    $('#alarms_list').empty();
+    $('#alarms_list').html('<div class="fa fa-spinner fa-pulse fa-2x fa-fw margin-bottom" style="margin:10px"></div>');
     alarm_severity = $('#severity_filter').data('filter') || 'All'
-    alarm_status = $('#alarm_filter').data('filter') || 'All' 
-    $.get( "#{plugin('monitoring').filter_alarms_path()}", { severity: alarm_severity, status: alarm_status }, function(data) {
-      console.log('dasdasd');
-      $('#alarms_list').html(data);
+    alarm_status = $('#status_filter').data('filter') || 'All'
+    $.ajax({ 
+      url: "#{plugin('monitoring').filter_alarms_path()}",
+      data: { 
+        severity: alarm_severity, 
+        state: alarm_status 
+      },
+      dataType: 'script'
     });
   }
 

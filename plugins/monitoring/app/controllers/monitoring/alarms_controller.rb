@@ -12,8 +12,12 @@ module Monitoring
     end
 
     def filter
-      all_alarms = services.monitoring.alarms
+      state = params[:state]
+      severity = params[:severity]
+      all_alarms = services.monitoring.alarms( { state: state, severity: severity } )
       @alarms_count = all_alarms.length
+      alarm_definitions = services.monitoring.alarm_definitions
+      @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]
       @alarms = Kaminari.paginate_array(all_alarms).page(params[:page]).per(10)
     end
 
@@ -40,9 +44,6 @@ module Monitoring
         format.html { redirect_to plugin('monitoring').alarms_path() }
       end
     end
-
-    
-    
 
   end
 end
