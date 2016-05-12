@@ -14,7 +14,7 @@ module Monitoring
     def filter
       state = params[:state]
       severity = params[:severity]
-      all_alarms = services.monitoring.alarms( { state: state, severity: severity } )
+      all_alarms = services.monitoring.alarms(state: state, severity: severity)
       @alarms_count = all_alarms.length
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]
