@@ -4,7 +4,6 @@
 
 = f.input :description
 = f.input :expression, 
-    placeholder: 'Enter Expression', 
     icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression."
 
 - severity = @alarm_definition.severity || 'LOW'
