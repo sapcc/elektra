@@ -2,62 +2,79 @@
 /   Show
 
 .modal-body
-  #graph
-  :css
-    .overlay {
-      fill: none;
-      pointer-events: all;
-    }
-    .node circle {
-      cursor: pointer;
-      stroke: #3182bd;
-      stroke-width: 1.5px;
-    }
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'External Network', '#external_network', aria: {controls:"external_network"}, role: "tab", data: {toggle:"tab"} 
 
-    .node text {
-      font: 10px sans-serif;
-      pointer-events: none;
-      text-anchor: middle;
-    }
+    %li{role: "presentation"}
+      = link_to '#internal_networks', aria: {controls:"internal_networks"}, role: "tab", data: {toggle:"tab"} do
+        Internal Networks
+        %span.badge= @router_interface_ports.length
+  
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"overview"}
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Name
+            %td= @router.name
+          %tr
+            %th ID
+            %td= @router.id
+          %tr
+            %th Project ID
+            %td= @router.tenant_id  
+          %tr
+            %th Status
+            %td= @router.status
+          %tr
+            %th Admin State
+            %td= @router.admin_state_up ? 'UP' : 'DOWN'
+        
 
-    line.link {
-      fill: none;
-      stroke: #9ecae1;
-      stroke-width: 1.5px;
-    }
+    .tab-pane{role:"tabpanel", id:"external_network"}
+      - @router_gateway_ports.each do |port|
+        %table.table.datatable
+          %tbody
+            %tr
+              %th Network Name
+              %td= port.network_object.name
+            %tr
+              %th Network ID
+              %td= port.network_id
+            %tr
+              %th External Fixed IPs
+              %td
+                - (port.fixed_ips || []).each do |fixed_ip|
+                  = fixed_ip["ip_address"]
+                  %br
 
-  :javascript
-    networking.topology("#graph",#{@topology_graph.to_json});
-
-
-  /
-  / %table.table.datatable
-  /   %tbody
-  /     %tr
-  /       %th Router
-  /     %tr
-  /       %td
-  /         %pre= JSON.pretty_generate(@router.attributes)
-  /
-  / %table.table.datatable
-  /   %tbody
-  /     %tr
-  /       %th Gateway Ports
-  /     - @router_gateway_ports.each do |port|
-  /       %tr
-  /         %td
-  /           %pre= JSON.pretty_generate(port.attributes)
-  /
-  / %table.table.datatable
-  /   %tbody
-  /     %tr
-  /       %th Interface Ports
-  /     - @router_interface_ports.each do |port|
-  /       %tr
-  /         %td
-  /           %pre= JSON.pretty_generate(port.attributes)
-          
-                     
+              
+                    
+    .tab-pane{role:"tabpanel", id:"internal_networks"}
+      %table.table.datatable
+        %thead
+          %tr
+            %th	Name	
+            %th Fixed IPs	
+            %th Status	
+            %th Type	
+            %th Admin State
+            
+        %tbody   
+          - @router_interface_ports.each do |port|
+            %tr
+              %td= port.network_object.name
+              %td
+                - (port.fixed_ips || []).each do |fixed_ip|
+                  = fixed_ip["ip_address"]
+                  %br
+                  
+              %td= port.status
+              %td= port.device_owner
+              %td= port.admin_state_up ? 'UP' : 'DOWN'
+           
+              
 
 - if modal?
   .modal-footer
