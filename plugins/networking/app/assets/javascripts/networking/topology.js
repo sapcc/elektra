@@ -1,3 +1,4 @@
+
 networking.topology = function(container, data) {
   var w = Math.max($(container).innerWidth(), 900),
   h = Math.max($(container).innerHeight(), 500);
@@ -245,7 +246,7 @@ networking.topology = function(container, data) {
 
   //resize();
   //window.focus();
-  d3.select(window).on("resize", resize);
+  //d3.select(window).on("resize", resize);
 
   force.on("tick", function() {
 
