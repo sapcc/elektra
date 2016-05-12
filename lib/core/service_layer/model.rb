@@ -212,10 +212,8 @@ module Core
           created_attributes = @driver.send("create_#{@class_name}", create_attrs)
           self.attributes= created_attributes
         rescue => e
-          unless defined?(@driver.handle_api_errors?)
-            raise e
-          end
-          @driver.handle_api_errors?
+          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+
           error_names = api_error_name_mapping
 
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
@@ -239,10 +237,8 @@ module Core
           updated_attributes = @driver.send("update_#{@class_name}", id, update_attrs)
           self.attributes=updated_attributes if updated_attributes
         rescue => e
-          unless defined?(@driver.handle_api_errors?)
-            raise e
-          end
-          @driver.handle_api_errors?
+          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+
           error_names = api_error_name_mapping
 
           errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
