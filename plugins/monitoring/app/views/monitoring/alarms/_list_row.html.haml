@@ -13,5 +13,5 @@
         %li= link_to 'Show', plugin('monitoring').alarm_path(alarm.id, name: @alarm_definitions[alarm.alarm_definition_id].name) , data: { modal: true }
         %li= link_to 'Definition', plugin('monitoring').alarm_definition_path(alarm.alarm_definition_id) , data: { modal: true }
         -#%li= link_to 'History', '#', data: { modal: true }
-        %li= link_to 'Delete', '#', method: :delete, data: { confirm: "Are you sure?" }
+        %li= link_to 'Delete', plugin('monitoring').alarm_path(alarm.id), method: :delete, data: { confirm: "Are you sure?" }
 

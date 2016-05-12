@@ -23,5 +23,26 @@ module Monitoring
       raise ActiveRecord::RecordNotFound, "alarm with id #{params[:id]} not found" unless @alarm
     end
 
+    def destroy 
+      alarm = services.monitoring.get_alarm(params.require(:id))
+      alarm.destroy
+      back_to_alarm_list
+    end
+
+    private
+
+    def back_to_alarm_list
+      respond_to do |format|
+        format.js do
+          index
+          render action: 'reload_list'
+        end
+        format.html { redirect_to plugin('monitoring').alarms_path() }
+      end
+    end
+
+    
+    
+
   end
 end

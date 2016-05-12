@@ -100,6 +100,12 @@ module Monitoring
         end
       end
 
+      def delete_alarm(id)
+        handle_response do
+          @fog.delete_alarm(id).body
+        end
+      end
+
       def notification_methods
         handle_response do
           @fog.list_notification_methods.body["elements"]
