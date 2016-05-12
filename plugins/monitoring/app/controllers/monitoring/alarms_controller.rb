@@ -2,6 +2,8 @@ module Monitoring
   class AlarmsController < Monitoring::ApplicationController
     authorization_required
 
+    before_filter :load_alarm, except: [ :index, :filter ]
+
     def index
       all_alarms = services.monitoring.alarms
       @alarms_count = all_alarms.length
@@ -22,14 +24,10 @@ module Monitoring
     end
 
     def show
-      @alarm = services.monitoring.get_alarm(params.require(:id))
-      @alarm_name = params[:name] || ''
-      raise ActiveRecord::RecordNotFound, "alarm with id #{params[:id]} not found" unless @alarm
     end
 
-    def destroy 
-      alarm = services.monitoring.get_alarm(params.require(:id))
-      alarm.destroy
+    def destroy
+      @alarm.destroy
       back_to_alarm_list
     end
 
@@ -43,6 +41,12 @@ module Monitoring
         end
         format.html { redirect_to plugin('monitoring').alarms_path() }
       end
+    end
+
+    def load_alarm
+      @alarm = services.monitoring.get_alarm(params.require(:id))
+      @alarm_name = params[:name] || ''
+      raise ActiveRecord::RecordNotFound, "alarm with id #{params[:id]} not found" unless @alarm
     end
 
   end
