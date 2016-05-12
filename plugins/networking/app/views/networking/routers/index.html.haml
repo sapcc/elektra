@@ -1,4 +1,3 @@
-<script src="//d3js.org/d3.v3.min.js"></script>
 - if @scoped_project_id
   - if current_user.is_allowed?("networking:router_create", {router: {user_id: current_user.id} })
     .toolbar
@@ -33,7 +32,7 @@
                 %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
                   - if current_user.is_allowed?("networking:router_get")
                     %li= link_to 'Show', plugin('networking').router_path(id: router.id), data: { modal: true}
-                    / %li= link_to 'Topology', plugin('networking').router_topology_path(router_id: router.id), data: { modal: true }
+                    # %li= link_to 'Topology', plugin('networking').router_topology_path(router_id: router.id), data: { modal: true }
             
                   - if current_user.is_allowed?("networking:router_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
                     %li.divider

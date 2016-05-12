@@ -1,11 +1,4 @@
 GIT
-  remote: git://localhost/D064310/monsoon_openstack_client.git
-  revision: cd9e034c9b8b42c7418604818b771049106f149b
-  specs:
-    monsoon_openstack_client (0.0.1)
-      excon
-
-GIT
   remote: git://localhost/***REMOVED***/fog-openstack-monitoring.git
   revision: e4d014f51f0188957c29cd3ad8f1c9b59749092b
   branch: based-on-old-fog-gem
@@ -629,7 +622,6 @@ DEPENDENCIES
   loadbalancing!
   monitoring!
   monsoon-openstack-auth!
-  monsoon_openstack_client!
   net-ssh
   networking!
   object_storage!
