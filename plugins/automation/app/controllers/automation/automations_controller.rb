@@ -92,13 +92,15 @@ module Automation
     def destroy
       automation = services.automation.automation(params[:id])
       automation.destroy
-      automations()
+      automations(1)
+      runs_with_jobs(1)
       flash.now[:success] = "Automation #{automation.name} removed successfully."
       render action: "index"
     rescue Exception => e
       Rails.logger.error e
       flash.now[:error] = "Error removing automation."
-      automations()
+      automations(1)
+      runs_with_jobs(1)
       render action: "index"
     end
 
