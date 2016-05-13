@@ -18,7 +18,7 @@ module Networking
           services.networking.ports(network_id: port.network_id).each do |port| 
             if port.device_owner.start_with?('compute:')
               node[:children] ||= []
-              node[:children] << {name: 'Server', type: 'server'}
+              node[:children] << {name: '', type: 'server'}
             end
           end
           node
