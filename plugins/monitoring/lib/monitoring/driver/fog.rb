@@ -79,9 +79,15 @@ module Monitoring
           "description" => params["description"], 
           "expression"  => params["expression"], 
           "severity"    => params["severity"], 
-          "match_by"    => params["match_by"].split(','),
+          "match_by"    => params["match_by"],
         }
-         
+ 
+        # needed when update_attributes(attr) is used and no "match_by" was given
+        # then match_by is already set with the current value and do not need converted
+        unless request_params["match_by"].kind_of?(Array)
+          request_params["match_by"]=  params["match_by"].split(', ')
+        end
+
         if params['actions_enabled'] == '1' or params['actions_enabled'] == true
           request_params['actions_enabled'] = true
         else  
