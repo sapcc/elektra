@@ -105,19 +105,33 @@ networking.topology = function(container, data) {
   var towhite = "stroke";
 
   
-  var circle = node.append("path")
-    .attr("d", d3.svg.symbol()
-    .size(function(d){ return Math.PI * Math.pow(getSize(d) , 2)})
-    .type(getLook))
+  var circle = node.append("circle")
+    .attr("r",18)
+    .style("fill","white")
+  
+  node.append('text')
+    .style('font-family', 'FontAwesome')
+    .style('font-size', '20px')
+    .attr("dx", -9).attr("dy",8)
+    .text(function(d) {
+      switch(d.type) {
+      case 'network': 
+        return '\uf0c2';
+      case 'server':
+        return '\uf0a0'; 
+      case 'router':
+        return '\uf0e8'; 
+      case 'gateway':
+        return '\uf0ac';     
+      }
+    }); 
 
   var text = g.selectAll(".text")
     .data(nodes)
     .enter().append("text")
     .text(function(node){ return node.name;})
     .attr("class", function(node){return node.type;})
-    .attr("dx", function(d) {
-      return (getSize(d)+3);
-    })
+    .attr("dx", 20)
 
   node.on("mouseover", function(d) {
     setHighlight(d);
@@ -194,7 +208,7 @@ networking.topology = function(container, data) {
     )
 
     text.attr("dx", function(d) {
-      return ( (getSize(d) +3)* base_radius / nominalBaseNodeSize || base_radius);
+      return ( 20 * base_radius / nominalBaseNodeSize || base_radius);
     });
 
     var text_size = nominalTextSize;
