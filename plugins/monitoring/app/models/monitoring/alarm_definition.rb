@@ -22,5 +22,11 @@ module Monitoring
       [['Low','LOW'],['Medium','MEDIUM'],['High','HIGH'],['Critical','CRITICAL']] 
     end
 
+    def match_by
+      match_by = read(:match_by)
+      return nil unless match_by
+      return nil if match_by.empty?
+      match_by.join(", ")
+    end
   end
 end

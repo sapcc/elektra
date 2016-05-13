@@ -79,7 +79,7 @@ module Monitoring
           "description" => params["description"], 
           "expression"  => params["expression"], 
           "severity"    => params["severity"], 
-          "match_by"    => params["match_by"],
+          "match_by"    => params["match_by"].split(','),
         }
          
         if params['actions_enabled'] == '1' or params['actions_enabled'] == true
@@ -124,11 +124,9 @@ module Monitoring
       def create_alarm_definition(params={})
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-12
         # not allowed paramters are deleted here
-        if params["match_by"].empty?
-          params.delete("match_by")
-        end
         params.delete('actions_enabled')
-        
+        # handle comma seperated list
+        params["match_by"] = params["match_by"].split(',')
         handle_response do
           @fog.create_alarm_definition(params).body
         end

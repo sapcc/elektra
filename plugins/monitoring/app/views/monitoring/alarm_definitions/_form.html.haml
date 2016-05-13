@@ -1,7 +1,6 @@
 #backend_error
-  = f.input :name, 
-    input_html: { autofocus: true }
-
+= f.input :name, 
+  input_html: { autofocus: true }
 = f.input :description
 = f.input :expression, 
     icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression."
@@ -11,8 +10,13 @@
     collection: @alarm_definition.supported_severities, 
     selected: severity
 
-= f.input :match_by, 
-    icon_hint: 'Comma-separated list of dimensions, A separate alarm will be created for every single dimension value.'
+-# https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#changing-alarm-definitions
+- if edit
+  = f.input :match_by, readonly: true,
+      icon_hint: 'Cannot be changed because this field is used to create Alarms and Alarms may already have been created. The only option to change "match by" is to delete the existing Alarm Definition and create a new one.'
+- else
+  = f.input :match_by, 
+      icon_hint: 'Comma-separated list of dimensions, A separate alarm will be created for every single dimension value.'
 
 .row
   .col-md-8.col-md-offset-3
