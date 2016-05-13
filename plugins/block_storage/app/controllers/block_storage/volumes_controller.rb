@@ -10,6 +10,7 @@ module BlockStorage
 
     # GET /volumes
     def index
+      @servers = services.compute.servers()
       @action_id = params[:id]
       if @scoped_project_id
         @volumes = services.block_storage.volumes
@@ -18,6 +19,7 @@ module BlockStorage
 
     # GET /volumes/1
     def show
+      @servers = services.compute.servers() if @volume.status == "in-use"
     end
 
     # GET /volumes/new
@@ -129,7 +131,7 @@ module BlockStorage
           @volume.status = 'detaching'
           @target_state = target_state_for_action 'detach'
           sleep(SLEEP)
-          render template: 'block_storage/volumes/update_item_with_close.js' and return
+          render template: 'block_storage/volumes/update_item_with_close.js'
         else
           flash[:error] = "Error during Volume detach"
           redirect_to volumes_path and return

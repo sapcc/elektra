@@ -120,7 +120,7 @@ module Compute
     def attached_volumes
       if volumes_attached
         @driver.volumes.select{|vol|
-          vol["attachments"].find { |attachment| attachment["server_id"] == id }
+          vol["attachments"].find { |attachment| attachment["serverId"] == id or attachment["server_id"] == id}
         }.collect{|v| Compute::OsVolume.new(@driver,v)} #map to OsVolume
 
       else

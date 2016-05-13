@@ -6,7 +6,7 @@
     %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} 
     %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}  
     %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}  
-    %li{role: "presentation"}= link_to 'Security Groups', '#security_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}  
+    %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Volumes Attached ', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}  
@@ -67,10 +67,10 @@
                   - values.each do |address|
                     %li= address["addr"] 
     
-    .tab-pane{role:"tabpanel", id:"security_groups"}  
+    .tab-pane{role:"tabpanel", id:"sec_groups"}
       %table.table.datatable
         %tbody
-          - (@instance.security_groups || []).each do |sg| 
+          - (@instance.security_groups || []).each do |sg|
             %tr
               %th= sg.name
               %td
@@ -107,14 +107,15 @@
             %th Device Name
             %th.snug
         %tbody
-          - if @instance.attached_volumes.empty?
+          - attached_volumes = @instance.attached_volumes
+          - if attached_volumes.empty?
             %tr
               %td No volumes attached.
           - else
-            - @instance.attached_volumes.each do |vol|
+            - attached_volumes.each do |vol|
               %tr
-                %td= vol.name
-                %td= vol.attachment_device(@instance.id).blank? ? "NO device name" : vol.attachment_device(@instance.id)
+                %td= vol.displayName || vol.name
+                %td= vol.attachments.first['device']
 
 - if modal?
   .modal-footer

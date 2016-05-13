@@ -36,14 +36,17 @@
           %tr
             %th Device Name
             %th Attached to Server
+            %th Server ID
             %th.snug
 
         %tbody
-        - if !@volume.attachments.blank?
-          - @volume.attachments.each do |att|
+        - attachments = get_attachments(@volume, @servers)
+        - if !attachments.blank?
+          - attachments.each do |att|
             %tr
-              %td= att['device']
-              %td= att['server_id']
+              %td= att[:device]
+              %td= att[:server_name]
+              %td= att[:server_id]
         - else
           %tr
             %td= 'No servers attached'

@@ -11,7 +11,8 @@
       %th Volume Name
       %th Description
       %th Size(GB)
-      %th State
+      %th Attached to
+      %th Status
       %th.snug
 
   %tbody
@@ -21,4 +22,4 @@
         %td{colspa: 5} No volumes available
     - else
       - @volumes.each do | volume |
-        = render partial: 'item', locals: {volume: volume}
+        = render partial: 'item', locals: {volume: volume, servers: @servers}
