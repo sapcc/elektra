@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: a14522aa4106744818ac376c9f08f917dcefe6c6
+  revision: 933402fc13e0dc319600b1fe268b9b47adbfb07d
   branch: master
   specs:
     monsoon-openstack-auth (0.8.6)
@@ -394,7 +394,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.4.3)
+    hashie (3.4.4)
     high_voltage (2.4.0)
     hike (1.2.3)
     html2haml (2.0.0)
