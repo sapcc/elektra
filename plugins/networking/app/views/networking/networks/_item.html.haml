@@ -1,18 +1,18 @@
 %tr{id: "network_#{network.id}"}
-  %td    
+  %td
     - if current_user.is_allowed?("networking:network_get", {})
       = link_to network.name, plugin('networking').network_path(id: network.id), data: {modal: true}
-        
+
   %td
     - network.subnet_objects.each do |subnet|
       %b= subnet.name
       &nbsp;
       = subnet.cidr
-  %td= network.shared
-  %td= network.attributes["router:external"]
+  %td= network.shared ? 'Yes' : 'No'
+  %td= network.external ? 'Yes' : 'No'
   %td= network.status
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'
-  
+
   %td.snug
     - if current_user.is_allowed?("networking:network_delete", {}) or current_user.is_allowed?("networking:network_update", {})
       .btn-group
@@ -23,6 +23,7 @@
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if current_user.is_allowed?("networking:network_update", {})
             %li= link_to 'Edit', plugin('networking').edit_network_path(id: network.id), data: {modal: true}
+            %li= link_to 'Access Control', plugin('networking').network_access_control_path(network_id: network.id), data: {modal: true}
 
             %li.divider
           - if current_user.is_allowed?("networking:network_delete", {})

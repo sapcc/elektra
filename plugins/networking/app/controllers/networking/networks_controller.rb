@@ -42,6 +42,10 @@ module Networking
       @network = services.networking.network(params[:id])
     end
 
+    def access_control
+      @rbacs = services.networking.rbacs(object_id: params[:network_id], object_type: 'network')
+    end
+
     def update
       @network = services.networking.network(params[:id])
       @network.attributes = params[@network.model_name.param_key]

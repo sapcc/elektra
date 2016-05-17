@@ -117,56 +117,61 @@ module Networking
       def security_groups(filter = {})
         handle_response { @fog.list_security_groups(filter).body['security_groups'] }
       end
-      
+
       ###################### ROUTERS ####################
       def routers(filter={})
         handle_response { @fog.list_routers(filter).body['routers']}
       end
-      
+
       def add_router_interface(router_id, subnet_id_or_options)
         handle_response { @fog.add_router_interface(router_id, subnet_id_or_options)}
       end
-      
+
       def remove_router_interface(router_id, subnet_id, options = {})
         handle_response{ @fog.remove_router_interface(router_id, subnet_id, options)}
       end
-      
+
       def get_router(router_id)
         handle_response { @fog.get_router(router_id).body['router']}
       end
-      
+
       def create_router(params)
         name = params.delete("name")
-        handle_response { @fog.create_router(name, params).body['router'] } 
+        handle_response { @fog.create_router(name, params).body['router'] }
       end
-      
+
       def update_router(id,params)
-        handle_response { @fog.update_router(id, params).body['router'] } 
+        handle_response { @fog.update_router(id, params).body['router'] }
       end
-      
+
       def delete_router(id)
         handle_response{@fog.delete_router(id)}
       end
-      
+
       ###################### PORTS ####################
       def ports(filter={})
         handle_response { @fog.list_ports(filter).body['ports']}
       end
-      
+
       def get_port(id)
         handle_response { @fog.get_port(id).body['port']}
       end
-      
+
       def create_port(network_id,params)
-        handle_response { @fog.create_port(network_id, params).body['port'] } 
+        handle_response { @fog.create_port(network_id, params).body['port'] }
       end
-      
+
       def update_port(id,params)
-        handle_response { @fog.update_port(id, params).body['port'] } 
+        handle_response { @fog.update_port(id, params).body['port'] }
       end
-      
+
       def delete_port(id)
         handle_response{@fog.delete_port(id)}
+      end
+
+      ###################### RBACS ####################
+      def rbacs(filter = {})
+        handle_response { @fog.list_rbac_policies(filter).body['rbac_policies'] }
       end
     end
   end
