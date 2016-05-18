@@ -1,8 +1,12 @@
 Networking::Engine.routes.draw do
-  resources :networks
+  resources :floating_ips
+  resources :security_groups
+
   resources :routers do
     get 'topology'
   end
-  resources :floating_ips
-  resources :security_groups
+
+  resources :networks do
+    get :access_control
+  end
 end
