@@ -1,11 +1,19 @@
+=render partial: 'tabs', locals: { tab: @visibility }
+
 .row
   .col-sm-6
     %table.table
       %thead
         %tr
           %th Name
-          %th Visibility
           %th.snug Status
       %tbody
-        - @images.each do | image |
-          = render partial: 'item', locals: {image: image}
+        - if @images.empty?
+          %tr
+            %td{colspa: 5} No #{@visibility} images available
+        - else
+          - @images.each do | image |
+            = render partial: 'item', locals: {image: image}
+
+    = link_to_previous_page @images, 'Previous Page', params: {marker: @prev_marker, previous: 'true'}
+    = link_to_next_page @images, 'Next Page', params: {marker: @next_marker}
