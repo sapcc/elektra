@@ -6,10 +6,10 @@
   .row
     - if current_user.is_allowed?("monitoring:alarm_definition_create")
       .col-sm-2.col-sm-offset-9
-        %input.form-control.string#alarm_definition_search{type:"text", placeholder:"Search"}
+        %input.form-control.string#alarm_definitions_search{type:"text", placeholder:"Search"}
     - else
       .col-sm-2.col-sm-offset-10
-        %input.form-control.string#alarm_definition_search{type:"text", placeholder:"Search"}
+        %input.form-control.string#alarm_definitions_search{type:"text", placeholder:"Search"}
     - if current_user.is_allowed?("monitoring:alarm_definition_create")  
       .col-sm-1
         = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
@@ -18,9 +18,17 @@
 
 :javascript
   $(function() {
-    $('#alarm_definition_search').keypress(function (e) {
+    $('#alarm_definitions_search').keypress(function (e) {
       if (e.which == 13) {
-        $.get("#{plugin('monitoring').search_alarm_definitions_path()}", {search: $('#alarm_definition_search').val()});
+        $.ajax({ 
+          url: "#{plugin('monitoring').search_alarm_definitions_path()}",
+          data: { 
+            search: $('#alarm_definitions_search').val() 
+          },
+          beforeSend: function() { $('.loading').show() },
+          complete: function() { $('.loading').hide() },
+          dataType: 'script'
+        });
       }
     });
   });

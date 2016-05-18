@@ -24,8 +24,6 @@ Filter by:
     %li.divider{ role: 'separator' }
     %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","All")'
 
-%span{class: 'loading', id:"loading"}
-
 :javascript
 
   $(function(){ set_filter('Status','Alarm') });

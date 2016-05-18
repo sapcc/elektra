@@ -7,19 +7,34 @@
       = link_to 'Overview', plugin('monitoring').send("entry_path")
   - if tab == 'alarms'
     %li.active{role: 'presentation'}
-      = link_to "Alarms (#{count})", '#', id:'count'
+      = link_to '#' do
+        Alarms (
+        %span{id:'count'}
+          0
+        )
+        %span{class: 'loading', id: 'loading'}
   - else 
     %li{role: 'presentation'}
       = link_to "Alarms", plugin('monitoring').send("alarms_path")
   - if tab == 'alarm_definitions'
     %li.active{role: 'presentation'}
-      = link_to "Alarm Definitions (#{count})", '#', id:'count'
+      = link_to '#' do
+        Alarm Definitions (
+        %span{id:'count'}
+          #{count}
+        )
+        %span{class: 'loading', id: 'loading'}
   - else 
     %li{role: 'presentation'}
       = link_to 'Alarm Definitions', plugin('monitoring').send("alarm_definitions_path")
   - if tab == 'notification_methods'
     %li.active{role: 'presentation'}
-      = link_to "Notification Methods (#{count})", '#', id:'count'
+      = link_to '#' do
+        Notification Methods (
+        %span{id:'count'}
+          #{count}
+        )
+        %span{class: 'loading', id: 'loading'}
   - else 
     %li{role: 'presentation'}
       = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")

@@ -6,10 +6,10 @@
   .row
     - if current_user.is_allowed?("monitoring:notification_method_create")
       .col-sm-2.col-sm-offset-9
-        %input{id: "notification_method_search", type:"text", class:"form-control string", placeholder:"Search"}
+        %input{id: "notification_methods_search", type:"text", class:"form-control string", placeholder:"Search"}
     - else
       .col-sm-2.col-sm-offset-10
-        %input{id: "notification_method_search", type:"text", class:"form-control string", placeholder:"Search"}
+        %input{id: "notification_methods_search", type:"text", class:"form-control string", placeholder:"Search"}
     - if current_user.is_allowed?("monitoring:notification_method_create")
       .col-sm-1
         = link_to "Create", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
@@ -18,9 +18,17 @@
 
 :javascript
   $(function() {
-    $('#notification_method_search').keypress(function (e) {
+    $('#notification_methods_search').keypress(function (e) {
       if (e.which == 13) {
-        $.get("#{plugin('monitoring').search_notification_methods_path()}", {search: $('#notification_method_search').val()});
+        $.ajax({ 
+          url: "#{plugin('monitoring').search_notification_methods_path()}",
+          data: { 
+            search: $('#notification_methods_search').val() 
+          },
+          beforeSend: function() { $('.loading').show() },
+          complete: function() { $('.loading').hide() },
+          dataType: 'script'
+        });
       }
     });
   });
