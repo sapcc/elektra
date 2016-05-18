@@ -24,7 +24,7 @@ Filter by:
     %li.divider{ role: 'separator' }
     %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","All")'
 
-%span{style:"margin-left:5px; display:none", id:"loading"}= icon('spinner', class: 'fa-pulse')
+%span{class: 'loading', id:"loading"}
 
 :javascript
 
