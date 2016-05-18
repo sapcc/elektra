@@ -6,6 +6,9 @@
       %thead
         %tr
           %th Name
+          - if @visibility != 'public'
+            %th Owner
+
           %th.snug Status
       %tbody
         - if @images.empty?

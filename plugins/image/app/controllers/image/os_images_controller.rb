@@ -21,6 +21,7 @@ module Image
       }
       # first call has no marker
       openstack_params[:marker] = params[:marker] if params[:marker].present?
+
       current_images = services.image.images(openstack_params)
       current_images_count = current_images.count
 
@@ -43,7 +44,6 @@ module Image
       @image = services.image.find_image(params[:id])
 
       properties = @image.attributes.clone
-      # TODO: handle display of owner
       known_attributes = %w(name id status visibility protected size container_format disk_format created_at updated_at owner)
       known_attributes.each { |known| properties.delete(known) }
       additional_properties = properties.delete('properties')
