@@ -3,7 +3,11 @@
 
 - pl = plugin('image')
 
-= simple_modal_form_for @image, url: pl.os_image_path(@image.id), cancel_url: pl.os_images_path, cancel_text: 'Close', html: {class: "form-readonly"} do |f|
+= simple_modal_form_for @image,
+  url: pl.send("os_images_#{@visibility}_path", @image.id),
+  cancel_url: plugin('image').send("os_images_#{@visibility}_index_path"),
+  cancel_text: 'Close',
+  html: { class: 'form-readonly' } do |f|
 
   .row
     .col-md-6
@@ -37,7 +41,7 @@
       = f.input :status, readonly: true
 
       = f.input :disk_format, readonly: true, label: 'Disk Format'
-      
+
 
   %h5 Additional Properties
   = render partial: 'show_properties', locals: { properties: @properties }

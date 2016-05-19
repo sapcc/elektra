@@ -1,0 +1,9 @@
+%ul.nav.nav-tabs
+  -# no need to render 'shared' separately - turns up in the private list and can be determined by owner
+  - %w(public private).each do |visibility|
+    - if tab == visibility
+      %li.active{ role: 'presentation' }
+        = link_to visibility.humanize, '#'
+    - else
+      %li{ role: 'presentation' }
+        = link_to visibility.humanize, plugin('image').send("os_images_#{visibility}_index_path")

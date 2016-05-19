@@ -14,8 +14,8 @@ module ServiceLayer
       driver.available
     end
 
-    def images
-      driver.map_to(Image::Image).images
+    def images(filter = {})
+      driver.map_to(Image::Image).images(filter)
     end
 
     def find_image(id)

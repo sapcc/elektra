@@ -1,7 +1,9 @@
 %tr
   %td
     - if current_user.is_allowed?("image:image_get", {})
-      = link_to image.name, plugin('image').os_image_path(id: image.id), data: {modal: true, cancel: "Close"}
+      = link_to image.name, plugin('image').send("os_images_#{@visibility}_path", image.id), data: {modal: true, cancel: "Close"}
 
-  %td= image.visibility
+  - if @visibility != 'public'
+    %td= project_id_and_name(image.owner)
+
   %td= image.status
