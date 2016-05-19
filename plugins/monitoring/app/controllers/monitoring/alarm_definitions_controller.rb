@@ -17,7 +17,7 @@ module Monitoring
       @alarm_definitions_count = searched_alarm_definitions.length
       @alarm_definitions = Kaminari.paginate_array(searched_alarm_definitions).page(params[:page]).per(10)
       respond_to do |format|
-        format.js
+        format.js { render action: 'index' }
         format.html { render action: 'index' }
       end
     end

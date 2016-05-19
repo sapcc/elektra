@@ -14,5 +14,5 @@
       - @alarm_definitions.each do |alarm_definition|
         = render partial: 'list_row', locals: { alarm_definition: alarm_definition } 
 
-= paginate @alarm_definitions, :theme => 'twitter-bootstrap-3', :remote => false
+= paginate @alarm_definitions, theme: 'twitter-bootstrap-3', remote: true
 

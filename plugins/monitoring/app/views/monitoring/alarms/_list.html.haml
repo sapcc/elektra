@@ -22,5 +22,5 @@
         = render partial: 'list_row', locals: { alarm: alarm }
 
 - if @alarms
-  = paginate @alarms, :theme => 'twitter-bootstrap-3', :remote => false
+  = paginate @alarms, :theme => 'twitter-bootstrap-3', :remote => true
 
