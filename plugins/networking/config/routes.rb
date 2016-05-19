@@ -4,6 +4,7 @@ Networking::Engine.routes.draw do
 
   resources :routers do
     get 'topology'
+    get 'node_details'
   end
 
   resources :networks do

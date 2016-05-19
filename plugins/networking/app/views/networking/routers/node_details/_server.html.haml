@@ -1,0 +1,18 @@
+- if server.nil?
+  This server does not exists anymore.
+- else  
+  %h4= server.name
+  %table.table
+    %tbody
+      %tr
+        %th ID
+        %td= server.id
+      %tr
+        %th Status
+        %td= server.status
+     
+  %h4 IP Adresses
+  %ul
+    - port.fixed_ips.each do |ip|
+      %li= ip["ip_address"]
+ 
