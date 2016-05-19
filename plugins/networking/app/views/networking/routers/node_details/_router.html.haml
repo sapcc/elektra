@@ -1,0 +1,20 @@
+%h4= router.name
+%table.table
+  %body
+    %tr
+      %th ID
+      %td= router.id
+    %tr
+      %th Status
+      %td= router.status
+
+%h4 External Fixed IPs    
+
+%ul
+  - router.external_gateway_info["external_fixed_ips"].each do |data|
+    %li 
+      %b Subnet ID: 
+      = data['subnet_id']
+    %li
+      %b IP
+      = data['ip_address']

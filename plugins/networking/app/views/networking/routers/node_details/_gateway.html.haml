@@ -1,0 +1,20 @@
+%h4= external_network.name
+
+%table.table
+  %tbody
+    %tr
+      %th ID
+      %td= external_network.id
+    %tr
+      %th Status
+      %td= external_network.status
+      
+%h4 Subnets
+%ul
+  - external_network.subnet_objects.each do |subnet|
+    %li
+      %b ID
+      = subnet.id
+    %li
+      %b CIDR   
+      = subnet.cidr          

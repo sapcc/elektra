@@ -33,23 +33,26 @@
         
 
     .tab-pane{role:"tabpanel", id:"external_network"}
-      - @router_gateway_ports.each do |port|
-        %table.table.datatable
-          %tbody
-            %tr
-              %th Network Name
-              %td= port.network_object.name
-            %tr
-              %th Network ID
-              %td= port.network_id
-            %tr
-              %th External Fixed IPs
-              %td
-                - (port.fixed_ips || []).each do |fixed_ip|
-                  = fixed_ip["ip_address"]
-                  %br
-
-              
+      %table.table.datatable
+        %tbody
+          %tr
+            %th Network Name
+            %td= @external_network.name
+          %tr
+            %th Network ID
+            %td= @external_network.id
+          %tr
+            %th External Fixed IPs
+            %td
+              %ul
+                - @router.external_gateway_info["external_fixed_ips"].each do |data|
+                  %li 
+                    %b Subnet ID: 
+                    = data['subnet_id']
+                  %li
+                    %b IP
+                    = data['ip_address']
+ 
                     
     .tab-pane{role:"tabpanel", id:"internal_networks"}
       %table.table.datatable

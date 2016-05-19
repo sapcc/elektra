@@ -1,11 +1,11 @@
 / = content_for :title do
 /   Show
 
-.modal-body
+.modal-body.networking
   #graph
   
   :javascript
-    networking.topology("#graph",#{@topology_graph.to_json});                 
+    new networking.Topology("#graph",#{@topology_graph.to_json}, {details_url: "#{plugin('networking').router_node_details_path(@router.id)}"});                 
 
 - if modal?
   .modal-footer

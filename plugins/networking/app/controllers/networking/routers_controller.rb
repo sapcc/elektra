@@ -7,18 +7,19 @@ module Networking
 
     def topology
       @router = services.networking.find_router(params[:router_id])
-      @router_gateway_ports = services.networking.ports(device_id: @router.id, device_owner: "network:router_gateway")
+      @external_network = services.networking.network(@router.external_gateway_info["network_id"])
       @router_interface_ports = services.networking.ports(device_id: @router.id, device_owner: "network:router_interface")
-      
+
       @topology_graph = {
         name: @router.name,
         type: 'router',
-        children: @router_gateway_ports.collect{|port| {name: port.network_object.name, type: 'gateway'}} + @router_interface_ports.collect do |port| 
-          node = {name: port.network_object.name, type: 'network'}
+        id: @router.id,
+        children: [{name: @external_network.name, type: 'gateway', id: @external_network.id}] + @router_interface_ports.collect do |port| 
+          node = {name: port.network_object.name, type: 'network', id: port.network_object.id}
           services.networking.ports(network_id: port.network_id).each do |port| 
             if port.device_owner.start_with?('compute:')
               node[:children] ||= []
-              node[:children] << {name: '', type: 'server'}
+              node[:children] << {name: '', type: 'server', id: port.device_id}
             end
           end
           node
@@ -26,21 +27,27 @@ module Networking
       }
     end
     
+    def node_details
+      case params[:type]
+      when 'router'
+        render partial: 'networking/routers/node_details/router', locals: {router: services.networking.find_router(params[:router_id]) }
+      when 'network'
+        render partial: 'networking/routers/node_details/network', locals: {network: services.networking.network(params[:id])}
+      when 'gateway'
+        render partial: 'networking/routers/node_details/gateway', locals: {external_network: services.networking.network(params[:id])}
+      when 'server'
+        server = services.compute.find_server(params[:id]) rescue nil
+        port = services.networking.ports(device_id: server.id).first if server
+        render partial: 'networking/routers/node_details/server', locals: {server: server, port: port}, status: server.nil? ? 404 : 200
+      else
+        render text: 'No details available'
+      end          
+    end
+    
     def show
       @router = services.networking.find_router(params[:id])
-      ports = services.networking.ports(device_id: params[:id])
-      
-      @router_gateway_ports = []
-      @router_interface_ports = []
-      
-      ports.each do |port|
-        puts port.pretty_attributes
-        if port.device_owner=='network:router_gateway'
-          @router_gateway_ports << port
-        elsif port.device_owner=='network:router_interface'
-          @router_interface_ports << port
-        end
-      end
+      @external_network = services.networking.network(@router.external_gateway_info["network_id"])
+      @router_interface_ports = services.networking.ports(device_id: @router.id, device_owner: "network:router_interface")
     end
 
     def new
