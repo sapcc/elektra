@@ -12,7 +12,7 @@
         %span{id:'count'}
           0
         )
-        %span{class: 'loading', id: 'loading'}
+        %span{class: 'loading_place'}
   - else 
     %li{role: 'presentation'}
       = link_to "Alarms", plugin('monitoring').send("alarms_path")
@@ -23,7 +23,7 @@
         %span{id:'count'}
           #{count}
         )
-        %span{class: 'loading', id: 'loading'}
+        %span{class: 'loading_place'}
   - else 
     %li{role: 'presentation'}
       = link_to 'Alarm Definitions', plugin('monitoring').send("alarm_definitions_path")
@@ -34,7 +34,7 @@
         %span{id:'count'}
           #{count}
         )
-        %span{class: 'loading', id: 'loading'}
+        %span{class: 'loading_place'}
   - else 
     %li{role: 'presentation'}
       = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")
@@ -42,10 +42,10 @@
 :javascript
   $(function() {
     $(document).ajaxStart( function() {
-      $('.loading').show()
+      $('.loading_place').addClass('loading')
     });
     $(document).ajaxStop( function() {
-      $('.loading').hide()
+      $('.loading_place').removeClass('loading')
     });
   });
 
