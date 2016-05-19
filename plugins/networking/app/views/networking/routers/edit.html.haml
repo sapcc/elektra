@@ -13,17 +13,16 @@
       collection:         [['UP', 'true'],['DOWN', 'false']]}
 
     = f.input :internal_subnets, {label: "Internal Networks",
-      input_html:         {multiple: true}, 
+      input_html:         {multiple: true},
       include_blank:      true,
       as:                 :select,
       collection:         @internal_subnets,
       selected:           @selected_internal_subnet_ids,
-      required:           true}    
+      required:           true}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+      = link_to "Cancel", routers_url, class: 'btn btn-default'
     = button_tag "Update", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
-

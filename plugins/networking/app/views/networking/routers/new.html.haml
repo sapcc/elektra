@@ -18,18 +18,17 @@
         collection:         @external_networks,
         selected:           @router.external_gateway_info,
         required:           true}
-        
+
     = f.input :internal_subnets, {label: "Internal Networks",
       input_html:         {multiple: true},
       as:                 :select,
       collection:         @internal_subnets,
       selected:           [],
-      required:           true}    
+      required:           true}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+      = link_to "Cancel", routers_url, class: 'btn btn-default'
     = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
-
