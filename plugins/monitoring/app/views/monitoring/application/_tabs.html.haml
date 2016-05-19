@@ -38,3 +38,15 @@
   - else 
     %li{role: 'presentation'}
       = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")
+
+:javascript
+  $(function() {
+    $(document).ajaxStart( function() {
+      $('.loading').show()
+    });
+    $(document).ajaxStop( function() {
+      $('.loading').hide()
+    });
+  });
+
+
