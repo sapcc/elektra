@@ -1,6 +1,8 @@
 module Image
   class OsImages::PrivateController < OsImagesController
-    def visibility
+    private
+
+    def load_visibility
       @visibility = 'private'.freeze
     end
   end

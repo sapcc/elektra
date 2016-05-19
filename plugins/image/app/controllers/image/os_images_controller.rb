@@ -1,8 +1,6 @@
 module Image
   class OsImagesController < Image::ApplicationController
-    def visibility
-      raise 'has to be implemented in subclass'
-    end
+    before_filter :load_visibility, only: [:index, :show]
 
     def index
       images_per_page = 15
@@ -17,7 +15,7 @@ module Image
         limit: images_per_page + 1,
         sort_key: 'name',
         sort_dir: sort_dir,
-        visibility: visibility
+        visibility: @visibility
       }
       # first call has no marker
       openstack_params[:marker] = params[:marker] if params[:marker].present?
@@ -68,6 +66,12 @@ module Image
 
     def destroy
       render text: 'destroy'
+    end
+
+    private
+
+    def load_visibility
+      raise 'has to be implemented in subclass'
     end
   end
 end
