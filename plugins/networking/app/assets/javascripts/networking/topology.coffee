@@ -131,6 +131,7 @@ class Topology
           @getNodeDetails d.type,d.id, (html,status) -> 
             if status==404 
               $element.attr('class',$element.attr('class')+' not-found') 
+              html = "This #{d.type} does not exist anymore."  
 
             $popover.find('.popover-content').html(html)
             $popover.data("currentNode",d.id)
@@ -184,18 +185,22 @@ class Topology
 
   getNodeDetails: (type,id,callback) ->
     @nodeDetails ||= {}
+    key = "#{type}_#{id}"
+    return callback(@nodeDetails[key].content,@nodeDetails[key].status) if @nodeDetails[key]
+    
     $.get("#{@options.details_url}", {type: "#{type}", id: "#{id}"})
-      .error ( jqXHR, textStatus, errorThrown) -> 
+      .error ( jqXHR, textStatus, errorThrown) => 
+        @nodeDetails[key] = {status: jqXHR.status, content: ''}
         callback("Loading error.",jqXHR.status)  
-      .done (data, status, xhr)->
+      .done (data, status, xhr) =>
         url = xhr.getResponseHeader('Location')
-      
         # got a redirect response
         if url
           # close modal window
           $('#modal-holder').find('.modal').modal('hide')
           window.location = url
         else  
+          @nodeDetails[key] = {status: 200, content: data}
           callback(data,200)
     
   isConnected: (a, b) ->
