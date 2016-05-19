@@ -2,20 +2,22 @@ module Monitoring
   class AlarmsController < Monitoring::ApplicationController
     authorization_required
 
-    before_filter :load_alarm, except: [ :index, :filter ]
+    before_filter :load_alarm, except: [ :index, :filter_and_search ]
 
     def index
       @index = 1
     end
 
-    def filter
+    def filter_and_search
       state = params[:state]
       severity = params[:severity]
-      all_alarms = services.monitoring.alarms(state: state, severity: severity)
+      search = params[:search]
+      all_alarms = services.monitoring.alarms(state: state, severity: severity, search: search)
       @alarms_count = all_alarms.length
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]
       @alarms = Kaminari.paginate_array(all_alarms).page(params[:page]).per(10)
+      render action: 'reload_list'
     end
 
     def show

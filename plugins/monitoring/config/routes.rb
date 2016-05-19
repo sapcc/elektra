@@ -3,7 +3,8 @@ Monitoring::Engine.routes.draw do
 
   resources 'alarms', except: [:new, :create] do
     collection do
-      get 'filter'
+      get 'filter' => 'alarms#filter_and_search'
+      get 'search' => 'alarms#filter_and_search'
     end
   end
 
