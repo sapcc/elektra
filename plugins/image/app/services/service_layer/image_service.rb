@@ -22,5 +22,9 @@ module ServiceLayer
       return nil if id.blank?
       driver.map_to(Image::Image).get_image(id)
     end
+
+    def members(id)
+      driver.map_to(Image::Member).members(id)
+    end
   end
 end

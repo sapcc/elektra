@@ -15,13 +15,17 @@ module Image
       end
 
       ########################### IMAGES #############################
-      # TODO: sort by name, allow filtering
       def images(filter = {})
         handle_response { @fog.list_images(filter).body['images'] }
       end
 
       def get_image(id)
         handle_response { @fog.get_image_by_id(id).body }
+      end
+
+      ########################### MEMBERS #############################
+      def members(id)
+        handle_response { @fog.get_image_members(id).body['members'] }
       end
     end
   end
