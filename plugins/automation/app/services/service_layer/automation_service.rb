@@ -10,15 +10,7 @@ module ServiceLayer
     end
 
     def install_node_available?
-      !arc_update_site.blank? && !arc_pki.blank?
-    end
-
-    def arc_update_site
-      AUTOMATION_CONF['arc_update_site_url']
-    end
-
-    def arc_pki
-      AUTOMATION_CONF['arc_pki_url']
+      %w{arc_latest_base_url arc_pki_url arc_broker_url}.all? { |key| AUTOMATION_CONF[key].present? }
     end
 
     def arc_service_endpoint
