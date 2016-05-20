@@ -21,7 +21,7 @@ module ServiceLayer
       # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#query-parameters-13
        alarm_definitions = driver.map_to(Monitoring::AlarmDefinition).alarm_definitions.sort_by(&:name)
       if search
-        alarm_definitions = alarm_definitions.select { |ad| ad.name.match(search) or ad.description.match(search) }
+        alarm_definitions = alarm_definitions.select { |ad| ad.name.upcase.match(search.upcase) or ad.description.upcase.match(search.upcase) }
       end
       alarm_definitions
     end
@@ -51,7 +51,7 @@ module ServiceLayer
       # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#query-parameters-8
        notification_methods = driver.map_to(Monitoring::NotificationMethod).notification_methods
       if search
-        notification_methods = notification_methods.select { |nm| nm.name.match(search) or nm.address.match(search) }
+        notification_methods = notification_methods.select { |nm| nm.name.upcase.match(search.upcase) or nm.address.upcase.match(search.upcase) }
       end
       notification_methods
     end
