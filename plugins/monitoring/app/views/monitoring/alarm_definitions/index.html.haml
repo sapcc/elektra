@@ -5,15 +5,16 @@
 - search_help = 'Search in name, severity, description and expression field'
 .toolbar
   .row
-    - if current_user.is_allowed?("monitoring:alarm_definition_create")
-      .col-sm-2.col-sm-offset-9.has-help-hint
-        = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }
-    - else
-      .col-sm-2.col-sm-offset-10.has-help-hint
-        = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }
     - if current_user.is_allowed?("monitoring:alarm_definition_create")  
       .col-sm-1
         = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+    - if current_user.is_allowed?("monitoring:alarm_definition_create")
+      .col-sm-2.col-sm-offset-9.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }
+    - else
+      .col-sm-2.col-sm-offset-10.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }
+
 #definitions_list
   = render partial: 'list'
 

@@ -7,7 +7,7 @@
   .row 
     .col-md-4
       = render partial: 'filter'
-    .col-md-2.col-md-offset-6.has-help-hint
+    .col-md-2.col-md-offset-6.has-help-hint.search-field
       = render partial: '/monitoring/application/search', locals: { id:'alarms_search', help:'Search in name, description, expression and metrics' }
       
 #alarms_list
