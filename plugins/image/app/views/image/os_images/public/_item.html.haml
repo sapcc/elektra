@@ -1,0 +1,6 @@
+%tr
+  %td
+    - if current_user.is_allowed?('image:image_get', {})
+      = link_to image.name, plugin('image').send("os_images_#{@visibility}_path", image.id), data: { modal: true, cancel: 'Close' }
+
+  %td= image.status

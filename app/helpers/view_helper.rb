@@ -1,5 +1,9 @@
 module ViewHelper
   def project_id_and_name(project)
-    "#{project} (#{services.identity.find_project(project).name})"
+    if project
+      "#{project} (#{services.identity.find_project(project).name})"
+    else
+      'N/A'
+    end
   end
 end
