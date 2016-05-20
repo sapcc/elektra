@@ -1,14 +1,14 @@
 = content_for :main_toolbar do 
   Monitoring 
 = render partial: '/monitoring/application/tabs', locals: { tab: 'notification_methods', count: @notification_methods_count }
-- search_help = 'search in name and address field'
+- search_help = 'Search in name and address field'
 .toolbar
   .row
     - if current_user.is_allowed?("monitoring:notification_method_create")
       .col-sm-2.col-sm-offset-9.has-help-hint
         = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
     - else
-      .col-sm-2.col-sm-offset-10
+      .col-sm-2.col-sm-offset-10.has-help-hint
         = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
 
     - if current_user.is_allowed?("monitoring:notification_method_create")
