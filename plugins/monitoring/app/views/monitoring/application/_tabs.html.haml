@@ -39,14 +39,3 @@
     %li{role: 'presentation'}
       = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")
 
-:javascript
-  $(function() {
-    $(document).ajaxStart( function() {
-      $('.loading_place').addClass('loading')
-    });
-    $(document).ajaxStop( function() {
-      $('.loading_place').removeClass('loading')
-    });
-  });
-
-

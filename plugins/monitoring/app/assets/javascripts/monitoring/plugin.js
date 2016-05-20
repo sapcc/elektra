@@ -26,11 +26,17 @@ function test() {
 // This function is available from everywhere by calling monitoring.name()
 monitoring.name = function() {
   "monitoring"
-} 
+};
 
 // This is always executed on page load.
 $(document).ready(function(){
-  // ...
+  // show small loading spinner on active tab during ajax calls 
+  $(document).ajaxStart( function() {
+    $('.loading_place').addClass('loading');
+  });
+  $(document).ajaxStop( function() {
+    $('.loading_place').removeClass('loading');
+  });
 }); 
     
 // Call function from other files inside this plugin using the variable monitoring
