@@ -22,6 +22,7 @@ module ServiceLayer
         alarm_definitions = alarm_definitions.select { |ad| 
           ad.name.upcase.match(search.upcase) or 
           ad.description.upcase.match(search.upcase) or
+          ad.severity.upcase.match(search.upcase) or
           ad.expression.upcase.match(search.upcase)
         }
       end

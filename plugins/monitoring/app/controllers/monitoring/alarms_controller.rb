@@ -11,8 +11,8 @@ module Monitoring
     def filter_and_search
       state = params[:state]
       severity = params[:severity]
-      search = params[:search]
-      all_alarms = services.monitoring.alarms(state: state, severity: severity, search: search)
+      @search = params[:search]
+      all_alarms = services.monitoring.alarms(state: state, severity: severity, search: @search)
       @alarms_count = all_alarms.length
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]

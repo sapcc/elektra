@@ -2,7 +2,7 @@
   Monitoring 
 = render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions', count: @alarm_definitions_count }
 
-- search_help = 'Search in name, description and expression field'
+- search_help = 'Search in name, severity, description and expression field'
 .toolbar
   .row
     - if current_user.is_allowed?("monitoring:alarm_definition_create")
