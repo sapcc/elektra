@@ -6,8 +6,8 @@ module Networking
 
     def show
       @network = services.networking.network(params[:id])
-      @subnets = services.networking.subnets(network_id:@network.id)
-      @ports   = services.networking.ports(networking_id:@network.id)
+      @subnets = services.networking.subnets(network_id: @network.id)
+      @ports   = services.networking.ports(network_id: @network.id)
     end
 
     def new
