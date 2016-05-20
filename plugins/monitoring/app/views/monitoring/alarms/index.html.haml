@@ -7,8 +7,8 @@
   .row 
     .col-md-4
       = render partial: 'filter'
-    .col-md-2.col-md-offset-6
-      %input.form-control.string#alarms_search{type:"text", placeholder:"Search"}
+    .col-md-2.col-md-offset-6.has-help-hint
+      = render partial: '/monitoring/application/search', locals: { id:'alarms_search', help:'Search in name, description and metrics' }
       
 #alarms_list
   = render partial: 'list'
