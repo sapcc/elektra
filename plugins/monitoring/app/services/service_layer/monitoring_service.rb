@@ -43,6 +43,7 @@ module ServiceLayer
         alarm_definitions_hash = Hash[alarm_definitions.map{ |a| [a.id, a] }]
         alarms = alarms.select { |alarm| alarm.alarm_definition_name.upcase.match(search.upcase) or 
           alarm_definitions_hash[alarm.alarm_definition_id].description.upcase.match(search.upcase) or
+          alarm_definitions_hash[alarm.alarm_definition_id].expression.upcase.match(search.upcase) or
           alarm.used_metrics.upcase.match(search.upcase) 
         }
       end
