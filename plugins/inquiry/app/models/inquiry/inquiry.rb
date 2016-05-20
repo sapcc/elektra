@@ -17,13 +17,21 @@ module Inquiry
     scope :id, -> (id) { where id: id }
     scope :state, -> (state) { where aasm_state: state }
     #scope :requester_id, -> (requester_id) { where requester_id: requester_id }
-    scope :requester_id, -> (requester_id) { Inquiry.joins(:requester).where(inquiry_processors: {uid: requester_id}).includes(:requester) }
-    scope :processor_id, -> (processor_id) { Inquiry.joins(:processors).where(inquiry_processors: {uid: processor_id}).includes(:processors) }
+    scope :requester_id, -> (requester_id) { Inquiry.includes(:requester).where(inquiry_processors: {uid: requester_id}) }
+    scope :processor_id, -> (processor_id) { Inquiry.includes(:processors).where(inquiry_processors: {uid: processor_id}) }
     scope :kind, -> (kind) { where kind: kind }
     scope :domain_id, -> (domain_id) { where domain_id: domain_id }
 
     after_create :transition_to_open
 
+    # scopes manually written becasue of distinct issue with json column
+    def self.processor_idx(processor_id)
+      Inquiry.find_by_sql("SELECT DISTINCT ON (inquiry_inquiries.id) inquiry_inquiries.* FROM inquiry_inquiries INNER JOIN inquiry_inquiries_processors ON inquiry_inquiries_processors.inquiry_id = inquiry_inquiries.id INNER JOIN inquiry_processors ON inquiry_processors.id = inquiry_inquiries_processors.processor_id WHERE inquiry_processors.uid = '#{processor_id}'")
+    end
+
+    def self.requester_idx(requester_id)
+      Inquiry.find_by_sql("SELECT DISTINCT ON (inquiry_inquiries.id) inquiry_inquiries.* FROM inquiry_inquiries INNER JOIN inquiry_processors ON inquiry_processors.id = inquiry_inquiries.requester_id WHERE inquiry_processors.uid ='#{requester_id}'")
+    end
 
     include AASM
     aasm do
@@ -36,7 +44,7 @@ module Inquiry
       state :rejected
       state :closed
 
-      event :open, :after => [:notify_requester,:notify_processors], :error => :error_on_event do
+      event :open, :after => [:notify_requester, :notify_processors], :error => :error_on_event do
         transitions :from => :new, :to => :open, :after => Proc.new { |*args| log_process_step(*args) }
       end
 

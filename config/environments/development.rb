@@ -62,7 +62,7 @@ Rails.application.configure do
   config.action_mailer.default_options = {
       from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
   }
-  config.action_mailer.perform_deliveries = true
+  config.action_mailer.perform_deliveries = false
 
   puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
 

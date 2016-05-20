@@ -25,7 +25,7 @@ module ServiceLayer
       domain_id = requester_user.domain_id || requester_user.project_domain_id || register_domain_id
       project_id = requester_user.project_id
       requester = Inquiry::Processor.from_users([requester_user]).first
-      processors = Inquiry::Processor.from_users(processor_users)
+      processors = Inquiry::Processor.from_users(processor_users).uniq
       inquiry = Inquiry::Inquiry.new(domain_id: domain_id, project_id: project_id, kind: kind, description: description, \
                                  requester: requester, payload: payload, processors: processors, callbacks: callbacks)
       inquiry.save!

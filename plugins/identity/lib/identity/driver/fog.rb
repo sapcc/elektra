@@ -16,7 +16,7 @@ module Identity
       end
 
       def handle_api_errors?
-        false
+        true
       end
 
       ########################### IMAGES #############################

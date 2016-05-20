@@ -38,7 +38,7 @@ module Inquiry
         content_tag(:div, '', data: {
           update_path: plugin('inquiry').inquiries_path({
             container_id: container_id, 
-            per_page: (options[:per_page] || 3), 
+            per_page: (options[:per_page] || Inquiry::Inquiry.default_per_page),
             filter: (options[:filter] || {}), 
             partial: true 
           }),

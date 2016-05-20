@@ -1,9 +1,10 @@
 {
-  "inquiry:inquiry_list": "@",
-  "inquiry:inquiry_get": "@",
-  "inquiry:inquiry_delete": "rule:admin_required",
   "inquiry:inquiry_admin_list": "rule:admin_required",
-  "inquiry:inquiry_update": "rule:admin_required",
-  "inquiry:inquiry_create": "rule:admin_required",
-  "inquiry:inquiry_edit": "rule:admin_required"
+  "no_admin_required": "@",
+  "inquiry:inquiry_list": "rule:no_admin_required",
+  "inquiry:inquiry_get": "rule:no_admin_required",
+  "inquiry:inquiry_delete": "rule:no_admin_required",
+  "inquiry:inquiry_update": "rule:no_admin_required",
+  "inquiry:inquiry_create": "rule:no_admin_required",
+  "inquiry:inquiry_edit": "rule:no_admin_required"
 }

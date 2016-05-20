@@ -63,7 +63,7 @@ module Inquiry
       #@inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
       result = @inquiry.change_state(inquiry_params[:aasm_state].to_sym, inquiry_params[:process_step_description], current_user)
       if result
-        flash[:notice] = "Request successfully updated."
+        flash.now[:notice] = "Request successfully updated."
         render 'inquiry/inquiries/update.js'
       else
         @inquiry.aasm_state = inquiry_params[:aasm_state]
@@ -72,18 +72,13 @@ module Inquiry
     end
 
     def destroy
-
-      if @inquiry
-        if @inquiry.destroy
-          flash[:notice] = "Request successfully deleted."
-        else
-          flash[:error] = @inquiry.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
-        end
-      end
-
-      respond_to do |format|
-        format.js {}
-        format.html { redirect_to inquiries_path }
+      if @inquiry.destroy
+        @inquiry = nil
+        flash[:notice] = "Request successfully deleted."
+        render template: 'inquiry/inquiries/update.js'
+      else
+        flash[:error] = @inquiry.errors.full_messages.to_sentence
+        redirect_to :inquiries
       end
     end
 

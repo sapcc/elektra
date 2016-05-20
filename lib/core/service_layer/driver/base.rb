@@ -47,7 +47,7 @@ module Core
           raise Core::ServiceLayer::Errors::ApiError.new(e)
         end
 
-        # TODO This is a clutch to enable the object-storage plugin to display plausible, informative errors when backend calls fail.
+        # TODO This is a crutch to enable the object-storage plugin to display plausible, informative errors when backend calls fail.
         def handle_api_errors?
           true # by default, can be overridden by subclass
         end
