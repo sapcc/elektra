@@ -25,7 +25,6 @@ describe 'Inquiry' do
             inq.save
           }.to change { Inquiry::Inquiry.count }.by(1)
           expect(inq.aasm_state).to eq("open")
-          puts inq
         end
 
         it 'changes state from open to approved and creates a step record for this' do
