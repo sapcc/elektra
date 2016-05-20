@@ -14,6 +14,10 @@ module Image
         @available = false
       end
 
+      def handle_api_errors?
+        false
+      end
+
       ########################### IMAGES #############################
       def images(filter = {})
         handle_response { @fog.list_images(filter).body['images'] }
@@ -26,6 +30,8 @@ module Image
       ########################### MEMBERS #############################
       def members(id)
         handle_response { @fog.get_image_members(id).body['members'] }
+      # not implemented in monsoon2 sm
+      rescue Excon::Errors::NotImplemented
       end
     end
   end
