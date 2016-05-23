@@ -44,7 +44,8 @@ module Monitoring
     end
 
     def load_alarm
-      @alarm = services.monitoring.get_alarm(params.require(:id))
+      id = params[:id] || params.require(:alarm_id)
+      @alarm = services.monitoring.get_alarm(id)
       @alarm_name = params[:name] || ''
       raise ActiveRecord::RecordNotFound, "alarm with id #{params[:id]} not found" unless @alarm
     end
