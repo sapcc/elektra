@@ -5,11 +5,11 @@
   .row
     .col-md-3.details-label
       %strong Status:
-    .col-md-9.details-value= @alarm.state
+    .col-md-9.details-value= show_state(@alarm.state)
   .row
     .col-md-3.details-label
       %strong Severity:
-    .col-md-9.details-value= @alarm.severity
+    .col-md-9.details-value= show_severity(@alarm.severity)
   .row
     .col-md-3.details-label
       %strong Created:
