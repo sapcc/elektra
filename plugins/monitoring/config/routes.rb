@@ -6,6 +6,7 @@ Monitoring::Engine.routes.draw do
       get 'filter' => 'alarms#filter_and_search'
       get 'search' => 'alarms#filter_and_search'
     end
+    get 'history'
   end
 
   resources 'alarm_definitions' do

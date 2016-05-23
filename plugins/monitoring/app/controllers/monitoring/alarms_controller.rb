@@ -23,6 +23,9 @@ module Monitoring
     def show
     end
 
+    def history
+    end
+
     def destroy
       @alarm.destroy
       back_to_alarm_list
