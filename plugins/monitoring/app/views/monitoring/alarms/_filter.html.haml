@@ -35,6 +35,7 @@ Filter by:
   }
 
   function apply_filter() {
+    $('#alarms_search').val('');
     alarm_severity = $('#severity_filter').data('filter') || 'All'
     alarm_status = $('#status_filter').data('filter') || 'All'
     $.ajax({ 

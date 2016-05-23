@@ -29,6 +29,17 @@ module Monitoring
       convert_timestamp(read(:created_timestamp))
     end
 
+    def alarm_definition_name
+      read(:alarm_definition)["name"] || nil
+    end
+
+    def used_metrics
+      metrics = read(:metrics) || nil
+      return nil unless metrics
+      used_metrics = {}
+      metrics.each {|value| used_metrics[value['name']] = '#'}
+      used_metrics.keys.join(',')
+    end
     private
 
     def convert_timestamp(timestamp)

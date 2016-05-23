@@ -4,7 +4,31 @@
 
 %p{style: 'margin:20px'}
 .toolbar
-  = render partial: 'filter'
+  .row 
+    .col-md-4
+      = render partial: 'filter'
+    .col-md-2.col-md-offset-6.has-help-hint.search-field
+      = render partial: '/monitoring/application/search', locals: { id:'alarms_search', help:'Search in name, description, expression and metrics' }
       
 #alarms_list
   = render partial: 'list'
+
+:javascript
+  $(function() {
+    $('#alarms_search').keypress(function (e) {
+      if (e.which == 13) {
+         alarm_severity = $('#severity_filter').data('filter') || 'All'
+         alarm_status = $('#status_filter').data('filter') || 'All'
+         $.ajax({ 
+          url: "#{plugin('monitoring').search_alarms_path()}",
+          data: { 
+            search: $('#alarms_search').val(),
+            severity: alarm_severity,
+            state: alarm_status
+          },
+          dataType: 'script'
+        });
+      }
+    });
+  });
+  

@@ -26,7 +26,7 @@
   .row
     .col-md-3.details-label
       %input{type: 'checkbox', id:'show_metrics'} 
-      Show Metrics:
+      Show Origin:
     .col-md-9.details-value{id:'metrics'}
       - @alarm.metrics.each do |metric|
         .row

@@ -2,8 +2,8 @@
 %tr
   %td= show_state(alarm.state)
   %td= show_severity(alarm.severity)
-  %td= definition.name
-  %td= definition.description
+  %td= highlight(definition.name,@search)
+  %td= highlight(definition.description,@search)
   %td= alarm.state_updated_timestamp
   %th.snug
     .btn-group

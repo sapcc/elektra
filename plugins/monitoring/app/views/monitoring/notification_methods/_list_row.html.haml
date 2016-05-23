@@ -1,12 +1,12 @@
 %tr
-  %td= notification_method.name
+  %td= highlight(notification_method.name,@search)
   %td 
     - if notification_method.type == "EMAIL"
       %span{title: "email notification_method", style: "cursor:help"}
         = icon('envelope-o')
     - else
       %strong ?
-  %td= notification_method.address
+  %td= highlight(notification_method.address,@search)
   %th.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }

@@ -1,18 +1,19 @@
 = content_for :main_toolbar do 
   Monitoring 
 = render partial: '/monitoring/application/tabs', locals: { tab: 'notification_methods', count: @notification_methods_count }
-
+- search_help = 'Search in name and address field'
 .toolbar
   .row
     - if current_user.is_allowed?("monitoring:notification_method_create")
-      .col-sm-2.col-sm-offset-9
-        %input{id: "notification_methods_search", type:"text", class:"form-control string", placeholder:"Search"}
-    - else
-      .col-sm-2.col-sm-offset-10
-        %input{id: "notification_methods_search", type:"text", class:"form-control string", placeholder:"Search"}
-    - if current_user.is_allowed?("monitoring:notification_method_create")
       .col-sm-1
         = link_to "Create", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+    - if current_user.is_allowed?("monitoring:notification_method_create")
+      .col-sm-2.col-sm-offset-9.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
+    - else
+      .col-sm-2.col-sm-offset-10.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
+
 #notification_methods_list
   = render partial: 'list'
 

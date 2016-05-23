@@ -1,7 +1,7 @@
 %tr
-  %td= alarm_definition.name
-  %td= show_severity(alarm_definition.severity)
-  %td= alarm_definition.description
+  %td= highlight(alarm_definition.name,@search)
+  %td= highlight(show_severity(alarm_definition.severity),@search)
+  %td= highlight(alarm_definition.description,@search)
   %td
     %div{ id: "alarm_actions_#{alarm_definition.id}"}
       = render partial: 'actions_enabled', locals: { alarm_definition: alarm_definition }

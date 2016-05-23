@@ -11,9 +11,8 @@ module Monitoring
     end
 
     def search
-      # TODO: use queries here
-      search = params[:search]
-      searched_alarm_definitions = services.monitoring.alarm_definitions(search)
+      @search = params[:search]
+      searched_alarm_definitions = services.monitoring.alarm_definitions(@search)
       @alarm_definitions_count = searched_alarm_definitions.length
       @alarm_definitions = Kaminari.paginate_array(searched_alarm_definitions).page(params[:page]).per(10)
       respond_to do |format|
