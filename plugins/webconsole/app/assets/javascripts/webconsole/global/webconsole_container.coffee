@@ -1,4 +1,8 @@
 class @WebconsoleContainer
+  unless Storage is "undefined"
+    # save information from local storage in class variable.
+    webconsoleHelpSeen = localStorage.getItem("webconsoleHelpSeen")
+    
   defaults =
     toolbarCssClass:    'toolbar'
     buttonsCssClass:    'main-buttons'
@@ -35,7 +39,6 @@ class @WebconsoleContainer
 
         # create and add each button to buttons container
         for button, i in settings.buttons
-          console.log button
           $buttons.append("<a href='#' data-trigger='webconsole:#{button}' data-toggle='tooltip' title='#{settings[button+'Text']}'><i class='#{settings[button+'Icon']}'/></a>")
 
     # add webconsole holder to container
@@ -51,7 +54,10 @@ class @WebconsoleContainer
 
       # create a container div for help text and show it
       $helpContent = $("<div class='#{settings.helpCssClass}-content'></div>").appendTo($helpContainer)
-      $helpContainer.animate({width:'toggle'},'400px')
+
+      # open help container unless already seen  
+      $helpContainer.animate({width:'toggle'},'400px') unless webconsoleHelpSeen
+        
       # set help button to active
       $('[data-trigger="webconsole:help"]').addClass('active')
 
@@ -59,6 +65,8 @@ class @WebconsoleContainer
       $("<a href='#' class='toggle'><i class='fa fa-close'></i></a>").prependTo($helpContainer).click (e) ->
         $helpContainer.animate({width:'toggle'},'400px')
         $('[data-trigger="webconsole:help"]').toggleClass('active')
+        # save information already seen in local storage
+        localStorage.setItem("webconsoleHelpSeen",true)
 
 
       # set height
@@ -109,7 +117,7 @@ class @WebconsoleContainer
     }
     $.ajax( options );
 
-  @init= (containerSelector, settings={}) ->
+  @init= (containerSelector, settings={}) ->        
     @$container = $(containerSelector)
     @settings   = $.extend {}, defaults, @$container.data(), settings
     @$holder    = createDomStructure(@$container, @settings)
@@ -163,20 +171,17 @@ class @WebconsoleContainer
 
 
   @open= (callback) ->
-    console.log 'open'
     # Open console container
     @$container.parent().slideDown 'slow', () ->
       WebconsoleContainer.load()
       callback() if callback
 
   @close= (callback) ->
-    console.log 'close'
     @$container.parent().slideUp 'slow', () ->
       console.log('Webconsole closed')
       callback() if callback
 
   @toogleFullscreen= (callback) ->
-    console.log 'toogle fullscreen'
     $parentContainer = @$container.parent()
 
     new_width = $parentContainer.data('width') || $( window ).width()
@@ -191,12 +196,10 @@ class @WebconsoleContainer
     })
 
   @reload= () ->
-    console.log 'reload'
     @load(true)
 
   @load= (reload=false) ->
     if @loaded && reload==false
-      console.log 'alredy loaded'
       return
 
     # bind this to self
@@ -242,6 +245,9 @@ class @WebconsoleContainer
                   $helpContainer.html(context.help_html)
 
                 $loadingHint.remove()
+                
+                # hterm deletes all values in local storage (don't know why). So save it again.
+                localStorage.setItem("webconsoleHelpSeen",true) if (Storage isnt "undefined") and webconsoleHelpSeen
 
               self.loaded = true
             error: (xhr, bleep, error) -> console.log('error: ' + error)
