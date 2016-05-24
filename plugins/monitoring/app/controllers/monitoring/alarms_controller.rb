@@ -24,6 +24,11 @@ module Monitoring
     end
 
     def history
+      # TODO: maybe we should use later here the option limit?
+      # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#list-alarm-state-history
+      states = services.monitoring.alarm_states_history(params.require(:alarm_id)).sort_by(&:timestamp)
+      @alarm_states_count = states.length
+      @alarm_states = Kaminari.paginate_array(states).page(params[:page]).per(7)
     end
 
     def destroy
