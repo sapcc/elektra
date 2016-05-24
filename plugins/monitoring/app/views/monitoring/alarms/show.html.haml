@@ -25,9 +25,9 @@
   %hr
   .row
     .col-md-3.details-label
-      %input{type: 'checkbox', id:'show_metrics'} 
+      %input#show_metrics{type: 'checkbox'}
       Show Origin:
-    .col-md-9.details-value{id:'metrics'}
+    .col-md-9.details-value#metrics
       - @alarm.metrics.each do |metric|
         .row
           .col-md-3=metric["name"]
