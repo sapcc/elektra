@@ -34,7 +34,9 @@
       .panel-heading
         .panel-title
           %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
-            History
+            Alarm changes (
+            %span{id:'count'}= @alarm_states_count
+            )
           %span.loading_place
       .panel-collapse.collapse#collapse2
         .panel-body
