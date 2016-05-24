@@ -2,12 +2,12 @@
   Show details for alarm #{@alarm_name}
 
 %div{class: modal? ? 'modal-body' : ''}
-  .pannel-group#accordion
-    .pannel.panel-default
+  .panel-group#accordion
+    .panel.panel-default
       .panel-heading
-        .pannel-title
+        .panel-title
           %a{href:'#collapse1', data: {toggle:'collapse', parent:'#accordion'}}
-            Basic Information
+            Basic
       .panel-collapse.collapse.in#collapse1
         .panel-body
           .row
@@ -30,11 +30,11 @@
             .col-md-3.details-label
               %strong State Updated:
             .col-md-9.details-value= @alarm.state_updated_timestamp
-    .pannel.panel-default
+    .panel.panel-default
       .panel-heading
-        .pannel-title
+        .panel-title
           %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
-            Alarm State History
+            History
           %span.loading_place
       .panel-collapse.collapse#collapse2
         .panel-body
@@ -42,9 +42,9 @@
             .col-md-12
               #alarm_states_list
                 = render partial: 'alarm_states_list'
-    .pannel.panel-default
+    .panel.panel-default
       .panel-heading
-        .pannel-title
+        .panel-title
           %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
             Origin
       .panel-collapse.collapse#collapse3
