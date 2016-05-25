@@ -6,7 +6,7 @@ module Identity
       @scoped_project_fid = params[:project_id] || @project_id
     end
 
-    authorization_required(context:'identity')
+    authorization_required(context:'identity', additional_policy_params: {project: Proc.new { {id: @project_id, domain_id: @scoped_domain_id} } } )
 
     def index
       @projects = @user_domain_projects
@@ -31,10 +31,24 @@ module Identity
       @project = services.identity.find_project(@project_id)
     end
 
+    # def update
+    #   @project = services.identity.find_project(@project_id)
+    #   @project.attributes = params[:project]
+    #   if @project.save
+    #     flash[:notice] = "Project #{@project.name} successfully updated."
+    #     redirect_to plugin('identity').project_path
+    #   else
+    #     flash.now[:error] = @project.errors.full_messages.to_sentence
+    #     render action: :edit
+    #   end
+    # end
+    
     def update
+      params[:project][:enabled] = (params[:project][:enabled]==true or params[:project][:enabled]=='true') ? true : false
       @project = services.identity.find_project(@project_id)
       @project.attributes = params[:project]
-      if @project.save
+    
+      if @project.valid? && service_user.update_project(@project_id,@project.attributes)
         flash[:notice] = "Project #{@project.name} successfully updated."
         redirect_to plugin('identity').project_path
       else
@@ -43,16 +57,30 @@ module Identity
       end
     end
 
+    # def destroy
+    #   project = services.identity.find_project(@project_id)
+    #
+    #   if project.destroy
+    #     flash[:notice] = "Project successfully deleted."
+    #   else
+    #     flash[:error] = project.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+    #   end
+    #
+    #   redirect_to plugin('identity').projects_path
+    # end
+          
     def destroy
-      project = services.identity.find_project(@project_id)
-
-      if project.destroy
+      response = service_user.delete_project(@project_id)
+      
+      if response
         flash[:notice] = "Project successfully deleted."
+        redirect_to plugin('identity').domain_path
       else
-        flash[:error] = project.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+        flash[:error] = response #"Something when wrong when trying to delete the project"
+        redirect_to plugin('identity').project_path
       end
 
-      redirect_to plugin('identity').projects_path
+      
     end
 
     def api_endpoints

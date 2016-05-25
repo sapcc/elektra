@@ -142,6 +142,14 @@ module Core
         role = self.find_role_by_name(role_name)
         driver_method(:grant_domain_user_role, false, self.domain_id, user_id, role.id)
       end
+      
+      def update_project(id,params)
+        driver_method(:update_project, true, id,params)
+      end
+      
+      def delete_project(id)
+        driver_method(:delete_project,false,id)
+      end
 
       def add_user_to_group(user_id, group_name)
         groups = driver_method(:groups, true, {domain_id: self.domain_id, name: group_name}) rescue []

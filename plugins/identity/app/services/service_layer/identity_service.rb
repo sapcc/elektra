@@ -71,6 +71,10 @@ module ServiceLayer
         Identity::ProjectTree.new(auth_projects)
       end
     end
+    
+    def clear_auth_projects_tree_cache
+      Rails.cache.delete("#{current_user.token}/auth_projects_tree")
+    end
 
     def projects(filter={})
       driver.map_to(Identity::Project).projects(filter)

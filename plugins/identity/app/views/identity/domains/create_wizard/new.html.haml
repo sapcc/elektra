@@ -6,7 +6,7 @@
     - unless @project.errors["message"].blank?
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
     
-    = render partial: 'identity/domains/shared/form', locals: { form: f }
+    = render partial: 'identity/projects/shared/form', locals: { form: f }
     
   %div{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
