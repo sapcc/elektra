@@ -100,15 +100,10 @@ SimpleNavigation::Configuration.run do |navigation|
                  html: { class: 'fancy-nav-header', 'data-icon': 'networking-icon' },
                  if: -> { plugin_available?(:networking) || plugin_available?(:loadbalancing) || plugin_available?(:dns_service) } do |networking_nav|
       networking_nav.item :networks,
-                          'Networks',
+                          'Networks & Routers',
                           -> { plugin('networking').networks_path },
                           if: -> { plugin_available?(:networking) },
                           highlights_on: %r{networking/networks.*}
-      networking_nav.item :routers,
-                          'Routers',
-                          -> { plugin('networking').routers_path },
-                          if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/routers.*}
       networking_nav.item :floating_ips,
                           'Floating IPs',
                           -> { plugin('networking').floating_ips_path },

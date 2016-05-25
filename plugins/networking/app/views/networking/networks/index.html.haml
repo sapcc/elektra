@@ -1,4 +1,5 @@
 = render "intro"
+=render partial: 'networking/shared/tabs', locals: { tab: 'networks' }
 
 - if @scoped_project_id
   - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })

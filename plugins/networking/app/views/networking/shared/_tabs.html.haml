@@ -1,0 +1,14 @@
+%ul.nav.nav-tabs
+  - if tab == 'networks'
+    %li.active{role: 'presentation'}
+      = link_to 'Networks', '#'
+  - else
+    %li{role: 'presentation'}
+      = link_to 'Networks', plugin('networking').networks_path
+
+  - if tab == 'routers'
+    %li.active{role: 'presentation'}
+      = link_to 'Routers', '#'
+  - else
+    %li{role: 'presentation'}
+      = link_to 'Routers', plugin('networking').routers_path
