@@ -1,0 +1,10 @@
+=content_for :main_toolbar do
+  Monitoring
+
+.bs-callout.bs-callout-warning
+  You are not authorized to use this UI.
+  The Monitoring UI can only be used when your user account has the
+  %strong monasca-user
+  role for this project.
+
+= link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'
