@@ -1,7 +1,8 @@
 {
 
   "monitoring_admin": "role:monasca-user",
-
+  "monitoring:entry_list": "not project_id:nil",
+  
   "monitoring:overview_list": "rule:monitoring_admin",
   
   "monitoring:alarm_list": "rule:monitoring_admin",  

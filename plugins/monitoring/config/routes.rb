@@ -1,5 +1,6 @@
 Monitoring::Engine.routes.draw do
-  get '/' => 'overview#index', as: :entry
+  get '/' => 'entry#index', as: 'entry'
+  get 'overview' => 'overview#index'
 
   resources 'alarms', except: [:new, :create] do
     collection do
