@@ -24,8 +24,14 @@ $ ->
     return false if link.attr('data-confirming')
     # mark link as confirming -> means the dialog is active
     link.attr('data-confirming','true')
+    confirmTerm = link.attr('data-confirm-term')
 
+    console.log('confirmTerm',confirmTerm)
+              
     message = link.attr 'data-confirm'
+    if link.attr('data-icon')!='false'
+      message = '<i class="confirm-icon fa fa-fw fa-exclamation-triangle"></i>'+message
+        
     html = """
            <div class="modal fade" style="padding-top:15%; overflow-y:visible;">
              <div class="modal-dialog">
@@ -34,16 +40,36 @@ $ ->
                    <a class="close" data-dismiss="modal">×</a>
                    <h4>#{message}</h4>
                  </div>
+
                  <div class="modal-footer">
                    <a data-dismiss="modal" class="btn">#{link.data('cancel') || 'Cancel'}</a>
-                   <a data-dismiss="modal" class="btn btn-primary confirm">#{link.data('ok') || 'Ok'}</a>
+                   <button data-dismiss="modal" class="btn btn-primary confirm">#{link.data('ok') || 'Ok'}</button>
                  </div>
                </div>
              </div>
            </div>
-           """
+           """       
     $html = $(html)
-    $html.find('.confirm').on 'click', -> $.rails.confirmed(link)
+    $confirmButton = $html.find('button.confirm')
+    $confirmButton.click () -> $.rails.confirmed(link)
+    
+    if confirmTerm
+      label = link.attr("data-confirm-term-label") || 'Please confirm "'+confirmTerm+'"'
+      $modalBody = $('<div class="modal-body"></div>')
+      $confirmSection = $('<div class="confirm-term form-group string required"><label class="string required">'+label+' </label></div>').appendTo($modalBody)
+      $confirmField = $('<input type="text"/>').appendTo($confirmSection)
+
+      $confirmButton.attr('disabled',true)
+      
+      $confirmField.keyup (e) ->
+        console.log(this.value,this.value==confirmTerm) 
+        if this.value==confirmTerm
+          $confirmButton.attr('disabled',false)
+        else
+          $confirmButton.attr('disabled',true)
+      
+      $html.find('.modal-header').after($modalBody)
+
 
     # dialog is beeing closed
     $html.on 'hidden.bs.modal', (e) ->
