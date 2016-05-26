@@ -28,11 +28,12 @@ module Monitoring
 
     def history(paginate = 7)
       # TODO: maybe we should use later here the option limit?
-      #       or to limit the we should get only all alarm changes since the last 7 days
+      #       or to limit we should get only all alarm changes since the last 7 days
       #       and give the user a selection to choose the time window
-      #       a search is maybe a good ide too
+      #       a search field is maybe a good idea too
       # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#list-alarm-state-history
       id = params[:id] || params.require(:alarm_id)
+      # TODO: latest first!
       states = services.monitoring.alarm_states_history(id).sort_by(&:timestamp)
       @alarm_states_count = states.length
       @alarm_states = Kaminari.paginate_array(states).page(params[:page]).per(paginate)
