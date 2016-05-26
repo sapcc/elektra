@@ -29,14 +29,5 @@ module Monitoring
         content_tag(:span, value, class: "badge #{styles.fetch(state, '')}")
     end
 
-    def badge_severity(severity,value)
-      styles = {
-        'LOW'      => 'alert-info',
-        'MEDIUM'   => 'alert-warning',
-        'HIGH'     => 'alert-danger',
-        'CRITICAL' => 'alert-danger',
-      }
-      return content_tag(:span, value, class: "badge #{styles.fetch(severity, '')}" )
-    end
   end
 end

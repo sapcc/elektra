@@ -19,7 +19,7 @@
         - @severity_cnt.each do |severity, cnt|
           .list-group-item
             = link_to severity.capitalize, plugin('monitoring').alarms_path( severity: severity.capitalize)
-            = badge_severity(severity,cnt)
+            %span.badge= cnt
   
     
   
