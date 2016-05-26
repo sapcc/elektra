@@ -1,10 +1,12 @@
 %ul.nav.nav-tabs
-  - if tab == 'networks'
-    %li.active{role: 'presentation'}
-      = link_to 'Networks', '#'
-  - else
-    %li{role: 'presentation'}
-      = link_to 'Networks', plugin('networking').networks_path
+  -# no need to render 'shared' separately - turns up in the private list and can be determined by owner
+  - %w(private external).each do |network_type|
+    - if tab == network_type
+      %li.active{ role: 'presentation' }
+        = link_to network_type.humanize + ' Networks', '#'
+    - else
+      %li{ role: 'presentation' }
+        = link_to network_type.humanize + ' Networks', plugin('networking').send("networks_#{network_type}_index_path")
 
   - if tab == 'routers'
     %li.active{role: 'presentation'}
