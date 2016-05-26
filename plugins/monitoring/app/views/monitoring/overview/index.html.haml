@@ -5,20 +5,20 @@
 .overview
   .row
     .col-md-6
+      .list-group-item.list-group-item-info
+        Status
+      - @state_cnt.each do |state, cnt|
+        .list-group-item
+          = link_to state.capitalize, plugin('monitoring').alarms_path( state: state.capitalize)
+          = badge_state(state,cnt)
+    .col-md-6
       .list-group
-        .list-group-item.active 
+        .list-group-item.list-group-item-info 
           Severity
         - @severity_cnt.each do |severity, cnt|
           .list-group-item
             = link_to severity.capitalize, plugin('monitoring').alarms_path( severity: severity.capitalize)
-            %span.badge= cnt
-    .col-md-6
-      .list-group-item.active 
-        Status
-      - @status_cnt.each do |status, cnt|
-        .list-group-item
-          = link_to status.capitalize, plugin('monitoring').alarms_path( state: status.capitalize)
-          %span.badge= cnt
+            = badge_severity(severity,cnt)
   
     
   
