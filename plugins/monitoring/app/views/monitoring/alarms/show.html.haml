@@ -44,7 +44,7 @@
       .panel-heading
         .panel-title
           %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
-            Alarm changes (
+            History - changes (
             %span{id:'count'}= @alarm_states_count
             )
           %span.loading_place
@@ -54,26 +54,6 @@
             .col-md-12
               #alarm_states_list
                 = render partial: 'alarm_states_list'
-    .panel.panel-default
-      .panel-heading
-        .panel-title
-          %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
-            Origin
-            -# TODO: needs to be more compact
-      .panel-collapse.collapse#collapse3
-        .panel-body
-          .row
-            .col-md-12{id:'metrics'}
-              - @alarm.metrics.each do |metric|
-                .row
-                  .col-md-3=metric["name"]
-                  .col-md-1=icon 'arrow-right'
-                  .col-md-7
-                    - metric["dimensions"].each do |key, value|
-                      .row
-                        .col-md-3= key
-                        .col-md-1=icon 'arrow-right'
-                        .col-md-8=value
 
 .buttons{class: modal? ? 'modal-footer' : ''} 
   %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close
