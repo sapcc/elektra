@@ -7,24 +7,23 @@
   
 = simple_form_for :role_assignments, url: plugin('identity').projects_members_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
-    .toolbar
-      = link_to 'New Project Member', plugin('identity').new_projects_member_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
-        
-    - role_ids = @roles.keys.sort
-    
+    - if current_user.is_allowed?('identity:member_create',{})
+      .toolbar= link_to 'New Project Member', plugin('identity').new_projects_member_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+    - role_ids = @roles.keys 
     %table.table#project_members
       %thead
         %tr
           %th User
-          - role_ids.each do |role_id|
-            %th{data: {role_id: role_id} }= @roles[role_id].name
+          - @roles.each do |role_id,role|
+            %th{data: {role_id: role_id} }= role.name
       %tbody
         - if @user_roles.blank?
           %tr
-            %td{colspan: role_ids.length+1} No members assigned this project. 
+            %td No members assigned this project. 
         - else    
           - @user_roles.each do |user_id, values|
-            = render partial: 'member', locals: {user: values[:user], role_ids: role_ids, user_role_ids: values[:role_ids]}
+            = render partial: 'member', locals: {user_id: user_id, user_name: values[:name], role_ids: role_ids, user_role_ids: values[:role_ids]}
                     
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?

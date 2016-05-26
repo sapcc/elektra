@@ -38,8 +38,8 @@ module Identity
         return if params[:inquiry_id].blank?
         @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
 
-        if @inquiry
-          unless current_user.is_allowed?("identity:create_wizard_create", {inquiry: {requester_uid: @inquiry.requester.uid}})
+        if @inquiry 
+          unless current_user.is_allowed?("identity:project_create", {project: {domain_id: @scoped_domain_id} })
             render template: '/dashboard/not_authorized'
           end
         else

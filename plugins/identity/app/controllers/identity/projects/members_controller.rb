@@ -8,9 +8,9 @@ module Identity
       
       def create
         @user = params[:user_name].blank? ? nil : begin 
-          services.identity.users(name:params[:user_name]).first 
+          service_user.users(domain_id: @scoped_domain_id,name:params[:user_name]).first 
         rescue
-          services.identity.find_user(params[:user_name]) rescue nil
+          service_user.find_user(params[:user_name]) rescue nil
         end
         
         load_role_assignments
@@ -38,15 +38,14 @@ module Identity
         params[:role_assignments].each do |user_id,roles|
           roles.each do |role_id, value|
             if value=="1"
-              services.identity.grant_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+              service_user.grant_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
             else
-              services.identity.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+              service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
             end
           end
         end
         
-        load_role_assignments
-        render action: :index
+        redirect_to projects_members_path
       end
       
       protected 
@@ -56,28 +55,24 @@ module Identity
       end
       
       def load_roles
-        ignore_roles = ['service', 'monasca-agent',	'monasca-user',	'cloud_admin', 'domain_admin', 'project_admin']
-        @roles = (services.identity.roles rescue []).inject({}) do |available_roles, role| 
-          available_roles[role.id]=role unless ignore_roles.include?(role.name)
+        # ignore_roles = ['service', 'monasca-agent',  'monasca-user',  'cloud_admin', 'domain_admin', 'project_admin']
+        relevant_roles = ['admin','member']
+        @roles = (service_user.roles rescue []).inject({}) do |available_roles, role|
+          # available_roles[role.id]=role unless ignore_roles.include?(role.name)
+          available_roles[role.id]=role if relevant_roles.include?(role.name)
           available_roles
         end
       end
       
       def load_role_assignments
-        @role_assignments = services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
-        @user_roles = user_roles(@role_assignments)
-      end
-      
-      def user_roles(role_assignments={})
-        role_assignments.inject({}) do |assignments, ra|
-          user = ra.user_id.nil? ? nil : services.identity.find_user(ra.user_id)
-          if user and user.id
-            assignments[ra.user_id] ||= {}
-            assignments[ra.user_id][:user] ||= services.identity.find_user(ra.user_id)
-            assignments[ra.user_id][:role_ids] ||= []
-            assignments[ra.user_id][:role_ids] << ra.role_id
-          end
-          assignments
+        #@role_assignments ||= services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
+        @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id,effective: true, include_names: true, include_subtree: true)
+        @user_roles ||= @role_assignments.inject({}) do |hash,ra| 
+          user_id = (ra.user || {}).fetch("id",nil)
+          next unless user_id
+          hash[user_id] ||= {role_ids: [], name: ra.user.fetch("name",'unknown')}
+          hash[user_id][:role_ids] << ra.role.fetch("id",nil)
+          hash
         end
       end
     end

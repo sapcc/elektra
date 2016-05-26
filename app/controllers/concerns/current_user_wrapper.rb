@@ -18,7 +18,7 @@ module CurrentUserWrapper
       old_user_details = (@session[:current_user_details] || {})
       
       # check if user id from session differs from current_user id
-      if old_user_details["id"]!=current_user.id
+      if current_user and old_user_details["id"]!=current_user.id
         # load user details for current_user
         
         new_user_details = @service_user.find_user(current_user.id) rescue nil

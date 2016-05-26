@@ -104,6 +104,9 @@ module Core
         end
       end
 
+      def users(filter={})
+        driver_method(:users, true, filter)
+      end
 
       def find_user(user_id)
         driver_method(:get_user, true, user_id)
@@ -143,6 +146,14 @@ module Core
         driver_method(:grant_domain_user_role, false, self.domain_id, user_id, role.id)
       end
       
+      def grant_project_user_role(project_id, user_id, role_id)
+        driver_method(:grant_project_user_role, false, project_id, user_id, role_id)
+      end
+      
+      def revoke_project_user_role(project_id, user_id, role_id)
+        driver_method(:revoke_project_user_role, false, project_id, user_id, role_id)
+      end
+            
       def update_project(id,params)
         driver_method(:update_project, true, id,params)
       end

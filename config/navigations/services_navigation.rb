@@ -86,12 +86,8 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :access_management, 'Users & Authorizations', nil,
       html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
-      if: -> {services.available?(:inquiry,:inquiries) or plugin_available?(:authorization)} do |access_management_nav|
-      access_management_nav.item :authorization, 'Project Members', -> {plugin('identity').projects_members_path}, if: -> { plugin_available?(:identity) and current_user.is_allowed?('identity:member_index')}, highlights_on: Proc.new { params[:controller][/members\/.*/] }
-      #access_management_nav.item :inquiries, 'Request', -> {plugin('inquiry').inquiries_path}, if: -> { services.available?(:inquiry,:inquiries) }, highlights_on: Proc.new { params[:controller][/inquiry\/.*/] }
-      # access_management_nav.item :audits, 'Audit', '#'
-
-      # access_management_nav.dom_attributes = {class: 'content-list'}
+      if: -> {services.available?(:identity) and current_user.is_allowed?('identity:member_list')} do |access_management_nav|
+      access_management_nav.item :authorization, 'Project Members', -> {plugin('identity').projects_members_path}, if: -> { plugin_available?(:identity) and current_user.is_allowed?('identity:member_list')}, highlights_on: Proc.new { params[:controller][/members\/.*/] }
     end
 
     primary.item :networking,
