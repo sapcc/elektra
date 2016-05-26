@@ -6,6 +6,8 @@ module Monitoring
 
     def index
       @index = 1
+      @state = params[:state] || 'Alarm'
+      @severity = params[:severity] || 'All'
     end
 
     def filter_and_search
@@ -26,6 +28,9 @@ module Monitoring
 
     def history(paginate = 7)
       # TODO: maybe we should use later here the option limit?
+      #       or to limit the we should get only all alarm changes since the last 7 days
+      #       and give the user a selection to choose the time window
+      #       a search is maybe a good ide too
       # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#list-alarm-state-history
       id = params[:id] || params.require(:alarm_id)
       states = services.monitoring.alarm_states_history(id).sort_by(&:timestamp)
