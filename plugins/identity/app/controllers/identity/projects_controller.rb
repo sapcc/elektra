@@ -8,7 +8,7 @@ module Identity
 
     authorization_required(context:'identity', additional_policy_params: {project: Proc.new { {id: @project_id, domain_id: @scoped_domain_id} } } )
 
-    def index
+    def user_projects
       @projects = @user_domain_projects
 
       respond_to do |format|

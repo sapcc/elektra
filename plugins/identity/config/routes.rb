@@ -14,11 +14,14 @@ Identity::Engine.routes.draw do
     delete '/' => 'projects#destroy', on: :member, as: :delete
   end
 
+  get 'user-projects' => 'projects#user_projects'
+
   namespace :projects do
 
     get 'web-console'
     get 'api-endpoints'
-
+    
+    
     resources :members, only: [:index, :new, :create] do
       put '/' => 'members#update', on: :collection
     end

@@ -23,7 +23,7 @@
 
       %ul.content-list
         %li
-          = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
+          = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
         %li
           = link_to 'Request a New Project', plugin('identity').domains_request_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_request')
 

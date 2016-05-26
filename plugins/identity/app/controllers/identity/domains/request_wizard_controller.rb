@@ -2,6 +2,12 @@ module Identity
   module Domains
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
+      before_filter :load_and_authorize_inquiry, only:[:edit,:update]
+      
+      before_filter do
+        enforce_permissions("identity:project_request",{})
+      end
+      
       def new
         @project = services.identity.new_project
         @project.enabled = true
@@ -76,7 +82,7 @@ module Identity
       @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
 
       if @inquiry
-        unless current_user.is_allowed?("identity:create_wizard_create", {inquiry: {requester_uid: @inquiry.requester.uid}})
+        unless current_user.is_allowed?("identity:project_request", {})
           render template: '/dashboard/not_authorized'
         end
       else
