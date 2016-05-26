@@ -3,7 +3,7 @@
   %td= rbac_target(rbac.target_tenant)
 
   %td.snug
-    -# - if current_user.is_allowed?("networking:network_delete", {}) or current_user.is_allowed?("networking:network_update", {})
+    -# - if current_user.is_allowed?("networking:network_#{@network_type}_delete", {}) or current_user.is_allowed?("networking:network_#{@network_type}_update", {})
     -#   .btn-group
     -#     %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
     -#       %span.fa.fa-cog

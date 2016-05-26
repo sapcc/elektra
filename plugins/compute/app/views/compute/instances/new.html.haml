@@ -6,8 +6,8 @@
       %p.alert.alert-error
         = @instance.errors.full_messages.to_sentence + '.'
         - if network_error = @instance.errors[:private_network]
-          - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })
-            = link_to 'New Network', plugin('networking').send("new_networks_#{@network_type}_path"), data: {modal: true}, class: 'btn btn-primary'
+          - if current_user.is_allowed?("networking:network_private_create")
+            = link_to 'New Private Network', plugin('networking').send("new_networks_private_path"), data: {modal: true}, class: 'btn btn-primary'
           - else
             = 'Please read '
             = link_to 'how to get a private network.', "#{sap_url_for('documentation')}docs/guides/advanced_private-network.html", target: '_blank'

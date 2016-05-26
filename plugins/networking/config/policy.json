@@ -1,4 +1,8 @@
 {
+  "context_is_admin": "rule:admin_required or rule:ccadmin or rule:cloud_admin",
+  "network_owner": "project_id:%(project.id)s",
+  "admin_or_network_owner": "rule:context_is_admin or rule:network_owner",
+
   "networking:floating_ip_get": "!",
   "networking:floating_ip_list": "",
   "networking:floating_ip_create": "!",
@@ -10,14 +14,17 @@
   "networking:security_group_create": "!",
   "networking:security_group_update": "!",
   "networking:security_group_delete": "!",
-  "networking:network_get": "role:admin or role:Member or role:member",
-  "networking:network_list": "role:admin or role:Member or role:member",
-  "networking:network_create": "role:admin",
-  "networking:network_update": "role:admin",
-  "networking:network_delete": "role:admin",
-  
-  "networking:router_create": "role:admin",
-  "networking:router_update": "role:admin",
-  "networking:router_get":    "role:admin or role:Member or role:member",
-  "networking:router_delete": "role:admin"
+  "networking:network_get": "",
+  "networking:network_list": "",
+  "networking:network_private_create": "rule:admin_or_network_owner",
+  "networking:network_private_update": "rule:admin_or_network_owner",
+  "networking:network_private_delete": "rule:admin_or_network_owner",
+  "networking:network_external_create": "rule:context_is_admin",
+  "networking:network_external_update": "rule:context_is_admin",
+  "networking:network_external_delete": "rule:context_is_admin",
+
+  "networking:router_create": "rule:admin_or_network_owner",
+  "networking:router_update": "rule:admin_or_network_owner",
+  "networking:router_get":    "rule:admin_or_network_owner",
+  "networking:router_delete": "rule:admin_or_network_owner"
 }
