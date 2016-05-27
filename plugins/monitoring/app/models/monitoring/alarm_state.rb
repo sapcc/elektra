@@ -12,7 +12,6 @@ module Monitoring
     # timestamp
     #
 
-    # TODO: better readable timestamp but untested because the api was not working :-(
     def timestamp()
       timestamp = read(:timestamp) || nil
       return nil unless timestamp

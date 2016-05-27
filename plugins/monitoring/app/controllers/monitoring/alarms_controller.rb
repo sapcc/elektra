@@ -34,7 +34,7 @@ module Monitoring
       # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#list-alarm-state-history
       id = params[:id] || params.require(:alarm_id)
       # TODO: latest first!
-      states = services.monitoring.alarm_states_history(id).sort_by(&:timestamp)
+      states = services.monitoring.alarm_states_history(id).sort_by(&:timestamp).reverse
       @alarm_states_count = states.length
       @alarm_states = Kaminari.paginate_array(states).page(params[:page]).per(paginate)
     end

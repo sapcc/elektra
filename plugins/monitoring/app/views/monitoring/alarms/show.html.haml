@@ -42,7 +42,9 @@
                 %b= show_state(latest_alarm_state.old_state)
                 to 
                 %b= show_state(latest_alarm_state.new_state)
-                with reason: "#{latest_alarm_state.reason}"
+                with reason: 
+                %i
+                  "#{latest_alarm_state.reason}"
 
     .panel.panel-default
       .panel-heading
