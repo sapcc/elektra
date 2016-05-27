@@ -3,7 +3,7 @@
 
 %div{class: modal? ? 'modal-body' : ''}
   .panel-group#accordion
-    .panel.panel-default
+    .panel.panel-info
       .panel-heading
         .panel-title
           %a{href:'#collapse1', data: {toggle:'collapse', parent:'#accordion'}}
@@ -45,7 +45,7 @@
                 with reason: 
                 %i
                   "#{latest_alarm_state.reason}"
-    .panel.panel-default
+    .panel.panel-info
       .panel-heading
         .panel-title
           %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
@@ -53,31 +53,39 @@
             %br
             %small
               %small
-                Involved metrics (#{@alarm_states[0].metrics.length || 0})
+                - if @alarm_states[0] and @alarm_states[0].metrics
+                  Involved metrics (#{@alarm_states[0].metrics.length})
       .panel-collapse.collapse#collapse2
         .panel-body
           -  if @alarm_states[0] and  @alarm_states[0].metrics
             = render partial: 'metrics', locals: { metrics: @alarm_states[0].metrics }
           - else
             No metrics found.
-    .panel.panel-default
+    .panel.panel-info
       .panel-heading
         .panel-title
           %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
             History
-            %br
-            %small
+            - if @alarm_states_count > 0
+              %br
               %small
-                State changes (
-                %span{id:'count'}= @alarm_states_count
-                )
+                %small
+                  State changes (
+                  %span{id:'count'}= @alarm_states_count
+                  )
           %span.loading_place
       .panel-collapse.collapse#collapse3
         .panel-body
           .row
             .col-md-12
               #alarm_states_list
-                = render partial: 'alarm_states_list'
+                - if @alarm_states_count > 0
+                  = render partial: 'alarm_states_list'
+                - else
+                  No alarm state changes fount.
 
-.buttons{class: modal? ? 'modal-footer' : ''} 
-  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close
+.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
+  - else
+    = link_to "Back", plugin('monitoring').alarms_path, class: 'btn btn-default'
