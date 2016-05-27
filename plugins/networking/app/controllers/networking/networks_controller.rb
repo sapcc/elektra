@@ -45,7 +45,8 @@ module Networking
     end
 
     def access_control
-      @rbacs = services.networking.rbacs(object_id: params[:network_id], object_type: 'network')
+      object_id = params["#{@network_type}_id"]
+      @rbacs = services.networking.rbacs(object_id: object_id, object_type: 'network')
     end
 
     def update
