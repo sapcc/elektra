@@ -32,24 +32,38 @@
             .col-md-9.details-value= @alarm.state_updated_timestamp
           .row
             .col-md-3.details-label
-              %strong Latest Alarm Change:
+              %strong Latest Change:
             .col-md-9.details-value
               - if @alarm_states.empty?
-                No alarm state changes found.
+                No state changes found.
               - else
                 - latest_alarm_state = @alarm_states[0]
-                Alarm changed from 
+                State changed from 
                 %b= show_state(latest_alarm_state.old_state)
                 to 
                 %b= show_state(latest_alarm_state.new_state)
                 with reason: 
                 %i
                   "#{latest_alarm_state.reason}"
-
     .panel.panel-default
       .panel-heading
         .panel-title
           %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
+            Origin
+            %br
+            %small
+              %small
+                Involved metrics (#{@alarm_states[0].metrics.length || 0})
+      .panel-collapse.collapse#collapse2
+        .panel-body
+          -  if @alarm_states[0] and  @alarm_states[0].metrics
+            = render partial: 'metrics', locals: { metrics: @alarm_states[0].metrics }
+          - else
+            No metrics found.
+    .panel.panel-default
+      .panel-heading
+        .panel-title
+          %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
             History
             %br
             %small
@@ -58,7 +72,7 @@
                 %span{id:'count'}= @alarm_states_count
                 )
           %span.loading_place
-      .panel-collapse.collapse#collapse2
+      .panel-collapse.collapse#collapse3
         .panel-body
           .row
             .col-md-12
