@@ -7,7 +7,11 @@ Networking::Engine.routes.draw do
     get 'node_details'
   end
 
-  resources :networks do
-    get :access_control
+  namespace :networks do
+    %i(external private).each do |type|
+      resources type do
+        get :access_control
+      end
+    end
   end
 end

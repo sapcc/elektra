@@ -97,7 +97,7 @@ SimpleNavigation::Configuration.run do |navigation|
                  if: -> { plugin_available?(:networking) || plugin_available?(:loadbalancing) || plugin_available?(:dns_service) } do |networking_nav|
       networking_nav.item :networks,
                           'Networks & Routers',
-                          -> { plugin('networking').networks_path },
+                          -> { plugin('networking').networks_private_index_path },
                           if: -> { plugin_available?(:networking) },
                           highlights_on: %r{networking/networks.*}
       networking_nav.item :floating_ips,

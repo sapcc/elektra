@@ -1,18 +1,17 @@
 = render "intro"
-=render partial: 'networking/shared/tabs', locals: { tab: 'networks' }
+= render partial: 'networking/shared/tabs', locals: { tab: @network_type }
 
 - if @scoped_project_id
-  - if current_user.is_allowed?("networking:network_create", {network: {user_id: current_user.id} })
+  - if current_user.is_allowed?("networking:network_#{@network_type}_create")
     .toolbar
-      = link_to 'Create new', plugin('networking').new_network_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+      = link_to 'Create new', plugin('networking').send("new_networks_#{@network_type}_path"), data: {modal: true}, class: 'btn btn-primary btn-lg'
 
   %table.table
     %thead
       %tr
         %th Name
         %th Subnets Associated
-        %th Shared
-        %th External
+        %th Owning Project
         %th Status
         %th Admin State
         %th.snug

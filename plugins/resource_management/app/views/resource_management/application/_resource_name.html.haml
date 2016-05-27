@@ -20,7 +20,7 @@
           - when :compute
             = link_to translated_name, plugin('compute').instances_path(), title: "Open #{area} service"
           - when :networking
-            = link_to translated_name, plugin('networking').networks_path(), title: "Open #{area} service"
+            = link_to translated_name, plugin('networking').networks_private_index_path, title: "Open #{area} service"
           - else
             = translated_name
       - else
