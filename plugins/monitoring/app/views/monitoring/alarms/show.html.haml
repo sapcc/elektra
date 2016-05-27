@@ -38,15 +38,23 @@
                 No alarm state changes found.
               - else
                 - latest_alarm_state = @alarm_states[0]
-                Alarm changed from #{show_state(latest_alarm_state.old_state)} to #{show_state(latest_alarm_state.new_state)} with reason: "#{latest_alarm_state.reason}"
+                Alarm changed from 
+                %b= show_state(latest_alarm_state.old_state)
+                to 
+                %b= show_state(latest_alarm_state.new_state)
+                with reason: "#{latest_alarm_state.reason}"
 
     .panel.panel-default
       .panel-heading
         .panel-title
           %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
-            History - changes (
-            %span{id:'count'}= @alarm_states_count
-            )
+            History
+            %br
+            %small
+              %small
+                State changes (
+                %span{id:'count'}= @alarm_states_count
+                )
           %span.loading_place
       .panel-collapse.collapse#collapse2
         .panel-body

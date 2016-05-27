@@ -14,7 +14,7 @@ module Monitoring
 
     # TODO: better readable timestamp but untested because the api was not working :-(
     def timestamp()
-      read(:timestamp) || nil
+      timestamp = read(:timestamp) || nil
       return nil unless timestamp
       date,time_string = timestamp.split("T")
       time = time_string.split('.')[0]
