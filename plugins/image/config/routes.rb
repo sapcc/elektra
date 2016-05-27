@@ -1,5 +1,5 @@
 Image::Engine.routes.draw do
-  namespace :os_images, module: :os_images do
+  namespace :os_images do
     resources :public
     resources :private do
       get :access_control
