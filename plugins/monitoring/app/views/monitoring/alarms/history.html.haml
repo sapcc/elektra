@@ -15,3 +15,8 @@
       #alarm_states_list
         = render partial: 'alarm_states_list'
 
+.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
+  - else
+    = link_to "Back", plugin('monitoring').alarms_path, class: 'btn btn-default'
