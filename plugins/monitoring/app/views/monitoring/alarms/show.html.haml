@@ -48,13 +48,15 @@
     .panel.panel-info
       .panel-heading
         .panel-title
-          %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
-            Origin
-            %br
-            %small
+          .row
+            .col-md-10
+              %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
+                Origin
+            .col-md-2
               %small
-                - if @alarm_states[0] and @alarm_states[0].metrics
-                  Involved metrics (#{@alarm_states[0].metrics.length})
+                %small
+                  - if @alarm_states[0] and @alarm_states[0].metrics
+                    Involved metrics (#{@alarm_states[0].metrics.length})
       .panel-collapse.collapse#collapse2
         .panel-body
           -  if @alarm_states[0] and  @alarm_states[0].metrics
@@ -64,16 +66,18 @@
     .panel.panel-info
       .panel-heading
         .panel-title
-          %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
-            History
-            - if @alarm_states_count > 0
-              %br
-              %small
+          .row
+            .col-md-10
+              %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
+                History
+                %span.loading_place
+            .col-md-2
+              - if @alarm_states_count > 0
                 %small
-                  State changes (
-                  %span{id:'count'}= @alarm_states_count
-                  )
-          %span.loading_place
+                  %small
+                    State changes (
+                    %span{id:'count'}= @alarm_states_count
+                    )
       .panel-collapse.collapse#collapse3
         .panel-body
           .row
