@@ -24,8 +24,6 @@ describe Identity::ProjectsController, type: :controller do
   describe "GET 'index'" do
     it "returns http success" do
       get :user_projects, default_params
-      p ">>>>>>>>>>>>>>>>>>>>"
-      p response
       expect(response).to be_success
     end
   end
