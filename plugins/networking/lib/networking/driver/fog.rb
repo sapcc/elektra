@@ -9,7 +9,7 @@ module Networking
         super(params)
         @fog = ::Fog::Network::OpenStack.new(auth_params)
         @available = true
-      rescue Fog::OpenStack::Errors::ServiceUnavailable
+      rescue ::Fog::OpenStack::Errors::ServiceUnavailable
         @fog = nil
         @available = false
       end
