@@ -26,7 +26,16 @@ Filter by:
 
 :javascript
 
-  $(function(){ set_filter('Status','Alarm') });
+  // set filter on start
+  $(function(){ 
+    severity = '#{@severity}'
+    if ( severity != 'All' ) {
+      set_filter('Severity','#{@severity}');
+    }
+    else {
+      set_filter('Status','#{@state}');
+    }
+  });
 
   function set_filter(TYPE,VALUE) {
     $("#"+TYPE.toLowerCase()+"_filter").text(TYPE+":"+VALUE);

@@ -1,0 +1,22 @@
+= content_for :title do
+  Show History for alarm #{@alarm_name}
+  %span.loading_place
+
+.modal-body
+  .toolbar
+    .row
+      .col-md-4
+        Alarm changes (
+        %span{id:'count'}= @alarm_states_count
+        )
+
+  .row
+    .col-md-12
+      #alarm_states_list
+        = render partial: 'alarm_states_list'
+
+.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
+  - else
+    = link_to "Back", plugin('monitoring').alarms_path, class: 'btn btn-default'

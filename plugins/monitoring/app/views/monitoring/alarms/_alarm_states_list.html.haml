@@ -1,0 +1,22 @@
+%table.table
+  %thead
+    %tr
+      %th Date
+      %th State
+      %th Reason
+      -#%th Metrics
+  %tbody
+    - if @alarm_states.empty?
+      %tr
+        %td{colspan: 4} No alarm state changes fount.
+    - else
+      - @alarm_states.each do |alarm_state|
+        %tr
+          %td.alarm-date= alarm_state.timestamp
+          %td= show_state(alarm_state.new_state)
+          %td= alarm_state.reason
+          -# TODO: not enough space here
+          -#%td=# render partial: 'metrics', locals: { metrics:alarm_state.metrics }
+
+= paginate @alarm_states, :theme => 'twitter-bootstrap-3', :remote => true          
+          

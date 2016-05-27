@@ -15,5 +15,8 @@
       %strong Type:
     .col-md-9.details-value= @notification_method.type
 
-.buttons{class: modal? ? 'modal-footer' : ''} 
-  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close
+.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
+  - else
+    = link_to "Back", plugin('monitoring').notification_methods_path, class: 'btn btn-default'

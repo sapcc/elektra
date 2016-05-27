@@ -2,60 +2,94 @@
   Show details for alarm #{@alarm_name}
 
 %div{class: modal? ? 'modal-body' : ''}
-  .row
-    .col-md-3.details-label
-      %strong Status:
-    .col-md-9.details-value= @alarm.state
-  .row
-    .col-md-3.details-label
-      %strong Severity:
-    .col-md-9.details-value= @alarm.severity
-  .row
-    .col-md-3.details-label
-      %strong Created:
-    .col-md-9.details-value= @alarm.created_timestamp
-  .row
-    .col-md-3.details-label
-      %strong Updated:
-    .col-md-9.details-value= @alarm.updated_timestamp
-  .row
-    .col-md-3.details-label
-      %strong State Updated:
-    .col-md-9.details-value= @alarm.state_updated_timestamp
-  %hr
-  .row
-    .col-md-3.details-label
-      %input#show_metrics{type: 'checkbox'}
-      Show Origin:
-    .col-md-9.details-value#metrics
-      - @alarm.metrics.each do |metric|
-        .row
-          .col-md-3=metric["name"]
-          .col-md-1=icon 'arrow-right'
-          .col-md-7
-            - metric["dimensions"].each do |key, value|
-              .row
-                .col-md-3= key
-                .col-md-1=icon 'arrow-right'
-                .col-md-8=value
+  .panel-group#accordion
+    .panel.panel-info
+      .panel-heading
+        .panel-title
+          %a{href:'#collapse1', data: {toggle:'collapse', parent:'#accordion'}}
+            Basic
+      .panel-collapse.collapse.in#collapse1
+        .panel-body
+          .row
+            .col-md-3.details-label
+              %strong Status:
+            .col-md-9.details-value= show_state(@alarm.state)
+          .row
+            .col-md-3.details-label
+              %strong Severity:
+            .col-md-9.details-value= show_severity(@alarm.severity)
+          .row
+            .col-md-3.details-label
+              %strong Created:
+            .col-md-9.details-value= @alarm.created_timestamp
+          .row
+            .col-md-3.details-label
+              %strong Updated:
+            .col-md-9.details-value= @alarm.updated_timestamp
+          .row
+            .col-md-3.details-label
+              %strong State Updated:
+            .col-md-9.details-value= @alarm.state_updated_timestamp
+          .row
+            .col-md-3.details-label
+              %strong Latest Change:
+            .col-md-9.details-value
+              - if @alarm_states.empty?
+                No state changes found.
+              - else
+                - latest_alarm_state = @alarm_states[0]
+                State changed from 
+                %b= show_state(latest_alarm_state.old_state)
+                to 
+                %b= show_state(latest_alarm_state.new_state)
+                with reason: 
+                %i
+                  "#{latest_alarm_state.reason}"
+    .panel.panel-info
+      .panel-heading
+        .panel-title
+          .row
+            .col-md-10
+              %a{href:'#collapse2', data: {toggle:'collapse', parent:'#accordion'}}
+                Origin
+            .col-md-2
+              %small
+                %small
+                  - if @alarm_states[0] and @alarm_states[0].metrics
+                    Involved metrics (#{@alarm_states[0].metrics.length})
+      .panel-collapse.collapse#collapse2
+        .panel-body
+          -  if @alarm_states[0] and  @alarm_states[0].metrics
+            = render partial: 'metrics', locals: { metrics: @alarm_states[0].metrics }
+          - else
+            No metrics found.
+    .panel.panel-info
+      .panel-heading
+        .panel-title
+          .row
+            .col-md-10
+              %a{href:'#collapse3', data: {toggle:'collapse', parent:'#accordion'}}
+                History
+                %span.loading_place
+            .col-md-2
+              - if @alarm_states_count > 0
+                %small
+                  %small
+                    State changes (
+                    %span{id:'count'}= @alarm_states_count
+                    )
+      .panel-collapse.collapse#collapse3
+        .panel-body
+          .row
+            .col-md-12
+              #alarm_states_list
+                - if @alarm_states_count > 0
+                  = render partial: 'alarm_states_list'
+                - else
+                  No alarm state changes fount.
 
-= content_for :javascripts do
-  :javascript
-    $(function() {
-      $('#metrics').toggle($('#show_metrics').is(':checked'))
-      $('#show_metrics').change(function(){
-         $('#metrics').toggle('fast');
-      });
-    });
-        
-
-
-
-
-
-
-
-
-
-.buttons{class: modal? ? 'modal-footer' : ''} 
-  %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Got it" }} Close
+.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
+  - else
+    = link_to "Back", plugin('monitoring').alarms_path, class: 'btn btn-default'

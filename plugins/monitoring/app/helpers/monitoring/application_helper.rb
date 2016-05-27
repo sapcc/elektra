@@ -20,5 +20,14 @@ module Monitoring
       return content_tag(:span, state.capitalize, class: styles.fetch(state, ''))
     end
 
+    def badge_state(state,value)
+      styles = {
+        'OK'           => 'alert-success',
+        'UNDETERMINED' => 'alert-warning',
+        'ALARM'        => 'alert-danger',
+      }
+        content_tag(:span, value, class: "badge #{styles.fetch(state, '')}")
+    end
+
   end
 end

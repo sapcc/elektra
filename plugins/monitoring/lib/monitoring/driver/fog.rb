@@ -33,6 +33,12 @@ module Monitoring
         end
       end
 
+      def alarm_states_history(id, options = {})
+        handle_response do
+          @fog.list_alarm_state_history_for_specific_alarm(id, options).body["elements"]
+        end
+      end
+
       def get_alarm(id)
         handle_response do
           # TODO: remove options?
