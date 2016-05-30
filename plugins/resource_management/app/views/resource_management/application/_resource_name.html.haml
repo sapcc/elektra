@@ -6,6 +6,7 @@
 .col-md-2.quota-label
   .text-muted
     - conf = resource.config
+    - name = conf.name
     - area = conf.service.area
     - if overview
       = link_to t("resource_management.#{conf.name}"), plugin('resource_management').send("#{scope}_area_path", area: area)
@@ -13,14 +14,27 @@
         .small= t("resource_management.#{conf.service_name}")
     - else
       - translated_name = t("resource_management.#{conf.name}")
+      - linktitle = "Open #{area} service"
       - if scope == 'resources'
         - case area
           - when :storage
-            = link_to translated_name, plugin('block_storage').volumes_path, title: "Open #{area} service"
+            - case name
+              - when :volumes, :capacity
+                = link_to translated_name, plugin('block_storage').volumes_path, title: linktitle
+              - when :snapshots
+                = link_to translated_name, plugin('block_storage').snapshots_path, title: linktitle
           - when :compute
-            = link_to translated_name, plugin('compute').instances_path(), title: "Open #{area} service"
+            = link_to translated_name, plugin('compute').instances_path(), title: linktitle
           - when :networking
-            = link_to translated_name, plugin('networking').networks_private_index_path, title: "Open #{area} service"
+            - case name
+              - when :networks, :subnets, :ports, :rbac_policies
+                = link_to translated_name, plugin('networking').networks_private_index_path, title: linktitle
+              - when :floating_ips
+                = link_to translated_name, plugin('networking').floating_ips_path, title: linktitle
+              - when :routers
+                = link_to translated_name, plugin('networking').routers_path, title:linktitle
+              - when :security_groups, :security_group_rules
+                = link_to translated_name, plugin('networking').security_groups_path, title: linktitle
           - else
             = translated_name
       - else

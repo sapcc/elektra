@@ -8,7 +8,7 @@ module ResourceManagement
   # - service_name  (Symbol):        the name of the service that manages this resource
   # - service       (ServiceConfig): configuration for this service
   # - data_type     (DataType):      used for parsing and formatting quota/usage values for this resource
-  
+
   class ResourceConfig
     attr_reader :name, :service_name, :data_type, :default_quota
 
@@ -29,10 +29,13 @@ module ResourceManagement
         new(:compute,        :ram,            data_type: :bytes),
         new(:networking,     :floating_ips   ),
         new(:networking,     :networks       ),
+        new(:networking,     :subnets        ),
+        # new(:networking,     :subnet_pools   ),
         new(:networking,     :ports          ),
         new(:networking,     :routers        ),
         new(:networking,     :security_groups),
-        new(:networking,     :subnets        ),
+        new(:networking,     :security_group_rules),
+        new(:networking,     :rbac_policies  ),
         new(:block_storage,  :capacity,       data_type: :bytes),
         new(:block_storage,  :snapshots      ),
         new(:block_storage,  :volumes        ),
