@@ -34,17 +34,23 @@ module Identity
       end
     
       def update
+        load_role_assignments
+        
         # save new role assignments
         params[:role_assignments].each do |user_id,roles|
           roles.each do |role_id, value|
-            if value=="1"
-              service_user.grant_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+            if value=="1" 
+              next if @user_roles[user_id] and @user_roles[user_id][:role_ids].include?(role_id)
+              service_user.grant_project_user_role(@scoped_project_id, user_id, role_id)
             else
-              service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+              if @user_roles[user_id] and @user_roles[user_id][:role_ids].include?(role_id)
+                service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id)
+              end
             end
           end
         end
         
+        #redirect_to domain_path(project_id: nil)
         redirect_to projects_members_path
       end
       
@@ -55,11 +61,11 @@ module Identity
       end
       
       def load_roles
-        # ignore_roles = ['service', 'monasca-agent',  'monasca-user',  'cloud_admin', 'domain_admin', 'project_admin']
+        ignore_roles = []#['service', 'monasca-agent',  'monasca-user',  'cloud_admin', 'domain_admin', 'project_admin']
         relevant_roles = ['admin','member']
         @roles = (service_user.roles rescue []).inject({}) do |available_roles, role|
-          # available_roles[role.id]=role unless ignore_roles.include?(role.name)
-          available_roles[role.id]=role if relevant_roles.include?(role.name)
+          available_roles[role.id]=role unless ignore_roles.include?(role.name)
+          #available_roles[role.id]=role if relevant_roles.include?(role.name)
           available_roles
         end
       end
@@ -74,6 +80,7 @@ module Identity
           hash[user_id][:role_ids] << ra.role.fetch("id",nil)
           hash
         end
+        @user_roles.sort_by { |user_id, age| user_id }
       end
     end
   end
