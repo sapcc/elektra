@@ -208,22 +208,28 @@ module ResourceManagement
         @fog_network ||= ::Fog::Network::OpenStack.new(service_user_auth_params)
       end
 
+      NETWORK_RESOURCE_MAP = {
+        'network'             => :networks,
+        'subnet'              => :subnets,
+        # 'subnetpool'          => :subnet_pools,
+        'floatingip'          => :floating_ips,
+        'router'              => :routers,
+        'port'                => :ports,
+        'security_group'      => :security_groups,
+        'security_group_rule' => :security_group_rules,
+        'rbac_policy'         => :rbac_policies
+      }.freeze
+
+      def set_project_quota_networking(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [NETWORK_RESOURCE_MAP.invert[k], v] }.to_h
+        handle_response { fog_network_connection.update_quota(project_id, quota_values) }
+      end
+
       def query_project_quota_networking(_domain_id, project_id)
         quotas = handle_response { fog_network_connection.get_quota(project_id).body['quota'] }
 
-        quota_map = {
-          'network'             => :networks,
-          'subnet'              => :subnets,
-          # 'subnetpool'          => :subnet_pools,
-          'floatingip'          => :floating_ips,
-          'router'              => :routers,
-          'port'                => :ports,
-          'security_group'      => :security_groups,
-          'security_group_rule' => :security_group_rules,
-          'rbac_policy'         => :rbac_policies
-        }
-
-        quotas.map { |k, v| [quota_map[k], v] }.to_h
+        quotas.map { |k, v| [NETWORK_RESOURCE_MAP[k], v] }.to_h
       end
 
       def query_project_usage_networking(_domain_id, project_id)
