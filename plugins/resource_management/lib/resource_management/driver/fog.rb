@@ -5,11 +5,6 @@ module ResourceManagement
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
-      def initialize(params)
-        super(params)
-        @fog_network = ::Fog::Network::OpenStack.new(service_user_auth_params)
-      end
-
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
@@ -208,8 +203,13 @@ module ResourceManagement
 
       ### NETWORKING: NEUTRON ###################################################################
 
+      def fog_network_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_network ||= ::Fog::Network::OpenStack.new(service_user_auth_params)
+      end
+
       def query_project_quota_networking(_domain_id, project_id)
-        quotas = handle_response { @fog_network.get_quota(project_id).body['quota'] }
+        quotas = handle_response { fog_network_connection.get_quota(project_id).body['quota'] }
 
         quota_map = {
           'network'             => :networks,
@@ -228,19 +228,21 @@ module ResourceManagement
 
       def query_project_usage_networking(_domain_id, project_id)
         # TODO: handle via ceilometer - the calls now are very expensive, there are no aggregates
-        # TODO: we will hit the api limits - so we need paginated calls
 
-        networks              = handle_response { @fog_network.list_networks(tenant_id: project_id).body['networks'] }.length
-        subnets               = handle_response { @fog_network.list_subnets(tenant_id: project_id).body['subnets'] }.length
+        # filter by project and ask only for id: we just want to count
+        net_options = { tenant_id: project_id, fields: 'id' }
+
+        networks              = handle_response { fog_network_connection.list_networks(net_options).body['networks'] }.length
+        subnets               = handle_response { fog_network_connection.list_subnets(net_options).body['subnets'] }.length
         # TODO: do we even need to handle subnet_pools quota-wise or will this stay cloud-admin only?
         # TODO: if yes: needs implementation in fog
-        # subnet_pools          = handle_response { @fog_network.list_subnet_pools(tenant_id: project_id).body['subnet_pools'] }.length
-        floating_ips          = handle_response { @fog_network.list_floating_ips(tenant_id: project_id).body['floatingips'] }.length
-        routers               = handle_response { @fog_network.list_routers(tenant_id: project_id).body['routers'] }.length
-        ports                 = handle_response { @fog_network.list_ports(tenant_id: project_id).body['ports'] }.length
-        security_groups       = handle_response { @fog_network.list_security_groups(tenant_id: project_id).body['security_groups'] }.length
-        security_group_rules  = handle_response { @fog_network.list_security_group_rules(tenant_id: project_id).body['security_group_rules'] }.length
-        rbac_policies         = handle_response { @fog_network.list_rbac_policies(tenant_id: project_id).body['rbac_policies'] }.length
+        # subnet_pools          = handle_response { fog_network_connection.list_subnet_pools(net_options).body['subnet_pools'] }.length
+        floating_ips          = handle_response { fog_network_connection.list_floating_ips(net_options).body['floatingips'] }.length
+        routers               = handle_response { fog_network_connection.list_routers(net_options).body['routers'] }.length
+        ports                 = handle_response { fog_network_connection.list_ports(net_options).body['ports'] }.length
+        security_groups       = handle_response { fog_network_connection.list_security_groups(net_options).body['security_groups'] }.length
+        security_group_rules  = handle_response { fog_network_connection.list_security_group_rules(net_options).body['security_group_rules'] }.length
+        rbac_policies         = handle_response { fog_network_connection.list_rbac_policies(net_options).body['rbac_policies'] }.length
 
         {
           networks:             networks,
