@@ -1,8 +1,12 @@
 @init_tag_editor_inputs= () ->
-  $('textarea[data-toggle="tagEditor"][data-tageditor-type="key-value"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs' })
-  $('textarea[data-toggle="tagEditor"][data-tageditor-type="tag"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false })
+  $('textarea[data-toggle="tagEditor"][data-tageditor-name="environment"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs', forceLowercase: false })
+  $('textarea[data-toggle="tagEditor"][data-tageditor-name="arguments"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false })
+  $('textarea[data-toggle="tagEditor"][data-tageditor-name="runlist"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: true })
+  $('textarea[data-toggle="tagEditor"][data-tageditor-name="tags"]').each ->
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: true })
 
 @switch_automation_type=(event) ->
   value = event.target.value

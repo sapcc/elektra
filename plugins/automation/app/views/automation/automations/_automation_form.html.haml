@@ -8,7 +8,7 @@
 
 = f.input :timeout, required:true, label: 'Timeout', input_html: {}, placeholder: 'Enter timeout'
 
-= f.input :tags, as: :text, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value'} }, placeholder: 'Enter tags',
+= f.input :tags, as: :text, required: false, label: 'Tags', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'key-value', tagEditor_name: 'tags'} }, placeholder: 'Enter tags',
   icon_hint: 'Tags are key-value pairs. See hint for more information.',
   help_hint: t('automation.help_hint.key_value_pairs')
 

@@ -27,7 +27,7 @@
       - form_horizontal_static_input('Log level', @automation.log_level)
     - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
       - form_horizontal_static_input('Path', @automation.path)
-      - form_horizontal_static_hash('Arguments', @automation.arguments)
+      - form_horizontal_static_array('Arguments', @automation.arguments)
       - form_horizontal_static_hash('Environment', @automation.environment)
 
 
