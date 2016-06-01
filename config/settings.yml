@@ -1,6 +1,7 @@
 self_registration_domains:
+  - monsoon2
   - monsoon3
-  
+
 credentials:
   types:
     - ec2
@@ -14,124 +15,132 @@ credentials:
       - name
       - public_key
 
+# If you add a new version to the tou, create a new version key,
+# set the ACTUAL_TERMS anchor to the new key and
+# set the actual_terms_version to the new key
+terms:
+  actual_terms_version: &ACTUAL_TERMS_VERSION v1
+  v1: &ACTUAL_TERMS >
+    ### Overview
 
-terms: >
-  ### Overview
+    #### Service Description
 
-  #### Service Description
+    IT Infrastructure Services will give the ability to provide standalone virtual operating systems as well as,
+    software automation (Iaas +PaaS). This is the automated provisioning of virtual servers via a self-service using IT IS’s Monsoon Platform.
+    These instances can be based on fixed sizes or customized specifically to the needs of the customers.
 
-  IT Infrastructure Services will give the ability to provide standalone virtual operating systems as well as,
-  software automation (Iaas +PaaS). This is the automated provisioning of virtual servers via a self-service using IT IS’s Monsoon Platform.
-  These instances can be based on fixed sizes or customized specifically to the needs of the customers.
+    #### Usage Guidelines
 
-  #### Usage Guidelines
+    Monsoon is intended for the use of Employees of SAP AG along with all subsidiaries.
+    The end user is solely responsible for all content, development and use of content.
+    You may use Monsoon to store, retrieve, query, serve and execute your content.
+    Your content must follow SAP’s Acceptable Use Policy, the Monsoon teams reserves the right to remove any content that falls outside this policy.
+    The end user is responsible for maintaining all installed software licenses that are not centrally provided by the Monsoon Service.
 
-  Monsoon is intended for the use of Employees of SAP AG along with all subsidiaries.
-  The end user is solely responsible for all content, development and use of content.
-  You may use Monsoon to store, retrieve, query, serve and execute your content.
-  Your content must follow SAP’s Acceptable Use Policy, the Monsoon teams reserves the right to remove any content that falls outside this policy.
-  The end user is responsible for maintaining all installed software licenses that are not centrally provided by the Monsoon Service.
+    ### Disclaimers
 
-  ### Disclaimers
+    #### Litigation Hold
 
-  #### Litigation Hold
+    As content is decommissioned from Monsoon it the end user must note if any relevant content is subject to Litigation Hold.
+    Litigation Hold Reminder identifies the materials that must continue to be preserved.
+    As noted in that Litigation Hold Reminder, “this obligation shall continue for as long as the Lawsuit and any related appeals
+    are ongoing and for as long thereafter as our counsel advises is appropriate.” Therefore, please continue to comply with
+    the directive in this <a href="https://localhost/go/litigation-hold-notices" target="_blank">Litigation Hold Reminder</a>.
 
-  As content is decommissioned from Monsoon it the end user must note if any relevant content is subject to Litigation Hold.
-  Litigation Hold Reminder identifies the materials that must continue to be preserved.
-  As noted in that Litigation Hold Reminder, “this obligation shall continue for as long as the Lawsuit and any related appeals
-  are ongoing and for as long thereafter as our counsel advises is appropriate.” Therefore, please continue to comply with
-  the directive in this <a href="https://localhost/go/litigation-hold-notices" target="_blank">Litigation Hold Reminder</a>.
+    #### Confidential Information
 
-  #### Confidential Information
+    The SAP Monsoon Team will use all reasonable efforts to preserve and protect any stored confidential data within its cloud environment.
+    Monsoon team is working with IT Security and Data Privacy to ensure CI.
+    SAP will ensure that all employees and agents that have access to the data are legally bound not to disclose this information.
+    Confidential Information shall mean all trade secrets and other information or Services which SAP or third parties protect
+    against unrestricted disclosure to others which is labeled Confidential.
 
-  The SAP Monsoon Team will use all reasonable efforts to preserve and protect any stored confidential data within its cloud environment.
-  Monsoon team is working with IT Security and Data Privacy to ensure CI.
-  SAP will ensure that all employees and agents that have access to the data are legally bound not to disclose this information.
-  Confidential Information shall mean all trade secrets and other information or Services which SAP or third parties protect
-  against unrestricted disclosure to others which is labeled Confidential.
+    #### Global Conditions
 
-  #### Global Conditions
+    Monsoon Infrastructure is provided in multiple global locations. The user has the authorization to select a location
+    based on their specific needs. Once the system is located in a specific region the data privacy, CI, and legal terms
+    follow the laws of that residing company. End users should be aware of this when determining a specific location for deployment.
 
-  Monsoon Infrastructure is provided in multiple global locations. The user has the authorization to select a location
-  based on their specific needs. Once the system is located in a specific region the data privacy, CI, and legal terms
-  follow the laws of that residing company. End users should be aware of this when determining a specific location for deployment.
+    ### Terms
 
-  ### Terms
+    #### Fees
 
-  #### Fees
+    Monsoon systems are subject to reoccurring fees agreed upon deployment and usage of specific services.
+    These fees are agreed upon upfront by the customer and the customer designated cost object is responsible
+    for these fees during the duration of system operation. It is your responsibility to maintain a correct
+    cost object per organization. If the cost object is not valid we have to bill your Headcount Cost Center.
+    SAP reserves the right to reasonably increase fees based on current conditions.
+    SAP will provide reasonable notice on any planned fee increase.
 
-  Monsoon systems are subject to reoccurring fees agreed upon deployment and usage of specific services.
-  These fees are agreed upon upfront by the customer and the customer designated cost object is responsible
-  for these fees during the duration of system operation. It is your responsibility to maintain a correct
-  cost object per organization. If the cost object is not valid we have to bill your Headcount Cost Center.
-  SAP reserves the right to reasonably increase fees based on current conditions.
-  SAP will provide reasonable notice on any planned fee increase.
+    #### OS Access
 
-  #### OS Access
+    SAP will provide the Monsoon user with Root/Administrator access to deployed system.
+    Root Access to OS should not be given to customers / partners. As such Monsoon team will provide good faith effort
+    to resolve any technical or performance issues related to the Operating System. Monsoon team cannot guarantee that
+    we will be able to fully resolve any OS issue. Monsoon team will fully support all infrastructure and orchestration layers.
 
-  SAP will provide the Monsoon user with Root/Administrator access to deployed system.
-  Root Access to OS should not be given to customers / partners. As such Monsoon team will provide good faith effort
-  to resolve any technical or performance issues related to the Operating System. Monsoon team cannot guarantee that
-  we will be able to fully resolve any OS issue. Monsoon team will fully support all infrastructure and orchestration layers.
+    #### Cookbooks
 
-  #### Cookbooks
+    Cookbooks are created and maintained by Open Community Standards. Cookbook owner is responsible for maintenance and
+    support of cookbook Monsoon team does not provide cookbook support.
 
-  Cookbooks are created and maintained by Open Community Standards. Cookbook owner is responsible for maintenance and
-  support of cookbook Monsoon team does not provide cookbook support.
+    #### Security Zones
 
-  #### Security Zones
+    Monsoon will provide ability to place systems into Network Zones 1(Internal Prod Biz), Zone 2 (Internal) and Zone 4 (DMZ).
+    If a system is deployed in zone 1,4 a security concept will be required to be submitted and approved by IT Security.
+    The creating and approval of the security concept is the responsibility of the scenario owner, IT-IS will support where required.
+    Root Access to OS should not be given to customers / partners.
 
-  Monsoon will provide ability to place systems into Network Zones 1(Internal Prod Biz), Zone 2 (Internal) and Zone 4 (DMZ).
-  If a system is deployed in zone 1,4 a security concept will be required to be submitted and approved by IT Security.
-  The creating and approval of the security concept is the responsibility of the scenario owner, IT-IS will support where required.
-  Root Access to OS should not be given to customers / partners.
+    ### Customer Obligations
 
-  ### Customer Obligations
+    #### Software Approval
 
-  #### Software Approval
+    In case software is not available either via Monsoon Standard OS or Recipe you may have to order it via SRM.
+    Note that all software installed on SAP hardware has to be “SWAP” approved.
+    That means that the software has to pass the Software Approval Process and has to be rated white or grey in the
+    SWAP Catalog before it can be ordered via SRM.
 
-  In case software is not available either via Monsoon Standard OS or Recipe you may have to order it via SRM.
-  Note that all software installed on SAP hardware has to be “SWAP” approved.
-  That means that the software has to pass the Software Approval Process and has to be rated white or grey in the
-  SWAP Catalog before it can be ordered via SRM.
+    #### Software Upgrades
 
-  #### Software Upgrades
+    From time to time, the Monsoon team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
+    Operating Systems or Software. We agree to use reasonable efforts to provide you with prior notice of any scheduled Maintenance,
+    except for emergency Maintenance and you agree to use reasonable efforts to comply with any Maintenance requirements that we notify you about.
 
-  From time to time, the Monsoon team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
-  Operating Systems or Software. We agree to use reasonable efforts to provide you with prior notice of any scheduled Maintenance,
-  except for emergency Maintenance and you agree to use reasonable efforts to comply with any Maintenance requirements that we notify you about.
+    #### Security Patching
 
-  #### Security Patching
+    From time to time, the SAP-IT team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
+    Operating Systems or Software. We agree to use reasonable efforts to provide you with prior notice of any scheduled Maintenance,
+    except for emergency Maintenance and you agree to use reasonable efforts to comply with any Maintenance requirements that
+    SAP –IT notify you about. It is customer responsibility to ensure installation of any OS / Security patches that are
+    requested by SAP-IT and to comply with their guidance / requests and time lines.
 
-  From time to time, the SAP-IT team may apply upgrades, patches, bug fixes or other maintenance to the Service Offerings,
-  Operating Systems or Software. We agree to use reasonable efforts to provide you with prior notice of any scheduled Maintenance,
-  except for emergency Maintenance and you agree to use reasonable efforts to comply with any Maintenance requirements that
-  SAP –IT notify you about. It is customer responsibility to ensure installation of any OS / Security patches that are
-  requested by SAP-IT and to comply with their guidance / requests and time lines.
+    #### Change Management
 
-  #### Change Management
+    Any request for a system change that isn’t currently automated by Monsoon can be requested through the Change Management process.
+    This process is listed in the Monsoon documentation and can trigger by the end user at any time.
+    Please note that certain Change Management processes can incur an additional fee; please refer to the documentation listed.
+    If systems require existing change management user must follow current change management processes listed.
 
-  Any request for a system change that isn’t currently automated by Monsoon can be requested through the Change Management process.
-  This process is listed in the Monsoon documentation and can trigger by the end user at any time.
-  Please note that certain Change Management processes can incur an additional fee; please refer to the documentation listed.
-  If systems require existing change management user must follow current change management processes listed.
+    ### Backup
 
-  ### Backup
+    Monsoon offers the standard File system (FS) and DB Backup / Restore from the Global Backup Team.
+    Customer is responsible for requesting to enable backups on their systems. Backups are not enabled by default.
 
-  Monsoon offers the standard File system (FS) and DB Backup / Restore from the Global Backup Team.
-  Customer is responsible for requesting to enable backups on their systems. Backups are not enabled by default.
+    ### LIMITATION OF LIABILITY
 
-  ### LIMITATION OF LIABILITY
+    TO THE EXTENT ALLOWABLE BY APPLICABLE LAW, SAP AND ITS AFFILIATES, SUBSIDIARIES, OFFICERS, EMPLOYEES, AGENTS, PARTNERS,
+    AND LICENSORS ARE NOT LIABLE TO ANY USER FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, CONSEQUENTIAL,
+    OR EXEMPLARY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, REVENUE, GOODWILL, USE, DATA, OR
+    OTHER INTANGIBLE LOSSES (EVEN IF SAP HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), HOWEVER CAUSED, WHETHER IN
+    CONTRACT, TORT, OR OTHERWISE, ARISING OUT OF OR RESULTING FROM: (i) THE USE OR THE INABILITY TO USE THE SAP.com, SAP SOFTWARE,
+    OR SERVICES; (ii) THE COST OF PROCUREMENT OF SUBSTITUTE GOODS AND SERVICES ARISING OUT OF YOUR USE OR INABILITY TO USE
+    ANY SAP SOFTWARE, CONTENT, OR SERVICES PURCHASED OR OBTAINED DURING TRANSACTIONS CONDUCTED ON THE SAP.com;
+    (iii) UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA;
+    (iv) STATEMENTS, MESSAGES, OR CONDUCT OF ANY THIRD PARTY ON THE SAP.com; OR
+    (v) ANY OTHER MATTER RELATING TO THE SAP.com OR SERVICES. NOTWITHSTANDING ANYTHING TO THE CONTRARY HEREIN,
+    THESE LIMITATIONS SHALL NOT APPLY IN CASE OF INTENT OR GROSS NEGLIGENCE BY SAP AND IN CASE OF SAPS STATUTORY
+    LIABILITY FOR PERSONAL INJURY AND DEFECTIVE PRODUCTS.
 
-  TO THE EXTENT ALLOWABLE BY APPLICABLE LAW, SAP AND ITS AFFILIATES, SUBSIDIARIES, OFFICERS, EMPLOYEES, AGENTS, PARTNERS,
-  AND LICENSORS ARE NOT LIABLE TO ANY USER FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, CONSEQUENTIAL,
-  OR EXEMPLARY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, REVENUE, GOODWILL, USE, DATA, OR
-  OTHER INTANGIBLE LOSSES (EVEN IF SAP HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), HOWEVER CAUSED, WHETHER IN
-  CONTRACT, TORT, OR OTHERWISE, ARISING OUT OF OR RESULTING FROM: (i) THE USE OR THE INABILITY TO USE THE SAP.com, SAP SOFTWARE,
-  OR SERVICES; (ii) THE COST OF PROCUREMENT OF SUBSTITUTE GOODS AND SERVICES ARISING OUT OF YOUR USE OR INABILITY TO USE
-  ANY SAP SOFTWARE, CONTENT, OR SERVICES PURCHASED OR OBTAINED DURING TRANSACTIONS CONDUCTED ON THE SAP.com;
-  (iii) UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA;
-  (iv) STATEMENTS, MESSAGES, OR CONDUCT OF ANY THIRD PARTY ON THE SAP.com; OR
-  (v) ANY OTHER MATTER RELATING TO THE SAP.com OR SERVICES. NOTWITHSTANDING ANYTHING TO THE CONTRARY HEREIN,
-  THESE LIMITATIONS SHALL NOT APPLY IN CASE OF INTENT OR GROSS NEGLIGENCE BY SAP AND IN CASE OF SAPS STATUTORY
-  LIABILITY FOR PERSONAL INJURY AND DEFECTIVE PRODUCTS.
+actual_terms:
+  version: *ACTUAL_TERMS_VERSION
+  terms: *ACTUAL_TERMS

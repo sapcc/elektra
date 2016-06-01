@@ -170,7 +170,15 @@ module Core
       def add_user_to_group(user_id,group_id)
         handle_response{@fog.add_user_to_group(group_id, user_id)}
       end
-  
+
+      def remove_user_from_group(user_id,group_id)
+        handle_response{@fog.remove_user_from_group(group_id, user_id)}
+      end
+
+      def group_user_check(user_id,group_id)
+        handle_response{@fog.group_user_check(group_id, user_id)}
+      end
+
       ##################### CREDENTIALS #########################
       def os_credentials(filter={})
         handle_response{ @fog.list_os_credentials(filter).body['credentials'] }
@@ -220,8 +228,8 @@ module Core
         handle_response{ @fog.list_user_groups(user_id).body['groups'] }
       end
   
-      def user_projects(user_id)
-        handle_response{ @fog.list_user_projects(user_id).body['projects'] }
+      def user_projects(user_id, filter= {})
+        handle_response{ @fog.list_user_projects(user_id, filter).body['projects'] }
       end
   
       ######################## ROLES ##########################

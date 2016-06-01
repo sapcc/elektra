@@ -10,11 +10,7 @@ Rails.application.routes.draw do
 
     scope "(/:project_id)" do
       scope module: 'dashboard' do
-        scope module: 'onboarding' do
-          get 'onboarding'
-          post 'register_without_inquiry'
-          post 'register_with_inquiry'
-        end
+        post 'accept_terms_of_use'
       end
 
       ###################### MOUNT PLUGINS #####################

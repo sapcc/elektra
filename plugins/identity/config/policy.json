@@ -11,7 +11,7 @@
   "identity:project_delete": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
 
   "identity:project_create": "rule:cloud_admin or rule:admin_and_matching_project_domain_id",
-  "identity:project_request": "(role:member or role:Member)",
+  "identity:project_request": "(domain_id:%(domain_id)s and not role:admin) or not project_id:nil",
 
   "identity:project_api_endpoints": "role:admin or role:Member or role:member",
   "identity:project_web_console": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",

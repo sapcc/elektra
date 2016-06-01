@@ -11,10 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160321133054) do
+ActiveRecord::Schema.define(version: 20160530112349) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "domain_profiles", force: :cascade do |t|
+    t.string   "domain_id"
+    t.integer  "user_profile_id"
+    t.string   "tou_version"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "domain_profiles", ["user_profile_id"], name: "index_domain_profiles_on_user_profile_id", using: :btree
 
   create_table "friendly_id_entries", force: :cascade do |t|
     t.string   "class_name"
@@ -114,4 +124,18 @@ ActiveRecord::Schema.define(version: 20160321133054) do
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
+  create_table "user_profiles", force: :cascade do |t|
+    t.string   "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "name"
+    t.string   "email"
+    t.string   "first_name"
+    t.string   "last_name"
+  end
+
+  add_index "user_profiles", ["name"], name: "index_user_profiles_on_name", using: :btree
+  add_index "user_profiles", ["uid"], name: "index_user_profiles_on_uid", using: :btree
+
+  add_foreign_key "domain_profiles", "user_profiles"
 end

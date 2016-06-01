@@ -12,7 +12,7 @@ module ServiceLayer
                                                 domain_id: self.domain_id,
                                                 project_id: self.project_id
                                             })
-    # catch token expired errors                                        
+        # catch token expired errors
     rescue Excon::Errors::Unauthorized, Excon::Errors::NotFound => e
       # and raise InvalidToken error
       raise Identity::InvalidToken.new(e)
@@ -46,7 +46,7 @@ module ServiceLayer
 
     ##################### PROJECTS #########################
     def new_project(attributes={})
-      Identity::Project.new(@driver, attributes)
+      Identity::Project.new(driver, attributes)
     end
 
     def find_project(id=nil, options=[])
@@ -65,10 +65,13 @@ module ServiceLayer
       return @auth_projects if domain_id.nil?
       @auth_projects.select { |project| project.domain_id==domain_id }
     end
-    
-    def auth_projects_tree
+
+    def auth_projects_tree(projects=auth_projects)
+      if projects && !projects.first.kind_of?(Identity::Project)
+        projects.collect! { |project| ::Identity::Project.new(@driver, project.attributes.merge(id:project.id)) }
+      end
       @projects_tree ||= Rails.cache.fetch("#{current_user.token}/auth_projects_tree", expires_in: 60.seconds) do
-        Identity::ProjectTree.new(auth_projects)
+        Identity::ProjectTree.new(projects)
       end
     end
     
@@ -112,7 +115,7 @@ module ServiceLayer
     def roles
       @roles ||= driver.map_to(Identity::Role).roles
     end
-    
+
     def groups
       driver.map_to(Identity::Group).user_groups(@current_user.id)
     end

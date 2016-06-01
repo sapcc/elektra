@@ -24,7 +24,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 86e02a30722f67ff6f585e28a0b614365e0121ad
+  revision: 3319612e101e4812b9e995aee74b21e1fee68886
   branch: master
   specs:
     monsoon-openstack-auth (0.8.6)
@@ -363,7 +363,7 @@ GEM
     mime-types (2.99.1)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
-    multi_json (1.12.0)
+    multi_json (1.12.1)
     multi_test (0.1.2)
     multipart-post (2.0.0)
     nenv (0.2.0)

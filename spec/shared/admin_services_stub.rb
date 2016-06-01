@@ -1,5 +1,6 @@
 def stub_admin_services(&block)
-  allow(Core::ServiceUser::Base).to receive(:load).and_return(double("service_user").as_null_object)
+  region = (AuthenticationStub.test_token["catalog"].first["endpoints"].first["region"] || AuthenticationStub.test_token["catalog"].first["endpoints"].first["region_id"])
+  allow(Core).to receive(:locate_region).and_return(region)
   allow_any_instance_of(Dashboard::OnboardingService).to receive(:new_user?).and_return(false)
   
   service_user = double('service_user').as_null_object

@@ -4,7 +4,7 @@ module Core
       @@service_user_mutex = Mutex.new
 
       # # delegate some methods to auth_users
-      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, :id, to: :@auth_user
+      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, :id, :default_services_region, :available_services_regions, to: :@auth_user
 
       # Class methods    
       class << self
@@ -125,6 +125,10 @@ module Core
         driver_method(:role_assignments, true, filter)
       end
 
+      def user_projects user_id, filter={}
+        driver_method(:user_projects, true, user_id, filter)
+      end
+
       def find_role_by_name(name)
         roles.select { |r| r.name==name }.first
       end
@@ -166,6 +170,18 @@ module Core
         groups = driver_method(:groups, true, {domain_id: self.domain_id, name: group_name}) rescue []
         group = groups.first
         driver_method(:add_user_to_group, false, user_id, group.id) rescue false
+      end
+
+      def remove_user_from_group(user_id, group_name)
+        groups = driver_method(:groups, true, {domain_id: self.domain_id, name: group_name}) rescue []
+        group = groups.first
+        driver_method(:remove_user_from_group, false, user_id, group.id) rescue false
+      end
+
+      def group_user_check(user_id, group_name)
+        groups = driver_method(:groups, true, {domain_id: self.domain_id, name: group_name}) rescue []
+        group = groups.first
+        driver_method(:group_user_check, false, user_id, group.id) rescue false
       end
 
       # A special case of list_scope_admins that returns a list of CC admins.
