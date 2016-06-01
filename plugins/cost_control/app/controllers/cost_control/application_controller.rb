@@ -1,6 +1,6 @@
 module CostControl
   class ApplicationController < DashboardController
-    def index
-    end
+    # This is the base class of all controllers in this plugin. Only put code in here that is shared across controllers.
+    authorization_context 'cost_control'
   end
 end

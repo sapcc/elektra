@@ -1,0 +1,4 @@
+{
+    "cost_control:cost_center_get": "not project_id:nil",
+    "cost_control:cost_center_update": "rule:project_admin"
+}
