@@ -12,7 +12,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/fog-openstack-sap-billing.git
-  revision: 84d5e63b60ac348001c989d088fd5d7f1697042d
+  revision: 5e0e6ae78450bd536582c0bb747b183541b90048
   branch: master
   specs:
     fog-openstack-sap-billing (0.0.1)

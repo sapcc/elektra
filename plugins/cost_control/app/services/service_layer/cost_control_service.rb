@@ -17,7 +17,7 @@ module ServiceLayer
 
     ##### project metadata
 
-    def project_metadata(project_id)
+    def find_project_metadata(project_id)
       return nil if project_id.blank?
       driver.map_to(CostControl::ProjectMetadata).get_project_metadata(project_id)
     end
