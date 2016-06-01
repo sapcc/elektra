@@ -54,6 +54,8 @@ module ResourceManagement
         @mocker ||= ResourceManagement::Driver::Mock.new
       end
 
+      ### OBJECT STORAGE: SWIFT ###################################################################
+
       def query_project_quota_object_storage(domain_id, project_id)
         metadata = get_swift_account_metadata(domain_id, project_id)
         if metadata.empty?
@@ -105,14 +107,14 @@ module ResourceManagement
           begin
             connection.request(
               # usually 204, but sometimes Swift Kilo inexplicably returns 200
-              :expects => [200, 204], 
+              :expects => [200, 204],
               :method  => 'HEAD',
               :path    => '',
               :query   => { 'format' => 'json' },
             ).headers.to_hash
           rescue ::Fog::Storage::OpenStack::NotFound
             # 404 not found is returned if a project exist but no account was created in swift
-            #     that usualy happens if account autocreate is disabled in swift and the user did not create a account 
+            #     that usualy happens if account autocreate is disabled in swift and the user did not create a account
             #     in the object storage plugin of elektra (or somerwhere else with the swift client ;-))
             return {}
           end
@@ -199,7 +201,67 @@ module ResourceManagement
         end
       end
 
+      ### NETWORKING: NEUTRON ###################################################################
 
+      def fog_network_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_network ||= ::Fog::Network::OpenStack.new(service_user_auth_params)
+      end
+
+      NETWORK_RESOURCE_MAP = {
+        'network'             => :networks,
+        'subnet'              => :subnets,
+        # 'subnetpool'          => :subnet_pools,
+        'floatingip'          => :floating_ips,
+        'router'              => :routers,
+        'port'                => :ports,
+        'security_group'      => :security_groups,
+        'security_group_rule' => :security_group_rules,
+        'rbac_policy'         => :rbac_policies
+      }.freeze
+
+      def set_project_quota_networking(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [NETWORK_RESOURCE_MAP.invert[k], v] }.to_h
+        handle_response { fog_network_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_networking(_domain_id, project_id)
+        quotas = handle_response { fog_network_connection.get_quota(project_id).body['quota'] }
+
+        quotas.map { |k, v| [NETWORK_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_networking(_domain_id, project_id)
+        # TODO: handle via ceilometer - the calls now are very expensive, there are no aggregates
+
+        # filter by project and ask only for id: we just want to count
+        net_options = { tenant_id: project_id, fields: 'id' }
+
+        networks              = handle_response { fog_network_connection.list_networks(net_options).body['networks'] }.length
+        subnets               = handle_response { fog_network_connection.list_subnets(net_options).body['subnets'] }.length
+        # TODO: do we even need to handle subnet_pools quota-wise or will this stay cloud-admin only?
+        # TODO: if yes: needs implementation in fog
+        # subnet_pools          = handle_response { fog_network_connection.list_subnet_pools(net_options).body['subnet_pools'] }.length
+        floating_ips          = handle_response { fog_network_connection.list_floating_ips(net_options).body['floatingips'] }.length
+        routers               = handle_response { fog_network_connection.list_routers(net_options).body['routers'] }.length
+        ports                 = handle_response { fog_network_connection.list_ports(net_options).body['ports'] }.length
+        security_groups       = handle_response { fog_network_connection.list_security_groups(net_options).body['security_groups'] }.length
+        security_group_rules  = handle_response { fog_network_connection.list_security_group_rules(net_options).body['security_group_rules'] }.length
+        rbac_policies         = handle_response { fog_network_connection.list_rbac_policies(net_options).body['rbac_policies'] }.length
+
+        {
+          networks:             networks,
+          subnets:              subnets,
+          # subnet_pools:        subnet_pools,
+          floating_ips:         floating_ips,
+          routers:              routers,
+          ports:                ports,
+          security_groups:      security_groups,
+          security_group_rules: security_group_rules,
+          rbac_policies:        rbac_policies
+        }
+      end
     end
   end
 end

@@ -12,8 +12,10 @@ en:
     networks: Networks
     subnets: Subnets
     routers: Routers
+    rbac_policies: RBAC Policies
     ports: Ports
     security_groups: Security Groups
+    security_group_rules: Security Group Rules
     volumes: Volumes
     snapshots: Snapshots
     capacity: Capacity
