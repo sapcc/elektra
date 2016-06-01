@@ -1,4 +1,4 @@
 CostControl::Engine.routes.draw do
-  get '/cost_center' => 'cost_center#show',   as: 'cost_center'
-  put '/cost_center' => 'cost_center#update'
+  get '/cost-object' => 'cost_object#show',   as: 'cost_object'
+  put '/cost-object' => 'cost_object#update'
 end

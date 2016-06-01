@@ -1,5 +1,5 @@
 module CostControl
-  class CostCenterController < ObjectStorage::ApplicationController
+  class CostObjectController < ObjectStorage::ApplicationController
     authorization_required
 
     def show
@@ -8,7 +8,7 @@ module CostControl
 
     def update
       # TODO
-      redirect_to plugin('cost_control').cost_center_path
+      redirect_to plugin('cost_control').cost_object_path
     end
 
   end
