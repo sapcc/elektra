@@ -1,11 +1,17 @@
 module CostControl
   module Driver
-    # Neutron calls
     class Interface < Core::ServiceLayer::Driver::Base
-      ###################### NETWORKS #######################
-      def test(filter={})
+
+      ##### project metadata
+
+      def get_project_metadata(project_id)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
+
+      def update_project_metadata(project_id, params={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end
