@@ -1,4 +1,12 @@
 =content_for :main_toolbar do
   Cost Control
 
-.alert.alert-info Coming soon!
+- writable = current_user.is_allowed?('cost_control:cost_object_update')
+
+=simple_form_for @metadata, url: plugin('cost_control').cost_object_path, method: :put, html: { class: 'form-horizontal' } do |f|
+  .row
+    .col-md-3= f.input :cost_object, input_html: { readonly: !writable }
+
+  - if writable
+    .buttons
+      = button_tag 'Save', { class: 'btn btn-primary', data: { disable_with: "Please wait..." } }

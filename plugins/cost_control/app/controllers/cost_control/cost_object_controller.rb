@@ -5,12 +5,15 @@ module CostControl
     before_filter :load_project_metadata
 
     def show
-      # TODO
     end
 
     def update
-      # TODO
-      redirect_to plugin('cost_control').cost_object_path
+      attrs = params.require(:project_metadata).permit(:cost_object)
+      if @metadata.update_attributes(attrs)
+        redirect_to plugin('cost_control').cost_object_path
+      else
+        render action: 'show'
+      end
     end
 
     private
