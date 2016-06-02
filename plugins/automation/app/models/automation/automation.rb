@@ -12,7 +12,7 @@ module Automation
 
     def form_attribute(name)
       unless self.respond_to? name.to_sym
-        return "Unknow attribute ''#{name}''"
+        return "Unknown attribute ''#{name}''"
       end
       self.send(name.to_sym)
     end
