@@ -51,6 +51,9 @@
             - if Rails.env.development?
               = render partial: 'layouts/dev_tools'
           .col-sm-3
+            - if Rails.env.development? and current_user
+              = "Token expires at: #{current_user.token_expires_at}"
+              
           .col-sm-3
 
     = yield :templates

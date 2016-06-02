@@ -10,20 +10,21 @@
     - if current_user.is_allowed?('identity:member_create',{})
       .toolbar= link_to 'New Project Member', plugin('identity').new_projects_member_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-    - role_ids = @roles.keys 
     %table.table#project_members
       %thead
         %tr
           %th User
-          - @roles.each do |role_id,role|
-            %th{data: {role_id: role_id} }= role.name
+          %th Roles
+          %th Actions
+
       %tbody
         - if @user_roles.blank?
           %tr
-            %td No members assigned this project. 
+            %td{colspan: 3} No members assigned to this project. 
         - else    
+          - can_update = current_user.is_allowed?('identity:member_update')
           - @user_roles.each do |user_id, values|
-            = render partial: 'member', locals: {user_id: user_id, user_name: values[:name], role_ids: role_ids, user_role_ids: values[:role_ids]}
+            = render partial: 'member', locals: {user_id: user_id, user_name: values[:name], roles: @roles, user_roles: values[:roles], can_update: can_update}
                     
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
@@ -31,5 +32,3 @@
     - else
       =# link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'  
     = f.submit 'Save', class: 'btn btn-primary hidden', data: { disable_with: "Please wait..." }
-    
-

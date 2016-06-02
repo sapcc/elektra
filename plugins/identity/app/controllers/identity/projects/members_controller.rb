@@ -35,22 +35,26 @@ module Identity
     
       def update
         load_role_assignments
-        
-        # save new role assignments
-        params[:role_assignments].each do |user_id,roles|
-          roles.each do |role_id, value|
-            if value=="1" 
-              next if @user_roles[user_id] and @user_roles[user_id][:role_ids].include?(role_id)
-              service_user.grant_project_user_role(@scoped_project_id, user_id, role_id)
-            else
-              if @user_roles[user_id] and @user_roles[user_id][:role_ids].include?(role_id)
-                service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id)
-              end
-            end
-          end
+
+        # update changed roles
+        updated_roles_user_ids = []
+        params[:role_assignments].each do |user_id,new_user_role_ids|
+          updated_roles_user_ids << user_id
+          old_user_role_ids = (@user_roles[user_id] || {roles: []})[:roles].collect{|role| role[:id]}
+           
+          role_ids_to_add = new_user_role_ids-old_user_role_ids
+          role_ids_to_remove = old_user_role_ids-new_user_role_ids
+
+          role_ids_to_add.each{|role_id| service_user.grant_project_user_role(@scoped_project_id, user_id, role_id)}
+          role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id)}
         end
         
-        #redirect_to domain_path(project_id: nil)
+        # remove roles
+        (@user_roles.keys-updated_roles_user_ids).each do |user_id|
+          role_ids_to_remove = (@user_roles[user_id] || {})[:roles].collect{|role| role[:id]}
+          role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id)}
+        end
+        
         redirect_to projects_members_path
       end
       
@@ -61,13 +65,7 @@ module Identity
       end
       
       def load_roles
-        ignore_roles = []#['service', 'monasca-agent',  'monasca-user',  'cloud_admin', 'domain_admin', 'project_admin']
-        relevant_roles = ['admin','member']
-        @roles = (service_user.roles rescue []).inject({}) do |available_roles, role|
-          available_roles[role.id]=role unless ignore_roles.include?(role.name)
-          #available_roles[role.id]=role if relevant_roles.include?(role.name)
-          available_roles
-        end
+        @roles = service_user.roles rescue []
       end
       
       def load_role_assignments
@@ -76,8 +74,8 @@ module Identity
         @user_roles ||= @role_assignments.inject({}) do |hash,ra| 
           user_id = (ra.user || {}).fetch("id",nil)
           next unless user_id
-          hash[user_id] ||= {role_ids: [], name: ra.user.fetch("name",'unknown')}
-          hash[user_id][:role_ids] << ra.role.fetch("id",nil)
+          hash[user_id] ||= {role_ids: [], roles:[], name: ra.user.fetch("name",'unknown')}
+          hash[user_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
           hash
         end
         @user_roles.sort_by { |user_id, age| user_id }
