@@ -9,7 +9,7 @@ module Identity
     authorization_required(context:'identity', additional_policy_params: {project: Proc.new { {id: @project_id, domain_id: @scoped_domain_id} } } )
 
     def user_projects
-      @projects = @user_domain_projects
+      @projects = @user_domain_projects.collect{ |project| ::Identity::Project.new(@driver, project.attributes.merge(id:project.id)) }
 
       respond_to do |format|
         format.html {
