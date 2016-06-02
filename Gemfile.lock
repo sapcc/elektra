@@ -180,6 +180,7 @@ GEM
     bootstrap-kaminari-views (0.0.5)
       kaminari (>= 0.13)
       rails (>= 3.1)
+    bootstrap-multiselect_rails (0.9.5)
     bootstrap-sass (3.3.5.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.3.0)
@@ -507,6 +508,7 @@ DEPENDENCIES
   bare_metal_hana!
   better_errors
   block_storage!
+  bootstrap-multiselect_rails (~> 0.9.4)
   bootstrap-sass
   byebug
   capybara
