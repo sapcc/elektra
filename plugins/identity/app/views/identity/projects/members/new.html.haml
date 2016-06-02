@@ -14,11 +14,9 @@
       %label.string.required.col-sm-4.control-label{for: "member_name"}
         %abbr{title:"required"} *
         User name or ID
-      .col-sm-8
+      .col-sm-6
         .input-wrapper
-          .input-group
-            %input{name: "user_name", class: "string required form-control", id: "member_name"}
-            %span.input-group-btn= f.button :submit, 'Add', class: 'btn btn-default'
+          %input{name: "user_name", class: "string required form-control", id: "member_name"}
         %p.help-block
           %i.fa.fa-info-circle
           You can add users from the same domain as members of this project.    
@@ -26,7 +24,7 @@
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
       = link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'
-    / = f.submit 'Save', class: 'btn btn-primary', data: { disable_with: "Please wait..." }
+    = f.submit 'Add', class: 'btn btn-primary', data: { disable_with: "Please wait..." }
