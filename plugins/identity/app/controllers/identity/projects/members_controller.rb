@@ -1,7 +1,7 @@
 module Identity
   module Projects
     class MembersController < ::DashboardController  
-      before_filter :load_project, :load_roles, except: [:new]
+      before_filter :load_roles, except: [:new]
       
       def new
       end
@@ -59,23 +59,21 @@ module Identity
       end
       
       protected 
-      
-      def load_project
-        @project = services.identity.find_project(@scoped_project_id)
-      end
-      
+
       def load_roles
         @roles = service_user.roles rescue []
       end
       
       def load_role_assignments
         #@role_assignments ||= services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
-        @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id,effective: true, include_names: true, include_subtree: true)
+        @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id, include_names: true, include_subtree: true)
         @user_roles ||= @role_assignments.inject({}) do |hash,ra| 
           user_id = (ra.user || {}).fetch("id",nil)
-          next unless user_id
-          hash[user_id] ||= {role_ids: [], roles:[], name: ra.user.fetch("name",'unknown')}
-          hash[user_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
+          # ignore group role assignments
+          if user_id
+            hash[user_id] ||= {role_ids: [], roles:[], name: ra.user.fetch("name",'unknown')}
+            hash[user_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
+          end
           hash
         end
         @user_roles.sort_by { |user_id, age| user_id }

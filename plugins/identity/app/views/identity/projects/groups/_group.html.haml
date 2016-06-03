@@ -1,0 +1,5 @@
+%tr.table
+  %td.snug= group_name
+  %td{data: {roles_display: true, roles_current: group_roles.collect{|r| r[:name]} }}
+  %td.snug
+    = select_tag("role_assignments[#{group_id}]",options_for_select(roles.collect{|r| [r.name, r.id] }, group_roles.collect{|r| r[:id]}), {multiple: true, data: {roles_select: true}, disabled: !can_update})

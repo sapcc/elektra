@@ -4,6 +4,8 @@
 - else
   = content_for :main_toolbar do
     Project Members   
+  = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }  
+  
   
 = simple_form_for :role_assignments, url: plugin('identity').projects_members_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
   %div{class: modal? ? 'modal-body' : ''}

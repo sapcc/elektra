@@ -163,6 +163,10 @@ module Core
         handle_response{@fog.list_groups(filter).body['groups']}
       end
       
+      def get_group(id)
+        handle_response{ @fog.get_group(id).body['group'] }
+      end
+      
       def user_groups(user_id)
         handle_response{@fog.list_user_groups(user_id).body['groups']}
       end
