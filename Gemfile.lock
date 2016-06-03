@@ -588,6 +588,3 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
-
-BUNDLED WITH
-   1.11.2

@@ -1,0 +1,35 @@
+- if modal?
+  = content_for :title do 
+    Groups   
+- else
+  = content_for :main_toolbar do
+    Groups
+  = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }     
+  
+= simple_form_for :role_assignments, url: plugin('identity').projects_groups_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    - if current_user.is_allowed?('identity:group_add',{})
+      .toolbar= link_to 'Assign new group', plugin('identity').new_projects_group_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+    %table.table#project_members
+      %thead
+        %tr
+          %th Group
+          %th Roles
+          %th Actions
+
+      %tbody
+        - if @group_roles.blank?
+          %tr
+            %td{colspan: 3} No groups assigned to this project. 
+        - else    
+          - can_update = current_user.is_allowed?('identity:group_update')
+          - @group_roles.each do |group_id, values|
+            = render partial: 'group', locals: {group_id: group_id, group_name: values[:name], roles: @roles, group_roles: values[:roles], can_update: can_update}
+                    
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      =# link_to 'Back', plugin('identity').project_path, class: 'btn btn-default'  
+    = f.submit 'Save', class: 'btn btn-primary hidden', data: { disable_with: "Please wait..." }

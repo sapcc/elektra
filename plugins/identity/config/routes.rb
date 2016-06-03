@@ -25,6 +25,10 @@ Identity::Engine.routes.draw do
     resources :members, only: [:index, :new, :create] do
       put '/' => 'members#update', on: :collection
     end
+    
+    resources :groups, only: [:index, :new, :create] do
+      put '/' => 'groups#update'
+    end
   end
 
   get 'project/home' => 'projects#show', as: :project

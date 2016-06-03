@@ -1,0 +1,7 @@
+%ul.nav.nav-tabs
+  - if params[:controller]=='identity/projects/members'
+    %li{ role: 'presentation', class: 'active'}= link_to 'Project Members', '#'
+    %li{ role: 'presentation' }= link_to 'Groups', projects_groups_path
+  - else  
+    %li{ role: 'presentation'}= link_to 'Project Members', projects_members_path
+    %li{ role: 'presentation', class: 'active' }= link_to 'Groups', '#'

@@ -111,6 +111,14 @@ module Core
       def find_user(user_id)
         driver_method(:get_user, true, user_id)
       end
+      
+      def groups(filter={})
+        driver_method(:groups, true, filter)
+      end
+
+      def find_group(group_id)
+        driver_method(:get_group, true, group_id)
+      end
 
       def find_domain(domain_id)
         driver_method(:get_domain, true, domain_id)
