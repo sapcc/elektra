@@ -18,7 +18,7 @@ class IndexNodesService
   end
 
   def list_nodes_with_jobs(page, per_page)
-    nodes = @automation_service.nodes("", ['online', 'platform_family', 'platform_version', 'hostname', 'os', 'ipaddress'], page, per_page)
+    nodes = @automation_service.nodes("", ['online', 'platform', 'platform_version', 'hostname', 'os', 'ipaddress'], page, per_page)
     jobs = {}
     nodes[:elements].each do |a|
       jobs[a.id.to_sym] = @automation_service.jobs(a.id, 1, 5)
