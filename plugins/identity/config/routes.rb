@@ -27,7 +27,7 @@ Identity::Engine.routes.draw do
     end
     
     resources :groups, only: [:index, :new, :create] do
-      put '/' => 'groups#update'
+      put '/' => 'groups#update', on: :collection
     end
   end
 

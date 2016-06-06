@@ -165,6 +165,14 @@ module Core
       def revoke_project_user_role(project_id, user_id, role_id)
         driver_method(:revoke_project_user_role, false, project_id, user_id, role_id)
       end
+      
+      def grant_project_group_role(project_id, group_id, role_id)
+        driver_method(:grant_project_group_role, false, project_id, group_id, role_id)
+      end
+      
+      def revoke_project_group_role(project_id, group_id, role_id)
+        driver_method(:revoke_project_group_role, false, project_id, group_id, role_id)
+      end
             
       def update_project(id,params)
         driver_method(:update_project, true, id,params)
