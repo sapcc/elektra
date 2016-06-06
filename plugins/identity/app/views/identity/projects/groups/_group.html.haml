@@ -1,4 +1,4 @@
-%tr.table
+%tr.table{class: "#{'danger' if local_assigns.has_key?(:new_group)}"}
   %td.snug= group_name
   %td{data: {roles_display: true, roles_current: group_roles.collect{|r| r[:name]} }}
   %td.snug

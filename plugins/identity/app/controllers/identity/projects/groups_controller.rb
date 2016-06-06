@@ -32,6 +32,33 @@ module Identity
       def index
         load_role_assignments
       end
+      
+      def update
+        load_role_assignments
+
+        # update changed roles
+        updated_roles_group_ids = []
+        if params[:role_assignments]
+          params[:role_assignments].each do |group_id,new_group_role_ids|
+            updated_roles_group_ids << group_id
+            old_group_role_ids = (@group_roles[group_id] || {roles: []})[:roles].collect{|role| role[:id]}
+           
+            role_ids_to_add = new_group_role_ids-old_group_role_ids
+            role_ids_to_remove = old_group_role_ids-new_group_role_ids
+
+            role_ids_to_add.each{|role_id| service_user.grant_project_group_role(@scoped_project_id, group_id, role_id)}
+            role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id)}
+          end
+        end
+        
+        # remove roles
+        (@group_roles.keys-updated_roles_group_ids).each do |group_id|
+          role_ids_to_remove = (@group_roles[group_id] || {})[:roles].collect{|role| role[:id]}
+          role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id)}
+        end
+        
+        redirect_to projects_groups_path
+      end
 
       protected 
 

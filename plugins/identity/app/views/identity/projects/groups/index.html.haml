@@ -11,7 +11,7 @@
     - if current_user.is_allowed?('identity:group_add',{})
       .toolbar= link_to 'Assign new group', plugin('identity').new_projects_group_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-    %table.table#project_members
+    %table.table#project_groups
       %thead
         %tr
           %th Group

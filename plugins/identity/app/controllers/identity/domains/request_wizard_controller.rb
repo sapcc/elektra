@@ -5,7 +5,7 @@ module Identity
       before_filter :load_and_authorize_inquiry, only:[:edit,:update]
       
       before_filter do
-        enforce_permissions("identity:project_request",{})
+        enforce_permissions("identity:project_request",{domain_id: @scoped_domain_id})
       end
       
       def new
@@ -82,7 +82,7 @@ module Identity
       @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
 
       if @inquiry
-        unless current_user.is_allowed?("identity:project_request", {})
+        unless current_user.is_allowed?("identity:project_request", {domain_id:@scoped_domain_id})
           render template: '/dashboard/not_authorized'
         end
       else
