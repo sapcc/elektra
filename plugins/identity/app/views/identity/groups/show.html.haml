@@ -1,0 +1,52 @@
+= content_for :main_toolbar do
+  Group Details
+
+.row
+  .col-md-9
+    = render partial: 'identity/groups/members', locals: {members: @group_members, group: @group}
+    
+
+  .col-md-3
+    .infobox
+      %h4.action-heading
+        Group Info 
+        - can_edit = current_user.is_allowed?('identity:group_update', group: @group)
+        - can_delete = current_user.is_allowed?('identity:group_delete', group: @group) 
+        - if can_delete or can_edit
+          .dropdown.header-action
+            %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
+            %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+              - if can_edit
+                %li
+                  = link_to plugin('identity').edit_group_path(project_id:nil,id:@group.id), title: "Edit group info", data: {modal: true, toggle: "tooltip", placement: "left"} do
+                    %i.fa.fa-edit.fa-fw
+                    Edit Group
+              - if can_delete
+                %li.divider{role: "separator"}
+                %li
+                  = link_to plugin('identity').groups_path(project_id: nil, id:@group.id), method: :delete, data: {confirm:'This will also delete all assigned members. Are you sure?', ok: 'Yes, delete it!', confirm_term: @group.name, confirm_term_label: "Type group name to confirm (#{@group.name})" } do
+                    %i.fa.fa-trash.fa-fw
+                    Delete Group
+                    / %i.fa.fa-exclamation-triangle 
+        
+      %table.table
+        %tbody
+          %tr
+            %td.snug-nowrap
+              %b Name:
+              %br
+              = @group.name
+          %tr
+            %td.snug-nowrap
+              %b Description:
+              %br
+              = @group.description
+          %tr
+            %td
+              - if current_user.is_allowed?('identity:group_add_member', group: @group)
+                = link_to 'Add Member', plugin('identity').group_members_new_path(@group.id), data: {modal: true}, class: 'btn btn-primary btn-sm'   
+
+
+
+
+    

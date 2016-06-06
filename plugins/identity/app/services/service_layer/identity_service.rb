@@ -116,10 +116,30 @@ module ServiceLayer
       @roles ||= driver.map_to(Identity::Role).roles
     end
 
-    def groups
+    def user_groups
       driver.map_to(Identity::Group).user_groups(@current_user.id)
     end
 
+    def groups(filter={})
+      driver.map_to(Identity::Group).groups(filter)
+    end
+    
+    def find_group(id)
+      driver.map_to(Identity::Group).get_group(id)
+    end
+    
+    def group_members(group_id,filter={})
+      driver.map_to(Identity::User).group_members(group_id,filter)
+    end
+    
+    def add_group_member(group_id,user_id)
+      driver.add_group_member(group_id,user_id)
+    end
+    
+    def remove_group_member(group_id,user_id)
+      driver.remove_group_member(group_id,user_id)
+    end
+    
     def find_role(id)
       return nil if id.blank?
       roles.select { |r| r.id==id }.first

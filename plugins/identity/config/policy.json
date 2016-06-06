@@ -25,7 +25,20 @@
   "identity:credential_update": "rule:admin_required",
   "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
 
-  "identity:member_list": "rule:cloud_admin or role:admin or role:member or role:Member",
-  "identity:member_create": "rule:cloud_admin or role:admin",
-  "identity:member_update": "rule:cloud_admin or role:admin"
+  "identity:project_member_list": "rule:cloud_admin or role:admin or role:member or role:Member",
+  "identity:project_member_create": "rule:cloud_admin or role:admin",
+  "identity:project_member_update": "rule:cloud_admin or role:admin",
+  
+  "identity:project_group_list": "rule:cloud_admin or role:admin or role:member or role:Member",
+  "identity:project_group_create": "rule:cloud_admin or role:admin",
+  "identity:project_group_update": "rule:cloud_admin or role:admin",
+  
+  "identity:group_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
+  "identity:group_create": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
+  "identity:group_update": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
+  "identity:group_delete": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
+  
+  "identity:group_add_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
+  "identity:group_remove_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)"
+  
 }

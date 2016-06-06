@@ -9,7 +9,7 @@
   
 = simple_form_for :role_assignments, url: plugin('identity').projects_members_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
-    - if current_user.is_allowed?('identity:member_create',{})
+    - if current_user.is_allowed?('identity:project_member_create',{})
       .toolbar= link_to 'New Project Member', plugin('identity').new_projects_member_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
     %table.table#project_members
@@ -24,7 +24,7 @@
           %tr
             %td{colspan: 3} No members assigned to this project. 
         - else    
-          - can_update = current_user.is_allowed?('identity:member_update')
+          - can_update = current_user.is_allowed?('identity:project_member_update')
           - @user_roles.each do |user_id, values|
             = render partial: 'member', locals: {user_id: user_id, user_name: values[:name], roles: @roles, user_roles: values[:roles], can_update: can_update}
                     

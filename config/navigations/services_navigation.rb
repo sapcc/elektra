@@ -87,7 +87,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :access_management, 'Users & Authorizations', nil,
       html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
       if: -> {services.available?(:inquiry,:inquiries) or plugin_available?(:authorization)} do |access_management_nav|
-      access_management_nav.item :authorization, 'Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { plugin_available?(:identity) and current_user.is_allowed?('identity:member_list')}, highlights_on: Proc.new { params[:controller][/members\/.*/] }
+      access_management_nav.item :authorization, 'Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { plugin_available?(:identity) and current_user.is_allowed?('identity:project_member_list')}, highlights_on: Proc.new { params[:controller][/members\/.*/] }
     end
 
     primary.item :networking,

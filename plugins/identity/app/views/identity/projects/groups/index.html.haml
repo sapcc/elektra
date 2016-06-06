@@ -8,7 +8,7 @@
   
 = simple_form_for :role_assignments, url: plugin('identity').projects_groups_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
-    - if current_user.is_allowed?('identity:group_add',{})
+    - if current_user.is_allowed?('identity:project_group_create',{})
       .toolbar= link_to 'Assign new group', plugin('identity').new_projects_group_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
     %table.table#project_groups
@@ -23,7 +23,7 @@
           %tr
             %td{colspan: 3} No groups assigned to this project. 
         - else    
-          - can_update = current_user.is_allowed?('identity:group_update')
+          - can_update = current_user.is_allowed?('identity:project_group_update')
           - @group_roles.each do |group_id, values|
             = render partial: 'group', locals: {group_id: group_id, group_name: values[:name], roles: @roles, group_roles: values[:roles], can_update: can_update}
                     
