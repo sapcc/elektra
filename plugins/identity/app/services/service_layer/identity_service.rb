@@ -46,7 +46,7 @@ module ServiceLayer
 
     ##################### PROJECTS #########################
     def new_project(attributes={})
-      Identity::Project.new(driver, attributes)
+      Identity::Project.new(@driver, attributes)
     end
 
     def find_project(id=nil, options=[])
