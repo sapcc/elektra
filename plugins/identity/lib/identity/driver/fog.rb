@@ -257,8 +257,24 @@ module Identity
       end
 
       ##################### GROUPS ####################
-      def user_groups(user_id)
-        handle_response{@fog.list_user_groups(user_id)}
+      def groups(filter={})
+        handle_response{@fog.list_groups(filter).body['groups']}
+      end
+      
+      def group_members(group_id,filter={})
+        handle_response{@fog.list_group_users(group_id,filter).body['users']}
+      end
+      
+      def add_group_member(group_id,user_id)
+        handle_response{@fog.add_user_to_group(group_id,user_id)}
+      end
+      
+      def remove_group_member(group_id,user_id)
+        handle_response{@fog.remove_user_from_group(group_id, user_id)}
+      end
+      
+      def get_group(id)
+        handle_response{@fog.get_group(id).body['group']}
       end
 
       ######################### TOKENS ########################

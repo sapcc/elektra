@@ -80,6 +80,10 @@ SimpleNavigation::Configuration.run do |navigation|
       primary.item :domain, 'Manage Domains', plugin('identity').domains_path, if: -> {
         current_user.is_allowed?('identity:domain_list')
       }
+
+      primary.item :domain, 'Manage Groups', plugin('identity').groups_path, if: -> {
+        current_user.is_allowed?('identity:group_list', domain_id: @scoped_domain_id)
+      }
     end
 
 

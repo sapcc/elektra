@@ -1,12 +1,14 @@
 module Identity
   module Projects
-    class GroupsController < ::DashboardController  
+    class GroupsController < ::DashboardController        
       before_filter :load_roles, except: [:new]
       
       def new
+        enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
       end
       
       def create
+        enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
         @group = params[:group_name].blank? ? nil : begin 
           service_user.groups(domain_id: @scoped_domain_id,name:params[:group_name]).first 
         rescue
@@ -30,10 +32,12 @@ module Identity
       end
       
       def index
+        enforce_permissions("identity:project_group_list",{domain_id: @scoped_domain_id})
         load_role_assignments
       end
       
       def update
+        enforce_permissions("identity:project_group_update",{domain_id: @scoped_domain_id})
         load_role_assignments
 
         # update changed roles

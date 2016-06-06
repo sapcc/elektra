@@ -4,9 +4,11 @@ module Identity
       before_filter :load_roles, except: [:new]
       
       def new
+        enforce_permissions("identity:project_member_create",{domain_id: @scoped_domain_id})
       end
       
       def create
+        enforce_permissions("identity:project_member_create",{domain_id: @scoped_domain_id})
         @user = params[:user_name].blank? ? nil : begin 
           service_user.users(domain_id: @scoped_domain_id,name:params[:user_name]).first 
         rescue
@@ -30,10 +32,12 @@ module Identity
       end
       
       def index
+        enforce_permissions("identity:project_member_list",{domain_id: @scoped_domain_id})
         load_role_assignments
       end
     
       def update
+        enforce_permissions("identity:project_member_update",{domain_id: @scoped_domain_id})
         load_role_assignments
 
         # update changed roles
