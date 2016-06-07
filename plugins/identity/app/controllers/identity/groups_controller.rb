@@ -53,22 +53,42 @@ module Identity
 
     def new
       enforce_permissions("identity:group_create",{domain_id: @scoped_domain_id})
+      @group = Identity::Group.new(nil,{})
     end
     
     def create
       enforce_permissions("identity:group_create",{domain_id: @scoped_domain_id})
+      @group = services.identity.new_group(params[:group].merge(domain_id: @scoped_domain_id))
+      if @group.save
+        redirect_to groups_path
+      else
+        render action: :new
+      end
     end
     
     def edit
-      enforce_permissions("identity:group_update",{domain_id: @scoped_domain_id})
+      @group = services.identity.find_group(params[:id])
+      enforce_permissions("identity:group_update",{group: @group})
     end
     
     def update
-      enforce_permissions("identity:group_update",{domain_id: @scoped_domain_id})
+      @group = services.identity.find_group(params[:id])
+      enforce_permissions("identity:group_update",{group: @group})
+      @group.description = params[:group][:description]
+      if @group.save
+        redirect_to group_path(@group.id)
+      else
+        render action: :edit
+      end
     end
     
     def destroy
-      enforce_permissions("identity:group_delete",{domain_id: @scoped_domain_id})
+      @group = services.identity.find_group(params[:id])
+      enforce_permissions("identity:group_delete",{group: @group})
+      if @group.destroy
+        flash.now[:error] = @group.errors.full_messages.to_sentence
+      end
+      redirect_to groups_path
     end
     
   end

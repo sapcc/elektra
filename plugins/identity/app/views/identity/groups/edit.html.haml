@@ -1,10 +1,10 @@
-= simple_form_for @group, url: groups_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @group, url: group_path(@group.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @group.errors.blank?
       %p.alert.alert-error= @group.errors.full_messages.to_sentence
     
-    = f.input :name, require: true
+    = f.input :name, require: true, disabled: true
     = f.input :description, as: :text 
   
   %div.buttons{class: modal? ? 'modal-footer' : ''}  

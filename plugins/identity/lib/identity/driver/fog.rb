@@ -276,6 +276,18 @@ module Identity
       def get_group(id)
         handle_response{@fog.get_group(id).body['group']}
       end
+      
+      def create_group(group_attributes)
+        handle_response{@fog.create_group(group_attributes).body['group']}
+      end
+      
+      def delete_group(group_id)
+        handle_response{@fog.delete_group(group_id)}
+      end
+      
+      def update_group(id,attributes)
+        handle_response{@fog.update_group(id,attributes).body['group']}
+      end
 
       ######################### TOKENS ########################
       def authenticate(auth)

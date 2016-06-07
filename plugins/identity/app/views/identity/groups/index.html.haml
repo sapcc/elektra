@@ -1,10 +1,15 @@
+= content_for :main_toolbar do
+  Groups
+- if current_user.is_allowed?("identity:group_create",{domain_id: @scoped_domain_id})
+  .toolbar
+    = link_to 'New Group', new_group_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    
 %table.table#groups
   %thead
     %tr
       %th Name
       %th Description
       %th ID
-      %th Actions
 
   %tbody
     - @groups.each do |group|
