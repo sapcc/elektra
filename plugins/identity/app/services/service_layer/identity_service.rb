@@ -124,6 +124,18 @@ module ServiceLayer
       driver.map_to(Identity::Group).groups(filter)
     end
     
+    def create_group(attributes)
+      driver.map_to(Identity::Group).create_group(attributes)
+    end
+    
+    def delete_group(group_id)
+      driver.delete_group(group_id)
+    end
+    
+    def new_group(attributes={})
+      Identity::Group.new(driver, attributes)
+    end
+    
     def find_group(id)
       driver.map_to(Identity::Group).get_group(id)
     end
