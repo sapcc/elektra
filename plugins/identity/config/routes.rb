@@ -9,8 +9,6 @@ Identity::Engine.routes.draw do
   
   namespace :domains do
     scope :wizard do
-      get 'request_project' => 'request_wizard#new'
-      post 'request_project' => 'request_wizard#create'
       get 'create_project' => 'create_wizard#new'
       post 'create_project' => 'create_wizard#create'
     end
@@ -26,8 +24,14 @@ Identity::Engine.routes.draw do
 
     get 'web-console'
     get 'api-endpoints'
-    
-    
+
+    scope :wizard do
+      get 'request_project' => 'request_wizard#new'
+      post 'request_project' => 'request_wizard#create'
+    end
+
+
+
     resources :members, only: [:index, :new, :create] do
       put '/' => 'members#update', on: :collection
     end

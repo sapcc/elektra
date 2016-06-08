@@ -1,11 +1,16 @@
 <%
   options  = " --format #{ENV['CUCUMBER_FORMAT'] || 'pretty'}" 
   options += " --format CI::Reporter::Cucumber --out #{ENV['CI_REPORTS'] || 'features/reports'}" if ENV['HEADLESS']
-  options += " -r features" 
+  options += " -r features"
+  options += " CCTEST_DOMAIN=#{ENV['DOMAIN'] || 'cctest_cluster_3'}"
+  options += " CCTEST_PROJECT=#{ENV['PROJECT'] || 'public'}"
+  options += " CCTEST_USER=#{ENV['TESTUSER'] || 'cctest_cluster_3_member'}"
+  options += " CCTEST_PASSWORD=#{ENV['TESTPASSWORD'] || 'L6e5Uv+1bjF7AlZYXNTXNw'}"
 %>
 
 default:     <%= options %> --strict --tags ~@wip features/acceptance
 acceptance:  <%= options %> --strict --tags ~@wip features/acceptance
 smoke:       <%= options %> --strict --tags ~@wip --tags @javascript features/smoke
 integration: <%= options %> --strict --tags ~@wip --tags @javascript features/integration
-e2e:         <%= options %> --strict --tags ~@wip --tags @javascript features/e2e
+e2e:         <%= options %> --strict --tags ~@wip --tags ~@member --tags ~@admin --tags @javascript features/e2e
+

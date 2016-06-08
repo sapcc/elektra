@@ -1,10 +1,18 @@
 @javascript
 Feature: Networks
   Background:
-    Given I visit "/monsoon2/identity/home"
-     And I log as test_user
-     And I am redirected to "/monsoon2/identity/home"
+    Given I visit domain path "identity/home"
+     And I log in as test_user
+     And I am redirected to domain path "identity/home"
 
-  Scenario: Networks page is reachable
-    When I visit "/monsoon2/dashboard_test_project/networking/networks/private"
+  Scenario: The Private Networks page is reachable
+    When I visit project path "networking/networks/private"
+    Then the page status code is successful
+
+ Scenario: The External Networks page is reachable
+    When I visit project path "networking/networks/external"
+    Then the page status code is successful
+
+ Scenario: The Routers page is reachable
+    When I visit project path "networking/routers"
     Then the page status code is successful

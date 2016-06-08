@@ -119,7 +119,7 @@ group :development, :test do
   gem 'capybara-screenshot'
 
 
-  gem "better_errors"
+  #gem "better_errors"
   gem 'pry-rails'
 end
 

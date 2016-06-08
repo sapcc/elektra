@@ -101,5 +101,5 @@ at_exit do
       puts ""
       puts ""
     end
-  end.join
+  end.join unless Capybara.run_server
 end

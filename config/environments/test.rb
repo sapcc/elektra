@@ -58,6 +58,6 @@ Rails.application.configure do
   # Set log level
   config.log_level = :ERROR
   
-  #config.debug_api_calls = true
+  config.debug_api_calls = false
 
 end

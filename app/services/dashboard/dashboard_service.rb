@@ -1,6 +1,5 @@
 module Dashboard
-  class OnboardingService
-
+  class DashboardService
 
     def self_registration_domain?(domain_name)
       if domain_name and

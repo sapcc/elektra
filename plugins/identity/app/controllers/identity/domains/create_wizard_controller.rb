@@ -5,7 +5,7 @@ module Identity
       before_filter :load_and_authorize_inquiry
 
       def new
-        @project = services.identity.new_project
+        @project = Identity::Project.new(nil,{})
         @project.attributes = @inquiry.payload if @inquiry
       end
 

@@ -25,7 +25,7 @@
         %li
           = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
         %li
-          = link_to 'Request a New Project', plugin('identity').domains_request_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_request', {domain_id: @scoped_domain_id})
+          = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true} if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
 
     - else
       %h4.heading-top
@@ -38,7 +38,7 @@
 
       %ul.content-list
         %li
-          = link_to 'Request a New Project', plugin('identity').domains_request_project_path, data: {modal: true} if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
+          = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true} if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
 
   .col-md-3
     = render 'projects_tree'

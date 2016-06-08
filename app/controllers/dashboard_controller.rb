@@ -40,8 +40,6 @@ class DashboardController < ::ScopeController
     redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
   end
 
-  DOMAIN_ACCESS_INQUIRY = 'domain-access'
-
   def rescope_token
     if @scoped_project_id.nil? and service_user.role_assignments("user.id" => current_user.id, "scope.domain.id" => @scoped_domain_id, "effective" => true).empty?
       authentication_rescope_token(domain: nil, project: nil)
@@ -51,16 +49,16 @@ class DashboardController < ::ScopeController
   end
 
   def check_terms_of_use
+    return if Rails.env == "test"
     unless tou_accepted?
       render action: :terms_of_use and return
     end
   end
 
   def accept_terms_of_use
-    x = params[:terms_of_use]
-    if x
+    if params[:terms_of_use]
       # user has accepted terms of use -> onboard user
-      UserProfile.create_with(name: current_user.name, email: current_user.email, first_name: nil, last_name: nil)
+      UserProfile.create_with(name: current_user.name, email: current_user.email, full_name: current_user.full_name)
           .find_or_create_by(uid: current_user.id)
           .domain_profiles.create(domain_id: current_user.user_domain_id, tou_version: Settings.actual_terms.version)
       reset_last_request_cache
@@ -74,6 +72,16 @@ class DashboardController < ::ScopeController
       group_name = "CC_#{current_user.user_domain_name.upcase}_DOMAIN_MEMBERS"
       @service_user.remove_user_from_group(current_user.id, group_name)
       render action: :terms_of_use
+    end
+  end
+
+  def find_users_by_name
+    name = params[:name] || ""
+    users = UserProfile.search_by_name name
+    users.collect! {|u| {id: u.uid, name: u.name, full_name: u.full_name, email: u.email } }
+    respond_to do |format|
+      format.html { render :json => users }
+      format.json { render :json => users }
     end
   end
 
@@ -131,7 +139,7 @@ class DashboardController < ::ScopeController
     is_cache_expired = current_user.id!=session[:last_user_id] ||
         session[:last_request_timestamp].nil? ||
         (session[:last_request_timestamp] < Time.now-5.minute)
-    if is_cache_expired
+    if true #is_cache_expired
       session[:last_request_timestamp] = Time.now
       session[:last_user_id] = current_user.id
       session[:tou_accepted] =
