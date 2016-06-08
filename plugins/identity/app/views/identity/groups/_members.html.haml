@@ -1,3 +1,6 @@
+- if current_user.is_allowed?('identity:group_add_member', group: @group)
+  .toolbar.toolbar-aligntop= link_to 'Add Member', plugin('identity').group_members_new_path(@group.id), data: {modal: true}, class: 'btn btn-primary btn-sm' 
+    
 %table.table#group_members
   %tr
     %th Name

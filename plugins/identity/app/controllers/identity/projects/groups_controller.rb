@@ -31,6 +31,10 @@ module Identity
         end  
       end
       
+      def members
+        @members = service_user.group_members(params[:group_id])
+      end
+            
       def index
         enforce_permissions("identity:project_group_list",{domain_id: @scoped_domain_id})
         load_role_assignments

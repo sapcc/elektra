@@ -6,7 +6,7 @@ module Identity
       @group = services.identity.find_group(params[:id])
       @group_members = services.identity.group_members(params[:id])
     end
-
+    
     def index
       enforce_permissions("identity:group_list",{domain_id: @scoped_domain_id})
       @groups = services.identity.groups(domain_id: @scoped_domain_id) 

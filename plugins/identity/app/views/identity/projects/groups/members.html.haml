@@ -1,0 +1,22 @@
+- if modal?
+  = content_for :title do
+    Group Members
+- else
+  = content_for :main_toolbar do
+    Group Members
+
+%div{class: modal? ? 'modal-body' : ''}
+  %table.table#group_members
+    %tr
+      %th Name
+      %th ID
+    - @members.each do |user|
+      %tr
+        %td= user.name
+        %td= user.id      
+
+%div{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Close
+  - else
+    = link_to 'Back', plugin('identity').projects_groups_path, class: 'btn btn-default'

@@ -115,6 +115,10 @@ module Core
       def groups(filter={})
         driver_method(:groups, true, filter)
       end
+      
+      def group_members(group_id,filter={})
+        driver_method(:group_members, true, group_id,filter)
+      end
 
       def find_group(group_id)
         driver_method(:get_group, true, group_id)

@@ -38,6 +38,7 @@ Identity::Engine.routes.draw do
     
     resources :groups, only: [:index, :new, :create] do
       put '/' => 'groups#update', on: :collection
+      get 'members' => 'groups#members', as: :members
     end
   end
 
