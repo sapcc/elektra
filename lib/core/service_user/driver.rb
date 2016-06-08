@@ -183,6 +183,11 @@ module Core
         handle_response{@fog.group_user_check(group_id, user_id)}
       end
 
+      
+      def group_members(group_id,filter={})
+        handle_response{@fog.list_group_users(group_id,filter).body['users']}
+      end
+      
       ##################### CREDENTIALS #########################
       def os_credentials(filter={})
         handle_response{ @fog.list_os_credentials(filter).body['credentials'] }

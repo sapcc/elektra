@@ -23,7 +23,7 @@
               /       %i.fa.fa-edit.fa-fw
               /       Edit Group
               - if can_delete
-                %li.divider{role: "separator"}
+                / %li.divider{role: "separator"}
                 %li
                   = link_to plugin('identity').group_path(project_id: nil, id:@group.id), method: :delete, data: {confirm:'This cannot be undone, are you sure?', ok: 'Yes, delete it!', confirm_term: @group.name, confirm_term_label: "Type group name to confirm (#{@group.name})" } do
                     %i.fa.fa-trash.fa-fw
@@ -36,13 +36,4 @@
             %td
               %b Description:
               %br
-              = @group.description
-          %tr
-            %td
-              - if current_user.is_allowed?('identity:group_add_member', group: @group)
-                = link_to 'Add Member', plugin('identity').group_members_new_path(@group.id), data: {modal: true}, class: 'btn btn-primary btn-sm'   
-
-
-
-
-    
+              = @group.description    
