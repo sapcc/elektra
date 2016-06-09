@@ -189,6 +189,10 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    better_errors (2.1.1)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+      rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bootstrap-kaminari-views (0.0.5)
@@ -522,6 +526,7 @@ DEPENDENCIES
   activerecord-session_store
   automation!
   bare_metal_hana!
+  better_errors
   block_storage!
   bootstrap-multiselect_rails (~> 0.9.4)
   bootstrap-sass
@@ -586,3 +591,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2
