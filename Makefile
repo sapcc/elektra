@@ -41,7 +41,7 @@ build:
 # Runs all unit tests suits.
 #
 .PHONY: 
-test: rspec cucumber 
+test: rspec
 
 .PHONY: 
 alpha: CAPYBARA_APP_HOST=https://localhost
