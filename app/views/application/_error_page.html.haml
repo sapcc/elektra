@@ -1,0 +1,32 @@
+- header_title ||= "Error"
+- title ||= "An error has occurred"
+- description ||= "Something went wrong while processing your request.<br> Please try later again."
+
+
+- if modal?
+  = content_for :title do
+    %span{class: "#{plugin_name}-icon error-icon"}
+    %span.active
+      = "#{header_title} Error"
+
+  .modal-body
+
+    %h3
+      = title.html_safe
+
+    %p
+      = description.html_safe
+
+  - if modal?
+    .modal-footer
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+
+- else
+
+  .alert.alert-error
+
+    %h3
+      = title.html_safe
+
+    %p
+      = description.html_safe
