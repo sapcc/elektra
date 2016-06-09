@@ -16,5 +16,10 @@ module CostControl
     validates_presence_of :cost_object_type, :cost_object_id
     # TODO: validate values
 
+    def readable_cost_object_type
+      type = cost_object_type
+      type.blank? ? '' : "#{COST_OBJECT_TYPES[type]} (#{type})"
+    end
+
   end
 end

@@ -1,15 +1,26 @@
 =content_for :main_toolbar do
   Cost Control
 
-- writable = current_user.is_allowed?('cost_control:cost_object_update')
 
-=simple_form_for @metadata, url: plugin('cost_control').cost_object_path, method: :put, html: { class: 'form-horizontal' } do |f|
-  .row
-    - types = CostControl::ProjectMetadata::COST_OBJECT_TYPES
-    .col-md-3= f.input :cost_object_type, collection: types.keys, label_method: -> (k) { types[k] }, input_html: { readonly: !writable }
-  .row
-    .col-md-3= f.input :cost_object_id, input_html: { readonly: !writable }
+.row
+  .col-md-3
+    .infobox
+      %h4
+        - if current_user.is_allowed?('cost_control:cost_object_edit')
+          = link_to 'Edit', plugin('cost_control').edit_cost_object_path, class: 'btn btn-default btn-xs pull-right', data: { modal: true }
+        Cost object
+      %table.table
+        %tr
+          %th.snug-nowrap Type:
+          %td= @metadata.readable_cost_object_type.presence || content_tag('div', 'Not set', class: 'text-danger')
+        %tr
+          %th.snug-nowrap ID:
+          %td= @metadata.cost_object_id.presence || content_tag('div', 'Not set', class: 'text-danger')
 
-  - if writable
-    .buttons
-      = button_tag 'Save', { class: 'btn btn-primary', data: { disable_with: "Please wait..." } }
+  - if @metadata.cost_object_type.blank? or @metadata.cost_object_id.blank?
+    .col-md-9.alert.alert-error
+      No cost object has been maintained for this project yet.
+      - if current_user.is_allowed?('cost_control:cost_object_edit')
+        Please do so now.
+      - else
+        Please ask your project admin to take care of this.
