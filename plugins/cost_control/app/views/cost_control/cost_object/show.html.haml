@@ -5,7 +5,10 @@
 
 =simple_form_for @metadata, url: plugin('cost_control').cost_object_path, method: :put, html: { class: 'form-horizontal' } do |f|
   .row
-    .col-md-3= f.input :cost_object, input_html: { readonly: !writable }
+    - types = CostControl::ProjectMetadata::COST_OBJECT_TYPES
+    .col-md-3= f.input :cost_object_type, collection: types.keys, label_method: -> (k) { types[k] }, input_html: { readonly: !writable }
+  .row
+    .col-md-3= f.input :cost_object_id, input_html: { readonly: !writable }
 
   - if writable
     .buttons
