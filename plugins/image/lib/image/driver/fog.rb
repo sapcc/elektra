@@ -9,7 +9,7 @@ module Image
         # pin to V2 for now, V1 has some different attributes
         @fog = ::Fog::Image::OpenStack::V2.new(auth_params)
         @available = true
-      rescue Fog::OpenStack::Errors::ServiceUnavailable
+      rescue ::Fog::OpenStack::Errors::ServiceUnavailable
         @fog = nil
         @available = false
       end

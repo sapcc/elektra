@@ -8,6 +8,9 @@ Feature: Volumes
   Scenario: The Volumes page is reachable
     When I visit project path "block-storage/volumes"
     Then the page status code is successful
+     And I see "Create new" button
+    When I click on "Create new"
+    Then the page status code is successful
 
   Scenario: The Snapshots page is reachable
     When I visit project path "block-storage/snapshots"

@@ -8,9 +8,10 @@
   options += " CCTEST_PASSWORD=#{ENV['TESTPASSWORD'] || 'L6e5Uv+1bjF7AlZYXNTXNw'}"
 %>
 
-default:     <%= options %> --strict --tags ~@wip features/acceptance
+default:     <%= options %> --strict --tags ~@wip --tags ~@admin features
 acceptance:  <%= options %> --strict --tags ~@wip features/acceptance
 smoke:       <%= options %> --strict --tags ~@wip --tags @javascript features/smoke
 integration: <%= options %> --strict --tags ~@wip --tags @javascript features/integration
 e2e:         <%= options %> --strict --tags ~@wip --tags ~@member --tags ~@admin --tags @javascript features/e2e
-
+member:      <%= options %> --strict --tags ~@wip --tags @member features
+admin:       <%= options %> --strict --tags ~@wip --tags @admin features
