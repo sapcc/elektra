@@ -80,7 +80,7 @@ class DashboardController < ::ScopeController
   end
 
   def find_users_by_name
-    name = params[:name] || ""
+    name = params[:name] || params[:term] || ""
     users = UserProfile.search_by_name name
     users.collect! {|u| {id: u.uid, name: u.name, full_name: u.full_name, email: u.email } }
     respond_to do |format|

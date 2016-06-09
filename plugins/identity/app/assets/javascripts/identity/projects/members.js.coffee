@@ -6,7 +6,6 @@ formState= (form) ->
   state
   
 multiselect=(elementsSelector) ->
-  
   $(elementsSelector).multiselect({
     buttonText: (options, select) ->
       $tr = $(select).closest('tr')
@@ -32,10 +31,10 @@ multiselect=(elementsSelector) ->
         
         if valuesToAdd.length==0 and newLabels.length==valuesToRemove.length
           $tr.addClass('danger')
-          label += " (permissions will be removed after save)"
+          label += " <span class='info-text'>(click save to remove this member from the list)</span>"
         else if valuesToAdd.length>0 or valuesToRemove.length>0
           $tr.addClass('info')
-          label += " (permissions will chnage after save)"
+          label += " <span class='info-text'>(click save to activate the changes)</span>"
         else
           $tr.removeClass('danger info')
         $display.html label
@@ -59,10 +58,10 @@ $(document).ready ->
     newState = formState($form)
 
     if $form.currentState!=newState
-      $form.find('input[type="submit"]').removeClass('hidden').show('fade')
+      $form.find('input[type="submit"], .cancel.stash').removeClass('hidden').show('fade')
       $(this).closest('tr').removeClass('danger')
     else
-      $form.find('input[type="submit"]').hide('fade')
+      $form.find('input[type="submit"], .cancel.stash').hide('fade')
   
   # update current state if new elements are added to form
   $form.on 'DOMNodeInserted', (e) ->
@@ -70,6 +69,7 @@ $(document).ready ->
       multiselect($(e.target).find('select[data-roles-select]')) 
     # console.log('DOMNodeInserted', e.target)
       $form.currentState = formState($form)
+      $form.find('.cancel.stash').removeClass('hidden stash').show('fade')
   
   # initialize current select dom elements
   multiselect($form.find('select[data-roles-select]'))    
