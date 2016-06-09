@@ -127,7 +127,7 @@ chmod +x /opt/arc/arc
     elsif instance_os == 'windows'
       return "mkdir C:\\monsoon\\arc
 powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['arc_latest_base_url']}/#{instance_os}/amd64','C:\\monsoon\\arc\\arc.exe')
-C:\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
+C:\\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
     else
       raise InstallNodeNoInstructionsFound.new("No instructions found for this os #{instance_os}")
     end
