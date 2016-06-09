@@ -6,8 +6,10 @@ formState= (form) ->
   state
   
 multiselect=(elementsSelector) ->
+  
   $(elementsSelector).multiselect({
     buttonText: (options, select) ->
+      $tr = $(select).closest('tr')
       labels = []
       options.each () -> labels.push($(this).text())
       $display = $(select).closest('tr').find('[data-roles-display]')
@@ -15,13 +17,34 @@ multiselect=(elementsSelector) ->
 
       valuesToRemove = currentRoles.filter (x) -> return labels.indexOf(x) < 0
       valuesToAdd = labels.filter (x) -> return currentRoles.indexOf(x) < 0
+      
       newLabels = $(currentRoles).not(valuesToAdd).not(valuesToRemove).toArray()
       newLabels.push '<b>'+value+'</b>' for value in valuesToAdd
       newLabels.push '<s>'+value+'</s>' for value in valuesToRemove
       newLabels = newLabels.sort (a, b) -> return (a.replace('<b>','').replace('<s>','')>b.replace('<b>','').replace('<s>',''))
 
-      $display.html newLabels.join(', ')
-
+      
+      if newLabels.length==0 
+        $display.html "No roles assigned yet!"   
+        $tr.addClass('danger')
+      else 
+        label = newLabels.join(', ')
+        
+        if valuesToAdd.length==0 and newLabels.length==valuesToRemove.length
+          $tr.addClass('danger')
+          label += " (permissions will be removed after save)"
+        else if valuesToAdd.length>0 or valuesToRemove.length>0
+          $tr.addClass('info')
+          label += " (permissions will chnage after save)"
+        else
+          $tr.removeClass('danger info')
+        $display.html label
+        
+      # if newLabels.length>0
+      #   $display.html newLabels.join(', ')
+      # else
+      #   $display.html "No roles assigned yet!"      
+           
       'Manage Roles'
   })   
   
@@ -46,7 +69,7 @@ $(document).ready ->
     if e.target.nodeName=='TR'
       multiselect($(e.target).find('select[data-roles-select]')) 
     # console.log('DOMNodeInserted', e.target)
-    #$form.currentState = formState($form)
+      $form.currentState = formState($form)
   
   # initialize current select dom elements
   multiselect($form.find('select[data-roles-select]'))    
