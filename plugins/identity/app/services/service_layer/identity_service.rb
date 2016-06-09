@@ -12,7 +12,8 @@ module ServiceLayer
                                                 domain_id: self.domain_id,
                                                 project_id: self.project_id
                                             })
-        # catch token expired errors
+      @driver
+      # catch token expired errors
     rescue Excon::Errors::Unauthorized, Excon::Errors::NotFound => e
       # and raise InvalidToken error
       raise Identity::InvalidToken.new(e)

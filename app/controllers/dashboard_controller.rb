@@ -39,6 +39,10 @@ class DashboardController < ::ScopeController
   rescue_from "Identity::InvalidToken" do
     redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
   end
+  
+  rescue_from "MonsoonOpenstackAuth::Authentication::NotAuthorized" do
+    redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
+  end
 
   def rescope_token
     if @scoped_project_id.nil? and service_user.role_assignments("user.id" => current_user.id, "scope.domain.id" => @scoped_domain_id, "effective" => true).empty?

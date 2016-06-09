@@ -69,21 +69,25 @@ module Core
                 scoped_token: {domain: {name: @scope_domain}}
             )
           rescue MonsoonOpenstackAuth::Authentication::MalformedToken => e
-            raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
+            nil
+            # raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
           end
         end
 
+        if @auth_user.nil? or @auth_user.token.blank?
+          raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
+        end
+        
         # Unfortunately we can't use Fog directly. Fog tries to authenticate the user
         # by credentials and region using the service catalog. Our backends all uses other regions.
         # Therefore we use the auth gem to authenticate the user get the service catalog and then 
         # we initialize the fog object. 
         @driver = ::Core::ServiceUser::Driver.new({
-                                                      auth_url: ::Core.keystone_auth_endpoint,
-                                                      region: Core.locate_region(@auth_user),
-                                                      token: @auth_user.token,
-                                                      domain_id: @auth_user.domain_id
-                                                  })
-        @driver
+          auth_url: ::Core.keystone_auth_endpoint,
+          region: Core.locate_region(@auth_user),
+          token: @auth_user.token,
+          domain_id: @auth_user.domain_id
+        })
       end
 
       # execute driver method. Catch 401 errors (token invalid -> expired or revoked)

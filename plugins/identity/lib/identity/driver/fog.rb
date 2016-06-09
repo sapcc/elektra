@@ -14,6 +14,10 @@ module Identity
           # @fog = ::Fog::IdentityV3::OpenStack.new(auth_params)
         end
       end
+      
+      def auth_token
+        @fog.auth_token rescue nil
+      end
 
       def handle_api_errors?
         true
