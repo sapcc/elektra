@@ -1,5 +1,5 @@
 @javascript
-Feature: Bare Metal Hana
+Feature: API Access
   Background:
     Given I visit domain path "identity/home"
     And I log in as test_user

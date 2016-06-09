@@ -1,4 +1,4 @@
-@javascript
+@javascript @wip
 Feature: Automation
   Background:
     Given I visit domain path "identity/home"
