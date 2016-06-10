@@ -21,7 +21,7 @@
           = @image.visibility
           = icon 'question-circle', class: 'help_icon', data: {toggle: 'tooltip', placement: 'right'}, title: 'A public image is globally visible.'
 
-      = f.input :size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@image.size) }
+      = f.input :size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@image.size.to_i) }
 
 
       = f.input :container_format, readonly: true, label: 'Container Format'
