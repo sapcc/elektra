@@ -33,13 +33,12 @@
           -#       networks
 
 
+%h1.page-header Converged Cloud Is Available In These Regions
 
-%h1.page-header Digital ideas happen on Converged Cloud
+#worldmap
 
-%p.lead
-  "Monsoon’s concept of IaaS, closely emulating AWS, has been a tremendous benefit to our development efforts that required more flexibility than our SAP PaaS could offer.”
+%h1.page-header Our Services
 
-%p <b><em>Danny Allen</em></b> (Head of Portfolio Execution &Service Delivery in Frontline Applications)
 
 %ul.fancy-list.fancy-list-2col
   %li
@@ -151,64 +150,102 @@
     %ul.content-list
       %li Choose from CoreOS, Debian, RHEL, SAP Suse, Suse, Ubuntu or Windows flavors.
 
-%h1.page-header Getting Started
-.row
-  .col-sm-8.text-copy
-    :markdown
-      When you start a new project as grassroot or fully funded, the first question you have to ask yourself is "where do I deploy"?
-
-      Launching an SAP solution to the market or releasing a support, shop or collaboration site to employees, customers or partners in the modern cloud world will naturally make you think.... sure AWS or sure Heruku !
-
-      As a general rule, as an SAP employee, you should follow the pattern:
-
-      * If you would deploy to Heruku deploy to Hana Cloud Platform.
-      * If you would deploy to AWS deploy to SAP Converged Cloud.
-
-      SAP Converged Cloud offers you the same ease of access and API driven feature like AWS, based on OpenStack run out of SAPs own datacenters at comparable pricing; like on AWS, you only pay what you consume.
-
-      Deploying on SAP Converged Cloud allows you to start in the place you can go productive later. You will limit the worries you will get with SAP DPA, EU-DP, Security audits, Certifications or Operations and can avoid migrating back home.
-
-      You are also in the right spot to integrate with Hana Cloud platform as backing service or extension at any point in your lifecycle, since you can serve your solution out of the same datacenter using the same secure internal networking for integration.
 
 
-      Start now with a free plan or contact our consulting group for an introduction and additional guidance.
+:javascript
+  //Map dimensions (in pixels)
+  var width = 1140,
+      height = 690;
 
-  .col-sm-4
-    .bs-callout.bs-callout-primary
-      %h4 Are you an exisiting customer of Monsoon or GMP?
-      = link_to "Learn how you can adopt SAP Converged Cloud", "#existing-customer"
-    .bs-callout.bs-callout-primary
-      %h4 Are you new to Converged Cloud?
-      = link_to "Get Started", "#existing-customer"
+  //Map projection
+  var projection = d3.geo.miller()
+      .scale(174.38214717143913)
+      .center([-0.0018057527730042117,11.25867847275954]) //projection center
+      .translate([width/2,height/2]) //translate to center the map in view
 
+  //Generate paths based on projection
+  var path = d3.geo.path()
+      .projection(projection);
 
-%a#existing-customer
-%h2 Existing Customers
+  //Create an SVG
+  var svg = d3.select("#worldmap").append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-.row
-  .col-sm-8
-    %p In order to be ready for the fast growing SAP Cloud Business, the SAP Converged Cloud will provide one global and state-of-the-art Cloud Infrastructure for all SAP products and services.
+  var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        var selectedRegionText = "";
+        if (d.regionkey == "#{current_region}") {
+          selectedRegionText = "Active Region";
+        }
 
-    %p SAP Converged Cloud not only supports SAP’s current and future Cloud Business, but will also incorporate existing “legacy” infrastructures such as Monsoon and GMP.
+        return "<strong>Region:</strong> " + d.regionname + "<br />"
+               + "<span class='d3-tip-info'>" + d.city + ", " + d.country + "</span><br />"
+               + "<span class='d3-tip-active'>" + selectedRegionText + "</span>";
+      })
 
-.row
-  .col-sm-4
-    %h3.page-header Monsoon
+  // add tooltip
+  svg.call(tip);
 
-    %p Provides subset of AWS API on top of VMWare vSphere hypervisor and a powerfull automation API for configuration management with Chef in SAPs own datacenters, e.g. HCP, S4/Hana, B1 Cloud, Success Factors, ...
+  // shorthand
+  var g = svg.append("g");
 
-    %h4 No migration required
-    %p Monsoon's subset of AWS API including the monsoon automation API will be provided in converged cloud.
-    %p All Monsoon datacenters will be upgraded to Converged Cloud during 2016.
+  //Group for the map features
+  var features = g
+      .attr("class","features");
 
-    Link to transition guide with all details will be provided.
+  // Get correct regions config file (depending on landscape)
+  var regions_config = "/regions_#{ENV['LANDSCAPE'] || 'development' }.json"
 
-  .col-sm-4
-    %h3.page-header GMP
-    %p Provides strong automation for ABAP based SAP solutions and databases.
-    %p And provides operations tooling and processes on Xen hypervisor.
+  d3.json("/world_countries.topojson", function(error,geodata) {
+    if (error) return console.log(error); //unknown error, check the console
 
-    %h4 GMP CC provider
-    %p You can keep managing your application through GMP and deploy your computing power in converged cloud.
+    //Create a path for each map feature in the data
+    features.selectAll("path")
+      .data(topojson.feature(geodata,geodata.objects.subunits).features) //generate features from TopoJSON
+      .enter()
+      .append("path")
+      .attr("d",path);
 
-    Link to transition guide with all details will be provided.
+    // Render circles for cities
+    d3.json(regions_config, function(error, data) {
+        g.selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", function(d) {
+                return projection([d.lon, d.lat])[0];
+          })
+          .attr("cy", function(d) {
+                return projection([d.lon, d.lat])[1];
+          })
+          .attr("r", 7)
+          .classed({'worldmap-city': true, 'active': function(d) {return d.regionkey == "#{current_region}"}})
+          .on("click",clickedCity)
+          .on("mouseover", mouseoverCity)
+          .on("mouseout", mouseoutCity);
+     });
+
+  });
+
+  // Add optional onClick events for features here
+  // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
+  function clickedCity(d,i) {
+    window.location.assign(window.location.href.replace("#{current_region}", d.regionkey));
+  }
+
+  // Add optional onMouseover events for features here
+  // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
+  function mouseoutCity(d,i) {
+    d3.select(this).attr("r", 7);
+    tip.hide(d);
+  }
+
+  // Add optional onMouseover events for features here
+  // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
+  function mouseoverCity(d,i) {
+    d3.select(this).attr("r", 10);
+    tip.show(d);
+  }

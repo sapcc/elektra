@@ -1,0 +1,20 @@
+[
+  {
+    "code":       "ROT",
+    "city":       "Sankt Leon-Rot",
+    "country":    "Germany",
+    "regionkey":  "eu-de-1",
+    "regionname": "EU-DE-1",
+    "lat":        49.26,
+    "lon":       8.62
+  },
+  {
+    "code":       "STE",
+    "city":       "Sterling, VA",
+    "country":    "USA",
+    "regionkey":  "na-us-1",
+    "regionname": "NA-US-1",
+    "lat":        39.01,
+    "lon":       -77.43
+  }
+]

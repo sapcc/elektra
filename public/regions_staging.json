@@ -1,0 +1,11 @@
+[
+  {
+    "code":       "ROT",
+    "city":       "Sankt Leon-Rot",
+    "country":    "Germany",
+    "regionkey":  "staging",
+    "regionname": "Staging",
+    "lat":        49.26,
+    "lon":       8.62
+  }
+]

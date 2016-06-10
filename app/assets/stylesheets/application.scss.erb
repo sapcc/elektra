@@ -33,9 +33,10 @@
 @import "forms";
 
 @import "pagination_spinner";
+@import "visualization";
 
 <%
   Core::PluginsManager.plugins_with_application_css.each do |plugin|
-  %><%=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }"%><% 
+  %><%=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }"%><%
   end
 %>
