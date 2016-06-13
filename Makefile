@@ -84,8 +84,10 @@ endif
 
 .PHONY: 
 cucumber: postgres migrate-test
-	$(DOCKER) run --rm  --link $(postgres):postgres $(CUCUMBER_OPTIONS) $(IMAGE) \
-		 bundle exec cucumber -p $(CUCUMBER_PROFILE) 
+    env | grep '^CCTEST' > cc_env.txt
+	$(DOCKER) run --rm  --env-file=cc_env.txt --link $(postgres):postgres $(CUCUMBER_OPTIONS) $(IMAGE) \
+		 bundle exec cucumber -p $(CUCUMBER_PROFILE)
+    rm -f cc_env.txt
 
 # ----------------------------------------------------------------------------------
 #   webapp 
