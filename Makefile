@@ -44,13 +44,6 @@ build:
 test: rspec
 
 .PHONY: 
-alpha: CAPYBARA_APP_HOST=https://localhost
-alpha: CUCUMBER_PROFILE=integration
-alpha: cucumber 
-	
-.PHONY: 
-beta: CAPYBARA_APP_HOST=https://localhost
-beta: CUCUMBER_PROFILE=e2e
 beta: cucumber
 
 #target for testing pull requests from the ci pipeline
