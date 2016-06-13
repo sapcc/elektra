@@ -36,7 +36,7 @@ Profiles e2e and admin are relevant:
 **admin:** Should only pass with an domain admin user
 
 
-ENV can also be passed in command line like:
+The ENV parameters can also be passed in command line like:
 
 bin/cucumber CCTEST_PROJECT=admin CCTEST_USER=cctest_cluster_3_admin CCTEST_PASSWORD=XXX -p admin 
 
