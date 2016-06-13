@@ -4,7 +4,7 @@ module UrlHelper
     case servicename
     when 'documentation'
       # TODO: remove special treatment once prod is on the production cluster with the proper certificates
-      return "http://#{servicename}.#{current_region}.cloud.sap:8080/"
+      return "https://#{servicename}.#{current_region}.cloud.sap/"
     else
       return "https://#{servicename}.#{current_region}.cloud.sap/"
     end
