@@ -26,7 +26,7 @@ module Automation
 
 
     # validation
-    validates_presence_of :name, :repository, :repository_revision, :type
+    validates_presence_of :name, :repository, :repository_revision, :type, :timeout
 
     def persisted?
       false

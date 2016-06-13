@@ -20,13 +20,16 @@ module Automation
       @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
       @facts = @node.automation_facts
       @jobs = services.automation.jobs(node_id, 1, 100)
-    rescue ::RestClient::ResourceNotFound => exception
-      Rails.logger.error "Automation-plugin: show action: #{exception.message}"
-      render "error_resource_not_found"
     end
 
     def install
-      @compute_instances = services.compute.servers
+      begin
+        @compute_instances = services.compute.servers
+      rescue => exception
+        logger.error exception.message
+        @compute_instances = []
+        @errors = [{key: "danger", message: "Compute API unavailable. You can add external instances only."}]
+      end
     end
 
     def show_instructions
@@ -54,7 +57,11 @@ module Automation
       @messages = exception.options[:messages]
       return @errors = [{key: "danger", message: exception.message}]
     rescue => exception
-      @messages = exception.options[:messages]
+      if exception.respond_to?(:options)
+        @messages = exception.options[:messages]
+      else
+        @messages = exception.message
+      end
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
       return @errors = [{key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}]
     end
