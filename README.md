@@ -21,6 +21,25 @@ this is work in progress so no guarantee of completeness ;-)
 5. foreman start
 6. now try to access http://localhost:8180
 
+Run Cucumbers
+-------------
+
+Follwing ENV parameters can be set for running cucumbers:
+
+CCTEST_DOMAIN=<domainname,default ***cctest_cluster_3***>
+CCTEST_PROJECT=<projectname, default ***public***>
+CCTEST_USER=<username, default ***cctest_cluster_3_member***>
+CCTEST_PASSWORD= Please check [github](https://localhost/monsoon/convergedcloud-docs-internal/blob/master/keystone_frontend_passwords.md)
+
+Profiles e2e and admin are relevant:
+**e2e:** Should pass with project member user
+**admin:** Should only pass with an domain admin user
+
+
+ENV can also be passed in command line like:
+
+bin/cucumber CCTEST_PROJECT=admin CCTEST_USER=cctest_cluster_3_admin CCTEST_PASSWORD=XXX -p admin 
+
 
 Create a new Plugin
 -------------------
