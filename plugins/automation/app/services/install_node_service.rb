@@ -49,7 +49,7 @@ class InstallNodeService
     end
 
     # check if node already exists
-    node_found = ((automation_service.node(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
+    node_found = node_exists?(instance_id, automation_service)
     if node_found == true
       messages << {key: "warning", message: "Node already exists on instance #{instance.name} (#{instance.image.name})"}
     end
@@ -76,7 +76,7 @@ class InstallNodeService
 
   def process_request_external(instance_id, instance_os, automation_service, active_project, token)
     # check if node already exists
-    node_found = ((automation_service.node(instance_id) rescue ::RestClient::ResourceNotFound) == ::RestClient::ResourceNotFound) ? false : true
+    node_found = node_exists?(instance_id, automation_service)
     if node_found == true
       messages << {key: "warning", message: "Node already exists with id #{instance_id}"}
     end
@@ -89,7 +89,8 @@ class InstallNodeService
     # get the registration url and log info
     url = begin
       registration_url(instance_id, active_project, token)
-    rescue
+    rescue => exception
+      Rails.logger.error "Automation-plugin: show_instructions: process_request_external: #{exception.message}"
       raise InstallNodeError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.")
     end
 
@@ -130,6 +131,18 @@ powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['ar
 C:\\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
     else
       raise InstallNodeNoInstructionsFound.new("No instructions found for this os #{instance_os}")
+    end
+  end
+
+  def node_exists?(instance_id, automation_service)
+    begin
+      automation_service.node(instance_id)
+    rescue RubyArcClient::ApiError => exception
+      if exception.code == 404
+        return false
+      else
+        return true
+      end
     end
   end
 

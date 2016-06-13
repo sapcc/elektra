@@ -36,8 +36,14 @@ module Automation
       job_ids.each do |job_id|
         job = begin
           @jobs << services.automation.job(job_id)
-        rescue ::RestClient::ResourceNotFound
+        rescue RubyArcClient::ApiError => exception
+          if exception.code == 404
+            # do nothing
+          else
+            raise exception
+          end
         end
+
       end
     end
 

@@ -291,6 +291,10 @@ section {
   color: $help-info-blue;
 }
 
+.error-icon {
+  color: $alarm-red;
+}
+
 .services-icon {
   @extend .fa;
   @extend .fa-fw;
@@ -833,6 +837,12 @@ footer, .footer {
 // ---------------------------------------------------------------------------------
 // Alerts
 // ---------------------------------------------------------------------------------
+
+.alert {
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+}
 
 .alert-error, .alert-alert {
   @extend .alert-danger;

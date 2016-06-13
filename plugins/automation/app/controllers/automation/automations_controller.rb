@@ -127,7 +127,12 @@ module Automation
             begin
               job = services.automation.job(job_id)
               run.jobs_states[job.status.to_sym] += 1
-            rescue ::RestClient::ResourceNotFound
+            rescue RubyArcClient::ApiError => exception
+              if exception.code == 404
+                # do nothing
+              else
+                raise exception
+              end
             end
           end
         end

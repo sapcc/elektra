@@ -14,9 +14,14 @@ module Automation
       # get node name
       @node = begin
         services.automation.node(@job.to, ['hostname'])
-      rescue ::RestClient::ResourceNotFound
-        nil
+      rescue RubyArcClient::ApiError => exception
+        if exception.code == 404
+          nil
+        else
+          raise exception
+        end
       end
+
 
       # payload
       @payload_lines = 1
@@ -34,9 +39,15 @@ module Automation
       @log_output = NO_LOG_FOUND
       log =  begin
         services.automation.job_log(params[:id])
-      rescue ::RestClient::ResourceNotFound
-        nil
+      rescue RubyArcClient::ApiError => exception
+        if exception.code == 404
+          nil
+        else
+          raise exception
+        end
       end
+
+
       unless log.blank?
         @log_lines = log.lines.count
         @log_truncated = @log_lines > LINES_TRUNCATION
@@ -53,14 +64,24 @@ module Automation
         @data = begin
           job = services.automation.job(@job_id)
           job.payload
-        rescue ::RestClient::ResourceNotFound
-          NO_PAYLOAD_FOUND
+        rescue RubyArcClient::ApiError => exception
+          if exception.code == 404
+            NO_PAYLOAD_FOUND
+          else
+            raise exception
+          end
         end
+
+
       elsif params[:attr] == 'log'
         @data =  begin
           services.automation.job_log(@job_id)
-        rescue ::RestClient::ResourceNotFound
-          NO_LOG_FOUND
+        rescue RubyArcClient::ApiError => exception
+          if exception.code == 404
+            NO_LOG_FOUND
+          else
+            raise exception
+          end
         end
       end
 
