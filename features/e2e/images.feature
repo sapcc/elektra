@@ -8,4 +8,5 @@ Feature: Images
   Scenario: The Images page is reachable
     When I visit project path "image/os_images/public"
     Then the page status code is successful
+    And I see "Images"
 

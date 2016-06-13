@@ -8,4 +8,6 @@ Feature: Floating IP's
   Scenario: The Floating IP's page is reachable
     When I visit project path "networking/floating_ips"
     Then the page status code is successful
+    And I see "Floating IPs"
+
 

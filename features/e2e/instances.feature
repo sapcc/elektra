@@ -11,4 +11,5 @@ Feature: Instances
     And I see "Create new" button
     When I click on "Create new"
     Then the page status code is successful
+    And I see "Max count"
 

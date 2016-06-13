@@ -8,4 +8,5 @@ Feature: Resource Management
   Scenario: The Resource Management page is reachable
     When I visit project path "resource-management"
     Then the page status code is successful
+    And I see "Manage Project Resources"
 

@@ -1,5 +1,6 @@
 @javascript
 Feature: Monitoring
+
   Background:
     Given I visit domain path "identity/home"
     And I log in as test_user
@@ -8,4 +9,4 @@ Feature: Monitoring
   Scenario: The Monitoring page is reachable
     When I visit project path "monitoring"
     Then the page status code is successful
-
+     And I see "Monitoring"

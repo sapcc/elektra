@@ -35,21 +35,23 @@ Given(/I am on the root page$/) do
 end
 
 When(/^I visit domain$/) do
-  visit "/"  + ENV['CCTEST_DOMAIN']
+  visit "/" + ENV['CCTEST_DOMAIN']
 end
 
 When(/^I visit domain path "(.*?)"$/) do |path|
-  visit "/"  + ENV['CCTEST_DOMAIN'] + "/"  + path
+  @cclast_domain_path =  "/" + ENV['CCTEST_DOMAIN'] + "/" + path
+  visit @cclast_domain_path
 end
 
 When(/^I visit project path "(.*?)"$/) do |path|
-  visit "/"  + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/"  + path
+  @cclast_project_path =  "/" + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/" + path
+  visit @cclast_project_path
 end
 
 Then(/^I am redirected to domain path "(.*?)"$/) do |path|
-  expect(current_path).to eq("/"  + ENV['CCTEST_DOMAIN'] + "/" + path)
-  end
+  expect(current_path).to eq(@cclast_domain_path)
+end
 
 Then(/^I am redirected to project path "(.*?)"$/) do |path|
-  expect(current_path).to eq("/"  + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/"  + path)
+  expect(current_path).to eq(@cclast_project_path)
 end

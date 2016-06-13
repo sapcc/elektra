@@ -2,25 +2,25 @@
 Feature: Projects
   Background:
     Given I visit domain path "identity/home"
-    Given I log in as test_user
+    And I log in as test_user
     And I am redirected to domain path "identity/home"
 
   Scenario: User Projects page is reachable
-    When I visit project path "/identity/home"
-    Then the page status code is successful
+    When I visit project path "identity/home"
+    Then I am redirected to project path "identity/home"
 
   @member
   Scenario: Member buttons
     When I visit domain path "identity/home"
     Then I see "Request a New Project" button
-    Then I see "Your Requests" button
+    And  I see "Your Requests" button
 
   @member
   Scenario: Visit own requests
     When I visit domain path "identity/home"
     Then I see "Your Requests" button
     When I click on "Your Requests"
-    Then the page status code is successful
+    Then I see "Your Requests"
 
   @admin
   Scenario: Create new Project
@@ -28,6 +28,7 @@ Feature: Projects
     Then I see "Create a New Project" button
     When I click on "Create a New Project"
     Then the page status code is successful
+    And  I see "Create new project"
 
   @admin
   Scenario: Visit own requests
@@ -35,6 +36,7 @@ Feature: Projects
     Then I see "Your Requests" button
     When I click on "Your Requests"
     Then the page status code is successful
+    And  I see "Your Requests"
 
   @admin
   Scenario: Manage Requests
@@ -42,6 +44,7 @@ Feature: Projects
     Then I see "Manage Requests" button
     When I click on "Manage Requests"
     Then the page status code is successful
+    And  I see "Requests for processing"
 
   @admin
   Scenario: Manage Groups
@@ -49,6 +52,7 @@ Feature: Projects
     Then I see "Manage Groups" button
     When I click on "Manage Groups"
     Then the page status code is successful
+    And  I see "Groups"
 
   @admin
   Scenario: Manage Resources
@@ -56,3 +60,4 @@ Feature: Projects
     Then I see "Domain Resources Admin" button
     When I click on "Domain Resources Admin"
     Then the page status code is successful
+    And  I see "Manage Domain Resources"

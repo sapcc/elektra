@@ -8,3 +8,4 @@ Feature: Bare Metal Hana
   Scenario: The Bare-Metal-Hana page is reachable
     When I visit project path "bare-metal-hana"
     Then the page status code is successful
+    And I see "HANA Servers"

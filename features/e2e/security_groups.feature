@@ -8,4 +8,5 @@ Feature: Security Groups
   Scenario: The Floating IP's page is reachable
     When I visit project path "networking/security_groups"
     Then the page status code is successful
+    And I see "Security Groups"
 

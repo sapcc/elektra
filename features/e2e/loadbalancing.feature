@@ -8,4 +8,5 @@ Feature: Load Balancing
   Scenario: The Floating IP's page is reachable
     When I visit project path "loadbalancing"
     Then the page status code is successful
+    And I see "Loadbalancing"
 

@@ -8,4 +8,5 @@ Feature: Shared File System Storage
   Scenario: The Shared File System Storage page is reachable
     When I visit project path "shared-filesystem-storage"
     Then the page status code is successful
+    And I see "Shared File System Storage"
 

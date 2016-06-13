@@ -8,7 +8,9 @@ Feature: API Access
   Scenario: The Web Console page is reachable
     When I visit project path "webconsole"
     Then the page status code is successful
+    And I see "Web Console"
 
   Scenario: The Api Endpoints page is reachable
     When I visit project path "identity/projects/api-endpoints"
     Then the page status code is successful
+    And I see "OS_AUTH_URL"

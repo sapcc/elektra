@@ -8,4 +8,5 @@ Feature: DNS
   Scenario: The DNS page is reachable
     When I visit project path "dns-service"
     Then the page status code is successful
+    And I see "DNS"
 

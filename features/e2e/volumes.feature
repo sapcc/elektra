@@ -15,5 +15,5 @@ Feature: Volumes
   Scenario: The Snapshots page is reachable
     When I visit project path "block-storage/snapshots"
     Then the page status code is successful
-
+    And I see "Snapshots"
 
