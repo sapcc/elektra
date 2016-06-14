@@ -45,19 +45,7 @@
     %footer.footer
       .container
         = image_tag "monsoon_logo.png", class: "pull-right"
-
-        .row
-          .col-sm-3
-            - if Rails.env.development?
-              = render partial: 'layouts/dev_tools'
-          .col-sm-3
-            - if Rails.env.development? and current_user
-              = raw "Token expires at: #{current_user.token_expires_at.to_time.localtime.strftime('%d.%m.%Y %H:%M:%S')} (ca. <span id='token-counter'>#{((current_user.token_expires_at.to_time-Time.now)/60).round}</span> minutes)"
-              :javascript
-                setInterval(function(){ var counter = parseInt($('#token-counter').text()); $('#token-counter').text(counter-1) }, 60000);
-                
-              
-          .col-sm-3
+        = render "application/footer"
 
     = yield :templates
     = yield :javascripts

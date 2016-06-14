@@ -1,37 +1,60 @@
-= content_for :page_lead do
-  .jumbotron
-    .container
-      %h1
-        Welcome
-        = current_user.full_name
-      %p Please accept the terms of use for this domain before you continue. Once you have accepted the terms your user will be registered to the domain.
-      %p Thank you and enjoy your stay!
+- if @tou
 
+  = content_for :page_lead do
+    .jumbotron
+      .container
+        %h1
+          Hello
+          = current_user.full_name
+        %p You've accepted the following Terms of Use
 
-= form_tag main_app.accept_terms_of_use_path, method: :post do
-  .row
-    .col-sm-8
-      .form-group
-        %label Terms and Conditions
-        .scrollable-text
-          :markdown
-            #{Settings.actual_terms.terms}
+  = form_tag '#' do
 
-    .col-sm-4
-      .form-group
-        %label User
-        %input.form-control{type: "text", placeholder: "#{current_user.full_name} (#{current_user.name})", readonly: "readonly"}
+    .row
+      .col-sm-8
+        .form-group
+          %label Terms and Conditions
+          .scrollable-text
+            :markdown
+              #{Settings.actual_terms.terms}
 
-      .form-group
-        %label Domain
-        %input.form-control{type: "text", placeholder: @scoped_domain_name, readonly: "readonly"}
+      .col-sm-4
+        .form-group
+          %label User
+          %input.form-control{type: "text", placeholder: "#{current_user.full_name} (#{current_user.name})", readonly: "readonly"}
 
+        .form-group
+          %label Domain
+          %input.form-control{type: "text", placeholder: @scoped_domain_name, readonly: "readonly"}
 
-      .form-group
-        .checkbox
-          %label
-            = check_box_tag 'terms_of_use', 'accepted', false, id: "accept_tos"
-            I have read and agree to the terms of use
+        .form-group
+          %label Accepted Version
+          %input.form-control{type: "text", placeholder: @tou.tou_version , readonly: "readonly"}
 
-      .form-group
-        = submit_tag "Register", class: "btn btn-primary btn-lg", id: "register-button", disabled: true
+        .form-group
+          %label Accepted on
+          %input.form-control{type: "text", placeholder: @tou.created_at, readonly: "readonly"}
+
+        .form-group
+          = link_to 'Back', :back, class: 'btn btn-primary btn-lg'
+
+- else
+
+  = content_for :page_lead do
+    .jumbotron
+      .container
+        %h1
+          Terms of Use for Converged Cloud
+
+  = form_tag '#' do
+
+    .row
+      .col-sm-12
+        .form-group
+          %label Terms and Conditions
+          .scrollable-text
+            :markdown
+              #{Settings.actual_terms.terms}
+
+        .form-group
+          = link_to 'Back', :back, class: 'btn btn-primary btn-lg pull-right'

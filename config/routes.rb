@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     scope "(/:project_id)" do
       scope module: 'dashboard' do
         post 'accept_terms_of_use'
+        get 'terms_of_use'
         get 'find_users_by_name'
       end
 

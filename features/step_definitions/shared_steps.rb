@@ -12,6 +12,14 @@ Given(/^I am not logged in$/) do
   visit monsoon_openstack_auth.logout_path
 end
 
+Given /^Test user has accepted terms of use$/ do
+  DashboardController.any_instance.stub(:tou_accepted?).and_return(true)
+end
+
+Given /^Test user has not accepted terms of use$/ do
+  DashboardController.any_instance.stub(:tou_accepted?).and_return(false)
+end
+
 #
 # Elements
 #
@@ -49,9 +57,9 @@ When(/^I visit project path "(.*?)"$/) do |path|
 end
 
 Then(/^I am redirected to domain path "(.*?)"$/) do |path|
-  expect(current_path).to eq(@cclast_domain_path)
+  expect(current_path).to eq("/" + ENV['CCTEST_DOMAIN'] + "/" + path)
 end
 
 Then(/^I am redirected to project path "(.*?)"$/) do |path|
-  expect(current_path).to eq(@cclast_project_path)
+  expect(current_path).to eq( "/" + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/" + path)
 end

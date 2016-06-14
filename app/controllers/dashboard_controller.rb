@@ -25,14 +25,15 @@ class DashboardController < ::ScopeController
                                 requested_url
                               end
                             end
-                          }
+                          },
+                          except: :terms_of_use
 
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use, except: [:accept_terms_of_use]
+  before_filter :check_terms_of_use, except: [:accept_terms_of_use, :terms_of_use]
   # rescope token
-  before_filter :rescope_token
-  before_filter :raven_context
-  before_filter :load_user_projects
+  before_filter :rescope_token, except: [:terms_of_use]
+  before_filter :raven_context, except: [:terms_of_use]
+  before_filter :load_user_projects, except: [:terms_of_use]
   before_filter :set_mailer_host
 
   # token is expired or was revoked -> redirect to login page
@@ -53,9 +54,8 @@ class DashboardController < ::ScopeController
   end
 
   def check_terms_of_use
-    return if Rails.env == "test"
     unless tou_accepted?
-      render action: :terms_of_use and return
+      render action: :accept_terms_of_use and return
     end
   end
 
@@ -75,8 +75,15 @@ class DashboardController < ::ScopeController
     else
       group_name = "CC_#{current_user.user_domain_name.upcase}_DOMAIN_MEMBERS"
       @service_user.remove_user_from_group(current_user.id, group_name)
-      render action: :terms_of_use
+      render action: :accept_terms_of_use
     end
+  end
+
+  def terms_of_use
+    if current_user
+      @tou = UserProfile.tou(current_user.id, current_user.user_domain_id, Settings.actual_terms.version)
+    end
+    render action: :terms_of_use
   end
 
   def find_users_by_name
@@ -143,12 +150,11 @@ class DashboardController < ::ScopeController
     is_cache_expired = current_user.id!=session[:last_user_id] ||
         session[:last_request_timestamp].nil? ||
         (session[:last_request_timestamp] < Time.now-5.minute)
-    if true #is_cache_expired
+    if is_cache_expired
       session[:last_request_timestamp] = Time.now
       session[:last_user_id] = current_user.id
       session[:tou_accepted] =
-          profile = UserProfile.find_by(uid: current_user.id).domain_profiles.find_by(domain_id: current_user.user_domain_id, tou_version: Settings.actual_terms.version) rescue false
-      if profile
+      if UserProfile.tou_accepted?(current_user.id, current_user.user_domain_id, Settings.actual_terms.version)
         session[:tou_accepted] = true
       else
         session[:tou_accepted] = false
