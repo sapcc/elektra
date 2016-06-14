@@ -67,7 +67,8 @@ module Identity
       protected 
 
       def load_roles
-        @roles = service_user.roles rescue []
+        ignore_roles = ['service','network_admin']
+        @roles = (service_user.roles rescue []).delete_if{|role| ignore_roles.include?(role.name)}
       end
       
       def load_role_assignments

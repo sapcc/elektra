@@ -9,7 +9,6 @@ gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '4.2.4'
 
-
 # Views and Assets
 gem 'compass-rails'
 gem 'sass-rails'

@@ -2,6 +2,7 @@ module Core
   module ServiceLayer
     class Model
       extend ActiveModel::Naming
+      extend ActiveModel::Translation
       include ActiveModel::Conversion
       include ActiveModel::Validations
 
