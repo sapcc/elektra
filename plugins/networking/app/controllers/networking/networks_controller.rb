@@ -26,14 +26,18 @@ module Networking
       if @network.save
 
         if subnets_params
-          subnet = services.networking.subnet
-          subnet.attributes = subnets_params.merge("network_id"=>@network.id)
-          puts subnet.pretty_attributes
-          subnet.save
+          @subnet = services.networking.subnet
+          @subnet.attributes = subnets_params.merge('network_id' => @network.id)
+          # FIXME: anti-pattern of doing two things in one action
+          if @subnet.save
+            flash[:notice] = 'Network successfully created.'
+            redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
+          else
+            @network.destroy
+            flash.now[:error] = @subnet.errors.full_messages.to_sentence
+            render action: :new
+          end
         end
-
-        flash[:notice] = "Network successfully created."
-        redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
       else
         flash.now[:error] = @network.errors.full_messages.to_sentence
         render action: :new

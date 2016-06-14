@@ -1,3 +1,6 @@
+= content_for :title do
+  Create #{@network_type.humanize} Network
+
 - if modal?
   .flashes_area
     = render 'flashes'
@@ -9,24 +12,23 @@
       %p.alert.alert-error= @network.errors.full_messages.to_sentence
 
     %fieldset
-      = f.input :name, { label: 'Network Name',
-          input_html: { value: 'private' } }
-      = f.input :admin_state_up, { label: "Admin State",
-          as:         :select,
+      = f.input :name, { input_html: { value: 'private' } }
+      = f.input :admin_state_up, { as:         :select,
           collection: [['UP', true], ['DOWN', false]],
           selected:   true }
 
     %label
       = check_box_tag 'subnet', 1, true, data:{ toggle: 'collapse', target: '#collapseExample'}
-      Create subnet
+      Create Subnet
 
+    -# FIXME: anti-pattern of doing two things in one dialog - labelling already indicates a hack
     %fieldset.collapse.in{id: 'collapseExample'}
       = f.simple_fields_for :subnets do |subnets|
-        = subnets.input :name, { label: 'Subnet Name',
-            input_html: { value: 'private_sub' } }
-        = subnets.input :cidr, { label: 'Network Address',
-            placeholder: '192.168.0.0/24' }
-        = subnets.input :enable_dhcp, { label: 'Enable DHCP',
+        = subnets.input :name, { label: "#{Networking::Subnet.human_attribute_name(:name)}",
+          input_html: { value: 'private_sub' } }
+        = subnets.input :cidr, { label: "#{Networking::Subnet.human_attribute_name(:cidr)}",
+          input_html: { value: '192.168.0.0/24' } }
+        = subnets.input :enable_dhcp, { label: "#{Networking::Subnet.human_attribute_name(:enable_dhcp)}",
             as: :boolean }
 
 

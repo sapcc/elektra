@@ -1,6 +1,6 @@
 module Networking
   class Network < Core::ServiceLayer::Model
-    validates :name, presence: { message: 'Please provide a name' }
+    validates :name, presence: true
 
     def external
       read('router:external')

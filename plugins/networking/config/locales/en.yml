@@ -1,8 +1,10 @@
 en:
   activemodel:
-    models:
-      networking/subnet:
-        one: 'sdfdsfdsf'
     attributes:
       networking/subnet:
         cidr: 'Network Address (CIDR)'
+        name: 'Subnet Name'
+        enable_dhcp: 'Enable DHCP'
+      networking/network:
+        name: 'Network Name'
+        admin_state_up: 'Admin State'
