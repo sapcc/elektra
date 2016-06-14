@@ -17,7 +17,7 @@
         %th.snug
     %tbody
       - if @networks.length==0
-        %tr
+        %tr{data: {empty: true}}
           %td{colspa: 6} No network available
       - else
         - @networks.each do | network |
