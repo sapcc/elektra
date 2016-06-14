@@ -1,5 +1,8 @@
+require "base64"
+
 module Compute
   class Server < Core::ServiceLayer::Model
+    validates :name, presence: {message: 'Please provide a name'}
     validates :image_id, presence: {message: 'Please select an image'}
     validates :flavor_id, presence: {message: 'Please select a flavor'}
     validates :network_ids, presence: {message: 'Please select at least one network'}
@@ -31,6 +34,7 @@ module Compute
       end
     end
 
+
     def attributes_for_create
       {
         "name"              => read("name"),
@@ -40,9 +44,10 @@ module Compute
         "min_count"         => read("min_count"),
         # Optional
         "networks"          => read("network_ids"),
-        #"security_groups"   => read("security_groups"),
+        "security_groups"   => read("security_groups"),
         "availability_zone" => read("availability_zone_id"),
-        "key_name"          => read("keypair_id")
+        "key_name"          => read("keypair_id"),
+        "user_data"         => Base64.encode64(read("user_data"))
         }.delete_if { |k, v| v.nil? }
     end
     

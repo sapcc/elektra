@@ -21,7 +21,7 @@ module Compute
       @images             = services.image.images
       @availability_zones = services.compute.availability_zones
       @security_groups    = services.compute.security_groups
-      @private_networks   = services.networking.project_networks(@scoped_project_id)
+      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
       @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
       @instance.errors.add :private_network,  'not available' if @private_networks.blank?
@@ -57,7 +57,7 @@ module Compute
       @instance.attributes=params[@instance.model_name.param_key]
 
       if @instance.save
-        flash[:notice] = "Instance successfully created."
+        flash.now[:notice] = "Instance successfully created."
         @instance = services.compute.find_server(@instance.id)
         render template: 'compute/instances/create.js'
       else
@@ -65,8 +65,8 @@ module Compute
         @images = services.image.images
         @availability_zones = services.compute.availability_zones
         @security_groups= services.compute.security_groups
-        @private_networks = services.networking.project_networks(@scoped_project_id)
-        @keypairs = services.compute.keypairs.collect {|kp| {id: kp.name, name: kp.name}}
+        @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
+        @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
         render action: :new
       end
     end
@@ -103,13 +103,13 @@ module Compute
 
     def execute_instance_action(action=action_name)
       instance_id = params[:id]
-      @instance = services.compute.find_server(instance_id)
+      @instance = services.compute.find_server(instance_id) rescue nil
 
       @target_state=nil
-      if (@instance.task_state || '')!='deleting'
+      if @instance and (@instance.task_state || '')!='deleting'
         if @instance.send(action)
           sleep(2)
-          @instance = services.compute.find_server(instance_id)
+          @instance = services.compute.find_server(instance_id) rescue nil
 
           @target_state = target_state_for_action(action)
           @instance.task_state ||= task_state(@target_state)

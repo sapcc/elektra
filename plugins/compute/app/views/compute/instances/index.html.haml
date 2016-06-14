@@ -17,8 +17,8 @@
         %th.snug
     %tbody
       - if @instances.empty?
-        %tr
-          %td{colspa: 5} No instances available
+        %tr{data: {empty: true}}
+          %td{colspan: 7} No instances available
       - else
         - @instances.each do | instance |
           = render partial: 'item', locals: {instance: instance}
