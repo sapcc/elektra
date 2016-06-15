@@ -42,7 +42,7 @@ module Core
       end
 
       def token
-        @driver.auth_token
+        @drivers[@current_domain].auth_token
       end
 
       def initialize(user_id, password, user_domain_name, scope_domain)
