@@ -48,7 +48,7 @@ module Compute
         "availability_zone" => read("availability_zone_id"),
         "key_name"          => read("keypair_id"),
         "user_data"         => Base64.encode64(read("user_data"))
-        }.delete_if { |k, v| v.nil? }
+        }.delete_if { |k, v| v.blank? }
     end
     
     def availability_zone
