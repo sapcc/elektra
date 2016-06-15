@@ -27,11 +27,11 @@
           - if @inquiry.domain_id
             %tr
               %th Request for Domain
-              %td= "#{@inquiry.domain_id} (#{FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Domain', nil, @inquiry.domain_id).name rescue "n/a"})"
+              %td= "#{FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Domain', nil, @inquiry.domain_id).name rescue "n/a"} (#{@inquiry.domain_id})"
           - if @inquiry.project_id
             %tr
               %th Request for Project
-              %td= "#{@inquiry.project_id} (#{FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project', @inquiry.domain_id, @inquiry.project_id).name rescue "n/a"})"
+              %td= "#{FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project', @inquiry.domain_id, @inquiry.project_id).name rescue "n/a"} (#{@inquiry.project_id})"
           %tr
             %th State
             %td= @inquiry.aasm_state

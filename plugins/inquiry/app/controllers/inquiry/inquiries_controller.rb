@@ -45,10 +45,10 @@ module Inquiry
       @inquiry.callbacks = callbacks
 
       if @inquiry.save
-        flash[:notice] = "Request successfully created."
+        flash.now[:notice] = "Request successfully created."
         redirect_to inquiries_path
       else
-        flash[:error] = "Error creating request: #{inquiry.errors.full_messages.to_sentence}."
+        flash.now[:error] = "Error creating request: #{inquiry.errors.full_messages.to_sentence}."
         Rails.logger.error "Inquiry(Request): Error creating inquiry: #{inquiry.errors.full_messages}"
         render action: :new
       end
