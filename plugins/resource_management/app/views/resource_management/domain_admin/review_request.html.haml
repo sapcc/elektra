@@ -8,7 +8,7 @@
     #usage_bars
       = render partial: 'details_usage_bar'
 
-    %p.help-block
+    %p
       The project
       %strong= @project_name
       requests that their quota be extended from
@@ -25,10 +25,10 @@
     %fieldset
       - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
       - if @project_resource.data_type.to_sym == :number
-        = f.input :approved_quota, label: 'New domain quota', input_html: { value: previous_value || @desired_quota }
+        = f.input :approved_quota, label: 'New project quota', input_html: { value: previous_value || @desired_quota }
       - else
         - requested_value = @project_resource.data_type.format(@desired_quota)
-        = f.input :approved_quota, label: 'New domain quota', as: :string, input_html: { value: previous_value || requested_value }
+        = f.input :approved_quota, label: 'New project quota', as: :string, input_html: { value: previous_value || requested_value }
 
       - previous_comment = params[:resource] ? params[:resource][:comment] : nil
       = f.input :comment, label: 'Comment', as: :string, input_html: { value: previous_comment, placeholder: 'Optional'}

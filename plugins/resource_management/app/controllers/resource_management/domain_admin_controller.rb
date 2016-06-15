@@ -154,11 +154,10 @@ module ResourceManagement
       # create inquiry
       base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.config.service.area.to_s, domain_id: nil)
       overlay_url = plugin('resource_management').cloud_admin_review_request_path()
-      domain_name = services.identity.find_domain(@scoped_domain_id).name
 
       inquiry = services.inquiry.create_inquiry(
         'domain_quota',
-        "#{@resource.service}/#{@resource.name} for domain #{domain_name}: add #{@resource.data_type.format(value - old_value)}",
+        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(value - old_value)} #{@resource.service}/#{@resource.name}",
         current_user,
         {
           resource_id: @resource.id,

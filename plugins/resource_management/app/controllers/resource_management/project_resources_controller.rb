@@ -2,11 +2,11 @@ require_dependency "resource_management/application_controller"
 
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
-   
+
     before_filter :load_project_resource, only: [:new_request, :create_request]
-    
+
     authorization_required
-    
+
     def index
       @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
@@ -27,7 +27,7 @@ module ResourceManagement
       old_value = @project_resource.approved_quota
       data_type = @project_resource.data_type
       new_value = params.require(:resource).require(:approved_quota)
-     
+
       # parse and validate value
       begin
         new_value = data_type.parse(new_value)
@@ -53,7 +53,7 @@ module ResourceManagement
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota',
-        "#{@project_resource.service}/#{@project_resource.name} for domain #{@scoped_domain_name}: add #{@project_resource.data_type.format(new_value - old_value)}",
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@project_resource.data_type.format(new_value - old_value)} #{@project_resource.service}/#{@project_resource.name}",
         current_user,
         {
           resource_id: @project_resource.id,
