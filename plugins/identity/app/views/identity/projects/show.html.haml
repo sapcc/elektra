@@ -17,7 +17,7 @@
                   = link_to plugin('identity').edit_project_path, title: "Edit project info", data: {modal: true, toggle: "tooltip", placement: "left"} do
                     %i.fa.fa-edit.fa-fw
                     Edit Project
-              - if can_delete
+              - if can_delete and @active_project.subprojects_ids.blank?
                 %li.divider{role: "separator"}
                 %li
                   = link_to delete_project_path(@active_project.id), method: :delete, data: {confirm:'This will also delete all assigned roles. Are you sure?', ok: 'Yes, delete it!', confirm_term: @active_project.name, confirm_term_label: "Type project name to confirm (#{@active_project.name})" } do
