@@ -16,6 +16,10 @@ module Automation
       Time.at(time_diff.to_i.abs).utc.strftime "%H:%M:%S"
     end
 
+    def owner
+      "Miau"
+    end
+
   end
 
 end

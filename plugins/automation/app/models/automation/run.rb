@@ -21,6 +21,14 @@ module Automation
       end
     end
 
+    def owner_name
+      if self.owner.attributes["name"].nil?
+        return self.owner.attributes["id"]
+      else
+        return self.owner.attributes["name"]
+      end
+    end
+
   end
 
 end

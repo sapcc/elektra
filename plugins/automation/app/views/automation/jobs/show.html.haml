@@ -19,17 +19,26 @@
         .col-md-2
           %b
             Node:
-        .col-md-4
+        .col-md-10
           - unless @agent.nil?
             = link_to(@agent.name, plugin('automation').node_path(id: @agent.id, name: @agent.name), data: {modal: true})
           - else
             = @job.to
+
+      .row
         .col-md-2
           %b
             Status:
         .col-md-4
           - job_state(@job.status)
-
+        .col-md-2
+          %b
+            Owner:
+        .col-md-4
+          - if @job.user.name.blank?
+            = @job.user.name
+          - else
+            = @job.user.id
 
       .row
         .col-md-2
