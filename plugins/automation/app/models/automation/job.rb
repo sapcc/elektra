@@ -16,8 +16,12 @@ module Automation
       Time.at(time_diff.to_i.abs).utc.strftime "%H:%M:%S"
     end
 
-    def owner
-      "Miau"
+    def owner_name
+      if self.user.name.nil?
+        return self.user.id
+      else
+        return self.user.name
+      end
     end
 
   end

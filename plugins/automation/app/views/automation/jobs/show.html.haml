@@ -35,10 +35,7 @@
           %b
             Owner:
         .col-md-4
-          - if @job.user.name.blank?
-            = @job.user.name
-          - else
-            = @job.user.id
+          = @job.owner_name
 
       .row
         .col-md-2
