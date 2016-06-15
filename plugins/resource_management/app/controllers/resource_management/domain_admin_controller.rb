@@ -312,7 +312,7 @@ module ResourceManagement
       project_resources = resources.where.not(project_id: nil)
 
       # when no domain resource record exists yet, use an empty mock object
-      domain_resource ||= ResourceManagement::ResourceManagement.new(
+      domain_resource ||= ResourceManagement::Resource.new(
         domain_id: @scoped_domain_id, service: service, name: resource, approved_quota: 0,
       )
 
