@@ -4,7 +4,7 @@ module Core
       @@service_user_mutex = Mutex.new
 
       # # delegate some methods to auth_users
-      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, :id, :default_services_region, :available_services_regions, to: :@auth_user
+      delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, :id, :default_services_region, :available_services_regions, to: :auth_user
 
       # Class methods
       class << self
@@ -37,6 +37,10 @@ module Core
         end
       end
 
+      def auth_user
+        @auth_users[@current_domain]
+      end
+
       def token
         @driver.auth_token
       end
@@ -46,19 +50,25 @@ module Core
         @password = password
         @user_domain_name = user_domain_name
         @scope_domain = scope_domain
+
+        @auth_users = {}
+        @drivers = {}
+        # some service-user requests need to be issued in a different domain;
+        # @current_domain tracks which domain scope is being used at the moment
+        @current_domain = @scope_domain
         authenticate
       end
 
       def authenticate
         # @scope_domain is a freindly id. So it can be the name or id
-        # That's why we try to load the service user by id and if it
-        # raises an error then we try again by name.
-        @auth_user = begin
+        # That's why we try to load the service user by id and if it 
+        # raises an error then we try again by name. 
+        auth_user = @auth_users[@current_domain] = begin
           MonsoonOpenstackAuth.api_client.auth_user(
               @user_id,
               @password,
               domain_name: @user_domain_name,
-              scoped_token: {domain: {id: @scope_domain}}
+              scoped_token: {domain: {id: @current_domain}}
           )
         rescue
           begin
@@ -66,7 +76,7 @@ module Core
                 @user_id,
                 @password,
                 domain_name: @user_domain_name,
-                scoped_token: {domain: {name: @scope_domain}}
+                scoped_token: {domain: {name: @current_domain}}
             )
           rescue MonsoonOpenstackAuth::Authentication::MalformedToken => e
             nil
@@ -74,37 +84,50 @@ module Core
           end
         end
 
-        if @auth_user.nil? or @auth_user.token.blank?
+        if auth_user.nil? or auth_user.token.blank?
           raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
         end
 
         # Unfortunately we can't use Fog directly. Fog tries to authenticate the user
         # by credentials and region using the service catalog. Our backends all uses other regions.
-        # Therefore we use the auth gem to authenticate the user get the service catalog and then
-        # we initialize the fog object.
-        @driver = ::Core::ServiceUser::Driver.new({
+        # Therefore we use the auth gem to authenticate the user get the service catalog and then 
+        # we initialize the fog object. 
+        @drivers[@current_domain] = ::Core::ServiceUser::Driver.new({
           auth_url: ::Core.keystone_auth_endpoint,
-          region: Core.locate_region(@auth_user),
-          token: @auth_user.token,
-          domain_id: @auth_user.domain_id
+          region: Core.locate_region(auth_user),
+          token: auth_user.token,
+          domain_id: auth_user.domain_id
         })
+
+        return
+      end
+
+      # Execute a block in a different domain scope, i.e. driver_method() will
+      # use a driver instance that's scoped to the given domain.
+      def in_domain_scope(domain)
+        previous_domain = @current_domain
+        @current_domain = domain
+        authenticate unless @drivers[@current_domain]
+        result = yield
+        @current_domain = previous_domain
+        return result
       end
 
       # execute driver method. Catch 401 errors (token invalid -> expired or revoked)
       def driver_method(method_sym, map, *arguments)
         if map
-          @driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
+          @drivers[@current_domain].map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
-          @driver.send(method_sym, *arguments)
+          @drivers[@current_domain].send(method_sym, *arguments)
         end
       rescue Core::ServiceLayer::Errors::ApiError => e
         # reauthenticate
         authenticate
         # and try again
         if map
-          @driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
+          @drivers[@current_domain].map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
-          @driver.send(method_sym, *arguments)
+          @drivers[@current_domain].send(method_sym, *arguments)
         end
       end
 
@@ -210,12 +233,11 @@ module Core
 
       # A special case of list_scope_admins that returns a list of CC admins.
       def list_ccadmins
-        unless @admin_domain_id
-          domain_name = Rails.configuration.cloud_admin_domain
-          @admin_domain_id = driver_method(:domains, true, {name: domain_name}).first.id
+        domain_name = Rails.configuration.cloud_admin_domain
+        in_domain_scope(domain_name) do
+          domain_id = @auth_users[domain_name].domain_id
+          list_scope_admins(domain_id: domain_id)
         end
-
-        return list_scope_admins({domain_id: @admin_domain_id})
       end
 
       # Returns admins for the given scope (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID)
