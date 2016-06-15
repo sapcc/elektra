@@ -6,7 +6,7 @@ module Core
       # # delegate some methods to auth_users
       delegate :token, :token_expired?, :token_expires_at, :domain_id, :domain_name, :context, :id, :default_services_region, :available_services_regions, to: :@auth_user
 
-      # Class methods    
+      # Class methods
       class << self
         def load(params={})
           scope_domain = params[:scope_domain]
@@ -51,8 +51,8 @@ module Core
 
       def authenticate
         # @scope_domain is a freindly id. So it can be the name or id
-        # That's why we try to load the service user by id and if it 
-        # raises an error then we try again by name. 
+        # That's why we try to load the service user by id and if it
+        # raises an error then we try again by name.
         @auth_user = begin
           MonsoonOpenstackAuth.api_client.auth_user(
               @user_id,
@@ -77,11 +77,11 @@ module Core
         if @auth_user.nil? or @auth_user.token.blank?
           raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
         end
-        
+
         # Unfortunately we can't use Fog directly. Fog tries to authenticate the user
         # by credentials and region using the service catalog. Our backends all uses other regions.
-        # Therefore we use the auth gem to authenticate the user get the service catalog and then 
-        # we initialize the fog object. 
+        # Therefore we use the auth gem to authenticate the user get the service catalog and then
+        # we initialize the fog object.
         @driver = ::Core::ServiceUser::Driver.new({
           auth_url: ::Core.keystone_auth_endpoint,
           region: Core.locate_region(@auth_user),
@@ -100,7 +100,7 @@ module Core
       rescue Core::ServiceLayer::Errors::ApiError => e
         # reauthenticate
         authenticate
-        # and try again 
+        # and try again
         if map
           @driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
@@ -115,11 +115,11 @@ module Core
       def find_user(user_id)
         driver_method(:get_user, true, user_id)
       end
-      
+
       def groups(filter={})
         driver_method(:groups, true, filter)
       end
-      
+
       def group_members(group_id,filter={})
         driver_method(:group_members, true, group_id,filter)
       end
@@ -165,27 +165,27 @@ module Core
         role = self.find_role_by_name(role_name)
         driver_method(:grant_domain_user_role, false, self.domain_id, user_id, role.id)
       end
-      
+
       def grant_project_user_role(project_id, user_id, role_id)
         driver_method(:grant_project_user_role, false, project_id, user_id, role_id)
       end
-      
+
       def revoke_project_user_role(project_id, user_id, role_id)
         driver_method(:revoke_project_user_role, false, project_id, user_id, role_id)
       end
-      
+
       def grant_project_group_role(project_id, group_id, role_id)
         driver_method(:grant_project_group_role, false, project_id, group_id, role_id)
       end
-      
+
       def revoke_project_group_role(project_id, group_id, role_id)
         driver_method(:revoke_project_group_role, false, project_id, group_id, role_id)
       end
-            
+
       def update_project(id,params)
         driver_method(:update_project, true, id,params)
       end
-      
+
       def delete_project(id)
         driver_method(:delete_project,false,id)
       end
@@ -211,7 +211,7 @@ module Core
       # A special case of list_scope_admins that returns a list of CC admins.
       def list_ccadmins
         unless @admin_domain_id
-          domain_name = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'ccadmin')
+          domain_name = Rails.configuration.cloud_admin_domain
           @admin_domain_id = driver_method(:domains, true, {name: domain_name}).first.id
         end
 
@@ -231,7 +231,7 @@ module Core
       end
 
       # Returns assigned users for the given scope and role (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID, role: ROLE)
-      # This method looks recursively for assigned users of project, parent_projects and domain. 
+      # This method looks recursively for assigned users of project, parent_projects and domain.
       def list_scope_assigned_users(options={})
         admins = []
         project_id = options[:project_id]
@@ -258,7 +258,7 @@ module Core
               # load project
               project = self.find_project(project_id) rescue nil
               if project
-                # try to get admins recursively by parent_id 
+                # try to get admins recursively by parent_id
                 admins = list_scope_assigned_users(project_id: project.parent_id, domain_id: project.domain_id, role: role)
               end
             end

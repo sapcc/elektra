@@ -69,7 +69,10 @@ module MonsoonDashboard
     ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','staging','europe']
 
-    #############ä SERVICE USER #############
+    ############## CLOUD ADMIN ###############
+    config.cloud_admin_domain = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'ccadmin')
+
+    ############## SERVICE USER #############
     config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
     config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
     config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
