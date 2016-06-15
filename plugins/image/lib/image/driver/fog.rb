@@ -25,6 +25,8 @@ module Image
 
       def get_image(id)
         handle_response { @fog.get_image_by_id(id).body }
+      rescue ::Fog::Image::OpenStack::NotFound
+        nil
       end
 
       ########################### MEMBERS #############################

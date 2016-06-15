@@ -1,47 +1,51 @@
 = content_for :title do
   Image: #{@image.name}
 
-- pl = plugin('image')
+- if @image.id.present?
+  - pl = plugin('image')
 
-= simple_modal_form_for @image,
-  url: pl.send("os_images_#{@visibility}_path", @image.id),
-  cancel_url: plugin('image').send("os_images_#{@visibility}_index_path"),
-  cancel_text: 'Close',
-  html: { class: 'form-readonly' } do |f|
+  = simple_modal_form_for @image,
+    url: pl.send("os_images_#{@visibility}_path", @image.id),
+    cancel_url: plugin('image').send("os_images_#{@visibility}_index_path"),
+    cancel_text: 'Close',
+    html: { class: 'form-readonly' } do |f|
 
-  .row
-    .col-md-6
-      = f.input :name, readonly: true
+    .row
+      .col-md-6
+        = f.input :name, readonly: true
 
-      = f.input :created do
-        %div= Core::Formatter.format_modification_time(DateTime.parse(@image.created_at.to_s))
+        = f.input :created do
+          %div= Core::Formatter.format_modification_time(DateTime.parse(@image.created_at.to_s))
 
-      = f.input :visibility do
-        %div
-          = @image.visibility
-          = icon 'question-circle', class: 'help_icon', data: {toggle: 'tooltip', placement: 'right'}, title: 'A public image is globally visible.'
+        = f.input :visibility do
+          %div
+            = @image.visibility
+            = icon 'question-circle', class: 'help_icon', data: {toggle: 'tooltip', placement: 'right'}, title: 'A public image is globally visible.'
 
-      = f.input :size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@image.size.to_i) }
-
-
-      = f.input :container_format, readonly: true, label: 'Container Format'
+        = f.input :size, readonly: true, input_html: { value: Core::DataType.new(:bytes).format(@image.size.to_i) }
 
 
-    .col-md-6
-      = f.input :id, readonly: true, label: 'UUID'
-
-      = f.input :updated do
-        %div= Core::Formatter.format_modification_time(DateTime.parse(@image.updated_at.to_s))
-
-      = f.input :protection do
-        %div
-          = @image.protected ? 'protected' : 'not protected'
-          = icon 'question-circle', class: 'help_icon', data: {toggle: 'tooltip', placement: 'right'}, title: 'A protected image can only be edited by an admin.'
-
-      = f.input :status, readonly: true
-
-      = f.input :disk_format, readonly: true, label: 'Disk Format'
+        = f.input :container_format, readonly: true, label: 'Container Format'
 
 
-  %h5 Additional Properties
-  = render partial: 'show_properties', locals: { properties: @properties }
+      .col-md-6
+        = f.input :id, readonly: true, label: 'UUID'
+
+        = f.input :updated do
+          %div= Core::Formatter.format_modification_time(DateTime.parse(@image.updated_at.to_s))
+
+        = f.input :protection do
+          %div
+            = @image.protected ? 'protected' : 'not protected'
+            = icon 'question-circle', class: 'help_icon', data: {toggle: 'tooltip', placement: 'right'}, title: 'A protected image can only be edited by an admin.'
+
+        = f.input :status, readonly: true
+
+        = f.input :disk_format, readonly: true, label: 'Disk Format'
+
+
+    %h5 Additional Properties
+    = render partial: 'show_properties', locals: { properties: @properties }
+
+- else
+  Image not found
