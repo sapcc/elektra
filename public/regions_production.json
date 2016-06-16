@@ -6,6 +6,174 @@
     "regionkey":  "eu-de-1",
     "regionname": "EU-DE-1",
     "lat":        49.26,
-    "lon":       8.62
+    "lon":        8.62,
+    "available":  true,
+    "date":       "Q2 2016"
+  },
+  {
+    "code":       "STE",
+    "city":       "Sterling, VA",
+    "country":    "USA",
+    "regionkey":  "na-us-1",
+    "regionname": "NA-US-1",
+    "lat":        39.01,
+    "lon":        -77.43,
+    "available":  false,
+    "date":       "Q3 2016"
+  },
+  {
+    "code":       "NSQ",
+    "city":       "Newtown Square, PA",
+    "country":    "USA",
+    "regionkey":  "na-us-2",
+    "regionname": "NA-US-2",
+    "lat":        39.98,
+    "lon":        -75.40,
+    "available":  false,
+    "date":       "Q3 2016"
+  },
+  {
+    "code":       "STC",
+    "city":       "Santa Clara, CA",
+    "country":    "USA",
+    "regionkey":  "na-us-3",
+    "regionname": "NA-US-3",
+    "lat":        37.35,
+    "lon":        -121.95,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "code":       "PHO",
+    "city":       "Phoenix, AZ",
+    "country":    "USA",
+    "regionkey":  "na-us-4",
+    "regionname": "NA-US-4",
+    "lat":        33.44,
+    "lon":        -112.07,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "code":       "TTO",
+    "city":       "Toronto",
+    "country":    "Canada",
+    "regionkey":  "na-ca-1",
+    "regionname": "NA-CA-1",
+    "lat":        43.66,
+    "lon":        -79.38,
+    "available":  false,
+    "date":       "Q4 2016"
+  },
+  {
+    "code":       "SAP",
+    "city":       "São Paulo",
+    "country":    "Brazil",
+    "regionkey":  "sa-br-1",
+    "regionname": "SA-BR-1",
+    "lat":        -23.56,
+    "lon":        -46.63,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "code":       "AMS",
+    "city":       "Amsterdam",
+    "country":    "Netherlands",
+    "regionkey":  "eu-nl-1",
+    "regionname": "EU-NL-1",
+    "lat":        52.36,
+    "lon":        4.895523,
+    "available":  false,
+    "date":       "Q4 2016"
+  },
+  {
+    "code":       "MOS",
+    "city":       "Moscow",
+    "country":    "Russia",
+    "regionkey":  "eu-ru-1",
+    "regionname": "EU-RU-1",
+    "lat":        55.75,
+    "lon":        37.62,
+    "available":  false,
+    "date":       "Q4 2016"
+  },
+  {
+    "code":       "ZAF",
+    "city":       "t.b.d.",
+    "country":    "South Africa",
+    "regionkey":  "eu-za-1",
+    "regionname": "EU-ZA-1",
+    "lat":        -31.35,
+    "lon":        23.96,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "code":       "DUB",
+    "city":       "Dubai",
+    "country":    "United Arab Emirates",
+    "regionkey":  "eu-ae-1",
+    "regionname": "EU-AE-1",
+    "lat":        25.09,
+    "lon":        55.17,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "code":       "IND",
+    "city":       "t.b.d.",
+    "country":    "India",
+    "regionkey":  "ap-in-1",
+    "regionname": "AP-IN-1",
+    "lat":        17.37,
+    "lon":        78.48,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "code":       "SHA",
+    "city":       "Shanghai",
+    "country":    "China",
+    "regionkey":  "ap-cn-1",
+    "regionname": "AP-CN-1",
+    "lat":        31.20,
+    "lon":        121.47,
+    "available":  false,
+    "date":       "Q4 2016"
+  },
+  {
+    "code":       "OSA",
+    "city":       "Osaka",
+    "country":    "Japan",
+    "regionkey":  "ap-jp-1",
+    "regionname": "AP-JP-1",
+    "lat":        34.68,
+    "lon":        135.50,
+    "available":  false,
+    "date":       "Q4 2016"
+  },
+  {
+    "code":       "TOK",
+    "city":       "Tokyo",
+    "country":    "Japan",
+    "regionkey":  "ap-jp-2",
+    "regionname": "ap-JP-2",
+    "lat":        35.66,
+    "lon":        139.77,
+    "available":  false,
+    "date":       "Q4 2016"
+  },
+  {
+    "code":       "SYD",
+    "city":       "Sydney",
+    "country":    "Australia",
+    "regionkey":  "ap-au-1",
+    "regionname": "AP-AU-1",
+    "lat":        -33.86,
+    "lon":        151.20,
+    "available":  false,
+    "date":       "Q4 2016"
   }
+
 ]

@@ -8,13 +8,28 @@
   }
 
   .worldmap-city {
-    fill: lighten($light-sapgold, 35);
-    stroke: #333;
+    fill: lighten($light-sapgold, 25);
+    stroke: #666;
     cursor: pointer;
 
     &.active {
+      cursor: crosshair;
       fill: $light-sapgold;
+      stroke: #333;
     }
+
+    &.notavailable {
+      cursor: crosshair;
+      fill: #bbb;
+      stroke: #666;
+
+      &.cominglater {
+        fill: #eee;
+        stroke: #777;
+      }
+    }
+
+
 
   }
 
@@ -47,12 +62,16 @@
   left: 0;
 }
 
-.d3-tip-active {
+.d3-tip-highlight {
   color: $light-sapgold;
 }
 
+.d3-tip-highlight-secondary {
+  color: lighten($bright-blue, 10);
+}
+
 .d3-tip-info {
-  color: #666;
+  color: #999;
 }
 
 #worldmap-city-info {

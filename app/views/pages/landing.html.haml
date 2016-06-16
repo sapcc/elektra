@@ -164,14 +164,14 @@
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html(function(d) {
-        var selectedRegionText = "";
-        if (d.regionkey == "#{current_region}") {
-          selectedRegionText = "Active Region";
-        }
+        var selectedRegionText = (d.regionkey == "#{current_region}") ? "Active Region" : "";
+
+        var comingSoonText = d.available ? "" : "Planned for " + d.date;
 
         return "<strong>Region:</strong> " + d.regionname + "<br />"
                + "<span class='d3-tip-info'>" + d.city + ", " + d.country + "</span><br />"
-               + "<span class='d3-tip-active'>" + selectedRegionText + "</span>";
+               + "<span class='d3-tip-highlight'>" + selectedRegionText + "</span>"
+               + "<span class='d3-tip-highlight-secondary'>" + comingSoonText + "</span>";
       })
 
   // add tooltip
@@ -209,8 +209,8 @@
           .attr("cy", function(d) {
                 return projection([d.lon, d.lat])[1];
           })
-          .attr("r", 7)
-          .classed({'worldmap-city': true, 'active': function(d) {return d.regionkey == "#{current_region}"}})
+          .attr("r", getRadius)
+          .classed({'worldmap-city': true, 'active': isActiveCity, 'notavailable': isNotAvailable, 'cominglater': isComingLater})
           .on("click",clickedCity)
           .on("mouseover", mouseoverCity)
           .on("mouseout", mouseoutCity);
@@ -221,13 +221,15 @@
   // Add optional onClick events for features here
   // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
   function clickedCity(d,i) {
-    window.location.assign(window.location.href.replace("#{current_region}", d.regionkey));
+    if (d.available && !isActiveCity(d)) {
+      window.location.assign(window.location.href.replace("#{current_region}", d.regionkey));
+    }
   }
 
   // Add optional onMouseover events for features here
   // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
   function mouseoutCity(d,i) {
-    d3.select(this).attr("r", 7);
+    d3.select(this).attr("r", getRadius);
     tip.hide(d);
   }
 
@@ -236,4 +238,24 @@
   function mouseoverCity(d,i) {
     d3.select(this).attr("r", 10);
     tip.show(d);
+  }
+
+  function getRadius(d,i) {
+    var size = d.available ? 7 : 6;
+    if (isActiveCity(d)) {size = size + 1};
+    return size;
+  }
+
+  function isActiveCity(d,i) {
+    return d.regionkey == "#{current_region}";
+  }
+
+  function isNotAvailable(d, i) {
+    return !d.available;
+  }
+
+  function isComingLater(d, i) {
+    var currentYear = new Date().getFullYear();
+    // if not available and the planned availability year is not the current year return true
+    return (!d.available && !d.date.includes(currentYear)) ? true : false;
   }
