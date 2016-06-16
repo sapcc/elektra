@@ -135,7 +135,7 @@ describe Core::ServiceUser::Base do
         )
 
         allow(@service_user).to receive(:token_expired?).and_return(true)
-        allow(@service_user.instance_variable_get(:@driver)).to receive(:get_user).with('u-7fd18a949').and_raise(Core::ServiceLayer::Errors::ApiError,
+        allow(@service_user.driver).to receive(:get_user).with('u-7fd18a949').and_raise(Core::ServiceLayer::Errors::ApiError,
         'Expected([200]) <=> Actual(401 Invalid Credentials)
         excon.error.response
           :body          => "{\"error\":{\"code\":401,\"message\":\"Invalid Credentials\",\"title\":\"Not Found\"}}"
@@ -214,28 +214,28 @@ describe Core::ServiceUser::Base do
         "enabled"=>true, "domain_id"=>"o-monsoon2", "default_project_id"=>nil, "links"=>{"self"=>"http://localhost:5000/v3/users/u-dashboard"},
         "domain"=>{"id"=>"o-monsoon2", "name"=>"monsoon2", "links"=>{"self"=>"http://localhost:5000/v3/domains/o-monsoon2"}}
       }
-      allow(service_user.instance_variable_get(:@driver)).to receive(:get_user).with('u-7fd18a949').and_return(user)
-      allow(service_user.instance_variable_get(:@driver)).to receive(:get_user).with('u-monsoon2_admin').and_return(admin)
-      allow(service_user.instance_variable_get(:@driver)).to receive(:get_user).with('u-dashboard').and_return(dashboard)
+      allow(service_user.driver).to receive(:get_user).with('u-7fd18a949').and_return(user)
+      allow(service_user.driver).to receive(:get_user).with('u-monsoon2_admin').and_return(admin)
+      allow(service_user.driver).to receive(:get_user).with('u-dashboard').and_return(dashboard)
 
       project = {"uri"=>"/projects/o-2d4857817", "id"=>"o-2d4857817", "domain_id"=>"o-monsoon2", "name"=>"D064310",
         "description"=>"Andreas's Sandbox", "enabled"=>true, "parent_id"=>"o-test", "links"=>{"self"=>"http://localhost:5000/v3/projects/o-2d4857817"}
       }
-      allow(service_user.instance_variable_get(:@driver)).to receive(:get_project).with('o-2d4857817').and_return(project)
+      allow(service_user.driver).to receive(:get_project).with('o-2d4857817').and_return(project)
 
       roles = [
         {"id"=>"r-admin", "links"=>{"self"=>"http://localhost:5000/v3/roles/r-admin"}, "name"=>"admin"},
         {"id"=>"r-member", "links"=>{"self"=>"http://localhost:5000/v3/roles/r-member"}, "name"=>"member"},
         {"id"=>"r-service", "links"=>{"self"=>"http://localhost:5000/v3/roles/r-service"}, "name"=>"service"}
       ]
-      allow(service_user.instance_variable_get(:@driver)).to receive(:roles).and_return(roles)
+      allow(service_user.driver).to receive(:roles).and_return(roles)
 
       role_assignments = [
         {"scope"=>{"domain"=>{"id"=>"o-monsoon2"}}, "role"=>{"id"=>"r-admin"}, "user"=>{"id"=>"u-monsoon2_admin"}, "links"=>{"assignment"=>"http://localhost:5000/v3/domains/o-monsoon2/users/u-monsoon2_admin/roles/r-admin"}},
         {"scope"=>{"domain"=>{"id"=>"o-monsoon2"}}, "role"=>{"id"=>"r-admin"}, "user"=>{"id"=>"u-dashboard"}, "links"=>{"assignment"=>"http://localhost:5000/v3/domains/o-monsoon2/users/u-dashboard/roles/r-admin"}}
       ]
-      allow(service_user.instance_variable_get(:@driver)).to receive(:role_assignments).with("scope.domain.id"=>"o-#{scope_test_domain}","role.id"=>'r-admin').and_return(role_assignments)
-      allow(service_user.instance_variable_get(:@driver)).to receive(:role_assignments).with("scope.domain.id"=>"o-#{scope_test_domain}","role.id"=>'r-admin', effective: true).and_return(role_assignments)
+      allow(service_user.driver).to receive(:role_assignments).with("scope.domain.id"=>"o-#{scope_test_domain}","role.id"=>'r-admin').and_return(role_assignments)
+      allow(service_user.driver).to receive(:role_assignments).with("scope.domain.id"=>"o-#{scope_test_domain}","role.id"=>'r-admin', effective: true).and_return(role_assignments)
     end
 
 
@@ -338,7 +338,7 @@ describe Core::ServiceUser::Base do
 
     describe '#grant_user_domain_member_role' do
       it "should create a role_assignment" do
-        expect(service_user.instance_variable_get(:@driver)).to receive(:grant_domain_user_role).with("o-#{scope_test_domain}",'u-7fd18a949','r-admin')
+        expect(service_user.driver).to receive(:grant_domain_user_role).with("o-#{scope_test_domain}",'u-7fd18a949','r-admin')
         service_user.grant_user_domain_member_role('u-7fd18a949','admin')
       end
     end
@@ -362,7 +362,7 @@ describe Core::ServiceUser::Base do
 
   context 'token was revoked' do
     before :each do
-      #allow(@service_user.instance_variable_get(:@driver)).to receive(:role_assignments).and_raise
+      #allow(@service_user.driver).to receive(:role_assignments).and_raise
     end
 
   end

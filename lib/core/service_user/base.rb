@@ -42,7 +42,11 @@ module Core
       end
 
       def token
-        @drivers[@current_domain].auth_token
+        driver.auth_token
+      end
+
+      def driver
+        @drivers[@current_domain]
       end
 
       def initialize(user_id, password, user_domain_name, scope_domain)
@@ -107,7 +111,7 @@ module Core
       def in_domain_scope(domain)
         previous_domain = @current_domain
         @current_domain = domain
-        authenticate unless @drivers[@current_domain]
+        authenticate unless driver
         result = yield
         @current_domain = previous_domain
         return result
@@ -116,18 +120,18 @@ module Core
       # execute driver method. Catch 401 errors (token invalid -> expired or revoked)
       def driver_method(method_sym, map, *arguments)
         if map
-          @drivers[@current_domain].map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
+          driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
-          @drivers[@current_domain].send(method_sym, *arguments)
+          driver.send(method_sym, *arguments)
         end
       rescue Core::ServiceLayer::Errors::ApiError => e
         # reauthenticate
         authenticate
         # and try again
         if map
-          @drivers[@current_domain].map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
+          driver.map_to(Core::ServiceLayer::Model).send(method_sym, *arguments)
         else
-          @drivers[@current_domain].send(method_sym, *arguments)
+          driver.send(method_sym, *arguments)
         end
       end
 
