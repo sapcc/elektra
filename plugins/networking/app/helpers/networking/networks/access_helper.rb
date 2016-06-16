@@ -1,5 +1,5 @@
 module Networking
-  module NetworksHelper
+  module Networks::AccessHelper
     def rbac_target(project)
       project == '*' ? 'All Projects' : project_id_and_name(project)
     end

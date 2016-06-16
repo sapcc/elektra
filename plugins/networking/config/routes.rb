@@ -10,7 +10,7 @@ Networking::Engine.routes.draw do
   namespace :networks do
     %i(external private).each do |type|
       resources type do
-        get :access_control
+        resources :access
       end
     end
   end

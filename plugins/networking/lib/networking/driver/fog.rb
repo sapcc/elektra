@@ -173,6 +173,18 @@ module Networking
       def rbacs(filter = {})
         handle_response { @fog.list_rbac_policies(filter).body['rbac_policies'] }
       end
+
+      def get_rbac(id)
+        handle_response { @fog.get_rbac_policy(id).body['rbac_policy'] }
+      end
+
+      def create_rbac(params)
+        handle_response { @fog.create_rbac_policy(params).body['rbac_policy'] }
+      end
+
+      def delete_rbac(id)
+        handle_response { @fog.delete_rbac_policy(id) }
+      end
     end
   end
 end

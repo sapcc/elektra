@@ -1,0 +1,45 @@
+- if modal?
+  = content_for :title do
+    New Access
+- else
+  = content_for :main_toolbar do
+    New Access
+
+= simple_form_for :access, url: plugin('networking').send("networks_#{@network_type}_access_index_path", @network_id), method: :post, remote: request.xhr?, html: {data: {modal: modal?}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  %div{ class: modal? ? 'modal-body' : '' }
+    - if @error
+      %p.alert.alert-error= @error
+
+    .row
+      .col-md-8
+        = f.input :auth_project_id, { label: 'Auth Project',
+          as:                 :select,
+          required:           false,
+          collection:         @user_domain_projects,
+          label_method:       -> (project) { "#{project.name} (#{project.id})" } }
+
+        = f.input :project_id, { required: true }
+
+      .col-md-4
+        .bs-callout.bs-callout-info
+          %p
+            Select one of your Auth Projects or enter the Project ID you want to add access manually.
+
+  %div{ class: modal? ? 'modal-footer' : '' }
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Back', plugin('networking').send("networks_#{@network_type}_access_index_path"), class: 'btn btn-default'
+    = f.submit 'Add', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+
+:javascript
+
+  $(document).ready(function() {
+    $("#access_auth_project_id").change(function(event) {
+      var str = "";
+      $("select option:selected").each(function() {
+        str += $(this).val();
+      });
+      $("#access_project_id").val(str);
+    });
+  });

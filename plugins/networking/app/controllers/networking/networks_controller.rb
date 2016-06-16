@@ -48,11 +48,6 @@ module Networking
       @network = services.networking.network(params[:id])
     end
 
-    def access_control
-      object_id = params["#{@network_type}_id"]
-      @rbacs = services.networking.rbacs(object_id: object_id, object_type: 'network')
-    end
-
     def update
       @network = services.networking.network(params[:id])
       @network.attributes = params[@network.model_name.param_key]
@@ -71,7 +66,7 @@ module Networking
         if @network.destroy
           flash[:notice] = 'Network successfully deleted.'
         else
-          flash[:error] = network.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+          flash[:error] = network.errors.full_messages.to_sentence
         end
       end
 
