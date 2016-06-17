@@ -82,12 +82,18 @@ module Compute
       addresses ? addresses.values.flatten.map{|x| x['addr']} : []
     end
     
+    def floating_ips
+      @floating_ips ||= addresses.values.flatten.select do |ip|
+        ip["OS-EXT-IPS:type"]=="floating" 
+      end
+    end
+    
     # borrowed from fog
     def floating_ip_addresses
-      all_floating= addresses  ? addresses.values.flatten.select{ |data| data["OS-EXT-IPS:type"]=="floating" }.map{|addr| addr["addr"] } : []
-
+      all_floating= addresses ? addresses.values.flatten.select{ |data| data["OS-EXT-IPS:type"]=="floating" }.map{|addr| addr["addr"] } : []
+      return [] if all_floating.empty?
       # Return them all, leading with manually assigned addresses
-      manual = all_addresses.map{|addr| addr["ip"]}
+      manual = all_floating.map{|addr| addr["ip"]}
 
       all_floating.sort{ |a,b|
         a_manual = manual.include? a

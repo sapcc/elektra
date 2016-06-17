@@ -53,14 +53,30 @@ module ServiceLayer
       driver.map_to(Networking::Port).ports(filter)
     end
 
-    def project_floating_ips(project_id)
+    def project_floating_ips(project_id,filter={})
       result = []
-      driver.floating_ips.each do |fip|
+      driver.floating_ips(filter).each do |fip|
         if fip['tenant_id'] == project_id
           result << Networking::FloatingIp.new(driver, fip)
         end
       end
       result
+    end
+    
+    def attach_floatingip(floating_ip_id, port_id, options = {})
+      driver.map_to(Networking::FloatingIp).associate_floating_ip(floating_ip_id,port_id,options)
+    end
+
+    def detach_floatingip(floating_ip_id)
+      driver.map_to(Networking::FloatingIp).disassociate_floating_ip(floating_ip_id)
+    end
+    
+    def new_floating_ip(params={})
+      Networking::FloatingIp.new(driver,params)
+    end
+    
+    def delete_floating_ip(floating_ip_id)
+      driver.delete_floating_ip(floating_ip_id)
     end
 
     def project_security_groups(project_id)

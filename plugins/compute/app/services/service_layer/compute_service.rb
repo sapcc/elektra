@@ -1,6 +1,10 @@
 module ServiceLayer
   class ComputeService < Core::ServiceLayer::Service
-    
+    @@images_mutex = Mutex.new
+    @@flavors_mutex = Mutex.new
+    @@images = {}
+    @@flavors = {}
+      
     def driver
       @driver ||= Compute::Driver::Fog.new({
         auth_url:   self.auth_url,
@@ -38,7 +42,14 @@ module ServiceLayer
     
     def image(id)
       return nil if id.blank?
-      driver.map_to(Compute::Image).get_image(id)
+
+      image = @@images[id]
+      unless image
+        @@images_mutex.synchronize do
+          image = @@images[id] = driver.get_image(id)
+        end
+      end
+      Compute::Image.new(driver,image)        
     end
     
     def flavors
@@ -47,7 +58,14 @@ module ServiceLayer
     
     def flavor(id)
       return nil if id.blank?
-      driver.map_to(Compute::Flavor).get_flavor(id)
+
+      flavor = @@flavors[id]
+      unless flavor
+        @@flavors_mutex.synchronize do
+          flavor = @@flavors[id] = driver.get_flavor(id)
+        end
+      end
+      Compute::Flavor.new(driver,flavor)
     end
     
     def availability_zones

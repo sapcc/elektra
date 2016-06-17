@@ -1,0 +1,25 @@
+= content_for :title do
+  New Floating IP
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @floating_ip, url: plugin('networking').floating_ips_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @floating_ip.errors.empty?
+      %p.alert.alert-error= @floating_ip.errors.full_messages.to_sentence
+
+    %fieldset
+      = f.input :floating_network_id,
+        as: :select,
+        collection: @floating_networks
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('networking').floating_ips_path, class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Allocate
