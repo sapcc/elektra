@@ -10,6 +10,6 @@ require 'spec_helper'
 #     end
 #   end
 # end
-RSpec.describe Networking::NetworksHelper, type: :helper do
+RSpec.describe Networking::Networks::AccessHelper, type: :helper do
   pending "add some examples to (or delete) #{__FILE__}"
 end

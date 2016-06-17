@@ -3,7 +3,10 @@
 
 %div{class: modal? ? 'modal-body' : ''}
   - if current_user.is_allowed?("networking:network_#{@network_type}_update",{})
-    .toolbar= link_to 'New Access', plugin('networking').send("new_networks_#{@network_type}_access_path", @network_id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+    .toolbar{ id: 'access_toolbar' }
+      = render partial: 'new_access_buttons', locals: { network_id: @network_id, network_type: @network_type}
+
+  %p{ id: 'new_access' }
 
   %table.table
     %thead
