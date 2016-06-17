@@ -6,7 +6,7 @@
       = link_to 'Allocate new', plugin('networking').new_floating_ip_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
   - if current_user.is_allowed?("networking:floating_ip_list", {floating_ip: {user_id: current_user.id} })
-    %table.table
+    %table.table#floating_ips
       %thead
         %tr
           %th Floating IP Address
@@ -15,7 +15,7 @@
           %th.snug
       %tbody
         - if @floating_ips.length==0
-          %tr
+          %tr{dta:{empty:true}}
             %td{colspa: 5} No Floating IP available
         - else
           - @floating_ips.each do | floating_ip |

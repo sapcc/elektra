@@ -1447,3 +1447,11 @@ input[type='checkbox'], input[type='radio'] {
 .ui-helper-hidden-accessible {
   display: none;
 }
+
+.list-group {
+  &.borderless {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

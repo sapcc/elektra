@@ -108,7 +108,7 @@ module Compute
       end
 
       def get_flavor(flavor_id)
-        handle_response { @fog.get_flavor(flavor_id).body['flavor'] }
+        handle_response { @fog.get_flavor_details(flavor_id).body['flavor'] }
       end
 
       def delete_flavor(id)
@@ -124,7 +124,7 @@ module Compute
       end
 
       def get_image(image_id)
-        handle_response { @fog.get_image(image_id).body['image'] }
+        handle_response { @fog.get_image_details(image_id).body['image'] }
       end
 
       def delete_image(id)

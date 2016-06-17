@@ -112,6 +112,23 @@ module Networking
       def floating_ips(filter = {})
         handle_response { @fog.list_floating_ips(filter).body['floatingips'] }
       end
+      
+      def create_floating_ip(params)
+        network_id = params.delete(:floating_network_id)
+        handle_response{@fog.create_floating_ip(network_id, params).body['floatingip']}
+      end
+      
+      def delete_floating_ip(floating_ip_id)
+        handle_response{@fog.delete_floating_ip(floating_ip_id)}
+      end
+      
+      def associate_floating_ip(floating_ip_id, port_id, options = {})
+        handle_response{@fog.associate_floating_ip(floating_ip_id, port_id, options)}
+      end
+      
+      def disassociate_floating_ip(floating_ip_id, options = {})
+        handle_response{@fog.disassociate_floating_ip(floating_ip_id, options)}
+      end
 
       ###################### SECURITY GROUPS #######################
       def security_groups(filter = {})

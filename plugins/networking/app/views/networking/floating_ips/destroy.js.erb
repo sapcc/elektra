@@ -1,1 +1,1 @@
-$("#floating_ip_<%=params[:id]%>").remove();
+<% if @deleted %>$("#floating_ip_<%=params[:id]%>").remove();<% end %>

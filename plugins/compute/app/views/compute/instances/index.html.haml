@@ -9,8 +9,9 @@
     %thead
       %tr
         %th Name
+        %th Network
+        %th IPs
         %th OS
-        %th IP
         %th Size
         %th Power state
         %th Status
@@ -18,7 +19,7 @@
     %tbody
       - if @instances.empty?
         %tr{data: {empty: true}}
-          %td{colspan: 7} No instances available
+          %td{colspan: 8} No instances available
       - else
         - @instances.each do | instance |
           = render partial: 'item', locals: {instance: instance}

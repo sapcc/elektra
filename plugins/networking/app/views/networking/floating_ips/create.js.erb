@@ -1,0 +1,9 @@
+var html="<%= j(render(partial: 'networking/floating_ips/item', locals: {floating_ip: @floating_ip})) %>"
+
+
+if($("table#floating_ips tr[data-empty]").length==1) {
+  $("table#floating_ips tr[data-empty]").replaceWith(html);
+} else {
+  $("table#floating_ips tbody").prepend(html);
+}
+MoModal.close();
