@@ -10,11 +10,7 @@ Networking::Engine.routes.draw do
   namespace :networks do
     %i(external private).each do |type|
       resources type do
-        resources :access, except: [:update] do
-          collection do
-            get :cancel
-          end
-        end
+        resources :access
       end
     end
   end

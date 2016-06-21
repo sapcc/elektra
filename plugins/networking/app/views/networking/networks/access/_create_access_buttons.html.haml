@@ -1,9 +1,0 @@
-= link_to 'Cancel',
-  plugin('networking').send("cancel_networks_#{network_type}_access_index_path",network_id),
-  remote: true,
-  class: 'btn btn-default btn-sm pull-right'
-= link_to 'Add',
-  '',
-  class: 'btn btn-primary',
-  onclick: '$("#new_access").children("form").submit()',
-  data: { disable_with: 'Please wait...' }
