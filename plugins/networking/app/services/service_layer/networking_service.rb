@@ -127,5 +127,13 @@ module ServiceLayer
     def rbacs(filter = {})
       driver.map_to(Networking::Rbac).rbacs(filter)
     end
+
+    def rbac(id = nil)
+      if id
+        driver.map_to(Networking::Rbac).get_rbac(id)
+      else
+        Networking::Rbac.new(driver)
+      end
+    end
   end
 end

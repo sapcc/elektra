@@ -22,7 +22,7 @@
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if current_user.is_allowed?("networking:network_#{@network_type}_update", {})
             %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id), data: {modal: true}
-            %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_control_path", network.id), data: {modal: true}
+            %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}
 
             %li.divider
           - if current_user.is_allowed?("networking:network_#{@network_type}_delete", {})
