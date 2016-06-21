@@ -39,6 +39,12 @@
   "identity:group_delete": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   
   "identity:group_add_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
-  "identity:group_remove_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)"
+  "identity:group_remove_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   
+  "identity:technical_user_list": "rule:cloud_admin or (role:admin and (domain_id:%(domain_id)s or domain_name:%(domain_id)s) )",
+  "identity:technical_user_get": "rule:cloud_admin or (role:admin and domain_id:%(target.user.domain_id)s )",
+  "identity:technical_user_create": "rule:cloud_admin or (role:admin and domain_id:%(user.domain_id)s )",
+  "identity:technical_user_update": "rule:cloud_admin or (role:admin and domain_id:%(user.domain_id)s )",
+  "identity:technical_user_reset_password": "rule:cloud_admin or (role:admin and domain_id:%(user.domain_id)s)",
+  "identity:technical_user_delete": "!"
 }

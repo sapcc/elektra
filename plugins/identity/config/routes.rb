@@ -12,6 +12,13 @@ Identity::Engine.routes.draw do
       get 'create_project' => 'create_wizard#new'
       post 'create_project' => 'create_wizard#create'
     end
+    
+    resources :technical_users do
+      member do
+        get 'reset_password'
+        put 'change_password'
+      end
+    end
   end
 
   resources :projects, only: [:index] do
