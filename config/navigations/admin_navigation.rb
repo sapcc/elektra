@@ -77,12 +77,16 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     if plugin_available?('identity')
-      primary.item :domain, 'Manage Domains', plugin('identity').domains_path, if: -> {
+      primary.item :domains, 'Manage Domains', plugin('identity').domains_path, if: -> {
         current_user.is_allowed?('identity:domain_list')
       }
 
-      primary.item :domain, 'Manage Groups', plugin('identity').groups_path, if: -> {
+      primary.item :groups, 'Manage Groups', plugin('identity').groups_path, if: -> {
         current_user.is_allowed?('identity:group_list', domain_id: @scoped_domain_id)
+      }
+      
+      primary.item :technical_users, 'Manage Technical Users', plugin('identity').domains_technical_users_path, if: -> {
+        current_user.is_allowed?('identity:technical_user_list', domain_id: @scoped_domain_id)
       }
     end
 

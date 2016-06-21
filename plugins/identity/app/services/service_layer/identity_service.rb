@@ -44,6 +44,24 @@ module ServiceLayer
     def domains(filter={})
       driver.map_to(Identity::Domain).domains(filter)
     end
+    
+    ###################### USERS ##########################
+    def users(filter={})
+      driver.map_to(Identity::User).users(filter)
+    end
+
+    def find_user(id)
+      driver.map_to(Identity::User).get_user(id)
+    end
+
+    def new_user(attributes={})
+      Identity::User.new(driver, attributes)
+    end
+    
+    def delete_user(id)
+      driver.delete_user(id)
+    end
+    
 
     ##################### PROJECTS #########################
     def new_project(attributes={})
@@ -179,13 +197,6 @@ module ServiceLayer
       driver.validate(token) rescue false
     end
 
-    ###################### USERS ##########################
-    def users(filter={})
-      driver.map_to(Identity::User).users(filter)
-    end
 
-    def find_user(id)
-      driver.map_to(Identity::User).get_user(id)
-    end
   end
 end

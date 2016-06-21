@@ -25,8 +25,6 @@ $ ->
     # mark link as confirming -> means the dialog is active
     link.attr('data-confirming','true')
     confirmTerm = link.attr('data-confirm-term')
-
-    console.log('confirmTerm',confirmTerm)
               
     message = link.attr 'data-confirm'
     if link.attr('data-icon')!='false'
@@ -62,7 +60,6 @@ $ ->
       $confirmButton.attr('disabled',true)
       
       $confirmField.keyup (e) ->
-        console.log(this.value,this.value==confirmTerm) 
         if this.value==confirmTerm
           $confirmButton.attr('disabled',false)
         else
