@@ -143,12 +143,12 @@
 :javascript
   //Map dimensions (in pixels)
   var width = 1140,
-      height = 690;
+      height = 580;
 
   //Map projection
   var projection = d3.geo.miller()
       .scale(174.38214717143913)
-      .center([-0.0018057527730042117,11.25867847275954]) //projection center
+      .center([-0.0018057527730042117,25]) //projection center
       .translate([width/2,height/2]) //translate to center the map in view
 
   //Generate paths based on projection
@@ -222,7 +222,8 @@
   // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
   function clickedCity(d,i) {
     if (d.available && !isActiveCity(d)) {
-      window.location.assign(window.location.href.replace("#{current_region}", d.regionkey));
+      var link = window.location.href.replace("#{current_region}", d.regionkey);
+      showConfirm("Do you want to switch to region " + d.regionname + "?", link);
     }
   }
 
@@ -240,6 +241,32 @@
     tip.show(d);
   }
 
+  // Confirm dialog for region switch
+  function showConfirm(text, link) {
+    var html =  "<div id='confirm-region-change' class='modal fade' style='padding-top:15%; overflow-y:visible;'>" +
+                  "<div class='modal-dialog'>" +
+                    "<div class='modal-content'>" +
+                       "<div class='modal-header'>" +
+                         "<a class='close' data-dismiss='modal'>×</a>" +
+                         "<h4>" + text + "</h4>" +
+                       "</div>" +
+                       "<div class='modal-footer'>" +
+                       "<a data-dismiss='modal' class='btn'>Cancel</a>" +
+                       "<button data-dismiss='modal' class='btn btn-primary confirm'>Yes, switch region</button>" +
+                     "</div>" +
+                   "</div>" +
+                 "</div>" +
+               "</div>"
+
+    $('#modal-holder').append(html);
+    $('#confirm-region-change').modal('show');
+    $('#confirm-region-change [data-dismiss="modal"].confirm').on('click', function (e) {
+      window.location.assign(link);
+    });
+
+  }
+
+  // Biggest radius for the active city, smaller radius for selectable cities, still smaller radius for future cities
   function getRadius(d,i) {
     var size = d.available ? 7 : 6;
     if (isActiveCity(d)) {size = size + 1};
@@ -254,6 +281,7 @@
     return !d.available;
   }
 
+  // check how far in the future the planned date is
   function isComingLater(d, i) {
     var currentYear = new Date().getFullYear();
     // if not available and the planned availability year is not the current year return true
