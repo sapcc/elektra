@@ -1,5 +1,5 @@
 {
-  "admin_and_matching_domain_id": "rule:admin_required and domain_id:%(domain_id)s",  
+  "admin_and_matching_domain_id": "rule:admin_required and domain_id:%(domain_id)s",
   "admin_and_matching_target_project_domain_id": "role:admin and domain_id:%(target.project.domain_id)s",
   "admin_and_matching_target_project_id": "role:admin and project_id:%(target.project.id)s",
   "admin_and_matching_project_domain_id": "rule:admin_required and domain_id:%(project.domain_id)s",

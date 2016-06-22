@@ -73,9 +73,7 @@ class DashboardController < ::ScopeController
         redirect_to main_app.root_path
       end
     else
-      group_name = "CC_#{current_user.user_domain_name.upcase}_DOMAIN_MEMBERS"
-      @service_user.remove_user_from_group(current_user.id, group_name)
-      render action: :accept_terms_of_use
+      check_terms_of_use
     end
   end
 

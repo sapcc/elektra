@@ -216,6 +216,10 @@ section {
   padding: 15px;
   height: 500px;
   overflow-y: scroll;
+  &.plain {
+    background: none;
+    border: none;
+  }
 }
 
 .text-nobreak {

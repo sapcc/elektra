@@ -1,60 +1,31 @@
-- if @tou
+= content_for :title do
+  Terms of Use
 
-  = content_for :page_lead do
-    .jumbotron
-      .container
-        %h1
-          Hello
-          = current_user.full_name
-        %p You've accepted the following Terms of Use
+.modal-body
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}= link_to 'Content', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
+    - if @tou and current_user
+      %li{role: "presentation"}= link_to 'Acknowledgment', '#accepted', aria: {controls:"accepted"}, role: "tab", data: {toggle:"tab"}
 
-  = form_tag '#' do
+  .tab-content
+    .tab-pane.active{role:"tabpanel", id:"overview"}
+      .scrollable-text.plain
+        :markdown
+          #{Settings.actual_terms.terms}
 
-    .row
-      .col-sm-8
-        .form-group
-          %label Terms and Conditions
-          .scrollable-text
-            :markdown
-              #{Settings.actual_terms.terms}
-
-      .col-sm-4
-        .form-group
-          %label User
-          %input.form-control{type: "text", placeholder: "#{current_user.full_name} (#{current_user.name})", readonly: "readonly"}
-
-        .form-group
-          %label Domain
-          %input.form-control{type: "text", placeholder: @scoped_domain_name, readonly: "readonly"}
-
-        .form-group
-          %label Accepted Version
-          %input.form-control{type: "text", placeholder: @tou.tou_version , readonly: "readonly"}
-
-        .form-group
-          %label Accepted on
-          %input.form-control{type: "text", placeholder: @tou.created_at, readonly: "readonly"}
-
-        .form-group
-          = link_to 'Back', :back, class: 'btn btn-primary btn-lg'
-
-- else
-
-  = content_for :page_lead do
-    .jumbotron
-      .container
-        %h1
-          Terms of Use for Converged Cloud
-
-  = form_tag '#' do
-
-    .row
-      .col-sm-12
-        .form-group
-          %label Terms and Conditions
-          .scrollable-text
-            :markdown
-              #{Settings.actual_terms.terms}
-
-        .form-group
-          = link_to 'Back', :back, class: 'btn btn-primary btn-lg pull-right'
+    -if @tou and current_user
+      .tab-pane{role:"tabpanel", id:"accepted"}
+        %table.table.datatable
+          %tbody
+            %tr
+              %th User
+              %td= "#{current_user.full_name} (#{current_user.name})"
+            %tr
+              %th Domain
+              %td= @scoped_domain_name
+            %tr
+              %th Accepted Version
+              %td= @tou.tou_version
+            %tr
+              %th Accepted on
+              %td= @tou.created_at
