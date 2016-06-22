@@ -1,12 +1,9 @@
-=# form.input :name, input_html: {disabled: true}
-=# form.input :password, input_html: {autocomplete:"off", type: :text, disabled: true, value: @technical_user.password }
-= form.input :description, as: :text, input_html: {autofocus: true}, require: true, icon_hint: 'Describe the intended purpose of this technical user.' 
+= form.input :description, as: :text, input_html: {}, require: true, icon_hint: 'Describe the intended purpose of this technical user.' 
 = form.input :domain_id, as: :hidden, input_html: { :value => @scoped_domain_id }
 
 :javascript
   $(document).ready(function(){
-    $('select[data-user-roles]').multiselect(); 
-    $('input[data-technical-user-name]').keyup(function(){
-      $(this).closest('.form-group').find('[data-technical-user-real-name]').text("t_#{@scoped_project_id}_"+this.value);
-    });
+    var textarea = $('#user_description');  
+    textarea.setCursorPosition(textarea.val().length+1);
+    setTimeout(function(){textarea.focus()}, 100);
   });
