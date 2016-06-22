@@ -135,7 +135,6 @@ $(document).ready ->
 
   # reset history (url in address bar) after an overlay has been closed.
   $('#modal-holder').on 'hidden.bs.modal', '.modal', () ->
-    console.log 'Modal window closed'
     History.pushState(null, null, restoreOriginStateUrl())
 
 
