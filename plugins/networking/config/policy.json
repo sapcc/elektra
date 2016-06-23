@@ -1,5 +1,5 @@
 {
-  "context_is_admin": "rule:admin_required or rule:ccadmin or rule:cloud_admin",
+  "context_is_admin": "rule:admin_required or rule:cloud_admin",
   "network_owner": "project_id:%(project.id)s",
   "admin_or_network_owner": "rule:context_is_admin or rule:network_owner",
 
