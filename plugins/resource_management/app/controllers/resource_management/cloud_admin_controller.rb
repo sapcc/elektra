@@ -187,7 +187,7 @@ module ResourceManagement
         return
       end
 
-      @domain_name = services.identity.find_domain(@resource.domain_id).name
+      @domain_name = services.identity.find_domain(@resource.domain_id).name rescue @resource.domain_id
     end
 
     def prepare_data_for_resource_list(services, options={})

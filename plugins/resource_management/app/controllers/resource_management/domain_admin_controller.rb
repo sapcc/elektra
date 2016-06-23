@@ -152,8 +152,10 @@ module ResourceManagement
       end
 
       # create inquiry
-      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.config.service.area.to_s, domain_id: nil)
-      overlay_url = plugin('resource_management').cloud_admin_review_request_path()
+      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.config.service.area.to_s, domain_id: Rails.configuration.cloud_admin_domain,
+                                                                        project_id: Rails.configuration.cloud_admin_project)
+      overlay_url = plugin('resource_management').cloud_admin_review_request_path(domain_id: Rails.configuration.cloud_admin_domain,
+                                                                                  project_id: Rails.configuration.cloud_admin_project)
 
       inquiry = services.inquiry.create_inquiry(
         'domain_quota',
