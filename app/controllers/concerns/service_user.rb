@@ -15,6 +15,7 @@ module ServiceUser
       password: Rails.application.config.service_user_password, #'secret',
       user_domain: Rails.application.config.service_user_domain_name 
     })
+
   end
   
 end

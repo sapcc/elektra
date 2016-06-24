@@ -11,6 +11,14 @@ class ApplicationController < ActionController::Base
   include ServiceUser
   include CurrentUserWrapper
 
+  # render error if service user could not be authenticated
+  before_filter do
+    unless service_user 
+      @error_message = 'Authentication Service (Keystone) is unavailable.'
+      render template: 'application/error'
+    end
+  end
+    
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
