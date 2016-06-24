@@ -4,7 +4,7 @@ module Identity
     validates :description, presence: {message: 'Please enter a description'}
 
     attr_accessor :inquiry_id # to close inquiry after creation
-    
+
     def subprojects_ids
       return @subprojetcs_ids if @subprojetcs_ids
 

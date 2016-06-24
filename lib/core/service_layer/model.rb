@@ -43,7 +43,7 @@ module Core
 
       def respond_to?(method_name, include_private = false)
         keys = @attributes.keys
-        keys.include?(method_name.to_s) or keys.include?(method_name.to_sym) or super
+        method_name.to_s=="id" or keys.include?(method_name.to_s) or keys.include?(method_name.to_sym) or super
       end
 
       def requires(*attrs)

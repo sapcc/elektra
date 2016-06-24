@@ -3,6 +3,7 @@ require_relative 'core/formatter'
 require_relative 'core/plugins_manager'
 require_relative 'core/service_layer'
 require_relative 'core/service_user'
+require_relative 'core/audit_logger'
 
 module Core
   def self.locate_region(auth_user,default_region=Rails.configuration.default_region)

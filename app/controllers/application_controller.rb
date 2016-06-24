@@ -1,3 +1,4 @@
+require 'core/audit_logger'
 # This class implements functionality to support modal views.
 # All subclasses which require modal views should inherit from this class.
 class ApplicationController < ActionController::Base

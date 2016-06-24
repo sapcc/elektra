@@ -39,7 +39,11 @@ module CurrentUserWrapper
     def method_missing(name, *args, &block)
       @current_user.send(name,*args,&block)
     end
-
+    
+    def respond_to?(method_name, include_private = false)
+      [:email,:full_name].include?(method_name) || @current_user.respond_to?(method_name, include_private)
+    end
+      
     # Email is not provided by current_user. So add it here.
     def email
       @session[:current_user_details]["email"] if @session[:current_user_details]
