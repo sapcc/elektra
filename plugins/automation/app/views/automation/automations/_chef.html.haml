@@ -7,7 +7,7 @@
   help_hint: t('automation.help_hint.string_array')
 
   = f.input :chef_attributes, as: :text, required: false, label: 'Attributes', placeholder: 'Enter attributes',
-  icon_hint: 'Runlist is JSON based. See hint for more information.',
+  icon_hint: 'Attributes are JSON based. See hint for more information.',
   help_hint: t('automation.help_hint.json')
 
   = f.input :log_level, custom_wrapper_html: {class: 'col-sm-5'}, required: false, label: 'Log level', input_html: {}, placeholder: 'Enter log level'
