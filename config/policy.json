@@ -5,8 +5,7 @@
   
   "admin_required": " role:admin or is_admin:1",
 
-  "cloud_admin": "rule:admin_required and (token.is_admin_project:True or domain_id:'Default')",
-  "ccadmin": "rule:admin_required and domain_name:'ccadmin'",
+  "cloud_admin": "rule:admin_required and (token.is_admin_project:True or domain_id:'ccadmin')",
   "domain_admin": "rule:admin_required and not domain_id:nil",
   "project_admin": "rule:admin_required and not project_id:nil",
   

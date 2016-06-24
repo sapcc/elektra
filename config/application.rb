@@ -71,6 +71,7 @@ module MonsoonDashboard
 
     ############## CLOUD ADMIN ###############
     config.cloud_admin_domain = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_DOMAIN', 'ccadmin')
+    config.cloud_admin_project = ENV.fetch('MONSOON_OPENSTACK_CLOUDADMIN_PROJECT', 'cloud_admin')
 
     ############## SERVICE USER #############
     config.service_user_id = ENV['MONSOON_OPENSTACK_AUTH_API_USERID']
