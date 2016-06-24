@@ -7,14 +7,18 @@ module Monitoring
     def index
       @index = 1
       @state = params[:state] || 'Alarm'
-      @severity = params[:severity] || 'All'
+      @severity = params[:severity] || nil
     end
 
     def filter_and_search
-      state = params[:state]
-      severity = params[:severity]
       @search = params[:search]
-      all_alarms = services.monitoring.alarms(state: state, severity: severity, search: @search)
+      query = {
+        state: params[:state],
+        severity: params[:severity],
+        search: @search,
+      }.reject { |k,v| v.blank? }
+
+      all_alarms = services.monitoring.alarms(query)
       @alarms_count = all_alarms.length
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]

@@ -22,14 +22,14 @@ Filter by:
     %li= link_to 'Medium', 'javascript:void(0)', onclick: 'set_filter("Severity","Medium")'
     %li= link_to 'Low', 'javascript:void(0)', onclick: 'set_filter("Severity","Low")'
     %li.divider{ role: 'separator' }
-    %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","All")'
+    %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","")'
 
 :javascript
 
   // set filter on start
   $(function(){ 
-    severity = '#{@severity}'
-    if ( severity != 'All' ) {
+    severity = '#{@severity || ''}'
+    if ( severity != '' ) {
       set_filter('Severity','#{@severity}');
     }
     else {
@@ -45,7 +45,7 @@ Filter by:
 
   function apply_filter() {
     $('#alarms_search').val('');
-    alarm_severity = $('#severity_filter').data('filter') || 'All'
+    alarm_severity = $('#severity_filter').data('filter') || ''
     alarm_status = $('#status_filter').data('filter') || 'All'
     $.ajax({ 
       url: "#{plugin('monitoring').filter_alarms_path()}",

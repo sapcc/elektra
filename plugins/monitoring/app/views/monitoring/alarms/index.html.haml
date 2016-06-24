@@ -17,7 +17,7 @@
   $(function() {
     $('#alarms_search').keypress(function (e) {
       if (e.which == 13) {
-         alarm_severity = $('#severity_filter').data('filter') || 'All'
+         alarm_severity = $('#severity_filter').data('filter') || ''
          alarm_status = $('#status_filter').data('filter') || 'All'
          $.ajax({ 
           url: "#{plugin('monitoring').search_alarms_path()}",
