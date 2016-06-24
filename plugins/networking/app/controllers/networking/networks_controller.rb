@@ -31,6 +31,8 @@ module Networking
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save
             flash[:notice] = 'Network successfully created.'
+            audit_logger.info(current_user, "has created", @network)
+            audit_logger.info(current_user, "has created", @subnet)
             redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
           else
             @network.destroy
@@ -53,6 +55,7 @@ module Networking
       @network.attributes = params[@network.model_name.param_key]
       if @network.save
         flash[:notice] = 'Network successfully updated.'
+        audit_logger.info(current_user, "has updated", @network)
         redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
       else
         render action: :edit
@@ -64,6 +67,7 @@ module Networking
 
       if @network
         if @network.destroy
+          audit_logger.info(current_user, "has deleted", @network)
           flash[:notice] = 'Network successfully deleted.'
         else
           flash[:error] = network.errors.full_messages.to_sentence

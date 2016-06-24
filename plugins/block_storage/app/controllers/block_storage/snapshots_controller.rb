@@ -22,6 +22,7 @@ module BlockStorage
     # PATCH/PUT /snapshots/1
     def update
       if @snapshot.update(snapshot_params)
+        audit_logger.info(current_user, "has updated", @snapshot)
         redirect_to @snapshot, notice: 'Snapshot was successfully updated.'
       else
         render :edit
@@ -30,7 +31,9 @@ module BlockStorage
 
     # DELETE /snapshots/1
     def destroy
-      @snapshot.destroy
+      if @snapshot.destroy
+        audit_logger.info(current_user, "has deleted", @snapshot)
+      end
       redirect_to snapshots_url, notice: 'Snapshot was successfully deleted.'
     end
 

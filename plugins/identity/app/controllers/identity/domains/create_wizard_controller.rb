@@ -20,6 +20,8 @@ module Identity
           services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
           services.identity.clear_auth_projects_tree_cache
           
+          audit_logger.info(current_user, "has created", @project)
+          
           flash[:notice] = "Project #{@project.name} successfully created."
           if @inquiry
             inquiry = services.inquiry.set_inquiry_state(@inquiry.id, :approved, "Project #{@project.name} approved and created by #{current_user.full_name}")

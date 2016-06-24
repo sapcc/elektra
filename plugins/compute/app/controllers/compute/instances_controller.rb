@@ -58,6 +58,7 @@ module Compute
 
       if @instance.save
         flash.now[:notice] = "Instance successfully created."
+        audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
         render template: 'compute/instances/create.js'
       else
@@ -92,6 +93,7 @@ module Compute
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
       begin 
         services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
+        audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
         redirect_to instances_url
       rescue => e
         @floating_ip.errors.add('message',e.message)
@@ -106,8 +108,6 @@ module Compute
         services.networking.detach_floatingip(floating_ips.first.id)
         redirect_to instances_url
       rescue => e
-        p ':::::::::::::::::::::::::::::::'
-        p e
         flash.now[:error] = "Could not detach Floating IP. Error: #{e.message}"
         redirect_to instances_url
       end
@@ -157,6 +157,8 @@ module Compute
           @instance.task_state ||= task_state(@target_state) if @instance
         end
       end
+      audit_logger.info(current_user, "has executed action", action, "on", @instance)
+      
       render template: 'compute/instances/update_item.js'
       #redirect_to instances_url
     end

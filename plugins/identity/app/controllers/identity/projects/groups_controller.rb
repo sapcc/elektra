@@ -65,6 +65,8 @@ module Identity
           role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id)}
         end
         
+        audit_logger.info(current_user, "has updated group role assignments for project #{@scoped_project_name} (#{@scoped_project_id})")
+        
         redirect_to projects_groups_path
       end
 

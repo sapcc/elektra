@@ -26,6 +26,7 @@ module Identity
         @technical_user = services.identity.new_user(attributes)
         @password = attributes[:password]
         if @technical_user.save
+          audit_logger.info(current_user, "has created technical user #{@technical_user.name} (#{@technical_user.id})")
           render action: :create
         else
           render action: :new
@@ -43,6 +44,7 @@ module Identity
         
         @technical_user.description = params[:user][:description]
         if @technical_user.save
+          audit_logger.info(current_user, "has updated technical user #{@technical_user.name} (#{@technical_user.id})")
           render action: :update
         else
           render action: :edit
@@ -61,6 +63,7 @@ module Identity
         @new_password = generate_password
         @technical_user.password = @new_password
         if @technical_user.save
+          audit_logger.info(current_user, "has changed password for technical user #{@technical_user.name} (#{@technical_user.id})")
           render action: :change_password
         else
           render action: :reset_password
@@ -72,6 +75,7 @@ module Identity
         enforce_permissions("identity:technical_user_delete", user: @technical_user)
         
         if @technical_user.destroy
+          audit_logger.info(current_user, "has deleted technical user #{@technical_user.name} (#{@technical_user.id})")
           @deleted = true
         else
           @deleted = false

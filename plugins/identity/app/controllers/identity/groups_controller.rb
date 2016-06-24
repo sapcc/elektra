@@ -24,7 +24,7 @@ module Identity
       @group_members = services.identity.group_members(params[:group_id])
       
       @user = params[:user_name].blank? ? nil : begin 
-        service_user.users(domain_id: @scoped_domain_id,name:params[:user_name]).first 
+        service_user.users(domain_id: @scoped_domain_id, name:params[:user_name]).first 
       rescue
         service_user.find_user(params[:user_name]) rescue nil
       end
@@ -40,6 +40,7 @@ module Identity
         render action: :new_member
       else
         services.identity.add_group_member(@group.id,@user.id)
+        audit_logger.info(current_user, "has added user #{@user.name} (#{@user.id})", "to", @group)
         redirect_to group_path(@group.id)
       end  
     end
@@ -48,6 +49,7 @@ module Identity
       @group = services.identity.find_group(params[:group_id]) 
       enforce_permissions("identity:group_remove_member",{group: @group})
       services.identity.remove_group_member(@group.id,params[:id])
+      audit_logger.info(current_user, "has removed user #{params[:id]}", "from", @group)
       redirect_to group_path(@group.id)
     end
 
@@ -60,6 +62,7 @@ module Identity
       enforce_permissions("identity:group_create",{domain_id: @scoped_domain_id})
       @group = services.identity.new_group(params[:group].merge(domain_id: @scoped_domain_id))
       if @group.save
+        audit_logger.info(current_user, "has created", @group)
         redirect_to groups_path
       else
         render action: :new
@@ -76,6 +79,7 @@ module Identity
       enforce_permissions("identity:group_update",{group: @group})
       @group.description = params[:group][:description]
       if @group.save
+        audit_logger.info(current_user, "has updated", @group)
         redirect_to group_path(@group.id)
       else
         render action: :edit
@@ -86,6 +90,7 @@ module Identity
       @group = services.identity.find_group(params[:id])
       enforce_permissions("identity:group_delete",{group: @group})
       if @group.destroy
+        audit_logger.info(current_user, "has deleted", @group)
         flash.now[:error] = @group.errors.full_messages.to_sentence
       end
       redirect_to groups_path

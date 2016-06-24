@@ -17,6 +17,7 @@ module Networking
       @floating_ip = services.networking.new_floating_ip(params[:floating_ip])
       @floating_ip.tenant_id=@scoped_project_id
       if @floating_ip.save
+        audit_logger.info(current_user, "has created", @floating_ip)
         render action: :create
       else
         render action: :new
@@ -26,6 +27,7 @@ module Networking
     def destroy
       if services.networking.delete_floating_ip(params[:id])
         @deleted=true
+        audit_logger.info(current_user, "has deleted floating ip", params[:id])
         flash.now[:notice] = "Floating IP deleted!"
       else
         @deleted=false

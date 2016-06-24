@@ -68,6 +68,7 @@ module Networking
       if @router.save
         # router is created -> add subnets as interfaces
         services.networking.add_router_interfaces(@router.id,@selected_internal_subnets)
+        audit_logger.info(current_user, "has created", @router)
         
         flash.now[:notice] = "Router successfully created."
         redirect_to plugin('networking').routers_path
@@ -123,6 +124,7 @@ module Networking
 
         services.networking.remove_router_interfaces(@router.id,to_be_detached)
         services.networking.add_router_interfaces(@router.id,to_be_attached)
+        audit_logger.info(current_user, "has updated", @router)
         
         flash.now[:notice] = "Router successfully created."
         redirect_to plugin('networking').routers_path
@@ -160,6 +162,7 @@ module Networking
         services.networking.remove_router_interfaces(@router.id,attached_subnet_ids)
         if @router.destroy
           @success = true
+          audit_logger.info(current_user, "has deleted", @router)
           flash.now[:notice] = "Router successfully deleted."
         else
           flash.now[:error] = network.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"

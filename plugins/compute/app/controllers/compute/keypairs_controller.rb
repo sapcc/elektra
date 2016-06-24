@@ -17,6 +17,7 @@ module Compute
 
       if @keypair.save
         flash[:notice] = "Key pair created."
+        audit_logger.info(current_user, "has created", @keypair)
         redirect_to action: :index
       else
         render action: :new, layout: 'modal'
@@ -29,6 +30,7 @@ module Compute
 
     def destroy
       if services.compute.delete_keypair(params[:id])
+        audit_logger.info(current_user, "has deleted keypair", params[:id])
         flash[:notice] = "Key pair deleted."
       else
         flash[:notice] = "Could not delete key pair."

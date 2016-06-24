@@ -38,6 +38,7 @@ module Identity
             )
             unless inquiry.errors?
               flash.now[:notice] = "Project request successfully created"
+              audit_logger.info(current_user, "has requested project #{@project.attributes}")
               render template: 'identity/projects/request_wizard/create.js'
             else
               render action: :new

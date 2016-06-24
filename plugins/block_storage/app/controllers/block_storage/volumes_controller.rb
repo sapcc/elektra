@@ -39,6 +39,7 @@ module BlockStorage
           @volume.status = 'creating'
           @target_state = target_state_for_action 'create'
           sleep(SLEEP)
+          audit_logger.info(current_user, "has created", @volume)
           render template: 'block_storage/volumes/create.js'
         else
           redirect_to volumes_path
@@ -56,6 +57,7 @@ module BlockStorage
     # PATCH/PUT /volumes/1
     def update
       if @volume.update(volume_params)
+        audit_logger.info(current_user, "has updated", @volume)
         redirect_to @volume, notice: 'Volume was successfully updated.'
       else
         render :edit
@@ -77,6 +79,7 @@ module BlockStorage
 
       if @snapshot.save
         flash[:notice] = "Snapshot successfully created."
+        audit_logger.info(current_user, "has created", @snapshot)
         redirect_to snapshots_path
       else
         set_volume
@@ -101,6 +104,7 @@ module BlockStorage
             @volume.status = 'attaching'
             @target_state = target_state_for_action 'attach'
             sleep(SLEEP)
+            audit_logger.info(current_user, "has attached", @volume, "to", @volume_server.server['server_id'])
             render template: 'block_storage/volumes/update_item_with_close.js'
           else
             @volume_server.servers = services.compute.servers
@@ -131,6 +135,7 @@ module BlockStorage
           @volume.status = 'detaching'
           @target_state = target_state_for_action 'detach'
           sleep(SLEEP)
+          audit_logger.info(current_user, "has detached", @volume, "from server", @volume_server.server['server_id'])
           render template: 'block_storage/volumes/update_item_with_close.js'
         else
           flash[:error] = "Error during Volume detach"
@@ -146,7 +151,9 @@ module BlockStorage
 
     # DELETE /volumes/1
     def destroy
-      @volume.destroy
+      if @volume.destroy
+        audit_logger.info(current_user, "has deleted", @volume)
+      end
       @volume.status = 'deleting'
       @target_state = target_state_for_action 'destroy'
       sleep(SLEEP)
