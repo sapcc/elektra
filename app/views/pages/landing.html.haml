@@ -156,22 +156,24 @@
       .projection(projection);
 
   //Create an SVG
-  var svg = d3.select("#worldmap").append("svg")
+  var svg = d3.select("#worldmap")
+      .append("svg")
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .on("click", clickedWorldMap);
 
   var tip = d3.tip()
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html(function(d) {
-        var selectedRegionText = (d.regionkey == "#{current_region}") ? "Active Region" : "";
+        var selectedRegionText = isActiveCity(d) ? "Active Region" : "";
 
         var comingSoonText = d.available ? "" : "Planned for " + d.date;
 
-        return "<strong>Region:</strong> " + d.regionname + "<br />"
-               + "<span class='d3-tip-info'>" + d.city + ", " + d.country + "</span><br />"
-               + "<span class='d3-tip-highlight'>" + selectedRegionText + "</span>"
-               + "<span class='d3-tip-highlight-secondary'>" + comingSoonText + "</span>";
+        return "<strong>Region:</strong> " + d.regionname + "<br />" +
+               "<span class='d3-tip-info'>" + d.city + ", " + d.country + "</span><br />" +
+               "<span class='d3-tip-highlight'>" + selectedRegionText + "</span>" +
+               "<span class='d3-tip-highlight-secondary'>" + comingSoonText + "</span>";
       })
 
   // add tooltip
@@ -211,6 +213,7 @@
           })
           .attr("r", getRadius)
           .classed({'worldmap-city': true, 'active': isActiveCity, 'notavailable': isNotAvailable, 'cominglater': isComingLater})
+          .each(showTip)
           .on("click",clickedCity)
           .on("mouseover", mouseoverCity)
           .on("mouseout", mouseoutCity);
@@ -218,28 +221,69 @@
 
   });
 
+  function showTip(d,i) {
+
+    if (!isActiveCity(d)) {
+
+      var thisNode = d3.select(this).node();
+
+      var matrix = thisNode.getScreenCTM()
+                .translate( thisNode.getAttribute("cx"),
+                            thisNode.getAttribute("cy"));
+
+      var tipContent = "<strong>Region:</strong> " + d.regionname + "<br />" +
+             "<span class='d3-tip-info'>" + d.city + ", " + d.country + "</span><br />" +
+             "<span class='d3-tip-highlight'>Active Region</span>"
+
+      var div = d3.select("body")
+        	.append("div")  // declare the tooltip div
+          	.attr("class", "d3-tip n d3-tip-active")
+            .style({position: "absolute"})
+            .html(tipContent)
+            .style("left", function (d) {
+                var tipWidth = this.getBoundingClientRect().width;
+                var computedLeft = window.pageXOffset + matrix.e - tipWidth/2;
+                return  computedLeft + "px";
+              })
+            .style("top", function (d) {
+                var tipHeight = this.getBoundingClientRect().height;
+                var computedTop = window.pageYOffset + matrix.f - tipHeight - 18;
+                return computedTop + "px";
+              });
+    }
+
+  }
+
+
   // Add optional onClick events for features here
   // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
   function clickedCity(d,i) {
-    if (d.available && !isActiveCity(d)) {
+    if (d.available & !isActiveCity(d)) {
+      d3.event.stopPropagation();
       var link = window.location.href.replace("#{current_region}", d.regionkey);
       showConfirm("Do you want to switch to region " + d.regionname + "?", link);
     }
+  }
+
+  function clickedWorldMap(d, i) {
+    d3.selectAll(".d3-tip")
+        .style({opacity: 0, "pointer-events": "none"});
+  }
+
+
+  // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
+  function mouseoverCity(d,i) {
+    d3.select(this).attr("r", 10);
+    tip.show(d);
   }
 
   // Add optional onMouseover events for features here
   // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
   function mouseoutCity(d,i) {
     d3.select(this).attr("r", getRadius);
-    tip.hide(d);
   }
 
-  // Add optional onMouseover events for features here
-  // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
-  function mouseoverCity(d,i) {
-    d3.select(this).attr("r", 10);
-    tip.show(d);
-  }
+
 
   // Confirm dialog for region switch
   function showConfirm(text, link) {
