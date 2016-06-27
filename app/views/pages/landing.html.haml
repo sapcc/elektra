@@ -223,7 +223,7 @@
 
   function showTip(d,i) {
 
-    if (!isActiveCity(d)) {
+    if (isActiveCity(d)) {
 
       var thisNode = d3.select(this).node();
 
