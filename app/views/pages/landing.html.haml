@@ -332,5 +332,6 @@
   function isComingLater(d, i) {
     var currentYear = new Date().getFullYear();
     // if not available and the planned availability year is not the current year return true
-    return (!d.available && !d.date.includes(currentYear)) ? true : false;
+    // return (!d.available && !d.date.includes(currentYear)) ? true : false;
+    return false;
   }
