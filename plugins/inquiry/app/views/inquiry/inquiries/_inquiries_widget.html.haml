@@ -9,9 +9,11 @@
         %li.active{role: "presentation"}= link_to 'Pending inquiries', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
         %li{role: "presentation"}= link_to 'All inquiries', '#allinquiries', aria: {controls:"allinquiries"}, role: "tab", data: {toggle:"tab"}
       .tab-content
+        .inquiries.spinner
         #openinquiries.tab-pane.active{role: "tabpanel"}
           = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {domain_id: domain_id, processor_id: current_user.id, state: ['open']})
         #allinquiries.tab-pane{role: "tabpanel"}
           = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page,filter: {domain_id: domain_id})
     - else
+      .inquiries.spinner
       = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {domain_id: current_user.user_domain_id, requester_id:current_user.id})

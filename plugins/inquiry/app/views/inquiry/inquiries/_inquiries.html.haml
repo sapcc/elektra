@@ -18,3 +18,6 @@
 
   .pagination
     = paginate @inquiries, :window => 1, :outer_window => 1, remote: remote_links, :theme => 'twitter-bootstrap-3'
+
+:javascript
+  $(".inquiries.spinner").remove();
