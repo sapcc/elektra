@@ -42,6 +42,7 @@ module MonsoonDashboard
         host:   env['HTTP_HOST'].to_s,
         # just take the first component of the path as a label
         path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/',1) || 20 ],
+        plugin: ["image", "block-storage",'compute','automation', "bare-metal-hana", "webconsole", "identity", "networking", "dns-service", "loadbalancing", "object-storage", "shared-filesystem-storage","resource-management", "monitoring"].include?( env['REQUEST_PATH'].split("/")[3] || "") ? env['REQUEST_PATH'].split("/")[3] : "",
       }
     end
     require 'prometheus/client/rack/exporter'
@@ -79,4 +80,5 @@ module MonsoonDashboard
     config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
     config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon3'
   end
+
 end
