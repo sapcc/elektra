@@ -274,6 +274,9 @@
   // d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
   function mouseoverCity(d,i) {
     d3.select(this).attr("r", 10);
+    // ensure active region tip is hidden before showing the new tip
+    d3.select(".d3-tip-active")
+        .style({opacity: 0, "pointer-events": "none"});
     tip.show(d);
   }
 
