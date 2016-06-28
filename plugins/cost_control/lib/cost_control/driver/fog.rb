@@ -7,7 +7,11 @@ module CostControl
 
       def get_project_metadata(project_id)
         handle_response do
-          metadata = fog.get_project_metadata(project_id).body['metadata']
+          begin
+            metadata = fog.get_project_metadata(project_id).body['metadata']
+          rescue ::Fog::Billing::OpenStack::NotFound
+            return { 'id' => project_id }
+          end
           cost_object = metadata.fetch('cost_object', {})
           {
             'id'               => project_id,
