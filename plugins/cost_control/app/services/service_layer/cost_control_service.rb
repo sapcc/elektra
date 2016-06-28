@@ -12,7 +12,7 @@ module ServiceLayer
     end
 
     def available?(action_name_sym=nil)
-      not current_user.service_url('sap-billing', region: region).nil?
+      not current_user.service_url('sapcc-billing', region: region).nil?
     end
 
     ##### project metadata
