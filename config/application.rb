@@ -36,15 +36,27 @@ module MonsoonDashboard
     config.middleware.insert_before Rack::Sendfile, "DebugEnvMiddleware"
     config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
     require 'prometheus/client/rack/collector'
+
+    # build a map from the plugins
+    plugin_mount_points = {}
+    Core::PluginsManager.available_plugins.each{|plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point}
+
     config.middleware.insert_after ActionDispatch::DebugExceptions, Prometheus::Client::Rack::Collector do |env|
       {
         method: env['REQUEST_METHOD'].downcase,
         host:   env['HTTP_HOST'].to_s,
         # just take the first component of the path as a label
         path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/',1) || 20 ],
-        plugin: ["image", "block-storage",'compute','automation', "bare-metal-hana", "webconsole", "identity", "networking", "dns-service", "loadbalancing", "object-storage", "shared-filesystem-storage","resource-management", "monitoring"].include?( env['REQUEST_PATH'].split("/")[3] || "") ? env['REQUEST_PATH'].split("/")[3] : "",
+        plugin: if env.fetch("action_dispatch.request.path_parameters",{}).fetch(:project_id,false)
+          plugin_mount_points[env['REQUEST_PATH'].split("/")[3]] || ""
+        elsif env.fetch("action_dispatch.request.path_parameters",{}).fetch(:domain_id, false)
+          plugin_mount_points[env['REQUEST_PATH'].split("/")[2]] || ""
+        else
+          ''
+        end
       }
     end
+
     require 'prometheus/client/rack/exporter'
     config.middleware.insert_after  Prometheus::Client::Rack::Collector, Prometheus::Client::Rack::Exporter
 
