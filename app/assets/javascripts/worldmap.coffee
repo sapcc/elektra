@@ -136,7 +136,9 @@ class Worldmap
     isComingLater = (d, i) ->
       currentYear = (new Date).getFullYear()
       # if not available and the planned availability year is not the current year return true
-      if !d.available and !d.date.includes(currentYear) then true else false
+      !d.available and (d.date.indexOf(currentYear) < 0)
+
+
 
 
 
