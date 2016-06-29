@@ -25,6 +25,7 @@ module BlockStorage
         audit_logger.info(current_user, "has updated", @snapshot)
         redirect_to @snapshot, notice: 'Snapshot was successfully updated.'
       else
+        @snapshot.errors[:base] << "Snapshot update failed!"
         render :edit
       end
     end
@@ -33,6 +34,8 @@ module BlockStorage
     def destroy
       if @snapshot.destroy
         audit_logger.info(current_user, "has deleted", @snapshot)
+      else
+        flash.now[:error] = "Error during Snapshot deletion!"
       end
       redirect_to snapshots_url, notice: 'Snapshot was successfully deleted.'
     end

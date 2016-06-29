@@ -4,8 +4,7 @@
 = simple_form_for @volume, url: plugin('block_storage').volumes_path, method: :post, remote: request.xhr?, html: {id: 'form_volume', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
   %div{class: modal? ? 'modal-body' : ''}
 
-    - if @volume.errors.present?
-      %p.alert.alert-error= @volume.errors.full_messages.to_sentence
+    = render partial: 'errors', locals: {data: @volume}
     
     = f.input :name
     = f.input :description

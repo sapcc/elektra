@@ -46,6 +46,7 @@ module BlockStorage
         end
       else
         @availability_zones = services.compute.availability_zones
+        @volume.errors[:base] << "Volume creation failed!"
         render :new
       end
     end
@@ -60,6 +61,7 @@ module BlockStorage
         audit_logger.info(current_user, "has updated", @volume)
         redirect_to @volume, notice: 'Volume was successfully updated.'
       else
+        @volume.errors[:base] << "Volume update failed!"
         render :edit
       end
     end
@@ -108,10 +110,12 @@ module BlockStorage
             render template: 'block_storage/volumes/update_item_with_close.js'
           else
             @volume_server.servers = services.compute.servers
+            @volume_server.errors[:base] << "Volume attachment failed!"
             render :edit_attach and return
           end
         rescue Exception => e
           @volume_server.servers = services.compute.servers
+          @volume_server.errors[:base] << "Volume attachment failed! #{e.message}"
           render :edit_attach and return
         end
       else
