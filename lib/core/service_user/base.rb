@@ -105,6 +105,12 @@ module Core
           })
         rescue => e
           message = "Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}."
+          message += {
+            auth_url: ::Core.keystone_auth_endpoint,
+            region: Core.locate_region(auth_user),
+            token: auth_user.token,
+            domain_id: auth_user.domain_id
+          }.to_s
           message += e.response.body if e.respond_to?(:response) and e.response.body
           raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)
         end
