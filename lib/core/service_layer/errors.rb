@@ -9,13 +9,12 @@ module Core
 
       class ApiError < StandardError
 
-        attr_reader :type, :response, :response_data, :api_error_message
+        attr_reader :type, :response, :response_data
 
         def initialize(error)
           if error.respond_to?(:response)
             @response = error.response 
             @response_data = JSON.parse(error.response.body)
-            #@api_error_message = @response_data.fetch("error", {}).fetch("message",nil)
           end
           error_name = error.class.name.to_s.split('::').last
           super(error)
