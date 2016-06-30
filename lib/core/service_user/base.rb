@@ -96,12 +96,18 @@ module Core
         # by credentials and region using the service catalog. Our backends all uses other regions.
         # Therefore we use the auth gem to authenticate the user get the service catalog and then 
         # we initialize the fog object. 
-        @drivers[@current_domain] = ::Core::ServiceUser::Driver.new({
-          auth_url: ::Core.keystone_auth_endpoint,
-          region: Core.locate_region(auth_user),
-          token: auth_user.token,
-          domain_id: auth_user.domain_id
-        })
+        begin
+          @drivers[@current_domain] = ::Core::ServiceUser::Driver.new({
+            auth_url: ::Core.keystone_auth_endpoint,
+            region: Core.locate_region(auth_user),
+            token: auth_user.token,
+            domain_id: auth_user.domain_id
+          })
+        rescue => e
+          message = "Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}."
+          message += e.response.body if e.respond_to?(:response) and e.response.body
+          raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)
+        end
 
         return
       end
