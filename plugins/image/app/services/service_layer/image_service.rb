@@ -11,7 +11,7 @@ module ServiceLayer
     end
 
     def available?(_action_name_sym = nil)
-      driver.available
+      true #driver.available
     end
 
     def images(filter = {})

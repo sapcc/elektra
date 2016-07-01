@@ -1,18 +1,6 @@
 GIT
-  remote: git://localhost/***REMOVED***/fog-openstack-monitoring.git
-  revision: f72d9d774fd2445df9f358cbde9e649ca70266c9
-  branch: master
-  specs:
-    fog-openstack-monitoring (0.0.8)
-      fog-core (>= 1.35)
-      fog-json (>= 1.0)
-      fog-openstack
-      fog-xml (>= 0.1)
-      ipaddress (>= 0.8)
-
-GIT
   remote: git://localhost/monsoon/fog-openstack-sap-billing.git
-  revision: 07c50a1f777ed2c5295d2334ef635c3f062a7b53
+  revision: d7377e91b169f4a466fcbdc40b19eb25d962dbce
   branch: master
   specs:
     fog-openstack-sap-billing (0.0.1)
@@ -35,10 +23,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: 40302e213a3e2a61a03a677bf69cb0499a52484b
+  revision: 08ae6970b7761c151cd51f12ab06d0840f9ead62
   branch: master
   specs:
-    fog-openstack (0.1.6)
+    fog-openstack (0.1.7)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       ipaddress (>= 0.8)
@@ -276,7 +264,7 @@ GEM
       railties (~> 4.0)
     equalizer (0.0.11)
     erubis (2.7.0)
-    excon (0.49.0)
+    excon (0.50.1)
     execjs (2.7.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -286,7 +274,7 @@ GEM
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.10)
-    fog-core (1.40.0)
+    fog-core (1.40.1)
       builder
       excon (~> 0.49)
       formatador (~> 0.2)
@@ -547,7 +535,6 @@ DEPENDENCIES
   dotenv-rails
   factory_girl_rails (~> 4.0)
   fog-openstack!
-  fog-openstack-monitoring!
   fog-openstack-sap-billing!
   font-awesome-sass
   foreman
@@ -594,3 +581,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.12.4
