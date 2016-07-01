@@ -28,5 +28,6 @@ Rails.application.routes.draw do
   # route for overwritten High Voltage Pages controller
   get "/pages/*id" => 'pages#show', as: :core_page, format: false
 
-  root to: 'pages#show', id: 'landing'
+  # root to: 'pages#show', id: 'landing'
+  root to: redirect("/#{Rails.application.config.default_domain}")
 end

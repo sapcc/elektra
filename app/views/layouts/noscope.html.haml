@@ -1,0 +1,61 @@
+!!!
+%html
+  %head
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    %meta(name="viewport" content="width=device-width, initial-scale=1")
+
+
+    %title Monsoon Converged Cloud Dashboard
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+
+
+
+    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+
+
+    = favicon_png
+    = favicon_ico
+    = apple_touch_icon
+
+    = csrf_meta_tags
+
+  %body{class: "#{body_class}"}
+
+    %nav.navbar.navbar-fixed-top.navbar-inverse.navbar-sap
+      .container
+        .navbar-header
+          %button.navbar-toggle.collapsed{"data-target": "#main-nav-collapse", "data-toggle": "collapse", type: "button"}
+            %span.sr-only Toggle navigation
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+          = link_to main_app.landing_page_url(@scoped_domain_fid ? @scoped_domain_fid : Rails.configuration.default_domain), class: "navbar-brand" do
+            .logo
+            Converged Cloud
+
+        .collapse.navbar-collapse#main-nav-collapse
+          %ul.nav.navbar-nav
+            %li
+              = link_to params[:domain_id], "/#{params[:domain_id]}"
+
+          %ul.nav.navbar-nav.navbar-right
+            - unless logged_in?
+              %li
+                = link_to "Log in", monsoon_openstack_auth.login_path(domain_name:params[:domain_id]), id: "navbar-login-btn"
+
+    = yield :page_lead
+
+    .container
+      .content
+        = render "application/flashes"
+        = yield
+
+    %footer.footer
+      .container
+        = image_tag "monsoon_logo.png", class: "pull-right"
+        -# = render "application/footer"
+
+    = yield :templates
+    = yield :javascripts
+
+    #modal-holder
