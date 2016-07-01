@@ -10,8 +10,8 @@
         There are no key pairs defined for your account. Without that, you can't access the server via ssh.
         You can define one
         = link_to 'here', keypairs_url()
-   
-    
+
+
     - if @private_networks.empty?
       - if current_user.is_allowed?("networking:network_private_create")
         = link_to 'New Private Network', plugin('networking').send("new_networks_private_path"), data: {modal: true}, class: 'btn btn-primary'
@@ -64,10 +64,10 @@
       selected:           (@instance.network_ids || []).collect{|n| n[:id]},
       required:           true,
       label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" }}
-      
+
     = f.input :user_data, { label: "User data",
       as:                 :text,
-      required:           false}  
+      required:           false}
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
