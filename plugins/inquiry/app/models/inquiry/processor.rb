@@ -8,13 +8,13 @@ module Inquiry
       res = []
       users.each do |user|
         processor = Processor.find_or_create_by(uid: user.id)
-        if user.respond_to?(:description) # for openstack user
-          if processor.email != user.email or processor.name != user.name or processor.full_name != user.description
-            processor.update_attributes({email: user.email, name: user.name, full_name: user.description})
-          end
-        elsif user.respond_to?(:full_name) # for current_user
+        if user.is_a? CurrentUserWrapper::CurrentUserWrapper # for current_user
           if processor.email != user.email or processor.name != user.name or processor.full_name != user.full_name
             processor.update_attributes({email: user.email, name: user.name, full_name: user.full_name})
+          end
+        elsif user.respond_to?(:description)
+          if processor.email != user.email or processor.name != user.name or processor.full_name != user.description
+            processor.update_attributes({email: user.email, name: user.name, full_name: user.description})
           end
         end
         res << processor
