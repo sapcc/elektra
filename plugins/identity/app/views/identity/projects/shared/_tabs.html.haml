@@ -1,7 +1,7 @@
 %ul.nav.nav-tabs
   - if params[:controller]=='identity/projects/members'
     %li{ role: 'presentation', class: 'active'}= link_to 'User Role Assignments', '#'
-    %li{ role: 'presentation' }= link_to 'Group Management', projects_groups_path
+    %li{ role: 'presentation' }= link_to 'Group Role Assignments', projects_groups_path
   - else  
     %li{ role: 'presentation'}= link_to 'User Role Assignments', projects_members_path
-    %li{ role: 'presentation', class: 'active' }= link_to 'Group Management', '#'
+    %li{ role: 'presentation', class: 'active' }= link_to 'Group Role Assignments', '#'

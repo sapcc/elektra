@@ -50,15 +50,15 @@ module Identity
             role_ids_to_add = new_user_role_ids-old_user_role_ids
             role_ids_to_remove = old_user_role_ids-new_user_role_ids
 
-            role_ids_to_add.each{|role_id| service_user.grant_project_user_role(@scoped_project_id, user_id, role_id)}
-            role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id)}
+            role_ids_to_add.each{|role_id| service_user.grant_project_user_role(@scoped_project_id, user_id, role_id) rescue nil}
+            role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil}
           end
         end
         
         # remove roles
         (@user_roles.keys-updated_roles_user_ids).each do |user_id|
           role_ids_to_remove = (@user_roles[user_id] || {})[:roles].collect{|role| role[:id]}
-          role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id)}
+          role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil}
         end
         
         audit_logger.info(current_user, "has updated user role assignments for project #{@scoped_project_name} (#{@scoped_project_id})")
@@ -74,11 +74,14 @@ module Identity
       
       def load_role_assignments
         #@role_assignments ||= services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
+        # we need to add include_subtree option to have permissions. But this causes that other projects then current are included in this list.
         @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id, include_names: true, include_subtree: true)
+        
         @user_roles ||= @role_assignments.inject({}) do |hash,ra| 
           user_id = (ra.user || {}).fetch("id",nil)
-          # ignore group role assignments
-          if user_id
+          project_id = (ra.scope || {}).fetch("project",{}).fetch("id",nil)
+          # ignore group role assignments and other projects
+          if user_id and project_id==@scoped_project_id
             hash[user_id] ||= {role_ids: [], roles:[], name: ra.user.fetch("name",'unknown')}
             hash[user_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
           end

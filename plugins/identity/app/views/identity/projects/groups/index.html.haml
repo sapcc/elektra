@@ -1,9 +1,9 @@
 - if modal?
   = content_for :title do 
-    Groups   
+    Authorizations   
 - else
   = content_for :main_toolbar do
-    Groups
+    Authorizations
   = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }     
   
 = simple_form_for :role_assignments, url: plugin('identity').projects_groups_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
