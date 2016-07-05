@@ -122,12 +122,12 @@ class InstallNodeService
 
   def create_script(url, instance_os)
     if instance_os == 'linux'
-      return "curl --create-dirs -o /opt/arc/arc #{AUTOMATION_CONF['arc_latest_base_url']}/#{instance_os}/amd64
+      return "curl --create-dirs -o /opt/arc/arc #{AUTOMATION_CONF['arc_updates_url']}/arc/#{instance_os}/amd64/latest
 chmod +x /opt/arc/arc
 /opt/arc/arc init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
     elsif instance_os == 'windows'
       return "mkdir C:\\monsoon\\arc
-powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['arc_latest_base_url']}/#{instance_os}/amd64','C:\\monsoon\\arc\\arc.exe')
+powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['arc_updates_url']}/arc/#{instance_os}/amd64/latest','C:\\monsoon\\arc\\arc.exe')
 C:\\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
     else
       raise InstallNodeNoInstructionsFound.new("No instructions found for this os #{instance_os}")

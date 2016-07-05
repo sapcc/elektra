@@ -18,7 +18,7 @@ if (AUTOMATION_CONF['arc_latest_base_url'].nil? || AUTOMATION_CONF['arc_updates_
   puts
   puts "################ WARNING ################"
   puts "Automation ENV variables not set"
-  puts "Env variable 'ARC_UPDATES_URL' not set." if AUTOMATION_CONF['arc_latest_base_url'].nil? || AUTOMATION_CONF['arc_updates_url'].nil?
+  puts "Env variable 'ARC_UPDATES_URL' not set." if AUTOMATION_CONF['arc_updates_url'].nil?
   puts "Env variable 'ARC_PKI_URL' not set." if AUTOMATION_CONF['arc_pki_url'].nil?
   puts "Env variable 'ARC_BROKER_URL' not set." if AUTOMATION_CONF['arc_broker_url'].nil?
   puts "#########################################"
