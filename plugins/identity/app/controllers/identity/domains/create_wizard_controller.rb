@@ -6,14 +6,24 @@ module Identity
 
       def new
         @project = Identity::Project.new(nil,{})
-        @project.attributes = @inquiry.payload if @inquiry
+        if @inquiry
+          payload = @inquiry.payload
+          if services.available?(:cost_control)
+            cc_attributes = payload.delete('cost_control')
+            @cost_control_metadata = services.cost_control.new_project_metadata(cc_attributes)
+          end
+          @project.attributes = payload
+        end
       end
 
       def create
+        project_params = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
+        cost_params    = project_params.delete(:cost_control)
+
         # user is not allowed to create a project (maybe)
         # so use admin identity for that!
         @project = services.identity.new_project
-        @project.attributes = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
+        @project.attributes = project_params
         @project.enabled = @project.enabled == 'true'
 
         if @project.save
@@ -21,6 +31,15 @@ module Identity
           services.identity.clear_auth_projects_tree_cache
           
           audit_logger.info(current_user, "has created", @project)
+
+          if services.available?(:cost_control)
+            # FIXME: services.cost_control needs to be scoped to @project here
+            cost_params.merge!(id: @project.id)
+            cost_control_metadata = services.cost_control.new_project_metadata(cost_params)
+            if cost_control_metadata.save
+              audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_metadata.cost_object_string}")
+            end
+          end
           
           flash[:notice] = "Project #{@project.name} successfully created."
           if @inquiry

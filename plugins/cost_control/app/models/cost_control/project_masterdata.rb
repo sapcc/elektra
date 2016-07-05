@@ -23,5 +23,9 @@ module CostControl
       type.blank? ? '' : "#{COST_OBJECT_TYPES[type]} (#{type})"
     end
 
+    def cost_object_string
+      (cost_object_type || '').to_s + (cost_object_id || '').to_s
+    end
+
   end
 end

@@ -17,3 +17,8 @@
 = form.input :description, { as: :text,
   icon_hint: 'Additional information about this project.'}
 = form.input :enabled, as: :hidden, :input_html => { value: true}
+
+- with_cost_object ||= false
+- if with_cost_object && services.available?(:cost_control)
+  = form.simple_fields_for :cost_control, @cost_control_metadata do |f|
+    - render partial: '/cost_control/cost_object/form', locals: { form: f, long_labels: true }
