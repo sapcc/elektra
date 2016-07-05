@@ -1,7 +1,6 @@
 defaults: &defaults
 <% if ENV['ARC_UPDATES_URL'] %>
-  arc_latest_base_url: <%= ::File.join( ENV['ARC_UPDATES_URL'], '/builds/latest/arc') %>
-  arc_updates_url: <%= ::File.join( ENV['ARC_UPDATES_URL'], '/updates')  %>
+  arc_updates_url: <%= ::File.join( ENV['ARC_UPDATES_URL'])  %>
 <% end %>
   arc_pki_url: <%= ENV['ARC_PKI_URL'] %>
   arc_broker_url: <%= ENV['ARC_BROKER_URL'] %>
