@@ -26,11 +26,21 @@ class Worldmap
       .html((d) ->
         selectedRegionText = if isActiveCity(d) then 'Active Region' else ''
         comingSoonText = if d.available then '' else 'Planned for ' + d.date
+        cityList =  d.city
+        if typeIsArray cityList
+          cityList = ""
+          d.city.forEach (element, index, array) ->
+            cityList += "#{element}"
+            # add line break for all except the last element
+            if index < array.length - 1
+              cityList += "<br />"
 
-        '<strong>Region:</strong> ' + d.regionname + '<br />' +
-        '<span class=\'d3-tip-info\'>' + d.city + ', ' + d.country + '</span><br />' +
-        '<span class=\'d3-tip-highlight\'>' + selectedRegionText + '</span>' +
-        '<span class=\'d3-tip-highlight-secondary\'>' + comingSoonText + '</span>'
+
+        "<strong>Region:</strong> #{d.regionname} <br />" +
+        "<span class='d3-tip-info'> #{cityList} </span><br />" +
+        "<span class='d3-tip-info'> #{d.country} </span><br />" +
+        "<span class='d3-tip-highlight'> #{selectedRegionText} </span>" +
+        "<span class='d3-tip-highlight-secondary'> #{comingSoonText} </span>"
     )
 
     # special tooltip for active region (will only be displayed on initial page load)
@@ -39,9 +49,20 @@ class Worldmap
         thisNode = d3.select(this).node() # current city
         matrix = thisNode.getScreenCTM().translate(thisNode.getAttribute('cx'), thisNode.getAttribute('cy')) # get screen relative coordinates for current city, matrix.e = x-coord, matrix.f = y-coord
 
-        tipContent = '<strong>Region:</strong> ' + d.regionname + '<br />' +
-                     '<span class=\'d3-tip-info\'>' + d.city + ', ' + d.country + '</span><br />' +
-                     '<span class=\'d3-tip-highlight\'>Active Region</span>'
+        cityList =  d.city
+        if typeIsArray cityList
+          cityList = ""
+          d.city.forEach (element, index, array) ->
+            cityList += "#{element}"
+            # add line break for all except the last element
+            if index < array.length - 1
+              cityList += "<br />"
+
+
+        tipContent = "<strong>Region:</strong> #{d.regionname} <br />" +
+                     "<span class='d3-tip-info'> #{cityList}</span><br />" +
+                     "<span class='d3-tip-info'> #{d.country} </span><br />" +
+                     "<span class='d3-tip-highlight'>Active Region</span>"
 
         div = d3.select('body')
           .append('div')
@@ -98,6 +119,15 @@ class Worldmap
     mouseoutCity = (d, i) ->
       d3.select(this).attr 'r', getRadius
       return
+
+
+    # -------------------------------------------------------------------
+    # Helper Functions
+    # -------------------------------------------------------------------
+
+    # check if an object is an array. Usage: typeIsArray obj
+    typeIsArray = Array.isArray || ( value ) ->
+      return {}.toString.call( value ) is '[object Array]'
 
     # Bootstrap confirm dialog for region switch
     showConfirm = (text, link) ->

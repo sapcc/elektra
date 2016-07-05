@@ -11,22 +11,11 @@
     "date":       "Q2 2016"
   },
   {
-    "code":       "STE",
-    "city":       "Sterling, VA",
+    "code":       "NSQ",
+    "city":       ["Newtown Square, PA", "Sterling, VA"],
     "country":    "USA",
     "regionkey":  "na-us-1",
     "regionname": "NA-US-1",
-    "lat":        39.01,
-    "lon":        -77.43,
-    "available":  false,
-    "date":       "Q3 2016"
-  },
-  {
-    "code":       "NSQ",
-    "city":       "Newtown Square, PA",
-    "country":    "USA",
-    "regionkey":  "na-us-2",
-    "regionname": "NA-US-2",
     "lat":        39.98,
     "lon":        -75.40,
     "available":  false,
@@ -36,8 +25,8 @@
     "code":       "STC",
     "city":       "Santa Clara, CA",
     "country":    "USA",
-    "regionkey":  "na-us-3",
-    "regionname": "NA-US-3",
+    "regionkey":  "na-us-2",
+    "regionname": "NA-US-2",
     "lat":        37.35,
     "lon":        -121.95,
     "available":  false,
@@ -47,8 +36,8 @@
     "code":       "PHO",
     "city":       "Phoenix, AZ",
     "country":    "USA",
-    "regionkey":  "na-us-4",
-    "regionname": "NA-US-4",
+    "regionkey":  "na-us-3",
+    "regionname": "NA-US-3",
     "lat":        33.44,
     "lon":        -112.07,
     "available":  false,
@@ -175,5 +164,4 @@
     "available":  false,
     "date":       "Q4 2016"
   }
-
 ]
