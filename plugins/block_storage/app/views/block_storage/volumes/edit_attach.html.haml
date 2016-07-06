@@ -7,7 +7,7 @@
 
     = render partial: 'errors', locals: {data: @volume_server}
 
-    = f.input :device,
+    -#= f.input :device,
       placeholder: "Server internal device name for volume"
     = f.input :server, { label: "Server",
       input_html:         {},

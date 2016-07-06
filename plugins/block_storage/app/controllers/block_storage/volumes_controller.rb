@@ -61,7 +61,6 @@ module BlockStorage
         audit_logger.info(current_user, "has updated", @volume)
         redirect_to @volume, notice: 'Volume was successfully updated.'
       else
-        @volume.errors[:base] << "Volume update failed!"
         render :edit
       end
     end

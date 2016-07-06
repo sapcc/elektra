@@ -25,7 +25,7 @@ module BlockStorage
         audit_logger.info(current_user, "has updated", @snapshot)
         redirect_to @snapshot, notice: 'Snapshot was successfully updated.'
       else
-        @snapshot.errors[:base] << "Snapshot update failed!"
+        @snapshot.errors[:base]
         render :edit
       end
     end

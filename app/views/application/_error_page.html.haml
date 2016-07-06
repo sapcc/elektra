@@ -1,4 +1,4 @@
-- header_title ||= "Error"
+- header_title ||= "Application"
 - title ||= "An error has occurred"
 - description ||= "Something went wrong while processing your request.<br> Please try later again."
 
@@ -14,7 +14,7 @@
     %h3
       = title.html_safe
 
-    %p
+    %p.alert-alert
       = description.html_safe
 
   - if modal?
