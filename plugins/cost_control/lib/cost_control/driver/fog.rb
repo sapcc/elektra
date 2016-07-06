@@ -5,11 +5,6 @@ module CostControl
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
-      # TODO: remove (for debugging on staging)
-      def handle_response
-        yield
-      end
-
       def get_project_metadata(project_id)
         handle_response do
           begin
