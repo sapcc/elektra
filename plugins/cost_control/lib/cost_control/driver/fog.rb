@@ -42,7 +42,10 @@ module CostControl
       private
 
       def fog
-        @fog ||= ::Fog::Billing::OpenStack.new(auth_params)
+        @fog ||= ::Fog::Billing::OpenStack.new(
+          # this service has only one (public) endpoint
+          auth_params.merge(openstack_endpoint_type: 'publicURL'),
+        )
       end
 
     end
