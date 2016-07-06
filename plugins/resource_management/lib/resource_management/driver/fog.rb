@@ -83,7 +83,7 @@ module ResourceManagement
           # the post_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
           begin
-            connection.request(
+            connection.send(:request,
               expects: [200, 204],
               method:  'POST',
               path:    '',
@@ -105,7 +105,7 @@ module ResourceManagement
           # the head_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
           begin
-            connection.request(
+            connection.send(:request,
               # usually 204, but sometimes Swift Kilo inexplicably returns 200
               :expects => [200, 204],
               :method  => 'HEAD',
