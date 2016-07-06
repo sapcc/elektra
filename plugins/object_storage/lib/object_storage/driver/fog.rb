@@ -266,7 +266,7 @@ module ObjectStorage
             end
   
             # TODO: the bulk delete request is missing in Fog
-            @fog.request({
+            @fog.send(:request, {
               expects: 200,
               method:  'DELETE',
               path:    '',
@@ -296,7 +296,7 @@ module ObjectStorage
         # 404 account is not existing
         handle_response do
           begin
-            @fog.request({
+            @fog.send(:request, {
               :expects  => [200,204],
               :method   => 'HEAD',
               :headers  => { 'Content-Type' => 'text/plain' },
@@ -311,7 +311,7 @@ module ObjectStorage
       def create_account
         # Note: account creation is only possible if the swift proxy is configured with allow_account_management: True
         handle_response do
-          @fog.request({
+          @fog.send(:request, {
             :expects  => [201],
             :method   => 'PUT',
             :headers  => { 'Content-Type' => 'text/plain' },
@@ -338,7 +338,7 @@ module ObjectStorage
 
       # Like @fog.get_object(), but encodes the `path` correctly. TODO: fix in Fog
       def fog_get_object(container_name, path)
-        @fog.request({
+        @fog.send(:request, {
           :expects  => 200,
           :method   => 'GET',
           :path     => "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
@@ -347,7 +347,7 @@ module ObjectStorage
 
       # Like @fog.head_object(), but encodes the `path` correctly. TODO: fix in Fog
       def fog_head_object(container_name, path)
-        @fog.request({
+        @fog.send(:request, {
           :expects  => 200,
           :method   => 'HEAD',
           :path     => "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
@@ -357,7 +357,7 @@ module ObjectStorage
       # Like @fog.copy_object(), but encodes the path correctly. TODO: fix in Fog
       def fog_copy_object(source_container_name, source_object_name, target_container_name, target_object_name, options={})
         headers = { 'X-Copy-From' => "/#{source_container_name}/#{source_object_name}" }.merge(options)
-        @fog.request({
+        @fog.send(:request, {
           :expects  => 201,
           :headers  => headers,
           :method   => 'PUT',
@@ -367,7 +367,7 @@ module ObjectStorage
 
       # TODO This request is missing in Fog.
       def fog_post_object(container_name, path, headers={})
-        @fog.request({
+        @fog.send(:request, {
           expects: [ 201, 202 ],
           method:  'POST',
           path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}",
@@ -377,7 +377,7 @@ module ObjectStorage
 
       # Like @fog.delete_object(), but encodes the `path` correctly. TODO: fix in Fog
       def fog_delete_object(container_name, path)
-        @fog.request({
+        @fog.send(:request, {
           expects: 204,
           method:  'DELETE',
           path:    "#{::Fog::OpenStack.escape(container_name)}/#{escape_path(path)}"
