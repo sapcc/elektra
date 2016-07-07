@@ -220,6 +220,9 @@ section {
     background: none;
     border: none;
   }
+  &.error-details-area {
+    height: 250px;
+  }
 }
 
 .text-nobreak {
@@ -856,6 +859,23 @@ footer, .footer {
   @extend .alert-info;
 }
 
+.alert-extended {
+  padding: 0;
+
+  hr {
+    margin: 0;
+  }
+
+  .alert-body {
+    padding: $alert-padding;
+  }
+  .alert-footer {
+    @include opacity(0.8);
+    padding: 5px $alert-padding;
+    font-size: $font-size-small;
+  }
+}
+
 // ---------------------------------------------------------------------------------
 // Callouts / Blockouts
 // ---------------------------------------------------------------------------------
@@ -1112,6 +1132,10 @@ tr.task-state {
     left: 50%;
     margin-left: -2.5em;
   }
+}
+
+.modal-footer .token {
+  text-align: left;
 }
 
 .data-tabular-display {
