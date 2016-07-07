@@ -22,9 +22,6 @@ class @PollingService
       dataType: dataType,
       data: {'polling_service': true},
       success: ( data, textStatus, jqXHR ) ->
-
-        #        console.log(jqXHR.getResponseHeader("content-type"))
-
         # try to get loacation from response header 
         redirectTo = jqXHR.getResponseHeader('Location')
         # response is a redirect
@@ -38,10 +35,6 @@ class @PollingService
             window.location = redirectTo
         else
           # no redirect -> replace content with html from response
-          #exists = $.contains(document.documentElement, $element)
-          #          if dataType == 'html'
-          #            $element.replaceWith(data)
-
           ct = jqXHR.getResponseHeader("content-type") || ""
           if ct.indexOf('javascript') > -1
             eval(data)
