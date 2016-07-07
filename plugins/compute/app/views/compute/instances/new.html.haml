@@ -3,8 +3,11 @@
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @instance.errors.present?
-      %p.alert.alert-error
-        = @instance.errors.full_messages.to_sentence + '.'
+      .alert.alert-error
+        = render_errors(@instance.errors)
+      =# @instance.errors.full_messages.to_sentence + '.'
+        
+        
     - if @keypairs.blank?
       %p.alert.alert-warning
         There are no key pairs defined for your account. Without that, you can't access the server via ssh.
@@ -20,7 +23,7 @@
         = link_to 'how to get a private network.', "#{sap_url_for('documentation')}docs/guides/advanced_private-network.html", target: '_blank'
 
     = f.input :name
-    = f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
+    =# f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
 
     = f.input :availability_zone_id, {label: "Availability zone",
       input_html:         {},
@@ -54,7 +57,7 @@
       collection:         @images,
       selected:           @instance.image_id,
       required:           true,
-      label_method:       -> (image) { "#{image.name}  (Size: #{image.size}, Format: #{image.disk_format})" }}
+      label_method:       -> (image) { "#{image.name}  (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format})" }}
 
     = f.input :network_ids, { label: "Private Network",
       wrapper_html:       { class: ('has-error' if @private_networks.empty?) },

@@ -52,7 +52,28 @@ module ApplicationHelper
   end
 
 
-
+  def byte_to_human(bytes)
+    kb = bytes.to_f/1024
+    return "#{bytes}Byte" if kb < 1
+    mb = kb/1024
+    return "#{kb.round(2)}KB" if mb < 1
+    gb = mb/1024
+    return "#{mb.round(2)}MB" if gb < 1
+    tb = gb/1024
+    return "#{gb.round(2)}GB" if tb < 1
+    return "#{tb.round(2)}TB"  
+  end
+  
+  # ---------------------------------------------------------------------------------------------------
+  # Errors Helper
+  # ---------------------------------------------------------------------------------------------------
+  def render_errors(errors)
+    content_tag(:ul) do
+      errors.each do |name,message|
+        concat(content_tag(:li, "#{name.capitalize}: #{message}"))
+      end
+    end
+  end
 
   # ---------------------------------------------------------------------------------------------------
   # Breadcrumb/Hierarchy Helpers
