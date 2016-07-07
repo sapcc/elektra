@@ -170,7 +170,6 @@ module Core
         @attributes
       end
 
-
       def write(attribute_name, value)
         @attributes[attribute_name.to_s] = value
       end
@@ -215,14 +214,7 @@ module Core
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
 
-          error_names = api_error_name_mapping
-
-          errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
-          errors.each do |name, message|
-            n = error_names[name] || error_names[message] || name || 'message'
-            message = message.join(", ") if message.is_a?(Array)
-            self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
-          end
+          get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
 
           return false
         end
@@ -240,17 +232,28 @@ module Core
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
 
-          error_names = api_error_name_mapping
-
-          errors = Core::ServiceLayer::ApiErrorHandler.parse(e)
-          errors.each do |name, message|
-            n = error_names[name] || error_names[message] || name || ' '
-            message = message.join(", ") if message.is_a?(Array)
-            self.errors.add(n, message.to_s) unless ERRORS_TO_IGNORE.include?(name.to_s.downcase)
-          end
+          get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
           return false
         end
         return true
+      end
+      
+      protected
+      
+      def get_api_error_messages(error)
+        if error.respond_to?(:response_data)
+          return read_error_messages(error.response_data)
+        else
+          [e.message]
+        end
+      end
+      
+      def read_error_messages(hash,messages=[])
+        hash.each do |k,v|
+          messages << v if k=='message'
+          read_error_messages(v,messages) if v.is_a?(Hash)
+        end
+        return messages
       end
 
     end
