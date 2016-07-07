@@ -3,7 +3,8 @@
     - if current_user.is_allowed?('image:image_get', {})
       = link_to image.name, plugin('image').send("os_images_#{@visibility}_path", image.id), data: {modal: true, cancel: 'Close'}
 
-  %td= project_id_and_name(image.owner)
+  %td
+    - project_id_and_name(image.owner)
   %td= image.status
   %td.snug
     .btn-group

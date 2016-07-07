@@ -1,5 +1,6 @@
 %tr{id: "image_#{member.id}"}
-  %td= project_id_and_name(member.member_id)
+  %td
+    - project_id_and_name(member.member_id)
   %td= member.status
 
   %td.snug

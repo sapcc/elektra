@@ -5,10 +5,10 @@
 
   %td
     - network.subnet_objects.each do |subnet|
-      %b= subnet.name
-      &nbsp;
-      = subnet.cidr
-  %td= project_id_and_name(network.tenant_id)
+      %strong= subnet.name
+      = "(#{subnet.cidr})"
+  %td
+    - project_id_and_name(network.tenant_id)
   %td= network.shared ? 'Yes' : 'No'
   %td= network.status
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'

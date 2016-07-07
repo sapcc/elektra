@@ -3,21 +3,21 @@
   %td.form_content
     = form_for :rbac, url: plugin('networking').send("networks_#{@network_type}_access_index_path", @network_id), method: :post, remote: true, html: {data: {inline:true}, class: 'hidden', id: 'new_rbac_form'} do |f|
 
-      .col-sm-10
-        .input-group
-          = f.text_field :target_tenant, class: 'form-control'
-          #suggestions
-          %span.input-group-btn
-            = f.submit 'Add', class: 'btn btn-primary', data: { disable_with: 'Please wait...' } 
-        %p.help-block
-          %i.fa.fa-info-circle
-          Choose from one of your projects or enter any project ID.    
-          
+
+      .input-group
+        = f.text_field :target_tenant, class: 'form-control'
+        #suggestions
+        %span.input-group-btn
+          = f.submit 'Add', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+      %p.help-block
+        %i.fa.fa-info-circle
+        Choose from one of your projects or enter any project ID.    
+
 
   %td= link_to '+', '#', class: 'btn btn-primary', data: {control_rbac_form: '#new_rbac_form'}
 
 :javascript
   $('[data-control-rbac-form]').rbacFormControl({
     authProjects: #{@user_domain_projects.collect{|project| project.id.to_s+" ("+project.name.to_s+")"}},
-    currentProject: "#{@scoped_project_id} (#{@scoped_project_name})" 
+    currentProject: "#{@scoped_project_id} (#{@scoped_project_name})"
   });
