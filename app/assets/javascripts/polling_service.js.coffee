@@ -35,9 +35,13 @@ class @PollingService
             window.location = redirectTo
         else
           # no redirect -> replace content with html from response
-          #exists = $.contains(document.documentElement, $element)
-          if dataType == 'html'
+          ct = jqXHR.getResponseHeader("content-type") || ""
+          if ct.indexOf('javascript') > -1
+            eval(data)
+          else
             $element.replaceWith(data)
+
+
       error: () ->
       complete: () ->
         $element.data( 'queuedForPolling', false );

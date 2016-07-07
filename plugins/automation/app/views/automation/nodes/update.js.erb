@@ -1,4 +1,4 @@
-$(".flashes_area").html("<%= escape_javascript( render "automation/shared/dismissible_flashes.html" ) %>");
+$(".modal-flashes").html("<%= escape_javascript( render "automation/shared/dismissible_flashes.html" ) %>");
 $(".js-inline-form-node-tags").html("<%= escape_javascript( render partial: 'form_tags', locals: {node_form: @node_form, node_form_read: @node_form_read} ) %>");
 <% if @error%>
   $('.js-inline-form-node-tags').initInlineFormNodeTag({state: 'open'})
