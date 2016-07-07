@@ -1,6 +1,8 @@
 - header_title ||= "Application"
 - title ||= "An error has occurred"
 - description ||= "Something went wrong while processing your request.<br> Please try later again."
+- token ||= nil
+- details ||= nil
 
 
 - if modal?
@@ -14,8 +16,25 @@
     %h3
       = title.html_safe
 
-    %p.alert-alert
-      = description.html_safe
+    .alert.alert-error.alert-extended
+      .alert-body
+        = description.html_safe
+      - unless token.nil?
+        %hr
+        .alert-footer
+          %b Error ID:
+          %span
+            = token
+
+    - unless details.nil?
+      %p
+        = link_to "#", data: {toggle: "show-error-details"} do
+          Show error details
+          %i.fa.fa-caret-down
+
+      .scrollable-text.error-details-area.hide
+        = details
+
 
   - if modal?
     .modal-footer
@@ -23,10 +42,24 @@
 
 - else
 
-  .alert.alert-error
+  %h3
+    = title.html_safe
 
-    %h3
-      = title.html_safe
-
-    %p
+  .alert.alert-error.alert-extended
+    .alert-body
       = description.html_safe
+    - unless token.nil?
+      %hr
+      .alert-footer
+        %b Error ID:
+        %span
+          = token
+
+  - unless details.nil?
+    %p
+      = link_to "#", data: {toggle: "show-error-details"} do
+        Show error details
+        %i.fa.fa-caret-down
+
+    .scrollable-text.error-details-area.hide
+      = details
