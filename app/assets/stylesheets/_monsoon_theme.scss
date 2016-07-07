@@ -206,7 +206,7 @@ section {
 }
 
 .info-text {
-  color: #888;
+  @include opacity(0.6);
 }
 
 .scrollable-text {
@@ -237,6 +237,10 @@ section {
     background: none;
     padding-left: 0;
   }
+}
+
+.can-copy {
+  cursor: pointer;
 }
 
 // ---------------------------------------------------------------------------------

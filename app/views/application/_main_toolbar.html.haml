@@ -7,6 +7,11 @@
           \/
           = link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id))
 
+        - unless @active_project.blank?
+          .info-text.pull-right
+            Project ID:
+            = @active_project.id
+
       .page-title
         %i.fa.fa-angle-right
         - if content_for? :main_toolbar

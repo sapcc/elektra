@@ -5,9 +5,9 @@
   .col-md-3
     .infobox
       %h4.action-heading
-        Project Info  
+        Project Info
         - can_edit = current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-        - can_delete = current_user.is_allowed?('identity:project_delete',{target: {project: @active_project }}) 
+        - can_delete = current_user.is_allowed?('identity:project_delete',{target: {project: @active_project }})
         - if can_delete or can_edit
           .dropdown.header-action
             %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
@@ -25,7 +25,7 @@
                     Delete Project
                     / %i.fa.fa-exclamation-triangle
 
-  
+
       %table.table
         %tbody
           %tr
@@ -38,6 +38,7 @@
               Description:
             %td
               = @active_project.description
+
 
     - if current_user.is_allowed?('identity:project_request')
       %h4.action-heading
