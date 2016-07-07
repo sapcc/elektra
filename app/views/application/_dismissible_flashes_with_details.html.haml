@@ -1,0 +1,16 @@
+- details ||= nil
+
+%div{class: "alert alert-#{key} alert-dismissible word-wrap", 'role' => 'alert'}
+  %button.close{type:'button', data: {dismiss: 'alert'}, "aria-label" => "Close"}
+    %span{'aria-hidden' => 'true'}
+      &times;
+  = value.html_safe
+
+  - unless details.nil?
+    %p
+      = link_to "#", data: {toggle: "show-error-details"} do
+        Show error details
+        %i.fa.fa-caret-down
+
+    .scrollable-text.error-details-area.hide
+      = details
