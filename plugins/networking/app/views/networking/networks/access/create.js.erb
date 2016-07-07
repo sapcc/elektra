@@ -1,1 +1,10 @@
-Dashboard.hideModal();
+var html="<%= j(render(partial: 'networking/networks/access/rbac_item', locals:{rbac: @rbac})) %>"
+
+
+if($("table#rbacs tr[data-empty]").length==1) {
+  $("table#rbacs tr[data-empty]").replaceWith(html);
+} else {
+  $("table#rbacs tbody").prepend(html);
+}
+
+$('[data-control-rbac-form]').rbacFormControl('hide');

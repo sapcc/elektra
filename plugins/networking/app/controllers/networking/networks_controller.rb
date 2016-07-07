@@ -3,6 +3,7 @@ module Networking
     before_filter :load_type
     def index
       @networks = services.networking.networks('router:external' => @network_type == 'external')
+      @networks.each{|n| puts n.pretty_attributes}
     end
 
     def show
@@ -12,22 +13,19 @@ module Networking
     end
 
     def new
-      @network = services.networking.network
+      @network = services.networking.new_network(name: "#{@scoped_project_name}_#{@network_type}")
+      @subnet = Networking::Subnet.new(nil,name: "#{@network.name}_sub", cidr: @network_type=='private' ? "192.168.0.0/24" : "10.44.32.0/24", enable_dhcp: true)
     end
 
     def create
-      @network = services.networking.network
-
-      network_params = params[@network.model_name.param_key]
-      subnets_params = network_params.delete(:subnets)
-
-      @network.attributes = network_params
+      @network = services.networking.new_network(params[:network])
 
       if @network.save
-
-        if subnets_params
-          @subnet = services.networking.subnet
-          @subnet.attributes = subnets_params.merge('network_id' => @network.id)
+        if params[:subnet]
+          subnets_params = network_params.delete(:subnets)
+          @subnet = services.networking.new_subnet(subnets_params) 
+          @subnet.network_id = @network.id
+          
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save
             flash[:notice] = 'Network successfully created.'
@@ -37,9 +35,13 @@ module Networking
           else
             @network.destroy
             flash.now[:error] = @subnet.errors.full_messages.to_sentence
-            render action: :new
+            render action: :new 
           end
+        else
+          audit_logger.info(current_user, "has created", @network)
+          redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
         end
+        
       else
         flash.now[:error] = @network.errors.full_messages.to_sentence
         render action: :new

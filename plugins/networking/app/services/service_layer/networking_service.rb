@@ -29,20 +29,20 @@ module ServiceLayer
       result
     end
 
-    def network(id=nil)
-      if id
-        driver.map_to(Networking::Network).get_network(id)
-      else
-        Networking::Network.new(driver)
-      end
+    def network(id)
+      driver.map_to(Networking::Network).get_network(id)
+    end
+    
+    def new_network(attributes={})
+      Networking::Network.new(driver,attributes)
     end
 
     def subnet(id=nil)
-      if id
-        driver.map_to(Networking::Subnet).get_subnet(id)
-      else
-        Networking::Subnet.new(driver)
-      end
+      driver.map_to(Networking::Subnet).get_subnet(id)
+    end
+    
+    def new_subnet(attributes={})
+      Networking::Subnet.new(driver,attributes)
     end
 
     def subnets(filter)
@@ -128,12 +128,12 @@ module ServiceLayer
       driver.map_to(Networking::Rbac).rbacs(filter)
     end
 
-    def rbac(id = nil)
-      if id
-        driver.map_to(Networking::Rbac).get_rbac(id)
-      else
-        Networking::Rbac.new(driver)
-      end
+    def find_rbac(id)
+      driver.map_to(Networking::Rbac).get_rbac(id)
+    end
+    
+    def new_rbac(attributes={})
+      Networking::Rbac.new(driver,attributes)
     end
   end
 end

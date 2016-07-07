@@ -99,8 +99,7 @@ $(document).on 'modal:contentUpdated', (e) ->
   # -------------
   # init tooltips
   $('[data-toggle="tooltip"]').tooltip()
-
-
+  
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
 # # React to turbolinks page load events to indicate to the user that something is happening
 # $ =>

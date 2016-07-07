@@ -1,35 +1,31 @@
 = content_for :title do
   Create #{@network_type.humanize} Network
 
-- if modal?
-  .flashes_area
-    = render 'flashes'
-
-= simple_form_for @network, url: plugin('networking').send("networks_#{@network_type}_index_path"), method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @network, url: plugin('networking').send("networks_#{@network_type}_index_path"), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @network.errors['message'].blank?
+    - unless @network.errors.blank?
       %p.alert.alert-error= @network.errors.full_messages.to_sentence
 
     %fieldset
-      = f.input :name, { input_html: { value: 'private' } }
-      = f.input :admin_state_up, { as:         :select,
-          collection: [['UP', true], ['DOWN', false]],
-          selected:   true }
-
+      = f.input :name
+      = f.input :admin_state_up, { as: :select, collection: [['UP', true], ['DOWN', false]], selected:   true }
+      = f.input :shared, as: :boolean, wrapper: :horizontal_boolean_4x8, label: 'Share this network'
+    
+    %hr  
     %label
-      = check_box_tag 'subnet', 1, true, data:{ toggle: 'collapse', target: '#collapseExample'}
       Create Subnet
-
+      = check_box_tag 'Create Subnet', 1, !@subnet.nil?, data:{ toggle: 'collapse', target: '#collapseExample'}
+      
     -# FIXME: anti-pattern of doing two things in one dialog - labelling already indicates a hack
-    %fieldset.collapse.in{id: 'collapseExample'}
+    %fieldset.collapse{id: 'collapseExample', class: "#{'in' if !@subnet.nil?}"}
       = f.simple_fields_for :subnets do |subnets|
         = subnets.input :name, { label: "#{Networking::Subnet.human_attribute_name(:name)}",
-          input_html: { value: 'private_sub' } }
+          input_html: { value: @subnet.try(:name) } }
         = subnets.input :cidr, { label: "#{Networking::Subnet.human_attribute_name(:cidr)}",
-          input_html: { value: '192.168.0.0/24' } }
+          input_html: { value: @subnet.try(:cidr) } }
         = subnets.input :enable_dhcp, { label: "#{Networking::Subnet.human_attribute_name(:enable_dhcp)}",
-            as: :boolean }
+            as: :boolean, input_html: { checked: @subnet.try(:enable_dhcp) },  wrapper: :horizontal_boolean_4x8 }
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

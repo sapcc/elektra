@@ -3,12 +3,13 @@
 
 %div{class: modal? ? 'modal-body' : ''}
   - if current_user.is_allowed?("networking:network_#{@network_type}_update",{})
-    .toolbar= link_to 'New Access', plugin('networking').send("new_networks_#{@network_type}_access_path", @network_id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+    / .toolbar= link_to 'New Access', plugin('networking').send("new_networks_#{@network_type}_access_path", @network_id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+    / .toolbar= link_to 'New Access', plugin('networking').send("new_networks_#{@network_type}_access_path", @network_id), class: 'btn btn-primary btn-sm', remote: true, id: 'new_rbac_button'
 
-  %table.table
+  %table.table#rbacs
     %thead
       %tr
-        %th Action
+        %th.snug Action
         %th Target Project
         %th.snug
     %tbody
@@ -18,7 +19,10 @@
       - else
         - @rbacs.each do | rbac |
           = render partial: 'rbac_item', locals: {rbac: rbac}
-
+          
+      - if current_user.is_allowed?("networking:rbac_policy_create",{tenant_id:@scoped_project_id})
+        = render partial: 'networking/networks/access/new_rbac_form'
+            
 
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
