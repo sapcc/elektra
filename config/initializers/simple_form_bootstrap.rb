@@ -72,6 +72,7 @@ SimpleForm.setup do |config|
     end
   end
 
+
   # please keep in sync with :horizontal_form
   config.wrappers :horizontal_form_disabled, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
@@ -120,6 +121,34 @@ SimpleForm.setup do |config|
       wr.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end
   end
+  
+  config.wrappers :horizontal_boolean_4x8, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
+    b.use :html5
+    b.optional :readonly
+
+    b.wrapper tag: 'div', class: 'col-sm-offset-4 col-sm-8' do |wr|
+      wr.wrapper tag: 'div', class: 'checkbox' do |ba|
+        ba.use :label_input, class: 'col-sm-8'
+      end
+
+      wr.use :error, wrap_with: { tag: 'span', class: 'help-block' }
+      wr.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    end
+  end
+  
+  config.wrappers :horizontal_radio_and_checkboxes_4x8, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
+    b.use :html5
+    b.optional :readonly
+
+    b.use :label, class: 'col-sm-4 control-label'
+
+    b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
+      ba.use :input
+      ba.use :error, wrap_with: { tag: 'span', class: 'help-block' }
+      ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
+    end
+  end
+  
 
   config.wrappers :horizontal_radio_and_checkboxes, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5

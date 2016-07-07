@@ -26,5 +26,9 @@
   "networking:router_create": "rule:admin_or_network_owner",
   "networking:router_update": "rule:admin_or_network_owner",
   "networking:router_get":    "rule:admin_or_network_owner",
-  "networking:router_delete": "rule:admin_or_network_owner"
+  "networking:router_delete": "rule:admin_or_network_owner",
+  
+  "networking:rbac_policy_list": "project_id:%(network.tenant_id)s",
+  "networking:rbac_policy_create": "project_id:%(tenant_id)s",
+  "networking:rbac_policy_delete": "project_id:%(rbac.tenant_id)s"
 }

@@ -15,8 +15,9 @@ class @MoModal
       
   @init= () ->
     $(document).on 'click', 'a[data-modal=true]', -> MoModal.load(this)
-    $(document).on 'ajax:beforeSend',"#{modal_holder_selector} form", (event, xhr, settings) -> settings.data += "&modal=true"
-    $(document).on 'ajax:success', "#{modal_holder_selector} form", handleAjaxSuccess
+    $(document).on 'click', '[data-modal-transition]', -> MoModal.replace(this)
+    $(document).on 'ajax:beforeSend',modal_holder_selector+' form[data-inline!="true"]', (event, xhr, settings) -> settings.data += "&modal=true"
+    $(document).on 'ajax:success', modal_holder_selector+' form[data-inline!="true"]', handleAjaxSuccess
 
   @close= () -> $('#modal-holder').find('.modal').modal('hide')
 
@@ -68,6 +69,19 @@ class @MoModal
       .complete () ->
         modal_is_loading = false
     return false
+    
+  @replace= (anker) ->
+    $(modal_holder_selector).find(modal_selector).find('.modal-body').html('<div class="loading-spinner"></div><div class="loading-text">Loading...</div>')
+    
+    $.ajax
+      dataType: 'html',
+      url: $(anker).attr('href'),
+      data: {modal: true, modal_transition: true},
+      success: (data, textStatus, jqXHR) ->
+        $(modal_holder_selector).find(modal_selector).modal('hide')
+        $(modal_holder_selector).html(data).find(modal_selector).modal()
+        triggerUpdateEvent()
+    return false  
   
   triggerUpdateEvent= -> 
     $modalHolder = $(modal_holder_selector)

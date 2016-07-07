@@ -9,6 +9,7 @@
       &nbsp;
       = subnet.cidr
   %td= project_id_and_name(network.tenant_id)
+  %td= network.shared ? 'Yes' : 'No'
   %td= network.status
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'
 
@@ -20,7 +21,7 @@
           -# %span.spinner
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if current_user.is_allowed?("networking:network_#{@network_type}_update", {})
+          - if current_user.is_allowed?("networking:rbac_policy_list", network: network.attributes)
             %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id), data: {modal: true}
             %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}
 

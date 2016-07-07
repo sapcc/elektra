@@ -54,15 +54,15 @@ module Identity
             role_ids_to_add = new_group_role_ids-old_group_role_ids
             role_ids_to_remove = old_group_role_ids-new_group_role_ids
 
-            role_ids_to_add.each{|role_id| service_user.grant_project_group_role(@scoped_project_id, group_id, role_id)}
-            role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id)}
+            role_ids_to_add.each{|role_id| service_user.grant_project_group_role(@scoped_project_id, group_id, role_id) rescue nil}
+            role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id) rescue nil}
           end
         end
         
         # remove roles
         (@group_roles.keys-updated_roles_group_ids).each do |group_id|
           role_ids_to_remove = (@group_roles[group_id] || {})[:roles].collect{|role| role[:id]}
-          role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id)}
+          role_ids_to_remove.each{|role_id| service_user.revoke_project_group_role(@scoped_project_id, group_id, role_id) rescue nil}
         end
         
         audit_logger.info(current_user, "has updated group role assignments for project #{@scoped_project_name} (#{@scoped_project_id})")
@@ -83,8 +83,9 @@ module Identity
         @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id, include_names: true, include_subtree: true)
         @group_roles ||= @role_assignments.inject({}) do |hash,ra| 
           group_id = (ra.group || {}).fetch("id",nil)
+          project_id = (ra.scope || {}).fetch("project",{}).fetch("id",nil)
           # ignore user role assignments
-          if group_id
+          if group_id and project_id==@scoped_project_id
             hash[group_id] ||= {role_ids: [], roles:[], name: ra.group.fetch("name",'unknown')}
             hash[group_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
           end
