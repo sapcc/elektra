@@ -80,7 +80,7 @@ module Compute
       
       @availability_zones = services.compute.availability_zones
       @security_groups    = services.compute.security_groups
-      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
+      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
       @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
       @instance.errors.add :private_network,  'not available' if @private_networks.blank?
@@ -132,37 +132,28 @@ module Compute
     end
 
     def new_floatingip
-      @instance = services.compute.find_server(params[:id]) 
-      @networks = {}
-      @available_ips = []
-      services.networking.project_floating_ips(@scoped_project_id).each do |fip|
-        if fip.fixed_ip_address.nil?
-          unless @networks[fip.floating_network_id]
-            @networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id)
-          end
-          @available_ips << fip
-        end
-      end
-          
+      @instance = services.compute.find_server(params[:id])
+      collect_available_ips
+
       @floating_ip = Networking::FloatingIp.new(nil)
     end
-        
+
     def attach_floatingip
       @instance_port = services.networking.ports(device_id: params[:id]).first
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
-      begin 
+      begin
         services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
         audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
         redirect_to instances_url
       rescue => e
         @floating_ip.errors.add('message',e.message)
-        @available_ips = services.networking.project_floating_ips(@scoped_project_id)
+        collect_available_ips
         render action: :new_floatingip
       end
     end
-    
+
     def detach_floatingip
-      begin 
+      begin
         floating_ips = services.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
         services.networking.detach_floatingip(floating_ips.first.id)
         redirect_to instances_url
@@ -201,6 +192,19 @@ module Compute
     end
 
     private
+
+    def collect_available_ips
+      @networks = {}
+      @available_ips = []
+      services.networking.project_floating_ips(@scoped_project_id).each do |fip|
+        if fip.fixed_ip_address.nil?
+          unless @networks[fip.floating_network_id]
+            @networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id)
+          end
+          @available_ips << fip
+        end
+      end
+    end
 
     def execute_instance_action(action=action_name)
       instance_id = params[:id]
