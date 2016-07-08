@@ -8,7 +8,7 @@ describe ApplicationController, type: :controller do
     end
   end
 
-  include AuthenticationStub
+  
 
   before :each do
     stub_authentication

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe %{PLUGIN_NAME}::ApplicationController, type: :controller do
   routes { %{PLUGIN_NAME}::Engine.routes }
   
-  include AuthenticationStub
+  
   
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
   

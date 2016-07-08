@@ -63,11 +63,14 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.include FactoryGirl::Syntax::Methods
+  
+  config.include AuthenticationStub
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
   end
   config.before(:all) do
+    
     DatabaseCleaner.start
     
     # set test config variables
@@ -82,6 +85,8 @@ RSpec.configure do |config|
   end
   
   config.before(:each) do
+    stub_authentication
+    
     allow(Core::ServiceUser::Base).to receive(:load).and_return(double('service_user').as_null_object)
   end
 

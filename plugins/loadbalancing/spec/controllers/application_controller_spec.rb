@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Loadbalancing::ApplicationController, type: :controller do
   routes { Loadbalancing::Engine.routes }
   
-  include AuthenticationStub
+  
   
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
   

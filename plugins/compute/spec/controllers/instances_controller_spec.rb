@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Compute::InstancesController, type: :controller do
   routes { Compute::Engine.routes }
   
-  include AuthenticationStub
+  
   
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
   
