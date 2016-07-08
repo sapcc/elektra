@@ -40,7 +40,7 @@ module Automation
 
       result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation, @active_project, current_user.token)
       @instance = result[:instance]
-      @log_info = result[:log_info]
+      @login_info = result[:log_info]
       @script = result[:script]
       @messages = result[:messages]
 
