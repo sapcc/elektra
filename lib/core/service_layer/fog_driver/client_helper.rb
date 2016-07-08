@@ -19,10 +19,11 @@ module Core
         def service_user_auth_params
           result = common_params
 
-          result[:openstack_username] = Rails.configuration.service_user_id
-          result[:openstack_api_key] = Rails.configuration.service_user_password
-          result[:openstack_user_domain] = Rails.configuration.service_user_domain_name
-          result[:openstack_domain_name] = Rails.configuration.cloud_admin_domain
+          result[:openstack_username]       = Rails.configuration.service_user_id
+          result[:openstack_api_key]        = Rails.configuration.service_user_password
+          result[:openstack_user_domain]    = Rails.configuration.service_user_domain_name
+          result[:openstack_project_name]   = Rails.configuration.cloud_admin_project
+          result[:openstack_project_domain] = Rails.configuration.cloud_admin_domain
 
           result
         end
