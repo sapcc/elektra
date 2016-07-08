@@ -100,6 +100,13 @@ module Automation
       flash.now[:error] = "Error executing automation '#{automation_name}'. Please try later"
     end
 
+    def destroy
+       node_id = params[:id]
+       services.automation.node_delete(node_id)
+       flash.now[:success] = "Node #{node_id} removed successfully."
+       redirect_to plugin('automation').nodes_path
+    end
+
     private
 
     def instance_info

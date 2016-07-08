@@ -21,6 +21,7 @@
 
 .modal-footer
   - if modal?
+    =link_to "Delete Node", plugin('automation').node_path(id: @node.id), class: 'btn btn-danger node-show-actions', :method => 'delete'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
   - else
     = link_to "Close", plugin('automation').nodes_url(), class: 'btn btn-default'

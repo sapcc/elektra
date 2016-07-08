@@ -52,6 +52,12 @@ module ServiceLayer
       !response.nil?
     end
 
+    def node_delete(node_id = "")
+      init_client
+      response = @client.delete_agent!(token, node_id)
+      !response.nil?
+    end
+
     #
     # Jobs
     #

@@ -3,3 +3,4 @@ vendor/bundle
 .bundle/
 tmp/
 log/*.log
+ci/
