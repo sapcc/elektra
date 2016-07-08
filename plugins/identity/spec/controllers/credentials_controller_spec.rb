@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Identity::CredentialsController, type: :controller do
   routes { Identity::Engine.routes }
   
-  include AuthenticationStub
+  
 
   default_params = {domain_id: AuthenticationStub.domain_id}
 

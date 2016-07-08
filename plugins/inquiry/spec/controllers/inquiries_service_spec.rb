@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Inquiry::InquiriesController, type: :controller do
   routes { Inquiry::Engine.routes }
 
-  include AuthenticationStub
+  
 
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 

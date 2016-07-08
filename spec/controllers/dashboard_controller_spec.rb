@@ -7,7 +7,7 @@ describe DashboardController, type: :controller do
     end
   end
   
-  include AuthenticationStub
+  
 
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 

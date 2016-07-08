@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Automation::NodesController, type: :controller do
   routes { Automation::Engine.routes }
   
-  include AuthenticationStub
+  
 
   before :each do
     stub_authentication
