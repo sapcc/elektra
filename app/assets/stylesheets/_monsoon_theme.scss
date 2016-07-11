@@ -564,6 +564,12 @@ section {
       left: 0;
       color: $bright-blue;
     }
+
+    a.active {
+      background: inline-svg("angle-right-outline.svg") 0 4px no-repeat;
+      padding-left: 12px;
+      text-decoration: underline;
+    }
   }
 }
 
