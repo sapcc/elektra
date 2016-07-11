@@ -1,6 +1,6 @@
 %tr{id: "network_#{network.id}"}
   %td
-    - if current_user.is_allowed?("networking:network_get", {})
+    - if current_user.is_allowed?("networking:network_get", network: network.attributes)
       = link_to network.name, plugin('networking').send("networks_#{@network_type}_path", network.id), data: {modal: true}
 
   %td
@@ -14,19 +14,22 @@
   %td= network.admin_state_up==true ? 'UP' : 'DOWN'
 
   %td.snug
-    - if current_user.is_allowed?("networking:network_#{@network_type}_delete", {}) or current_user.is_allowed?("networking:network_#{@network_type}_update", {})
+    - if current_user.is_allowed?("networking:network_#{@network_type}_delete", network: network.attributes) or current_user.is_allowed?("networking:network_#{@network_type}_update", network: network.attributes)
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog
           -# %span.spinner
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if current_user.is_allowed?("networking:rbac_policy_list", network: network.attributes)
+          - added = false
+          - if current_user.is_allowed?("networking:network_#{@network_type}_update", network: network.attributes)
             %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id), data: {modal: true}
+            - added = true
+          - if current_user.is_allowed?("networking:rbac_policy_list", network: network.attributes)
             %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}
-
-            %li.divider
-          - if current_user.is_allowed?("networking:network_#{@network_type}_delete", {})
+            - added = true
+          - if current_user.is_allowed?("networking:network_#{@network_type}_delete", network: network.attributes)
+            %li.divider if added
             %li= link_to 'Delete',
             plugin('networking').send("networks_#{@network_type}_path", network.id),
             method: :delete,

@@ -1,7 +1,9 @@
 {
-  "context_is_admin": "rule:admin_required or rule:cloud_admin",
-  "network_owner": "project_id:%(project.id)s",
-  "admin_or_network_owner": "rule:context_is_admin or rule:network_owner",
+  "context_is_cloud_admin":  "role:cloud_network_admin",
+  "context_is_network_admin":  "role:network_admin",
+  "context_is_admin":  "rule:context_is_cloud_admin", 
+  "network_owner": "(project_id:%(network.tenant_id)s or project_id:%(tenant_id)s or project_id:%(rbac.tenant_id)s)",
+  "admin_or_network_owner": "rule:network_owner or rule:context_is_network_admin or rule:context_is_cloud_admin",
 
   "networking:floating_ip_get": "!",
   "networking:floating_ip_list": "",
@@ -19,16 +21,16 @@
   "networking:network_private_create": "rule:admin_or_network_owner",
   "networking:network_private_update": "rule:admin_or_network_owner",
   "networking:network_private_delete": "rule:admin_or_network_owner",
-  "networking:network_external_create": "rule:context_is_admin",
-  "networking:network_external_update": "rule:context_is_admin",
-  "networking:network_external_delete": "rule:context_is_admin",
+  "networking:network_external_create": "rule:context_is_cloud_admin",
+  "networking:network_external_update": "rule:context_is_cloud_admin",
+  "networking:network_external_delete": "rule:context_is_cloud_admin",
 
   "networking:router_create": "rule:admin_or_network_owner",
   "networking:router_update": "rule:admin_or_network_owner",
   "networking:router_get":    "rule:admin_or_network_owner",
   "networking:router_delete": "rule:admin_or_network_owner",
   
-  "networking:rbac_policy_list": "project_id:%(network.tenant_id)s",
-  "networking:rbac_policy_create": "project_id:%(tenant_id)s",
-  "networking:rbac_policy_delete": "project_id:%(rbac.tenant_id)s"
+  "networking:rbac_policy_list": "rule:admin_or_network_owner",
+  "networking:rbac_policy_create": "rule:admin_or_network_owner",
+  "networking:rbac_policy_delete": "rule:admin_or_network_owner"
 }
