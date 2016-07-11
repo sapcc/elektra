@@ -13,61 +13,6 @@ module Compute
     def show
       @instance = services.compute.find_server(params[:id])
     end
-
-
-    # {
-    #   "vmware_adaptertype": "paraVirtual",
-    #   "container_format": "bare",
-    #   "min_ram": 0,
-    #   "vmware_disktype": "sparse",
-    #   "updated_at": "2016-07-07T13:06:28Z",
-    #   "file": "/v2/images/79a3ef45-02a6-4d69-80d2-d652c9ec3ee6/file",
-    #   "owner": "862c6624f6014370860747976e5ed87d",
-    #   "size": 1505099776,
-    #   "self": "/v2/images/79a3ef45-02a6-4d69-80d2-d652c9ec3ee6",
-    #   "disk_format": "vmdk",
-    #   "direct_url": "swift+config://swift-global/glance/79a3ef45-02a6-4d69-80d2-d652c9ec3ee6",
-    #   "schema": "/v2/schemas/image",
-    #   "status": "active",
-    #   "tags": [
-    #
-    #   ],
-    #   "visibility": "public",
-    #   "min_disk": 0,
-    #   "virtual_size": null,
-    #   "name": "rhel-7-amd64-26",
-    #   "hypervisor_type": "vmware",
-    #   "created_at": "2016-07-07T13:05:08Z",
-    #   "hw_vif_model": "vmxnet3",
-    #   "protected": false,
-    #   "checksum": "54514792b5d159c3513407fdca35653c",
-    #   "vmware_ostype": "rhel7_64Guest",
-    #   "id": "79a3ef45-02a6-4d69-80d2-d652c9ec3ee6"
-    # }
-    #
-    # {
-    #   "name": "m1.small",
-    #   "links": [
-    #     {
-    #       "href": "http://localhost/v2/adac5c36277b4346bbd631811af533f3/flavors/2",
-    #       "rel": "self"
-    #     },
-    #     {
-    #       "href": "http://localhost/adac5c36277b4346bbd631811af533f3/flavors/2",
-    #       "rel": "bookmark"
-    #     }
-    #   ],
-    #   "ram": 2048,
-    #   "OS-FLV-DISABLED:disabled": false,
-    #   "vcpus": 1,
-    #   "swap": "",
-    #   "os-flavor-access:is_public": true,
-    #   "rxtx_factor": 1.0,
-    #   "OS-FLV-EXT-DATA:ephemeral": 0,
-    #   "disk": 20,
-    #   "id": "2"
-    # }
-    
     
     def new
       @instance = services.compute.new_server

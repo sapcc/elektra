@@ -17,6 +17,7 @@ module Image
         sort_dir: sort_dir,
         visibility: @visibility
       }
+
       # first call has no marker
       openstack_params[:marker] = params[:marker] if params[:marker].present?
 
