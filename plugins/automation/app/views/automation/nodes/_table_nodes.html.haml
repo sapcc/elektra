@@ -11,7 +11,7 @@
     %tbody
       - if instances.empty?
         %tr
-          %td{colspa: 6} No agents available
+          %td{colspa: 6} No nodes available
       - else
         -instances.each do | instance |
           = render partial: 'table_nodes_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].fetch(:elements, {})}
