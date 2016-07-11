@@ -1,7 +1,7 @@
 module Webconsole
   class ApplicationController < DashboardController
     include UrlHelper
-    
+
     def show
       @token = current_user.token
       @webcli_endpoint = current_user.service_url("webcli")
@@ -44,10 +44,11 @@ module Webconsole
         general_help_file = File.join(Rails.root,"plugins/webconsole/webconsole_general_help.md")
         general_help_source = File.new(general_help_file, "r").read if File.exists?(general_help_file)
         # replace placeholders inside this contet
-        general_help_source = general_help_source.gsub('#{@scoped_domain_name}', @scoped_domain_name)
+        general_help_source = general_help_source.gsub('#{@scoped_domain_name}',  @scoped_domain_name)
                                                  .gsub('#{@scoped_project_name}', @scoped_project_name)
-                                                 .gsub('#{@token}', current_user.token)
-                                                 .gsub('#{@sap_docu_url}', sap_url_for('documentation'))
+                                                 .gsub('#{@active_project.id}',   @active_project.id)
+                                                 .gsub('#{@token}',               current_user.token)
+                                                 .gsub('#{@sap_docu_url}',        sap_url_for('documentation'))
         # load plugin specific help content
         source = File.new(help_file, "r").read
         # create renderer

@@ -6,7 +6,11 @@
     </tr>
     <tr>
       <th> project </th>
-      <td> #{@scoped_project_name} </td>
+      <td>
+        #{@active_project.id}
+        <br />
+        #{@scoped_project_name}
+      </td>
     </tr>
     <tr>
       <th> token </td>
