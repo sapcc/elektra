@@ -2,7 +2,10 @@
   %td
     - if current_user.is_allowed?('image:image_get', {})
       = link_to image.name, plugin('image').send("os_images_#{@visibility}_path", image.id), data: {modal: true, cancel: 'Close'}
-
+    - else
+      = image.name  
+  %td= image.disk_format
+  %td= byte_to_human(image.size)
   %td
     - project_id_and_name(image.owner)
   %td= image.status
