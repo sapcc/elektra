@@ -1,5 +1,6 @@
-%h1
+= content_for :main_toolbar do
   Requests for processing
-%br
+
+
 .inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
   = render partial: 'inquiries_widget', locals: {admin_view: true, remote_links: false}

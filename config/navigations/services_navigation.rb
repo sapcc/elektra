@@ -93,8 +93,8 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :access_management, 'Authorizations', nil,
       html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
       if: -> {services.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
-        access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: Proc.new { params[:controller][/members\/.*/] }
-        access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: Proc.new { params[:controller][/groups\/.*/] }
+        access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
+        access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
       end
 
     primary.item :networking,
@@ -102,31 +102,31 @@ SimpleNavigation::Configuration.run do |navigation|
                  nil,
                  html: { class: 'fancy-nav-header', 'data-icon': 'networking-icon' },
                  if: -> { plugin_available?(:networking) || plugin_available?(:loadbalancing) || plugin_available?(:dns_service) } do |networking_nav|
-      networking_nav.item :networks,
-                          'Networks & Routers',
-                          -> { plugin('networking').networks_private_index_path },
-                          if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/networks.*}
-      networking_nav.item :floating_ips,
-                          'Floating IPs',
-                          -> { plugin('networking').floating_ips_path },
-                          if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/floating_ips.*}
-      networking_nav.item :security_groups,
-                          'Security Groups',
-                          -> { plugin('networking').security_groups_path },
-                          if: -> { plugin_available?(:networking) },
-                          highlights_on: %r{networking/security_groups.*}
-      networking_nav.item :loadbalancing,
-                          'Loadbalancing',
-                          -> { plugin('loadbalancing').entry_path },
-                          if: -> { plugin_available?(:loadbalancing) },
-                          highlights_on: -> { params[:controller][%r{loadbalancing/.*}] }
-      networking_nav.item :dns_service,
-                          'DNS',
-                          -> { plugin('dns_service').entry_path },
-                          if: -> { plugin_available?(:dns_service) },
-                          highlights_on: -> { params[:controller][%r{dns_service/.*}] }
+                    networking_nav.item :networks,
+                                        'Networks & Routers',
+                                        -> { plugin('networking').networks_private_index_path },
+                                        if: -> { plugin_available?(:networking) },
+                                        highlights_on: %r{networking/(networks|routers)/?.*}
+                    networking_nav.item :floating_ips,
+                                        'Floating IPs',
+                                        -> { plugin('networking').floating_ips_path },
+                                        if: -> { plugin_available?(:networking) },
+                                        highlights_on: %r{networking/floating_ips/?.*}
+                    networking_nav.item :security_groups,
+                                        'Security Groups',
+                                        -> { plugin('networking').security_groups_path },
+                                        if: -> { plugin_available?(:networking) },
+                                        highlights_on: %r{networking/security_groups/?.*}
+                    networking_nav.item :loadbalancing,
+                                        'Loadbalancing',
+                                        -> { plugin('loadbalancing').entry_path },
+                                        if: -> { plugin_available?(:loadbalancing) },
+                                        highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
+                    networking_nav.item :dns_service,
+                                        'DNS',
+                                        -> { plugin('dns_service').entry_path },
+                                        if: -> { plugin_available?(:dns_service) },
+                                        highlights_on: -> { params[:controller][%r{dns_service/?.*}] }
     end
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
