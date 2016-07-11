@@ -15,10 +15,10 @@ Feature: Networks
   Scenario: The Private Networks page is reachable
     When I visit project path "networking/networks/private"
     Then the page status code is successful
-    And I see "Create new" button
-    When I click on "Create new"
-    Then the page status code is successful
-    And I see "Network Name"
+    # And I see "Create new" button
+    # When I click on "Create new"
+    # Then the page status code is successful
+    # And I see "Network Name"
 
  Scenario: The External Networks page is reachable
     When I visit project path "networking/networks/external"
