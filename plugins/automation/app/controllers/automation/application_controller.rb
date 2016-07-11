@@ -4,11 +4,11 @@ module Automation
     rescue_from RubyArcClient::ApiError do |exception|
       Rails.logger.error "Automation-plugin: index action: #{exception.to_s}"
       @error = exception
+      @details = exception.json_hash.empty? ? exception.inspect : exception.json_hash
 
       if request.xhr? && params[:polling_service]
         @key = "error"
         @value = exception.to_s
-        @details = exception.json_hash
         # respond to Ajax request
         render "automation/shared/error_javascript.js", format: "JS"
       else

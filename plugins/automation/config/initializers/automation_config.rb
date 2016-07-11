@@ -14,7 +14,7 @@ AUTOMATION_CONF = YAML.load(ERB.new(File.read(File.join(Core::PluginsManager.plu
 
 # check env varibales
 
-if (AUTOMATION_CONF['arc_latest_base_url'].nil? || AUTOMATION_CONF['arc_updates_url'].nil? ) || AUTOMATION_CONF['arc_pki_url'].nil? || AUTOMATION_CONF['arc_broker_url'].nil?
+if AUTOMATION_CONF['arc_updates_url'].nil? || AUTOMATION_CONF['arc_pki_url'].nil? || AUTOMATION_CONF['arc_broker_url'].nil?
   puts
   puts "################ WARNING ################"
   puts "Automation ENV variables not set"
