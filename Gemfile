@@ -90,11 +90,11 @@ group :development do
   # We stick to 2.x until this is fixed:
   # https://github.com/banister/binding_of_caller/issues/59
   gem 'puma', '~> 2.16'
-  # load .env
-  gem 'dotenv-rails'
 end
 
 group :development, :test do
+  # load .env needed for cucumber tests!
+  gem 'dotenv-rails'
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
