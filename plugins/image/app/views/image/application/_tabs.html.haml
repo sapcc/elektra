@@ -1,6 +1,6 @@
 %ul.nav.nav-tabs
   -# no need to render 'shared' separately - turns up in the private list and can be determined by owner
-  - %w(public private shared).each do |visibility|
+  - %w(public private).each do |visibility|
     - if tab == visibility
       %li.active{ role: 'presentation' }
         = link_to visibility.humanize, '#'
