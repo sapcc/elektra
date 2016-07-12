@@ -9,6 +9,11 @@ module Core
     #     >> Core::DataType.new(:bytes).parse("1 MiB")
     #     1048576
     #
+    #     >> Core::DataType.new(:bytes, :mega).format(1024)
+    #     "1 GiB"
+    #     >> Core::DataType.new(:bytes, :mega).parse("1 GiB")
+    #     1024
+    #
     # Parsing is intended to be very forgiving. For example, the user could
     # also abbreviate "1 MiB" as "1m" for the :bytes data type.
     #
@@ -17,14 +22,27 @@ module Core
     #   :number     - for values that don't have a unit (format is just #to_s and parse is just #to_i)
     #   :bytes      - for storage capacity values
     #
+    # The :bytes data type also supports a sub type. For example,
+    # if your base is not bytes, but megabytes, you can provide the sub type :mega
+    #
+    # The following sub types are known:
+    #
+    #   :bytes       - default
+    #   :kilo, :mega, :giga, :tera, :peta, :exa
+    #
     # To add a new datatype (e.g. "foo"), add the private methods "parse_foo"
     # and "format_foo", and extend ALLOWED_DATATYPES accordingly.
 
-    ALLOWED_DATA_TYPES = [ :number, :bytes ]
+    ALLOWED_DATA_TYPES      = %i( number bytes ).freeze
+    ALLOWED_SUB_TYPES       = %i( bytes kilo mega giga tera peta exa ).freeze
+    PRETTY_FORMAT_BYTES     = %w( Bytes KiB  MiB  GiB  TiB  PiB  EiB ).freeze
+    SUB_BYTES_SHORT         = %w( b     k    m    g    t    p    e   ).freeze
 
-    def initialize(data_type)
+    def initialize(data_type, sub_type = nil)
       raise ArgumentError, "unknown data type: #{data_type.inspect}" unless ALLOWED_DATA_TYPES.include?(data_type)
       @type = data_type
+      raise ArgumentError, "unknown sub type: #{sub_type.inspect}" if sub_type && !ALLOWED_SUB_TYPES.include?(sub_type)
+      initialize_sub_type(sub_type)
     end
 
     def to_sym
@@ -56,7 +74,8 @@ module Core
       #   "1 MB"
       #   >> number_to_human_size(1024 * 1024 - 1)
       #   "1020 KB"
-      %w[ Bytes KiB MiB GiB TiB PiB EiB ].each do |unit|
+      PRETTY_FORMAT_BYTES.each_with_index do |unit, idx|
+        next if idx < @target_unit_index
         # is this unit large enough?
         if value < 1024
           str = "%.2f" % value
@@ -70,31 +89,44 @@ module Core
 
     def parse_number(value)
       value = value.sub(/\A\s+/, '').sub(/\s+\Z/, '')
-      raise ArgumentError, "value #{value} is not numeric" unless value.match(/\A\d+\Z/)
+      raise ArgumentError, "value #{value} is not numeric" unless value =~ /\A\d+\Z/
       return value.to_i
     end
 
     def parse_bytes(value)
-      # get rid of all whitespace, e.g. "  12 GiB " => "12GiB"
+      # get rid of all whitespace, e.g. "  12 GiBytes " => "12GiBytes"
       value = value.gsub(/\s*/, '')
 
-      # remove units that don't actually change the value, e.g. "5Bytes" => "5", "23GiB" => "23G"
-      value = value.gsub(/(?i:i?b(?:ytes)?)\Z/, '')
+      # remove 'ytes' ending, e.g. "12GiBytes" => "12GiB"
+      value = value.gsub(/((?:ytes)?)\Z/i, '')
+      # remove 'i' in the middle, e.g. "12GiB" => "12GB"
+      value = value.gsub(/(\A\d+?([.,]\d+)?(k|m|g|t|p|e)?)i+/i, '\1')
+      # remove b at the end, if it is redundant, e.g. "12GB" => "12G"
+      value = value.gsub(/(\A\d+?([.,]\d+)?(k|m|g|t|p|e))b?\Z/i, '\1')
+      # add the correct ending if there is none, e.g. "24" => "24m"
+      value += SUB_BYTES_SHORT[@target_unit_index] if value =~ /\A\d+\Z/
 
       # recognize units that actually change the value (e.g. "23G" -> "23" with unit = 1<<30)
       unit = 1
-      %w[ k m g t p e ].each_with_index do |letter,idx|
+      SUB_BYTES_SHORT.each_with_index do |letter,idx|
+        next if idx < @target_unit_index
         if value[-1].downcase == letter
           value = value[0, value.size - 1] # cut off that letter
-          unit = 1 << (idx * 10 + 10)
+          unit = 1 << ((idx - @target_unit_index - 1) * 10 + 10)
           break # only one unit allowed
         end
       end
 
       # now only a positive number should be left
-      raise ArgumentError, "value #{value} is not numeric" unless value.match(/\A\d+?([.,]\d+)?\Z/)
+      raise ArgumentError, "value #{value} is not numeric" unless value =~ /\A\d+?([.,]\d+)?\Z/
       return (value.gsub(',', '.').to_f * unit).to_i
     end
 
+    def initialize_sub_type(sub_type)
+      return unless @type == :bytes
+      # if no subtype given start with the smallest unit
+      sub_type = :bytes unless sub_type
+      @target_unit_index = ALLOWED_SUB_TYPES.index(sub_type)
+    end
   end
 end

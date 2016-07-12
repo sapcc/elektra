@@ -3,8 +3,9 @@ require 'core/data_type'
 
 RSpec.describe Core::DataType do
 
-  let(:datatype_number) { Core::DataType.new(:number) }
-  let(:datatype_bytes)  { Core::DataType.new(:bytes)  }
+  let(:datatype_number)     { Core::DataType.new(:number)       }
+  let(:datatype_bytes)      { Core::DataType.new(:bytes)        }
+  let(:datatype_mega_bytes) { Core::DataType.new(:bytes, :mega) }
 
   describe '#format' do
 
@@ -35,13 +36,28 @@ RSpec.describe Core::DataType do
       end
     end
 
-    it 'handles float values correctly' do 
+    it 'renders mega-byte values with appropriate units' do
+      [
+        [ 1, "1 MiB" ],
+        [ 1234, "1.21 GiB" ],
+        [ 45421, "44.36 GiB" ],
+        [ 1234567, "1.18 TiB" ],
+      ].each do |value, string|
+        expect(datatype_mega_bytes.format(value)).to eq(string)
+      end
+    end
+
+    it 'handles float values correctly' do
       expect(datatype_number.format(5.0)).to eq('5')
     end
 
     it 'fails with unknown datatype' do
       expect { Core::DataType.new(:foo) }.to raise_error(ArgumentError)
       expect { Core::DataType.new(23) }.to raise_error(ArgumentError)
+    end
+
+    it 'fails with unknown bytes subtype' do
+      expect { Core::DataType.new(:bytes, :magra) }.to raise_error(ArgumentError)
     end
 
   end
@@ -99,6 +115,38 @@ RSpec.describe Core::DataType do
       expect { datatype_bytes.parse("4 things") }.to raise_error(ArgumentError)
     end
 
+    it 'parses mega-byte values correctly' do
+      [
+        [ "0",          0 ],
+        [ "0 MiB",      0 ],
+        [ "1.21 GiB",   1239 ],
+        [ "44.61 GiB",  45680 ],
+        [ "1.177 TiB",  1234173 ],
+      ].each do |string, value|
+        # check multiple representations of the same input
+        # 1. with comma or dot
+        [ string, string.sub(/\./, ',') ].uniq.each do |repr1|
+          # 2. with space between value and unit removed
+          [ repr1, repr1.gsub(/\s+/, '') ].uniq.each do |repr2|
+            # 3. with extra surrounding space
+            [ repr2, "  #{repr2}\n" ].each do |repr3|
+              # 4. with units like "MiB" shortened to "MB" or "M"
+              [ repr3, repr3.sub("iB", "B"), repr3.sub("iB", "") ].uniq.each do |repr4|
+                # 5. with units in all lowercase or all uppercase
+                [ repr4, repr4.downcase, repr4.upcase ].uniq.each do |repr5|
+                  expect(datatype_mega_bytes.parse(repr5)).to eq(value)
+                end
+              end
+            end
+          end
+        end
+      end
+
+      # check some incorrect values
+      expect { datatype_mega_bytes.parse("8 k")     }.to raise_error(ArgumentError)
+      expect { datatype_mega_bytes.parse("16 mk")   }.to raise_error(ArgumentError)
+      expect { datatype_mega_bytes.parse("4 bytes") }.to raise_error(ArgumentError)
+    end
   end
 
 end
