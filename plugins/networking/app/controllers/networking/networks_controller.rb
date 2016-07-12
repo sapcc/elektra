@@ -3,7 +3,6 @@ module Networking
     before_filter :load_type
     def index
       @networks = services.networking.networks('router:external' => @network_type == 'external')
-      @networks.each{|n| puts n.pretty_attributes}
     end
 
     def show
