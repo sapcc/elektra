@@ -14,10 +14,6 @@
         $('#forms_automation_chef_attributes').val(editor.getText())
         return
 
-    console.log($('#jsoneditor').data('mode'))
-    console.log($('#jsoneditor').data('mode') == "view")
-    console.log(jQuery.type(content) == 'undefined' || content == "")
-
     if !($('#jsoneditor').data('mode') == "view" && (jQuery.type(content) == 'undefined' || content == ""))
       editor = new JSONEditor(document.getElementById('jsoneditor'), options, content);
 
