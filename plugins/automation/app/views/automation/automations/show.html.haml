@@ -23,7 +23,7 @@
 
     - if @automation.type == ::Automation::Automation::Types::CHEF
       - form_horizontal_static_array('Runlist', @automation.run_list)
-      - form_horizontal_static_input('Attributes', @automation.chef_attributes)
+      - form_horizontal_json_editor('Attributes', @automation.chef_attributes)
       - form_horizontal_static_input('Log level', @automation.log_level)
     - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
       - form_horizontal_static_input('Path', @automation.path)

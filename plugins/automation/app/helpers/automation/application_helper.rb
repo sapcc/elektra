@@ -24,6 +24,17 @@ module Automation
       end
     end
 
+    def form_horizontal_json_editor(label, value)
+      haml_tag :div, {class: "form-group"} do
+        haml_tag :label, {class: "col-sm-4 control-label"} do
+          haml_concat label
+        end
+        haml_tag :div, {class: "col-sm-8"} do
+          haml_tag :div, {id: "jsoneditor", data:{mode:"view", content: value}}
+        end
+      end
+    end
+
     def form_horizontal_static_hash(label, data)
       haml_tag :div, {class: "form-group"} do
         haml_tag :label, {class: "col-sm-4 control-label"} do
