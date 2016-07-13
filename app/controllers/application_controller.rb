@@ -1,3 +1,51 @@
+module ErrorRenderer
+  # This method is used in controllers to catch errors and render error page.
+  # It differentiates between html, modal, js and polling errors. 
+  # Request vom Polling service which end up in error will display Flash-Errors.
+  # GET-Requests for modal content will show errors inside modal window.
+  # JS-POST requests (e.g.: remote: true) will display error dialog. 
+  def render_error_page_for(*error_classes)
+    error_classes = error_classes.first if error_classes.first.is_a?(Array)
+    error_mapping = {}
+    klasses = []
+    
+    error_classes.each do |error_class| 
+      if error_class.is_a?(Hash)
+        error_mapping[error_class.keys.first.to_s]=error_class.values.first
+        klasses << error_class.keys.first.to_s
+      else
+        klasses << error_class
+      end
+    end
+        
+    rescue_from *klasses do |error|
+      map = error_mapping[error.class.name] || {}
+      
+      value = lambda do |param|
+        v = map[param.to_sym] || map[param.to_s]
+        return nil if v.nil?    
+        return error.send(v).to_s if v.kind_of?(Symbol)
+        return v.call(error).to_s if v.kind_of?(Proc)
+        return v.to_s
+      end
+      
+      @title = value.call(:title) || error.class.name.split('::').last.humanize
+      @description = value.call(:description) || error.message
+      @details = value.call(:details) || error.class.name+"\n"+error.backtrace.join("\n")
+      @error_id = value.call(:error_id) || request.uuid
+
+      if request.xhr? && params[:polling_service]
+        render "/application/errors/error_polling.js", format: "JS"
+      else
+        respond_to do |format|
+          format.html { render '/application/errors/error.html' }
+          format.js { render "/application/errors/error.js" }
+        end
+      end
+    end
+  end
+end
+
 require 'core/audit_logger'
 # This class implements functionality to support modal views.
 # All subclasses which require modal views should inherit from this class.
@@ -10,14 +58,8 @@ class ApplicationController < ActionController::Base
   include Services  
   include ServiceUser
   include CurrentUserWrapper
-
-  # render error if service user could not be authenticated
-  before_filter do
-    unless service_user 
-      @error_message = 'Authentication Service (Keystone) is unavailable.'
-      render template: 'application/error'
-    end
-  end
+  
+  extend ErrorRenderer
     
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -28,19 +70,16 @@ class ApplicationController < ActionController::Base
   # check if the requested domain is the same as that of the current user.
   before_filter :same_domain_check
   
-  # # token is expired or was revoked -> redirect to login page
-  # render_error_page_for [
-  #   {
-  #     "Core::ServiceUser::Errors::AuthenticationError" => {
-  #       title: "Unsupported domain",
-  #       description: "Dashboard is not enabled for this domain."
-  #     }
-  #   }
-  # ]
-  rescue_from "Core::ServiceUser::Errors::AuthenticationError" do
-    render 'application/domain_forbidden'
-  end
-
+  # token is expired or was revoked -> redirect to login page
+  render_error_page_for [
+    {
+      "Core::ServiceUser::Errors::AuthenticationError" => {
+        title: "Unsupported domain",
+        description: "Dashboard is not enabled for this domain.",
+        details: :message
+      }
+    }
+  ]
 
   def modal?
     if @modal.nil?
@@ -82,52 +121,6 @@ class ApplicationController < ActionController::Base
 
         # render domain switch view
         render template: 'application/domain_switch'
-      end
-    end
-  end
-  
-  # This method is used in controllers to catch errors and render error page.
-  # It differentiates between html, modal, js and polling errors. 
-  # Request vom Polling service which end up in error will display Flash-Errors.
-  # GET-Requests for modal content will show errors inside modal window.
-  # JS-POST requests (e.g.: remote: true) will display error dialog. 
-  def self.render_error_page_for(*error_classes)
-    error_classes = error_classes.first if error_classes.first.is_a?(Array)
-    error_mapping = {}
-    klasses = []
-    
-    error_classes.each do |error_class| 
-      if error_class.is_a?(Hash)
-        error_mapping[error_class.keys.first.to_s]=error_class.values.first
-        klasses << error_class.keys.first.to_s
-      else
-        klasses << error_class
-      end
-    end
-        
-    rescue_from *klasses do |error|
-      map = error_mapping[error.class.name] || {}
-      
-      value = lambda do |param|
-        v = map[param.to_sym] || map[param.to_s]
-        return nil if v.nil?    
-        return error.send(v).to_s if v.kind_of?(Symbol)
-        return v.call(error).to_s if v.kind_of?(Proc)
-        return v.to_s
-      end
-      
-      @title = value.call(:title) || error.class.name.split('::').last.humanize
-      @description = value.call(:description) || error.message
-      @details = value.call(:details) || error.class.name+"\n"+error.backtrace.join("\n")
-      @error_id = value.call(:error_id) || request.uuid
-
-      if request.xhr? && params[:polling_service]
-        render "/application/errors/error_polling.js", format: "JS"
-      else
-        respond_to do |format|
-          format.html { render '/application/errors/error.html' }
-          format.js { render "/application/errors/error.js" }
-        end
       end
     end
   end
