@@ -141,7 +141,7 @@ module ServiceLayer
         this_actual_quota = actual_quota[resource.service_name][resource.name]
         this_actual_usage = actual_usage[resource.service_name][resource.name]
 
-        # this is the case if account is not accesible or not created 
+        # this is the case if account is not accesible or not created
         next if this_actual_quota.nil? or this_actual_usage.nil?
 
         domain_resource =  ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil, name:resource.name, service:resource.service_name).first
@@ -160,7 +160,7 @@ module ServiceLayer
           approved_quota: 0,
         ) do |obj|
           # enforce default quotas for newly created projects, if not done by the responsible service itself
-          # default quota is used only if it was setuped by the domain admin 
+          # default quota is used only if it was setuped by the domain admin
           if this_actual_quota == -1 and not domain_resource.try(:default_quota).nil?
             this_actual_quota = domain_resource.default_quota
             obj.current_quota = this_actual_quota

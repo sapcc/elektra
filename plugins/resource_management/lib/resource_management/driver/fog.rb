@@ -262,6 +262,47 @@ module ResourceManagement
           rbac_policies:        rbac_policies
         }
       end
+
+      ### COMPUTE: NOVA ###################################################################
+
+      def fog_compute_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_compute ||= ::Fog::Compute::OpenStack.new(service_user_auth_params)
+      end
+
+      COMPUTE_RESOURCE_MAP = {
+        # 'key_pairs'                   => :key_pairs,
+        # 'metadata_items'              => :metadata_items,
+        # 'server_groups'               => :server_groups,
+        # 'server_group_members'        => :server_group_members,
+        # 'injected_files'              => :injected_files,
+        # 'injected_file_content_bytes' => :injected_file_content_bytes,
+        # 'injected_file_path_bytes'    => :injected_file_path_bytes,
+        # 'fixed_ips'                   => :fixed_ips,
+        'cores'                       => :cores,
+        'instances'                   => :instances,
+        'ram'                         => :ram
+      }.freeze
+
+      def set_project_quota_compute(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [COMPUTE_RESOURCE_MAP.invert[k], v] }.to_h
+        handle_response { fog_compute_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_compute(_domain_id, project_id)
+        quotas = handle_response { fog_compute_connection.get_quota(project_id).body['quota_set'] }
+        quotas.map { |k, v| [COMPUTE_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_compute(_domain_id, project_id)
+        limits = handle_response { fog_compute_connection.get_limits(tenant_id: project_id).body['limits']['absolute'] }
+        {
+          cores:     limits['totalCoresUsed'],
+          instances: limits['totalInstancesUsed'],
+          ram:       limits['totalRAMUsed']
+        }
+      end
     end
   end
 end
