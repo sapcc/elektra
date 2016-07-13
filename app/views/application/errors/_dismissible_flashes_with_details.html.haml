@@ -1,10 +1,10 @@
 - details ||= nil
 
-%div{class: "alert alert-#{key} alert-dismissible word-wrap", 'role' => 'alert'}
+%div{class: "alert alert-error alert-dismissible word-wrap", 'role' => 'alert'}
   %button.close{type:'button', data: {dismiss: 'alert'}, "aria-label" => "Close"}
     %span{'aria-hidden' => 'true'}
       &times;
-  = value.html_safe
+  = description.html_safe if description
 
   - unless details.nil?
     %p

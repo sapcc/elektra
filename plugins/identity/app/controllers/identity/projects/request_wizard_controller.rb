@@ -2,8 +2,6 @@ module Identity
   module Projects
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
-      before_filter :load_and_authorize_inquiry, only:[:edit,:update]
-      
       before_filter do
         enforce_permissions("identity:project_request",{domain_id: @scoped_domain_id})
       end
@@ -52,44 +50,5 @@ module Identity
         end
       end
     end
-
-    def edit
-      @project = Identity::Project.new(nil,{})
-      @project.attributes = @inquiry.payload
-    end
-
-    def update
-      # user is not allowed to create a project (maybe)
-      # so use admin identity for that!
-      @project = Identity::Project.new(nil,{})
-      @project.attributes = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
-      if @project.valid?
-        inquiry = services.inquiry.change_inquiry(
-            id: @inquiry.id,
-            description: @project.description,
-            payload: @project.attributes.to_json
-        )
-        unless inquiry.errors?
-          render template: 'identity/projects/request_wizard/create.js'
-        else
-          render action: :edit
-        end
-      else
-        render action: :edit
-      end
-    end
-
-    def load_and_authorize_inquiry
-      @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
-
-      if @inquiry
-        unless current_user.is_allowed?("identity:project_request", {domain_id:@scoped_domain_id})
-          render template: '/dashboard/not_authorized'
-        end
-      else
-        render template: '/identity/projects/create_wizard/not_found'
-      end
-    end
-
   end
 end

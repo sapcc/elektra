@@ -1,15 +1,14 @@
 module BlockStorage
   class ApplicationController < DashboardController
-
-    # token is expired or was revoked -> redirect to login page
-    rescue_from Core::ServiceLayer::Errors::ApiError do |exception|
-      @exception = ""
-      exception.message.each_line.with_index do |l, i|
-        @exception += l if i < 25
-      end
-      @exception += " ..."
-      render 'block_storage/application/service_error'
-    end
+    render_error_page_for [
+      {
+        "Core::ServiceLayer::Errors::ApiError" => {
+          header_title: 'Backend Service', 
+          title: 'Error happend during backend  call', 
+          details: -> e { e.json_hash.empty? ? e.inspect : e.json_hash}
+        }
+      }
+    ]
 
     def target_state_for_action(action)
       case action

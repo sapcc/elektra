@@ -1,0 +1,50 @@
+- @header_title ||= "Application"
+- @title ||= "An error has occurred"
+- @description ||= "Something went wrong while processing your request.<br> Please try later again."
+
+- if modal?
+  = content_for :title do
+    %span{class: "#{plugin_name}-icon error-icon"}
+    %span.active
+      = "#{@header_title} Error"
+
+  .modal-body
+    .bs-callout.bs-callout-danger
+      %h3= @title.html_safe
+      %p= @description.html_safe
+      - if @error_id
+        .callout-footer
+          %b Error ID:
+          %span
+            = @error_id
+
+    - if @details
+      %p
+        = link_to "#", data: {toggle: "show-error-details"} do
+          Show error details
+          %i.fa.fa-caret-down
+
+      .scrollable-text.error-details-area.hide
+        = simple_format(@details)
+
+  .modal-footer
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+
+- else
+  .bs-callout.bs-callout-danger
+    %h3= @title.html_safe
+    %p= @description.html_safe
+    - if @error_id
+      .callout-footer
+        %b Error ID:
+        %span
+          = @error_id
+
+  - if @details
+    %p
+      = link_to "#", data: {toggle: "show-error-details"} do
+        Show error details
+        %i.fa.fa-caret-down
+
+    .scrollable-text.error-details-area.hide
+      = simple_format(@details)

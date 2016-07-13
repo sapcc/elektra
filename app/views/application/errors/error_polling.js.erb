@@ -1,0 +1,8 @@
+var html = "<%= escape_javascript( render partial: '/application/errors/dismissible_flashes_with_details', locals: {description: @description, details: @details} ) %>";
+
+<% if modal?%>
+$(".modal-flashes").append(html);
+<% else %>
+$(".flashes").append(html);
+<% end %>
+init_error_details();
