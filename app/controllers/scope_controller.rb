@@ -8,6 +8,10 @@ class ScopeController < ::ApplicationController
     # use existing, user's or default domain
     domain_id = (params[:domain_id] || service_user.try(:domain_id))     
     project_id = params[:project_id]
+    
+    if service_user.nil?
+      raise Core::Error::ServiceUserNotAuthenticated.new("Could not authenticate service user. Please check permissions on #{params[:domain_id]} for service user #{Rails.application.config.service_user_id}") 
+    end
 
     @scoped_domain_fid = @scoped_domain_id = domain_id 
     @scoped_project_fid = @scoped_project_id = project_id
@@ -46,8 +50,7 @@ class ScopeController < ::ApplicationController
         end     
       end
     else
-      @errors = {"domain" => "Not found"}
-      render template: 'application/error'
+      raise Core::Error::DomainNotFound.new("Domain #{domain_id} not found!")
     end
     # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
     # p "domain_id: #{domain_id}"
@@ -58,4 +61,17 @@ class ScopeController < ::ApplicationController
     # p "@scoped_project_id: #{@scoped_project_id}"
     # p "@scoped_project_fid: #{@scoped_project_fid}"
   end
+  
+  render_error_page_for [
+    {
+      "Core::Error::ServiceUserNotAuthenticated" => {
+        title: "Unsupported Domain",
+        description: "Dashboard is not enabled for this domain.",
+        details: :message
+      }
+    },
+    {
+      "Core::Error::DomainNotFound" => {title: 'Bad Domain'}
+    }
+  ]
 end

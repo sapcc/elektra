@@ -52,6 +52,9 @@ module ErrorRenderer
         @details = e.class.name+"\n"+(e.backtrace rescue '').join("\n")
         @error_id = request.uuid
       end  
+      
+      logger.error(@error_id+": "+@title+". "+@description)
+      
       if request.xhr? && params[:polling_service]
         render "/application/errors/error_polling.js", format: "JS"
       else
@@ -78,7 +81,7 @@ class ApplicationController < ActionController::Base
   include CurrentUserWrapper
   
   extend ErrorRenderer
-    
+      
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -88,21 +91,8 @@ class ApplicationController < ActionController::Base
   # check if the requested domain is the same as that of the current user.
   before_filter :same_domain_check
   
-  # token is expired or was revoked -> redirect to login page
-  render_error_page_for [
-    {
-      "Core::ServiceUser::Errors::AuthenticationError" => {
-        title: "Unsupported domain",
-        description: "Dashboard is not enabled for this domain.",
-        details: :message
-      }
-    },
-    {
-      "StandardError" => {
-        title: 'Backend Service Error'
-      }
-    }
-  ]
+  # catch all errors and render error page
+  render_error_page_for [ { "StandardError" => { title: 'Backend Service Error' }} ]
 
   def modal?
     if @modal.nil?
