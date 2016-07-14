@@ -900,6 +900,11 @@ footer, .footer {
   border: 1px solid #eee;
   border-left-width: 5px;
   border-radius: 3px;
+  
+  .callout-footer {
+    border-top: 1px solid #eee;
+    padding-top: 5px;
+  }
 
   &.bs-callout-primary {
     border-left-color: $btn-primary-border;
@@ -919,6 +924,10 @@ footer, .footer {
 
   &.bs-callout-danger {
     border-left-color: $btn-danger-border;
+    
+    h1,h2,h3,h4,h5,h6 {
+      color: $alarm-red;
+    }
   }
 
   table {

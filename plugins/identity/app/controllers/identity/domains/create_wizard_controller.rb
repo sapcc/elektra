@@ -41,9 +41,7 @@ module Identity
         @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
 
         if @inquiry 
-          unless current_user.is_allowed?("identity:project_create", {project: {domain_id: @scoped_domain_id} })
-            render template: '/dashboard/not_authorized'
-          end
+          enforce_permissions("identity:project_create", {project: {domain_id: @scoped_domain_id} })
         else
           render template: '/identity/domains/create_wizard/not_found'
         end

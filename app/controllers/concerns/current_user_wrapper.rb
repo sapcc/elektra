@@ -4,7 +4,7 @@ module CurrentUserWrapper
   def current_user
     return nil if super.nil?
     return @current_user_wrapper if @current_user_wrapper and @current_user_wrapper.token==super.token
-    @current_user_wrapper = CurrentUserWrapper.new(super,session,service_user)
+    @current_user_wrapper = CurrentUserWrapper.new(super,session,(service_user rescue nil))
   end
 
   # Wrapper for current user

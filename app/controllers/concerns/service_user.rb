@@ -11,8 +11,8 @@ module ServiceUser
     
     @service_user = Core::ServiceUser::Base.load({
       scope_domain: scope_domain,
-      user_id: Rails.application.config.service_user_id, #'u-monsooncc_admin',
-      password: Rails.application.config.service_user_password, #'secret',
+      user_id: Rails.application.config.service_user_id,
+      password: Rails.application.config.service_user_password,
       user_domain: Rails.application.config.service_user_domain_name 
     })
 
