@@ -37,6 +37,10 @@ module Core
         end
       end
 
+      def instance_variables
+        super.delete_if{|name| name==:@password}
+      end
+
       def auth_user
         @auth_users[@current_domain]
       end

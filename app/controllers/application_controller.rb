@@ -19,7 +19,19 @@ module ErrorRenderer
     end
         
     rescue_from *klasses do |error|
-      map = error_mapping[error.class.name] || {}
+      map = error_mapping[error.class.name]
+      unless map
+        klass = nil
+        error_mapping.each do |class_name,mapping| 
+          found_class = eval(class_name)
+          next if klass and found_class > klass
+
+          if found_class>error.class
+            map = mapping 
+          end
+        end
+        map ||= {}
+      end
       
       value = lambda do |param|
         v = map[param.to_sym] || map[param.to_s]
@@ -29,11 +41,17 @@ module ErrorRenderer
         return v.to_s
       end
       
-      @title = value.call(:title) || error.class.name.split('::').last.humanize
-      @description = value.call(:description) || error.message
-      @details = value.call(:details) || error.class.name+"\n"+error.backtrace.join("\n")
-      @error_id = value.call(:error_id) || request.uuid
-
+      begin
+        @title = value.call(:title) || error.class.name.split('::').last.humanize
+        @description = value.call(:description) || (error.message rescue error.to_s)
+        @details = value.call(:details) || error.class.name+"\n"+(error.backtrace rescue '').join("\n")
+        @error_id = value.call(:error_id) || request.uuid
+      rescue => e
+        @title = e.class.name.split('::').last.humanize
+        @description = e.message
+        @details = e.class.name+"\n"+(e.backtrace rescue '').join("\n")
+        @error_id = request.uuid
+      end  
       if request.xhr? && params[:polling_service]
         render "/application/errors/error_polling.js", format: "JS"
       else
@@ -77,6 +95,11 @@ class ApplicationController < ActionController::Base
         title: "Unsupported domain",
         description: "Dashboard is not enabled for this domain.",
         details: :message
+      }
+    },
+    {
+      "StandardError" => {
+        title: 'Backend Service Error'
       }
     }
   ]
