@@ -1,6 +1,6 @@
 # This class guarantees that the user is logged in and his token is rescoped.
 # All subclasses which require a logged in user should inherit from this class.
-class DashboardController < ::ScopeController
+class DashboardController < ::ScopeController  
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
@@ -35,6 +35,7 @@ class DashboardController < ::ScopeController
   before_filter :raven_context, except: [:terms_of_use]
   before_filter :load_user_projects, except: [:terms_of_use]
   before_filter :set_mailer_host
+  
 
   # token is expired or was revoked -> redirect to login page
   rescue_from "Identity::InvalidToken", "MonsoonOpenstackAuth::Authentication::NotAuthorized" do
@@ -42,9 +43,7 @@ class DashboardController < ::ScopeController
   end
 
   # catch all mentioned errors and render error page
-  render_error_page_for [
-    {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission denied'}}
-  ]
+  render_error_page_for [ {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied'}} ]
 
   def rescope_token
     if @scoped_project_id.nil? and service_user.role_assignments("user.id" => current_user.id, "scope.domain.id" => @scoped_domain_id, "effective" => true).empty?
