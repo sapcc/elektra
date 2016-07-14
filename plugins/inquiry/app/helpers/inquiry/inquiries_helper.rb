@@ -31,16 +31,16 @@ module Inquiry
     end
 
     # This method creates a div with data needed attributes. The content is loaded via ajax by PollingService
-    def remote_inquiries(options={})  
+    def remote_inquiries(options={})
       container_id = SecureRandom.hex
-      
+
       content_tag(:div, id: container_id) do
         content_tag(:div, '', data: {
           update_path: plugin('inquiry').inquiries_path({
-            container_id: container_id, 
+            container_id: container_id,
             per_page: (options[:per_page] || Inquiry::Inquiry.default_per_page),
-            filter: (options[:filter] || {}), 
-            partial: true 
+            filter: (options[:filter] || {}),
+            partial: true
           }),
           update_immediately: true
         })
@@ -49,6 +49,14 @@ module Inquiry
 
     def render_errors inquiry
 
+    end
+
+    def render_requestor_name(requestor)
+      unless requestor.full_name.blank?
+        "#{requestor.full_name} (#{requestor.name})"
+      else
+        requestor.name
+      end
     end
 
   end
