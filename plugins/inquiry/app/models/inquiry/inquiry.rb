@@ -214,7 +214,7 @@ module Inquiry
 
     def notify_processors
       begin
-        InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self.process_steps.last).deliver_later
+        InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self.process_steps.last, self.requester).deliver_later
       rescue Net::SMTPFatalError => e
         self.processors.each do |p|
           begin

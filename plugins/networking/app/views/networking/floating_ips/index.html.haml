@@ -1,11 +1,11 @@
 = render "intro"
 
 - if @scoped_project_id
-  - if current_user.is_allowed?("networking:floating_ip_create", {floating_ip: {user_id: current_user.id} })
+  - if current_user.is_allowed?("networking:floating_ip_create", {})
     .toolbar
       = link_to 'Allocate new', plugin('networking').new_floating_ip_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-  - if current_user.is_allowed?("networking:floating_ip_list", {floating_ip: {user_id: current_user.id} })
+  - if current_user.is_allowed?("networking:floating_ip_list", {})
     %table.table#floating_ips
       %thead
         %tr

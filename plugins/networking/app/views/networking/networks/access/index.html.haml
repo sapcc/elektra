@@ -11,7 +11,7 @@
     %tbody
       - if @rbacs.length == 0
         %tr
-          %td{colspa: 5} No Access given to other projects
+          %td{colspan: 5} No Access given to other projects
       - else
         - @rbacs.each do | rbac |
           = render partial: 'rbac_item', locals: {rbac: rbac}
