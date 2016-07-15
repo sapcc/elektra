@@ -1,6 +1,6 @@
 # This class guarantees that the user is logged in and his token is rescoped.
 # All subclasses which require a logged in user should inherit from this class.
-class DashboardController < ::ScopeController  
+class DashboardController < ::ScopeController
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
@@ -10,8 +10,8 @@ class DashboardController < ::ScopeController
                           redirect_to: -> current_user, requested_url, referer_url {
                             # do stuff after user has logged on bevore redirect to requested url
 
-                            # if the new scope domain which user has logged in differs from the scope in requested url 
-                            # then redirect user to home page of the new domain.  
+                            # if the new scope domain which user has logged in differs from the scope in requested url
+                            # then redirect user to home page of the new domain.
                             if requested_url.blank? or (!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(requested_url=~/^[^\?]*#{current_user.user_domain_id}/))
                               "/#{current_user.user_domain_id}/identity/home"
                             else
@@ -35,7 +35,7 @@ class DashboardController < ::ScopeController
   before_filter :raven_context, except: [:terms_of_use]
   before_filter :load_user_projects, except: [:terms_of_use]
   before_filter :set_mailer_host
-  
+
 
   # token is expired or was revoked -> redirect to login page
   rescue_from "Identity::InvalidToken", "MonsoonOpenstackAuth::Authentication::NotAuthorized" do
@@ -95,6 +95,11 @@ class DashboardController < ::ScopeController
   end
 
   protected
+
+  def show_beta?
+    params[:betafeatures] == 'showme'
+  end
+  helper_method :show_beta?
 
   def raven_context
     Raven.user_context(

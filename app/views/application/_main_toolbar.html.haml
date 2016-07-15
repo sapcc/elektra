@@ -8,9 +8,14 @@
           = link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id))
 
         - unless @active_project.blank?
-          .info-text.pull-right
-            Project ID:
-            = @active_project.id
+          .info-box.pull-right
+            .info-text
+              Project ID:
+              = @active_project.id
+            - if show_beta?
+              .info-text
+                %i.monitoring-icon
+                = link_to "Quota: 7 floating IPs", plugin('resource_management').resources_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
 
       .page-title
         %i.fa.fa-angle-right
