@@ -136,7 +136,7 @@ class @InfoDialog
     $dialog.find('.progress-bar').attr('class', 'progress-bar')
     $dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType) if settings.progressType
     $dialog.find('h3').text(title)
-    $dialog.find('.modal-body').text(message)
+    $dialog.find('.modal-body').html(message)
 
     # Adding callbacks
     if typeof settings.onHide is 'function'
@@ -147,7 +147,7 @@ class @InfoDialog
     
   # class method  
   @showError: (message) ->
-    InfoDialog.show("Error", message)
+    InfoDialog.show("Error", message, {dialogSize: 'lg'})
     
   # class method  
   @showNotice: (message) ->

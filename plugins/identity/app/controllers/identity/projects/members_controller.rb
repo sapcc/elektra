@@ -39,7 +39,9 @@ module Identity
       def update
         enforce_permissions("identity:project_member_update",{domain_id: @scoped_domain_id})
         load_role_assignments
-
+        
+        available_role_ids = @roles.collect{|r| r.id}
+        
         # update changed roles
         updated_roles_user_ids = []
         if params[:role_assignments]
@@ -50,15 +52,28 @@ module Identity
             role_ids_to_add = new_user_role_ids-old_user_role_ids
             role_ids_to_remove = old_user_role_ids-new_user_role_ids
 
-            role_ids_to_add.each{|role_id| service_user.grant_project_user_role(@scoped_project_id, user_id, role_id) rescue nil}
-            role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil}
+            role_ids_to_add.each do |role_id| 
+              if available_role_ids.include?(role_id) 
+                service_user.grant_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+              end
+            end
+            
+            role_ids_to_remove.each do |role_id| 
+              if available_role_ids.include?(role_id)
+                service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+              end
+            end
           end
         end
         
         # remove roles
         (@user_roles.keys-updated_roles_user_ids).each do |user_id|
           role_ids_to_remove = (@user_roles[user_id] || {})[:roles].collect{|role| role[:id]}
-          role_ids_to_remove.each{|role_id| service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil}
+          role_ids_to_remove.each do |role_id| 
+            if available_role_ids.include?(role_id)
+              service_user.revoke_project_user_role(@scoped_project_id, user_id, role_id) rescue nil
+            end
+          end
         end
         
         audit_logger.info(current_user, "has updated user role assignments for project #{@scoped_project_name} (#{@scoped_project_id})")

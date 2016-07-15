@@ -3,7 +3,7 @@
     - if true #current_user.is_allowed?("network:network_get", {})
       = link_to inquiry.kind, inquiry_path(id: inquiry.id), data: {modal: true}
   %td{:width => "500"}= inquiry.description
-  %td= inquiry.requester.full_name
+  %td= render_requestor_name(inquiry.requester)
   %td= inquiry.created_at.getlocal.strftime("%F %T")
   %td= inquiry.aasm.human_state
 

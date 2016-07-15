@@ -7,9 +7,7 @@
     %p
       = "Hello SAP Converged Cloud project administrator,"
 
-    %p
-      a request for a
-      = "#{@inquiry_step.inquiry.kind} needs your attention."
+    %p!= "a request from user <b>#{@requester_name}</b> for a #{@inquiry_step.inquiry.kind} needs your attention."
 
     %p
       %a(href="#{admin_inquiries_url(domain_id: "#{@inquiry_step.inquiry.domain_id}")}") Click here to enter the request processing.

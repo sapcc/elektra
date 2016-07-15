@@ -8,14 +8,18 @@ module Inquiry
       res = []
       users.each do |user|
         processor = Processor.find_or_create_by(uid: user.id)
-        if user.is_a? CurrentUserWrapper::CurrentUserWrapper # for current_user
-          if processor.email != user.email or processor.name != user.name or processor.full_name != user.full_name
-            processor.update_attributes({email: user.email, name: user.name, full_name: user.full_name})
+        begin
+          if user.is_a? CurrentUserWrapper::CurrentUserWrapper # for current_user
+            if processor.email != user.email or processor.name != user.name or processor.full_name != user.full_name
+              processor.update_attributes({email: user.email, name: user.name, full_name: user.full_name})
+            end
+          elsif user.respond_to?(:description)
+            if processor.email != user.email or processor.name != user.name or processor.full_name != user.description
+              processor.update_attributes({email: user.email, name: user.name, full_name: user.description})
+            end
           end
-        elsif user.respond_to?(:description)
-          if processor.email != user.email or processor.name != user.name or processor.full_name != user.description
-            processor.update_attributes({email: user.email, name: user.name, full_name: user.description})
-          end
+        rescue => e
+          Rails.logger.warn "Can't update processor attributes for user.id: #{user.id} " + e.message
         end
         res << processor
       end

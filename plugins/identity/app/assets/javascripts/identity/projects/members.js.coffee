@@ -8,13 +8,29 @@ formState= (form) ->
 multiselect=(elementsSelector) ->
   $(elementsSelector).multiselect({
     buttonText: (options, select) ->
+      # options are selected checkboxes in role select
+      # select is the form select.
       $tr = $(select).closest('tr')
+      # all available labels
+      availableLabels = []
+      $(select).find('option').each () -> availableLabels.push($(this).text())
+      console.log("availableLabels ", availableLabels)
+      
+      # selected labels
       labels = []
+      # add all selected options to labels
       options.each () -> labels.push($(this).text())
       $display = $(select).closest('tr').find('[data-roles-display]')
+      # current selected roles
       currentRoles = $display.data('roles-current')
 
-      valuesToRemove = currentRoles.filter (x) -> return labels.indexOf(x) < 0
+      # valuesToRemove = currentRoles - labels
+      valuesToRemove = currentRoles.filter (x) -> 
+        console.log(x, labels.indexOf(x),availableLabels.indexOf(x))
+        #return ((labels.indexOf(x) < 0) and !(availableLabels.indexOf(x) < 0))
+        
+        return (availableLabels.indexOf(x) >= 0) and (labels.indexOf(x) < 0)
+      # valuesToAdd = labels - currentRoles
       valuesToAdd = labels.filter (x) -> return currentRoles.indexOf(x) < 0
       
       newLabels = $(currentRoles).not(valuesToAdd).not(valuesToRemove).toArray()

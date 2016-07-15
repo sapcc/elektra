@@ -1,3 +1,4 @@
+# This class is used by ShowException middleware. See config/environments/production.rb 
 class ErrorsController < ActionController::Base
   layout 'errors'
 

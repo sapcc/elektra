@@ -41,8 +41,7 @@ module Monitoring
 
       def get_alarm(id)
         handle_response do
-          # TODO: remove options?
-          @fog.get_alarm(id,{}).body
+          @fog.get_alarm(id).body
         end
       end
 

@@ -12,7 +12,7 @@ module Dashboard
       entry = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Domain',nil,domain_fid_id_or_key)
       # no entry found -> create a new one
       unless entry
-        entry = FriendlyIdEntry.find_or_create_entry('Domain', nil, @service_user.domain_id, @service_user.domain_name)
+        entry = FriendlyIdEntry.find_or_create_entry('Domain', nil, @service_user.domain_id, @service_user.domain_name) if @service_user
       end
       entry
     end
@@ -24,7 +24,7 @@ module Dashboard
   
       # no entry found -> create a new one
       unless entry
-        project = @service_user.find_project_by_name_or_id(project_fid_or_key)
+        project = @service_user.find_project_by_name_or_id(project_fid_or_key) if @service_user
         # create friendly_id entry
         if project
           entry = FriendlyIdEntry.find_or_create_entry('Project', project.domain_id, project.id, project.name)

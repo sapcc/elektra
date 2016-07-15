@@ -162,10 +162,7 @@ module ResourceManagement
         return
       end
 
-      unless current_user.is_allowed?("resource_management:cloud_admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
-        render template: '/dashboard/not_authorized'
-        return
-      end
+      enforce_permissions("resource_management:cloud_admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
 
       # validate payload (these are all validations that I never expect to
       # fail, so I don't spend much time on presenting the errors)

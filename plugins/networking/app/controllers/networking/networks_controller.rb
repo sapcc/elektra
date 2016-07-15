@@ -22,9 +22,9 @@ module Networking
       if @network.save
         if params[:subnet]
           subnets_params = network_params.delete(:subnets)
-          @subnet = services.networking.new_subnet(subnets_params) 
+          @subnet = services.networking.new_subnet(subnets_params)
           @subnet.network_id = @network.id
-          
+
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save
             flash[:notice] = 'Network successfully created.'
@@ -34,13 +34,13 @@ module Networking
           else
             @network.destroy
             flash.now[:error] = @subnet.errors.full_messages.to_sentence
-            render action: :new 
+            render action: :new
           end
         else
           audit_logger.info(current_user, "has created", @network)
           redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
         end
-        
+
       else
         flash.now[:error] = @network.errors.full_messages.to_sentence
         render action: :new
@@ -71,7 +71,7 @@ module Networking
           audit_logger.info(current_user, "has deleted", @network)
           flash[:notice] = 'Network successfully deleted.'
         else
-          flash[:error] = network.errors.full_messages.to_sentence
+          flash[:error] = @network.errors.full_messages.to_sentence
         end
       end
 
