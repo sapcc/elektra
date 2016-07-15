@@ -132,6 +132,7 @@ class ApplicationController < ActionController::Base
         @current_domain_name = current_user.user_domain_name
         @new_domain_name = service_user.domain_name
 
+        @domain_switch = true
         # render domain switch view
         render template: 'application/domain_switch'
       end
