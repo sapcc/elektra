@@ -123,11 +123,11 @@ module Networking
       end
       
       def associate_floating_ip(floating_ip_id, port_id, options = {})
-        handle_response{@fog.associate_floating_ip(floating_ip_id, port_id, options)}
+        handle_response{@fog.associate_floating_ip(floating_ip_id, port_id, options).body['floatingip']}
       end
       
       def disassociate_floating_ip(floating_ip_id, options = {})
-        handle_response{@fog.disassociate_floating_ip(floating_ip_id, options)}
+        handle_response{@fog.disassociate_floating_ip(floating_ip_id, options).body['floatingip']}
       end
 
       ###################### SECURITY GROUPS #######################
