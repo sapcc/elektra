@@ -115,7 +115,6 @@ module Compute
               "OS-EXT-IPS:type" => "floating"
             }
             @instance.addresses[@instance.addresses.keys.first] = addresses
-            puts @instance.pretty_attributes
           }
         end
       else
@@ -147,8 +146,6 @@ module Compute
             end  
             @instance.addresses[@instance.addresses.keys.first] = addresses
           end
-          
-          puts @instance.pretty_attributes
         }
       end
     end
