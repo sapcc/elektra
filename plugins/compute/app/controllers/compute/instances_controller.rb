@@ -3,6 +3,8 @@ module Compute
     def index
       if @scoped_project_id
         @instances = services.compute.servers
+        
+        @instances.each{|i| puts i.pretty_attributes}
       end
     end
 
@@ -86,12 +88,37 @@ module Compute
     def attach_floatingip
       @instance_port = services.networking.ports(device_id: params[:id]).first
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
-      begin
-        services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
-        audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
-        redirect_to instances_url
+      
+      success = begin
+        @floating_ip = services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
+        if @floating_ip.port_id
+          true
+        else
+          false
+        end
       rescue => e
         @floating_ip.errors.add('message',e.message)
+        false
+      end
+      
+      if success
+        audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
+        
+        respond_to do |format|
+          format.html{redirect_to instances_url}
+          format.js{
+            @instance = services.compute.find_server(params[:id])
+            addresses = @instance.addresses[@instance.addresses.keys.first]
+            addresses ||= []
+            addresses << {
+              "addr" => @floating_ip.floating_ip_address,
+              "OS-EXT-IPS:type" => "floating"
+            }
+            @instance.addresses[@instance.addresses.keys.first] = addresses
+            puts @instance.pretty_attributes
+          }
+        end
+      else
         collect_available_ips
         render action: :new_floatingip
       end
@@ -100,11 +127,29 @@ module Compute
     def detach_floatingip
       begin
         floating_ips = services.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
-        services.networking.detach_floatingip(floating_ips.first.id)
-        redirect_to instances_url
+        @floating_ip = services.networking.detach_floatingip(floating_ips.first.id)
       rescue => e
         flash.now[:error] = "Could not detach Floating IP. Error: #{e.message}"
-        redirect_to instances_url
+      end
+      
+      respond_to do |format| 
+        format.html{
+          sleep(3)
+          redirect_to instances_url
+        }
+        format.js{
+          @instance = services.compute.find_server(params[:id])
+          if @floating_ip.port_id.nil?
+            @instance = services.compute.find_server(params[:id])
+            addresses = @instance.addresses[@instance.addresses.keys.first]
+            if addresses and addresses.is_a?(Array)
+              addresses.delete_if{|values| values["OS-EXT-IPS:type"]=="floating"}
+            end  
+            @instance.addresses[@instance.addresses.keys.first] = addresses
+          end
+          
+          puts @instance.pretty_attributes
+        }
       end
     end
 
