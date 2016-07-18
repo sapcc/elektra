@@ -68,6 +68,26 @@ module Identity
       @identity_url = current_user.service_url("identity")
     end
 
+    def download_openrc
+      @token = current_user.token
+      @webcli_endpoint = current_user.service_url("webcli")
+      @identity_url = current_user.service_url("identity")
+
+      out_data = "export OS_AUTH_URL=#{@identity_url}\n" \
+        "export OS_IDENTITY_API_VERSION=3\n" \
+        "export OS_PROJECT_NAME=\"#{@scoped_project_name}\"\n" \
+        "export OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
+        "export OS_USERNAME=#{current_user.name}\n" \
+        "export OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
+        "echo \"Please enter your OpenStack Password: \"\n" \
+        "read -sr OS_PASSWORD_INPUT\n" \
+        "export OS_PASSWORD=$OS_PASSWORD_INPUT\n" \
+        "export OS_REGION_NAME=#{current_region}\n" \
+
+      send_data( out_data, type:'text/plain', filename:"openrc-#{@scoped_domain_name}-#{@scoped_project_name}",dispostion:'inline',status: :ok )
+
+    end
+
     private
 
     def get_project_id
