@@ -42,6 +42,7 @@ module Core
       end
 
       def auth_user
+        authenticate if @auth_users[@current_domain].nil?
         @auth_users[@current_domain]
       end
 

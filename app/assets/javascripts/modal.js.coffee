@@ -78,8 +78,16 @@ class @MoModal
       url: $(anker).attr('href'),
       data: {modal: true, modal_transition: true},
       success: (data, textStatus, jqXHR) ->
+        $data = $(data)
+        $footer = $data.find('.modal-footer')
+        if $footer.length>0
+          # add back button to footer
+          $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>') 
+          $back.click () -> History.back()
+          $footer.prepend($back)
+
         $(modal_holder_selector).find(modal_selector).modal('hide')
-        $(modal_holder_selector).html(data).find(modal_selector).modal()
+        $(modal_holder_selector).html($data).find(modal_selector).modal()
         triggerUpdateEvent()
     return false  
   

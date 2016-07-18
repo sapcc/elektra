@@ -18,9 +18,9 @@
           - ip_values.each do |values|
             %p.list-group-item-text
               - if values["OS-EXT-IPS:type"]=='floating'
-                %i.fa.fa-globe
+                %i.fa.fa-globe.fa-fw
               - elsif values["OS-EXT-IPS:type"]=='fixed'
-                %i.fa.fa-desktop  
+                %i.fa.fa-desktop.fa-fw  
               = values["addr"]
               %span.info-text= values["OS-EXT-IPS:type"]
         

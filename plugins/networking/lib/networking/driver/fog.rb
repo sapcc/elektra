@@ -113,6 +113,10 @@ module Networking
         handle_response { @fog.list_floating_ips(filter).body['floatingips'] }
       end
       
+      def get_floating_ip(id)
+        handle_response{@fog.get_floating_ip(id).body['floatingip']}
+      end
+      
       def create_floating_ip(params)
         network_id = params.delete(:floating_network_id)
         handle_response{@fog.create_floating_ip(network_id, params).body['floatingip']}

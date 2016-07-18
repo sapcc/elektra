@@ -54,6 +54,9 @@ module ErrorRenderer
       end  
       
       logger.error(@error_id+": "+@title+". "+@description)
+      Raven::Rack.capture_exception(error, env)
+      
+      status = error.respond_to?(:status)? error.status: 503
       
       if request.xhr? && params[:polling_service]
         render "/application/errors/error_polling.js", format: "JS"
@@ -91,8 +94,12 @@ class ApplicationController < ActionController::Base
   # check if the requested domain is the same as that of the current user.
   before_filter :same_domain_check
   
-  # catch all errors and render error page
-  render_error_page_for [ { "StandardError" => { title: 'Backend Service Error' }} ]
+  # catch all api errors and render error page
+  render_error_page_for [ 
+    { "Excon::Error" => { title: 'Backend Service Error' }},
+    { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }},
+    { "Core::ServiceLayer::Errors::ApiError" => { title: 'Backend Service Error' }}
+  ]
 
   def modal?
     if @modal.nil?

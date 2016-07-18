@@ -1,10 +1,14 @@
 %tr{id: "floating_ip_#{floating_ip.id}"}
   %td
-    - if current_user.is_allowed?("networking:floating_ip_get", {})
-      = link_to floating_ip.floating_ip_address, plugin('networking').floating_ip_path(id: floating_ip.id), data: {modal: true}
+    %i.fa.fa-globe.fa-fw
+    = floating_ip.floating_ip_address
+  %td
+    - if floating_ip.fixed_ip_address.present? 
+      = link_to plugin('networking').floating_ip_path(floating_ip.id), data: {modal: true} do
+        %i.fa.fa-desktop.fa-fw
+        = floating_ip.fixed_ip_address
     - else
-      = floating_ip.floating_ip_address
-  %td= floating_ip.fixed_ip_address.present? ? floating_ip.fixed_ip_address : '-'
+      '-'
   %td= floating_ip.status
 
   %td.snug

@@ -15,7 +15,7 @@
           %th.snug
       %tbody
         - if @floating_ips.length==0
-          %tr{dta:{empty:true}}
+          %tr{data:{empty:true}}
             %td{colspa: 5} No Floating IP available
         - else
           - @floating_ips.each do | floating_ip |
