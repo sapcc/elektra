@@ -1,0 +1,33 @@
+= content_for :title do
+  Floating IP
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+%div{class: modal? ? 'modal-body' : ''}
+  %h4 Overview
+  %table.table
+    %tbody
+      %tr
+        %th Floating IP Adress
+        %td= @floating_ip.floating_ip_address
+      %tr
+        %th Fixed IP Address
+        %td= @floating_ip.fixed_ip_address   
+      %tr
+        %th Owner
+        %td
+          - if @port.owner_type==Networking::Port::DEVICE_OWNER_INSTANCE
+            = link_to @port.owner_type.capitalize, plugin('compute').instance_path(id: @port.device_id), data: { modal_transition: true  }
+          - else
+            = @port.owner_type.capitalize
+      %tr
+        %th Network
+        %td= link_to @network.name, plugin('networking').networks_external_path(id:@network.id), data: { modal_transition: true  } 
+
+%div.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Close
+  - else
+    = link_to 'Back', plugin('networking').floating_ips_path, class: 'btn btn-default'

@@ -52,6 +52,10 @@ module ServiceLayer
     def ports(filter={})
       driver.map_to(Networking::Port).ports(filter)
     end
+    
+    def find_port(id)
+      driver.map_to(Networking::Port).get_port(id)
+    end
 
     def project_floating_ips(project_id,filter={})
       result = []
@@ -73,6 +77,10 @@ module ServiceLayer
     
     def new_floating_ip(params={})
       Networking::FloatingIp.new(driver,params)
+    end
+    
+    def find_floating_ip(id)
+      driver.map_to(Networking::FloatingIp).get_floating_ip(id)
     end
     
     def delete_floating_ip(floating_ip_id)

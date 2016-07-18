@@ -4,7 +4,7 @@ module Compute
       if @scoped_project_id
         @instances = services.compute.servers
         
-        @instances.each{|i| puts i.pretty_attributes}
+        #@instances.each{|i| puts i.pretty_attributes}
       end
     end
 
@@ -138,7 +138,7 @@ module Compute
         }
         format.js{
           @instance = services.compute.find_server(params[:id])
-          if @floating_ip.port_id.nil?
+          if @floating_ip and @floating_ip.port_id.nil?
             @instance = services.compute.find_server(params[:id])
             addresses = @instance.addresses[@instance.addresses.keys.first]
             if addresses and addresses.is_a?(Array)

@@ -4,7 +4,7 @@
   %button.close{type:'button', data: {dismiss: 'alert'}, "aria-label" => "Close"}
     %span{'aria-hidden' => 'true'}
       &times;
-  = description.html_safe if description
+  = h(description) if description
 
   - unless details.nil?
     %p

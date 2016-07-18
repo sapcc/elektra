@@ -17,6 +17,9 @@ module Services
   
   # try to find a region based on catalog and default region
   def current_region
-    ::Core.locate_region((service_user rescue nil), Rails.configuration.default_region)
+    unless @services_current_region
+      su = service_user rescue nil
+      @services_current_region = ::Core.locate_region(su, Rails.configuration.default_region)
+    end
   end
 end

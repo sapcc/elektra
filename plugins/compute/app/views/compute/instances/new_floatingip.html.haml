@@ -1,21 +1,33 @@
 = content_for :title do
   Attach Floating IP
 
-= simple_form_for @floating_ip, url: plugin('compute').attach_floatingip_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+- if @available_ips.length>0  
+  = simple_form_for @floating_ip, url: plugin('compute').attach_floatingip_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
+    %div{class: modal? ? 'modal-body' : ''}
+      - if @floating_ip.errors.present?
+        %p.alert.alert-error
+          = @floating_ip.errors.full_messages.to_sentence + '.'
+
+      = f.input :ip_id,
+        as: :select,
+        collection: @available_ips.collect{|fip| ["#{fip.floating_ip_address} (#{@networks[fip.floating_network_id].try(:name)})",fip.id] }
+
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      - else
+        = link_to "Cancel", instances_url(), class: 'btn btn-default'
+      = button_tag "Attach", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+    
+- else
   %div{class: modal? ? 'modal-body' : ''}
-    - if @floating_ip.errors.present?
-      %p.alert.alert-error
-        = @floating_ip.errors.full_messages.to_sentence + '.'
-
-    = f.input :ip_id,
-      as: :select,
-      collection: @available_ips.collect{|fip| ["#{fip.floating_ip_address} (#{@networks[fip.floating_network_id].try(:name)})",fip.id] }
-
+    %p There is no floating IP available. Please allocate a new IP. 
+    = link_to 'Allocate IP', plugin('networking').new_floating_ip_path, data: {modal: true}      
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
-      = link_to "Cancel", instances_url(), class: 'btn btn-default'
-    = button_tag "Attach", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'  

@@ -4,6 +4,12 @@ module Networking
       @floating_ips = services.networking.project_floating_ips(@scoped_project_id)
     end
     
+    def show
+      @floating_ip = services.networking.find_floating_ip(params[:id])
+      @port = services.networking.find_port(@floating_ip.port_id)
+      @network = services.networking.network(@floating_ip.floating_network_id)
+    end
+    
     def new
       @floating_networks = services.networking.networks('router:external' => true)
       @floating_ip = Networking::FloatingIp.new(nil)

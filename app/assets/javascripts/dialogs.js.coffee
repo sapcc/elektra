@@ -147,7 +147,8 @@ class @InfoDialog
     
   # class method  
   @showError: (message) ->
-    InfoDialog.show("Error", message, {dialogSize: 'lg'})
+    error_wrapper = '<div class="bs-callout bs-callout-danger"><h3>Error</h3><p>'+message+'</p></div>'      
+    InfoDialog.show("Application Error", error_wrapper, {dialogSize: 'lg'})
     
   # class method  
   @showNotice: (message) ->
