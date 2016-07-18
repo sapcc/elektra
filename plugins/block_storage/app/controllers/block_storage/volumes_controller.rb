@@ -26,12 +26,13 @@ module BlockStorage
     def new
       @volume = services.block_storage_.new_volume
       @availability_zones = services.compute.availability_zones
+
     end
 
     # POST /volumes
     def create
       @volume = services.block_storage.new_volume
-      @volume.attributes=params[@volume.model_name.param_key]
+      @volume.attributes = params[@volume.model_name.param_key].delete_if{ |key,value| value.blank?} # delete blank attributes from hash. If they are passed as empty strings the API doesn't recognize them as blank and throws a fit ...
 
       if @volume.save
         if @volume.snapshot_id.blank?
