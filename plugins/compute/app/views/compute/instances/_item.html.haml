@@ -44,8 +44,8 @@
         - unless instance.os_ext_sts_task_state
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-              %li= link_to 'Console', console_instance_path(id: instance.id), data: { modal: true}
-                
+              %li= link_to 'Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
+                          
             - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               - if instance.floating_ips.length>0
                 %li= link_to 'Detach Floating IP', plugin('compute').detach_floatingip_instance_path(id: instance.id, floating_ip: instance.floating_ips.first["addr"]), method: :delete, data: { confirm: 'Are you sure you want to detach floating?', ok: "Yes, detach it", confirmed: :loading_status}, remote: true
@@ -58,6 +58,8 @@
               - if instance.power_state==Compute::Server::RUNNING
                 %li.divider
                 %li= link_to 'Stop', plugin('compute').stop_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to stop this instance?', ok: "Yes, stop it", confirmed: :loading_status}, remote: true  
+                
+                %li= link_to 'Reboot', plugin('compute').reboot_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to reboot this instance?', ok: "Yes, reboot it", confirmed: :loading_status}, remote: true  
 
                 %li= link_to 'Pause', plugin('compute').pause_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to pause this instance?', ok: "Yes, stop it", confirmed: :loading_status }, remote: true  
 
