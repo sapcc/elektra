@@ -15,7 +15,7 @@ module ResourceManagement
     def initialize(service_name, name, options={})
       @name          = name.to_sym
       @service_name  = service_name.to_sym
-      @data_type     = Core::DataType.new(options.fetch(:data_type, :number))
+      @data_type     = Core::DataType.new(options.fetch(:data_type, :number), options[:data_sub_type])
     end
 
     def service
@@ -24,25 +24,33 @@ module ResourceManagement
 
     def self.all
       @all ||= [
-        new(:compute,        :cores          ),
-        new(:compute,        :instances      ),
-        new(:compute,        :ram,            data_type: :bytes),
-        new(:networking,     :floating_ips   ),
-        new(:networking,     :networks       ),
-        new(:networking,     :subnets        ),
-        # new(:networking,     :subnet_pools   ),
-        new(:networking,     :ports          ),
-        new(:networking,     :routers        ),
-        new(:networking,     :security_groups),
-        new(:networking,     :security_group_rules),
-        new(:networking,     :rbac_policies  ),
-        new(:block_storage,  :capacity,       data_type: :bytes),
-        new(:block_storage,  :snapshots      ),
-        new(:block_storage,  :volumes        ),
-        new(:object_storage, :capacity,       data_type: :bytes),
+        new(:compute,        :cores                     ),
+        new(:compute,        :instances                 ),
+        new(:compute,        :ram,                         data_type: :bytes, data_sub_type: :mega),
+        # new(:compute,        :key_pairs                 ),
+        # new(:compute,        :metadata_items            ),
+        # new(:compute,        :server_groups             ),
+        # new(:compute,        :server_group_members      ),
+        # new(:compute,        :injected_files            ),
+        # new(:compute,        :injected_file_content_bytes, data_type: :bytes),
+        # new(:compute,        :injected_file_path_bytes,    data_type: :bytes),
+        # new(:compute,        :fixed_ips                 ),
+        new(:networking,     :floating_ips              ),
+        new(:networking,     :networks                  ),
+        new(:networking,     :subnets                   ),
+        # new(:networking,     :subnet_pools              ),
+        new(:networking,     :ports                     ),
+        new(:networking,     :routers                   ),
+        new(:networking,     :security_groups           ),
+        new(:networking,     :security_group_rules      ),
+        new(:networking,     :rbac_policies             ),
+        new(:block_storage,  :capacity,                    data_type: :bytes),
+        new(:block_storage,  :snapshots                 ),
+        new(:block_storage,  :volumes                   ),
+        new(:object_storage, :capacity,                    data_type: :bytes),
         # :mock_service can be enabled with ResourceManagement::ServiceConfig.mock!
-        new(:mock_service,   :things         ),
-        new(:mock_service,   :capacity,       data_type: :bytes),
+        new(:mock_service,   :things                    ),
+        new(:mock_service,   :capacity,                    data_type: :bytes),
       ]
 
       # only show resources for enabled services
