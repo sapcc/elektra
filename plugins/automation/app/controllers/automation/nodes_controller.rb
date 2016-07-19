@@ -23,8 +23,6 @@ module Automation
     end
 
     def install
-      raise RubyArcClient::ApiError.new('{"id":"83e940c4-7199-407f-8985-3cae72237ef1","status":"Unauthorized","code":401,"title":"Not authorized.","detail":"Authorization: Identity status invalid. Invalid is not Confirmed","source":{"pointer":"(GET) /api/v1/agents?q=\u0026page=0\u0026per_page=0\u0026facts=","parameter":"map[]"}}')
-
       begin
         @compute_instances = services.compute.servers
       rescue => exception
