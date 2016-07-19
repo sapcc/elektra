@@ -1,0 +1,26 @@
+!!!
+%html
+  %head
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    %meta(name="viewport" content="width=device-width, initial-scale=1")
+
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    %title= "Console for #{@instance.name} (#{@instance.id})"
+
+    = favicon_png
+    = favicon_ico
+    = apple_touch_icon
+
+    = csrf_meta_tags
+    
+    :css
+      html, body {
+        height: 100%;
+        width: 100%;
+      }
+  %body
+    .btn-group{role: "group", aria: {label: "..."}}
+      = link_to 'Close', 'javascript: window.close();', class: 'btn btn-default'
+      = link_to 'Reload', 'javascript:location.reload();', class: 'btn btn-default'
+    .console{style: 'position: relative; height: 100%; width: 100%;'}
+      = yield

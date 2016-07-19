@@ -9,7 +9,12 @@ module Compute
     end
 
     def console
+      @instance = services.compute.find_server(params[:id])
       @console = services.compute.vnc_console(params[:id])
+      respond_to do |format|
+        format.html{ render action: :console, layout: 'compute/console'}
+        format.json{ render json: { url: @console.url }}
+      end
     end
 
     def show
@@ -200,6 +205,7 @@ module Compute
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
         if @instance.send(action)
+          audit_logger.info(current_user, "has triggered action", action, "on", @instance)
           sleep(2)
           @instance = services.compute.find_server(instance_id) rescue nil
 
@@ -207,7 +213,6 @@ module Compute
           @instance.task_state ||= task_state(@target_state) if @instance
         end
       end
-      audit_logger.info(current_user, "has executed action", action, "on", @instance)
       
       render template: 'compute/instances/update_item.js'
       #redirect_to instances_url
