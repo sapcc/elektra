@@ -2,6 +2,8 @@
   %td
     - if current_user.is_allowed?("networking:network_get", network: network.attributes)
       = link_to network.name, plugin('networking').send("networks_#{@network_type}_path", network.id), data: {modal: true}
+    - else
+      = network.name
 
   %td
     - network.subnet_objects.each do |subnet|
