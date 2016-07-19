@@ -161,3 +161,63 @@ Adding gem dependencies with native extensions
 The dashboard Docker image does not contain the build chain for compiling ruby extensions. Gems which contain native extensions need to be pre-build and packaged as alpine packages (apk).
 
 Building alpine packages and publishing to an internal repository is easy and documented here: https://localhost/monsoon/alpine-packages
+
+
+Audit Log
+---------
+Each controller which inherits from DashboardController provides access to audit log via audit_logger. This logger uses internally the Rails logger and thus the existing log infrastructure.
+
+### How to use Audit Logger
+
+```ruby
+audit_logger.info(“user D064310 has deleted project 54353454353455435345") 
+# => [AUDIT LOG] user D064310 has deleted project 54353454353455435345
+```
+
+```ruby
+audit_logger.info(current_user, "has deleted project", @project_id)  
+# => [AUDIT LOG] CurrentUserWrapper D064310 (7ebe1bbd17b36c685389c29bd861d8c337d70a2f56022f80b71a5a13852e6f96) has deleted project AndreasPfau (adac5c36277b4346bbd631811af533f3)
+```
+```ruby
+audit_logger.info(user: “D064310”, has: “deleted”, project: "54353454353455435345") 
+# => [AUDIT LOG] user D064310 has deleted project 54353454353455435345
+```
+```ruby
+audit_logger.info(“user D064310”, “has deleted”, “project 54353454353455435345") 
+# => [AUDIT LOG] user D064310 has deleted project 54353454353455435345
+```
+
+### Available Methods
+* audit_logger.info
+* audit_logger.warn
+* audit_logger.error
+* audit_logger.debug
+* audit_logger.fatal
+
+
+Catch Errors in Controller
+---------------
+
+The Elektra ApplicationController provides a class method which allows to catch errors and render well designed error page. 
+
+```ruby
+render_error_page_for [ 
+  { "Excon::Error" => { title: 'Backend Service Error', description: 'Api Error', details: -> e {e.backtrace.join("\n")}}},
+  { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }},
+  "Core::ServiceLayer::Errors::ApiError"
+]
+```  
+
+Errors that are caught in this way, are rendered within the application layout so that the navigation remains visible. For example if a service is unavailable the user gets to see an error but she still can naviagte to other services.
+
+### How to use
+
+render_error_page_for accepts an array of hashes and/or strings. For the case you want to overwrite rendered attributes you should provide a hash with a mapping. 
+
+Available attributes:
+* title (error title)
+* description (error message)
+* details (some details like backtrace)
+* error_id (default is request uuid)
+
+
