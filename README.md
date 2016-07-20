@@ -6,7 +6,7 @@ A new service based Converged Cloud dashboard.
 
 Prerequisites
 -------------
-1. OpenStack Dev setup
+1. OpenStack Dev setup 
 2. installed postgres database
 
 
