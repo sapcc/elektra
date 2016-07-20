@@ -42,19 +42,19 @@
         %tbody
           %tr
             %th Flavor
-            %td= @instance.flavor.name
+            %td= @instance.flavor_object.name
           %tr
             %th Flavor ID
-            %td= @instance.flavor.id
+            %td= @instance.flavor_object.id
           %tr
             %th RAM
-            %td= "#{@instance.flavor.ram}MB"
+            %td= "#{@instance.flavor_object.ram}MB"
           %tr
             %th VCPUs
-            %td= "#{@instance.flavor.vcpus} VCPU"
+            %td= "#{@instance.flavor_object.vcpus} VCPU"
           %tr
             %th Disk
-            %td= "#{@instance.flavor.disk}GB"
+            %td= "#{@instance.flavor_object.disk}GB"
       
     .tab-pane{role:"tabpanel", id:"ip_addresses"}  
       %table.table.datatable
@@ -93,7 +93,7 @@
         %tbody 
           %tr
             %th Image Name
-            %td= @instance.image.name  
+            %td= @instance.image_object.name  
           - @instance.metadata.attributes.each do |k,v| 
             %tr
               %th= k
