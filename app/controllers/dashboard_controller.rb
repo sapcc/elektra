@@ -12,10 +12,10 @@ class DashboardController < ::ScopeController
 
                             # if the new scope domain which user has logged in differs from the scope in requested url
                             # then redirect user to home page of the new domain.
-                            p ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-                            p "requested_url: #{requested_url}"
-                            p "!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/)}"
-                            p "!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/)}"
+                            #p ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
+                            #p "requested_url: #{requested_url}"
+                            #p "!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/)}"
+                            #p "!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/)}"
                             
                             if requested_url.blank? or (!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(requested_url=~/^[^\?]*#{current_user.user_domain_id}/))
                               "/#{current_user.user_domain_id}/identity/home"
@@ -43,12 +43,15 @@ class DashboardController < ::ScopeController
 
 
   # token is expired or was revoked -> redirect to login page
-  rescue_from "Identity::InvalidToken", "MonsoonOpenstackAuth::Authentication::NotAuthorized" do
-    redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
-  end
+  # rescue_from "Identity::InvalidToken" do #, "MonsoonOpenstackAuth::Authentication::NotAuthorized" do
+  #   redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
+  # end
 
   # catch all mentioned errors and render error page
-  render_error_page_for [ {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied'}} ]
+  render_error_page_for [ 
+    {"MonsoonOpenstackAuth::Authentication::NotAuthorized" => {title: 'Not Authorized', description: "You do not have permission for the requested scope!", sentry: false}},
+    {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied', sentry: false}} 
+  ]
 
   def rescope_token
     if @scoped_project_id.nil? and service_user.role_assignments("user.id" => current_user.id, "scope.domain.id" => @scoped_domain_id, "effective" => true).empty?

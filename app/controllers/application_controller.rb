@@ -54,8 +54,8 @@ module ErrorRenderer
       end  
       
       logger.error(@error_id+": "+@title+". "+@description)
-      Raven::Rack.capture_exception(error, env)
-      
+      Raven::Rack.capture_exception(error, env) unless map[:sentry]==false
+
       status = error.respond_to?(:status)? error.status: 503
       
       if request.xhr? && params[:polling_service]

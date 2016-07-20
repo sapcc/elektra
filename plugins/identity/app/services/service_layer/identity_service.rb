@@ -13,10 +13,6 @@ module ServiceLayer
                                                 project_id: self.project_id
                                             })
       @driver
-      # catch token expired errors
-    rescue Excon::Errors::Unauthorized, Excon::Errors::NotFound => e
-      # and raise InvalidToken error
-      raise Identity::InvalidToken.new(e)
     end
 
     def available?(action_name_sym=nil)
