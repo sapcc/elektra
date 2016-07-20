@@ -1,5 +1,5 @@
 # encoding: UTF-8
-source 'http://localhost:8080/rubygemsorg/'
+source 'https://rubygems.org'
 source 'https://localhost/' do
   gem 'ruby-arc-client', '~> 0.7.0'
 end
