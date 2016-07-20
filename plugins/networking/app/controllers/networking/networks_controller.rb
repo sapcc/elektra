@@ -17,11 +17,12 @@ module Networking
     end
 
     def create
-      @network = services.networking.new_network(params[:network])
+      network_params = params[:network]
+      subnets_params = network_params.delete(:subnets)
+      @network = services.networking.new_network(network_params)
 
       if @network.save
-        if params[:subnet]
-          subnets_params = network_params.delete(:subnets)
+        if subnets_params.present?
           @subnet = services.networking.new_subnet(subnets_params)
           @subnet.network_id = @network.id
 
