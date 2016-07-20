@@ -1,9 +1,9 @@
 module Identity
   class ProjectsController < ::DashboardController
 
+    before_filter :project_id_required, except: [:index, :create, :new]    
     before_filter :get_project_id,  except: [:index, :create, :new]
     before_filter do
-      raise "Unknown Project" if params[:project_id].blank?
       @scoped_project_fid = params[:project_id] || @project_id
     end
 
