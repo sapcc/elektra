@@ -3,6 +3,11 @@ module Networking
     
     def index
       @routers = services.networking.routers(tenant_id:@scoped_project_id)
+      
+      usage = @routers.length
+      @quota_data = services.resource_management.quota_data([
+        {service_name: 'networking', resource_name: 'routers', usage: usage}
+      ])
     end
 
     def topology
@@ -51,6 +56,10 @@ module Networking
     end
 
     def new
+      @quota_data = services.resource_management.quota_data([
+        {service_name: 'networking', resource_name: 'routers'}
+      ])
+      
       # build new router object (no api call done yet!)
       @router = services.networking.new_router("admin_state_up" => true)      
       

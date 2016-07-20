@@ -34,7 +34,7 @@ module ServiceLayer
           resource.save
         end
       
-        result << resource #ResourceManagement::QuotaData.new(name: resource.name, total: resource.current_quota, used: resource.usage)
+        result << ResourceManagement::QuotaData.new(name: resource.name, total: resource.current_quota, usage: resource.usage, unit: values[:unit])
       end
       result
     end

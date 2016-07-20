@@ -221,3 +221,28 @@ Available attributes:
 * error_id (default is request uuid)
 
 
+Display Quota Data
+------------------
+
+If the @quota_data is set the view will display all data inside this variable.
+
+### How to set @quota_data
+
+This will load quota data from data base and update the usage attribute.
+```ruby
+@quota_data = services.resource_management.quota_data([
+  {service_name: 'compute', resource_name: 'instances', usage: @instances.length},
+  {service_name: 'compute', resource_name: 'cores', usage: cores},
+  {service_name: 'compute', resource_name: 'ram', usage: ram}
+])
+``` 
+
+Same example but without updating the usage attribute. It just loads the values from database. Note that the data in database are not always up to date.
+
+```ruby
+@quota_data = services.resource_management.quota_data([
+  {service_name: 'compute', resource_name: 'instances'},
+  {service_name: 'compute', resource_name: 'cores'},
+  {service_name: 'compute', resource_name: 'ram'}
+])
+``` 
