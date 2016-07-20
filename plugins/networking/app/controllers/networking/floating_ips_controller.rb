@@ -2,6 +2,10 @@ module Networking
   class FloatingIpsController < DashboardController
     def index
       @floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+
+      @quota_data = services.resource_management.quota_data([
+        {service_name: 'networking', resource_name: 'floating_ips', usage: @floating_ips.length}
+      ])
     end
     
     def show

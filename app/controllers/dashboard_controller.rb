@@ -12,6 +12,11 @@ class DashboardController < ::ScopeController
 
                             # if the new scope domain which user has logged in differs from the scope in requested url
                             # then redirect user to home page of the new domain.
+                            p ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
+                            p "requested_url: #{requested_url}"
+                            p "!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/)}"
+                            p "!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/)}"
+                            
                             if requested_url.blank? or (!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(requested_url=~/^[^\?]*#{current_user.user_domain_id}/))
                               "/#{current_user.user_domain_id}/identity/home"
                             else

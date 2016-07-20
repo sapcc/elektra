@@ -3,6 +3,12 @@ module Networking
     before_filter :load_type
     def index
       @networks = services.networking.networks('router:external' => @network_type == 'external')
+      
+      # all networks but shared
+      usage = @networks.select{|n| n.shared==false}.length
+      @quota_data = services.resource_management.quota_data([
+        {service_name: 'networking', resource_name: 'networks', usage: usage}
+      ])
     end
 
     def show

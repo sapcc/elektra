@@ -18,7 +18,7 @@ module Compute
         @quota_data = services.resource_management.quota_data([
           {service_name: 'compute', resource_name: 'instances', usage: @instances.length},
           {service_name: 'compute', resource_name: 'cores', usage: cores},
-          {service_name: 'compute', resource_name: 'ram', usage: ram}
+          {service_name: 'compute', resource_name: 'ram', usage: ram, unit: 'mb'}
         ])
         
         #@instances.each{|i| puts i.pretty_attributes}
@@ -43,7 +43,7 @@ module Compute
       @quota_data = services.resource_management.quota_data([
         {service_name: 'compute', resource_name: 'instances'},
         {service_name: 'compute', resource_name: 'cores'},
-        {service_name: 'compute', resource_name: 'ram'}
+        {service_name: 'compute', resource_name: 'ram', unit: :mb}
       ])
       
       @instance = services.compute.new_server

@@ -7,8 +7,6 @@
       = link_to plugin('networking').floating_ip_path(floating_ip.id), data: {modal: true} do
         %i.fa.fa-desktop.fa-fw
         = floating_ip.fixed_ip_address
-    - else
-      '-'
   %td= floating_ip.status
 
   %td.snug
