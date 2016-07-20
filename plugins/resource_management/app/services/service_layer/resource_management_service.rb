@@ -9,6 +9,37 @@ module ServiceLayer
       )
     end
 
+    def quota_data(options=[])
+      result = []
+      
+      return result if options.empty?
+      
+      domain_id = current_user.domain_id || current_user.project_domain_id
+      project_id = current_user.project_id
+      
+      options.each do |values| 
+        service_name,resource_name,usage=nil
+      
+        resource = ResourceManagement::Resource.where({
+          domain_id: domain_id, 
+          project_id: project_id, 
+          service: values[:service_name], 
+          name: values[:resource_name]
+        }).first
+        
+        next if resource.nil?
+        
+        if values[:usage] and values[:usage].is_a?(Fixnum) and resource.usage!=values[:usage] 
+          resource.usage=values[:usage]
+          resource.save
+        end
+      
+        result << resource #ResourceManagement::QuotaData.new(name: resource.name, total: resource.current_quota, used: resource.usage)
+      end
+      result
+    end
+    
+    
     # This is used in the unit test to replace services.identity by a mock.
     def services_identity
       @services_identity || services.identity

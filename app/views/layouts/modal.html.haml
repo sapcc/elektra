@@ -11,6 +11,11 @@
           - else
             = "#{action_name.capitalize} #{controller.controller_name.singularize.humanize}"
 
+        - if @quota_data and @quota_data.length>0
+          .info-text
+            %i.monitoring-icon
+            = "Quota: #{@quota_data.collect{|resource| "#{resource.current_quota-resource.usage} #{resource.name}"}.join(', ')}"
+            
       = yield
       
 = yield :javascripts      

@@ -25,8 +25,8 @@
               %span.info-text= values["OS-EXT-IPS:type"]
         
   
-  %td= services.compute.image(instance.image.id).name rescue nil           
-  %td= services.compute.flavor(instance.flavor.id).name rescue nil   
+  %td= instance.image_object.name
+  %td= instance.flavor_object.name
   %td= instance.power_state_string
   %td
     = instance.task_state.nil? ? instance.status.capitalize : instance.task_state

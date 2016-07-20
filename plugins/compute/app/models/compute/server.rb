@@ -108,12 +108,34 @@ module Compute
       all_floating.empty? ? manual : all_floating
     end
     
-    def flavor
-      attribute_to_object("flavor",Compute::Flavor)
+    def flavor_object
+      return nil if @flavor_object==false
+      
+      if @flavor_object.nil?
+        flavor_id = self.flavor.nil? ? nil : self.flavor["id"]
+        if flavor_id
+          @flavor_object = @driver.map_to(Compute::Flavor).get_flavor(flavor_id) rescue false
+        else
+          @flavor_object = false
+        end
+      end
+      
+      return @flavor_object || nil
     end
     
-    def image
-      attribute_to_object("image",Compute::Image)
+    def image_object
+      return nil if @image_object==false
+      
+      if @image_object.nil?
+        image_id = self.image.nil? ? nil : self.image["id"]
+        if image_id
+          @image_object = @driver.map_to(Compute::Image).get_image(image_id) rescue false
+        else
+          @image_object = false
+        end
+      end
+      
+      return @image_object || nil
     end
     
     def metadata

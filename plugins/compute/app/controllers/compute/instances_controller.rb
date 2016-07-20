@@ -3,6 +3,23 @@ module Compute
     def index
       if @scoped_project_id
         @instances = services.compute.servers
+      
+        # get/calculate quota data
+        cores = 0
+        ram = 0
+        @instances.each do |i|
+          flavor = i.flavor_object
+          if flavor
+            cores += flavor.vcpus.to_i
+            ram += flavor.ram.to_i
+          end
+        end
+      
+        @quota_data = services.resource_management.quota_data([
+          {service_name: 'compute', resource_name: 'instances', usage: @instances.length},
+          {service_name: 'compute', resource_name: 'cores', usage: cores},
+          {service_name: 'compute', resource_name: 'ram', usage: ram}
+        ])
         
         #@instances.each{|i| puts i.pretty_attributes}
       end
@@ -22,6 +39,13 @@ module Compute
     end
     
     def new
+      # get usage from db
+      @quota_data = services.resource_management.quota_data([
+        {service_name: 'compute', resource_name: 'instances'},
+        {service_name: 'compute', resource_name: 'cores'},
+        {service_name: 'compute', resource_name: 'ram'}
+      ])
+      
       @instance = services.compute.new_server
 
       @flavors            = services.compute.flavors
@@ -45,7 +69,7 @@ module Compute
       @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
       @instance.keypair_id = @keypairs.first['name'] unless @keypairs.blank?
 
-      @instance.max_count = 1
+      @instance.max_count = 1            
     end
 
 
