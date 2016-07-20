@@ -49,8 +49,15 @@ class DashboardController < ::ScopeController
 
   # catch all mentioned errors and render error page
   render_error_page_for [ 
-    {"MonsoonOpenstackAuth::Authentication::NotAuthorized" => {title: 'Not Authorized', description: "You do not have permission for the requested scope!", sentry: false}},
-    {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied', sentry: false}} 
+    {
+      "MonsoonOpenstackAuth::Authentication::NotAuthorized" => {
+        title: 'Not Authorized', 
+        description: "You do not have permission for the requested scope!", 
+        sentry: false
+      }
+    },
+    {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied', sentry: false}},
+    {"Core::Error::ProjectNotFound" => {title: 'Project Not Found'}}
   ]
 
   def rescope_token
@@ -176,6 +183,9 @@ class DashboardController < ::ScopeController
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
     ActionMailer::Base.default_url_options[:protocol] = request.protocol
   end
-
+  
+  def project_id_required
+    raise Core::Error::ProjectNotFound.new("The project that you have requested was not found.") if params[:project_id].blank?
+  end
 
 end
