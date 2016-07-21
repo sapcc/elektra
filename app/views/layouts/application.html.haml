@@ -41,6 +41,7 @@
     .container
       .content{class: "#{plugin_name if plugin_name}"}
         = render "application/flashes"
+        = "current_region: #{current_region}"
         = yield
 
     %footer.footer
