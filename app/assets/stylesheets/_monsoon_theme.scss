@@ -220,6 +220,12 @@ section {
 
 .info-text {
   @include opacity(0.45);
+
+
+  &.info-clickable:hover {
+    @include opacity(1);
+  }
+
 }
 
 .info-box {
