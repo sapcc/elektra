@@ -337,6 +337,12 @@ section {
   @extend .fa-cloud;
 }
 
+.cloud-admin-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-magic;
+}
+
 .compute-icon {
   @extend .icon-monsoon;
   @extend .icon-monsoon-cloud;
