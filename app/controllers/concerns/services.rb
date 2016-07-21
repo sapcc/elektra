@@ -10,16 +10,13 @@ module Services
     # initialize services unless already initialized
     @services ||= Core::ServiceLayer::ServicesManager.new(region)  
     # update current_user
-    @services.service_user = service_user rescue nil
+    @services.service_user = service_user
     @services.current_user = current_user 
     @services
   end
   
   # try to find a region based on catalog and default region
   def current_region
-    unless @services_current_region
-      su = service_user rescue nil
-      @services_current_region = ::Core.locate_region(su, Rails.configuration.default_region)
-    end
+    @services_current_region ||= ::Core.locate_region(service_user, Rails.configuration.default_region)
   end
 end
