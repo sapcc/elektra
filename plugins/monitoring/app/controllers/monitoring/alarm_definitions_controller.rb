@@ -66,7 +66,6 @@ module Monitoring
       back_to_alarm_definition_list
     end
 
-
     def destroy 
        @alarm_definition.destroy
        back_to_alarm_definition_list

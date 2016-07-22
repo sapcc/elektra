@@ -15,11 +15,18 @@ module ServiceLayer
       not current_user.service_url('sapcc-billing', region: region).nil?
     end
 
-    ##### project metadata
+    ##### project masterdata
 
-    def find_project_metadata(project_id)
+    def find_project_masterdata(project_id)
       return nil if project_id.blank?
-      driver.map_to(CostControl::ProjectMetadata).get_project_metadata(project_id)
+      driver.map_to(CostControl::ProjectMasterdata).get_project_masterdata(project_id)
+    end
+
+    ##### domain masterdata
+
+    def find_domain_masterdata(domain_id)
+      return nil if domain_id.blank?
+      driver.map_to(CostControl::DomainMasterdata).get_domain_masterdata(domain_id)
     end
 
   end

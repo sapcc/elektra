@@ -1,0 +1,29 @@
+=content_for :main_toolbar do
+  Cost Control
+
+
+.row
+  .col-md-3
+    .infobox
+      %h4
+        - if current_user.is_allowed?('cost_control:cost_object_edit')
+          = link_to 'Edit', plugin('cost_control').edit_cost_object_path, class: 'btn btn-default btn-xs pull-right', data: { modal: true }
+        Cost object
+      %table.table
+        %tr
+          %th.snug-nowrap Type:
+          %td= @masterdata.readable_cost_object_type.presence || content_tag('div', 'Not set', class: 'text-danger')
+        %tr
+          %th.snug-nowrap ID:
+          %td= @masterdata.cost_object_id.presence || content_tag('div', 'Not set', class: 'text-danger')
+        %tr
+          %th.snug-nowrap responsibleController:
+          %td= @masterdata.readable_cost_object_responsibleController.presence || content_tag('div', 'Not set', class: 'text-danger')
+
+  - if @masterdata.cost_object_type.blank? or @masterdata.cost_object_id.blank?
+    .col-md-9.alert.alert-error
+      No cost object has been maintained for this domain yet.
+      - if current_user.is_allowed?('cost_control:cost_object_edit')
+        Please do so now.
+      - else
+        Please ask your domain admin to take care of this.
