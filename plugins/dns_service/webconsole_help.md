@@ -1,14 +1,13 @@
 ### Available Clients
-  * designate
+  * openstack
 
 ### Quick Help
-[OpenStack designate command line tool](http://docs.openstack.org/developer/python-designateclient)
 
-`designate help`
+`openstack help zone`
 
-`designate help <command>`
+`openstack help recordset`
 
 ### Most Used Commands
-`designate record-list <domain_id> `
+`openstack zone list`
 
-`designate record-create <domain_id> `
+`openstack recordset create --type A --records <ip> <zone_name_or_id> <record_name>`
