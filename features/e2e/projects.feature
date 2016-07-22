@@ -50,7 +50,7 @@ Feature: Projects
   @admin
   Scenario: Manage Groups
     When I visit domain path "identity/home"
-    Then I see "Manage Groups" button
+    Then I see "Group Management" button
     When I click on "Manage Groups"
     Then the page status code is successful
     And  I see "Groups"
