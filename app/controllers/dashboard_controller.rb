@@ -41,14 +41,18 @@ class DashboardController < ::ScopeController
   before_filter :load_user_projects, except: [:terms_of_use]
   before_filter :set_mailer_host
 
-
-  # token is expired or was revoked -> redirect to login page
-  # rescue_from "Identity::InvalidToken" do #, "MonsoonOpenstackAuth::Authentication::NotAuthorized" do
-  #   redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
-  # end
+  # even if token is not expired yet we get sometimes the error "token not found"
+  # so we try to catch this error here and redirect user to login screen
+  rescue_from "Excon::Error::NotFound" do |error|
+    if error.message.match(/Could not find token/i)
+      redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
+    else
+      render_error_page(error,{title: 'Backend Service Error'})
+    end
+  end
 
   # catch all mentioned errors and render error page
-  render_error_page_for [ 
+  rescue_and_render_error_page [ 
     {
       "MonsoonOpenstackAuth::Authentication::NotAuthorized" => {
         title: 'Not Authorized', 

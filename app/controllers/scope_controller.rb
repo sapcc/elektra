@@ -62,7 +62,7 @@ class ScopeController < ::ApplicationController
     # p "@scoped_project_fid: #{@scoped_project_fid}"
   end
   
-  render_error_page_for [
+  rescue_and_render_error_page [
     {
       "Core::Error::ServiceUserNotAuthenticated" => {
         title: "Unsupported Domain",
