@@ -1,46 +1,29 @@
+# This module adds two methods for error handling.
+# With rescue_and_render_error_page it is possible to catch 
+# errors and display a well designed error page. 
+# The render_error_page method implements the displaying of an error. 
 module ErrorRenderer
-  # This method is used in controllers to catch errors and render error page.
-  # It differentiates between html, modal, js and polling errors. 
-  # Request vom Polling service which end up in error will display Flash-Errors.
-  # GET-Requests for modal content will show errors inside modal window.
-  # JS-POST requests (e.g.: remote: true) will display error dialog. 
-  def render_error_page_for(*error_classes)
-    error_classes = error_classes.first if error_classes.first.is_a?(Array)
-    error_mapping = {}
-    klasses = []
-    
-    error_classes.each do |error_class| 
-      if error_class.is_a?(Hash)
-        error_mapping[error_class.keys.first.to_s]=error_class.values.first
-        klasses << error_class.keys.first.to_s
-      else
-        klasses << error_class
-      end
-    end
-        
-    rescue_from *klasses do |error|
-      map = error_mapping[error.class.name]
-      unless map
-        klass = nil
-        error_mapping.each do |class_name,mapping| 
-          found_class = eval(class_name)
-          next if klass and found_class > klass
-
-          if found_class>error.class
-            map = mapping 
-          end
-        end
-        map ||= {}
-      end
-      
+  # add instance and class methods after this module was included or extended.
+  def self.included(base)
+    base.send("extend",ClassMethods)
+    base.send("include", InstanceMethods)
+  end
+  def self.extended(base)
+    base.send("extend",ClassMethods)
+    base.send("include", InstanceMethods)
+  end
+  
+  # instance methods
+  module InstanceMethods
+    def render_error_page(error,map={})
       value = lambda do |param|
         v = map[param.to_sym] || map[param.to_s]
         return nil if v.nil?    
         return error.send(v).to_s if v.kind_of?(Symbol)
-        return v.call(error).to_s if v.kind_of?(Proc)
+        return v.call(error,self).to_s if v.kind_of?(Proc)
         return v.to_s
       end
-      
+    
       begin
         @title = value.call(:title) || error.class.name.split('::').last.humanize
         @description = value.call(:description) || (error.message rescue error.to_s)
@@ -52,12 +35,13 @@ module ErrorRenderer
         @details = e.class.name+"\n"+(e.backtrace rescue '').join("\n")
         @error_id = request.uuid
       end  
+    
       
       logger.error(@error_id+": "+@title+". "+@description)
       Raven::Rack.capture_exception(error, env) unless map[:sentry]==false
 
       status = error.respond_to?(:status)? error.status: 503
-      
+    
       if request.xhr? && params[:polling_service]
         render "/application/errors/error_polling.js", format: "JS"
       else
@@ -65,6 +49,47 @@ module ErrorRenderer
           format.html { render '/application/errors/error.html' }
           format.js { render "/application/errors/error.js" }
         end
+      end
+    end
+  end
+  
+  # class methods
+  module ClassMethods
+    # This method is used in controllers to catch errors and render error page.
+    # It differentiates between html, modal, js and polling errors. 
+    # Request vom Polling service which end up in error will display Flash-Errors.
+    # GET-Requests for modal content will show errors inside modal window.
+    # JS-POST requests (e.g.: remote: true) will display error dialog. 
+    def rescue_and_render_error_page(*error_classes)
+      error_classes = error_classes.first if error_classes.first.is_a?(Array)
+      error_mapping = {}
+      klasses = []
+    
+      error_classes.each do |error_class| 
+        if error_class.is_a?(Hash)
+          error_mapping[error_class.keys.first.to_s]=error_class.values.first
+          klasses << error_class.keys.first.to_s
+        else
+          klasses << error_class
+        end
+      end
+      
+      rescue_from *klasses do |error|
+        map = error_mapping[error.class.name]
+        unless map
+          klass = nil
+          error_mapping.each do |class_name,mapping| 
+            found_class = eval(class_name)
+            next if klass and found_class > klass
+
+            if found_class>error.class
+              map = mapping 
+            end
+          end
+          map ||= {}
+        end
+        
+        render_error_page(error,map)
       end
     end
   end
@@ -95,7 +120,7 @@ class ApplicationController < ActionController::Base
   before_filter :same_domain_check
   
   # catch all api errors and render error page
-  render_error_page_for [ 
+  rescue_and_render_error_page [ 
     { "Excon::Error" => { title: 'Backend Service Error' }},
     { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }},
     { "Core::ServiceLayer::Errors::ApiError" => { title: 'Backend Service Error' }}
