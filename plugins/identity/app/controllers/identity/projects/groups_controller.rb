@@ -11,10 +11,6 @@ module Identity
       def create
         enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
 
-        @group = nil if params[:group_name].blank?
-        @group = service_user.groups(domain_id: @scoped_domain_id,name:params[:group_name]).first rescue nil unless @group
-        @group = service_user.find_group(params[:group_name]) rescue nil unless @group
-
         load_role_assignments
         @groups = service_user.groups(domain_id: @scoped_domain_id)
         @group = @groups.select{|group| group.name==params[:group_name] || group.id==params[:group_name]}.first rescue nil
