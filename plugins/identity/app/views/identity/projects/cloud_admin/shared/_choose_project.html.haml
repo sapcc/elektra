@@ -1,0 +1,21 @@
+= form_tag url_for(params), method: :get, class: '' do 
+  .form-group.string.col-sm-12.well
+    %label.string.required.col-sm-2.control-label
+      %abbr{title: "required"}*
+      Project ID
+    
+    .col-sm-5
+      .input-wrapper
+        %input.string.required.form-control#pid{name:"pid", value:params[:pid]}
+      %p.help-block
+        %i.fa.fa-info-circle
+        Please provide an id of project you want to change role assignments.
+    .col-sm-2
+      = submit_tag 'Change Project', class: 'btn btn-primary'    
+    
+    .col-sm-3    
+      - if @project or @domain
+        = "Domain: #{@domain.name}" if @domain
+        %br
+        = "Project: #{@project.name}" if @project
+

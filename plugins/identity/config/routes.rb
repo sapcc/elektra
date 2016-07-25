@@ -38,8 +38,6 @@ Identity::Engine.routes.draw do
       post 'request_project' => 'request_wizard#create'
     end
 
-
-
     resources :members, only: [:index, :new, :create] do
       put '/' => 'members#update', on: :collection
     end
@@ -48,8 +46,18 @@ Identity::Engine.routes.draw do
       put '/' => 'groups#update', on: :collection
       get 'members' => 'groups#members', as: :members
     end
+    
+    # global role assignments (cloud admin)
+    namespace :cloud_admin do
+      resources :project_members, only: [:index, :new, :create] do
+        put '/' => 'project_members#update', on: :collection
+      end
+      resources :project_groups, only: [:index, :new, :create] do
+        put '/' => 'project_groups#update', on: :collection
+      end
+    end
   end
-
+  
   get 'project/home' => 'projects#show', as: :project
   get 'project/edit' => 'projects#edit', as: :edit_project
   put 'project' => 'projects#update', as: :update_project

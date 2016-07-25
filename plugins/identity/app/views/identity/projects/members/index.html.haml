@@ -12,21 +12,7 @@
     - if current_user.is_allowed?('identity:project_member_create',{})
       .toolbar= link_to 'New Project Member', plugin('identity').new_projects_member_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-    %table.table#project_members
-      %thead
-        %tr
-          %th User
-          %th Roles
-          %th Actions
-
-      %tbody
-        - if @user_roles.blank?
-          %tr
-            %td{colspan: 3} No members assigned to this project. 
-        - else    
-          - can_update = current_user.is_allowed?('identity:project_member_update')
-          - @user_roles.each do |user_id, values|
-            = render partial: 'member', locals: {user_id: user_id, user_name: values[:name], roles: @roles, user_roles: values[:roles], can_update: can_update}
+    = render partial: 'identity/projects/members/member_list', locals: {user_roles: @user_roles, roles: @roles}
                     
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
