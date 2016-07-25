@@ -48,10 +48,10 @@ Feature: Projects
     And  I see "Requests for processing"
 
   @admin
-  Scenario: Manage Groups
+  Scenario: Group Management
     When I visit domain path "identity/home"
     Then I see "Group Management" button
-    When I click on "Manage Groups"
+    When I click on "Group Management"
     Then the page status code is successful
     And  I see "Groups"
 
