@@ -14,7 +14,7 @@ module ResourceManagement
 
       respond_to do |format|
         format.html
-        format.js # update only status bars 
+        format.js # update only status bars
       end
     end
 
@@ -37,7 +37,7 @@ module ResourceManagement
     def update_capacity
       @capacity = ResourceManagement::Capacity.find(params[:id])
 
-      if @capacity.update(params.require(:capacity).permit(:value))
+      if @capacity.update(params.require(:capacity).permit(:value, :comment))
         render 'resource_management/cloud_admin/update_capacity.js'
       else
         @has_errors = true
@@ -114,7 +114,7 @@ module ResourceManagement
       end
     end
 
-    def details 
+    def details
       @show_all_button = true if params[:overview] == 'true'
 
       @service  = params.require(:service).to_sym
