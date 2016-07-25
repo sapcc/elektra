@@ -106,10 +106,18 @@ class DashboardController < ::ScopeController
   def find_users_by_name
     name = params[:name] || params[:term] || ""
     users = UserProfile.search_by_name name
-    users.collect! {|u| {id: u.uid, name: u.name, full_name: u.full_name, email: u.email } }
+    
+    # sample users uniq
+    result = {}
+    users.each do |u| 
+      unless result[u.name]
+        result[u.name] = {id: u.uid, name: u.name, full_name: u.full_name, email: u.email }
+      end 
+    end
+
     respond_to do |format|
-      format.html { render :json => users }
-      format.json { render :json => users }
+      format.html { render :json => result.values }
+      format.json { render :json => result.values }
     end
   end
 

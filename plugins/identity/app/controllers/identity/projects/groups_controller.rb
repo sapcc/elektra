@@ -5,17 +5,15 @@ module Identity
 
       def new
         enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
+        @groups = service_user.groups(domain_id: @scoped_domain_id)
       end
 
       def create
         enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
-        @group = params[:group_name].blank? ? nil : begin
-          service_user.groups(domain_id: @scoped_domain_id,name:params[:group_name]).first
-        rescue
-          service_user.find_group(params[:group_name]) rescue nil
-        end
 
         load_role_assignments
+        @groups = service_user.groups(domain_id: @scoped_domain_id)
+        @group = @groups.select{|group| group.name==params[:group_name] || group.id==params[:group_name]}.first rescue nil
 
         if @group.nil? or @group.id.nil?
           @error = "Group not found."
@@ -32,7 +30,11 @@ module Identity
       end
 
       def members
-        @members = service_user.group_members(params[:group_id])
+        @members = begin 
+          service_user.group_members(params[:group_id])
+        rescue 
+          services.identity.group_members(params[:group_id])
+        end
       end
 
       def index

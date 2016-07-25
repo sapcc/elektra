@@ -110,6 +110,14 @@ module ServiceLayer
     def revoke_project_user_role(project_id, user_id, role_id)
       driver.revoke_project_user_role(project_id, user_id, role_id)
     end
+    
+    def grant_project_group_role(project_id, group_id, role_id)
+      driver.grant_project_group_role(project_id, group_id, role_id)
+    end
+
+    def revoke_project_group_role(project_id, group_id, role_id)
+      driver.revoke_project_group_role(project_id, group_id, role_id)
+    end
 
     ##################### CREDENTIALS #########################
     def new_credential(attributes={})
@@ -187,6 +195,7 @@ module ServiceLayer
     def revoke_domain_user_role(domain_id, user_id, role_id)
       driver.revoke_domain_user_role(domain_id, user_id, role_id)
     end
+    
 
     ###################### TOKENS ###########################
     def validate_token(token)
