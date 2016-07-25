@@ -61,9 +61,9 @@ module ApplicationHelper
     return "#{mb.round(2)}MB" if gb < 1
     tb = gb/1024
     return "#{gb.round(2)}GB" if tb < 1
-    return "#{tb.round(2)}TB"  
+    return "#{tb.round(2)}TB"
   end
-  
+
   # ---------------------------------------------------------------------------------------------------
   # Errors Helper
   # ---------------------------------------------------------------------------------------------------
@@ -235,7 +235,8 @@ module ApplicationHelper
   end
 
   def selected_service_name
-    name = active_navigation_item_name(context: :services, :level => :all)
+    context = current_user.is_allowed?('cloud_admin') ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
+    name = active_navigation_item_name(context: context, :level => :all)
     if name.blank?
       name = "Services"
     end
@@ -260,7 +261,8 @@ module ApplicationHelper
   end
 
   def active_service_breadcrumb
-    active_service = active_navigation_item_name(context: :services, :level => :all)
+    context = current_user.is_allowed?('cloud_admin') ? :cloud_admin : :services # this might be a bit ugly. But since we have two separate navs for general services and cloud admin services we have to somehow specify the correct context
+    active_service = active_navigation_item_name(context: context, :level => :all)
     crumb = "Home" # Default case, only visible on domain home page
     if active_service.blank?
       crumb = "Project Overview" unless @active_project.blank? # no service selected, if project is available this is the project home page -> print project name

@@ -18,9 +18,6 @@
                 %i.monitoring-icon
                 = link_to "Quota: #{@quota_data.collect{|qd| qd.display_string}.join(', ')}", plugin('resource_management').resources_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
 
-              / %i.monitoring-icon
-              / = link_to "Quota: 7 floating IPs", plugin('resource_management').resources_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
-              / = link_to "Quota: 7 floating IPs", plugin('resource_management').resources_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
 
       .page-title
         %i.fa.fa-angle-right
