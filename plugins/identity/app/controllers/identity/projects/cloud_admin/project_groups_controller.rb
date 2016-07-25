@@ -24,9 +24,7 @@ module Identity
 
           load_role_assignments(@project.id)
           @groups = services.identity.groups(domain_id: @domain.id)
-        
-          p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-          p @group
+
           if @group.nil? or @group.id.nil?
             @error = "Group not found."
             render action: :new
