@@ -24,7 +24,10 @@
             %i{class: selected_category_icon}
             = selected_service_name
             %span.caret
-          = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
+          - if current_user.is_allowed?('cloud_admin')
+            = render_navigation(context: :cloud_admin, expand_all: true, renderer: :fancy_list)
+          - else
+            = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
 
     .special-crumb
       - if services.available?(:webconsole) and plugin_name!='webconsole' and plugin_name!='loadbalancing'
@@ -32,5 +35,3 @@
           %span.fa-stack
             %i.fa.fa-square.fa-stack-2x
             %i.fa.fa-terminal.fa-stack-1x.fa-inverse
-    
-

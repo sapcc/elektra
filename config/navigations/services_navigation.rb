@@ -57,13 +57,6 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-  primary.item :ccadmin, 'Cloud Administration', nil, html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon"}, if: -> {current_user and current_user.is_allowed?('cloud_admin')} do |ccadmin_nav|
-    ccadmin_nav.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path
-    ccadmin_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').cloud_admin_path}, if: -> { services.available?(:resource_management,:resources) }
-    ccadmin_nav.item :project_members, 'Project Members', -> {plugin('identity').projects_cloud_admin_project_members_path}, if: -> { services.available?(:identity) }
-    ccadmin_nav.item :project_groups, 'Project Groups', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
-  end
-
   primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "compute-icon"},
     if: -> {services.available?(:compute,:instances) or services.available?(:image,:os_images) or plugin_available?(:block_storage)} do |compute_nav|
       compute_nav.item :instances, 'Servers', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }, highlights_on: Proc.new { params[:controller][/compute\/instances/] }
