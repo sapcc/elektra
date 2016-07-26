@@ -1,6 +1,6 @@
 .row
   .col-md-9
-    - if current_user.is_allowed?('cloud_admin')
+    - if current_user && current_user.is_allowed?('cloud_admin')
       = render_navigation(context: :cloud_admin, expand_all: true, renderer: :fancy_list)
     - else
       = render_navigation(context: :services, expand_all: true, renderer: :fancy_list)
