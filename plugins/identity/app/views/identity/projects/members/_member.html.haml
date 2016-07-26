@@ -4,7 +4,11 @@
 - class_name += 'danger' if local_assigns.has_key?(:new_member)
 
 %tr.table{class: class_name}
-  %td.snug= user_name
+  %td.snug
+    = user_name
+    %br
+    = user_description	
+
   %td{data: {roles_display: true, roles_current: user_roles.collect{|r| r[:name]} }}
   %td.snug
     = select_tag("role_assignments[#{user_id}]",options_for_select(roles.collect{|r| [r.name, r.id] }, user_roles.collect{|r| r[:id]}), {multiple: true, data: {roles_select: true}, disabled: !can_update})

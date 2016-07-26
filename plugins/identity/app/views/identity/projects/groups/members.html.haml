@@ -12,8 +12,11 @@
       %th ID
     - @members.each do |user|
       %tr
-        %td= user.name
-        %td= user.id      
+        %td
+          = user.name
+          %br
+          = user.description	
+        %td= user.id
 
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
