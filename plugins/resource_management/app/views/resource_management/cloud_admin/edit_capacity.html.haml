@@ -15,7 +15,11 @@
         - previous_value = params[:capacity] ? params[:capacity][:value] : nil
         = f.input :value, label: 'Available capacity', as: :string, input_html: { value: previous_value || @capacity.data_type.format(@capacity.value) }
       %p.help-block
-        In some cases, capacity values can be measured by an appropriate tool. In other cases, it comes down to counting the hardware that's there. Use your own judgment.
+        In some cases, capacity values can be measured by an appropriate tool.
+        In other cases, it comes down to counting the hardware that's there.
+        Use your own judgment. You can add a comment explaining why you chose this value below.
+
+        = f.input :comment
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
