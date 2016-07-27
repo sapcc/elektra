@@ -97,7 +97,10 @@ module Identity
           project_id = (ra.scope || {}).fetch("project",{}).fetch("id",nil)
           # ignore group role assignments and other projects
           if user_id and project_id==@scoped_project_id
-            hash[user_id] ||= {role_ids: [], roles:[], name: ra.user.fetch("name",'unknown'), description: ra.user.fetch("description",'')}
+            user_name = ra.user.fetch("name",'unknown')
+            user_profile = UserProfile.search_by_name(user_name).first # try to get full name from user profile stored in Elektra db
+            user_description = user_profile.blank? ? '' : user_profile.full_name
+            hash[user_id] ||= {role_ids: [], roles:[], name: user_name, description: user_description}
             hash[user_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
           end
           hash

@@ -4,10 +4,10 @@
 - class_name += 'danger' if local_assigns.has_key?(:new_member)
 
 %tr.table{class: class_name}
-  %td.snug
+  %td.user-name-cell
     = user_name
     %br
-    = user_description	
+    = user_description
 
   %td{data: {roles_display: true, roles_current: user_roles.collect{|r| r[:name]} }}
   %td.snug
