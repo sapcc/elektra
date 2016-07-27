@@ -97,6 +97,27 @@ module ServiceLayer
       result
     end
 
+
+    def new_security_group(attributes={})
+      Networking::SecurityGroup.new(driver,attributes)
+    end
+        
+    def find_security_group(id)
+      driver.map_to(Networking::SecurityGroup).get_security_group(id)
+    end
+    
+    def security_group_rules(options={})
+      driver.map_to(Networking::SecurityGroupRule).list_security_group_rules(options)
+    end
+
+    def find_security_group_rule(security_group_rule_id)
+      driver.map_to(Networking::SecurityGroupRule).get_security_group_rule(security_group_rule_id)
+    end
+    
+    def new_security_group_rule(attributes={})
+      Networking::SecurityGroupRule.new(driver,attributes)
+    end
+
     ####################### ROUTERS #############################
     def routers(filter={})
       driver.map_to(Networking::Router).routers(filter)

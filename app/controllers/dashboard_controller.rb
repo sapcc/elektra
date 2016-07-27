@@ -50,6 +50,10 @@ class DashboardController < ::ScopeController
       render_error_page(error,{title: 'Backend Service Error'})
     end
   end
+  
+  rescue_from "Excon::Error::Unauthorized" do 
+    redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
+  end
 
   # catch all mentioned errors and render error page
   rescue_and_render_error_page [ 
