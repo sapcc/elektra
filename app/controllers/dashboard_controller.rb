@@ -16,7 +16,7 @@ class DashboardController < ::ScopeController
                             #p "requested_url: #{requested_url}"
                             #p "!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/)}"
                             #p "!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/)}"
-                            
+
                             if requested_url.blank? or (!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(requested_url=~/^[^\?]*#{current_user.user_domain_id}/))
                               "/#{current_user.user_domain_id}/identity/home"
                             else
@@ -50,17 +50,17 @@ class DashboardController < ::ScopeController
       render_error_page(error,{title: 'Backend Service Error'})
     end
   end
-  
-  rescue_from "Excon::Error::Unauthorized" do 
+
+  rescue_from "Excon::Error::Unauthorized" do
     redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
   end
 
   # catch all mentioned errors and render error page
-  rescue_and_render_error_page [ 
+  rescue_and_render_error_page [
     {
       "MonsoonOpenstackAuth::Authentication::NotAuthorized" => {
-        title: 'Not Authorized', 
-        description: "You do not have permission for the requested scope!", 
+        title: 'Not Authorized',
+        description: "You do not have permission for the requested scope!",
         sentry: false
       }
     },
@@ -110,13 +110,13 @@ class DashboardController < ::ScopeController
   def find_users_by_name
     name = params[:name] || params[:term] || ""
     users = UserProfile.search_by_name name
-    
+
     # sample users uniq
     result = {}
-    users.each do |u| 
+    users.each do |u|
       unless result[u.name]
         result[u.name] = {id: u.uid, name: u.name, full_name: u.full_name, email: u.email }
-      end 
+      end
     end
 
     respond_to do |format|
@@ -199,9 +199,9 @@ class DashboardController < ::ScopeController
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
     ActionMailer::Base.default_url_options[:protocol] = request.protocol
   end
-  
+
   def project_id_required
-    raise Core::Error::ProjectNotFound.new("The project that you have requested was not found.") if params[:project_id].blank?
+    raise Core::Error::ProjectNotFound.new("The project you have requested was not found.") if params[:project_id].blank?
   end
 
 end

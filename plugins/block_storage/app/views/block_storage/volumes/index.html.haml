@@ -1,5 +1,5 @@
 
-=render partial: 'tabs', locals: { tab: 'volumes' }
+=render partial: 'compute/shared/tabs'
 
 - if @scoped_project_id
   - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id} })
