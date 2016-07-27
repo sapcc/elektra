@@ -1,13 +1,13 @@
 %tr{id: "security_group_#{security_group.id}"}
   %td
     - if current_user.is_allowed?("networking:security_group_get", {})
-      = link_to security_group.name, plugin('networking').security_group_path(id: security_group.id), data: {modal: true}
+      = link_to security_group.name, plugin('networking').security_group_path(id: security_group.id)
     - else
       = security_group.name
   %td= security_group.description
 
   %td.snug
-    - if current_user.is_allowed?("networking:security_group_delete", {})
+    - if current_user.is_allowed?("networking:security_group_delete", {}) and security_group.name!='default'
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog
@@ -21,7 +21,4 @@
                 ok: "Yes, delete it",
                 confirmed: :loading_status},
               remote: true
-          - if current_user.is_allowed?("networking:security_group_update", {})
-            %li= link_to 'Edit',
-              plugin('networking').edit_security_group_path(id: security_group.id),
-              data: {modal: true}
+

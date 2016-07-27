@@ -1,6 +1,8 @@
 Networking::Engine.routes.draw do
   resources :floating_ips
-  resources :security_groups
+  resources :security_groups, except:[:edit,:update] do
+    resources :rules, module: :security_groups
+  end
 
   resources :routers do
     get 'topology'

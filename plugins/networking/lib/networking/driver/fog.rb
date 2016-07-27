@@ -138,6 +138,37 @@ module Networking
       def security_groups(filter = {})
         handle_response { @fog.list_security_groups(filter).body['security_groups'] }
       end
+      
+      def get_security_group(id)
+        handle_response { @fog.get_security_group(id).body['security_group'] }
+      end
+      
+      def create_security_group(attributes={})
+        handle_response { @fog.create_security_group(attributes).body['security_group']}
+      end
+
+      
+      def delete_security_group(security_group_id)
+        handle_response { @fog.delete_security_group(security_group_id)}
+      end
+      
+      def list_security_group_rules(options = {})
+        handle_response { @fog.list_security_group_rules(options).body['security_group_rules'] }
+      end
+      
+      def get_security_group_rule(security_group_rule_id)
+        handle_response { @fog.get_security_group_rule(security_group_rule_id).body['security_group_rule'] }
+      end
+      
+      def create_security_group_rule(options = {})
+        security_group_id = options.delete(:security_group_id)
+        direction = options.delete(:direction)
+        handle_response { @fog.create_security_group_rule(security_group_id, direction, options).body['security_group_rule']}
+      end
+      
+      def delete_security_group_rule(security_group_rule_id)
+        handle_response { @fog.delete_security_group_rule(security_group_rule_id) }
+      end
 
       ###################### ROUTERS ####################
       def routers(filter={})

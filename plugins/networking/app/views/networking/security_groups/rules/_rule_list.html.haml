@@ -1,0 +1,13 @@
+- if current_user.is_allowed?('networking:security_group_create')
+  .toolbar.toolbar-aligntop= link_to 'Add New Rule', plugin('networking').new_security_group_rule_path(@security_group.id), data: {modal: true}, class: 'btn btn-primary btn-sm' 
+   
+%table.table#group_members
+  %tr
+    %th Direction
+    %th Ether Type 
+    %th IP Protocol
+    %th Port Range
+    %th Remote Source
+    %th
+  - rules.each do |rule|
+    = render partial: 'networking/security_groups/rules/rule', locals: {rule: rule, security_group: @security_group}            
