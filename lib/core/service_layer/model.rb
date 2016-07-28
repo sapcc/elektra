@@ -244,11 +244,12 @@ module Core
         if error.respond_to?(:response_data)
           return read_error_messages(error.response_data)
         else
-          [e.message]
+          [error.message]
         end
       end
       
       def read_error_messages(hash,messages=[])
+        return [ hash.to_s ] unless hash.respond_to?(:each)
         hash.each do |k,v|
           messages << v if k=='message'
           read_error_messages(v,messages) if v.is_a?(Hash)
