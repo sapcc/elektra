@@ -51,19 +51,12 @@ class DashboardController < ::ScopeController
     end
   end
 
-  rescue_from "Excon::Error::Unauthorized" do
+  rescue_from "Excon::Error::Unauthorized","MonsoonOpenstackAuth::Authentication::NotAuthorized" do
     redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
   end
 
   # catch all mentioned errors and render error page
   rescue_and_render_error_page [
-    {
-      "MonsoonOpenstackAuth::Authentication::NotAuthorized" => {
-        title: 'Not Authorized',
-        description: "You do not have permission for the requested scope!",
-        sentry: false
-      }
-    },
     {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied', sentry: false}},
     {"Core::Error::ProjectNotFound" => {title: 'Project Not Found'}}
   ]

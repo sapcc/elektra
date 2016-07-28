@@ -146,9 +146,19 @@ class @InfoDialog
     $dialog.modal()
     
   # class method  
-  @showError: (message) ->
-    error_wrapper = '<div class="bs-callout bs-callout-danger"><h3>Error</h3><p>'+message+'</p></div>'      
+  @showError: (message, details=null) ->
+    error_wrapper = '<div class="bs-callout bs-callout-danger">'      
+    error_wrapper += '<h3>Error</h3><p>'+message+'</p>'  
+      
+    if details
+      error_wrapper += '<p><a href="#", data-toggle="show-error-details">Show error details <i class="fa fa-caret-down"></i></a></p>'
+      error_wrapper += '<div class="scrollable-text error-details-area hide">'+details+'</div>'
+    
+    error_wrapper += '</div>'
+        
     InfoDialog.show("Application Error", error_wrapper, {dialogSize: 'lg'})
+    if details
+      setTimeout(init_error_details,500)
     
   # class method  
   @showNotice: (message) ->

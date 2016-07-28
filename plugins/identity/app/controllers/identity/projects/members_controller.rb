@@ -4,6 +4,7 @@ module Identity
       before_filter :load_roles, except: [:new]
 
       def new
+        raise "Error"
         enforce_permissions("identity:project_member_create",{domain_id: @scoped_domain_id})
       end
 
