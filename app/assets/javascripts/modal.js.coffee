@@ -18,9 +18,10 @@ class @MoModal
     $(document).on 'click', '[data-modal-transition]', -> MoModal.replace(this)
     $(document).on 'ajax:beforeSend',modal_holder_selector+' form[data-inline!="true"]', (event, xhr, settings) -> settings.data += "&modal=true"
     $(document).on 'ajax:success', modal_holder_selector+' form[data-inline!="true"]', handleAjaxSuccess
+    $(document).on 'ajax:error', modal_holder_selector+' form[data-inline!="true"]', (event,jqXHR, textStatus, errorThrown) -> showError(jqXHR, textStatus, errorThrown)
 
   @close= () -> $('#modal-holder').find('.modal').modal('hide')
-
+  
   @load= (anker)->
     if jQuery.type(anker) == "string"
       location = anker
@@ -40,14 +41,7 @@ class @MoModal
 
     modal_is_loading = true
     $.get(location, {modal:true})
-      .error ( jqXHR, textStatus, errorThrown) -> 
-        # console.log 'Loading error'
-        InfoDialog.hideLoading()
-        # restore url -> remove ?overflow=...
-        window.restoreOriginStateUrl()
-        # show error dialog
-        InfoDialog.showError(errorThrown)
-        
+      .error showError
       .done (data, status, xhr)->
         # console.log 'done'
         #$button.removeClass('loading')
@@ -77,6 +71,7 @@ class @MoModal
       dataType: 'html',
       url: $(anker).attr('href'),
       data: {modal: true, modal_transition: true},
+      error: showError, 
       success: (data, textStatus, jqXHR) ->
         $data = $(data)
         $footer = $data.find('.modal-footer')
@@ -91,6 +86,24 @@ class @MoModal
         triggerUpdateEvent()
     return false  
   
+  showError= (jqXHR, textStatus, errorThrown) ->
+    console.log("jqXHR",jqXHR)
+    console.log("textStatus",textStatus)
+    console.log("errorThrown",errorThrown)
+    # console.log 'Loading error'
+    InfoDialog.hideLoading()
+    # restore url -> remove ?overflow=...
+    window.restoreOriginStateUrl()
+    # show error dialog
+    try
+      errorMessage = jqXHR.statusText+' ('+jqXHR.status+')'
+      details = jqXHR.responseText
+    catch e
+      errorMessage = errorThrown
+      details = null
+        
+    InfoDialog.showError(errorMessage,details)
+    
   triggerUpdateEvent= -> 
     $modalHolder = $(modal_holder_selector)
     target = {id: $modalHolder.prop('id'), class: $modalHolder.prop('class')}
