@@ -244,7 +244,7 @@ module Core
         if error.respond_to?(:response_data)
           return read_error_messages(error.response_data)
         else
-          [e.message]
+          [error.message]
         end
       end
       
