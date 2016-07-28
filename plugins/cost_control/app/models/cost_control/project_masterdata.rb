@@ -14,8 +14,8 @@ module CostControl
       'WBS' => 'WBS element',
     }
 
-    validates_presence_of :cost_object_type, :cost_object_id, :unless => :cost_object_inherited
-    validates_presence_of :cost_object_inherited, :unless => :cost_object_id
+    validates_presence_of :cost_object_type, :cost_object_id, unless: :cost_object_inherited
+    validates_presence_of :cost_object_inherited, unless: :cost_object_id
     # TODO: validate cost_object_id
 
     def readable_cost_object_type
