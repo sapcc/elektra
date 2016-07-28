@@ -27,8 +27,12 @@ When /^I click on "(.*?)"$/ do |button|
   click_on(button)
 end
 
-Then(/^I see a "(.*?)" button$/) do |button_text|
+Then(/^I see a "(.*?)" (button|link)$/) do |button_text,l|
   expect(page).to have_selector('a', text: button_text)
+end
+
+Then(/^I don't see a "(.*?)" (button|link)$/) do |button_text,l|
+  expect(page).not_to have_selector('a', text: button_text)
 end
 
 #
