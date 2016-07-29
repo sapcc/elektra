@@ -19,6 +19,11 @@ Identity::Engine.routes.draw do
         put 'change_password'
       end
     end
+    
+    resources :users, only: [:index, :show] do
+      put 'enable' => 'users#enable'
+      put 'disable' => 'users#disable'
+    end
   end
 
   resources :projects, only: [:index] do

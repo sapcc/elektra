@@ -1,0 +1,26 @@
+= content_for :main_toolbar do
+  Users
+
+.toolbar
+  .row
+    .col-sm-5
+      .has-feedback
+        = text_field_tag 'filter_users', '', class: "form-control", placeholder: 'User name, description or ID'
+        %i.glyphicon.glyphicon-search.form-control-feedback
+    
+%table.table#users.searchable{data: {search_input: '#filter_users'}}
+  %thead
+    %tr
+      %th Name/ID
+      %th Description
+      %th Status
+      %th 
+
+  %tbody
+    - if @users.empty?
+      %tr{data: {empty:true}}
+        %td{colspan: 3} No users. 
+    -else  
+      - @users.each do |user|
+        - next if user.name.start_with?('t_')
+        = render partial: 'user', locals: {user: user}

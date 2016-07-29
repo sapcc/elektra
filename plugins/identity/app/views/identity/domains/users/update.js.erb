@@ -1,0 +1,2 @@
+var html="<%= escape_javascript(render(partial: 'user', locals: {user: @user, class_name: 'search-result'})) %>";
+$("table#users tr#user_<%=@user.id%>").replaceWith(html);

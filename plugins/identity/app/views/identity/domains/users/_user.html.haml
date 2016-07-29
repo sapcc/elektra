@@ -1,0 +1,22 @@
+%tr{class: (class_name unless local_assigns[:class_name].nil?), id: "user_#{user.id}", data: {search_name: "#{user.name} #{user.description} #{user.id}"}}
+  %td
+    - unless user.enabled 
+      %i.fa.fa-lock.text-danger
+    = user.name
+    %br
+    %span.small.info-text= user.id
+  %td= user.description 
+  %td= user.enabled ? 'enabled' : 'disabled'
+  %td.snug
+    - if current_user.is_allowed?("identity:user_update", domain_id: @scoped_domain_id)      
+      .btn-group
+        %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+          %span.fa.fa-cog
+          -# %span.spinner
+         
+        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+          - if current_user.is_allowed?("identity:user_update", domain_id: @scoped_domain_id)
+            - if user.enabled 
+              %li= link_to 'Disable', domains_user_disable_path(user.id), method: :put, remote: true, data: {loading_status: true}
+            - else   
+              %li= link_to 'Enable', domains_user_enable_path(user.id), method: :put, remote: true, data: {loading_status: true}

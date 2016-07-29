@@ -175,7 +175,9 @@ module Core
       end
 
       def read(attribute_name)
-        @attributes[attribute_name.to_s] || @attributes[attribute_name.to_sym]
+        value = @attributes[attribute_name.to_s]
+        value = @attributes[attribute_name.to_sym] if value.nil?
+        value
       end
 
       def pretty_attributes
