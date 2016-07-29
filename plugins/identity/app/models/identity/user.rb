@@ -15,7 +15,7 @@ module Identity
         "enabled"             => read("enabled"),
         "description"         => read("description"),
         "password"            => read("password")
-      }.delete_if { |k, v| v.blank? }
+      }.delete_if { |k, v| (v.nil? || (v.is_a?(String) && v.empty?)) }
     end
 
     def attributes_for_update
