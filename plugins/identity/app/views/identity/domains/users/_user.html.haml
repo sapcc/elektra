@@ -1,5 +1,5 @@
 %tr{class: (class_name unless local_assigns[:class_name].nil?), id: "user_#{user.id}", data: {search_name: "#{user.name} #{user.description} #{user.id}"}}
-  %td
+  %td.snug
     - unless user.enabled 
       %i.fa.fa-lock.text-danger
     = user.name

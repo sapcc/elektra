@@ -60,8 +60,8 @@ SimpleNavigation::Configuration.run do |navigation|
   primary.item :ccadmin, 'Cloud Administration', nil, html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon"}, if: -> {current_user and current_user.is_allowed?('cloud_admin')} do |ccadmin_nav|
     ccadmin_nav.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path
     ccadmin_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').cloud_admin_path}, if: -> { services.available?(:resource_management,:resources) }
-    ccadmin_nav.item :project_members, 'Project Members', -> {plugin('identity').projects_cloud_admin_project_members_path}, if: -> { services.available?(:identity) }
-    ccadmin_nav.item :project_groups, 'Project Groups', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
+    ccadmin_nav.item :project_members, 'Project User Role Assignments', -> {plugin('identity').projects_cloud_admin_project_members_path}, if: -> { services.available?(:identity) }
+    ccadmin_nav.item :project_groups, 'Project Group Role Assignments', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
   end
 
   primary.item :access_management, 'Authorizations For Project cloud_admin', nil,
