@@ -5,7 +5,7 @@ module Networking
     class RulesController < ::DashboardController
       
       def new
-        @security_groups = services.networking.project_security_groups(@scoped_project_id)
+        @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
         @security_group = @security_groups.select{|sg| sg.id==params[:security_group_id]}.first
         @rule_type = Networking::SecurityGroupRule::PREDEFINED_RULE_TYPES.keys.first
         
@@ -67,7 +67,7 @@ module Networking
         if @rule && @rule.save
           redirect_to security_group_path(params[:security_group_id])
         else  
-          @security_groups = services.networking.project_security_groups(@scoped_project_id)
+          @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
           @security_group = @security_groups.select{|sg| sg.id==params[:security_group_id]}.first
 
           @quota_data = services.resource_management.quota_data([
