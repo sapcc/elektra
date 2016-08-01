@@ -35,7 +35,7 @@ RSpec.describe InstallNodeService do
       end
 
       it "should not raise an error if agent already exists on the instance" do
-        instance = double('instance', id: @instance_id, name: 'instance_name', image: double('image', name: 'cuak_cuak', metadata: {}), addresses: {'first_ip' => [{'addr' => 'this_is_the_ip'}]}, metadata: double('metadata', dns_name: ''))
+        instance = double('instance', id: @instance_id, name: 'instance_name', image_object: double('image', name: 'cuak_cuak', metadata: {}), addresses: {'first_ip' => [{'addr' => 'this_is_the_ip'}]}, metadata: double('metadata', dns_name: ''))
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ true }
 
@@ -43,7 +43,7 @@ RSpec.describe InstallNodeService do
       end
 
       it "should raise an exception if instance_os and image metadata os_family are empty or nil" do
-        instance = double('instance', id: @instance_id, image: double('image', name: 'cuak_cuak', metadata: {}))
+        instance = double('instance', id: @instance_id, image_object: double('image', name: 'cuak_cuak', metadata: {}))
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ raise ::RubyArcClient::ApiError.new('{"code":404}') }
 
@@ -52,7 +52,7 @@ RSpec.describe InstallNodeService do
       end
 
       it "should get the image metadata os_family when input param instance_os is empty or nil" do
-        instance = double('instance', id: @instance_id, image: double('image', name: 'cuak_cuak', metadata: {'os_family'=> @os}), addresses: {}, metadata: double('metadata', dns_name: ''))
+        instance = double('instance', id: @instance_id, image_object: double('image', name: 'cuak_cuak', metadata: {'os_family'=> @os}), addresses: {}, metadata: double('metadata', dns_name: ''))
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ raise ::RubyArcClient::ApiError.new('{"code":404}') }
         allow(RestClient::Request).to receive(:new).and_return( double('response', execute: {url: @url}.to_json) )
@@ -62,7 +62,7 @@ RSpec.describe InstallNodeService do
       end
 
       it "should return the right log info" do
-        instance = double('instance', id: @instance_id, image: double('image', name: 'cuak_cuak', metadata: {'os_family'=> @os}), addresses: {'first_ip' => [{'addr' => 'this_is_the_ip'}]}, metadata: double('metadata', dns_name: 'mo_hash'))
+        instance = double('instance', id: @instance_id, image_object: double('image', name: 'cuak_cuak', metadata: {'os_family'=> @os}), addresses: {'first_ip' => [{'addr' => 'this_is_the_ip'}]}, metadata: double('metadata', dns_name: 'mo_hash'))
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ raise ::RubyArcClient::ApiError.new('{"code":404}') }
         allow(RestClient::Request).to receive(:new).and_return(double('response', execute: {url: @url}.to_json))
