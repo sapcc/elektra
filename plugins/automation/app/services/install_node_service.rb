@@ -51,16 +51,16 @@ class InstallNodeService
     # check if node already exists
     node_found = node_exists?(instance_id, automation_service)
     if node_found == true
-      messages << {key: "warning", message: "Node already exists on instance #{instance.name} (#{instance.image.name})"}
+      messages << {key: "warning", message: "Node already exists on instance #{instance.name} (#{instance.image_object.name})"}
     end
 
     # if instance_os is not given then we check the metadata or we ask for
     if instance_os.blank?
       # check image metadata
-      if instance.image.metadata.nil? || instance.image.metadata['os_family'].blank? || ( instance.image.metadata['os_family'] != 'windows' && instance.image.metadata['os_family'] != 'linux')
+      if instance.image_object.metadata.nil? || instance.image_object.metadata['os_family'].blank? || ( instance.image_object.metadata['os_family'] != 'windows' && instance.image_object.metadata['os_family'] != 'linux')
         raise InstallNodeInstanceOSNotFound.new("Instance OS empty or not known", {instance: instance, messages: messages})
       else
-        instance_os = instance.image.metadata['os_family']
+        instance_os = instance.image_object.metadata['os_family']
       end
     end
 
