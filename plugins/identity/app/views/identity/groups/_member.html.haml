@@ -3,7 +3,7 @@
     = user.name
     %br
     = user.description
-  %td= user.id
+  %td.info-text= user.id
   %td.snug
     - if current_user.is_allowed?("identity:group_remove_member", {group: group})
       = link_to plugin('identity').group_members_remove_path(group.id, user.id), class: "btn btn-default btn-sm", method: :delete do

@@ -15,8 +15,8 @@
         %td
           = user.name
           %br
-          = user.description	
-        %td= user.id
+          = user.description
+        %td.info-text= user.id
 
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
