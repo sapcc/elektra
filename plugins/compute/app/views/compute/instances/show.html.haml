@@ -70,7 +70,8 @@
     .tab-pane{role:"tabpanel", id:"sec_groups"}
       %table.table.datatable
         %tbody
-          - (@instance.security_groups || []).each do |sg|
+          - security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+          - (@instance_security_groups || []).each do |sg|
             %tr
               %th= sg.name
               %td
@@ -78,8 +79,8 @@
                   No rules defined.
                 - else
                   %ul
-                    - sg.security_group_rules.each do |rule|
-                      %li= rule.attributes
+                    - sg.rule_objects.each do |rule|
+                      %li= rule.to_s(security_groups)
 
     .tab-pane{role:"tabpanel", id:"keypairs"}
       %table.table.datatable

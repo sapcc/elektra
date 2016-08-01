@@ -32,11 +32,11 @@
       selected:           @instance.availability_zone_id,
       required:           true}
 
-    = f.input :security_group_id, { label: "Security groups",
+    = f.input :security_groups, { label: "Security groups",
       input_html:         {multiple: true},
       as:                 :select,
-      collection:         @security_groups,
-      selected:           (@instance.security_group_ids || []).collect{|sg| sg[:id]},
+      collection:         @security_groups.collect{|sg| [sg.name,sg.name]},
+      selected:           (@instance.security_groups || []).collect{|sg| sg.name},
       required:           true}
 
     = f.input :keypair_id, { label: "Key pair",

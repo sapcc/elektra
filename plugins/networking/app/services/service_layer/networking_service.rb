@@ -96,6 +96,10 @@ module ServiceLayer
       end
       result
     end
+    
+    def security_groups(options={})
+      driver.map_to(Networking::SecurityGroup).security_groups(options)
+    end
 
 
     def new_security_group(attributes={})
