@@ -44,5 +44,28 @@ module Networking
         "Any"
       end
     end
+    
+    def to_s(security_groups=[])      
+      result = "ALLOW #{self.ethertype} #{self.display_port} #{self.direction=='ingress' ? 'from' : 'to'} "
+      result += if self.remote_ip_prefix.blank? and self.remote_group_id.blank?
+        if (self.ethertype || '').downcase=='ipv4'
+          '0.0.0.0/0'
+        else
+          '::/0'
+        end
+      elsif self.remote_ip_prefix.blank?
+        sg = catch :found do
+          security_groups.each do |sg| 
+            throw :found, sg if sg.id==self.remote_group_id
+          end
+          nil
+        end
+        sg.nil? ? self.remote_group_id : sg.name
+      else
+        self.remote_ip_prefix
+      end
+
+      result
+    end
   end
 end

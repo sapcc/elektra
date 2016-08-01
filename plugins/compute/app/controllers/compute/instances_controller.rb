@@ -36,6 +36,9 @@ module Compute
 
     def show
       @instance = services.compute.find_server(params[:id])
+      @instance_security_groups = @instance.security_groups.collect do |sg| 
+        services.networking.security_groups(tenant_id: @scoped_project_id, name: sg['name']).first
+      end
     end
     
     def new
@@ -55,7 +58,7 @@ module Compute
       #@flavors.each{|f| puts f.pretty_attributes}
       
       @availability_zones = services.compute.availability_zones
-      @security_groups    = services.compute.security_groups
+      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
       @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
@@ -89,8 +92,9 @@ module Compute
 
     def create
       @instance = services.compute.new_server
+      params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
       @instance.attributes=params[@instance.model_name.param_key]
-
+      
       if @instance.save
         flash.now[:notice] = "Instance successfully created."
         audit_logger.info(current_user, "has created", @instance)
@@ -100,7 +104,7 @@ module Compute
         @flavors = services.compute.flavors
         @images = services.image.images
         @availability_zones = services.compute.availability_zones
-        @security_groups= services.compute.security_groups
+        @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
         @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
         @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
         render action: :new
