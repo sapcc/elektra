@@ -39,6 +39,7 @@ module Automation
       @os_types = ::Automation::Node.os_types
 
       result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation, @active_project, current_user.token)
+
       @instance = result[:instance]
       @login_info = result[:log_info]
       @script = result[:script]
@@ -60,7 +61,7 @@ module Automation
       if exception.respond_to?(:options)
         @messages = exception.options[:messages]
       else
-        @messages = exception.message
+        @messages = ['error' => exception.message]
       end
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
       return @errors = [{key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}]

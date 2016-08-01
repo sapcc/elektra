@@ -16,7 +16,7 @@
       .form-group
         = label_tag 'compute_instance_id', 'Please select an instance:', class: 'col-sm-4 control-label'
         .col-sm-8
-          = select_tag 'compute_instance_id', "#{options_for_select(@compute_instances.collect{|v| [ "#{v.name} (#{v.image.try(:name)})", v.id ] }, '')}<option disabled>──────────</option>#{options_for_select([ ["Add external instance", "external"] ], "")}".html_safe, include_blank: "", class: 'form-control', data: {toggle: 'selectAutomationInstance'}
+          = select_tag 'compute_instance_id', "#{options_for_select(@compute_instances.collect{|v| [ "#{v.name} (#{v.image_object.try(:name)})", v.id ] }, '')}<option disabled>──────────</option>#{options_for_select([ ["Add external instance", "external"] ], "")}".html_safe, include_blank: "", class: 'form-control', data: {toggle: 'selectAutomationInstance'}
 
       .js-external-instance.hide
         .form-group
