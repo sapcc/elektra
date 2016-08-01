@@ -1,7 +1,7 @@
 module Identity
   class ProjectsController < ::DashboardController
 
-    before_filter :project_id_required, except: [:index, :create, :new]    
+    before_filter :project_id_required, except: [:index, :create, :new]
     before_filter :get_project_id,  except: [:index, :create, :new]
     before_filter do
       @scoped_project_fid = params[:project_id] || @project_id
@@ -36,12 +36,12 @@ module Identity
       params[:project][:enabled] = (params[:project][:enabled]==true or params[:project][:enabled]=='true') ? true : false
       @project = services.identity.find_project(@project_id)
       @project.attributes = params[:project]
-    
+
       if @project.valid? && service_user.update_project(@project_id,@project.attributes)
         # audit_logger.info("User #{current_user.name} (#{current_user.id}) has updated project #{@project.name} (#{@project.id})")
         # audit_logger.info(user: current_user, has: "updated", project: @project)
         audit_logger.info(current_user, "has updated", @project)
-        
+
         flash[:notice] = "Project #{@project.name} successfully updated."
         redirect_to plugin('identity').project_path
       else
@@ -52,7 +52,7 @@ module Identity
 
     def destroy
       response = service_user.delete_project(@project_id)
-      
+
       if response
         audit_logger.info(current_user, "has deleted project", @project_id)
         flash[:notice] = "Project successfully deleted."
