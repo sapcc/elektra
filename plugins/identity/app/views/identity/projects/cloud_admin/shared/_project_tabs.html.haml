@@ -1,7 +1,7 @@
 %ul.nav.nav-tabs
   - if params[:controller]=='identity/projects/cloud_admin/project_members'
-    %li{ role: 'presentation', class: 'active'}= link_to 'Project Members', '#'
-    %li{ role: 'presentation' }= link_to 'Project Groups', projects_cloud_admin_project_groups_path(pid:@project.id)
+    %li{ role: 'presentation', class: 'active'}= link_to 'Project User Role Assignments', '#'
+    %li{ role: 'presentation' }= link_to 'Project Group Role Assignments', projects_cloud_admin_project_groups_path(pid:@project.id)
   - else  
-    %li{ role: 'presentation'}= link_to 'Project Members', projects_cloud_admin_project_members_path(pid: @project.id)
-    %li{ role: 'presentation', class: 'active' }= link_to 'Project Groups', '#'
+    %li{ role: 'presentation'}= link_to 'Project User Role Assignments', projects_cloud_admin_project_members_path(pid: @project.id)
+    %li{ role: 'presentation', class: 'active' }= link_to 'Project Group Role Assignments', '#'
