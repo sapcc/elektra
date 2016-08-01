@@ -71,10 +71,6 @@ module ServiceLayer
     def availability_zones
       driver.map_to(Compute::AvailabilityZone).availability_zones
     end
-    
-    def security_groups
-      driver.map_to(Compute::SecurityGroup).security_groups
-    end
 
     def attach_volume(volume_id, server_id, device)
       driver.attach_volume(volume_id, server_id, device)

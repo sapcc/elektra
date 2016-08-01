@@ -87,20 +87,9 @@ module ServiceLayer
       driver.delete_floating_ip(floating_ip_id)
     end
 
-    def project_security_groups(project_id)
-      result = []
-      driver.security_groups.each do |sg|
-        if sg['tenant_id'] == project_id
-          result << Networking::SecurityGroup.new(driver, sg)
-        end
-      end
-      result
-    end
-    
     def security_groups(options={})
       driver.map_to(Networking::SecurityGroup).security_groups(options)
     end
-
 
     def new_security_group(attributes={})
       Networking::SecurityGroup.new(driver,attributes)

@@ -146,10 +146,6 @@ module Compute
       attribute_to_object("networks",Compute::Metadata)
     end
     
-    # def security_groups
-    #   attribute_to_object("security_groups",Compute::SecurityGroup)
-    # end
-    
     def attached_volumes
       if volumes_attached
         @driver.volumes.select{|vol|
