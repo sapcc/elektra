@@ -122,8 +122,7 @@ class ApplicationController < ActionController::Base
   # catch all api errors and render error page
   rescue_and_render_error_page [ 
     { "Excon::Error" => { title: 'Backend Service Error' }},
-    { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }},
-    { "Core::ServiceLayer::Errors::ApiError" => { title: 'Backend Service Error' }}
+    { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }}
   ]
 
   def modal?
