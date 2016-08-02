@@ -50,6 +50,14 @@ class DashboardController < ::ScopeController
       render_error_page(error,{title: 'Backend Service Error'})
     end
   end
+  
+  rescue_from "Core::ServiceLayer::Errors::ApiError" do |error|
+    if error.respond_to?(:response_data) and error.response_data["error"] and error.response_data["error"]["code"]==403
+      render_error_page(error,{title: 'Permissin Denied', description: "You are not authorized to request this page."})
+    else
+      render_error_page(error, title: 'Backend Service Error')
+    end
+  end
 
   rescue_from "Excon::Error::Unauthorized","MonsoonOpenstackAuth::Authentication::NotAuthorized" do
     redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
