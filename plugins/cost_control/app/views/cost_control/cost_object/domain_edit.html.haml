@@ -1,0 +1,17 @@
+=content_for :title do
+  Maintain Cost Object for domain: #{@scoped_domain_name}
+
+- pl = plugin('cost_control')
+
+=simple_modal_form_for @masterdata, submit_action: 'Save', url: pl.cost_object_path, method: :put, cancel_url: pl.cost_object_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  - if @masterdata.errors.present?
+    %p.alert.alert-error
+      = @masterdata.errors.full_messages.to_sentence + '.'
+  - types = CostControl::DomainMasterdata::COST_OBJECT_TYPES
+  = f.input :cost_object_type, label: 'Type', collection: types.keys, label_method: -> (k) { types[k] }
+  = f.input :cost_object_id, label: 'ID'
+  = f.input :cost_object_responsibleController, label: 'Responsible Controller'
+  .row
+    .help-block.col-sm-8.col-sm-offset-4
+      A cost object is an element that we can bill for services rendered.
+    -# TODO: monsoon2 has a link to "Learn more about pricing." here

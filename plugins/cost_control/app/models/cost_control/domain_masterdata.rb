@@ -1,8 +1,9 @@
 module CostControl
-  class ProjectMetadata < Core::ServiceLayer::Model
+  class DomainMasterdata < Core::ServiceLayer::Model
     # The following properties are known:
     # - cost_object_type (String)
     # - cost_object_id   (String)
+    # - cost_object_responsibleController (String)
     # The id() is identical to the project ID if the object is persisted.
 
     COST_OBJECT_TYPES = {
@@ -13,7 +14,8 @@ module CostControl
       'WBS' => 'WBS element',
     }
 
-    validates_presence_of :cost_object_type, :cost_object_id
+    validates_presence_of :cost_object_type, :cost_object_id, :cost_object_responsibleController
+    validates :cost_object_responsibleController, format: { with: /\A[DdIi]\d{6}|[Cc]\d{7}\z/ }
     # TODO: validate values
 
     def readable_cost_object_type

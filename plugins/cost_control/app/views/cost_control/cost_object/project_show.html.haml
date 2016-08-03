@@ -12,12 +12,12 @@
       %table.table
         %tr
           %th.snug-nowrap Type:
-          %td= @metadata.readable_cost_object_type.presence || content_tag('div', 'Not set', class: 'text-danger')
+          %td= @masterdata.readable_cost_object_type.presence || content_tag('div', 'Not set', class: 'text-danger')
         %tr
           %th.snug-nowrap ID:
-          %td= @metadata.cost_object_id.presence || content_tag('div', 'Not set', class: 'text-danger')
+          %td= @masterdata.cost_object_id.presence || content_tag('div', 'Not set', class: 'text-danger')
 
-  - if @metadata.cost_object_type.blank? or @metadata.cost_object_id.blank?
+  - if @masterdata.cost_object_type.blank? or @masterdata.cost_object_id.blank?
     .col-md-9.alert.alert-error
       No cost object has been maintained for this project yet.
       - if current_user.is_allowed?('cost_control:cost_object_edit')

@@ -6,8 +6,8 @@ $:.push File.expand_path("../lib", __FILE__)
 Gem::Specification.new do |s|
   s.name        = "cost_control"
   s.version     = "0.0.1"
-  s.authors     = ["Stefan Majewsky"]
-  s.email       = ["stefan.majewsky@sap.com"]
+  s.authors     = ["Stefan Majewsky", "Arno Uhlig"]
+  s.email       = ["stefan.majewsky@sap.com", "arno.uhlig@sap.com"]
   s.homepage    = ""
   s.summary     = "Summary of CostControl."
   s.description = "Description of CostControl."
@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
-  s.add_dependency "fog-openstack-sap-billing"
+  s.add_dependency "fog-openstack-sap-billing" , "~> 0.0.2"
 
 end

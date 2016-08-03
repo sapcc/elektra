@@ -1,5 +1,5 @@
 {
-    "cost_control:cost_object_get": "not project_id:nil",
-    "cost_control:cost_object_edit": "rule:project_admin",
-    "cost_control:cost_object_update": "rule:project_admin"
+    "cost_control:cost_object_get": "",
+    "cost_control:cost_object_edit": "rule:project_admin or rule:domain_admin",
+    "cost_control:cost_object_update": "rule:project_admin or rule:domain_admin"
 }
