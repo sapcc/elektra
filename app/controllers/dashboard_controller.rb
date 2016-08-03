@@ -1,36 +1,22 @@
 # This class guarantees that the user is logged in and his token is rescoped.
 # All subclasses which require a logged in user should inherit from this class.
 class DashboardController < ::ScopeController
+  prepend_before_filter do
+    requested_url = request.env['REQUEST_URI']
+    referer_url = request.referer
+    referer_url = "#{URI(referer_url).path}?#{URI(referer_url).query}" rescue nil
+    if requested_url=~/(\?|\&)modal=true/ and referer_url=~/(\?|\&)overlay=.+/
+      params[:after_login] = referer_url
+    else
+      params[:after_login] = requested_url
+    end  
+  end
+  
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
                           project: -> c { c.instance_variable_get('@scoped_project_id') },
-                          rescope: false, # do not rescope after authentication
-
-                          redirect_to: -> current_user, requested_url, referer_url {
-                            # do stuff after user has logged on bevore redirect to requested url
-
-                            # if the new scope domain which user has logged in differs from the scope in requested url
-                            # then redirect user to home page of the new domain.
-                            #p ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-                            #p "requested_url: #{requested_url}"
-                            #p "!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/)}"
-                            #p "!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/): #{!(requested_url=~/^[^\?]*#{current_user.user_domain_id}/)}"
-
-                            if requested_url.blank? or (!(requested_url=~/^[^\?]*#{current_user.user_domain_name}/) and !(requested_url=~/^[^\?]*#{current_user.user_domain_id}/))
-                              "/#{current_user.user_domain_id}/identity/home"
-                            else
-                              # new domain is the same but the requested_url contains modal parameter and the referer url contains overlay parameter
-                              # in this case the requested_url came from a modal window. So we do not redirect user to the requested_url
-                              # but to the referer url.
-                              if requested_url=~/(\?|\&)modal=true/ and referer_url=~/(\?|\&)overlay=.+/
-                                referer_url
-                              else
-                                # in all other cases redirect user to requested url
-                                requested_url
-                              end
-                            end
-                          },
+                          rescope: false,
                           except: :terms_of_use
 
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
@@ -45,22 +31,22 @@ class DashboardController < ::ScopeController
   # so we try to catch this error here and redirect user to login screen
   rescue_from "Excon::Error::NotFound" do |error|
     if error.message.match(/Could not find token/i)
-      redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
+      redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
     else
       render_error_page(error,{title: 'Backend Service Error'})
     end
   end
   
   rescue_from "Core::ServiceLayer::Errors::ApiError" do |error|
-    if error.respond_to?(:response_data) and error.response_data["error"] and error.response_data["error"]["code"]==403
-      render_error_page(error,{title: 'Permissin Denied', description: "You are not authorized to request this page."})
+    if error.response_data and error.response_data["error"] and error.response_data["error"]["code"]==403
+      render_error_page(error,{title: 'Permission Denied', description: "You are not authorized to request this page."})
     else
       render_error_page(error, title: 'Backend Service Error')
     end
   end
 
   rescue_from "Excon::Error::Unauthorized","MonsoonOpenstackAuth::Authentication::NotAuthorized" do
-    redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name)
+    redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
   end
 
   # catch all mentioned errors and render error page

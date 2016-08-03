@@ -1,4 +1,4 @@
-require 'fog/openstack/storage'
+require 'fog/storage/openstack'
 
 module ResourceManagement
   module Driver

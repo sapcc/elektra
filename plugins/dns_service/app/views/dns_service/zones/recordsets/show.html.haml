@@ -1,0 +1,41 @@
+= content_for :title do
+  Record Detail
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+%div{class: modal? ? 'modal-body' : ''}
+  %h4 Overview
+  %table.table
+    %tbody
+      %tr
+        %th Name
+        %td= @recordset.name
+      %tr
+        %th ID
+        %td= @recordset.id        
+      %tr
+        %th Type
+        %td= @recordset.type   
+      %tr
+        %th Description
+        %td= @recordset.description
+      %tr
+        %th Record Data
+        %td= @recordset.records.join(', ')
+      %tr
+        %th TTL
+        %td= @recordset.ttl
+      %tr
+        %th Created at
+        %td= DateTime.parse(@recordset.created_at).strftime("%b. %d, %Y, %l:%M %P") rescue @recordset.created_at
+      %tr
+        %th Updated at
+        %td= DateTime.parse(@recordset.updated_at).strftime("%b. %d, %Y, %l:%M %P") rescue @recordset.updated_at
+                                        
+%div.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Close
+  - else
+    = link_to 'Back', plugin('networking').floating_ips_path, class: 'btn btn-default'
