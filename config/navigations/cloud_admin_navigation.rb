@@ -79,12 +79,6 @@ SimpleNavigation::Configuration.run do |navigation|
     #   account_nav.dom_attributes = {class: 'content-list'}
     # end
 
-    if plugin_available?('cost_control')
-      primary.item :cost_control, 'Manage Cost Control', plugin('cost_control').cost_object_path, if: -> {
-        current_user.is_allowed?('cost_control:domain_show', domain_id: @scoped_domain_id)
-      }
-    end
-
 
     # Add an item which has a sub navigation (same params, but with block)
     # primary.item :key_2, 'name', url, options do |sub_nav|
