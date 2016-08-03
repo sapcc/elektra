@@ -12,7 +12,7 @@ GIT
 
 GIT
   remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: eeea220522ea0206e913356f5df1de563939ddaa
+  revision: eb105aa1fe6d5a5423849801122b7f948f86691e
   branch: master
   specs:
     monsoon-openstack-auth (0.8.6)
@@ -23,10 +23,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: 04178c2e8489bd27879b398e2e93b20ecae9f2e6
+  revision: f67c038183d072f15168c479341cbaf62c604c86
   branch: master
   specs:
-    fog-openstack (0.1.8)
+    fog-openstack (0.1.10)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       ipaddress (>= 0.8)

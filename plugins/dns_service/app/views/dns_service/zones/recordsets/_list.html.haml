@@ -1,0 +1,16 @@
+%table.table#recordsets
+  %thead
+    %tr
+      %th Name
+      %th Type
+      %th Date
+      %th Priority
+      %th TTL
+      %th.snug
+  %tbody
+    - if recordsets.length==0
+      %tr{data: {empty: true}}
+        %td{colspa: 6} No records available
+    - else
+      - recordsets.each do | recordset |
+        = render partial: 'dns_service/zones/recordsets/recordset_item', locals: {zone: zone, recordset: recordset}

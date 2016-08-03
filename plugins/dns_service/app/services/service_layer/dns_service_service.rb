@@ -3,7 +3,7 @@ module ServiceLayer
   class DnsServiceService < Core::ServiceLayer::Service
 
     def driver
-      @driver ||= DnsService::Driver::MyDriver.new({
+      @driver ||= DnsService::Driver::Fog.new({
         auth_url:   self.auth_url,
         region:     self.region,
         token:      self.token,
@@ -16,9 +16,20 @@ module ServiceLayer
       true  
     end
     
-
-    def test
-      driver.test
+    def zones(filter={})
+      driver.map_to(DnsService::Zone).list_zones(filter)
+    end
+    
+    def find_zone(id)
+      driver.map_to(DnsService::Zone).get_zone(id)
+    end
+    
+    def recordsets(zone_id)
+      driver.map_to(DnsService::Recordset).list_recordsets(zone_id)
+    end
+    
+    def find_recordset(recordset_id)
+      driver.map_to(DnsService::Recordset).get_recordset(recordset_id)
     end
   end
 end

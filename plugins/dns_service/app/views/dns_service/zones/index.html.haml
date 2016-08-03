@@ -1,0 +1,19 @@
+- if current_user.is_allowed?("dns_service:zone_create")
+  .toolbar
+    = link_to 'Create new', '#', data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Email
+      %th TTL
+      %th Serial
+      %th.snug
+  %tbody
+    - if @zones.length==0
+      %tr{data: {empty: true}}
+        %td{colspa: 6} No zones available
+    - else
+      - @zones.each do | zone |
+        = render partial: 'zone_item', locals: {zone: zone}
