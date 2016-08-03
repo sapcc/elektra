@@ -67,7 +67,7 @@ module CostControl
               'cost_object' => {
                   'type'      => params.fetch('cost_object_type', ''),
                   'name'      => params.fetch('cost_object_id', ''),
-                  'inherited' => params.fetch('cost_object_responsibleController', '')
+                  'responsibleController' => params.fetch('cost_object_responsibleController', '')
               },
           }
           fog.put_domain_masterdata(domain_id, masterdata)
