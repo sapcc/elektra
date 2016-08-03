@@ -14,19 +14,23 @@
     - if current_user and current_user.admin?
       %h4.heading-whitespace Domain Administration
 
-      - if plugin_available?('resource_management')
+      - if plugin_available?('resource_management') || plugin_available?('cost_control')
         %h5
           %i.monitoring-icon
           Resource Management
 
         %ul.plain-list
-          - if current_user.is_allowed?('resource_management:cloud_admin_list')
+          - if plugin_available?('resource_management') && current_user.is_allowed?('resource_management:cloud_admin_list')
             %li
               = link_to "Cloud Resources Administration", plugin('resource_management').cloud_admin_path
 
-          - if current_user.is_allowed?('resource_management:domain_admin_list')
+          - if plugin_available?('resource_management') && current_user.is_allowed?('resource_management:domain_admin_list')
             %li
               = link_to "Domain Resources Administration", plugin('resource_management').admin_path
+
+          - if plugin_available?('cost_control') && current_user.is_allowed?('cost_control:cost_object_get')
+            %li
+              = link_to "Cost Control", plugin('cost_control').cost_object_path
 
       - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
         %h5
