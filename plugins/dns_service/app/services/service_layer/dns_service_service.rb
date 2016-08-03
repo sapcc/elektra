@@ -28,8 +28,12 @@ module ServiceLayer
       driver.map_to(DnsService::Recordset).list_recordsets(zone_id)
     end
     
-    def find_recordset(recordset_id)
-      driver.map_to(DnsService::Recordset).get_recordset(recordset_id)
+    def find_recordset(zone_id,recordset_id)
+      driver.map_to(DnsService::Recordset).get_recordset(zone_id,recordset_id)
+    end
+    
+    def new_recordset(zone_id,attributes={})
+      recordset = DnsService::Recordset.new(driver,attributes.merge(zone_id: zone_id))
     end
   end
 end

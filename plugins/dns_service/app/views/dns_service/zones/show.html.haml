@@ -3,6 +3,15 @@
   = "/ #{@zone.name}"
 
 .row
+  .col-md-12
+    %h4 Nameservers
+    %ul
+      - @nameservers.each do |recordset|
+        - records = recordset.records
+        - records = [records] unless records.is_a?(Array)
+        - records.each do |record|
+          %li= record
+.row
   .col-md-9
     = render partial: 'dns_service/zones/recordsets/list', locals: { zone: @zone, recordsets: @recordsets }
 

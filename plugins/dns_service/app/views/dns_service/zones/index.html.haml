@@ -1,6 +1,6 @@
 - if current_user.is_allowed?("dns_service:zone_create")
   .toolbar
-    = link_to 'Create new', '#', data: {modal: true}, class: 'btn btn-primary btn-lg'
+    = link_to 'Create new', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
 %table.table
   %thead

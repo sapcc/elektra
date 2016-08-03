@@ -1,9 +1,13 @@
+- if current_user.is_allowed?("dns_service:recordset_create")
+  .toolbar.toolbar-aligntop
+    = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary btn-lg'
+
 %table.table#recordsets
   %thead
     %tr
       %th Name
       %th Type
-      %th Date
+      %th Data
       %th Priority
       %th TTL
       %th.snug
@@ -13,4 +17,5 @@
         %td{colspa: 6} No records available
     - else
       - recordsets.each do | recordset |
+        
         = render partial: 'dns_service/zones/recordsets/recordset_item', locals: {zone: zone, recordset: recordset}

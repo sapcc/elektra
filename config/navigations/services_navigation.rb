@@ -119,7 +119,7 @@ SimpleNavigation::Configuration.run do |navigation|
                                         highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
                     networking_nav.item :dns_service,
                                         'DNS',
-                                        -> { plugin('dns_service').entry_path },
+                                        -> { plugin('dns_service').zones_path },
                                         if: -> { plugin_available?(:dns_service) },
                                         highlights_on: -> { params[:controller][%r{dns_service/?.*}] }
     end
