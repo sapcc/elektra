@@ -58,7 +58,7 @@ PATH
   remote: plugins/cost_control
   specs:
     cost_control (0.0.1)
-      fog-openstack-sap-billing
+      fog-openstack-sap-billing (~> 0.0.2)
 
 PATH
   remote: plugins/dns_service

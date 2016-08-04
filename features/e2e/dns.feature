@@ -7,7 +7,7 @@ Feature: DNS
     Then I am redirected to domain path "identity/home"
 
   Scenario: The DNS page is reachable
-    When I visit project path "dns-service"
+    When I visit project path "dns-service/zones"
     Then the page status code is successful
     And I see "DNS"
 
