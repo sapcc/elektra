@@ -17,8 +17,8 @@
           %th.snug-nowrap ID:
           %td= @masterdata.cost_object_id.presence || content_tag('div', 'Not set', class: 'text-danger')
         %tr
-          %th.snug-nowrap responsibleController:
-          %td= @masterdata.readable_cost_object_responsibleController.presence || content_tag('div', 'Not set', class: 'text-danger')
+          %th.snug-nowrap Responsible Controller:
+          %td= @masterdata.cost_object_responsibleController.presence || content_tag('div', 'Not set', class: 'text-danger')
 
   - if @masterdata.cost_object_type.blank? or @masterdata.cost_object_id.blank?
     .col-md-9.alert.alert-error
