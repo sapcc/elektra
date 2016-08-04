@@ -15,8 +15,8 @@ module CostControl
     }
 
     validates_presence_of :cost_object_type, :cost_object_id, :cost_object_responsibleController
-    validates :cost_object_responsibleController, format: { with: /\A[DdIi]\d{6}|[Cc]\d{7}\z/ }
-    # TODO: validate values
+    validates :cost_object_responsibleController, format: { with: /\A[DdIi]\d{6}\z/ }
+    # TODO: validate cost_object_id
 
     def readable_cost_object_type
       type = cost_object_type
