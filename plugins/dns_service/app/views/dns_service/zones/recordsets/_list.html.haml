@@ -19,3 +19,5 @@
       - recordsets.each do | recordset |
         
         = render partial: 'dns_service/zones/recordsets/recordset_item', locals: {zone: zone, recordset: recordset}
+
+= render_paginatable(recordsets)

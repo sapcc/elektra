@@ -1,12 +1,12 @@
 {
-  "dns_service:zone_list": "@",
-  "dns_service:zone_get": "@",
+  "dns_service:zone_list": "rule:admin_required",
+  "dns_service:zone_get": "rule:admin_required",
   "dns_service:zone_create": "!",
   "dns_service:zone_update": "!",
   "dns_service:zone_delete": "!",
-  "dns_service:recordset_list": "@",
-  "dns_service:recordset_get": "@",
-  "dns_service:recordset_create": "!",
+  "dns_service:recordset_list": "rule:admin_required",
+  "dns_service:recordset_get": "rule:admin_required",
+  "dns_service:recordset_create": "rule:admin_required",
   "dns_service:recordset_update": "!",
-  "dns_service:recordset_delete": "!"
+  "dns_service:recordset_delete": "rule:admin_required"
 }
