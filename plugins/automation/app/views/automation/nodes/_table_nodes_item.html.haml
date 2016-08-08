@@ -5,17 +5,7 @@
 
   %td.snug-nowrap
     -unless addresses.empty?
-      - addresses.each do |network_name, ip_values|
-        -if ip_values and ip_values.length>0
-          .list-group.borderless
-            - ip_values.each do |values|
-              %p.list-group-item-text
-                - if values["OS-EXT-IPS:type"]=='floating'
-                  %i.fa.fa-globe.fa-fw
-                - elsif values["OS-EXT-IPS:type"]=='fixed'
-                  %i.fa.fa-desktop.fa-fw
-                = values["addr"]
-                %span.info-text= values["OS-EXT-IPS:type"]
+      - compute_ips(addresses)
     -else
       %i.fa.fa-desktop.fa-fw
       = instance.automation_facts.ipaddress
