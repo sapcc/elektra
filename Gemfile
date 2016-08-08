@@ -1,7 +1,7 @@
 # encoding: UTF-8
 source 'https://rubygems.org'
 source 'https://localhost/' do
-  gem 'ruby-arc-client', '~> 0.7.0'
+  gem 'ruby-arc-client', '~> 0.7.1'
 end
 # Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
 # # unf is pulled in by the ruby-arc-client
