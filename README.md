@@ -246,3 +246,20 @@ Same example but without updating the usage attribute. It just loads the values 
   {service_name: 'compute', resource_name: 'ram'}
 ])
 ``` 
+
+Pagination
+----------
+
+### Controller
+
+```ruby
+@images = paginatable(per_page: 15) do |pagination_options|
+  services.image.images({sort_key: 'name', visibility: @visibility}.merge(pagination_options))
+end
+```
+
+### View
+
+```ruby
+= render_paginatable(@images)
+```

@@ -254,7 +254,13 @@ module Core
         return [ hash.to_s ] unless hash.respond_to?(:each)
         hash.each do |k,v|
           messages << v if k=='message'
-          read_error_messages(v,messages) if v.is_a?(Hash)
+          if v.is_a?(Hash)
+            read_error_messages(v,messages) 
+          elsif v.is_a?(Array)
+            v.each do |value|
+              read_error_messages(value,messages) if value.is_a?(Hash)
+            end
+          end
         end
         return messages
       end

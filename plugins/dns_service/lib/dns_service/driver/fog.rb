@@ -25,12 +25,21 @@ module DnsService
         handle_response{ @fog.get_recordset(zone_id,recordset_id).body}
       end
       
-      def create_recordset(zone_id, params={})
+      def create_recordset(params={})
         handle_response{
+          zone_id = params.delete(:zone_id)
           name = params.delete(:name)
           type = params.delete(:type)
           records = params.delete(:records)
           @fog.create_recordset(zone_id, name, type, records, params).body
+        }
+      end
+      
+      def update_recordset(params={})
+        handle_response{
+          zone_id = params.delete(:zone_id)
+          id = params.delete(:id)
+          @fog.update_recordset(zone_id, id, params)
         }
       end
       
