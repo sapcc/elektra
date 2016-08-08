@@ -2,7 +2,27 @@
   %td
     = link_to(instance.name, plugin('automation').node_path(id: instance.id), data: {modal: true})
   %td= "#{instance.automation_facts.platform} #{instance.automation_facts.platform_version}"
-  %td= instance.automation_facts.ipaddress
+
+  %td.snug-nowrap
+    -unless addresses.empty?
+      - addresses.each do |network_name, ip_values|
+        -if ip_values and ip_values.length>0
+          .list-group.borderless
+            - ip_values.each do |values|
+              %p.list-group-item-text
+                - if values["OS-EXT-IPS:type"]=='floating'
+                  %i.fa.fa-globe.fa-fw
+                - elsif values["OS-EXT-IPS:type"]=='fixed'
+                  %i.fa.fa-desktop.fa-fw
+                = values["addr"]
+                %span.info-text= values["OS-EXT-IPS:type"]
+    -else
+      %i.fa.fa-desktop.fa-fw
+      = instance.automation_facts.ipaddress
+      %span.info-text fixed
+      %a{href:"#", data: {toggle:"popover", content: "Information retrieved from node facts.", "popover-type" => "table-info-hint"}}
+        %i.fa.fa-info-circle.fa-fw
+
   %td{class: "snug #{'automation_status_alarm' if instance.automation_facts.online == false}"}
     = instance.automation_facts.online_to_string
   %td

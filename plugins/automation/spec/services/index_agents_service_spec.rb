@@ -5,13 +5,20 @@ RSpec.describe IndexNodesService do
   describe 'initialization' do
 
     it "should raise an error if no automation_service is given" do
-      expect { IndexNodesService.new(nil)}.to raise_error(IndexNodesServiceParamError, 'Automation service parameter empty.')
+      compute_service = double('compute_service')
+      expect { IndexNodesService.new(nil, compute_service)}.to raise_error(IndexNodesServiceParamError)
+    end
+
+    it "should raise an error if no compute_service is given" do
+      automation_service = double('automation_service')
+      expect { IndexNodesService.new(automation_service, nil)}.to raise_error(IndexNodesServiceParamError)
     end
 
     it "should initialize an object" do
       automation_service = double('automation_service')
-      expect { IndexNodesService.new(automation_service)}.not_to raise_error
-      expect(IndexNodesService.new(automation_service)).not_to be_nil
+      compute_service = double('compute_service')
+      expect { IndexNodesService.new(automation_service, compute_service)}.not_to raise_error
+      expect(IndexNodesService.new(automation_service, compute_service)).not_to be_nil
     end
 
   end
@@ -19,16 +26,21 @@ RSpec.describe IndexNodesService do
   describe 'list_agents' do
 
     it "should return all nodes with the corresponding jobs" do
-      agent1 = double('agent1', id: 'agent1')
-      agent2 = double('agent2', id: 'agent2')
+      agent1 = double('agent', id: 'test_1')
+      agent2 = double('agent', id: 'test_2')
       agent1_jobs = double('jobs_agent1', data: [{request_id:'agent1_1'}, {request_id:'agent1_2'}, {request_id:'agent1_3'}, {request_id:'agent1_4'}, {request_id:'agent1_5'}])
       agent2_jobs = double('jobs_agent2', data: [{request_id:'agent2_1'}, {request_id:'agent2_2'}, {request_id:'agent2_3'}, {request_id:'agent2_4'}, {request_id:'agent2_5'}])
       automation_service = double('automation_service', nodes: {elements: [agent1, agent2]})
 
-      allow(automation_service).to receive(:jobs).with('agent1', 1, 5) { agent1_jobs }
-      allow(automation_service).to receive(:jobs).with('agent2', 1, 5) { agent2_jobs }
+      allow(automation_service).to receive(:jobs).with('test_1', 1, 5) { agent1_jobs }
+      allow(automation_service).to receive(:jobs).with('test_2', 1, 5) { agent2_jobs }
 
-      expect(IndexNodesService.new(automation_service).list_nodes_with_jobs(1,5)).to match( {:elements=>[agent1, agent2], :jobs=>{:agent1=>agent1_jobs, :agent2=>agent2_jobs}} )
+      compute_service = double('compute_service')
+      address = {"SCI Lab"=>[{"OS-EXT-IPS-MAC:mac_addr"=>"fa:16:3e:8e:b1:4f", "version"=>4, "addr"=>"10.0.0.240", "OS-EXT-IPS:type"=>"fixed"}, {"OS-EXT-IPS-MAC:mac_addr"=>"fa:16:3e:8e:b1:4f", "version"=>4, "addr"=>"10.47.0.28", "OS-EXT-IPS:type"=>"floating"}]}
+      servers = [double('server1', id: "test_1", addresses: {}), double('server2', id: "test_2", addresses: address)]
+      allow(compute_service).to receive(:servers) { servers }
+
+      expect(IndexNodesService.new(automation_service, compute_service).list_nodes_with_jobs(1,5)).to match( {:elements=>[agent1, agent2], :jobs=>{:test_1=>agent1_jobs, :test_2=>agent2_jobs}, :addresses => {test_2: address}} )
     end
 
   end

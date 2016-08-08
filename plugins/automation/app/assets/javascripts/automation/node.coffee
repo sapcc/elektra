@@ -1,5 +1,10 @@
 job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
 
+@init_table_info_popover= () ->
+  $('[data-toggle="popover"][data-popover-type="table-info-hint"]').popover
+    placement: 'top'
+    trigger: 'focus'
+
 @init_history_popover= () ->
   # init popovers elements
   init_job_popover()
@@ -34,8 +39,13 @@ job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
     close_popover()
 
 $ ->
-  # add handler to the polling update event
+  # add handlers to the polling update event
   $(document).on('polling:update_complete', init_history_popover)
+  $(document).on('polling:update_complete', init_table_info_popover)
 
-  # init popovers elements
+
+  # init history popovers elements
   init_job_popover()
+
+  # init table info hints
+  init_table_info_popover()
