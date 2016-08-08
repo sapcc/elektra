@@ -10,7 +10,7 @@ module Automation
     end
 
     def index_update
-      render partial: 'table_nodes', locals: {instances: @nodes, jobs: @jobs}, layout: false
+      render partial: 'table_nodes', locals: {instances: @nodes, jobs: @jobs, addresses: @addresses}, layout: false
     end
 
     def show
@@ -129,12 +129,13 @@ module Automation
     def nodes_with_jobs
       page = params[:page]||1
       per_page = 5
-      result = IndexNodesService.new(services.automation).list_nodes_with_jobs(page, per_page)
+      result = IndexNodesService.new(services.automation, services.compute).list_nodes_with_jobs(page, per_page)
 
       @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).
         page(page).
         per(per_page)
       @jobs = result[:jobs]
+      @addresses = result[:addresses]
     end
 
   end

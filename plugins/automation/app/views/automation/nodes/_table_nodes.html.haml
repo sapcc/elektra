@@ -14,7 +14,7 @@
           %td{colspa: 6} No nodes available
       - else
         -instances.each do | instance |
-          = render partial: 'table_nodes_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].fetch(:elements, {})}
+          = render partial: 'table_nodes_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(instance.id.to_sym, {})}
 
   = paginate instances, :theme => 'twitter-bootstrap-3'
 
