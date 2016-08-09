@@ -45,7 +45,7 @@ module Automation
 
       # validate and check
       if @automation.save(services.automation.automation_service)
-        flash[:success] = "Automation #{@automation.name} was successfully added."
+        #flash[:success] = "Automation #{@automation.name} was successfully added."
         redirect_to plugin('automation').automations_path
       else
          render action: "new"
@@ -78,7 +78,7 @@ module Automation
 
       # validate and save
       if @automation.update(services.automation.automation_service)
-        flash[:success] = "Automation #{@automation.name} was successfully updated."
+        #flash[:success] = "Automation #{@automation.name} was successfully updated."
         redirect_to plugin('automation').automations_path
       else
         render action: "edit"
