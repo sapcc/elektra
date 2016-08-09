@@ -3,24 +3,86 @@
 = render partial: 'tabs', locals: { tab: 'overview' }
 
 .overview
-  -# TODO: use picharts here? like https://github.com/ankane/chartkick
   .row
     .col-md-6
-      .list-group-item.list-group-item-info
-        Status
-      - @state_cnt.sort_by{|k,v|v}.reverse.each do |state, cnt|
-        .list-group-item
-          = link_to state.capitalize, plugin('monitoring').alarms_path( state: state.capitalize)
-          = badge_state(state,cnt)
+      %svg#state
     .col-md-6
-      .list-group
-        .list-group-item.list-group-item-info 
-          Severity
-        - @severity_cnt.sort_by{|k,v|v}.reverse.each do |severity, cnt|
-          .list-group-item
-            = link_to severity.capitalize, plugin('monitoring').alarms_path( severity: severity.capitalize)
-            %span.badge= cnt
-  
+      %svg#severity
+
+:javascript
+  // var dataset = #{@severity_pie_data.to_json};
+  // monitoring.render_overview_pie(dataset);
     
+  render_overview_pie('severity',#{@severity_pie_data.to_json});
+  render_overview_pie('state',#{@state_pie_data.to_json});
+
+  function render_overview_pie(TYPE,DATA,SIZE) {
+
+    var width = SIZE || 400;
+    var height = SIZE || 400;
   
+    nv.addGraph( function() {
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.label })
+            .y(function(d) { return d.count })
+            .width(width)
+            .height(height)
+            .noData("There is no Data to display")
+            .showLegend(true)
+            .title(TYPE)
+            .donut(true)
+            .donutRatio(0.4)
+            .showTooltipPercent(true);
+  
+        d3.select("#"+TYPE)
+            .datum(DATA)
+            .transition().duration(1200)
+            .attr('width', width)
+            .attr('height', height)
+            .call(chart);
+  
+        // remove legend rendering otherwise it will collide with the click event
+        chart.legend.dispatch.stateChange = function(newState){};
+  
+        // overwrite legend click
+        // http://stackoverflow.com/questions/17598694/how-to-add-a-click-event-on-nvd3-js-graph
+        chart.legend.dispatch.legendClick = function(d, i){
+           //console.log(d.label);
+           switch(d.label) {
+             case "Low":
+                //console.log("Low");
+                window.location.replace("#{plugin('monitoring').alarms_path( severity: 'Low')}");
+                break;
+             case "Medium":
+                //console.log("Medium");
+                window.location.replace("#{plugin('monitoring').alarms_path( severity: 'Medium')}");
+                break;
+             case "High":
+                //console.log("High");
+                window.location.replace("#{plugin('monitoring').alarms_path( severity: 'High')}");
+                break;
+             case "Critical":
+                //console.log("Critical");
+                window.location.replace("#{plugin('monitoring').alarms_path( severity: 'Critical')}");
+                break;
+             case "Ok":
+                //console.log("OK");
+                window.location.replace("#{plugin('monitoring').alarms_path( state: 'OK')}");
+                break;
+             case "Alarm":
+                //console.log("Alarm");
+                window.location.replace("#{plugin('monitoring').alarms_path( state: 'Alarm')}");
+                break;
+             case "Undetermined":
+                //console.log("Undetermined");
+                window.location.replace("#{plugin('monitoring').alarms_path( state: 'Undetermined')}");
+                break;
+           }
+        };
+  
+        return chart;
+    } );
+
+  }
+
 
