@@ -4,6 +4,9 @@ job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
   $('[data-toggle="popover"][data-popover-type="table-info-hint"]').popover
     placement: 'top'
     trigger: 'focus'
+  $('[data-toggle="popover"][data-popover-type="table-info-hint"]').on 'click', (e) ->
+    e.stopPropagation()
+    e.preventDefault()
 
 @init_history_popover= () ->
   # init popovers elements
