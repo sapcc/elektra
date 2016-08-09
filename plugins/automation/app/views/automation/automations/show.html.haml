@@ -6,13 +6,6 @@
   .modal-flashes
     = render "automation/shared/flashes.html"
 
-  .row
-    .col-md-2.col-xs-2.col-md-offset-10.col-xs-offset-10.clearfix.automation-show-actions-bar
-      = link_to plugin('automation').edit_automation_path(id: @automation.id), data: {modal: true}, class: 'btn btn-primary pull-right automation-show-actions' do
-        %i.fa.fa-pencil
-      = link_to plugin('automation').automation_path(id: @automation.id), class: 'btn btn-danger pull-right automation-show-actions', :method => 'delete' do
-        %i.fa.fa-trash
-
   .form-horizontal
     - form_horizontal_static_input('Name', @automation.name)
     - form_horizontal_static_input('Repository', @automation.repository)
