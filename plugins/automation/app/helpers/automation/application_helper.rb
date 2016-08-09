@@ -104,10 +104,27 @@ module Automation
     #
 
     def node_form_inline_tags(data)
-      if data.blank? || data.empty?
+      if data.blank?
         haml_concat 'No tags available'
       else
         form_static_hash_value(data)
+      end
+    end
+
+    def node_table_tags(data)
+      unless data.blank?
+        haml_tag :div, {class: "static-tags clearfix"} do
+          data.each do |key, value|
+            haml_tag :div, {class: "tag"} do
+              haml_tag :div, {class: "key"} do
+                haml_concat key
+              end
+              haml_tag :div, {class: "value"} do
+                haml_concat value
+              end
+            end
+          end
+        end
       end
     end
 

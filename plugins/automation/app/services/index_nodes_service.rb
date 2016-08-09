@@ -38,8 +38,6 @@ class IndexNodesService
     end
     nodes[:addresses] = addresses
     nodes[:jobs] = jobs
-
-
     nodes
   end
 

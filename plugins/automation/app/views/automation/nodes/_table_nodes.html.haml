@@ -1,17 +1,18 @@
-.agents_table{data: {update_path: plugin('automation').index_update_nodes_path(), update_interval: 30}}
+.nodes_table{data: {update_path: plugin('automation').index_update_nodes_path(), update_interval: 30}}
   %table.table
     %thead
       %tr
         %th Name
         %th Platform
         %th IP
+        %th Tags
         %th Online
         %th Job history
-        %th
+        %th.snug-nowrap
     %tbody
       - if instances.empty?
         %tr
-          %td{colspa: 6} No nodes available
+          %td{colspa: 7} No nodes available
       - else
         -instances.each do | instance |
           = render partial: 'table_nodes_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(instance.id.to_sym, {})}
