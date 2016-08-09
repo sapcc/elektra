@@ -6,4 +6,4 @@
     .toolbar
       = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-    = render partial: 'table_nodes', locals: {instances: @nodes, jobs: @jobs, addresses: @addresses}
+    = render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs, addresses: @addresses}
