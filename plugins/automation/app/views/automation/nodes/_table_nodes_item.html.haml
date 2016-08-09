@@ -13,8 +13,12 @@
       %a{href:"#", data: {toggle:"popover", content: "Information retrieved from node facts.", "popover-type" => "table-info-hint"}}
         %i.fa.fa-info-circle.fa-fw
 
-  %td{class: "snug #{'automation_status_alarm' if instance.automation_facts.online == false}"}
+  %td
+    - node_table_tags(instance.tags)
+
+  %td{class: "#{'automation_status_alarm' if instance.automation_facts.online == false}"}
     = instance.automation_facts.online_to_string
+
   %td
     = render partial: "table_nodes_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
   %td

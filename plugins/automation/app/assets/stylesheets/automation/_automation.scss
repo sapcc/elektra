@@ -15,6 +15,12 @@
   padding: 0;
 }
 
+.automations_table .table, .nodes_table .table{
+  .no_wrap {
+    white-space: nowrap;
+  }
+}
+
 // Index
 
 .loading-spinner-section {
@@ -22,8 +28,20 @@
   @include spinner(background rgba(0,0,0,0.2));
 }
 
-.agents_table .table th:not(:last-child){
-  width: 20%;
+/*.nodes_table .table th:not(:last-child){
+  width: 16%;
+}*/
+
+.nodes_table .table th:nth-child(-n+3) {
+  width: 16%;
+}
+
+.nodes_table .table th:nth-child(5) {
+  width: 10%;
+}
+
+.nodes_table .table th:nth-child(6) {
+  width: 10%;
 }
 
 .automation_status_alarm {
@@ -74,12 +92,6 @@ pre {
 }
 
 // Automations
-
-.automations_table {
-  .no_wrap {
-    white-space: nowrap;
-  }
-}
 
 .automation-content {
   padding: 20px 20px;
