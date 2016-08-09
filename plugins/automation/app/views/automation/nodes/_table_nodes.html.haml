@@ -10,13 +10,13 @@
         %th Job history
         %th.snug-nowrap
     %tbody
-      - if instances.empty?
+      - if nodes.empty?
         %tr
           %td{colspa: 7} No nodes available
       - else
-        -instances.each do | instance |
-          = render partial: 'table_nodes_item', locals: {instance: instance, jobs: jobs[instance.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(instance.id.to_sym, {})}
+        -nodes.each do | node |
+          = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(node.id.to_sym, {})}
 
-  = paginate instances, :theme => 'twitter-bootstrap-3'
+  = paginate nodes, :theme => 'twitter-bootstrap-3'
 
   #popover_container
