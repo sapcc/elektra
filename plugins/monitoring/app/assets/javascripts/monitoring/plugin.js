@@ -42,8 +42,8 @@ $(document).ready(function(){
 
 monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
 
-  var width = SIZE || 400;
-  var height = SIZE || 400;
+  var width = SIZE || 450;
+  var height = SIZE || 450;
 
   nv.addGraph( function() {
       var chart = nv.models.pieChart()
