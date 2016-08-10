@@ -51,6 +51,7 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
           .y(function(d) { return d.count })
           .width(width)
           .height(height)
+          .showLegend(false)
           .noData("There is no Data to display")
           .title(TYPE)
           .donut(true)
