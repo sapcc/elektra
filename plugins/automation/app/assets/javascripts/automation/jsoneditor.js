@@ -1,3 +1,9 @@
+/*
+* Edited by Arturo Reuschenbach
+* - Removed PoweredBy icon ~> line 16046
+*/
+
+
 /*!
  * jsoneditor.js
  *
