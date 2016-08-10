@@ -16,7 +16,7 @@
 }
 
 .automations_table .table, .nodes_table .table{
-  .no_wrap {
+  .no-wrap {
     white-space: nowrap;
   }
 }
@@ -32,17 +32,17 @@
   width: 16%;
 }*/
 
-.nodes_table .table th:nth-child(-n+3) {
-  width: 16%;
-}
-
-.nodes_table .table th:nth-child(5) {
-  width: 10%;
-}
-
-.nodes_table .table th:nth-child(6) {
-  width: 10%;
-}
+//.nodes_table .table th:nth-child(-n+3) {
+//  width: 16%;
+//}
+//
+//.nodes_table .table th:nth-child(5) {
+//  width: 10%;
+//}
+//
+//.nodes_table .table th:nth-child(6) {
+//  width: 10%;
+//}
 
 .automation_status_alarm {
   color: $alarm-red;
@@ -97,12 +97,6 @@ pre {
   padding: 20px 20px;
   border-top: 1px solid #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
-}
-
-.automation-show-actions-bar {
-  .automation-show-actions {
-    margin-left: 5px;
-  }
 }
 
 .static-tags {
