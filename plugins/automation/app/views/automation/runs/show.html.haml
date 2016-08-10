@@ -8,7 +8,7 @@
     %h3
       Details
 
-    .job_details
+    .run_details
       .row
         .col-md-2
           %b
@@ -44,8 +44,8 @@
   .modal-section
     %h3
       Jobs
-
-    = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs}
+    .js-run_jobs_table
+      = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs}
 
   .modal-section
     %h3
