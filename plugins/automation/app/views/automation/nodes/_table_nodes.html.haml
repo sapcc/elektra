@@ -1,4 +1,4 @@
-.nodes_table{data: {update_path: plugin('automation').index_update_nodes_path(), update_interval: 30}}
+.nodes_table
   %table.table
     %thead
       %tr
@@ -8,7 +8,7 @@
         %th Tags
         %th Online
         %th Job history
-        %th.snug-nowrap
+        %th.snug
     %tbody
       - if nodes.empty?
         %tr
