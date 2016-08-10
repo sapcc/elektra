@@ -1,3 +1,8 @@
+#
+# Adds a loading spinner and dimms the table when clicking pagination icons.
+# When using Ajax:
+# If pagination happens with ajax the PaginationSpinner should be reloaded.
+#
 class PaginationSpinner
 
   constructor: (options) ->
