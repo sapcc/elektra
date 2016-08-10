@@ -11,12 +11,19 @@ module Monitoring
       all_alarms.map{|alarm| alarm.severity }.map{|severity| severity_cnt[severity] += 1}
       all_alarms.map{|alarm| alarm.state }.map{|state| state_cnt[state] += 1}
       
-      # create pie data
       @severity_pie_data = Array.new
       @state_pie_data = Array.new
-      @severity_pie_data = severity_cnt.keys.sort.map{|severity| { label: severity.capitalize, count: severity_cnt[severity] } }
-      @state_pie_data = state_cnt.keys.sort.map{|state| { label: state.capitalize, count: state_cnt[state] } }
+      @severity_pie_data = severity_cnt.keys.sort.map{|severity| { label: severity.capitalize, count: severity_cnt[severity] }}
+      @state_pie_data = state_cnt.keys.sort.map{|state| 
+         # rename undetermined because it is to long for the chart label
+        state = "unkown" if state == 'undetermined'
+        { label: state.capitalize, count: state_cnt[state] } 
+      }
       
+      # demo data to test styles
+      #@state_pie_data << { label: "Unknown", count: 5 }
+      #@severity_pie_data << { label: "Low", count: 5 }
+      #@severity_pie_data << { label: "Medium", count: 8 }
     end
 
   end

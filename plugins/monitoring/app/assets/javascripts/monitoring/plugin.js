@@ -52,11 +52,45 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
           .width(width)
           .height(height)
           .showLegend(false)
+          .labelThreshold(0.05)
           .noData("There is no Data to display")
           .title(TYPE)
           .donut(true)
           .donutRatio(0.4)
           .showTooltipPercent(true);
+
+      chart.color(function (d, i) {
+        // color scheme is used from _variables.scss
+         switch(d.label) {
+           case "Low":
+              //console.log("Low");
+              //$medium-blue
+              return ["#226ca9"];
+           case "Medium":
+              //console.log("Medium");
+              //$bright-orange
+              return ["#de8a2e"];
+           case "High":
+              //console.log("High");
+              //$deep-orange
+              return ["#b34a2a"];
+           case "Critical":
+              //console.log("Critical");
+              //$alarm-red
+              return ["#e22"];
+           case "Ok":
+              //console.log("OK");
+              //$medium-green
+              return ["#8ab54e"];
+           case "Alarm":
+              //console.log("Alarm");
+              //$alarm-red
+              return ["#e22"];
+           case "Unknown":
+              //console.log("Undetermined");
+              return ["#aaa"];
+         }
+      });
 
       d3.select("#"+TYPE)
           .datum(DATA)
@@ -64,7 +98,9 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
           .attr('width', width)
           .attr('height', height)
           .call(chart);
-          
+
+
+
       return chart;
   } );
 
