@@ -39,46 +39,32 @@ $(document).ready(function(){
   });
 }); 
 
-/*
-monitoring.render_overview_pie = function(dataset) {
 
-      var width = 300;
-      var height = 300;
-      var radius = Math.min(width, height) / 2;
+monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
 
-      // Alternative
-      var color = ['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C'];
-      
-      // define arc
-      var arc = d3.arc()
-        .innerRadius(0)
-        .outerRadius(radius);
+  var width = SIZE || 400;
+  var height = SIZE || 400;
 
-      // define pi
-      var pie = d3.pie()
-        .value(function(d) { return d.count; })
-        .sort(null);
-      
+  nv.addGraph( function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.count })
+          .width(width)
+          .height(height)
+          .noData("There is no Data to display")
+          .title(TYPE)
+          .donut(true)
+          .donutRatio(0.4)
+          .showTooltipPercent(true);
 
-      // create svg
-      var svg = d3.select('#chart')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .append('g')
-        .attr('transform', 'translate(' + (width / 2) +  ',' + (height / 2) + ')');
+      d3.select("#"+TYPE)
+          .datum(DATA)
+          .transition().duration(1200)
+          .attr('width', width)
+          .attr('height', height)
+          .call(chart);
+          
+      return chart;
+  } );
 
-      // render the pie chart
-      svg.selectAll('path')
-        .data(pie(dataset))
-        .enter()
-        .append('path')
-        .attr('d', arc)
-        .attr('fill', function(d, i) {
-          return color[i];
-        });
 }
-*/
-
-// Call function from other files inside this plugin using the variable monitoring
-//monitoring.anyFunction()    
