@@ -5,12 +5,12 @@
 .overview
   .row
     .col-md-6
-      %svg#state
+      %svg#State
     .col-md-6
-      %svg#severity
+      %svg#Severity
 
 :javascript
 
-  monitoring.render_overview_pie('severity',#{@severity_pie_data.to_json});
-  monitoring.render_overview_pie('state',#{@state_pie_data.to_json});
+  monitoring.render_overview_pie('Severity',#{@severity_pie_data.to_json});
+  monitoring.render_overview_pie('State',#{@state_pie_data.to_json});
 
