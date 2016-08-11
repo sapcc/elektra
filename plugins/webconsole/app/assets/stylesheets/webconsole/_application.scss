@@ -51,6 +51,7 @@ $help-content-width: 420px;
   display: none;
   position: fixed;
   bottom: 0;
+  z-index: 99;
 
   #webconsole-container {
     height: 40vh;
@@ -64,6 +65,10 @@ $help-content-width: 420px;
     height: $line-height-computed + $toolbar-vertical-padding*2;
     position: absolute;
     top: -($line-height-computed + $toolbar-vertical-padding*2);
+
+    .main-buttons {
+      right: 15px;
+    }
   }
 }
 
