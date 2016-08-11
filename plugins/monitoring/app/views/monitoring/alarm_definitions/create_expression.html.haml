@@ -1,0 +1,26 @@
+= content_for :title do
+  Alarm Definition Step #{@step_count}
+
+.modal-body
+  %h4 Create Expression #{@step_count}
+  .panel.panel-default
+    .panel-body
+      #expression
+  .row
+    .col-md-6
+      %label{ for:'metric'}
+        %abbr{title:"required"} *
+        Metric
+      %input{id:'metric', class: 'form-control', data: { provide: "typeahead" }}
+      .dimensions
+  
+:javascript
+  var metric_names = #{@metric_names.to_json};
+  
+  $(function(){
+    $("#metric").typeahead({ source:  metric_names, afterSelect: function(){ monitoring.render_dimensions() } });
+  });
+
+  
+  
+=# link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}  

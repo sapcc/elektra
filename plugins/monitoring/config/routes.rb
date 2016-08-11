@@ -13,6 +13,7 @@ Monitoring::Engine.routes.draw do
   resources 'alarm_definitions' do
     collection do
       get 'search'
+      get 'create_expression'
     end
     member do
       get 'toggle_alarm_actions'

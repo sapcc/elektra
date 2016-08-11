@@ -83,6 +83,24 @@ module ServiceLayer
       Monitoring::AlarmDefinition.new(driver,attributes)
     end
 
+    def get_metrics_and_dimensions
+      metrics = driver.map_to(Monitoring::Metric).list_metrics()
+      
+      metrics_data = Array.new
+      metrics.map{|metric| metrics_data << [metric.name, metric.dimensions.keys[0], metric.dimensions.values[0]] }
+      
+      metric_names = Array.new
+      metrics_data.map{|metric_data| metric_names << metric_data[0] }
+      
+      metrics_data
+    end
+    
+    def get_metric_names
+      metric_names_data = driver.map_to(Monitoring::MetricName).list_metric_names()
+      metric_names = Array.new
+      metric_names_data.map{|metric_name_data|metric_names << metric_name_data.name}
+      metric_names
+    end
 
   end
 end

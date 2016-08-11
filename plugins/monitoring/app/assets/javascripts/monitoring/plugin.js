@@ -40,6 +40,42 @@ $(document).ready(function(){
 }); 
 
 
+monitoring.get_metric_names = function() {
+  
+	var metric_names_unfiltered = []
+  $.each(metrics_data, function( index, metric ) {
+    metric_names_unfiltered.push(metric[0]);
+  });
+  //console.log(metric_names_unfiltered);
+  
+  var metric_names_unique = metric_names_unfiltered.filter(function(metric_name, i, ar){ 
+    return ar.indexOf(metric_name) === i; 
+  });
+  //console.log(metric_names_unique);
+  
+  return metric_names_unique;
+};
+
+monitoring.generate_expression = function() {
+  
+  var expression = "";
+  var metric = $('#metric').val();
+  var statistical_function = 'avg';
+  var dimensions = "";
+  var period = "";
+  var relational_operator = "";
+  var threshold_value = "";
+  
+  return statistical_function+"("+metric+"{"+dimensions+"},"+period+")"+relational_operator+" "+threshold_value;
+  
+} 
+
+monitoring.render_dimensions = function() {
+  $('#expression').html(monitoring.generate_expression());
+  
+}
+
+
 monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
 
   var width = SIZE || 450;
@@ -99,9 +135,7 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
           .attr('height', height)
           .call(chart);
 
-
-
       return chart;
   } );
 
-}
+};

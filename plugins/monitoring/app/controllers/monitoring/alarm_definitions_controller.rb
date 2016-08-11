@@ -2,7 +2,7 @@ module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_required
     
-    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search ] 
+    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search, :create_expression ] 
 
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
@@ -77,6 +77,10 @@ module Monitoring
       } 
       
       @alarm_definition.update_attributes(attrs)
+    end
+    
+    def create_expression
+      @metric_names = services.monitoring.get_metric_names
     end
 
     private
