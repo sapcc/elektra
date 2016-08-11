@@ -1,7 +1,7 @@
 = content_for :title do
   Automation details
 
-.modal-body
+.modal-body.static-columns
 
   .modal-flashes
     = render "automation/shared/flashes.html"
@@ -24,8 +24,8 @@
       - form_horizontal_static_hash('Environment', @automation.environment)
 
 
-  %div.buttons{class: modal? ? 'modal-footer' : ''}
-    - if modal?
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Close
-    - else
-      = link_to "Close", plugin('automation').automations_path(), class: 'btn btn-default'
+%div{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Close
+  - else
+    = link_to "Close", plugin('automation').automations_path(), class: 'btn btn-default'
