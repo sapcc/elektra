@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Automation::JobsController, type: :controller do
   routes { Automation::Engine.routes }
 
-  
-
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 
   before(:all) do
@@ -21,29 +19,31 @@ describe Automation::JobsController, type: :controller do
 
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::ComputeService).to receive(:driver).and_return(compute_driver)
+    allow(UserProfile).to receive(:tou_accepted?).and_return(true)
   end
 
-  # describe "GET 'show'" do
-  #
-  #   before :each do
-  #     @agent_id = 'kuack_kuack'
-  #     @job_id = 'miau_bup'
-  #     @payload =  "First line \n second line \n third line"
-  #     @log = log_output
-  #     @job = double('job', created_at: '2016-02-29T10:18:34.708279Z', updated_at: '2016-02-29T10:18:49.708279Z', payload: @payload)
-  #     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job_id).and_return(@job)
-  #     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job_id).and_return(@log)
-  #   end
-  #
-  #   it "returns http success" do
-  #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
-  #     expect(response).to be_success
-  #   end
-  #
-  #   it "should calculate the duration" do
-  #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
-  #     expect(assigns(:duration)).to eq('00:00:15')
-  #   end
+  describe "GET 'show'" do
+
+    before :each do
+      @payload =  "First line \n second line \n third line"
+      @log = log_output
+      @job = double('job', id: 'test_job_id', created_at: '2016-02-29T10:18:34.708279Z', updated_at: '2016-02-29T10:18:49.708279Z', payload: @payload, to: "node_test_id")
+      @node = double('node', id: 'node_test_id', name: 'Test node name')
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job.id).and_return(@job)
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:node).with(any_args).and_return(@node)
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
+    end
+
+    it "returns http success and render the template" do
+      get :show, default_params.merge!({id: @job.id})
+      expect(response).to be_success
+      expect(response).to render_template(:show)
+    end
+
+    # it "should calculate the duration" do
+    #   get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
+    #   expect(assigns(:duration)).to eq('00:00:15')
+    # end
   #
   #   it "should calculate the payload and log lines" do
   #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
@@ -63,7 +63,33 @@ describe Automation::JobsController, type: :controller do
   #     expect(@log).to include(assigns(:log_output))
   #   end
   #
-  # end
+  end
+
+  describe "GET 'show_data'" do
+
+    before :each do
+      @payload =  "First line \n second line \n third line"
+      @log = log_output
+      @job = double('job', id: 'test_job_id', created_at: '2016-02-29T10:18:34.708279Z', updated_at: '2016-02-29T10:18:49.708279Z', payload: @payload, to: "node_test_id")
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job.id).and_return(@job)
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
+    end
+
+    it "returns http success and render the template for payload" do
+      get :show_data, default_params.merge!({id: @job.id, attr: 'payload'})
+      expect(response).to be_success
+      expect(response).to render_template(:show_data)
+      expect(assigns(:data)).to eq(@payload)
+    end
+
+    it "returns http success and render the template for log" do
+      get :show_data, default_params.merge!({id: @job.id, attr: 'log'})
+      expect(response).to be_success
+      expect(response).to render_template(:show_data)
+      expect(assigns(:data)).to eq(@log)
+    end
+
+  end
 
 end
 

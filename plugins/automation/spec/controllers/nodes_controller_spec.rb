@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe Automation::NodesController, type: :controller do
   routes { Automation::Engine.routes }
-  
-  
 
   before :each do
     stub_authentication
