@@ -5,9 +5,6 @@ module Automation
     NO_LOG_FOUND = 'No log available.'
     NO_PAYLOAD_FOUND = 'No payload available.'
 
-    def index
-    end
-
     def show
       @job = services.automation.job(params[:id])
 

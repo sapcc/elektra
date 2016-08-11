@@ -98,7 +98,7 @@
             #{@payload_output}
 
 
-.modal-footer
+%div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
   - else

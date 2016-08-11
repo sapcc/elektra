@@ -121,8 +121,9 @@ class @MoModal
       window.location = url
     else if response_type.indexOf('javascript') > -1
       # response is javascript
+      # Commeted lines as removes the backdrop when sending ajax calls to change the modal content
       # Remove old modal backdrop
-      $('.modal-backdrop').remove()
+      # $('.modal-backdrop').remove()
     else
       # assume response is a html
       # modal has the fade effect 

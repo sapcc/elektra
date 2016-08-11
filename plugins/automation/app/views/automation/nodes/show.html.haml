@@ -19,7 +19,7 @@
     .tab-pane{role:"tabpanel", id:"jobs"}
       = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs[:elements]}
 
-.modal-footer
+%div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
   - else
