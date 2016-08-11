@@ -21,6 +21,12 @@
   }
 }
 
+.static-columns {
+  *[class^='col-']{
+    position: static;
+  }
+}
+
 // Index
 
 .loading-spinner-section {
