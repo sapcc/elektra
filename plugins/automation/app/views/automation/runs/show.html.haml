@@ -54,7 +54,7 @@
     .js-run-log
       = render partial: 'run_log', locals: {log_lines: @log_lines, log_truncated: @log_truncated, run: @run, log_output: @log_output}
 
-.modal-footer
+%div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
   - else
