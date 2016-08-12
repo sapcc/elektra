@@ -27,9 +27,9 @@ module Monitoring
         end
       end
       
-      def list_metrics
+      def list_metrics(options = {})
         handle_response do
-          @fog.list_metrics.body["elements"]
+          @fog.list_metrics(options).body["elements"]
         end
       end
 

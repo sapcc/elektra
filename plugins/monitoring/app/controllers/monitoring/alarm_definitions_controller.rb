@@ -2,7 +2,7 @@ module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_required
     
-    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search, :create_expression ] 
+    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search, :create_expression, :get_dimensions_by_metric, :dimension_row ] 
 
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
@@ -81,6 +81,21 @@ module Monitoring
     
     def create_expression
       @metric_names = services.monitoring.get_metric_names
+    end
+    
+    def get_dimensions_by_metric
+      name = params.require(:name)
+      t = Time.now.utc - (60*60)
+      metrics = services.monitoring.get_metric({name: name, start_time: t.iso8601})
+      dimensions = Hash.new{ |h, k| h[k] = [] } 
+      metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
+      render json: dimensions
+    end
+
+    def dimension_row
+      @cnt = params.require(:cnt).to_i
+      @next = @cnt + 1
+      render partial: "dimension_row"
     end
 
     private

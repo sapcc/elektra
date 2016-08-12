@@ -12,15 +12,69 @@
         %abbr{title:"required"} *
         Metric
       %input{id:'metric', class: 'form-control', data: { provide: "typeahead" }}
-      .dimensions
+      #expression_dimensions_1
   
 :javascript
   var metric_names = #{@metric_names.to_json};
+  var dimension_cnt = 0;
   
   $(function(){
-    $("#metric").typeahead({ source:  metric_names, afterSelect: function(){ monitoring.render_dimensions() } });
+    $("#metric").typeahead({ source:  metric_names, afterSelect: function(){ 
+      monitoring.generate_expression(); 
+      get_dimensions($('#metric').val());
+      dimension_cnt++;
+      render_dimension_row(dimension_cnt);
+      // made read only
+    }
+    });
   });
 
+  function render_dimension_row(CNT) {
+    $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: CNT}, function( data ){ 
+      // get row data
+      $('#expression_dimensions_'+CNT).html(data);
+      // set autocompletion for dimension key
+      dimension_keys = Object.keys(dimension_data);
+      $("#dimension_key_"+CNT).typeahead({ source: dimension_keys, afterSelect: function(){
+        // destroy old typeahead
+        $("#dimension_value_"+CNT).val("");
+        $("#dimension_value_"+CNT).typeahead('destroy');
+        var selected_dimension_key = $("#dimension_key_"+CNT).val();
+        var dimension_values = dimension_data[selected_dimension_key];
+        $("#dimension_value_"+CNT).typeahead({ source: dimension_values, afterSelect: function(){
+          // remove selected value from array
+          var selected_dimension_value = $("#dimension_value_"+CNT).val();
+          var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
+          // console.log(value_index);
+          dimension_data[selected_dimension_key].splice(value_index,1);
+          // render new row
+          render_dimension_row(CNT + 1); 
+          monitoring.generate_expression();
+          // made row read only
+        } });
+      }});
+    });
+    
+  }
+
+  var dimension_data;
+  function get_dimensions(METRIC_NAME) {
+    $.ajax({
+      url: "#{plugin('monitoring').dimensions_by_metric_alarm_definitions_path()}",
+      data: { name: METRIC_NAME },
+      success: function( data ) { 
+        dimension_data = data; 
+        // remove doubled entrys
+        $(Object.keys(dimension_data)).each(function(index,dimension_key) {
+         $.unique( dimension_data[dimension_key]);
+        })
+      },
+      async: false
+    });
+    //$.get( , { name: METRIC_NAME },  function( data ) {
+    //   dimension_data = data;
+    //});
+  }
   
   
 =# link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}  

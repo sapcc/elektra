@@ -54,7 +54,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def list_metrics()
+      def list_metrics(params={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

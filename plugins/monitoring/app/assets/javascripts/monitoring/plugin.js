@@ -62,11 +62,21 @@ monitoring.generate_expression = function() {
   var metric = $('#metric').val();
   var statistical_function = 'avg';
   var dimensions = "";
+
+  var dimensions = "";
+  $('.dimension_key').each(function( ) {
+    if($( this ).text() != '' ) {
+      var defintion_id = $(this).data('defintion')
+      dimensions += $( this ).text()+":"+$('#dimension_value_'+defintion_id).text()+",";
+    }
+  });
+
   var period = "";
   var relational_operator = "";
   var threshold_value = "";
   
-  return statistical_function+"("+metric+"{"+dimensions+"},"+period+")"+relational_operator+" "+threshold_value;
+  expression = statistical_function+"("+metric+"{"+dimensions+"},"+period+")"+relational_operator+" "+threshold_value;
+  $('#expression').html(expression);
   
 } 
 
