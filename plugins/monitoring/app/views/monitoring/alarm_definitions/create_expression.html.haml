@@ -10,7 +10,6 @@
           .row
             .col-md-11
               #expression
-                your expression
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset_btn
@@ -24,6 +23,21 @@
       %p.help-block
         A metric is uniquely identified by a name and set of dimensions.
       #expression_dimensions
+      %label{ for:'statistical_function'}
+        %abbr{title:"required"} *
+        Statistical Function
+      %select#statistical_function.select.required.form-control{onchange: 'monitoring.generate_expression();'}
+        %option{value: 'avg'} avg
+        %option{value: 'min'} min
+        %option{value: 'max'} max
+        %option{value: 'sum'} sum
+        %option{value: 'count'} count
+      #period
+      #treshold
+    -#.col-md-6
+      Preview Statistics
+      .bs-callout.bs-callout-info
+        Good to know......
 
 .buttons{ class: modal? ? 'modal-footer' : '' }
   - if modal?
@@ -58,6 +72,7 @@
     // initial autofocus
     setTimeout(function() {
       $("#metric").focus().select();
+      monitoring.generate_expression();
     }, 0);
   });
 

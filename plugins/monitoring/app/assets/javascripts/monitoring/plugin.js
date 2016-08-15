@@ -60,7 +60,7 @@ monitoring.generate_expression = function() {
   
   var expression = "";
   var metric = $('#metric').val();
-  var statistical_function = 'avg';
+  var statistical_function = $('#statistical_function').val();
   var dimensions = "";
 
   var dimensions = "";
