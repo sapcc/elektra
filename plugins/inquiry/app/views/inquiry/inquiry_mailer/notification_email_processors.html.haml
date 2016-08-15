@@ -4,34 +4,45 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
 
   %body
-    %p
-      = "Hello SAP Converged Cloud project administrator,"
+    %p A request needs your attention!
 
-    %p!= "a request from user <b>#{@requester_name}</b> for a #{@inquiry_step.inquiry.kind} needs your attention."
+    %p
+      %b Domain:
+      = @inquiry_step.inquiry.domain_id
+
+      %br
+      %b Request for:
+      = @inquiry_step.inquiry.kind
+
+      %br
+      %b Requestor:
+      = @requester_name
+
+      %br
+      %b Request Status:
+      = @inquiry_step.inquiry.aasm.human_state
 
     %p
       - inquiries_url = @inquiry_step.inquiry.kind.downcase.start_with?("domain") ? admin_inquiries_url(domain_id: Rails.configuration.cloud_admin_domain,project_id: Rails.configuration.cloud_admin_project) : admin_inquiries_url(domain_id: @inquiry_step.inquiry.domain_id)
       %a(href="#{inquiries_url}") Click here to enter the request processing.
 
-    %p
-      %strong= "The status of the request is #{@inquiry_step.inquiry.aasm.human_state}."
 
     %p
-      Details on the request can be found below. The requester will be informed automatically on status changes.
+      Details on the request can be found below. The requestor will be informed automatically on status changes.
 
     %p
-      Request details:
+      %b Request details:
       %br
       = "---"
       %br
-      %strong Resource:
+      %b Resource:
       = @inquiry_step.inquiry.kind
       %br
-      %strong Request reason:
+      %b Request reason:
       %br
       %pre= @inquiry_step.inquiry.description
       %br
-      %strong Request specific data:
+      %b Request specific data:
       %pre= JSON.pretty_generate(@inquiry_step.inquiry.payload) rescue "Error during rendering of JSON payload!"
       = "---"
 
