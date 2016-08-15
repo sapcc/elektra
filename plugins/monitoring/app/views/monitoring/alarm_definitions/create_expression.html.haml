@@ -14,7 +14,7 @@
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset_btn
-      = link_to "Reset", "", class: 'btn btn-default btn-sm', title: 'this will reload everything'
+      = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default btn-sm', title: 'this will reload everything', data: { modal:true }
   .row
     .col-md-6
       %label{ for:'metric'}
@@ -33,7 +33,7 @@
     = link_to "Cancel", "", class: 'btn btn-default'
   
   = link_to "Create Another Expression", "", class: 'btn btn-primary'
-  = link_to "Create Definition", "", class: 'btn btn-primary'
+  = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary', data: { modal:true }  
 
   
 :javascript
@@ -54,7 +54,10 @@
       render_dimension_row(dimension_cnt);
     }
     });
-    $("#metric").focus();
+    // initial autofocus
+    setTimeout(function() {
+      $("#metric").focus().select();
+    }, 0);
   });
 
   function render_dimension_row(ID) {
@@ -140,4 +143,3 @@
   }
   
   
-=# link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}  
