@@ -1,12 +1,12 @@
 = content_for :title do
   %i.fa.fa-terminal
   VNC Console
-  
-- if modal?  
+
+- if modal?
   .modal-body.console
-    %iframe{src: @console.url, width: '100%', height: '650'}
+    %iframe{src: @console.url, width: '100%', height: '650px'}
 - else
-  %iframe{src: @console.url, width: '100%', height: '100%'}    
+  %iframe{src: @console.url, width: '100%', height: '850px'}
 
 - if modal?
   .modal-footer
@@ -14,4 +14,3 @@
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
     - else
       = link_to "Close", plugin('compute').instances_url, class: 'btn btn-default'
-    

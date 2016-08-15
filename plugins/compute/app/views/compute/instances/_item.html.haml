@@ -25,8 +25,10 @@
               %span.info-text= values["OS-EXT-IPS:type"]
 
 
+
   %td= instance.image_object.name if instance.image_object
   %td= instance.flavor_object.name if instance.flavor_object
+
   %td= instance.power_state_string
   %td
     = instance.task_state.nil? ? instance.status.capitalize : instance.task_state
@@ -44,7 +46,8 @@
         - unless instance.os_ext_sts_task_state
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-              %li= link_to 'Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
+
+              %li= link_to 'VNC Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
 
             - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               - if instance.floating_ips.length>0
