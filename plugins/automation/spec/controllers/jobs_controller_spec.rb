@@ -34,17 +34,12 @@ describe Automation::JobsController, type: :controller do
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
     end
 
-    it "returns http success and render the template" do
+    it "returns http success and renders the right template" do
       get :show, default_params.merge!({id: @job.id})
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
 
-    # it "should calculate the duration" do
-    #   get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
-    #   expect(assigns(:duration)).to eq('00:00:15')
-    # end
-  #
   #   it "should calculate the payload and log lines" do
   #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
   #     expect(assigns(:payload_lines)).to eq(3)
