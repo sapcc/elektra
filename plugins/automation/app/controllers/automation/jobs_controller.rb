@@ -68,8 +68,6 @@ module Automation
             raise exception
           end
         end
-
-
       elsif params[:attr] == 'log'
         @data =  begin
           services.automation.job_log(@job_id)
