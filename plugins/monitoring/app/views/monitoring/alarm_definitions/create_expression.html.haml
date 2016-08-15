@@ -21,7 +21,20 @@
         %abbr{title:"required"} *
         Metric
       %input{id:'metric', class: 'form-control metric', data: { provide: "typeahead" }}
+      %p.help-block
+        A metric is uniquely identified by a name and set of dimensions.
       #expression_dimensions
+
+.buttons{ class: modal? ? 'modal-footer' : '' }
+  - if modal?
+    %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } }
+      Cancel
+  - else
+    = link_to "Cancel", "", class: 'btn btn-default'
+  
+  = link_to "Create Another Expression", "", class: 'btn btn-primary'
+  = link_to "Create Definition", "", class: 'btn btn-primary'
+
   
 :javascript
   // all metric names
@@ -41,46 +54,50 @@
       render_dimension_row(dimension_cnt);
     }
     });
+    $("#metric").focus();
   });
 
   function render_dimension_row(ID) {
-    $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID}, function( data ){ 
-      // get row data
-      $('#expression_dimensions').append(data);
-      // set autocompletion for dimension key
-      dimension_keys = Object.keys(dimension_data);
-      $("#dimension_key_"+ID).typeahead({ source: dimension_keys, afterSelect: function(){
-        // destroy old typeahead
-        $("#dimension_value_"+ID).val("");
-        $("#dimension_value_"+ID).typeahead('destroy');
-        var selected_dimension_key = $("#dimension_key_"+ID).val();
-        var dimension_values = dimension_data[selected_dimension_key];
-
-        // set typeahead for values
-        $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
-          function(){
-            // remove selected value from array
-            var selected_dimension_value = $("#dimension_value_"+ID).val();
-            var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
-            // console.log(value_index);
-            dimension_data[selected_dimension_key].splice(value_index,1);
-            // remove key if no values left
-            if ( dimension_data[selected_dimension_key].length == 0 ) {
-              delete dimension_data[selected_dimension_key];
+    $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID}, 
+      function( data ){ 
+        // get row data
+        $('#expression_dimensions').append(data);
+        // set autocompletion for dimension key
+        dimension_keys = Object.keys(dimension_data);
+        $("#dimension_key_"+ID).typeahead({ source: dimension_keys, afterSelect: function(){
+          // destroy old typeahead
+          $("#dimension_value_"+ID).val("");
+          $("#dimension_value_"+ID).typeahead('destroy');
+          var selected_dimension_key = $("#dimension_key_"+ID).val();
+          var dimension_values = dimension_data[selected_dimension_key];
+          // set typeahead for values
+          $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
+            function(){
+              // remove selected value from array
+              var selected_dimension_value = $("#dimension_value_"+ID).val();
+              var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
+              // console.log(value_index);
+              dimension_data[selected_dimension_key].splice(value_index,1);
+              // remove key if no values left
+              if ( dimension_data[selected_dimension_key].length == 0 ) {
+                delete dimension_data[selected_dimension_key];
+              }
+              // render new row
+              dimension_cnt++
+              render_dimension_row(dimension_cnt); 
+              monitoring.generate_expression();
+              // made row read only
+              $("#dimension_value_"+ID).prop("readonly", true);
+              $("#dimension_key_"+ID).prop("readonly", true);
+              // show remove button
+              $('#expression_remove_dimension_btn_'+ID).removeClass('disabled');
             }
-            // render new row
-            dimension_cnt++
-            render_dimension_row(dimension_cnt); 
-            monitoring.generate_expression();
-            // made row read only
-            $("#dimension_value_"+ID).prop("readonly", true);
-            $("#dimension_key_"+ID).prop("readonly", true);
-            // show remove button
-            $('#expression_remove_dimension_btn_'+ID).removeClass('disabled');
-          } 
-        });
-
-      }});
+          });
+          $("#dimension_value_"+ID).focus();
+        }
+      });
+                
+      $("#dimension_key_"+ID).focus();
     });
   }
   

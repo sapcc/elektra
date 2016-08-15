@@ -1,15 +1,15 @@
 .expression_dimension{ id: "expression_dimension_#{@cnt}" }
   .row
-    .col-md-5
+    .col-md-4
       %label{ for: "dimension_key_#{@cnt}"}
         %abbr{ title: "required" } *
         Dimension Key
       %input{id:"dimension_key_#{@cnt}", class: "form-control dimension_key", data: { provide: "typeahead", defintion: @cnt }}
-    .col-md-7
+    .col-md-8
       .input-group
         %label{ for: "dimension_value_#{@cnt}"}
           %abbr{ title: "required" } *
           Dimension Value
         %input{id:"dimension_value_#{@cnt}", class: "form-control dimension_value", data: { provide: "typeahead", defintion: @cnt  }}
         %span.input-group-btn.expression_remove_dimension{id: "expression_remove_dimension_#{@cnt}"}
-          = link_to "Remove", "javascript:remove_dimension_row(#{@cnt})", class: 'btn btn-default btn-sm disabled', id: "expression_remove_dimension_btn_#{@cnt}"
+          = link_to "Remove", "javascript:remove_dimension_row(#{@cnt})", class: 'btn btn-default disabled', id: "expression_remove_dimension_btn_#{@cnt}"
