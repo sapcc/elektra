@@ -40,7 +40,8 @@ module Automation
       if params[:attr] == 'payload'
         @data = begin
           job = services.automation.job(@job_id)
-          job.payload
+          data = job.payload
+          prettify(data)
         rescue RubyArcClient::ApiError => exception
           if exception.code == 404
             ::Automation::DataTruncation::NO_DATA_FOUND
@@ -50,7 +51,8 @@ module Automation
         end
       elsif params[:attr] == 'log'
         @data =  begin
-          services.automation.job_log(@job_id)
+          data = services.automation.job_log(@job_id)
+          prettify(data)
         rescue RubyArcClient::ApiError => exception
           if exception.code == 404
             ::Automation::DataTruncation::NO_DATA_FOUND
@@ -61,6 +63,17 @@ module Automation
       end
 
       render :layout => false
+    end
+
+    private
+
+    def prettify(data)
+      begin
+        json = JSON.parse(data)
+        JSON.pretty_generate(json)
+      rescue JSON::ParserError
+        data
+      end
     end
 
   end
