@@ -149,3 +149,25 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
   } );
 
 };
+  
+monitoring.remove_dimension_row = function (ID) {
+  // add value to choosen dimension key
+  var dimension_key = $("#dimension_key_"+ID).val();
+  var dimension_value = $("#dimension_value_"+ID).val();
+
+  // check for exiting key
+  if(!dimension_data.hasOwnProperty(dimension_key)) {
+    // create key and empty array
+    dimension_data[dimension_key] = [];
+  }
+
+  // add free value to array
+  dimension_data[dimension_key].push(dimension_value);
+  // remove entry
+  $('#expression_dimension_'+ID).remove();
+  monitoring.generate_expression();
+  // remove latest empty dimension key - value input and render it new
+  // to update typeahead
+  $('#expression_dimension_'+dimension_cnt).remove();
+  render_dimension_row(dimension_cnt);
+};

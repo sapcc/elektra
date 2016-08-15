@@ -32,8 +32,8 @@
   - else
     = link_to "Cancel", "", class: 'btn btn-default'
   
-  = link_to "Create Another Expression", "", class: 'btn btn-primary'
-  = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary', data: { modal:true }  
+  = link_to "Create Another Expression", "", class: 'btn btn-primary disabled'
+  = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary disabled', data: { modal:true }  
 
   
 :javascript
@@ -44,15 +44,16 @@
   
   $(function(){
     // set typeahead for metrics
-    $("#metric").typeahead({ source:  metric_names, afterSelect: function(){ 
-      monitoring.generate_expression(); 
-      get_dimensions($('#metric').val());
-      // cleanup everything
-      dimension_cnt = 1;
-      $('#expression_dimensions').empty();
-      $('.expression_dimension_head').css('display','inline');
-      render_dimension_row(dimension_cnt);
-    }
+    $("#metric").typeahead({ source:  metric_names, afterSelect: 
+      function(){ 
+        monitoring.generate_expression(); 
+        get_dimensions($('#metric').val());
+        // cleanup everything
+        dimension_cnt = 1;
+        $('#expression_dimensions').empty();
+        $('.expression_dimension_head').css('display','inline');
+        render_dimension_row(dimension_cnt);
+      }
     });
     // initial autofocus
     setTimeout(function() {
@@ -102,28 +103,6 @@
                 
       $("#dimension_key_"+ID).focus();
     });
-  }
-  
-  function remove_dimension_row(ID) {
-    // add value to choosen dimension key
-    var dimension_key = $("#dimension_key_"+ID).val();
-    var dimension_value = $("#dimension_value_"+ID).val();
-
-    // check for exiting key
-    if(!dimension_data.hasOwnProperty(dimension_key)) {
-      // create key and empty array
-      dimension_data[dimension_key] = [];
-    }
-
-    // add free value to array
-    dimension_data[dimension_key].push(dimension_value);
-    // remove entry
-    $('#expression_dimension_'+ID).remove();
-    monitoring.generate_expression();
-    // remove latest empty dimension key - value input and render it new
-    // to update typeahead
-    $('#expression_dimension_'+dimension_cnt).remove();
-    render_dimension_row(dimension_cnt);
   }
 
   var dimension_data;
