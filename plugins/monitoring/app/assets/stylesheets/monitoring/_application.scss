@@ -66,11 +66,28 @@
   text-align: right;
 }
 
-.expression_dimensions_head {
-  padding-top:10px;
+.expression_remove_dimension {
+  padding-top:23px;
+  padding-left:10px;
 }
 
-.expression_add_dimension {
-  padding-top:10px;
-  display:none;
+.panel-expression {
+  padding:5px 5px 5px 10px;
+}
+
+.expression_dimension {
+  margin-bottom:10px;
+}
+
+.metric {
+  margin-bottom:10px;
+}
+
+.loading-right {
+  margin-right:10px;
+  float:right;
+}
+
+.reset_btn {
+  padding-left:0;
 }

@@ -1,17 +1,15 @@
-%h4.expression_dimensions_head
-  Dimension #{@cnt}
-.row
-  .col-md-5
-    %label{ for: "dimension_key_#{@cnt}"}
-      %abbr{ title: "required" } *
-      Key
-    %input{id:"dimension_key_#{@cnt}", class: "form-control dimension_key", data: { provide: "typeahead", defintion: @cnt }}
-  .col-md-5
-    %label{ for: "dimension_value_#{@cnt}"}
-      %abbr{ title: "required" } *
-      Value
-    %input{id:"dimension_value_#{@cnt}", class: "form-control dimension_value", data: { provide: "typeahead", defintion: @cnt  }}
-  .col-md-2
-    .expression_add_dimension
-      = link_to "Add", "javascript:render_dimension_row(#{@next})", class: 'btn btn-default btn-sm' 
-%div{ id: "expression_dimensions_#{@next}" }
+.expression_dimension{ id: "expression_dimension_#{@cnt}" }
+  .row
+    .col-md-5
+      %label{ for: "dimension_key_#{@cnt}"}
+        %abbr{ title: "required" } *
+        Dimension Key
+      %input{id:"dimension_key_#{@cnt}", class: "form-control dimension_key", data: { provide: "typeahead", defintion: @cnt }}
+    .col-md-7
+      .input-group
+        %label{ for: "dimension_value_#{@cnt}"}
+          %abbr{ title: "required" } *
+          Dimension Value
+        %input{id:"dimension_value_#{@cnt}", class: "form-control dimension_value", data: { provide: "typeahead", defintion: @cnt  }}
+        %span.input-group-btn.expression_remove_dimension{id: "expression_remove_dimension_#{@cnt}"}
+          = link_to "Remove", "javascript:remove_dimension_row(#{@cnt})", class: 'btn btn-default btn-sm disabled', id: "expression_remove_dimension_btn_#{@cnt}"

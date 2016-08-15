@@ -3,58 +3,107 @@
 
 .modal-body
   %h4 Create Expression #{@step_count}
-  .panel.panel-default
-    .panel-body
-      #expression
+  .row
+    .col-md-11
+      .panel.panel-default
+        .panel-body.panel-expression
+          .row
+            .col-md-11
+              #expression
+                your expression
+            .col-md-1
+              .loading_place.loading-right
+    .col-md-1.reset_btn
+      = link_to "Reset", "", class: 'btn btn-default btn-sm', title: 'this will reload everything'
   .row
     .col-md-6
       %label{ for:'metric'}
         %abbr{title:"required"} *
         Metric
-      %input{id:'metric', class: 'form-control', data: { provide: "typeahead" }}
-      #expression_dimensions_1
+      %input{id:'metric', class: 'form-control metric', data: { provide: "typeahead" }}
+      #expression_dimensions
   
 :javascript
+  // all metric names
   var metric_names = #{@metric_names.to_json};
+  // global dimension counter
   var dimension_cnt = 0;
   
   $(function(){
+    // set typeahead for metrics
     $("#metric").typeahead({ source:  metric_names, afterSelect: function(){ 
       monitoring.generate_expression(); 
       get_dimensions($('#metric').val());
-      dimension_cnt++;
+      // cleanup everything
+      dimension_cnt = 1;
+      $('#expression_dimensions').empty();
+      $('.expression_dimension_head').css('display','inline');
       render_dimension_row(dimension_cnt);
-      // made read only
     }
     });
   });
 
-  function render_dimension_row(CNT) {
-    $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: CNT}, function( data ){ 
+  function render_dimension_row(ID) {
+    $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID}, function( data ){ 
       // get row data
-      $('#expression_dimensions_'+CNT).html(data);
+      $('#expression_dimensions').append(data);
       // set autocompletion for dimension key
       dimension_keys = Object.keys(dimension_data);
-      $("#dimension_key_"+CNT).typeahead({ source: dimension_keys, afterSelect: function(){
+      $("#dimension_key_"+ID).typeahead({ source: dimension_keys, afterSelect: function(){
         // destroy old typeahead
-        $("#dimension_value_"+CNT).val("");
-        $("#dimension_value_"+CNT).typeahead('destroy');
-        var selected_dimension_key = $("#dimension_key_"+CNT).val();
+        $("#dimension_value_"+ID).val("");
+        $("#dimension_value_"+ID).typeahead('destroy');
+        var selected_dimension_key = $("#dimension_key_"+ID).val();
         var dimension_values = dimension_data[selected_dimension_key];
-        $("#dimension_value_"+CNT).typeahead({ source: dimension_values, afterSelect: function(){
-          // remove selected value from array
-          var selected_dimension_value = $("#dimension_value_"+CNT).val();
-          var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
-          // console.log(value_index);
-          dimension_data[selected_dimension_key].splice(value_index,1);
-          // render new row
-          render_dimension_row(CNT + 1); 
-          monitoring.generate_expression();
-          // made row read only
-        } });
+
+        // set typeahead for values
+        $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
+          function(){
+            // remove selected value from array
+            var selected_dimension_value = $("#dimension_value_"+ID).val();
+            var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
+            // console.log(value_index);
+            dimension_data[selected_dimension_key].splice(value_index,1);
+            // remove key if no values left
+            if ( dimension_data[selected_dimension_key].length == 0 ) {
+              delete dimension_data[selected_dimension_key];
+            }
+            // render new row
+            dimension_cnt++
+            render_dimension_row(dimension_cnt); 
+            monitoring.generate_expression();
+            // made row read only
+            $("#dimension_value_"+ID).prop("readonly", true);
+            $("#dimension_key_"+ID).prop("readonly", true);
+            // show remove button
+            $('#expression_remove_dimension_btn_'+ID).removeClass('disabled');
+          } 
+        });
+
       }});
     });
-    
+  }
+  
+  function remove_dimension_row(ID) {
+    // add value to choosen dimension key
+    var dimension_key = $("#dimension_key_"+ID).val();
+    var dimension_value = $("#dimension_value_"+ID).val();
+
+    // check for exiting key
+    if(!dimension_data.hasOwnProperty(dimension_key)) {
+      // create key and empty array
+      dimension_data[dimension_key] = [];
+    }
+
+    // add free value to array
+    dimension_data[dimension_key].push(dimension_value);
+    // remove entry
+    $('#expression_dimension_'+ID).remove();
+    monitoring.generate_expression();
+    // remove latest empty dimension key - value input and render it new
+    // to update typeahead
+    $('#expression_dimension_'+dimension_cnt).remove();
+    render_dimension_row(dimension_cnt);
   }
 
   var dimension_data;
@@ -71,9 +120,6 @@
       },
       async: false
     });
-    //$.get( , { name: METRIC_NAME },  function( data ) {
-    //   dimension_data = data;
-    //});
   }
   
   
