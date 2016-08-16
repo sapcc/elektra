@@ -36,8 +36,8 @@
     %li{role: 'presentation'}
       = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")
 
-  %li{role: 'presentation'}
-    = link_to sap_url_for('grafana'), class: "btn", target: "_blank" do
+  .go-to-grafana
+    = link_to sap_url_for('grafana'), class: "btn", title: "Open grafana in new window.", target: "_blank" do
       %i.fa.fa-external-link
       Grafana
 

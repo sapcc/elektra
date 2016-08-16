@@ -3,24 +3,14 @@
 = render partial: 'tabs', locals: { tab: 'overview' }
 
 .overview
-  -# TODO: use picharts here? like https://github.com/ankane/chartkick
   .row
     .col-md-6
-      .list-group-item.list-group-item-info
-        Status
-      - @state_cnt.sort_by{|k,v|v}.reverse.each do |state, cnt|
-        .list-group-item
-          = link_to state.capitalize, plugin('monitoring').alarms_path( state: state.capitalize)
-          = badge_state(state,cnt)
+      %svg#State
     .col-md-6
-      .list-group
-        .list-group-item.list-group-item-info 
-          Severity
-        - @severity_cnt.sort_by{|k,v|v}.reverse.each do |severity, cnt|
-          .list-group-item
-            = link_to severity.capitalize, plugin('monitoring').alarms_path( severity: severity.capitalize)
-            %span.badge= cnt
-  
-    
-  
+      %svg#Severity
+
+:javascript
+
+  monitoring.render_overview_pie('Severity',#{@severity_pie_data.to_json});
+  monitoring.render_overview_pie('State',#{@state_pie_data.to_json});
 
