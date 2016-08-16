@@ -165,9 +165,9 @@ monitoring.remove_dimension_row = function(ID) {
   dimension_data[dimension_key].push(dimension_value);
   // remove entry
   $('#expression_dimension_'+ID).remove();
-  monitoring.generate_expression();
-  // remove latest empty dimension key - value input and render it new
-  // to update typeahead
+  // remove latest empty dimension key - value input and render new to update typeahead
   $('#expression_dimension_'+dimension_cnt).remove();
+  // generate expression and render new dimension row
+  monitoring.generate_expression();
   render_dimension_row(dimension_cnt);
 };

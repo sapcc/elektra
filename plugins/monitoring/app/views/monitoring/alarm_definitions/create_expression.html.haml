@@ -13,7 +13,7 @@
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset_btn
-      = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default btn-sm', title: 'this will reload everything', data: { modal:true }
+      = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
   .row
     .col-md-6
       %label{ for:'metric'}
@@ -58,7 +58,6 @@
     // set typeahead for metrics
     $("#metric").typeahead({ source:  metric_names, afterSelect: 
       function(){ 
-        monitoring.generate_expression(); 
         get_dimensions($('#metric').val());
         // cleanup everything
         dimension_cnt = 1;
@@ -81,7 +80,6 @@
         // render row data
         $('#expression_dimensions').append(data);
         autocomplete_dimension_values(ID);
-        monitoring.generate_expression();
     });
   }
   
@@ -130,9 +128,16 @@
       data: { name: METRIC_NAME },
       success: function( data ) { 
         dimension_data = data; 
-        // remove doubled entrys
+        // normalize data
         $(Object.keys(dimension_data)).each(function(index,dimension_key) {
-          $.unique( dimension_data[dimension_key]);
+          //console.log(dimension_key);
+          var unique_values = [];
+          // removed doubled entrys
+          // http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
+          $.each(dimension_data[dimension_key], function(i, value){
+              if($.inArray(value, unique_values) === -1) unique_values.push(value);
+          });
+          dimension_data[dimension_key] = unique_values;
         })
       },
       async: false
