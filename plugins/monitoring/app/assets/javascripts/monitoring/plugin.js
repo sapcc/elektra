@@ -66,8 +66,8 @@ monitoring.generate_expression = function() {
   var dimensions = "";
   $('.dimension_key').each(function( ) {
     if($( this ).text() != '' ) {
-      var defintion_id = $(this).data('defintion')
-      dimensions += $( this ).text()+":"+$('#dimension_value_'+defintion_id).text()+",";
+      var defintion_id = $(this).data('id')
+      dimensions += $( this ).val()+":"+$('#dimension_value_'+defintion_id).text()+",";
     }
   });
 
@@ -150,7 +150,7 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
 
 };
   
-monitoring.remove_dimension_row = function (ID) {
+monitoring.remove_dimension_row = function(ID) {
   // add value to choosen dimension key
   var dimension_key = $("#dimension_key_"+ID).val();
   var dimension_value = $("#dimension_value_"+ID).val();

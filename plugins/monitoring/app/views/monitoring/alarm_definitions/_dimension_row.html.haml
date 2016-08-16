@@ -1,15 +1,13 @@
 .expression_dimension{ id: "expression_dimension_#{@cnt}" }
+  %label{ for: "dimension_key_#{@cnt}"}
+    Dimension
   .row
     .col-md-4
-      %label{ for: "dimension_key_#{@cnt}"}
-        %abbr{ title: "required" } *
-        Dimension Key
-      %input{id:"dimension_key_#{@cnt}", class: "form-control dimension_key", data: { provide: "typeahead", defintion: @cnt }}
+      %select{id:"dimension_key_#{@cnt}", class: "form-control dimension_key", onchange: "autocomplete_dimension_values(#{@cnt})", data: {id: @cnt}}
+        - @keys.each do |key|
+          %option{value: key}=key
     .col-md-8
       .input-group
-        %label{ for: "dimension_value_#{@cnt}"}
-          %abbr{ title: "required" } *
-          Dimension Value
-        %input{id:"dimension_value_#{@cnt}", class: "form-control dimension_value", data: { provide: "typeahead", defintion: @cnt  }}
+        %input{id:"dimension_value_#{@cnt}", class: "form-control dimension_value", data: { provide: "typeahead", id: @cnt  }, placeholder:'value'}
         %span.input-group-btn.expression_remove_dimension{id: "expression_remove_dimension_#{@cnt}"}
           = link_to "Remove", "javascript:monitoring.remove_dimension_row(#{@cnt})", class: 'btn btn-default disabled', id: "expression_remove_dimension_btn_#{@cnt}"

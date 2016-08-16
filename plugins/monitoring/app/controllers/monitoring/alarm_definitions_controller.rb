@@ -94,6 +94,7 @@ module Monitoring
 
     def dimension_row
       @cnt = params.require(:cnt).to_i
+      @keys = JSON.parse(params.require(:keys));
       @next = @cnt + 1
       render partial: "dimension_row"
     end

@@ -15,7 +15,7 @@ Monitoring::Engine.routes.draw do
       get 'search'
       get 'create_expression'
       get 'dimensions_by_metric' => 'alarm_definitions#get_dimensions_by_metric'
-      get 'dimension_row'
+      post 'dimension_row'
     end
     member do
       get 'toggle_alarm_actions'
