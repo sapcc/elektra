@@ -90,7 +90,7 @@ module Automation
       node_id = params[:node_id]
       automation_id = params[:automation_id]
       automation_name = params[:automation_name]
-      run = services.automation.automation_run_service.new(automation_id: automation_id, selector: "@identity='#{node_id}'")
+      run = services.automation.automation_execute(automation_id,"@identity='#{node_id}'")
       if run.save
         flash.now[:success] = "Automation #{automation_name} was successfully executed. Click following #{view_context.link_to('link', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe} to see the details."
       else
@@ -102,10 +102,17 @@ module Automation
     end
 
     def destroy
-       node_id = params[:id]
-       services.automation.node_delete(node_id)
-       flash.now[:success] = "Node #{node_id} removed successfully."
-       redirect_to plugin('automation').nodes_path
+      node_id = params[:id]
+      node = begin
+        services.automation.node(node_id, ['all'])
+      rescue Exception => e
+        Rails.logger.error e
+        nil
+      end
+      name = node.nil? ? node_id : node.name
+      services.automation.node_delete(node_id)
+      flash[:success] = "Node #{name} removed successfully."
+      redirect_to plugin('automation').nodes_path
     end
 
     private
@@ -129,11 +136,10 @@ module Automation
     def nodes_with_jobs
       page = params[:page]||1
       per_page = 5
-      result = IndexNodesService.new(services.automation, services.compute).list_nodes_with_jobs(page, per_page)
+      service = IndexNodesService.new(services.automation, services.compute)
+      result = service.list_nodes_with_jobs(page, per_page)
 
-      @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).
-        page(page).
-        per(per_page)
+      @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(page).per(per_page)
       @jobs = result[:jobs]
       @addresses = result[:addresses]
     end

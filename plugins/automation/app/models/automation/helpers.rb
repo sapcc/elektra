@@ -21,6 +21,8 @@ module Automation
         unless result_hash.empty?
           return result_hash.to_json
         end
+      else
+        '{}'
       end
     end
 

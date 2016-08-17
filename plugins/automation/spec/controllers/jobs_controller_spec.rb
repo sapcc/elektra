@@ -1,4 +1,5 @@
 require 'spec_helper'
+require_relative '../factories/factories'
 
 describe Automation::JobsController, type: :controller do
   routes { Automation::Engine.routes }
@@ -16,21 +17,27 @@ describe Automation::JobsController, type: :controller do
 
     identity_driver = double('identity_service_driver').as_null_object
     compute_driver = double('compute_service_driver').as_null_object
+    client = double('ruby_arc_client').as_null_object
+    automation_service = double('automation_service').as_null_object
+    automation_run_service = double('automation_run_service').as_null_object
 
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::ComputeService).to receive(:driver).and_return(compute_driver)
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(ServiceLayer::AutomationService).to receive(:client).and_return(client)
+    allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_service).and_return(automation_service)
+    allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_run_service).and_return(automation_run_service)
   end
 
   describe "GET 'show'" do
 
     before :each do
-      @payload =  "First line \n second line \n third line"
-      @log = log_output
-      @job = double('job', id: 'test_job_id', created_at: '2016-02-29T10:18:34.708279Z', updated_at: '2016-02-29T10:18:49.708279Z', payload: @payload, to: "node_test_id")
-      @node = double('node', id: 'node_test_id', name: 'Test node name')
+      @job = ::Automation::FakeFactory.new.job
+      @payload = @job.payload
+      @log = ::Automation::FakeFactory.new.log
+
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job.id).and_return(@job)
-      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:node).with(any_args).and_return(@node)
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:node).with(any_args).and_return(::Automation::FakeFactory.new.node)
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
     end
 
@@ -40,58 +47,66 @@ describe Automation::JobsController, type: :controller do
       expect(response).to render_template(:show)
     end
 
-  #   it "should calculate the payload and log lines" do
-  #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
-  #     expect(assigns(:payload_lines)).to eq(3)
-  #     expect(assigns(:log_lines)).to eq(27)
-  #   end
-  #
-  #   it "should evaluate if log and payload are truncated" do
-  #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
-  #     expect(assigns(:payload_truncated)).to eq(false)
-  #     expect(assigns(:log_truncated)).to eq(true)
-  #   end
-  #
-  #   it "should assign the log and payload" do
-  #     get :show, default_params.merge!({agent_id: @agent_id, id: @job_id})
-  #     expect(assigns(:payload_output)).to eq(@payload)
-  #     expect(@log).to include(assigns(:log_output))
-  #   end
-  #
+    it "should assign the log and payload" do
+      get :show, default_params.merge!({id: @job.id})
+      expect(@log).to include(assigns(:truncated_log).data_output)
+      expect(@payload).to include(assigns(:truncated_payload).data_output)
+    end
+
   end
 
   describe "GET 'show_data'" do
 
-    before :each do
-      @payload =  "First line \n second line \n third line"
-      @log = log_output
-      @job = double('job', id: 'test_job_id', created_at: '2016-02-29T10:18:34.708279Z', updated_at: '2016-02-29T10:18:49.708279Z', payload: @payload, to: "node_test_id")
-      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job.id).and_return(@job)
-      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
+    context 'plain text' do
+      before :each do
+        @job = ::Automation::FakeFactory.new.job
+        @payload = @job.payload
+        @log = ::Automation::FakeFactory.new.log
+
+        allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job.id).and_return(@job)
+        allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
+      end
+
+      it "returns http success and render the template for payload" do
+        get :show_data, default_params.merge!({id: @job.id, attr: 'payload'})
+        expect(response).to be_success
+        expect(response).to render_template(:show_data)
+        expect(assigns(:data)).to eq(@payload)
+      end
+
+      it "returns http success and render the template for log" do
+        get :show_data, default_params.merge!({id: @job.id, attr: 'log'})
+        expect(response).to be_success
+        expect(response).to render_template(:show_data)
+        expect(assigns(:data)).to eq(@log)
+      end
     end
 
-    it "returns http success and render the template for payload" do
-      get :show_data, default_params.merge!({id: @job.id, attr: 'payload'})
-      expect(response).to be_success
-      expect(response).to render_template(:show_data)
-      expect(assigns(:data)).to eq(@payload)
-    end
+    context 'json' do
+      before :each do
+        @job = ::Automation::FakeFactory.new.job({payload: '{"run_list": ["role[landscape]","recipe[ids::certificate]"]}'})
+        @payload = @job.payload
+        @log = '{"test": ["miau","bup", "kuack"]}'
 
-    it "returns http success and render the template for log" do
-      get :show_data, default_params.merge!({id: @job.id, attr: 'log'})
-      expect(response).to be_success
-      expect(response).to render_template(:show_data)
-      expect(assigns(:data)).to eq(@log)
+        allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job).with(@job.id).and_return(@job)
+        allow_any_instance_of(ServiceLayer::AutomationService).to receive(:job_log).with(@job.id).and_return(@log)
+      end
+
+      it "returns http success and render the template for payload" do
+        get :show_data, default_params.merge!({id: @job.id, attr: 'payload'})
+        expect(response).to be_success
+        expect(response).to render_template(:show_data)
+        expect(assigns(:data)).to eq(JSON.pretty_generate(JSON.parse(@payload)))
+      end
+
+      it "returns http success and render the template for log" do
+        get :show_data, default_params.merge!({id: @job.id, attr: 'log'})
+        expect(response).to be_success
+        expect(response).to render_template(:show_data)
+        expect(assigns(:data)).to eq(JSON.pretty_generate(JSON.parse(@log)))
+      end
     end
 
   end
 
-end
-
-def log_output
-  output = ""
-  for i in 0..26
-    output << "Line #{i}\n"
-  end
-  output
 end
