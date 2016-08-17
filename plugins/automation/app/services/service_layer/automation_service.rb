@@ -14,47 +14,45 @@ module ServiceLayer
     end
 
     def arc_service_endpoint
-      current_user.service_url('arc')
+      current_user.service_url('arc') || ""
     end
 
     def automation_service_endpoint
-      current_user.service_url('automation')
+      current_user.service_url('automation') || ""
     end
 
     #
     # Nodes (Agents)
     #
 
+    def client
+      @client ||= RubyArcClient::Client.new(arc_service_endpoint)
+    end
+
     def nodes(filter="", show_facts=[], page=0, per_page=0)
-      init_client
-      ::Automation::Node.create_nodes(@client.list_agents!(current_user.token, filter, show_facts, page, per_page))
+      ::Automation::Node.create_nodes(client.list_agents!(current_user.token, filter, show_facts, page, per_page))
     end
 
     def node(node_id="", show_facts=[])
-      init_client
-      ::Automation::Node.new(@client.find_agent!(current_user.token, node_id, show_facts))
+      ::Automation::Node.new(client.find_agent!(current_user.token, node_id, show_facts))
     end
 
     def node_facts(node_id = "")
-      init_client
-      ::Automation::Facts.new(@client.show_agent_facts!(token, node_id))
+      ::Automation::Facts.new(client.show_agent_facts!(token, node_id))
     end
 
     def node_add_tags(node_id = "", tags = {})
-      init_client
-      response = @client.add_agent_tags!(token, node_id, tags)
+      response = client.add_agent_tags!(token, node_id, tags)
       !response.nil?
     end
 
     def node_delete_tag(node_id = "", key = "")
-      init_client
-      response = @client.delete_agent_tag!(token, node_id, key)
+      response = client.delete_agent_tag!(token, node_id, key)
       !response.nil?
     end
 
     def node_delete(node_id = "")
-      init_client
-      response = @client.delete_agent!(token, node_id)
+      response = client.delete_agent!(token, node_id)
       !response.nil?
     end
 
@@ -63,18 +61,15 @@ module ServiceLayer
     #
 
     def jobs(node_id = "", page=0, per_page=0)
-      init_client
-      Automation::Job.create_jobs( @client.list_jobs!(token, node_id, page, per_page) )
+      Automation::Job.create_jobs( client.list_jobs!(token, node_id, page, per_page) )
     end
 
     def job(job_id)
-      init_client
-      Automation::Job.new( @client.find_job!(token, job_id) )
+      Automation::Job.new( client.find_job!(token, job_id) )
     end
 
     def job_log(job_id)
-      init_client
-      @client.find_job_log!(token, job_id)
+      client.find_job_log!(token, job_id)
     end
 
     #
@@ -82,13 +77,13 @@ module ServiceLayer
     #
 
     def automation_service
-      Automation::Automation.site = ::File.join(ENV.fetch("LYRA_ENDPOINT") { automation_service_endpoint }, 'api/v1')
+      Automation::Automation.site = ::File.join(ENV.fetch("LYRA_ENDPOINT", "") { automation_service_endpoint }, 'api/v1')
       Automation::Automation.token = self.token
       Automation::Automation
     end
 
     def automation_run_service
-      Automation::Run.site = ::File.join(ENV.fetch("LYRA_ENDPOINT") { automation_service_endpoint }, 'api/v1')
+      Automation::Run.site = ::File.join(ENV.fetch("LYRA_ENDPOINT", "") { automation_service_endpoint }, 'api/v1')
       Automation::Run.token = self.token
       Automation::Run
     end
@@ -109,14 +104,8 @@ module ServiceLayer
       automation_run_service.find(run_id)
     end
 
-    private
-
-    def init_client
-      if @client.nil? && !available?
-        raise ServiceNotAvailable
-      else
-        @client = RubyArcClient::Client.new(arc_service_endpoint)
-      end
+    def automation_execute(automation_id, selector)
+      automation_run_service.new(automation_id: automation_id, selector: selector)
     end
 
   end

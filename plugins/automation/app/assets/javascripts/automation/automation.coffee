@@ -74,8 +74,6 @@
     dataType: 'html',
     success: ( data, textStatus, jqXHR ) ->
       $(".flashes").append(data)
-    error: () ->
-      $(".flashes").append(data)
     complete: () ->
       spinner.addClass('hide')
       btn_group.removeClass('hide')

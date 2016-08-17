@@ -38,8 +38,14 @@ module Automation
       # get the original tags to compare
       node = service_automation.node(self.agent_id)
       old_tags = node.tags
+
       # transform the given tags
       new_tags = JSON.parse(string_to_json(self.tags))
+
+      # return if nothing todo
+      if tags.blank? && old_tags.blank?
+        return true
+      end
 
       # Get just the keys to add or update
       diff_tags = new_tags.to_a - old_tags.to_a
