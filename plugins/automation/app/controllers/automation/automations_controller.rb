@@ -152,6 +152,7 @@ module Automation
       unless params['forms_script_automation'].blank?
         return params.fetch('forms_script_automation', {})
       end
+      return {}
     end
 
   end

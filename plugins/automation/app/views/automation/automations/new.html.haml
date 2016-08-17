@@ -1,19 +1,18 @@
 = content_for :title do
   New Automation
 
-.modal-body
 
-  .modal-flashes
-    = render "automation/shared/flashes.html"
+= simple_form_for @automation, url: plugin('automation').automations_path(), method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
+  .modal-body
+    .modal-flashes
+      = render "automation/shared/flashes.html"
 
-  = simple_form_for @automation, url: plugin('automation').automations_path(), method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+      = render partial: 'automation_form', locals: {automation: @automation, types: @automation_types, f: f, form_type: 'new'}
 
-    = render partial: 'automation_form', locals: {automation: @automation, types: @automation_types, f: f, form_type: 'new'}
-
-%div{class: modal? ? 'modal-footer' : ''}
-  - if modal?
-    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-  - else
-    = link_to "Cancel", plugin('automation').automations_path(), class: 'btn btn-default'
-  = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('automation').automations_path(), class: 'btn btn-default'
+    = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
