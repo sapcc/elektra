@@ -61,8 +61,7 @@ monitoring.generate_expression = function() {
   var expression = "";
   var metric = $('#metric').val();
   var statistical_function = $('#statistical_function').val();
-  var dimensions = "";
-
+  
   var dimensions = "";
   $('.dimension_key').each(function( ) {
     if($( this ).text() != '' ) {
@@ -71,7 +70,19 @@ monitoring.generate_expression = function() {
     }
   });
 
-  var period = "";
+  var period = $('#period_custom').val();
+  // validation
+  period = Math.floor(period);
+  var numberReg =  /^[0-9]+$/;
+  if (!numberReg.test(period/60)) {
+    $('#period_slider').addClass('has-error');
+    $('#period_slider').append("<span class='help-block'>period is not a multiple of 60 or an integer</span>");
+  }
+  else {
+    $('#period_slider .help-block').remove();
+    $('#period_slider').removeClass('has-error');
+  }
+  
   var relational_operator = "";
   var threshold_value = "";
   

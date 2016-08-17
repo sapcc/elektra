@@ -16,13 +16,13 @@
       = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
   .row
     .col-md-6
-      %label{ for:'metric'}
+      %label.control-label{ for:'metric'}
         Metric
-      %input{id:'metric', class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"}
-      %p.help-block
+      %input{id:'metric', type: 'text', class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"}
+      %span.help-block
         A metric is uniquely identified by a name and set of dimensions.
       #expression_dimensions
-      %label{ for:'statistical_function'}
+      %label.control-label{ for:'statistical_function'}
         Statistical Function
       %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
         %option{value: 'avg'} avg
@@ -30,7 +30,19 @@
         %option{value: 'max'} max
         %option{value: 'sum'} sum
         %option{value: 'count'} count
-      #period
+      %span.help-block
+        What is the statistical function..
+      .form-group#period_slider
+        %label.control-label{ for:'period'}
+          Period
+        .row
+          .col-md-3
+            %input{id: 'period_custom', class: 'form-control', value: 60}
+          .col-md-9.period-slider
+            -# note: we need the style tag here to render the slide in correct size (css class is not working)
+            %input{id: 'period', type: 'text', style: 'width:95%;' ,class: 'form-control', data: { slider: { width: '500px', id: 'period', min: 60, max: 600, step: 60, value: 60 } }}
+      %span.help-block
+        Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
       #treshold
     -#.col-md-6
       Preview Statistics
@@ -49,10 +61,30 @@
 
   
 :javascript
+  // TODO:
+  // error handling on ajax calls
+  // onclick events $("#bla").click(function() {});
+  
   // all metric names
   var metric_names = #{@metric_names.to_json};
   // global dimension counter
   var dimension_cnt = 0;
+
+  var period_slider = $('#period').slider({
+    formatter: function(value) {
+      return value+' sec';
+    }
+  }).on(
+    "slide", function(slide_event) { 
+       //console.log(slide_event.value);
+       monitoring.generate_expression();
+       $('#period_custom').val(slide_event.value);
+    }
+  );
+  
+  $("#period_custom").change(function() {
+    monitoring.generate_expression();
+  });
   
   $(function(){
     // set typeahead for metrics
