@@ -29,15 +29,19 @@ class IndexNodesService
     # init variables
     jobs = {}
     addresses = {}
+    external_nodes = {}
 
     nodes[:elements].each do |a|
-      unless compute_instances[a.id].blank?
+      unless compute_instances[a.id].nil?
         addresses[a.id.to_sym] = compute_instances[a.id]
+      else
+        external_nodes[a.id.to_sym] = true
       end
       jobs[a.id.to_sym] = @automation_service.jobs(a.id, 1, 5)
     end
     nodes[:addresses] = addresses
     nodes[:jobs] = jobs
+    nodes[:external_nodes] = external_nodes
     nodes
   end
 

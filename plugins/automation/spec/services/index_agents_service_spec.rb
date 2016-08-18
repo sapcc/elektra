@@ -26,21 +26,21 @@ RSpec.describe IndexNodesService do
   describe 'list_agents' do
 
     it "should return all nodes with the corresponding jobs" do
-      agent1 = double('agent', id: 'test_1')
-      agent2 = double('agent', id: 'test_2')
-      agent1_jobs = double('jobs_agent1', data: [{request_id:'agent1_1'}, {request_id:'agent1_2'}, {request_id:'agent1_3'}, {request_id:'agent1_4'}, {request_id:'agent1_5'}])
-      agent2_jobs = double('jobs_agent2', data: [{request_id:'agent2_1'}, {request_id:'agent2_2'}, {request_id:'agent2_3'}, {request_id:'agent2_4'}, {request_id:'agent2_5'}])
-      automation_service = double('automation_service', nodes: {elements: [agent1, agent2]})
+      node1 = double('node', id: 'test_1')
+      node2 = double('node', id: 'external_node_id')
+      node1_jobs = double('jobs_agent1', data: [{request_id:'agent1_1'}, {request_id:'agent1_2'}, {request_id:'agent1_3'}, {request_id:'agent1_4'}, {request_id:'agent1_5'}])
+      node2_jobs = double('jobs_agent2', data: [{request_id:'agent2_1'}, {request_id:'agent2_2'}, {request_id:'agent2_3'}, {request_id:'agent2_4'}, {request_id:'agent2_5'}])
+      automation_service = double('automation_service', nodes: {elements: [node1, node2]})
 
-      allow(automation_service).to receive(:jobs).with('test_1', 1, 5) { agent1_jobs }
-      allow(automation_service).to receive(:jobs).with('test_2', 1, 5) { agent2_jobs }
+      allow(automation_service).to receive(:jobs).with('test_1', 1, 5) { node1_jobs }
+      allow(automation_service).to receive(:jobs).with('external_node_id', 1, 5) { node2_jobs }
 
       compute_service = double('compute_service')
-      address = {"SCI Lab"=>[{"OS-EXT-IPS-MAC:mac_addr"=>"fa:16:3e:8e:b1:4f", "version"=>4, "addr"=>"10.0.0.240", "OS-EXT-IPS:type"=>"fixed"}, {"OS-EXT-IPS-MAC:mac_addr"=>"fa:16:3e:8e:b1:4f", "version"=>4, "addr"=>"10.47.0.28", "OS-EXT-IPS:type"=>"floating"}]}
-      servers = [double('server1', id: "test_1", addresses: {}), double('server2', id: "test_2", addresses: address)]
+      addresses = {"SCI Lab"=>[{"OS-EXT-IPS-MAC:mac_addr"=>"fa:16:3e:8e:b1:4f", "version"=>4, "addr"=>"10.0.0.240", "OS-EXT-IPS:type"=>"fixed"}, {"OS-EXT-IPS-MAC:mac_addr"=>"fa:16:3e:8e:b1:4f", "version"=>4, "addr"=>"10.47.0.28", "OS-EXT-IPS:type"=>"floating"}]}
+      servers = [double('server1', id: "test_1", addresses: addresses), double('server2', id: "test_2", addresses: {})]
       allow(compute_service).to receive(:servers) { servers }
 
-      expect(IndexNodesService.new(automation_service, compute_service).list_nodes_with_jobs(1,5)).to match( {:elements=>[agent1, agent2], :jobs=>{:test_1=>agent1_jobs, :test_2=>agent2_jobs}, :addresses => {test_2: address}} )
+      expect(IndexNodesService.new(automation_service, compute_service).list_nodes_with_jobs(1,5)).to match( {:elements=>[node1, node2], :jobs=>{:test_1=>node1_jobs, :external_node_id=>node2_jobs}, :addresses => {test_1: addresses}, :external_nodes => {:external_node_id => true}} )
     end
 
   end
