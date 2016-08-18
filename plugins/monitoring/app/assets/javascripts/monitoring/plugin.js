@@ -58,10 +58,12 @@ monitoring.get_metric_names = function() {
 
 monitoring.generate_expression = function() {
   
+  var valid = true;
+  var expression = "";
   $('.create_expression_error').css('display','none');
   
-  var expression = "";
   var metric = $('#metric').val();
+  if(metric == "") valid = false;
   var statistical_function = $('#statistical_function').val();
   
   var dimensions = "";
@@ -77,37 +79,42 @@ monitoring.generate_expression = function() {
   }
 
   var period = $('#period_custom').val();
+  if(period == "") valid = false;
   // validation
   period = Math.floor(period);
   var numberReg =  /^[0-9]+$/;
   if (!numberReg.test(period/60)) {
-    $('.period .help-block').hide();
+    $('.period.help-block').hide();
     $('.period').addClass('has-error');
     $('.period').append("<span class='help-block' id='period_error'>Period is not a multiple of 60 or an integer</span>");
     period = '-'
+    valid = false;
   }
   else {
     $('#period_error').remove();
     $('.period').removeClass('has-error');
-    $('.period .help-block').show();
+    $('.period.help-block').show();
   }
   
   var relational_operator = $('#threshold_relational_operator').val();
+  if(relational_operator == "") valid = false;
   var threshold_value = $('#threshold_value').val();
   if(!$.isNumeric(threshold_value)) {
-    $('.threshold .help-block').hide();
+    $('.threshold.help-block').hide();
     $('.threshold').addClass('has-error');
     $('.threshold').append("<span class='help-block' id='threshold_error'>Threshold must be a number</span>");
     threshold_value = '-';
+    valid = false;
   }
   else {
     $('#threshold_error').remove();
     $('.threshold').removeClass('has-error');
-    $('.threshold .help-block').show();
+    $('.threshold.help-block').show();
   }
   
   expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value;
   $('#expression').html(expression);
+  if(valid) $('.btn.btn-primary.disabled').removeClass('disabled');
   
 } 
 
