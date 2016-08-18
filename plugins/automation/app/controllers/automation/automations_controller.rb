@@ -4,6 +4,8 @@ module Automation
     before_action :automation, only: [:show, :edit]
 
     PER_PAGE = 10
+    AUTOMATION_TYPE_UNKNOWN = "Automation type unknown"
+    AUTOMATION_TYPE_MANIPULATED = "Automation type can't be changed"
 
     def index
       if request.xhr?
@@ -29,18 +31,15 @@ module Automation
 
       # check automation type
       form_params = automation_params
-      type = form_params['type']
-      if type.blank?
-        raise ArgumentError.new("Automation type missing")
-      end
+      type = form_params.fetch('type',"")
 
       # create automation type
-      if type == 'chef'
-        @automation = ::Automation::Forms::ChefAutomation.new(form_params)
-      elsif type == 'script'
-        @automation = ::Automation::Forms::ScriptAutomation.new(form_params)
-      else
-        raise ArgumentError.new("Automation type not known")
+      @automation = automation_form(type, form_params)
+      if @automation.nil?
+        # in case someone manipulate the type we set the default chef type back manually
+        @automation = ::Automation::Forms::ChefAutomation.new(form_params.merge(type: 'chef'))
+        flash.now[:error] = AUTOMATION_TYPE_UNKNOWN
+        return render action: "new"
       end
 
       # validate and check
@@ -67,14 +66,17 @@ module Automation
       @automation_form = nil
       form_params = automation_params
 
-      # check type and create model
-      if form_params['type'] == ::Automation::Automation::Types::CHEF
-        @automation = ::Automation::Forms::ChefAutomation.new(form_params)
-      elsif form_params['type'] == ::Automation::Automation::Types::SCRIPT
-        @automation = ::Automation::Forms::ScriptAutomation.new(form_params)
-      else
-        raise ArgumentError.new("Automation type not known")
+      # get original data and compare type
+      orig_automation = services.automation.automation(form_params['id'])
+      type = form_params.fetch('type',"")
+      if type != orig_automation.type
+        @automation = automation_form(orig_automation.type, form_params.merge({type: orig_automation.type}))
+        flash.now[:error] = AUTOMATION_TYPE_MANIPULATED
+        return render action: "edit"
       end
+
+      # create model
+      @automation = automation_form(type, form_params)
 
       # validate and save
       if @automation.update(services.automation.automation_service)
@@ -84,8 +86,8 @@ module Automation
         render action: "edit"
       end
     rescue Exception => e
-      Rails.logger.error e
-      flash.now[:error] = "Error updating automation."
+      Rails.logger.error e.message
+      flash[:error] = "Error updating automation."
       render action: "edit"
     end
 
@@ -97,7 +99,7 @@ module Automation
       flash.now[:success] = "Automation #{automation.name} removed successfully."
       render action: "index"
     rescue Exception => e
-      Rails.logger.error e
+      Rails.logger.error e.message
       flash.now[:error] = "Error removing automation."
       automations(1)
       runs_with_jobs(1)
@@ -140,6 +142,16 @@ module Automation
       @runs = Kaminari.paginate_array(runs, total_count: runs.http_response['Pagination-Elements'].to_i).
         page(runs.http_response['Pagination-Page'].to_i).
         per(runs.http_response['Pagination-Per-Page'].to_i)
+    end
+
+    def automation_form(type, form_params)
+      if type.downcase == ::Automation::Automation::Types::CHEF.downcase
+       return ::Automation::Forms::ChefAutomation.new(form_params)
+      elsif type.downcase == ::Automation::Automation::Types::SCRIPT.downcase
+        return ::Automation::Forms::ScriptAutomation.new(form_params)
+      else
+        return nil
+      end
     end
 
     def automation_params

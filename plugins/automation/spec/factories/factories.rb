@@ -61,6 +61,17 @@ module Automation
       []
     end
 
+    def automation_generic(params = {})
+      ::Automation::Forms::Automation.new({"name"=>"test_automation", "repository"=>"http://test.com", "repository_revision"=>"master", "timeout"=>"3600", "type" => "test_type"}.merge(params))
+    end
+
+    def automation_chef(params = {})
+      ::Automation::Forms::ChefAutomation.new({"name"=>"test_automation", "repository"=>"http://test.com", "repository_revision"=>"master", "timeout"=>"3600", "type" => "chef", "run_list" => "recipe[nginx]"}.merge(params))
+    end
+
+    def automation_script
+    end
+
   end
 
 end
