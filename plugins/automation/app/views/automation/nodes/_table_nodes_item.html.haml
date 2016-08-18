@@ -1,6 +1,12 @@
 %tr{id: "node_#{node.id}"}
   %td
+    - if is_external_node
+      %a{href:"#", title: 'External node', data: {toggle:"tooltip"}}
+        %i.fa.fa-tty
+
+  %td
     = link_to(node.name, plugin('automation').node_path(id: node.id), data: {modal: true})
+
   %td= "#{node.automation_facts.platform} #{node.automation_facts.platform_version}"
 
   %td.no-wrap
@@ -10,8 +16,6 @@
       %i.fa.fa-desktop.fa-fw
       = node.automation_facts.ipaddress
       %span.info-text fixed
-      %a{href:"#", data: {toggle:"popover", content: "Information retrieved from node facts.", "popover-type" => "table-info-hint"}}
-        %i.fa.fa-info-circle.fa-fw
 
   %td
     - node_table_tags(node.tags)

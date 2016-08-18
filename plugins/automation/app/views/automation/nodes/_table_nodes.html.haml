@@ -2,6 +2,7 @@
   %table.table
     %thead
       %tr
+        %th.snug
         %th Name
         %th Platform
         %th IP
@@ -12,10 +13,10 @@
     %tbody
       - if nodes.empty?
         %tr
-          %td{colspa: 7} No nodes available
+          %td{colspa: 8} No nodes available
       - else
         -nodes.each do | node |
-          = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(node.id.to_sym, {})}
+          = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(node.id.to_sym, {}), is_external_node: external_nodes.fetch(node.id.to_sym, false)}
 
   = paginate nodes, :theme => 'twitter-bootstrap-3'
 

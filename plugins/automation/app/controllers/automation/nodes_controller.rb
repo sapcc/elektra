@@ -10,7 +10,7 @@ module Automation
     end
 
     def index_update
-      render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs, addresses: @addresses}, layout: false
+      render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs, addresses: @addresses, external_nodes: @external_nodes}, layout: false
     end
 
     def show
@@ -142,6 +142,7 @@ module Automation
       @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(page).per(per_page)
       @jobs = result[:jobs]
       @addresses = result[:addresses]
+      @external_nodes = result[:external_nodes]
     end
 
   end
