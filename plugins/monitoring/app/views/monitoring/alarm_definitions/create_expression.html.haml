@@ -43,7 +43,13 @@
             %input{id: 'period', type: 'text', style: 'width:95%;' ,class: 'form-control', data: { slider: { width: '500px', id: 'period', min: 60, max: 600, step: 60, value: 60 } }}
       %span.help-block
         Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
-      #treshold
+      %label.control-label{ for:'htreshold'}
+        Threshold
+      %select#threshold.form-control{onchange: 'monitoring.generate_expression();'}
+        %option{value: '<'} <
+        %option{value: '>'} >
+        %option{value: '<='} <=
+        %option{value: '>='} >=
     -#.col-md-6
       Preview Statistics
       .bs-callout.bs-callout-info
@@ -64,6 +70,7 @@
   // TODO:
   // error handling on ajax calls
   // onclick events $("#bla").click(function() {});
+  // wenn keine dimensionen gefunden wurden fehler anzeigen!
   
   // all metric names
   var metric_names = #{@metric_names.to_json};

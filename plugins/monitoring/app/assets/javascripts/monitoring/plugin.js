@@ -84,7 +84,7 @@ monitoring.generate_expression = function() {
   }
   
   var relational_operator = "";
-  var threshold_value = "";
+  var threshold_value = $('#threshold').val();
   
   expression = statistical_function+"("+metric+"{"+dimensions+"},"+period+")"+relational_operator+" "+threshold_value;
   $('#expression').html(expression);
