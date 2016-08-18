@@ -11,6 +11,10 @@
   height: 100%;
 }
 
+#jsoneditor.compact {
+  height: 300px;
+}
+
 /* reset styling (prevent conflicts with bootstrap, materialize.css, etc.) */
 
 div.jsoneditor input {
