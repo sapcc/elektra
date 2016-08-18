@@ -17,43 +17,54 @@
       = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
   .row
     .col-md-6
-      %label.control-label{ for:'metric'}
-        Metric
-      %input{id:'metric', type: 'text', class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"}
-      %span.help-block
-        A metric is uniquely identified by a name and set of dimensions.
+      .form-group
+        %label.control-label{ for:'metric'}
+          Metric
+        %input{id:'metric', type: 'text', class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"}
+        %span.help-block
+          A metric is uniquely identified by a name and set of dimensions.
       #expression_dimensions
-      %label.control-label{ for:'statistical_function'}
-        Statistical Function
-      %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
-        %option{value: 'avg'} avg
-        %option{value: 'min'} min
-        %option{value: 'max'} max
-        %option{value: 'sum'} sum
-        %option{value: 'count'} count
-      %span.help-block
-        What is the statistical function..
-      .form-group#period_slider
+      .form-group
+        %label.control-label{ for:'statistical_function'}
+          Statistical Function
+        %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
+          %option{value: 'avg'} avg
+          %option{value: 'min'} min
+          %option{value: 'max'} max
+          %option{value: 'sum'} sum
+          %option{value: 'count'} count
+        %span.help-block
+          What is the statistical function..
+      .form-group.period
         %label.control-label{ for:'period'}
           Period
         .row
           .col-md-3
-            %input{id: 'period_custom', class: 'form-control', value: 60}
+            %input{id: 'period_custom', class: 'form-control', value: 60, onchange: 'monitoring.generate_expression();'}
           .col-md-9.period-slider
             -# note: we need the style tag here to render the slide in correct size (css class is not working)
-            %input{id: 'period', type: 'text', style: 'width:95%;' ,class: 'form-control', data: { slider: { width: '500px', id: 'period', min: 60, max: 600, step: 60, value: 60 } }}
-      %span.help-block
-        Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
-      %label.control-label{ for:'htreshold'}
-        Threshold
-      %select#threshold.form-control{onchange: 'monitoring.generate_expression();'}
-        %option{value: '<'} <
-        %option{value: '>'} >
-        %option{value: '<='} <=
-        %option{value: '>='} >=
-    -#.col-md-6
+            %input{id: 'period_slider', type: 'text', style: 'width:95%;' ,class: 'form-control', data: { slider: { min: 60, max: 600, step: 60, value: 60 } }}
+        %span.help-block
+          Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
+      .form-group.threshold
+        .row 
+          .col-md-2
+            %label.control-label{ for:'threshold_relational_operator'}
+              Threshold
+            %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
+              %option{value: '<'} <
+              %option{value: '>'} >
+              %option{value: '<='} <=
+              %option{value: '>='} >=
+          .col-md-10
+            %label.control-label{ for:'threshold_value'}
+              Value
+            %input{id: 'threshold_value', class: 'form-control', value: 60, onchange: 'monitoring.generate_expression();'}
+        %span.help-block
+          Threshold values are always in the same units as the metric that they are being compared to.
+    .col-md-6
       Preview Statistics
-      .bs-callout.bs-callout-info
+      -#.bs-callout.bs-callout-info
         Good to know......
 
 .buttons{ class: modal? ? 'modal-footer' : '' }
@@ -68,17 +79,13 @@
 
   
 :javascript
-  // TODO:
-  // error handling on ajax calls
-  // onclick events $("#bla").click(function() {});
-  // wenn keine dimensionen gefunden wurden fehler anzeigen!
-  
+
   // all metric names
   var metric_names = #{@metric_names.to_json};
   // global dimension counter
   var dimension_cnt = 0;
 
-  var period_slider = $('#period').slider({
+  $('#period_slider').slider({
     formatter: function(value) {
       return value+' sec';
     }
@@ -89,11 +96,6 @@
        $('#period_custom').val(slide_event.value);
     }
   );
-  
-  $("#period_custom").change(function() {
-    monitoring.generate_expression();
-  });
-  
   
   $(function(){
     // set typeahead for metrics

@@ -81,18 +81,32 @@ monitoring.generate_expression = function() {
   period = Math.floor(period);
   var numberReg =  /^[0-9]+$/;
   if (!numberReg.test(period/60)) {
-    $('#period_slider').addClass('has-error');
-    $('#period_slider').append("<span class='help-block'>period is not a multiple of 60 or an integer</span>");
+    $('.period .help-block').hide();
+    $('.period').addClass('has-error');
+    $('.period').append("<span class='help-block' id='period_error'>Period is not a multiple of 60 or an integer</span>");
+    period = '-'
   }
   else {
-    $('#period_slider .help-block').remove();
-    $('#period_slider').removeClass('has-error');
+    $('#period_error').remove();
+    $('.period').removeClass('has-error');
+    $('.period .help-block').show();
   }
   
-  var relational_operator = "";
-  var threshold_value = $('#threshold').val();
+  var relational_operator = $('#threshold_relational_operator').val();
+  var threshold_value = $('#threshold_value').val();
+  if(!$.isNumeric(threshold_value)) {
+    $('.threshold .help-block').hide();
+    $('.threshold').addClass('has-error');
+    $('.threshold').append("<span class='help-block' id='threshold_error'>Threshold must be a number</span>");
+    threshold_value = '-';
+  }
+  else {
+    $('#threshold_error').remove();
+    $('.threshold').removeClass('has-error');
+    $('.threshold .help-block').show();
+  }
   
-  expression = statistical_function+"("+metric+dimensions+","+period+")"+relational_operator+" "+threshold_value;
+  expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value;
   $('#expression').html(expression);
   
 } 
