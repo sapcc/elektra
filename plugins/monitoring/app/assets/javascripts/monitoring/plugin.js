@@ -58,6 +58,8 @@ monitoring.get_metric_names = function() {
 
 monitoring.generate_expression = function() {
   
+  $('.create_expression_error').css('display','none');
+  
   var expression = "";
   var metric = $('#metric').val();
   var statistical_function = $('#statistical_function').val();
@@ -69,6 +71,10 @@ monitoring.generate_expression = function() {
       dimensions += $( this ).val()+":"+$('#dimension_value_'+defintion_id).text()+",";
     }
   });
+  
+  if (dimensions != "") {
+    dimensions = "{"+dimensions+"}";
+  }
 
   var period = $('#period_custom').val();
   // validation
@@ -86,7 +92,7 @@ monitoring.generate_expression = function() {
   var relational_operator = "";
   var threshold_value = $('#threshold').val();
   
-  expression = statistical_function+"("+metric+"{"+dimensions+"},"+period+")"+relational_operator+" "+threshold_value;
+  expression = statistical_function+"("+metric+dimensions+","+period+")"+relational_operator+" "+threshold_value;
   $('#expression').html(expression);
   
 } 

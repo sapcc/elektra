@@ -3,6 +3,7 @@
 
 .modal-body
   %h4 Create Expression #{@step_count}
+  %p.alert.alert-error.create_expression_error
   .row
     .col-md-11
       .panel.panel-default
@@ -93,15 +94,18 @@
     monitoring.generate_expression();
   });
   
+  
   $(function(){
     // set typeahead for metrics
     $("#metric").typeahead({ source:  metric_names, afterSelect: 
       function(){ 
+        // this is called once to get the dimension data
         get_dimensions($('#metric').val());
         // cleanup everything
         dimension_cnt = 1;
         $('#expression_dimensions').empty();
         $('.expression_dimension_head').css('display','inline');
+        // render the row based on dimension_data and the template
         render_dimension_row(dimension_cnt);
       }
     });
@@ -113,13 +117,16 @@
   });
 
   function render_dimension_row(ID) {
-    var dimension_keys = Object.keys(dimension_data);
-    $.post( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID, keys: JSON.stringify(dimension_keys)}, 
-      function( data ){ 
-        // render row data
-        $('#expression_dimensions').append(data);
-        autocomplete_dimension_values(ID);
-    });
+    // if no dimension was found do nothing
+    if (dimension_data) {
+      var dimension_keys = Object.keys(dimension_data);
+      $.post( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID, keys: JSON.stringify(dimension_keys)}, 
+        function( data ){ 
+          // render row data
+          $('#expression_dimensions').append(data);
+          autocomplete_dimension_values(ID);
+      });
+    }
   }
   
   function autocomplete_dimension_values(ID) {
@@ -160,6 +167,8 @@
     }
   }
 
+  // we used here a global value because it is used by render_dimension_row that and
+  // dimension_data is only generated once
   var dimension_data;
   function get_dimensions(METRIC_NAME) {
     $.ajax({
@@ -179,6 +188,11 @@
           dimension_data[dimension_key] = unique_values;
         })
       },
+      error: function(jqXHR) {
+        $('.create_expression_error').css('display','block');
+        $('.create_expression_error').html('Metric Dimensions Error: '+jqXHR.status+' '+jqXHR.statusText);
+      },
+      // async false because I need the dimension_data in any case first
       async: false
     });
   }
