@@ -29,6 +29,13 @@ module Automation
       end
     end
 
+    def snapshot
+      if !self.automation_attributes.blank? && self.automation_attributes.respond_to?(:attributes) && !self.automation_attributes.attributes.blank?
+        return self.automation_attributes.attributes
+      end
+      {}
+    end
+
   end
 
 end

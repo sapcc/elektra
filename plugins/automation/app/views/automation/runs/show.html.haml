@@ -54,6 +54,19 @@
     .js-run-log
       = render partial: 'run_log', locals: {truncated_log: @truncated_log, run: @run}
 
+  .modal-section
+    %h3
+      Automation Snapshot
+      %small
+        Automation definition at time of job execution
+
+    .js-run-snapshot
+      - if @run.snapshot.empty?
+        No data found
+      - else
+        #jsoneditor.compact{data:{mode: "view", content_id: @run.snapshot.to_json}}
+
+
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
