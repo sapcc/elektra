@@ -33,15 +33,13 @@
   .row
     .col-md-6
       .form-group
-        %label.control-label{ for:'metric'}
-          Metric
-        %input{id:'metric', type: 'text', class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"}
+        = label_tag 'metric', 'Metric', class:'control-label'
+        = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"
         %span.help-block
           A metric is uniquely identified by a name and set of dimensions.
       #expression-dimensions
       .form-group
-        %label.control-label{ for:'statistical_function'}
-          Statistical Function
+        = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
         %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
           %option{value: 'avg'} avg
           %option{value: 'min'} min
@@ -49,34 +47,30 @@
           %option{value: 'sum'} sum
           %option{value: 'count'} count
       .form-group.period
-        %label.control-label{ for:'period'}
-          Period
+        = label_tag 'period', 'Period', class: 'control-label'
         .row
           .col-md-3
-            %input{id: 'period_custom', class: 'form-control', value: 60, onchange: 'monitoring.generate_expression();'}
+            = text_field_tag 'period_custom', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
           .col-md-9.period-slider
             -# note: we need the style tag here to render the slide in correct size (css class is not working)
-            %input{id: 'period_slider', type: 'text', style: 'width:95%;' ,class: 'form-control', data: { slider: { min: 60, max: 600, step: 60, value: 60 } }}
+            = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
         %span.help-block.period
           Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
       .form-group.threshold
         .row 
           .col-md-2
-            %label.control-label{ for:'threshold_relational_operator'}
-              Threshold
+            = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
             %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
               %option{value: '<'} <
               %option{value: '>'} >
               %option{value: '<='} <=
               %option{value: '>='} >=
           .col-md-10
-            %label.control-label{ for:'threshold_value'}
-              Value
-            %input{id: 'threshold_value', class: 'form-control', value: 60, onchange: 'monitoring.generate_expression();'}
+            = label_tag 'threshold_value', 'Value', class: 'control-label'
+            = text_field_tag 'threshold_value', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
         %span.help-block.threshold
           Threshold values are always in the same units as the metric that they are being compared to.
-      %label.control-label{ for:'chain_operator'}
-        Chain Operator*
+      = label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
       %select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
         %option
         %option{value: 'AND'} and
@@ -85,10 +79,6 @@
         Chain expressions with logical operators together (optional).
 
     .col-md-6
-      %label.control-label
-        Preview Statistics
-      -#.bs-callout.bs-callout-info
-        Good to know......
 
 .buttons{ class: modal? ? 'modal-footer' : '' }
   - if modal?
@@ -110,6 +100,10 @@
   var dimension_cnt = 0;
 
   $('#period_slider').slider({
+    step: 60,
+    min: 60,
+    max: 600,
+    value:60,
     formatter: function(value) {
       return value+' sec';
     }
