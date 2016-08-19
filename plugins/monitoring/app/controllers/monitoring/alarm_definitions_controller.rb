@@ -67,8 +67,8 @@ module Monitoring
     end
 
     def destroy 
-       @alarm_definition.destroy
-       back_to_alarm_definition_list
+      @alarm_definition.destroy
+      back_to_alarm_definition_list
     end
 
     def toggle_alarm_actions
@@ -80,7 +80,14 @@ module Monitoring
     end
     
     def create_expression
+      expressions = params['expressions'] || ""
+      # split expression into subexpression parts
+      @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
+
       @metric_names = services.monitoring.get_metric_names
+      
+      # dummy data for testing
+      # @metric_names = ['foo','bla']
     end
     
     def get_dimensions_by_metric

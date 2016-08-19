@@ -6,11 +6,23 @@
   %p.alert.alert-error.create_expression_error
   .row
     .col-md-11
+    .col-md-1
+  .row
+    .col-md-11
       .panel.panel-default
         .panel-body.panel-expression
           .row
             .col-md-11
-              #expression
+              = form_tag "", method: :post,  id:'expression' do
+                = hidden_field_tag 'expressions'
+                
+              - index = 0;
+              - @sub_expressions.each do |expression, logical_operator|
+                .sub_expression
+                  - index += 1
+                  = expression+logical_operator
+                  = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
+              #expression_string
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset_btn
@@ -33,8 +45,6 @@
           %option{value: 'max'} max
           %option{value: 'sum'} sum
           %option{value: 'count'} count
-        %span.help-block
-          What is the statistical function..
       .form-group.period
         %label.control-label{ for:'period'}
           Period
@@ -62,8 +72,18 @@
             %input{id: 'threshold_value', class: 'form-control', value: 60, onchange: 'monitoring.generate_expression();'}
         %span.help-block
           Threshold values are always in the same units as the metric that they are being compared to.
+      %label.control-label{ for:'chain_operator'}
+        Chain Operator*
+      %select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
+        %option
+        %option{value: 'AND'} and
+        %option{value: 'OR'} or
+      %span.help-block
+        Chain expressions with logical operators together (optional).
+
     .col-md-6
-      Preview Statistics
+      %label.control-label
+        Preview Statistics
       -#.bs-callout.bs-callout-info
         Good to know......
 
@@ -74,8 +94,9 @@
   - else
     = link_to "Cancel", "", class: 'btn btn-default'
   
-  = link_to "Chain Another Expression", "", class: 'btn btn-primary disabled'
-  = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary disabled', data: { modal:true }  
+  
+  = link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()"
+  = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
 
   
 :javascript

@@ -59,7 +59,9 @@ monitoring.get_metric_names = function() {
 monitoring.generate_expression = function() {
   
   var valid = true;
-  var expression = "";
+  $('#chain_expression_btn').addClass('disabled');
+  $('#create_alarm_definition_btn').addClass('disabled');
+  
   $('.create_expression_error').css('display','none');
   
   var metric = $('#metric').val();
@@ -112,10 +114,25 @@ monitoring.generate_expression = function() {
     $('.threshold.help-block').show();
   }
   
-  expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value;
-  $('#expression').html(expression);
-  if(valid) $('.btn.btn-primary.disabled').removeClass('disabled');
+  if(valid) $('#create_alarm_definition_btn').removeClass('disabled');
+  var chain_operator = $('#chain_operator').val();
+  if(chain_operator != '' && valid) {
+    $('#chain_expression_btn').removeClass('disabled');
+    $('#create_alarm_definition_btn').addClass('disabled');
+  }
   
+  // render current expression
+  var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value+" "+chain_operator;
+  $('#expression_string').html(expression);
+  
+  // collect all chained expressions
+  var sub_expression = "";
+  $('.sub_expression').each(function(){
+    sub_expression += " "+$(this).text().trim();
+  });
+  // write it to form for submit
+  $('#expressions').val($.trim(sub_expression+" "+expression));
+
 } 
 
 monitoring.render_dimensions = function() {
