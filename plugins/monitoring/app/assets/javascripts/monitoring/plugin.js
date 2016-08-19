@@ -121,17 +121,17 @@ monitoring.generate_expression = function() {
   }
 
   // colorize expression
-  $('#expression_string').removeClass();
+  $('#expression_preview').removeClass();
   if(valid) {
-    $('#expression_string').addClass('text-success');
+    $('#expression_preview').addClass('text-success');
   }
   else {
-    $('#expression_string').addClass('text-danger');
+    $('#expression_preview').addClass('text-danger');
   }
 
   // render current expression
   var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value+" "+chain_operator;
-  $('#expression_string').text(expression);
+  $('#expression_preview').text(expression);
   
   // collect all chained expressions
   var sub_expression = "";

@@ -9,6 +9,7 @@
     .col-md-1
   .row
     .col-md-11
+      = label_tag 'expression_preview', 'Preview', class:'control-label'
       .panel.panel-default
         .panel-body.panel-expression
           .row
@@ -22,7 +23,7 @@
                   - index += 1
                   = expression+logical_operator
                   = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
-              #expression_string
+              #expression_preview
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset-btn
