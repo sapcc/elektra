@@ -1,4 +1,5 @@
 require 'active_resource'
+require 'uri'
 
 module Automation
 
@@ -34,6 +35,23 @@ module Automation
         return self.automation_attributes.attributes
       end
       {}
+    end
+
+    def revision_from_github?
+      if !snapshot.empty? && !snapshot[:repository].blank?
+        host = URI(snapshot[:repository]).host
+        if !host.blank? && host == "localhost"
+          return true
+        end
+      end
+      false
+    end
+
+    def revision_link
+      if revision_from_github?
+        return URI::join(snapshot[:repository].gsub!(/(.git\s*)*$/, '/'), 'commit/', self.repository_revision).to_s
+      end
+      self.repository_revision
     end
 
   end

@@ -52,7 +52,7 @@ describe Automation::AutomationsController, type: :controller do
   describe "GET 'create'" do
 
     it "redirect when automation valid" do
-      automation = ::Automation::FakeFactory.new.automation_chef
+      automation = ::Automation::FakeFactory.new.automation_form_chef
       expect(post :create, default_params.merge({forms_chef_automation: automation.attributes})).to redirect_to(automations_path(default_params))
     end
 
@@ -92,7 +92,7 @@ describe Automation::AutomationsController, type: :controller do
   describe "GET 'update'" do
 
     it "should return to the edit view with an error if type have been changed" do
-      automation = ::Automation::FakeFactory.new.automation_chef
+      automation = ::Automation::FakeFactory.new.automation_form_chef
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_return(automation)
 
       get :update, default_params.merge({id: 'automation_id', forms_chef_automation: automation.attributes.merge(type: 'other_type')})
@@ -110,7 +110,7 @@ describe Automation::AutomationsController, type: :controller do
     end
 
     it "should redirect to the automations index view when update is successful" do
-      automation = ::Automation::FakeFactory.new.automation_chef
+      automation = ::Automation::FakeFactory.new.automation_form_chef
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_return(automation)
 
       expect(get :update, default_params.merge({id: 'automation_id', forms_chef_automation: automation.attributes})).to redirect_to(automations_path(default_params))
