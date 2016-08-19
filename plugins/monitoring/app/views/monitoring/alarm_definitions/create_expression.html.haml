@@ -18,7 +18,7 @@
                 
               - index = 0;
               - @sub_expressions.each do |expression, logical_operator|
-                .sub_expression
+                .sub-expression.text-success
                   - index += 1
                   = expression+logical_operator
                   = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
@@ -54,7 +54,7 @@
           .col-md-9.period-slider
             -# note: we need the style tag here to render the slide in correct size (css class is not working)
             %input{id: 'period_slider', type: 'text', style: 'width:95%;' ,class: 'form-control', data: { slider: { min: 60, max: 600, step: 60, value: 60 } }}
-        %span.help-block
+        %span.help-block.period
           Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
       .form-group.threshold
         .row 
@@ -70,7 +70,7 @@
             %label.control-label{ for:'threshold_value'}
               Value
             %input{id: 'threshold_value', class: 'form-control', value: 60, onchange: 'monitoring.generate_expression();'}
-        %span.help-block
+        %span.help-block.threshold
           Threshold values are always in the same units as the metric that they are being compared to.
       %label.control-label{ for:'chain_operator'}
         Chain Operator*
@@ -93,7 +93,6 @@
       Cancel
   - else
     = link_to "Cancel", "", class: 'btn btn-default'
-  
   
   = link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()"
   = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  

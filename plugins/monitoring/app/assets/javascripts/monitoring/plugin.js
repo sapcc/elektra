@@ -120,14 +120,23 @@ monitoring.generate_expression = function() {
     $('#chain_expression_btn').removeClass('disabled');
     $('#create_alarm_definition_btn').addClass('disabled');
   }
-  
+
+  // colorize expression
+  $('#expression_string').removeClass();
+  if(valid) {
+    $('#expression_string').addClass('text-success');
+  }
+  else {
+    $('#expression_string').addClass('text-danger');
+  }
+
   // render current expression
   var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value+" "+chain_operator;
-  $('#expression_string').html(expression);
+  $('#expression_string').text(expression);
   
   // collect all chained expressions
   var sub_expression = "";
-  $('.sub_expression').each(function(){
+  $('.sub-expression').each(function(){
     sub_expression += " "+$(this).text().trim();
   });
   // write it to form for submit
