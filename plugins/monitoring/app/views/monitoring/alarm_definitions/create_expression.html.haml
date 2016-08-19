@@ -26,7 +26,10 @@
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset-btn
-      = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
+      - if modal?
+        = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
+      - else
+        = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything'
   .row
     .col-md-6
       .form-group
@@ -92,8 +95,9 @@
     %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } }
       Cancel
   - else
-    = link_to "Cancel", "", class: 'btn btn-default'
+    = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
   
+  -# TODO: modal test
   = link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()"
   = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
 
