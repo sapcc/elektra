@@ -13,7 +13,7 @@ module Identity
         @project.parent_name = @scoped_project_name #params[:parent_project_name] if params[:parent_project_name]
 
         if services.available?(:cost_control)
-          @cost_control_metadata = services.cost_control.new_project_metadata
+          @cost_control_masterdata = services.cost_control.new_project_masterdata
         end
       end
 
@@ -59,7 +59,7 @@ module Identity
       payload = @inquiry.payload
       @project = Identity::Project.new(nil, {})
       if services.available?(:cost_control)
-        @cost_control_metadata = services.cost_control.new_project_metadata(payload.delete(:cost_control))
+        @cost_control_masterdata = services.cost_control.new_project_masterdata(payload.delete(:cost_control))
       end
       @project.attributes = payload
     end

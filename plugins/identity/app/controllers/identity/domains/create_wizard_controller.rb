@@ -10,7 +10,7 @@ module Identity
           payload = @inquiry.payload
           if services.available?(:cost_control)
             cc_attributes = payload.delete('cost_control')
-            @cost_control_metadata = services.cost_control.new_project_metadata(cc_attributes)
+            @cost_control_masterdata = services.cost_control.new_project_masterdata(cc_attributes)
           end
           @project.attributes = payload
         end
@@ -35,9 +35,9 @@ module Identity
           if services.available?(:cost_control)
             # FIXME: services.cost_control needs to be scoped to @project here
             cost_params.merge!(id: @project.id)
-            cost_control_metadata = services.cost_control.new_project_metadata(cost_params)
-            if cost_control_metadata.save
-              audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_metadata.cost_object_string}")
+            cost_control_masterdata = services.cost_control.new_project_masterdata(cost_params)
+            if cost_control_masterdata.save
+              audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_masterdata.cost_object_string}")
             end
           end
           

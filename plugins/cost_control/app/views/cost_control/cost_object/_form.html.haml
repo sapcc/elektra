@@ -1,6 +1,7 @@
-- types = CostControl::ProjectMetadata::COST_OBJECT_TYPES
+- types = CostControl::ProjectMasterdata::COST_OBJECT_TYPES
 = form.input :cost_object_type, label: long_labels ? 'Cost Object Type' : 'Type', collection: types.keys, label_method: -> (k) { types[k] }
 = form.input :cost_object_id, label: long_labels ? 'Cost Object ID' : 'ID'
+= form.input :cost_object_inherited, label: long_labels ? 'Cost Object is inherited?' : 'Inherited'
 .row
   .help-block.col-sm-8.col-sm-offset-4
     A cost object is an element that we can bill for services rendered.
