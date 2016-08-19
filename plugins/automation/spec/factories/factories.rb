@@ -61,15 +61,52 @@ module Automation
       []
     end
 
-    def automation_generic(params = {})
+    def automation_form_generic(params = {})
       ::Automation::Forms::Automation.new({"name"=>"test_automation", "repository"=>"http://test.com", "repository_revision"=>"master", "timeout"=>"3600", "type" => "test_type"}.merge(params))
     end
 
-    def automation_chef(params = {})
+    def automation_form_chef(params = {})
       ::Automation::Forms::ChefAutomation.new({"name"=>"test_automation", "repository"=>"http://test.com", "repository_revision"=>"master", "timeout"=>"3600", "type" => "chef", "run_list" => "recipe[nginx]"}.merge(params))
     end
 
-    def automation_script
+    def automation(params = {})
+      ::Automation::Automation.site = 'https://test.com'
+      automation = ::Automation::Automation.new({
+        name: "bootstrap",
+        timeout: 3600,
+        run_list: ["role[landscape]", "recipe[ids::certificate]"],
+        repository: "https://localhost/ids/chef-moo3.git"
+      }.merge(params))
+      automation
+    end
+
+    def run(params = {})
+      owner = ::Automation::BaseActiveResource.new()
+      owner.attributes = {
+        id: "b2ff8f4a7d1eab4f5cf82489f76e52fc1934c1b4d4a7a4a9bd9ce82ca1310bbc",
+        name: "D063222",
+        domain_id: "ec213443e8834473b579f7bea9e8c194",
+        domain_name: "monsoon3",
+        chef_attributes: {},
+        repository_revision: ''
+      }
+
+      ::Automation::Run.site = 'https://test.com'
+      run = ::Automation::Run.new({
+        id: 165,
+        log: "Selecting nodes using filter @identity='idp1':\nidp1 idp01\nUsing exiting artifact for revision c7b3ee00635673294619070fafbccf27a23bcbd4\nScheduled 1 job:\n376f5485-9d2e-4040-a55f-7e42ea6d6a7b\n",
+        created_at: "2016-08-18T15:33:57.133Z",
+        updated_at: "2016-08-18T15:35:21.468Z",
+        repository_revision: "c7b3ee00635673294619070fafbccf27a23bcbd4",
+        state: "completed",
+        jobs: ["376f5485-9d2e-4040-a55f-7e42ea6d6a7b"],
+        owner: owner,
+        automation_id: '5',
+        automation_name: "bootstrap",
+        selector: "@identity='idp1'",
+        automation_attributes: automation()
+      }.merge(params))
+      run
     end
 
   end
