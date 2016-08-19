@@ -62,7 +62,7 @@ monitoring.generate_expression = function() {
   $('#chain_expression_btn').addClass('disabled');
   $('#create_alarm_definition_btn').addClass('disabled');
   
-  $('.create_expression_error').css('display','none');
+  $('.create-expression-error').css('display','none');
   
   var metric = $('#metric').val();
   if(metric == "") valid = false;

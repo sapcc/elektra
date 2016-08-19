@@ -3,7 +3,7 @@
 
 .modal-body
   %h4 Create Expression #{@step_count}
-  %p.alert.alert-error.create_expression_error
+  %p.alert.alert-error.create-expression-error
   .row
     .col-md-11
     .col-md-1
@@ -25,7 +25,7 @@
               #expression_string
             .col-md-1
               .loading_place.loading-right
-    .col-md-1.reset_btn
+    .col-md-1.reset-btn
       = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
   .row
     .col-md-6
@@ -35,7 +35,7 @@
         %input{id:'metric', type: 'text', class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"}
         %span.help-block
           A metric is uniquely identified by a name and set of dimensions.
-      #expression_dimensions
+      #expression-dimensions
       .form-group
         %label.control-label{ for:'statistical_function'}
           Statistical Function
@@ -212,8 +212,8 @@
         })
       },
       error: function(jqXHR) {
-        $('.create_expression_error').css('display','block');
-        $('.create_expression_error').html('Metric Dimensions Error: '+jqXHR.status+' '+jqXHR.statusText);
+        $('.create-expression-error').css('display','block');
+        $('.create-expression-error').html('Metric Dimensions Error: '+jqXHR.status+' '+jqXHR.statusText);
       },
       // async false because I need the dimension_data in any case first
       async: false
