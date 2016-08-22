@@ -14,9 +14,9 @@
         .panel-body.panel-expression
           .row
             .col-md-11
-              = form_tag "", method: :post,  id:'expression' do
+              = form_tag plugin('monitoring').create_expression_alarm_definitions_path(), method: :post, id:'expression' do
                 = hidden_field_tag 'expressions'
-                
+
               - index = 0;
               - @sub_expressions.each do |expression, logical_operator|
                 .sub-expression.text-success
@@ -24,11 +24,12 @@
                   = expression+logical_operator
                   = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
               #expression_preview
+
             .col-md-1
               .loading_place.loading-right
     .col-md-1.reset-btn
       - if modal?
-        = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
+        = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal_transition:true }
       - else
         = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything'
   .row
@@ -39,45 +40,46 @@
         %span.help-block
           A metric is uniquely identified by a name and set of dimensions.
       #expression_dimensions
-      .form-group
-        = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
-        %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
-          %option{value: 'avg'} avg
-          %option{value: 'min'} min
-          %option{value: 'max'} max
-          %option{value: 'sum'} sum
-          %option{value: 'count'} count
-      .form-group.period
-        = label_tag 'period', 'Period', class: 'control-label'
-        .row
-          .col-md-3
-            = text_field_tag 'period_custom', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
-          .col-md-9.period-slider
-            -# note: we need the style tag here to render the slide in correct size (css class is not working)
-            = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
-        %span.help-block.period
-          Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
-      .form-group.threshold
-        .row 
-          .col-md-2
-            = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
-            %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
-              %option{value: '<'} <
-              %option{value: '>'} >
-              %option{value: '<='} <=
-              %option{value: '>='} >=
-          .col-md-10
-            = label_tag 'threshold_value', 'Value', class: 'control-label'
-            = text_field_tag 'threshold_value', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
-        %span.help-block.threshold
-          Threshold values are always in the same units as the metric that they are being compared to.
-      = label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
-      %select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
-        %option
-        %option{value: 'AND'} and
-        %option{value: 'OR'} or
-      %span.help-block
-        Chain expressions with logical operators together (optional).
+      .hide-on-start
+        .form-group
+          = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
+          %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
+            %option{value: 'avg'} avg
+            %option{value: 'min'} min
+            %option{value: 'max'} max
+            %option{value: 'sum'} sum
+            %option{value: 'count'} count
+        .form-group.period
+          = label_tag 'period', 'Period', class: 'control-label'
+          .row
+            .col-md-3
+              = text_field_tag 'period_custom', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
+            .col-md-9.period-slider
+              -# note: we need the style tag here to render the slide in correct size (css class is not working)
+              = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
+          %span.help-block.period
+            Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
+        .form-group.threshold
+          .row 
+            .col-md-4
+              = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
+              %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
+                %option{value: '<'} <
+                %option{value: '>'} >
+                %option{value: '<='} <=
+                %option{value: '>='} >=
+            .col-md-8
+              = label_tag 'threshold_value', 'Value', class: 'control-label'
+              = text_field_tag 'threshold_value', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
+          %span.help-block.threshold
+            Threshold values are always in the same units as the metric that they are being compared to.
+        = label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
+        %select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
+          %option
+          %option{value: 'AND'} and
+          %option{value: 'OR'} or
+        %span.help-block
+          Chain expressions with logical operators together (optional).
 
     .col-md-6
 
@@ -85,12 +87,15 @@
   - if modal?
     %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } }
       Cancel
+    %button.btn.btn-primary.disabled{ id: 'chain_expression_btn', type: 'submit', form:'expression', data: { modal_transition: "true" } }
+      Chain Another Expression
+
+    =# link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()", data: { modal_transition:true }
+    = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
   - else
     = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
-  
-  -# TODO: modal test
-  = link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()"
-  = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
+    = link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()"
+    = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled'
 
   
 :javascript
@@ -146,6 +151,7 @@
           // render row data
           $('#expression_dimensions').append(data);
           autocomplete_dimension_values(ID);
+          $('.hide-on-start').fadeIn();
       });
     }
   }
@@ -207,6 +213,7 @@
               if($.inArray(value, unique_values) === -1) unique_values.push(value);
           });
           dimension_data[dimension_key] = unique_values;
+          monitoring.generate_expression();
         })
       },
       error: function(jqXHR) {

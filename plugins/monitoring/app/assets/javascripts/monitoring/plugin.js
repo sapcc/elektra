@@ -60,13 +60,13 @@ monitoring.generate_expression = function() {
   var valid = true;
   $('#chain_expression_btn').addClass('disabled');
   $('#create_alarm_definition_btn').addClass('disabled');
-  
   $('.create-expression-error').css('display','none');
   
+  // metrics
   var metric = $('#metric').val();
-  if(metric == "") valid = false;
-  var statistical_function = $('#statistical_function').val();
+  if(metric == "")valid = false;
   
+  // dimensions
   var dimensions = "";
   $('.dimension_key').each(function( ) {
     if($( this ).text() != '' ) {
@@ -85,6 +85,10 @@ monitoring.generate_expression = function() {
     dimensions = "{"+dimensions+"}";
   }
 
+  // statistical function
+  var statistical_function = $('#statistical_function').val();
+  
+  // period
   var period = $('#period_custom').val();
   if(period == "") valid = false;
   // validation
@@ -103,6 +107,7 @@ monitoring.generate_expression = function() {
     $('.period.help-block').show();
   }
   
+  // relational operator
   var relational_operator = $('#threshold_relational_operator').val();
   if(relational_operator == "") valid = false;
   var threshold_value = $('#threshold_value').val();
