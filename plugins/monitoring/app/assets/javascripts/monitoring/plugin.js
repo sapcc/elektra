@@ -71,9 +71,15 @@ monitoring.generate_expression = function() {
   $('.dimension_key').each(function( ) {
     if($( this ).text() != '' ) {
       var defintion_id = $(this).data('id')
-      dimensions += $( this ).val()+":"+$('#dimension_value_'+defintion_id).text()+",";
-    }
+      var key = $( this ).val();
+      var value = $('#dimension_value_'+defintion_id).val();
+      if(key != '' && value != '') {
+        dimensions += key+":"+value+",";
+      }    }
   });
+  
+  // remove the last comma
+  dimensions = dimensions.slice(0, -1);
   
   if (dimensions != "") {
     dimensions = "{"+dimensions+"}";

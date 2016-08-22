@@ -92,10 +92,12 @@ module Monitoring
     
     def get_dimensions_by_metric
       name = params.require(:name)
+      # get all dimensions 60 minutes ago
       t = Time.now.utc - (60*60)
       metrics = services.monitoring.get_metric({name: name, start_time: t.iso8601})
-      dimensions = Hash.new{ |h, k| h[k] = [] } 
+      dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
+      dimensions[''] << ''
       render json: dimensions
     end
 

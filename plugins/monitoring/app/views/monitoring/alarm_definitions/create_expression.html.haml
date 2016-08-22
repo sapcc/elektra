@@ -38,7 +38,7 @@
         = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"
         %span.help-block
           A metric is uniquely identified by a name and set of dimensions.
-      #expression-dimensions
+      #expression_dimensions
       .form-group
         = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
         %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
