@@ -7,6 +7,6 @@
   "dns_service:recordset_list": "rule:admin_required",
   "dns_service:recordset_get": "rule:admin_required",
   "dns_service:recordset_create": "rule:admin_required",
-  "dns_service:recordset_update": "!",
+  "dns_service:recordset_update": "rule:admin_required",
   "dns_service:recordset_delete": "rule:admin_required"
 }
