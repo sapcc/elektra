@@ -55,17 +55,7 @@ monitoring.get_metric_names = function() {
   return metric_names_unique;
 };
 
-monitoring.generate_expression = function() {
-  
-  var valid = true;
-  $('#chain_expression_btn').addClass('disabled');
-  $('#create_alarm_definition_btn').addClass('disabled');
-  $('.create-expression-error').css('display','none');
-  
-  // metrics
-  var metric = $('#metric').val();
-  if(metric == "")valid = false;
-  
+monitoring.expression_dimensions = function() {
   // dimensions
   var dimensions = "";
   $('.dimension_key').each(function( ) {
@@ -80,6 +70,23 @@ monitoring.generate_expression = function() {
   
   // remove the last comma
   dimensions = dimensions.slice(0, -1);
+  
+  return dimensions;
+}
+
+monitoring.generate_expression = function() {
+  
+  var valid = true;
+  $('#chain_expression_btn').addClass('disabled');
+  $('#create_alarm_definition_btn').addClass('disabled');
+  $('.create-expression-error').css('display','none');
+  
+  // metrics
+  var metric = $('#metric').val();
+  if(metric == "")valid = false;
+  
+  // dimensions
+  var dimensions = monitoring.expression_dimensions();
   
   if (dimensions != "") {
     dimensions = "{"+dimensions+"}";
@@ -174,7 +181,22 @@ monitoring.remove_dimension_row = function(ID) {
   // generate expression and render new dimension row
   monitoring.generate_expression();
   render_dimension_row(dimension_cnt);
+  show_statistic();
 };
+
+// https://remysharp.com/2010/07/21/throttling-function-calls
+// http://stackoverflow.com/questions/4364729/jquery-run-code-2-seconds-after-last-keypress
+monitoring.throttle = function(f, delay){
+  var timer = null;
+  return function(){
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = window.setTimeout(function(){
+          f.apply(context, args);
+      },
+      delay || 500);
+  };
+}
 
 monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
 

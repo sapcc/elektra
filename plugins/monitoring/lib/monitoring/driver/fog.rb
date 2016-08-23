@@ -39,6 +39,12 @@ module Monitoring
         end
       end
 
+      def list_statistics(options = {})
+        handle_response do
+          @fog.list_statistics(options).body["elements"]
+        end
+      end
+
       def alarms(options = {})
         handle_response do
           @fog.list_alarms(options).body["elements"]

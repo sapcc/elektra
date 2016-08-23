@@ -2,7 +2,7 @@ module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_required
     
-    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search, :create_expression, :get_dimensions_by_metric, :dimension_row ] 
+    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search, :create_expression, :get_dimensions_by_metric, :dimension_row, :statistics ] 
 
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
@@ -71,6 +71,41 @@ module Monitoring
       back_to_alarm_definition_list
     end
 
+    def statistics
+      metric = params['metric']
+      dimensions = params['dimensions']
+      period = params['period']
+      threshold = params['threshold']
+      
+      # get the statistic data for the last 6 hours
+      t = Time.now.utc - (60*360)
+      statistics = services.monitoring.list_statistics({
+        name: metric, 
+        start_time: t.iso8601,
+        statistics: 'avg,min,max',
+        dimensions: dimensions,
+        period: period,
+        merge_metrics: true
+      })
+      
+      data = [];
+      ['avg','max','min','threshold'].each do |column|
+        values = [];
+        x = 0;
+        statistics.statistics.each do |statistic|
+          if column == 'threshold'
+            values << {x: x, y: threshold}
+          else
+            values << {x: x, y: statistic[statistics.columns.find_index(column)]}
+          end
+          x +=period.to_i/60
+        end
+        data << {key: column, values: values}
+      end
+      
+      render json: data
+    end
+
     def toggle_alarm_actions
       attrs = { 
         actions_enabled: !@alarm_definition.actions_enabled,
@@ -87,14 +122,17 @@ module Monitoring
       @metric_names = services.monitoring.get_metric_names
       
       # dummy data for testing
-      # @metric_names = ['foo','bla']
+      #@metric_names = ['foo','bla']
     end
     
     def get_dimensions_by_metric
       name = params.require(:name)
       # get all dimensions 60 minutes ago
       t = Time.now.utc - (60*60)
-      metrics = services.monitoring.get_metric({name: name, start_time: t.iso8601})
+      metrics = services.monitoring.get_metric({
+        name: name, 
+        start_time: t.iso8601
+      })
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
       dimensions[''] << ''

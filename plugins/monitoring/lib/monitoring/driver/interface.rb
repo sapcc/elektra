@@ -62,6 +62,10 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      def list_statistics(options={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end

@@ -16,6 +16,7 @@ Monitoring::Engine.routes.draw do
       match '/create_expression' => 'alarm_definitions#create_expression' , :via => [:get, :post]
       get 'dimensions_by_metric' => 'alarm_definitions#get_dimensions_by_metric'
       post 'dimension_row'
+      post 'statistics'
     end
     member do
       get 'toggle_alarm_actions'

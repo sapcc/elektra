@@ -14,7 +14,7 @@
         .panel-body.panel-expression
           .row
             .col-md-11
-              = form_tag plugin('monitoring').create_expression_alarm_definitions_path(), method: :post, id:'expression' do
+              = form_tag plugin('monitoring').create_expression_alarm_definitions_path(), method: :get, id:'expression' do
                 = hidden_field_tag 'expressions'
 
               - index = 0;
@@ -53,14 +53,14 @@
           = label_tag 'period', 'Period', class: 'control-label'
           .row
             .col-md-3
-              = text_field_tag 'period_custom', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
+              = text_field_tag 'period_custom', 60, class: 'form-control'
             .col-md-9.period-slider
               -# note: we need the style tag here to render the slide in correct size (css class is not working)
               = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
           %span.help-block.period
             Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
         .form-group.threshold
-          .row 
+          .row  
             .col-md-4
               = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
               %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
@@ -70,7 +70,7 @@
                 %option{value: '>='} >=
             .col-md-8
               = label_tag 'threshold_value', 'Value', class: 'control-label'
-              = text_field_tag 'threshold_value', 60, class: 'form-control', onchange: 'monitoring.generate_expression();'
+              = text_field_tag 'threshold_value', 60, class: 'form-control'
           %span.help-block.threshold
             Threshold values are always in the same units as the metric that they are being compared to.
         = label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
@@ -81,13 +81,23 @@
         %span.help-block
           Chain expressions with logical operators together (optional).
 
-    .col-md-6
+    .col-md-6.hide-on-start
+      .row
+        .col-md-12
+          = label_tag 'statistic', 'Statistic', class: 'control-label'
+          %svg#statistic{style:"width:100%; height:400px;"}
+            %text{ x:"10", y:"25", font: { family: "sans-serif", size:"20px"}, fill:"#3c763d"}
+              Loading Statistic...
+          %span.help-block
+            The statistic shows the average, maximum and minmum values that are collected 
+            in the last 6 hours (360 minutes).
+      
 
 .buttons{ class: modal? ? 'modal-footer' : '' }
   - if modal?
     %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } }
       Cancel
-    %button.btn.btn-primary.disabled{ id: 'chain_expression_btn', type: 'submit', form:'expression', data: { modal_transition: "true" } }
+    %button.btn.btn-primary{ id: 'chain_expression_btn', type: 'submit', form:'expression', data: { modal_transition: "true" } }
       Chain Another Expression
 
     =# link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()", data: { modal_transition:true }
@@ -96,6 +106,8 @@
     = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
     = link_to "Chain Another Expression", "#", id: 'chain_expression_btn', class: 'btn btn-primary disabled', onclick: "$('form#expression').submit()"
     = link_to "Create Definition", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled'
+
+  = link_to "Reload Statistic","#", id: 'reload_statistic_btn', onclick:'show_statistic()', class:'btn btn-primary disabled'
 
   
 :javascript
@@ -118,6 +130,8 @@
        //console.log(slide_event.value);
        monitoring.generate_expression();
        $('#period_custom').val(slide_event.value);
+       // send change to trigger statistic reload after 1 second
+       $('#period_custom').trigger("change");
     }
   );
   
@@ -130,16 +144,25 @@
         // cleanup everything
         dimension_cnt = 1;
         $('#expression_dimensions').empty();
-        $('.expression_dimension_head').css('display','inline');
+        $('.expression_dimension_head').fadeIn();
         // render the row based on dimension_data and the template
         render_dimension_row(dimension_cnt);
+        show_statistic();
       }
     });
+    
     // initial autofocus
     setTimeout(function() {
       $("#metric").focus().select();
       monitoring.generate_expression();
     }, 0);
+    
+    // events
+    // delay change event for 1 second
+    $('#period_custom, #threshold_value').change(monitoring.throttle(function(){
+      monitoring.generate_expression();
+      show_statistic();
+    },1000));
   });
 
   function render_dimension_row(ID) {
@@ -182,6 +205,7 @@
         $("#dimension_value_"+ID).prop("readonly", true);
         //$("#dimension_key_"+ID).prop("readonly", true);
         $("#dimension_key_"+ID).prop("disabled", "disabled");
+        show_statistic();
       }
     });
     // set fokus to value field
@@ -225,4 +249,33 @@
     });
   }
   
-  
+  function show_statistic() {
+    $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
+      metric: $('#metric').val(),
+      dimensions: monitoring.expression_dimensions(),
+      period: $('#period_custom').val(),
+      threshold: $('#threshold_value').val()
+    },function(data) {
+      
+      $('#statistic').empty();
+      //console.log(data);
+      nv.addGraph(function() {
+        var chart = nv.models.lineChart();
+        
+        chart.margin({"left":30,"right":20,"top":5,"bottom":30});
+      
+        d3.select('#statistic')
+          .datum(data)
+          .transition().duration(500)
+          .call(chart)
+          ;
+      
+        nv.utils.windowResize(chart.update);
+      
+        return chart;
+      });
+      $('#reload_statistic_btn').removeClass('disabled');
+    });
+    
+  }
+
