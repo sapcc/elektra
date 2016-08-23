@@ -1,0 +1,13 @@
+= render partial: 'key_manager/shared/nav.html', locals: {pane: 'containers'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"containers-pane"}
+
+    %h3
+      Available Containers
+
+    -#.toolbar
+    -#  = link_to "New Secret", "#", data: {modal: true}, class: 'btn btn-primary btn-sm'
+    -#
+    -#.js-table-secrets{data: {toggle: 'paginationSpinner'}}
+    -#  = render partial: 'table_secrets', locals: {secrets: @secrets}
