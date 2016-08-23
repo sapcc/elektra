@@ -78,7 +78,7 @@ module Monitoring
       threshold = params['threshold']
       
       # get the statistic data for the last 6 hours
-      t = Time.now.utc - (60*360)
+      t = Time.now.utc - (60*120)
       statistics = services.monitoring.list_statistics({
         name: metric, 
         start_time: t.iso8601,
@@ -116,6 +116,7 @@ module Monitoring
     
     def create_expression
       expressions = params['expressions'] || ""
+      @step_count = params['step_count'] || 1
       # split expression into subexpression parts
       @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
 

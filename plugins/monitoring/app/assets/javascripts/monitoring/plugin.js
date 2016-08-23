@@ -77,7 +77,6 @@ monitoring.expression_dimensions = function() {
 monitoring.generate_expression = function() {
   
   var valid = true;
-  $('#chain_expression_btn').addClass('disabled');
   $('#create_alarm_definition_btn').addClass('disabled');
   $('.create-expression-error').css('display','none');
   
@@ -134,22 +133,25 @@ monitoring.generate_expression = function() {
   if(valid) $('#create_alarm_definition_btn').removeClass('disabled');
   var chain_operator = $('#chain_operator').val();
   if(chain_operator != '' && valid) {
-    $('#chain_expression_btn').removeClass('disabled');
+    $('#chain_expression_btn').removeClass('hide');
     $('#create_alarm_definition_btn').addClass('disabled');
+  }
+  else {
+    $('#chain_expression_btn').addClass('hide');
   }
 
   // colorize expression
-  $('#expression_preview').removeClass();
+  $('#preview').removeClass();
   if(valid) {
-    $('#expression_preview').addClass('text-success');
+    $('#preview').addClass('expression-preview text-success pull-left');
   }
   else {
-    $('#expression_preview').addClass('text-danger');
+    $('#preview').addClass('expression-preview text-danger pull-left');
   }
 
   // render current expression
   var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value+" "+chain_operator;
-  $('#expression_preview').text(expression);
+  $('#preview').text(expression);
   
   // collect all chained expressions
   var sub_expression = "";
