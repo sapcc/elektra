@@ -1,7 +1,7 @@
 {
   "context_is_cloud_admin": "role:cloud_dns_admin",
   "context_is_dns_admin": "role:dns_admin",
-  "admin": "rule:context_is_cloud_admin or rule:admin_required",
+  "admin": "rule:context_is_cloud_admin or is_admin:True",
   "owner": "project_id:%(tenant_id)s",
   "admin_or_owner": "rule:admin or rule:owner",  
   "zone_primary_or_admin": "(%(zone_type)s=='PRIMARY' and rule:admin_or_owner) or (%(zone_type)s=='SECONDARY' and is_admin:True)", 
