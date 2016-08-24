@@ -253,7 +253,7 @@ module Core
       def read_error_messages(hash,messages=[])
         return [ hash.to_s ] unless hash.respond_to?(:each)
         hash.each do |k,v|
-          messages << v if k=='message'
+          messages << v if k=='message' or k=='type'
           if v.is_a?(Hash)
             read_error_messages(v,messages) 
           elsif v.is_a?(Array)

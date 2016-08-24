@@ -38,5 +38,16 @@ module DnsService
         "zone_id"     => read("zone_id"),
       }.delete_if { |k, v| v.blank? }
     end
+    
+    def attributes_for_update
+      {
+        "type"        => (read("type").upcase rescue nil),
+        "name"        => read('name'),
+        "records"     => (read("records").is_a?(Array) ? read("records") : [read("records")]),
+        "ttl"         => (read("ttl") ? read("ttl").to_i : nil),
+        "description" => read("description"),
+        "zone_id"     => read("zone_id"),
+      }.delete_if { |k, v| v.blank? }
+    end
   end
 end

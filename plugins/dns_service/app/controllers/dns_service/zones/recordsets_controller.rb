@@ -22,6 +22,31 @@ module DnsService
         end
       end
       
+      def edit
+        @zone = services.dns_service.find_zone(params[:zone_id])
+        @recordset = services.dns_service.find_recordset(@zone.id,params[:id])
+      end
+      
+      def update
+        @zone = services.dns_service.find_zone(params[:zone_id])
+        @recordset = services.dns_service.find_recordset(@zone.id,params[:id])
+        
+        @recordset.records = params[:recordset][:records]
+        @recordset.description = params[:recordset][:description]
+        @recordset.ttl = params[:recordset][:ttl]
+        
+        if @recordset.save
+          flash.now[:notice] = "Recordset successfully updated."
+          respond_to do |format|
+            format.html{redirect_to zone_path(@zone.id)}
+            format.js {render 'update.js'}
+          end
+          
+        else
+          render action: :edit
+        end
+      end
+      
       def destroy
         @deleted = services.dns_service.delete_recordset(params[:zone_id],params[:id])
         respond_to do |format|

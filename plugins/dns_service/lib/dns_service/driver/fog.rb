@@ -35,10 +35,9 @@ module DnsService
         }
       end
       
-      def update_recordset(params={})
+      def update_recordset(id,params={})
         handle_response{
           zone_id = params.delete(:zone_id)
-          id = params.delete(:id)
           @fog.update_recordset(zone_id, id, params)
         }
       end
