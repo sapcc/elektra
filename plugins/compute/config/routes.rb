@@ -4,6 +4,8 @@ Compute::Engine.routes.draw do
       get 'console'
       get 'update_item'
       get 'new_floatingip'
+      get 'new_size'
+      put 'resize'
       put 'stop'
       put 'start'
       put 'pause'

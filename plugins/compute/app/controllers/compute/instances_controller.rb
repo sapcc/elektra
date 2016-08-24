@@ -182,6 +182,21 @@ module Compute
         }
       end
     end
+    
+    def new_size
+      @instance = services.compute.find_server(params[:id])
+      @flavors  = services.compute.flavors
+    end
+    
+    def resize
+      @instance = services.compute.find_server(params[:id])
+      @instance.flavor_id=params[:server][:flavor_id]
+      if services.compute.resize_server(@instance.id,@instance.flavor_id)
+        redirect_to instances_url
+      else
+        render action: :new_size
+      end
+    end
 
     def stop
       execute_instance_action
