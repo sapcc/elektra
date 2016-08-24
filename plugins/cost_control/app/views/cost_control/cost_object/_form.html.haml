@@ -1,8 +1,21 @@
 - types = CostControl::ProjectMasterdata::COST_OBJECT_TYPES
-= form.input :cost_object_type, label: long_labels ? 'Cost Object Type' : 'Type', collection: types.keys, label_method: -> (k) { types[k] }
-= form.input :cost_object_id, label: long_labels ? 'Cost Object ID' : 'ID'
-= form.input :cost_object_inherited, label: long_labels ? 'Cost Object is inherited?' : 'Inherited'
+.only-when-not-inherited
+  = form.input :cost_object_type, label: long_labels ? 'Cost Object Type' : 'Type', collection: types.keys, label_method: -> (k) { types[k] }
+  = form.input :cost_object_id, label: long_labels ? 'Cost Object ID' : 'ID'
+.row
+  .col-md-8.col-md-offset-4
+    = form.check_box :cost_object_inherited
+    = form.label :cost_object_inherited, 'Inherited'
 .row
   .help-block.col-sm-8.col-sm-offset-4
     A cost object is an element that we can bill for services rendered.
   -# TODO: monsoon2 has a link to "Learn more about pricing." here
+= content_for :javascripts do
+  :javascript
+    var checkbox = $('#project_cost_control_cost_object_inherited');
+    if (checkbox.is(':checked')) {
+      $('.only-when-not-inherited input, .only-when-not-inherited select').val('').prop('disabled', true);
+    }
+    checkbox.change(function() {
+      $('.only-when-not-inherited input, .only-when-not-inherited select').val('').prop('disabled', $(this).is(':checked'));
+    });
