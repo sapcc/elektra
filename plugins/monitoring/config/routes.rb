@@ -17,6 +17,7 @@ Monitoring::Engine.routes.draw do
       get 'dimensions_by_metric' => 'alarm_definitions#get_dimensions_by_metric'
       post 'dimension_row'
       post 'statistics'
+      post 'from_expression_wizzard_new'
     end
     member do
       get 'toggle_alarm_actions'

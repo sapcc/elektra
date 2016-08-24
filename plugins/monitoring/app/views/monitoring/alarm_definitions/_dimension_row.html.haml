@@ -1,6 +1,6 @@
 .expression-dimension{ id: "expression_dimension_#{@cnt}" }
   %label{ for: "dimension_key_#{@cnt}"}
-    Dimension
+    Filter by dimension
   .row
     .col-md-4
       %select{id:"dimension_key_#{@cnt}", class: "form-control dimension_key", onchange: "autocomplete_dimension_values(#{@cnt})", data: {id: @cnt}}

@@ -2,7 +2,7 @@ module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_required
     
-    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search, :create_expression, :get_dimensions_by_metric, :dimension_row, :statistics ] 
+    before_filter :load_alarm_definition, except: [ :index, :new,:from_expression_wizzard_new, :create, :search, :create_expression, :get_dimensions_by_metric, :dimension_row, :statistics ] 
 
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
@@ -31,6 +31,13 @@ module Monitoring
     def new
       @alarm_definition = services.monitoring.new_alarm_definition(name: "")
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+    end
+    
+    def from_expression_wizzard_new
+      expression = params['expression'] || ''
+      @alarm_definition = services.monitoring.new_alarm_definition(name: "", expression: expression)
+      @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+      render action: 'new'
     end
 
     def create
@@ -115,11 +122,13 @@ module Monitoring
     end
     
     def create_expression
-      expressions = params['expressions'] || ""
+      # chain expressions keep it vor later
+      # expressions = params['expressions'] || ""
       @step_count = params['step_count'] || 1
+      
+      # chain expressions keep it vor later
       # split expression into subexpression parts
-      @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
-
+      # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
       @metric_names = services.monitoring.get_metric_names
       
       # dummy data for testing

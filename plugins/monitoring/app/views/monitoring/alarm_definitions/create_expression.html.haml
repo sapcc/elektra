@@ -1,10 +1,15 @@
 = content_for :title do
-  Alarm Definition - Create Expression #{@step_count}
+  Create Expression
+  -# not yet used
+  -#{@step_count}
 
 - unless modal?
-  %h4 Alarm Definition - Create Expression #{@step_count}
-= form_tag plugin('monitoring').create_expression_alarm_definitions_path(), method: :post, remote: modal? do
-  = hidden_field_tag 'expressions'
+  %h4 Create Expression 
+  -# not yet used
+  -#{@step_count}
+
+= form_tag plugin('monitoring').from_expression_wizzard_new_alarm_definitions_path(),autocomplete: "off", method: :post, remote: modal?  do
+  = hidden_field_tag 'expression'
   = hidden_field_tag 'step_count', @step_count.to_i + 1
   .modal-body
     %p.alert.alert-error.create-expression-error
@@ -15,13 +20,14 @@
           .panel-body.panel-expression
             .row
               .col-md-11
-                - index = 0;
-                - @sub_expressions.each do |expression, logical_operator|
-                  - if logical_operator
-                    .sub-expression.text-success
-                      - index += 1
-                      = expression+logical_operator
-                      = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
+                -# chain expressions keep it vor later
+                -#  - index = 0;
+                -#  - @sub_expressions.each do |expression, logical_operator|
+                -#    - if logical_operator
+                -#      .sub-expression.text-success
+                -#        - index += 1
+                -#        = expression+logical_operator
+                -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
                     
                 .expression-preview#preview
                 %button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
@@ -75,17 +81,19 @@
                 = text_field_tag 'threshold_value', 60, class: 'form-control'
             %span.help-block.threshold
               Threshold values are always in the same units as the metric that they are being compared to.
-          = label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
-          %select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
-            %option
-            %option{value: 'AND'} and
-            %option{value: 'OR'} or
-          %span.help-block
-            Chain expressions with logical operators together (optional).
+
+          -# chain expressions keep it vor later
+          -#= label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
+          -#%select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
+          -#  %option
+          -#  %option{value: 'AND'} and
+          -#  %option{value: 'OR'} or
+          -#%span.help-block
+          -#  Chain expressions with logical operators together (optional).
   
       .col-md-6.hide-on-start
         .row
-          .col-md-12
+          .col-md-12.p-l-0
             = label_tag 'statistic', 'Statistic', class: 'control-label'
             %button.btn.btn-default.btn-xs.pull-right{ id: 'reload_statistic_btn', onclick:'show_statistic()'}
               Reload
@@ -96,19 +104,16 @@
               The statistic shows the average, maximum and minmum values that are collected 
               in the last 2 hours (120 minutes).
 
-        
-  
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - if modal?
-      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' } }
-        Cancel
-      = link_to "Next", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
+      = button_tag 'Cancel', type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' }, class: 'btn btn-default'
+      =# link_to "Next", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
     - else
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
-      = link_to "Next", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled'
-  
-    =# link_to "Reload Statistic","#", id: 'reload_statistic_btn', onclick:'show_statistic()', class:'btn btn-primary disabled'
-
+      
+    %button.btn.btn-primary{ onclick: '', type: 'submit', id: 'create_alarm_definition_btn' }
+      Next
+        
 :javascript
 
   // all metric names
@@ -262,6 +267,7 @@
         var chart = nv.models.lineChart();
         
         chart.margin({"left":30,"right":20,"top":5,"bottom":30});
+        chart.useInteractiveGuideline(true);
       
         d3.select('#statistic')
           .datum(data)
@@ -275,6 +281,5 @@
       });
       $('#reload_statistic_btn').removeClass('disabled');
     });
-    
   }
 

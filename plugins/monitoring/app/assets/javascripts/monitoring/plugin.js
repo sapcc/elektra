@@ -77,7 +77,6 @@ monitoring.expression_dimensions = function() {
 monitoring.generate_expression = function() {
   
   var valid = true;
-  $('#create_alarm_definition_btn').addClass('disabled');
   $('.create-expression-error').css('display','none');
   
   // metrics
@@ -129,37 +128,43 @@ monitoring.generate_expression = function() {
     $('.threshold').removeClass('has-error');
     $('.threshold.help-block').show();
   }
-  
-  if(valid) $('#create_alarm_definition_btn').removeClass('disabled');
-  var chain_operator = $('#chain_operator').val();
-  if(chain_operator != '' && valid) {
-    $('#chain_expression_btn').removeClass('hide');
-    $('#create_alarm_definition_btn').addClass('disabled');
-  }
-  else {
-    $('#chain_expression_btn').addClass('hide');
-  }
+
+//  chain expressions keep it vor later
+//  var chain_operator = $('#chain_operator').val();
+//  if(chain_operator != '' && valid) {
+//    $('#chain_expression_btn').removeClass('hide');
+//    $('#create_alarm_definition_btn').addClass('hide');
+//  }
+//  else {
+//    $('#chain_expression_btn').addClass('hide');
+//    $('#create_alarm_definition_btn').removeClass('hide');
+//  }
 
   // colorize expression
   $('#preview').removeClass();
   if(valid) {
-    $('#preview').addClass('expression-preview text-success pull-left');
+    //$('#preview').addClass('expression-preview text-success pull-left');
+    $('#create_alarm_definition_btn').removeClass('hide');
   }
   else {
+    //$('#create_alarm_definition_btn').addClass('hide');
     $('#preview').addClass('expression-preview text-danger pull-left');
   }
 
   // render current expression
-  var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value+" "+chain_operator;
+  var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value//+" "+chain_operator;
   $('#preview').text(expression);
-  
-  // collect all chained expressions
-  var sub_expression = "";
-  $('.sub-expression').each(function(){
-    sub_expression += " "+$(this).text().trim();
-  });
+
+//  chain expressions keep it vor later
+//  // collect all chained expressions
+    var sub_expression = "";
+//  $('.sub-expression').each(function(){
+//    sub_expression += " "+$(this).text().trim();
+//  });
+
   // write it to form for submit
-  $('#expressions').val($.trim(sub_expression+" "+expression));
+  $('#expression').val($.trim(sub_expression+" "+expression));
+//  $('#ready_expressions').val($.trim(sub_expression+" "+expression));
 
 } 
 
