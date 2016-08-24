@@ -1,16 +1,11 @@
+require 'fog/key_manager/openstack/models/secret'
+
 module ServiceLayer
 
   class KeyManagerService < Core::ServiceLayer::Service
+    include Core::ServiceLayer::FogDriver::ClientHelper
 
-    def driver
-      @driver ||= KeyManager::Driver::Fog.new({
-        auth_url:   self.auth_url,
-        region:     self.region,
-        token:      self.token,
-        domain_id:  self.domain_id,
-        project_id: self.project_id  
-      })
-    end
+    attr_reader :service
     
     def available?(action_name_sym=nil)
       true  
@@ -18,12 +13,19 @@ module ServiceLayer
     
 
     def secrets(filter={})
-      ::KeyManager::Secret.create_secrets(driver.secrets(filter))
+      ::KeyManager::Secret.create_secrets(service.secrets.all(filter))
     end
 
     def secret(uuid)
-      s = driver.secret(uuid)
-      ::KeyManager::Secret.new(s.attributes)
+      ::KeyManager::Secret.new(service.secrets.get(uuid))
+    end
+
+    def new_secret(attr)
+      ::KeyManager::Secret.new(attr.merge({service: service}))
+    end
+
+    def service
+      @service ||= ::Fog::KeyManager::OpenStack.new(auth_params)
     end
 
   end
