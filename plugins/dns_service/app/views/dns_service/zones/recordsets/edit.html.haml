@@ -11,7 +11,7 @@
     = f.input :records, label: label_values[:label] || 'Content', required: true, as: (label_values[:type]=='text' ? :text : :string)
     
     = f.input :description, as: :text
-    = f.input :ttl, input_html: {value: 1800}, as: :integer, icon_hint: 'TTL is the time-to-live for the record, in seconds.'
+    = f.input :ttl, as: :integer, icon_hint: 'TTL is the time-to-live for the record, in seconds.'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

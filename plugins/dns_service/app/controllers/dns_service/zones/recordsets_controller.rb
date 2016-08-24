@@ -34,7 +34,7 @@ module DnsService
         @recordset.records = params[:recordset][:records]
         @recordset.description = params[:recordset][:description]
         @recordset.ttl = params[:recordset][:ttl]
-        
+
         if @recordset.save
           flash.now[:notice] = "Recordset successfully updated."
           respond_to do |format|
