@@ -18,16 +18,23 @@ module ServiceLayer
     ##### project masterdata
 
     def find_project_masterdata(project_id)
-      return nil if project_id.blank?
+      return new_project_masterdata if project_id.blank?
       driver.map_to(CostControl::ProjectMasterdata).get_project_masterdata(project_id)
+    end
+
+    def new_project_masterdata(attributes={})
+      CostControl::ProjectMasterdata.new(driver, attributes)
     end
 
     ##### domain masterdata
 
-    def find_domain_masterdata(domain_id)
-      return nil if domain_id.blank?
-      driver.map_to(CostControl::DomainMasterdata).get_domain_masterdata(domain_id)
+    def new_domain_masterdata(attributes={})
+      CostControl::DomainMasterdata.new(driver, attributes)
     end
 
+    def find_domain_masterdata(domain_id)
+      return new_domain_masterdata if domain_id.blank?
+      driver.map_to(CostControl::DomainMasterdata).get_domain_masterdata(domain_id)
+    end
   end
 end
