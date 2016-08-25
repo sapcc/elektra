@@ -85,24 +85,36 @@ module Monitoring
     end
 
     def statistics
-      metric = params['metric']
-      dimensions = params['dimensions']
-      period = params['period']
-      threshold = params['threshold']
+      metric     = params.require('metric')
+      dimensions = params['dimensions'] || ''
+      period     = params.require('period')
+      threshold  = params.require('threshold')
+      statistical_function = params.require('statistical_function')
       
+      columns = []
+      if statistical_function == 'avg' || 
+         statistical_function == 'min' ||
+         statistical_function == 'max'
+         statistical_function = 'avg,min,max'
+         columns = ['avg','max','min','threshold']
+      else
+        columns << statistical_function
+        columns << 'threshold'
+      end
+
       # get the statistic data for the last 6 hours
       t = Time.now.utc - (60*120)
       statistics = services.monitoring.list_statistics({
         name: metric, 
         start_time: t.iso8601,
-        statistics: 'avg,min,max',
+        statistics: statistical_function,
         dimensions: dimensions,
         period: period,
         merge_metrics: true
       })
       
       data = [];
-      ['avg','max','min','threshold'].each do |column|
+      columns.each do |column|
         values = [];
         x = 0;
         statistics.statistics.each do |statistic|

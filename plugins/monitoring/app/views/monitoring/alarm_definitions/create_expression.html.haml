@@ -27,6 +27,7 @@
                 -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
                     
                 .expression-preview#preview
+                
                 -#%button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
                 -#  Chain Expression
   
@@ -48,7 +49,7 @@
         .hide-on-start
           .form-group
             = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
-            %select#statistical_function.form-control{onchange: 'monitoring.generate_expression();'}
+            %select#statistical_function.form-control
               %option{value: 'avg'} avg
               %option{value: 'min'} min
               %option{value: 'max'} max
@@ -169,6 +170,11 @@
       monitoring.generate_expression();
       show_statistic();
     },1000));
+    
+    $('#statistical_function').change(function(){
+      monitoring.generate_expression();
+      show_statistic();
+    });
   });
 
   function render_dimension_row(ID) {
@@ -262,7 +268,8 @@
       metric: $('#metric').val(),
       dimensions: monitoring.expression_dimensions(),
       period: $('#period_custom').val(),
-      threshold: $('#threshold_value').val()
+      threshold: $('#threshold_value').val(),
+      statistical_function: $('#statistical_function').val()
     },function(data) {
       
       $('#statistic').empty();
