@@ -143,11 +143,11 @@ monitoring.generate_expression = function() {
   // colorize expression
   $('#preview').removeClass();
   if(valid) {
-    //$('#preview').addClass('expression-preview text-success pull-left');
+    $('#preview').addClass('expression-preview text-success pull-left');
     $('#create_alarm_definition_btn').removeClass('hide');
   }
   else {
-    //$('#create_alarm_definition_btn').addClass('hide');
+    $('#create_alarm_definition_btn').addClass('hide');
     $('#preview').addClass('expression-preview text-danger pull-left');
   }
 

@@ -29,15 +29,21 @@ module Monitoring
     end
 
     def new
+      @head = 'New Alarm Definition'
       @alarm_definition = services.monitoring.new_alarm_definition(name: "")
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
     
     def from_expression_wizzard_new
+      @head = 'Create Alarm Definition'
       expression = params['expression'] || ''
+      
+      #dimensions = params['filter_by_dimensions']
+      #@filter_by = filter_by_dimensions.to_json if dimensions || []
+      
       @alarm_definition = services.monitoring.new_alarm_definition(name: "", expression: expression)
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
-      render action: 'new'
+      render action: 'new_with_expression'
     end
 
     def create

@@ -1,16 +1,13 @@
 = content_for :title do
-  Create Expression
-  -# not yet used
-  -#{@step_count}
+  First Create Expression
 
 - unless modal?
-  %h4 Create Expression 
-  -# not yet used
-  -#{@step_count}
+  %h4 First Create Expression 
 
 = form_tag plugin('monitoring').from_expression_wizzard_new_alarm_definitions_path(),autocomplete: "off", method: :post, remote: modal?  do
   = hidden_field_tag 'expression'
-  = hidden_field_tag 'step_count', @step_count.to_i + 1
+  = hidden_field_tag 'filter_by_dimensions'
+  
   .modal-body
     %p.alert.alert-error.create-expression-error
     .row
@@ -30,8 +27,8 @@
                 -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
                     
                 .expression-preview#preview
-                %button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
-                  Chain Expression
+                -#%button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
+                -#  Chain Expression
   
               .col-md-1
                 .loading_place.loading-right
@@ -111,7 +108,7 @@
     - else
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
       
-    %button.btn.btn-primary{ onclick: '', type: 'submit', id: 'create_alarm_definition_btn' }
+    %button.btn.btn-primary.hide{ onclick: '', type: 'submit', id: 'create_alarm_definition_btn' }
       Next
         
 :javascript
@@ -120,7 +117,10 @@
   var metric_names = #{@metric_names.to_json};
   // global dimension counter
   var dimension_cnt = 0;
-
+  // we used here a global value because it is used by render_dimension_row that and
+  // dimension_data is only generated once
+  var dimension_data;
+  
   $('#period_slider').slider({
     step: 60,
     min: 60,
@@ -158,7 +158,9 @@
     // initial autofocus
     setTimeout(function() {
       $("#metric").focus().select();
-      monitoring.generate_expression();
+      $('#preview').addClass('expression-preview text-info pull-left');
+      $('#preview').text('please define me');
+      //monitoring.generate_expression();
     }, 0);
     
     // events
@@ -173,12 +175,24 @@
     // if no dimension was found do nothing
     if (dimension_data) {
       var dimension_keys = Object.keys(dimension_data);
+
+      //JSON.stringify(dimension_keys)
+      // write dimension keys to $('#filter_by_dimensions').val(JSON.stringify(dimension_keys))
+      
       $.post( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID, keys: JSON.stringify(dimension_keys)}, 
         function( data ){ 
           // render row data
           $('#expression_dimensions').append(data);
-          autocomplete_dimension_values(ID);
+
+          // set fokus to key field
+          $("#dimension_key_"+ID).focus();
           $('.hide-on-start').fadeIn();
+
+          // enable remove button
+          var id_before = ID - 1;
+          if($('#expression_remove_dimension_btn_'+id_before)) {
+            $('#expression_remove_dimension_btn_'+id_before).removeClass('disabled');
+          }
       });
     }
   }
@@ -207,24 +221,14 @@
         monitoring.generate_expression();
         // made row read only
         $("#dimension_value_"+ID).prop("readonly", true);
-        //$("#dimension_key_"+ID).prop("readonly", true);
         $("#dimension_key_"+ID).prop("disabled", "disabled");
         show_statistic();
       }
     });
     // set fokus to value field
     $("#dimension_value_"+ID).focus();
-    
-    var id_before = ID - 1;
-    // console.log(id_before);
-    if($('#expression_remove_dimension_btn_'+id_before)) {
-      $('#expression_remove_dimension_btn_'+id_before).removeClass('disabled');
-    }
   }
 
-  // we used here a global value because it is used by render_dimension_row that and
-  // dimension_data is only generated once
-  var dimension_data;
   function get_dimensions(METRIC_NAME) {
     $.ajax({
       url: "#{plugin('monitoring').dimensions_by_metric_alarm_definitions_path()}",
