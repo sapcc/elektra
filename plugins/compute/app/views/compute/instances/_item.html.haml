@@ -31,7 +31,7 @@
 
   %td= instance.power_state_string
   %td
-    = instance.task_state.nil? ? instance.status.capitalize : instance.task_state
+    = instance.task_state.nil? ? instance.status.humanize : instance.task_state.humanize
     - if instance.fault
       %br
       %span.info-text= instance.fault["message"]
@@ -60,6 +60,11 @@
 
               - if instance.status=='ACTIVE' or instance.status=='SHUTOFF' 
                 %li= link_to 'Resize', new_size_instance_path(id: instance.id), data: { modal: true} 
+                
+              - if instance.status=='VERIFY_RESIZE'
+                %li= link_to 'Confirm Resize', plugin('compute').confirm_resize_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
+                %li= link_to 'Revert Resize', plugin('compute').revert_resize_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
+                
                 
               - if instance.power_state==Compute::Server::RUNNING
                 %li.divider

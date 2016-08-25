@@ -189,13 +189,16 @@ module Compute
     end
     
     def resize
-      @instance = services.compute.find_server(params[:id])
-      @instance.flavor_id=params[:server][:flavor_id]
-      if services.compute.resize_server(@instance.id,@instance.flavor_id)
-        redirect_to instances_url
-      else
-        render action: :new_size
-      end
+      @close_modal=true
+      execute_instance_action('resize',params[:server][:flavor_id])
+    end
+    
+    def confirm_resize
+      execute_instance_action
+    end 
+    
+    def revert_resize
+      execute_instance_action
     end
 
     def stop
@@ -241,13 +244,14 @@ module Compute
       end
     end
 
-    def execute_instance_action(action=action_name)
+    def execute_instance_action(action=action_name,options=nil)
       instance_id = params[:id]
       @instance = services.compute.find_server(instance_id) rescue nil
 
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
-        if @instance.send(action)
+        result = options.nil? ? @instance.send(action) : @instance.send(action,options)
+        if result
           audit_logger.info(current_user, "has triggered action", action, "on", @instance)
           sleep(2)
           @instance = services.compute.find_server(instance_id) rescue nil

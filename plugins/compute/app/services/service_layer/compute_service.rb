@@ -83,6 +83,14 @@ module ServiceLayer
     def resize_server(server_id,flavor_id)
       driver.resize_server(server_id, flavor_id)
     end
+    
+    def confirm_resize_server(server_id)
+      driver.confirm_resize_server(server_id)
+    end
+
+    def revert_resize_server(server_id)
+      driver.revert_resize_server(server_id)
+    end
 
     ##################### KEYPAIRS #########################
     def new_keypair(attributes={})

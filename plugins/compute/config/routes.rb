@@ -6,6 +6,8 @@ Compute::Engine.routes.draw do
       get 'new_floatingip'
       get 'new_size'
       put 'resize'
+      put 'confirm_resize'
+      put 'revert_resize'
       put 'stop'
       put 'start'
       put 'pause'
