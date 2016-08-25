@@ -7,8 +7,8 @@ module Identity
       authorization_required only: [:index, :new, :create]
       
       def index
-        services.identity.users(domain_id:@scoped_domain_id, "name__startswith" => 't_' ).length
-        @technical_users = services.identity.users(domain_id:@scoped_domain_id, "name__startswith" => 't_' ).select{|user| user.name.start_with?("t_")}
+        services.identity.users(domain_id:@scoped_domain_id, "name__startswith" => 'T' ).length
+        @technical_users = services.identity.users(domain_id:@scoped_domain_id, "name__startswith" => 'T' ).select{|user| user.name.start_with?("T")}
       end
       
       def new
@@ -17,7 +17,7 @@ module Identity
       
       def create
         attributes = {
-          name: "t_#{SecureRandom.hex(8)}", 
+          name: "T#{SecureRandom.hex(8).upcase}",
           password: generate_password,
           description: params[:user][:description],
           domain_id: params[:user][:domain_id]
@@ -83,7 +83,7 @@ module Identity
       end
 
       private
-      def generate_password(length=8)
+      def generate_password(length=15)
         Array.new(length){[*"A".."Z", *"a".."z",*"0".."9"].sample}.join
       end
     end
