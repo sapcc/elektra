@@ -1,5 +1,7 @@
 = render partial: 'tabs', locals: { tab: @visibility }
 = render partial: "image/os_images/#{@visibility}/index_table"
 
-= link_to_previous_page @images, 'Previous Page', params: { marker: @prev_marker, previous: 'true' }
-= link_to_next_page @images, 'Next Page', params: { marker: @next_marker }
+= render_paginatable(@images)
+
+/ = link_to_previous_page @images, 'Previous Page', params: { marker: @prev_marker, previous: 'true' }
+/ = link_to_next_page @images, 'Next Page', params: { marker: @next_marker }

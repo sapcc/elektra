@@ -5,3 +5,6 @@ $(".js-table-automations").html("<%= escape_javascript(render partial: 'table_au
 <% unless @runs.nil? %>
 $(".js-table-runs").html("<%= escape_javascript(render partial: 'table_runs', locals: {runs: @runs}) %>");
 <% end %>
+
+// reload the pagination spinner
+$('[data-toggle="paginationSpinner"]').initPaginationSpinner()

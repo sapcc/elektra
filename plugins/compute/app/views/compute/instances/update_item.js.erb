@@ -8,3 +8,7 @@
     $("table.instances tbody").prepend("<tr data-empty><td colspan=7>No instances available</td></tr>");    
   }
 <%end%>
+
+<% if @close_modal %>
+  MoModal.close();
+<% end %>  

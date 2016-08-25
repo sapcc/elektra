@@ -16,7 +16,7 @@
 // outside this closure you should bind functions to monitoring. 
 //  
 //       
-//= require_tree .   
+//= require_tree .  
   
 // This function is visible only inside this file.
 function test() {
@@ -38,6 +38,70 @@ $(document).ready(function(){
     $('.loading_place').removeClass('loading');
   });
 }); 
-    
-// Call function from other files inside this plugin using the variable monitoring
-//monitoring.anyFunction()    
+
+
+monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
+
+  var width = SIZE || 450;
+  var height = SIZE || 450;
+
+  nv.addGraph( function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.count })
+          .width(width)
+          .height(height)
+          .showLegend(false)
+          .labelThreshold(0.05)
+          .noData("There is no Data to display")
+          .title(TYPE)
+          .donut(true)
+          .donutRatio(0.4)
+          .showTooltipPercent(true);
+
+      chart.color(function (d, i) {
+        // color scheme is used from _variables.scss
+         switch(d.label) {
+           case "Low":
+              //console.log("Low");
+              //$medium-blue
+              return ["#226ca9"];
+           case "Medium":
+              //console.log("Medium");
+              //$bright-orange
+              return ["#de8a2e"];
+           case "High":
+              //console.log("High");
+              //$deep-orange
+              return ["#b34a2a"];
+           case "Critical":
+              //console.log("Critical");
+              //$alarm-red
+              return ["#e22"];
+           case "Ok":
+              //console.log("OK");
+              //$medium-green
+              return ["#8ab54e"];
+           case "Alarm":
+              //console.log("Alarm");
+              //$alarm-red
+              return ["#e22"];
+           case "Unknown":
+              //console.log("Undetermined");
+              return ["#aaa"];
+         }
+      });
+
+      d3.select("#"+TYPE)
+          .datum(DATA)
+          .transition().duration(1200)
+          .attr('width', width)
+          .attr('height', height)
+          .call(chart);
+
+
+
+      return chart;
+  } );
+
+}

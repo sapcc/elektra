@@ -6,11 +6,11 @@
       .alert.alert-error
         = render_errors(@instance.errors)
       =# @instance.errors.full_messages.to_sentence + '.'
-        
-        
+
+
     - if @keypairs.blank?
       %p.alert.alert-warning
-        There are no key pairs defined for your account. Without that, you can't access the server via ssh.
+        There are no key pairs defined for your account. Without key pairs you can't access the server via ssh.
         You can define one
         = link_to 'here', keypairs_url()
 

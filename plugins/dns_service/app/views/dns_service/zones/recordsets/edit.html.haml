@@ -1,0 +1,21 @@
+= simple_form_for @recordset, url: plugin('dns_service').zone_recordset_path(@zone.id,@recordset.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @recordset.errors.present?
+      .alert.alert-error
+        = render_errors(@recordset.errors)        
+
+    = f.input :name, input_html: {disabled: true}    
+    - record_type = @recordset.type ? @recordset.type.downcase.to_sym : nil
+    - label_values = DnsService::Recordset::CONTENT_LABELS.fetch(record_type,{})
+    = f.input :records, label: label_values[:label] || 'Content', required: true, as: (label_values[:type]=='text' ? :text : :string)
+    
+    = f.input :description, as: :text
+    = f.input :ttl, as: :integer, icon_hint: 'TTL is the time-to-live for the record, in seconds.'
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    = button_tag "Update", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

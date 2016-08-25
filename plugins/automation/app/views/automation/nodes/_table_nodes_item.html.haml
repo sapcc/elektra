@@ -1,20 +1,40 @@
-%tr{id: "instance_#{instance.id}"}
+%tr{id: "node_#{node.id}"}
   %td
-    = link_to(instance.name, plugin('automation').node_path(id: instance.id), data: {modal: true})
-  %td= "#{instance.automation_facts.platform} #{instance.automation_facts.platform_version}"
-  %td= instance.automation_facts.ipaddress
-  %td{class: "snug #{'automation_status_alarm' if instance.automation_facts.online == false}"}
-    = instance.automation_facts.online_to_string
+    - if is_external_node
+      %a{href:"#", title: 'External node', data: {toggle:"tooltip"}}
+        %i.fa.fa-tty
+
   %td
-    = render partial: "table_nodes_item_jobs", locals: {instance_id: instance.id, jobs: jobs}
+    = link_to(node.name, plugin('automation').node_path(id: node.id), data: {modal: true})
+
+  %td= "#{node.automation_facts.platform} #{node.automation_facts.platform_version}"
+
+  %td.no-wrap
+    -unless addresses.empty?
+      - compute_ips(addresses)
+    -else
+      %i.fa.fa-desktop.fa-fw
+      = node.automation_facts.ipaddress
+      %span.info-text fixed
+
   %td
-    %i.loading-spinner-section.hide{data: {node_id: instance.id}}
-    .btn-group{data: {node_id: instance.id}}
+    - node_table_tags(node.tags)
+
+  %td{class: "#{'automation_status_alarm' if node.automation_facts.online == false}"}
+    = node.automation_facts.online_to_string
+
+  %td.no-wrap
+    = render partial: "table_nodes_item_jobs", locals: {jobs: jobs}
+  %td.no-wrap
+    %i.loading-spinner-section.hide{data: {node_id: node.id}}
+    .btn-group{data: {node_id: node.id}}
       %button.btn.btn-default.btn-sm.dropdown-toggle{type: "button", data: {toggle: "dropdown"}, "aria-haspopup" => "true", "aria-expanded" => "false"}
-        %i.fa.fa-gears
-      %ul.dropdown-menu
+        %i.fa.fa-gears.fa-fw
+      %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
         %li.dropdown-header
           Run Automation
         - @automations.each do |automation|
-          %li
-            = link_to(automation.name, "#", data: {toggle: "run_automation_link", node_id: instance.id, link: plugin('automation').run_automation_nodes_path(node_id: instance.id, automation_id: automation.id, automation_name: automation.name) })
+          %li= link_to(automation.name, "#", data: {toggle: "run_automation_link", node_id: node.id, link: plugin('automation').run_automation_nodes_path(node_id: node.id, automation_id: automation.id, automation_name: automation.name) })
+
+    = link_to plugin('automation').node_path(id: node.id), class: 'btn btn-default btn-sm', :method => 'delete', data: { confirm: "Are you sure you want to remove the node #{node.name}?", ok: "Yes, remove it", confirmed: :loading_status} do
+      %i.fa.fa-trash.fa-fw

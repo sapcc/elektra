@@ -98,7 +98,7 @@ html {
 
 body {
   padding-top: $navbar-height + $context-breadcrumb-height;
-  margin-bottom: $footer-height + $footer-margin-top;
+  margin-bottom: $footer-height + $footer-margin-top; // needed for sticky footer
 
   &.landing, &.onboarding {
     padding-top: $navbar-height;
@@ -255,9 +255,9 @@ section {
 }
 
 .pagination {
+  position: relative;
   float: right;
-  ul {
-  }
+
   li {
     background: none;
     padding-left: 0;
@@ -468,6 +468,12 @@ section {
     position: absolute;
     right: 8px;
     top: 3px;
+  }
+
+  &.toolbar-with-h {
+    .main-buttons {
+      top: ($line-height-computed / 2) - 2px;
+    }
   }
 
   .btn {

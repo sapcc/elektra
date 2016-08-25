@@ -104,10 +104,51 @@ module Automation
     #
 
     def node_form_inline_tags(data)
-      if data.blank? || data.empty?
+      if data.blank?
         haml_concat 'No tags available'
       else
         form_static_hash_value(data)
+      end
+    end
+
+    def node_table_tags(data)
+      unless data.blank?
+        haml_tag :div, {class: "static-tags clearfix"} do
+          data.each do |key, value|
+            haml_tag :div, {class: "tag"} do
+              haml_tag :div, {class: "key"} do
+                haml_concat key
+              end
+              haml_tag :div, {class: "value"} do
+                haml_concat value
+              end
+            end
+          end
+        end
+      end
+    end
+
+    def compute_ips(addresses)
+      unless addresses.nil?
+        addresses.each do |network_name, ip_values|
+          if ip_values and ip_values.length>0
+            haml_tag :div, {class: "list-group borderless"} do
+              ip_values.each do |values|
+                haml_tag :p, {class: "list-group-item-text"} do
+                  if values["OS-EXT-IPS:type"]=='floating'
+                    haml_tag :i, {class: "fa fa-globe fa-fw"}
+                  elsif values["OS-EXT-IPS:type"]=='fixed'
+                    haml_tag :i, {class: "fa fa-desktop fa-fw"}
+                  end
+                  haml_concat values["addr"]
+                  haml_tag :span, {class: "info-text"} do
+                    haml_concat values["OS-EXT-IPS:type"]
+                  end
+                end
+              end
+            end
+          end
+        end
       end
     end
 

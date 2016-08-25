@@ -1,5 +1,5 @@
 !!!
-%html
+%html.compute
   %head
     %meta(http-equiv="X-UA-Compatible" content="IE=edge")
     %meta(name="viewport" content="width=device-width, initial-scale=1")
@@ -12,15 +12,17 @@
     = apple_touch_icon
 
     = csrf_meta_tags
-    
-    :css
-      html, body {
-        height: 100%;
-        width: 100%;
-      }
-  %body
-    .btn-group{role: "group", aria: {label: "..."}}
-      = link_to 'Close', 'javascript: window.close();', class: 'btn btn-default'
-      = link_to 'Reload', 'javascript:location.reload();', class: 'btn btn-default'
+
+  %body.vnc-console
+    .toolbar.toolbar-with-h
+      %h5
+        VNC Console
+        %small (Click the blue bar to focus the console for keyboard input)
+      .main-buttons
+        = link_to 'javascript:location.reload();', class: 'btn btn-primary' do
+          %i.fa.fa-refresh
+          Reload
+
+        = link_to 'Close', 'javascript: window.close();', class: 'btn btn-default'
     .console{style: 'position: relative; height: 100%; width: 100%;'}
       = yield

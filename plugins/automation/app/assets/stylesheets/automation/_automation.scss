@@ -15,15 +15,23 @@
   padding: 0;
 }
 
+.automations_table .table, .nodes_table .table{
+  .no-wrap {
+    white-space: nowrap;
+  }
+}
+
+.static-columns {
+  *[class^='col-']{
+    position: static;
+  }
+}
+
 // Index
 
 .loading-spinner-section {
   margin-left: 10px;
   @include spinner(background rgba(0,0,0,0.2));
-}
-
-.agents_table .table th:not(:last-child){
-  width: 20%;
 }
 
 .automation_status_alarm {
@@ -75,22 +83,10 @@ pre {
 
 // Automations
 
-.automations_table {
-  .no_wrap {
-    white-space: nowrap;
-  }
-}
-
 .automation-content {
   padding: 20px 20px;
   border-top: 1px solid #e5e5e5;
   border-bottom: 1px solid #e5e5e5;
-}
-
-.automation-show-actions-bar {
-  .automation-show-actions {
-    margin-left: 5px;
-  }
 }
 
 .static-tags {

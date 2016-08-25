@@ -14,18 +14,38 @@
         $('#forms_automation_chef_attributes').val(editor.getText())
         return
 
+    # build the editor
     if !($('#jsoneditor').data('mode') == "view" && (jQuery.type(content) == 'undefined' || content == ""))
-      editor = new JSONEditor(document.getElementById('jsoneditor'), options, content);
+      editor = new JSONEditor(document.getElementById('jsoneditor'), options, content)
+
+      # add resize button
+      $('#jsoneditor .jsoneditor .jsoneditor-menu').append( "<a id='jsoneditor-resize' class='jsoneditor-poweredBy'><i class='fa fa-expand'></i><i class='fa fa-compress hide'></i></a>" )
+      resizeButton = $('#jsoneditor-resize')
+      resizeButton.on 'click', (e) ->
+        e.stopPropagation()
+        e.preventDefault()
+        if resizeButton.find('.fa-expand').hasClass('hide')
+          resizeButton.find('.fa-expand').removeClass('hide')
+          resizeButton.find('.fa-compress').addClass('hide')
+          $('#jsoneditor .jsoneditor').removeClass('fullsize')
+          if $.isFunction(editor.resize)
+            editor.resize()
+        else
+          resizeButton.find('.fa-expand').addClass('hide')
+          resizeButton.find('.fa-compress').removeClass('hide')
+          $('#jsoneditor .jsoneditor').addClass('fullsize')
+          if $.isFunction(editor.resize)
+            editor.resize()
 
 @init_tag_editor_inputs= () ->
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="environment"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs', forceLowercase: false })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs', keyValueEntries: true, forceLowercase: false })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="arguments"]').each ->
     $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="runlist"]').each ->
     $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: true })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="tags"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: true })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: true, forceLowercase: true })
 
 @switch_automation_type=(event) ->
   value = event.target.value
@@ -53,8 +73,6 @@
     url: $(event.target).data('link'),
     dataType: 'html',
     success: ( data, textStatus, jqXHR ) ->
-      $(".flashes").append(data)
-    error: () ->
       $(".flashes").append(data)
     complete: () ->
       spinner.addClass('hide')

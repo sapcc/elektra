@@ -39,7 +39,7 @@ class DashboardController < ::ScopeController
   
   rescue_from "Core::ServiceLayer::Errors::ApiError" do |error|
     if error.response_data and error.response_data["error"] and error.response_data["error"]["code"]==403
-      render_error_page(error,{title: 'Permission Denied', description: "You are not authorized to request this page."})
+      render_error_page(error,{title: 'Permission Denied', description: error.response_data["error"]["message"] || "You are not authorized to request this page."})
     else
       render_error_page(error, title: 'Backend Service Error')
     end

@@ -7,7 +7,7 @@ Automation::Engine.routes.draw do
     get 'run_automation', :on => :collection
   end
 
-  resources :jobs, only: [:index, :show] do
+  resources :jobs, only: [:show] do
     get ':id/show_payload', to: 'jobs#show_data', defaults: { attr: 'payload' }, :on => :collection, as: 'show_payload'
     get ':id/show_log', to: 'jobs#show_data', defaults: { attr: 'log' }, :on => :collection, as: 'show_log'
   end

@@ -1,5 +1,5 @@
-%tr
-  %td
+%tr{id: "recordset_#{recordset.id}"}
+  %td.big-data-cell
     - if current_user.is_allowed?("dns_service:zone_get", recordset: recordset.attributes)
       = link_to recordset.name, zone_recordset_path(zone_id:zone.id,id:recordset.id), data: {modal: true}
     - else
@@ -16,14 +16,14 @@
   %td= recordset.priority            
   %td= recordset.ttl
   %td.snug
-    - if recordset.type!='NS' and (current_user.is_allowed?("dns_service:recordset_update", recordset: recordset.attributes) or current_user.is_allowed?("dns_service:recordset_delete", recordset: recordset.attributes))
+    - if recordset.type!='NS' and (current_user.is_allowed?("dns_service:recordset_update", zone_type: zone.type) or current_user.is_allowed?("dns_service:recordset_delete", zone_type: zone.type))
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog
           -# %span.spinner
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if current_user.is_allowed?("dns_service:recordset_update", recordset: recordset.attributes)
+          - if current_user.is_allowed?("dns_service:recordset_update", zone_type: zone.type)
             %li= link_to 'Edit', plugin('dns_service').edit_zone_recordset_path(zone_id:zone.id,id: recordset.id), data: {modal: true}
-          - if current_user.is_allowed?("dns_service:recordset_delete", recordset: recordset.attributes)
+          - if current_user.is_allowed?("dns_service:recordset_delete", zone_type: zone.type)
             %li= link_to 'Delete', plugin('dns_service').zone_recordset_path(zone_id:zone.id,id:recordset.id), method: :delete, data: { confirm: 'Are you sure you want to delete this record?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

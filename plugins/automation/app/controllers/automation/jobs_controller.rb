@@ -1,12 +1,6 @@
 module Automation
 
   class JobsController < ::Automation::ApplicationController
-    LINES_TRUNCATION = 25
-    NO_LOG_FOUND = 'No log available.'
-    NO_PAYLOAD_FOUND = 'No payload available.'
-
-    def index
-    end
 
     def show
       @job = services.automation.job(params[:id])
@@ -22,21 +16,10 @@ module Automation
         end
       end
 
+      # payload truncation
+      @truncated_payload = ::Automation::DataTruncation.new(@job.payload)
 
-      # payload
-      @payload_lines = 1
-      @payload_truncated = false
-      @payload_output = NO_PAYLOAD_FOUND
-      unless @job.payload.blank?
-        @payload_lines = @job.payload.lines.count
-        @payload_truncated = @payload_lines > LINES_TRUNCATION
-        @payload_output = @job.payload.lines.last(LINES_TRUNCATION).join
-      end
-
-      # log
-      @log_lines = 1
-      @log_truncated = false
-      @log_output = NO_LOG_FOUND
+      # log truncation
       log =  begin
         services.automation.job_log(params[:id])
       rescue RubyArcClient::ApiError => exception
@@ -46,13 +29,7 @@ module Automation
           raise exception
         end
       end
-
-
-      unless log.blank?
-        @log_lines = log.lines.count
-        @log_truncated = @log_lines > LINES_TRUNCATION
-        @log_output = log.lines.last(LINES_TRUNCATION).join
-      end
+      @truncated_log = ::Automation::DataTruncation.new(log)
     end
 
 
@@ -63,22 +40,22 @@ module Automation
       if params[:attr] == 'payload'
         @data = begin
           job = services.automation.job(@job_id)
-          job.payload
+          data = job.payload
+          prettify(data)
         rescue RubyArcClient::ApiError => exception
           if exception.code == 404
-            NO_PAYLOAD_FOUND
+            ::Automation::DataTruncation::NO_DATA_FOUND
           else
             raise exception
           end
         end
-
-
       elsif params[:attr] == 'log'
         @data =  begin
-          services.automation.job_log(@job_id)
+          data = services.automation.job_log(@job_id)
+          prettify(data)
         rescue RubyArcClient::ApiError => exception
           if exception.code == 404
-            NO_LOG_FOUND
+            ::Automation::DataTruncation::NO_DATA_FOUND
           else
             raise exception
           end
@@ -86,6 +63,17 @@ module Automation
       end
 
       render :layout => false
+    end
+
+    private
+
+    def prettify(data)
+      begin
+        json = JSON.parse(data)
+        JSON.pretty_generate(json)
+      rescue JSON::ParserError
+        data
+      end
     end
 
   end

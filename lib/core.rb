@@ -5,6 +5,7 @@ require_relative 'core/service_layer'
 require_relative 'core/service_user'
 require_relative 'core/audit_logger'
 require_relative 'core/errors'
+require_relative 'core/paginatable'
 
 module Core
   def self.locate_region(auth_user,default_region=Rails.configuration.default_region)

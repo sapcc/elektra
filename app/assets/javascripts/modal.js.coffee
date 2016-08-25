@@ -87,9 +87,9 @@ class @MoModal
     return false  
   
   showError= (jqXHR, textStatus, errorThrown) ->
-    console.log("jqXHR",jqXHR)
-    console.log("textStatus",textStatus)
-    console.log("errorThrown",errorThrown)
+    # console.log("jqXHR",jqXHR)
+    # console.log("textStatus",textStatus)
+    # console.log("errorThrown",errorThrown)
     # console.log 'Loading error'
     InfoDialog.hideLoading()
     # restore url -> remove ?overflow=...
@@ -121,8 +121,9 @@ class @MoModal
       window.location = url
     else if response_type.indexOf('javascript') > -1
       # response is javascript
+      # Commeted lines as removes the backdrop when sending ajax calls to change the modal content
       # Remove old modal backdrop
-      $('.modal-backdrop').remove()
+      # $('.modal-backdrop').remove()
     else
       # assume response is a html
       # modal has the fade effect 
