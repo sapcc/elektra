@@ -271,7 +271,7 @@
   
   function show_statistic() {
     $('#statistic').empty();
-    $('#statistic').html('<text x=10" y="25" font-family="sans-serif" font-size="18px" fill="#31708f"}>loading data...</text>');
+    $('#statistic').html('<text x="10" y="25" font-family="sans-serif" font-size="18px" fill="#31708f"}>loading data...</text>');
 
     $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
       metric: $('#metric').val(),
