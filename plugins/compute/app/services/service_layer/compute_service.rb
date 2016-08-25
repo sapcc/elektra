@@ -79,6 +79,18 @@ module ServiceLayer
     def detach_volume(volume_id, server_id)
       driver.detach_volume(server_id, volume_id)
     end
+    
+    def resize_server(server_id,flavor_id)
+      driver.resize_server(server_id, flavor_id)
+    end
+    
+    def confirm_resize_server(server_id)
+      driver.confirm_resize_server(server_id)
+    end
+
+    def revert_resize_server(server_id)
+      driver.revert_resize_server(server_id)
+    end
 
     ##################### KEYPAIRS #########################
     def new_keypair(attributes={})
