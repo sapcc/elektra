@@ -102,7 +102,7 @@ module Monitoring
         columns << 'threshold'
       end
 
-      # get the statistic data for the last 6 hours
+      # get the statistic data for the last 120 minutes
       t = Time.now.utc - (60*120)
       statistics = services.monitoring.list_statistics({
         name: metric, 
@@ -121,7 +121,10 @@ module Monitoring
           if column == 'threshold'
             values << {x: x, y: threshold}
           else
-            values << {x: x, y: statistic[statistics.columns.find_index(column)]}
+            current_value = statistic[statistics.columns.find_index(column)]
+            # round values
+            current_value = current_value.round(2) if current_value.is_a? Numeric
+            values << {x: x, y: current_value}
           end
           x +=period.to_i/60
         end
@@ -155,8 +158,8 @@ module Monitoring
     
     def get_dimensions_by_metric
       name = params.require(:name)
-      # get all dimensions 60 minutes ago
-      t = Time.now.utc - (60*60)
+      # get all dimensions 120 minutes ago
+      t = Time.now.utc - (60*120)
       metrics = services.monitoring.get_metric({
         name: name, 
         start_time: t.iso8601

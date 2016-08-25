@@ -91,16 +91,12 @@
   
       .col-md-6.hide-on-start
         .row
-          .col-md-12.p-l-0
+          .col-md-12{style: 'padding-left:0px'}
             = label_tag 'statistic', 'Statistic', class: 'control-label'
-            %button.btn.btn-default.btn-xs.pull-right{ id: 'reload_statistic_btn', onclick:'show_statistic()'}
-              Reload
+            = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
             %svg#statistic{style:"width:100%; height:400px;"}
-              %text{ x:"10", y:"25", font: { family: "sans-serif", size:"20px"}, fill:"#3c763d"}
-                Loading Statistic...
             %span.help-block
-              The statistic shows the average, maximum and minmum values that are collected 
-              in the last 2 hours (120 minutes).
+              The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
 
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - if modal?
@@ -264,6 +260,9 @@
   }
   
   function show_statistic() {
+    $('#statistic').empty();
+    $('#statistic').html('<text x=10" y="25" font-family="sans-serif" font-size="18px" fill="#31708f"}>loading data...</text>');
+
     $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
       metric: $('#metric').val(),
       dimensions: monitoring.expression_dimensions(),
@@ -277,8 +276,9 @@
       nv.addGraph(function() {
         var chart = nv.models.lineChart();
         
-        chart.margin({"left":30,"right":20,"top":5,"bottom":30});
+        chart.margin({"left":30,"right":30,"top":5,"bottom":30});
         chart.useInteractiveGuideline(true);
+        chart.xAxis.tickFormat(function(d) { return d + ' min' });
       
         d3.select('#statistic')
           .datum(data)
