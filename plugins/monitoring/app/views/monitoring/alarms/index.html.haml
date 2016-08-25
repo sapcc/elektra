@@ -19,12 +19,13 @@
       if (e.which == 13) {
          alarm_severity = $('#severity_filter').data('filter') || ''
          alarm_status = $('#status_filter').data('filter') || 'All'
+         
          $.ajax({ 
           url: "#{plugin('monitoring').search_alarms_path()}",
           data: { 
             search: $('#alarms_search').val(),
             severity: alarm_severity,
-            state: alarm_status
+            state: alarm_status.toUpperCase()
           },
           dataType: 'script'
         });

@@ -51,7 +51,7 @@ Filter by:
       url: "#{plugin('monitoring').filter_alarms_path()}",
       data: { 
         severity: alarm_severity, 
-        state: alarm_status
+        state: alarm_status.toUpperCase()
       },
       beforeSend: function() { $('#loading').show() },
       complete: function() { $('#loading').hide() },
