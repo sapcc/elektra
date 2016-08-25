@@ -62,10 +62,15 @@ monitoring.expression_dimensions = function() {
     if($( this ).text() != '' ) {
       var defintion_id = $(this).data('id')
       var key = $( this ).val();
-      var value = $('#dimension_value_'+defintion_id).val();
-      if(key != '' && value != '') {
-        dimensions += key+":"+value+",";
-      }    }
+      
+      var valid_value = $('#dimension_value_'+defintion_id).data('valid');
+      if(valid_value) {
+        var value = $('#dimension_value_'+defintion_id).val();
+        if(key != '' && value != '') {
+          dimensions += key+":"+value+",";
+        }   
+      }
+    }
   });
   
   // remove the last comma

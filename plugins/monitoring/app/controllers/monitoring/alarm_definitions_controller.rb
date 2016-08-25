@@ -164,6 +164,7 @@ module Monitoring
         name: name, 
         start_time: t.iso8601
       })
+      # default init with empty array
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
       dimensions[''] << ''

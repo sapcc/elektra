@@ -8,6 +8,6 @@
           %option{value: key}=key
     .col-md-8
       .input-group
-        %input{id:"dimension_value_#{@cnt}", type: 'text', class: "form-control dimension_value", data: { provide: "typeahead", id: @cnt  }, placeholder:'value'}
+        = text_field_tag "dimension_value_#{@cnt}", nil, class: "form-control dimension_value", data: { provide: "typeahead", id: @cnt  }, placeholder:'value', autocomplete: "off"
         %span.input-group-btn.expression-remove-dimension{id: "expression_remove_dimension_#{@cnt}"}
           = link_to "Remove", '#', class: 'btn btn-default disabled', id: "expression_remove_dimension_btn_#{@cnt}", onclick: "monitoring.remove_dimension_row(#{@cnt})"

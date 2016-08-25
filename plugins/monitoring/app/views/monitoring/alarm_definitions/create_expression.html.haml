@@ -4,109 +4,109 @@
 - unless modal?
   %h4 First Create Expression 
 
-= form_tag plugin('monitoring').from_expression_wizzard_new_alarm_definitions_path(),autocomplete: "off", method: :post, remote: modal?  do
+= form_tag plugin('monitoring').from_expression_wizzard_new_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
   = hidden_field_tag 'expression'
   = hidden_field_tag 'filter_by_dimensions'
   
-  .modal-body
-    %p.alert.alert-error.create-expression-error
-    .row
-      .col-md-11
-        = label_tag 'expression_preview', 'Preview', class:'control-label'
-        .panel.panel-default
-          .panel-body.panel-expression
-            .row
-              .col-md-11
-                -# chain expressions keep it vor later
-                -#  - index = 0;
-                -#  - @sub_expressions.each do |expression, logical_operator|
-                -#    - if logical_operator
-                -#      .sub-expression.text-success
-                -#        - index += 1
-                -#        = expression+logical_operator
-                -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
-                    
-                .expression-preview#preview
-                
-                -#%button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
-                -#  Chain Expression
-  
-              .col-md-1
-                .loading_place.loading-right
-      .col-md-1.reset-btn
-        - if modal?
-          = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal_transition:true }
-        - else
-          = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything'
-    .row
-      .col-md-6
+.modal-body
+  %p.alert.alert-error.create-expression-error
+  .row
+    .col-md-11
+      = label_tag 'expression_preview', 'Preview', class:'control-label'
+      .panel.panel-default
+        .panel-body.panel-expression
+          .row
+            .col-md-11
+              -# chain expressions keep it vor later
+              -#  - index = 0;
+              -#  - @sub_expressions.each do |expression, logical_operator|
+              -#    - if logical_operator
+              -#      .sub-expression.text-success
+              -#        - index += 1
+              -#        = expression+logical_operator
+              -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
+                  
+              .expression-preview#preview
+              
+              -#%button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
+              -#  Chain Expression
+
+            .col-md-1
+              .loading_place.loading-right
+    .col-md-1.reset-btn
+      - if modal?
+        = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal_transition:true }
+      - else
+        = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything'
+  .row
+    .col-md-6
+      .form-group
+        = label_tag 'metric', 'Metric', class:'control-label'
+        = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc", autocomplete: "off"
+        %span.help-block
+          A metric is uniquely identified by a name and set of dimensions.
+      #expression_dimensions
+      .hide-on-start
         .form-group
-          = label_tag 'metric', 'Metric', class:'control-label'
-          = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc"
+          = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
+          %select#statistical_function.form-control
+            %option{value: 'avg'} avg
+            %option{value: 'min'} min
+            %option{value: 'max'} max
+            %option{value: 'sum'} sum
+            %option{value: 'count'} count
+        .form-group.period
+          = label_tag 'period', 'Period', class: 'control-label'
+          .row
+            .col-md-3
+              = text_field_tag 'period_custom', 60, class: 'form-control'
+            .col-md-9.period-slider
+              -# note: we need the style tag here to render the slide in correct size (css class is not working)
+              = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
+          %span.help-block.period
+            Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
+        .form-group.threshold
+          .row  
+            .col-md-4
+              = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
+              %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
+                %option{value: '<'} <
+                %option{value: '>'} >
+                %option{value: '<='} <=
+                %option{value: '>='} >=
+            .col-md-8
+              = label_tag 'threshold_value', 'Value', class: 'control-label'
+              = text_field_tag 'threshold_value', 60, class: 'form-control'
+          %span.help-block.threshold
+            Threshold values are always in the same units as the metric that they are being compared to.
+
+        -# chain expressions keep it vor later
+        -#= label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
+        -#%select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
+        -#  %option
+        -#  %option{value: 'AND'} and
+        -#  %option{value: 'OR'} or
+        -#%span.help-block
+        -#  Chain expressions with logical operators together (optional).
+
+    .col-md-6.hide-on-start
+      .row
+        .col-md-12{style: 'padding-left:0px'}
+          = label_tag 'statistic', 'Statistic', class: 'control-label'
+          = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
+          %svg#statistic{style:"width:100%; height:400px;"}
           %span.help-block
-            A metric is uniquely identified by a name and set of dimensions.
-        #expression_dimensions
-        .hide-on-start
-          .form-group
-            = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
-            %select#statistical_function.form-control
-              %option{value: 'avg'} avg
-              %option{value: 'min'} min
-              %option{value: 'max'} max
-              %option{value: 'sum'} sum
-              %option{value: 'count'} count
-          .form-group.period
-            = label_tag 'period', 'Period', class: 'control-label'
-            .row
-              .col-md-3
-                = text_field_tag 'period_custom', 60, class: 'form-control'
-              .col-md-9.period-slider
-                -# note: we need the style tag here to render the slide in correct size (css class is not working)
-                = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
-            %span.help-block.period
-              Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
-          .form-group.threshold
-            .row  
-              .col-md-4
-                = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
-                %select#threshold_relational_operator.form-control{onchange: 'monitoring.generate_expression();'}
-                  %option{value: '<'} <
-                  %option{value: '>'} >
-                  %option{value: '<='} <=
-                  %option{value: '>='} >=
-              .col-md-8
-                = label_tag 'threshold_value', 'Value', class: 'control-label'
-                = text_field_tag 'threshold_value', 60, class: 'form-control'
-            %span.help-block.threshold
-              Threshold values are always in the same units as the metric that they are being compared to.
+            The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
 
-          -# chain expressions keep it vor later
-          -#= label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
-          -#%select#chain_operator.form-control{onchange: 'monitoring.generate_expression();'}
-          -#  %option
-          -#  %option{value: 'AND'} and
-          -#  %option{value: 'OR'} or
-          -#%span.help-block
-          -#  Chain expressions with logical operators together (optional).
-  
-      .col-md-6.hide-on-start
-        .row
-          .col-md-12{style: 'padding-left:0px'}
-            = label_tag 'statistic', 'Statistic', class: 'control-label'
-            = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
-            %svg#statistic{style:"width:100%; height:400px;"}
-            %span.help-block
-              The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
-
-  .buttons{ class: modal? ? 'modal-footer' : '' }
-    - if modal?
-      = button_tag 'Cancel', type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' }, class: 'btn btn-default'
-      =# link_to "Next", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
-    - else
-      = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
-      
-    %button.btn.btn-primary.hide{ onclick: '', type: 'submit', id: 'create_alarm_definition_btn' }
-      Next
+.buttons{ class: modal? ? 'modal-footer' : '' }
+  - if modal?
+    = button_tag 'Cancel', type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' }, class: 'btn btn-default'
+    =# link_to "Next", plugin('monitoring').new_alarm_definition_path(), id: 'create_alarm_definition_btn', class: 'btn btn-primary disabled', data: { modal:true }  
+  - else
+    = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
+    
+  %button.btn.btn-primary.hide{ type: 'submit', form:'expression_data', id: 'create_alarm_definition_btn' }
+    Next
         
 :javascript
 
@@ -138,7 +138,7 @@
   
   $(function(){
     // set typeahead for metrics
-    $("#metric").typeahead({ source:  metric_names, afterSelect: 
+    $("#metric").typeahead({source:  metric_names, afterSelect: 
       function(){ 
         // this is called once to get the dimension data
         get_dimensions($('#metric').val());
@@ -157,7 +157,6 @@
       $("#metric").focus().select();
       $('#preview').addClass('expression-preview text-info pull-left');
       $('#preview').text('please define me');
-      //monitoring.generate_expression();
     }, 0);
     
     // events
@@ -188,6 +187,7 @@
 
           // set fokus to key field
           $("#dimension_key_"+ID).focus();
+          $("#dimension_value_"+ID).prop('readonly',true);
           $('.hide-on-start').fadeIn();
 
           // enable remove button
@@ -202,33 +202,43 @@
   function autocomplete_dimension_values(ID) {
     // destroy old typeahead
     $("#dimension_value_"+ID).typeahead('destroy');
-    // get typeahead data
-    var selected_dimension_key = $("#dimension_key_"+ID).val();
-    var dimension_values = dimension_data[selected_dimension_key];
-    // set typeahead for values
-    $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
-      function(){
-        // remove selected value from array
-        var selected_dimension_value = $("#dimension_value_"+ID).val();
-        var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
-        // console.log(value_index);
-        dimension_data[selected_dimension_key].splice(value_index,1);
-        // remove key if no values left
-        if ( dimension_data[selected_dimension_key].length == 0 ) {
-          delete dimension_data[selected_dimension_key];
+    if($("#dimension_key_"+ID).val() != '') {
+      // get typeahead data
+      var selected_dimension_key = $("#dimension_key_"+ID).val();
+      var dimension_values = dimension_data[selected_dimension_key];
+      // set typeahead for values
+      $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
+        function(){
+          // to prevent random user input only the input from typeahead is valid
+          $("#dimension_value_"+ID).data('valid',true);
+          // remove selected value from array
+          var selected_dimension_value = $("#dimension_value_"+ID).val();
+          var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
+          // console.log(value_index);
+          dimension_data[selected_dimension_key].splice(value_index,1);
+          // remove key if no values left
+          if ( dimension_data[selected_dimension_key].length == 0 ) {
+            delete dimension_data[selected_dimension_key];
+          }
+          // render new row
+          dimension_cnt++
+          render_dimension_row(dimension_cnt); 
+          monitoring.generate_expression();
+          // made row read only
+          $("#dimension_value_"+ID).prop("readonly", true);
+          $("#dimension_key_"+ID).prop("disabled", "disabled");
+          show_statistic();
         }
-        // render new row
-        dimension_cnt++
-        render_dimension_row(dimension_cnt); 
-        monitoring.generate_expression();
-        // made row read only
-        $("#dimension_value_"+ID).prop("readonly", true);
-        $("#dimension_key_"+ID).prop("disabled", "disabled");
-        show_statistic();
-      }
-    });
-    // set fokus to value field
-    $("#dimension_value_"+ID).focus();
+      });
+  
+      // set fokus to value field
+      $("#dimension_value_"+ID).prop('readonly',false);
+      $("#dimension_value_"+ID).focus();
+    }
+    else {
+      // empty key
+      $("#dimension_value_"+ID).prop('readonly',true);
+    }
   }
 
   function get_dimensions(METRIC_NAME) {
