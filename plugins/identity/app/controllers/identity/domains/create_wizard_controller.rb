@@ -6,6 +6,7 @@ module Identity
 
       def new
         @project = Identity::Project.new(nil,{})
+        @project.cost_control = {}
         if @inquiry
           payload = @inquiry.payload
           @project.attributes = payload
