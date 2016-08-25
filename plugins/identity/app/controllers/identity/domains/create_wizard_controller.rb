@@ -9,7 +9,6 @@ module Identity
         if @inquiry
           payload = @inquiry.payload
           @project.attributes = payload
-          puts @project.pretty_attributes
         end
       end
 
