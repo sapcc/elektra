@@ -35,6 +35,7 @@ module Identity
           if services.available?(:cost_control)
             # FIXME: services.cost_control needs to be scoped to @project here
             cost_params.merge!(id: @project.id)
+            cost_params.merge!('cost_object_inherited' => cost_params.fetch('cost_object_inherited', '')=='1')
             cost_control_masterdata = services.cost_control.new_project_masterdata(cost_params)
             if cost_control_masterdata.save
               audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_masterdata.cost_object_string}")

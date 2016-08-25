@@ -28,8 +28,12 @@ module ServiceLayer
 
     ##### domain masterdata
 
+    def new_domain_masterdata(attributes={})
+      CostControl::DomainMasterdata.new(driver, attributes)
+    end
+
     def find_domain_masterdata(domain_id)
-      return nil if domain_id.blank?
+      return new_domain_masterdata if domain_id.blank?
       driver.map_to(CostControl::DomainMasterdata).get_domain_masterdata(domain_id)
     end
   end
