@@ -11,6 +11,7 @@ module Identity
         @project.enabled = true
         @project.parent_id = @scoped_project_id #params[:parent_project_id] if params[:parent_project_id]
         @project.parent_name = @scoped_project_name #params[:parent_project_name] if params[:parent_project_name]
+        @project.cost_control = {}
 
         if services.available?(:cost_control)
           @cost_control_masterdata = services.cost_control.new_project_masterdata

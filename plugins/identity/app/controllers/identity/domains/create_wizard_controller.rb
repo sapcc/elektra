@@ -8,11 +8,8 @@ module Identity
         @project = Identity::Project.new(nil,{})
         if @inquiry
           payload = @inquiry.payload
-          if services.available?(:cost_control)
-            cc_attributes = payload.delete('cost_control')
-            @cost_control_masterdata = services.cost_control.new_project_masterdata(cc_attributes)
-          end
           @project.attributes = payload
+          puts @project.pretty_attributes
         end
       end
 
@@ -33,7 +30,7 @@ module Identity
           audit_logger.info(current_user, "has created", @project)
 
           if services.available?(:cost_control)
-            # FIXME: services.cost_control needs to be scoped to @project here
+
             cost_params.merge!(id: @project.id)
 
             # normalize value from inherited cost object checkbox to boolean
