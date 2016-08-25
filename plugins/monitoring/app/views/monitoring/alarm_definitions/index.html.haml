@@ -6,17 +6,13 @@
 .toolbar
   .row
     - if current_user.is_allowed?("monitoring:alarm_definition_create")
-      -# note to myself: why is bootstrap utility class p-r-0 not working here?
-      .col-sm-1{ style:'padding-right:0px'}
-        = link_to "Wizzard", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-primary btn-sm', data: {modal:true}
-      -# note to myself: why is bootstrap utility class p-l-0 not working here?
-      .col-sm-1{ style:'padding-left:0px'}
+      .col-sm-1
         = link_to "New", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-sm pull-left', data: {modal:true}
     - if current_user.is_allowed?("monitoring:alarm_definition_create")
-      .col-sm-2.col-sm-offset-8.has-help-hint.search-field
+      .col-sm-2.col-sm-offset-9.has-help-hint.search-field
         = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }
     - else
-      .col-sm-2.col-sm-offset-9.has-help-hint.search-field
+      .col-sm-2.col-sm-offset-10.has-help-hint.search-field
         = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }
 
 #definitions_list
