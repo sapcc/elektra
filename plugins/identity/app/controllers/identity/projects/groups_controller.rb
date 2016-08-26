@@ -30,9 +30,9 @@ module Identity
       end
 
       def members
-        @members = begin 
+        @members = begin
           service_user.group_members(params[:group_id])
-        rescue 
+        rescue
           services.identity.group_members(params[:group_id])
         end
       end
@@ -90,7 +90,7 @@ module Identity
 
 
       def load_roles
-        ignore_roles = ['service','network_admin','cloud_network_admin','swiftreseller']
+        ignore_roles = ['service','network_admin','cloud_network_admin','cloud_dns_admin','dns_admin','swiftreseller']
         @roles = (service_user.roles rescue []).delete_if{|role| ignore_roles.include?(role.name)}
       end
 
