@@ -7,7 +7,7 @@ module Monitoring
       
       # first count alarms states, severity and alarms ins status ALARM
       # severity_cnt_hash = Hash.new(0)
-      state_cnt_hash    = Hash.new(0)
+      states_cnt_hash    = Hash.new(0)
       alarm_cnt_hash    = Hash.new(0)
       unknown_cnt_hash  = Hash.new(0)
       ok_cnt_hash       = Hash.new(0)
@@ -18,15 +18,15 @@ module Monitoring
       #   @severity_cnt += 1
       # }
       
-      @alarm_cnt = 0;
+      @states_cnt = 0;
       all_alarms.map{|alarm| alarm.state }.map{|state| 
-        state_cnt_hash[state] += 1
-        @alarm_cnt += 1
+        states_cnt_hash[state] += 1
+        @states_cnt += 1
       }
       
-      @state_alarm_cnt = state_cnt_hash['ALARM']
-      @state_ok_cnt = state_cnt_hash['OK']
-      @state_unknown_cnt = state_cnt_hash['UNDETERMINED']
+      @state_alarm_cnt = states_cnt_hash['ALARM']
+      @state_ok_cnt = states_cnt_hash['OK']
+      @state_unknown_cnt = states_cnt_hash['UNDETERMINED']
       all_alarms.map{|alarm|
         if alarm.state == 'ALARM'
           alarm_cnt_hash[alarm.severity] += 1
@@ -38,8 +38,8 @@ module Monitoring
       }
 
       # then build pie data
-      @severity_pie_data    = Array.new
-      @state_pie_data       = Array.new
+      # @severity_pie_data    = Array.new
+      @states_pie_data       = Array.new
       @state_alarm_pie_data = Array.new
       
       # severity data
@@ -48,9 +48,9 @@ module Monitoring
       # }
       
       # all states data
-      @state_pie_data = state_cnt_hash.keys.sort.map{|state| 
+      @states_pie_data = states_cnt_hash.keys.sort.map{|state| 
         # rename undetermined because it is to long for the chart label
-        state_value = state_cnt_hash[state]
+        state_value = states_cnt_hash[state]
         state = "UNKNOWN" if state == 'UNDETERMINED'
         { label: state.capitalize, count: state_value } 
       }
@@ -71,7 +71,7 @@ module Monitoring
       }
 
       # demo data to test styles
-      # @state_pie_data << { label: "Unknown", count: 5 }
+      # @states_pie_data << { label: "Unknown", count: 5 }
       # @severity_pie_data << { label: "Low", count: 5 }
       # @severity_pie_data << { label: "Medium", count: 8 }
     end
