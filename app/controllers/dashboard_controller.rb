@@ -12,6 +12,8 @@ class DashboardController < ::ScopeController
     end
   end
 
+  # before_filter :load_help_text;
+
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
@@ -216,6 +218,38 @@ class DashboardController < ::ScopeController
 
   def project_id_required
     raise Core::Error::ProjectNotFound.new("The project you have requested was not found.") if params[:project_id].blank?
+  end
+
+  def load_help_text
+    # get plugin specific help content
+    plugin_path = params[:plugin_path]
+    # remove leading slash
+    plugin_path.sub!(/^\//, '')
+
+    # find plugin by mount point (plugin_path)
+    plugin = catch (:found)  do
+      Core::PluginsManager.available_plugins.each do |plugin|
+        throw :found, plugin if plugin_path.start_with?(plugin.mount_point)
+      end
+    end
+
+    # get name of the specific service inside the plugin
+    # remove plugin name from path
+    path = plugin_path.split('/')
+    path.shift
+    service_name = path.join('_')
+
+    # try to find the help file
+    help_file = File.join(plugin.path,"plugin_#{service_name}_help.md")
+    help_file = File.join(plugin.path,"plugin_help.md") unless File.exists?(help_file)
+
+
+    if File.exists?(help_file)
+      # load plugin specific help content
+      @plugin_help_text = File.new(help_file, "r").read
+    end
+
+
   end
 
 end
