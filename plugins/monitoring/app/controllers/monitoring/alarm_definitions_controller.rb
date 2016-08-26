@@ -117,18 +117,20 @@ module Monitoring
       columns.each do |column|
         values = [];
         x = 0;
-        statistics.statistics.each do |statistic|
-          if column == 'threshold'
-            values << {x: x, y: threshold}
-          else
-            current_value = statistic[statistics.columns.find_index(column)]
-            # round values
-            current_value = current_value.round(2) if current_value.is_a? Numeric
-            values << {x: x, y: current_value}
+        if statistics
+          statistics.statistics.each do |statistic|
+            if column == 'threshold'
+              values << {x: x, y: threshold}
+            else
+              current_value = statistic[statistics.columns.find_index(column)]
+              # round values
+              current_value = current_value.round(2) if current_value.is_a? Numeric
+              values << {x: x, y: current_value}
+            end
+            x +=period.to_i/60
           end
-          x +=period.to_i/60
+          data << {key: column, values: values}
         end
-        data << {key: column, values: values}
       end
       
       render json: data

@@ -10,9 +10,8 @@
     collection: @alarm_definition.supported_severities, 
     selected: severity
 
+= f.input :match_by, as: :hidden
 - unless @filter_by.empty?
-  = f.input :match_by, as: :hidden
-
   .form-group
     .row
       = label_tag 'filter_by', 'Filter by', class: 'control-label col-sm-4'

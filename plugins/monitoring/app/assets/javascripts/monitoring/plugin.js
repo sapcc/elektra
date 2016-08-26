@@ -67,7 +67,7 @@ monitoring.expression_dimensions = function() {
       if(valid_value) {
         var value = $('#dimension_value_'+defintion_id).val();
         if(key != '' && value != '') {
-          dimensions += key+":"+value+",";
+          dimensions += key+"="+value+",";
         }   
       }
     }
