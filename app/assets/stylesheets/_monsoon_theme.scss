@@ -306,6 +306,14 @@ section {
   height: 32px;
 }
 
+.monsoon-cloud-logo {
+  background: inline-image('monsoon_cloud.png') 0 0px no-repeat;
+  display: inline-block;
+  width: 49px;
+  height: 43px;
+  margin-right: -15px;
+}
+
 .jumbotron .moo-cloud-white {
   @include opacity(0.2);
   width: 256px;
@@ -954,29 +962,64 @@ footer, .footer {
     padding-top: 5px;
   }
 
+  &.bs-callout-emphasize {
+     background: #f9f9f9;
+  }
+
   &.bs-callout-primary {
     border-left-color: $btn-primary-border;
+
+    a {
+      color: darken($btn-primary-border, 10);
+    }
   }
 
   &.bs-callout-info {
     border-left-color: $btn-info-border;
+
+    &.bs-callout-emphasize {
+      background: lighten($alert-info-bg, 5);
+    }
   }
 
   &.bs-callout-success {
     border-left-color: $btn-success-border;
+
+    &.bs-callout-emphasize {
+      background: lighten($alert-success-bg, 5);
+    }
+
+    a {
+      color: darken($btn-success-border, 10);
+    }
   }
 
   &.bs-callout-warning {
     border-left-color: $btn-warning-border;
+
+    &.bs-callout-emphasize {
+      background: lighten($alert-warning-bg, 2);
+    }
+
+    a {
+      color: darken($btn-warning-border, 10);
+    }
   }
 
   &.bs-callout-danger {
     border-left-color: $btn-danger-border;
 
-    h1,h2,h3,h4,h5,h6 {
-      color: $alarm-red;
+    &.bs-callout-emphasize {
+      background: lighten($alert-danger-bg, 5);
     }
+
+    a, h1,h2,h3,h4,h5,h6  {
+      color: darken($btn-danger-border, 10);
+    }
+
   }
+
+
 
   table {
     margin-bottom: 0;
@@ -1533,6 +1576,40 @@ input[type='checkbox'], input[type='radio'] {
     margin: $line-height-computed 0;
   }
 }
+
+
+// ---------------------------------------------------------------------------------
+// Help
+// ---------------------------------------------------------------------------------
+
+.plugin-help {
+  position: relative;
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+
+  .close-button {
+    @include opacity(0.75);
+    position: absolute;
+    right: 7px;
+    top: 2px
+  }
+
+  .plugin-help-text {
+    @extend .col-sm-9;
+  }
+
+  .plugin-help-links {
+    @extend .col-sm-3;
+
+    ul {
+      @extend .content-list;
+    }
+  }
+}
+
 
 // ---------------------------------------------------------------------------------
 // jQuery Autocomplete
