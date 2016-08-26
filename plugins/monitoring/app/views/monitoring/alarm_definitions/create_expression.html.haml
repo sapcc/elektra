@@ -193,17 +193,20 @@
           if($('#expression_remove_dimension_btn_'+id_before)) {
             $('#expression_remove_dimension_btn_'+id_before).removeClass('disabled');
           }
+          
+          // remove all dimensions keys that are used and
+          // write the keys for later in creation form  and match by 
+          var dimension_keys = Object.keys(dimension_data);
+          $('.dimension_key').each(function(){
+            var used_dimension_key = $(this).val();
+            var index = dimension_keys.indexOf(used_dimension_key)
+            dimension_keys.splice(index,1);
+          })
+          $('#filter_by_dimensions').val(dimension_keys);
+          
+          // update preview
+          monitoring.generate_expression();
       });
-      
-      // remove all dimensions keys that are used and
-      // write the keys for later in creation form  and match by 
-      var dimension_keys = Object.keys(dimension_data);
-      $('.dimension_key').each(function(){
-        var used_dimension_key = $(this).val();
-        var index = dimension_keys.indexOf(used_dimension_key)
-        dimension_keys.splice(index,1);
-      })
-      $('#filter_by_dimensions').val(dimension_keys)
     }
   }
   
