@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         post 'accept_terms_of_use'
         get 'terms_of_use'
         get 'find_users_by_name'
+        get 'find_cached_projects'
       end
 
       ###################### MOUNT PLUGINS #####################

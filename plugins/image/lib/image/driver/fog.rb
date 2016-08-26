@@ -28,6 +28,10 @@ module Image
       rescue ::Fog::Image::OpenStack::NotFound
         nil
       end
+      
+      def add_member_to_image(image_id, tenant_id)
+        handle_response { @fog.add_member_to_image(image_id, tenant_id).body}
+      end
 
       ########################### MEMBERS #############################
       def members(id)

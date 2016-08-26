@@ -112,8 +112,20 @@ class DashboardController < ::ScopeController
     end
   end
 
-  protected
+  def find_cached_domains
+    name = params[:name] || params[:term] || ""
+    domains = FriendlyIdEntry.search('Domain',nil,name)
+    render json: domains.collect{|d| {id: d.key, name: d.name}}.to_json  
+  end
+    
+  def find_cached_projects
+    name = params[:name] || params[:term] || ""
+    projects = FriendlyIdEntry.search('Project',@scoped_domain_id,name)
+    render json: projects.collect{|project| {id: project.key, name: project.name}}.to_json
+  end
 
+  protected
+  
   def show_beta?
     params[:betafeatures] == 'showme'
   end
