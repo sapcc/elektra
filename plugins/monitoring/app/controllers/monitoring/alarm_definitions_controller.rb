@@ -38,8 +38,8 @@ module Monitoring
       @head = 'Create Alarm Definition'
       expression = params['expression'] || ''
       
-      #dimensions = params['filter_by_dimensions']
-      #@filter_by = filter_by_dimensions.to_json if dimensions || []
+      filter_by_dimensions = params['filter_by_dimensions']
+      @filter_by = filter_by_dimensions.split(/,/) if filter_by_dimensions || []
       
       @alarm_definition = services.monitoring.new_alarm_definition(name: "", expression: expression)
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)

@@ -109,7 +109,8 @@
     Next
         
 :javascript
-
+  // TODO: better error handling in case token is invalid
+  
   // all metric names
   var metric_names = #{@metric_names.to_json};
   // global dimension counter
@@ -177,9 +178,6 @@
     if (dimension_data) {
       var dimension_keys = Object.keys(dimension_data);
 
-      //JSON.stringify(dimension_keys)
-      // write dimension keys to $('#filter_by_dimensions').val(JSON.stringify(dimension_keys))
-      
       $.post( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID, keys: JSON.stringify(dimension_keys)}, 
         function( data ){ 
           // render row data
@@ -196,6 +194,9 @@
             $('#expression_remove_dimension_btn_'+id_before).removeClass('disabled');
           }
       });
+      
+      // write dimension keys for later use in match by  
+      $('#filter_by_dimensions').val(dimension_keys.toString())
     }
   }
   
@@ -257,8 +258,13 @@
               if($.inArray(value, unique_values) === -1) unique_values.push(value);
           });
           dimension_data[dimension_key] = unique_values;
-          monitoring.generate_expression();
-        })
+        });
+        
+        monitoring.generate_expression();
+        var dimension_keys = Object.keys(dimension_data);
+        // write dimension keys for later use in match by
+        // hier dürfen nur keys rein die noch nirgends verwendet wurden!!!
+        $('#filter_by_dimensions').val(dimension_keys.toString())
       },
       error: function(jqXHR) {
         $('.create-expression-error').css('display','block');
@@ -297,7 +303,6 @@
           ;
       
         nv.utils.windowResize(chart.update);
-      
         return chart;
       });
       $('#reload_statistic_btn').removeClass('disabled');
