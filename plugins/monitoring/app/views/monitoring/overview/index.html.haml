@@ -4,13 +4,19 @@
 
 .overview
   .row
-    .col-md-6
+    .col-md-4
       %svg#State
-    .col-md-6
-      %svg#Severity
+    .col-md-8
+      .row
+        .col-md-4
+          %svg#Alarm
+        .col-md-4
+          %svg#Unknown
+        .col-md-4
+          %svg#OK
 
 :javascript
-  var test = #{@severity_pie_data.to_json};
-  monitoring.render_overview_pie('Severity',#{@severity_pie_data.to_json},#{@severity_cnt});
-  monitoring.render_overview_pie('State',#{@state_pie_data.to_json},#{@alarm_cnt});
-
+  monitoring.render_overview_pie('State',#{@state_pie_data.to_json},#{@alarm_cnt},350);
+  monitoring.render_overview_pie('Alarm',#{@state_alarm_pie_data.to_json},#{@state_alarm_cnt},220);
+  monitoring.render_overview_pie('OK',#{@state_ok_pie_data.to_json},#{@state_ok_cnt},220);
+  monitoring.render_overview_pie('Unknown',#{@state_unknown_pie_data.to_json},#{@state_unknown_cnt},220);

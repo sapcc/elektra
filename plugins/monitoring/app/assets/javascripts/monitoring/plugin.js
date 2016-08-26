@@ -40,18 +40,19 @@ $(document).ready(function(){
 }); 
 
 
-monitoring.render_overview_pie = function(TYPE,DATA,CNT,SIZE) {
+monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
 
-  var width = SIZE || 450;
-  var height = SIZE || 450;
+  var width = W || 350;
+  var height = W || 350;
+  var scale = S || 1;
 
-  // from inner 0,5 (100%) to outer 1 (0%)
+  // from inner 0,5 (100%) to outer 1.05 (0%)
   var multiplicator = 0.5 / CNT;
   var arcRadius = [];
   $.each(DATA, function(index, data) {
     var count = data['count'];
     var inner =  1-(multiplicator*count)
-    arcRadius.push({inner: inner, outer:1});
+    arcRadius.push({inner: inner, outer:1.05});
   } );
   
   nv.addGraph( function() {
@@ -66,9 +67,9 @@ monitoring.render_overview_pie = function(TYPE,DATA,CNT,SIZE) {
           .noData("There is no Data to display")
           .title(TYPE)
           .donut(true)
-          .donutRatio(0.4)
           .showTooltipPercent(true)
-          .arcsRadius(arcRadius);
+          .arcsRadius(arcRadius)
+          .margin({"top": 30, "right": 20, "bottom": 20, "left": 20});
 
       chart.color(function (d, i) {
         // color scheme is used from _variables.scss
@@ -107,10 +108,8 @@ monitoring.render_overview_pie = function(TYPE,DATA,CNT,SIZE) {
           .datum(DATA)
           .transition().duration(1200)
           .attr('width', width)
-          .attr('height', height)
+          .attr('height', height*scale)
           .call(chart);
-
-
 
       return chart;
   } );
