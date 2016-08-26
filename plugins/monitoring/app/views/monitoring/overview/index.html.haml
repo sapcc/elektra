@@ -10,7 +10,7 @@
       %svg#Severity
 
 :javascript
-
-  monitoring.render_overview_pie('Severity',#{@severity_pie_data.to_json});
-  monitoring.render_overview_pie('State',#{@state_pie_data.to_json});
+  var test = #{@severity_pie_data.to_json};
+  monitoring.render_overview_pie('Severity',#{@severity_pie_data.to_json},#{@severity_cnt});
+  monitoring.render_overview_pie('State',#{@state_pie_data.to_json},#{@alarm_cnt});
 

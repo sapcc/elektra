@@ -40,11 +40,20 @@ $(document).ready(function(){
 }); 
 
 
-monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
+monitoring.render_overview_pie = function(TYPE,DATA,CNT,SIZE) {
 
   var width = SIZE || 450;
   var height = SIZE || 450;
 
+  // from inner 0,5 (100%) to outer 1 (0%)
+  var multiplicator = 0.5 / CNT;
+  var arcRadius = [];
+  $.each(DATA, function(index, data) {
+    var count = data['count'];
+    var inner =  1-(multiplicator*count)
+    arcRadius.push({inner: inner, outer:1});
+  } );
+  
   nv.addGraph( function() {
       var chart = nv.models.pieChart()
           .x(function(d) { return d.label })
@@ -52,12 +61,14 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
           .width(width)
           .height(height)
           .showLegend(false)
-          .labelThreshold(0.05)
+          .labelsOutside(true)
+			    .labelSunbeamLayout(true)
           .noData("There is no Data to display")
           .title(TYPE)
           .donut(true)
           .donutRatio(0.4)
-          .showTooltipPercent(true);
+          .showTooltipPercent(true)
+          .arcsRadius(arcRadius);
 
       chart.color(function (d, i) {
         // color scheme is used from _variables.scss
