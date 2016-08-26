@@ -47,7 +47,7 @@ monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
   var scale = S || 1;
 
   // from inner 0,5 (100%) to outer 1.05 (0%)
-  var multiplicator = 0.5 / CNT;
+  var multiplicator = 0.45 / CNT;
   var arcRadius = [];
   $.each(DATA, function(index, data) {
     var count = data['count'];
