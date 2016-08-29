@@ -129,6 +129,7 @@ class DashboardController < ::ScopeController
     )
 
     tags = {}
+    tags[:plugin] = plugin_name if try(:plugin_name).present?
     if current_user.domain_id
       tags[:domain_id] = current_user.domain_id
       tags[:domain_name] = current_user.domain_name
