@@ -7,11 +7,10 @@ module Monitoring
       
       # first count alarms states, severity and alarms ins status ALARM
       # severity_cnt_hash = Hash.new(0)
-      states_cnt_hash    = Hash.new(0)
-      alarm_cnt_hash    = Hash.new(0)
-      unknown_cnt_hash  = Hash.new(0)
-      ok_cnt_hash       = Hash.new(0)
-      
+      states_cnt_hash  = Hash.new(0)
+      alarm_cnt_hash   = Hash.new(0)
+      unknown_cnt_hash = Hash.new(0)
+
       # @severity_cnt = 0;
       # all_alarms.map{|alarm| alarm.severity }.map{|severity| 
       #   severity_cnt_hash[severity] += 1 
@@ -25,13 +24,10 @@ module Monitoring
       }
       
       @state_alarm_cnt = states_cnt_hash['ALARM']
-      @state_ok_cnt = states_cnt_hash['OK']
       @state_unknown_cnt = states_cnt_hash['UNDETERMINED']
       all_alarms.map{|alarm|
         if alarm.state == 'ALARM'
           alarm_cnt_hash[alarm.severity] += 1
-        elsif alarm.state == 'OK'
-          ok_cnt_hash[alarm.severity] += 1
         elsif alarm.state == 'UNDETERMINED'
           unknown_cnt_hash[alarm.severity] += 1
         end
@@ -60,20 +56,11 @@ module Monitoring
         { label: state.capitalize, count: alarm_cnt_hash[state] }
       }
 
-      # only ok state data
-      @state_ok_pie_data = ok_cnt_hash.keys.sort.map{|state| 
-        { label: state.capitalize, count: ok_cnt_hash[state] }
-      }
-
       # only unkown state data
       @state_unknown_pie_data = unknown_cnt_hash.keys.sort.map{|state| 
         { label: state.capitalize, count: unknown_cnt_hash[state] }
       }
 
-      # demo data to test styles
-      # @states_pie_data << { label: "Unknown", count: 5 }
-      # @severity_pie_data << { label: "Low", count: 5 }
-      # @severity_pie_data << { label: "Medium", count: 8 }
     end
 
   end

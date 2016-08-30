@@ -6,17 +6,12 @@
   .row
     .col-md-4
       %svg#States
-    .col-md-8
-      .row
-        .col-md-4
-          %svg#Alarm
-        .col-md-4
-          %svg#Unknown
-        .col-md-4
-          %svg#OK
+    .col-md-4
+      %svg#Alarm
+    .col-md-4
+      %svg#Unknown
 
 :javascript
   monitoring.render_overview_pie('States',#{@states_pie_data.to_json},#{@states_cnt},350);
-  monitoring.render_overview_pie('Alarm',#{@state_alarm_pie_data.to_json},#{@state_alarm_cnt},220);
-  monitoring.render_overview_pie('OK',#{@state_ok_pie_data.to_json},#{@state_ok_cnt},220);
-  monitoring.render_overview_pie('Unknown',#{@state_unknown_pie_data.to_json},#{@state_unknown_cnt},220);
+  monitoring.render_overview_pie('Alarm',#{@state_alarm_pie_data.to_json},#{@state_alarm_cnt},350);
+  monitoring.render_overview_pie('Unknown',#{@state_unknown_pie_data.to_json},#{@state_unknown_cnt},350);

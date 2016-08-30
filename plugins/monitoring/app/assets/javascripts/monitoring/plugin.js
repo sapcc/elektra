@@ -42,11 +42,15 @@ $(document).ready(function(){
 
 monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
 
-  var width = W || 350;
+  var width =  W || 350;
   var height = W || 350;
-  var scale = S || 1;
+  var scale =  S || 1;
+
+  if (CNT == 0) return;
 
   // from inner 0,5 (100%) to outer 1.05 (0%)
+  // not used but maybe it is later userfull so I keep it here ;-)
+  /*
   var multiplicator = 0.45 / CNT;
   var arcRadius = [];
   $.each(DATA, function(index, data) {
@@ -54,6 +58,7 @@ monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
     var inner =  1-(multiplicator*count)
     arcRadius.push({inner: inner, outer:1.05});
   } );
+  */
   
   nv.addGraph( function() {
       var chart = nv.models.pieChart()
@@ -61,14 +66,16 @@ monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
           .y(function(d) { return d.count })
           .width(width)
           .height(height)
-          .showLegend(false)
-          .labelsOutside(true)
-			    .labelSunbeamLayout(true)
+          .showLegend(true)
+          .showLabels(false)
+          .labelsOutside(false)
+			    .labelSunbeamLayout(false)
           .noData("There is no Data to display")
           .title(TYPE)
           .donut(true)
           .showTooltipPercent(true)
-          .arcsRadius(arcRadius)
+          //.arcsRadius(arcRadius)
+          .donutRatio(0.5)
           .margin({"top": 30, "right": 20, "bottom": 20, "left": 20});
 
       chart.color(function (d, i) {
