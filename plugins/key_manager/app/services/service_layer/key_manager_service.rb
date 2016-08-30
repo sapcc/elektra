@@ -8,16 +8,16 @@ module ServiceLayer
     attr_reader :service
     
     def available?(action_name_sym=nil)
-      true  
+      not current_user.service_url('key-manager',region: region).nil?
     end
-    
 
     def secrets(filter={})
       ::KeyManager::Secret.create_secrets(service.secrets.all(filter))
     end
 
     def secret(uuid)
-      ::KeyManager::Secret.new(service.secrets.get(uuid))
+      secret_attr = service.secrets.get(uuid).attributes
+      ::KeyManager::Secret.new(secret_attr.merge({service: service}))
     end
 
     def new_secret(attr)
