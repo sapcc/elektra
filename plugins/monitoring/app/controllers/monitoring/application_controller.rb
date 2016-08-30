@@ -5,18 +5,28 @@ module Monitoring
     authorization_context 'monitoring'
 
     rescue_from Excon::Errors::HTTPStatusError do |exception|
-      # get exception message
-      response = JSON.parse(exception.response.body)
-
-      # monasca api error handling
-      if response['title'] && response['description']
-        title = response['title'] || ""
-        description = response['description'] || ""
-        @exception_msg = "#{title} - Reason: #{description}"
+      if(exception.class.name == "Excon::Error::ServiceUnavailable")
+        # in that case we have no json to parse
+        @exception_msg = exception.response.reason_phrase
       else
-        # other
-        reason = response.keys[0] || ""
-        @exception_msg = "#{reason.capitalize} - #{response[reason]['message']}"
+        begin
+          response = JSON.parse(exception.response.body)
+          # monasca api error handling
+          if response['title'] && response['description']
+            @exception_msg = response['title'] || ""
+            @description   = response['description'] || ""
+          else
+            # other
+            reason = response.keys[0] || ""
+            @exception_msg = "#{reason.capitalize} - #{response[reason]['message']}"
+            if response[reason]['message'] == "Invalid token" || response[reason]['message'] == "The request you have made requires authentication."
+              @load_after_auth = request.original_url
+            end
+          end
+        rescue
+          # fallback if everything goes wrong
+          @exception_msg = "Error - #{exception.message}"
+        end
       end
       
       render template: '/monitoring/application/backend_error'

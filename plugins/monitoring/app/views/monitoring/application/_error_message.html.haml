@@ -1,1 +1,12 @@
-%p.alert.alert-error= @exception_msg
+- if @description
+  %p.alert.alert-error{onclick: '$("#error_details").toggleClass("hide")', title: "click to show more details"}
+    @exception_msg
+    #error_details.hide
+      @description
+- else
+  %p.alert.alert-error= @exception_msg
+  - if @load_after_auth
+    :javascript
+      // close modal window if existing
+      $('#modal-holder').find('.modal').modal('hide');
+      window.location = "#{monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: @load_after_auth)}";
