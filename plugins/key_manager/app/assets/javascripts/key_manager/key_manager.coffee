@@ -1,11 +1,20 @@
 secret_type_select = 'select[data-toggle="secretTypeSwitcher"]'
+payload_content_info = '.js-secret-payload-content-info'
+section_spinner = '.key_manager .loading-spinner-section'
 
 switch_content_type= (e) ->
   value = $(e.target).val()
+  # hide area and add spinner
+  $(payload_content_info).addClass('hide')
+  $(section_spinner).removeClass('hide')
   $.ajax
     url: $(e.target).data('update-url'),
     data: {secret_type: value},
     dataType: 'script'
+    success: ( data, textStatus, jqXHR ) ->
+      $(payload_content_info).removeClass('hide')
+      $(section_spinner).addClass('hide')
+
 
 init_date_time_picker= () ->
   $('.form_datetime').datetimepicker

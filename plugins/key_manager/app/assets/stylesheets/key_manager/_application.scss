@@ -23,3 +23,10 @@
 
 @import "bootstrap-datetimepicker";
 @import "secrets";
+
+
+.loading-spinner-section {
+  position: relative;
+  left: 50%;
+  @include spinner(3em);
+}

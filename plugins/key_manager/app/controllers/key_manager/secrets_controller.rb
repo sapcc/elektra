@@ -23,7 +23,8 @@ module KeyManager
       @secret = services.key_manager.new_secret(secrets_params)
       # validate and check
       if @secret.valid? && @secret.save
-        # flash[:success] = "Secret #{@secret.name} was successfully added."
+        # TODO should show a DISMISSIBLE flash message
+        #flash[:success] = "Secret #{@secret.name} was successfully added."
         redirect_to plugin('key_manager').secrets_path
       else
         unless @secret.errors.messages[:global].blank?
