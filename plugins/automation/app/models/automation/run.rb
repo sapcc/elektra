@@ -4,6 +4,25 @@ require 'uri'
 module Automation
 
   class Run < ::Automation::BaseActiveResource
+
+    #
+    # Added attribute classes to fix the activeresource load nested hashes with special keys like docker-compos
+    #
+    class AutomationAttributes < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+    class Owner < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+
     self.collection_name = "runs"
 
     def duration
