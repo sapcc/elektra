@@ -87,19 +87,6 @@ module ServiceLayer
       driver.map_to(Monitoring::Metric).list_metrics(attributes)
     end
     
-    # obsolete???
-    def get_metrics_and_dimensions(attributes={})
-      metrics = driver.map_to(Monitoring::Metric).list_metrics(attributes)
-      
-      metrics_data = Array.new
-      metrics.map{|metric| metrics_data << [metric.name, metric.dimensions.keys[0], metric.dimensions.values[0]] }
-      
-      metric_names = Array.new
-      metrics_data.map{|metric_data| metric_names << metric_data[0] }
-      
-      metrics_data
-    end
-    
     def get_metric_names
       metric_names_data = driver.map_to(Monitoring::MetricName).list_metric_names()
       metric_names = Array.new

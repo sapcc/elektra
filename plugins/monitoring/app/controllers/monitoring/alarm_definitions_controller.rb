@@ -2,7 +2,17 @@ module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_required
     
-    before_filter :load_alarm_definition, except: [ :index, :new,:from_expression_wizzard_new, :create, :search, :create_expression, :get_dimensions_by_metric, :dimension_row, :statistics ] 
+    before_filter :load_alarm_definition, except: [ 
+      :index, 
+      :new,
+      :from_expression_wizzard_new,
+      :create,
+      :search,
+      :create_expression,
+      :get_dimensions_for_metric,
+      :dimension_row,
+      :statistics 
+    ] 
 
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
@@ -154,11 +164,9 @@ module Monitoring
       # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
       @metric_names = services.monitoring.get_metric_names
       
-      # dummy data for testing
-      #@metric_names = ['foo','bla']
     end
     
-    def get_dimensions_by_metric
+    def get_dimensions_for_metric
       name = params.require(:name)
       # get all dimensions 120 minutes ago
       t = Time.now.utc - (60*120)
