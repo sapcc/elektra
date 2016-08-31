@@ -32,12 +32,20 @@ module Image
       def add_member_to_image(image_id, tenant_id)
         handle_response { @fog.add_member_to_image(image_id, tenant_id).body}
       end
+      
+      def remove_member_from_image(image_id, member_id)
+        handle_response{ @fog.remove_member_from_image(image_id, member_id) }
+      end
 
       ########################### MEMBERS #############################
       def members(id)
         handle_response { @fog.get_image_members(id).body['members'] }
       # not implemented in monsoon2 sm
       rescue Excon::Errors::NotImplemented
+      end
+      
+      def update_image_member(image_id,member_id,status)
+        handle_response{ @fog.update_image_member(image_id, {"member_id" => member_id, "status" => status}).body['member']}
       end
     end
   end

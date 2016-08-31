@@ -10,7 +10,7 @@
   %tbody
     - if @images.empty?
       %tr
-        %td{colspan: 6} No private imagaes found.
+        %td{colspan: 6} No suggested imagaes found.
     - else    
       - @images.each do |image|
         = render partial: "item", locals: { image: image }

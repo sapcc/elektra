@@ -1,7 +1,7 @@
 = content_for :title do
   Share Image
   
-= simple_form_for @member, url: plugin('image').os_images_private_add_member_path(private_id: @image.id), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @member, url: plugin('image').os_images_private_members_path(private_id: @image.id), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @error

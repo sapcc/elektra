@@ -1,0 +1,5 @@
+<% if @success %>
+  $("#image_<%=params[:suggested_id]%>").remove();
+<% else %>
+  $("#image_<%=params[:suggested_id]%>").removeClass('updating');
+<% end %>  

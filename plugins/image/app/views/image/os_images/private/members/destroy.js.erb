@@ -1,0 +1,5 @@
+<% if @success %>
+  $("#member_<%=params[:id]%>").remove();
+<% else %>
+  $("#member_<%=params[:id]%>").removeClass('updating');
+<% end %>  

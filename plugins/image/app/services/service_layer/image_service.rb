@@ -27,12 +27,26 @@ module ServiceLayer
       driver.map_to(Image::Member).add_member_to_image(image_id, tenant_id)
     end
     
+    def remove_member_from_image(image_id,member_id)
+      driver.remove_member_from_image(image_id, member_id)
+    end
+    
     def new_member(attributes={})
       Image::Member.new(driver,attributes)
     end
 
     def members(id)
       driver.map_to(Image::Member).members(id)
+    end
+    
+    def accept_member(member)
+      return false if member.nil?
+      driver.map_to(Image::Member).update_image_member(member.image_id,member.member_id,'accepted')
+    end
+    
+    def reject_member(member)
+      return false if member.nil?
+      driver.map_to(Image::Member).update_image_member(member.image_id,member.member_id,'rejected')
     end
   end
 end
