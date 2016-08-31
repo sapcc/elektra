@@ -21,6 +21,12 @@ module Monitoring
             @exception_msg = "#{reason.capitalize} - #{response[reason]['message']}"
             if response[reason]['message'] == "Invalid token" || response[reason]['message'] == "The request you have made requires authentication."
               @load_after_auth = request.original_url
+              if modal?
+                # to load modal window instantly after the logon
+                @load_after_auth = @load_after_auth.gsub request.original_url.split('/').last, ""
+                overlay = request.path.split('/').last
+                @load_after_auth = @load_after_auth+"?overlay="+overlay
+              end
             end
           end
         rescue
