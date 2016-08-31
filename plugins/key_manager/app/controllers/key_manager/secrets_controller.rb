@@ -3,12 +3,20 @@ module KeyManager
   class SecretsController < ::Automation::ApplicationController
     before_action :secret_form_attr, only: [:new, :type_update, :create]
 
+    helper :all
+
     def index
       @secrets = services.key_manager.secrets()
     end
 
     def show
       @secret = services.key_manager.secret(params[:id])
+
+      # get the user name from the openstack id
+      begin
+        @user = service_user.find_user(@secret.creator_id).name
+      rescue
+      end
     end
 
     def new
@@ -17,6 +25,18 @@ module KeyManager
 
     def type_update
       @secret = ::KeyManager::Secret.new({})
+    end
+
+    def payload
+      @secret = services.key_manager.secret(params[:id])
+
+      response = RestClient::Request.new(method: :get,
+                                         url: @secret.payload_link,
+                                         headers: {'X-Auth-Token': current_user.token},
+                                         timeout: 5).execute
+
+
+      send_data response, filename: @secret.name
     end
 
     def create

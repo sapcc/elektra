@@ -30,3 +30,22 @@
   left: 50%;
   @include spinner(3em);
 }
+
+.modal-section {
+  padding: 20px 0;
+}
+.modal-section.first {
+  padding: 0;
+}
+
+.attribute-group {
+  margin-top: 10px;
+}
+
+.state_success {
+  color: $deep-green;
+}
+
+.state_failed {
+  color: $alarm-red;
+}

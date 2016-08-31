@@ -6,6 +6,13 @@
     %h3
       Available Containers
 
+    = form_tag plugin('key_manager').containers_path(), method: :post do
+
+      .toolbar
+        = button_tag "Save", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
+
+      = render partial: 'table_secrets', locals: {secrets: @secrets}
+
     -#.toolbar
     -#  = link_to "New Secret", "#", data: {modal: true}, class: 'btn btn-primary btn-sm'
     -#

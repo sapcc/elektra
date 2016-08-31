@@ -17,7 +17,9 @@ module ServiceLayer
 
     def secret(uuid)
       secret_attr = service.secrets.get(uuid).attributes
-      ::KeyManager::Secret.new(secret_attr.merge({service: service}))
+      secret_metadata = service.get_secret_metadata(uuid).data.fetch(:body, {})
+      secret_payload = service.get_secret_payload(uuid).data.fetch(:body, "")
+      ::KeyManager::Secret.new(secret_attr.merge({service: service, metadata: secret_metadata, payload: secret_payload}))
     end
 
     def new_secret(attr)

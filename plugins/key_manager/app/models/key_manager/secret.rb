@@ -4,6 +4,10 @@ module KeyManager
 
   class Secret < ::Fog::KeyManager::OpenStack::Secret
 
+    module Status
+      ACTIVE = 'ACTIVE'
+    end
+
     module Type
 
       SYMMETRIC = 'symmetric'
@@ -162,6 +166,24 @@ module KeyManager
         secrets << secret
       end
       secrets
+    end
+
+    def payload_link
+      File.join(self.secret_ref, 'payload')
+    end
+
+    def payload_binary?
+      if self.secret_type == Type::PASSPHRASE
+        return false
+      end
+      return true
+    end
+
+    def display_bit_length
+      if !self.bit_length.blank? && self.bit_length != 0
+        return self.bit_length
+      end
+      ''
     end
 
     def display_name
