@@ -1,4 +1,13 @@
 module ViewHelper
+  def project_name(id)
+    # try to find project in friendly ids
+    remote_project = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project',@scoped_domain_id,id)
+    # project not found in friendly ids -> load from api
+    remote_project = @service_user.find_project_by_name_or_id(id) unless remote_project
+    # projects where the service user does not have permissions or deleted projects get 'N/A'
+    project_name = remote_project ? remote_project.name : ''
+  end
+    
   def project_id_and_name(project)
     if project
       # try to find project in friendly ids

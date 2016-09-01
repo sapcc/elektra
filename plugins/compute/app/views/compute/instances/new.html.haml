@@ -52,12 +52,13 @@
       selected:           @instance.flavor_id,
       label_method:       -> (flavor) { "#{flavor.name}  (RAM: #{flavor.ram}MB, VCPUs: #{flavor.vcpus}, Disk: #{flavor.disk}GB)" }}
 
-    = f.input :image_id, { label: "Image",
-      as:                 :select,
-      collection:         @images,
-      selected:           @instance.image_id,
-      required:           true,
-      label_method:       -> (image) { "#{image.name}  (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format})" }}
+    = f.input :image_id, label: 'Image',
+      as:            :grouped_select,
+      collection:    grouped_images(@images),
+      group_method:  :last,
+      label_method:  -> (image) { image_label_for_select(image) },
+      selected:      @instance.image_id,
+      required:      true 
 
     = f.input :network_ids, { label: "Private Network",
       wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
