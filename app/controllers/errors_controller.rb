@@ -1,5 +1,6 @@
 # This class is used by ShowException middleware. See config/environments/production.rb 
 class ErrorsController < ActionController::Base
+  include CurrentUserWrapper
   layout 'errors'
 
   def show
@@ -7,6 +8,9 @@ class ErrorsController < ActionController::Base
     @exception_wrapper = ActionDispatch::ExceptionWrapper.new(env, @exception)
     @status_code       = @exception_wrapper.status_code
     @rescue_response   = ActionDispatch::ExceptionWrapper.rescue_responses[@exception.class.name]
+    @sentry_event_id   = Raven.last_event_id
+    @sentry_public_dsn = URI.parse(ENV['SENTRY_DSN']).tap {|u| u.password=nil}.to_s if ENV['SENTRY_DSN']
+    @sentry_user       = { name: current_user.full_name || current_user.name, email: current_user.email } if current_user
 
     respond_to do |format|
       format.html { render :show, status: @status_code, layout: !request.xhr? }
