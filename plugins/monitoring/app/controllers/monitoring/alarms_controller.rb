@@ -11,6 +11,7 @@ module Monitoring
     end
 
     def filter_and_search
+
       @search = params[:search]
       query = {
         state: params[:state],

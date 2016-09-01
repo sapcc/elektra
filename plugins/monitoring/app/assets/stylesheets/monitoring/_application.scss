@@ -35,6 +35,7 @@
   margin-top:4px;
 }
 
+// TODO: move to loading-place
 .loading_place {
   display: inline-block !important;
   width:7px !important;
@@ -66,3 +67,69 @@
   text-align: right;
 }
 
+.expression-remove-dimension {
+  padding-top:0px;
+  padding-left:10px;
+}
+
+.panel-expression {
+  padding:7px 12px 10px 12px;
+  background: #EFEFEF;
+}
+
+.expression-dimension {
+  margin-bottom:10px;
+}
+
+.loading-right {
+  margin-right:10px;
+  float:right;
+}
+
+.reset-btn {
+  margin-top:27px;
+  padding-left:0;
+}
+
+.period-slider {
+  margin-top:5px;
+}
+
+.create-expression-error {
+  display:none;
+}
+
+.delete-expression {
+  cursor: pointer;
+}
+
+.period-slider .slider-selection {
+  background: #DDD;
+}
+
+.hide-on-start {
+  display:none;
+}
+
+.expression-preview {
+  margin-right:10px;
+}
+
+.filter_by_label {
+  display: inline;
+  padding-right: 2px;
+  font-weight: normal;
+}
+
+.filter_by_input {
+  vertical-align: top;
+  margin-right: 7px;
+}
+
+.show-error-details {
+  cursor: pointer;
+}
+
+.backend-error {
+  margin:20px;
+}

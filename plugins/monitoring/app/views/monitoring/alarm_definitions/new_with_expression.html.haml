@@ -1,0 +1,17 @@
+= content_for :title do
+  Second define alarm
+
+= simple_modal_form_for @alarm_definition, submit_action: 'Create', url: plugin('monitoring').alarm_definitions_path, method: :post, cancel_url: plugin('monitoring').alarm_definitions_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form, autofocus: 'alarm_definition_name' do |f|
+  = render partial: 'form_with_expression', locals: {f:f}
+
+:javascript
+  $(function(){
+    // remove left overs from statistic graph
+    d3.selectAll("svg > *").remove();
+    d3.select("#statistic")
+      .on("mousemove", null)
+      .on("mouseout", null)
+      .on("dblclick", null)
+      .on("click", null);
+    d3.select(".nvtooltip").remove();
+  });

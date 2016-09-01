@@ -17,7 +17,7 @@
 //  
 //       
 //= require_tree .  
-  
+
 // This function is visible only inside this file.
 function test() {
   //...  
@@ -39,6 +39,19 @@ $(document).ready(function(){
   });
 }); 
 
+// https://remysharp.com/2010/07/21/throttling-function-calls
+// http://stackoverflow.com/questions/4364729/jquery-run-code-2-seconds-after-last-keypress
+monitoring.throttle = function(f, delay){
+  var timer = null;
+  return function(){
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = window.setTimeout(function(){
+          f.apply(context, args);
+      },
+      delay || 500);
+  };
+}
 
 monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
 
@@ -121,4 +134,5 @@ monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
       return chart;
   } );
 
-}
+};
+  

@@ -2,12 +2,13 @@
   Monitoring 
 = render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions', count: @alarm_definitions_count }
 
+.backend-error
 - search_help = 'Search in name, severity, description and expression field'
 .toolbar
   .row
-    - if current_user.is_allowed?("monitoring:alarm_definition_create")  
+    - if current_user.is_allowed?("monitoring:alarm_definition_create")
       .col-sm-1
-        = link_to "Create", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+        = link_to "New", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-sm pull-left', data: {modal:true}
     - if current_user.is_allowed?("monitoring:alarm_definition_create")
       .col-sm-2.col-sm-offset-9.has-help-hint.search-field
         = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help:search_help }

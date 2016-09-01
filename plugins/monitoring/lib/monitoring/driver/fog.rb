@@ -26,6 +26,24 @@ module Monitoring
           @fog.list_alarm_definitions.body["elements"]
         end
       end
+      
+      def list_metrics(options = {})
+        handle_response do
+          @fog.list_metrics(options).body["elements"]
+        end
+      end
+
+      def list_metric_names
+        handle_response do
+          @fog.list_metric_names.body["elements"]
+        end
+      end
+
+      def list_statistics(options = {})
+        handle_response do
+          @fog.list_statistics(options).body["elements"]
+        end
+      end
 
       def alarms(options = {})
         handle_response do

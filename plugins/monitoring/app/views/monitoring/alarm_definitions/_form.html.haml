@@ -2,8 +2,12 @@
 = f.input :name, 
   input_html: { autofocus: true }
 = f.input :description
-= f.input :expression, 
-    icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression."
+
+- if edit
+  = f.input :expression, readonly: true
+- else
+  = f.input :expression, 
+    icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression. <br><br> <span class='pull-right'>To create a valid expression you can also use a wizard. If you use the wizard please be aware that your filled out data is not saved for later!</span> #{link_to 'use Wizard', plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-primary btn-xs pull-right', data: {modal:true}}"
 
 - severity = @alarm_definition.severity || 'LOW'
 = f.input :severity, 
@@ -15,7 +19,8 @@
   = f.input :match_by, readonly: true,
       icon_hint: 'Cannot be changed because this field is used to create Alarms and Alarms may already have been created. The only option to change "match by" is to delete the existing Alarm Definition and create a new one.'
 - else
-  = f.input :match_by, 
+  = f.input :match_by,
+      label: 'Filter by',
       icon_hint: 'Comma-separated list of dimensions, A separate alarm will be created for every single dimension value.'
 
 .row

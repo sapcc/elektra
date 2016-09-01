@@ -83,6 +83,20 @@ module ServiceLayer
       Monitoring::AlarmDefinition.new(driver,attributes)
     end
 
+    def get_metric(attributes={}) 
+      driver.map_to(Monitoring::Metric).list_metrics(attributes)
+    end
+    
+    def get_metric_names
+      metric_names_data = driver.map_to(Monitoring::MetricName).list_metric_names()
+      metric_names = Array.new
+      metric_names_data.map{|metric_name_data|metric_names << metric_name_data.name}
+      metric_names
+    end
+    
+    def list_statistics(attributes={})
+      driver.map_to(Monitoring::Statistic).list_statistics(attributes)[0]
+    end
 
   end
 end

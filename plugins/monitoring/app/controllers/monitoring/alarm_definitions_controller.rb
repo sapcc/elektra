@@ -2,8 +2,18 @@ module Monitoring
   class AlarmDefinitionsController < Monitoring::ApplicationController
     authorization_required
     
-    before_filter :load_alarm_definition, except: [ :index, :new, :create, :search ] 
-
+    before_filter :load_alarm_definition, except: [ 
+      :index, 
+      :new,
+      :from_expression_wizzard_new,
+      :create,
+      :search,
+      :create_expression,
+      :get_dimensions_for_metric,
+      :dimension_row,
+      :statistics 
+    ]
+    
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions_count = all_alarm_definitions.length
@@ -29,8 +39,21 @@ module Monitoring
     end
 
     def new
+      @head = 'New Alarm Definition'
       @alarm_definition = services.monitoring.new_alarm_definition(name: "")
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+    end
+    
+    def from_expression_wizzard_new
+      @head = 'Create Alarm Definition'
+      expression = params['expression'] || ''
+      
+      filter_by_dimensions = params['filter_by_dimensions']
+      @filter_by = filter_by_dimensions.split(/,/) if filter_by_dimensions || []
+      
+      @alarm_definition = services.monitoring.new_alarm_definition(name: "", expression: expression)
+      @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+      render action: 'new_with_expression'
     end
 
     def create
@@ -67,8 +90,60 @@ module Monitoring
     end
 
     def destroy 
-       @alarm_definition.destroy
-       back_to_alarm_definition_list
+      @alarm_definition.destroy
+      back_to_alarm_definition_list
+    end
+
+    def statistics
+      metric     = params.require('metric')
+      dimensions = params['dimensions'] || ''
+      period     = params.require('period')
+      threshold  = params.require('threshold')
+      statistical_function = params.require('statistical_function')
+      
+      columns = []
+      if statistical_function == 'avg' || 
+         statistical_function == 'min' ||
+         statistical_function == 'max'
+         statistical_function = 'avg,min,max'
+         columns = ['avg','max','min','threshold']
+      else
+        columns << statistical_function
+        columns << 'threshold'
+      end
+
+      # get the statistic data for the last 120 minutes
+      t = Time.now.utc - (60*120)
+      statistics = services.monitoring.list_statistics({
+        name: metric, 
+        start_time: t.iso8601,
+        statistics: statistical_function,
+        dimensions: dimensions,
+        period: period,
+        merge_metrics: true
+      })
+      
+      data = [];
+      columns.each do |column|
+        values = [];
+        x = 0;
+        if statistics
+          statistics.statistics.each do |statistic|
+            if column == 'threshold'
+              values << {x: x, y: threshold}
+            else
+              current_value = statistic[statistics.columns.find_index(column)]
+              # round values
+              current_value = current_value.round(2) if current_value.is_a? Numeric
+              values << {x: x, y: current_value}
+            end
+            x +=period.to_i/60
+          end
+          data << {key: column, values: values}
+        end
+      end
+
+      render json: data
     end
 
     def toggle_alarm_actions
@@ -77,6 +152,41 @@ module Monitoring
       } 
       
       @alarm_definition.update_attributes(attrs)
+    end
+    
+    def create_expression
+      # chain expressions keep it vor later
+      # expressions = params['expressions'] || ""
+      @step_count = params['step_count'] || 1
+      @after_login = plugin('monitoring').alarm_definitions_path()+'?overlay=create_expression'
+      
+      # chain expressions keep it vor later
+      # split expression into subexpression parts
+      # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
+      @metric_names = services.monitoring.get_metric_names
+      
+    end
+    
+    def get_dimensions_for_metric
+      name = params.require(:name)
+      # get all dimensions 120 minutes ago
+      t = Time.now.utc - (60*120)
+      metrics = services.monitoring.get_metric({
+        name: name, 
+        start_time: t.iso8601
+      })
+      # default init with empty array
+      dimensions = Hash.new{ |h, k| h[k] = [] }
+      metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
+      dimensions[''] << ''
+      render json: dimensions
+    end
+
+    def dimension_row
+      @cnt = params.require(:cnt).to_i
+      @keys = JSON.parse(params.require(:keys));
+      @next = @cnt + 1
+      render partial: "dimension_row"
     end
 
     private
