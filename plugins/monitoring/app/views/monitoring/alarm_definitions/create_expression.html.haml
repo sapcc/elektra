@@ -176,7 +176,7 @@
     if (dimension_data) {
       var dimension_keys = Object.keys(dimension_data);
 
-      $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {
+      $.post( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {
         cnt: ID, 
         keys: JSON.stringify(dimension_keys), 
         // in case of invalid token we don't want to follow the redirect from the server to the logon page
@@ -276,7 +276,7 @@
   }
 
   function get_dimensions(METRIC_NAME) {
-    $.get("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
+    $.post("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
       name: METRIC_NAME,
       // in case of invalid token we don't want to follow the redirect from the server to the logon page
       // instead we handle that case in check_logon_state()
@@ -340,7 +340,7 @@
     
     $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="217" y="187.5"}>Loading Data.</text>');
 
-    $.get( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
+    $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
       metric: $('#metric').val(),
       dimensions: expression_dimensions(),
       period: $('#period_custom').val(),
