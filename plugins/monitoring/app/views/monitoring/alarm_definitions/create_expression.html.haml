@@ -175,8 +175,9 @@
       $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {
         cnt: ID, 
         keys: JSON.stringify(dimension_keys), 
+        // in case of invalid token we don't want to follow the redirect from the server to the logon page
+        // instead we handle that case in check_logon_state()
         do_not_redirect: true
-        
       }, 
         function( data, status, xhr){ 
         
@@ -255,6 +256,8 @@
     }
   }
 
+  // load the logon page if we got a new location
+  // that happens when the token was invalid
   function check_logon_state(XHR) {
     if(XHR.getResponseHeader('Location')) {
       // close modal window
@@ -271,7 +274,9 @@
 
   function get_dimensions(METRIC_NAME) {
     $.get("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
-      name: METRIC_NAME, 
+      name: METRIC_NAME,
+      // in case of invalid token we don't want to follow the redirect from the server to the logon page
+      // instead we handle that case in check_logon_state()
       do_not_redirect: true 
     },
       function( data,status,xhr ) { 
@@ -313,7 +318,7 @@
   
   function show_statistic() {
     $('#statistic').empty();
-    $('#statistic').html('<text x="10" y="25" font-family="sans-serif" font-size="18px" fill="#31708f"}>loading data...</text>');
+    $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="217" y="187.5"}>Loading Data.</text>');
 
     $.get( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
       metric: $('#metric').val(),
@@ -321,13 +326,25 @@
       period: $('#period_custom').val(),
       threshold: $('#threshold_value').val(),
       statistical_function: $('#statistical_function').val(),
+      // in case of invalid token we don't want to follow the redirect from the server to the logon page
+      // instead we handle that case in check_logon_state()
       do_not_redirect: true
     },function(data,status,xhr) {
       
       check_logon_state(xhr);
       
-      $('#statistic').empty();
-      //console.log(data);
+      // cleanup left overs
+      // http://stackoverflow.com/questions/22452112/nvd3-clear-svg-before-loading-new-chart
+      // http://stackoverflow.com/questions/28560835/issue-with-useinteractiveguideline-in-nvd3-js
+      // https://github.com/Caged/d3-tip/issues/133
+      d3.selectAll("svg > *").remove();
+      d3.select("#statistic")
+        .on("mousemove", null)
+        .on("mouseout", null)
+        .on("dblclick", null)
+        .on("click", null);
+      d3.select(".nvtooltip").remove();
+      
       nv.addGraph(function() {
         var chart = nv.models.lineChart();
         
