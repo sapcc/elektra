@@ -117,25 +117,27 @@
   // dimension_data is only generated once
   var dimension_data;
   
-  $('#period_slider').slider({
-    step: 60,
-    min: 60,
-    max: 600,
-    value:60,
-    formatter: function(value) {
-      return value+' sec';
-    }
-  }).on(
-    "slide", function(slide_event) { 
-       //console.log(slide_event.value);
-       generate_expression();
-       $('#period_custom').val(slide_event.value);
-       // send change to trigger statistic reload after 1 second
-       $('#period_custom').trigger("change");
-    }
-  );
-  
+  //
+  // INIT
+  //
   $(function(){
+    $('#period_slider').slider({
+      step: 60,
+      min: 60,
+      max: 600,
+      value:60,
+      formatter: function(value) {
+        return value+' sec';
+      }
+    }).on(
+      "slide", function(slide_event) { 
+         //console.log(slide_event.value);
+         generate_expression();
+         $('#period_custom').val(slide_event.value);
+         // send change to trigger statistic reload after 1 second
+         $('#period_custom').trigger("change");
+      }
+    );
     // set typeahead for metrics
     $("#metric").typeahead({source:  metric_names, afterSelect: 
       function(){ 
@@ -165,6 +167,9 @@
     });
   });
 
+  //
+  // LOGIC
+  //
   function render_dimension_row(ID) {
     // if no dimension was found do nothing
     if (dimension_data) {
@@ -227,7 +232,6 @@
           // remove selected value from array
           var selected_dimension_value = $("#dimension_value_"+ID).val();
           var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
-          // console.log(value_index);
           dimension_data[selected_dimension_key].splice(value_index,1);
           // remove key if no values left
           if ( dimension_data[selected_dimension_key].length == 0 ) {
@@ -296,9 +300,12 @@
         
         generate_expression();
         var dimension_keys = Object.keys(dimension_data);
+        // remove all used dimensions from dimension_keys
+        $('.dimension_key').each(function(){
+          var dimension = $(this).val();
+          dimension_keys.splice(dimension_keys.indexOf(dimension), 1);
+        })
         // write dimension keys for later use in match by
-        // hier dürfen nur keys rein die noch nirgends verwendet wurden!!!
-        
         $('#filter_by_dimensions').val(dimension_keys.toString())
 
         // cleanup everything
