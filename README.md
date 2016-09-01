@@ -194,7 +194,6 @@ audit_logger.info(“user D064310”, “has deleted”, “project 543534543534
 * audit_logger.debug
 * audit_logger.fatal
 
-
 Catch Errors in Controller
 ---------------
 
