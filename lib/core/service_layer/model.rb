@@ -8,8 +8,6 @@ module Core
 
       attr_reader :errors, :attributes
 
-      ERRORS_TO_IGNORE = ["code", "title"]
-
       def initialize(driver, params=nil)
         @driver = driver
         self.attributes=params
@@ -102,6 +100,8 @@ module Core
             return false
           end
         rescue => e
+          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+          
           Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
           return false
         end

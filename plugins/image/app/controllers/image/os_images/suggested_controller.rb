@@ -3,7 +3,7 @@ module Image
     before_filter :find_member, only: [:accept, :reject]
       
     def accept
-      @success = services.image.accept_member(m@ember)
+      @success = services.image.accept_member(@member)
       render action: :accept, format: :js
     end
     
