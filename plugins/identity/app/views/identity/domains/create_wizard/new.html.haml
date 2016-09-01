@@ -7,8 +7,7 @@
       .alert.alert-error
         = render_errors(@project.errors)
     
-    = render partial: 'identity/projects/shared/form', locals: { form: f }
-    
+    = render partial: 'identity/projects/shared/form', locals: { form: f, with_cost_object: true }
   %div{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     = f.submit 'Create project', class: 'btn btn-primary', data: { disable_with: "Please wait..." }

@@ -1,0 +1,18 @@
+= content_for :title do
+  Share Image
+
+= simple_form_for @member, url: plugin('image').os_images_private_members_path(private_id: @image.id), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @error
+      %p.alert.alert-error= @error
+
+    = f.input :project, input_html: {data: {autocomplete_url: main_app.find_cached_projects_path}},
+      icon_hint: 'Project (name or ID) with whom the image will be shared.' 
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    = button_tag "Add", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

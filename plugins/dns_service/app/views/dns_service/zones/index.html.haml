@@ -13,7 +13,11 @@
   %tbody
     - if @zones.length==0
       %tr{data: {empty: true}}
-        %td{colspa: 6} No zones available
+        %td{colspa: 6}
+          = 'No zones available.'
+          = link_to "#{sap_url_for('documentation')}docs/learn/network/create_dns_zone.html", class: "btn", title: "Open documentation in new window.", target: "_blank" do
+            %i.fa.fa-external-link
+            How to get a DNS zone
     - else
       - @zones.each do | zone |
         = render partial: 'zone_item', locals: {zone: zone}

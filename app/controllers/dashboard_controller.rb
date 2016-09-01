@@ -39,7 +39,7 @@ class DashboardController < ::ScopeController
   
   rescue_from "Core::ServiceLayer::Errors::ApiError" do |error|
     if error.response_data and error.response_data["error"] and error.response_data["error"]["code"]==403
-      render_error_page(error,{title: 'Permission Denied', description: "You are not authorized to request this page."})
+      render_error_page(error,{title: 'Permission Denied', description: error.response_data["error"]["message"] || "You are not authorized to request this page."})
     else
       render_error_page(error, title: 'Backend Service Error')
     end
@@ -112,8 +112,20 @@ class DashboardController < ::ScopeController
     end
   end
 
-  protected
+  def find_cached_domains
+    name = params[:name] || params[:term] || ""
+    domains = FriendlyIdEntry.search('Domain',nil,name)
+    render json: domains.collect{|d| {id: d.key, name: d.name}}.to_json  
+  end
+    
+  def find_cached_projects
+    name = params[:name] || params[:term] || ""
+    projects = FriendlyIdEntry.search('Project',@scoped_domain_id,name)
+    render json: projects.collect{|project| {id: project.key, name: project.name}}.to_json
+  end
 
+  protected
+  
   def show_beta?
     params[:betafeatures] == 'showme'
   end
@@ -129,6 +141,7 @@ class DashboardController < ::ScopeController
     )
 
     tags = {}
+    tags[:plugin] = plugin_name if try(:plugin_name).present?
     if current_user.domain_id
       tags[:domain_id] = current_user.domain_id
       tags[:domain_name] = current_user.domain_name

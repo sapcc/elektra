@@ -8,4 +8,9 @@
       %th Status
       %th.snug
   %tbody
-    = render partial: 'index_table_body'
+    - if @images.empty?
+      %tr
+        %td{colspan: 6} No private images found.
+    - else    
+      - @images.each do |image|
+        = render partial: "item", locals: { image: image }

@@ -1,4 +1,18 @@
 module ApplicationHelper
+  def render_paginatable(items)
+    if @pagination_enabled
+      content_tag(:div, class: 'pagination') do 
+        concat(content_tag(:span, "#{@pagination_seen_items+1} - #{@pagination_seen_items+items.length} ", class: 'current-window'))
+        if @pagination_current_page>1
+          concat(link_to 'Previous Page', page: @pagination_current_page-1, marker: items.first.id, reverse: true)
+        end
+        if @pagination_has_next
+          concat(" | ")
+          concat(link_to 'Next Page', page: @pagination_current_page+1, marker: items.last.id)
+        end
+      end
+    end
+  end
 
   # This class is used to create scoped urls for plugin url helpers
   class PluginUrlHelper

@@ -73,9 +73,22 @@ $ ->
 
 
 # -------------------------------------------------------------------------------------------------------------
-# Initialize Modal Windows
-
+# Initialize Modal Windows          
 $(document).on 'modal:contentUpdated', (e) ->
+  $( "[data-autocomplete-url]" ).each () ->
+    $input = $(this)
+    $input.autocomplete({
+      appendTo: $input.parent(),
+      source: $input.data('autocompleteUrl'),
+      select: ( event, ui ) ->
+        $input.val(ui.item.name);
+        return false;
+    }).data('ui-autocomplete')._renderItem = ( ul, item ) ->
+        return $( "<li>" )
+          .attr( "data-value", item.name )
+          .append( item.name )
+          .appendTo( ul );
+          
   try
     # define target selector dependent on id or class
     selector = "##{e.target.id}" if e.target.id

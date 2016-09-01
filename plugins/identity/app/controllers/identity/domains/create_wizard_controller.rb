@@ -6,14 +6,21 @@ module Identity
 
       def new
         @project = Identity::Project.new(nil,{})
-        @project.attributes = @inquiry.payload if @inquiry
+        @project.cost_control = {}
+        if @inquiry
+          payload = @inquiry.payload
+          @project.attributes = payload
+        end
       end
 
       def create
+        project_params = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
+        cost_params    = project_params.delete(:cost_control)
+
         # user is not allowed to create a project (maybe)
         # so use admin identity for that!
         @project = services.identity.new_project
-        @project.attributes = params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
+        @project.attributes = project_params
         @project.enabled = @project.enabled == 'true'
 
         if @project.save
@@ -21,6 +28,19 @@ module Identity
           services.identity.clear_auth_projects_tree_cache
           
           audit_logger.info(current_user, "has created", @project)
+
+          if services.available?(:cost_control)
+
+            cost_params.merge!(id: @project.id)
+
+            # normalize value from inherited cost object checkbox to boolean
+            cost_params['cost_object_inherited'] = cost_params.fetch('cost_object_inherited', '')=='1'
+
+            cost_control_masterdata = services.cost_control.new_project_masterdata(cost_params)
+            if cost_control_masterdata.save
+              audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_masterdata.cost_object_string}")
+            end
+          end
           
           flash[:notice] = "Project #{@project.name} successfully created."
           if @inquiry

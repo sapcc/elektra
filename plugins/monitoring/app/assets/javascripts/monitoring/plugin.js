@@ -53,24 +53,43 @@ monitoring.throttle = function(f, delay){
   };
 }
 
-monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
+monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
 
-  var width = SIZE || 450;
-  var height = SIZE || 450;
+  var width =  W || 350;
+  var height = W || 350;
+  var scale =  S || 1;
 
+  if (CNT == 0) return;
+
+  // from inner 0,5 (100%) to outer 1.05 (0%)
+  // not used but maybe it is later userfull so I keep it here ;-)
+  /*
+  var multiplicator = 0.45 / CNT;
+  var arcRadius = [];
+  $.each(DATA, function(index, data) {
+    var count = data['count'];
+    var inner =  1-(multiplicator*count)
+    arcRadius.push({inner: inner, outer:1.05});
+  } );
+  */
+  
   nv.addGraph( function() {
       var chart = nv.models.pieChart()
           .x(function(d) { return d.label })
           .y(function(d) { return d.count })
           .width(width)
           .height(height)
-          .showLegend(false)
-          .labelThreshold(0.05)
+          .showLegend(true)
+          .showLabels(false)
+          .labelsOutside(false)
+			    .labelSunbeamLayout(false)
           .noData("There is no Data to display")
           .title(TYPE)
           .donut(true)
-          .donutRatio(0.4)
-          .showTooltipPercent(true);
+          .showTooltipPercent(true)
+          //.arcsRadius(arcRadius)
+          .donutRatio(0.5)
+          .margin({"top": 30, "right": 20, "bottom": 20, "left": 20});
 
       chart.color(function (d, i) {
         // color scheme is used from _variables.scss
@@ -109,7 +128,7 @@ monitoring.render_overview_pie = function(TYPE,DATA,SIZE) {
           .datum(DATA)
           .transition().duration(1200)
           .attr('width', width)
-          .attr('height', height)
+          .attr('height', height*scale)
           .call(chart);
 
       return chart;

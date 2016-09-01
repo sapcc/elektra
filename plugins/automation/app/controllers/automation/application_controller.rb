@@ -5,7 +5,8 @@ module Automation
       {
         "RubyArcClient::ApiError" => {
           header_title: "Monsoon Automation", 
-          details: -> e { e.json_hash.empty? ? e.inspect : e.json_hash}, 
+          details: -> e, c { e.json_hash.empty? ? e.inspect : e.json_hash},
+          description: :title,
           title: :status, 
           error_id: :id
         }

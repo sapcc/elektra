@@ -54,7 +54,7 @@
           - if current_user.is_allowed?('identity:technical_user_list', domain_id: @scoped_domain_id)
             %li
               = link_to "Create/Edit Technical Users", plugin('identity').domains_technical_users_path
-            
+
           - if current_user.is_allowed?('identity:user_list', domain_id: @scoped_domain_id)
             %li
               = link_to "User Management", plugin('identity').domains_users_path
@@ -115,18 +115,20 @@
               = @scoped_domain_name
 
 
-      %h5 Helpful Links
+      %h5
+        Helpful Links
+        %i.fa.fa-external-link
 
       %ul.fa-ul
         %li
           %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/start/whatis.html") Getting Started
+          %a(href="#{sap_url_for('documentation')}" target="_blank") Documentation Main Page
         %li
           %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/trouble/") Troubleshooting & FAQ
+          %a(href="#{sap_url_for('documentation')}docs/trouble/" target="_blank") Troubleshooting & FAQ
         %li
           %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/monitor/") Monitoring and Cost Control
+          %a(href="#{sap_url_for('documentation')}docs/monitor/" target="_blank") Monitoring and Cost Control
         %li
           %i.fa.fa-li.fa-file-text-o
-          %a(href="#{sap_url_for('documentation')}docs/guides/") Tutorials
+          %a(href="#{sap_url_for('documentation')}docs/learn/" target="_blank") Tutorials

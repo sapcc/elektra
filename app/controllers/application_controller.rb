@@ -107,6 +107,7 @@ class ApplicationController < ActionController::Base
   include Services  
   include ServiceUser
   include CurrentUserWrapper
+  include Core::Paginatable
   
   extend ErrorRenderer
       

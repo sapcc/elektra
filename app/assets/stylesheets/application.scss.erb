@@ -37,6 +37,8 @@
 @import "nv.d3";
 @import "bootstrap-slider";
 
+@import "jsoneditor";
+
 <%
   Core::PluginsManager.plugins_with_application_css.each do |plugin|
   %><%=".#{plugin.name} {  @import \"#{plugin.name}/application\"; }"%><%

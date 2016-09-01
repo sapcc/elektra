@@ -8,7 +8,7 @@
     %h3
       Details
 
-    .job_details
+    .run_details
       .row
         .col-md-2
           %b
@@ -28,7 +28,6 @@
         .col-md-4.js-run-state
           = render partial: 'run_state', locals: {run: @run}
 
-
       .row
         .col-md-2
           %b
@@ -41,20 +40,44 @@
         .col-md-4.js-run-duration
           = @run.duration
 
+      .row
+        .col-md-2
+          %b Revision:
+        .col-md-10
+          -if @run.revision_from_github?
+            = link_to @run.repository_revision, @run.revision_link, target: "_blank"
+          -else
+            = @run.repository_revision
+
+
+
   .modal-section
     %h3
       Jobs
-
-    = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs}
+    .js-run_jobs_table
+      = render partial: 'automation/shared/table_jobs', locals: {jobs: @jobs}
 
   .modal-section
     %h3
       Log
 
     .js-run-log
-      = render partial: 'run_log', locals: {log_lines: @log_lines, log_truncated: @log_truncated, run: @run, log_output: @log_output}
+      = render partial: 'run_log', locals: {truncated_log: @truncated_log, run: @run}
 
-.modal-footer
+  .modal-section
+    %h3
+      Automation Snapshot
+      %small
+        Automation definition at time of job execution
+
+    .js-run-snapshot
+      - if @run.snapshot.empty?
+        No data found
+      - else
+        #jsoneditor.compact{data:{mode: "view", content_id: @run.snapshot.to_json}}
+
+
+%div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
   - else

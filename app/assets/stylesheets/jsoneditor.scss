@@ -1,10 +1,14 @@
-#chef-automation #jsoneditor {
-  width: 100%;
-  height: 250px;
+#jsoneditor .fullsize {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  height: 100%;
 }
 
-
-//color: $medium-blue;
+#jsoneditor.compact {
+  height: 300px;
+}
 
 /* reset styling (prevent conflicts with bootstrap, materialize.css, etc.) */
 
@@ -246,6 +250,7 @@ div.jsoneditor-tree {
   height: 100%;
   position: relative;
   overflow: auto;
+  background-color: white;
 }
 
 textarea.jsoneditor-text {
@@ -873,7 +878,7 @@ table.jsoneditor-search div.jsoneditor-results {
 
 table.jsoneditor-search {
   position: absolute;
-  right: 4px;
+  right: 30px;
   top: 4px;
   border-collapse: collapse;
   border-spacing: 0;

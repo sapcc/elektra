@@ -1,0 +1,16 @@
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Format
+      %th Size
+      %th Owning Project
+      %th Status
+      %th.snug
+  %tbody
+    - if @images.empty?
+      %tr
+        %td{colspan: 6} No suggested images found.
+    - else    
+      - @images.each do |image|
+        = render partial: "item", locals: { image: image }

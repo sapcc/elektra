@@ -1,18 +1,18 @@
 = content_for :title do
   Install new Node
 
-.modal-body
+= form_tag plugin('automation').show_instructions_nodes_path, class: 'form-horizontal', remote: true do
 
-  .modal-flashes
+  .modal-body
 
-  #modal_flash_messages
-    = render partial: "automation/nodes/install_node_error", locals: {flashes: @errors}
+    .modal-flashes
 
-  #modal_messages
+    #modal_flash_messages
+      = render partial: "automation/nodes/install_node_error", locals: {flashes: @errors}
 
-  .section#search_instance
+    #modal_messages
 
-    = form_tag plugin('automation').show_instructions_nodes_path, class: 'form-horizontal', remote: true do
+    #install-node-body
       .form-group
         = label_tag 'compute_instance_id', 'Please select an instance:', class: 'col-sm-4 control-label'
         .col-sm-8
@@ -24,12 +24,12 @@
           .col-sm-8
             = text_field_tag 'external_instance_id', '', :maxlength => "256", :placeholder => "Enter identifier", class: 'form-control', autofocus: true
 
-      .buttons{class: modal? ? 'modal-footer' : ''}
-        - if modal?
-          %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-        - else
-          = link_to "Cancel", nodes_url(), class: 'btn btn-default'
-        = button_tag "Get instructions", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+  #install-node-footer{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", nodes_url(), class: 'btn btn-default'
+    = button_tag "Get instructions", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
 
 = content_for :javascript do
   :javascript

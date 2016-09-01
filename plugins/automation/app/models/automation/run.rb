@@ -1,8 +1,28 @@
 require 'active_resource'
+require 'uri'
 
 module Automation
 
   class Run < ::Automation::BaseActiveResource
+
+    #
+    # Added attribute classes to fix the activeresource load nested hashes with special keys like docker-compos
+    #
+    class AutomationAttributes < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+    class Owner < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+
     self.collection_name = "runs"
 
     def duration
@@ -27,6 +47,30 @@ module Automation
       else
         return self.owner.attributes["name"]
       end
+    end
+
+    def snapshot
+      if !self.automation_attributes.blank? && self.automation_attributes.respond_to?(:attributes) && !self.automation_attributes.attributes.blank?
+        return self.automation_attributes.attributes
+      end
+      {}
+    end
+
+    def revision_from_github?
+      if !snapshot.empty? && !snapshot[:repository].blank? && !self.repository_revision.blank?
+        host = URI(snapshot[:repository]).host
+        if !host.blank? && host == "localhost"
+          return true
+        end
+      end
+      false
+    end
+
+    def revision_link
+      if revision_from_github?
+        return URI::join(snapshot[:repository].gsub!(/(.git\s*)*$/, '/'), 'commit/', self.repository_revision).to_s
+      end
+      self.repository_revision
     end
 
   end

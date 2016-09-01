@@ -3,6 +3,33 @@ require 'active_resource'
 module Automation
 
   class Automation < ::Automation::BaseActiveResource
+
+    #
+    # Added attribute classes to fix the activeresource load nested hashes with special keys like docker-compos
+    #
+    class Environment < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+    class Tags < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+    class ChefAttributes < ActiveResource::Base
+      def initialize(attributes = {}, persisted = false)
+        @attributes     = attributes.with_indifferent_access
+        @prefix_options = {}
+        @persisted = persisted
+      end
+    end
+
+
     module Types
       CHEF = 'Chef'
       SCRIPT = 'Script'

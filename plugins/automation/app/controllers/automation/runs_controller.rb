@@ -8,16 +8,7 @@ module Automation
     def show
       # get the jobs
       list_run_jobs()
-
-      # set the log values
-      @log_lines = 1
-      @log_truncated = false
-      @log_output = NO_DATA_FOUND
-      unless @run.log.blank?
-        @log_lines = @run.log.lines.count
-        @log_truncated = @log_lines > LINES_TRUNCATION
-        @log_output = @run.log.lines.last(LINES_TRUNCATION).join
-      end
+      @truncated_log = ::Automation::DataTruncation.new(@run.log)
     end
 
     def show_log
