@@ -1,10 +1,15 @@
-var html="<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>"
+if (window.location.href.indexOf('<%=plugin("compute").instances_url%>')>-1) {
+  var html="<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>"
 
-
-if($("table.instances tr[data-empty]").length==1) {
-  $("table.instances tr[data-empty]").replaceWith(html);
-} else {
-  $("table.instances tbody").prepend(html);
+  if($("table.instances tr[data-empty]").length==1) {
+    $("table.instances tr[data-empty]").replaceWith(html);
+  } else {
+    $("table.instances tbody").prepend(html);
+  }
+  $("#instance_<%=@instance.id%>").update()
 }
-$("#instance_<%=@instance.id%>").update()
+else {
+  window.location.href='<%= plugin("compute").instances_path%>';  
+}
+
 MoModal.close();

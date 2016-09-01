@@ -5,8 +5,8 @@
   - pl = plugin('image')
 
   = simple_modal_form_for @image,
-    url: pl.send("os_images_#{@visibility}_path", @image.id),
-    cancel_url: plugin('image').send("os_images_#{@visibility}_index_path"),
+    url: pl.send("os_images_#{@image.visibility}_path", @image.id),
+    cancel_url: plugin('image').send("os_images_#{@image.visibility}_index_path"),
     cancel_text: 'Close',
     html: { class: 'form-readonly' } do |f|
 
