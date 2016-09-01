@@ -1,43 +1,41 @@
 module ServiceLayer
-
   class DnsServiceService < Core::ServiceLayer::Service
-
     def driver
-      @driver ||= DnsService::Driver::Fog.new({
-        auth_url:   self.auth_url,
-        region:     self.region,
-        token:      self.token,
-        domain_id:  self.domain_id,
-        project_id: self.project_id  
-      })
+      @driver ||= DnsService::Driver::Fog.new(
+        auth_url:   auth_url,
+        region:     region,
+        token:      token,
+        domain_id:  domain_id,
+        project_id: project_id
+      )
     end
-    
-    def available?(action_name_sym=nil)
-      true  
+
+    def available?(_action_name_sym = nil)
+      driver.available
     end
-    
-    def zones(filter={})
+
+    def zones(filter = {})
       driver.map_to(DnsService::Zone).list_zones(filter)
     end
-    
+
     def find_zone(id)
       driver.map_to(DnsService::Zone).get_zone(id)
     end
-    
-    def recordsets(zone_id,options={})
-      driver.map_to(DnsService::Recordset).list_recordsets(zone_id,options)
+
+    def recordsets(zone_id, options = {})
+      driver.map_to(DnsService::Recordset).list_recordsets(zone_id, options)
     end
-    
-    def find_recordset(zone_id,recordset_id)
-      driver.map_to(DnsService::Recordset).get_recordset(zone_id,recordset_id)
+
+    def find_recordset(zone_id, recordset_id)
+      driver.map_to(DnsService::Recordset).get_recordset(zone_id, recordset_id)
     end
-    
-    def new_recordset(zone_id,attributes={})
-      DnsService::Recordset.new(driver,attributes.merge(zone_id: zone_id))
+
+    def new_recordset(zone_id, attributes = {})
+      DnsService::Recordset.new(driver, attributes.merge(zone_id: zone_id))
     end
-    
-    def delete_recordset(zone_id,id)
-      driver.delete_recordset(zone_id,id)
+
+    def delete_recordset(zone_id, id)
+      driver.delete_recordset(zone_id, id)
     end
   end
 end
