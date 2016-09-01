@@ -39,46 +39,6 @@ $(document).ready(function(){
   });
 }); 
 
-monitoring.get_metric_names = function() {
-  
-	var metric_names_unfiltered = []
-  $.each(metrics_data, function( index, metric ) {
-    metric_names_unfiltered.push(metric[0]);
-  });
-  //console.log(metric_names_unfiltered);
-  
-  var metric_names_unique = metric_names_unfiltered.filter(function(metric_name, i, ar){ 
-    return ar.indexOf(metric_name) === i; 
-  });
-  //console.log(metric_names_unique);
-  
-  return metric_names_unique;
-};
-
-monitoring.expression_dimensions = function() {
-  // dimensions
-  var dimensions = "";
-  $('.dimension_key').each(function( ) {
-    if($( this ).text() != '' ) {
-      var defintion_id = $(this).data('id')
-      var key = $( this ).val();
-      
-      var valid_value = $('#dimension_value_'+defintion_id).data('valid');
-      if(valid_value) {
-        var value = $('#dimension_value_'+defintion_id).val();
-        if(key != '' && value != '') {
-          dimensions += key+"="+value+",";
-        }   
-      }
-    }
-  });
-  
-  // remove the last comma
-  dimensions = dimensions.slice(0, -1);
-  
-  return dimensions;
-}
-
 // https://remysharp.com/2010/07/21/throttling-function-calls
 // http://stackoverflow.com/questions/4364729/jquery-run-code-2-seconds-after-last-keypress
 monitoring.throttle = function(f, delay){
