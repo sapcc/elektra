@@ -64,7 +64,7 @@ SimpleNavigation::Configuration.run do |navigation|
     ccadmin_nav.item :project_groups, 'Project Group Role Assignments', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
   end
 
-  primary.item :access_management, 'Authorizations For Project cloud_admin', nil,
+  primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
     html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
     if: -> {services.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
       access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
