@@ -5,6 +5,19 @@ class FriendlyIdEntry < ActiveRecord::Base
 
   friendly_id :name, :use => :scoped, :scope => :scope
 
+  def self.search(class_name,scope, term)
+    sql = [
+      "class_name=? and (key ILIKE ? or name ILIKE ?) and endpoint=? #{'and lower(scope)=?' if scope}", 
+      class_name, 
+      "%#{term}%", 
+      "%#{term}%", 
+      Rails.configuration.keystone_endpoint
+    ]
+    sql << scope.to_s.downcase if scope
+
+    self.where(sql)
+  end
+  
   def self.find_by_class_scope_and_key_or_slug(class_name,scope,key_or_slug)
     sql = [
       "class_name=? and (lower(key)=? or lower(slug)=?) and endpoint=? #{'and lower(scope)=?' if scope}", 

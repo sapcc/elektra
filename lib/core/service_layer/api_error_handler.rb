@@ -1,49 +1,33 @@
 module Core
   module ServiceLayer
     class ApiErrorHandler
-    
-      # Observed error formats        
-      # {"NeutronError"=>{"message"=>"Invalid network", "type"=>"", "detail"=>""}}
-      def self.parse(e)
-        result = nil
-        begin
-          #TODO: improove error parsing
-          error_message = e.message.gsub('(Disable debug mode to suppress these details.)','')
-
-          #errors = error_message.scan(/.*excon\.error\.response.*\n.*:body\s*=>\s*("|')(.*).*("|')\n/)
-          errors = error_message.scan(/^.*excon\.error\.response.*\n.*:body\s*=>(.*)\n.*$/)
-          # errors = s.scan(/^.*excon\.error\.response.*\n((.|\n)*)$/)
-          
-          #error_string = errors.flatten.first
-          #error_string.gsub!(/\\+"/,'"') if error_string
-          
-          #parsed_errors = JSON.parse(error_string) rescue nil
-          
-          errors = errors.flatten.first
-          parsed_errors = eval(eval(errors)) rescue nil
-          
-          s2s = 
-            lambda do |h| 
-              Hash === h ? 
-                Hash[
-                  h.map do |k, v| 
-                    [k.respond_to?(:to_sym) ? k.to_sym : k, s2s[v]] 
-                  end 
-                ] : h 
-            end
-
-          parsed_errors = s2s[parsed_errors] if parsed_errors
-
-          result = parsed_errors[:errors] || parsed_errors[:error]  if parsed_errors
-          result = parsed_errors if result.nil? and parsed_errors.is_a?(Hash)
-          result = {"Error" => e.message} unless result
-        rescue => e
-          puts e
+      
+      def self.get_api_error_messages(error)
+        if error.respond_to?(:response_data)
+          return read_error_messages(error.response_data)
+        elsif error.respond_to?(:response) and error.response.body 
+          response_data = JSON.parse(error.response.body) rescue error.response.body
+          return read_error_messages(response_data)
+        else
+          [error.message]
         end
-
-        result = {'message' => e.message} unless result
-        return result
       end
+      
+      def self.read_error_messages(hash,messages=[])
+        return [ hash.to_s ] unless hash.respond_to?(:each)
+        hash.each do |k,v|
+          messages << v if k=='message' or k=='type'
+          if v.is_a?(Hash)
+            read_error_messages(v,messages) 
+          elsif v.is_a?(Array)
+            v.each do |value|
+              read_error_messages(value,messages) if value.is_a?(Hash)
+            end
+          end
+        end
+        return messages
+      end
+      
     end
   end
 end

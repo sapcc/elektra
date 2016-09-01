@@ -1,7 +1,5 @@
-= render partial: 'tabs', locals: { tab: @visibility }
-= render partial: "image/os_images/#{@visibility}/index_table"
+- current_tab = controller.controller_name
+= render partial: 'tabs', locals: { current_tab: current_tab}
+= render partial: "image/os_images/#{current_tab}/index_table"
 
 = render_paginatable(@images)
-
-/ = link_to_previous_page @images, 'Previous Page', params: { marker: @prev_marker, previous: 'true' }
-/ = link_to_next_page @images, 'Next Page', params: { marker: @next_marker }
