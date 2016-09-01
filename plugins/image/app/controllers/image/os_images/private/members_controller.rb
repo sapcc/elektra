@@ -4,6 +4,7 @@ module Image
       class MembersController < Image::ApplicationController
       
         def index
+          @image = services.image.find_image(params[:private_id])
           @members = services.image.members(params[:private_id])
         end
       

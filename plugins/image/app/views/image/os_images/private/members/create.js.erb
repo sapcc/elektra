@@ -2,7 +2,7 @@
   $('#members .form-wrapper .error').text('<%=@error%>');
 <% else %>  
   $('#members .form-wrapper .error').text('');
-  var html="<%= j(render(partial: 'image/os_images/private/members/item', locals: {member: @member })) %>"
+  var html="<%= j(render(partial: 'image/os_images/private/members/item', locals: {image: @image,member: @member })) %>"
 
 
   if($("table#members tr[data-empty]").length==1) {

@@ -4,7 +4,7 @@
   %td= member.status
 
   %td.snug
-    - if current_user.is_allowed?("image:member_delete", {member: member}) 
+    - if current_user.is_allowed?("image:member_delete", {image: image, member: member.attributes}) 
       - if member.status=='accepted'
         = link_to 'Remove', plugin('image').os_images_private_member_path(private_id: member.image_id, id: member.member_id), method: :delete, data: { confirm: 'The access has been accepted by target project. Are you sure you want to remove this access?', ok: "Yes, remove it", confirmed: :loading_status}, remote: true, class: 'btn btn-danger btn-sm'
       - else

@@ -14,9 +14,9 @@
           %td{ colspa: 5 } No Access given to other projects
       - else
         - @members.each do |member|
-          = render partial: 'item', locals: { member: member }
+          = render partial: 'item', locals: { image:@image, member: member }
       
-      - if current_user.is_allowed?("image:member_create", {image_id: params[:private_id]})
+      - if current_user.is_allowed?("image:member_create", {image: @image.attributes})
         %tr
           %td
             .form-wrapper.hidden

@@ -5,8 +5,8 @@
   "image:image_update": "role:admin or user_id:%(image.user_id)s",
   "image:image_delete": "role:admin-from-image or user_id:%(image.user_id)s",
   
-  "image:member_create": "@",
+  "image:member_create": "project_id:%(image.owner)s",
   "image:member_update": "@",
-  "image:member_delete": "@",
+  "image:member_delete": "project_id:%(image.owner)s",
   "image:member_list": "@"
 }
