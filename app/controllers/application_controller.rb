@@ -39,6 +39,9 @@ module ErrorRenderer
       
       logger.error(@error_id+": "+@title+". "+@description)
       Raven::Rack.capture_exception(error, env) unless map[:sentry]==false
+      @sentry_event_id   = Raven.last_event_id
+      @sentry_public_dsn = URI.parse(ENV['SENTRY_DSN']).tap {|u| u.password=nil}.to_s if ENV['SENTRY_DSN']
+      @sentry_user       = { name: current_user.full_name || current_user.name, email: current_user.email } if current_user
 
       status = error.respond_to?(:status)? error.status: 503
     
