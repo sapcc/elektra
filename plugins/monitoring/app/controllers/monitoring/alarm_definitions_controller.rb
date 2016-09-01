@@ -12,8 +12,8 @@ module Monitoring
       :get_dimensions_for_metric,
       :dimension_row,
       :statistics 
-    ] 
-
+    ]
+    
     def index
       all_alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions_count = all_alarm_definitions.length
@@ -142,7 +142,7 @@ module Monitoring
           data << {key: column, values: values}
         end
       end
-      
+
       render json: data
     end
 
@@ -158,6 +158,7 @@ module Monitoring
       # chain expressions keep it vor later
       # expressions = params['expressions'] || ""
       @step_count = params['step_count'] || 1
+      @after_login = plugin('monitoring').alarm_definitions_path()+'?overlay=create_expression'
       
       # chain expressions keep it vor later
       # split expression into subexpression parts

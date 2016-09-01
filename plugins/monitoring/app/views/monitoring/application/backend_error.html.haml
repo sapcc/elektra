@@ -1,3 +1,4 @@
+-# this is currently not active
 - if modal?
   = content_for :title do
     Backend error
@@ -7,4 +8,3 @@
 
 %div{ class: modal? ? 'modal-body' : '' }
   = render partial: 'error_message'
-

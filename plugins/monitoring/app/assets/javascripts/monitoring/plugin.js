@@ -17,7 +17,7 @@
 //  
 //       
 //= require_tree .  
-  
+
 // This function is visible only inside this file.
 function test() {
   //...  

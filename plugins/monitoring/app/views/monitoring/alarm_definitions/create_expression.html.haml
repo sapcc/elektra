@@ -172,10 +172,15 @@
     if (dimension_data) {
       var dimension_keys = Object.keys(dimension_data);
 
-      $.post( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {cnt: ID, keys: JSON.stringify(dimension_keys)}, 
+      $.get( "#{plugin('monitoring').dimension_row_alarm_definitions_path()}", {
+        cnt: ID, 
+        keys: JSON.stringify(dimension_keys), 
+        do_not_redirect: true
+        
+      }, 
         function( data, status, xhr){ 
         
-          check_logon_state(xhr)
+          check_logon_state(xhr);
           // render row data
           $('#expression_dimensions').append(data);
 
@@ -251,13 +256,11 @@
   }
 
   function check_logon_state(XHR) {
-    //console.log(XHR);
-    var url = XHR.getResponseHeader('Location');
-    //console.log(url)
-    if(url) {
+    if(XHR.getResponseHeader('Location')) {
       // close modal window
       $('#modal-holder').find('.modal').modal('hide');
-      window.location = url;
+      // load logon page
+      window.location = "#{ monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login:@after_login) }";
     }
   }
   
@@ -267,7 +270,10 @@
   }
 
   function get_dimensions(METRIC_NAME) {
-    $.post("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { name: METRIC_NAME },
+    $.get("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
+      name: METRIC_NAME, 
+      do_not_redirect: true 
+    },
       function( data,status,xhr ) { 
 
         check_logon_state(xhr);
@@ -309,12 +315,13 @@
     $('#statistic').empty();
     $('#statistic').html('<text x="10" y="25" font-family="sans-serif" font-size="18px" fill="#31708f"}>loading data...</text>');
 
-    $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
+    $.get( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
       metric: $('#metric').val(),
       dimensions: monitoring.expression_dimensions(),
       period: $('#period_custom').val(),
       threshold: $('#threshold_value').val(),
-      statistical_function: $('#statistical_function').val()
+      statistical_function: $('#statistical_function').val(),
+      do_not_redirect: true
     },function(data,status,xhr) {
       
       check_logon_state(xhr);
@@ -337,6 +344,7 @@
         nv.utils.windowResize(chart.update);
         return chart;
       });
+      
       $('#reload_statistic_btn').removeClass('disabled');
     }).error (function(xhr) {
         show_error(xhr);

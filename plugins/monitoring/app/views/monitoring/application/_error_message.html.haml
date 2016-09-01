@@ -1,3 +1,4 @@
+-# this is currently not active
 - if @description
   %div.alert.alert-error.show-error-details{ onclick: '$("#error_details").toggleClass("hide")', title: "click to show more details" }
     %p=@exception_msg
@@ -7,4 +8,4 @@
   %p.alert.alert-error= @exception_msg
   - if @load_after_auth
     :javascript
-      //window.location = "#{monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: @load_after_auth)}";
+      window.location = "#{monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: @load_after_auth)}";

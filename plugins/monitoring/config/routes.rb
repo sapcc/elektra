@@ -14,9 +14,9 @@ Monitoring::Engine.routes.draw do
     collection do
       get 'search'
       match '/create_expression' => 'alarm_definitions#create_expression' , :via => [:get, :post]
-      post 'dimensions_for_metric' => 'alarm_definitions#get_dimensions_for_metric'
-      post 'dimension_row'
-      post 'statistics'
+      get 'dimensions_for_metric' => 'alarm_definitions#get_dimensions_for_metric'
+      get 'dimension_row'
+      get 'statistics'
       post 'from_expression_wizzard_new'
     end
     member do
