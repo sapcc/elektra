@@ -32,7 +32,7 @@
               -#  Chain Expression
 
             .col-md-1
-              .loading_place.loading-right
+              .loading-place.loading-right
     .col-md-1.reset-btn
       - if modal?
         = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal_transition:true }
