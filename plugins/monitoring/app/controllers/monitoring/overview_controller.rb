@@ -45,10 +45,7 @@ module Monitoring
       
       # all states data
       @states_pie_data = states_cnt_hash.keys.sort.map{|state| 
-        # rename undetermined because it is to long for the chart label
-        state_value = states_cnt_hash[state]
-        state = "UNKNOWN" if state == 'UNDETERMINED'
-        { label: state.capitalize, count: state_value } 
+        { label: state.capitalize, count: states_cnt_hash[state] } 
       }
       
       # only alarm state data

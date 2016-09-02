@@ -291,7 +291,7 @@
         $(Object.keys(dimension_data)).each(function(index,dimension_key) {
           //console.log(dimension_key);
           var unique_values = [];
-          // removed doubled entrys
+          // removed doubled entry
           // http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
           $.each(dimension_data[dimension_key], function(i, value){
               if($.inArray(value, unique_values) === -1) unique_values.push(value);

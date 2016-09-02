@@ -6,18 +6,19 @@ module Monitoring
 
     def index
       @index = 1
-      @state = params[:state] || 'Alarm'
-      @severity = params[:severity] || nil
+      @state    = params[:state] if params[:state] != 'ALL' 
+      @severity = params[:severity] if params[:severity] != 'ALL'
     end
 
     def filter_and_search
 
       @search = params[:search]
       query = {
-        state: params[:state],
-        severity: params[:severity],
         search: @search,
       }.reject { |k,v| v.blank? }
+      
+      query[:state] = params[:state] if params[:state] != 'ALL'
+      query[:severity] = params[:severity] if params[:severity] != 'ALL'
 
       all_alarms = services.monitoring.alarms(query)
       @alarms_count = all_alarms.length
