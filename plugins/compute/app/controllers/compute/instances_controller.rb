@@ -191,6 +191,14 @@ module Compute
       execute_instance_action('resize',params[:server][:flavor_id])
     end
     
+    def new_snapshot
+    end
+    
+    def create_image
+      @close_modal=true
+      execute_instance_action('create_image',params[:snapshot][:name])
+    end
+    
     def confirm_resize
       execute_instance_action
     end 
