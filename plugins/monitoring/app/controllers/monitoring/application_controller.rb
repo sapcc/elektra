@@ -16,31 +16,39 @@ module Monitoring
         description: -> e,_ { 
           exception     = e
           exception_msg = ""
-          description   = ""
+          
+          endpoint      = ""
+          request = exception.request
+          if request 
+            endpoint = " - Involved endpoint: "+request[:scheme]+"://"+request[:host]+request[:path]
+          end
+
           if(exception.class.name == "Excon::Error::ServiceUnavailable")
             # in that case we have no json to parse
-            exception_msg = exception.response.reason_phrase
+            exception_msg = exception.response.reason_phrase+endpoint
           else
+            description   = ""
             begin
               response = JSON.parse(exception.response.body)
               # monasca api error handling
               if response['title'] && response['description']
                 exception_msg = response['title'] || ""
-                description   = response['description'] || ""
+                description   = "Description: "+response['description'] || ""
               else
                 # other
                 reason = response.keys[0] || ""
-                exception_msg = "#{reason.capitalize} - #{response[reason]['message']}"
+                exception_msg = "#{reason.capitalize}"
+                description = "Description: "+response[reason]['message']
               end
-            rescue
+           rescue
               # fallback if everything goes wrong
               exception_msg = "Error - #{exception.message}"
             end
-            
+             
             if description
-              exception_msg+" - "+description 
+              exception_msg+" - "+description+endpoint 
             else 
-              exception_msg
+              exception_msg+endpoint
             end
           end
           }

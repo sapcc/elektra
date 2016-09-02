@@ -94,7 +94,7 @@
         .col-md-12{style: 'padding-left:0px'}
           = label_tag 'statistic', 'Statistic', class: 'control-label'
           = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
-          %svg#statistic{style:"width:100%; height:400px;"}
+          %svg#statistic{style:"width:425px; height:400px;"}
           %span.help-block
             The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
 
@@ -116,8 +116,7 @@
   // we used here a global value because it is used by render_dimension_row that and
   // dimension_data is only generated once
   var dimension_data;
-  var valid_expression = false;
-  
+
   //
   // INIT
   //
@@ -192,6 +191,7 @@
           // set fokus to key field
           $("#dimension_key_"+ID).focus();
           $("#dimension_value_"+ID).prop('readonly',true);
+          // show the complete wizzard on first run
           $('.hide-on-start').fadeIn();
 
           // enable remove button
@@ -324,7 +324,7 @@
   
   function show_statistic() {
 
-    if (!valid_expression) { return };
+    if (!$('#preview').data('valid')) { return };
 
     // cleanup left overs
     // http://stackoverflow.com/questions/22452112/nvd3-clear-svg-before-loading-new-chart
@@ -453,12 +453,12 @@
     if(valid) {
       $('#preview').addClass('expression-preview text-success pull-left');
       $('#create_alarm_definition_btn').removeClass('hide');
-      valid_expression = true;
+      $('#preview').data('valid', true);
     }
     else {
       $('#create_alarm_definition_btn').addClass('hide');
       $('#preview').addClass('expression-preview text-danger pull-left');
-      valid_expression = false;
+      $('#preview').data('valid', false);
     }
   
     // render current expression
