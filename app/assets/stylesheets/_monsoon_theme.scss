@@ -1153,6 +1153,15 @@ table.table-select tbody tr {
 }
 
 tr.deleting, tr.updating {
+  
+  td:first-child {
+    &:before {
+      content: " ";
+      @include spinner(background rgba(0, 0, 0, 0.2));
+      margin-right: 3px;
+    }
+  }
+  
   td {
     color: #999;
     background-color: #efefef;

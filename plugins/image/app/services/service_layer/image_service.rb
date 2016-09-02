@@ -48,5 +48,21 @@ module ServiceLayer
       return false if member.nil?
       driver.map_to(Image::Member).update_image_member(member.image_id,member.member_id,'rejected')
     end
+    
+    def publish_image(id)
+      driver.map_to(Image::Image).update_image_values(id, [ { 
+        op: "replace", 
+        path: "/visibility", 
+        value: "public"
+      }])
+    end
+    
+    def unpublish_image(id)
+      driver.map_to(Image::Image).update_image_values(id, [ { 
+        op: "replace", 
+        path: "/visibility", 
+        value: "private"
+      }])      
+    end
   end
 end

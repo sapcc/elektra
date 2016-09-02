@@ -1,19 +1,6 @@
 module Compute
   module InstancesHelper
-    
-    # def grouped_images(images)
-    #   public_images = []
-    #   private_images = []
-    #   images.each do |image|
-    #     if image.visibility=='public'
-    #       public_images << image
-    #     elsif image.visibility=='private'
-    #       private_images << image
-    #     end
-    #   end
-    #   [ ['Public', public_images], ['Private', private_images] ]
-    # end
-    
+
     def grouped_images(images)
       public_images = {}
       private_images = {}

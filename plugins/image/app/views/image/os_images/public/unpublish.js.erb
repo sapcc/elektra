@@ -1,5 +1,5 @@
 <% if @success %>
-  $("#image_<%=params[:suggested_id]%>").remove();
+  $("#image_<%=params[:public_id]%>").remove();
   
   // Update tab badge
   var badge = $("#image-tab-private").find('.badge');
@@ -12,5 +12,5 @@
   //------------------ 
   
 <% else %>
-  $("#image_<%=params[:suggested_id]%>").removeClass('updating');
+  $("#image_<%=params[:public_id]%>").removeClass('updating');
 <% end %>  

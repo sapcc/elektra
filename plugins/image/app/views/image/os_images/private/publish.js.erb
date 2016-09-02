@@ -1,0 +1,16 @@
+<% if @success %>
+  $("#image_<%=params[:private_id]%>").remove();
+  
+  // Update tab badge
+  var badge = $("#image-tab-public").find('.badge');
+  if (badge.length==0) {
+    $("#image-tab-public").append(' <span class="badge">+<span class="count">1</span></span>');
+  } else {
+    var count = badge.find('.count');
+    count.text(parseInt(count.text())+1);
+  }
+  //------------------ 
+
+<% else %>
+  $("#image_<%=params[:private_id]%>").removeClass('updating');
+<% end %>  

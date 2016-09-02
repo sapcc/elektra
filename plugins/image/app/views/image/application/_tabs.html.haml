@@ -1,4 +1,6 @@
 %ul.nav.nav-tabs
-  - %w(public private suggested).each do |tab|
+  - tabs = %w(public private)
+  - tabs << 'suggested' if current_user.is_allowed?('image:image_suggested')
+  - tabs.each do |tab|
     %li{ role: 'presentation', class: tab==current_tab ? 'active' : '' }
-      = link_to tab.humanize, tab==current_tab ? '#' : plugin('image').send("os_images_#{tab}_index_path")  
+      = link_to tab.humanize, tab==current_tab ? '#' : plugin('image').send("os_images_#{tab}_index_path"), id: "image-tab-#{tab}"  
