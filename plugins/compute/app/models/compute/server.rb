@@ -174,6 +174,12 @@ module Compute
       @driver.resize_server(id, flavor_ref)
       true
     end
+    
+    def create_image(name, metadata = {})
+      requires :id
+      @driver.create_image(id,name, metadata)
+      true
+    end
 
     def revert_resize
       requires :id

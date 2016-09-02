@@ -61,6 +61,9 @@
               - if instance.status=='ACTIVE' or instance.status=='SHUTOFF' 
                 %li= link_to 'Resize', new_size_instance_path(id: instance.id), data: { modal: true} 
                 
+              - if ['ACTIVE', 'SHUTOFF', 'PAUSED', 'SUSPENDED.'].include?(instance.status)
+                %li= link_to 'Create Snapshot', new_snapshot_instance_path(id: instance.id), data: { modal: true} 
+                
               - if instance.status=='VERIFY_RESIZE'
                 %li= link_to 'Confirm Resize', plugin('compute').confirm_resize_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
                 %li= link_to 'Revert Resize', plugin('compute').revert_resize_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
