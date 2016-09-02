@@ -36,6 +36,10 @@ module Image
       def remove_member_from_image(image_id, member_id)
         handle_response{ @fog.remove_member_from_image(image_id, member_id) }
       end
+      
+      def update_image_values(id,json_patch=[])
+        handle_response{@fog.update_image(id,json_patch)}
+      end
 
       ########################### MEMBERS #############################
       def members(id)

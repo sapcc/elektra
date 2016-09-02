@@ -1,12 +1,12 @@
 %tr{id: "image_#{image.id}"}
   %td
-    - if image.owner!=@scoped_project_id
+    - if current_user.is_allowed?('image:image_suggested') and image.owner!=@scoped_project_id
       %i.fa.fa-share.fa-fw
     - if current_user.is_allowed?('image:image_get', {})
       = link_to image.name, plugin('image').send("os_images_private_path", image.id), data: {modal: true, cancel: 'Close'}
     - else
       = image.name  
-    - if image.owner!=@scoped_project_id
+    - if current_user.is_allowed?('image:image_suggested') and image.owner!=@scoped_project_id
       %br
       %span.info-text shared image
         
@@ -23,4 +23,5 @@
         %li= link_to 'Access Control', plugin('image').os_images_private_members_path(private_id: image.id), data: { modal: true }
         - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li= link_to 'Launch Instance', plugin('compute').new_instance_path(image_id: image.id), data: {modal: true}
-        
+        - if current_user.is_allowed?("image:image_publish")
+          %li= link_to 'Publish', plugin('image').os_images_private_publish_path(private_id:image.id), method: :put, remote:true, data: {loading_status: true}

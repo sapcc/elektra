@@ -1,5 +1,9 @@
 module Image
   class OsImages::PublicController < OsImagesController
+    def unpublish
+      @image = services.image.unpublish_image(params[:public_id])
+      @success = @image and @image.visibility=='private'
+    end
     
     protected
     def filter_params
