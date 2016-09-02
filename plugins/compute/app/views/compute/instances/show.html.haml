@@ -94,7 +94,7 @@
         %tbody 
           %tr
             %th Image Name
-            %td= @instance.image_object.name  
+            %td= @instance.image_object.name rescue '-' 
           - @instance.metadata.attributes.each do |k,v| 
             %tr
               %th= k
