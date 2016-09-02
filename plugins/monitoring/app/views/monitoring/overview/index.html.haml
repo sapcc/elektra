@@ -96,7 +96,7 @@
             .attr('width', width)
             .attr('height', height*scale)
             .call(chart);
-  
+        // jump to filtered alarm list
         // http://stackoverflow.com/questions/36571654/nvd3-create-click-event-for-individual-slice-of-a-pie-chart
         chart.pie.dispatch.on("elementClick", function(e) {
           //alert("You've clicked " + e.data.label);

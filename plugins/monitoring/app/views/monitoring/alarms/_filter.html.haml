@@ -57,14 +57,6 @@ Filter by:
     }
   }
 
-  // load the logon page if we got a new location
-  // that happens when the token was invalid
-  function check_logon_state(XHR) {
-    if(XHR.getResponseHeader('Location')) {
-      window.location = "#{ monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: plugin('monitoring').alarms_path()) }";
-    }
-  }
-
   function apply_filter() {
     $('#alarms_search').val('');
     alarm_severity = $('#severity_filter').data('filter') || ''
@@ -72,13 +64,11 @@ Filter by:
     $.ajax({ 
       url: "#{plugin('monitoring').filter_alarms_path()}",
       data: { 
-        severity: alarm_severity.toUpperCase(), 
-        state: alarm_status.toUpperCase(),
+        severity: alarm_severity, 
+        state: alarm_status,
         do_not_redirect: true 
       },
-      beforeSend: function() { $('#loading').show() },
       complete: function(xhr) { 
-        $('#loading').hide() 
         check_logon_state(xhr);
       },
       dataType: 'script'

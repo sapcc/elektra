@@ -32,10 +32,10 @@ monitoring.name = function() {
 $(document).ready(function(){
   // show small loading spinner on active tab during ajax calls 
   $(document).ajaxStart( function() {
-    $('.loading-place').addClass('loading');
+    $('.loading_place').addClass('loading');
   });
   $(document).ajaxStop( function() {
-    $('.loading-place').removeClass('loading');
+    $('.loading_place').removeClass('loading');
   });
 }); 
 

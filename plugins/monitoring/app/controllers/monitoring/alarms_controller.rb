@@ -6,8 +6,9 @@ module Monitoring
 
     def index
       @index = 1
-      @state    = params[:state] if params[:state] != 'ALL' 
-      @severity = params[:severity] if params[:severity] != 'ALL'
+      # to initialy load the filter - apply_filter and filter_and_search
+      @state    = params[:state] if params[:state] 
+      @severity = params[:severity] if params[:severity]
     end
 
     def filter_and_search
@@ -17,8 +18,8 @@ module Monitoring
         search: @search,
       }.reject { |k,v| v.blank? }
       
-      query[:state] = params[:state] if params[:state] != 'ALL'
-      query[:severity] = params[:severity] if params[:severity] != 'ALL'
+      query[:state] = params[:state].upcase if params[:state] and params[:state] != 'All'
+      query[:severity] = params[:severity].upcase if params[:severity] and params[:severity] != 'All'
 
       all_alarms = services.monitoring.alarms(query)
       @alarms_count = all_alarms.length
