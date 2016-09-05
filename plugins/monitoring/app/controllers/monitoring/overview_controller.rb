@@ -5,18 +5,11 @@ module Monitoring
     def index
       all_alarms = services.monitoring.alarms()
       
-      # first count alarms states, severity and alarms ins status ALARM
-      # severity_cnt_hash = Hash.new(0)
-      states_cnt_hash  = Hash.new(0)
-      alarm_cnt_hash   = Hash.new(0)
+      # FIRST: count alarms states, severity and alarms ins status ALARM
+      states_cnt_hash       = Hash.new(0)
+      alarm_cnt_hash        = Hash.new(0)
       undetermined_cnt_hash = Hash.new(0)
 
-      # @severity_cnt = 0;
-      # all_alarms.map{|alarm| alarm.severity }.map{|severity| 
-      #   severity_cnt_hash[severity] += 1 
-      #   @severity_cnt += 1
-      # }
-      
       @states_cnt = 0;
       all_alarms.map{|alarm| alarm.state }.map{|state| 
         states_cnt_hash[state] += 1
@@ -26,6 +19,7 @@ module Monitoring
       @state_alarm_cnt = states_cnt_hash['ALARM']
       @state_undetermined_cnt = states_cnt_hash['UNDETERMINED']
       all_alarms.map{|alarm|
+        # only ALARM and UNDETERMINED are interesting to show OK is't sp important
         if alarm.state == 'ALARM'
           alarm_cnt_hash[alarm.severity] += 1
         elsif alarm.state == 'UNDETERMINED'
@@ -33,8 +27,7 @@ module Monitoring
         end
       }
 
-      # then build pie data
-      # @severity_pie_data    = Array.new
+      # SECOND: build pie data
       @states_pie_data      = Array.new
       @state_alarm_pie_data = Array.new
       
