@@ -5,11 +5,11 @@ Filter by:
     %span.caret
     %span.sr-only Toggle Dropdown
   %ul.dropdown-menu
-    %li= link_to 'Alarm', 'javascript:void(0)', onclick: 'set_filter("Status","Alarm")'
-    %li= link_to 'OK', 'javascript:void(0)', onclick: 'set_filter("Status","OK")'
-    %li= link_to 'Undetermined', 'javascript:void(0)', onclick: 'set_filter("Status","Undetermined")'
+    %li= link_to 'Alarm', 'javascript:void(0)', onclick: 'set_filter("Status","Alarm",true)'
+    %li= link_to 'OK', 'javascript:void(0)', onclick: 'set_filter("Status","OK",true)'
+    %li= link_to 'Undetermined', 'javascript:void(0)', onclick: 'set_filter("Status","Undetermined",true)'
     %li.divider{ role: 'separator' }
-    %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Status","All")'
+    %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Status","All",true)'
 
 .btn-group
   %button.btn.btn-default.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' } }
@@ -17,30 +17,44 @@ Filter by:
     %span.caret
     %span.sr-only Toggle Dropdown
   %ul.dropdown-menu
-    %li= link_to 'Critical', 'javascript:void(0)', onclick: 'set_filter("Severity","Critical")'
-    %li= link_to 'High', 'javascript:void(0)', onclick: 'set_filter("Severity","High")'
-    %li= link_to 'Medium', 'javascript:void(0)', onclick: 'set_filter("Severity","Medium")'
-    %li= link_to 'Low', 'javascript:void(0)', onclick: 'set_filter("Severity","Low")'
+    %li= link_to 'Critical', 'javascript:void(0)', onclick: 'set_filter("Severity","Critical",true)'
+    %li= link_to 'High', 'javascript:void(0)', onclick: 'set_filter("Severity","High",true)'
+    %li= link_to 'Medium', 'javascript:void(0)', onclick: 'set_filter("Severity","Medium",true)'
+    %li= link_to 'Low', 'javascript:void(0)', onclick: 'set_filter("Severity","Low",true)'
     %li.divider{ role: 'separator' }
-    %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","")'
+    %li= link_to 'All', 'javascript:void(0)', onclick: 'set_filter("Severity","All",true)'
 
 :javascript
 
   // set filter on start
   $(function(){ 
-    severity = '#{@severity || ''}'
-    if ( severity != '' ) {
-      set_filter('Severity','#{@severity}');
+    var severity = '#{@severity || ''}';
+    var state = '#{@state || ''}';
+    
+    if (severity != '' && state != '' ) {
+      set_filter('Status',state);
+      set_filter('Severity',severity,true);
+    }
+    else if ( severity != '' ) {
+      set_filter('Status','All');
+      set_filter('Severity',severity,true);
+    }
+    else if ( state != '' ) {
+      set_filter('Severity','All');
+      set_filter('Status',state,true);
     }
     else {
-      set_filter('Status','#{@state}');
+      set_filter('Severity','All');
+      set_filter('Status','All',true);
     }
   });
 
-  function set_filter(TYPE,VALUE) {
+  function set_filter(TYPE,VALUE,APPLY) {
     $("#"+TYPE.toLowerCase()+"_filter").text(TYPE+":"+VALUE);
     $("#"+TYPE.toLowerCase()+"_filter").data('filter',VALUE);
-    apply_filter();
+    if (APPLY) {
+      apply_filter();
+    }
   }
 
   function apply_filter() {
@@ -51,10 +65,12 @@ Filter by:
       url: "#{plugin('monitoring').filter_alarms_path()}",
       data: { 
         severity: alarm_severity, 
-        state: alarm_status.toUpperCase()
+        state: alarm_status,
+        do_not_redirect: true 
       },
-      beforeSend: function() { $('#loading').show() },
-      complete: function() { $('#loading').hide() },
+      complete: function(xhr) { 
+        check_logon_state(xhr);
+      },
       dataType: 'script'
     });
   }
