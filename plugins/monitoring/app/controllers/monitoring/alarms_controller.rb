@@ -12,7 +12,6 @@ module Monitoring
     end
 
     def filter_and_search
-
       @search = params[:search]
       query = {
         search: @search,
