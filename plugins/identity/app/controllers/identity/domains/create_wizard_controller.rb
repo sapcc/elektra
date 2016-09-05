@@ -51,6 +51,9 @@ module Identity
             redirect_to :domain
           end
         else
+          # put cost_params back into @project where the view can find them to re-render the form
+          @project.cost_control = cost_params
+
           flash.now[:error] = @project.errors.full_messages.to_sentence
           render action: :new
         end
