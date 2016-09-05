@@ -51,6 +51,10 @@ module Compute
         }.delete_if { |k, v| v.blank? }
     end
     
+    def security_groups
+      read("security_groups") || []
+    end
+    
     def availability_zone
       read("OS-EXT-AZ:availability_zone")
     end 

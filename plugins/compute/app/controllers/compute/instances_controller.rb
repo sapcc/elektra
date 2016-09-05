@@ -39,6 +39,9 @@ module Compute
       @instance_security_groups = @instance.security_groups.collect do |sg| 
         services.networking.security_groups(tenant_id: @scoped_project_id, name: sg['name']).first
       end
+      
+      p '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+      puts @instance.pretty_attributes
     end
     
     def new
