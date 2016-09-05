@@ -20,7 +20,7 @@ module Monitoring
           endpoint      = ""
           request = exception.request
           if request 
-            endpoint = " - Involved endpoint: "+request[:scheme]+"://"+request[:host]+request[:path]
+            endpoint = " - Involved endpoint url: "+request[:scheme]+"://"+request[:host]+request[:path]
           end
 
           if(exception.class.name == "Excon::Error::ServiceUnavailable")

@@ -15,12 +15,6 @@ module Monitoring
         end
       end
 
-      def handle_api_errors?
-        # to handle the errors withing the plugin (inside the application_controller)
-        # otherwise all errors will be swallowed by the service layer
-        false
-      end
-
       def alarm_definitions
         handle_response do
           @fog.list_alarm_definitions.body["elements"]

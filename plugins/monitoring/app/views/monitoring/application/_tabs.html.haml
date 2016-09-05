@@ -11,7 +11,7 @@
         Alarms (
         %span#count 0
         )
-        %span.loading_place
+        %span.loading-place
   - else 
     %li{role: 'presentation'}
       = link_to "Alarms", plugin('monitoring').send("alarms_path")
@@ -21,7 +21,7 @@
         Alarm Definitions (
         %span#count= count
         )
-        %span.loading_place
+        %span.loading-place
   - else 
     %li{role: 'presentation'}
       = link_to 'Alarm Definitions', plugin('monitoring').send("alarm_definitions_path")
@@ -31,7 +31,7 @@
         Notification Methods (
         %span#count= count
         )
-        %span.loading_place
+        %span.loading-place
   - else 
     %li{role: 'presentation'}
       = link_to 'Notification Methods', plugin('monitoring').send("notification_methods_path")
