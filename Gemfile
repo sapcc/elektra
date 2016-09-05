@@ -90,6 +90,8 @@ group :development do
   # We stick to 2.x until this is fixed:
   # https://github.com/banister/binding_of_caller/issues/59
   gem 'puma', '~> 2.16'
+
+  gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
 end
 
 group :development, :test do
