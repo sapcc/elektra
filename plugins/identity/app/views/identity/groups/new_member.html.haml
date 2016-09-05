@@ -16,7 +16,7 @@
         User name or ID
       .col-sm-6
         .input-wrapper
-          %input{name: "user_name", class: "string required form-control", id: "member_name", data: {find_cached_projects main_app.find_users_by_name_path }}
+          %input{name: "user_name", class: "string required form-control", id: "member_name", data: {autocomplete_url: main_app.find_users_by_name_path }}
         %p.help-block
           %i.fa.fa-info-circle
           You can add users from the same domain as members of this project.    
