@@ -1,17 +1,16 @@
 module KeyManager
 
-  class SecretsController < ::Automation::ApplicationController
+  class SecretsController < ::KeyManager::ApplicationController
     before_action :secret_form_attr, only: [:new, :type_update, :create]
 
     helper :all
 
     def index
-      @secrets = services.key_manager.secrets()
+      secrets()
     end
 
     def show
-      @secret = services.key_manager.secret(params[:id])
-
+      @secret = services.key_manager.secret_with_metadata_payload(params[:id])
       # get the user name from the openstack id
       begin
         @user = service_user.find_user(@secret.creator_id).name
@@ -61,14 +60,25 @@ module KeyManager
     end
 
     def destroy
+      # delete secret
       @secret = services.key_manager.secret(params[:id])
       @secret.destroy
       flash.now[:success] = "Secret #{@secret.name} was successfully removed."
-      @secrets = services.key_manager.secrets()
+      # grap a new list of secrets
+      secrets()
+      # render
       render action: "index"
     end
 
     private
+
+    def secrets
+      page = params[:page]||1
+      per_page = 10
+      offset = (page.to_i - 1) * per_page
+      result = services.key_manager.secrets({sort: 'created:desc', limit: per_page, offset: offset})
+      @secrets = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(page).per(per_page)
+    end
 
     def secret_form_attr
       @types = ::KeyManager::Secret::Type.to_hash
@@ -80,7 +90,16 @@ module KeyManager
     def secrets_params
       unless params['secret'].blank?
         secret = params.clone.fetch('secret', {})
+
+        # remove if blank
         secret.delete_if { |key, value| value.blank? }
+
+        # correct time
+        unless secret.fetch(:expiration, nil).nil?
+          dateTime = DateTime.parse(secret['expiration'])
+          secret[:expiration] = dateTime.strftime("%FT%TZ")
+        end
+
         return secret
       end
       return {}

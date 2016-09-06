@@ -6,15 +6,8 @@
     %h3
       Available Containers
 
-    = form_tag plugin('key_manager').containers_path(), method: :post do
+    .toolbar
+      = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-      .toolbar
-        = button_tag "Save", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
-
-      = render partial: 'table_secrets', locals: {secrets: @secrets}
-
-    -#.toolbar
-    -#  = link_to "New Secret", "#", data: {modal: true}, class: 'btn btn-primary btn-sm'
-    -#
-    -#.js-table-secrets{data: {toggle: 'paginationSpinner'}}
-    -#  = render partial: 'table_secrets', locals: {secrets: @secrets}
+    .js-table-container
+      = render partial: 'table_containers', locals: {containers: @containers}

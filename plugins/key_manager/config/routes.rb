@@ -5,6 +5,6 @@ KeyManager::Engine.routes.draw do
     get 'payload', :on => :collection
   end
 
-  resources :containers, only: [:index, :create]
+  resources :containers, only: [:index, :new, :create, :destroy]
 
 end

@@ -21,7 +21,6 @@ init_date_time_picker= () ->
     autoclose: true
     todayBtn: true
     pickerPosition: "bottom-left"
-    format: "yyyy-mm-ddThh:mm:ssZ"
     container: '.secret_expiration .input-wrapper'
 
 $ ->

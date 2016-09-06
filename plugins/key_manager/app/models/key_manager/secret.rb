@@ -64,88 +64,11 @@ module KeyManager
 
     end
 
-    module FogModelExtensions
-
-      def save
-        begin
-          super
-        rescue => e
-          save_fog_errors(e)
-          false
-        end
-      end
-
-      def update
-        begin
-          super
-        rescue => e
-          save_fog_errors(e)
-          false
-        end
-      end
-
-      def create
-        begin
-          super
-        rescue => e
-          save_fog_errors(e)
-          false
-        end
-      end
-
-      def destroy
-        begin
-          super
-        rescue => e
-          save_fog_errors(e)
-          false
-        end
-      end
-
-      def save_fog_errors(exception)
-        messages = get_api_error_messages(exception)
-        if self.errors.messages[:global].nil?
-          self.errors.messages[:global] = messages
-        else
-          self.errors.messages[:global] += messages
-        end
-      end
-
-      def get_api_error_messages(error)
-        if error.respond_to?(:response_data)
-          return read_error_messages(error.response_data)
-        elsif error.respond_to?(:response) and error.response.body
-          response_data = JSON.parse(error.response.body) rescue error.response.body
-          return read_error_messages(response_data)
-        else
-          [error.message]
-        end
-      end
-
-      def read_error_messages(hash,messages=[])
-        return [ hash.to_s ] unless hash.respond_to?(:each)
-        hash.each do |k,v|
-          messages << v if k=='message' or k=='type' or k=='description'
-          if v.is_a?(Hash)
-            read_error_messages(v,messages)
-          elsif v.is_a?(Array)
-            v.each do |value|
-              read_error_messages(value,messages) if value.is_a?(Hash)
-            end
-          end
-        end
-        return messages
-      end
-
-    end
-
-
-
 
     extend ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Validations
-    prepend FogModelExtensions
+    prepend ::KeyManager::FogModelExtensions
 
     identity :secret_ref
 
@@ -160,12 +83,17 @@ module KeyManager
     end
 
     def self.create_secrets(_secrets=[])
+      total = nil
+      unless _secrets.blank?
+        total = _secrets.response.body.fetch('total', 0)
+      end
+
       secrets = []
       _secrets.each do |_secret|
         secret = Secret.new(_secret.attributes)
         secrets << secret
       end
-      secrets
+      {elements: secrets, total_elements: total}
     end
 
     def payload_link
