@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: a873d7301148a7905cdd8267caf56d795be69678
+  revision: 30b8bf81bb3c1e1e587ca682b8d02ec1b37f064e
   branch: master
   specs:
     fog-openstack (0.1.10)
@@ -82,6 +82,14 @@ PATH
       aasm
       bootstrap-kaminari-views
       kaminari
+
+PATH
+  remote: plugins/key_manager
+  specs:
+    key_manager (0.0.1)
+      activeresource
+      activeresource-response
+      virtus
 
 PATH
   remote: plugins/loadbalancing
@@ -550,6 +558,7 @@ DEPENDENCIES
   inquiry!
   jquery-rails
   jquery-ui-rails
+  key_manager!
   loadbalancing!
   monitoring!
   monsoon-openstack-auth!

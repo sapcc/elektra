@@ -1,0 +1,28 @@
+= content_for :title do
+  New Container
+
+
+= simple_form_for @container, url: plugin('key_manager').containers_path(), method: :post, remote: request.xhr?,  html: {id: 'form_container', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  .modal-body
+    .modal-flashes
+      = render "automation/shared/flashes.html"
+
+    = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
+
+    = f.input :type, label: 'Container Type', required: true, collection: @types.sort.map{|k,v| ["#{k} - #{v}",k]}, selected: @selected_type
+
+    .form-group
+      %label.string.required.col-sm-4.control-label
+        %abbr{title: 'required'} *
+        Secrets
+      .col-sm-8
+        .input-wrapper
+          = render partial: "table_secrets", locals: {secrets: @secrets[:elements]}
+
+  %div{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", plugin('key_manager').containers_path(), class: 'btn btn-default'
+    = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
