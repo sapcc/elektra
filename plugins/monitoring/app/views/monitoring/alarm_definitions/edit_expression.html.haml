@@ -81,11 +81,9 @@
             %span.help-block
               The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
   .buttons{ class: modal? ? 'modal-footer' : '' }
-    - if modal?
-      = button_tag 'Cancel', type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Cancel' }, class: 'btn btn-default'
-    - else
+    - unless modal?
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
-    %button.btn.btn-primaryhide{ type: 'submit', form:'expression_data', id: 'edit_alarm_definition_btn' }
+    %button.btn.btn-primaryhide{ type: 'submit', form:'expression_data', id: 'create_alarm_definition_btn' }
       Save
 
   :javascript
