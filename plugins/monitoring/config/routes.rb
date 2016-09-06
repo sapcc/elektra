@@ -14,6 +14,7 @@ Monitoring::Engine.routes.draw do
     collection do
       get 'search'
       match '/create_expression' => 'alarm_definitions#create_expression' , :via => [:get, :post]
+      get '/edit_expression' => 'alarm_definitions#edit_expression'
       post 'dimensions_for_metric' => 'alarm_definitions#get_dimensions_for_metric'
       post 'dimension_row'
       post 'statistics'

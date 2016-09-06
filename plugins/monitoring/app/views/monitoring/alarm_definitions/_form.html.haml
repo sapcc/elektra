@@ -4,7 +4,9 @@
 = f.input :description
 
 - if edit
-  = f.input :expression, readonly: true
+  = f.input :expression, 
+    readonly: true,
+    icon_hint: "#{link_to 'edit Expression', plugin('monitoring').edit_expression_alarm_definitions_path(expression: expression), class: 'btn btn-primary btn-xs pull-right', data: {modal:true}} Metrics in the expression cannot be changed This is because the metrics is used to create Alarms and Alarms may already have been created"
 - else
   = f.input :expression, 
     icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression. <br><br> <span class='pull-right'>To create a valid expression you can also use a wizard. If you use the wizard please be aware that your filled out data is not saved for later!</span> #{link_to 'use Wizard', plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-primary btn-xs pull-right', data: {modal:true}}"

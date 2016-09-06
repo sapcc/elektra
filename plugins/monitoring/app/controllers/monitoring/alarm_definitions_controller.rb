@@ -11,7 +11,8 @@ module Monitoring
       :create_expression,
       :get_dimensions_for_metric,
       :dimension_row,
-      :statistics 
+      :statistics,
+      :edit_expression
     ]
     
     def index
@@ -152,6 +153,19 @@ module Monitoring
       } 
       
       @alarm_definition.update_attributes(attrs)
+    end
+    
+    def edit_expression
+      @expression = params['expression']
+      # remove all white spaces
+      @expression.gsub!(/\s/,'')
+      # parse expression
+      @statistical_function,@metric,@dimensions,@period,@threshold,@threshold_value = @expression.scan(/(avg|min|max|sum|count|\w+\.?\w+|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
+      @dimensions[0].slice!('}')
+      @dimensions[0].slice!('{')
+      # rebuild expression to check if everything was going right
+      @parsed_expression = @statistical_function[0]+"("+@metric[0]+"{"+@dimensions[0]+"},"+@period[0]+")"+@threshold[0]+@threshold_value[0]
+
     end
     
     def create_expression
