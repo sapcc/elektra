@@ -1,6 +1,15 @@
 module Automation
   module ApplicationHelper
 
+def grouped_chef_versions
+			result = []
+			major_versions = [""]
+			major_versions.concat ::Automation::AvailableChefVersions.get.map {|version| version[/^\d+/]}.uniq
+			result << ["General version", major_versions]
+			result << ["Specific Version", ::Automation::AvailableChefVersions.get]
+			result
+		end
+
     def flash_box(key, value)
       haml_tag :p, {class: "alert alert-#{key.to_s}", role: "alert"} do
         haml_concat value.to_s

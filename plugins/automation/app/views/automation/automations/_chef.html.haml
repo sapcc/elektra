@@ -2,7 +2,6 @@
   %h3 Chef
 
   = f.input :run_list, as: :text, required: false, label: 'Runlist', input_html: { data: {toggle:'tagEditor', tagEditor_type: 'tag', tagEditor_name: 'runlist'} }, placeholder: 'Enter runlist',
-  required: true,
   icon_hint: 'Runlist is an array of strings. See hint for more information.',
   help_hint: t('automation.help_hint.string_array')
 
@@ -15,4 +14,15 @@
       .input-wrapper
         #jsoneditor{data:{mode: "code", content_id: "$('#forms_automation_chef_attributes').val()"}}
 
-  = f.input :log_level, custom_wrapper_html: {class: 'col-sm-5'}, required: false, label: 'Log level', input_html: {}, placeholder: 'Enter log level'
+  = f.input :chef_version, 
+      as: :grouped_select,
+      collection: grouped_chef_versions,
+      label_method:  -> (version) { version.empty? ?  "Latest" : version  },
+      group_method: :last,
+      selected: @automation.chef_version
+  = f.input :log_level,
+      custom_wrapper_html: {class: 'col-sm-5'},
+      required: false,
+      label: 'Log level',
+      input_html: {},
+      placeholder: 'Enter log level'
