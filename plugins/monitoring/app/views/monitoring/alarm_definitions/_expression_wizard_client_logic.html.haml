@@ -29,7 +29,7 @@
       }
     );
     // set typeahead for metrics
-    if( metric_names ) {
+    if( metric_names && wizard_mode == "create" ) {
       $("#metric").typeahead({source:  metric_names, afterSelect: 
         function(){ 
           var metric_name = $('#metric').val();
@@ -38,13 +38,6 @@
         }
       });
     }
-    
-    // initial autofocus
-    setTimeout(function() {
-      $("#metric").focus().select();
-      $('#preview').addClass('expression-preview text-info pull-left');
-      $('#preview').text('please define me');
-    }, 0);
     
     // events
     // delay change event for 1 second
@@ -57,6 +50,19 @@
       generate_expression();
       show_statistic();
     });
+    
+    if (wizard_mode == "edit") {
+      generate_expression();
+      show_statistic();
+    }
+    else if (wizard_mode == "create") {
+      // initial autofocus
+      setTimeout(function() {
+        $("#metric").focus().select();
+        $('#preview').addClass('expression-preview text-info pull-left');
+        $('#preview').text('please define me');
+      }, 0);
+    }
   });
 
   //
@@ -83,7 +89,7 @@
           // set fokus to key field
           $("#dimension_key_"+ID).focus();
           $("#dimension_value_"+ID).prop('readonly',true);
-          // show the complete wizzard on first run
+          // show the complete wizard on first run
           $('.hide-on-start').fadeIn();
 
           // enable remove button
@@ -230,7 +236,12 @@
       .on("click", null);
     d3.select(".nvtooltip").remove();
     
-    $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="217" y="187.5"}>Loading Data.</text>');
+    if (wizard_mode == "create") {
+      $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="217" y="200"}>Loading Data.</text>');
+    }
+    else if (wizard_mode == "edit") {
+      $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="217" y="112.5"}>Loading Data.</text>');
+    }
 
     $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
       metric: $('#metric').val(),
@@ -272,14 +283,14 @@
     
     var valid = true;
     $('.create-expression-error').css('display','none');
-    
+
     // metrics
     var metric = $('#metric').val();
     if(metric == "")valid = false;
     
     // dimensions
     var dimensions = expression_dimensions();
-    
+
     if (dimensions != "") {
       dimensions = "{"+dimensions+"}";
     }
@@ -308,7 +319,7 @@
       $('.period').removeClass('has-error');
       $('.period.help-block').show();
     }
-    
+
     // relational operator
     var relational_operator = $('#threshold_relational_operator').val();
     if(relational_operator == "") valid = false;
@@ -339,7 +350,7 @@
     //    $('#chain_expression_btn').addClass('hide');
     //    $('#create_alarm_definition_btn').removeClass('hide');
     //  }
-  
+
     // colorize expression
     $('#preview').removeClass();
     if(valid) {
@@ -413,23 +424,26 @@
   function expression_dimensions() {
     // dimensions
     var dimensions = "";
-    $('.dimension_key').each(function( ) {
-      if($( this ).text() != '' ) {
-        var defintion_id = $(this).data('id')
-        var key = $( this ).val();
-        
-        var valid_value = $('#dimension_value_'+defintion_id).data('valid');
-        if(valid_value) {
-          var value = $('#dimension_value_'+defintion_id).val();
-          if(key != '' && value != '') {
-            dimensions += key+"="+value+",";
-          }   
+    if (wizard_mode == "edit") {
+      dimensions = $('#dimensions').val();
+    }
+    else if (wizard_mode == "create") {
+      $('.dimension_key').each(function( ) {
+        if($( this ).text() != '' ) {
+          var defintion_id = $(this).data('id')
+          var key = $( this ).val();
+          
+          var valid_value = $('#dimension_value_'+defintion_id).data('valid');
+          if(valid_value) {
+            var value = $('#dimension_value_'+defintion_id).val();
+            if(key != '' && value != '') {
+              dimensions += key+"="+value+",";
+            }   
+          }
         }
-      }
-    });
-    
-    // remove the last comma
-    dimensions = dimensions.slice(0, -1);
-    
+      });
+      // remove the last comma
+      dimensions = dimensions.slice(0, -1);
+    }
     return dimensions;
   }

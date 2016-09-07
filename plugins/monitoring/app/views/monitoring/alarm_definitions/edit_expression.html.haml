@@ -7,7 +7,7 @@
 - if @parsed_expression != @expression
   .modal-body
     %p.alert.alert-error
-      Sorry but I cannot parse the given expression. The parsed result is different to the given expression
+      Sorry! it was not possible to parse the given expression. The parsed result is different to the given expression
       %br
       given:
       %b=@parsed_expression
@@ -29,7 +29,7 @@
   .modal-body
     %p.alert.alert-error.create-expression-error
     .row
-      .col-md-11
+      .col-md-12
         = label_tag 'expression_preview', 'Preview', class:'control-label'
         .panel.panel-default
           .panel-body.panel-expression
@@ -77,7 +77,7 @@
           .col-md-12{style: 'padding-left:0px'}
             = label_tag 'statistic', 'Statistic', class: 'control-label'
             = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
-            %svg#statistic{style:"width:425px; height:400px;"}
+            %svg#statistic{style:"width:425px; height:225px;"}
             %span.help-block
               The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
   .buttons{ class: modal? ? 'modal-footer' : '' }
@@ -88,6 +88,7 @@
 
   :javascript
     var metric_names;
+    var wizard_mode = "edit";
 
   = render partial: 'expression_wizard_client_logic'
 
