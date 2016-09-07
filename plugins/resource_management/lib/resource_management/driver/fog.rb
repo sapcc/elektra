@@ -303,6 +303,47 @@ module ResourceManagement
           ram:       limits['totalRAMUsed']
         }
       end
+
+      ### DNS: DESIGNATE ###################################################################
+
+      def fog_dns_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_dns ||= ::Fog::DNS::OpenStack::V2.new(service_user_auth_params)
+      end
+
+      DNS_RESOURCE_MAP = {
+        'zones'           => :zones,
+        'zone_recordsets' => :recordsets
+      }.freeze
+
+      def set_project_quota_dns(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [DNS_RESOURCE_MAP.invert[k], v] }.to_h
+        # activating admin action
+        quota_values[:all_projects] = true
+        handle_response { fog_dns_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_dns(_domain_id, project_id)
+        quotas = handle_response { fog_dns_connection.get_quota(project_id).body }
+        quotas.map { |k, v| [DNS_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_dns(_domain_id, project_id)
+        # we can't query for metadata only, so at least limit the result set
+        dns_options = { project_id: project_id, limit: 1 }
+
+        # dup workaround for fog internal option modification
+        zones = handle_response { fog_dns_connection.list_zones(dns_options.dup).body['metadata']['total_count'] }
+        # FIXME: this collects the total count of recordsets per project
+        # correct would be: max count of recordsets per zone per project (but too expensive here - wait for ceilometer)
+        recordsets = handle_response { fog_dns_connection.list_recordsets(dns_options.dup).body['metadata']['total_count'] }
+
+        {
+          zones:      zones,
+          recordsets: recordsets
+        }
+      end
     end
   end
 end

@@ -19,3 +19,6 @@ en:
     volumes: Volumes
     snapshots: Snapshots
     capacity: Capacity
+    dns: DNS
+    zones: Zones
+    recordsets: Recordsets per Zone
