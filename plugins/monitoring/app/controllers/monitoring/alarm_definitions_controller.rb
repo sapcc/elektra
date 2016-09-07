@@ -57,6 +57,15 @@ module Monitoring
       render action: 'new_with_expression'
     end
 
+    def from_expression_wizzard_edit
+      expression = params[:expression]
+      if expression 
+        @alarm_definition.expression = expression
+      end
+      @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
+      render action: 'edit_with_expression'
+    end
+
     def create
       @alarm_definition = services.monitoring.new_alarm_definition(params.require(:alarm_definition))
       unless @alarm_definition.save
@@ -156,7 +165,8 @@ module Monitoring
     end
     
     def edit_expression
-      @expression = params['expression']
+      @expression = params.require(:expression)
+      @alarm_definition = params.require(:alarm_definition)
       # remove all white spaces
       @expression.gsub!(/\s/,'')
       # parse expression
@@ -165,7 +175,6 @@ module Monitoring
       @dimensions[0].slice!('{')
       # rebuild expression to check if everything was going right
       @parsed_expression = @statistical_function[0]+"("+@metric[0]+"{"+@dimensions[0]+"},"+@period[0]+")"+@threshold[0]+@threshold_value[0]
-
     end
     
     def create_expression
@@ -216,7 +225,8 @@ module Monitoring
     end
 
     def load_alarm_definition
-      @alarm_definition = services.monitoring.get_alarm_definition(params.require(:id))
+      id = params[:id] || params["id"]
+      @alarm_definition = services.monitoring.get_alarm_definition(id)
       raise ActiveRecord::RecordNotFound, "alarm definition with id #{params[:id]} not found" unless @alarm_definition
     end
 

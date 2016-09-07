@@ -359,11 +359,11 @@
     $('#preview').removeClass();
     if(valid) {
       $('#preview').addClass('expression-preview text-success pull-left');
-      $('#create_alarm_definition_btn').removeClass('hide');
+      $('#alarm_definition_ready_btn').removeClass('hide');
       $('#preview').data('valid', true);
     }
     else {
-      $('#create_alarm_definition_btn').addClass('hide');
+      $('#alarm_definition_ready_btn').addClass('hide');
       $('#preview').addClass('expression-preview text-danger pull-left');
       $('#preview').data('valid', false);
     }

@@ -20,9 +20,11 @@
     - else
       = link_to "Back", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
 - else
-  = form_tag plugin('monitoring').from_expression_wizzard_new_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
+  = form_tag plugin('monitoring').from_expression_wizzard_edit_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
     = hidden_field_tag 'expression'
-    
+    = hidden_field_tag 'id', @alarm_definition
+  
+  -# this is to keep the information to generate the expression in the right way
   = text_field_tag 'metric', @metric, class: 'hide'
   = text_field_tag 'dimensions', @dimensions, class: 'hide'
 
@@ -84,8 +86,8 @@
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - unless modal?
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
-    %button.btn.btn-primaryhide{ type: 'submit', form:'expression_data', id: 'create_alarm_definition_btn' }
-      Save
+    %button.btn.btn-primary.hide{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
+      Next
 
   :javascript
     var metric_names;
