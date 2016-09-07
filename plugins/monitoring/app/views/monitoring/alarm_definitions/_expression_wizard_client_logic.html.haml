@@ -50,6 +50,10 @@
       generate_expression();
       show_statistic();
     });
+
+    $('#threshold_relational_operator').change(function(){
+      generate_expression();
+    });
     
     if (wizard_mode == "edit") {
       generate_expression();

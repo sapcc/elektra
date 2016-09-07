@@ -47,11 +47,8 @@
         .form-group
           = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
           %select#statistical_function.form-control
-            %option{value: 'avg'} avg
-            %option{value: 'min'} min
-            %option{value: 'max'} max
-            %option{value: 'sum'} sum
-            %option{value: 'count'} count
+            - ['avg','min','max','sum','count'].each do |statistical_function|
+              %option{value: statistical_function} #{statistical_function}
         .form-group.period
           = label_tag 'period', 'Period', class: 'control-label'
           .row
@@ -66,11 +63,9 @@
           .row  
             .col-md-4
               = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
-              %select#threshold_relational_operator.form-control{onchange: 'generate_expression();'}
-                %option{value: '<'} <
-                %option{value: '>'} >
-                %option{value: '<='} <=
-                %option{value: '>='} >=
+              %select#threshold_relational_operator.form-control
+                - ['<','>','<=','>='].each do |threshold|
+                  %option{value: threshold} #{threshold}
             .col-md-8
               = label_tag 'threshold_value', 'Value', class: 'control-label'
               = text_field_tag 'threshold_value', 60, class: 'form-control'
