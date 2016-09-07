@@ -119,7 +119,7 @@ module Monitoring
         name: metric, 
         start_time: t.iso8601,
         statistics: statistical_function,
-        dimensions: dimensions,
+        dimensions: dimensions.gsub(/=/,':'),
         period: period,
         merge_metrics: true
       })
