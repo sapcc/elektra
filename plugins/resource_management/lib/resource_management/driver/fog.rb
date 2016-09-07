@@ -330,18 +330,28 @@ module ResourceManagement
       end
 
       def query_project_usage_dns(_domain_id, project_id)
-        # we can't query for metadata only, so at least limit the result set
-        dns_options = { project_id: project_id, limit: 1 }
+        zones_response = handle_response { fog_dns_connection.list_zones(project_id: project_id) }
+        zones_count = zones_response.body['metadata']['total_count']
 
-        # dup workaround for fog internal option modification
-        zones = handle_response { fog_dns_connection.list_zones(dns_options.dup).body['metadata']['total_count'] }
-        # FIXME: this collects the total count of recordsets per project
-        # correct would be: max count of recordsets per zone per project (but too expensive here - wait for ceilometer)
-        recordsets = handle_response { fog_dns_connection.list_recordsets(dns_options.dup).body['metadata']['total_count'] }
+        recordset_counts = [0]
+
+        # max count of recordsets per zone per project
+        # FIXME: very expensive - check the previous version for a simpler solution or use ceilometer
+        zones_response.body['zones'].each do |zone|
+          total_count = fog_dns_connection.list_recordsets(
+            zone_id: zone['id'],
+            project_id: project_id,
+            # don't want the data, just the meta for the count
+            limit: 1
+          ).body['metadata']['total_count']
+          recordset_counts << total_count.to_i
+        end
+
+        # IDEA: do more with the recordset_counts than grabbing the max value
 
         {
-          zones:      zones,
-          recordsets: recordsets
+          zones:      zones_count,
+          recordsets: recordset_counts.max
         }
       end
     end
