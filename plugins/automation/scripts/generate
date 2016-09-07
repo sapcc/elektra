@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
+
+require 'pathname'
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path("../Gemfile",
+  Pathname.new(__FILE__).realpath)
+require 'bundler/setup'
+
 $:.unshift File.join(File.expand_path "../lib", __FILE__)
+
 require 'chef/project_manifest' 
 require 'chef/version'
 project = Chef::ProjectManifest.new('chef', 'stable')
