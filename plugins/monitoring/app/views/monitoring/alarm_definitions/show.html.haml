@@ -72,11 +72,11 @@
     $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="250" y="125"}>Loading Data.</text>');
 
     $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
-      metric: "#{@metric[0]}",
-      dimensions: "#{@dimensions[0]}",
-      period: "#{@period[0]}",
-      threshold: "#{@threshold[0]}",
-      statistical_function: "#{@statistical_function[0]}",
+      metric: "#{@metric}",
+      dimensions: "#{@dimensions}",
+      period: "#{@period}",
+      threshold: "#{@threshold}",
+      statistical_function: "#{@statistical_function}",
       // in case of invalid token we don't want to follow the redirect from the server to the logon page
       // instead we handle that case in check_logon_state()
       do_not_redirect: true

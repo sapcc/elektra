@@ -54,7 +54,6 @@ monitoring.throttle = function(f, delay){
 }
 
 monitoring.render_statistic = function(ID,DATA) {
-
     // cleanup left overs
     // http://stackoverflow.com/questions/22452112/nvd3-clear-svg-before-loading-new-chart
     // http://stackoverflow.com/questions/28560835/issue-with-useinteractiveguideline-in-nvd3-js
@@ -68,6 +67,12 @@ monitoring.render_statistic = function(ID,DATA) {
     d3.select(".nvtooltip").remove();
     
     $('#'+ID).empty();
+    
+    // check that we have a valid data object
+    if(typeof(DATA) != "object") {
+      return;
+    }
+
     nv.addGraph(function() {
       var chart = nv.models.lineChart();
       
