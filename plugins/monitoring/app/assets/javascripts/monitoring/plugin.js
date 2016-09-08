@@ -53,3 +53,124 @@ monitoring.throttle = function(f, delay){
   };
 }
 
+monitoring.render_statistic = function(ID,DATA) {
+    // cleanup left overs
+    // http://stackoverflow.com/questions/22452112/nvd3-clear-svg-before-loading-new-chart
+    // http://stackoverflow.com/questions/28560835/issue-with-useinteractiveguideline-in-nvd3-js
+    // https://github.com/Caged/d3-tip/issues/133
+    d3.selectAll("svg > *").remove();
+    d3.select("#"+ID)
+      .on("mousemove", null)
+      .on("mouseout", null)
+      .on("dblclick", null)
+      .on("click", null);
+    d3.select(".nvtooltip").remove();
+    
+    $('#'+ID).empty();
+    
+    // check that we have a valid data object
+    if(typeof(DATA) != "object") {
+      return;
+    }
+
+    nv.addGraph(function() {
+      var chart = nv.models.lineChart();
+      
+      chart.margin({"left":30,"right":30,"top":5,"bottom":30});
+      chart.useInteractiveGuideline(true);
+      chart.xAxis.tickFormat(function(d) { return d + ' min' });
+
+      d3.select('#'+ID)
+        .datum(DATA)
+        .transition().duration(500)
+        .call(chart)
+        ;
+    
+      nv.utils.windowResize(chart.update);
+      return chart;
+    });
+  }
+
+monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
+
+  var width =  W || 350;
+  var height = W || 350;
+  var scale =  S || 1;
+
+  if (CNT == 0) return;
+
+  // from inner 0,5 (100%) to outer 1.05 (0%)
+  // not used but maybe it is later userfull so I keep it here ;-)
+  /*
+  var multiplicator = 0.45 / CNT;
+  var arcRadius = [];
+  $.each(DATA, function(index, data) {
+    var count = data['count'];
+    var inner =  1-(multiplicator*count)
+    arcRadius.push({inner: inner, outer:1.05});
+  } );
+  */
+  
+  nv.addGraph( function() {
+      var chart = nv.models.pieChart()
+          .x(function(d) { return d.label })
+          .y(function(d) { return d.count })
+          .width(width)
+          .height(height)
+          .showLegend(true)
+          .showLabels(false)
+          .labelsOutside(false)
+			    .labelSunbeamLayout(false)
+          .noData("There is no Data to display")
+          .title(TYPE)
+          .donut(true)
+          .showTooltipPercent(true)
+          //.arcsRadius(arcRadius)
+          .donutRatio(0.5)
+          .margin({"top": 30, "right": 20, "bottom": 20, "left": 20});
+
+      chart.color(function (d, i) {
+        // color scheme is used from _variables.scss
+         switch(d.label) {
+           case "Low":
+              //console.log("Low");
+              //$medium-blue
+              return ["#226ca9"];
+           case "Medium":
+              //console.log("Medium");
+              //$bright-orange
+              return ["#de8a2e"];
+           case "High":
+              //console.log("High");
+              //$deep-orange
+              return ["#b34a2a"];
+           case "Critical":
+              //console.log("Critical");
+              //$alarm-red
+              return ["#e22"];
+           case "Ok":
+              //console.log("OK");
+              //$medium-green
+              return ["#8ab54e"];
+           case "Alarm":
+              //console.log("Alarm");
+              //$alarm-red
+              return ["#e22"];
+           case "Unknown":
+              //console.log("Undetermined");
+              return ["#aaa"];
+         }
+      });
+
+      d3.select("#"+TYPE)
+          .datum(DATA)
+          .transition().duration(1200)
+          .attr('width', width)
+          .attr('height', height*scale)
+          .call(chart);
+
+      return chart;
+  } );
+
+};
+  

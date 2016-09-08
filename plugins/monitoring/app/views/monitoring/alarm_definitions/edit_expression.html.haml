@@ -1,0 +1,95 @@
+= content_for :title do
+  Edit Expression
+
+- unless modal?
+  %h4 Edit Expression 
+
+- if @parsed_expression != @expression
+  .modal-body
+    %p.alert.alert-error
+      Sorry! it was not possible to parse the given expression. The parsed result is different to the given expression
+      %br
+      given:
+      %b=@expression
+      %br
+      parsed:
+      %b=@parsed_expression
+  .buttons{ class: modal? ? 'modal-footer' : '' }
+    - unless modal?
+      = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
+- else
+  = form_tag plugin('monitoring').from_expression_wizzard_edit_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
+    = hidden_field_tag 'expression'
+    = hidden_field_tag 'id', @alarm_definition_id
+  
+  -# this is to keep the information to generate the expression in the right way
+  = text_field_tag 'metric', @metric, class: 'hide'
+  = text_field_tag 'dimensions', @dimensions, class: 'hide'
+
+  .modal-body
+    %p.alert.alert-error.create-expression-error
+    .row
+      .col-md-12
+        = label_tag 'expression_preview', 'Preview', class:'control-label'
+        .panel.panel-default
+          .panel-body.panel-expression
+            .row
+              .col-md-11
+                .expression-preview#preview=@expression
+              .col-md-1
+                .loading-place.loading-right
+    .row
+      .col-md-6
+        .form-group
+          = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
+          %select#statistical_function.form-control
+            - ['avg','min','max','sum','count'].each do |statistical_function|
+              - if @statistical_function == statistical_function
+                %option{value: statistical_function, selected:true} #{statistical_function}
+              - else
+                %option{value: statistical_function} #{statistical_function}
+        .form-group.period
+          = label_tag 'period', 'Period', class: 'control-label'
+          .row
+            .col-md-3
+              = text_field_tag 'period_custom', @period, class: 'form-control'
+            .col-md-9.period-slider
+              -# note: we need the style tag here to render the slide in correct size (css class is not working)
+              = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control', data: {period: @period}
+          %span.help-block.period
+            Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
+        .form-group.threshold
+          .row  
+            .col-md-4
+              = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
+              %select#threshold_relational_operator.form-control
+                - ['<','>','<=','>='].each do |threshold|
+                  - if @threshold == threshold
+                    %option{value: threshold, selected:true} #{threshold}
+                  - else
+                    %option{value: threshold} #{threshold}
+            .col-md-8
+              = label_tag 'threshold_value', 'Value', class: 'control-label'
+              = text_field_tag 'threshold_value', @threshold_value, class: 'form-control'
+          %span.help-block.threshold
+            Threshold values are always in the same units as the metric that they are being compared to.
+      .col-md-6
+        .row
+          .col-md-12{style: 'padding-left:0px'}
+            = label_tag 'statistic', 'Statistic', class: 'control-label'
+            = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
+            %svg#statistic{style:"width:425px; height:225px;"}
+            %span.help-block
+              The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
+  .buttons{ class: modal? ? 'modal-footer' : '' }
+    - unless modal?
+      = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
+    %button.btn.btn-primary.hide{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
+      Next
+
+  :javascript
+    var metric_names;
+    var wizard_mode = "edit";
+
+  = render partial: 'expression_wizard_client_logic'
+

@@ -45,7 +45,7 @@ module Monitoring
               exception_msg = "Error - #{exception.message}"
             end
              
-            if description
+            unless description.empty?
               exception_msg+" - "+description+endpoint 
             else 
               exception_msg+endpoint
