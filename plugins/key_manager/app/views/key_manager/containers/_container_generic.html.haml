@@ -5,5 +5,8 @@
 
   = f.simple_fields_for :secrets, wrapper: :horizontal_form do |secret|
     = secret.input :generic, label: "All secrets", as: :select,
-    collection: @secrets.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, type: #{secret.secret_type}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    collection: @secrets.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, type: #{secret.secret_type}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref, uuid: secret.uuid}.to_json]},
     input_html: { multiple: "multiple", data: {toggle: 'selectMultiple'}}, disabled: @selected_type != ::KeyManager::Container::Type::GENERIC
+
+  %h4 Selected Secrets
+  .js-secrets-naming

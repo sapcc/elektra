@@ -6,17 +6,17 @@
 
   = f.simple_fields_for :secrets, wrapper: :horizontal_form do |secret|
     = secret.input :certificate, label: "Certificate", as: :select,
-    collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: 'certificate', secret_ref: secret.secret_ref}.to_json]},
     icon_hint: 'Expected to be a PEM formatted x509 certificate.', prompt: "Choose a certificate", disabled: @selected_type != ::KeyManager::Container::Type::CERTIFICATE
 
     = secret.input :private_key, label: "Private key", as: :select, required: false,
-    collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: 'private_key', secret_ref: secret.secret_ref}.to_json]},
     prompt: "Choose a private key", disabled: @selected_type != ::KeyManager::Container::Type::CERTIFICATE
 
-    = secret.input :passphrase, label: "Private key passphrase", as: :select, required: false,
-    collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    = secret.input :private_key_passphrase, label: "Private key passphrase", as: :select, required: false,
+    collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: 'private_key_passphrase', secret_ref: secret.secret_ref}.to_json]},
     prompt: "Choose a private key passphrase", disabled: @selected_type != ::KeyManager::Container::Type::CERTIFICATE
 
-    = secret.input :certificates, label: "Intermediates", as: :select, required: false,
-    collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    = secret.input :intermediates, label: "Intermediates", as: :select, required: false,
+    collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: 'intermediates', secret_ref: secret.secret_ref}.to_json]},
     icon_hint: 'Expected to be a PEM formatted PKCS7 certificate chain.', prompt: 'Choose a intermediates', disabled: @selected_type != ::KeyManager::Container::Type::CERTIFICATE

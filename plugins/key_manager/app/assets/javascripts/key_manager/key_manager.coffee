@@ -4,8 +4,11 @@ secret_payload_content_info = '.js-secret-payload-content-info'
 container_type_select = 'select[data-toggle="containerTypeSwitcher"]'
 container_all_secrets = '.js-container-secrets'
 container_secrets = '.js-container-secrets .js-secrets'
+container_secrets_naming = '.js-secrets-naming'
 
 section_spinner = '.key_manager .loading-spinner-section'
+
+secretsTable = null
 
 switch_content_type= (e) ->
   value = $(e.target).val()
@@ -26,6 +29,10 @@ init_date_time_picker= () ->
     todayBtn: true
     pickerPosition: "bottom-left"
     container: '.secret_expiration .input-wrapper'
+
+#
+# Containers
+#
 
 switch_container_type= (e) ->
   value = $(e.target).val()
@@ -59,12 +66,32 @@ secrets_container_disable= (container) ->
   $('select[data-toggle="selectMultiple"]').multiselect('destroy')
   init_select_multiple()
 
+#
+# secrets Multiselect
+#
+
 @init_select_multiple= () ->
   $('select[data-toggle="selectMultiple"]').multiselect({
     buttonWidth: '100%',
-    numberDisplayed: 1
+    numberDisplayed: 1,
+    onChange: (option, checked, select) ->
+      console.log(option.val())
+      update_secrets_table(option, checked)
+
   })
   $( ".btn-group:has(button.multiselect)" ).css("width", "100%")
+  secretsTable = new SecretsTable('.js-secrets-naming', {})
+
+update_secrets_table= (option, checked) ->
+  table_body = $('.js-secrets-naming tbody')
+  obj = jQuery.parseJSON( option.val() )
+
+  secretsTable.updateRow(option, checked)
+
+
+#
+# Inits
+#
 
 
 $ ->

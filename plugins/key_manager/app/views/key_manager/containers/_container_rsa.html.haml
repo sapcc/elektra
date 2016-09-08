@@ -8,7 +8,7 @@
     collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
     prompt: "Choose a private key", disabled: @selected_type != ::KeyManager::Container::Type::RSA
 
-    = secret.input :passphrase, label: "Private key passphrase", as: :select, required: false,
+    = secret.input :private_key_passphrase, label: "Private key passphrase", as: :select, required: false,
     collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
     prompt: "Choose a private key passphrase", disabled: @selected_type != ::KeyManager::Container::Type::RSA
 

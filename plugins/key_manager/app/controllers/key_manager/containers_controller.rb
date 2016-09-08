@@ -73,7 +73,7 @@ module KeyManager
 
     def container_form_attr
       @types = ::KeyManager::Container::Type.to_hash
-      @selected_type = params.fetch('container', {}).fetch('container_type', nil) || params[:container_type] || ::KeyManager::Container::Type::GENERIC
+      @selected_type = params.fetch('container', {}).fetch('type', nil) || params[:container_type] || ::KeyManager::Container::Type::GENERIC
       @container = ::KeyManager::Container.new({})
 
       # get all secrets
@@ -110,9 +110,6 @@ module KeyManager
     end
 
     def container_params
-
-      binding.pry
-
       unless params['container'].blank?
         container = params.clone.fetch('container', {})
 
@@ -120,13 +117,41 @@ module KeyManager
         container.delete_if { |key, value| value.blank? }
 
         # add secrets
-        unless params.fetch('secrets', nil).nil?
-          container['secret_refs'] = []
-          params['secrets'].each do |key, value|
-            secret_value = JSON.parse(value) rescue nil
-            container['secret_refs'] << secret_value unless secret_value.nil?
-          end
+        case container['type']
+          when Container::Type::CERTIFICATE
+            secrets = container.fetch('secrets', {}).fetch(Container::Type::CERTIFICATE, nil)
+            unless secrets.nil?
+              container['secret_refs'] = []
+              secrets.each do |value|
+                secret_value = JSON.parse(value) rescue nil
+                container['secret_refs'] << secret_value unless secret_value.nil?
+              end
+            end
+          when Container::Type::RSA
+            secrets = container.fetch('secrets', {}).fetch(Container::Type::RSA, nil)
+            unless secrets.nil?
+              container['secret_refs'] = []
+              secrets.each do |value|
+                secret_value = JSON.parse(value) rescue nil
+                container['secret_refs'] << secret_value unless secret_value.nil?
+              end
+            end
+          when Container::Type::GENERIC
+            secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, nil)
+            names = params.fetch('secrets_names', {})
+            unless secrets.nil?
+              container['secret_refs'] = []
+              secrets.each do |value|
+                secret_value = JSON.parse(value) rescue nil
+                unless secret_value.nil?
+                  secret_value['name'] = names[secret_value['uuid']]
+                  container['secret_refs'] << secret_value
+                end
+              end
+            end
         end
+
+        binding.pry
 
         return container
       end
