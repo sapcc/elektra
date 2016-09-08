@@ -1,0 +1,13 @@
+= render partial: 'key_manager/shared/nav.html', locals: {pane: 'containers'}
+
+.tab-content
+  .tab-pane.active{role:"tabpanel", id:"containers-pane"}
+
+    %h3
+      Available Containers
+
+    .toolbar
+      = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+    .js-table-container
+      = render partial: 'table_containers', locals: {containers: @containers}

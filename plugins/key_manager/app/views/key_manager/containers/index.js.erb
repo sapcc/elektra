@@ -1,0 +1,8 @@
+$(".flashes").html("<%= escape_javascript( render "automation/shared/dismissible_flashes.html" ) %>");
+
+<% unless @containers.nil? %>
+$(".js-table-container").html("<%= escape_javascript(render partial: 'table_containers', locals: {containers: @containers}) %>");
+<% end %>
+
+// reload the pagination spinner
+$('[data-toggle="paginationSpinner"]').initPaginationSpinner()
