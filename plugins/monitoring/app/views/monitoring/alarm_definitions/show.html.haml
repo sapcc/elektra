@@ -20,7 +20,7 @@
     .col-md-9.details-value= @alarm_definition.expression
   .row
     .col-md-3.details-label 
-      %strong Match by:
+      %strong Filter by:
     .col-md-9.details-value= @alarm_definition.match_by 
   %hr
   .row
@@ -39,6 +39,7 @@
     .col-md-3.details-label 
       %strong Undetermined Actions:
     .col-md-9.details-value= @alarm_definition.undetermined_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',') 
+
 
 .buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?

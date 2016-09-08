@@ -19,11 +19,12 @@
 -# https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#changing-alarm-definitions
 - if edit
   = f.input :match_by, readonly: true,
-      icon_hint: 'Cannot be changed because this field is used to create Alarms and Alarms may already have been created. The only option to change "match by" is to delete the existing Alarm Definition and create a new one.'
+      label: 'Filter by',
+      icon_hint: 'Cannot be changed because this field is used to create Alarms and Alarms may already have been created. The only option to change "filter by" is to delete the existing Alarm Definition and create a new one.'
 - else
   = f.input :match_by,
       label: 'Filter by',
-      icon_hint: 'Comma-separated list of dimensions, A separate alarm will be created for every single dimension value.'
+      icon_hint: 'Comma-separated list of dimensions, A separate alarm will be created for every single dimension.'
 
 .row
   .col-md-8.col-md-offset-3

@@ -46,6 +46,7 @@ module Monitoring
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
     
+    # this is used when the generated expression is transfered to the create alarm definitions view
     def from_expression_wizzard_new
       @head = 'Create Alarm Definition'
       expression = params['expression'] || ''
@@ -58,6 +59,7 @@ module Monitoring
       render action: 'new_with_expression'
     end
 
+    # this is used when the modified expression is transfered to the edit alarm definitions view
     def from_expression_wizzard_edit
       expression = params[:expression]
       if expression 
@@ -105,6 +107,7 @@ module Monitoring
       back_to_alarm_definition_list
     end
 
+    # get statistics for given expression
     def statistics
       metric     = params.require('metric')
       dimensions = params['dimensions'] || ''
@@ -165,6 +168,8 @@ module Monitoring
       @alarm_definition.update_attributes(attrs)
     end
     
+    # edit a predefined expression
+    # it is only allowed to change statistical functions, period and threshold
     def edit_expression
       @expression = params.require(:expression)
       @alarm_definition = params.require(:alarm_definition)
@@ -178,19 +183,21 @@ module Monitoring
       @parsed_expression = @statistical_function[0]+"("+@metric[0]+"{"+@dimensions[0]+"},"+@period[0]+")"+@threshold[0]+@threshold_value[0]
     end
     
+    # create a new expression from scratch
     def create_expression
       # chain expressions keep it vor later
       # expressions = params['expressions'] || ""
       @step_count = params['step_count'] || 1
       @after_login = plugin('monitoring').alarm_definitions_path()+'?overlay=create_expression'
       
-      # chain expressions keep it vor later
+      # TODO: chain expressions keep it vor later
       # split expression into subexpression parts
       # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
-      @metric_names = services.monitoring.get_metric_names
       
+      @metric_names = services.monitoring.get_metric_names
     end
     
+    # used by the wizard to get once all dimensions for given metric name
     def get_dimensions_for_metric
       name = params.require(:name)
       # get all dimensions 120 minutes ago
@@ -206,6 +213,7 @@ module Monitoring
       render json: dimensions
     end
 
+    # used by wizard to render a new dimension row
     def dimension_row
       @cnt = params.require(:cnt).to_i
       @keys = JSON.parse(params.require(:keys));
