@@ -303,6 +303,57 @@ module ResourceManagement
           ram:       limits['totalRAMUsed']
         }
       end
+
+      ### DNS: DESIGNATE ###################################################################
+
+      def fog_dns_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_dns ||= ::Fog::DNS::OpenStack::V2.new(service_user_auth_params)
+      end
+
+      DNS_RESOURCE_MAP = {
+        'zones'           => :zones,
+        'zone_recordsets' => :recordsets
+      }.freeze
+
+      def set_project_quota_dns(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [DNS_RESOURCE_MAP.invert[k], v] }.to_h
+        # activating admin action
+        quota_values[:all_projects] = true
+        handle_response { fog_dns_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_dns(_domain_id, project_id)
+        quotas = handle_response { fog_dns_connection.get_quota(project_id).body }
+        quotas.map { |k, v| [DNS_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_dns(_domain_id, project_id)
+        zones_response = handle_response { fog_dns_connection.list_zones(project_id: project_id) }
+        zones_count = zones_response.body['metadata']['total_count']
+
+        recordset_counts = [0]
+
+        # max count of recordsets per zone per project
+        # FIXME: very expensive - check the previous version for a simpler solution or use ceilometer
+        zones_response.body['zones'].each do |zone|
+          total_count = fog_dns_connection.list_recordsets(
+            zone_id: zone['id'],
+            project_id: project_id,
+            # don't want the data, just the meta for the count
+            limit: 1
+          ).body['metadata']['total_count']
+          recordset_counts << total_count.to_i
+        end
+
+        # IDEA: do more with the recordset_counts than grabbing the max value
+
+        {
+          zones:      zones_count,
+          recordsets: recordset_counts.max
+        }
+      end
     end
   end
 end
