@@ -1,16 +1,17 @@
-%h3 Secrets
-%p An RSA container is used for storing RSA public keys, private keys, and private key pass phrases:
+- classes = ["js-secrets", "js-#{::KeyManager::Container::Type::RSA}", ("hide" unless @selected_type == ::KeyManager::Container::Type::RSA)]
+%div{class: classes}
+  %h3 Secrets
+  %p An RSA container is used for storing RSA public keys, private keys, and private key pass phrases:
 
-= f.simple_fields_for :secrets, wrapper: :horizontal_form do |secret|
+  = f.simple_fields_for :secrets, wrapper: :horizontal_form do |secret|
+    = secret.input :private_key, label: "Private key", as: :select, required: false,
+    collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    prompt: "Choose a private key", disabled: @selected_type != ::KeyManager::Container::Type::RSA
 
-  = secret.input :private_key, label: "Private key", as: :select, required: false,
-  collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
-  prompt: "Choose a private key"
+    = secret.input :passphrase, label: "Private key passphrase", as: :select, required: false,
+    collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    prompt: "Choose a private key passphrase", disabled: @selected_type != ::KeyManager::Container::Type::RSA
 
-  = secret.input :passphrase, label: "Private key passphrase", as: :select, required: false,
-  collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
-  prompt: "Choose a private key passphrase"
-
-  = secret.input :public_key, label: "Public key", as: :select, required: false,
-  collection: @public_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
-  prompt: "Choose a public key"
+    = secret.input :public_key, label: "Public key", as: :select, required: false,
+    collection: @public_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+    prompt: "Choose a public key", disabled: @selected_type != ::KeyManager::Container::Type::RSA

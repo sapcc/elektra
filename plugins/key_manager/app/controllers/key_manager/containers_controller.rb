@@ -73,7 +73,7 @@ module KeyManager
 
     def container_form_attr
       @types = ::KeyManager::Container::Type.to_hash
-      @selected_type = params.fetch('container', {}).fetch('container_type', nil) || params[:container_type] || ::KeyManager::Container::Type::CERTIFICATE
+      @selected_type = params.fetch('container', {}).fetch('container_type', nil) || params[:container_type] || ::KeyManager::Container::Type::GENERIC
       @container = ::KeyManager::Container.new({})
 
       # get all secrets
@@ -110,6 +110,9 @@ module KeyManager
     end
 
     def container_params
+
+      binding.pry
+
       unless params['container'].blank?
         container = params.clone.fetch('container', {})
 

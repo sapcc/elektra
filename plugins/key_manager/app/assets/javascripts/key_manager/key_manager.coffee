@@ -1,8 +1,11 @@
 secret_type_select = 'select[data-toggle="secretTypeSwitcher"]'
 secret_payload_content_info = '.js-secret-payload-content-info'
-section_spinner = '.key_manager .loading-spinner-section'
+
 container_type_select = 'select[data-toggle="containerTypeSwitcher"]'
-container_secrets = '.js-container-secrets'
+container_all_secrets = '.js-container-secrets'
+container_secrets = '.js-container-secrets .js-secrets'
+
+section_spinner = '.key_manager .loading-spinner-section'
 
 switch_content_type= (e) ->
   value = $(e.target).val()
@@ -26,16 +29,35 @@ init_date_time_picker= () ->
 
 switch_container_type= (e) ->
   value = $(e.target).val()
+
   # hide area and add spinner
-  $(container_secrets).addClass('hide')
+  $(container_all_secrets).addClass('hide')
   $(section_spinner).removeClass('hide')
-  $.ajax
-    url: $(e.target).data('update-url'),
-    data: {container_type: value},
-    dataType: 'script'
-    success: ( data, textStatus, jqXHR ) ->
-      $(container_secrets).removeClass('hide')
-      $(section_spinner).addClass('hide')
+
+  $(container_secrets).each ->
+    if $(this).hasClass("js-"+value)
+      secrets_container_enable($(this))
+    else
+      secrets_container_disable($(this))
+
+  setTimeout(->
+    $(container_all_secrets).removeClass('hide')
+    $(section_spinner).addClass('hide')
+  , 500);
+
+secrets_container_enable= (container) ->
+  $(container).removeClass('hide')
+  $(container).find('select').each ->
+   $(this).prop('disabled', false)
+  $('select[data-toggle="selectMultiple"]').multiselect('destroy')
+  init_select_multiple()
+
+secrets_container_disable= (container) ->
+  $(container).addClass('hide')
+  $(container).find('select').each ->
+    $(this).prop('disabled', true)
+  $('select[data-toggle="selectMultiple"]').multiselect('destroy')
+  init_select_multiple()
 
 @init_select_multiple= () ->
   $('select[data-toggle="selectMultiple"]').multiselect({
