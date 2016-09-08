@@ -22,7 +22,7 @@
 - else
   = form_tag plugin('monitoring').from_expression_wizzard_edit_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
     = hidden_field_tag 'expression'
-    = hidden_field_tag 'id', @alarm_definition
+    = hidden_field_tag 'id', @alarm_definition_id
   
   -# this is to keep the information to generate the expression in the right way
   = text_field_tag 'metric', @metric, class: 'hide'
