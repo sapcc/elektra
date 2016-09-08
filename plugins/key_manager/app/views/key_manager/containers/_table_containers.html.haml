@@ -9,7 +9,7 @@
     %tbody
       - if containers.empty?
         %tr
-          %td{colspa: 4} No containers available
+          %td{colspan: 4} No containers available
       - else
         -containers.each do | container |
           = render partial: 'table_containers_item', locals: {container: container}

@@ -10,15 +10,11 @@
 
     = f.input :name, required: true, label: 'Name', input_html: { autofocus: 'autofocus' }, placeholder: 'Enter name'
 
-    = f.input :type, label: 'Container Type', required: true, collection: @types.sort.map{|k,v| ["#{k} - #{v}",k]}, selected: @selected_type
+    = f.input :type, label: 'Container Type', required: true, collection: @types.sort.map{|k,v| [k.capitalize,k]}, selected: @selected_type, input_html: {data: {toggle: 'containerTypeSwitcher', update_url: plugin('key_manager').new_container_path()}}
 
-    .form-group
-      %label.string.required.col-sm-4.control-label
-        %abbr{title: 'required'} *
-        Secrets
-      .col-sm-8
-        .input-wrapper
-          = render partial: "table_secrets", locals: {secrets: @secrets[:elements]}
+    .loading-spinner-section.hide
+    .js-container-secrets
+      = render partial: 'container_select'
 
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?

@@ -9,11 +9,16 @@ module KeyManager
       containers()
     end
 
+    def show
+      @container = services.key_manager.container(params[:id])
+      # get the user name from the openstack id
+      begin
+        @user = service_user.find_user(@container.creator_id).name
+      rescue
+      end
+    end
+
     def new
-      @types = ::KeyManager::Container::Type.to_hash
-      @selected_type = ::KeyManager::Container::Type::GENERIC
-      @secrets = services.key_manager.secrets({sort: 'created:desc', limit: 100})
-      @container = ::KeyManager::Container.new({})
     end
 
     def create
@@ -68,9 +73,40 @@ module KeyManager
 
     def container_form_attr
       @types = ::KeyManager::Container::Type.to_hash
-      @selected_type = ::KeyManager::Container::Type::GENERIC
-      @secrets = services.key_manager.secrets({sort: 'created:desc', limit: 100})
+      @selected_type = params.fetch('container', {}).fetch('container_type', nil) || params[:container_type] || ::KeyManager::Container::Type::CERTIFICATE
       @container = ::KeyManager::Container.new({})
+
+      # get all secrets
+      @secrets = []
+      offset = 0
+      limit = 100
+      begin
+        secrets_chunk = services.key_manager.secrets({sort: 'created:desc', offset: offset, limit: limit})
+        @secrets += secrets_chunk[:elements] unless secrets_chunk[:elements].blank?
+        offset += limit
+      end while offset < secrets_chunk[:total_elements].to_i
+
+      # sort by type
+      @symmetrics = []
+      @public_keys = []
+      @private_keys = []
+      @passphrases = []
+      @certificates = []
+      @secrets.each do |element|
+        case element.secret_type
+          when Secret::Type::SYMMETRIC
+            @symmetrics << element
+          when Secret::Type::PUBLIC
+            @public_keys << element
+          when Secret::Type::PRIVATE
+            @private_keys << element
+          when Secret::Type::PASSPHRASE
+            @passphrases << element
+          when Secret::Type::CERTIFICATE
+            @certificates << element
+          else
+        end
+      end
     end
 
     def container_params

@@ -1,0 +1,8 @@
+= simple_form_for @container, url: plugin('key_manager').containers_path(), method: :post, remote: request.xhr?,  html: {id: 'form_container', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  - case @selected_type
+    - when ::KeyManager::Container::Type::GENERIC
+      = render partial: 'container_generic', locals: {f:f}
+    - when ::KeyManager::Container::Type::CERTIFICATE
+      = render partial: 'container_certificate', locals: {f:f}
+    - when ::KeyManager::Container::Type::RSA
+      = render partial: 'container_rsa', locals: {f:f}

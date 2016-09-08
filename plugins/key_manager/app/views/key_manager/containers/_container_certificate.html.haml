@@ -1,0 +1,49 @@
+%h3 Secrets
+%p A certificate container is used for storing the following secrets that are relevant to certificates: certificate, private_key (optional), private_key_passphrase (optional), intermediates (optional):
+
+= f.simple_fields_for :secrets, wrapper: :horizontal_form do |secret|
+  = secret.input :certificate, label: "Certificate", as: :select,
+  collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+  icon_hint: 'Expected to be a PEM formatted x509 certificate.', prompt: "Choose a certificate"
+
+  = secret.input :private_key, label: "Private key", as: :select, required: false,
+  collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+  prompt: "Choose a private key"
+
+  = secret.input :passphrase, label: "Private key passphrase", as: :select, required: false,
+  collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+  prompt: "Choose a private key passphrase"
+
+  = secret.input :certificates, label: "Intermediates", as: :select, required: false,
+  collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]},
+  icon_hint: 'Expected to be a PEM formatted PKCS7 certificate chain.', prompt: 'Choose a intermediates'
+
+
+
+
+
+
+-#.form-group
+-#  %label.string.required.col-sm-4.control-label
+-#    %abbr{title: "required"} *
+-#    Secrets
+-#  .col-sm-8
+-#    = simple_fields_for :secrets, html: {class: 'col-sm-12' } do |secret|
+-#      = secret.input :certificate, label: false, as: :select, collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]}, icon_hint: 'Required. Expected to be a PEM formatted x509 certificate.', prompt: "Certificate"
+-#      = secret.input :private_keys, label: false, as: :select, collection: @private_keys.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]}, icon_hint: "Optional", prompt: "Private key"
+-#      = secret.input :passphrases, label: false, as: :select, collection: @passphrases.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]}, icon_hint: "Optional", prompt: "Private key passphrase"
+-#      = secret.input :certificates, label: false, as: :select, collection: @certificates.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, status: #{secret.status})", {name: secret.name, secret_ref: secret.secret_ref}.to_json]}, icon_hint: 'Optional. Expected to be a PEM formatted PKCS7 certificate chain.', prompt: 'Intermediates'
+
+-#.form-group
+-#  %label.string.required.col-sm-4.control-label
+-#    Secrets
+-#  .col-sm-8
+-#    %p A certificate container is used for storing the following secrets that are relevant to certificates: certificate, private_key (optional), private_key_passphrase (optional), intermediates (optional)
+-#
+-#    = render partial: "grid_secrets", locals: {secrets: @certificates, title: 'Certificate', subtitle: 'Expected to be a PEM formatted x509 certificate.'}
+-#
+-#    = render partial: "grid_secrets", locals: {secrets: @private_keys, title: 'Private key'}
+-#
+-#    = render partial: "grid_secrets", locals: {secrets: @passphrases, title: 'Private key passphrases'}
+-#
+-#    = render partial: "grid_secrets", locals: {secrets: @certificates, title: 'Intermediates', subtitle: 'Expected to be a PEM formatted PKCS7 certificate chain.'}

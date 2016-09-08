@@ -1,7 +1,6 @@
 %tr
   %td
-    -#= link_to(container.display_name, plugin('key_manager').secret_path(id: secret.uuid), data: {modal: true})
-    = container.name
+    = link_to(container.display_name, plugin('key_manager').container_path(id: container.uuid), data: {modal: true})
   %td
     = container.type
   %td
