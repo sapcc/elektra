@@ -11,7 +11,7 @@
     %tbody
       - if jobs.empty?
         %tr
-          %td{colspa: 6} No jobs available
+          %td{colspan: 6} No jobs available
       - else
         -jobs.each do | job |
           = render partial: 'automation/shared/table_jobs_item', locals: {job: job}
