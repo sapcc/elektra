@@ -53,6 +53,39 @@ monitoring.throttle = function(f, delay){
   };
 }
 
+monitoring.render_statistic = function(ID,DATA) {
+
+    // cleanup left overs
+    // http://stackoverflow.com/questions/22452112/nvd3-clear-svg-before-loading-new-chart
+    // http://stackoverflow.com/questions/28560835/issue-with-useinteractiveguideline-in-nvd3-js
+    // https://github.com/Caged/d3-tip/issues/133
+    d3.selectAll("svg > *").remove();
+    d3.select("#"+ID)
+      .on("mousemove", null)
+      .on("mouseout", null)
+      .on("dblclick", null)
+      .on("click", null);
+    d3.select(".nvtooltip").remove();
+    
+    $('#'+ID).empty();
+    nv.addGraph(function() {
+      var chart = nv.models.lineChart();
+      
+      chart.margin({"left":30,"right":30,"top":5,"bottom":30});
+      chart.useInteractiveGuideline(true);
+      chart.xAxis.tickFormat(function(d) { return d + ' min' });
+
+      d3.select('#'+ID)
+        .datum(DATA)
+        .transition().duration(500)
+        .call(chart)
+        ;
+    
+      nv.utils.windowResize(chart.update);
+      return chart;
+    });
+  }
+
 monitoring.render_overview_pie = function(TYPE,DATA,CNT,W,S) {
 
   var width =  W || 350;

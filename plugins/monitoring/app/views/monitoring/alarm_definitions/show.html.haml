@@ -39,10 +39,20 @@
     .col-md-3.details-label 
       %strong Undetermined Actions:
     .col-md-9.details-value= @alarm_definition.undetermined_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',') 
-
+  %hr
+  .row
+    .col-md-3.details-label 
+      %strong Statistic:
+    .col-md-9.details-label
+      %svg#statistic{style:"width:425px; height:225px;"}
 
 .buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
   - else
-    = link_to "Back", plugin('monitoring').alarm_definitions_path, class: 'btn btn-default'  
+    = link_to "Back", plugin('monitoring').alarm_definitions_path, class: 'btn btn-default'
+    
+:javascript
+  $(function(){
+    monitoring.show_statistic("#{plugin('monitoring').statistics_alarm_definitions_path()}");
+  });
