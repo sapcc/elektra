@@ -1,4 +1,4 @@
-require 'fog/openstack/billing'
+require 'fog/billing/openstack'
 
 module CostControl
   module Driver

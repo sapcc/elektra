@@ -1,9 +1,9 @@
 GIT
   remote: git://localhost/monsoon/fog-openstack-sap-billing.git
-  revision: 45900582c02d8582d4ad07e19dc94a419d46f9de
+  revision: d171dcd2cfddfbb7fd7e1549742832fcc43c5e2f
   branch: master
   specs:
-    fog-openstack-sap-billing (0.0.2)
+    fog-openstack-sap-billing (0.0.5)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       fog-openstack
@@ -58,7 +58,7 @@ PATH
   remote: plugins/cost_control
   specs:
     cost_control (0.0.1)
-      fog-openstack-sap-billing (~> 0.0.2)
+      fog-openstack-sap-billing (~> 0.0.5)
 
 PATH
   remote: plugins/dns_service
