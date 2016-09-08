@@ -33,6 +33,7 @@ module Monitoring
       notification_methods = services.monitoring.notification_methods
       @notification_methods_hash = {}
       notification_methods.each{|notification_method| @notification_methods_hash[notification_method.id] = notification_method }
+      parse_expression(@alarm_definition.expression)
     end
 
     def edit
@@ -172,7 +173,8 @@ module Monitoring
     # it is only allowed to change statistical functions, period and threshold
     def edit_expression
       @expression = params.require(:expression)
-      @alarm_definition = params.require(:alarm_definition)
+      @alarm_definition_id = params.require(:alarm_definition_id)
+      @after_login = plugin('monitoring').alarm_definitions_path();
       parse_expression(@expression)
     end
     
@@ -181,7 +183,7 @@ module Monitoring
       # chain expressions keep it vor later
       # expressions = params['expressions'] || ""
       @step_count = params['step_count'] || 1
-      @after_login = plugin('monitoring').alarm_definitions_path()+'?overlay=create_expression'
+      @after_login = plugin('monitoring').alarm_definitions_path(overlay: 'create_expression')
       
       # TODO: chain expressions keep it vor later
       # split expression into subexpression parts
