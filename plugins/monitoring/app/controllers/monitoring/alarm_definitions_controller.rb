@@ -173,14 +173,7 @@ module Monitoring
     def edit_expression
       @expression = params.require(:expression)
       @alarm_definition = params.require(:alarm_definition)
-      # remove all white spaces
-      @expression.gsub!(/\s/,'')
-      # parse expression
-      @statistical_function,@metric,@dimensions,@period,@threshold,@threshold_value = @expression.scan(/(avg|min|max|sum|count|\w+\.?\w+|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
-      @dimensions[0].slice!('}')
-      @dimensions[0].slice!('{')
-      # rebuild expression to check if everything was going right
-      @parsed_expression = @statistical_function[0]+"("+@metric[0]+"{"+@dimensions[0]+"},"+@period[0]+")"+@threshold[0]+@threshold_value[0]
+      parse_expression(@expression)
     end
     
     # create a new expression from scratch
@@ -222,6 +215,17 @@ module Monitoring
     end
 
     private
+    
+    def parse_expression(expression)
+      # remove all white spaces
+      expression.gsub!(/\s/,'')
+      # parse expression
+      @statistical_function,@metric,@dimensions,@period,@threshold,@threshold_value = expression.scan(/(avg|min|max|sum|count|\w+\.?\w+|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
+      @dimensions[0].slice!('}')
+      @dimensions[0].slice!('{')
+      # rebuild expression to check if everything was going right
+      @parsed_expression = @statistical_function[0]+"("+@metric[0]+"{"+@dimensions[0]+"},"+@period[0]+")"+@threshold[0]+@threshold_value[0]
+    end
 
     def back_to_alarm_definition_list
       respond_to do |format|
