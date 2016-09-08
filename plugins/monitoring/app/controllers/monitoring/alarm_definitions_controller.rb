@@ -36,6 +36,7 @@ module Monitoring
     end
 
     def edit
+      @expression = @alarm_definition.expression
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
 
