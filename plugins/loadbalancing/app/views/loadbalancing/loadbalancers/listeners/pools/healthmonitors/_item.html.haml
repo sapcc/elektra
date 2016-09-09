@@ -1,0 +1,34 @@
+#healthmonitor
+  - if healthmonitor.blank?
+    %table.table.datatable
+      %thead
+      %tbody
+        %tr
+          %td
+            No Healthmonitor defined
+  - else
+    %table.table.datatable
+      %thead
+      %tbody
+        %tr
+          %th Type
+          %td= healthmonitor.type
+        %tr
+          %th Max Retires
+          %td= healthmonitor.max_retries
+        %tr
+          %th Timeout
+          %td= healthmonitor.timeout
+        %tr
+          %th Delays
+          %td= healthmonitor.delay
+        - if healthmonitor.type == 'HTTP'
+          %tr
+            %th HTTP Method
+            %td= healthmonitor.http_method
+          %tr
+            %th URL Path
+            %td= healthmonitor.url_path
+          %tr
+            %th Expected Return Codes
+            %td= healthmonitor.expected_codes

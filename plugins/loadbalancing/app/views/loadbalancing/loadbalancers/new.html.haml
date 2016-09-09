@@ -1,0 +1,32 @@
+= content_for :title do
+  New Load Balancer
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @loadbalancer, url: plugin('loadbalancing').loadbalancers_path, method: :post, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @loadbalancer.errors.empty?
+      %p.alert.alert-error= @loadbalancer.errors.full_messages.to_sentence
+
+    %fieldset
+      = f.input :name, required: true
+      = f.input :description, as: :text
+      = f.input :vip_subnet_id, { label: "Private Network",
+                                wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
+                                as:                 :select,
+                                collection:         @private_networks,
+                                selected:           @loadbalancer.vip_subnet_id,
+                                required:           true,
+                                value_method:       -> (net) { net.subnet_objects.map(&:id).first },
+                                label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" }}
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancers_path(), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Create

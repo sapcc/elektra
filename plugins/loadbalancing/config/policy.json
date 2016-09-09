@@ -1,0 +1,7 @@
+{
+  "loadbalancing:loadbalancer_get": "rule:cloud_admin or rule:admin_required",
+  "loadbalancing:loadbalancer_list": "@",
+  "loadbalancing:loadbalancer_create": "rule:cloud_admin or rule:admin_required",
+  "loadbalancing:loadbalancer_update": "rule:cloud_admin or rule:admin_required",
+  "loadbalancing:loadbalancer_delete": "rule:cloud_admin or rule:admin_required"
+}

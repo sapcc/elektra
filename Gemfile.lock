@@ -23,7 +23,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: a38257830dce1813eb1b42257f1a6081a53c0d06
+  revision: 8ed26f12c236909dd42c641ea3f47fc3ceda6848
   branch: master
   specs:
     fog-openstack (0.1.11)
@@ -595,4 +595,4 @@ DEPENDENCIES
   webconsole!
 
 BUNDLED WITH
-   1.11.2
+   1.12.5

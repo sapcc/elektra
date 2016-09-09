@@ -1,0 +1,7 @@
+%fieldset
+  = f.input :name, required: true
+  = f.input :description
+  = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, required: true
+  = f.input :lb_algorithm, as: :select, collection: Loadbalancing::Pool::ALGORITHMS, required: true
+  = f.input :session_persistence_type, as: :select, collection: Loadbalancing::Pool::SESSION_PERSISTENCE_TYPES
+  = f.input :session_persistence_cookie_name, required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')}

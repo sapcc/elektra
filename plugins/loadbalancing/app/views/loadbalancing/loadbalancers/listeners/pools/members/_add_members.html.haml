@@ -1,0 +1,50 @@
+- members.each do |member|
+  %tr{id: "member_#{member.id}"}
+    %td
+      - if member.address and !member.errors
+        %input{ name: "servers[][address]", value: "#{member.address}", readonly: true }
+      - else
+        %input{ id: 'ip', name: "servers[][address]", value: "#{member.address}", required: true }
+      -if member.errors
+        %p.span.info-text
+          -if member.errors.messages[:api]
+            = member.errors.messages[:api].first
+          -else
+            = member.errors.messages.first
+    %td
+      %input{ type: 'number',  min: 1, max: 65535, name: "servers[][protocol_port]", value: "#{member.protocol_port}", required: true }
+    %td
+      %input{ type: 'number', min: 0, max: 256, name: "servers[][weight]", value: "#{member.weight}", required: true }
+    %td.snug
+      - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {})
+        = button_tag "Delete", { class: 'btn btn-default', onclick: "minus(member_#{member.id})"} do
+          %i.fa.fa-minus
+
+
+=content_for :javascripts do
+  :javascript
+    // reload/update status bars after closing the modal window
+    $(document).ready(function() {
+      $('#newMembers').formValidation({
+        framework: 'bootstrap',
+          icon: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+          },
+          fields: {
+            ip: {
+              validators: {
+                ip: {
+                  message: 'Please enter a valid IP address'
+                }
+              }
+            }
+          }
+      });
+    });
+
+    function minus(id) {
+      $(id).remove();
+    }
+

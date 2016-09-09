@@ -1,0 +1,21 @@
+= content_for :title do
+  Edit Pool
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @pool, url: plugin('loadbalancing').pool_path(id: @pool.id), method: :put, remote: request.xhr?, html: {id: 'pool_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @pool.errors.empty?
+      %p.alert.alert-error= @pool.errors.full_messages.to_sentence
+
+    = render partial: 'form', locals: {f: f}
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_listener_path(), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Save

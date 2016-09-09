@@ -1,0 +1,3 @@
+var html="<%= j(render(partial: 'loadbalancing/loadbalancers/listeners/pools/members/add_members', locals: {members: @new_members})) %>"
+
+$("table#newmembers tbody").append(html);

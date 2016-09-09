@@ -114,8 +114,8 @@ SimpleNavigation::Configuration.run do |navigation|
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/security_groups/?.*}
                     networking_nav.item :loadbalancing,
-                                        'Loadbalancing',
-                                        -> { plugin('loadbalancing').entry_path },
+                                        'Load Balancers',
+                                        -> { plugin('loadbalancing').loadbalancers_path },
                                         if: -> { plugin_available?(:loadbalancing) },
                                         highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
                     networking_nav.item :dns_service,

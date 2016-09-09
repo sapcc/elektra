@@ -1,0 +1,3 @@
+$("#pool").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/listeners/pools/item', locals: {pool: @pool })) %>");
+$("#pool").update();
+MoModal.close();

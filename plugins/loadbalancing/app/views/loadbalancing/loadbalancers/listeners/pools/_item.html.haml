@@ -1,0 +1,32 @@
+#pool
+  - if pool.blank?
+    %table.table.datatable
+      %thead
+      %tbody
+        %tr
+          %td
+            No Pool defined
+  - else
+    %table.table.datatable
+      %thead
+      %tbody
+        %tr
+          %th Name
+          %td= pool.name
+        %tr
+          %th Description
+          %td= pool.description
+        %tr
+          %th Load Balacing Algorithm
+          %td= pool.lb_algorithm
+        %tr
+          %th Protocol
+          %td= pool.protocol
+        - unless pool.session_persistence_type.blank?
+          %tr
+            %th Session Persistence Type
+            %td= pool.session_persistence_type
+          - unless pool.session_persistence_cookie_name.blank?
+            %tr
+              %th Session Persistence Cookie Name
+              %td= pool.session_persistence_cookie_name

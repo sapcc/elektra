@@ -1,0 +1,35 @@
+/ = content_for :title do
+/   Show
+  
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th Name
+        %td= @loadbalancer.name
+      %tr
+        %th Description
+        %td= @loadbalancer.description
+      %tr
+        %th ID
+        %td= @loadbalancer.id
+      %tr
+        %th IP Address
+        %td= @loadbalancer.vip_address
+      %tr
+        %th Provider
+        %td= @loadbalancer.provider
+      %tr
+        %th Operating Status
+        %td= @loadbalancer.operating_status
+      %tr
+        %th Provisioning Status
+        %td= @loadbalancer.provisioning_status
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+    - else
+      = link_to "Close", plugin('block_storage').volumes_url, class: 'btn btn-default'

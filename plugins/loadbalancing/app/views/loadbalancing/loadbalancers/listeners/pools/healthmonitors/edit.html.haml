@@ -1,0 +1,21 @@
+= content_for :title do
+  Edit Healthmonitor
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @healthmonitor, url: plugin('loadbalancing').healthmonitor_path(id: @healthmonitor.id), method: :put, remote: request.xhr?, html: {id: 'healthmonitor_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @healthmonitor.errors.empty?
+      %p.alert.alert-error= @healthmonitor.errors.full_messages.to_sentence
+
+    = render partial: 'form', locals: {f: f, update: true}
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_listener_path(), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Save
