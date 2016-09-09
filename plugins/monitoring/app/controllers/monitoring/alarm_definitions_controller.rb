@@ -219,6 +219,12 @@ module Monitoring
     private
     
     def parse_expression(expression)
+
+      # at the moment period, statistical function and dimensions are optional
+      #  - period is set with 60 seconds, if it is not existing
+      #  - statistical function is set with avg, if it is not existing
+      # metric, threshold and threshold value are required
+      
       # remove all white spaces
       expression.gsub!(/\s/,'')
       # parse expression
