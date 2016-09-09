@@ -5,18 +5,24 @@
 .overview
   .row
     .col-md-4
-      %svg#States
+      %svg#States{style:"width:350px; height:350px;"}
+      %span.help-block.pie-description
+        All existing alarms with there states.
     .col-md-4
-      %svg#Alarm
+      %svg#Alarm{style:"width:350px; height:350px;"}
+      %span.help-block.pie-description
+        All existing alarms with there severity in status alarm.
     .col-md-4
-      %svg#Undetermined
+      %svg#Undetermined{style:"width:350px; height:350px;"}
+      %span.help-block.pie-description
+        All existing alarms with there severity in status undetermined.
 
 :javascript
 
   $(function() {
-    render_overview_pie('States',#{@states_pie_data.to_json},#{@states_cnt},350);
-    render_overview_pie('Alarm',#{@state_alarm_pie_data.to_json},#{@state_alarm_cnt},350);
-    render_overview_pie('Undetermined',#{@state_undetermined_pie_data.to_json},#{@state_undetermined_cnt},350);     
+    render_overview_pie('States',#{@states_pie_data.to_json},#{@states_cnt});
+    render_overview_pie('Alarm',#{@state_alarm_pie_data.to_json},#{@state_alarm_cnt});
+    render_overview_pie('Undetermined',#{@state_undetermined_pie_data.to_json},#{@state_undetermined_cnt});
   });
 
   function render_overview_pie(TYPE,DATA,CNT,W,S) {
@@ -24,8 +30,6 @@
     var width =  W || 350;
     var height = W || 350;
     var scale =  S || 1;
-  
-    if (CNT == 0) return;
   
     // from inner 0,5 (100%) to outer 1.05 (0%)
     // not used but maybe it is later userfull so I keep it here ;-)
@@ -49,7 +53,7 @@
             .showLabels(false)
             .labelsOutside(false)
   			    .labelSunbeamLayout(false)
-            .noData("There is no Data to display")
+            .noData("Everything is fine. No Data to display.")
             .title(TYPE)
             .donut(true)
             .showTooltipPercent(true)

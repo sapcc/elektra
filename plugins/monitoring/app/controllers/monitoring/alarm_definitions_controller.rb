@@ -219,30 +219,78 @@ module Monitoring
     private
     
     def parse_expression(expression)
+
+      # at the moment period, statistical function and dimensions are optional
+      #  - period is set with 60 seconds, if it is not existing
+      #  - statistical function is set with avg, if it is not existing
+      # metric, threshold and threshold value are required
+      
       # remove all white spaces
       expression.gsub!(/\s/,'')
       # parse expression
-      result = expression.scan(/(avg|min|max|sum|count|\w+\.?\w+|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
-      puts '#################'
-      pp result
+      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/)
+
+      dimensions_string           = ""
+      period_string               = ""
+      statistical_function_string = ""
       begin
-        @statistical_function = result[0][0] || 'ERROR'
+        # puts '###################'
+        # pp result
+        # puts '###################'
+        
+        #check existing statistical function
+        if result[0][0] =~ /avg|min|max|sum|count/
+          @statistical_function = result[0][0]
+          statistical_function_string = result[0][0]
+        else
+          # use avg as default value
+          @statistical_function = "avg"
+          # without statistical function we need to take care of the correct order
+          result.insert(0,result[0])
+        end
+        
         @metric               = result[1][0] || 'ERROR'
-        @dimensions           = result[2][0] || 'ERROR'
-        @period               = result[3][0] || 'ERROR'
+
+        # check existing dimensions
+        if result[2][0] =~ /\{.*\}/
+          @dimensions = result[2][0]
+          dimensions_string = result[2][0].clone
+          # for later use we do not need the brackets
+          @dimensions.slice!('}')
+          @dimensions.slice!('{')
+        else 
+          # without dimensions we need to take care of the correct order
+          result.insert(2,result[2])
+        end
+
+        # check existing period
+        if result[3][0] =~ /\A[-+]?[0-9]*\.?[0-9]+\Z/
+          @period = result[3][0]
+          period_string = ","+@period
+        else
+          # use 60 seconds as default value
+          @period = 60
+          # without period we need to take care of the correct order
+          result.insert(3,result[3])
+        end
+        
         @threshold            = result[4][0] || 'ERROR'
         @threshold_value      = result[5][0] || 'ERROR'
         
-        # trim dimensions
-        if @dimensions != 'ERROR'
-          @dimensions.slice!('}')
-          @dimensions.slice!('{')
+        # rebuild the brackets for validity check
+        unless statistical_function_string.empty?
+          statistical_function_string = statistical_function_string+"("
+          if period_string.empty?
+            dimensions_string = dimensions_string+")"
+          else
+            period_string = period_string+")"
+          end
         end
-  
+        
         # rebuild expression to check if everything was going right
-        @parsed_expression = @statistical_function+"("+@metric+"{"+@dimensions+"},"+@period+")"+@threshold+@threshold_value
+        @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
       rescue
-        @parsed_expression = "Cannot parse! Please check the syntax of the expression."
+        @parsed_expression = "Cannot parse! This expression was probably not created with the expression wizard."
       end 
     end
 

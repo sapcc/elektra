@@ -6,17 +6,34 @@
 
 - if @parsed_expression != @expression
   .modal-body
-    %p.alert.alert-error
-      Sorry! it was not possible to parse the given expression. The parsed result is different to the given expression
-      %br
-      given:
-      %b=@expression
-      %br
-      parsed:
-      %b=@parsed_expression
+    = form_tag plugin('monitoring').from_expression_wizzard_edit_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
+      = hidden_field_tag 'id', @alarm_definition_id
+      .form-group.period
+        = label_tag 'expression', 'Expression', class: 'control-label'
+        .row
+          .col-md-12
+            = text_field_tag 'expression', @expression, class: 'form-control'
+            %span.help-block.parse-error{onclick: "$( '.parse-error-details' ).toggle('fast')"}
+              Sorry! it was not possible to parse the given expression. Please do the adjustments by yourself. 
+              = icon 'info-circle'
+              Please be aware that it is not allowed to change Metrics in the expression! This is because the metric 
+              is used to create Alarms and Alarms may already have been created
+              .loading-place.loading-right
+            %span.help-block.parse-error-details
+              The parsed result is different to the given expression. This expression was probably not created with the expression wizard.
+              %br
+              given:
+              %b=@expression
+              %br
+              parsed:
+              %b=@parsed_expression
+              %br
+              %br
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - unless modal?
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
+    %button.btn.btn-primary{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
+      Next
 - else
   = form_tag plugin('monitoring').from_expression_wizzard_edit_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
     = hidden_field_tag 'expression'

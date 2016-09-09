@@ -184,9 +184,15 @@
       // instead we handle that case in check_logon_state()
       do_not_redirect: true 
     },
-      function( data,status,xhr ) { 
+      function( data,status,xhr ) {
 
         check_logon_state(xhr);
+        // check that we have correct data here
+        if (typeof(data) != 'object') {
+          $('.create-expression-error').css('display','block');
+          $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
+          return;
+        }
 
         dimension_data = data; 
         // normalize data
@@ -261,7 +267,7 @@
       monitoring.render_statistic('statistic',data);
       $('#reload_statistic_btn').removeClass('disabled');
     }).error (function(xhr) {
-        show_error(xhr);
+      $('#statistic').empty();
     });
   }
 
@@ -286,7 +292,10 @@
     
     // period
     var period = $('#period_custom').val();
-    if(period == "") valid = false;
+    if(period == "") {
+      valid = false;
+    }
+    
     // validation
     period = Math.floor(period);
     var numberReg =  /^[0-9]+$/;
