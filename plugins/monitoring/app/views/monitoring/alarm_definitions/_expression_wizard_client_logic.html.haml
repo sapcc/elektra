@@ -292,11 +292,10 @@
     
     // period
     var period = $('#period_custom').val();
-    // default value is 60 seconds
     if(period == "") {
-      $('#period_custom').val(60);
-      period = 60;
+      valid = false;
     }
+    
     // validation
     period = Math.floor(period);
     var numberReg =  /^[0-9]+$/;
