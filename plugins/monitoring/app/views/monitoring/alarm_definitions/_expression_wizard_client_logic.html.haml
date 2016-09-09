@@ -185,7 +185,8 @@
       do_not_redirect: true 
     },
       function( data,status,xhr ) {
-      
+
+        check_logon_state(xhr);
         // check that we have correct data here
         if (typeof(data) != 'object') {
           $('.create-expression-error').css('display','block');
@@ -193,7 +194,6 @@
           return;
         }
 
-        check_logon_state(xhr);
         dimension_data = data; 
         // normalize data
         $(Object.keys(dimension_data)).each(function(index,dimension_key) {
