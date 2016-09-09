@@ -1,0 +1,5 @@
+<% if @error %>
+  InfoDialog.showError("<%=@error%>");
+<% else %>
+  $("#flavor_<%=@flavor.id%>").remove();
+<% end %>

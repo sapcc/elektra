@@ -117,6 +117,22 @@ module Compute
           true
         }
       end
+      
+      def create_flavor(attributes)
+        handle_response { @fog.create_flavor(attributes).body['flavor']}
+      end
+      
+      def add_flavor_access_to_tenant(flavor_id,tenant_id)
+        handle_response {@fog.add_flavor_access(flavor_id, tenant_id).body['flavor_access']}
+      end
+      
+      def remove_flavor_access_from_tenant(flavor_id,tenant_id)
+        handle_response{@fog.remove_flavor_access(flavor_id, tenant_id).body['flavor_access']}
+      end
+      
+      def list_flavor_members(flavor_id)
+        handle_response{@fog.list_tenants_with_flavor_access(flavor_id).body['flavor_access']}
+      end
 
       ########################### IMAGES #############################
       def images(filter={})

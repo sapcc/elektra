@@ -1,0 +1,2 @@
+$("#flavor_<%=@flavor.id%>").replaceWith("<%= j(render(partial: 'compute/flavors/item', locals: {flavor: @flavor})) %>");
+MoModal.close();

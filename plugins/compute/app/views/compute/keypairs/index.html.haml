@@ -14,7 +14,7 @@
   %tbody#keypairs_table
     - if @user_keypairs.blank?
       %tr
-        %td(colspan="4")
+        %td{colspan: 3}
           No keypairs available
     - else
       - @user_keypairs.each do |keypair|

@@ -1,7 +1,7 @@
 SimpleNavigation::Configuration.run do |navigation|
   navigation.selected_class = 'active'
   navigation.active_leaf_class = 'nav-active-leaf'
-  navigation.items do |primary|
+  navigation.items do |primary|    
     primary.item  :storage,
                   'Storage',
                   nil,
@@ -47,6 +47,7 @@ SimpleNavigation::Configuration.run do |navigation|
                                   if: -> { current_user.is_allowed?('identity:project_group_list') },
                                   highlights_on: %r{identity/projects/groups/?.*}
     end
+        
 
     primary.dom_attributes = { class: 'fancy-nav', role: 'menu' }
   end

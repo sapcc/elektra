@@ -9,5 +9,9 @@ module Networking
         nil
       end
     end
+    
+    def external_gateway_info
+      read("external_gateway_info") || {}
+    end
   end
 end

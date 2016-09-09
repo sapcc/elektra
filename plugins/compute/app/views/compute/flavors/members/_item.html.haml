@@ -1,0 +1,7 @@
+%tr{id: "member_#{member.tenant_id}"}
+  %td
+    - project_id_and_name(member.tenant_id)
+
+  %td.snug
+    - if current_user.is_allowed?("compute:flavor_access_delete", {member: member.attributes}) 
+      = link_to 'Remove', plugin('compute').flavor_member_path(flavor_id: member.flavor_id, id: member.tenant_id), method: :delete, data: { confirm: 'The access has been accepted by target project. Are you sure you want to remove this access?', ok: "Yes, remove it", confirmed: :loading_status}, remote: true, class: 'btn btn-danger btn-sm'

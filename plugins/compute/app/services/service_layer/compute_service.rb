@@ -52,22 +52,34 @@ module ServiceLayer
       Compute::Image.new(driver,image)        
     end
     
-    def flavors
-      driver.map_to(Compute::Flavor).flavors
+    def new_flavor(params={})
+      Compute::Flavor.new(driver,params)
+    end
+    
+    def flavors(filter={})
+      driver.map_to(Compute::Flavor).flavors(filter)
     end
     
     def flavor(id)
-      return nil if id.blank?
+      driver.map_to(Compute::Flavor).get_flavor(id)
+    end
 
-      flavor = @@flavors[id]
-      unless flavor
-        @@flavors_mutex.synchronize do
-          flavor = @@flavors[id] = driver.get_flavor(id)
-        end
-      end
-      Compute::Flavor.new(driver,flavor)
+    def flavor_members(flavor_id)
+      driver.map_to(Compute::FlavorAccess).list_flavor_members(flavor_id)  
     end
     
+    def new_flavor_access(params={})
+      Compute::FlavorAccess.new(driver,params)
+    end
+         
+    def add_flavor_access_to_tenant(flavor_id,tenant_id)
+      driver.map_to(Compute::FlavorAccess).add_flavor_access_to_tenant(flavor_id, tenant_id)
+    end
+    
+    def remove_flavor_access_from_tenant(flavor_id,tenant_id)
+      driver.remove_flavor_access_from_tenant(flavor_id,tenant_id)
+    end
+      
     def availability_zones
       driver.map_to(Compute::AvailabilityZone).availability_zones
     end
