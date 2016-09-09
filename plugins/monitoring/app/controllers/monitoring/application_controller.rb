@@ -8,9 +8,14 @@ module Monitoring
     rescue_and_render_error_page [ 
       { "Core::ServiceLayer::Errors::ApiError" => { 
         title: 'API Error',
-        description: -> e,_ { e.response_data['title']+" - "+e.response_data['description'] }
+        description: -> e,_ { 
+          if e.response_data 
+            e.response_data['title']+" - "+e.response_data['description']
+          else
+            e
+          end
         }
-      },
+      }},
       { "Excon::Error" => { 
         title: 'API Error', 
         description: -> e,_ { 

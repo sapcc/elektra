@@ -267,7 +267,7 @@
       monitoring.render_statistic('statistic',data);
       $('#reload_statistic_btn').removeClass('disabled');
     }).error (function(xhr) {
-        show_error(xhr);
+      $('#statistic').empty();
     });
   }
 
@@ -292,7 +292,11 @@
     
     // period
     var period = $('#period_custom').val();
-    if(period == "") valid = false;
+    // default value is 60 seconds
+    if(period == "") {
+      $('#period_custom').val(60);
+      period = 60;
+    }
     // validation
     period = Math.floor(period);
     var numberReg =  /^[0-9]+$/;

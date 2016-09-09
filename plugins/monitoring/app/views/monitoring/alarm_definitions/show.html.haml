@@ -82,6 +82,8 @@
       do_not_redirect: true
     },function(data,status,xhr) {
       monitoring.render_statistic('statistic',data);
+    }).error (function(xhr) {
+      $('#statistic').empty();
     });
 
   });
