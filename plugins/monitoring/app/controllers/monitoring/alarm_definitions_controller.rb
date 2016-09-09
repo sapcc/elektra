@@ -222,24 +222,33 @@ module Monitoring
       # remove all white spaces
       expression.gsub!(/\s/,'')
       # parse expression
-      result = expression.scan(/(avg|min|max|sum|count|\w+\.?\w+|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
+      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
 
+      dimensions_value = ""
       begin
+        # puts '###################'
+        # pp result
+        # puts '###################'
         @statistical_function = result[0][0] || 'ERROR'
         @metric               = result[1][0] || 'ERROR'
-        @dimensions           = result[2][0] || 'ERROR'
+
+        # check existing dimensions
+        if result[2][0] and result[2][0] =~ /\{.*\}/
+          @dimensions = result[2][0]
+          # for later use we do not need the brackets
+          dimensions_value = result[2][0].clone
+          @dimensions.slice!('}')
+          @dimensions.slice!('{')
+        else 
+          # without dimensions we need to take care of the correct order
+          result.insert(2,result[2])
+        end
         @period               = result[3][0] || 'ERROR'
         @threshold            = result[4][0] || 'ERROR'
         @threshold_value      = result[5][0] || 'ERROR'
         
-        # trim dimensions
-        if @dimensions != 'ERROR'
-          @dimensions.slice!('}')
-          @dimensions.slice!('{')
-        end
-  
         # rebuild expression to check if everything was going right
-        @parsed_expression = @statistical_function+"("+@metric+"{"+@dimensions+"},"+@period+")"+@threshold+@threshold_value
+        @parsed_expression = @statistical_function+"("+@metric+dimensions_value+","+@period+")"+@threshold+@threshold_value
       rescue
         @parsed_expression = "Cannot parse! Please check the syntax of the expression."
       end 
