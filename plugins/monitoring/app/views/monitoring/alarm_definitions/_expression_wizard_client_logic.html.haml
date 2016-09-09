@@ -184,10 +184,16 @@
       // instead we handle that case in check_logon_state()
       do_not_redirect: true 
     },
-      function( data,status,xhr ) { 
+      function( data,status,xhr ) {
+      
+        // check that we have correct data here
+        if (typeof(data) != 'object') {
+          $('.create-expression-error').css('display','block');
+          $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
+          return;
+        }
 
         check_logon_state(xhr);
-
         dimension_data = data; 
         // normalize data
         $(Object.keys(dimension_data)).each(function(index,dimension_key) {

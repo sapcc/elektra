@@ -223,8 +223,7 @@ module Monitoring
       expression.gsub!(/\s/,'')
       # parse expression
       result = expression.scan(/(avg|min|max|sum|count|\w+\.?\w+|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
-      puts '#################'
-      pp result
+
       begin
         @statistical_function = result[0][0] || 'ERROR'
         @metric               = result[1][0] || 'ERROR'
