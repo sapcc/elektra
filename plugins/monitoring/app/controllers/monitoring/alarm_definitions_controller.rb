@@ -222,7 +222,7 @@ module Monitoring
       # remove all white spaces
       expression.gsub!(/\s/,'')
       # parse expression
-      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<|<=|>|>=|\d*\.?\d+)/)
+      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/)
 
       dimensions_value = ""
       begin
