@@ -84,13 +84,13 @@ module ServiceLayer
     #
 
     def automation_service
-      Automation::Automation.site = ::File.join(ENV.fetch("LYRA_ENDPOINT", "") { automation_service_endpoint }, 'api/v1')
+      Automation::Automation.site = ::File.join(ENV.fetch("LYRA_ENDPOINT") { automation_service_endpoint }, 'api/v1')
       Automation::Automation.token = self.token
       Automation::Automation
     end
 
     def automation_run_service
-      Automation::Run.site = ::File.join(ENV.fetch("LYRA_ENDPOINT", "") { automation_service_endpoint }, 'api/v1')
+      Automation::Run.site = ::File.join(ENV.fetch("LYRA_ENDPOINT") { automation_service_endpoint }, 'api/v1')
       Automation::Run.token = self.token
       Automation::Run
     end
