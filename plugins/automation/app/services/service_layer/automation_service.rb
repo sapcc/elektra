@@ -2,6 +2,13 @@ module ServiceLayer
 
   class ServiceNotAvailable < StandardError; end
 
+  class AutomationApiError < StandardError;
+    attr_reader :data
+    def initialize(data)
+      @data = data
+    end
+  end
+
   class AutomationService < Core::ServiceLayer::Service
     attr_reader :client
 
@@ -22,7 +29,7 @@ module ServiceLayer
     end
 
     #
-    # Nodes (Agents)
+    # Nodes (Agents, RubyArcClient)
     #
 
     def client
@@ -57,7 +64,7 @@ module ServiceLayer
     end
 
     #
-    # Jobs
+    # Jobs (RubyArcClient)
     #
 
     def jobs(node_id = "", page=0, per_page=0)
@@ -73,7 +80,7 @@ module ServiceLayer
     end
 
     #
-    # Automations
+    # Automations (ActiveResource)
     #
 
     def automation_service
@@ -90,22 +97,32 @@ module ServiceLayer
 
     def automations(page=0, per_page=0)
       automation_service.find(:all, :params => { page: page, per_page: per_page })
+    rescue => e
+      raise AutomationApiError.new(e.response)
     end
 
     def automation(automation_id)
-        automation_service.find(automation_id)
+      automation_service.find(automation_id)
+    rescue => e
+      raise AutomationApiError.new(e.response)
     end
 
     def automation_runs(page=0, per_page=0)
       automation_run_service.find(:all, :params => { page: page, per_page: per_page })
+    rescue => e
+      raise AutomationApiError.new(e.response)
     end
 
     def automation_run(run_id)
       automation_run_service.find(run_id)
+    rescue => e
+      raise AutomationApiError.new(e.response)
     end
 
     def automation_execute(automation_id, selector)
       automation_run_service.new(automation_id: automation_id, selector: selector)
+    rescue => e
+      raise AutomationApiError.new(e.response)
     end
 
   end

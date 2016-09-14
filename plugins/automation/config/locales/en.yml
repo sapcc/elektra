@@ -4,3 +4,12 @@ en:
       key_value_pairs: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
       string_array: "Array of strings are separated by ','. Start a new entry by hitting the Enter key or ','. You can also copy and paste a string containing strings following this pattern: 'value1,value2...'"
       json: "JSON Schema defines seven primitive types for JSON values: array, boolean, integer, number, null, object and string. Example: {'title':'root'}"
+    messages:
+      automation_removed_successfully: "Automation #{name} removed successfully."
+    errors:
+      automation_not_found: "Automation not found."
+      automation_creation_error: "Error creating automation."
+      automation_type_unknown: "Automation type unknown."
+      automation_type_manipulated: "Automation type can't be changed."
+      automation_update_error: "Error updating automation."
+      automation_remove_error: "Error removing automation."

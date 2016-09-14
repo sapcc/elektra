@@ -4,8 +4,8 @@ module Automation
     before_action :automation, only: [:show, :edit]
 
     PER_PAGE = 10
-    AUTOMATION_TYPE_UNKNOWN = "Automation type unknown"
-    AUTOMATION_TYPE_MANIPULATED = "Automation type can't be changed"
+    AUTOMATION_TYPE_UNKNOWN = I18n.t('automation.errors.automation_type_unknown')
+    AUTOMATION_TYPE_MANIPULATED = I18n.t('automation.errors.automation_type_manipulated')
 
     def index
       if request.xhr?
@@ -51,7 +51,7 @@ module Automation
       end
     rescue Exception => e
       Rails.logger.error e
-      flash.now[:error] = "Error creating automation"
+      flash.now[:error] = I18n.t("automation.errors.automation_creation_error")
       render action: "new"
     end
 
@@ -87,7 +87,7 @@ module Automation
       end
     rescue Exception => e
       Rails.logger.error e.message
-      flash[:error] = "Error updating automation."
+      flash[:error] = I18n.t('automation.errors.automation_update_error')
       render action: "edit"
     end
 
@@ -96,11 +96,11 @@ module Automation
       automation.destroy
       automations(1)
       runs_with_jobs(1)
-      flash.now[:success] = "Automation #{automation.name} removed successfully."
+      flash.now[:success] = I18n.t("automation.messages.automation_removed_successfully", name: automation.name)
       render action: "index"
     rescue Exception => e
       Rails.logger.error e.message
-      flash.now[:error] = "Error removing automation."
+      flash.now[:error] = I18n.t('automation.errors.automation_remove_error')
       automations(1)
       runs_with_jobs(1)
       render action: "index"

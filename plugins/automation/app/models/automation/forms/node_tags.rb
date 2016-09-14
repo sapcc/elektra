@@ -37,7 +37,7 @@ module Automation
     def update_tags(service_automation)
       # get the original tags to compare
       node = service_automation.node(self.agent_id)
-      old_tags = node.tags
+      old_tags = node.tags || {}
 
       # transform the given tags
       new_tags = JSON.parse(string_to_json(self.tags))
