@@ -84,6 +84,9 @@ module Automation
     rescue Exception => e
       Rails.logger.error e
       flash.now[:error] = "Error updating node."
+      # get the original node tags
+      @node = services.automation.node(@node_form.agent_id, ['all'])
+      @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
     end
 
     def run_automation
