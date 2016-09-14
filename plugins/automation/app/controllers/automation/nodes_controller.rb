@@ -28,7 +28,7 @@ module Automation
       rescue => exception
         logger.error exception.message
         @compute_instances = []
-        @errors = [{key: "danger", message: "Compute API unavailable. You can add external instances only."}]
+        @errors = [{key: "danger", message: I18n.t('automation.errors.node_install_compute_unavailable')}]
       end
     end
 
@@ -64,7 +64,7 @@ module Automation
         @messages = ['error' => exception.message]
       end
       logger.error "Automation-plugin: show_instructions: #{exception.message}"
-      return @errors = [{key: "danger", message: "Internal Server Error. Something went wrong while processing your request"}]
+      return @errors = [{key: "danger", message: I18n.t('automation.errors.node_install_show_instructions_error')}]
     end
 
     def update
@@ -73,17 +73,18 @@ module Automation
 
       # validate and update
       if @node_form.update(services.automation)
-        flash.now[:success] = "Node was successfully updated."
+        flash.now[:success] = I18n.t('automation.messages.node_updated_succesfully')
       else
         @error = true
       end
 
-      # get the original node tags
+      # get the updated node tags data
       @node = services.automation.node(@node_form.agent_id, ['all'])
       @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
-    rescue Exception => e
-      Rails.logger.error e
-      flash.now[:error] = "Error updating node."
+    rescue => exception
+      Rails.logger.error exception.message
+      flash.now[:error] = I18n.t('automation.errors.node_update_error')
+
       # get the original node tags
       @node = services.automation.node(@node_form.agent_id, ['all'])
       @node_form_read = ::Automation::Forms::NodeTags.new(@node.attributes_to_form)
@@ -97,19 +98,19 @@ module Automation
       if run.save
         flash.now[:success] = "Automation #{automation_name} was successfully executed. Click following #{view_context.link_to('link', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe} to see the details."
       else
-        flash.now[:error] = "Error executing automation #{automation_name}. #{run.errors}"
+        flash.now[:error] = I18n.t('automation.errors.node_executing_automation_error', name: automation_name, errors: run.errors)
       end
     rescue => exception
       logger.error "Automation-plugin: run_automation: #{exception.message}"
-      flash.now[:error] = "Error executing automation '#{automation_name}'. Please try later"
+      flash.now[:error] = I18n.t('automation.errors.node_executing_automation_error', name: automation_name)
     end
 
     def destroy
       node_id = params[:id]
       node = begin
         services.automation.node(node_id, ['all'])
-      rescue Exception => e
-        Rails.logger.error e
+      rescue => exception
+        Rails.logger.error exception.message
         nil
       end
       name = node.nil? ? node_id : node.name

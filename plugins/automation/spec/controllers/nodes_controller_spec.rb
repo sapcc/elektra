@@ -143,6 +143,15 @@ describe Automation::NodesController, type: :controller do
       expect(response).to render_template(:update)
     end
 
+    it "renders the page correcty when an exception happens" do
+      allow_any_instance_of(Automation::Forms::NodeTags).to receive(:update).and_raise("boom update")
+      xhr :put, :update, default_params.merge({id: "node_id"})
+      expect(assigns(:node)).to be_truthy
+      expect(assigns(:node_form_read)).to be_truthy
+      expect(assigns(:node_form)).to be_truthy
+      # expect(assigns(:errors)).to be_truthy
+    end
+
   end
 
   describe "GET xhr run_automation" do

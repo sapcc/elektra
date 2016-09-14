@@ -6,6 +6,7 @@ en:
       json: "JSON Schema defines seven primitive types for JSON values: array, boolean, integer, number, null, object and string. Example: {'title':'root'}"
     messages:
       automation_removed_successfully: "Automation #{name} removed successfully."
+      node_updated_succesfully: "Node was successfully updated."
     errors:
       automation_not_found: "Automation not found."
       automation_creation_error: "Error creating automation."
@@ -13,3 +14,8 @@ en:
       automation_type_manipulated: "Automation type can't be changed."
       automation_update_error: "Error updating automation."
       automation_remove_error: "Error removing automation."
+      node_install_compute_unavailable: "Compute API unavailable. You can add external instances only."
+      node_install_show_instructions_error: "Internal Server Error. Something went wrong while processing your request"
+      node_update_error: "Error updating node."
+      node_executing_automation_error: "Error executing automation '#{name}'. Please try later"
+      node_executing_automation_error_save: "Error executing automation #{name}. #{errors}"
