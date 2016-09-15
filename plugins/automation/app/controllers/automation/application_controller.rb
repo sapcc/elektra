@@ -7,8 +7,7 @@ module Automation
           header_title: "Monsoon Automation", 
           details: -> e, c { e.json_hash.empty? ? e.inspect : e.json_hash},
           description: :title,
-          title: :status, 
-          error_id: :id
+          title: :status
         }
       },
       {

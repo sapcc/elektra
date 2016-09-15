@@ -36,7 +36,7 @@ class ErrorsController < ActionController::Base
       key         = @exception.class.name.underscore
       name        = @exception.class.name
       message     = @exception.message
-      token       = env['action_dispatch.request_id'] || "n/a"
+      token       = Raven.last_event_id || request.uuid || "n/a"
       description = "There are no further details available. Good luck!"
 
       I18n.with_options scope: [:exception, :show, @rescue_response], name: name, message: message, token: token do |i18n|
