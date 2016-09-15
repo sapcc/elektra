@@ -8,6 +8,8 @@ container_secrets_naming = '.js-secrets-naming'
 
 section_spinner = '.key_manager .loading-spinner-section'
 
+orig_select = 'select[data-toggle="selectMultiple"]'
+multiselect = '.js-generic .multiselect-native-select'
 secretsTable = null
 
 switch_content_type= (e) ->
@@ -56,14 +58,14 @@ secrets_container_enable= (container) ->
   $(container).removeClass('hide')
   $(container).find('select').each ->
    $(this).prop('disabled', false)
-  $('select[data-toggle="selectMultiple"]').multiselect('destroy')
+  $(orig_select).multiselect('destroy')
   init_select_multiple()
 
 secrets_container_disable= (container) ->
   $(container).addClass('hide')
   $(container).find('select').each ->
     $(this).prop('disabled', true)
-  $('select[data-toggle="selectMultiple"]').multiselect('destroy')
+  $(orig_select).multiselect('destroy')
   init_select_multiple()
 
 #
@@ -72,16 +74,53 @@ secrets_container_disable= (container) ->
 
 @init_select_multiple= () ->
   # init secret_table obj
-  secretsTable = new SecretsTable('.js-secrets-naming', {})
+  secretsTable = new SecretsTable('.js-secrets-naming', {
+    onRemoveRow: (row_id) ->
+      update_multiselect_option(row_id, false)
+  })
+
   # init multiselect
-  $('select[data-toggle="selectMultiple"]').multiselect({
+  $(orig_select).multiselect({
     buttonWidth: '100%',
     numberDisplayed: 0,
-    onChange: (option, checked, select) ->
-      secretsTable.updateRow(option, checked)
+    buttonText: (options, select) ->
+      return "Select secrets"
+    onInitialized: (select, container) ->
+      add_secret()
+
   })
   # fix the width of the multiselect
   $( ".btn-group:has(button.multiselect)" ).css("width", "100%")
+  return
+
+update_multiselect_option= (option_val, disabled) ->
+  input = $(multiselect + ' input[value="' + option_val + '"]')
+  input.prop('checked', false)
+  input.parents('li').removeClass 'active'
+  if disabled
+    input.prop 'disabled', true
+    input.parents('li').addClass 'disabled hidden'
+  else
+    input.prop 'disabled', false
+    input.parents('li').removeClass 'disabled'
+    input.parents('li').removeClass 'hidden'
+
+add_secret= (names) ->
+ $(multiselect).find('input').each ->
+   if $(this).is(":checked") && !$(this).prop('disabled')
+     value = $(this).val()
+     option = $(orig_select).find("option[value='"+ value + "']")
+     # update table
+
+     console.log(names)
+
+     if names != undefined
+       secretsTable.updateRow(option, true, "test")
+     else
+       secretsTable.updateRow(option, true)
+     # hide selected options
+     update_multiselect_option(value, true)
+
 
 #
 # Inits
@@ -102,3 +141,7 @@ $ ->
   # init select multiple
   $(document).on('modal:contentUpdated', init_select_multiple)
   init_select_multiple()
+
+  # init add secrets button
+  $(document).on 'click', ".js-add-generic-secrets", ->
+    add_secret()

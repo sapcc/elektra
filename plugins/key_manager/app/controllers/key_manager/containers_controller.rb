@@ -75,6 +75,7 @@ module KeyManager
       @types = ::KeyManager::Container::Type.to_hash
       @selected_type = params.fetch('container', {}).fetch('type', nil) || params[:container_type] || ::KeyManager::Container::Type::GENERIC
       @container = ::KeyManager::Container.new({})
+      @selected_secrets = {}
 
       # get all secrets
       @secrets = []
@@ -137,20 +138,15 @@ module KeyManager
               end
             end
           when Container::Type::GENERIC
-            binding.pry
-
-            secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, nil)
-            names = params.fetch('secrets_names', {})
-            unless secrets.nil?
+            secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, {})
+            unless secrets.blank?
               container['secret_refs'] = []
-              secrets.each do |value|
-                secret_value = JSON.parse(value) rescue nil
-                unless secret_value.nil?
-                  secret_value['name'] = names[secret_value['uuid']]
-                  container['secret_refs'] << secret_value
-                end
+              secrets.each do |key, value|
+                container['secret_refs'] << value
               end
+              container['secret_refs'] = container['secret_refs'].to_json
             end
+            @selected_secrets = secrets
         end
 
         binding.pry

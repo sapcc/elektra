@@ -3,13 +3,14 @@
   %h3 Secrets
   %p A generic container is used for any type of container that a user may wish to create. There are no restrictions on the type or amount of secrets that can be held within a container:
 
-  = f.simple_fields_for :secrets, wrapper: :vertical_form do |secret|
-    .row
-      .col-sm-6
-        = secret.input :generic, label: false, as: :select,
-        collection: @secrets.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, type: #{secret.secret_type}, status: #{secret.status})", secret.uuid, {data: {name: secret.name, secret_ref: secret.secret_ref, uuid: secret.uuid}}]},
-        input_html: { multiple: "multiple", data: {toggle: 'selectMultiple'}}, disabled: @selected_type != ::KeyManager::Container::Type::GENERIC
+  .row
+    .col-sm-6
+      = select_tag "", options_for_select(@secrets.map{|secret|["#{secret.display_name} (created: #{date_humanize(secret.created)}, type: #{secret.secret_type}, status: #{secret.status})", secret.uuid, {data: {name: secret.name, secret_ref: secret.secret_ref, uuid: secret.uuid}}]}, selected: @selected_secrets.keys),
+        data: {toggle: 'selectMultiple'}, multiple: true, id: 'generic_select'
+    .col-sm-1
+      = link_to 'Add', "#", class: 'btn btn-primary btn-sm js-add-generic-secrets'
 
-  .js-secrets-naming.hide
-    %h4 Selected Secrets
-    %p Selected secrets can be labeled with a container-specific string.
+  %section
+    .js-secrets-naming.hide
+      %h4 Selected Secrets
+      %p Selected secrets can be labeled with a container-specific string.
