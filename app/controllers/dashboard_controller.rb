@@ -132,12 +132,18 @@ class DashboardController < ::ScopeController
   helper_method :show_beta?
 
   def raven_context
+
+    @sentry_user_context = {
+      ip_address: request.ip,
+      id: current_user.id,
+      email: current_user.email,
+      username: current_user.name,
+      domain: current_user.user_domain_name,
+      name: current_user.full_name
+    }.reject {|_,v| v.nil?}
+
     Raven.user_context(
-        ip_address: request.ip,
-        id: current_user.id,
-        email: current_user.email,
-        username: current_user.name,
-        domain: current_user.user_domain_name
+      @sentry_user_context
     )
 
     tags = {}

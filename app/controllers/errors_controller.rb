@@ -9,8 +9,14 @@ class ErrorsController < ActionController::Base
     @status_code       = @exception_wrapper.status_code
     @rescue_response   = ActionDispatch::ExceptionWrapper.rescue_responses[@exception.class.name]
     @sentry_event_id   = Raven.last_event_id
-    @sentry_public_dsn = URI.parse(ENV['SENTRY_DSN']).tap {|u| u.password=nil}.to_s if ENV['SENTRY_DSN']
-    @sentry_user       = { name: current_user.full_name || current_user.name, email: current_user.email } if current_user
+    @sentry_user_context = {
+      ip_address: request.ip,
+      id: current_user.id,
+      email: current_user.email,
+      username: current_user.name,
+      domain: current_user.user_domain_name,
+      name: current_user.full_name
+    }.reject {|_,v| v.nil?}
 
     respond_to do |format|
       format.html { render :show, status: @status_code, layout: !request.xhr? }

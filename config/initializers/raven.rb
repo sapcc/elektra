@@ -1,3 +1,5 @@
+$sentry_public_dsn = URI.parse(ENV['SENTRY_DSN']).tap {|u| u.password=nil}.to_s if ENV['SENTRY_DSN']
+
 Raven.configure do |config|
   # httpclient is the only faraday adpater which handles no_proxy 
   config.http_adapter = :httpclient
@@ -5,6 +7,8 @@ Raven.configure do |config|
   config.app_dirs_pattern = /(app|bin|config|lib|plugins|spec)/
   config.timeout = 3
 end
+
+Rails.application.config.assets.precompile += %w(raven.js)
 
 ActiveSupport::Notifications.subscribe('request.active_resource') do |name, started, finished, unique_id, data|
   Raven.breadcrumbs.record do |crumb|
