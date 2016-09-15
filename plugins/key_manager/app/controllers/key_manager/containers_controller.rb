@@ -137,6 +137,8 @@ module KeyManager
               end
             end
           when Container::Type::GENERIC
+            binding.pry
+
             secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, nil)
             names = params.fetch('secrets_names', {})
             unless secrets.nil?

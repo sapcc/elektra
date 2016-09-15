@@ -71,23 +71,17 @@ secrets_container_disable= (container) ->
 #
 
 @init_select_multiple= () ->
+  # init secret_table obj
+  secretsTable = new SecretsTable('.js-secrets-naming', {})
+  # init multiselect
   $('select[data-toggle="selectMultiple"]').multiselect({
     buttonWidth: '100%',
-    numberDisplayed: 1,
+    numberDisplayed: 0,
     onChange: (option, checked, select) ->
-      console.log(option.val())
-      update_secrets_table(option, checked)
-
+      secretsTable.updateRow(option, checked)
   })
+  # fix the width of the multiselect
   $( ".btn-group:has(button.multiselect)" ).css("width", "100%")
-  secretsTable = new SecretsTable('.js-secrets-naming', {})
-
-update_secrets_table= (option, checked) ->
-  table_body = $('.js-secrets-naming tbody')
-  obj = jQuery.parseJSON( option.val() )
-
-  secretsTable.updateRow(option, checked)
-
 
 #
 # Inits
