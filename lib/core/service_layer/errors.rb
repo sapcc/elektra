@@ -13,8 +13,12 @@ module Core
 
         def initialize(error)
           if error.respond_to?(:response)
-            @response = error.response 
-            @response_data = JSON.parse(error.response.body)
+            @response = error.response
+            if error.response.get_header("content-type").include?("json")
+              @response_data = JSON.parse(error.response.body)
+            else
+              @response_data = { text: error.response.body }
+            end
           end
           error_name = error.class.name.to_s.split('::').last
           super(error)
