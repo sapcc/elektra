@@ -4,6 +4,10 @@
       %li= link_to "Terms of Use", main_app.terms_of_use_path, data:{modal: true} unless @scoped_domain_id.blank?
       %li
         %a(href="#{sap_url_for('documentation')}" target='ccdocs') Documentation
+      %li
+        %div
+          %span{id: "wish-text"} I wish this page
+          %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
 
   .col-sm-3
     - if Rails.env.development?
