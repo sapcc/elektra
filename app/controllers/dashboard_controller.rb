@@ -158,6 +158,7 @@ class DashboardController < ::ScopeController
       tags[:project_domain_id] = current_user.project_domain_id
       tags[:project_domain_name] = current_user.project_domain_name
     end
+    @sentry_tags_context = tags
     Raven.tags_context(tags)
   end
 
