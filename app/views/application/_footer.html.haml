@@ -1,15 +1,25 @@
-.row
-  .col-sm-3
-    %ul.list-unstyled
-      %li= link_to "Terms of Use", main_app.terms_of_use_path, data:{modal: true} unless @scoped_domain_id.blank?
-      %li
-        %a(href="#{sap_url_for('documentation')}" target='ccdocs') Documentation
-
-  .col-sm-3
-    - if Rails.env.development?
-      = render partial: 'layouts/dev_tools'
-  .col-sm-3
-    - if Rails.env.development? and current_user
+%footer.footer
+  - if Rails.env.development? and current_user
+    .token-info
       = raw "Token expires at: #{current_user.token_expires_at.to_time.localtime.strftime('%d.%m.%Y %H:%M:%S')} (ca. <span id='token-counter'>#{((current_user.token_expires_at.to_time-Time.now)/60).round}</span> minutes)"
       :javascript
         setInterval(function(){ var counter = parseInt($('#token-counter').text()); $('#token-counter').text(counter-1) }, 60000);
+
+  .container
+    = image_tag "cc_logo.png", class: "pull-right"
+
+    .row
+      .col-sm-3
+        %ul.list-unstyled
+          %li= link_to "Terms of Use", main_app.terms_of_use_path, data:{modal: true} unless @scoped_domain_id.blank?
+          %li
+            %a(href="#{sap_url_for('documentation')}" target='ccdocs') Documentation
+
+
+      .col-sm-4
+        %span{id: "wish-text"} I wish this page
+        %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
+
+      .col-sm-2
+        - if Rails.env.development?
+          = render partial: 'layouts/dev_tools'
