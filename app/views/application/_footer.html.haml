@@ -17,8 +17,9 @@
 
 
       .col-sm-4
-        %span{id: "wish-text"} I wish this page
-        %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
+        - if $sentry_public_dsn
+          %span{id: "wish-text"} I wish this page
+          %input{type: 'text', id: 'wish-value', autocomplete: 'off'}
 
       .col-sm-2
         - if Rails.env.development?
