@@ -133,6 +133,18 @@ module Compute
       def list_flavor_members(flavor_id)
         handle_response{@fog.list_tenants_with_flavor_access(flavor_id).body['flavor_access']}
       end
+      
+      def create_flavor_metadata(flavor_id,specs_data)
+        handle_response{@fog.create_flavor_metadata(flavor_id, specs_data).body['extra_specs']}
+      end
+      
+      def delete_flavor_matadata(flavor_id,key)
+        handle_response{ @fog.delete_flavor_metadata(flavor_id, key)}
+      end
+      
+      def get_flavor_metadata(flavor_id)
+        handle_response{@fog.get_flavor_metadata(flavor_id).body['extra_specs']}
+      end
 
       ########################### IMAGES #############################
       def images(filter={})

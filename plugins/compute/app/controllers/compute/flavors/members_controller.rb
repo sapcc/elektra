@@ -13,19 +13,17 @@ module Compute
         @project = services.identity.find_project(@member.tenant_id.strip) 
 
         if @project.nil?
-          @error = "Could not find project #{@member.tenant_id}"
+          @member.errors.add(:project,"Could not find project #{@member.tenant_id}")
         else
-          begin 
-            @member = services.compute.add_flavor_access_to_tenant(@member.flavor_id,@member.tenant_id) 
-            @member = @member.first if @member and @member.is_a?(Array)
-          rescue => e
-            @error = Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).join(', ')
-          end
+          @member.save
         end
       end
     
       def destroy
-        @success = services.compute.remove_flavor_access_from_tenant(params[:flavor_id],params[:id])
+        member = services.compute.new_flavor_access
+        member.flavor_id = params[:flavor_id]
+        member.tenant_id = params[:id]
+        @success = member.destroy
       end
     
     end

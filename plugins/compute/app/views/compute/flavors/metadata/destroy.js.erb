@@ -1,0 +1,6 @@
+<% if @metadata.errors.empty? %>
+  $("#spec_<%=params[:key]%>").remove();
+<% else %>
+InfoDialog.showError('<%=@metadata.errors.full_messages.to_sentence%>');
+  $("#spec_<%=params[:key]%>").removeClass('updating');
+<% end %>  

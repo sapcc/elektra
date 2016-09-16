@@ -4,10 +4,12 @@ module Compute
       "#{self.name}, #{self.vcpus} VCPUs, #{self.disk}GB Disk, #{self.ram}MB Ram" 
     end    
     
+    # FOG already maps this field to ephemeral. It is only a backup. 
     def ephemeral
       read("OS-FLV-EXT-DATA:ephemeral") || read("ephemeral")
     end
     
+    # convert is_public to boolean.
     def is_public?
       result = read("os-flavor-access:is_public") 
       if result.nil?
@@ -16,8 +18,11 @@ module Compute
       result == "1" || result == true 
     end
     
-    
     # overwrite (defined in model.rb)
+    # The save method is defined in the superclass. 
+    # This method is used for both create and for update. 
+    # However Flavors API does not support update. Therefore we override save so that 
+    # it simulates an update by deleting the old flavor first and then creating a new one with the same id.
     def save
       # execute before callback
       before_save
@@ -26,6 +31,7 @@ module Compute
 
       if success
         unless id.blank?
+          # try to delete the "old" flavor
           begin 
             @driver.delete_flavor(id) 
           rescue Core::ServiceLayer::Errors::ApiError => api_error
@@ -39,9 +45,12 @@ module Compute
           end
         end
       
+        # get new attributes
         new_attributes = attributes_for_update.with_indifferent_access
+        # set old id as new if exists
         new_attributes['id'] = id unless id.blank?
         
+        # create the new flavor. Caution: if this operation fails then it is just a delete.
         begin
           @driver.create_flavor(new_attributes)
         rescue => e
@@ -54,7 +63,8 @@ module Compute
       return success & after_save
     end
     
-    
+    # this method is called by save. It allows us to map values passed to the API.
+    # For example the is_public attribute is converted to string. 
     def attributes_for_update
       {
         "name"         => read("name"),
@@ -69,8 +79,9 @@ module Compute
     end
     
     protected
+    # deactivate perform_create method. Use save instead!
     def perform_create
-      raise 'Do not use this method in flavor.'
+      raise 'Do not use this method in flavor. Use save instead'
     end
   end
 end

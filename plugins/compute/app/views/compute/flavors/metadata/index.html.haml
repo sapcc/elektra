@@ -1,0 +1,47 @@
+= content_for :title do
+  Flavor Metadata
+
+%div{ class: modal? ? 'modal-body' : '' }
+  %table.table#metadata
+    %thead
+      %tr
+        %th Key
+        %th Value
+        %th.snug
+    %tbody
+      - if @metadata.attributes.empty?
+        %tr
+          %td{ colspa: 3 } No specs defined.
+      - else
+        - @metadata.attributes.each do |key,value|
+          = render partial: 'item', locals: { key: key, value: value, flavor_id: @flavor.id }
+      
+      - if current_user.is_allowed?("compute:flavor_manage_metadata", {flavor: @flavor.attributes})
+        %tr
+          %td{colspan: 2}
+            .form-wrapper.hidden
+              .error.text-danger
+              = form_for :spec, url: plugin('compute').flavor_metadata_path(flavor_id: params[:flavor_id]), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-inline' } do |f|
+
+                .form-group= f.text_field :key, class: "form-control", placeholder: 'Key'
+                .form-group= f.text_field :value, class: "form-control", placeholder: 'Value'
+                = button_tag "Add", { class: 'btn btn-primary', data: { disable_with: "Please wait..." } }         
+          %td
+            = link_to ' + ', '#', class: 'btn btn-info', id:'toggle_form'
+
+
+.buttons{ class: modal? ? 'modal-footer' : '' }
+  - if modal?
+    %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Close' } } Close
+  - else
+    = link_to 'Back', metadata_url, class: 'btn btn-default'
+
+
+:javascript
+  $(document).ready(function(){
+    $('#metadata .form-wrapper').removeClass('hidden').hide();  
+    $('#toggle_form').click(function(){
+      $(this).closest('tr').find('.form-wrapper').fadeToggle();
+    });
+  });  
+    

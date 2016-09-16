@@ -68,16 +68,16 @@ module ServiceLayer
       driver.map_to(Compute::FlavorAccess).list_flavor_members(flavor_id)  
     end
     
-    def new_flavor_access(params={})
-      Compute::FlavorAccess.new(driver,params)
-    end
-         
-    def add_flavor_access_to_tenant(flavor_id,tenant_id)
-      driver.map_to(Compute::FlavorAccess).add_flavor_access_to_tenant(flavor_id, tenant_id)
+    def flavor_metadata(flavor_id)
+      driver.map_to(Compute::FlavorMetadata).get_flavor_metadata(flavor_id)  
     end
     
-    def remove_flavor_access_from_tenant(flavor_id,tenant_id)
-      driver.remove_flavor_access_from_tenant(flavor_id,tenant_id)
+    def new_flavor_metadata(flavor_id)
+      Compute::FlavorMetadata.new(driver, flavor_id: flavor_id)
+    end
+    
+    def new_flavor_access(params={})
+      Compute::FlavorAccess.new(driver,params)
     end
       
     def availability_zones
