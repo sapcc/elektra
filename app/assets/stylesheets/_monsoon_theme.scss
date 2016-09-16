@@ -1570,6 +1570,7 @@ input[type='checkbox'], input[type='radio'] {
   border: none;
   border-bottom: 1px dashed #999;
   padding-left: 3px;
+  width: 180px;
 
   &:focus {
     background: #fff;
