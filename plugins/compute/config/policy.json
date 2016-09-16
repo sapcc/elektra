@@ -8,5 +8,13 @@
   "compute:keypair_create": "(role:admin or role:member) and (not rule:monsoon2_domain)",
   "compute:keypair_get": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
   "compute:keypair_update": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
-  "compute:keypair_delete": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)"
+  "compute:keypair_delete": "(role:admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
+  
+  "cloud_admin_project": "role:admin and token.is_admin_project:true",
+  "compute:flavor_create": "rule:cloud_admin_project",
+  "compute:flavor_delete": "rule:cloud_admin_project",
+  "compute:flavor_update": "rule:cloud_admin_project",
+  "compute:flavor_access_create": "rule:cloud_admin_project",
+  "compute:flavor_access_delete": "rule:cloud_admin_project",
+  "compute:flavor_manage_metadata": "rule:cloud_admin_project"
 }

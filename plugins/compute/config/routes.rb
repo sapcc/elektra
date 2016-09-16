@@ -22,4 +22,9 @@ Compute::Engine.routes.draw do
   end
 
   resources :keypairs
+  
+  resources :flavors, except: [:show] do
+    resources :members, module: :flavors, except: [:edit, :update, :show]
+    resources :metadata, module: :flavors, except: [:edit, :update, :show], param: :key
+  end
 end

@@ -1,0 +1,29 @@
+= content_for :main_toolbar do
+  Flavors
+
+- if current_user.is_allowed?("compute:flavor_create", {target: {scoped_domain_name: @scoped_domain_name, user_id: current_user.id}})
+  .toolbar
+    = link_to 'Create new', plugin('compute').new_flavor_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+%table.table.flavors
+  %thead
+    %tr
+      %th Name
+      %th VCPUs						
+      %th RAM
+      %th Root Disk
+      %th Ephemeral Disk
+      %th Swap Disk
+      %th RX/TX factor
+      %th Public
+      %th Actions
+  %tbody#flavors
+    - if @flavors.length==0
+      %tr{data: {empty: true}}
+        %td{colspa: 9} No flavors available.
+      
+    - else
+      - @flavors.each do |flavor|
+        = render partial: 'item', locals: {flavor: flavor}
+        
+= render_paginatable(@flavors)        

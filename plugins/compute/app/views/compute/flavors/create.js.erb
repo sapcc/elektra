@@ -1,0 +1,14 @@
+if (window.location.href.indexOf('<%=plugin("compute").flavors_url%>')>-1) {
+  var html="<%= j(render(partial: 'compute/flavors/item', locals: {flavor: @flavor})) %>";
+
+  if($("table.flavors tr[data-empty]").length==1) {
+    $("table.flavors tr[data-empty]").replaceWith(html);
+  } else {
+    $("table.flavors tbody").prepend(html);
+  }
+}
+else {
+  window.location.href='<%= plugin("compute").flavors_path%>';  
+}
+
+MoModal.close();

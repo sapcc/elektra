@@ -1,0 +1,16 @@
+<% unless @metadata.errors.empty? %>
+  $('#metadata .form-wrapper .error').text('<%=@metadata.errors.full_messages.to_sentence%>');
+<% else %>  
+  $('#metadata .form-wrapper .error').text('');
+  var html;
+  <% @metadata.attributes.each do |key,value| %>
+    html="<%= j(render(partial: 'compute/flavors/metadata/item', locals: { key: key, value: value, flavor_id: params[:flavor_id] })) %>"
+
+    if($("table#metadata tr[data-empty]").length==1) {
+      $("table#metadata tr[data-empty]").replaceWith(html);
+    } else {
+      $("table#metadata tbody").prepend(html);
+    }
+    $('#metadata .form-wrapper').fadeOut();
+  <% end %>  
+<% end %>

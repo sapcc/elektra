@@ -1,0 +1,9 @@
+= f.input :name, required: true
+= f.input :id, input_html: { placeholder: 'auto'}	, icon_hint: "Flavor ID should be UUID4 or integer. Leave this field blank to set a random UUID4."
+= f.input :ram, label: 'RAM (MB)', required: true, as: :integer
+= f.input :disk, label: 'Root Disk (GB)', required: true, as: :integer
+= f.input :vcpus, label: 'VCPUs', required: true, as: :integer
+= f.input :ephemeral, label: 'Ephemeral Disk (GB)', as: :integer
+= f.input :swap, label: 'Swap Disk (MB)', as: :integer
+= f.input :rxtx_factor, label: 'RX/TX Factor', as: :integer
+= f.input :is_public, as: :boolean, input_html: {checked: @flavor.is_public?},  wrapper: :horizontal_boolean_4x8 

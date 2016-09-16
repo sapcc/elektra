@@ -174,7 +174,7 @@ module Networking
           audit_logger.info(current_user, "has deleted", @router)
           flash.now[:notice] = "Router successfully deleted."
         else
-          flash.now[:error] = network.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+          flash.now[:error] = @router.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
         end
       end
 

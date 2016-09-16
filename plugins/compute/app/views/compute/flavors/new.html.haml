@@ -1,0 +1,18 @@
+= simple_form_for @flavor, url: plugin('compute').flavors_path(), method: :post, remote: request.xhr?, html: {class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @flavor.errors.empty?
+      .alert.alert-error
+        = render_errors(@flavor.errors)
+
+    %p
+      Flavors define the sizes for RAM, disk, number of cores, and other resources and can be selected when users deploy instances.
+    = render partial: 'form', locals: {f: f} 
+  
+  %div.buttons{class: modal? ? 'modal-footer' : ''}  
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", flavors_path(), class: 'btn btn-default'
+      
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save

@@ -1,0 +1,15 @@
+= simple_form_for @flavor, url: plugin('compute').flavor_path(id:@flavor.id), method: :put, remote: request.xhr?, html: {class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @flavor.errors.empty?
+      %p.alert.alert-error= render_errors(@flavor)
+
+    = render partial: 'form', locals: {f: f} 
+  
+  %div.buttons{class: modal? ? 'modal-footer' : ''}  
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", flavors_path(), class: 'btn btn-default'
+      
+    %button{type: "submit", class: 'btn btn-primary', data: { disable_with: 'Please wait...'}} Save

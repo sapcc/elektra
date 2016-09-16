@@ -1,0 +1,14 @@
+<% if @error %>
+  $('#members .form-wrapper .error').text('<%=@error%>');
+<% else %>  
+  $('#members .form-wrapper .error').text('');
+  var html="<%= j(render(partial: 'compute/flavors/members/item', locals: {member: @member })) %>"
+
+
+  if($("table#members tr[data-empty]").length==1) {
+    $("table#members tr[data-empty]").replaceWith(html);
+  } else {
+    $("table#members tbody").prepend(html);
+  }
+  $('#members .form-wrapper').fadeOut();
+<% end %>
