@@ -48,10 +48,8 @@
         = render "application/flashes"
         = yield
 
-    %footer.footer
-      .container
-        = image_tag "cc_logo.png", class: "pull-right"
-        = render "application/footer"
+
+    = render "application/footer"
 
     = yield :templates
     = yield :javascripts

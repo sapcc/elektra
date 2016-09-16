@@ -1153,7 +1153,7 @@ table.table-select tbody tr {
 }
 
 tr.deleting, tr.updating {
-  
+
   td:first-child {
     &:before {
       content: " ";
@@ -1161,7 +1161,7 @@ tr.deleting, tr.updating {
       margin-right: 3px;
     }
   }
-  
+
   td {
     color: #999;
     background-color: #efefef;
@@ -1557,6 +1557,25 @@ input[type='checkbox'], input[type='radio'] {
   }
 }
 
+// ------------------------------------
+// User Feedback
+// ------------------------------------
+
+#wish-text {
+  color: #777;
+}
+
+#wish-value {
+  background: none;
+  border: none;
+  border-bottom: 1px dashed #999;
+  padding-left: 3px;
+
+  &:focus {
+    background: #fff;
+  }
+}
+
 // ---------------------------------------------------------------------------------
 // Interactive
 // ---------------------------------------------------------------------------------
@@ -1567,7 +1586,7 @@ input[type='checkbox'], input[type='radio'] {
 
 
 // ---------------------------------------------------------------------------------
-// News
+// DEV: News
 // ---------------------------------------------------------------------------------
 
 .news {
@@ -1584,6 +1603,17 @@ input[type='checkbox'], input[type='radio'] {
     border-bottom: 2px solid $bright-blue;
     margin: $line-height-computed 0;
   }
+}
+
+// ---------------------------------------------------------------------------------
+// DEV: Token Info
+// ---------------------------------------------------------------------------------
+
+.token-info {
+  position: absolute;
+  right: 5px;
+  top: -25px;
+  color: #ccc;
 }
 
 

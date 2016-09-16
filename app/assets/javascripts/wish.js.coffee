@@ -1,5 +1,5 @@
 $ ->
-  wishPlaceholders = [ "showed more detail", "would be less technical", "contained more docs" ]
+  wishPlaceholders = [ "showed more detail", "were less technical", "had more documentation" ]
   currentPlaceholder = wishPlaceholders[Math.floor(Math.random()*wishPlaceholders.length)]
   $("#wish-value").attr("placeholder", currentPlaceholder)
 
