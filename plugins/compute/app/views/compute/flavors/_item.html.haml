@@ -29,3 +29,5 @@
             
           - if current_user.is_allowed?("compute:flavor_delete", flavor: flavor)
             %li= link_to 'Delete', plugin('compute').flavor_path(id: flavor.id), method: :delete, data: { confirm: 'Are you sure you want to delete this flavor?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
+    - else
+      = "-"        
