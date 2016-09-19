@@ -46,11 +46,12 @@
       required:           false}
 
     = f.input :flavor_id, { label: "Flavor",
-      as:                 :select,
+      as:                 :grouped_select,
       required:           true,
-      collection:         @flavors,
+      collection:         grouped_flavors(@flavors),
+      group_method:       :last,
       selected:           @instance.flavor_id,
-      label_method:       -> (flavor) { "#{flavor.name}  (RAM: #{flavor.ram}MB, VCPUs: #{flavor.vcpus}, Disk: #{flavor.disk}GB)" }}
+      label_method:       -> (flavor) { flavor_label_for_select(flavor) }}
 
     = f.input :image_id, label: 'Image',
       as:            :grouped_select,

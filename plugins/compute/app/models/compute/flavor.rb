@@ -52,7 +52,9 @@ module Compute
         
         # create the new flavor. Caution: if this operation fails then it is just a delete.
         begin
-          @driver.create_flavor(new_attributes)
+          self.attributes= @driver.create_flavor(new_attributes)
+          success = true
+          
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
           Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}

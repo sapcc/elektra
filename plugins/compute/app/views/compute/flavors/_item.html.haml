@@ -15,13 +15,14 @@
   %td= flavor.rxtx_factor
   %td= flavor.is_public?
   %td.snug
-    - if current_user.is_allowed?("compute:flavor_delete", flavor: flavor) or current_user.is_allowed?("compute:flavor_update", flavor: flavor)
+    - if current_user.is_allowed?("compute:flavor_delete", flavor: flavor) or current_user.is_allowed?("compute:flavor_update", flavor: flavor) or current_user.is_allowed?("compute:flavor_access_list", flavor: flavor)
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if current_user.is_allowed?("compute:flavor_update", flavor: flavor)
             %li= link_to 'Edit', plugin('compute').edit_flavor_path(id: flavor.id), data: {modal: true}
+          - if current_user.is_allowed?("compute:flavor_access_list", flavor: flavor)
             %li= link_to 'Access Control', plugin('compute').flavor_members_path(flavor_id: flavor.id), data: {modal: true}  
           - if current_user.is_allowed?("compute:flavor_manage_metadata", flavor: flavor)
             %li= link_to 'Manage Metadata', plugin('compute').flavor_metadata_path(flavor_id: flavor.id), data: {modal: true}  
