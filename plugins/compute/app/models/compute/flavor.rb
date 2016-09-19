@@ -52,13 +52,7 @@ module Compute
         
         # create the new flavor. Caution: if this operation fails then it is just a delete.
         begin
-          new_attributes = @driver.create_flavor(new_attributes)
-          self.attributes= new_attributes #@driver.create_flavor(new_attributes)
-          p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-          p new_attributes
-          puts self.pretty_attributes
-          p self.id
-          
+          self.attributes= @driver.create_flavor(new_attributes)
           success = true
           
         rescue => e
