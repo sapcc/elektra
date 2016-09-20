@@ -28,13 +28,10 @@ module KeyManager
 
     def payload
       @secret = services.key_manager.secret(params[:id])
-
       response = RestClient::Request.new(method: :get,
                                          url: @secret.payload_link,
                                          headers: {'X-Auth-Token': current_user.token},
                                          timeout: 5).execute
-
-
       send_data response, filename: @secret.name
     end
 

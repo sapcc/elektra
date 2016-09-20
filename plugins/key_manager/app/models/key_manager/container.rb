@@ -20,6 +20,25 @@ module KeyManager
 
     end
 
+    module SecretsName
+
+      CERTIFICATE = 'certificate'
+      PRIVATE_KEY = 'private_key'
+      PUBLIC_KEY = 'public_key'
+      PRIVATE_KEY_PASSPHRASE = 'private_key_passphrase'
+      INTERMEDIATES = 'intermediates'
+      FREELY_SELECTED = 'freely selected'
+
+      def self.realtion_to_type
+        res = {}
+        res[Type::GENERIC.to_sym] = [SecretsName::FREELY_SELECTED]
+        res[Type::CERTIFICATE.to_sym] = [SecretsName::CERTIFICATE, SecretsName::PRIVATE_KEY, SecretsName::PRIVATE_KEY_PASSPHRASE, SecretsName::INTERMEDIATES]
+        res[Type::RSA.to_sym] = [SecretsName::PRIVATE_KEY, SecretsName::PRIVATE_KEY_PASSPHRASE, SecretsName::PUBLIC_KEY]
+        res
+      end
+
+    end
+
     extend ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Validations
@@ -45,6 +64,20 @@ module KeyManager
         containers << container
       end
       {elements: containers, total_elements: total}
+    end
+
+    def display_name
+      unless self.name.blank?
+        self.name
+      else
+        'Empty name'
+      end
+    end
+
+    def secrets
+      self.secret_refs.each do |secret|
+        secret['uuid'] = URI(secret['secret_ref']).path.split('/').last rescue nil
+      end
     end
 
   end
