@@ -154,6 +154,12 @@ module Monitoring
           @fog.create_alarm_definition(params).body
         end
       end
+      
+      def list_dimension_values(params)
+        handle_response do
+          @fog.list_dimension_values(params).body
+        end
+      end
     end
   end
 end

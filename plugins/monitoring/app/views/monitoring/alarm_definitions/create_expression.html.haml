@@ -38,7 +38,15 @@
   .row
     .col-md-6
       .form-group
-        = label_tag 'metric', 'Metric', class:'control-label'
+        = label_tag 'dimension', 'Start with Dimension', class:'control-label'
+        %select#dimension.form-control{onchange: 'get_metric_names();'}
+          %option{value: '', selected: true}
+          - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
+            %option{value: dimension} #{dimension}
+        %span.help-block
+          Dimensions can be used to uniquely identify a metric
+      .form-group
+        = label_tag 'metric', 'Start with Metric', class:'control-label'
         = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc", autocomplete: "off"
         %span.help-block
           A metric is uniquely identified by a name and set of dimensions.

@@ -82,6 +82,9 @@ module ServiceLayer
     def new_alarm_definition(attributes={})
       Monitoring::AlarmDefinition.new(driver,attributes)
     end
+    
+    def get_metrics_by_dimension(name)
+    end
 
     def get_metric(attributes={}) 
       driver.map_to(Monitoring::Metric).list_metrics(attributes)

@@ -31,7 +31,7 @@
     // set typeahead for metrics
     if( metric_names && wizard_mode == "create" ) {
       $("#metric").typeahead({source:  metric_names, afterSelect: 
-        function(){ 
+        function(){
           var metric_name = $('#metric').val();
           // this is called once to get the dimension data
           get_dimensions(metric_name);
@@ -401,19 +401,19 @@
 
 
   function get_metric_names() {
-    
-  	var metric_names_unfiltered = []
-    $.each(metrics_data, function( index, metric ) {
-      metric_names_unfiltered.push(metric[0]);
+
+    $.post( "#{plugin('monitoring').metric_names_by_dimension_alarm_definitions_path()}", {
+      dimension: $('select#dimension').val(),
+      // in case of invalid token we don't want to follow the redirect from the server to the logon page
+      // instead we handle that case in check_logon_state()
+      do_not_redirect: true
+    },function(data,status,xhr) {
+      check_logon_state(xhr);
+
+    }).error (function(xhr) {
+
     });
-    //console.log(metric_names_unfiltered);
-    
-    var metric_names_unique = metric_names_unfiltered.filter(function(metric_name, i, ar){ 
-      return ar.indexOf(metric_name) === i; 
-    });
-    //console.log(metric_names_unique);
-    
-    return metric_names_unique;
+
   };
   
   function expression_dimensions() {

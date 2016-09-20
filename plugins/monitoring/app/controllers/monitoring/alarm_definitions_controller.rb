@@ -12,7 +12,8 @@ module Monitoring
       :get_dimensions_for_metric,
       :dimension_row,
       :statistics,
-      :edit_expression
+      :edit_expression,
+      :metric_names_by_dimension,
     ]
     
     def index
@@ -190,6 +191,10 @@ module Monitoring
       # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
       
       @metric_names = services.monitoring.get_metric_names
+    end
+    
+    def metric_names_by_dimension
+      render json: {foo:'bla'}
     end
     
     # used by the wizard to get once all dimensions for given metric name
