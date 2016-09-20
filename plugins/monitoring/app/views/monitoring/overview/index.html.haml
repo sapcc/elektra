@@ -7,15 +7,15 @@
     .col-md-4
       %svg#States{style:"width:350px; height:350px;"}
       %span.help-block.pie-description
-        All existing alarms with there states.
+        All triggered alarms by there states.
     .col-md-4
       %svg#Alarm{style:"width:350px; height:350px;"}
       %span.help-block.pie-description
-        All existing alarms with there severity in status alarm.
+        All triggered alarms by severity in status strong alarm.
     .col-md-4
       %svg#Undetermined{style:"width:350px; height:350px;"}
       %span.help-block.pie-description
-        All existing alarms with there severity in status undetermined.
+        All triggered alarms by severity in status undetermined (missing metrics data).
 
 :javascript
 
@@ -52,8 +52,8 @@
             .showLegend(true)
             .showLabels(false)
             .labelsOutside(false)
-  			    .labelSunbeamLayout(false)
-            .noData("Everything is fine. No Data to display.")
+            .labelSunbeamLayout(false)
+            .noData("Everything is fine")
             .title(TYPE)
             .donut(true)
             .showTooltipPercent(true)

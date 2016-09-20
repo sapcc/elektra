@@ -8,7 +8,7 @@ module Monitoring
         'HIGH'     => 'text-danger',
         'CRITICAL' => 'text-danger',
       }
-      return content_tag(:span, severity.capitalize, class: styles.fetch(severity, ''))
+      content_tag(:span, severity.capitalize, class: styles.fetch(severity, ''))
     end
 
     def show_state(state)
@@ -17,7 +17,7 @@ module Monitoring
         'UNDETERMINED' => 'text-warning',
         'ALARM'        => 'text-danger',
       }
-      return content_tag(:span, state.capitalize, class: styles.fetch(state, ''))
+      content_tag(:span, state.capitalize, class: styles.fetch(state, ''))
     end
 
     def badge_state(state,value)
@@ -26,7 +26,17 @@ module Monitoring
         'UNDETERMINED' => 'alert-warning',
         'ALARM'        => 'alert-danger',
       }
-        content_tag(:span, value, class: "badge #{styles.fetch(state, '')}")
+      content_tag(:span, value, class: "badge #{styles.fetch(state, '')}")
+    end
+    
+    def notification_method_type(type)
+      if type == "EMAIL"
+        return content_tag(:span, icon('envelope-o'), style: "cursor:help", title: 'notification by email' )
+      elsif type == "WEBHOOK"
+        return content_tag(:span, icon('globe'), style: "cursor:help", title: 'notification by webhook' )
+      else
+        return content_tag(:strong, '?')
+      end
     end
 
   end

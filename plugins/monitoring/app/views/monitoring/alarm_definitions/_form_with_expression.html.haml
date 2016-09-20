@@ -18,8 +18,8 @@
       .col-sm-8
         - @filter_by.each do |dimensions_key|
           - if dimensions_key != ""
-            = label_tag dimensions_key, dimensions_key.capitalize, class: 'filter_by_label'
-            = check_box_tag dimensions_key, dimensions_key, false, class:'filter_by_input', onchange:'filter_by()'
+            = label_tag dimensions_key, dimensions_key.capitalize, class: 'filter-by-label'
+            = check_box_tag dimensions_key, dimensions_key, false, class:'filter-by-input', onchange:'filter_by()'
         %p.help-block
           A separate alarm will be created for every choosen value.
 
@@ -55,7 +55,7 @@
     function filter_by() {
       $('#alarm_definition_match_by').val('');
       var filter_by = "";
-      $('.filter_by_input').each(function(index) {
+      $('.filter-by-input').each(function(index) {
         if($(this).prop('checked')) {
           filter_by += $(this).val()+",";
         }
