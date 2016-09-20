@@ -36,7 +36,7 @@
       input_html:         {multiple: true},
       as:                 :select,
       collection:         @security_groups.collect{|sg| [sg.name,sg.name]},
-      selected:           (@instance.security_groups || []).collect{|sg| sg.name},
+      selected:           (@instance.security_groups || []).collect{|sg| sg},
       required:           true}
 
     = f.input :keypair_id, { label: "Key pair",
