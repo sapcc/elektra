@@ -29,8 +29,8 @@ module Core
     end
   end
   
-  def self.keystone_auth_endpoint
-    endpoint = Rails.configuration.keystone_endpoint rescue ''
+  def self.keystone_auth_endpoint(endpoint_url=nil)
+    endpoint = endpoint_url || Rails.configuration.keystone_endpoint rescue ''
 
     unless endpoint and endpoint.include?('auth/tokens')
       endpoint += '/' if endpoint.last!='/' 

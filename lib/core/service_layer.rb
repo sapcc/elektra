@@ -34,11 +34,11 @@ module Core
           unless klazz < Core::ServiceLayer::Service
             raise "service #{service_class_name} is not a subclass of Core::ServiceLayer::BaseProvider"  
           end
-        
+
           # create an instance of the service class
           if klazz 
             klazz.new(
-              Core.keystone_auth_endpoint,
+              Core.keystone_auth_endpoint(params[:auth_url]),
               params.delete(:region),
               params.delete(:token),
               params
@@ -71,8 +71,9 @@ module Core
         # service is not cached yet -> first request
         unless service    
           # create a Core::ServiceLayer::Service  
+          current_user_identity_url = @current_user.service_url('identity', {region: @region, interface: 'public'}) rescue nil
           params = {
-            auth_url: Core.keystone_auth_endpoint,
+            auth_url: Core.keystone_auth_endpoint(current_user_identity_url),
             region: @region,
           }
           if @current_user
