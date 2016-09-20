@@ -15,7 +15,7 @@
       .col-sm-2.has-help-hint.search-field
         = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
       .col-sm-1.col-sm-offset-9
-        = link_to "Create", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+        = link_to "New", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
 
 #notification_methods_list
   = render partial: 'list'
