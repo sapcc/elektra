@@ -8,16 +8,24 @@ class @SecretsTable
     tableOpts = opts
     container = cont
 
+    # create table id
     table_id = opts['id'] || 'secrets_table_edit_name'
-    table =  $("<table class='table' id='" + table_id + "'>" +
-                  "<thead>" +
-                  "<tr><th>Secret</th><th>Container secret label</th><th class='snug'></th></tr>" +
-                  "</thead>" +
-                  "<tbody>" +
-                  emptyRow() +
-                  "</table>")
 
-    if $(container).length && $('#'+table_id).length == 0
+    # check
+    if $(container).length
+      # if table exists remove table
+      if $('#'+table_id).length > 0
+        $('#'+table_id).remove()
+
+      # create a new table
+      table =  $( "<table class='table' id='" + table_id + "'>" +
+                    "<thead>" +
+                      "<tr><th>Secret</th><th>Container secret label</th><th class='snug'></th></tr>" +
+                    "</thead>" +
+                    "<tbody>" +
+                      emptyRow() +
+                    "</tbody>" +
+                  "</table>")
       $(container).append(table)
 
   emptyRow= () ->

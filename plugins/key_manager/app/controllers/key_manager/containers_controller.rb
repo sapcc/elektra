@@ -23,6 +23,7 @@ module KeyManager
 
     def create
       @container = services.key_manager.new_container(container_params)
+
       if @container.valid? && @container.save
         redirect_to plugin('key_manager').containers_path
       else
@@ -120,23 +121,25 @@ module KeyManager
         # add secrets
         case container['type']
           when Container::Type::CERTIFICATE
-            secrets = container.fetch('secrets', {}).fetch(Container::Type::CERTIFICATE, nil)
-            unless secrets.nil?
+            secrets = container.fetch('secrets', {}).fetch(Container::Type::CERTIFICATE, {})
+            unless secrets.blank?
+              secrets.delete_if { |key, value| value.blank? }
               container['secret_refs'] = []
-              secrets.each do |value|
-                secret_value = JSON.parse(value) rescue nil
-                container['secret_refs'] << secret_value unless secret_value.nil?
+              secrets.each do |key, value|
+                container['secret_refs'] << {name: key, secret_ref: value}
               end
             end
+            @selected_secrets = secrets
           when Container::Type::RSA
-            secrets = container.fetch('secrets', {}).fetch(Container::Type::RSA, nil)
-            unless secrets.nil?
+            secrets = container.fetch('secrets', {}).fetch(Container::Type::RSA, {})
+            unless secrets.blank?
+              secrets.delete_if { |key, value| value.blank? }
               container['secret_refs'] = []
-              secrets.each do |value|
-                secret_value = JSON.parse(value) rescue nil
-                container['secret_refs'] << secret_value unless secret_value.nil?
+              secrets.each do |key,value|
+                container['secret_refs'] << {name: key, secret_ref: value}
               end
             end
+            @selected_secrets = secrets
           when Container::Type::GENERIC
             secrets = container.fetch('secrets', {}).fetch(Container::Type::GENERIC, {})
             unless secrets.blank?
@@ -144,12 +147,9 @@ module KeyManager
               secrets.each do |key, value|
                 container['secret_refs'] << value
               end
-              container['secret_refs'] = container['secret_refs'].to_json
             end
             @selected_secrets = secrets
         end
-
-        binding.pry
 
         return container
       end

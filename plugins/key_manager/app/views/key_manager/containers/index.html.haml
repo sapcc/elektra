@@ -3,19 +3,22 @@
 .tab-content
   .tab-pane.active{role:"tabpanel", id:"containers-pane"}
 
-    %section
-      %p
-        The containers resource is the organizational center piece of barbican. It creates a logical object that can be
-        used to hold secret references. This is helpful when having to deal with tracking and having access to hundreds
-        of secrets. For more information visit the
-        = link_to "barbican openstack documentation", "http://docs.openstack.org/developer/barbican/api/userguide/containers.html", :target => "_blank"
-        \.
-
     %h3
       Available Containers
 
-    .toolbar
-      = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+    .row
 
-    .js-table-container
-      = render partial: 'table_containers', locals: {containers: @containers}
+      .col-sm-9
+        .toolbar
+          = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+        .js-table-container
+          = render partial: 'table_containers', locals: {containers: @containers}
+
+      .col-sm-3
+        .bs-callout.bs-callout-primary.toolbar-aligment
+          %p
+            The containers resource is the organizational center piece of barbican. It creates a logical object that can be
+            used to hold secret references. This is helpful when having to deal with tracking and having access to hundreds
+            of secrets. For more information visit the
+            = link_to "barbican openstack documentation", "http://docs.openstack.org/developer/barbican/api/userguide/containers.html", :target => "_blank"
+            \.

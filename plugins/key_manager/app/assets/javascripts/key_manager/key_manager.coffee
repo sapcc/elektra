@@ -58,15 +58,11 @@ secrets_container_enable= (container) ->
   $(container).removeClass('hide')
   $(container).find('select').each ->
    $(this).prop('disabled', false)
-  $(orig_select).multiselect('destroy')
-  init_select_multiple()
 
 secrets_container_disable= (container) ->
   $(container).addClass('hide')
   $(container).find('select').each ->
     $(this).prop('disabled', true)
-  $(orig_select).multiselect('destroy')
-  init_select_multiple()
 
 #
 # secrets Multiselect
@@ -86,17 +82,42 @@ secrets_container_disable= (container) ->
     buttonText: (options, select) ->
       return "Select secrets"
     onInitialized: (select, container) ->
-      add_secret()
+      # get selected options
+      selected_options = $(orig_select).data("selected")
+      # add selected options to the table
+      add_secret(selected_options)
 
   })
   # fix the width of the multiselect
   $( ".btn-group:has(button.multiselect)" ).css("width", "100%")
   return
 
+add_secret= (selected_options) ->
+  # check new selected options
+  $(multiselect).find('input').each ->
+    if $(this).is(":checked") && !$(this).prop('disabled')
+      value = $(this).val()
+      option = $(orig_select).find("option[value='"+ value + "']")
+
+      # update table row
+      if selected_options != undefined && !$.isEmptyObject(selected_options)
+        name = if selected_options[value] != undefined then selected_options[value]['name'] else undefined
+        secretsTable.updateRow(option, true, name)
+      else
+        secretsTable.updateRow(option, true)
+
+    # hide selected options
+    update_multiselect_option(value, true)
+
 update_multiselect_option= (option_val, disabled) ->
+  # select option
   input = $(multiselect + ' input[value="' + option_val + '"]')
+
+  # deselect option and remove active class
   input.prop('checked', false)
   input.parents('li').removeClass 'active'
+
+  # enable or disable options
   if disabled
     input.prop 'disabled', true
     input.parents('li').addClass 'disabled hidden'
@@ -104,23 +125,6 @@ update_multiselect_option= (option_val, disabled) ->
     input.prop 'disabled', false
     input.parents('li').removeClass 'disabled'
     input.parents('li').removeClass 'hidden'
-
-add_secret= (names) ->
- $(multiselect).find('input').each ->
-   if $(this).is(":checked") && !$(this).prop('disabled')
-     value = $(this).val()
-     option = $(orig_select).find("option[value='"+ value + "']")
-     # update table
-
-     console.log(names)
-
-     if names != undefined
-       secretsTable.updateRow(option, true, "test")
-     else
-       secretsTable.updateRow(option, true)
-     # hide selected options
-     update_multiselect_option(value, true)
-
 
 #
 # Inits
