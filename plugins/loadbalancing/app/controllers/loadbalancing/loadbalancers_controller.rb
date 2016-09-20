@@ -50,6 +50,10 @@ module Loadbalancing
 
     private
 
+    def experimental
+      true
+    end
+
     def loadbalancer_params
       return params[:loadbalancer].merge(tenant_id: @scoped_project_id)
     end

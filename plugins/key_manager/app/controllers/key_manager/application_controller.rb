@@ -11,6 +11,14 @@ module KeyManager
        }
       }
      ]
+
+     private
+
+     def experimental
+       true
+     end
+
+
   end
 
 end

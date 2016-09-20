@@ -1,5 +1,25 @@
 .news
 
+  - date = Time.new(2016,9,20)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      #### Mark Plugins as experimental
+      You can now mark plugins as experimental:
+
+      1. In your controller add a private method `experimental` and have it return `true`
+      2. Once plugin isn't in an experimental state anymore, remove the method
+
+      ```
+      private
+
+      def experimental
+        true
+      end
+      ```
+
+
   - date = Time.new(2016,4,1)
   .new{data:{date: date}}
     .author-title= "Esther Schmitz - #{date}"

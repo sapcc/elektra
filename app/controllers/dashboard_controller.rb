@@ -9,9 +9,9 @@ class DashboardController < ::ScopeController
       params[:after_login] = referer_url
     else
       params[:after_login] = requested_url
-    end  
+    end
   end
-  
+
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
@@ -36,7 +36,7 @@ class DashboardController < ::ScopeController
       render_error_page(error,{title: 'Backend Service Error'})
     end
   end
-  
+
   rescue_from "Core::ServiceLayer::Errors::ApiError" do |error|
     if error.response_data and error.response_data["error"] and error.response_data["error"]["code"]==403
       render_error_page(error,{title: 'Permission Denied', description: error.response_data["error"]["message"] || "You are not authorized to request this page."})
@@ -115,9 +115,9 @@ class DashboardController < ::ScopeController
   def find_cached_domains
     name = params[:name] || params[:term] || ""
     domains = FriendlyIdEntry.search('Domain',nil,name)
-    render json: domains.collect{|d| {id: d.key, name: d.name}}.to_json  
+    render json: domains.collect{|d| {id: d.key, name: d.name}}.to_json
   end
-    
+
   def find_cached_projects
     name = params[:name] || params[:term] || ""
     projects = FriendlyIdEntry.search('Project',@scoped_domain_id,name)
@@ -125,7 +125,13 @@ class DashboardController < ::ScopeController
   end
 
   protected
-  
+
+  helper_method :experimental
+
+  def experimental
+    false
+  end
+
   def show_beta?
     params[:betafeatures] == 'showme'
   end
