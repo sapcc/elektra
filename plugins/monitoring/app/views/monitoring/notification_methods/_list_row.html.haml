@@ -1,11 +1,6 @@
 %tr
   %td= highlight(notification_method.name,@search)
-  %td 
-    - if notification_method.type == "EMAIL"
-      %span{title: "email notification_method", style: "cursor:help"}
-        = icon('envelope-o')
-    - else
-      %strong ?
+  %td= notification_method_type(notification_method.type)
   %td= highlight(notification_method.address,@search)
   %th.snug
     .btn-group
