@@ -87,9 +87,6 @@ PATH
   remote: plugins/key_manager
   specs:
     key_manager (0.0.1)
-      activeresource
-      activeresource-response
-      virtus
 
 PATH
   remote: plugins/loadbalancing
@@ -591,3 +588,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2
