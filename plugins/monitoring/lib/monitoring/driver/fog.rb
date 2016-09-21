@@ -21,7 +21,7 @@ module Monitoring
         end
       end
       
-      def list_metrics(options = {})
+      def list_metrics(options={})
         handle_response do
           @fog.list_metrics(options).body["elements"]
         end
@@ -33,19 +33,19 @@ module Monitoring
         end
       end
 
-      def list_statistics(options = {})
+      def list_statistics(options={})
         handle_response do
           @fog.list_statistics(options).body["elements"]
         end
       end
 
-      def alarms(options = {})
+      def alarms(options={})
         handle_response do
           @fog.list_alarms(options).body["elements"]
         end
       end
 
-      def alarm_states_history(id, options = {})
+      def alarm_states_history(id, options={})
         handle_response do
           @fog.list_alarm_state_history_for_specific_alarm(id, options).body["elements"]
         end
@@ -75,44 +75,44 @@ module Monitoring
         end
       end
 
-      def update_notification_method(id, params={})
+      def update_notification_method(id, options={})
         handle_response do
           # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-10
           request_params = {
-            "name" => params["name"],
-            "type" => params["type"], 
-            "address" => params["address"],
+            "name" => options["name"],
+            "type" => options["type"], 
+            "address" => options["address"],
           }
           @fog.update_notification_method(id, request_params).body
         end
       end
 
-      def update_alarm_definition(id, params={})
+      def update_alarm_definition(id, options={})
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
         # TODO: if the alarm definition was created with no match_by it cannot be updated and hangs with message
         #       "match_by must not change"
         request_params = {
-          "name"        => params["name"],
-          "description" => params["description"], 
-          "expression"  => params["expression"], 
-          "severity"    => params["severity"], 
-          "match_by"    => params["match_by"],
+          "name"        => options["name"],
+          "description" => options["description"], 
+          "expression"  => options["expression"], 
+          "severity"    => options["severity"], 
+          "match_by"    => options["match_by"],
         }
  
         # needed when update_attributes(attr) is used and no "match_by" was given
         # then match_by is already set with the current value and do not need converted
         unless request_params["match_by"].kind_of?(Array)
-          request_params["match_by"]=  params["match_by"].split(', ')
+          request_params["match_by"]=  options["match_by"].split(', ')
         end
 
-        if params['actions_enabled'] == '1' or params['actions_enabled'] == true
+        if options['actions_enabled'] == '1' or options['actions_enabled'] == true
           request_params['actions_enabled'] = true
         else  
           request_params['actions_enabled'] = false
         end
-        request_params['ok_actions'] = params['ok_actions'] 
-        request_params['alarm_actions'] = params['alarm_actions']
-        request_params['undetermined_actions'] = params['undetermined_actions'] 
+        request_params['ok_actions'] = options['ok_actions'] 
+        request_params['alarm_actions'] = options['alarm_actions']
+        request_params['undetermined_actions'] = options['undetermined_actions'] 
 
         handle_response do
           @fog.update_alarm_definition(id, request_params).body
@@ -137,27 +137,27 @@ module Monitoring
         end
       end
 
-      def create_notification_method(params={})
+      def create_notification_method(options={})
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-7
         handle_response do
-          @fog.create_notification_method(params).body
+          @fog.create_notification_method(options).body
         end
       end
 
-      def create_alarm_definition(params={})
+      def create_alarm_definition(options={})
         # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-12
         # not allowed paramters are deleted here
-        params.delete('actions_enabled')
+        options.delete('actions_enabled')
         # handle comma seperated list
-        params["match_by"] = params["match_by"].split(',')
+        options["match_by"] = options["match_by"].split(',')
         handle_response do
-          @fog.create_alarm_definition(params).body
+          @fog.create_alarm_definition(options).body
         end
       end
       
-      def list_dimension_values(params)
+      def list_dimension_values(options)
         handle_response do
-          @fog.list_dimension_values(params).body
+          @fog.list_dimension_values(options).body
         end
       end
     end
