@@ -1,30 +1,38 @@
 {
 
   "monitoring_admin": "role:monasca-user",
+  "monitoring_viewer": "role:monasca-viewer",
   "monitoring:entry_list": "not project_id:nil",
   
-  "monitoring:overview_list": "rule:monitoring_admin",
+  "monitoring:overview_list": "rule:monitoring_admin or rule:monitoring_viewer",
   
-  "monitoring:alarm_list": "rule:monitoring_admin",  
-  "monitoring:alarm_get": "rule:monitoring_admin",
+  "monitoring:alarm_list": "rule:monitoring_admin or rule:monitoring_viewer",
+  "monitoring:alarm_get": "rule:monitoring_admin or rule:monitoring_viewer",
   "monitoring:alarm_delete": "rule:monitoring_admin",
   "monitoring:alarm_update": "rule:monitoring_admin",
-
-  "monitoring:notification_method_list": "rule:monitoring_admin",
-  "monitoring:notification_method_get": "rule:monitoring_admin",
+  "monitoring:alarm_filter_and_search": "rule:monitoring_admin or rule:monitoring_viewer",
+  "monitoring:alarm_history": "rule:monitoring_admin or rule:monitoring_viewer",
+ 
+  "monitoring:notification_method_list": "rule:monitoring_admin or rule:monitoring_viewer",
+  "monitoring:notification_method_get": "rule:monitoring_admin or rule:monitoring_viewer",
   "monitoring:notification_method_create": "rule:monitoring_admin",
   "monitoring:notification_method_delete": "rule:monitoring_admin",
   "monitoring:notification_method_update": "rule:monitoring_admin",
   "monitoring:notification_method_new": "rule:monitoring_admin",
+  "monitoring:notification_method_search": "rule:monitoring_admin or rule:monitoring_viewer",
 
-  "monitoring:alarm_definition_list": "rule:monitoring_admin",
-  "monitoring:alarm_definition_get": "rule:monitoring_admin",
+  "monitoring:alarm_definition_list": "rule:monitoring_admin or rule:monitoring_viewer",
+  "monitoring:alarm_definition_get": "rule:monitoring_admin or rule:monitoring_viewer",
   "monitoring:alarm_definition_create": "rule:monitoring_admin",
   "monitoring:alarm_definition_delete": "rule:monitoring_admin",
   "monitoring:alarm_definition_update": "rule:monitoring_admin",
-  "monitoring:alarm_definition_new": "rule:monitoring_admin"
+  "monitoring:alarm_definition_new": "rule:monitoring_admin",
+  "monitoring:alarm_definition_toggle_alarm_actions": "rule:monitoring_admin",
+  "monitoring:alarm_definition_from_expression_wizzard_new": "rule:monitoring_admin",
+  "monitoring:alarm_definition_from_expression_wizzard_edit": "rule:monitoring_admin",
+  "monitoring:alarm_definition_edit_expression": "rule:monitoring_admin",
+  "monitoring:alarm_definition_create_expression": "rule:monitoring_admin",
+  "monitoring:alarm_definition_search" : "rule:monitoring_admin or rule:monitoring_viewer",
+  "monitoring:alarm_definition_statistics": "rule:monitoring_admin or rule:monitoring_viewer"
 
 }
-
-
- 

@@ -14,6 +14,6 @@
         %li= link_to 'Details', plugin('monitoring').alarm_path(alarm.id, name: definition.name) , data: { modal: true }
         %li= link_to 'History', plugin('monitoring').alarm_history_path(alarm.id, name: definition.name), data: { modal: true }
         %li= link_to 'Definition', plugin('monitoring').alarm_definition_path(alarm.alarm_definition_id) , data: { modal: true }
-        -#%li= link_to 'Mute', '#', data: { modal: true }
-        %li= link_to 'Delete', plugin('monitoring').alarm_path(alarm.id), method: :delete, data: { confirm: "Are you sure?" }
+        - if current_user.is_allowed?("monitoring:monitoring:alarm_delete")
+          %li= link_to 'Delete', plugin('monitoring').alarm_path(alarm.id), method: :delete, data: { confirm: "Are you sure?" }
 
