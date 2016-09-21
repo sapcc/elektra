@@ -2,6 +2,19 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.selected_class = 'active'
   navigation.active_leaf_class = 'nav-active-leaf'
   navigation.items do |primary|    
+
+    primary.item :api, 
+                 'API Access', nil, 
+                 html: {class: "fancy-nav-header", 'data-icon': "api-icon"},
+                 if: -> {services.available?(:webconsole)} do |api_nav|
+      api_nav.item :web_console,
+                   'Web Console', -> { plugin('webconsole').root_path}, 
+                   if: -> { services.available?(:webconsole)},
+                   highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
+      api_nav.item :api_endpoints, 
+                   'API Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
+    end
+
     primary.item  :storage,
                   'Storage',
                   nil,
@@ -24,17 +37,6 @@ SimpleNavigation::Configuration.run do |navigation|
                           highlights_on: -> { params[:controller][%r{monitoring/?.*}] }
     end
 
-    primary.item :api, 
-                 'API Access', nil, 
-                 html: {class: "fancy-nav-header", 'data-icon': "api-icon"},
-                 if: -> {services.available?(:webconsole)} do |api_nav|
-      api_nav.item :web_console,
-                   'Web Console', -> { plugin('webconsole').root_path}, 
-                   if: -> { services.available?(:webconsole)},
-                   highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
-      api_nav.item :api_endpoints, 
-                   'API Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
-    end
 
     primary.item  :access_management,
                   "Authorizations for project #{@scoped_project_name}",
