@@ -53,5 +53,6 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.dom_attributes = { class: 'fancy-nav', role: 'menu' }
+    
   end
 end
