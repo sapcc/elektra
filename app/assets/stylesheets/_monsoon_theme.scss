@@ -898,6 +898,13 @@ footer, .footer {
       font-size: 45%;
       a {
         color: #888;
+
+        &.help-link {
+          &:hover, &:active, &:focus {
+            color: $link-color;
+            text-decoration: none;
+          }
+        }
       }
     }
 
@@ -984,6 +991,8 @@ footer, .footer {
     border-left-color: $btn-info-border;
 
     &.bs-callout-emphasize {
+      border-color: $emphasize-info-border-color;
+      border-left-color: $bright-blue;
       background: lighten($alert-info-bg, 5);
     }
   }
@@ -1640,11 +1649,16 @@ input[type='checkbox'], input[type='radio'] {
     @include opacity(0.75);
     position: absolute;
     right: 7px;
-    top: 2px
+    top: 2px;
+
+    &:hover {
+      text-decoration: none;
+    }
   }
 
   .plugin-help-text {
     @extend .col-sm-9;
+    border-right: 1px solid $emphasize-info-border-color;
   }
 
   .plugin-help-links {
