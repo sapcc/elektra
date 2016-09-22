@@ -1,4 +1,10 @@
-= link_to toggle_alarm_actions_alarm_definition_path(alarm_definition.id), remote: true, title: 'toggle alarm actions', data: { confirm: 'Toggle alarm notifications. Are you sure?', disable_with: "Working..." } do
+- if current_user.is_allowed?("monitoring:toggle_alarm_actions")
+  = link_to toggle_alarm_actions_alarm_definition_path(alarm_definition.id), remote: true, title: 'toggle alarm actions', data: { confirm: 'Toggle alarm notifications. Are you sure?', disable_with: "Working..." } do
+    - if alarm_definition.actions_enabled
+      = icon('check-square-o')
+    - else
+      = icon('square-o')
+- else
   - if alarm_definition.actions_enabled
     = icon('check-square-o')
   - else
