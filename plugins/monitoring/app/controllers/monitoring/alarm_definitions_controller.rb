@@ -191,13 +191,14 @@ module Monitoring
       # split expression into subexpression parts
       # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
       
-      @metric_names = services.monitoring.get_metric_names
+      @metric_names = services.monitoring.get_metric_names()
     end
     
     def metric_names_by_dimension
       name = params.require(:name)
       value = params.require(:value)
-      render json: {metric_names: ['bla','foo']}
+      @metric_names = services.monitoring.get_metric_names({dimensions: name+":"+value})
+      render partial: "metrics"
     end
 
     def dimension_values

@@ -40,22 +40,16 @@
       .row
         .col-md-12#start_with_dimension_row
           .form-group
-            = label_tag 'start_with_dimension', 'Start with Dimension', class:'control-label'
-            %select#start_with_dimension.form-control{onchange: 'get_dimension_values();'}
+            = label_tag 'dimension-name', 'Filter metric by dimension', class:'control-label'
+            %select.dimension-name.form-control{onchange: 'get_dimension_values();'}
               %option{value: '', selected: true}
               - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
                 %option{value: dimension} #{dimension}
             %span.help-block
               Dimensions can be used to uniquely identify a metric
         #start_with_dimension_value
-      .form-group
-        = label_tag 'metric', 'Start with Metric', class:'control-label'
-        %select#metric.form-control{onchange: "get_dimensions();", data: { "live-search" => "true"}}
-          %option{value: '', selected: true}
-          - @metric_names.sort.each do |metric_name|
-            %option{value: metric_name} #{metric_name}
-        %span.help-block
-          A metric is uniquely identified by a name and set of dimensions.
+      #start_with_metric
+        = render partial:"metrics"
       #expression_dimensions
       .hide-on-start
         .form-group

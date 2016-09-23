@@ -30,7 +30,7 @@
     );
 
     if( metric_names && wizard_mode == "create" ) {
-      $('#start_with_dimension').selectpicker({
+      $("select.dimension-name").selectpicker({
         style: 'btn-default',
         size: 7
       });
@@ -65,8 +65,7 @@
       // initial autofocus
       setTimeout(function() {
         $("#metric").focus().select();
-        $('#preview').addClass('expression-preview text-info pull-left');
-        $('#preview').text('please define me');
+        please_define_me();
       }, 0);
     }
   });
@@ -74,6 +73,11 @@
   //
   // LOGIC
   //
+  
+  function please_define_me() {
+    $('#preview').addClass('expression-preview text-info pull-left');
+    $('#preview').text('please define me');
+  }
   
   function render_dimension_row(ID) {
     // if no dimension was found do nothing
@@ -180,6 +184,12 @@
     $('.create-expression-error').html('Metric Dimensions Error: '+XHR.status+' '+XHR.statusText);
   }
 
+  function cleanup_dimensions() {
+    dimension_cnt = 1;
+    $('#expression_dimensions').empty();
+    $('.expression_dimension_head').fadeIn();
+  }
+
   function get_dimensions() {
     var metric_name = $('#metric').val();
     if (metric_name) {
@@ -222,10 +232,7 @@
           // write dimension keys for later use in match by
           $('#filter_by_dimensions').val(dimension_keys.toString())
   
-          // cleanup everything
-          dimension_cnt = 1;
-          $('#expression_dimensions').empty();
-          $('.expression_dimension_head').fadeIn();
+          cleanup_dimensions();
           // render the row based on dimension_data and the template
           render_dimension_row(dimension_cnt);
           show_statistic();
@@ -308,7 +315,7 @@
     if (!numberReg.test(period/60)) {
       // if the error is already set we do not need to set it again
       if (!$('.period .has-error').length) {
-        $('.period.help-block').hide();
+        $('.period.help-block').fadeOut();
         $('.period').addClass('has-error');
         $('.period').append("<span class='help-block period-error'>Period is not a multiple of 60 or an integer</span>");
       }
@@ -356,11 +363,11 @@
     $('#preview').removeClass();
     if(valid) {
       $('#preview').addClass('expression-preview text-success pull-left');
-      $('#alarm_definition_ready_btn').removeClass('hide');
+      $('#alarm_definition_ready_btn').fadeIn();
       $('#preview').data('valid', true);
     }
     else {
-      $('#alarm_definition_ready_btn').addClass('hide');
+      $('#alarm_definition_ready_btn').fadeOut();
       $('#preview').addClass('expression-preview text-danger pull-left');
       $('#preview').data('valid', false);
     }
@@ -405,12 +412,19 @@
     show_statistic();
   };
 
+  function cleanup() {
+    cleanup_dimensions();
+    please_define_me();
+    $('#alarm_definition_ready_btn').fadeOut();
+    $('.hide-on-start').fadeOut();
+    $('#start_with_metric').fadeOut();
+  }
 
   function get_dimension_values() {
 
-    var dimension = $('select#start_with_dimension').val();
+    var dimension = $('select.dimension-name').val();
     if (dimension != "") {
-      $("#metric").prop('readonly',true);
+      cleanup();
       $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
         name: dimension,
         // in case of invalid token we don't want to follow the redirect from the server to the logon page
@@ -418,32 +432,27 @@
         do_not_redirect: true
       },function(data,status,xhr) {
         check_logon_state(xhr);
-  
+
         var start_with_dimension = $('#start_with_dimension_row');
         start_with_dimension.removeClass('col-md-12');
         start_with_dimension.addClass('col-md-6');
         $('#start_with_dimension_value').html(data);
-        $('#start_with_dimension_value_select').selectpicker({
+        $('select.dimension-value').selectpicker({
           style: 'btn-default',
-          size: 6
+          size: 7
         });
-
-      }).error (function(xhr) {
-
-    });
-    }
-    else {
-      $("#metric").prop('readonly',false);
+      }).error (function(xhr){});
     }
 
   };
   
   function recreate_metrics_field() {
 
-    var dimension = $('select#start_with_dimension').val();
-    var value = $('select#start_with_dimension_value').val();
+    var dimension = $('select.dimension-name').val();
+    var value = $('select.dimension-value').val();
     
     if (dimension != "" && value != "") {
+      cleanup();
       $.post( "#{plugin('monitoring').metric_names_by_dimension_alarm_definitions_path()}", {
         name: dimension,
         value: value,
@@ -452,10 +461,13 @@
         do_not_redirect: true
       },function(data,status,xhr) {
         check_logon_state(xhr);
-        $("#metric").prop('readonly',false);
-      }).error (function(xhr) {
-  
-      });
+        $('#start_with_metric').html(data);
+        $('#metric').selectpicker({
+          style: 'btn-default',
+          size: 10
+        });
+        $('#start_with_metric').fadeIn();
+      }).error (function(xhr) {});
     }
 
   };

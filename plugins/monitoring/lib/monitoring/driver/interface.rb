@@ -58,7 +58,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def list_metric_names()
+      def list_metric_names(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
