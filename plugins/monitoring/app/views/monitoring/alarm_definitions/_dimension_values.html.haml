@@ -1,0 +1,7 @@
+.col-md-6
+  .form-group
+    = label_tag 'start_with_dimension_value', 'Value', class:'control-label'
+    %select#start_with_dimension_value.form-control{onchange: 'recreate_metrics_field();'}
+      %option{value: '', selected: true}
+      - @dimension_values.each do |dimension_value|
+        %option{value: dimension_value} #{dimension_value}

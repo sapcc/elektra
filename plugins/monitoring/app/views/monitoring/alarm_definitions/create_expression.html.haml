@@ -37,14 +37,17 @@
       = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
   .row
     .col-md-6
-      .form-group
-        = label_tag 'dimension', 'Start with Dimension', class:'control-label'
-        %select#dimension.form-control{onchange: 'get_dimension_values();'}
-          %option{value: '', selected: true}
-          - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
-            %option{value: dimension} #{dimension}
-        %span.help-block
-          Dimensions can be used to uniquely identify a metric
+      .row
+        .col-md-12#start_with_dimension_row
+          .form-group
+            = label_tag 'start_with_dimension', 'Start with Dimension', class:'control-label'
+            %select#start_with_dimension.form-control{onchange: 'get_dimension_values();'}
+              %option{value: '', selected: true}
+              - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
+                %option{value: dimension} #{dimension}
+            %span.help-block
+              Dimensions can be used to uniquely identify a metric
+        #start_with_dimension_value
       .form-group
         = label_tag 'metric', 'Start with Metric', class:'control-label'
         = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc", autocomplete: "off"

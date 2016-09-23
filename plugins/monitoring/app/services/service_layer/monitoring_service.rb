@@ -54,7 +54,6 @@ module ServiceLayer
       driver.map_to(Monitoring::AlarmState).alarm_states_history(id)
     end
 
-
     def notification_methods(search = nil)
       notification_methods = driver.map_to(Monitoring::NotificationMethod).notification_methods
       if search
@@ -84,7 +83,7 @@ module ServiceLayer
     end
     
     def get_dimension_values_by_dimension(name)
-      driver.map_to(Monitoring::Dimension).list_dimension_values(name)[0]
+      driver.map_to(Monitoring::Dimension).list_dimension_values(name)[0].values()
     end
 
     def get_metric(attributes={}) 

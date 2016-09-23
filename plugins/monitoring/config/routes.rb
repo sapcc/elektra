@@ -12,15 +12,16 @@ Monitoring::Engine.routes.draw do
 
   resources 'alarm_definitions' do
     collection do
-      get 'search'
-      match '/create_expression' => 'alarm_definitions#create_expression' , :via => [:get, :post]
-      post 'dimension_values'
-      get '/edit_expression' => 'alarm_definitions#edit_expression'
-      post 'dimensions_for_metric' => 'alarm_definitions#get_dimensions_for_metric'
-      post 'dimension_row'
-      post 'statistics'
-      post 'from_expression_wizzard_new'
-      post 'from_expression_wizzard_edit'
+      get   'search'
+      match 'create_expression' => 'alarm_definitions#create_expression' , :via => [:get, :post]
+      post  'dimension_values'
+      post  'metric_names_by_dimension'
+      get   'edit_expression' => 'alarm_definitions#edit_expression'
+      post  'dimensions_for_metric' => 'alarm_definitions#get_dimensions_for_metric'
+      post  'dimension_row'
+      post  'statistics'
+      post  'from_expression_wizzard_new'
+      post  'from_expression_wizzard_edit'
     end
     member do
       get 'toggle_alarm_actions'

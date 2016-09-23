@@ -14,6 +14,7 @@ module Monitoring
       :statistics,
       :edit_expression,
       :dimension_values,
+      :metric_names_by_dimension
     ]
     
     def index
@@ -193,10 +194,17 @@ module Monitoring
       @metric_names = services.monitoring.get_metric_names
     end
     
+    def metric_names_by_dimension
+      name = params.require(:name)
+      value = params.require(:value)
+      render json: {metric_names: ['bla','foo']}
+    end
+
     def dimension_values
-      dimension_name = params.require(:dimension)
-      dimension_values = services.monitoring.get_dimension_values_by_dimension(dimension_name)
-      render json: {dimension_values: dimension_values.values}
+      name = params.require(:name)
+      @dimension_values = services.monitoring.get_dimension_values_by_dimension(name)
+      # because of ajax call we render the partial
+      render partial: "dimension_values"
     end
     
     # used by the wizard to get once all dimensions for given metric name
@@ -220,6 +228,7 @@ module Monitoring
       @cnt = params.require(:cnt).to_i
       @keys = JSON.parse(params.require(:keys));
       @next = @cnt + 1
+      # because of ajax call we render the partial
       render partial: "dimension_row"
     end
 

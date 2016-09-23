@@ -402,17 +402,51 @@
 
   function get_dimension_values() {
 
-    $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
-      dimension: $('select#dimension').val(),
-      // in case of invalid token we don't want to follow the redirect from the server to the logon page
-      // instead we handle that case in check_logon_state()
-      do_not_redirect: true
-    },function(data,status,xhr) {
-      check_logon_state(xhr);
-
-    }).error (function(xhr) {
+    var dimension = $('select#start_with_dimension').val();
+    if (dimension != "") {
+      $("#metric").prop('readonly',true);
+      $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
+        name: dimension,
+        // in case of invalid token we don't want to follow the redirect from the server to the logon page
+        // instead we handle that case in check_logon_state()
+        do_not_redirect: true
+      },function(data,status,xhr) {
+        check_logon_state(xhr);
+  
+        var start_with_dimension = $('#start_with_dimension_row');
+        start_with_dimension.removeClass('col-md-12');
+        start_with_dimension.addClass('col-md-6');
+        $('#start_with_dimension_value').html(data);
+  
+      }).error (function(xhr) {
 
     });
+    }
+    else {
+      $("#metric").prop('readonly',false);
+    }
+
+  };
+  
+  function recreate_metrics_field() {
+
+    var dimension = $('select#start_with_dimension').val();
+    var value = $('select#start_with_dimension_value').val();
+    
+    if (dimension != "" && value != "") {
+      $.post( "#{plugin('monitoring').metric_names_by_dimension_alarm_definitions_path()}", {
+        name: dimension,
+        value: value,
+        // in case of invalid token we don't want to follow the redirect from the server to the logon page
+        // instead we handle that case in check_logon_state()
+        do_not_redirect: true
+      },function(data,status,xhr) {
+        check_logon_state(xhr);
+        $("#metric").prop('readonly',false);
+      }).error (function(xhr) {
+  
+      });
+    }
 
   };
   
