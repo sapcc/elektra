@@ -18,12 +18,6 @@
                 %i.monitoring-icon
                 = link_to "Quota: #{@quota_data.collect{|qd| qd.display_string}.join(', ')}", plugin('resource_management').resources_path, data: {toggle: "tooltip", placement: "right"}, title: "Click to manage quotas"
 
-            - if @plugin_help_text
-              %div
-                %a.help-link{href: "#", data: {toggle: "help"}}
-                  Help
-                  %i.fa.fa-question-circle-o
-
 
       .page-title
         %i.fa.fa-angle-right
@@ -34,6 +28,6 @@
             = active_service_breadcrumb
 
         - if experimental
-          %span.experimental-tag{data: {toggle: "tooltip"}, title: "This is still experimental. There will be errors/missing features!"}
+          %span.experimental-tag{data: {toggle: "tooltip"}, title: "This is an experimental. There will be errors/missing features!"}
             %i.fa.fa-flash
             Experimental
