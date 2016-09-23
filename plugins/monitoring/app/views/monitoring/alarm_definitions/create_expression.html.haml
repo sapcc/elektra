@@ -40,16 +40,18 @@
       .row
         .col-md-12#start_with_dimension_row
           .form-group
-            = label_tag 'dimension-name', 'Filter metric by dimension', class:'control-label'
+            = label_tag 'dimension-name', 'Filter metrics by dimension', class:'control-label'
             %select.dimension-name.form-control{onchange: 'get_dimension_values();'}
               %option{value: '', selected: true}
               - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
                 %option{value: dimension} #{dimension}
             %span.help-block
-              Dimensions can be used to uniquely identify a metric
+              A dimension can be used to uniquely identify a metric
         #start_with_dimension_value
-      #start_with_metric
-        = render partial:"metrics"
+        
+      -#start_with_metric
+      -#  = render partial:"metrics"
+      
       #expression_dimensions
       .hide-on-start
         .form-group
@@ -89,12 +91,14 @@
         -#%span.help-block
         -#  Chain expressions with logical operators together (optional).
 
-    .col-md-6.hide-on-start
-      .row
-        .col-md-12{style: 'padding-left:0px'}
+    .col-md-6
+      #start_with_metric
+        = render partial:"metrics"
+      .row.hide-on-start
+        .col-md-12
           = label_tag 'statistic', 'Statistic', class: 'control-label'
           = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
-          %svg#statistic{style:"width:425px; height:400px;"}
+          %svg#statistic{style:"width:425px; height:350px;"}
           %span.help-block
             The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
 

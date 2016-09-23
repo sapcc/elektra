@@ -1,6 +1,6 @@
 .col-md-6
   .form-group
-    = label_tag 'dimension-value', 'and value', class:'control-label'
+    = label_tag 'dimension-value', 'Value', class:'control-label'
     %select.dimension-value.form-control{onchange: 'recreate_metrics_field();', data: { "live-search" => "true"}}
       %option{value: '', selected: true}
       - @dimension_values.each do |dimension_value|

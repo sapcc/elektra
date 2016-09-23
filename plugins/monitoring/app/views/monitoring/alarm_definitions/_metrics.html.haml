@@ -1,8 +1,8 @@
 .form-group
-  = label_tag 'metric', 'Metric', class:'control-label'
-  %select#metric.form-control{onchange: "get_dimensions();", data: { "live-search" => "true"}}
+  = label_tag 'metric', @metrics_title, class:'control-label'
+  %select#metric.form-control{onchange: "get_dimensions();", data: {"live-search" => "true"}}
     %option{value: '', selected: true}
     - @metric_names.sort.each do |metric_name|
       %option{value: metric_name} #{metric_name}
   %span.help-block
-  A metric is uniquely identified by a name and set of dimensions.
+    A metric is uniquely identified by a name and set of dimensions.
