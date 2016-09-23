@@ -155,9 +155,9 @@ module Monitoring
         end
       end
       
-      def list_dimension_values(options)
+      def list_dimension_values(dimension_values,options={})
         handle_response do
-          @fog.list_dimension_values(options).body
+          @fog.list_dimension_values(dimension_values,options).body["elements"]
         end
       end
     end

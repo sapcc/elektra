@@ -13,7 +13,7 @@ module Monitoring
       :dimension_row,
       :statistics,
       :edit_expression,
-      :metric_names_by_dimension,
+      :dimension_values,
     ]
     
     def index
@@ -193,8 +193,10 @@ module Monitoring
       @metric_names = services.monitoring.get_metric_names
     end
     
-    def metric_names_by_dimension
-      render json: {foo:'bla'}
+    def dimension_values
+      dimension_name = params.require(:dimension)
+      dimension_values = services.monitoring.get_dimension_values_by_dimension(dimension_name)
+      render json: {dimension_values: dimension_values.values}
     end
     
     # used by the wizard to get once all dimensions for given metric name

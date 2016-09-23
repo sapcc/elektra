@@ -66,7 +66,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
       
-      def list_dimension_values(options)
+      def list_dimension_values(dimension_name,options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

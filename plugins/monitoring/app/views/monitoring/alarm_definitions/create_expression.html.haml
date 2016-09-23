@@ -39,7 +39,7 @@
     .col-md-6
       .form-group
         = label_tag 'dimension', 'Start with Dimension', class:'control-label'
-        %select#dimension.form-control{onchange: 'get_metric_names();'}
+        %select#dimension.form-control{onchange: 'get_dimension_values();'}
           %option{value: '', selected: true}
           - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
             %option{value: dimension} #{dimension}

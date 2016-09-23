@@ -400,9 +400,9 @@
   };
 
 
-  function get_metric_names() {
+  function get_dimension_values() {
 
-    $.post( "#{plugin('monitoring').metric_names_by_dimension_alarm_definitions_path()}", {
+    $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
       dimension: $('select#dimension').val(),
       // in case of invalid token we don't want to follow the redirect from the server to the logon page
       // instead we handle that case in check_logon_state()
