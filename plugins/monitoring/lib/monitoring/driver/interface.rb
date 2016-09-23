@@ -30,7 +30,7 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def alarm_states_history(id, params={})
+      def alarm_states_history(id, options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
