@@ -11,7 +11,8 @@
 
       = f.input :ip_id,
         as: :select,
-        collection: @available_ips.collect{|fip| ["#{fip.floating_ip_address} (#{@networks[fip.floating_network_id].try(:name)})",fip.id] }
+        collection: @available_ips.collect{|fip| ["#{fip.floating_ip_address} (#{@networks[fip.floating_network_id].try(:name)})",fip.id] },
+        include_blank: false
 
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
