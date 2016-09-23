@@ -50,7 +50,10 @@
         #start_with_dimension_value
       .form-group
         = label_tag 'metric', 'Start with Metric', class:'control-label'
-        = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc", autocomplete: "off"
+        %select#metric.form-control{onchange: "get_dimensions();", data: { "live-search" => "true"}}
+          %option{value: '', selected: true}
+          - @metric_names.sort.each do |metric_name|
+            %option{value: metric_name} #{metric_name}
         %span.help-block
           A metric is uniquely identified by a name and set of dimensions.
       #expression_dimensions
