@@ -2,7 +2,7 @@ module CostControl
   class CostObjectController < CostControl::ApplicationController
     authorization_required
 
-    before_filter :load_masterdata
+    before_filter :load_masterdata, :load_kb11n_billing_object
 
     def show
       if @scoped_project_id
@@ -50,6 +50,16 @@ module CostControl
       else
         @masterdata = services.cost_control.find_domain_masterdata(@scoped_domain_id)
       end
+    end
+
+    def load_kb11n_billing_object
+      if @scoped_project_id
+        @kb11n_billing_object = services.cost_control.find_kb11n_billing_object(@scoped_project_id)
+      end
+    end
+
+    def experimental
+      true
     end
 
   end

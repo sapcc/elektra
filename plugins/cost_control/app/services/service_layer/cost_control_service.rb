@@ -36,5 +36,17 @@ module ServiceLayer
       return new_domain_masterdata if domain_id.blank?
       driver.map_to(CostControl::DomainMasterdata).get_domain_masterdata(domain_id)
     end
+
+    #### kb11n billing object
+
+    def new_kb11n_billing_object(attributes={})
+      CostControl::Kb11nBillingObject.new(driver, attributes)
+    end
+
+    def find_kb11n_billing_object(project_id)
+      return new_kb11n_billing_object if project_id.blank?
+      driver.map_to(CostControl::Kb11nBillingObject).get_kb11n_billing_object(project_id)
+    end
+
   end
 end

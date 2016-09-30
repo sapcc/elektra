@@ -22,6 +22,12 @@ module CostControl
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      #### kb11n billing object
+
+      def get_kb11n_billing_object(project_id)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end
