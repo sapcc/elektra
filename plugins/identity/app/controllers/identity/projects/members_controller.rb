@@ -83,7 +83,7 @@ module Identity
       protected
 
       def load_roles
-        @roles = (service_user.roles rescue []).delete_if { |role| IGNORED_ROLES.include?(role.name) }
+        @roles = (service_user.roles rescue []).keep_if { |role| ALLOWED_ROLES.include?(role.name) }
       end
 
       def load_role_assignments

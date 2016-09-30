@@ -1,1 +1,1 @@
-IGNORED_ROLES = %w(service cloud_network_admin network_admin cloud_dns_admin dns_admin swiftreseller).freeze
+ALLOWED_ROLES = %w(admin member monasca-agent monasca-user monasca-viewer monitoring-delegate swiftoperator).freeze
