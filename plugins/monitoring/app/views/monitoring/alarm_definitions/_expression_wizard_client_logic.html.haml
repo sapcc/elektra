@@ -144,7 +144,7 @@
       var dimension_values = dimension_data[selected_dimension_key];
 
       $("#dimension_value_"+ID).empty();
-      var options = "<option selected></option>";
+      var options = "";
       $.each(dimension_values, function(index,value){
         options += "<option value='"+value+"'>"+value+"</option>"
       });
@@ -174,10 +174,6 @@
       // set fokus to value field
       //$("#dimension_value_"+ID).prop('readonly',false);
       $("#dimension_value_"+ID).focus();
-    }
-    else {
-      // empty key
-      $("#dimension_value_"+ID).prop('readonly',true);
     }
   }
 

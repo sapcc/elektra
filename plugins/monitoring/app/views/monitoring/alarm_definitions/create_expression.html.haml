@@ -29,7 +29,6 @@
           .form-group
             = label_tag 'dimension-name', 'Filter metrics by dimension', class:'control-label'
             %select.dimension-name.form-control{onchange: 'get_dimension_values();',title: 'choose dimension to filter metrics'}
-              %option{value: '', selected: true}
               - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
                 %option{value: dimension} #{dimension}
             %span.help-block
