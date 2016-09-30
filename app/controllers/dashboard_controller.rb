@@ -132,10 +132,10 @@ class DashboardController < ::ScopeController
 
   protected
 
-  helper_method :experimental
+  helper_method :release_state
 
-  def experimental
-    false
+  def release_state
+    "public_release"
   end
 
   def show_beta?

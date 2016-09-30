@@ -33,7 +33,8 @@
           - else
             = active_service_breadcrumb
 
-        - if experimental
-          %span.experimental-tag{data: {toggle: "tooltip"}, title: "This is an experimental. There will be errors/missing features!"}
-            %i.fa.fa-flash
-            Experimental
+
+        - if release_state
+          %span{class: "release-state release-state-#{release_state}", data: {toggle: "tooltip"}, title: "Experimental: There will be errors and/or missing features!"}
+            %i{class: "#{release_state}-icon"}
+            = release_state.titleize

@@ -268,10 +268,29 @@ section {
   cursor: pointer;
 }
 
-.experimental-tag {
-  color: $dark-sapgold;
+.release-state {
+  display: none;
   cursor: help;
   font-size: $font-size-base;
+
+  i {
+    margin-right: 1px;
+  }
+
+  &.release-state-experimental {
+    display: inline;
+    color: $dark-sapgold;
+  }
+
+  &.release-state-tech_preview {
+    display: inline;
+    color: $bright-blue;
+  }
+
+  &.release-state-beta {
+    display: inline;
+    color: $medium-green;
+  }
 }
 
 // ---------------------------------------------------------------------------------
@@ -417,6 +436,20 @@ section {
   @extend .fa-exchange;
 }
 
+.experimental-icon {
+  @extend .fa;
+  @extend .fa-flash;
+}
+
+.tech_preview-icon {
+  @extend .fa;
+  @extend .fa-paper-plane-o;
+}
+
+.beta-icon {
+  @extend .fa;
+  @extend .fa-rocket;
+}
 
 // ---------------------------------------------------------------------------------
 // Buttons
