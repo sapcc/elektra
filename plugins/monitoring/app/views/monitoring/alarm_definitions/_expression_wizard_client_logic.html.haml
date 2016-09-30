@@ -127,39 +127,52 @@
     }
   }
   
+  function set_dimension_value() {
+    
+  }
+  
   function autocomplete_dimension_values(ID) {
+
+    $("#dimension_key_"+ID).prop('disabled',true);
+    $("#dimension_value_"+ID).prop('disabled',false);
+    $('.selectpicker').selectpicker('refresh');
     // destroy old typeahead
-    $("#dimension_value_"+ID).typeahead('destroy');
+    //$("#dimension_value_"+ID).typeahead('destroy');
     if($("#dimension_key_"+ID).val() != '') {
       // get typeahead data
       var selected_dimension_key = $("#dimension_key_"+ID).val();
       var dimension_values = dimension_data[selected_dimension_key];
-      // set typeahead for values
-      $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
-        function(){
-          // to prevent random user input only the input from typeahead is valid
-          $("#dimension_value_"+ID).data('valid',true);
-          // remove selected value from array
-          var selected_dimension_value = $("#dimension_value_"+ID).val();
-          var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
-          dimension_data[selected_dimension_key].splice(value_index,1);
-          // remove key if no values left
-          if ( dimension_data[selected_dimension_key].length == 0 ) {
-            delete dimension_data[selected_dimension_key];
-          }
-          // render new row
-          dimension_cnt++
-          render_dimension_row(dimension_cnt); 
-          generate_expression();
-          // made row read only
-          $("#dimension_value_"+ID).prop("readonly", true);
-          $("#dimension_key_"+ID).prop("disabled", "disabled");
-          show_statistic();
-        }
+
+      $("#dimension_value_"+ID).empty();
+      var options = "<option selected></option>";
+      $.each(dimension_values, function(index,value){
+        options += "<option value='"+value+"'>"+value+"</option>"
       });
-  
+
+      $("#dimension_value_"+ID).html(options);
+      $('#dimension_value_'+ID).selectpicker('refresh');
+      $('#dimension_value_'+ID).on('changed.bs.select', function (e) {
+        // to prevent random user input only the input from typeahead is valid
+        $("#dimension_value_"+ID).data('valid',true);
+        $("#dimension_value_"+ID).prop('disabled',true);
+        $('#dimension_value_'+ID).selectpicker('refresh');
+        // remove selected value from array
+        var selected_dimension_value = $("#dimension_value_"+ID).val();
+        var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
+        dimension_data[selected_dimension_key].splice(value_index,1);
+        // remove key if no values left
+        if ( dimension_data[selected_dimension_key].length == 0 ) {
+          delete dimension_data[selected_dimension_key];
+        }
+        // render new row
+        dimension_cnt++
+        render_dimension_row(dimension_cnt); 
+        generate_expression();
+        show_statistic();
+      });
+
       // set fokus to value field
-      $("#dimension_value_"+ID).prop('readonly',false);
+      //$("#dimension_value_"+ID).prop('readonly',false);
       $("#dimension_value_"+ID).focus();
     }
     else {
