@@ -190,14 +190,14 @@ module Monitoring
       # TODO: chain expressions keep it vor later
       # split expression into subexpression parts
       # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
-      @metrics_title = "OR use unfiltered metrics"
+      @metrics_title = "OR start with unfiltered metrics"
       @metric_names = services.monitoring.get_metric_names()
     end
     
     def metric_names_by_dimension
       name = params.require(:name)
       value = params.require(:value)
-      @metrics_title = "AND use filtered metrics"
+      @metrics_title = "AND start with prefiltered metrics"
       @metric_names = services.monitoring.get_metric_names({dimensions: name+":"+value})
       render partial: "metrics"
     end

@@ -2,16 +2,15 @@
   %label{ for: "dimension_key_#{@cnt}"}
     Filter by dimension
   .row
-    .col-md-4
+    .col-md-4.dimensions-column 
       %select{id:"dimension_key_#{@cnt}", class: "form-control dimension_key selectpicker dropdown", onchange: "autocomplete_dimension_values(#{@cnt})", data: {id: @cnt}}
         - @keys.sort.each do |key|
           %option{value: key}=key
-    .col-md-8
-      .input-group
-        %select{id: "dimension_value_#{@cnt}", class: "form-control dimension_key selectpicker dropdown", disabled: 'disabled',data: {"live-search" => "true"}}
-        -# text_field_tag "dimension_value_#{@cnt}", nil, class: "form-control dimension_value", data: { provide: "typeahead", id: @cnt  }, placeholder:'value', autocomplete: "off"
-        %span.input-group-btn.expression-remove-dimension{id: "expression_remove_dimension_#{@cnt}"}
-          = link_to "Remove", '#', class: 'btn btn-default disabled', id: "expression_remove_dimension_btn_#{@cnt}", onclick: "remove_dimension_row(#{@cnt})"
+    .col-md-5.dimensions-column
+      %select{id: "dimension_value_#{@cnt}", class: "form-control dimension_key selectpicker dropdown", disabled: 'disabled',data: {"live-search" => "true"}}
+    .col-md-2.dimensions-column.remove-dimension-btn
+      %span.input-group-btn.expression-remove-dimension{id: "expression_remove_dimension_#{@cnt}"}
+        = link_to "Remove", '#', class: 'btn btn-default disabled', id: "expression_remove_dimension_btn_#{@cnt}", onclick: "remove_dimension_row(#{@cnt})"
 
 :javascript
   $(function(){

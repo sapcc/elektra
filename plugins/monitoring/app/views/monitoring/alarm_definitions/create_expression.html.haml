@@ -17,20 +17,7 @@
         .panel-body.panel-expression
           .row
             .col-md-11
-              -# chain expressions keep it vor later
-              -#  - index = 0;
-              -#  - @sub_expressions.each do |expression, logical_operator|
-              -#    - if logical_operator
-              -#      .sub-expression.text-success
-              -#        - index += 1
-              -#        = expression+logical_operator
-              -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
-                  
               .expression-preview#preview
-              
-              -#%button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
-              -#  Chain Expression
-
             .col-md-1
               .loading-place.loading-right
     .col-md-1.reset-btn
@@ -41,7 +28,7 @@
         .col-md-12#start_with_dimension_row
           .form-group
             = label_tag 'dimension-name', 'Filter metrics by dimension', class:'control-label'
-            %select.dimension-name.form-control{onchange: 'get_dimension_values();'}
+            %select.dimension-name.form-control{onchange: 'get_dimension_values();',title: 'choose dimension to filter metrics'}
               %option{value: '', selected: true}
               - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
                 %option{value: dimension} #{dimension}
@@ -81,16 +68,6 @@
               = text_field_tag 'threshold_value', 60, class: 'form-control'
           %span.help-block.threshold
             Threshold values are always in the same units as the metric that they are being compared to.
-
-        -# chain expressions keep it vor later
-        -#= label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
-        -#%select#chain_operator.form-control{onchange: 'generate_expression();'}
-        -#  %option
-        -#  %option{value: 'AND'} and
-        -#  %option{value: 'OR'} or
-        -#%span.help-block
-        -#  Chain expressions with logical operators together (optional).
-
     .col-md-6
       #start_with_metric
         = render partial:"metrics"
