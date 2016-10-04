@@ -17,8 +17,8 @@ module BlockStorage
 
         # # quota for block_storage is not implemented yet        
         # @quota_data = services.resource_management.quota_data([
-        #   {service_name: 'block_storage', resource_name: 'volumes', usage: @volumes.length},
-        #   {service_name: 'block_storage', resource_name: 'capacity', unit: :gb}
+        #   {service_name: :block_storage, resource_name: :volumes, usage: @volumes.length},
+        #   {service_name: :block_storage, resource_name: :capacity}
         # ])
         
       end

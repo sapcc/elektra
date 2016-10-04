@@ -9,8 +9,8 @@ module Loadbalancing
           @members = services.loadbalancing.pool_members(@pool.id) if @pool
           @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool and @pool.healthmonitor_id
           # @quota_data = services.resource_management.quota_data([
-          #                                                           {service_name: 'networking', resource_name: 'loadbalancers', usage: @loadbalancers.length},
-          #                                                           {service_name: 'networking', resource_name: 'loadbalancer_rules', usage: @rules.length}
+          #                                                           {service_name: :networking, resource_name: :loadbalancers, usage: @loadbalancers.length},
+          #                                                           {service_name: :networking, resource_name: :loadbalancer_rules, usage: @rules.length}
           #                                                       ])
         end
 

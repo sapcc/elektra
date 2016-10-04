@@ -4,8 +4,8 @@ module Networking
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       
       @quota_data = services.resource_management.quota_data([
-        {service_name: 'networking', resource_name: 'security_groups', usage: @security_groups.length},
-        {service_name: 'networking', resource_name: 'security_group_rules'}
+        {service_name: :networking, resource_name: :security_groups, usage: @security_groups.length},
+        {service_name: :networking, resource_name: :security_group_rules}
       ])
     end
     
@@ -63,8 +63,8 @@ module Networking
       end
       
       @quota_data = services.resource_management.quota_data([
-        {service_name: 'networking', resource_name: 'security_groups', usage: @security_groups.length},
-        {service_name: 'networking', resource_name: 'security_group_rules', usage: @rules.length}
+        {service_name: :networking, resource_name: :security_groups, usage: @security_groups.length},
+        {service_name: :networking, resource_name: :security_group_rules, usage: @rules.length}
       ])
     end
     
