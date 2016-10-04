@@ -127,17 +127,11 @@
     }
   }
   
-  function set_dimension_value() {
-    
-  }
-  
   function autocomplete_dimension_values(ID) {
 
     $("#dimension_key_"+ID).prop('disabled',true);
     $("#dimension_value_"+ID).prop('disabled',false);
     $('.selectpicker').selectpicker('refresh');
-    // destroy old typeahead
-    //$("#dimension_value_"+ID).typeahead('destroy');
     if($("#dimension_key_"+ID).val() != '') {
       // get typeahead data
       var selected_dimension_key = $("#dimension_key_"+ID).val();
@@ -219,31 +213,37 @@
           }
   
           dimension_data = data; 
-          // normalize data
-          $(Object.keys(dimension_data)).each(function(index,dimension_key) {
-            //console.log(dimension_key);
-            var unique_values = [];
-            // removed doubled entrys
-            // http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
-            $.each(dimension_data[dimension_key], function(i, value){
-                if($.inArray(value, unique_values) === -1) unique_values.push(value);
+          if (dimension_data.length > 0) {
+            // normalize data
+            $(Object.keys(dimension_data)).each(function(index,dimension_key) {
+              //console.log(dimension_key);
+              var unique_values = [];
+              // removed doubled entrys
+              // http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
+              $.each(dimension_data[dimension_key], function(i, value){
+                  if($.inArray(value, unique_values) === -1) unique_values.push(value);
+              });
+              dimension_data[dimension_key] = unique_values;
             });
-            dimension_data[dimension_key] = unique_values;
-          });
-          
-          generate_expression();
-          var dimension_keys = Object.keys(dimension_data);
-          // remove all used dimensions from dimension_keys
-          $('.dimension_key').each(function(){
-            var dimension = $(this).val();
-            dimension_keys.splice(dimension_keys.indexOf(dimension), 1);
-          })
-          // write dimension keys for later use in match by
-          $('#filter_by_dimensions').val(dimension_keys.toString())
-  
-          cleanup_dimensions();
-          // render the row based on dimension_data and the template
-          render_dimension_row(dimension_cnt);
+            
+            generate_expression();
+            var dimension_keys = Object.keys(dimension_data);
+            // remove all used dimensions from dimension_keys
+            $('.dimension_key').each(function(){
+              var dimension = $(this).val();
+              dimension_keys.splice(dimension_keys.indexOf(dimension), 1);
+            })
+            // write dimension keys for later use in match by
+            $('#filter_by_dimensions').val(dimension_keys.toString())
+    
+            cleanup_dimensions();
+            // render the row based on dimension_data and the template
+            render_dimension_row(dimension_cnt);
+          }
+          else {
+            generate_expression();
+            $('.hide-on-start').fadeIn();
+          }
           show_statistic();
   
         }).error( function(xhr) {
