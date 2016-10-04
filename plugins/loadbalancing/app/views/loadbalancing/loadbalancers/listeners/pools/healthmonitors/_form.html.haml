@@ -1,9 +1,9 @@
 %fieldset
   =# f.input :name, required: true
   = f.input :type, as: :select, collection: Loadbalancing::Healthmonitor::TYPES, required: true, disabled: update
-  = f.input :max_retries, as: :integer
-  = f.input :timeout, as: :integer
-  = f.input :delay, as: :integer, label: 'Delays'
+  = f.input :max_retries, as: :integer, input_html: { min: '1', max: 10 }
+  = f.input :timeout, label: 'Timeout', as: :integer, required: true, input_html: { min: '1' }
+  = f.input :delay, as: :integer, label: 'Delays', input_html: { min: '1' }
   = f.input :http_method, { wrapper_html: {class: ("hidden" unless @healthmonitor.type == 'HTTP')}, required: true, as: :select, collection: Loadbalancing::Healthmonitor::METHODS }
   = f.input :expected_codes, { wrapper_html: {class: ("hidden" unless @healthmonitor.type == 'HTTP')} }
   = f.input :url_path, { wrapper_html: {class: ("hidden" unless @healthmonitor.type == 'HTTP')} }
