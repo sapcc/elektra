@@ -9,7 +9,7 @@ module Monitoring
       :create,
       :search,
       :create_expression,
-      :get_dimensions_for_metric,
+      :dimensions_for_metric,
       :dimension_row,
       :statistics,
       :edit_expression,
@@ -210,7 +210,7 @@ module Monitoring
     end
     
     # used by the wizard to get once all dimensions for given metric name
-    def get_dimensions_for_metric
+    def dimensions_for_metric
       name = params.require(:name)
       # get all dimensions 120 minutes ago
       t = Time.now.utc - (60*120)
