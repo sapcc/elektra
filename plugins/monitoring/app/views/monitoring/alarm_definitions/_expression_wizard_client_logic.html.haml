@@ -196,6 +196,8 @@
   function get_dimensions() {
     var metric_name = $('#metric').val();
     if (metric_name) {
+    
+      // remove prefilter
       $.post("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
         name: metric_name,
         // in case of invalid token we don't want to follow the redirect from the server to the logon page
@@ -211,7 +213,17 @@
             $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
             return;
           }
-  
+          // only used if we load it first time
+          if( $('#metric_list div.form-group label.control-label').text() != "Metric" ) {
+            $('#prefilter').fadeOut();
+            // reuse metric list
+            $('#metric_list').insertBefore($('#expression_dimensions'))
+            // rename label
+            $('#metric_list div.form-group label.control-label').text('Metric')
+            $('#prefilter').remove();
+            $('.hide-on-start').fadeIn();
+          }
+
           dimension_data = data; 
           if (Object.keys(dimension_data).length > 0) {
             // normalize data

@@ -17,6 +17,9 @@ select.selectpicker {
   width: 100%;
   padding-right: 25px;
   z-index: 1;
+  /*because of this the styling is fixed and cannot be changed
+    http://silviomoreto.github.io/bootstrap-select/examples/#styling
+  */
   background: white !important;
 }
 .bootstrap-select > .dropdown-toggle.bs-placeholder,
@@ -24,7 +27,6 @@ select.selectpicker {
 .bootstrap-select > .dropdown-toggle.bs-placeholder:focus,
 .bootstrap-select > .dropdown-toggle.bs-placeholder:active {
   color: #999;
-  background: white !important;
 }
 .bootstrap-select > select {
   position: absolute !important;

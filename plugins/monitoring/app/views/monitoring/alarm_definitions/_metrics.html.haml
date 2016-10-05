@@ -1,7 +1,8 @@
-.form-group
-  = label_tag 'metric', @metrics_title, class:'control-label'
-  %select#metric.form-control{ onchange: "get_dimensions();", title: "search and choose metric", data: {"live-search" => "true"} }
-    - @metric_names.sort.each do |metric_name|
-      %option{value: metric_name} #{metric_name}
-  %span.help-block
-    A metric is uniquely identified by a name and set of dimensions.
+#metric_list
+  .form-group
+    = label_tag 'metric', @metrics_title, class:'control-label'
+    %select#metric.form-control{ onchange: "get_dimensions();", title: "search and choose a metric", data: {"live-search" => "true"} }
+      - @metric_names.sort.each do |metric_name|
+        %option{value: metric_name} #{metric_name}
+    %span.help-block
+      Choose a metric to start with the expression creation.
