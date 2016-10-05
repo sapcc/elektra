@@ -81,7 +81,7 @@ module KeyManager
       @types = ::KeyManager::Secret::Type.to_hash
       @selected_type = params.fetch('secret', {}).fetch('secret_type', nil) || params[:secret_type] || ::KeyManager::Secret::Type::PASSPHRASE
       @payload_content_types = ::KeyManager::Secret::PayloadContentType.relation_to_type[@selected_type.to_sym]
-      @payload_content_encoding = ::KeyManager::Secret::Encoding.relation_to_type[@selected_type.to_sym]
+      @payload_content_encoding = ::KeyManager::Secret::Encoding.relation_to_payload_content_type[@selected_type.to_sym]
     end
 
     def secrets_params

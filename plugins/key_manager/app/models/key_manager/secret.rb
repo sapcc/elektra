@@ -42,7 +42,7 @@ module KeyManager
         res[Type::PUBLIC.to_sym] = [PayloadContentType::OCTET_STREAM]
         res[Type::PRIVATE.to_sym] = [PayloadContentType::OCTET_STREAM]
         res[Type::PASSPHRASE.to_sym] = [PayloadContentType::TEXTPLAIN, PayloadContentType::TEXTPLAIN_CHARSET_UTF8]
-        res[Type::CERTIFICATE.to_sym] = [PayloadContentType::PKCS8, PayloadContentType::PKIX_CERT]
+        res[Type::CERTIFICATE.to_sym] = [PayloadContentType::TEXTPLAIN] #[PayloadContentType::PKCS8, PayloadContentType::PKIX_CERT]
         res
       end
 
@@ -52,13 +52,24 @@ module KeyManager
 
       BASE64 = 'base64'
 
+      # TODO: change this to be relation to PayloadContentType
       def self.relation_to_type
         res = {}
         res[Type::SYMMETRIC.to_sym] = BASE64
         res[Type::PUBLIC.to_sym] = BASE64
         res[Type::PRIVATE.to_sym] = BASE64
         res[Type::PASSPHRASE.to_sym] = nil
-        res[Type::CERTIFICATE.to_sym] = BASE64
+        res[Type::CERTIFICATE.to_sym] = nil #BASE64
+        res
+      end
+
+      def self.relation_to_payload_content_type
+        res = {}
+        res[PayloadContentType::OCTET_STREAM.to_sym] = BASE64
+        res[PayloadContentType::TEXTPLAIN.to_sym] = nil
+        res[PayloadContentType::TEXTPLAIN_CHARSET_UTF8.to_sym] = nil
+        res[PayloadContentType::PKCS8.to_sym] = BASE64
+        res[PayloadContentType::PKIX_CERT.to_sym] = BASE64
         res
       end
 
