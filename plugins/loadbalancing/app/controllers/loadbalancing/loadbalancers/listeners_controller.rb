@@ -6,8 +6,8 @@ module Loadbalancing
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
         # @quota_data = services.resource_management.quota_data([
-        #   {service_name: 'loadbalancing', resource_name: 'loadbalancers', usage: @loadbalancers.length},
-        #   {service_name: 'loadbalancing', resource_name: 'loadbalancer_rules'}
+        #   {service_name: :loadbalancing, resource_name: :loadbalancers, usage: @loadbalancers.length},
+        #   {service_name: :loadbalancing, resource_name: :loadbalancer_rules}
         # ])
       end
 
@@ -17,8 +17,8 @@ module Loadbalancing
         @listener = services.loadbalancing.find_listener(params[:id])
         @pools = [services.loadbalancing.find_pool(@listener.default_pool_id)] if @listener.default_pool_id
         # @quota_data = services.resource_management.quota_data([
-        #                                                           {service_name: 'networking', resource_name: 'loadbalancers', usage: @loadbalancers.length},
-        #                                                           {service_name: 'networking', resource_name: 'loadbalancer_rules', usage: @rules.length}
+        #                                                           {service_name: :networking, resource_name: :loadbalancers, usage: @loadbalancers.length},
+        #                                                           {service_name: :networking, resource_name: :loadbalancer_rules, usage: @rules.length}
         #                                                       ])
       end
 

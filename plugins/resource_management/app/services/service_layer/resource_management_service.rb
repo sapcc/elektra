@@ -11,35 +11,48 @@ module ServiceLayer
 
     def quota_data(options=[])
       result = []
-      
+
       return result if options.empty?
-      
+
       domain_id = current_user.domain_id || current_user.project_domain_id
       project_id = current_user.project_id
-      
-      options.each do |values| 
-        service_name,resource_name,usage=nil
-      
+
+      options.each do |values|
         resource = ResourceManagement::Resource.where({
-          domain_id: domain_id, 
-          project_id: project_id, 
-          service: values[:service_name], 
-          name: values[:resource_name]
+          domain_id: domain_id,
+          project_id: project_id,
+          service: values[:service_name].to_s,
+          name: values[:resource_name].to_s
         }).first
-        
+
         next if resource.nil?
-        
-        if values[:usage] and values[:usage].is_a?(Fixnum) and resource.usage!=values[:usage] 
-          resource.usage=values[:usage]
+
+        if values[:usage] and values[:usage].is_a?(Fixnum) and resource.usage != values[:usage]
+          resource.usage = values[:usage]
           resource.save
         end
-      
-        result << ResourceManagement::QuotaData.new(name: resource.name, total: resource.current_quota, usage: resource.usage, unit: values[:unit])
+
+        data_type = ResourceManagement::ServiceConfig.find(values[:service_name]).
+          try { |srv| srv.resources.find { |r| r.name == values[:resource_name] } }.
+          try { |res| res.data_type }
+
+        unless data_type
+          # if this error occurs, add the resource to lib/resource_management/{service,resource}_config.rb
+          # and to the driver (please do not try to patch around; this will make a horrible mess)
+          raise ArgumentError, "unknown resource '#{values[:service_name]}/#{values[:resource_name]}'"
+        end
+
+        result << ResourceManagement::QuotaData.new(
+          name: resource.name,
+          total: resource.current_quota,
+          usage: resource.usage,
+          data_type: data_type,
+        )
       end
       result
     end
-    
-    
+
+
     # This is used in the unit test to replace services.identity by a mock.
     def services_identity
       @services_identity || services.identity

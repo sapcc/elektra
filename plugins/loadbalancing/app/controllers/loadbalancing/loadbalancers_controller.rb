@@ -4,16 +4,16 @@ module Loadbalancing
       @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
 
       # @quota_data = services.resource_management.quota_data([
-      #   {service_name: 'loadbalancing', resource_name: 'loadbalancers', usage: @loadbalancers.length},
-      #   {service_name: 'loadbalancing', resource_name: 'loadbalancer_rules'}
+      #   {service_name: :loadbalancing, resource_name: :loadbalancers, usage: @loadbalancers.length},
+      #   {service_name: :loadbalancing, resource_name: :loadbalancer_rules}
       # ])
     end
 
     def show
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       # @quota_data = services.resource_management.quota_data([
-      #                                                           {service_name: 'networking', resource_name: 'loadbalancers', usage: @loadbalancers.length},
-      #                                                           {service_name: 'networking', resource_name: 'loadbalancer_rules', usage: @rules.length}
+      #                                                           {service_name: :networking, resource_name: :loadbalancers, usage: @loadbalancers.length},
+      #                                                           {service_name: :networking, resource_name: :loadbalancer_rules, usage: @rules.length}
       #                                                       ])
     end
 

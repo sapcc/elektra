@@ -6,7 +6,7 @@ module Networking
       
       usage = @routers.length
       @quota_data = services.resource_management.quota_data([
-        {service_name: 'networking', resource_name: 'routers', usage: usage}
+        {service_name: :networking, resource_name: :routers, usage: usage}
       ])
     end
 
@@ -57,7 +57,7 @@ module Networking
 
     def new
       @quota_data = services.resource_management.quota_data([
-        {service_name: 'networking', resource_name: 'routers'}
+        {service_name: :networking, resource_name: :routers}
       ])
       
       # build new router object (no api call done yet!)

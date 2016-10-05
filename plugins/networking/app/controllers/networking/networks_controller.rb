@@ -7,7 +7,7 @@ module Networking
       # all networks but shared
       usage = @networks.select{|n| n.shared==false}.length
       @quota_data = services.resource_management.quota_data([
-        {service_name: 'networking', resource_name: 'networks', usage: usage}
+        {service_name: :networking, resource_name: :networks, usage: usage}
       ])
     end
 
