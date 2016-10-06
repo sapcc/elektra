@@ -3,15 +3,15 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.active_leaf_class = 'nav-active-leaf'
   navigation.items do |primary|
 
-    primary.item :api, 
-                 'API Access', nil, 
+    primary.item :api,
+                 'API Access', nil,
                  html: {class: "fancy-nav-header", 'data-icon': "api-icon"},
                  if: -> {services.available?(:webconsole)} do |api_nav|
       api_nav.item :web_console,
-                   'Web Console', -> { plugin('webconsole').root_path}, 
+                   'Web Console', -> { plugin('webconsole').root_path},
                    if: -> { services.available?(:webconsole)},
                    highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
-      api_nav.item :api_endpoints, 
+      api_nav.item :api_endpoints,
                    'API Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
     end
 
@@ -26,6 +26,17 @@ SimpleNavigation::Configuration.run do |navigation|
                         'Images',
                         -> { plugin('image').os_images_public_index_path },
                         highlights_on: -> { params[:controller][%r{image/?.*}] }
+    end
+
+    primary.item  :storage,
+                  'Storage',
+                  nil,
+                  html: { class: 'fancy-nav-header', :'data-icon' => 'storage-icon' },
+                  if: -> { services.available?(:object_storage, :containers) } do |storage_nav|
+      storage_nav.item  :shared_storage,
+                        'Shared Object Storage',
+                        -> { plugin('object_storage').entry_path },
+                        highlights_on: -> { params[:controller][%r{object_storage/?.*}] }
     end
 
     primary.item  :access_management,
@@ -53,6 +64,6 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.dom_attributes = { class: 'fancy-nav', role: 'menu' }
-    
+
   end
 end
