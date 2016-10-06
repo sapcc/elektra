@@ -11,7 +11,7 @@
 .modal-body
   %p.alert.alert-error.create-expression-error
   .row#prefilter
-    .col-md-7
+    .col-md-5#filter_dimensions
       .row
         .col-md-12#start_with_dimension_row
           .form-group
@@ -22,7 +22,10 @@
             %span.help-block
               A dimension can be used to uniquely identify a metric
         #start_with_dimension_value
-    .col-md-4
+    .col-md-1
+      .dimension-or-metrics
+        OR
+    .col-md-5#filtered_metrics
       #start_with_metric
         = render partial:"metrics"
     .col-md-1
@@ -41,6 +44,9 @@
       = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
   .row.hide-on-start
     .col-md-6
+      .expression-dimension-head
+        %label
+          Filter by dimension's
       #expression_dimensions
       .form-group
         = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'

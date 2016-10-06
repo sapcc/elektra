@@ -97,11 +97,10 @@
           // render row data
           $('#expression_dimensions').append(data);
 
-          // set fokus to key field
-          $("#dimension_key_"+ID).focus();
-          $("#dimension_value_"+ID).prop('readonly',true);
-          // show the complete wizard on first run
-          $('.hide-on-start').fadeIn();
+          // show head on the first run
+          $(".expression-dimension-head").fadeIn();
+          // show new dimension line
+          $("#expression_dimension_"+ID).fadeIn();
 
           // enable remove button
           var id_before = ID - 1;
@@ -190,10 +189,9 @@
   function cleanup_dimensions() {
     dimension_cnt = 1;
     $('#expression_dimensions').empty();
-    $('.expression_dimension_head').fadeIn();
   }
 
-  function get_dimensions() {
+  function get_dimensions(METRICS_LIST_TITLE) {
     var metric_name = $('#metric').val();
     if (metric_name) {
     
@@ -213,13 +211,14 @@
             $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
             return;
           }
+          
           // only used if we load it first time
-          if( $('#metric_list div.form-group label.control-label').text() != "Metric" ) {
+          if( !RegExp(/Metric/).test($('#metric_list div.form-group label.control-label').text()) ) {
             $('#prefilter').fadeOut();
             // reuse metric list
-            $('#metric_list').insertBefore($('#expression_dimensions'))
+            $('#metric_list').insertBefore($('.expression-dimension-head'))
             // rename label
-            $('#metric_list div.form-group label.control-label').text('Metric')
+            $('#metric_list div.form-group label.control-label').text(METRICS_LIST_TITLE)
             $('#prefilter').remove();
             $('.hide-on-start').fadeIn();
           }
@@ -247,7 +246,6 @@
             })
             // write dimension keys for later use in match by
             $('#filter_by_dimensions').val(dimension_keys.toString())
-    
             cleanup_dimensions();
             // render the row based on dimension_data and the template
             render_dimension_row(dimension_cnt);
@@ -418,14 +416,20 @@
     please_define_me();
     $('#alarm_definition_ready_btn').fadeOut();
     $('.hide-on-start').fadeOut();
-    $('#start_with_metric').fadeOut();
   }
-
+  
+  
+  // used for prefilter
   function get_dimension_values() {
 
     var dimension = $('select.dimension-name').val();
     if (dimension != "") {
-      cleanup();
+
+      $('#start_with_dimension_value').fadeOut();
+      $('#start_with_metric').fadeOut();
+      $('.dimension-or-metrics').fadeOut();
+      console.log('dasdas');
+      
       $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
         name: dimension,
         // in case of invalid token we don't want to follow the redirect from the server to the logon page
@@ -433,6 +437,13 @@
         do_not_redirect: true
       },function(data,status,xhr) {
         check_logon_state(xhr);
+
+        // readjust the prefilter line
+        $('.dimension-or-metrics').parent().remove();
+        $('#filter_dimensions').addClass('col-md-7');
+        $('#filter_dimensions').removeClass('col-md-5');
+        $('#filtered_metrics').addClass('col-md-4');
+        $('#filtered_metrics').removeClass('col-md-5');
 
         var start_with_dimension = $('#start_with_dimension_row');
         start_with_dimension.removeClass('col-md-12');
@@ -442,6 +453,7 @@
           style: 'btn-default',
           size: 7
         });
+        $('#start_with_dimension_value').fadeIn();
       }).error (function(xhr){});
     }
 
