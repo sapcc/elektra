@@ -1,5 +1,5 @@
 = content_for :title do
-  First - choose Metric
+  1. Choose Metric
 
 - unless modal?
   %h4 First Create Expression 
@@ -15,12 +15,12 @@
       .row
         .col-md-12#start_with_dimension_row
           .form-group
-            = label_tag 'dimension-name', 'Start with filtering by dimension', class:'control-label'
-            %select.dimension-name.form-control{onchange: 'get_dimension_values();',title: 'choose dimension to prefilter metrics list'}
+            = label_tag 'dimension-name', 'Restrict metrics by category', class:'control-label'
+            %select.dimension-name.form-control{onchange: 'get_dimension_values();',title: 'choose category to prefilter metrics list'}
               - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
                 %option{value: dimension} #{dimension}
             %span.help-block
-              A dimension can be used to uniquely identify a metric
+              Category (Dimension) filters can be used to discover metrics belonging to a specific service, component, host etc.
         .reset-filter-btn.hide-on-start
           = link_to "Reset filter", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
         #start_with_dimension_value
@@ -48,7 +48,7 @@
     .col-md-6
       .expression-dimension-head
         %label
-          Filter by dimension's
+          Filter by
       #expression_dimensions
       .form-group
         = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
