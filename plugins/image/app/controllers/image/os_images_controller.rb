@@ -35,7 +35,8 @@ module Image
     end
 
     def destroy
-      render text: 'destroy'
+      @image = services.image.find_image(params[:id])
+      @success =  (@image and @image.destroy)
     end
 
     protected
