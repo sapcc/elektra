@@ -113,11 +113,18 @@
           // remove all dimensions keys that are used and
           // write the keys for later in creation form  and match by 
           var dimension_keys = Object.keys(dimension_data);
+          //console.log(dimension_keys);
           $('.dimension_key').each(function(){
             var used_dimension_key = $(this).val();
+            //console.log(used_dimension_key);
             var index = dimension_keys.indexOf(used_dimension_key)
-            dimension_keys.splice(index,1);
-          })
+            //console.log(index);
+            // if nothing was found we do not delete
+            if(index != -1) {
+              dimension_keys.splice(index,1);
+            }
+          });
+          //console.log(dimension_keys);
           $('#filter_by_dimensions').val(dimension_keys);
           
           // update preview
