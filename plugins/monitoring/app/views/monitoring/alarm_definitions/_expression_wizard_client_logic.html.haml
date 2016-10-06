@@ -226,6 +226,7 @@
             $('#metric_list div.form-group label.control-label').text(METRICS_LIST_TITLE)
             $('#prefilter').remove();
             $('.hide-on-start').fadeIn();
+            $('.modal-title').text('Second - design the Expression');
           }
 
           dimension_data = data; 
@@ -436,8 +437,7 @@
       $('#start_with_dimension_value').fadeOut();
       $('#start_with_metric').fadeOut();
       $('.dimension-or-metrics').fadeOut();
-      console.log('dasdas');
-      
+
       $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
         name: dimension,
         // in case of invalid token we don't want to follow the redirect from the server to the logon page
@@ -452,7 +452,6 @@
         $('#filter_dimensions').removeClass('col-md-5');
         $('#filtered_metrics').addClass('col-md-4');
         $('#filtered_metrics').removeClass('col-md-5');
-        $('#start_with_metric').remove();
         $('#filtered_metrics').append($('.reset-filter-btn'));
         $('.reset-filter-btn').fadeIn();
 
