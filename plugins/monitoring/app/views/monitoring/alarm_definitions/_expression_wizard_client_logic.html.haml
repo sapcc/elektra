@@ -74,11 +74,13 @@
   // LOGIC
   //
   
+  // shown on startup
   function please_define_me() {
     $('#preview').addClass('expression-preview text-info pull-left');
     $('#preview').text('please define me');
   }
   
+  // renders new dimensionrow
   function render_dimension_row(ID) {
     // if no dimension was found do nothing
     if (dimension_data) {
@@ -126,6 +128,7 @@
     }
   }
   
+  // set autocompletion for dimension values field
   function autocomplete_dimension_values(ID) {
 
     $("#dimension_key_"+ID).prop('disabled',true);
@@ -186,12 +189,14 @@
     $('.create-expression-error').html('Metric Dimensions Error: '+XHR.status+' '+XHR.statusText);
   }
 
+  // if everything was reseted to start
   function cleanup_dimensions() {
     dimension_cnt = 1;
     $('#expression_dimensions').empty();
   }
 
-  function get_dimensions(METRICS_LIST_TITLE) {
+  // is triggerd if user chooses a metric
+  function get_dimensions_for_metric(METRICS_LIST_TITLE) {
     var metric_name = $('#metric').val();
     if (metric_name) {
     
@@ -262,6 +267,7 @@
       }
   }
   
+  // render the statistic
   function show_statistic() {
 
     if (!$('#preview').data('valid')) { return };
@@ -303,6 +309,7 @@
     });
   }
 
+  // is triggerd if the user changes a value
   function generate_expression() {
     
     var valid = true;
@@ -388,6 +395,7 @@
     $('#expression').val(expression);
   } 
   
+  // triggered when the user removes a dimension row
   function remove_dimension_row(ID) {
     // add value to choosen dimension key
     var dimension_key = $("#dimension_key_"+ID).val();
@@ -411,15 +419,15 @@
     show_statistic();
   };
 
+  // everything starts from begining
   function cleanup() {
     cleanup_dimensions();
     please_define_me();
     $('#alarm_definition_ready_btn').fadeOut();
     $('.hide-on-start').fadeOut();
   }
-  
-  
-  // used for prefilter
+
+  // used for prefilter to load all values related to on dimension
   function get_dimension_values() {
 
     var dimension = $('select.dimension-name').val();
@@ -459,7 +467,8 @@
 
   };
   
-  function recreate_metrics_field() {
+  // used on prefilter to filter metrics list
+  function filter_metrics_by_dimension() {
 
     var dimension = $('select.dimension-name').val();
     var value = $('select.dimension-value').val();
@@ -485,6 +494,7 @@
 
   };
   
+  // get all expression dimensions as string
   function expression_dimensions() {
     // dimensions
     var dimensions = "";
