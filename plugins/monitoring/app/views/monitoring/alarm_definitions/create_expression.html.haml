@@ -21,6 +21,8 @@
                 %option{value: dimension} #{dimension}
             %span.help-block
               A dimension can be used to uniquely identify a metric
+        .reset-filter-btn.hide-on-start
+          = link_to "Reset filter", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
         #start_with_dimension_value
     .col-md-1
       .dimension-or-metrics

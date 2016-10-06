@@ -452,6 +452,9 @@
         $('#filter_dimensions').removeClass('col-md-5');
         $('#filtered_metrics').addClass('col-md-4');
         $('#filtered_metrics').removeClass('col-md-5');
+        $('#start_with_metric').remove();
+        $('#filtered_metrics').append($('.reset-filter-btn'));
+        $('.reset-filter-btn').fadeIn();
 
         var start_with_dimension = $('#start_with_dimension_row');
         start_with_dimension.removeClass('col-md-12');
