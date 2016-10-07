@@ -1,5 +1,5 @@
 = content_for :title do
-  Second define alarm
+  3. Define Alarm Definition
 
 = simple_modal_form_for @alarm_definition, submit_action: 'Create', url: plugin('monitoring').alarm_definitions_path, method: :post, cancel_url: plugin('monitoring').alarm_definitions_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form, autofocus: 'alarm_definition_name' do |f|
   = render partial: 'form_with_expression', locals: {f:f}

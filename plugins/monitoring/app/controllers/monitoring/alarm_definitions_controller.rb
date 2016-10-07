@@ -9,10 +9,12 @@ module Monitoring
       :create,
       :search,
       :create_expression,
-      :get_dimensions_for_metric,
+      :dimensions_for_metric,
       :dimension_row,
       :statistics,
-      :edit_expression
+      :edit_expression,
+      :dimension_values,
+      :metric_names_by_dimension
     ]
     
     def index
@@ -187,13 +189,35 @@ module Monitoring
       
       # TODO: chain expressions keep it vor later
       # split expression into subexpression parts
-      # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).to_a
+      # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).
       
-      @metric_names = services.monitoring.get_metric_names
+      # this used on prefilter label
+      @metrics_title = "use unfiltered metrics list"
+      # this is used for metrics list label on the expression wizard
+      @metrics_list_title = "Metrics - unfiltered"
+      @metric_names = services.monitoring.get_metric_names()
+    end
+    
+    def metric_names_by_dimension
+      name = params.require(:name)
+      value = params.require(:value)
+      # this used on prefilter label
+      @metrics_title = "to use a prefiltered metrics list"
+      # this is used for metrics list label on the expression wizard
+      @metrics_list_title = "Metrics - filtered"
+      @metric_names = services.monitoring.get_metric_names({dimensions: name+":"+value})
+      render partial: "metrics"
+    end
+
+    def dimension_values
+      @name = params.require(:name)
+      @dimension_values = services.monitoring.get_dimension_values_by_dimension(@name)
+      # because of ajax call we render the partial
+      render partial: "dimension_values"
     end
     
     # used by the wizard to get once all dimensions for given metric name
-    def get_dimensions_for_metric
+    def dimensions_for_metric
       name = params.require(:name)
       # get all dimensions 120 minutes ago
       t = Time.now.utc - (60*120)
@@ -204,7 +228,6 @@ module Monitoring
       # default init with empty array
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
-      dimensions[''] << ''
       render json: dimensions
     end
 
@@ -213,6 +236,7 @@ module Monitoring
       @cnt = params.require(:cnt).to_i
       @keys = JSON.parse(params.require(:keys));
       @next = @cnt + 1
+      # because of ajax call we render the partial
       render partial: "dimension_row"
     end
 
