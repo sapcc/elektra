@@ -40,6 +40,7 @@ module Monitoring
 
     def edit
       @expression = @alarm_definition.expression
+      parse_expression(@expression)
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
 
@@ -313,8 +314,10 @@ module Monitoring
         
         # rebuild expression to check if everything was going right
         @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
+        @parsed_expression_success = true
       rescue
         @parsed_expression = "Cannot parse! This expression was probably not created with the expression wizard."
+        @parsed_expression_success = false
       end 
     end
 
