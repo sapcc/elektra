@@ -59,7 +59,7 @@
       .col-md-6
         .form-group
           = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
-          %select#statistical_function.form-control
+          %select#statistical_function.form-control.selectpicker
             - ['avg','min','max','sum','count'].each do |statistical_function|
               - if @statistical_function == statistical_function
                 %option{value: statistical_function, selected:true} #{statistical_function}
@@ -79,7 +79,7 @@
           .row  
             .col-md-4
               = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
-              %select#threshold_relational_operator.form-control
+              %select#threshold_relational_operator.form-control.selectpicker
                 - ['<','>','<=','>='].each do |threshold|
                   - if @threshold == threshold
                     %option{value: threshold, selected:true} #{threshold}
@@ -107,6 +107,14 @@
   :javascript
     var metric_names;
     var wizard_mode = "edit";
+    
+    $(function(){
+      $(".selectpicker").selectpicker({
+        style: 'btn-default',
+        dropupAuto: false,
+        size: 5
+      });
+    })
 
   = render partial: 'expression_wizard_client_logic'
 
