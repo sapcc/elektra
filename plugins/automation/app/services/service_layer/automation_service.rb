@@ -2,13 +2,6 @@ module ServiceLayer
 
   class ServiceNotAvailable < StandardError; end
 
-  class AutomationApiError < StandardError;
-    attr_reader :data
-    def initialize(data)
-      @data = data
-    end
-  end
-
   class AutomationService < Core::ServiceLayer::Service
     attr_reader :client
 
@@ -85,44 +78,34 @@ module ServiceLayer
 
     def automation_service
       Automation::Automation.site = ::File.join(ENV.fetch("LYRA_ENDPOINT") { automation_service_endpoint }, 'api/v1')
-      Automation::Automation.token = self.token
+      Automation::Automation.headers = {"X-Auth-Token" => self.token}
       Automation::Automation
     end
 
     def automation_run_service
       Automation::Run.site = ::File.join(ENV.fetch("LYRA_ENDPOINT") { automation_service_endpoint }, 'api/v1')
-      Automation::Run.token = self.token
+      Automation::Run.headers = {"X-Auth-Token" => self.token}
       Automation::Run
     end
 
     def automations(page=0, per_page=0)
-      automation_service.find(:all, :params => { page: page, per_page: per_page })
-    rescue => e
-      raise AutomationApiError.new(e.response)
+      automation_service.find(:all, {}, { page: page, per_page: per_page })
     end
 
     def automation(automation_id)
-      automation_service.find(automation_id)
-    rescue => e
-      raise AutomationApiError.new(e.response)
+      automation_service.find(automation_id, {})
     end
 
     def automation_runs(page=0, per_page=0)
-      automation_run_service.find(:all, :params => { page: page, per_page: per_page })
-    rescue => e
-      raise AutomationApiError.new(e.response)
+      automation_run_service.find(:all, {}, { page: page, per_page: per_page })
     end
 
     def automation_run(run_id)
-      automation_run_service.find(run_id)
-    rescue => e
-      raise AutomationApiError.new(e.response)
+      automation_run_service.find(run_id, {})
     end
 
     def automation_execute(automation_id, selector)
-      automation_run_service.new(automation_id: automation_id, selector: selector)
-    rescue => e
-      raise AutomationApiError.new(e.response)
+      automation_run_service.new(nil, {automation_id: automation_id, selector: selector})
     end
 
   end

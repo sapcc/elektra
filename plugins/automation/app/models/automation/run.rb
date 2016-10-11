@@ -1,27 +1,10 @@
-require 'active_resource'
+require 'lyra_client'
 require 'uri'
 
 module Automation
 
-  class Run < ::Automation::BaseActiveResource
-
-    #
-    # Added attribute classes to fix the activeresource load nested hashes with special keys like docker-compos
-    #
-    class AutomationAttributes < ActiveResource::Base
-      def initialize(attributes = {}, persisted = false)
-        @attributes     = attributes.with_indifferent_access
-        @prefix_options = {}
-        @persisted = persisted
-      end
-    end
-    class Owner < ActiveResource::Base
-      def initialize(attributes = {}, persisted = false)
-        @attributes     = attributes.with_indifferent_access
-        @prefix_options = {}
-        @persisted = persisted
-      end
-    end
+  class Run < LyraClient::Base
+    include ::Automation::Helpers
 
     self.collection_name = "runs"
 
@@ -42,16 +25,16 @@ module Automation
     end
 
     def owner_name
-      if self.owner.attributes["name"].nil?
-        return self.owner.attributes["id"]
+      if self.attributes.fetch('owner', {})["name"].nil?
+        return self.attributes.fetch('owner', {})["id"]
       else
-        return self.owner.attributes["name"]
+        return self.attributes.fetch('owner', {})["name"]
       end
     end
 
     def snapshot
-      if !self.automation_attributes.blank? && self.automation_attributes.respond_to?(:attributes) && !self.automation_attributes.attributes.blank?
-        return self.automation_attributes.attributes
+      if !self.automation_attributes.blank? && !self.automation_attributes.blank?
+        return self.automation_attributes
       end
       {}
     end
@@ -71,6 +54,20 @@ module Automation
         return URI::join(snapshot[:repository].gsub!(/(.git\s*)*$/, '/'), 'commit/', self.repository_revision).to_s
       end
       self.repository_revision
+    end
+
+    def respond_to?(method_name, include_private = false)
+      keys = @attributes.keys
+      keys.include?(method_name.to_s) or keys.include?(method_name.to_sym) or super
+    end
+
+    def method_missing(method_name, *args, &block)
+      keys = @attributes.keys
+      if keys.include?(method_name.to_s)
+        @attributes[method_name.to_s]
+      else
+        super
+      end
     end
 
   end

@@ -1,34 +1,9 @@
-require 'active_resource'
+require 'lyra_client'
 
 module Automation
 
-  class Automation < ::Automation::BaseActiveResource
-
-    #
-    # Added attribute classes to fix the activeresource load nested hashes with special keys like docker-compos
-    #
-    class Environment < ActiveResource::Base
-      def initialize(attributes = {}, persisted = false)
-        @attributes     = attributes.with_indifferent_access
-        @prefix_options = {}
-        @persisted = persisted
-      end
-    end
-    class Tags < ActiveResource::Base
-      def initialize(attributes = {}, persisted = false)
-        @attributes     = attributes.with_indifferent_access
-        @prefix_options = {}
-        @persisted = persisted
-      end
-    end
-    class ChefAttributes < ActiveResource::Base
-      def initialize(attributes = {}, persisted = false)
-        @attributes     = attributes.with_indifferent_access
-        @prefix_options = {}
-        @persisted = persisted
-      end
-    end
-
+  class Automation < LyraClient::Base
+    include ::Automation::Helpers
 
     module Types
       CHEF = 'Chef'
@@ -38,10 +13,7 @@ module Automation
     self.collection_name = "automations"
 
     def form_attribute(name)
-      unless self.respond_to? name.to_sym
-        return "Unknown attribute ''#{name}''"
-      end
-      self.send(name.to_sym)
+      attributes.fetch(name, '')
     end
 
     def form_to_attributes(attrs)
@@ -64,16 +36,12 @@ module Automation
       attr = self.attributes.clone
       attr.keys.each do |key|
         if json_attr.include? key.to_sym
-          if attr[key].respond_to?(:attributes)
-            attr[key] = json_to_string(attr[key].attributes)
-          end
+          attr[key] = json_to_string(attr[key])
         elsif array_attr.include? key.to_sym
           attr[key] = array_to_string(attr[key])
         elsif key == 'chef_attributes'
           unless attr[key].blank?
-            if attr[key].respond_to?(:attributes)
-              attr[key] = attr[key].attributes.to_json
-            end
+            attr[key] = attr[key].to_json
           end
         end
       end
@@ -90,6 +58,20 @@ module Automation
 
     def self.types
       {script: ::Automation::Automation::Types::SCRIPT, chef: ::Automation::Automation::Types::CHEF}
+    end
+
+    def respond_to?(method_name, include_private = false)
+      keys = @attributes.keys
+      keys.include?(method_name.to_s) or keys.include?(method_name.to_sym) or super
+    end
+
+    def method_missing(method_name, *args, &block)
+      keys = @attributes.keys
+      if keys.include?(method_name.to_s)
+        @attributes[method_name.to_s]
+      else
+        super
+      end
     end
 
     private
