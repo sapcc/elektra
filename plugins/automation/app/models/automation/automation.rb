@@ -69,6 +69,8 @@ module Automation
       keys = @attributes.keys
       if keys.include?(method_name.to_s)
         @attributes[method_name.to_s]
+      elsif keys.include?(method_name.to_sym)
+        @attributes[method_name.to_sym]
       else
         super
       end
