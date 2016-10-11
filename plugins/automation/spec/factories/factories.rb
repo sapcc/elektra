@@ -71,7 +71,7 @@ module Automation
 
     def automation(params = {})
       ::Automation::Automation.site = 'https://test.com'
-      automation = ::Automation::Automation.new({
+      automation = ::Automation::Automation.new({}, {
         name: "bootstrap",
         timeout: 3600,
         run_list: ["role[landscape]", "recipe[ids::certificate]"],
@@ -81,18 +81,8 @@ module Automation
     end
 
     def run(params = {})
-      owner = ::Automation::BaseActiveResource.new()
-      owner.attributes = {
-        id: "b2ff8f4a7d1eab4f5cf82489f76e52fc1934c1b4d4a7a4a9bd9ce82ca1310bbc",
-        name: "D063222",
-        domain_id: "ec213443e8834473b579f7bea9e8c194",
-        domain_name: "monsoon3",
-        chef_attributes: {},
-        repository_revision: ''
-      }
-
       ::Automation::Run.site = 'https://test.com'
-      run = ::Automation::Run.new({
+      run = ::Automation::Run.new({}, {
         id: 165,
         log: "Selecting nodes using filter @identity='idp1':\nidp1 idp01\nUsing exiting artifact for revision c7b3ee00635673294619070fafbccf27a23bcbd4\nScheduled 1 job:\n376f5485-9d2e-4040-a55f-7e42ea6d6a7b\n",
         created_at: "2016-08-18T15:33:57.133Z",
@@ -100,11 +90,18 @@ module Automation
         repository_revision: "c7b3ee00635673294619070fafbccf27a23bcbd4",
         state: "completed",
         jobs: ["376f5485-9d2e-4040-a55f-7e42ea6d6a7b"],
-        owner: owner,
+        owner: {
+          id: "b2ff8f4a7d1eab4f5cf82489f76e52fc1934c1b4d4a7a4a9bd9ce82ca1310bbc",
+          name: "D063222",
+          domain_id: "ec213443e8834473b579f7bea9e8c194",
+          domain_name: "monsoon3",
+          chef_attributes: {},
+          repository_revision: ''
+        },
         automation_id: '5',
         automation_name: "bootstrap",
         selector: "@identity='idp1'",
-        automation_attributes: automation()
+        automation_attributes: automation().attributes
       }.merge(params))
       run
     end

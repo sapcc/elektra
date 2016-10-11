@@ -114,21 +114,18 @@ module Automation
     end
 
     def automations(page)
-      automations = services.automation.automations(page, PER_PAGE)
-      @automations = Kaminari.paginate_array(automations, total_count: automations.http_response['Pagination-Elements'].to_i).
-        page(automations.http_response['Pagination-Page'].to_i).
-        per(automations.http_response['Pagination-Per-Page'].to_i)
+      @automations = services.automation.automations(page, PER_PAGE)
     end
 
     def runs_with_jobs(page)
       runs = services.automation.automation_runs(page, PER_PAGE)
       runs.each do |run|
-        unless run.jobs.nil?
-          run.jobs_states = {queued: 0, failed: 0, complete: 0, executing:0}
-          run.jobs.each do |job_id|
+        unless run.attributes['jobs'].nil?
+          run.attributes['jobs_states'] = {'queued' => 0, 'failed' => 0, 'complete' => 0, 'executing' => 0}
+          run.attributes['jobs'].each do |job_id|
             begin
               job = services.automation.job(job_id)
-              run.jobs_states[job.status.to_sym] += 1
+              run.attributes['jobs_states'][job.status] += 1
             rescue RubyArcClient::ApiError => exception
               if exception.code == 404
                 # do nothing
@@ -139,9 +136,7 @@ module Automation
           end
         end
       end
-      @runs = Kaminari.paginate_array(runs, total_count: runs.http_response['Pagination-Elements'].to_i).
-        page(runs.http_response['Pagination-Page'].to_i).
-        per(runs.http_response['Pagination-Per-Page'].to_i)
+      @runs = runs
     end
 
     def automation_form(type, form_params)
