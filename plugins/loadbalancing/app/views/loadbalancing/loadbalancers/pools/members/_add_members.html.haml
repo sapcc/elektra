@@ -17,34 +17,13 @@
       %input{ type: 'number', min: 0, max: 256, name: "servers[][weight]", value: "#{member.weight}", required: true }
     %td.snug
       - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {})
-        = button_tag "Delete", { class: 'btn btn-default', onclick: "minus(member_#{member.id})"} do
+        = link_to "javascript:$('#member_#{member.id}').remove();", { class: 'btn btn-default' } do
           %i.fa.fa-minus
 
 
 =content_for :javascripts do
   :javascript
-    // reload/update status bars after closing the modal window
-    $(document).ready(function() {
-      $('#newMembers').formValidation({
-        framework: 'bootstrap',
-          icon: {
-            valid: 'glyphicon glyphicon-ok',
-            invalid: 'glyphicon glyphicon-remove',
-            validating: 'glyphicon glyphicon-refresh'
-          },
-          fields: {
-            ip: {
-              validators: {
-                ip: {
-                  message: 'Please enter a valid IP address'
-                }
-              }
-            }
-          }
-      });
-    });
 
     function minus(id) {
       $(id).remove();
     }
-

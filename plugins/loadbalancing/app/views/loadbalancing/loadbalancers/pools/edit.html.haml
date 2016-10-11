@@ -9,9 +9,9 @@
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @pool.errors.empty?
-      %p.alert.alert-error= @pool.errors.full_messages.to_sentence
+      %p.alert.alert-error= @pool.errors.full_messages.first
 
-    = render partial: 'form', locals: {f: f}
+    = render partial: 'form', locals: {f: f, update: true}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

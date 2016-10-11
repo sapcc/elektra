@@ -8,7 +8,7 @@
     %table.table#members
       %thead
         %tr
-          %th Name
+          -#%th Name
           %th IP Address
           %th Protocol Port
           %th Weight
@@ -19,4 +19,4 @@
             %td{colspa: 3} No Members available
         - else
           - members.each do | member |
-            = render partial: 'loadbalancing/loadbalancers/listeners/pools/members/item', locals: {pool: @pool, member: member}
+            = render partial: 'loadbalancing/loadbalancers/pools/members/item', locals: {pool: @pool, member: member}

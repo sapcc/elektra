@@ -13,7 +13,7 @@
 
     %fieldset
       = f.input :name, required: true
-      = f.input :description, as: :text
+      = f.input :description
       = f.input :vip_subnet_id, { label: "Private Network",
                                 wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
                                 as:                 :select,

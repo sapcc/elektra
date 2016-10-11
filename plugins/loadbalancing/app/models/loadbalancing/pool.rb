@@ -6,6 +6,8 @@ module Loadbalancing
 
     validates :name, presence: true
     validates :lb_algorithm, presence: true
+    validates :protocol, presence: true
+    validates :listener_id, presence: true
     validates_presence_of :session_persistence_cookie_name, :if => :app_cookie?, message: "Please enter a Cookie Name in case of Application Cookie persistence"
 
     def app_cookie?

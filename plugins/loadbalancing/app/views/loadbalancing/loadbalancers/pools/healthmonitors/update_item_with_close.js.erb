@@ -1,0 +1,3 @@
+$("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item', locals: {healthmonitor: @healthmonitor })) %>");
+$("#healthmonitor").update();
+MoModal.close();

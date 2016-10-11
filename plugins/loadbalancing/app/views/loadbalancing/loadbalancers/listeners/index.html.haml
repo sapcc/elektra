@@ -3,38 +3,47 @@
   = ' / '
   = link_to @loadbalancer.name , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
 
-.row
-  .col-md-9
+%ul.nav.nav-tabs{style: 'border-bottom: none'}
+  %li.active{role: "presentation"}= link_to 'Listeners', '#listeners', aria: {controls:"listeners"}, role: "tab", data: {toggle:"tab"}
+  %li{role: "presentation"}= link_to 'Pools', plugin('loadbalancing').send("loadbalancer_pools_path", @loadbalancer.id)
 
-    - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
-      .toolbar.toolbar-aligntop= link_to 'Add New Listener', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+.tab-content
+  #listeners.tab-pane.active{role: "tabpanel"}
+  .row
+    .col-md-9
 
-    %table.table#group_members
-      %tr
-        %th Name
-        %th Description
-        %th Protocol
-        %th Protocol Port
-        %th
-      -unless @listeners.blank?
-        - @listeners.each do |listener|
-          = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
-      -else
+      - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
+        .toolbar.toolbar-aligntop= link_to 'Add New Listener', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+      %table.table#group_members
         %tr
-          %td{colspan:5} No Listeners defined
-  .col-md-3
-    .infobox
-      %h4.action-heading
-        Loadbalancer Info
-      %table.table
-        %tbody
+          %th Name
+          %th Description
+          %th Protocol
+          %th Protocol Port
+          %th Pool
+          %th
+        -unless @listeners.blank?
+          - @listeners.each do |listener|
+            = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
+        -else
           %tr
-            %th.snug-nowrap
-              Name:
-            %td
-              = @loadbalancer.name
-          %tr
-            %th.snug-nowrap
-              Description:
-            %td
-              = @loadbalancer.description
+            %td{colspan:5} No Listeners defined
+    .col-md-3
+      .infobox
+        %h4.action-heading
+          Loadbalancer Info
+        %table.table
+          %tbody
+            %tr
+              %th.snug-nowrap
+                Name:
+              %td
+                = @loadbalancer.name
+            %tr
+              %th.snug-nowrap
+                Description:
+              %td
+                = @loadbalancer.description
+.tab-content
+  #pools.tab-pane{role: "tabpanel"}

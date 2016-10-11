@@ -36,6 +36,23 @@ module Loadbalancing
 
     end
 
+    def edit
+      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
+    end
+
+    def update
+      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer.name = loadbalancer_params[:name]
+      @loadbalancer.description = loadbalancer_params[:description]
+      if @loadbalancer.save
+        audit_logger.info(current_user, "has updated", @loadbalancer)
+        redirect_to loadbalancers_path(), notice: 'Load Balancer was successfully updated.'
+      else
+        render :edit
+      end
+    end
+
     def destroy
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       if @loadbalancer.destroy

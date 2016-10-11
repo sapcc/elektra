@@ -1,12 +1,16 @@
 %tr{id: "loadbalancer_listener_#{listener.id}"}
   %td
-    - if current_user.is_allowed?("loadbalancing:loadbalancer_get", {}) and listener.default_pool_id
-      = link_to listener.name, plugin('loadbalancing').listener_show_details_path(listener_id: listener.id)
-    - else
-      = link_to listener.name, plugin('loadbalancing').listener_show_details_path(listener_id: listener.id)
+    = link_to listener.name, plugin('loadbalancing').listener_path(id: listener.id), data: {modal: true}
   %td= listener.description
   %td= listener.protocol
   %td= listener.protocol_port
+  %td
+    - if listener.default_pool_id
+      -#= link_to 'Default Pool', plugin('loadbalancing').show_details_pool_path( id: listener.default_pool_id )
+      %i.fa.fa-check
+    - else
+      -#= link_to 'New Default Pool', plugin('loadbalancing').new_loadbalancer_pool_path(@loadbalancer.id), data: {modal: true}
+      %i.fa.fa-times
 
   %td.snug
     - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {})
@@ -16,6 +20,10 @@
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           %li= link_to 'Show', plugin('loadbalancing').listener_path(id: listener.id), data: {modal: true}
+          %li= link_to 'Edit', plugin('loadbalancing').edit_listener_path(id: listener.id), data: {modal: true}
+          - if listener.default_pool_id
+            %li.divider
+            %li= link_to 'Default Pool', plugin('loadbalancing').show_details_pool_path( id: listener.default_pool_id )
           - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {})
             %li.divider
             %li= link_to 'Delete',

@@ -1,0 +1,29 @@
+= content_for :title do
+  Edit Listener
+
+- if modal?
+  .flashes_area
+    = render 'flashes'
+
+= simple_form_for @listener, url: plugin('loadbalancing').listener_path(id: @listener.id), method: :put, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @listener.errors.empty?
+      %p.alert.alert-error= @listener.errors.full_messages.to_sentence
+
+    %fieldset
+      = f.input :name, required: true
+      = f.input :description
+      = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, disabled: true
+      = f.input :protocol_port, { readonly: true,
+                                  label: 'Protocol Port',
+                                  hint: 'A port number between 1 and 65535',
+                                  input_html: { type: :number, min: 1, max: 65535 }}
+
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    - else
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id), class: 'btn btn-default'
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Save
