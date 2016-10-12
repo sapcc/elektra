@@ -19,4 +19,4 @@
             %td{colspa: 3} No Members available
         - else
           - members.each do | member |
-            = render partial: 'loadbalancing/loadbalancers/pools/members/item', locals: {pool: @pool, member: member}
+            = render partial: 'loadbalancing/pools/members/item', locals: {pool: @pool, member: member}

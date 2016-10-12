@@ -1,0 +1,2 @@
+$("#loadbalancer_<%=@loadbalancer.id%>").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/item', locals: {loadbalancer: @loadbalancer })) %>");
+MoModal.close();

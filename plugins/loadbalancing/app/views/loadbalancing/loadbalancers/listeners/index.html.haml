@@ -1,49 +1,41 @@
 = content_for :main_toolbar do
-  = link_to 'Loadbalancers', plugin('loadbalancing').loadbalancers_path()
+  = link_to 'Load Balancing', plugin('loadbalancing').loadbalancers_path()
   = ' / '
-  = link_to @loadbalancer.name , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
+  = link_to "#{@loadbalancer.name} / Listeners" , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
 
-%ul.nav.nav-tabs{style: 'border-bottom: none'}
-  %li.active{role: "presentation"}= link_to 'Listeners', '#listeners', aria: {controls:"listeners"}, role: "tab", data: {toggle:"tab"}
-  %li{role: "presentation"}= link_to 'Pools', plugin('loadbalancing').send("loadbalancer_pools_path", @loadbalancer.id)
+.row
+  .col-md-9
 
-.tab-content
-  #listeners.tab-pane.active{role: "tabpanel"}
-  .row
-    .col-md-9
+    - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
+      .toolbar.toolbar-aligntop= link_to 'Add New Listener', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-      - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
-        .toolbar.toolbar-aligntop= link_to 'Add New Listener', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
-
-      %table.table#group_members
+    %table.table#group_members
+      %tr
+        %th Name
+        %th Description
+        %th Protocol
+        %th Protocol Port
+        %th Pool
+        %th
+      -unless @listeners.blank?
+        - @listeners.each do |listener|
+          = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
+      -else
         %tr
-          %th Name
-          %th Description
-          %th Protocol
-          %th Protocol Port
-          %th Pool
-          %th
-        -unless @listeners.blank?
-          - @listeners.each do |listener|
-            = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
-        -else
+          %td{colspan:5} No Listeners defined
+  .col-md-3
+    .infobox
+      %h4.action-heading
+        Loadbalancer Info
+      %table.table
+        %tbody
           %tr
-            %td{colspan:5} No Listeners defined
-    .col-md-3
-      .infobox
-        %h4.action-heading
-          Loadbalancer Info
-        %table.table
-          %tbody
-            %tr
-              %th.snug-nowrap
-                Name:
-              %td
-                = @loadbalancer.name
-            %tr
-              %th.snug-nowrap
-                Description:
-              %td
-                = @loadbalancer.description
-.tab-content
-  #pools.tab-pane{role: "tabpanel"}
+            %th.snug-nowrap
+              Name:
+            %td
+              = @loadbalancer.name
+          %tr
+            %th.snug-nowrap
+              Description:
+            %td
+              = @loadbalancer.description

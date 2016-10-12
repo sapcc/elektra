@@ -5,7 +5,7 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @pool, url: plugin('loadbalancing').loadbalancer_pools_path(@loadbalancer.id), method: :post, remote: request.xhr?, html: {id: 'pool_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @pool, url: plugin('loadbalancing').pools_path(), method: :post, remote: request.xhr?, html: {id: 'pool_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @pool.errors.empty?

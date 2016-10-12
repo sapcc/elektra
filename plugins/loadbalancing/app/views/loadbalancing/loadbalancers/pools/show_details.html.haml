@@ -1,8 +1,0 @@
-= content_for :main_toolbar do
-  = link_to 'Loadbalancers', plugin('loadbalancing').loadbalancers_path()
-  = " / "
-  = link_to @loadbalancer.name , plugin('loadbalancing').loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id)
-  = " / "
-  = link_to @pool.name , plugin('loadbalancing').show_details_pool_path(id: @pool.id)
-
-= render partial: 'loadbalancing/loadbalancers/pools/show_details', locals: { loadbalancer: @loadbalancer, pool: @pool, healthmonitor: @healthmonitor, members: @members }

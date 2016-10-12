@@ -5,7 +5,7 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @listener, url: plugin('loadbalancing').listener_path(id: @listener.id), method: :put, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @listener, url: plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: @loadbalancer.id, id: @listener.id), method: :put, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @listener.errors.empty?

@@ -1,20 +1,27 @@
 Loadbalancing::Engine.routes.draw do
-  get '/' => 'application#index', as: :entry
-  resources :loadbalancers, shallow: true do
+  get '/' => 'loadbalancers#index', as: :entry
+  get 'listener_details/:id', to: 'loadbalancers/listeners#show', as: 'listener_details'
+  resources :loadbalancers do
+    member do
+      get 'new_floatingip'
+      put 'attach_floatingip'
+      delete 'detach_floatingip'
+    end
+
     resources :listeners, module: :loadbalancers do
     end
-    resources :pools, module: :loadbalancers do
-      get :show_details, on: :member
-      resources :members, module: :pools do
-        collection do
-          post :add
-          get :add_external
-        end
-        member do
-        end
+  end
+  resources :pools do
+    get :show_details, on: :member
+    resources :members, module: :pools do
+      collection do
+        post :add
+        get :add_external
       end
-      resources :healthmonitors, module: :pools do
+      member do
       end
+    end
+    resources :healthmonitors, module: :pools do
     end
   end
 end

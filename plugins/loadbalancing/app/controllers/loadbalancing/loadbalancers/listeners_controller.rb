@@ -37,12 +37,14 @@ module Loadbalancing
           audit_logger.info(current_user, "has created", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: params[:loadbalancer_id]), notice: 'Listener successfully created.'
         else
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           render :new
         end
       end
 
       def edit
         @listener = services.loadbalancing.find_listener(params[:id])
+        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
       end
 
       def update
@@ -52,6 +54,7 @@ module Loadbalancing
           audit_logger.info(current_user, "has updated", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id'] ), notice: 'Listener was successfully updated.'
         else
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           render :edit
         end
       end

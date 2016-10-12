@@ -5,7 +5,7 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @healthmonitor, url: plugin('loadbalancing').healthmonitor_path(id: @healthmonitor.id), method: :put, remote: request.xhr?, html: {id: 'healthmonitor_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @healthmonitor, url: plugin('loadbalancing').pool_healthmonitor_path(pool_id: @pool.id, id: @healthmonitor.id), method: :put, remote: request.xhr?, html: {id: 'healthmonitor_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @healthmonitor.errors.empty?
@@ -17,5 +17,5 @@
     - if modal?
       %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
     - else
-      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_listener_path(), class: 'btn btn-default'
+      = link_to 'Cancel', plugin('loadbalancing').pools_path(), class: 'btn btn-default'
     %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Save

@@ -1,0 +1,27 @@
+= content_for :main_toolbar do
+  = link_to 'Loadbalancing / Pools', plugin('loadbalancing').pools_path()
+
+%ul.nav.nav-tabs
+  %li{role: "presentation"}= link_to 'Load Balancers', plugin('loadbalancing').send("loadbalancers_path")
+  %li.active{role: "presentation"}= link_to 'Pools', '#pools', aria: {controls:"pools"}, role: "tab", data: {toggle:"tab"}
+
+.tab-content
+  #pools.tab-pane.active{role: "tabpanel"}
+  .row
+    .col-md-12
+      - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
+        .toolbar= link_to 'Create New', plugin('loadbalancing').new_pool_path(), data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+      %table.table#pools
+        %tr
+          %th Name
+          %th Description
+          %th Protocol
+          %th Algorithm
+          %th
+        -unless @pools.blank?
+          - @pools.each do |pool|
+            = render partial: 'loadbalancing/pools/item', locals: {pool: pool}
+        -else
+          %tr
+            %td{colspan:5} No Pool defined
