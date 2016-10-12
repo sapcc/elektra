@@ -226,27 +226,24 @@ class DashboardController < ::ScopeController
     plugin_path = params[:controller]
 
     # find plugin by mount point (plugin_path)
-    # plugin = catch (:found)  do
-    #   Core::PluginsManager.available_plugins.each do |plugin|
-    #     throw :found, plugin if plugin_path.start_with?(plugin.mount_point)
-    #   end
-    # end
-    all_plugins = Core::PluginsManager.available_plugins
-    plugin_index = all_plugins.find_index { |p| plugin_path.starts_with?(p.name)}
-    plugin = all_plugins[plugin_index]
+    plugin = catch (:found)  do
+      Core::PluginsManager.available_plugins.each do |plugin|
+        throw :found, plugin if plugin_path.starts_with?(plugin.name)
+      end
+    end
 
-    # unless plugin.blank?
+    unless plugin.blank?
       # get name of the specific service inside the plugin
       # remove plugin name from path
       path = plugin_path.split('/')
       path.shift
       service_name = path.join('_')
 
-      # try to find the help file
+      # try to find the help file, check first for service specific help file, next for general plugin help file
       help_file =  File.join(plugin.path,"plugin_#{service_name}_help.md")
       help_file =  File.join(plugin.path,"plugin_help.md") unless File.exists?(help_file)
 
-      # try to find the links file
+      # try to find the links file, check first for service specific links file, next for general plugin links file
       help_links = File.join(plugin.path,"plugin_#{service_name}_help_links.md")
       help_links = File.join(plugin.path,"plugin_help_links.md") unless File.exists?(help_links)
 
@@ -259,7 +256,8 @@ class DashboardController < ::ScopeController
         @plugin_help_links = File.new(help_links, "r").read
         @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for('documentation'))
       end
-    # end
+
+    end
 
   end
 
