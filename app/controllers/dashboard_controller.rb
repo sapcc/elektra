@@ -1,6 +1,8 @@
 # This class guarantees that the user is logged in and his token is rescoped.
 # All subclasses which require a logged in user should inherit from this class.
 class DashboardController < ::ScopeController
+  include UrlHelper
+
   prepend_before_filter do
     requested_url = request.env['REQUEST_URI']
     referer_url = request.referer
@@ -11,6 +13,8 @@ class DashboardController < ::ScopeController
       params[:after_login] = requested_url
     end
   end
+
+  before_filter :load_help_text;
 
   # authenticate user -> current_user is available
   authentication_required domain: -> c { c.instance_variable_get("@scoped_domain_id") },
@@ -216,6 +220,45 @@ class DashboardController < ::ScopeController
 
   def project_id_required
     raise Core::Error::ProjectNotFound.new("The project you have requested was not found.") if params[:project_id].blank?
+  end
+
+  def load_help_text
+    plugin_path = params[:controller]
+
+    # find plugin by mount point (plugin_path)
+    plugin = catch (:found)  do
+      Core::PluginsManager.available_plugins.each do |plugin|
+        throw :found, plugin if plugin_path.starts_with?(plugin.name)
+      end
+    end
+
+    unless plugin.blank?
+      # get name of the specific service inside the plugin
+      # remove plugin name from path
+      path = plugin_path.split('/')
+      path.shift
+      service_name = path.join('_')
+
+      # try to find the help file, check first for service specific help file, next for general plugin help file
+      help_file =  File.join(plugin.path,"plugin_#{service_name}_help.md")
+      help_file =  File.join(plugin.path,"plugin_help.md") unless File.exists?(help_file)
+
+      # try to find the links file, check first for service specific links file, next for general plugin links file
+      help_links = File.join(plugin.path,"plugin_#{service_name}_help_links.md")
+      help_links = File.join(plugin.path,"plugin_help_links.md") unless File.exists?(help_links)
+
+
+      # load plugin specific help text
+      @plugin_help_text = File.new(help_file, "r").read if File.exists?(help_file)
+
+      # load plugin specific help links
+      if File.exists?(help_links)
+        @plugin_help_links = File.new(help_links, "r").read
+        @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for('documentation'))
+      end
+
+    end
+
   end
 
 end

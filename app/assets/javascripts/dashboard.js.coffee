@@ -55,6 +55,11 @@ $ ->
     placement: 'top'
     trigger: 'focus'
 
+  # help text toggle
+  $('[data-toggle="help"]').click (e) ->
+    e.preventDefault()
+    $('.plugin-help').toggleClass('visible')
+
   # ---------------------------------------------
   # Expandable Tree
 
@@ -112,7 +117,7 @@ $(document).on 'modal:contentUpdated', (e) ->
   # -------------
   # init tooltips
   $('[data-toggle="tooltip"]').tooltip()
-  
+
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
 # # React to turbolinks page load events to indicate to the user that something is happening
 # $ =>
