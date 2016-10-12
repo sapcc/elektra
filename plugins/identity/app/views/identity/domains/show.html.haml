@@ -28,6 +28,9 @@
             %li
               = link_to "Domain Resources Administration", plugin('resource_management').admin_path
 
+          - if plugin_available?('cost_control') && current_user.is_allowed?('cost_control:cost_object_get')
+            %li
+              = link_to "Cost Control", plugin('cost_control').cost_object_path
 
       - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
         %h5
