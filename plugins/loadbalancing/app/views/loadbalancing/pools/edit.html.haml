@@ -1,15 +1,15 @@
 = content_for :title do
-  Edit Healthmonitor
+  Edit Pool
 
 - if modal?
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @healthmonitor, url: plugin('loadbalancing').healthmonitor_path(id: @healthmonitor.id), method: :put, remote: request.xhr?, html: {id: 'healthmonitor_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @pool, url: plugin('loadbalancing').pool_path(id: @pool.id), method: :put, remote: request.xhr?, html: {id: 'pool_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @healthmonitor.errors.empty?
-      %p.alert.alert-error= @healthmonitor.errors.full_messages.to_sentence
+    - unless @pool.errors.empty?
+      %p.alert.alert-error= @pool.errors.full_messages.first
 
     = render partial: 'form', locals: {f: f, update: true}
 

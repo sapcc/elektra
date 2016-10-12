@@ -168,7 +168,6 @@ module Compute
           redirect_to instances_url
         }
         format.js{
-          @instance = services.compute.find_server(params[:id])
           if @floating_ip and @floating_ip.port_id.nil?
             @instance = services.compute.find_server(params[:id])
             addresses = @instance.addresses[@instance.addresses.keys.first]

@@ -1,0 +1,6 @@
+= content_for :main_toolbar do
+  = link_to 'Loadbalancing / Pools', plugin('loadbalancing').pools_path()
+  = " / "
+  = link_to @pool.name , plugin('loadbalancing').show_details_pool_path(id: @pool.id)
+
+= render partial: 'loadbalancing/pools/show_details', locals: { pool: @pool, healthmonitor: @healthmonitor, members: @members }

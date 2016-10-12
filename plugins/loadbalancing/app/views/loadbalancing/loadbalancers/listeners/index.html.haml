@@ -1,7 +1,7 @@
 = content_for :main_toolbar do
-  = link_to 'Loadbalancers', plugin('loadbalancing').loadbalancers_path()
+  = link_to 'Load Balancing', plugin('loadbalancing').loadbalancers_path()
   = ' / '
-  = link_to @loadbalancer.name , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
+  = link_to "#{@loadbalancer.name} / Listeners" , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
 
 .row
   .col-md-9
@@ -15,6 +15,7 @@
         %th Description
         %th Protocol
         %th Protocol Port
+        %th Pool
         %th
       -unless @listeners.blank?
         - @listeners.each do |listener|

@@ -22,13 +22,13 @@
             %th.snug
         %tbody
           - if @members.blank?
-            %tr{data:{empty:true}}
+            %tr#nomember{data:{empty:true}}
               %td{colspa: 4} No Members available
           - else
             - @members.each do | member |
-              = render partial: 'loadbalancing/loadbalancers/listeners/pools/members/item', locals: {pool: @pool, member: member, nodestroy: :true}
+              = render partial: 'loadbalancing/pools/members/item', locals: {pool: @pool, member: member, nodestroy: :true}
             - if @error_members
-              = render partial: 'loadbalancing/loadbalancers/listeners/pools/members/add_members', locals: {pool: @pool, members: @error_members}
+              = render partial: 'loadbalancing/pools/members/add_members', locals: {pool: @pool, members: @error_members}
 
       %div.buttons{class: 'modal-footer'}
         - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
@@ -56,12 +56,12 @@
               %td{colspa: 3} No Servers available
           - else
             - @ips.each do | ip |
-              = render partial: 'loadbalancing/loadbalancers/listeners/pools/members/ip_item', locals: {ip: ip}
+              = render partial: 'loadbalancing/pools/members/ip_item', locals: {ip: ip}
 
       %div.buttons{class: 'modal-footer'}
         - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
-          = button_tag "Cancel", { class: 'btn btn-default submit', data: {dismiss:"modal"} }
-          =# link_to 'Cancel', plugin('loadbalancing').listener_show_details_path(id: @pool.listeners.first['id']), class: 'btn btn-default'
+          =# button_tag "Cancel", { class: 'btn btn-default submit', data: {dismiss:"modal"} }
+          = link_to 'Cancel', plugin('loadbalancing').show_details_pool_path(id: @pool.id ), class: 'btn btn-default'
           = link_to 'Add External', plugin('loadbalancing').add_external_pool_members_path(pool_id: @pool.id ), class: 'btn btn-default', remote: true
           = button_tag "Add", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
 

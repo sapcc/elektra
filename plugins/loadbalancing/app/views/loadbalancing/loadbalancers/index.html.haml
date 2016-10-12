@@ -1,27 +1,33 @@
-= render "intro"
+= content_for :main_toolbar do
+  = link_to 'Loadbalancing / Load Balancers', plugin('loadbalancing').loadbalancers_path()
 
-- if @scoped_project_id
-  - if current_user.is_allowed?("loadbalancing:loadbalancer_create", {loadbalancer: {user_id: current_user.id} })
-    .toolbar
-      = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'Load Balancers', '#loadbalancers', aria: {controls:"loadbalancers"}, role: "tab", data: {toggle:"tab"}
+  %li{role: "presentation"}= link_to 'Pools', plugin('loadbalancing').send("pools_path")
 
-  - if current_user.is_allowed?("loadbalancing:loadbalancer_list", {loadbalancer: {user_id: current_user.id} })
-    %table.table#loadbalancers
-      %thead
-        %tr
-          %th Name
-          %th Description
-          %th Operating Status
-          %th Provisioning Status
-          %th IP Address
-          %th Listeners
-          %th.snug
-      %tbody
-        - if @loadbalancers.length==0
-          %tr{data:{empty:true}}
-            %td{colspa: 3} No Load Balancers available
-        - else
-          - @loadbalancers.each do | loadbalancer |
-            = render partial: 'item', locals: {loadbalancer: loadbalancer}
-- else
-  = render "application/projects_list"
+.tab-content
+  #loadbalancers.tab-pane.active{role: "tabpanel"}
+  .row
+    .col-md-12
+      - if current_user.is_allowed?("loadbalancing:loadbalancer_create", {loadbalancer: {user_id: current_user.id} })
+        .toolbar
+          = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+
+      - if current_user.is_allowed?("loadbalancing:loadbalancer_list", {loadbalancer: {user_id: current_user.id} })
+        %table.table#loadbalancers
+          %thead
+            %tr
+              %th Name
+              %th Description
+              %th Operating Status
+              %th Provisioning Status
+              %th IP Address
+              %th Listeners
+              %th.snug
+          %tbody
+            - if @loadbalancers.length==0
+              %tr{data:{empty:true}}
+                %td{colspa: 3} No Load Balancers available
+            - else
+              - @loadbalancers.each do | loadbalancer |
+                = render partial: 'item', locals: {loadbalancer: loadbalancer}

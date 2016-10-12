@@ -30,3 +30,6 @@
             %tr
               %th Session Persistence Cookie Name
               %td= pool.session_persistence_cookie_name
+        %tr
+          %th Assigned to Listener
+          %td= pool.listener.name if pool.listener

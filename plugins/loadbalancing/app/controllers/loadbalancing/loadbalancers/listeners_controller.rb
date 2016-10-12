@@ -22,13 +22,6 @@ module Loadbalancing
         #                                                       ])
       end
 
-      def show_details
-        @listener = services.loadbalancing.find_listener(params[:listener_id])
-        @loadbalancer = services.loadbalancing.find_loadbalancer(@listener.loadbalancers.first['id'])
-        @pool = services.loadbalancing.find_pool(@listener.default_pool_id) if @listener.default_pool_id
-        @members = services.loadbalancing.pool_members(@pool.id) if @pool
-        @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool and @pool.healthmonitor_id
-      end
 
       def new
         @listener = services.loadbalancing.new_listener
@@ -44,9 +37,28 @@ module Loadbalancing
           audit_logger.info(current_user, "has created", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: params[:loadbalancer_id]), notice: 'Listener successfully created.'
         else
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           render :new
         end
       end
+
+      def edit
+        @listener = services.loadbalancing.find_listener(params[:id])
+        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+      end
+
+      def update
+        @listener = services.loadbalancing.find_listener(params[:id])
+        # @listener.attributes = listener_params.delete_if { |key, value| value.blank? }
+        if @listener.update(listener_params)
+          audit_logger.info(current_user, "has updated", @listener)
+          redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id'] ), notice: 'Listener was successfully updated.'
+        else
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+          render :edit
+        end
+      end
+
 
       def destroy
         @listener = services.loadbalancing.find_listener(params[:id])
@@ -57,6 +69,12 @@ module Loadbalancing
           redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']),
                       flash: { error: "Listener deletion failed -> #{@listener.errors.full_messages.to_sentence}" }
         end
+      end
+
+      private
+
+      def listener_params
+        return params[:listener]
       end
 
     end
