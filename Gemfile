@@ -57,7 +57,7 @@ gem 'httpclient' # The only faraday backend that handled no_proxy :|
 
 ###################### PLUGINS #####################
 # backlist plugins 
-black_list = [] #e.g. ['compute']
+black_list = ['cost_control'] #e.g. ['compute']
 
 Dir.glob("plugins/*").each do |plugin_path|
   unless black_list.include?(plugin_path.gsub('plugins/', ''))
