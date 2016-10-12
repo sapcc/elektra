@@ -1,5 +1,6 @@
 - if volume
   - transition = false
+  - volume_name = volume.name.present? ? volume.name : volume.id
   - if local_assigns.has_key?(:target_state) && volume.in_transition?(target_state)
     - transition = true
     - data = {}
@@ -9,17 +10,21 @@
   %tr{class: "state-#{volume.status.downcase} #{'task-state' if transition}", data: data, id: "volume_#{volume.id}"}
     - if current_user.is_allowed?("block_storage:volume_get", {})
       %td
-        = link_to volume.name, plugin('block_storage').volume_path(id: volume.id), data: {modal: true}
+        = link_to volume_name, plugin('block_storage').volume_path(id: volume.id), data: {modal: true}
     - else
-      %td= volume.name
+      %td= volume_name
     %td= volume.description
     %td= volume.size
     - attachments = get_attachments(volume, @servers)
     - if !attachments.blank?
       - attachments.each do |att|
-        %td
-          = link_to "#{att[:server_name]}", plugin('compute').instance_path(id: att[:server_id]), data: {modal: true}
-          = "on #{att[:device]}"
+        - if att[:server_name]
+          %td
+            = link_to "#{att[:server_name]}", plugin('compute').instance_path(id: att[:server_id]), data: {modal: true}
+            = "on #{att[:device]}"
+        - else
+          %td
+            = "N/A (#{att[:server_id]}) on #{att[:device]}"
     - else
       %td
     %td= volume.status
