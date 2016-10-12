@@ -1,5 +1,5 @@
 = content_for :title do
-  First Create Expression
+  1. Choose Metric
 
 - unless modal?
   %h4 First Create Expression 
@@ -10,83 +10,79 @@
   
 .modal-body
   %p.alert.alert-error.create-expression-error
-  .row
+  .row#prefilter
+    .col-md-5#filter_dimensions
+      .row
+        .col-md-12#start_with_dimension_row
+          .form-group
+            = label_tag 'dimension-name', 'Restrict metrics by category', class:'control-label'
+            %select.dimension-name.form-control{onchange: 'get_dimension_values();',title: 'choose category to prefilter metrics list'}
+              - ['hostname','observer_host','url','device','service','component'].sort.each do |dimension|
+                %option{value: dimension} #{dimension}
+            %span.help-block
+              Category (Dimension) filters can be used to discover metrics belonging to a specific service, component, host etc.
+        .reset-filter-btn.hide-on-start
+          = link_to "Reset filter", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
+        #start_with_dimension_value
+    .col-md-1
+      .dimension-or-metrics
+        OR
+    .col-md-5#filtered_metrics
+      #start_with_metric
+        = render partial:"metrics"
+    .col-md-1
+      .loading-place
+  .row.hide-on-start
     .col-md-11
       = label_tag 'expression_preview', 'Preview', class:'control-label'
       .panel.panel-default
         .panel-body.panel-expression
           .row
             .col-md-11
-              -# chain expressions keep it vor later
-              -#  - index = 0;
-              -#  - @sub_expressions.each do |expression, logical_operator|
-              -#    - if logical_operator
-              -#      .sub-expression.text-success
-              -#        - index += 1
-              -#        = expression+logical_operator
-              -#        = icon( 'trash', class: 'delete-expression', title: 'remove expresssion from chain', onclick: '$(this).parent().fadeOut(100).remove();')
-                  
               .expression-preview#preview
-              
-              -#%button.btn.btn-success.btn-xs.hide.pull-left{ id: 'chain_expression_btn', type: 'submit'}
-              -#  Chain Expression
-
             .col-md-1
               .loading-place.loading-right
     .col-md-1.reset-btn
       = link_to "Reset", plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-default', title: 'this will reload everything', data: { modal:true }
-  .row
+  .row.hide-on-start
     .col-md-6
-      .form-group
-        = label_tag 'metric', 'Metric', class:'control-label'
-        = text_field_tag 'metric', nil, class: 'form-control metric', data: { provide: "typeahead" }, placeholder: "cpu.idle_perc", autocomplete: "off"
-        %span.help-block
-          A metric is uniquely identified by a name and set of dimensions.
+      .expression-dimension-head
+        %label
+          Filter by
       #expression_dimensions
-      .hide-on-start
-        .form-group
-          = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
-          %select#statistical_function.form-control
-            - ['avg','min','max','sum','count'].each do |statistical_function|
-              %option{value: statistical_function} #{statistical_function}
-        .form-group.period
-          = label_tag 'period', 'Period', class: 'control-label'
-          .row
-            .col-md-3
-              = text_field_tag 'period_custom', 60, class: 'form-control'
-            .col-md-9.period-slider
-              -# note: we need the style tag here to render the slide in correct size (css class is not working)
-              = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
-          %span.help-block.period
-            Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
-        .form-group.threshold
-          .row  
-            .col-md-4
-              = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
-              %select#threshold_relational_operator.form-control
-                - ['<','>','<=','>='].each do |threshold|
-                  %option{value: threshold} #{threshold}
-            .col-md-8
-              = label_tag 'threshold_value', 'Value', class: 'control-label'
-              = text_field_tag 'threshold_value', 60, class: 'form-control'
-          %span.help-block.threshold
-            Threshold values are always in the same units as the metric that they are being compared to.
-
-        -# chain expressions keep it vor later
-        -#= label_tag 'chain_operator', 'Chain Operator*', class: 'control-label'
-        -#%select#chain_operator.form-control{onchange: 'generate_expression();'}
-        -#  %option
-        -#  %option{value: 'AND'} and
-        -#  %option{value: 'OR'} or
-        -#%span.help-block
-        -#  Chain expressions with logical operators together (optional).
-
-    .col-md-6.hide-on-start
-      .row
-        .col-md-12{style: 'padding-left:0px'}
+      .form-group
+        = label_tag 'statistical_function', 'Statistical Function', class: 'control-label'
+        %select#statistical_function.form-control.selectpicker
+          - ['avg','min','max','sum','count'].each do |statistical_function|
+            %option{value: statistical_function} #{statistical_function}
+      .form-group.period
+        = label_tag 'period', 'Period', class: 'control-label'
+        .row
+          .col-md-3
+            = text_field_tag 'period_custom', 60, class: 'form-control'
+          .col-md-9.period-slider
+            -# note: we need the style tag here to render the slide in correct size (css class is not working)
+            = text_field_tag 'period_slider', nil, type: 'text', style: 'width:95%;' ,class: 'form-control'
+        %span.help-block.period
+          Period is the number of seconds for the measurement to be done on. It must be an integer multiple of 60. The default period is 60 seconds.
+      .form-group.threshold
+        .row  
+          .col-md-4
+            = label_tag 'threshold_relational_operator', 'Threshold', class: 'control-label'
+            %select#threshold_relational_operator.form-control.selectpicker
+              - ['<','>','<=','>='].each do |threshold|
+                %option{value: threshold} #{threshold}
+          .col-md-8
+            = label_tag 'threshold_value', 'Value', class: 'control-label'
+            = text_field_tag 'threshold_value', 60, class: 'form-control'
+        %span.help-block.threshold
+          Threshold values are always in the same units as the metric that they are being compared to.
+    .col-md-6
+      .row.hide-on-start
+        .col-md-12.statistic
           = label_tag 'statistic', 'Statistic', class: 'control-label'
           = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
-          %svg#statistic{style:"width:425px; height:400px;"}
+          %svg#statistic{style:"width:425px; height:370px;"}
           %span.help-block
             The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
 
@@ -94,7 +90,7 @@
   - unless modal?
     = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
     
-  %button.btn.btn-primary.hide{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
+  %button.btn.btn-primary.hide-on-start{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
     Next
 
 :javascript

@@ -14,14 +14,14 @@
 - unless @filter_by.empty?
   .form-group
     .row
-      = label_tag 'filter_by', 'Filter by', class: 'control-label col-sm-4'
+      = label_tag 'filter_by', 'Seperate by', class: 'control-label col-sm-4'
       .col-sm-8
         - @filter_by.each do |dimensions_key|
           - if dimensions_key != ""
             = label_tag dimensions_key, dimensions_key.capitalize, class: 'filter-by-label'
             = check_box_tag dimensions_key, dimensions_key, false, class:'filter-by-input', onchange:'filter_by()'
         %p.help-block
-          A separate alarm will be created for every choosen value.
+          A separate alarm will be created for every choosed dimension.
 
 .row
   .col-md-8.col-md-offset-3

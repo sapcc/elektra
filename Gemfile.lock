@@ -23,10 +23,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: 8ed26f12c236909dd42c641ea3f47fc3ceda6848
+  revision: b9e38ca1702d79a02cad7667268262ddd62616fd
   branch: master
   specs:
-    fog-openstack (0.1.11)
+    fog-openstack (0.1.12)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       ipaddress (>= 0.8)
@@ -35,8 +35,6 @@ PATH
   remote: plugins/automation
   specs:
     automation (0.0.1)
-      activeresource
-      activeresource-response
       virtus
 
 PATH
@@ -161,12 +159,6 @@ GEM
       actionpack (>= 4.0.0, < 5)
       activerecord (>= 4.0.0, < 5)
       railties (>= 4.0.0, < 5)
-    activeresource (4.0.0)
-      activemodel (~> 4.0)
-      activesupport (~> 4.0)
-      rails-observers (~> 0.1.1)
-    activeresource-response (1.1.1)
-      activeresource (>= 3, < 5)
     activesupport (4.2.4)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
@@ -352,6 +344,7 @@ GEM
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
+    lyra-client (0.1.1)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
     method_source (0.8.2)
@@ -414,8 +407,6 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    rails-observers (0.1.2)
-      activemodel (~> 4.0)
     rails_stdout_logging (0.0.5)
     railties (4.2.4)
       actionpack (= 4.2.4)
@@ -555,6 +546,7 @@ DEPENDENCIES
   jquery-ui-rails
   key_manager!
   loadbalancing!
+  lyra-client (~> 0.1.1)!
   monitoring!
   monsoon-openstack-auth!
   net-ssh
@@ -588,3 +580,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.13.3

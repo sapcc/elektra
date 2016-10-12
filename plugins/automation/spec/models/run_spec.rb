@@ -15,7 +15,7 @@ describe Automation::Run do
 
     it "should return a hash if data available" do
       run = ::Automation::FakeFactory.new.run
-      expect(run.snapshot.to_json).to match(::Automation::FakeFactory.new.automation.to_json)
+      expect(run.snapshot.to_json).to match(::Automation::FakeFactory.new.automation.attributes.to_json)
     end
 
   end
@@ -29,7 +29,7 @@ describe Automation::Run do
 
     it "should return false for the other cases" do
       automation = ::Automation::FakeFactory.new.automation({repository: 'https://github.com/ids/chef-moo3.git'})
-      run = ::Automation::FakeFactory.new.run({automation_attributes: automation})
+      run = ::Automation::FakeFactory.new.run({automation_attributes: automation.attributes})
       expect(run.revision_from_github?).to be_falsey
     end
 
@@ -44,7 +44,7 @@ describe Automation::Run do
 
     it "should return just the revision sha if no github wdf repo" do
       automation = ::Automation::FakeFactory.new.automation({repository: 'https://github.com/ids/chef-moo3.git'})
-      run = ::Automation::FakeFactory.new.run({automation_attributes: automation})
+      run = ::Automation::FakeFactory.new.run({automation_attributes: automation.attributes})
       expect(run.revision_link).to eq('c7b3ee00635673294619070fafbccf27a23bcbd4')
     end
 

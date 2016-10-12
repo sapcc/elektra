@@ -9,22 +9,6 @@ module Automation
           description: :title,
           title: :status
         }
-      },
-      {
-        "ServiceLayer::AutomationApiError" => {
-          header_title: "Monsoon Automation",
-          details: -> e, c {e.data.to_yaml},
-          description: -> e, c {
-            body = JSON.parse(e.data.body) rescue nil
-            unless body.nil?
-              unless body['error'].nil?
-                return body['error']
-              end
-            end
-            return e.data.body
-          },
-          title: -> e, c {e.data.message},
-        }
       }
     ]
   end

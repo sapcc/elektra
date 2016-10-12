@@ -25,3 +25,5 @@
           %li= link_to 'Launch Instance', plugin('compute').new_instance_path(image_id: image.id), data: {modal: true}
         - if current_user.is_allowed?("image:image_publish")
           %li= link_to 'Publish', plugin('image').os_images_private_publish_path(private_id:image.id), method: :put, remote:true, data: {loading_status: true}
+        - if current_user.is_allowed?("image:image_delete", image: image.attributes)
+          %li= link_to 'Delete', plugin('image').os_images_private_path(id:image.id), method: :delete, data: { confirm: 'Are you sure you want to delete this image?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

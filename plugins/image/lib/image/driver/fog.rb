@@ -29,6 +29,10 @@ module Image
         nil
       end
       
+      def delete_image(image_id)
+        handle_response{@fog.delete_image(image_id)}
+      end
+      
       def add_member_to_image(image_id, tenant_id)
         handle_response { @fog.add_member_to_image(image_id, tenant_id).body}
       end

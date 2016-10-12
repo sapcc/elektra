@@ -34,11 +34,11 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def create_notification_method(params={})
+      def create_notification_method(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def create_alarm_definition(params={})
+      def create_alarm_definition(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
@@ -46,23 +46,27 @@ module Monitoring
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def update_notification_method(id,params)
+      def update_notification_method(id,options)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def update_alarm_definition(id,params)
+      def update_alarm_definition(id,options)
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def list_metrics(params={})
+      def list_metrics(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
-      def list_metric_names()
+      def list_metric_names(options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
       def list_statistics(options={})
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+      
+      def list_dimension_values(dimension_name,options={})
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 

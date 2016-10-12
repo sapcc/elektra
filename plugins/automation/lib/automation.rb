@@ -1,4 +1,3 @@
-require 'active_resource'
 require 'virtus'
 require_relative "automation/engine"
 require_relative "automation/data_truncation"

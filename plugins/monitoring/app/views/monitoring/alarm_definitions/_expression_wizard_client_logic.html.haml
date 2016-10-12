@@ -28,17 +28,19 @@
          $('#period_custom').trigger("change");
       }
     );
-    // set typeahead for metrics
+
     if( metric_names && wizard_mode == "create" ) {
-      $("#metric").typeahead({source:  metric_names, afterSelect: 
-        function(){ 
-          var metric_name = $('#metric').val();
-          // this is called once to get the dimension data
-          get_dimensions(metric_name);
-        }
+      $("select.dimension-name").selectpicker({
+        style: 'btn-default',
+        size: 7
+      });
+  
+      $('#metric').selectpicker({
+        style: 'btn-default',
+        size: 10
       });
     }
-    
+
     // events
     // delay change event for 1 second
     $('#period_custom, #threshold_value').change(monitoring.throttle(function(){
@@ -63,8 +65,7 @@
       // initial autofocus
       setTimeout(function() {
         $("#metric").focus().select();
-        $('#preview').addClass('expression-preview text-info pull-left');
-        $('#preview').text('please define me');
+        please_define_me();
       }, 0);
     }
   });
@@ -72,6 +73,14 @@
   //
   // LOGIC
   //
+  
+  // shown on startup
+  function please_define_me() {
+    $('#preview').addClass('expression-preview text-info pull-left');
+    $('#preview').text('please define me');
+  }
+  
+  // renders new dimensionrow
   function render_dimension_row(ID) {
     // if no dimension was found do nothing
     if (dimension_data) {
@@ -90,11 +99,10 @@
           // render row data
           $('#expression_dimensions').append(data);
 
-          // set fokus to key field
-          $("#dimension_key_"+ID).focus();
-          $("#dimension_value_"+ID).prop('readonly',true);
-          // show the complete wizard on first run
-          $('.hide-on-start').fadeIn();
+          // show head on the first run
+          $(".expression-dimension-head").fadeIn();
+          // show new dimension line
+          $("#expression_dimension_"+ID).fadeIn();
 
           // enable remove button
           var id_before = ID - 1;
@@ -105,11 +113,18 @@
           // remove all dimensions keys that are used and
           // write the keys for later in creation form  and match by 
           var dimension_keys = Object.keys(dimension_data);
+          //console.log(dimension_keys);
           $('.dimension_key').each(function(){
             var used_dimension_key = $(this).val();
+            //console.log(used_dimension_key);
             var index = dimension_keys.indexOf(used_dimension_key)
-            dimension_keys.splice(index,1);
-          })
+            //console.log(index);
+            // if nothing was found we do not delete
+            if(index != -1) {
+              dimension_keys.splice(index,1);
+            }
+          });
+          //console.log(dimension_keys);
           $('#filter_by_dimensions').val(dimension_keys);
           
           // update preview
@@ -120,44 +135,48 @@
     }
   }
   
+  // set autocompletion for dimension values field
   function autocomplete_dimension_values(ID) {
-    // destroy old typeahead
-    $("#dimension_value_"+ID).typeahead('destroy');
+
+    $("#dimension_key_"+ID).prop('disabled',true);
+    $("#dimension_value_"+ID).prop('disabled',false);
+    $('.selectpicker').selectpicker('refresh');
     if($("#dimension_key_"+ID).val() != '') {
       // get typeahead data
       var selected_dimension_key = $("#dimension_key_"+ID).val();
       var dimension_values = dimension_data[selected_dimension_key];
-      // set typeahead for values
-      $("#dimension_value_"+ID).typeahead({ source: dimension_values, afterSelect: 
-        function(){
-          // to prevent random user input only the input from typeahead is valid
-          $("#dimension_value_"+ID).data('valid',true);
-          // remove selected value from array
-          var selected_dimension_value = $("#dimension_value_"+ID).val();
-          var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
-          dimension_data[selected_dimension_key].splice(value_index,1);
-          // remove key if no values left
-          if ( dimension_data[selected_dimension_key].length == 0 ) {
-            delete dimension_data[selected_dimension_key];
-          }
-          // render new row
-          dimension_cnt++
-          render_dimension_row(dimension_cnt); 
-          generate_expression();
-          // made row read only
-          $("#dimension_value_"+ID).prop("readonly", true);
-          $("#dimension_key_"+ID).prop("disabled", "disabled");
-          show_statistic();
-        }
+
+      $("#dimension_value_"+ID).empty();
+      var options = "";
+      $.each(dimension_values, function(index,value){
+        options += "<option value='"+value+"'>"+value+"</option>"
       });
-  
+
+      $("#dimension_value_"+ID).html(options);
+      $('#dimension_value_'+ID).selectpicker('refresh');
+      $('#dimension_value_'+ID).on('changed.bs.select', function (e) {
+        // to prevent random user input only the input from typeahead is valid
+        $("#dimension_value_"+ID).data('valid',true);
+        $("#dimension_value_"+ID).prop('disabled',true);
+        $('#dimension_value_'+ID).selectpicker('refresh');
+        // remove selected value from array
+        var selected_dimension_value = $("#dimension_value_"+ID).val();
+        var value_index =  dimension_data[selected_dimension_key].indexOf(selected_dimension_value);
+        dimension_data[selected_dimension_key].splice(value_index,1);
+        // remove key if no values left
+        if ( dimension_data[selected_dimension_key].length == 0 ) {
+          delete dimension_data[selected_dimension_key];
+        }
+        // render new row
+        dimension_cnt++
+        render_dimension_row(dimension_cnt); 
+        generate_expression();
+        show_statistic();
+      });
+
       // set fokus to value field
-      $("#dimension_value_"+ID).prop('readonly',false);
+      //$("#dimension_value_"+ID).prop('readonly',false);
       $("#dimension_value_"+ID).focus();
-    }
-    else {
-      // empty key
-      $("#dimension_value_"+ID).prop('readonly',true);
     }
   }
 
@@ -177,59 +196,86 @@
     $('.create-expression-error').html('Metric Dimensions Error: '+XHR.status+' '+XHR.statusText);
   }
 
-  function get_dimensions(METRIC_NAME) {
-    $.post("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
-      name: METRIC_NAME,
-      // in case of invalid token we don't want to follow the redirect from the server to the logon page
-      // instead we handle that case in check_logon_state()
-      do_not_redirect: true 
-    },
-      function( data,status,xhr ) {
+  // if everything was reseted to start
+  function cleanup_dimensions() {
+    dimension_cnt = 1;
+    $('#expression_dimensions').empty();
+  }
 
-        check_logon_state(xhr);
-        // check that we have correct data here
-        if (typeof(data) != 'object') {
-          $('.create-expression-error').css('display','block');
-          $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
-          return;
-        }
+  // is triggerd if user chooses a metric
+  function get_dimensions_for_metric(METRICS_LIST_TITLE) {
+    var metric_name = $('#metric').val();
+    if (metric_name) {
+    
+      // remove prefilter
+      $.post("#{plugin('monitoring').dimensions_for_metric_alarm_definitions_path()}", { 
+        name: metric_name,
+        // in case of invalid token we don't want to follow the redirect from the server to the logon page
+        // instead we handle that case in check_logon_state()
+        do_not_redirect: true 
+      },
+        function( data,status,xhr ) {
+  
+          check_logon_state(xhr);
+          // check that we have correct data here
+          if (typeof(data) != 'object') {
+            $('.create-expression-error').css('display','block');
+            $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
+            return;
+          }
+          
+          // only used if we load it first time
+          if( !RegExp(/Metric/).test($('#metric_list div.form-group label.control-label').text()) ) {
+            $('#prefilter').fadeOut();
+            // reuse metric list
+            $('#metric_list').insertBefore($('.expression-dimension-head'))
+            // rename label
+            $('#metric_list div.form-group label.control-label').text(METRICS_LIST_TITLE)
+            $('#prefilter').remove();
+            $('.hide-on-start').fadeIn();
+            $('.modal-title').text('2. Design the Expression');
+          }
 
-        dimension_data = data; 
-        // normalize data
-        $(Object.keys(dimension_data)).each(function(index,dimension_key) {
-          //console.log(dimension_key);
-          var unique_values = [];
-          // removed doubled entrys
-          // http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
-          $.each(dimension_data[dimension_key], function(i, value){
-              if($.inArray(value, unique_values) === -1) unique_values.push(value);
-          });
-          dimension_data[dimension_key] = unique_values;
+          dimension_data = data; 
+          if (Object.keys(dimension_data).length > 0) {
+            // normalize data
+            $(Object.keys(dimension_data)).each(function(index,dimension_key) {
+              //console.log(dimension_key);
+              var unique_values = [];
+              // removed doubled entrys
+              // http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
+              $.each(dimension_data[dimension_key], function(i, value){
+                  if($.inArray(value, unique_values) === -1) unique_values.push(value);
+              });
+              dimension_data[dimension_key] = unique_values;
+            });
+            
+            generate_expression();
+            var dimension_keys = Object.keys(dimension_data);
+            // remove all used dimensions from dimension_keys
+            $('.dimension_key').each(function(){
+              var dimension = $(this).val();
+              dimension_keys.splice(dimension_keys.indexOf(dimension), 1);
+            })
+            // write dimension keys for later use in match by
+            $('#filter_by_dimensions').val(dimension_keys.toString())
+            cleanup_dimensions();
+            // render the row based on dimension_data and the template
+            render_dimension_row(dimension_cnt);
+          }
+          else {
+            generate_expression();
+            $('.hide-on-start').fadeIn();
+          }
+          show_statistic();
+  
+        }).error( function(xhr) {
+          show_error(xhr);
         });
-        
-        generate_expression();
-        var dimension_keys = Object.keys(dimension_data);
-        // remove all used dimensions from dimension_keys
-        $('.dimension_key').each(function(){
-          var dimension = $(this).val();
-          dimension_keys.splice(dimension_keys.indexOf(dimension), 1);
-        })
-        // write dimension keys for later use in match by
-        $('#filter_by_dimensions').val(dimension_keys.toString())
-
-        // cleanup everything
-        dimension_cnt = 1;
-        $('#expression_dimensions').empty();
-        $('.expression_dimension_head').fadeIn();
-        // render the row based on dimension_data and the template
-        render_dimension_row(dimension_cnt);
-        show_statistic();
-
-      }).error( function(xhr) {
-        show_error(xhr);
-      });
+      }
   }
   
+  // render the statistic
   function show_statistic() {
 
     if (!$('#preview').data('valid')) { return };
@@ -271,6 +317,7 @@
     });
   }
 
+  // is triggerd if the user changes a value
   function generate_expression() {
     
     var valid = true;
@@ -302,7 +349,7 @@
     if (!numberReg.test(period/60)) {
       // if the error is already set we do not need to set it again
       if (!$('.period .has-error').length) {
-        $('.period.help-block').hide();
+        $('.period.help-block').fadeOut();
         $('.period').addClass('has-error');
         $('.period').append("<span class='help-block period-error'>Period is not a multiple of 60 or an integer</span>");
       }
@@ -334,48 +381,29 @@
       $('.threshold').removeClass('has-error');
       $('.threshold.help-block').show();
     }
-  
-    //  chain expressions keep it vor later
-    //  var chain_operator = $('#chain_operator').val();
-    //  if(chain_operator != '' && valid) {
-    //    $('#chain_expression_btn').removeClass('hide');
-    //    $('#create_alarm_definition_btn').addClass('hide');
-    //  }
-    //  else {
-    //    $('#chain_expression_btn').addClass('hide');
-    //    $('#create_alarm_definition_btn').removeClass('hide');
-    //  }
 
     // colorize expression
     $('#preview').removeClass();
     if(valid) {
       $('#preview').addClass('expression-preview text-success pull-left');
-      $('#alarm_definition_ready_btn').removeClass('hide');
+      $('#alarm_definition_ready_btn').fadeIn();
       $('#preview').data('valid', true);
     }
     else {
-      $('#alarm_definition_ready_btn').addClass('hide');
+      $('#alarm_definition_ready_btn').fadeOut();
       $('#preview').addClass('expression-preview text-danger pull-left');
       $('#preview').data('valid', false);
     }
   
     // render current expression
-    var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value//+" "+chain_operator;
+    var expression = statistical_function+" ("+metric+dimensions+", "+period+") "+relational_operator+" "+threshold_value;
     $('#preview').text(expression);
   
-    //  chain expressions keep it vor later
-    //  // collect all chained expressions
-        var sub_expression = "";
-    //  $('.sub-expression').each(function(){
-    //    sub_expression += " "+$(this).text().trim();
-    //  });
-  
     // write it to form for submit
-    $('#expression').val($.trim(sub_expression+" "+expression));
-  //  $('#ready_expressions').val($.trim(sub_expression+" "+expression));
-  
+    $('#expression').val(expression);
   } 
   
+  // triggered when the user removes a dimension row
   function remove_dimension_row(ID) {
     // add value to choosen dimension key
     var dimension_key = $("#dimension_key_"+ID).val();
@@ -399,23 +427,83 @@
     show_statistic();
   };
 
+  // everything starts from begining
+  function cleanup() {
+    cleanup_dimensions();
+    please_define_me();
+    $('#alarm_definition_ready_btn').fadeOut();
+    $('.hide-on-start').fadeOut();
+  }
 
-  function get_metric_names() {
-    
-  	var metric_names_unfiltered = []
-    $.each(metrics_data, function( index, metric ) {
-      metric_names_unfiltered.push(metric[0]);
-    });
-    //console.log(metric_names_unfiltered);
-    
-    var metric_names_unique = metric_names_unfiltered.filter(function(metric_name, i, ar){ 
-      return ar.indexOf(metric_name) === i; 
-    });
-    //console.log(metric_names_unique);
-    
-    return metric_names_unique;
+  // used for prefilter to load all values related to on dimension
+  function get_dimension_values() {
+
+    var dimension = $('select.dimension-name').val();
+    if (dimension != "") {
+
+      $('#start_with_dimension_value').fadeOut();
+      $('#start_with_metric').fadeOut();
+      $('.dimension-or-metrics').fadeOut();
+
+      $.post( "#{plugin('monitoring').dimension_values_alarm_definitions_path()}", {
+        name: dimension,
+        // in case of invalid token we don't want to follow the redirect from the server to the logon page
+        // instead we handle that case in check_logon_state()
+        do_not_redirect: true
+      },function(data,status,xhr) {
+        check_logon_state(xhr);
+
+        // readjust the prefilter line
+        $('.dimension-or-metrics').parent().remove();
+        $('#filter_dimensions').addClass('col-md-7');
+        $('#filter_dimensions').removeClass('col-md-5');
+        $('#filtered_metrics').addClass('col-md-4');
+        $('#filtered_metrics').removeClass('col-md-5');
+        $('#filtered_metrics').append($('.reset-filter-btn'));
+        $('.reset-filter-btn').fadeIn();
+
+        var start_with_dimension = $('#start_with_dimension_row');
+        start_with_dimension.removeClass('col-md-12');
+        start_with_dimension.addClass('col-md-6');
+        $('#start_with_dimension_value').html(data);
+        $('select.dimension-value').selectpicker({
+          style: 'btn-default',
+          size: 7
+        });
+        $('#start_with_dimension_value').fadeIn();
+      }).error (function(xhr){});
+    }
+
   };
   
+  // used on prefilter to filter metrics list
+  function filter_metrics_by_dimension() {
+
+    var dimension = $('select.dimension-name').val();
+    var value = $('select.dimension-value').val();
+    
+    if (dimension != "" && value != "") {
+      cleanup();
+      $.post( "#{plugin('monitoring').metric_names_by_dimension_alarm_definitions_path()}", {
+        name: dimension,
+        value: value,
+        // in case of invalid token we don't want to follow the redirect from the server to the logon page
+        // instead we handle that case in check_logon_state()
+        do_not_redirect: true
+      },function(data,status,xhr) {
+        check_logon_state(xhr);
+        $('#start_with_metric').html(data);
+        $('#metric').selectpicker({
+          style: 'btn-default',
+          size: 10
+        });
+        $('#start_with_metric').fadeIn();
+      }).error (function(xhr) {});
+    }
+
+  };
+  
+  // get all expression dimensions as string
   function expression_dimensions() {
     // dimensions
     var dimensions = "";

@@ -13,7 +13,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
-  s.add_dependency 'activeresource'
-  s.add_dependency 'activeresource-response'
   s.add_dependency 'virtus'
 end

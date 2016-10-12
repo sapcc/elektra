@@ -79,6 +79,11 @@
 
 .expression-dimension {
   margin-bottom:10px;
+  display:none;
+}
+
+.expression-dimension-head {
+  display:none;
 }
 
 .loading-right {
@@ -93,6 +98,13 @@
 
 .period-slider {
   margin-top:5px;
+}
+
+.dimension-or-metrics {
+  font-weight:bold;
+  margin-top:30px;
+  padding:0px;
+  text-align:center;
 }
 
 .create-expression-error {
@@ -148,4 +160,20 @@
 
 .parse-error-details {
   display:none;
+}
+
+.dimensions-column {
+  padding-right:0px;
+}
+
+.remove-dimension-btn {
+  padding-left:0px;
+}
+
+.statistic {
+  padding-left:0px;
+}
+
+.reset-filter-btn {
+  padding-top:25px;
 }

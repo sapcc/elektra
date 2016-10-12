@@ -57,7 +57,7 @@ class InstallNodeService
     # if instance_os is not given then we check the metadata or we ask for
     if instance_os.blank?
       # check image metadata
-      if instance.image_object.metadata.nil? || instance.image_object.metadata['os_family'].blank? || ( instance.image_object.metadata['os_family'] != 'windows' && instance.image_object.metadata['os_family'] != 'linux')
+      if instance.image_object.nil? || instance.image_object.metadata.nil? || instance.image_object.metadata['os_family'].blank? || ( instance.image_object.metadata['os_family'] != 'windows' && instance.image_object.metadata['os_family'] != 'linux')
         raise InstallNodeInstanceOSNotFound.new("Instance OS empty or not known", {instance: instance, messages: messages})
       else
         instance_os = instance.image_object.metadata['os_family']
