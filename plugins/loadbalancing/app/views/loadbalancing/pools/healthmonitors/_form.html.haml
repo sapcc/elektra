@@ -1,5 +1,5 @@
 %fieldset
-  =# f.input :name, required: true
+  =# f.input :name, required: false
   = f.input :type, as: :select, collection: Loadbalancing::Healthmonitor::TYPES, required: true, disabled: update
   = f.input :max_retries, as: :integer, input_html: { min: '1', max: 10 }
   = f.input :timeout, label: 'Timeout', as: :integer, required: true, input_html: { min: '1' }

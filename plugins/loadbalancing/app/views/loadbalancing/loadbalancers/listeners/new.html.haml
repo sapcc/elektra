@@ -12,7 +12,7 @@
       %p.alert.alert-error= @listener.errors.full_messages.to_sentence
 
     %fieldset
-      = f.input :name, required: true
+      = f.input :name, required: false
       = f.input :description
       = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS
       = f.input :protocol_port, { label: 'Protocol Port',
