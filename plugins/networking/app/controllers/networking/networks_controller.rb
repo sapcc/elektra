@@ -3,7 +3,7 @@ module Networking
     before_filter :load_type
     def index
       @networks = services.networking.networks('router:external' => @network_type == 'external')
-      
+
       # all networks but shared
       usage = @networks.select{|n| n.shared==false}.length
       @quota_data = services.resource_management.quota_data([
@@ -19,13 +19,14 @@ module Networking
 
     def new
       @network = services.networking.new_network(name: "#{@scoped_project_name}_#{@network_type}")
-      @subnet = Networking::Subnet.new(nil,name: "#{@network.name}_sub", cidr: @network_type=='private' ? "192.168.0.0/24" : "10.44.32.0/24", enable_dhcp: true)
+      @subnet = Networking::Subnet.new(nil,name: "#{@network.name}_sub", enable_dhcp: true)
     end
 
     def create
       network_params = params[:network]
       subnets_params = network_params.delete(:subnets)
       @network = services.networking.new_network(network_params)
+      @errors = Array.new
 
       if @network.save
         if subnets_params.present?
@@ -40,7 +41,8 @@ module Networking
             redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
           else
             @network.destroy
-            flash.now[:error] = @subnet.errors.full_messages.to_sentence
+            # flash.now[:error] = @subnet.errors.full_messages.to_sentence
+            @errors = @subnet.errors
             render action: :new
           end
         else
@@ -49,7 +51,9 @@ module Networking
         end
 
       else
-        flash.now[:error] = @network.errors.full_messages.to_sentence
+        # flash.now[:error] = @network.errors.full_messages.to_sentence
+        @errors = @subnet.errors
+
         render action: :new
       end
     end
