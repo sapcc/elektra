@@ -1,5 +1,5 @@
 %fieldset
-  = f.input :name, required: true
+  = f.input :name, required: false
   = f.input :description
   = f.input :lb_algorithm, as: :select, collection: Loadbalancing::Pool::ALGORITHMS, required: true
   = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, required: true,  disabled: update

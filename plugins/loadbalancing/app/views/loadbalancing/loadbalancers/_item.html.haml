@@ -34,7 +34,7 @@
           - else
             %li= link_to 'Attach Floating IP', new_floatingip_loadbalancer_path(id: loadbalancer.id), data: {modal: true }
 
-          - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {})
+          - if loadbalancer.listeners.count == 0 and current_user.is_allowed?("loadbalancing:loadbalancer_delete", {})
             %li.divider
             %li= link_to 'Delete',
               plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id),

@@ -33,10 +33,12 @@ module Loadbalancing
 
       def update
         @healthmonitor = services.loadbalancing.find_healthmonitor(params[:id])
+        params[:healthmonitor][:type] = @healthmonitor.type
         if @healthmonitor.update(healthmonitor_params)
           audit_logger.info(current_user, "has updated", @healthmonitor)
           render template: 'loadbalancing/pools/healthmonitors/update_item_with_close.js'
         else
+          @pool = services.loadbalancing.find_pool(params[:pool_id])
           render :edit
         end
       end

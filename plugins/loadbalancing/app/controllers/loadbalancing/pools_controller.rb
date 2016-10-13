@@ -72,7 +72,44 @@ module Loadbalancing
 
     def destroy
       @pool = services.loadbalancing.find_pool(params[:id])
-      if @pool.destroy
+      @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool.healthmonitor_id
+
+      count = 0
+      h_error = false
+      if @healthmonitor
+        until @healthmonitor.destroy
+          if count  > 2
+            h_error = true
+            break
+          end
+          count += 1
+          sleep 3
+        end
+      end
+
+      if h_error
+        redirect_to pools_path(), flash: {error: "Could not delete attached Healthmonitor #{@healthmonitor.errors.full_messages.to_sentence}"}
+        return
+      end
+
+      sleep 3
+      count = 0
+      p_error = false
+      until @pool.destroy
+        if count  > 2
+          p_error = true
+          break
+        end
+        count += 1
+        sleep 3
+      end
+
+      sleep 3
+      if !p_error and !h_error and @healthmonitor
+        audit_logger.info(current_user, "has deleted", @pool)
+        audit_logger.info(current_user, "has deleted", @healthmonitor)
+        redirect_to pools_path(), notice: 'Pool and Healthmonitor successfully deleted.'
+      elsif !p_error and !h_error and !@healthmonitor
         audit_logger.info(current_user, "has deleted", @pool)
         redirect_to pools_path(), notice: 'Pool successfully deleted.'
       else
