@@ -77,7 +77,7 @@ module Monitoring
 
       def update_notification_method(id, options={})
         handle_response do
-          # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-10
+          # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#update-notification-method
           request_params = {
             "name" => options["name"],
             "type" => options["type"], 
@@ -88,7 +88,7 @@ module Monitoring
       end
 
       def update_alarm_definition(id, options={})
-        # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-15
+        # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#update-alarm-definition
         # TODO: if the alarm definition was created with no match_by it cannot be updated and hangs with message
         #       "match_by must not change"
         request_params = {
@@ -138,14 +138,15 @@ module Monitoring
       end
 
       def create_notification_method(options={})
-        # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-7
+        # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#create-notification-method
         handle_response do
           @fog.create_notification_method(options).body
         end
       end
 
       def create_alarm_definition(options={})
-        # https://github.com/openstack/monasca-api/blob/master/docs/monasca-api-spec.md#request-body-12
+        # pp options
+        # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#create-alarm-definition
         # not allowed paramters are deleted here
         options.delete('actions_enabled')
         # handle comma seperated list

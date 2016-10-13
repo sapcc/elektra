@@ -75,12 +75,23 @@ module Monitoring
 
     def create
       @alarm_definition = services.monitoring.new_alarm_definition(params.require(:alarm_definition))
+
       unless @alarm_definition.save
         @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
         render action: 'new'
         return
       end
-      back_to_alarm_definition_list
+      
+      # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#create-alarm-definition
+      # some how it is not possible to create an alarm with disabled alarm_actions and by default 
+      # it is enabled so this should do the trick to disable alarm actions
+      # when alarm_actions are zero do an update with the same params for creation and 
+      # alarm actions should be deactivated
+      if params['alarm_definition']['actions_enabled'].to_i == 0 
+        update 
+      else
+        back_to_alarm_definition_list
+      end
     end
 
     def update
