@@ -41,7 +41,6 @@ module Networking
             redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
           else
             @network.destroy
-            # flash.now[:error] = @subnet.errors.full_messages.to_sentence
             @errors = @subnet.errors
             render action: :new
           end
@@ -51,7 +50,6 @@ module Networking
         end
 
       else
-        # flash.now[:error] = @network.errors.full_messages.to_sentence
         @errors = @subnet.errors
 
         render action: :new
