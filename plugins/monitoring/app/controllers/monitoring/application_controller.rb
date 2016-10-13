@@ -9,7 +9,6 @@ module Monitoring
       { "Core::ServiceLayer::Errors::ApiError" => { 
         title: 'API Error',
         description: -> e,_ { 
-          
           if e.response_data 
             result = e.response_data.try('title').to_s + " - " + e.response_data.try('description').to_s
             if  result == " - "
