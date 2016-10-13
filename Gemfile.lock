@@ -53,12 +53,6 @@ PATH
     compute (0.0.1)
 
 PATH
-  remote: plugins/cost_control
-  specs:
-    cost_control (0.0.1)
-      fog-openstack-sap-billing (~> 0.0.5)
-
-PATH
   remote: plugins/dns_service
   specs:
     dns_service (0.0.1)
@@ -524,7 +518,6 @@ DEPENDENCIES
   compass-rails
   compute!
   config
-  cost_control!
   cucumber-rails
   database_cleaner
   dns_service!
@@ -580,6 +573,3 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
-
-BUNDLED WITH
-   1.13.3
