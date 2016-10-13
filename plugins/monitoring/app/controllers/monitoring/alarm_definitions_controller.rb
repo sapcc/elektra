@@ -85,9 +85,14 @@ module Monitoring
       # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#create-alarm-definition
       # some how it is not possible to create an alarm with disabled alarm_actions and by default 
       # it is enabled so this should do the trick to disable alarm actions
-      # when alarm_actions are zero do an update with the same params for creation and 
-      # alarm actions should be deactivated
-      if params['alarm_definition']['actions_enabled'].to_i == 0 
+      # when actions are zero (or no alarm action was selected) do an update with
+      # the same params for creation and alarm actions should be deactivated
+      if params['alarm_definition']['actions_enabled'].to_i == 0 or (
+         !params['alarm_definition'].key?('ok_actions') and 
+         !params['alarm_definition'].key?('alarm_actions') and 
+         !params['alarm_definition'].key?('undetermined_actions')
+         )
+        params['alarm_definition']['actions_enabled'] = 0
         update 
       else
         back_to_alarm_definition_list
@@ -108,6 +113,15 @@ module Monitoring
         { alarm_actions: [] },
         { undetermined_actions: [] },
       ) 
+      
+      # disable actions if no alarm action was selected
+      if params['alarm_definition']['actions_enabled'].to_i == 0 or (
+         !params['alarm_definition'].key?('ok_actions') and 
+         !params['alarm_definition'].key?('alarm_actions') and 
+         !params['alarm_definition'].key?('undetermined_actions')
+         )
+         attrs[:actions_enabled] = 0
+      end
 
       unless @alarm_definition.update_attributes(attrs)
         @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
