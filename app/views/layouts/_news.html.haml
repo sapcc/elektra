@@ -1,5 +1,27 @@
 .news
 
+  - date = Time.new(2016,10,13)
+  .new{data:{date: date}}
+    .author-title= "Esther Schmitz - #{date}"
+
+    :markdown
+      Help texts are meant to be a bit more verbose than just tooltips but shouldn't be too long. The idea is to give some extra hints for the most common question a user might have and to provide links to the complete in-depth documentation from there. As an example look at the compute/instances plugin. The help text there is just about the maximum length we want for this. Adding the help text works similar to the help text for the webconsole. So you add a file to the plugin root folder as follows:
+
+      Instructions:
+
+      Create a markdown file using the following naming scheme:
+
+      plugin_(service_name_)help.md
+
+      So either plugin_help.md for a plugin wide help, or plugin_service_name_help.md (e.g. plugin_instances_help.md) for cases where more than one service lives in the same plugin and you need servivce specific help text.
+
+      Similar for the links:
+
+      plugin_(service_name_)help_links.md
+
+      See the compute plugin for an example (especially the links file, it requires a special syntax for cc internal links, e.g. to the documentation).
+
+
   - date = Time.new(2016,9,20)
   .new{data:{date: date}}
     .author-title= "Esther Schmitz - #{date}"
