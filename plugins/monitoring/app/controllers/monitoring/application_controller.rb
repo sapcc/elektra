@@ -9,11 +9,7 @@ module Monitoring
       { "Core::ServiceLayer::Errors::ApiError" => { 
         title: 'API Error',
         description: -> e,_ { 
-          if e.response_data 
-            e.response_data['title']+" - "+e.response_data['description']
-          else
-            e
-          end
+          e
         }
       }},
       { "Excon::Error" => { 
