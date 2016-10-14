@@ -12,7 +12,7 @@
     icon_hint: hint
 - else
   = f.input :expression, 
-    icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression. To create a valid expression you can also use the expression wizard. #{link_to 'Use Wizard', plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-primary btn-xs pull-right wizard-btn', data: { modal_transition:true }}"
+    icon_hint: "If the expression is true, and the alarm actions are enabled and configured a notification will be sent. Refer to the #{link_to 'documentation', 'https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#alarm-definition-expressions', target: '_blank'} for how to write an expression. To create a valid expression you can also use the expression wizard. #{link_to 'Use Wizard', 'javascript:;', id: 'use_wizard_btm', class: 'btn btn-primary btn-xs pull-right wizard-btn'}"
 
 - severity = @alarm_definition.severity || 'LOW'
 = f.input :severity, 
@@ -55,5 +55,44 @@
       $('#alarm_definition_actions_enabled').change(function(){
          $('#alarm_actions').toggle('fast');
       });
+      
+      $('#use_wizard_btm').click(
+        function(){
+          use_wizard();
+        }
+      );
     });
+    
+    function use_wizard() {
+      
+      var data = {
+          modal: true,
+          modal_transition: true,
+          name: $('#alarm_definition_name').val(),
+          description: $('#alarm_definition_description').val(),
+          severity: $('#alarm_definition_severity').val(),
+        };
+      
+      // ripped from /app/assets/javascripts/modal.js.coffee
+      $('#modal-holder').find('.modal').find('.modal-body').html('<div class="loading-spinner"></div><div class="loading-text">Loading...</div>');
+      $.ajax({
+        dataType: 'html',
+        url: "#{plugin('monitoring').create_expression_alarm_definitions_path()}",
+        data: data,
+        success: function(data, textStatus, jqXHR) {
+          var $back, $data, $footer;
+          $data = $(data);
+          $footer = $data.find('.modal-footer');
+          if ($footer.length > 0) {
+            $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>');
+            $back.click(function() {
+              return History.back();
+            });
+            $footer.prepend($back);
+          }
+          $('#modal-holder').find('.modal').modal('hide');
+          $('#modal-holder').html($data).find('.modal').modal();
+        }
+      });
+    }
 

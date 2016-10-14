@@ -11,7 +11,10 @@ module Monitoring
         description: -> e,_ { 
           
           if e.response_data 
-            e.response_data.try('title')+" - "+e.response_data.try('description')
+            result = e.response_data.try('title').to_s + " - " + e.response_data.try('description').to_s
+            if  result == " - "
+              e
+            end
           else
             e
           end
