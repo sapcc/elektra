@@ -7,6 +7,9 @@
     - unless @network.errors.blank?
       %p.alert.alert-error= @network.errors.full_messages.to_sentence
 
+    - unless @errors.blank?
+      %p.alert.alert-error= @errors.full_messages.to_sentence
+
     %fieldset
       = f.input :name
       = f.input :admin_state_up, { as: :select, collection: [['UP', true], ['DOWN', false]], selected:   true }
@@ -22,7 +25,7 @@
         = subnets.input :name, { label: "#{Networking::Subnet.human_attribute_name(:name)}",
           input_html: { value: @subnet.try(:name) } }
         = subnets.input :cidr, { label: "#{Networking::Subnet.human_attribute_name(:cidr)}",
-          input_html: { value: @subnet.try(:cidr) } }
+          input_html: { value: @subnet.try(:cidr), placeholder: "Must be within #{@network_type=='private' ? '10.180.0.0/16' : '10.44.32.0/24'} range!" } }
         = subnets.input :enable_dhcp, { label: "#{Networking::Subnet.human_attribute_name(:enable_dhcp)}",
             as: :boolean, input_html: { checked: @subnet.try(:enable_dhcp) },  wrapper: :horizontal_boolean_4x8 }
 
