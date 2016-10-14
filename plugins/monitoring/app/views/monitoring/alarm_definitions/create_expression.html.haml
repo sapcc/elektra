@@ -7,6 +7,13 @@
 = form_tag plugin('monitoring').from_expression_wizzard_new_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
   = hidden_field_tag 'expression'
   = hidden_field_tag 'filter_by_dimensions'
+  = hidden_field_tag 'alarm_definition_name', @name
+  = hidden_field_tag 'alarm_definition_description', @description
+  = hidden_field_tag 'alarm_definition_severity', @severity
+  = hidden_field_tag 'alarm_definition_actions_enabled', @actions_enabled
+  = hidden_field_tag 'alarm_definition_ok_actions', @ok_actions
+  = hidden_field_tag 'alarm_definition_alarm_actions', @alarm_actions
+  = hidden_field_tag 'alarm_definition_undetermined_actions', @undetermined_actions
   
 .modal-body
   %p.alert.alert-error.create-expression-error

@@ -54,11 +54,29 @@ module Monitoring
     def from_expression_wizzard_new
       @head = 'Create Alarm Definition'
       expression = params['expression'] || ''
-      
+      # remember on values from the alarm creation dialog
+      @name                 = params[:alarm_definition_name] || ''
+      @description          = params[:alarm_definition_description] || ''
+      @severity             = params[:alarm_definition_severity] || ''
+      @actions_enabled      = params[:alarm_definition_actions_enabled] || 0
+      @ok_actions           = params[:alarm_definition_ok_actions].split(/ /) || []
+      @alarm_actions        = params[:alarm_definition_alarm_actions].split(/ /) || []
+      @undetermined_actions = params[:alarm_definition_undetermined_actions].split(/ /) || []
+
       filter_by_dimensions = params['filter_by_dimensions']
       @filter_by = filter_by_dimensions.split(/,/) if filter_by_dimensions || []
       
-      @alarm_definition = services.monitoring.new_alarm_definition(name: "", expression: expression)
+      @alarm_definition = services.monitoring.new_alarm_definition(
+        name: @name,
+        expression: expression,
+        description: @description,
+        severity: @severity,
+        actions_enabled: @actions_enabled,
+        ok_actions: @ok_actions,
+        alarm_actions: @alarm_actions,
+        undetermined_actions: @undetermined_actions,
+      )
+      
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
       render action: 'new_with_expression'
     end
@@ -208,14 +226,17 @@ module Monitoring
     
     # create a new expression from scratch
     def create_expression
-      # chain expressions keep it vor later
-      # expressions = params['expressions'] || ""
-      @step_count = params['step_count'] || 1
-      @after_login = plugin('monitoring').alarm_definitions_path(overlay: 'create_expression')
       
-      # TODO: chain expressions keep it vor later
-      # split expression into subexpression parts
-      # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).
+      # remember on values from the alarm creation dialog
+      @name                 = params[:name]
+      @description          = params[:description]
+      @severity             = params[:severity]
+      @actions_enabled      = params[:actions_enabled]
+      @ok_actions           = params[:ok_actions]
+      @alarm_actions        = params[:alarm_actions]
+      @undetermined_actions = params[:undetermined_actions]
+      
+      @after_login = plugin('monitoring').alarm_definitions_path(overlay: 'create_expression')
       
       # this used on prefilter label
       @metrics_title = "use unfiltered metrics list"
