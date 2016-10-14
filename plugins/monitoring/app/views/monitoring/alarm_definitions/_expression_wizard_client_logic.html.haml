@@ -215,14 +215,17 @@
         do_not_redirect: true 
       },
         function( data,status,xhr ) {
-  
+
           check_logon_state(xhr);
           // check that we have correct data here
-          if (typeof(data) != 'object') {
+          if (typeof(data.dimensions) != 'object') {
             $('.create-expression-error').css('display','block');
             $('.create-expression-error').html('Metric Dimensions Error: was not able to load the dimensions...');
             return;
           }
+          
+          // set suggested threshold_value
+          $('#threshold_value').val(data.suggested_threshold_value);
           
           // only used if we load it first time
           if( !RegExp(/Metric/).test($('#metric_list div.form-group label.control-label').text()) ) {
@@ -236,7 +239,7 @@
             $('.modal-title').text('2. Design the Expression');
           }
 
-          dimension_data = data; 
+          dimension_data = data.dimensions; 
           if (Object.keys(dimension_data).length > 0) {
             // normalize data
             $(Object.keys(dimension_data)).each(function(index,dimension_key) {

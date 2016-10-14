@@ -74,7 +74,7 @@
                 %option{value: threshold} #{threshold}
           .col-md-8
             = label_tag 'threshold_value', 'Value', class: 'control-label'
-            = text_field_tag 'threshold_value', 60, class: 'form-control'
+            = text_field_tag 'threshold_value', 0, class: 'form-control'
         %span.help-block.threshold
           Threshold values are always in the same units as the metric that they are being compared to.
     .col-md-6

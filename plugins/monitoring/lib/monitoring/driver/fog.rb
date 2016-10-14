@@ -161,6 +161,7 @@ module Monitoring
           @fog.list_dimension_values(dimension_values,options).body["elements"]
         end
       end
+      
     end
   end
 end

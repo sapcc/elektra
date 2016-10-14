@@ -251,10 +251,26 @@ module Monitoring
         name: name, 
         start_time: t.iso8601
       })
+      
+      # get statistics to suggest a god threshold value
+      statistic = services.monitoring.list_statistics({
+        name: name, 
+        start_time: t.iso8601,
+        statistics: 'avg',
+        merge_metrics: true
+      })
+      # get random value and retry 6 times if value is zero
+      retry_value = 6
+      threshold_value = 0
+      while retry_value > 0 and threshold_value == 0
+        threshold_value = statistic.statistics.sample[1].to_i
+        retry_value -= 1
+      end
+      
       # default init with empty array
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
-      render json: dimensions
+      render json: { suggested_threshold_value: threshold_value, dimensions: dimensions }
     end
 
     # used by wizard to render a new dimension row
