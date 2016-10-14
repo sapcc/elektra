@@ -225,14 +225,12 @@ class DashboardController < ::ScopeController
   def load_help_text
     plugin_path = params[:controller]
 
-    # find plugin by mount point (plugin_path)
-    plugin = catch (:found)  do
-      Core::PluginsManager.available_plugins.each do |plugin|
-        throw :found, plugin if plugin_path.starts_with?(plugin.name)
-      end
-    end
+    plugin_index = Core::PluginsManager.available_plugins.find_index{ |p| plugin_path.starts_with?(p.name)}
+    plugin = Core::PluginsManager.available_plugins.fetch(plugin_index, nil) unless plugin_index.blank?
+
 
     unless plugin.blank?
+
       # get name of the specific service inside the plugin
       # remove plugin name from path
       path = plugin_path.split('/')
