@@ -50,8 +50,7 @@ module Networking
         end
 
       else
-        @errors = @subnet.errors
-
+        @errors = @network.errors
         render action: :new
       end
     end
