@@ -1,4 +1,5 @@
 secret_type_select = 'select[data-toggle="secretTypeSwitcher"]'
+payload_content_type_select = 'select[data-toggle="secretPayloadTypeSwitcher"]'
 secret_payload_content_info = '.js-secret-payload-content-info'
 
 container_type_select = 'select[data-toggle="containerTypeSwitcher"]'
@@ -12,7 +13,7 @@ orig_select = 'select[data-toggle="selectMultiple"]'
 multiselect = '.js-generic .multiselect-native-select'
 secretsTable = null
 
-switch_content_type= (e) ->
+switch_secret_content_type= (e) ->
   value = $(e.target).val()
   # hide area and add spinner
   $(secret_payload_content_info).addClass('hide')
@@ -24,6 +25,19 @@ switch_content_type= (e) ->
     success: ( data, textStatus, jqXHR ) ->
       $(secret_payload_content_info).removeClass('hide')
       $(section_spinner).addClass('hide')
+
+switch_secret_payload_content_type= (e) ->
+  relation = $(payload_content_type_select).data('encoding-relation')
+  val = $(e.target).val()
+  if relation[val] == null
+    console.log("null")
+    $('.js-secret-encoding').addClass('hide')
+    $('#secret_payload_content_encoding').prop('disabled', true)
+  else
+    console.log(relation[val])
+    $('#secret_payload_content_encoding').prop('disabled', false)
+    $('.js-secret-encoding').removeClass('hide')
+
 
 init_date_time_picker= () ->
   $('.form_datetime').datetimepicker
@@ -133,7 +147,10 @@ update_multiselect_option= (option_val, disabled) ->
 
 $ ->
   # add handler to the secret type select
-  $(document).on 'change',secret_type_select, switch_content_type
+  $(document).on 'change',secret_type_select, switch_secret_content_type
+
+  # add handler to the secret type select
+  $(document).on 'change',payload_content_type_select, switch_secret_payload_content_type
 
   # init date time picker
   $(document).on('modal:contentUpdated', init_date_time_picker)

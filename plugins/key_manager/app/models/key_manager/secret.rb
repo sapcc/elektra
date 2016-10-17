@@ -15,6 +15,7 @@ module KeyManager
       PRIVATE = 'private'
       PASSPHRASE = 'passphrase'
       CERTIFICATE = 'certificate'
+      OPAQUE = 'opaque'
 
       def self.to_hash
         res = {}
@@ -22,7 +23,8 @@ module KeyManager
         res[PUBLIC.to_sym] = 'Used for storing the public key of an asymmetric keypair'
         res[PRIVATE.to_sym] = 'Used for storing the private key of an asymmetric keypair'
         res[PASSPHRASE.to_sym] = 'Used for storing plain text passphrases'
-        res[CERTIFICATE.to_sym] = ' Used for storing cryptographic certificates such as X.509 certificates'
+        res[CERTIFICATE.to_sym] = 'Used for storing cryptographic certificates such as X.509 certificates'
+        res[OPAQUE.to_sym] = 'Used for backwards compatibility with previous versions of the API without typed secrets'
         res
       end
 
@@ -39,10 +41,11 @@ module KeyManager
       def self.relation_to_type
         res = {}
         res[Type::SYMMETRIC.to_sym] = [PayloadContentType::OCTET_STREAM]
-        res[Type::PUBLIC.to_sym] = [PayloadContentType::OCTET_STREAM]
-        res[Type::PRIVATE.to_sym] = [PayloadContentType::OCTET_STREAM]
+        res[Type::PUBLIC.to_sym] = [PayloadContentType::OCTET_STREAM, PayloadContentType::TEXTPLAIN]
+        res[Type::PRIVATE.to_sym] = [PayloadContentType::OCTET_STREAM, PayloadContentType::TEXTPLAIN]
         res[Type::PASSPHRASE.to_sym] = [PayloadContentType::TEXTPLAIN, PayloadContentType::TEXTPLAIN_CHARSET_UTF8]
-        res[Type::CERTIFICATE.to_sym] = [PayloadContentType::TEXTPLAIN] #[PayloadContentType::PKCS8, PayloadContentType::PKIX_CERT]
+        res[Type::CERTIFICATE.to_sym] = [PayloadContentType::PKCS8, PayloadContentType::PKIX_CERT, PayloadContentType::TEXTPLAIN]
+        res[Type::OPAQUE.to_sym] = [PayloadContentType::TEXTPLAIN]
         res
       end
 
@@ -51,17 +54,6 @@ module KeyManager
     module Encoding
 
       BASE64 = 'base64'
-
-      # TODO: change this to be relation to PayloadContentType
-      def self.relation_to_type
-        res = {}
-        res[Type::SYMMETRIC.to_sym] = BASE64
-        res[Type::PUBLIC.to_sym] = BASE64
-        res[Type::PRIVATE.to_sym] = BASE64
-        res[Type::PASSPHRASE.to_sym] = nil
-        res[Type::CERTIFICATE.to_sym] = nil #BASE64
-        res
-      end
 
       def self.relation_to_payload_content_type
         res = {}
