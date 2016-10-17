@@ -80,8 +80,11 @@ module KeyManager
     def secret_form_attr
       @types = ::KeyManager::Secret::Type.to_hash
       @selected_type = params.fetch('secret', {}).fetch('secret_type', nil) || params[:secret_type] || ::KeyManager::Secret::Type::PASSPHRASE
+
       @payload_content_types = ::KeyManager::Secret::PayloadContentType.relation_to_type[@selected_type.to_sym]
-      @payload_content_encoding = ::KeyManager::Secret::Encoding.relation_to_payload_content_type[@selected_type.to_sym]
+      @selected_payload_content_type = @payload_content_types.first
+
+      @payload_encoding_relation = ::KeyManager::Secret::Encoding.relation_to_payload_content_type
     end
 
     def secrets_params
