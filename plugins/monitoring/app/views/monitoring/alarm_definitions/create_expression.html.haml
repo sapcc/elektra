@@ -88,7 +88,7 @@
       .row.hide-on-start
         .col-md-12.statistic
           = label_tag 'statistic', 'Statistic', class: 'control-label'
-          = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
+          = link_to "", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: 'fa fa-refresh reload-statistic-btn', title: 'reload statistic'
           %svg#statistic{style:"width:425px; height:370px;"}
           %span.help-block
             The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
