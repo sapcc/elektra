@@ -140,6 +140,11 @@ module Monitoring
          )
          attrs[:actions_enabled] = 0
       end
+      
+      # allow to deselect all actions
+      attrs["ok_actions"] = [] if !params['alarm_definition'].key?('ok_actions')
+      attrs["alarm_actions"] = [] if !params['alarm_definition'].key?('alarm_actions')
+      attrs["undetermined_actions"] = [] if !params['alarm_definition'].key?('undetermined_actions')
 
       unless @alarm_definition.update_attributes(attrs)
         @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
