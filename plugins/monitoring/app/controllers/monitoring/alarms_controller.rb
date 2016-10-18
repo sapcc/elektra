@@ -65,8 +65,10 @@ module Monitoring
     def load_alarm
       id = params[:id] || params.require(:alarm_id)
       @alarm = services.monitoring.get_alarm(id)
+      # @alarm is loaded before destoy so we only need to take care in one place
+      raise ActiveRecord::RecordNotFound, "The alarm with id #{params[:id]} was not found.  Maybe it was deleted from someone else?" unless @alarm.try(:id)
+      
       @alarm_name = params[:name] || ''
-      raise ActiveRecord::RecordNotFound, "alarm with id #{params[:id]} not found" unless @alarm
     end
 
   end
