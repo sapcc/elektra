@@ -62,9 +62,9 @@ module Monitoring
           begin 
             @fog.get_alarm_definition(id).body
           rescue ::Fog::Monitoring::OpenStack::NotFound
-            # is handled in alarm_defintions_controller
-            # get_alarm_definition is loaded before delete and 
-            # update so we only need to take care in one place
+            # is handled in alarm_defintions_controller -> load_alarm_definition()
+            # get_alarm_definition is loaded before delete and update so we only 
+            # need to take care in one place
             false
           end
         end
@@ -72,8 +72,15 @@ module Monitoring
 
       def get_notification_method(id)
         handle_response do
-          @fog.get_notification_method(id).body
-        end
+          begin
+            @fog.get_notification_method(id).body
+          rescue ::Fog::Monitoring::OpenStack::NotFound
+            # is handled in notification_methods_controller -> load_notification_method()
+            # get_notification_method is loaded before delete and update so we only
+            # need to take care in one place
+            false
+          end
+         end
       end
 
       def delete_notification_method(id)

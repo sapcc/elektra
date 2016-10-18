@@ -334,7 +334,8 @@ module Monitoring
     def load_alarm_definition
       id = params[:id] || params["id"]
       @alarm_definition = services.monitoring.get_alarm_definition(id)
-      raise ActiveRecord::RecordNotFound, "The alarm definition with id #{params[:id]} was not found. Maybe it was deleted from someone else?" unless @alarm_definition.id
+      # @alarm_definition is loaded before delete and update so we only need to take care in one place
+      raise ActiveRecord::RecordNotFound, "The alarm definition with id #{params[:id]} was not found. Maybe it was deleted from someone else?" unless @alarm_definition.try(:id)
     end
 
   end
