@@ -54,11 +54,29 @@ module Monitoring
     def from_expression_wizzard_new
       @head = 'Create Alarm Definition'
       expression = params['expression'] || ''
-      
+      # remember on values from the alarm creation dialog
+      @name                 = params[:alarm_definition_name] || ''
+      @description          = params[:alarm_definition_description] || ''
+      @severity             = params[:alarm_definition_severity] || ''
+      @actions_enabled      = params[:alarm_definition_actions_enabled] || 0
+      @ok_actions           = params[:alarm_definition_ok_actions].split(/ /) || []
+      @alarm_actions        = params[:alarm_definition_alarm_actions].split(/ /) || []
+      @undetermined_actions = params[:alarm_definition_undetermined_actions].split(/ /) || []
+
       filter_by_dimensions = params['filter_by_dimensions']
       @filter_by = filter_by_dimensions.split(/,/) if filter_by_dimensions || []
       
-      @alarm_definition = services.monitoring.new_alarm_definition(name: "", expression: expression)
+      @alarm_definition = services.monitoring.new_alarm_definition(
+        name: @name,
+        expression: expression,
+        description: @description,
+        severity: @severity,
+        actions_enabled: @actions_enabled,
+        ok_actions: @ok_actions,
+        alarm_actions: @alarm_actions,
+        undetermined_actions: @undetermined_actions,
+      )
+      
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
       render action: 'new_with_expression'
     end
@@ -75,12 +93,28 @@ module Monitoring
 
     def create
       @alarm_definition = services.monitoring.new_alarm_definition(params.require(:alarm_definition))
+
       unless @alarm_definition.save
         @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
         render action: 'new'
         return
       end
-      back_to_alarm_definition_list
+      
+      # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md#create-alarm-definition
+      # some how it is not possible to create an alarm with disabled alarm_actions and by default 
+      # it is enabled so this should do the trick to disable alarm actions
+      # when actions are zero (or no alarm action was selected) do an update with
+      # the same params for creation and alarm actions should be deactivated
+      if params['alarm_definition']['actions_enabled'].to_i == 0 or (
+         !params['alarm_definition'].key?('ok_actions') and 
+         !params['alarm_definition'].key?('alarm_actions') and 
+         !params['alarm_definition'].key?('undetermined_actions')
+         )
+        params['alarm_definition']['actions_enabled'] = 0
+        update 
+      else
+        back_to_alarm_definition_list
+      end
     end
 
     def update
@@ -97,6 +131,20 @@ module Monitoring
         { alarm_actions: [] },
         { undetermined_actions: [] },
       ) 
+      
+      # disable actions if no alarm action was selected
+      if params['alarm_definition']['actions_enabled'].to_i == 0 or (
+         !params['alarm_definition'].key?('ok_actions') and 
+         !params['alarm_definition'].key?('alarm_actions') and 
+         !params['alarm_definition'].key?('undetermined_actions')
+         )
+         attrs[:actions_enabled] = 0
+      end
+      
+      # allow to deselect all actions
+      attrs["ok_actions"] = [] if !params['alarm_definition'].key?('ok_actions')
+      attrs["alarm_actions"] = [] if !params['alarm_definition'].key?('alarm_actions')
+      attrs["undetermined_actions"] = [] if !params['alarm_definition'].key?('undetermined_actions')
 
       unless @alarm_definition.update_attributes(attrs)
         @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
@@ -183,14 +231,17 @@ module Monitoring
     
     # create a new expression from scratch
     def create_expression
-      # chain expressions keep it vor later
-      # expressions = params['expressions'] || ""
-      @step_count = params['step_count'] || 1
-      @after_login = plugin('monitoring').alarm_definitions_path(overlay: 'create_expression')
       
-      # TODO: chain expressions keep it vor later
-      # split expression into subexpression parts
-      # @sub_expressions = expressions.split(/(AND|OR)/).each_slice(2).
+      # remember on values from the alarm creation dialog
+      @name                 = params[:name]
+      @description          = params[:description]
+      @severity             = params[:severity]
+      @actions_enabled      = params[:actions_enabled]
+      @ok_actions           = params[:ok_actions]
+      @alarm_actions        = params[:alarm_actions]
+      @undetermined_actions = params[:undetermined_actions]
+      
+      @after_login = plugin('monitoring').alarm_definitions_path(overlay: 'create_expression')
       
       # this used on prefilter label
       @metrics_title = "use unfiltered metrics list"
@@ -226,10 +277,12 @@ module Monitoring
         name: name, 
         start_time: t.iso8601
       })
+      
+      threshold_value =  suggest_threshold(name,'avg')
       # default init with empty array
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
-      render json: dimensions
+      render json: { suggested_threshold_value: threshold_value, dimensions: dimensions }
     end
 
     # used by wizard to render a new dimension row
@@ -336,6 +389,26 @@ module Monitoring
       @alarm_definition = services.monitoring.get_alarm_definition(id)
       # @alarm_definition is loaded before destroy and update so we only need to take care in one place
       raise ActiveRecord::RecordNotFound, "The alarm definition with id #{params[:id]} was not found. Maybe it was deleted from someone else?" unless @alarm_definition.try(:id)
+    end
+
+    def suggest_threshold(name,statistic)
+      t = Time.now.utc - (60*120)
+      # get statistics to suggest a god threshold value
+      statistic = services.monitoring.list_statistics({
+        name: name, 
+        start_time: t.iso8601,
+        statistics: statistic,
+        merge_metrics: true
+      })
+      # get random value and retry 6 times if value is zero
+      retry_value = 6
+      threshold_value = 0
+      while retry_value > 0 and threshold_value == 0
+        threshold_value = statistic.statistics.sample[1].to_i
+        retry_value -= 1
+      end
+      
+      threshold_value
     end
 
   end
