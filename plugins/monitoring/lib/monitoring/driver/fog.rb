@@ -59,7 +59,14 @@ module Monitoring
 
       def get_alarm_definition(id)
         handle_response do
-          @fog.get_alarm_definition(id).body
+          begin 
+            @fog.get_alarm_definition(id).body
+          rescue ::Fog::Monitoring::OpenStack::NotFound
+            # is handled in alarm_defintions_controller
+            # get_alarm_definition is loaded before delete and 
+            # update so we only need to take care in one place
+            false
+          end
         end
       end
 
