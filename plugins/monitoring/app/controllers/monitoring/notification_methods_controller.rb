@@ -65,7 +65,7 @@ module Monitoring
 
     def load_notification_method
       @notification_method = services.monitoring.get_notification_method(params.require(:id))
-      # @notification_method is loaded before delete and update so we only need to take care in one place
+      # @notification_method is loaded before destoy and update so we only need to take care in one place
       raise ActiveRecord::RecordNotFound, "The notification method with id #{params[:id]} was not found. Maybe it was deleted from someone else?" unless @notification_method.try(:id)
     end
     

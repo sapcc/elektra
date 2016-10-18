@@ -53,7 +53,13 @@ module Monitoring
 
       def get_alarm(id)
         handle_response do
-          @fog.get_alarm(id).body
+          begin
+            @fog.get_alarm(id).body
+          rescue ::Fog::Monitoring::OpenStack::NotFound
+            # is handled in alarms_controller -> load_alarm()
+            # load_alarm is loaded before delete and update so we only need to take care in one place
+            false
+          end
         end
       end
 
