@@ -1,5 +1,4 @@
-
-=render partial: 'compute/shared/tabs'
+= render_navigation(context: :block_storage, expand_all: true)
 
 - if @scoped_project_id
   - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id} })

@@ -57,11 +57,8 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-  primary.item :instances,        'Servers',          -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }, highlights_on: Proc.new { params[:controller][/compute\/instances/] }
   primary.item :block_storage,    'Volumes',          -> {plugin('block_storage').volumes_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage\/volumes/] }
   primary.item :block_storage,    'Volume Snapshots',        -> {plugin('block_storage').snapshots_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage\/snapshots/] }
-  primary.item :floating_ips,     'Floating IPs',     -> {plugin('networking').floating_ips_path }, if: -> { plugin_available?(:networking) }, highlights_on: %r{networking/floating_ips/?.*}
-  primary.item :security_groups,  'Security Groups',  -> {plugin('networking').security_groups_path }, if: -> { plugin_available?(:networking) }, highlights_on: %r{networking/security_groups/?.*}
 
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
