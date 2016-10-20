@@ -1,7 +1,8 @@
 {
-  "loadbalancing:loadbalancer_get": "rule:cloud_admin or rule:admin_required",
-  "loadbalancing:loadbalancer_list": "@",
-  "loadbalancing:loadbalancer_create": "rule:cloud_admin or rule:admin_required",
-  "loadbalancing:loadbalancer_update": "rule:cloud_admin or rule:admin_required",
-  "loadbalancing:loadbalancer_delete": "rule:cloud_admin or rule:admin_required"
+  "loadbalancing:resource_get": "role:admin or role:member",
+  "loadbalancing:resource_list": "role:admin or role:member",
+  "loadbalancing:resource_create": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
+  "loadbalancing:resource_update": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
+  "loadbalancing:resource_delete": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
+  "loadbalancing:loadbalancer_assign_ip": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)"
 }

@@ -9,11 +9,11 @@
   #loadbalancers.tab-pane.active{role: "tabpanel"}
   .row
     .col-md-12
-      - if current_user.is_allowed?("loadbalancing:loadbalancer_create", {loadbalancer: {user_id: current_user.id} })
+      - if current_user.is_allowed?("loadbalancing:resource_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
         .toolbar
           = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-      - if current_user.is_allowed?("loadbalancing:loadbalancer_list", {loadbalancer: {user_id: current_user.id} })
+      - if current_user.is_allowed?("loadbalancing:resource_list", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
         %table.table#loadbalancers
           %thead
             %tr

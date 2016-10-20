@@ -31,7 +31,7 @@
               = render partial: 'loadbalancing/pools/members/add_members', locals: {pool: @pool, members: @error_members}
 
       %div.buttons{class: 'modal-footer'}
-        - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
+        - if current_user.is_allowed?('loadbalancing:resource_update', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           = button_tag "Save", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
 
   .col-md-1
@@ -59,9 +59,9 @@
               = render partial: 'loadbalancing/pools/members/ip_item', locals: {ip: ip}
 
       %div.buttons{class: 'modal-footer'}
-        - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
-          =# button_tag "Cancel", { class: 'btn btn-default submit', data: {dismiss:"modal"} }
-          = link_to 'Cancel', plugin('loadbalancing').show_details_pool_path(id: @pool.id ), class: 'btn btn-default'
+        =# button_tag "Cancel", { class: 'btn btn-default submit', data: {dismiss:"modal"} }
+        = link_to 'Cancel', plugin('loadbalancing').show_details_pool_path(id: @pool.id ), class: 'btn btn-default'
+        - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           = link_to 'Add External', plugin('loadbalancing').add_external_pool_members_path(pool_id: @pool.id ), class: 'btn btn-default', remote: true
           = button_tag "Add", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
 

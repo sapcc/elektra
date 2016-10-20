@@ -3,7 +3,7 @@
     .toolbar
       %h4
         Pool Members
-        - if current_user.is_allowed?('loadbalancing:loadbalancer_create')
+        - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           = link_to 'Add', plugin('loadbalancing').new_pool_member_path(pool_id: @pool.id ), data: {modal: true}, class: 'btn btn-primary btn-sm'
     %table.table#members
       %thead

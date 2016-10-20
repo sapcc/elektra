@@ -26,18 +26,22 @@ module Loadbalancing
       def new
         @listener = services.loadbalancing.new_listener
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+        containers = services.key_manager.containers()
+        @containers = containers[:elements].map { |c| [c.name, c.container_ref] }  if containers
       end
 
       def create
         @listener = services.loadbalancing.new_listener
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         @listener.attributes = params[:listener].delete_if { |key, value| value.blank? }.merge(loadbalancer_id: @loadbalancer.id)
-
+        @listener.sni_container_refs.reject! { |c| c.empty? } if @listener.sni_container_refs
         if @listener.save
           audit_logger.info(current_user, "has created", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: params[:loadbalancer_id]), notice: 'Listener successfully created.'
         else
           @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+          containers = services.key_manager.containers()
+          @containers = containers[:elements].map { |c| [c.name, c.container_ref] }  if containers
           render :new
         end
       end

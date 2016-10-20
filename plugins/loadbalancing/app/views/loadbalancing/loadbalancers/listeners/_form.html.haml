@@ -1,0 +1,10 @@
+%fieldset
+  = f.input :name, required: false
+  = f.input :description
+  = f.input :protocol_port, { readonly: update,
+                              label: 'Protocol Port',
+                              hint: 'A port number between 1 and 65535',
+                              input_html: { type: :number, min: 1, max: 65535 }}
+  = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, disabled: update
+  = f.input :default_tls_container_ref, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, collection: @containers, include_blank: true }
+  = f.input :sni_container_refs, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, collection: @containers, include_blank: true, input_html: { multiple: true} }
