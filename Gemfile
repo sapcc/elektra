@@ -55,17 +55,6 @@ gem 'prometheus-client'
 gem 'sentry-raven'
 gem 'httpclient' # The only faraday backend that handled no_proxy :|
 
-###################### PLUGINS #####################
-# backlist plugins 
-black_list = ['cost_control'] #e.g. ['compute']
-
-Dir.glob("plugins/*").each do |plugin_path|
-  unless black_list.include?(plugin_path.gsub('plugins/', ''))
-    gemspec path: plugin_path
-  end
-end
-######################## END #######################
-
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -76,15 +65,47 @@ end
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+
+
+###################### PLUGINS #####################
+
+white_list = Array.new # do not modify
+
+# backlist plugins (global)
+# if you want to work on a black listed plugin, you can activate it for development only in the development group below
+global_black_list = ['cost_control'] #e.g. ['compute', 'cost_control']
+
+group :development do
+  # add plugins you want to have available in development even if they have been blacklisted globally
+  white_list = ['cost_control']
+end
+
+# remove locally white listed plugins (if any) from global black list
+black_list = global_black_list - white_list
+
+# load all plugins except blacklisted plugins
+Dir.glob("plugins/*").each do |plugin_path|
+  unless black_list.include?(plugin_path.gsub('plugins/', ''))
+    gemspec path: plugin_path
+  end
+end
+
+######################## END #######################
+
+
+
+
 # Avoid double log lines in development
 # See: https://github.com/heroku/rails_stdout_logging/issues/1
 group :production do
   # We are not using the railtie because it comes to late,
   # we are setting the logger in production.rb
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
+
 end
 
 group :development do
+
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
   # We stick to 2.x until this is fixed:
@@ -95,6 +116,7 @@ group :development do
 end
 
 group :development, :test do
+
   # load .env needed for cucumber tests!
   gem 'dotenv-rails'
 
