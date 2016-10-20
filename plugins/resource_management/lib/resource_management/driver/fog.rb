@@ -217,7 +217,12 @@ module ResourceManagement
         'port'                => :ports,
         'security_group'      => :security_groups,
         'security_group_rule' => :security_group_rules,
-        'rbac_policy'         => :rbac_policies
+        'rbac_policy'         => :rbac_policies,
+        'loadbalancer'        => :loadbalancers,
+        'listener'            => :listeners,
+        'pool'                => :pools,
+        'healthmonitor'       => :healthmonitors
+
       }.freeze
 
       def set_project_quota_networking(_domain_id, project_id, values)
@@ -249,6 +254,10 @@ module ResourceManagement
         security_groups       = handle_response { fog_network_connection.list_security_groups(net_options).body['security_groups'] }.length
         security_group_rules  = handle_response { fog_network_connection.list_security_group_rules(net_options).body['security_group_rules'] }.length
         rbac_policies         = handle_response { fog_network_connection.list_rbac_policies(net_options).body['rbac_policies'] }.length
+        loadbalancers         = handle_response { fog_network_connection.list_lbaas_loadbalancers(net_options).body['loadbalancers'] }.length
+        listeners             = handle_response { fog_network_connection.list_lbaas_listeners(net_options).body['listeners'] }.length
+        pools                 = handle_response { fog_network_connection.list_lbaas_pools(net_options).body['pools'] }.length
+        healthmonitors        = handle_response { fog_network_connection.list_lbaas_healthmonitors(net_options).body['healthmonitors'] }.length
 
         {
           networks:             networks,
@@ -259,7 +268,11 @@ module ResourceManagement
           ports:                ports,
           security_groups:      security_groups,
           security_group_rules: security_group_rules,
-          rbac_policies:        rbac_policies
+          rbac_policies:        rbac_policies,
+          loadbalancers:        loadbalancers,
+          listeners:            listeners,
+          pools:                pools,
+          healthmonitors:       healthmonitors
         }
       end
 

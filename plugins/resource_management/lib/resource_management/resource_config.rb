@@ -53,6 +53,10 @@ module ResourceManagement
         # :mock_service can be enabled with ResourceManagement::ServiceConfig.mock!
         new(:mock_service,   :things                    ),
         new(:mock_service,   :capacity,                    data_type: :bytes),
+        new(:networking,     :loadbalancers             ),
+        new(:networking,     :listeners                 ),
+        new(:networking,     :pools                     ),
+        new(:networking,     :healthmonitors            )
       ]
 
       # only show resources for enabled services

@@ -22,3 +22,7 @@ en:
     dns: DNS
     zones: Zones
     recordsets: Recordsets per Zone
+    loadbalancers: LBaaS - Load Balancers
+    listeners: LBaaS - Listeners
+    pools: LBaaS - Pools
+    healthmonitors: LBaaS - Health Monitors

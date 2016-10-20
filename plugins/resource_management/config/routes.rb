@@ -1,6 +1,6 @@
 ResourceManagement::Engine.routes.draw do
 
-  area_regex = /(?:compute|networking|storage)/
+  area_regex = /(?:compute|networking|dns|storage)/
 
   scope '/', as: 'resources' do
     get  '/' => 'project_resources#index'

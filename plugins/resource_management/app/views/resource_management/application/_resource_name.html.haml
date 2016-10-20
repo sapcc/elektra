@@ -35,6 +35,12 @@
                 = link_to translated_name, plugin('networking').routers_path, title:linktitle
               - when :security_groups, :security_group_rules
                 = link_to translated_name, plugin('networking').security_groups_path, title: linktitle
+              - when :loadbalancers, :listeners
+                = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
+              - when :pools, :healthmonitors
+                = link_to translated_name, plugin('loadbalancing').pools_path, title: linktitle
+          - when :dns
+            - case name
               - when :zones, :recordsets
                 = link_to translated_name, plugin('dns_service').zones_path, title: linktitle
           - else
