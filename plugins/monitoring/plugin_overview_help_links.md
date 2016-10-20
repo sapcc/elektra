@@ -1,2 +1,2 @@
 #### Useful Links
-* [Enduser Documentation](#{@sap_docu_url})
+* [Documentation](#{@sap_docu_url}/docs/monitor/dashboard/overview.html)
