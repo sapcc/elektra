@@ -1,22 +1,22 @@
-
 .row
-  .col-md-4
-    .infobox
-      %h4
-        Accumulated Costs
-      %table.table
-        %tr
-          %th.snug-nowrap Description:
-          %td= @kb11n_billing_object.kb11n_billing_object_doc_headertext.presence || content_tag('div', 'Not set', class: 'text-danger')
-        %tr
-          %th.snug-nowrap Cost Element:
-          %td= @kb11n_billing_object.kb11n_billing_object_cost_element.presence || content_tag('div', 'Not set', class: 'text-danger')
-        %tr
-          %th.snug-nowrap Costs:
-          %td= @kb11n_billing_object.kb11n_billing_object_costs.presence || content_tag('div', 'Not set', class: 'text-danger')
-        %tr
-          %th.snug-nowrap Currency:
-          %td= @kb11n_billing_object.kb11n_billing_object_currency.presence || content_tag('div', 'Not set', class: 'text-danger')
+  %h4
+    Accumulated Costs
+  %table.table
+    %tr
+      %th.snug-nowrap Description:
+      %td= @kb11n_billing_object.kb11n_billing_object_doc_headertext.presence || content_tag('div', 'Not set', class: 'text-danger')
+    %tr
+      %th.snug-nowrap Cost Element:
+      %td= @kb11n_billing_object.kb11n_billing_object_cost_element.presence || content_tag('div', 'Not set', class: 'text-danger')
+    %tr
+      %th.snug-nowrap Send Costcenter:
+      %td= @kb11n_billing_object.kb11n_billing_object_send_costctr.presence || content_tag('div', 'Not set', class: 'text-danger')
+    %tr
+      %th.snug-nowrap Receiver Costcenter:
+      %td= @kb11n_billing_object.kb11n_billing_object_rec_costctr.presence || content_tag('div', 'Not set', class: 'text-danger')
+    %tr
+      %th.snug-nowrap Costs:
+      %td= "#{@kb11n_billing_object.kb11n_billing_object_costs.presence} #{@kb11n_billing_object.kb11n_billing_object_currency.presence}" || content_tag('div', 'Not set', class: 'text-danger')
 
   - if @kb11n_billing_object.kb11n_billing_object_costs.blank?
     .col-md-4.alert.alert-error
