@@ -84,7 +84,7 @@ module BlockStorage
     def snapshot
       @snapshot = services.block_storage.new_snapshot
       @snapshot.attributes=params[@snapshot.model_name.param_key]
-      @snapshot.attributes['volume_id'] = params[:id]
+      @snapshot.volume_id = params[:id]
 
       if @snapshot.save
         flash[:notice] = "Snapshot successfully created."
