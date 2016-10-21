@@ -1,0 +1,18 @@
+{
+  "shared_filesystem_storage:share_list": "@",
+  "shared_filesystem_storage:share_get": "@",
+  "shared_filesystem_storage:share_create": "@",
+  "shared_filesystem_storage:share_delete": "@",
+  "shared_filesystem_storage:share_update": "@",
+  
+  "shared_filesystem_storage:shared_network_list": "@",
+  "shared_filesystem_storage:shared_network_get": "@",
+  "shared_filesystem_storage:shared_network_create": "@",
+  "shared_filesystem_storage:shared_network_delete": "@",
+  "shared_filesystem_storage:shared_network_update": "@",
+  
+  "shared_filesystem_storage:snapshot_list": "@",
+  "shared_filesystem_storage:snapshot_get": "@",
+  "shared_filesystem_storage:snapshot_delete": "@",
+  "shared_filesystem_storage:snapshot_update": "@"
+}

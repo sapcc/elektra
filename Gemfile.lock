@@ -23,10 +23,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: b9e38ca1702d79a02cad7667268262ddd62616fd
-  branch: master
+  revision: bc92ce26a060e05f17b51803f19179e8abbf0250
+  branch: manila_actions_cc
   specs:
-    fog-openstack (0.1.12)
+    fog-openstack (0.1.15)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       ipaddress (>= 0.8)
@@ -174,6 +174,10 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    babel-source (5.8.35)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -229,6 +233,7 @@ GEM
     config (1.0.0)
       activesupport (>= 3.0)
       deep_merge (~> 1.0.0)
+    connection_pool (2.2.0)
     cucumber (2.3.3)
       builder (>= 2.1.2)
       cucumber-core (~> 1.4.0)
@@ -418,6 +423,13 @@ GEM
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
     rdoc (4.2.0)
+    react-rails (1.8.2)
+      babel-transpiler (>= 0.7.0)
+      coffee-script-source (~> 1.8)
+      connection_pool
+      execjs
+      railties (>= 3.2)
+      tilt
     redcarpet (3.3.4)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
@@ -561,6 +573,7 @@ DEPENDENCIES
   quiet_assets
   rails (= 4.2.4)
   rails_stdout_logging
+  react-rails
   redcarpet
   resource_management!
   responders
