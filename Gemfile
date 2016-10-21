@@ -30,13 +30,17 @@ gem 'font-awesome-sass'
 
 gem 'responders'
 
+# make it fancy with react
+gem 'react-rails'
+
 # Database
 gem 'pg'
 gem 'activerecord-session_store'
 
 # Openstack
 gem 'net-ssh'
-gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
+#gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
+gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :manila_actions_cc
 gem 'fog-openstack-sap-billing', git: 'git://localhost/monsoon/fog-openstack-sap-billing.git', branch: :master
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
@@ -68,7 +72,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 
 ###################### PLUGINS #####################
-
 white_list = Array.new # do not modify
 
 # backlist plugins (global)

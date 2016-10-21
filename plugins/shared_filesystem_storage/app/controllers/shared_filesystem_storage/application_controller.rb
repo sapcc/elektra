@@ -1,9 +1,20 @@
 module SharedFilesystemStorage
-  class ApplicationController < DashboardController
+  class ApplicationController < ::DashboardController
     def index
-      @token = current_user.token
-      @webcli_endpoint = current_user.service_url("webcli")
-      @identity_url = current_user.service_url("identity")
+      @permissions = {
+        shares: {
+          list: current_user.is_allowed?("shared_filesystem_storage:share_list"),
+          create: current_user.is_allowed?("shared_filesystem_storage:share_create")
+        },
+        snapshots: { 
+          list: current_user.is_allowed?("shared_filesystem_storage:snapshot_list"),
+          create: current_user.is_allowed?("shared_filesystem_storage:snapshot_create")
+        },
+        share_networks: {
+          list: current_user.is_allowed?("shared_filesystem_storage:shared_network_list"),
+          create: current_user.is_allowed?("shared_filesystem_storage:shared_network_create")
+        }
+      }
     end
   end
 end

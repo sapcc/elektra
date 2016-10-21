@@ -31,6 +31,14 @@ module ApplicationHelper
       @plugin          = helper.send("#{plugin_name}_plugin")
       @main_app        = helper.main_app
     end
+    
+    def root_path
+      @root_path ||= @main_app.send("#{@plugin_name}_plugin_path",@scope)
+    end
+    
+    def root_url
+      @root_url ||= @main_app.send("#{@plugin_name}_plugin_url",@scope)
+    end
 
     # delegate all methods to the plugin_helper. Clean the scope parameters before delegation!
     def method_missing(method,*args,&block)

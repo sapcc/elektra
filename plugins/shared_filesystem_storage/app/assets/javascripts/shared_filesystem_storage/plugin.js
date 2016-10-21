@@ -16,22 +16,6 @@
 // outside this closure you should bind functions to shared_filesystem_storage. 
 //  
 //       
-//= require_tree .   
-  
-// This function is visible only inside this file.
-function test() {
-  //...  
-}    
-
-// This function is available from everywhere by calling shared_filesystem_storage.name()
-shared_filesystem_storage.name = function() {
-  "shared_filesystem_storage"
-} 
-
-// This is always executed on page load.
-$(document).ready(function(){
-  // ...
-}); 
-    
-// Call function from other files inside this plugin using the variable shared_filesystem_storage
-//shared_filesystem_storage.anyFunction()    
+//= require react
+//= require react_ujs
+//= require_tree ./components  

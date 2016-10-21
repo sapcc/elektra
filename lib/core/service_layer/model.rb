@@ -6,7 +6,7 @@ module Core
       include ActiveModel::Conversion
       include ActiveModel::Validations
 
-      attr_reader :errors, :attributes
+      attr_reader :errors
 
       def initialize(driver, params=nil)
         @driver = driver
@@ -23,6 +23,18 @@ module Core
 
       def id
         @id
+      end
+      
+      def id=(id)
+        @id=id
+      end
+      
+      def attributes
+        @attributes.merge(id:@id)
+      end
+      
+      def as_json(options=nil)
+        attributes
       end
 
       # look in attributes if a method is missing  
@@ -93,7 +105,7 @@ module Core
         error_names = api_error_name_mapping
         begin
           if id
-            @driver.send("delete_#{@class_name}", id)
+            perform_driver_delete(id) #@driver.send("delete_#{@class_name}", id)
             return true
           else
             self.errors.add(:id, "Could not destroy #{@class_name}. Id not presented.")
@@ -202,7 +214,7 @@ module Core
         create_attrs.delete(:id)
 
         begin
-          created_attributes = @driver.send("create_#{@class_name}", create_attrs)
+          created_attributes = perform_driver_create(create_attrs) #@driver.send("create_#{@class_name}", create_attrs)
           self.attributes= created_attributes
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
@@ -220,7 +232,7 @@ module Core
         begin
           update_attrs = attributes_for_update.with_indifferent_access
           update_attrs.delete(:id)
-          updated_attributes = @driver.send("update_#{@class_name}", id, update_attrs)
+          updated_attributes = perform_driver_update(id,update_attrs) #@driver.send("update_#{@class_name}", id, update_attrs)
           self.attributes=updated_attributes if updated_attributes
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
@@ -230,7 +242,21 @@ module Core
         end
         return true
       end
-
+      
+      # msp to driver create method
+      def perform_driver_create(create_attributes)
+        @driver.send("create_#{@class_name}", create_attributes)
+      end
+      
+      # map to driver update method
+      def perform_driver_update(id,update_attributes)
+        @driver.send("update_#{@class_name}", id, update_attributes)
+      end
+      
+      # map to driver delete method
+      def perform_driver_delete(id)
+        @driver.send("delete_#{@class_name}", id)
+      end
 
     end
   end

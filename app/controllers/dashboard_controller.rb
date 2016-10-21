@@ -4,9 +4,11 @@ class DashboardController < ::ScopeController
   include UrlHelper
 
   prepend_before_filter do
+    # session[:monsoon_openstack_auth_token]["expires_at"]=(Time.now-1.minute).to_s
     requested_url = request.env['REQUEST_URI']
     referer_url = request.referer
     referer_url = "#{URI(referer_url).path}?#{URI(referer_url).query}" rescue nil
+
     if requested_url=~/(\?|\&)modal=true/ and referer_url=~/(\?|\&)overlay=.+/
       params[:after_login] = referer_url
     else

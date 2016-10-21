@@ -146,7 +146,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to(options = {}, response_status = {})
-    if modal? or params[:polling_service] or params[:do_not_redirect]
+    if request.format==Mime::JSON or modal? or params[:polling_service] or params[:do_not_redirect]
       head :ok, location: url_for(options)
     else
       super options, response_status
