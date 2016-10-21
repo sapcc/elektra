@@ -3,8 +3,11 @@
 
 
 .row
-  .col-md-6
-    = render partial: 'kb11n_show'
+  .col-md-7
+    %h4
+      Accumulated expenses
+    - @kb11n_billing_objects.each do |kb11n_billing_object|
+      = render partial: 'kb11n_show', locals: { kb11n_billing_object: kb11n_billing_object }
 
   .col-md-offset-8
     .infobox
@@ -20,8 +23,12 @@
         %th.snug-nowrap ID:
         %td= @masterdata.cost_object_id.presence || content_tag('div', 'Not set', class: 'text-danger')
 
+  - if @kb11n_billing_objects.blank?
+    .col-md-7.alert.alert-error
+      No expenses have been arisen or maintained for this project yet.
+
   - if @masterdata.cost_object_type.blank? or @masterdata.cost_object_id.blank?
-    .col-md-9.alert.alert-error
+    .col-md-offset-8.alert.alert-error
       No cost object has been maintained for this project yet.
       - if current_user.is_allowed?('cost_control:cost_object_edit')
         Please do so now.

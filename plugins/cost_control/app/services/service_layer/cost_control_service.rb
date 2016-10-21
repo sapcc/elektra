@@ -43,9 +43,16 @@ module ServiceLayer
       CostControl::Kb11nBillingObject.new(driver, attributes)
     end
 
-    def find_kb11n_billing_object(project_id)
-      return new_kb11n_billing_object if project_id.blank?
-      driver.map_to(CostControl::Kb11nBillingObject).get_kb11n_billing_object(project_id)
+    def find_kb11n_billing_objects(project_id)
+      unless @kb11n_billing_objects
+        @kb11n_billing_objects = []
+        kb11n_billing_objects = driver.map_to(CostControl::Kb11nBillingObject).get_kb11n_billing_objects(project_id)
+        kb11n_billing_objects.each do |kb11n_billing_object|
+          kb11n = new_kb11n_billing_object(kb11n_billing_object.attributes) if kb11n_billing_object.attributes
+          @kb11n_billing_objects << kb11n if kb11n
+        end
+      end
+      return @kb11n_billing_objects
     end
 
   end

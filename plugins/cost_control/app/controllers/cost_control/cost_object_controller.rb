@@ -2,7 +2,7 @@ module CostControl
   class CostObjectController < CostControl::ApplicationController
     authorization_required
 
-    before_filter :load_masterdata, :load_kb11n_billing_object
+    before_filter :load_masterdata, :load_kb11n_billing_objects
 
     def show
       if @scoped_project_id
@@ -52,9 +52,9 @@ module CostControl
       end
     end
 
-    def load_kb11n_billing_object
+    def load_kb11n_billing_objects
       if @scoped_project_id
-        @kb11n_billing_object = services.cost_control.find_kb11n_billing_object(@scoped_project_id)
+        @kb11n_billing_objects = services.cost_control.find_kb11n_billing_objects(@scoped_project_id)
       end
     end
 
