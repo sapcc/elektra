@@ -1,7 +1,7 @@
 = render_navigation(context: :block_storage, expand_all: true)
 
 - if @scoped_project_id
-  - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id} })
+  - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id}, target: {scoped_domain_name: @scoped_domain_name} })
     .toolbar
       = link_to 'Create new', plugin('block_storage').new_volume_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 %table.table.volumes

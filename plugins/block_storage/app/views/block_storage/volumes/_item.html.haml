@@ -30,7 +30,7 @@
     %td= volume.status
 
     %td.snug
-      - if current_user.is_allowed?("block_storage:volume_delete", {}) or current_user.is_allowed?("block_storage:volume_update", {})
+      - if current_user.is_allowed?("block_storage:volume_delete", {target: {scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("block_storage:volume_update", {target: {scoped_domain_name: @scoped_domain_name}})
         .btn-group
           - if transition
             %button.btn.btn-default.btn-sm.dropdown-toggle{ disabled: true, type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
@@ -39,15 +39,15 @@
             %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
               %span.fa.fa-cog
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-            - if current_user.is_allowed?("block_storage:volume_update", {})
+            - if current_user.is_allowed?("block_storage:volume_update", {target: {scoped_domain_name: @scoped_domain_name}})
               %li= link_to 'Change', plugin('block_storage').edit_volume_path(id: volume.id), data: {modal: true}
               %li= link_to 'Create Snapshot', plugin('block_storage').new_snapshot_volume_path(id: volume.id), data: {modal: true} if volume.snapshotable?
-            - if current_user.is_allowed?("block_storage:volume_assign", {})
+            - if current_user.is_allowed?("block_storage:volume_assign", {target: {scoped_domain_name: @scoped_domain_name}})
               %li.divider
               - if volume.attachments.blank?
                 %li= link_to 'Attach', plugin('block_storage').edit_attach_volume_path(id: volume.id), data: {modal: true}
               - else
                 %li= link_to 'Detach', plugin('block_storage').edit_detach_volume_path(id: volume.id), data: {modal: true}
-            - if current_user.is_allowed?("block_storage:volume_delete", {}) and volume.deletable?
+            - if current_user.is_allowed?("block_storage:volume_delete", {target: {scoped_domain_name: @scoped_domain_name}}) and volume.deletable?
               %li.divider
               %li= link_to 'Delete', plugin('block_storage').volume_path(id: volume.id), method: :delete, data: { confirm: 'Are you sure you want to delete this volume?' }, remote: true

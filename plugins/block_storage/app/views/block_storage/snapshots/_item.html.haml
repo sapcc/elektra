@@ -1,7 +1,7 @@
 - data = {}
 - if snapshot
   %tr
-    - if current_user.is_allowed?("block_storage:snapshot_get", {})
+    - if current_user.is_allowed?("block_storage:snapshot_get", {target: {scoped_domain_name: @scoped_domain_name}})
       %td
         = link_to snapshot.name, plugin('block_storage').snapshot_path(id: snapshot.id), data: {modal: true}
     - else
@@ -11,16 +11,15 @@
     %td= snapshot.status
 
     %td.snug
-      - if current_user.is_allowed?("block_storage:snapshot_delete", {}) or current_user.is_allowed?("block_storage:snapshot_update", {})
+      - if current_user.is_allowed?("block_storage:snapshot_delete", {target: {scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("block_storage:snapshot_update", {target: {scoped_domain_name: @scoped_domain_name}})
         .btn-group
           %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
             %span.fa.fa-cog
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-            - if current_user.is_allowed?("block_storage:snapshot_update", {})
+            - if current_user.is_allowed?("block_storage:snapshot_update", {target: {scoped_domain_name: @scoped_domain_name}})
               %li= link_to 'Change', plugin('block_storage').edit_snapshot_path(snapshot.id), data: {modal: true}
-            - if current_user.is_allowed?("block_storage:snapshot_update", {})
               %li.divider
               %li= link_to 'Create Volume', plugin('block_storage').create_volume_snapshot_path(snapshot.id), data: {modal: true}
-            - if current_user.is_allowed?("block_storage:snapshot_delete", {})
+            - if current_user.is_allowed?("block_storage:snapshot_delete", {target: {scoped_domain_name: @scoped_domain_name}})
               %li.divider
               %li= link_to 'Delete', plugin('block_storage').snapshot_path(id: snapshot.id), method: :delete, data: { confirm: 'Are you sure you want to delete this snapshot?' }
