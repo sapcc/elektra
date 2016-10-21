@@ -11,7 +11,7 @@
       - area_str = area.to_s
       - if tab == area_str
         %li.active{role: 'presentation'}
-          = link_to area_str.humanize, '#'
+          = link_to t("resource_management.#{area_str}"), '#'
       - else
         %li{role: 'presentation'}
-          = link_to area_str.humanize, plugin('resource_management').send("#{scope}_area_path", area: area_str)
+          = link_to t("resource_management.#{area_str}"), plugin('resource_management').send("#{scope}_area_path", area: area_str)

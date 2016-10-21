@@ -5,6 +5,7 @@ en:
     networking: Network
     block_storage: Block Storage
     object_storage: Object Storage
+    loadbalancing: Loadbalancing
     floating_ips: Floating IPs
     ram: RAM
     instances: Instances
@@ -22,7 +23,7 @@ en:
     dns: DNS
     zones: Zones
     recordsets: Recordsets per Zone
-    loadbalancers: LBaaS - Load Balancers
-    listeners: LBaaS - Listeners
-    pools: LBaaS - Pools
-    healthmonitors: LBaaS - Health Monitors
+    loadbalancers: Load Balancers
+    listeners: Listeners
+    pools: Pools
+    healthmonitors: Health Monitors

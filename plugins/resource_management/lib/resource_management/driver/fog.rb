@@ -217,12 +217,7 @@ module ResourceManagement
         'port'                => :ports,
         'security_group'      => :security_groups,
         'security_group_rule' => :security_group_rules,
-        'rbac_policy'         => :rbac_policies,
-        'loadbalancer'        => :loadbalancers,
-        'listener'            => :listeners,
-        'pool'                => :pools,
-        'healthmonitor'       => :healthmonitors
-
+        'rbac_policy'         => :rbac_policies
       }.freeze
 
       def set_project_quota_networking(_domain_id, project_id, values)
@@ -269,6 +264,46 @@ module ResourceManagement
           security_groups:      security_groups,
           security_group_rules: security_group_rules,
           rbac_policies:        rbac_policies,
+          loadbalancers:        loadbalancers,
+          listeners:            listeners,
+          pools:                pools,
+          healthmonitors:       healthmonitors
+        }
+      end
+
+      ### LOADBALANCING: NEUTRON ###################################################################
+
+      LBAAS_RESOURCE_MAP = {
+        'loadbalancer'        => :loadbalancers,
+        'listener'            => :listeners,
+        'pool'                => :pools,
+        'healthmonitor'       => :healthmonitors
+      }.freeze
+
+      def set_project_quota_loadbalancing(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [LBAAS_RESOURCE_MAP.invert[k], v] }.to_h
+        handle_response { fog_network_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_loadbalancing(_domain_id, project_id)
+        quotas = handle_response { fog_network_connection.get_quota(project_id).body['quota'] }
+
+        quotas.map { |k, v| [LBAAS_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_loadbalancing(_domain_id, project_id)
+        # TODO: handle via ceilometer - the calls now are very expensive, there are no aggregates
+
+        # filter by project and ask only for id: we just want to count
+        net_options = { tenant_id: project_id, fields: 'id' }
+
+        loadbalancers         = handle_response { fog_network_connection.list_lbaas_loadbalancers(net_options).body['loadbalancers'] }.length
+        listeners             = handle_response { fog_network_connection.list_lbaas_listeners(net_options).body['listeners'] }.length
+        pools                 = handle_response { fog_network_connection.list_lbaas_pools(net_options).body['pools'] }.length
+        healthmonitors        = handle_response { fog_network_connection.list_lbaas_healthmonitors(net_options).body['healthmonitors'] }.length
+
+        {
           loadbalancers:        loadbalancers,
           listeners:            listeners,
           pools:                pools,
