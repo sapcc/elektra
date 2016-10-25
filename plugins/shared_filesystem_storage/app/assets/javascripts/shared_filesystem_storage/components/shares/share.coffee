@@ -29,6 +29,10 @@ shared_filesystem_storage.Share = React.createClass
     e.preventDefault()
     @props.handleNewSnapshot(@props.share)  
     
+  handleAccessControl: (e) ->
+    e.preventDefault()
+    @props.handleAccessControl(@props.share.id)  
+    
   render: ->
     tr  {className: ('updating' if @state.loading)},
       td null, 
@@ -54,7 +58,10 @@ shared_filesystem_storage.Share = React.createClass
                   a { href: '#', onClick: @handleEdit }, 'Edit' 
                 if @props.share.status=='available'
                   li null,
-                    a { href: '#', onClick: @handleSnapshot}, 'Create Snapshot'    
+                    a { href: '#', onClick: @handleSnapshot}, 'Create Snapshot'        
+                  
+                  li null, 
+                    a { href: '#', onClick: @handleAccessControl }, 'Access Control'    
   
 
           	

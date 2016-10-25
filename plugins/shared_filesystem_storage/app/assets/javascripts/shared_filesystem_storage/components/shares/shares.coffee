@@ -7,12 +7,21 @@ shared_filesystem_storage.Shares = React.createClass
     
   getInitialState: ->
     availability_zones: null
+    shareRules: {}
     # share_types: null
     
   loadAvailabilityZones: () ->
     unless @state.availability_zones
       @props.ajax.get 'shares/availability_zones',
         success: ( data, textStatus, jqXHR ) => @setState availability_zones: data  
+  
+  loadShareRules: (shareId) ->
+    unless false#@state.shareRules[shareId]
+      @props.ajax.get "shares/#{shareId}/rules",
+        success: ( data, textStatus, jqXHR ) => 
+          rules = jQuery.extend({}, @state.shareRules)
+          rules[shareId] = data
+          @setState shareRules: rules      
   
   # loadShareTypes: () ->
   #   unless @state.share_types
@@ -41,6 +50,23 @@ shared_filesystem_storage.Shares = React.createClass
     @props.loadShareNetworks()
     @refs.editShareModal.open(share)
                   
+  # open modal window with form for new share.  
+  accessControl: (shareId) ->
+    @loadShareRules(shareId)
+    @refs.accessControlModal.open(shareId)
+    
+  addRule: (shareId,rule) ->
+    rules = jQuery.extend({}, @state.shareRules)
+    rules[shareId] ||= [] 
+    rules[shareId].push(rule)
+    @setState shareRules: rules
+  
+  deleteRule: (shareId,rule) ->
+    rules = jQuery.extend({}, @state.shareRules)
+    index = rules[shareId].indexOf rule
+    rules[shareId].splice index, 1
+    @setState shareRules: rules    
+                    
   render: ->
     unless @props.shares
       div null,
@@ -48,6 +74,14 @@ shared_filesystem_storage.Shares = React.createClass
         'Loading...'
     else 
       div null, 
+        # Modal Overlay for Access Control
+        React.createElement shared_filesystem_storage.AccessControl,
+          ref: 'accessControlModal',
+          ajax: @props.ajax,
+          shareRules: @state.shareRules
+          handleCreateRule: @addRule
+          handleDeleteRule: @deleteRule
+          
         # Modal Overlay for Editing Share
         React.createElement shared_filesystem_storage.EditShare,
           ref: 'editShareModal',
@@ -102,4 +136,5 @@ shared_filesystem_storage.Shares = React.createClass
                 handleDeleteShare: @props.deleteShare
                 handleEditShare: @editShare 
                 handleNewSnapshot: @newSnapshot
+                handleAccessControl: @accessControl
                 share: share   

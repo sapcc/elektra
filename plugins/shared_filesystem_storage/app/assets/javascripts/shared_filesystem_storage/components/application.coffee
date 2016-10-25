@@ -56,7 +56,7 @@ shared_filesystem_storage.Application = React.createClass
     shareNetworks: null
     snapshots: null
     shares: null
-    activeTabUid: tabs[tabs.length-1].uid
+    activeTabUid: 'shares'
   
   ################### HELPER METHODS ####################
   loadItems: (path) ->

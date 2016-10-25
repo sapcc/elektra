@@ -35,6 +35,14 @@ module ServiceLayer
       SharedFilesystemStorage::Share.new(driver,params)
     end
     
+    def share_rules(share_id)
+      driver.map_to(SharedFilesystemStorage::ShareRule).list_share_access_rules(share_id)
+    end
+    
+    def new_share_rule(share_id, params={})
+      SharedFilesystemStorage::ShareRule.new(driver,params.merge(share_id: share_id))
+    end
+    
     ####################################################
     #                 SNAPSHOTS                        #
     ####################################################

@@ -54,14 +54,14 @@ module SharedFilesystemStorage
         #handle_response { @fog.extend_share() } 
 			end
 
-      def grant_share_access
-				raise 'Not implemented yet!'
-        #handle_response { @fog.grant_share_access() } 
+      def grant_share_access(share_id,params={})
+        handle_response { 
+          @fog.grant_share_access(share_id, params["access_to"], params["access_type"], params["access_level"]).body['access']
+        } 
 			end
 
-      def revoke_share_access
-				raise 'Not implemented yet!'
-        #handle_response { @fog.revoke_share_access() } 
+      def revoke_share_access(share_id,access_id)
+        handle_response { @fog.revoke_share_access(share_id, access_id)} 
 			end
 
       def reset_share_state
@@ -69,9 +69,8 @@ module SharedFilesystemStorage
         #handle_response { @fog.reset_share_state() } 
 			end
 
-      def list_share_access_rules
-				raise 'Not implemented yet!'
-        #handle_response { @fog.list_share_access_rules() } 
+      def list_share_access_rules(share_id)
+        handle_response { @fog.list_share_access_rules(share_id).body['access_list'] } 
 			end
 
       def force_share_delete
