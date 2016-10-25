@@ -14,5 +14,10 @@
   "shared_filesystem_storage:snapshot_list": "@",
   "shared_filesystem_storage:snapshot_get": "@",
   "shared_filesystem_storage:snapshot_delete": "@",
-  "shared_filesystem_storage:snapshot_update": "@"
+  "shared_filesystem_storage:snapshot_update": "@",
+  
+  "shared_filesystem_storage:rule_list": "@",
+  "shared_filesystem_storage:rule_get": "@",
+  "shared_filesystem_storage:rule_delete": "@",
+  "shared_filesystem_storage:rule_update": "@"
 }
