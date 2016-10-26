@@ -72,19 +72,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 
 ###################### PLUGINS #####################
-white_list = Array.new # do not modify
 
 # backlist plugins (global)
-# if you want to work on a black listed plugin, you can activate it for development only in the development group below
-global_black_list = ['cost_control'] #e.g. ['compute', 'cost_control']
-
-group :development do
-  # add plugins you want to have available in development even if they have been blacklisted globally
-  white_list = ['cost_control']
-end
-
-# remove locally white listed plugins (if any) from global black list
-black_list = global_black_list - white_list
+black_list = ['cost_control'] #e.g. ['compute', 'cost_control']
 
 # load all plugins except blacklisted plugins
 Dir.glob("plugins/*").each do |plugin_path|
