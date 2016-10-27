@@ -5,7 +5,7 @@
         = link_to @scoped_domain_name, plugin('identity').domain_path(project_id:nil)
         - hierarchical_breadcrumb(@active_project, @user_domain_projects) do |project|
           \/
-          = link_to(project.name,plugin('identity').project_path(project_id: project.friendly_id))
+          = link_to(project.name,plugin('identity').project_path(project_id: project.id))
 
         - unless @active_project.blank?
           .info-box.pull-right

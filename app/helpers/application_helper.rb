@@ -1,7 +1,7 @@
 module ApplicationHelper
   def render_paginatable(items)
     if @pagination_enabled
-      content_tag(:div, class: 'pagination') do 
+      content_tag(:div, class: 'pagination') do
         concat(content_tag(:span, "#{@pagination_seen_items+1} - #{@pagination_seen_items+items.length} ", class: 'current-window'))
         if @pagination_current_page>1
           concat(link_to 'Previous Page', page: @pagination_current_page-1, marker: items.first.id, reverse: true)
@@ -31,11 +31,11 @@ module ApplicationHelper
       @plugin          = helper.send("#{plugin_name}_plugin")
       @main_app        = helper.main_app
     end
-    
+
     def root_path
       @root_path ||= @main_app.send("#{@plugin_name}_plugin_path",@scope)
     end
-    
+
     def root_url
       @root_url ||= @main_app.send("#{@plugin_name}_plugin_url",@scope)
     end
@@ -110,10 +110,10 @@ module ApplicationHelper
       # blank check necessary for root projects
       unless parents_project_ids.blank?
         parents_project_ids.compact!
-        auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash)
+        auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash) # get all projects
 
         breadcrumb_projects = parents_project_ids.reverse.inject([]) do |array,project_id|
-          project = auth_projects[project_id]
+          project = auth_projects[project_id] # pick project from all projects
           if project
             yield(project) if block_given? # if block given do this
             array << project               # this is for the case that no block is given: just add to array
