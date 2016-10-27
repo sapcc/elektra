@@ -46,7 +46,7 @@ describe KeyManager::SecretsController, type: :controller do
     end
 
     it "returns http success and renders the right template" do
-      get :show, default_params.merge!({id: @secret.uuid})
+      get :show, default_params.merge({id: @secret.uuid})
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
