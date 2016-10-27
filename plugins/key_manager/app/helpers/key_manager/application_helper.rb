@@ -19,5 +19,22 @@ module KeyManager
       end
     end
 
+    def secret_content_types(data)
+      unless data.blank?
+        haml_tag :div, {class: "static-tags clearfix"} do
+          data.each do |key, value|
+            haml_tag :div, {class: "tag"} do
+              haml_tag :div, {class: "key"} do
+                haml_concat key
+              end
+              haml_tag :div, {class: "value"} do
+                haml_concat value
+              end
+            end
+          end
+        end
+      end
+    end
+
   end
 end

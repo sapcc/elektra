@@ -23,11 +23,10 @@ module KeyManager
 
     def create
       @container = services.key_manager.new_container(container_params)
-
       if @container.valid? && @container.save
-        redirect_to plugin('key_manager').containers_path
+        redirect_to plugin('key_manager').containers_path()
       else
-        fash_message_from_key([:secret_refs, :global], @container)
+        flash_message_from_key([:secret_refs, :global], @container)
         render action: "new"
       end
     end
@@ -47,7 +46,7 @@ module KeyManager
 
     private
 
-    def fash_message_from_key(keys, container)
+    def flash_message_from_key(keys, container)
       keys.each do |value|
         unless container.errors.messages[value].blank?
           container.errors.messages[value].each do |msg|
