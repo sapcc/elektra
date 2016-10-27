@@ -3,7 +3,7 @@ $(document).on 'modal:contentUpdated', (e) ->
 
   $form.find('.form-group.healthmonitor_type select').change () ->
     value = $(this).find(":selected").val()
-    if value=='HTTP'
+    if value == 'HTTP' || value == 'HTTPS'
       $form.find(".form-group.healthmonitor_http_method").removeClass('hidden')
       $form.find(".form-group.healthmonitor_expected_codes").removeClass('hidden')
       $form.find(".form-group.healthmonitor_url_path").removeClass('hidden')

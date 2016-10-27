@@ -6,5 +6,11 @@
                               hint: 'A port number between 1 and 65535',
                               input_html: { type: :number, min: 1, max: 65535 }}
   = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, disabled: update
-  = f.input :default_tls_container_ref, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, collection: @containers, include_blank: true }
-  = f.input :sni_container_refs, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, collection: @containers, include_blank: true, input_html: { multiple: true} }
+  = f.input :default_tls_container_ref, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, label: 'Certificate Container', collection: @containers, include_blank: true }
+  = f.input :sni_container_refs, { wrapper_html: {class: ("hidden" unless @listener.protocol == 'TERMINATED_HTTPS')}, as: :select, label: 'SNI Containers', collection: @containers, include_blank: false, input_html: { id: 'sni_container_refs', multiple: true} }
+
+=content_for :javascripts do
+  :javascript
+    $(document).ready(function() {
+      $('#sni_container_refs').multiselect();
+    });

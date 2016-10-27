@@ -3,6 +3,7 @@ module Loadbalancing
 
     ALGORITHMS=['ROUND_ROBIN', 'LEAST_CONNECTIONS', 'SOURCE_IP']
     SESSION_PERSISTENCE_TYPES=['SOURCE_IP', 'HTTP_COOKIE', 'APP_COOKIE']
+    PROTOCOLS= ['TCP', 'HTTP', 'HTTPS']
 
     validates :name, presence: true
     validates :lb_algorithm, presence: true

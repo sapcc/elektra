@@ -25,7 +25,7 @@
         %tr
           %th Delays
           %td= healthmonitor.delay
-        - if healthmonitor.type == 'HTTP'
+        - if healthmonitor.http_type?
           %tr
             %th HTTP Method
             %td= healthmonitor.http_method

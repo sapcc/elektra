@@ -64,7 +64,7 @@ module Loadbalancing
 
       def healthmonitor_params
         p = params[:healthmonitor].symbolize_keys if params[:healthmonitor]
-        unless p[:type] == 'HTTP'
+        unless p[:type] == 'HTTP' || 'HTTPS'
           p.delete(:url_path)
           p.delete(:http_method)
           p.delete(:expected_codes)
