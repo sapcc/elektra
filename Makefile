@@ -1,11 +1,12 @@
 SHELL       := /bin/sh
 REPOSITORY  := localhost/monsoon/monsoon-dashboard
 TAG         ?= latest
+
 IMAGE       := $(REPOSITORY):$(TAG)
 
 ### Executables
 DOCKER      = docker
-WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(WAIT_OPTS) localhost/monsoon-docker/wait || ($(DOCKER) logs $(WAIT_ID) && false)
+WAIT        = $(DOCKER) run --rm --link $(WAIT_ID):wait $(WAIT_OPTS) localhost/monsoon/monsoon-docker-wait || ($(DOCKER) logs $(WAIT_ID) && false)
 
 ### Variables that are expanded dynamically
 postgres = $(shell cat postgres 2> /dev/null)
