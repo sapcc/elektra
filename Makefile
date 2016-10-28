@@ -111,7 +111,7 @@ webapp: migrate-production
 #
 postgres: WAIT_ID = $$(cat postgres)
 postgres: 
-	$(DOCKER) run -d localhost/monsoon/postgres:9.4-alpine > postgres 
+	$(DOCKER) run -d localhost/monsoon/postgres:9.5-alpine > postgres 
 	$(WAIT)
 
 # ----------------------------------------------------------------------------------
