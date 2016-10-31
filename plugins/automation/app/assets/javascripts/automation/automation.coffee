@@ -4,7 +4,7 @@
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="arguments"]').each ->
     $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="runlist"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: true })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="tags"]').each ->
     $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: true, forceLowercase: true })
 
