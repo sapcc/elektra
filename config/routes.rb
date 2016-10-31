@@ -30,5 +30,10 @@ Rails.application.routes.draw do
   get "/pages/*id" => 'pages#show', as: :core_page, format: false
 
   # root to: 'pages#show', id: 'landing'
-  root to: redirect("/#{Rails.application.config.default_domain}")
+
+  root(to: redirect do |params, request| 
+    domain_id = request.query_parameters["domain_id"]
+    "/#{domain_id || Rails.application.config.default_domain}" 
+  end)
+  
 end
