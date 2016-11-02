@@ -234,8 +234,8 @@ module ResourceManagement
       @cloud_status = {
         # special case if no capacity was found create a dummy object that the view can handle
         capacity:         ResourceManagement::Capacity.find_by(service: service, resource: resource) || ResourceManagement::Capacity.new(service: service, resource: resource, value: -1),
-        usage_sum:        project_resources.pluck("SUM(usage)").first,
-        domain_quota_sum: domain_resources.pluck("SUM(approved_quota)").first,
+        usage_sum:        project_resources.pluck("SUM(usage)").first || 0.0, # 0.0 to avoid nil exception in case resource was never determined before
+        domain_quota_sum: domain_resources.pluck("SUM(approved_quota)").first || 0.0, # 0.0 to avoid nil exception in case resource was never determined before
       }
 
       # needed for further processing in details() action
