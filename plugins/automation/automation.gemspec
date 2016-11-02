@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.version     = "0.0.1"
   s.authors     = ["Arturo Reuschenbach Puncernau"]
   s.email       = ["a.reuschenbach.puncernau@sap.com"]
-  s.homepage    = "https://localhost/pages/monsoon/arc/"
-  s.summary     = "Arc automation service"
-  s.description = "Arc automation service"
-  s.license     = "MIT"
+  s.homepage    = ""
+  s.summary     = "Automation service"
+  s.description = "Automation service"
+  s.license     = "Apache 2"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
