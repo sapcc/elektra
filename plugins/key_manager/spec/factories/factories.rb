@@ -27,7 +27,7 @@ module KeyManager
                                        created: "2016-10-20T13:45:01.232805",
                                        creator_id: "916409a1dde718b39ab46e8f073855aa69450a455a14d7ea5064bbc41a5be4ea",
                                        secret_refs: [{
-                                                       secret_ref: "https://localhost:443/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae40",
+                                                       secret_ref: "https://keymanager-app/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae40",
                                                        name: "certificate"}
                                                     ],
                                        type: "certificate"

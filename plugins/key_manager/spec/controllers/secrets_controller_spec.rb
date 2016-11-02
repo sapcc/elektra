@@ -26,7 +26,7 @@ describe KeyManager::SecretsController, type: :controller do
   describe "GET 'index'" do
 
     before :each do
-      @secret = ::KeyManager::FakeFactory.new.secret(secret_ref: "https://localhost:443/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae40")
+      @secret = ::KeyManager::FakeFactory.new.secret(secret_ref: "https://keymanager-app/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae40")
       allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:secrets).and_return({elements: [@secret], total_elements: 1})
     end
 
@@ -41,7 +41,7 @@ describe KeyManager::SecretsController, type: :controller do
   describe "GET 'show'" do
 
     before :each do
-      @secret = ::KeyManager::FakeFactory.new.secret(secret_ref: "https://localhost:443/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae41")
+      @secret = ::KeyManager::FakeFactory.new.secret(secret_ref: "https://keymanager-3.app/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae41")
       allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:secret).with(@secret.uuid).and_return(@secret)
     end
 
@@ -76,7 +76,7 @@ describe KeyManager::SecretsController, type: :controller do
   describe "GET 'payload'" do
 
     before :each do
-      @secret = ::KeyManager::FakeFactory.new.secret(secret_ref: "https://localhost:443/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae42")
+      @secret = ::KeyManager::FakeFactory.new.secret(secret_ref: "https://keymanager-app/v1/secrets/4373e881-2f12-4c9f-b236-1e39738fae42")
       allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:secret).with(@secret.uuid).and_return(@secret)
       allow_any_instance_of(RestClient::Request).to receive(:execute).and_return('test')
     end

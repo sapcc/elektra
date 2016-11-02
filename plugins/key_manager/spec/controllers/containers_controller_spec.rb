@@ -40,7 +40,7 @@ describe KeyManager::ContainersController, type: :controller do
   describe "GET 'show'" do
 
     before :each do
-      @container = ::KeyManager::FakeFactory.new.container(container_ref: "https://localhost:443/v1/containers/5492647f-eb4f-4ff7-b923-b59a6ce73f69")
+      @container = ::KeyManager::FakeFactory.new.container(container_ref: "https://keymanager-app/v1/containers/5492647f-eb4f-4ff7-b923-b59a6ce73f69")
       allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:container).and_return(@container)
     end
 
