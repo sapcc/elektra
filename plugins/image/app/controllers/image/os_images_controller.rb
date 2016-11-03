@@ -11,13 +11,13 @@ module Image
     def show
       @image = services.image.find_image(params[:id])
 
-      properties = @image.attributes.clone
+      properties = @image.attributes.clone.stringify_keys
       known_attributes = %w(name id status visibility protected size container_format disk_format created_at updated_at owner)
       known_attributes.each { |known| properties.delete(known) }
       additional_properties = properties.delete('properties')
       properties.merge!(additional_properties) if additional_properties
 
-      @properties = properties.sort
+      @properties = properties.sort_by { |k, _v| k }
     end
 
     def new
