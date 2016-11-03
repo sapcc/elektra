@@ -44,10 +44,7 @@ gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: 
 gem 'fog-openstack-sap-billing', git: 'git://localhost/monsoon/fog-openstack-sap-billing.git', branch: :master
 
 gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
-#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
-#gem 'converged_cloud_bootstrap', git: 'git://localhost/monsoon/converged_cloud_bootstrap.git'
-#gem 'converged_cloud_bootstrap', path: '../converged_cloud_bootstrap'
 
 # Extras
 gem 'config'
