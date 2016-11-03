@@ -6,7 +6,10 @@
       = zone.name
     %br
     %span.info-text= zone.id
-  %td= zone.email            
+  - if @all_projects
+    %td
+      - project_id_and_name(zone.project_id)
+  %td= zone.email
   %td= zone.ttl
   %td= zone.serial
   %td.snug
@@ -23,4 +26,3 @@
             %li= link_to 'Edit', plugin('dns_service').edit_zone_path(zone.id), data: {modal: true}
           - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes)
             %li= link_to 'Delete', plugin('dns_service').zone_path(zone.id), method: :delete, data: { confirm: 'Are you sure you want to delete this zone?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
-    
