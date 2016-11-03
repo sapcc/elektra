@@ -1,6 +1,6 @@
 module Automation
 
-  class Facts < RubyArcClient::Facts
+  class Facts < ArcClient::Facts
 
     def attributes
       attr = self.marshal_dump

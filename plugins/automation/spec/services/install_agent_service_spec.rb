@@ -45,7 +45,7 @@ RSpec.describe InstallNodeService do
       it "should raise an exception if instance_os and image metadata os_family are empty or nil" do
         instance = double('instance', id: @instance_id, image_object: double('image', name: 'cuak_cuak', metadata: {}))
         compute_service = double('compute_service', find_server: instance)
-        allow(@automation_service).to receive(:node){ raise ::RubyArcClient::ApiError.new('{"code":404}') }
+        allow(@automation_service).to receive(:node){ raise ::ArcClient::ApiError.new('{"code":404}') }
 
         expect { @service.process_request(@instance_id, @instance_type,  '', compute_service, @automation_service, '', '') }.to raise_error(InstallNodeInstanceOSNotFound, "Instance OS empty or not known")
         expect { @service.process_request(@instance_id, @instance_type, nil, compute_service, @automation_service, '', '') }.to raise_error(InstallNodeInstanceOSNotFound, "Instance OS empty or not known")
@@ -54,7 +54,7 @@ RSpec.describe InstallNodeService do
       it "should get the image metadata os_family when input param instance_os is empty or nil" do
         instance = double('instance', id: @instance_id, image_object: double('image', name: 'cuak_cuak', metadata: {'os_family'=> @os}), addresses: {}, metadata: double('metadata', dns_name: ''))
         compute_service = double('compute_service', find_server: instance)
-        allow(@automation_service).to receive(:node){ raise ::RubyArcClient::ApiError.new('{"code":404}') }
+        allow(@automation_service).to receive(:node){ raise ::ArcClient::ApiError.new('{"code":404}') }
         allow(RestClient::Request).to receive(:new).and_return( double('response', execute: {url: @url}.to_json) )
         allow(@service).to receive(:create_script).with(@url,@os).and_return( @script )
 
@@ -64,7 +64,7 @@ RSpec.describe InstallNodeService do
       it "should return the right log info" do
         instance = double('instance', id: @instance_id, image_object: double('image', name: 'cuak_cuak', metadata: {'os_family'=> @os}), addresses: {'first_ip' => [{'addr' => 'this_is_the_ip'}]}, metadata: double('metadata', dns_name: 'mo_hash'))
         compute_service = double('compute_service', find_server: instance)
-        allow(@automation_service).to receive(:node){ raise ::RubyArcClient::ApiError.new('{"code":404}') }
+        allow(@automation_service).to receive(:node){ raise ::ArcClient::ApiError.new('{"code":404}') }
         allow(RestClient::Request).to receive(:new).and_return(double('response', execute: {url: @url}.to_json))
         allow(@service).to receive(:create_script).with(@url, @os).and_return( @script )
 

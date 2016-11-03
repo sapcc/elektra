@@ -17,7 +17,7 @@ describe Automation::RunsController, type: :controller do
 
     identity_driver = double('identity_service_driver').as_null_object
     compute_driver = double('compute_service_driver').as_null_object
-    client = double('ruby_arc_client').as_null_object
+    client = double('arc_client').as_null_object
     automation_service = double('automation_service').as_null_object
     automation_run_service = double('automation_run_service').as_null_object
 

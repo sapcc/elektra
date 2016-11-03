@@ -1,6 +1,6 @@
 module Automation
 
-  class Node < RubyArcClient::Agent
+  class Node < ArcClient::Agent
     include ::Automation::Helpers
 
     attr_accessor :id, :name

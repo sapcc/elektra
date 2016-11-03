@@ -1,6 +1,6 @@
 module Automation
 
-  class Job < RubyArcClient::Job
+  class Job < ArcClient::Job
 
     def self.create_jobs(_jobs=[])
       jobs = []

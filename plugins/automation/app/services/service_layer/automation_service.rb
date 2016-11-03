@@ -22,11 +22,11 @@ module ServiceLayer
     end
 
     #
-    # Nodes (Agents, RubyArcClient)
+    # Nodes (Agents, ArcClient)
     #
 
     def client
-      @client ||= RubyArcClient::Client.new(arc_service_endpoint)
+      @client ||= ArcClient::Client.new(arc_service_endpoint)
     end
 
     def nodes(filter="", show_facts=[], page=0, per_page=0)
@@ -57,7 +57,7 @@ module ServiceLayer
     end
 
     #
-    # Jobs (RubyArcClient)
+    # Jobs (ArcClient)
     #
 
     def jobs(node_id = "", page=0, per_page=0)

@@ -137,7 +137,7 @@ C:\\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} -
   def node_exists?(instance_id, automation_service)
     begin
       automation_service.node(instance_id)
-    rescue RubyArcClient::ApiError => exception
+    rescue ArcClient::ApiError => exception
       if exception.code == 404
         return false
       else

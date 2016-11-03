@@ -126,7 +126,7 @@ module Automation
             begin
               job = services.automation.job(job_id)
               run.attributes['jobs_states'][job.status] += 1
-            rescue RubyArcClient::ApiError => exception
+            rescue ArcClient::ApiError => exception
               if exception.code == 404
                 # do nothing
               else

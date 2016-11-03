@@ -8,7 +8,7 @@ module Automation
       # get node name
       @node = begin
         services.automation.node(@job.to, ['hostname'])
-      rescue RubyArcClient::ApiError => exception
+      rescue ArcClient::ApiError => exception
         if exception.code == 404
           nil
         else
@@ -22,7 +22,7 @@ module Automation
       # log truncation
       log =  begin
         services.automation.job_log(params[:id])
-      rescue RubyArcClient::ApiError => exception
+      rescue ArcClient::ApiError => exception
         if exception.code == 404
           nil
         else
@@ -42,7 +42,7 @@ module Automation
           job = services.automation.job(@job_id)
           data = job.payload
           prettify(data)
-        rescue RubyArcClient::ApiError => exception
+        rescue ArcClient::ApiError => exception
           if exception.code == 404
             ::Automation::DataTruncation::NO_DATA_FOUND
           else
@@ -53,7 +53,7 @@ module Automation
         @data =  begin
           data = services.automation.job_log(@job_id)
           prettify(data)
-        rescue RubyArcClient::ApiError => exception
+        rescue ArcClient::ApiError => exception
           if exception.code == 404
             ::Automation::DataTruncation::NO_DATA_FOUND
           else
