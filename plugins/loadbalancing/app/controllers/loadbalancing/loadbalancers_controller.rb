@@ -142,8 +142,8 @@ module Loadbalancing
       end
     end
 
-    def experimental
-      true
+    def release_state
+      "experimental"
     end
 
     def loadbalancer_params

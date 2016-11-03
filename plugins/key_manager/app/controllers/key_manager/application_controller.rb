@@ -14,8 +14,8 @@ module KeyManager
 
      private
 
-     def experimental
-       true
+     def release_state
+       "experimental"
      end
 
 
