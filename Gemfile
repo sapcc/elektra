@@ -55,7 +55,7 @@ gem 'httpclient' # The only faraday backend that handled no_proxy :|
 
 # Automation
 gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
-gem 'arc-client', git: 'https://localhost/monsoon/ruby-arc-client.git'
+gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
