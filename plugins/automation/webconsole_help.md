@@ -2,7 +2,6 @@
 * lyra
 
 ### Quick Help
-[Automation command line tool documentation](https://localhost/docs/automation/cli.html)
 
 `lyra --help`
 Show help

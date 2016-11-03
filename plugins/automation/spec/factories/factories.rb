@@ -75,7 +75,7 @@ module Automation
         name: "bootstrap",
         timeout: 3600,
         run_list: ["role[landscape]", "recipe[ids::certificate]"],
-        repository: "https://localhost/ids/chef-moo3.git"
+        repository: "https://github.com/sapcc/chef-test.git"
       }.merge(params))
       automation
     end
@@ -92,7 +92,7 @@ module Automation
         jobs: ["376f5485-9d2e-4040-a55f-7e42ea6d6a7b"],
         owner: {
           id: "b2ff8f4a7d1eab4f5cf82489f76e52fc1934c1b4d4a7a4a9bd9ce82ca1310bbc",
-          name: "D063222",
+          name: "Musterman",
           domain_id: "ec213443e8834473b579f7bea9e8c194",
           domain_name: "monsoon3",
           chef_attributes: {},

@@ -22,13 +22,13 @@ describe Automation::Run do
 
   describe 'revision_from_github?' do
 
-    it "should return true if it is from localhost" do
+    it "should return true if it is from github" do
       run = ::Automation::FakeFactory.new.run
       expect(run.revision_from_github?).to be_truthy
     end
 
     it "should return false for the other cases" do
-      automation = ::Automation::FakeFactory.new.automation({repository: 'https://github.com/ids/chef-moo3.git'})
+      automation = ::Automation::FakeFactory.new.automation({repository: 'https://server.com/test/chef-test.git'})
       run = ::Automation::FakeFactory.new.run({automation_attributes: automation.attributes})
       expect(run.revision_from_github?).to be_falsey
     end
@@ -39,11 +39,11 @@ describe Automation::Run do
 
     it "should return a link" do
       run = ::Automation::FakeFactory.new.run
-      expect(run.revision_link).to eq('https://localhost/ids/chef-moo3/commit/c7b3ee00635673294619070fafbccf27a23bcbd4')
+      expect(run.revision_link).to eq('https://github.com/sapcc/chef-test/commit/c7b3ee00635673294619070fafbccf27a23bcbd4')
     end
 
-    it "should return just the revision sha if no github wdf repo" do
-      automation = ::Automation::FakeFactory.new.automation({repository: 'https://github.com/ids/chef-moo3.git'})
+    it "should return just the revision sha if no github repo" do
+      automation = ::Automation::FakeFactory.new.automation({repository: 'https://server.com/sapcc/chef-test.git'})
       run = ::Automation::FakeFactory.new.run({automation_attributes: automation.attributes})
       expect(run.revision_link).to eq('c7b3ee00635673294619070fafbccf27a23bcbd4')
     end
@@ -60,7 +60,7 @@ describe Automation::Run do
     #   automation = ::Automation::FakeFactory.new.automation({environment:environment, chef_attributes: chef_attributes, tags: tags})
     #   # owner
     #   owner = {"id"=>"b2ff8f4a7d1eab4f5cf82489f76e52fc1934c1b4d4a7a4a9bd9ce82ca1310bbc",
-    #    "name"=>"D063222",
+    #    "name"=>"Musterman",
     #    "domain_id"=>"ec213443e8834473b579f7bea9e8c194",
     #    "domain_name"=>"monsoon3"}
     #

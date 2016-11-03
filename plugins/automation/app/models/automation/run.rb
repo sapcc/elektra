@@ -42,7 +42,7 @@ module Automation
     def revision_from_github?
       if !snapshot.empty? && !snapshot[:repository].blank? && !self.repository_revision.blank?
         host = URI(snapshot[:repository]).host
-        if !host.blank? && host == "localhost"
+        if !host.blank? && host.include?("github")
           return true
         end
       end
