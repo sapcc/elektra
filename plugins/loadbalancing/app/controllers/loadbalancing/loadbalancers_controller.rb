@@ -143,7 +143,7 @@ module Loadbalancing
     end
 
     def release_state
-      "tech_preview"
+      "experimental"
     end
 
     def loadbalancer_params
