@@ -78,17 +78,6 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # Mailer configuration
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-      address:              'localhost',
-      port:                 25,
-      enable_starttls_auto: false }
-  config.action_mailer.default_options = {
-      from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
-  }
-
   # error handling
   config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
   config.log_tags = [ :uuid ]

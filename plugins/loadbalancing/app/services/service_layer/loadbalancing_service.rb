@@ -13,7 +13,9 @@ module ServiceLayer
     end
     
     def available?(action_name_sym=nil)
-      true  
+      # check if loadbalancers call responds without error
+      @available ||= driver.map_to(Loadbalancing::Loadbalancer).loadbalancers() rescue false
+      return @available
     end
 
     def test

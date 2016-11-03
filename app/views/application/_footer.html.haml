@@ -1,5 +1,5 @@
 %footer.footer
-  - if Rails.env.development? and current_user
+  - if current_user
     .token-info
       = raw "Token expires at: #{current_user.token_expires_at.to_time.localtime.strftime('%d.%m.%Y %H:%M:%S')} (ca. <span id='token-counter'>#{((current_user.token_expires_at.to_time-Time.now)/60).round}</span> minutes)"
       :javascript

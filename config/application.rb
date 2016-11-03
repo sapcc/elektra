@@ -91,6 +91,19 @@ module MonsoonDashboard
     config.service_user_password = ENV['MONSOON_OPENSTACK_AUTH_API_PASSWORD']
     config.service_user_domain_name = ENV['MONSOON_OPENSTACK_AUTH_API_DOMAIN']
     config.default_domain = ENV['MONSOON_DASHBOARD_DEFAULT_DOMAIN'] || 'monsoon3'
+
+    # Mailer configuration for inquiries/requests
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+        address:              ENV['MONSOON_DASHBOARD_MAIL_SERVER'],
+        port:                 ENV['MONSOON_DASHBOARD_MAIL_SERVER_PORT'] || 25,
+        enable_starttls_auto: false
+    }
+    config.action_mailer.default_options = {
+        from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
+    }
+
   end
 
 end

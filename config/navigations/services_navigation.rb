@@ -116,12 +116,12 @@ SimpleNavigation::Configuration.run do |navigation|
                     networking_nav.item :loadbalancing,
                                         'Load Balancers',
                                         -> { plugin('loadbalancing').loadbalancers_path },
-                                        if: -> { plugin_available?(:loadbalancing) },
+                                        if: -> { plugin_available?(:loadbalancing) && services.available?(:loadbalancing) },
                                         highlights_on: -> { params[:controller][%r{loadbalancing/?.*}] }
                     networking_nav.item :dns_service,
                                         'DNS',
                                         -> { plugin('dns_service').zones_path },
-                                        if: -> { plugin_available?(:dns_service) },
+                                        if: -> { plugin_available?(:dns_service) && services.available?(:dns_service) },
                                         highlights_on: -> { params[:controller][%r{dns_service/?.*}] }
     end
 
