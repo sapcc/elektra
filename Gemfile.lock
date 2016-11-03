@@ -31,6 +31,12 @@ GIT
       fog-json (>= 1.0)
       ipaddress (>= 0.8)
 
+GIT
+  remote: https://github.com/sapcc/lyra-client.git
+  revision: a2ab91bb90d727d99cc4fa7ef3528439167ea290
+  specs:
+    lyra-client (0.1.1)
+
 PATH
   remote: plugins/automation
   specs:
@@ -343,7 +349,6 @@ GEM
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.9)
-    lyra-client (0.1.1)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
     method_source (0.8.2)
@@ -551,7 +556,7 @@ DEPENDENCIES
   jquery-ui-rails
   key_manager!
   loadbalancing!
-  lyra-client (~> 0.1.1)!
+  lyra-client!
   monitoring!
   monsoon-openstack-auth!
   net-ssh
@@ -586,3 +591,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.13.6

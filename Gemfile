@@ -2,7 +2,6 @@
 source 'https://rubygems.org'
 source 'https://localhost/' do
   gem 'ruby-arc-client', '~> 0.7.1'
-  gem 'lyra-client', '~> 0.1.1'
 end
 # Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
 # # unf is pulled in by the ruby-arc-client
@@ -56,6 +55,8 @@ gem 'prometheus-client'
 gem 'sentry-raven'
 gem 'httpclient' # The only faraday backend that handled no_proxy :|
 
+# Automation
+gem 'lyra-client', git: 'https://github.com/sapcc/lyra-client.git'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
