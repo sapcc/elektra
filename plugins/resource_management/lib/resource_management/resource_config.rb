@@ -46,6 +46,7 @@ module ResourceManagement
         new(:networking,     :rbac_policies             ),
         new(:dns,            :zones                     ),
         new(:dns,            :recordsets                ),
+        new(:dns,            :records                   ),
         new(:block_storage,  :capacity,                    data_type: :bytes),
         new(:block_storage,  :snapshots                 ),
         new(:block_storage,  :volumes                   ),

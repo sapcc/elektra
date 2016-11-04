@@ -23,6 +23,7 @@ en:
     dns: DNS
     zones: Zones
     recordsets: Recordsets per Zone
+    records: Records per Zone
     loadbalancers: Load Balancers
     listeners: Listeners
     pools: Pools

@@ -361,7 +361,8 @@ module ResourceManagement
 
       DNS_RESOURCE_MAP = {
         'zones'           => :zones,
-        'zone_recordsets' => :recordsets
+        'zone_recordsets' => :recordsets,
+        'zone_records'    => :records
       }.freeze
 
       def set_project_quota_dns(_domain_id, project_id, values)
@@ -395,11 +396,15 @@ module ResourceManagement
           recordset_counts << total_count.to_i
         end
 
+        recordsets = recordset_counts.max
         # IDEA: do more with the recordset_counts than grabbing the max value
 
         {
           zones:      zones_count,
-          recordsets: recordset_counts.max
+          recordsets: recordsets,
+          # we cannot easily count the records (just not worth it)
+          # so we display the possible max
+          records:    recordsets * 20 # 20 is default records_per_recordset quota
         }
       end
     end
