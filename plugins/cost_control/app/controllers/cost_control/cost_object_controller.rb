@@ -45,16 +45,36 @@ module CostControl
     private
 
     def load_masterdata
-      if @scoped_project_id
-        @masterdata = services.cost_control.find_project_masterdata(@scoped_project_id)
-      else
-        @masterdata = services.cost_control.find_domain_masterdata(@scoped_domain_id)
+      begin
+        if @scoped_project_id
+          @masterdata = services.cost_control.find_project_masterdata(@scoped_project_id)
+        else
+          @masterdata = services.cost_control.find_domain_masterdata(@scoped_domain_id)
+        end
+      rescue => exception
+        puts "---------"
+        puts exception.respond_to? :status
+        puts exception.status
+        if exception.respond_to? :status and exception.status == 401 || 404 || 502
+
+          raise exception
+        else
+          # do nothing
+        end
       end
     end
 
     def load_kb11n_billing_objects
-      if @scoped_project_id
-        @kb11n_billing_objects = services.cost_control.find_kb11n_billing_objects(@scoped_project_id)
+      begin
+        if @scoped_project_id
+          @kb11n_billing_objects = services.cost_control.find_kb11n_billing_objects(@scoped_project_id)
+        end
+      rescue Fog::Billing::ApiError => exception
+        if exception.code == 401 || 404 || 502
+          raise exception
+        else
+          # do nothing
+        end
       end
     end
 

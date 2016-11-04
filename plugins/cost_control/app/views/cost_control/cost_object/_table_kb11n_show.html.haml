@@ -6,7 +6,7 @@
         %th Description
         %th Cost Element
         %th Send Costcenter
-        %th Receiver Costcenter
+        %th Rec. Costcenter
         %th Costs
         %th.snug
     %tbody
@@ -14,5 +14,5 @@
         %tr
           %td{colspan: 4} No billing data available yet.
       - else
-        -kb11n_billing_objects.each do | kb11n_billing_objects |
-          = render partial: 'table_kb11n_billing_object', locals: {kb11n_billing_objects: kb11n_billing_objects}
+        -kb11n_billing_objects.each do | kb11n_billing_object |
+          = render partial: 'table_kb11n_billing_object', locals: {kb11n_billing_object: kb11n_billing_object}

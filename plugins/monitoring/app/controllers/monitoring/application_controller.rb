@@ -20,7 +20,7 @@ module Monitoring
         }
       }},
       { "Excon::Error" => { 
-        title: 'API Error', 
+        title: 'API Error',
         description: -> e,_ { 
           exception     = e
           exception_msg = ""

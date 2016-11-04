@@ -46,7 +46,7 @@ module CostControl
       attributes.fetch('Costs', '')
     end
 
-    def tr_currency
+    def currency
       attributes.fetch('Tr.Crcy', '')
     end
 
