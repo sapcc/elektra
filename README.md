@@ -1,28 +1,48 @@
 Elektra
 =================
 
-Elektra is an opinionated Openstack Dashboard for Operators and Consumers of Openstack Services. It additionally offers
+Elektra is an opinionated Openstack Dashboard for Operators and Consumers of Openstack Services.
 
 
 Prerequisites
 -------------
-1. OpenStack Dev setup
+1. DevStack or Openstack installation, Mitaka Release
 2. installed postgres database
+3. ruby installation, version >= 2.2.0, bundler installation  
 
 
-Install
--------
+Application Installation with bundler
+-------------------------------------
+1. run: ```bundle install```
+2. copy the **env.sample** file to a **.env** file and adjust the values
+    - Set the MONSOON_OPENSTACK_AUTH_API_* values to your devstack/openstack configuration settings
+    - Enter the database configuration paramaters
+2. run: ```rake db:create```
+3. run: ```rake db:seed```
 
-1. bundle install
-2. copy env.sample to .env and adjust the values
-3. rake db:create
-4. rake db:seed
-5. foreman start
-6. now try to access http://localhost:8180
+
+Start the Elektra Dashboard Application
+---------------------------------------
+1. run: ```foreman start```
+2. Browser access for Elektra: http://localhost:8180/Default
+3. DevStack: Login with user demo/devstack
+ 
+
+Use Elektra Request Management
+------------------------------
+1. Create another administrator user for the Default domain with email address in Horizon or with CLI
+2. Configure MONSOON_DASHBOARD_MAIL_SERVER accordingly
+3. Restart Elektra Application
 
 
-Run Cucumbers
--------------
+Available Services in Elektra
+-----------------------------
+If elektra is configured against a standard DevStack installation, only the core services like identity, nova, neutron and cinder are (sometimes partly) available and
+shown in Elektra. Additional services like swift, LBaaS, manila, ... will only be shown when available from the DevStack backend side.  
+
+
+Running the cucumber tests
+--------------------------
 
 The following ENV parameters can be set for running cucumbers:
 

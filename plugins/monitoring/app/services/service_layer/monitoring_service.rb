@@ -13,7 +13,7 @@ module ServiceLayer
     end
     
     def available?(action_name_sym=nil)
-      true  
+      return !current_user.service_url("monitoring").blank?
     end
     
     def alarm_definitions(search = nil)
