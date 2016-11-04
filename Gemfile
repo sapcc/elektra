@@ -40,7 +40,7 @@ gem 'net-ssh'
 gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :manila_actions_cc
 gem 'fog-openstack-sap-billing', git: 'git://localhost/monsoon/fog-openstack-sap-billing.git', branch: :master
 
-gem 'monsoon-openstack-auth', git: 'git://localhost/monsoon/monsoon-openstack-auth.git', branch: :master
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 
 
 # Extras

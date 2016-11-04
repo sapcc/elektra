@@ -11,17 +11,6 @@ GIT
       ipaddress (>= 0.8)
 
 GIT
-  remote: git://localhost/monsoon/monsoon-openstack-auth.git
-  revision: 8918830a97e14b665d647e819950fe9066c4b968
-  branch: master
-  specs:
-    monsoon-openstack-auth (0.8.6)
-      excon
-      hashie
-      rails
-      uglifier (>= 1.3.0)
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5a87ce484a6e8d3cd5ff3f61b25a528e77f652dc
   specs:
@@ -43,6 +32,16 @@ GIT
   revision: a2ab91bb90d727d99cc4fa7ef3528439167ea290
   specs:
     lyra-client (0.1.1)
+
+GIT
+  remote: https://github.com/sapcc/monsoon-openstack-auth.git
+  revision: 2ba34729c6a64f9cf084c0bb7051635081e2b4da
+  specs:
+    monsoon-openstack-auth (0.8.6)
+      excon
+      hashie
+      rails
+      uglifier (>= 1.3.0)
 
 PATH
   remote: plugins/automation
@@ -595,6 +594,3 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
-
-BUNDLED WITH
-   1.13.6
