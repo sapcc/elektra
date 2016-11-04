@@ -3,12 +3,7 @@ module SharedFilesystemStorage
     
     # msp to driver create method
     def perform_driver_create(create_attributes)
-      share_id  = create_attributes.delete("share_id")
-      
-      p "::::::::::::::::::::::::::::"
-      p "share_id: #{share_id}"
-      p "create_attributes"
-      puts create_attributes
+      share_id  = create_attributes.delete("share_id")      
       @driver.grant_share_access(share_id, create_attributes)
     end    
     

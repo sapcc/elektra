@@ -4,8 +4,8 @@ shared_filesystem_storage.AccessForm = React.createClass
   statics:
     accessTypes: 
       ip: 'ip'
-      user: 'user'
-      cert: 'cert'
+      # user: 'user'
+      # cert: 'cert'
     accessLevels: 
       ro: 'read-only'
       rw: 'read-write'
