@@ -18,16 +18,16 @@ module DnsService
         handle_response{@fog.list_zones(filter).body['zones']}
       end
 
-      def get_zone(id)
-        handle_response { @fog.get_zone(id).body }
+      def get_zone(id, options = {})
+        handle_response { @fog.get_zone(id, options).body }
       end
 
       def list_recordsets(zone_id,options={})
         handle_response{@fog.list_recordsets(zone_id,options).body['recordsets']}
       end
 
-      def get_recordset(zone_id,recordset_id)
-        handle_response{ @fog.get_recordset(zone_id,recordset_id).body}
+      def get_recordset(zone_id, recordset_id, options = {})
+        handle_response{ @fog.get_recordset(zone_id, recordset_id, options).body}
       end
 
       def create_recordset(params={})
