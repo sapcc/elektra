@@ -1,6 +1,9 @@
 %tr{id: "loadbalancer_#{loadbalancer.id}"}
   %td
-    = link_to loadbalancer.name, plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
+    - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+      = link_to loadbalancer.name, plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
+    - else
+      %td= loadbalancer.name
   %td= loadbalancer.description
   %td= loadbalancer.operating_status
   %td= loadbalancer.provisioning_status
@@ -23,7 +26,9 @@
       %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
         - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li= link_to 'Show', plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id), data: {modal: true}
+          %li= link_to 'Show Listeners', plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
         - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+          %li.divider
           %li= link_to 'Edit', plugin('loadbalancing').edit_loadbalancer_path(id: loadbalancer.id), data: {modal: true}
 
         - if current_user.is_allowed?("loadbalancing:loadbalancer_assign_ip", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})

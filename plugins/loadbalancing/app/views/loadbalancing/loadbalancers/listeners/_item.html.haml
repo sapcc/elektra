@@ -22,6 +22,7 @@
           - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
             %li= link_to 'Show', plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: loadbalancer.id, id: listener.id), data: {modal: true}
           - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+            %li.divider
             %li= link_to 'Edit', plugin('loadbalancing').edit_loadbalancer_listener_path(loadbalancer_id: loadbalancer.id, id: listener.id), data: {modal: true}
           - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
             %li.divider
