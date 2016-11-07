@@ -37,8 +37,6 @@ module Core
           }
 
           result[:connection_options] = {
-              # remove this shit after the certificates for endpoints are configured correctly!
-              ssl_verify_peer: false,
               debug_request: Rails.configuration.debug_api_calls,
               debug_response: Rails.configuration.debug_api_calls
               # please don't add non-supported Excon connection keys here (f.i. :debug)!
