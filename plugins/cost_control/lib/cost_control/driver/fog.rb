@@ -65,14 +65,24 @@ module CostControl
         handle_response do
           masterdata = {
               'cost_object' => {
-                  'type'      => params.fetch('cost_object_type', ''),
-                  'name'      => params.fetch('cost_object_id', ''),
+                  'type'                  => params.fetch('cost_object_type', ''),
+                  'name'                  => params.fetch('cost_object_id', ''),
                   'responsibleController' => params.fetch('cost_object_responsibleController', '')
               },
           }
           fog.put_domain_masterdata(domain_id, masterdata)
           params
         end
+      end
+
+      def get_kb11n_billing_objects(project_id)
+        #handle_response do
+        begin
+          kb11n_billing_objects = fog.get_kb11n_billing_object(project: project_id, format: 'json').body
+        rescue ::Fog::Billing::OpenStack::NotFound
+          return {'id' => project_id}
+        end
+        return kb11n_billing_objects
       end
 
       private
