@@ -35,7 +35,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 2ba34729c6a64f9cf084c0bb7051635081e2b4da
+  revision: 99d8552fb9085a2c777d98500ddbbeff9ef3bed4
   specs:
     monsoon-openstack-auth (0.8.6)
       excon
@@ -63,12 +63,6 @@ PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
-
-PATH
-  remote: plugins/cost_control
-  specs:
-    cost_control (0.0.1)
-      fog-openstack-sap-billing (~> 0.0.9)
 
 PATH
   remote: plugins/dns_service
@@ -600,3 +594,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.12.5
