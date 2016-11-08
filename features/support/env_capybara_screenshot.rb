@@ -27,11 +27,11 @@ module Screenshots
   end
 
   def self.request_token
-    endpoint_url = URI.parse("https://localhost:5000/v3/auth/tokens")
-    user         = "concourse" 
-    password     = "secret" 
-    project      = "p-7496766f1" 
-    domain       = "monsooncc"
+    endpoint_url = ENV['SCREEN_SHOT_UPLOAD_URL']
+    user         = ENV['SCREEN_SHOT_UPLOAD_USER'] 
+    password     = ENV['SCREEN_SHOT_UPLOAD_PASSWORD'] 
+    project      = ENV['SCREEN_SHOT_UPLOAD_PROJECT'] 
+    domain       = ENV['SCREEN_SHOT_UPLOAD_DOMAIN']
 
     Net::HTTP.start(endpoint_url.host, 
                     endpoint_url.port, 
