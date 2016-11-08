@@ -1,21 +1,21 @@
 GIT
-  remote: git://localhost/monsoon/fog-openstack-sap-billing.git
-  revision: 7c6a59c4fdb937b39c1fbfe38d8d82140096c82f
-  branch: master
-  specs:
-    fog-openstack-sap-billing (0.0.9)
-      fog-core (>= 1.40)
-      fog-json (>= 1.0)
-      fog-openstack
-      fog-xml (>= 0.1)
-      ipaddress (>= 0.8)
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5a87ce484a6e8d3cd5ff3f61b25a528e77f652dc
   specs:
     arc-client (0.7.1)
       rest-client (~> 2.0.0.rc3)
+
+GIT
+  remote: https://github.com/sapcc/fog-openstack-sap-billing.git
+  revision: b43cf0d4cf9fb85a907cb277337357d539c91f62
+  branch: master
+  specs:
+    fog-openstack-sap-billing (0.0.9)
+      fog-core (>= 1.40)
+      fog-json (>= 1.0)
+      fog-openstack (>= 0.1.11)
+      fog-xml (>= 0.1)
+      ipaddress (>= 0.8)
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
