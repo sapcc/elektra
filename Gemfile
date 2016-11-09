@@ -67,7 +67,6 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 
-
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
@@ -81,8 +80,6 @@ Dir.glob("plugins/*").each do |plugin_path|
 end
 
 ######################## END #######################
-
-
 
 
 # Avoid double log lines in development
@@ -138,4 +135,16 @@ end
 
 group :test do
   gem 'guard-rspec'
+end
+
+# load dotenv to get ENV for extension retrieval if needed
+begin
+  require 'dotenv'
+  Dotenv.load
+rescue Exception => e
+end
+
+# load SAP specific extension for fonts, ....
+if ENV['LOAD_ELEKTRA_EXTENSION'] == 'true'
+  gem 'elektra-extension', git: "git://localhost/monsoon/elektra-extension.git", branch: :master
 end

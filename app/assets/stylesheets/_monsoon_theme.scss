@@ -12,18 +12,6 @@ $context-breadcrumb-font-size: $font-size-medium;
 // Fonts
 // ---------------------------------------------------------------------------------
 
-@font-face {
-  font-family: 'MonsoonIcons';
-  src: font-url('MonsoonIcons-Regular.eot'); /* IE9 Compat Modes */
-  src: font-url('MonsoonIcons-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       font-url('MonsoonIcons-Regular.woff') format('woff'), /* Modern Browsers */
-       font-url('MonsoonIcons-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
-       font-url('MonsoonIcons-Regular.svg#c6b2bb2514051854bf2bababb8772ce0') format('svg'); /* Legacy iOS */
-
-  font-style:   normal;
-  font-weight:  400;
-}
-
 .icon-monsoon {
   font-family: 'MonsoonIcons';
   display: inline-block;
@@ -33,56 +21,6 @@ $context-breadcrumb-font-size: $font-size-medium;
 
 .icon-monsoon-cloud:before {
   content: "\E000"
-}
-
-@font-face {
-  font-family: "BentonSansLight";
-  src: font-url("benton_sans_light/56fead03-cbb4-48e8-bc4c-512c795fc3c9-2.eot");
-  src: font-url("benton_sans_light/56fead03-cbb4-48e8-bc4c-512c795fc3c9-2.eot?") format("embedded-opentype"),
-       font-url("benton_sans_light/56fead03-cbb4-48e8-bc4c-512c795fc3c9-3.woff") format("woff"),
-       font-url("benton_sans_light/56fead03-cbb4-48e8-bc4c-512c795fc3c9-1.ttf") format("truetype");
-  font-style: normal;
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: "BentonSansMedium";
-  src: font-url("benton_sans_medium/71592d14-e584-4c00-bbb9-8f1da5b98bf9-2.eot");
-  src: font-url("benton_sans_medium/71592d14-e584-4c00-bbb9-8f1da5b98bf9-2.eot?") format("embedded-opentype"),
-       font-url("benton_sans_medium/71592d14-e584-4c00-bbb9-8f1da5b98bf9-3.woff") format("woff"),
-       font-url("benton_sans_medium/71592d14-e584-4c00-bbb9-8f1da5b98bf9-1.ttf") format("truetype");
-  font-style: normal;
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: "BentonSans";
-  src: font-url("benton_sans_regular/b36a47f4-8876-40cb-b31a-d02f16a88d78-2.eot");
-  src: font-url("benton_sans_regular/b36a47f4-8876-40cb-b31a-d02f16a88d78-2.eot?") format("embedded-opentype"),
-       font-url("benton_sans_regular/b36a47f4-8876-40cb-b31a-d02f16a88d78-3.woff") format("woff"),
-       font-url("benton_sans_regular/b36a47f4-8876-40cb-b31a-d02f16a88d78-1.ttf") format("truetype");
-  font-style: normal;
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: "BentonSans";
-  src: font-url("benton_sans_bold/90a77a6d-79fe-4845-96a8-b6dadd7d52a4-2.eot");
-  src: font-url("benton_sans_bold/90a77a6d-79fe-4845-96a8-b6dadd7d52a4-2.eot?") format("embedded-opentype"),
-       font-url("benton_sans_bold/90a77a6d-79fe-4845-96a8-b6dadd7d52a4-3.woff") format("woff"),
-       font-url("benton_sans_bold/90a77a6d-79fe-4845-96a8-b6dadd7d52a4-1.ttf") format("truetype");
-  font-style: normal;
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: "BentonSans";
-  src: font-url("benton_sans_regular_italic/cee0931f-0f2a-40c1-bbcc-89e2816df749-2.eot");
-  src: font-url("benton_sans_regular_italic/cee0931f-0f2a-40c1-bbcc-89e2816df749-2.eot?") format("embedded-opentype"),
-       font-url("benton_sans_regular_italic/cee0931f-0f2a-40c1-bbcc-89e2816df749-3.woff") format("woff"),
-       font-url("benton_sans_regular_italic/cee0931f-0f2a-40c1-bbcc-89e2816df749-1.ttf") format("truetype");
-  font-style: italic;
-  font-weight: normal;
 }
 
 
