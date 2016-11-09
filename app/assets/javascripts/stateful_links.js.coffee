@@ -74,13 +74,13 @@ buildNewStateUrl= (href) ->
   # build href which will be shown in window address bar.
   # Idea:
   #  Case 1: 
-  #    base url: http://localhost:3000/sap_default/***REMOVED***_sandbox/instances
-  #    link url: /sap_default/***REMOVED***_sandbox/instances/new
-  #    -> overlay url (href): http://localhost:3000/sap_default/***REMOVED***_sandbox/instances/?overlay=new
+  #    base url: http://localhost:3000/sap_default/d064310_sandbox/instances
+  #    link url: /sap_default/d064310_sandbox/instances/new
+  #    -> overlay url (href): http://localhost:3000/sap_default/d064310_sandbox/instances/?overlay=new
   #  Case 2:
-  #    base url: http://localhost:3000/sap_default/***REMOVED***_sandbox/instances/23/show
-  #    link url: /sap_default/***REMOVED***_sandbox/instances/new
-  #    -> overlay url (href): http://localhost:3000/sap_default/***REMOVED***_sandbox/instances/23/show?overlay=/sap_default/***REMOVED***_sandbox/instances/new 
+  #    base url: http://localhost:3000/sap_default/d064310_sandbox/instances/23/show
+  #    link url: /sap_default/d064310_sandbox/instances/new
+  #    -> overlay url (href): http://localhost:3000/sap_default/d064310_sandbox/instances/23/show?overlay=/sap_default/d064310_sandbox/instances/new 
   
   href = href.replace(hostUrl,'').replace(current_path,'').replace(/^\/+/,'').trim()
   href = "/#{href}" if isAbsolutePath

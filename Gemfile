@@ -146,5 +146,5 @@ end
 
 # load SAP specific extension for fonts, ....
 if ENV['LOAD_ELEKTRA_EXTENSION'] == 'true'
-  gem 'elektra-extension', git: "git://localhost/monsoon/elektra-extension.git", branch: :master
+  gem 'elektra-extension', git: "git://github.wdf.sap.corp/monsoon/elektra-extension.git", branch: :master
 end
