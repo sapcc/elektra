@@ -26,7 +26,7 @@ module ResourceManagement
       @all << new(:networking,     :networking)
       @all << new(:loadbalancing,  :networking)
       @all << new(:dns,            :dns)
-      @all << new(:block_storage,  :storage)    if Rails.env.development?
+      @all << new(:block_storage,  :storage)
       @all << new(:object_storage, :storage)
       return @all
     end

@@ -201,6 +201,40 @@ module ResourceManagement
         end
       end
 
+      ### BLOCK STORAGE: CINDER ###################################################################
+
+      def fog_block_storage_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_block_storage ||= ::Fog::Volume::OpenStack::V2.new(service_user_auth_params)
+      end
+
+      BLOCK_STORAGE_RESOURCE_MAP = {
+        'gigabytes' => :capacity,
+        'volumes'   => :volumes,
+        'snapshots' => :snapshots
+      }.freeze
+
+      def set_project_quota_block_storage(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [BLOCK_STORAGE_RESOURCE_MAP.invert[k], v] }.to_h
+        handle_response { fog_block_storage_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_block_storage(_domain_id, project_id)
+        quotas = handle_response { fog_block_storage_connection.get_quota(project_id).body['quota_set'] }
+        quotas.map { |k, v| [BLOCK_STORAGE_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_block_storage(_domain_id, project_id)
+        usage = handle_response { fog_block_storage_connection.get_quota_usage(project_id).body['quota_set'] }
+
+        {
+          capacity:   usage['gigabytes']['in_use'],
+          volumes:    usage['volumes']['in_use'],
+          snapshots:  usage['snapshots']['in_use']
+        }
+      end
+
       ### NETWORKING: NEUTRON ###################################################################
 
       def fog_network_connection

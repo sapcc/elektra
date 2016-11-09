@@ -8,11 +8,7 @@ module Core
           result[:openstack_auth_token] = @token
           result[:openstack_domain_id] = @domain_id if @domain_id
           result[:openstack_project_id] = @project_id if @project_id
-          if Rails.env.development? || Rails.env.test?
-            result[:openstack_endpoint_type] = "publicURL"
-          else
-            result[:openstack_endpoint_type] = "internalURL"
-          end
+
           result
         end
 
@@ -32,14 +28,20 @@ module Core
 
         def common_params
           result = {
-              openstack_auth_url: @auth_url,
-              openstack_region: @region
+            openstack_auth_url: @auth_url,
+            openstack_region: @region
           }
 
+          result[:openstack_endpoint_type] = if Rails.env.development? || Rails.env.test?
+                                               'publicURL'
+                                             else
+                                               'internalURL'
+                                             end
+
           result[:connection_options] = {
-              debug_request: Rails.configuration.debug_api_calls,
-              debug_response: Rails.configuration.debug_api_calls
-              # please don't add non-supported Excon connection keys here (f.i. :debug)!
+            debug_request: Rails.configuration.debug_api_calls,
+            debug_response: Rails.configuration.debug_api_calls
+            # please don't add non-supported Excon connection keys here (f.i. :debug)!
           }
 
           result
