@@ -42,8 +42,7 @@
 
 @import "jsoneditor";
 
-// Load specific extension fonts only if gem available
-<% if ElektraExtension %>
+<% if Object.const_defined?('ElektraExtension') %>
   @import "elektra-extension/fonts";
 <%end%>
 
