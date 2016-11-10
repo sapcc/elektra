@@ -16,7 +16,7 @@ Application Installation with bundler
 1. run: ```bundle install```
 2. copy the **env.sample** file to a **.env** file and adjust the values
     - Set the MONSOON_OPENSTACK_AUTH_API_* values to your devstack/openstack configuration settings
-    - Enter the database configuration paramaters
+    - Enter the database configuration parameters
 2. run: ```rake db:create```
 3. run: ```rake db:seed```
 
