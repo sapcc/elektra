@@ -44,12 +44,12 @@ body {
 }
 
 h4, h5, h6 {
-  font-family: $font-family-sap-medium;
+  font-family: $font-family-sans-serif-medium;
 }
 
 h1, h2, h3, h4, h5, h6 {
   small, .small {
-    font-family: $font-family-sap-light;
+    font-family: $font-family-sans-serif-light;
   }
 
   &.heading-top {
@@ -66,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .header-action {
-    font-family: "BentonSans";
+    font-family: $font-family-sans-serif;
     position: absolute;
     top: 0;
     right: 2px;
@@ -136,7 +136,7 @@ section {
 }
 
 .lead {
-  font-family: $font-family-sap-light, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: $font-family-sans-serif-light;
 }
 
 .avatar {
@@ -880,7 +880,7 @@ footer, .footer {
     }
 
     .page-title {
-      font-family: $font-family-sap-light;
+      font-family: $font-family-sans-serif-light;
       padding-top: $line-height-computed / 3;
 
       .fa {
@@ -1045,7 +1045,7 @@ blockquote, .bs-callout {
   background: $medium-blue;
   background: linear-gradient($deep-blue, $bright-blue);
   color: rgba(255, 255, 255, 0.8);
-  font-family: $font-family-sap-light;
+  font-family: $font-family-sans-serif-light;
 
   h1, h2, h3, h4, h5, h6 {
     color: #fff;
@@ -1223,41 +1223,8 @@ tr.task-state {
   }
 }
 
-.loading {
-  &:before {
-    content: " ";
-    @include spinner(background rgba(0, 0, 0, 0.2));
-    margin-right: 3px;
-  }
-}
 
-.btn-primary.loading {
-  &:before {
-    content: " ";
-    @include spinner(border-color #efefef, background rgba(0, 0, 0, 0.2));
-    margin-right: 0.5em;
-  }
-}
-
-.modal-body {
-  .loading-spinner {
-    position: relative;
-    left: 50%;
-    margin-left: -3em;
-    @include spinner(6em);
-  }
-  .loading-text {
-    position: absolute;
-    top: 50%;
-    margin-top: -0.6em;
-    left: 50%;
-    margin-left: -2.5em;
-  }
-}
-
-.modal-footer .token {
-  text-align: left;
-}
+// DATATABLES
 
 .data-tabular-display {
   display: table;
@@ -1309,6 +1276,48 @@ tr.task-state {
   }
 
 }
+
+
+
+
+.loading {
+  &:before {
+    content: " ";
+    @include spinner(background rgba(0, 0, 0, 0.2));
+    margin-right: 3px;
+  }
+}
+
+.btn-primary.loading {
+  &:before {
+    content: " ";
+    @include spinner(border-color #efefef, background rgba(0, 0, 0, 0.2));
+    margin-right: 0.5em;
+  }
+}
+
+.modal-body {
+  .loading-spinner {
+    position: relative;
+    left: 50%;
+    margin-left: -3em;
+    @include spinner(6em);
+  }
+  .loading-text {
+    position: absolute;
+    top: 50%;
+    margin-top: -0.6em;
+    left: 50%;
+    margin-left: -2.5em;
+  }
+}
+
+.modal-footer .token {
+  text-align: left;
+}
+
+
+
 
 // ---------------------------------------------------------------------------------
 // Lists
@@ -1488,6 +1497,8 @@ table.searchable.search-mode {
     }
   }
 }
+
+
 
 // ---------------------------------------------------------------------------------
 // Forms
