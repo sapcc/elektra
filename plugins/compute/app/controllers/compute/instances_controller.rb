@@ -1,9 +1,10 @@
 module Compute
   class InstancesController < Compute::ApplicationController
     def index
-      if @scoped_project_id
+      @instances = []
+      if @scoped_project_id && current_user.is_allowed?("compute:instance_list")
         @instances = services.compute.servers
-      
+
         # get/calculate quota data
         cores = 0
         ram = 0
@@ -14,13 +15,13 @@ module Compute
             ram += flavor.ram.to_i
           end
         end
-      
+
         @quota_data = services.resource_management.quota_data([
           {service_name: :compute, resource_name: :instances, usage: @instances.length},
           {service_name: :compute, resource_name: :cores, usage: cores},
           {service_name: :compute, resource_name: :ram, usage: ram}
         ])
-        
+
         #@instances.each{|i| puts i.pretty_attributes}
       end
     end
@@ -36,11 +37,11 @@ module Compute
 
     def show
       @instance = services.compute.find_server(params[:id])
-      @instance_security_groups = @instance.security_groups.collect do |sg| 
+      @instance_security_groups = @instance.security_groups.collect do |sg|
         services.networking.security_groups(tenant_id: @scoped_project_id, name: sg['name']).first
       end
     end
-    
+
     def new
       # get usage from db
       @quota_data = services.resource_management.quota_data([
@@ -48,13 +49,13 @@ module Compute
         {service_name: :compute, resource_name: :cores},
         {service_name: :compute, resource_name: :ram}
       ])
-      
+
       @instance = services.compute.new_server
 
       @flavors            = services.compute.flavors
       @images             = services.image.images
       @images.each{|i| puts i.pretty_attributes}
-      
+
       @availability_zones = services.compute.availability_zones
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
@@ -70,7 +71,7 @@ module Compute
       @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
       @instance.keypair_id = @keypairs.first['name'] unless @keypairs.blank?
 
-      @instance.max_count = 1            
+      @instance.max_count = 1
     end
 
 
@@ -92,7 +93,7 @@ module Compute
       @instance = services.compute.new_server
       params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
       @instance.attributes=params[@instance.model_name.param_key]
-      
+
       if @instance.save
         flash.now[:notice] = "Instance successfully created."
         audit_logger.info(current_user, "has created", @instance)
@@ -119,7 +120,7 @@ module Compute
     def attach_floatingip
       @instance_port = services.networking.ports(device_id: params[:id]).first
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
-      
+
       success = begin
         @floating_ip = services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
         if @floating_ip.port_id
@@ -131,10 +132,10 @@ module Compute
         @floating_ip.errors.add('message',e.message)
         false
       end
-      
+
       if success
         audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
-        
+
         respond_to do |format|
           format.html{redirect_to instances_url}
           format.js{
@@ -161,8 +162,8 @@ module Compute
       rescue => e
         flash.now[:error] = "Could not detach Floating IP. Error: #{e.message}"
       end
-      
-      respond_to do |format| 
+
+      respond_to do |format|
         format.html{
           sleep(3)
           redirect_to instances_url
@@ -173,35 +174,35 @@ module Compute
             addresses = @instance.addresses[@instance.addresses.keys.first]
             if addresses and addresses.is_a?(Array)
               addresses.delete_if{|values| values["OS-EXT-IPS:type"]=="floating"}
-            end  
+            end
             @instance.addresses[@instance.addresses.keys.first] = addresses
           end
         }
       end
     end
-    
+
     def new_size
       @instance = services.compute.find_server(params[:id])
       @flavors  = services.compute.flavors
     end
-    
+
     def resize
       @close_modal=true
       execute_instance_action('resize',params[:server][:flavor_id])
     end
-    
+
     def new_snapshot
     end
-    
+
     def create_image
       @close_modal=true
       execute_instance_action('create_image',params[:snapshot][:name])
     end
-    
+
     def confirm_resize
       execute_instance_action
-    end 
-    
+    end
+
     def revert_resize
       execute_instance_action
     end
@@ -265,7 +266,7 @@ module Compute
           @instance.task_state ||= task_state(@target_state) if @instance
         end
       end
-      
+
       render template: 'compute/instances/update_item.js'
       #redirect_to instances_url
     end
