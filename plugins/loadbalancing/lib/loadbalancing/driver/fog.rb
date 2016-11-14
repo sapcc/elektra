@@ -127,13 +127,6 @@ module Loadbalancing
         handle_response { @fog.delete_lbaas_healthmonitor(healthmonitor_id) }
       end
 
-
-
-
-
-
-
-
       def test(filter={})
         puts "test"
       end
