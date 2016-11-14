@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
+  revision: 8b86c7b5672069fb1b1603f011b72382a3d5705c
+  branch: master
+  specs:
+    elektra-extension (0.0.1)
+
+GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5a87ce484a6e8d3cd5ff3f61b25a528e77f652dc
   specs:
@@ -543,6 +550,7 @@ DEPENDENCIES
   database_cleaner
   dns_service!
   dotenv-rails
+  elektra-extension!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   fog-openstack-sap-billing!
@@ -594,3 +602,6 @@ DEPENDENCIES
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
   webconsole!
+
+BUNDLED WITH
+   1.11.2
