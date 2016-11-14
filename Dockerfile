@@ -8,7 +8,7 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install byebug -v 8.2.4 \
       && gem install ffi -v 1.9.10 \
-      && gem install nokogiri -v 1.6.8 \
+      && gem install nokogiri -v 1.6.8.1 \
       && gem install pg -v 0.18.4 \
       && gem install puma -v 3.6.0  \
       && gem install redcarpet -v 3.3.4 \
