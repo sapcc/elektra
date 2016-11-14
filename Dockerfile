@@ -45,6 +45,9 @@ ADD plugins/*/*.gemspec tmp/plugins/
 ADD script/organize_plugins_gemspecs script/
 RUN script/organize_plugins_gemspecs
 
+ARG ELEKTRA_EXTENSION=false
+ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
+
 # install gems, copy app and run rake tasks
 RUN bundle install --without development
 ADD . /home/app/webapp
