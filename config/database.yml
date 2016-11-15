@@ -22,8 +22,8 @@ default: &default
   pool: <%= ENV['MAX_THREADS'] || 10 %> 
   username: <%= ENV['MONSOON_DB_USER'] || 'postgres' %>
   password: <%= ENV['MONSOON_DB_PASSWORD'] || '' %>
-  host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || ENV['POSTGRES_SERVICE_HOST'] || 'localhost' %>
-  port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || ENV['POSTGRES_SERVICE_PORT'] || 5432 %>
+  host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] || ENV['POSTGRES_ELEKTRA_SERVICE_HOST'] || ENV['POSTGRES_SERVICE_HOST'] || 'localhost' %>
+  port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] || ENV['POSTGRES_ELEKTRA_SERVICE_PORT'] || ENV['POSTGRES_SERVICE_PORT'] || 5432 %>
 
 development:
   <<: *default
