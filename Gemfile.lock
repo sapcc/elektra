@@ -1,6 +1,6 @@
 GIT
   remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
-  revision: 8b86c7b5672069fb1b1603f011b72382a3d5705c
+  revision: a18a49a5dee437e1f3d4e616ed87924326fd26cb
   branch: master
   specs:
     elektra-extension (0.0.1)

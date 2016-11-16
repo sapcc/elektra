@@ -1,0 +1,38 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>
+Created by FontPrep 20130207 at Fri Apr 15 17:03:18 2016
+ By Franz Heidl
+copyright missing
+</metadata>
+<defs>
+<font id="c6b2bb2514051854bf2bababb8772ce0" horiz-adv-x='1024' >
+  <font-face 
+    font-family="MonsoonIcons"
+    font-weight="400"
+    font-stretch="normal"
+    units-per-em="2048"
+    panose-1="0 0 5 0 0 0 0 0 0 0"
+    ascent="1638"
+    descent="-410"
+    bbox="0 -217 1985 1434"
+    underline-thickness="102"
+    underline-position="-102"
+    unicode-range="U+0020-E000"
+  />
+<missing-glyph 
+d="M0 0v1434h1024v-1434h-1024zM512 809l348 522h-696zM573 717l349 -522v1044zM164 102h696l-348 523zM102 1239v-1044l349 522z" />
+    <glyph glyph-name=".notdef" 
+d="M0 0v1434h1024v-1434h-1024zM512 809l348 522h-696zM573 717l349 -522v1044zM164 102h696l-348 523zM102 1239v-1044l349 522z" />
+    <glyph glyph-name=".null" horiz-adv-x="0" 
+ />
+    <glyph glyph-name="nonmarkingreturn" horiz-adv-x="681" 
+ />
+    <glyph glyph-name="space" unicode=" " horiz-adv-x="819" 
+ />
+    <glyph glyph-name="uniE000" unicode="&#xe000;" horiz-adv-x="2048" 
+d="M1985 838q0 -186 -113 -342q113 -119 113 -291t-119 -297t-285 -125h-1112q-166 0 -285 125q-118 126 -118 278t80 266q81 114 206 150q-2 14 -2 43q0 168 118 286t286 118q55 0 110 -17q61 170 210 276t333 107q240 0 409 -169t169 -408zM1657 748q0 -68 -23 -132
+q113 -16 197 -84q100 135 100 306q1 216 -153 370t-371 154q-168 0 -302 -97t-190 -251q17 0 27 -13q121 147 300 147t297 -118t118 -282z" />
+  </font>
+</defs></svg>

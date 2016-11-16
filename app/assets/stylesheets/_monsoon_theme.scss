@@ -12,6 +12,18 @@ $context-breadcrumb-font-size: $font-size-medium;
 // Fonts
 // ---------------------------------------------------------------------------------
 
+@font-face {
+    font-family: 'MonsoonIcons';
+    src: font-url('MonsoonIcons-Regular.eot'); /* IE9 Compat Modes */
+    src: font-url('MonsoonIcons-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    font-url('MonsoonIcons-Regular.woff') format('woff'), /* Modern Browsers */
+    font-url('MonsoonIcons-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+    font-url('MonsoonIcons-Regular.svg#c6b2bb2514051854bf2bababb8772ce0') format('svg'); /* Legacy iOS */
+
+    font-style:   normal;
+    font-weight:  400;
+}
+
 .icon-monsoon {
   font-family: 'MonsoonIcons';
   display: inline-block;
@@ -22,6 +34,7 @@ $context-breadcrumb-font-size: $font-size-medium;
 .icon-monsoon-cloud:before {
   content: "\E000"
 }
+
 
 
 // ---------------------------------------------------------------------------------
