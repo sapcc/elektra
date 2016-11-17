@@ -1,5 +1,6 @@
 require 'capybara-screenshot'
 require 'capybara-screenshot/cucumber'
+require 'mime-types'
 
 Capybara.save_and_open_page_path = "features/screenshots"
 
@@ -7,7 +8,7 @@ module Screenshots
   def self.upload(path) 
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
-    type         = Mime::Type.lookup_by_extension(extension)
+    type         = MIME::Types.type_for(extension)
     endpoint_url = URI.parse("#{endpoint}/debug/#{basename}")
     content      = File.read(path)
 
@@ -27,7 +28,7 @@ module Screenshots
   end
 
   def self.request_token
-    endpoint_url = ENV['SCREEN_SHOT_UPLOAD_URL']
+    endpoint_url = URI.parse(ENV.fetch('SCREEN_SHOT_UPLOAD_URL'))
     user         = ENV['SCREEN_SHOT_UPLOAD_USER'] 
     password     = ENV['SCREEN_SHOT_UPLOAD_PASSWORD'] 
     project      = ENV['SCREEN_SHOT_UPLOAD_PROJECT'] 

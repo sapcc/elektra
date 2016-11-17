@@ -3,11 +3,11 @@ When(/^I fill in "(.*?)" as "(.*?)"/) do |value,field|
 end
 
 Then(/^I am redirected to login page$/) do
-  expect(current_path.start_with?(monsoon_openstack_auth.login_path)).to eq(true)
+  expect(current_path.start_with?("/auth/login")).to eq(true)
 end
 
 Then(/^I see login form$/) do
-  expect(page).to have_selector("form[action='#{monsoon_openstack_auth.sessions_path}']")
+  expect(page).to have_selector("form[action='/auth/sessions']")
 end
 
 And(/^I click on user navigation$/) do

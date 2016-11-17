@@ -1,3 +1,7 @@
+require 'capybara/poltergeist'
+require 'capybara-screenshot'
+require 'capybara/cucumber'
+require 'cucumber/rspec/doubles'
 # phantomjs is required by poltergeist
 require 'phantomjs'
 

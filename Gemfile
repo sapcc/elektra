@@ -119,17 +119,18 @@ group :development, :test do
   gem "rspec"
   gem "rspec-rails"
   gem "factory_girl_rails", "~> 4.0"
-  gem "cucumber-rails", require: false
-  gem "capybara"
   gem "database_cleaner"
-
-  gem 'poltergeist'
-  gem 'phantomjs', require: false
-  gem 'capybara-screenshot'
-
 
   gem "better_errors"
   gem 'pry-rails'
+end
+
+group :integration_tests do
+  gem "capybara"
+  gem 'capybara-screenshot'
+  gem "cucumber-rails", require: false
+  gem 'phantomjs', require: false
+  gem 'poltergeist'
 end
 
 group :test do

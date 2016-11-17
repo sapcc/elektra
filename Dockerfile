@@ -49,7 +49,7 @@ ARG ELEKTRA_EXTENSION=false
 ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
 
 # install gems, copy app and run rake tasks
-RUN bundle install --without development
+RUN bundle install --without "development integration_tests"
 ADD . /home/app/webapp
 RUN bin/rake assets:precompile && rm -rf tmp/cache/assets
 

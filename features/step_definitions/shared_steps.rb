@@ -5,19 +5,23 @@ And(/^I log in as test_user/) do
   fill_in "username", :with => "#{ENV['CCTEST_USER']}"
   fill_in "password", :with => "#{ENV['CCTEST_PASSWORD']}"
   click_on 'Sign in'
-  expect(page.driver.status_code.should).to eq(200)
+  expect(page.driver.status_code).to eq(200)
 end
 
 Given(/^I am not logged in$/) do
-  visit monsoon_openstack_auth.logout_path
+  visit "/auth/logout" 
 end
 
 Given /^Test user has accepted terms of use$/ do
-  DashboardController.any_instance.stub(:tou_accepted?).and_return(true)
+  if defined? DashboardController
+    allow_any_instance_of(DashboardController).to receive(:tou_accepted?).and_return(true)
+  end
 end
 
 Given /^Test user has not accepted terms of use$/ do
-  DashboardController.any_instance.stub(:tou_accepted?).and_return(false)
+  if defined? DashboardController
+    allow_any_instance_of(DashboardController).to receive(:tou_accepted?).and_return(false)
+  end
 end
 
 #
@@ -43,7 +47,7 @@ Then(/^the page status code is successful$/) do
 end
 
 Given(/I am on the root page$/) do
-  visit root_path
+  visit "/" 
 end
 
 When(/^I visit domain$/) do
