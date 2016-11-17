@@ -1,5 +1,7 @@
+Dockerfile
 vendor/bundle
 .env
+.envrc
 .bundle/
 tmp/
 log/*.log

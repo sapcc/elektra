@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+# This script is called in the build pipeline (Dockerfile) before executing bundler.
+# It copies each gemspec file from tmp/plugins folder to plugins/PLUGIN_NAME/PLUGIN_NAME.gemspec.
+# We cache the Gemfile in this way. Docker runs this script only if some of the gemspecs has changed!
+# Prerequisite is the previous copying of local plugin gemspecs into tmp/plugins/ folder.
+# See Dockerfile
+
+require 'fileutils'
+
+Dir['tmp/plugins/*.gemspec'].each do |file_name|
+  plugin_name = file_name.match(/tmp\/plugins\/(.+)\.gemspec/)[1] rescue nil
+  if plugin_name
+    FileUtils.mkdir_p("plugins/#{plugin_name}")
+    FileUtils.cp(file_name, "plugins/#{plugin_name}/")
+  end
+end
