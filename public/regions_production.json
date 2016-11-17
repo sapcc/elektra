@@ -161,7 +161,7 @@
     "regionname": "AP-AU-1",
     "lat":        -33.86,
     "lon":        151.20,
-    "available":  false,
+    "available":  true,
     "date":       "Q4 2016"
   }
 ]
