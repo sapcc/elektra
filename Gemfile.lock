@@ -40,9 +40,8 @@ GIT
   specs:
     lyra-client (0.1.1)
 
-GIT
-  remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 477e1bfc258bbf128de6ec218e437aac45c24abc
+PATH
+  remote: ../monsoon-openstack-auth
   specs:
     monsoon-openstack-auth (0.8.6)
       excon

@@ -80,8 +80,7 @@ module Core
               scoped_token: {domain: {id: @current_domain}}
           )
         rescue => e
-          p e
-          puts e
+
           begin
             MonsoonOpenstackAuth.api_client.auth_user(
                 @user_id,

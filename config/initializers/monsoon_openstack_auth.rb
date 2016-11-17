@@ -12,7 +12,7 @@ MonsoonOpenstackAuth.configure do |auth|
   # auth.connection_driver = DriverClass
     
   auth.connection_driver.api_endpoint = Rails.application.config.keystone_endpoint
-  auth.connection_driver.ssl_verify_peer = false
+  auth.connection_driver.ssl_verify_peer = true
 
   # optional, default=true
   auth.token_auth_allowed = true
