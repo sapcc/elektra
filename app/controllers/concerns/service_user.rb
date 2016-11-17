@@ -15,7 +15,7 @@ module ServiceUser
       user_id: Rails.application.config.service_user_id,
       password: Rails.application.config.service_user_password,
       user_domain: Rails.application.config.service_user_domain_name 
-    }) rescue nil   
+    }) #rescue nil   
   end
   
 end
