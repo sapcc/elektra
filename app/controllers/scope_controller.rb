@@ -8,10 +8,6 @@ class ScopeController < ::ApplicationController
     # use existing, user's or default domain
     domain_id = (params[:domain_id] || service_user.try(:domain_id))     
     project_id = params[:project_id]
-    
-    if service_user.nil?
-      raise Core::Error::ServiceUserNotAuthenticated.new("Could not authenticate service user. Please check permissions on #{params[:domain_id]} for service user #{Rails.application.config.service_user_id}") 
-    end
 
     @scoped_domain_fid = @scoped_domain_id = domain_id 
     @scoped_project_fid = @scoped_project_id = project_id
@@ -52,14 +48,6 @@ class ScopeController < ::ApplicationController
     else
       raise Core::Error::DomainNotFound.new("Domain #{domain_id} not found!")
     end
-    # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    # p "domain_id: #{domain_id}"
-    # p "project_id: #{project_id}"
-    # p "@scoped_domain_id: #{@scoped_domain_id}"
-    # p "@scoped_domain_fid: #{@scoped_domain_fid}"
-    # p "@scoped_domain_name: #{@scoped_domain_name}"
-    # p "@scoped_project_id: #{@scoped_project_id}"
-    # p "@scoped_project_fid: #{@scoped_project_fid}"
   end
   
   rescue_and_render_error_page [
@@ -72,6 +60,12 @@ class ScopeController < ::ApplicationController
     },
     {
       "Core::Error::DomainNotFound" => {title: 'Bad Domain'}
+    },
+    {
+      "Core::ServiceUser::Errors::AuthenticationError" => {
+        title: "Service User Authentication Error",
+        description: :message
+      }
     }
   ]
 end

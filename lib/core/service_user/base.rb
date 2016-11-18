@@ -12,16 +12,10 @@ module Core
           scope_domain = params[:scope_domain]
           return nil if scope_domain.nil?
 
-          # puts ">>>>>Rails.configuration.keystone_endpoint: #{Rails.configuration.keystone_endpoint}"
-          # puts ">>>>>Rails.configuration.default_region: #{Rails.configuration.default_region}"
-          # puts ">>>>>Rails.configuration.service_user_id: #{Rails.configuration.service_user_id}"
-          # puts ">>>>>Rails.configuration.service_user_password: #{Rails.configuration.service_user_password}"
-          # puts ">>>>>Rails.configuration.service_user_domain_name: #{Rails.configuration.service_user_domain_name}"
-          # puts ">>>>>scope_domain: #{scope_domain}"
-
           @@service_user_mutex.synchronize do
             @service_users ||= {}
 
+            # the service user is created per domain which user accesses.
             service_user = @service_users[scope_domain]
             if service_user.nil?
               @service_users[scope_domain] = self.new(
@@ -37,19 +31,23 @@ module Core
         end
       end
 
+      # Hide the password if this object is being inspected.
       def instance_variables
         super.delete_if{|name| name==:@password}
       end
 
+      # interface to user provided by monsoon-openstack-auth gem.
       def auth_user
         authenticate if @auth_users[@current_domain].nil?
         @auth_users[@current_domain]
       end
 
+      # We could use the token from the auth_user but the fog driver creates a new token that is more up-to-date.
       def token
         driver.auth_token
       end
 
+      # keystone connection for current scope domain.
       def driver
         @drivers[@current_domain]
       end
@@ -71,38 +69,34 @@ module Core
       def authenticate
         # @scope_domain is a freindly id. So it can be the name or id
         # That's why we try to load the service user by id and if it 
-        # raises an error then we try again by name. 
-        auth_user = @auth_users[@current_domain] = begin
+        # raises an error then we try again by name.
+                
+        # try to authenticate service user by scope domain id
+        scope = {domain: {id: @current_domain}}
+        auth_user = @auth_users[@current_domain] = begin  
           MonsoonOpenstackAuth.api_client.auth_user(
-              @user_id,
-              @password,
-              domain_name: @user_domain_name,
-              scoped_token: {domain: {id: @current_domain}}
+            @user_id,
+            @password,
+            domain_name: @user_domain_name,
+            scoped_token: scope
           )
-        rescue => e
-
-          begin
-            MonsoonOpenstackAuth.api_client.auth_user(
-                @user_id,
-                @password,
-                domain_name: @user_domain_name,
-                scoped_token: {domain: {name: @current_domain}}
-            )
-          rescue MonsoonOpenstackAuth::Authentication::MalformedToken => e
-            nil
-            # raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
-          end
-        end
-        
-        if auth_user.nil? or auth_user.token.blank?
-          raise ::Core::ServiceUser::Errors::AuthenticationError.new("Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}")
+        rescue => e     
+          if e.respond_to?(:code) and e.code==401 and scope[:domain].has_key?(:id)
+            #  try to authenticate service user by scope domain name
+            scope = {domain: {name: @current_domain}}
+            retry
+          else
+            message = e.message + " (user_id: #{@user_id}, domain: #{@user_domain_name}, scope: #{scope})" 
+            raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)  
+          end 
         end
 
         # Unfortunately we can't use Fog directly. Fog tries to authenticate the user
-        # by credentials and region using the service catalog. Our backends all use other regions.
-        # Therefore we use the auth gem to authenticate the user get the service catalog and then 
-        # we initialize the fog object. 
+        # by credentials and region using the service catalog. Our backends all use different regions.
+        # Therefore we use the auth gem to authenticate the user, get the service catalog and then 
+        # initialize the fog object. 
         begin
+          # save connection for current domain. This connection will be used for all further api calls.
           @drivers[@current_domain] = ::Core::ServiceUser::Driver.new({
             auth_url: ::Core.keystone_auth_endpoint,
             region: Core.locate_region(auth_user),
@@ -110,18 +104,10 @@ module Core
             domain_id: auth_user.domain_id
           })
         rescue => e
-          message = "Could not authenticate service user. Please check permissions on #{@scope_domain} for service user #{@user_id}."
-          message += {
-            auth_url: ::Core.keystone_auth_endpoint,
-            region: Core.locate_region(auth_user),
-            token: auth_user.token,
-            domain_id: auth_user.domain_id
-          }.to_s
-          message += e.response.body if e.respond_to?(:response) and e.response.body
+          message = e.message + " (token: #{auth_user.token}, domain_id: #{auth_user.domain_id}, region: #{Core.locate_region(auth_user)})" 
           raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)
         end
-
-        return
+        return nil
       end
 
       # Execute a block in a different domain scope, i.e. driver_method() will

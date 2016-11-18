@@ -71,6 +71,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # backlist plugins (global)
 black_list = ['cost_control'] #e.g. ['compute', 'cost_control']
+if ENV.has_key?('BLACK_LIST_PLUGINS')
+  ENV['BLACK_LIST_PLUGINS'].split(',').each{|plugin_name| black_list << plugin_name.strip}
+end
 
 # load all plugins except blacklisted plugins
 Dir.glob("plugins/*").each do |plugin_path|
