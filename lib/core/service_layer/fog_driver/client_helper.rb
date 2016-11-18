@@ -41,7 +41,7 @@ module Core
           result[:connection_options] = {
             debug_request: Rails.configuration.debug_api_calls,
             debug_response: Rails.configuration.debug_api_calls,
-            ssl_verify_peer: true
+            ssl_verify_peer: Rails.configuration.ssl_verify_peer
             # please don't add non-supported Excon connection keys here (f.i. :debug)!
           }
 

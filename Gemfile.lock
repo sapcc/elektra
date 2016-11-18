@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: d9fa6534b5a74ad5f66cc0a3987d806c1b0eb1e0
+  revision: 477e1bfc258bbf128de6ec218e437aac45c24abc
   specs:
     monsoon-openstack-auth (0.8.6)
       excon

@@ -78,6 +78,13 @@ module MonsoonDashboard
 
     config.debug_api_calls = ENV.has_key?('DEBUG_API_CALLS')
     config.debug_policy_engine = ENV.has_key?('DEBUG_POLICY_ENGINE')
+    
+    
+    config.ssl_verify_peer = if ENV.has_key?('ELEKTRA_SSL_VERIFY_PEER')
+      ENV['ELEKTRA_SSL_VERIFY_PEER'].to_s=='true' 
+    else
+      true
+    end  
 
     ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','staging','europe']
