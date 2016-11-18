@@ -48,10 +48,11 @@ RUN script/organize_plugins_gemspecs
 ARG ELEKTRA_EXTENSION=false
 ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
 # Install the SAP Global Root CA if ELEKTRA_EXTENSION is set
-RUN [ -n "$ELEKTRA_EXTENSION" ] \ 
-      && curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
+RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \ 
+      curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
       && update-ca-certificates \
-      && ruby -ropen-uri -e 'open("https://github.wdf.sap.corp").read'
+      && ruby -ropen-uri -e 'open("https://github.wdf.sap.corp").read' \
+      ; fi
 
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
