@@ -12,6 +12,12 @@ module SharedFilesystemStorage
     end
     
     def show
+      share = services.shared_filesystem_storage.find_share(params[:id])
+      share.permissions = {
+        delete: current_user.is_allowed?("shared_filesystem_storage:share_delete"), 
+        update: current_user.is_allowed?("shared_filesystem_storage:share_update")
+      }
+      render json: share
     end
     
     def availability_zones

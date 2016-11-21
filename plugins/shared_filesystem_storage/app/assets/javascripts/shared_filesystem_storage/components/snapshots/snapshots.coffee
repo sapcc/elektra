@@ -39,5 +39,6 @@ shared_filesystem_storage.Snapshots = React.createClass
                 key: snapshot.id
                 ajax: @props.ajax
                 snapshot: snapshot
+                share: @props.getShare(snapshot.share_id)
                 handleDeleteSnapshot: @props.deleteSnapshot                   
                 handleEditSnapshot: @editSnapshot

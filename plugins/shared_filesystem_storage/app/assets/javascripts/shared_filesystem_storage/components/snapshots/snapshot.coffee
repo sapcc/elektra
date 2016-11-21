@@ -31,7 +31,15 @@ shared_filesystem_storage.Snapshot = React.createClass
         @props.snapshot.name
         br null
         span {className: 'info-text'}, @props.snapshot.id
-      td null, @props.snapshot.share_id    
+      td null, 
+        if @props.share
+          div null,
+            @props.share.name
+            br null
+            span {className: 'info-text'}, @props.snapshot.share_id    
+        else
+          @props.snapshot.share_id 
+            
       td null, (@props.snapshot.size || 0) + ' GB'	
       td null, @props.snapshot.status	
       td { className: "snug" },
