@@ -3,7 +3,7 @@
 shared_filesystem_storage.Share = React.createClass
   getInitialState: ->
     loading: false
-    
+
   handleDelete: (e) ->
     shared_filesystem_storage.ConfirmDialog.ask 'Are you sure?', 
       #validationTerm: @props.shared_network.name
@@ -18,8 +18,7 @@ shared_filesystem_storage.Share = React.createClass
       success: () =>
         @props.handleDeleteShare @props.share
       error: ( jqXHR, textStatus, errorThrown ) =>
-        alert(errorThrown) 
-        @setState loading: false
+        @setState loading: false      
                     
   handleEdit: (e) ->
     e.preventDefault()
@@ -33,10 +32,14 @@ shared_filesystem_storage.Share = React.createClass
     e.preventDefault()
     @props.handleAccessControl(@props.share.id)  
     
+  handleShow: (e) ->
+    e.preventDefault()
+    @props.handleShowShare(@props.share)
+      
   render: ->
     tr  {className: ('updating' if @state.loading)},
       td null, 
-        @props.share.name
+        a href: '#', onClick: @handleShow, @props.share.name
         br null
         span {className: 'info-text'}, @props.share.id
       td null, @props.share.share_proto    
@@ -56,12 +59,13 @@ shared_filesystem_storage.Share = React.createClass
               if @props.share.permissions.update
                 li null, 
                   a { href: '#', onClick: @handleEdit }, 'Edit' 
-                if @props.share.status=='available'
-                  li null,
-                    a { href: '#', onClick: @handleSnapshot}, 'Create Snapshot'        
-                  
-                  li null, 
-                    a { href: '#', onClick: @handleAccessControl }, 'Access Control'    
+              if @props.share.permissions.update and @props.share.status=='available'
+                li null,
+                  a { href: '#', onClick: @handleSnapshot}, 'Create Snapshot'        
+               
+              if @props.share.permissions.update and @props.share.status=='available'    
+                li null, 
+                  a { href: '#', onClick: @handleAccessControl }, 'Access Control'    
   
 
           	

@@ -102,6 +102,18 @@ shared_filesystem_storage.Application = React.createClass
     newState = {}
     newState[itemsName] = items
     @setState newState
+    
+    
+  reloadShare: (share) ->
+    @ajax().get "shares/#{share.id}",
+      success: ( data, textStatus, jqXHR ) => 
+        @updateShare(share,data)    
+        
+  getShare: (shareId) ->
+    return null unless @state.shares
+    for share in @state.shares
+      return share if shareId==share.id           
+    
           
   ###################### HANDLE SHARES #################
   loadShares: -> @loadItems("shares")
@@ -161,6 +173,8 @@ shared_filesystem_storage.Application = React.createClass
               addShare:     @addShare
               updateShare:  @updateShare
               deleteShare:  @deleteShare
+              reloadShare:  @reloadShare
+              getShare:     @getShare
               
               snapshots:      @state.snapshots
               loadSnapshots:  @loadSnapshots

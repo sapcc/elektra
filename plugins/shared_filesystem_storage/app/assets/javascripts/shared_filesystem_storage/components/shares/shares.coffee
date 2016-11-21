@@ -21,7 +21,7 @@ shared_filesystem_storage.Shares = React.createClass
         success: ( data, textStatus, jqXHR ) => 
           rules = jQuery.extend({}, @state.shareRules)
           rules[shareId] = data
-          @setState shareRules: rules      
+          @setState shareRules: rules           
   
   # loadShareTypes: () ->
   #   unless @state.share_types
@@ -42,6 +42,9 @@ shared_filesystem_storage.Shares = React.createClass
   # open modal window with form for new snapshot.  
   newSnapshot: (share) ->
     @refs.newSnapshotModal.open(share)
+    
+  showShare: (share) ->
+    @refs.showShareModal.open(share)  
 
   # open modal window with form for edit share.
   editShare: (share) ->
@@ -98,7 +101,10 @@ shared_filesystem_storage.Shares = React.createClass
           handleCreateSnapshot: @props.addSnapshot
           snapshots: @props.snapshots
           loadSnapshots: @props.loadSnapshots
-              
+          
+        React.createElement shared_filesystem_storage.ShowShare, 
+          ref: 'showShareModal'     
+                   
         if @props.can_create
           div null,
             # Modal Overlay for Creating Share
@@ -130,6 +136,8 @@ shared_filesystem_storage.Shares = React.createClass
               tr null,
                 td { colSpan: 6 }, 'No Shares found.'
             for share in @props.shares
+              if share.status=='creating'
+                setTimeout( (() => @props.reloadShare(share)),5000)
               React.createElement shared_filesystem_storage.Share, 
                 key: share.id
                 ajax: @props.ajax
@@ -137,4 +145,5 @@ shared_filesystem_storage.Shares = React.createClass
                 handleEditShare: @editShare 
                 handleNewSnapshot: @newSnapshot
                 handleAccessControl: @accessControl
+                handleShowShare: @showShare
                 share: share   

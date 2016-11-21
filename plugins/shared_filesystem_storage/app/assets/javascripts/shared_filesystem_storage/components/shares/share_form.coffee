@@ -2,7 +2,7 @@
 
 shared_filesystem_storage.ShareForm = React.createClass
   statics:
-    protocols: ['NFS','CIFS','GlusterFS','HDFS']
+    protocols: ['NFS'] #['NFS','CIFS','GlusterFS','HDFS']
       
   getInitialState: ->
     valid: false
