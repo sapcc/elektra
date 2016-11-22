@@ -136,8 +136,6 @@ shared_filesystem_storage.Shares = React.createClass
               tr null,
                 td { colSpan: 6 }, 'No Shares found.'
             for share in @props.shares
-              if share.status=='creating'
-                setTimeout( (() => @props.reloadShare(share)),5000)
               React.createElement shared_filesystem_storage.Share, 
                 key: share.id
                 ajax: @props.ajax
@@ -146,4 +144,5 @@ shared_filesystem_storage.Shares = React.createClass
                 handleNewSnapshot: @newSnapshot
                 handleAccessControl: @accessControl
                 handleShowShare: @showShare
+                reloadShare: @props.reloadShare
                 share: share   

@@ -7,6 +7,7 @@ shared_filesystem_storage.EditShare = React.createClass
     errors: null
 
   open: (share) ->
+    @setState @getInitialState()
     @setState share: jQuery.extend({}, share), () => @refs.modal.open()
   
   handleChange: (name,value)->
@@ -45,6 +46,7 @@ shared_filesystem_storage.EditShare = React.createClass
         h4 className: 'modal-title', 'Edit Share'
       
       React.createElement ShareForm, 
+        mode: 'edit' 
         share: @state.share
         loading: @state.loading
         shareNetworks: @props.shareNetworks

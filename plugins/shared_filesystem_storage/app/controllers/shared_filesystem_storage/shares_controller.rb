@@ -27,16 +27,17 @@ module SharedFilesystemStorage
     end
     
     def update
-      @share = services.shared_filesystem_storage.new_share(share_params)
-      @share.id = params[:id]
-      if @share.save
-        @share.permissions = {
+      share = services.shared_filesystem_storage.new_share(share_params)
+      share.id = params[:id]
+
+      if share.save
+        share.permissions = {
           delete: current_user.is_allowed?("shared_filesystem_storage:share_delete"), 
           update: current_user.is_allowed?("shared_filesystem_storage:share_update")
         }
-        render json: @share
+        render json: share
       else
-        render json: @share.errors, status: :unprocessable_entity
+        render json: share.errors, status: :unprocessable_entity
       end  
     end
 

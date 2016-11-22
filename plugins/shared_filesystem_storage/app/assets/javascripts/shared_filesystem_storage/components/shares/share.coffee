@@ -44,8 +44,13 @@ shared_filesystem_storage.Share = React.createClass
         span {className: 'info-text'}, @props.share.id
       td null, @props.share.share_proto    
       td null, (@props.share.size || 0) + ' GB'	
-      td null, if @props.share.is_public then 'public' else 'private'
-      td null, @props.share.status	
+      td null, (if @props.share.is_public then 'public' else 'private')
+      td null, 
+        @props.share.status	
+        if @props.share.status=='creating'
+          setTimeout( (() => @props.reloadShare(@props.share)),5000)
+          span className: 'spinner'
+          
       td { className: "snug" },
         if @props.share.permissions.delete or @props.share.permissions.update
           div { className: 'btn-group' },
