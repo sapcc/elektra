@@ -5,6 +5,7 @@ shared_filesystem_storage.Share = React.createClass
     loading: false
 
   handleDelete: (e) ->
+    e.preventDefault()
     shared_filesystem_storage.ConfirmDialog.ask 'Are you sure?', 
       #validationTerm: @props.shared_network.name
       description: 'Would you like to delete this share?'
@@ -40,16 +41,15 @@ shared_filesystem_storage.Share = React.createClass
     tr  {className: ('updating' if @state.loading)},
       td null, 
         a href: '#', onClick: @handleShow, @props.share.name
-        br null
-        span {className: 'info-text'}, @props.share.id
       td null, @props.share.share_proto    
       td null, (@props.share.size || 0) + ' GB'	
       td null, (if @props.share.is_public then 'public' else 'private')
+      #td null, 'Network'
       td null, 
-        @props.share.status	
         if @props.share.status=='creating'
           setTimeout( (() => @props.reloadShare(@props.share)),5000)
           span className: 'spinner'
+        @props.share.status	
           
       td { className: "snug" },
         if @props.share.permissions.delete or @props.share.permissions.update

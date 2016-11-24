@@ -5,6 +5,7 @@ shared_filesystem_storage.Snapshot = React.createClass
     loading: false
     
   handleDelete: (e) ->
+    e.preventDefault()
     shared_filesystem_storage.ConfirmDialog.ask 'Are you sure?', 
       #validationTerm: @props.shared_network.name
       description: 'Would you like to delete this snapshot?'

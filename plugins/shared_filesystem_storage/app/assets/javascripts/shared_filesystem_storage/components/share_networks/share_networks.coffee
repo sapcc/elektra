@@ -3,7 +3,9 @@
 shared_filesystem_storage.ShareNetworks = React.createClass
   componentDidMount: () ->
     # load content on adding this component to the DOM
-    @props.loadShareNetworks() unless @props.shareNetworks
+    unless @props.shareNetworks
+      @props.loadShareNetworks() 
+      @loadNetworks()
     
   getInitialState: ->
     networks: null
@@ -30,6 +32,11 @@ shared_filesystem_storage.ShareNetworks = React.createClass
   newShareNetwork: () ->
     @refs.newShareNetworkModal.open()
     @loadNetworks()
+    
+  # open modal window with form for new shared network.  
+  showShareNetwork: (shareNetwork) ->
+    @refs.showShareNetworkModal.open(shareNetwork)
+    @loadNetworks()  
   
   # open modal window with form for edit shared network.
   editShareNetwork: (shareNetwork) ->
@@ -44,13 +51,19 @@ shared_filesystem_storage.ShareNetworks = React.createClass
     else
       div null, 
         # Modal Overlay for Editing Shared Network
+        React.createElement shared_filesystem_storage.ShowShareNetwork,
+          ref: 'showShareNetworkModal',
+          networks: @state.networks,
+          subnets: @state.subnets,
+          loadSubnets: @loadSubnets
+          
         React.createElement shared_filesystem_storage.EditShareNetwork,
           ref: 'editShareNetworkModal',
           ajax: @props.ajax,
           networks: @state.networks,
           subnets: @state.subnets,
           handleUpdateShareNetwork: @props.updateShareNetwork
-          loadSubnets: @loadSubnets
+          loadSubnets: @loadSubnets  
             
         if @props.can_create
           div null,
@@ -59,7 +72,6 @@ shared_filesystem_storage.ShareNetworks = React.createClass
               ref: 'newShareNetworkModal', 
               ajax: @props.ajax, 
               networks: @state.networks,
-              subnets: @state.subnets,
               handleCreateShareNetwork: @props.addShareNetwork  
               loadSubnets: @loadSubnets
             
@@ -73,9 +85,7 @@ shared_filesystem_storage.ShareNetworks = React.createClass
               th null, 'Name'
               th null, 'Neutron Net'
               th null, 'Neutron Subnet'
-              th null, 'IP Version'
-              th null, 'Network Type'
-              th null, 'Actions'
+              th null, ''
           tbody null,
             if @props.shareNetworks.length==0
               tr null,
@@ -85,6 +95,10 @@ shared_filesystem_storage.ShareNetworks = React.createClass
                 ajax: @props.ajax, 
                 key: shareNetwork.id, 
                 shareNetwork: shareNetwork,
+                networks: @state.networks,
+                subnets: @state.subnets,
+                loadSubnets: @loadSubnets,
                 handleDeleteShareNetwork: @props.deleteShareNetwork
                 handleEditShareNetwork: @editShareNetwork
+                handleShowShareNetwork: @showShareNetwork
               

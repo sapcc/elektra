@@ -1,10 +1,19 @@
+{tr,td,br,a,span,div,button,ul,li,i} = React.DOM
 {ConfirmDialog} = shared_filesystem_storage
 
 shared_filesystem_storage.ShareNetwork = React.createClass
   getInitialState: ->
     loading: false
-
+    
+  componentDidMount: () ->
+    @props.loadSubnets(@props.shareNetwork.neutron_net_id) unless @props.subnets[@props.shareNetwork.neutron_net_id]   
+    $(@refs.row).find('[data-toggle="tooltip"]').tooltip() 
+      
+  componentDidUpdate: ->
+    $(@refs.row).find('[data-toggle="tooltip"]').tooltip() 
+      
   handleDelete: (e) ->
+    e.preventDefault()
     ConfirmDialog.ask 'Are you sure?', 
       #validationTerm: @props.shareNetwork.name
       description: 'Would you like to delete this shared network?'
@@ -22,22 +31,57 @@ shared_filesystem_storage.ShareNetwork = React.createClass
         @setState loading: false
             
   
+  neutronNetwork: ->
+    if @props.networks and @props.networks.length>0
+      for network in @props.networks 
+        if network.id==@props.shareNetwork.neutron_net_id  
+          return network
+    return null
+      
+    
+  neutronSubnet: () ->
+    if @props.subnets[@props.shareNetwork.neutron_net_id] 
+      for subnet in @props.subnets[@props.shareNetwork.neutron_net_id]
+        if subnet.id==@props.shareNetwork.neutron_subnet_id        
+          return subnet
+    return null
+    
   handleEdit: (e) ->
     e.preventDefault()
-    @props.handleEditShareNetwork(@props.shareNetwork)      
+    @props.handleEditShareNetwork(@props.shareNetwork)    
+  
+  handleShow: (e) ->
+    e.preventDefault()
+    @props.handleShowShareNetwork(@props.shareNetwork)    
         
   render: ->
-    {tr,td,br,a,span,div,button,ul,li,script} = React.DOM
+    network = @neutronNetwork()
+    subnet = @neutronSubnet()
     
-    tr {className: ('updating' if @state.loading)}, 
+    tr {className: ('updating' if @state.loading), ref: 'row'}, 
       td null, 
-        @props.shareNetwork.name
-        br null
-        span { className: 'info-text' }, @props.shareNetwork.id
-      td null, @props.shareNetwork.neutron_net_id    
-      td null, @props.shareNetwork.neutron_subnet_id	
-      td null, @props.shareNetwork.ip_version
-      td null, @props.shareNetwork.network_type  
+        if @props.shareNetwork.permissions.get 
+          a href: "#", onClick: @handleShow, @props.shareNetwork.name
+        else
+          @props.shareNetwork.name  
+      td null, 
+        if network
+          div null,
+            network.name
+            if network['router:external']
+              i className: "fa fa-fw fa-globe", "data-toggle": "tooltip", "data-placement": "right", title: "External Network"
+            if network.shared
+              i className: "fa fa-fw fa-share", "data-toggle": "tooltip",  "data-placement": "right", title: "Shared Network"
+        else
+          #span className: 'spinner'  
+          i className: 'spinner-pulse'
+
+      td null, 
+        if subnet
+          div null, "#{subnet.name} #{subnet.cidr}"
+        else
+          span className: 'spinner'  
+ 
       td { className: "snug" },
         if @props.shareNetwork.permissions.delete or @props.shareNetwork.permissions.update
           div { className: 'btn-group' },

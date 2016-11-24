@@ -5,6 +5,7 @@ module SharedFilesystemStorage
       # extend attributes with permissions
       @share_networks.each do |sn| 
         sn.permissions = {
+          get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"), 
           update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
         }
@@ -18,6 +19,7 @@ module SharedFilesystemStorage
       @share_network.id = params[:id]
       if @share_network.save
         @share_network.permissions = {
+          get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"), 
           update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
         }
@@ -40,6 +42,7 @@ module SharedFilesystemStorage
       
       if @share_network.save
         @share_network.permissions = {
+          get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"), 
           update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
         }

@@ -29,7 +29,7 @@ shared_filesystem_storage.Snapshots = React.createClass
               th null, 'Source'
               th null, 'Size'
               th null, 'Status'
-              th null, 'Actions'
+              th null, ''
           tbody null,
             if @props.snapshots.length==0
               tr null,

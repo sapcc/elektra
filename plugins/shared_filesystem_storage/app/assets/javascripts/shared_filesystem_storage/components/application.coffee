@@ -50,13 +50,18 @@ shared_filesystem_storage.Application = React.createClass
     
   getInitialState: () ->
     tabs = shared_filesystem_storage.Application.tabs
+    activeTab = 'shres'
+    
     for tab in tabs
-      return activeTabUid: tab.uid if window.location.hash=="##{tab.uid}"
-       
+      if window.location.hash=="##{tab.uid}"
+        activeTab = tab.uid
+        break
+        
+    activeTabUid: activeTab
     shareNetworks: null
     snapshots: null
     shares: null
-    activeTabUid: 'shares'
+    
   
   ################### HELPER METHODS ####################
   loadItems: (path) ->

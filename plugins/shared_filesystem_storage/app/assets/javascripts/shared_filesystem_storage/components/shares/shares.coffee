@@ -129,8 +129,9 @@ shared_filesystem_storage.Shares = React.createClass
               th null, 'Protocol'
               th null, 'Size'
               th null, 'Visibility'
+              #th null, 'Network'
               th null, 'Status'
-              th null, 'Actions'
+              th null, ''
           tbody null,
             if @props.shares.length==0
               tr null,
