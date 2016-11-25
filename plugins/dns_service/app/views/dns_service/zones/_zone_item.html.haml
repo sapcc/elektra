@@ -1,4 +1,9 @@
-%tr
+- className= ''
+- className= 'bg-success' if zone.status=='PENDING' and zone.action=='CREATE'
+- className= 'bg-warning' if zone.status=='PENDING' and zone.action=='UPDATE'
+- className= 'bg-danger' if zone.status=='PENDING' and zone.action=='DELETE'
+
+%tr{id: "zone_#{zone.id}", class: className}
   %td
     - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes)
       = link_to zone.name, zone_path(zone.id)
@@ -12,6 +17,8 @@
   %td= zone.email
   %td= zone.ttl
   %td= zone.serial
+  %td= zone.status
+  %td= zone.action
   %td.snug
     - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes) or current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes) or current_user.is_allowed?("dns_service:zone_update", zone: zone.attributes)
       .btn-group
@@ -24,5 +31,5 @@
             %li= link_to 'Manage Records', plugin('dns_service').zone_path(zone.id)
           - if current_user.is_allowed?("dns_service:zone_update", zone: zone.attributes)
             %li= link_to 'Edit', plugin('dns_service').edit_zone_path(zone.id), data: {modal: true}
-          - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes)
+          - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes) 
             %li= link_to 'Delete', plugin('dns_service').zone_path(zone.id), method: :delete, data: { confirm: 'Are you sure you want to delete this zone?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

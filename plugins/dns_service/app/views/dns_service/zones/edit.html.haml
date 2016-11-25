@@ -1,13 +1,12 @@
-= simple_form_for @zone, url: plugin('dns_service').zones_path(@zone.id), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @zone, url: plugin('dns_service').zone_path(@zone.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @zone.errors.present?
       .alert.alert-error
         = render_errors(@zone.errors)        
 
-    = f.input :name,  required: true
     = f.input :email, required: true
-    = f.input :ttl,   required: false, as: :integer, input_html: {value: @zone.ttl || 1}
+    = f.input :ttl,   required: false, as: :integer
     = f.input :description, required: false, as: :text
    
   %div.buttons{class: modal? ? 'modal-footer' : ''}
@@ -15,4 +14,4 @@
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
     - else
       = link_to "Cancel", instances_url(), class: 'btn btn-default'
-    = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+    = button_tag "Save", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

@@ -21,6 +21,18 @@ module DnsService
       def get_zone(id, options = {})
         handle_response { @fog.get_zone(id, options).body }
       end
+      
+      def create_zone(name, email, options={})
+        handle_response{@fog.create_zone(name, email, options).body}
+      end
+      
+      def update_zone(id, attributes={})
+        handle_response{@fog.update_zone(id, attributes).body}
+      end
+      
+      def delete_zone(id, options = {})
+        handle_response{@fog.delete_zone(id, options).body}
+      end
 
       def list_recordsets(zone_id,options={})
         handle_response{@fog.list_recordsets(zone_id,options).body['recordsets']}

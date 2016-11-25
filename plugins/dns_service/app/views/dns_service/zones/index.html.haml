@@ -2,7 +2,7 @@
   .toolbar
     = link_to 'Create new', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-%table.table
+%table.table.zones
   %thead
     %tr
       %th Name
@@ -11,6 +11,8 @@
       %th Email
       %th TTL
       %th Serial
+      %th Status
+      %th Action
       %th.snug
   %tbody
     - if @zones.length==0
