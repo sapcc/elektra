@@ -4,6 +4,7 @@ shared_filesystem_storage.Shares = React.createClass
   componentDidMount: () ->
     # load content on adding this component to the DOM
     @props.loadShares() unless @props.shares
+    @props.loadShareNetworks() unless @props.shareNetworks
     
   getInitialState: ->
     availability_zones: null
@@ -16,7 +17,7 @@ shared_filesystem_storage.Shares = React.createClass
         success: ( data, textStatus, jqXHR ) => @setState availability_zones: data  
   
   loadShareRules: (shareId) ->
-    unless false#@state.shareRules[shareId]
+    unless @state.shareRules[shareId]
       @props.ajax.get "shares/#{shareId}/rules",
         success: ( data, textStatus, jqXHR ) => 
           rules = jQuery.extend({}, @state.shareRules)
@@ -69,7 +70,7 @@ shared_filesystem_storage.Shares = React.createClass
     index = rules[shareId].indexOf rule
     rules[shareId].splice index, 1
     @setState shareRules: rules    
-                    
+                
   render: ->
     unless @props.shares
       div null,
@@ -82,6 +83,7 @@ shared_filesystem_storage.Shares = React.createClass
           ref: 'accessControlModal',
           ajax: @props.ajax,
           shareRules: @state.shareRules
+          shareNetworks: @props.shareNetworks
           handleCreateRule: @addRule
           handleDeleteRule: @deleteRule
           
@@ -129,8 +131,8 @@ shared_filesystem_storage.Shares = React.createClass
               th null, 'Protocol'
               th null, 'Size'
               th null, 'Visibility'
-              #th null, 'Network'
               th null, 'Status'
+              th style:{width: '30%'}, 'Network'
               th null, ''
           tbody null,
             if @props.shares.length==0
@@ -147,3 +149,7 @@ shared_filesystem_storage.Shares = React.createClass
                 handleShowShare: @showShare
                 reloadShare: @props.reloadShare
                 share: share   
+                shareNetworks: @props.shareNetworks
+                shareRules: @state.shareRules
+                loadShareRules: @loadShareRules
+                

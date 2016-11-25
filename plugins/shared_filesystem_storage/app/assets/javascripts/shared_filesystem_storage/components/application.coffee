@@ -50,7 +50,7 @@ shared_filesystem_storage.Application = React.createClass
     
   getInitialState: () ->
     tabs = shared_filesystem_storage.Application.tabs
-    activeTab = 'shres'
+    activeTab = 'shares'
     
     for tab in tabs
       if window.location.hash=="##{tab.uid}"

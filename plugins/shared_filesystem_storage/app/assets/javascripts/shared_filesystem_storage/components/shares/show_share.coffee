@@ -39,9 +39,10 @@ shared_filesystem_storage.ShowShare = React.createClass
                   tr null,  
                     th null, "Status"
                     td null, @state.share.status
-                  tr null,  
-                    th null, "Export Locations"
-                    td null, (div(key: link.href, link.href) for link in @state.share.links)
+                  if @state.share.export_locations
+                    tr null,  
+                      th null, "Export Locations"
+                      td null, (div(key: link.href, link.href) for link in @state.share.export_locations)
                   tr null,  
                     th null, 'Visibility'
                     td null, (if @state.share.is_public then 'public' else 'private')
@@ -57,10 +58,10 @@ shared_filesystem_storage.ShowShare = React.createClass
                     td null, @state.share.size+' GiB'
                   tr null,
                     th null, "Protocol"
-                    td null, @state.share.id
+                    td null, @state.share.share_proto
                   tr null,  
                     th null, "Share Type"
-                    td null, @state.share.share_proto
+                    td null, @state.share.share_type
                   tr null,  
                     th null, "Share network"
                     td null, @state.share.share_network_id
