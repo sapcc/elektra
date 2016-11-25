@@ -72,6 +72,10 @@ module SharedFilesystemStorage
       def list_share_access_rules(share_id)
         handle_response { @fog.list_share_access_rules(share_id).body['access_list'] } 
 			end
+      
+      def list_share_export_locations(share_id)
+        handle_response { @fog.list_share_export_locations(share_id).body['export_locations']}
+      end
 
       def force_share_delete
 				raise 'Not implemented yet!'
