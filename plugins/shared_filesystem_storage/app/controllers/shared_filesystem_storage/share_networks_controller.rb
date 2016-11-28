@@ -17,6 +17,7 @@ module SharedFilesystemStorage
     def update
       @share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
       @share_network.id = params[:id]
+
       if @share_network.save
         @share_network.permissions = {
           get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 

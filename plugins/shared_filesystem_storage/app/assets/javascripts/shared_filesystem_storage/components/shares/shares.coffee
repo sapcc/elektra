@@ -9,6 +9,7 @@ shared_filesystem_storage.Shares = React.createClass
   getInitialState: ->
     availability_zones: null
     shareRules: {}
+    shareExportLocations: {}
     # share_types: null
     
   loadAvailabilityZones: () ->
@@ -24,6 +25,14 @@ shared_filesystem_storage.Shares = React.createClass
           rules[shareId] = data
           @setState shareRules: rules           
   
+  loadExportLocations: (shareId) ->
+    unless @state.shareExportLocations[shareId]
+      @props.ajax.get "/shares/#{shareId}/export_locations",
+        success: ( data, textStatus, jqXHR ) => 
+          exportLocations = jQuery.extend({}, @state.shareExportLocations)
+          exportLocations[shareId] = data
+          @setState shareExportLocations: exportLocations
+        
   # loadShareTypes: () ->
   #   unless @state.share_types
   #     $.ajax
@@ -105,7 +114,9 @@ shared_filesystem_storage.Shares = React.createClass
           loadSnapshots: @props.loadSnapshots
           
         React.createElement shared_filesystem_storage.ShowShare, 
-          ref: 'showShareModal'     
+          ref: 'showShareModal'   
+          shareExportLocations: @state.shareExportLocations,
+          loadExportLocations: @loadExportLocations 
                    
         if @props.can_create
           div null,

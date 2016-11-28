@@ -43,7 +43,7 @@ GIT
 PATH
   remote: ../fog-openstack
   specs:
-    fog-openstack (0.1.15)
+    fog-openstack (0.1.17)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       ipaddress (>= 0.8)

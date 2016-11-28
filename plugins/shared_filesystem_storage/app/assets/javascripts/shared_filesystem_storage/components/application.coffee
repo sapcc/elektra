@@ -9,6 +9,7 @@ shared_filesystem_storage.Application = React.createClass
     
     ajax: 
       request: (url, method, options={}) ->
+        url = url.replace(/([^:]\/)\/+/g, "$1")
         $.ajax 
           url: url
           method: method

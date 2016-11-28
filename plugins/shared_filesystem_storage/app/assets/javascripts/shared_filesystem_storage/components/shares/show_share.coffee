@@ -12,11 +12,12 @@ shared_filesystem_storage.ShowShare = React.createClass
       div className: "col-sm-10", value  
     
   open: (share) -> 
+    @props.loadExportLocations(share.id)   
     @setState share: share
     @refs.modal.open()
   close: () -> @refs.modal.close()
   handleClose: () -> null
-
+  
   render: ->
     React.createElement shared_filesystem_storage.Modal, ref: 'modal', onHidden: @handleClose,
       div className: 'modal-header',    
@@ -39,10 +40,18 @@ shared_filesystem_storage.ShowShare = React.createClass
                   tr null,  
                     th null, "Status"
                     td null, @state.share.status
-                  if @state.share.export_locations
-                    tr null,  
-                      th null, "Export Locations"
-                      td null, (div(key: link.href, link.href) for link in @state.share.export_locations)
+                  
+                  tr null,  
+                    th null, "Export Locations"
+                    td null,
+                      if @props.shareExportLocations[@state.share.id] 
+                        for location in @props.shareExportLocations[@state.share.id]
+                          div(key: location.id, location.path)
+
+                      else
+                        span className: 'spinner'          
+                                  
+
                   tr null,  
                     th null, 'Visibility'
                     td null, (if @state.share.is_public then 'public' else 'private')
