@@ -74,8 +74,6 @@ module SharedFilesystemStorage
 			end
       
       def list_share_export_locations(share_id)
-        p '::::::::::::::::::::::'
-        p @fog.share_export_locations.all
         handle_response { @fog.list_share_export_locations(share_id).body['export_locations']}
       end
 
