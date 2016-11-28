@@ -47,6 +47,7 @@ shared_filesystem_storage.NewShareNetwork = React.createClass
         handleCancel: @close
         handleChange: @handleChange
         buttonLabel: 'Create'
+        mode: 'create'
         loading: @state.loading
         shareNetwork: @state.shareNetwork
         errors: @state.errors       
