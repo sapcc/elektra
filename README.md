@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sapcc/elektra.svg?branch=master)](https://travis-ci.org/sapcc/elektra)
+
 Elektra
 =================
 
