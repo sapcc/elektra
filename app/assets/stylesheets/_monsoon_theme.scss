@@ -166,9 +166,9 @@ section {
 
 .spinner {
   //@include spinner(background rgba(0, 0, 0, 0.2));
-  
-  @extend .fa; 
-  @extend .fa-spinner; 
+
+  @extend .fa;
+  @extend .fa-spinner;
   //  @extend .fa-spin;
   @extend .fa-pulse;
   color: $medium-blue;
@@ -1144,6 +1144,12 @@ td, th {
   }
 }
 
+.table.no-borders {
+  td, th {
+    border: none;
+  }
+}
+
 table.table-select tbody tr {
   td {
     a {
@@ -1722,7 +1728,7 @@ input[type='checkbox'], input[type='radio'] {
 }
 
 .panel-group.smooth-accordion  {
-  
+
   .panel {
     margin-top: 0;
     border-radius: 0;
@@ -1736,10 +1742,10 @@ input[type='checkbox'], input[type='radio'] {
       border-bottom: none;
     }
   }
-      
+
   .panel-collapse .panel-body {
     border-top: none;
-  }    
+  }
   .panel-heading {
     border-radius: 0;
     border: none;
@@ -1784,11 +1790,11 @@ input[type='checkbox'], input[type='radio'] {
     border-radius: 0;
     transition: border-radius linear 0s;
   }
-  
+
   .panel-collapse > .panel-body {
      border-top-color: none;
   }
-  
+
   /* #bs-collapse icon scale option */
 
   .panel-heading a:before {
@@ -1808,4 +1814,4 @@ input[type='checkbox'], input[type='radio'] {
     transform: rotate(0deg);
     color: #888888;
   }
-}  
+}
