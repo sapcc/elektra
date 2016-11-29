@@ -74,7 +74,7 @@ shared_filesystem_storage.ShareNetwork = React.createClass
               i className: "fa fa-fw fa-share", "data-toggle": "tooltip",  "data-placement": "right", title: "Shared Network"
         else
           #span className: 'spinner'  
-          i className: 'spinner-pulse'
+          i className: 'spinner'
 
       td null, 
         if subnet

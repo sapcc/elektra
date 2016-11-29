@@ -7,6 +7,9 @@ shared_filesystem_storage.ShareNetworks = React.createClass
       @props.loadShareNetworks() 
       @loadNetworks()
     
+  componentWillUpdate: ->
+    @loadNetworks()
+      
   getInitialState: ->
     networks: null
     subnets: {}
@@ -72,6 +75,7 @@ shared_filesystem_storage.ShareNetworks = React.createClass
               ref: 'newShareNetworkModal', 
               ajax: @props.ajax, 
               networks: @state.networks,
+              subnets: @state.subnets,
               handleCreateShareNetwork: @props.addShareNetwork  
               loadSubnets: @loadSubnets
             

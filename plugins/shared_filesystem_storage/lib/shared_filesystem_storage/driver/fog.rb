@@ -105,7 +105,7 @@ module SharedFilesystemStorage
 			end
 
       def update_snapshot(id, params)
-        handle_response { update_snapshot(id, params) } 
+        handle_response { @fog.update_snapshot(id, params).body['snapshot'] } 
 			end
 
       def manage_snapshot

@@ -55,26 +55,26 @@ shared_filesystem_storage.ShareNetworkForm = React.createClass
                     'Loading...'
 
 
-          if @props.shareNetwork.neutron_net_id
-            subnets = @props.subnets[@props.shareNetwork.neutron_net_id]
-            unless subnets
-              @props.loadSubnets(@props.shareNetwork.neutron_net_id)
+        if @props.mode=='create' and @props.shareNetwork.neutron_net_id
+          subnets = @props.subnets[@props.shareNetwork.neutron_net_id]
+          unless subnets
+            @props.loadSubnets(@props.shareNetwork.neutron_net_id)
 
-            div { className: "form-group select required neutron_subnet_id" },
-              label { className: "select required col-sm-4 control-label", htmlFor: "neutron_subnet_id" },
-                abbr { title: "required" }, '*'
-                'Neutron Subnet'
-              div { className: "col-sm-8" },
-                div { className: "input-wrapper"},
-                  if subnets
-                    select { name: "neutron_subnet_id", className: "select required form-control", value: (@props.shareNetwork.neutron_subnet_id || ''), onChange: @handleChange },
-                      option null, ' '
-                      for subnet in subnets
-                        option { value: subnet.id, key: subnet.id }, subnet.name
-                  else
-                    span null,
-                      span {className: 'spinner'}, null
-                      'Loading...'
+          div { className: "form-group select required neutron_subnet_id" },
+            label { className: "select required col-sm-4 control-label", htmlFor: "neutron_subnet_id" },
+              abbr { title: "required" }, '*'
+              'Neutron Subnet'
+            div { className: "col-sm-8" },
+              div { className: "input-wrapper"},
+                if subnets
+                  select { name: "neutron_subnet_id", className: "select required form-control", value: (@props.shareNetwork.neutron_subnet_id || ''), onChange: @handleChange },
+                    option null, ' '
+                    for subnet in subnets
+                      option { value: subnet.id, key: subnet.id }, subnet.name
+                else
+                  span null,
+                    span {className: 'spinner'}, null
+                    'Loading...'
 
       div className: 'modal-footer',
         button role: 'cancel', type: 'button', className: 'btn btn-default', onClick: @props.handleCancel, 'Cancel'

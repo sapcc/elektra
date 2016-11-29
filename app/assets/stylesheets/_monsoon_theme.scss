@@ -165,12 +165,8 @@ section {
 }
 
 .spinner {
-  //@include spinner(background rgba(0, 0, 0, 0.2));
+  @include spinner(background rgba(0, 0, 0, 0.2));
 
-  @extend .fa;
-  @extend .fa-spinner;
-  //  @extend .fa-spin;
-  @extend .fa-pulse;
   color: $medium-blue;
   margin: 0 5px;
 }
@@ -1175,10 +1171,9 @@ tr.deleting, tr.updating {
 
   td:first-child {
     &:before {
-      //content: " ";
-      //@include spinner(background rgba(0, 0, 0, 0.2));
-      @extend .spinner;
-      //margin-right: 3px;
+      content: " ";
+      @include spinner(background rgba(0, 0, 0, 0.2));
+      margin-right: 3px;
     }
   }
 

@@ -21,7 +21,7 @@ shared_filesystem_storage.EditShareNetwork = React.createClass
   handleSubmit: () ->
     @setState loading: true
     @props.ajax.put "share-networks/#{@state.shareNetwork.id}",
-      data: { share_network: {name: @state.shareNetwork.name, description: @state.shareNetwork.description} } 
+      data: { share_network: shareNetwork } 
       success: (data, textStatus, jqXHR) =>
         @props.handleUpdateShareNetwork @state.shareNetwork, data
         @setState @getInitialState()
