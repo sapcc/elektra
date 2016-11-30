@@ -25,8 +25,9 @@ module Identity
 
         if @project.save
           services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
+          services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')
           services.identity.clear_auth_projects_tree_cache
-          
+
           audit_logger.info(current_user, "has created", @project)
 
           if services.available?(:cost_control)
@@ -41,7 +42,7 @@ module Identity
               audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_masterdata.cost_object_string}")
             end
           end
-          
+
           flash[:notice] = "Project #{@project.name} successfully created."
           if @inquiry
             inquiry = services.inquiry.set_inquiry_state(@inquiry.id, :approved, "Project #{@project.name} approved and created by #{current_user.full_name}")
@@ -63,7 +64,7 @@ module Identity
         return if params[:inquiry_id].blank?
         @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
 
-        if @inquiry 
+        if @inquiry
           enforce_permissions("identity:project_create", {project: {domain_id: @scoped_domain_id} })
         else
           render template: '/identity/domains/create_wizard/not_found'
