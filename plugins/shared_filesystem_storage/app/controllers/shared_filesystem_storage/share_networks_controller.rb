@@ -31,7 +31,7 @@ module SharedFilesystemStorage
     end
     
     def networks
-      render json: services.networking.networks
+      render json: services.networking.networks('router:external' => false)
     end
     
     def subnets
