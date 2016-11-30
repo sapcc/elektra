@@ -7,7 +7,8 @@
         = @router.errors.full_messages.to_sentence + '.'
 
     = f.input :name
-    = f.input :external_gateway_info, {input_html: {value: @external_network.name, disabled:true}}
+    = f.input :external_gateway_info,
+      {input_html: {value: @external_network.present? ? @external_network.name : 'No external gateway set.', disabled:true}}
     = f.input :admin_state_up, {label: 'Admin State',
       as:                 :select,
       collection:         [['UP', 'true'],['DOWN', 'false']]}
