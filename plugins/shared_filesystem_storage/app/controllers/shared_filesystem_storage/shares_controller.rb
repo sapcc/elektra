@@ -61,13 +61,13 @@ module SharedFilesystemStorage
     end
     
     def destroy
-      @share = services.shared_filesystem_storage.new_share
-      @share.id=params[:id]
+      share = services.shared_filesystem_storage.new_share
+      share.id=params[:id]
       
-      if @share.destroy
+      if share.destroy
         head :no_content
       else
-        render json: @share.errors, status: :unprocessable_entity
+        render json: share.errors, status: :unprocessable_entity
       end
     end
     

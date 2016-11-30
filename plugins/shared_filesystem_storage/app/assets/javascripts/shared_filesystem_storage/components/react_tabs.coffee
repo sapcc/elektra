@@ -15,8 +15,7 @@ shared_filesystem_storage.ReactTabs = React.createClass
       panels = []
       for tab,content of @props.tabs
         tabId = tab.replace(/\s/g,'-').toLowerCase()
-        console.log tab,content
-      
+
         tabs.push(li key: "#{tabId}_tab", role: "presentation", className: ("active" if activeTab==tab),
           a href: "##{tabId}", "aria-controls": "home", role: "tab",  "data-toggle": "tab", tab)
         panels.push(div key: "#{tabId}_panel", role: "tabpanel", className: "tab-pane #{"active" if activeTab==tab}", id: tabId, content)

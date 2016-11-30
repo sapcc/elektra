@@ -26,6 +26,10 @@ shared_filesystem_storage.Share = React.createClass
       success: () =>
         @props.handleDeleteShare @props.share
       error: ( jqXHR, textStatus, errorThrown ) =>
+        errors = JSON.parse(jqXHR.responseText)
+        message = ul null,
+          li(key: name, "#{name}: #{error}") for name,error of errors if errors 
+        shared_filesystem_storage.ReactErrorDialog.show(errorThrown, description: message)
         @setState loading: false      
                     
   handleEdit: (e) ->

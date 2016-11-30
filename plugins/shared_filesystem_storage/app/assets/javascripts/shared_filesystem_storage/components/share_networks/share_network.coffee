@@ -1,5 +1,5 @@
 {tr,td,br,a,span,div,button,ul,li,i} = React.DOM
-{ConfirmDialog} = shared_filesystem_storage
+{ConfirmDialog, ReactErrorDialog} = shared_filesystem_storage
 
 shared_filesystem_storage.ShareNetwork = React.createClass
   getInitialState: ->
@@ -27,7 +27,11 @@ shared_filesystem_storage.ShareNetwork = React.createClass
       success: () =>
         @props.handleDeleteShareNetwork @props.shareNetwork
       error: ( jqXHR, textStatus, errorThrown ) =>
-        alert(errorThrown) 
+
+        errors = JSON.parse(jqXHR.responseText)
+        message = ul null,
+          li(key: name, "#{name}: #{error}") for name,error of errors if errors 
+        ReactErrorDialog.show(errorThrown, description: message)
         @setState loading: false
             
   
