@@ -10,7 +10,8 @@ shared_filesystem_storage.EditShareNetwork = React.createClass
     @setState shareNetwork: jQuery.extend({}, shareNetwork), () => @refs.modal.open()
   
   close: () -> @refs.modal.close()  
-  handleClose: () -> @getInitialState()
+  handleClose: -> 
+    @setState @getInitialState()
   
   handleChange: (name,value)->
     shareNetwork = @state.shareNetwork
@@ -20,7 +21,7 @@ shared_filesystem_storage.EditShareNetwork = React.createClass
   handleSubmit: () ->
     @setState loading: true
     @props.ajax.put "share-networks/#{@state.shareNetwork.id}",
-      data: { share_network: @state.shareNetwork } 
+      data: { share_network: shareNetwork } 
       success: (data, textStatus, jqXHR) =>
         @props.handleUpdateShareNetwork @state.shareNetwork, data
         @setState @getInitialState()

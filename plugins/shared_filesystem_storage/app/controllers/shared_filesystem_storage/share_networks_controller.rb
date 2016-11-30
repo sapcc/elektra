@@ -1,9 +1,9 @@
 module SharedFilesystemStorage
   class ShareNetworksController < ApplicationController
     def index
-      @share_networks = services.shared_filesystem_storage.share_networks_detail
+      share_networks = services.shared_filesystem_storage.share_networks_detail
       # extend attributes with permissions
-      @share_networks.each do |sn| 
+      share_networks.each do |sn| 
         sn.permissions = {
           get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"), 
@@ -11,26 +11,27 @@ module SharedFilesystemStorage
         }
       end
       
-      render json: @share_networks
+      render json: share_networks
     end
     
     def update
-      @share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
-      @share_network.id = params[:id]
-      if @share_network.save
-        @share_network.permissions = {
+      share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
+      share_network.id = params[:id]
+
+      if share_network.save
+        share_network.permissions = {
           get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"), 
           update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
         }
-        render json: @share_network
+        render json: share_network
       else
-        render json: @share_network.errors, status: :unprocessable_entity
+        render json: share_network.errors, status: :unprocessable_entity
       end      
     end
     
     def networks
-      render json: services.networking.networks
+      render json: services.networking.networks('router:external' => false)
     end
     
     def subnets
@@ -38,28 +39,28 @@ module SharedFilesystemStorage
     end
     
     def create
-      @share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
+      share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
       
-      if @share_network.save
-        @share_network.permissions = {
+      if share_network.save
+        share_network.permissions = {
           get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"), 
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"), 
           update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
         }
-        render json: @share_network
+        render json: share_network
       else
-        render json: @share_network.errors, status: :unprocessable_entity
+        render json: share_network.errors, status: :unprocessable_entity
       end
     end
     
     def destroy
-      @share_network = services.shared_filesystem_storage.new_share_network
-      @share_network.id=params[:id]
+      share_network = services.shared_filesystem_storage.new_share_network
+      share_network.id=params[:id]
       
-      if @share_network.destroy
+      if share_network.destroy
         head :no_content
       else
-        render json: @share_network.errors, status: :unprocessable_entity
+        render json: share_network.errors, status: :unprocessable_entity
       end
     end
     

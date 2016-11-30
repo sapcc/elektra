@@ -1,5 +1,6 @@
 {div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a,ul,li} = React.DOM
-
+{ Modal } = shared_filesystem_storage
+    
 shared_filesystem_storage.SnapshotForm = React.createClass
   statics:
     protocols: ['NFS','CIFS','GlusterFS','HDFS']
@@ -32,7 +33,7 @@ shared_filesystem_storage.SnapshotForm = React.createClass
     @props.handleClickNewShareNetwork()
     
   render: ->
-    { Modal } = shared_filesystem_storage
+
 
     form className: 'form form-horizontal', onSubmit: @handleSubmit,
       div className: 'modal-body',

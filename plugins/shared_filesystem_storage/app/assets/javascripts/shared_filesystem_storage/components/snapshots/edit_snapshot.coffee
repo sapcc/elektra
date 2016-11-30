@@ -17,8 +17,8 @@ shared_filesystem_storage.EditSnapshot = React.createClass
   close: () -> @refs.modal.close()  
   handleClose: () -> @getInitialState()
     
-  handleSubmit: (share) ->
-    @setState share: share
+  handleSubmit: (snapshot) ->
+    @setState loading: true
     @props.ajax.put "/snapshots/#{snapshot.id}",
       data: { snapshot: snapshot } 
       success: (data, textStatus, jqXHR) =>

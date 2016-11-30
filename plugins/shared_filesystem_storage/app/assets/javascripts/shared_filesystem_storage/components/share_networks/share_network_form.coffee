@@ -36,25 +36,26 @@ shared_filesystem_storage.ShareNetworkForm = React.createClass
             div { className: "input-wrapper" },
               textarea { className: "text optional form-control", name: "description", value: (@props.shareNetwork.description || ''), onChange: @handleChange }
 
-        # Networks
-        div { className: "form-group select required neutron_net_id" },
-          label { className: "select required col-sm-4 control-label", htmlFor: "neutron_net_id" },
-            abbr { title: "required" }, '*'
-            'Neutron Net'
-          div { className: "col-sm-8" },
-            div { className: "input-wrapper"},
-              if @props.networks
-                select { name: "neutron_net_id", className: "select required form-control", value: (@props.shareNetwork.neutron_net_id || ''), onChange: @handleChange },
-                  option null, ' '
-                    for network in @props.networks
-                      option { value: network.id, key: network.id }, network.name
-              else
-                span null,
-                  span {className: 'spinner'}, null
-                  'Loading...'
+        if @props.mode=='create'            
+          # Networks
+          div { className: "form-group select required neutron_net_id" },
+            label { className: "select required col-sm-4 control-label", htmlFor: "neutron_net_id" },
+              abbr { title: "required" }, '*'
+              'Neutron Net'
+            div { className: "col-sm-8" },
+              div { className: "input-wrapper"},
+                if @props.networks
+                  select { name: "neutron_net_id", className: "select required form-control", value: (@props.shareNetwork.neutron_net_id || ''), onChange: @handleChange },
+                    option null, ' '
+                      for network in @props.networks
+                        option { value: network.id, key: network.id }, network.name
+                else
+                  span null,
+                    span {className: 'spinner'}, null
+                    'Loading...'
 
 
-        if @props.shareNetwork.neutron_net_id
+        if @props.mode=='create' and @props.shareNetwork.neutron_net_id
           subnets = @props.subnets[@props.shareNetwork.neutron_net_id]
           unless subnets
             @props.loadSubnets(@props.shareNetwork.neutron_net_id)

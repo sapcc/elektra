@@ -19,6 +19,11 @@ shared_filesystem_storage.Snapshot = React.createClass
       success: () =>
         @props.handleDeleteSnapshot @props.snapshot
       error: ( jqXHR, textStatus, errorThrown ) => 
+        errors = JSON.parse(jqXHR.responseText)
+        message = ul null,
+          li(key: name, "#{name}: #{error}") for name,error of errors if errors 
+        ReactErrorDialog.show(errorThrown, description: message)
+        
         @setState loading: false
                     
   

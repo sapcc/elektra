@@ -43,6 +43,10 @@ module ServiceLayer
       SharedFilesystemStorage::ShareRule.new(driver,params.merge(share_id: share_id))
     end
     
+    def share_export_locations(share_id)
+      driver.map_to(SharedFilesystemStorage::ShareExportLocation).list_share_export_locations(share_id)
+    end
+    
     ####################################################
     #                 SNAPSHOTS                        #
     ####################################################

@@ -9,6 +9,7 @@ shared_filesystem_storage.Application = React.createClass
     
     ajax: 
       request: (url, method, options={}) ->
+        url = url.replace(/([^:]\/)\/+/g, "$1")
         $.ajax 
           url: url
           method: method
@@ -77,7 +78,7 @@ shared_filesystem_storage.Application = React.createClass
     # load remote items
     @ajax().get path,
       error: ( jqXHR, textStatus, errorThrown) -> 
-        console.log errorThrown if console
+        shared_filesystem_storage.ReactErrorDialog.show(errorThrown)
       success: ( data, textStatus, jqXHR ) => 
         newState = {}
         newState[itemsName] = data
