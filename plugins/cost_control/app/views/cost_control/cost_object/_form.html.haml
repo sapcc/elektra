@@ -2,15 +2,15 @@
 .only-when-not-inherited
   = form.input :cost_object_type, label: long_labels ? 'Cost Object Type' : 'Type', collection: types.keys, label_method: -> (k) { types[k] }, selected: @project.cost_control['cost_object_type']
   = form.input :cost_object_id, label: long_labels ? 'Cost Object ID' : 'ID', input_html: {:value => @project.cost_control['cost_object_id']}
--# cost object inheritance during project creation disabled for now. resuming work once billing guys are back.
+-# TODO: Cost object inheritance is currently disabled
 -#.row
 -#  .col-md-8.col-md-offset-4
 -#    = form.check_box :cost_object_inherited, { :checked => @project.cost_control['cost_object_inherited'] == '1' }
 -#    = form.label :cost_object_inherited, 'Inherit cost object'
--#    -# TODO: default true,false
 .row
   .help-block.col-sm-8.col-sm-offset-4
     A cost object is an element that we can bill for services rendered.
+-# TODO: Cost object inheritance is currently disabled
 -#= content_for :javascripts do
 -#  :javascript
 -#    var checkbox = $('#project_cost_control_cost_object_inherited');

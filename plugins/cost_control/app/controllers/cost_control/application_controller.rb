@@ -5,14 +5,15 @@ module CostControl
 
     rescue_and_render_exception_page [
                                      {
-                                         "Fog::Billing::ApiError" => {
+                                         "::Fog::Billing::ApiError" => {
                                              header_title: "Monsoon3 Cost Control",
-                                             title:        -> e, c { e.title },
-                                             description:  -> e, c { e.description },
+                                             title:        "No Billing data available.",
+                                             description:  :description,
                                              details:      -> e, c { e.details.html_safe }
                                          }
                                      }
                                  ]
+
   end
 
   protected

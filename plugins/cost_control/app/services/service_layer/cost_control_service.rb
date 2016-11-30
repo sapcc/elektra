@@ -37,7 +37,7 @@ module ServiceLayer
       driver.map_to(CostControl::DomainMasterdata).get_domain_masterdata(domain_id)
     end
 
-    #### kb11n billing object
+    #### kb11n billing object (cumulated costs per project)
 
     def new_kb11n_billing_object(attributes={})
       CostControl::Kb11nBillingObject.new(driver, attributes)
@@ -53,6 +53,24 @@ module ServiceLayer
         end
       end
       return @kb11n_billing_objects
+    end
+
+    #### billing object (costs per service per project)
+
+    def new_billing_object(attributes={})
+      CostControl::BillingObject.new(driver, attributes)
+    end
+
+    def find_billing_objects(project_id)
+      unless @billing_objects
+        @billing_objects = []
+        billing_objects = driver.map_to(CostControl::BillingObject).get_billing_objects(project_id)
+        billing_objects.each do |itm|
+          billing_object = new_billing_object(itm.attributes) if itm.attributes
+          @billing_objects << billing_object if billing_object
+        end
+      end
+      return @billing_objects
     end
 
   end
