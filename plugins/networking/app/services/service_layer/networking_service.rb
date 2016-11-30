@@ -30,9 +30,9 @@ module ServiceLayer
     end
 
     def network(id)
-      driver.map_to(Networking::Network).get_network(id)
+      driver.map_to(Networking::Network).get_network(id) if id.present?
     end
-    
+
     def new_network(attributes={})
       Networking::Network.new(driver,attributes)
     end
@@ -40,7 +40,7 @@ module ServiceLayer
     def subnet(id=nil)
       driver.map_to(Networking::Subnet).get_subnet(id)
     end
-    
+
     def new_subnet(attributes={})
       Networking::Subnet.new(driver,attributes)
     end
@@ -52,7 +52,7 @@ module ServiceLayer
     def ports(filter={})
       driver.map_to(Networking::Port).ports(filter)
     end
-    
+
     def find_port(id)
       driver.map_to(Networking::Port).get_port(id)
     end
@@ -66,7 +66,7 @@ module ServiceLayer
       end
       result
     end
-    
+
     def attach_floatingip(floating_ip_id, port_id, options = {})
       driver.map_to(Networking::FloatingIp).associate_floating_ip(floating_ip_id,port_id,options)
     end
@@ -74,15 +74,15 @@ module ServiceLayer
     def detach_floatingip(floating_ip_id)
       driver.map_to(Networking::FloatingIp).disassociate_floating_ip(floating_ip_id)
     end
-    
+
     def new_floating_ip(params={})
       Networking::FloatingIp.new(driver,params)
     end
-    
+
     def find_floating_ip(id)
       driver.map_to(Networking::FloatingIp).get_floating_ip(id)
     end
-    
+
     def delete_floating_ip(floating_ip_id)
       driver.delete_floating_ip(floating_ip_id)
     end
@@ -94,11 +94,11 @@ module ServiceLayer
     def new_security_group(attributes={})
       Networking::SecurityGroup.new(driver,attributes)
     end
-        
+
     def find_security_group(id)
       driver.map_to(Networking::SecurityGroup).get_security_group(id)
     end
-    
+
     def security_group_rules(options={})
       driver.map_to(Networking::SecurityGroupRule).list_security_group_rules(options)
     end
@@ -106,7 +106,7 @@ module ServiceLayer
     def find_security_group_rule(security_group_rule_id)
       driver.map_to(Networking::SecurityGroupRule).get_security_group_rule(security_group_rule_id)
     end
-    
+
     def new_security_group_rule(attributes={})
       Networking::SecurityGroupRule.new(driver,attributes)
     end
@@ -153,7 +153,7 @@ module ServiceLayer
     def find_rbac(id)
       driver.map_to(Networking::Rbac).get_rbac(id)
     end
-    
+
     def new_rbac(attributes={})
       Networking::Rbac.new(driver,attributes)
     end
