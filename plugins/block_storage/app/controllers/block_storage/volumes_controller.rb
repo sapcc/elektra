@@ -82,14 +82,14 @@ module BlockStorage
 
     # POST /volumes/1/snapshot
     def snapshot
-      @snapshot = services.block_storage.new_snapshot
-      @snapshot.attributes=params[@snapshot.model_name.param_key]
+      @snapshot = services.block_storage.new_snapshot({force: false})
+      @snapshot.attributes = @snapshot.attributes.merge(params[@snapshot.model_name.param_key])
       @snapshot.volume_id = params[:id]
 
       if @snapshot.save
         flash[:notice] = "Snapshot successfully created."
         audit_logger.info(current_user, "has created", @snapshot)
-        redirect_to snapshots_path
+        redirect_to volumes_path
       else
         set_volume
         flash[:error] = "Snapshot creation failed!"

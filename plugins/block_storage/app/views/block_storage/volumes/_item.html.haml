@@ -41,7 +41,13 @@
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if current_user.is_allowed?("block_storage:volume_update", {target: {scoped_domain_name: @scoped_domain_name}})
               %li= link_to 'Change', plugin('block_storage').edit_volume_path(id: volume.id), data: {modal: true}
-              %li= link_to 'Create Snapshot', plugin('block_storage').new_snapshot_volume_path(id: volume.id), data: {modal: true} if volume.snapshotable?
+              - if volume.snapshotable?
+                %li= link_to 'Create Snapshot', plugin('block_storage').new_snapshot_volume_path(id: volume.id), data: {modal: true}
+              -# else
+                %li
+                  = link_to plugin('block_storage').new_snapshot_volume_path(id: volume.id), data: {modal: true} do
+                    %i.fa.fa-warning.text-danger
+                    Create Snapshot
             - if current_user.is_allowed?("block_storage:volume_assign", {target: {scoped_domain_name: @scoped_domain_name}})
               %li.divider
               - if volume.attachments.blank?

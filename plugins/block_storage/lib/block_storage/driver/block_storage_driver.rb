@@ -53,7 +53,8 @@ module BlockStorage
         volume_id = params["volume_id"]
         name = params["name"]
         description = params["description"]
-        handle_response{ @connection.create_snapshot(volume_id, name, description, force=false).body['snapshot'] }
+        force = params["force"]
+        handle_response{ @connection.create_snapshot(volume_id, name, description, force).body['snapshot'] }
       end
 
       def update_snapshot(id, params={})
