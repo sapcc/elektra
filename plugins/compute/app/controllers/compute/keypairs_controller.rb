@@ -4,6 +4,7 @@ module Compute
     authorization_context 'compute'
 
     def index
+      enforce_permissions("::compute:keypair_list")
       @user_keypairs = services.compute.keypairs
     end
 

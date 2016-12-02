@@ -2,7 +2,8 @@ module Compute
   class InstancesController < Compute::ApplicationController
     def index
       @instances = []
-      if @scoped_project_id && current_user.is_allowed?("compute:instance_list")
+      if @scoped_project_id
+        enforce_permissions("::compute:instance_list")
         @instances = services.compute.servers
 
         # get/calculate quota data
@@ -21,8 +22,6 @@ module Compute
           {service_name: :compute, resource_name: :cores, usage: cores},
           {service_name: :compute, resource_name: :ram, usage: ram}
         ])
-
-        #@instances.each{|i| puts i.pretty_attributes}
       end
     end
 

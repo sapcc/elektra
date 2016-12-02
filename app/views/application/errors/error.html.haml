@@ -11,7 +11,7 @@
   .modal-body
     .bs-callout.bs-callout-danger
       %h3= @title.html_safe
-      %p= h(@description)
+      %p= raw(@description)
       - if @error_id
         .callout-footer
           %b Error ID:
@@ -33,7 +33,7 @@
 - else
   .bs-callout.bs-callout-danger
     %h3= @title.html_safe
-    %p= h(@description)
+    %p= raw(@description)
     - if @error_id
       .callout-footer
         %b Error ID:

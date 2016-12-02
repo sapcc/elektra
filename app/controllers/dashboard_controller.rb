@@ -57,7 +57,20 @@ class DashboardController < ::ScopeController
 
   # catch all mentioned errors and render error page
   rescue_and_render_error_page [
-    {"MonsoonOpenstackAuth::Authorization::SecurityViolation" => {title: 'Permission Denied', sentry: false}},
+    {
+      "MonsoonOpenstackAuth::Authorization::SecurityViolation" => {
+        title: 'Permission Denied', 
+        sentry: false,
+        description: -> (e,c) {
+          m = e.message
+          if e.involved_roles and e.involved_roles.length>0
+            m += "<br/>Please check if you have one of the following roles: <b>#{e.involved_roles.flatten.join(', ')}</b>." 
+            m += " <a href='#' data-toggle='modal' data-target='#profile'>Check here</a>"
+          end 
+          m
+        }
+      }
+    },
     {"Core::Error::ProjectNotFound" => {title: 'Project Not Found'}}
   ]
 
