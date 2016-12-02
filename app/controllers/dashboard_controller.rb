@@ -64,8 +64,7 @@ class DashboardController < ::ScopeController
         description: -> (e,c) {
           m = e.message
           if e.involved_roles and e.involved_roles.length>0
-            m += "<br/>Please check if you have one of the following roles: <b>#{e.involved_roles.flatten.join(', ')}</b>." 
-            m += " <a href='#' data-toggle='modal' data-target='#profile'>Check here</a>"
+            m += " Please check (user profile or role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
           end 
           m
         }
