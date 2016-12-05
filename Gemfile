@@ -37,7 +37,7 @@ gem 'activerecord-session_store'
 # Openstack
 gem 'net-ssh'
 #gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
-gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :manila_actions_cc
+gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
 #gem 'fog-openstack', path: '../fog-openstack', branch: :manila_actions_cc
 gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 

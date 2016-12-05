@@ -45,6 +45,10 @@ class ScopeController < ::ApplicationController
           redirect_to new_path
         end     
       end
+      
+      @policy_default_params = { target: {} }
+      @policy_default_params[:target][:scoped_domain_name] = @scoped_domain_name if @scoped_domain_name
+      @policy_default_params[:target][:scoped_project_name] = @scoped_project_name if @scoped_project_name
     else
       raise Core::Error::DomainNotFound.new("Domain #{domain_id} not found!")
     end

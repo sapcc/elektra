@@ -2,9 +2,9 @@
   options  = " --format #{ENV['CUCUMBER_FORMAT'] || 'pretty'}" 
   options += " --format CI::Reporter::Cucumber --out #{ENV['CI_REPORTS'] || 'features/reports'}" if ENV['HEADLESS']
   options += " -r features"
-  options += " CCTEST_DOMAIN=#{ENV['CCTEST_DOMAIN'] || 'cctest_cluster_3'}"
-  options += " CCTEST_PROJECT=#{ENV['CCTEST_PROJECT'] || 'public'}"
-  options += " CCTEST_USER=#{ENV['CCTEST_USER'] || 'cctest_cluster_3_member'}"
+  options += " CCTEST_DOMAIN=#{ENV['CCTEST_DOMAIN'] || 'cc3test'}"
+  options += " CCTEST_PROJECT=#{ENV['CCTEST_PROJECT'] || 'member'}"
+  options += " CCTEST_USER=#{ENV['CCTEST_USER'] || 'test_member'}"
   options += " CCTEST_PASSWORD=#{ENV['CCTEST_PASSWORD']}"
 %>
 
