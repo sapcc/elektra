@@ -5,7 +5,7 @@
         .modal-header
           %button.close{type: "button", "data-dismiss": "modal", "aria-label": "Close"}
             %span{ "aria-hidden": "true"} &times;
-            
+
           %h4.modal-title My Profile
         .modal-body
           %table.table.no-borders
@@ -15,24 +15,23 @@
                 %td= current_user.name
               %tr
                 %th Full Name
-                %td= current_user.full_name   
+                %td= current_user.full_name
               %tr
                 %th Current Scope
                 %td
                   %b Domain:
-                  = current_user.project_domain_name || current_user.domain
+                  = current_user.project_domain_name || current_user.domain_name
                   %br
                   %b Project:
                   = current_user.project_name
               %tr
                 %th Roles
                 %td
-                  = current_user.role_names.join(', ')  
+                  = current_user.role_names.join(', ')
                   - if current_user.is_allowed?('identity:project_member_list')
                     %br
                     = link_to 'edit roles', plugin('identity').projects_members_path
-                
-      
+
+
         .modal-footer
           %button.btn.btn-default{ type: "button", "data-dismiss": "modal"} Close
-  
