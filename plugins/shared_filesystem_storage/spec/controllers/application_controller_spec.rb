@@ -21,9 +21,9 @@ describe SharedFilesystemStorage::ApplicationController, type: :controller do
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
   end
 
-  describe "GET 'index'" do
+  describe "GET 'show'" do
     it "returns http success" do
-      get :index, default_params
+      get :show, default_params
       expect(response).to be_success
     end
   end
