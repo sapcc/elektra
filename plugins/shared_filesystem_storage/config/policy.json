@@ -27,5 +27,5 @@
   "shared_filesystem_storage:share_network_get": "rule:shares_admin_or_owner",
   "shared_filesystem_storage:share_network_networks": "rule:shares_admin_or_owner",
   
-  "shared_filesystem_storage:application_get": "rule:shared_filesystem_storage:share_list or shared_filesystem_storage:share_network_list or shared_filesystem_storage:snapshot_list"
+  "shared_filesystem_storage:application_get": "rule:shared_filesystem_storage:share_list or rule:shared_filesystem_storage:share_network_list or rule:shared_filesystem_storage:snapshot_list"
 }
