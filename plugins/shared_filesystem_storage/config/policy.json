@@ -1,23 +1,31 @@
 {
-  "shared_filesystem_storage:share_list": "@",
-  "shared_filesystem_storage:share_get": "@",
+  "context_is_admin": "role:admin",
+  "shares_admin_or_owner": "role:admin or project_id:%(project_id)s",
+         
+  "shared_filesystem_storage:share_list": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_get": "rule:shares_admin_or_owner",
   "shared_filesystem_storage:share_create": "@",
-  "shared_filesystem_storage:share_delete": "@",
-  "shared_filesystem_storage:share_update": "@",
+  "shared_filesystem_storage:share_delete": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_update": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_export_locations": "rule:shares_admin_or_owner",
   
-  "shared_filesystem_storage:shared_network_list": "@",
-  "shared_filesystem_storage:shared_network_get": "@",
-  "shared_filesystem_storage:shared_network_create": "@",
-  "shared_filesystem_storage:shared_network_delete": "@",
-  "shared_filesystem_storage:shared_network_update": "@",
+  "shared_filesystem_storage:rule_list": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:rule_get": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:rule_delete": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:rule_update": "rule:shares_admin_or_owner",
+    
+  "shared_filesystem_storage:snapshot_create": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:snapshot_delete": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:snapshot_get": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:snapshot_list": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:snapshot_update": "rule:shares_admin_or_owner",
   
-  "shared_filesystem_storage:snapshot_list": "@",
-  "shared_filesystem_storage:snapshot_get": "@",
-  "shared_filesystem_storage:snapshot_delete": "@",
-  "shared_filesystem_storage:snapshot_update": "@",
+  "shared_filesystem_storage:share_network_create": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_network_delete": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_network_update": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_network_list": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_network_get": "rule:shares_admin_or_owner",
+  "shared_filesystem_storage:share_network_networks": "rule:shares_admin_or_owner",
   
-  "shared_filesystem_storage:rule_list": "@",
-  "shared_filesystem_storage:rule_get": "@",
-  "shared_filesystem_storage:rule_delete": "@",
-  "shared_filesystem_storage:rule_update": "@"
+  "shared_filesystem_storage:application_get": "rule:shared_filesystem_storage:share_list or shared_filesystem_storage:share_network_list or shared_filesystem_storage:snapshot_list"
 }

@@ -1,5 +1,5 @@
 SharedFilesystemStorage::Engine.routes.draw do
-  root to: 'application#index', as: :start
+  root to: 'application#show', as: :start
   #get '/', to: 'application#index', as: :start, constraints: { format: :html }
 
   

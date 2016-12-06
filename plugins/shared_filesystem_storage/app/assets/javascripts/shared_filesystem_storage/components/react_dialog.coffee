@@ -46,7 +46,7 @@ shared_filesystem_storage.ReactDialog = React.createClass
         icon = null
         colorClass = ''
         
-    React.createElement shared_filesystem_storage.Modal, ref: 'modal', large: false, onHidden: @handleClose,
+    React.createElement shared_filesystem_storage.Modal, ref: 'modal', large: true, onHidden: @handleClose,
       div className: 'modal-header',    
         h4 className: 'modal-title', 
           span null, 

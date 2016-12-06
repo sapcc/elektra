@@ -59,7 +59,7 @@ class DashboardController < ::ScopeController
   rescue_and_render_error_page [
     {
       "MonsoonOpenstackAuth::Authorization::SecurityViolation" => {
-        title: 'Permission Denied', 
+        title: 'Unauthorized', 
         sentry: false,
         description: -> (e,c) {
           m = e.message

@@ -1,3 +1,4 @@
+{ul,li} = React.DOM
 shared_filesystem_storage.Application = React.createClass
   displayName: 'Application'
   statics: 
@@ -78,7 +79,12 @@ shared_filesystem_storage.Application = React.createClass
     # load remote items
     @ajax().get path,
       error: ( jqXHR, textStatus, errorThrown) -> 
-        shared_filesystem_storage.ReactErrorDialog.show(errorThrown)
+        console.log jqXHR, textStatus, errorThrown
+        errors = JSON.parse(jqXHR.responseText)
+        message = ul null,
+          li(key: name, "#{name}: #{error}") for name,error of errors if errors
+          
+        shared_filesystem_storage.ReactErrorDialog.show(errorThrown, description: message)
       success: ( data, textStatus, jqXHR ) => 
         newState = {}
         newState[itemsName] = data
@@ -159,6 +165,7 @@ shared_filesystem_storage.Application = React.createClass
 
       div { className: 'tab-content'},
         for tab in tabs
+          console.log tab, @can('list',tab.uid)
           if @can('list',tab.uid)
             React.createElement shared_filesystem_storage.Panel, 
               active: (@state.activeTabUid is tab.uid)

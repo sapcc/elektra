@@ -1,8 +1,5 @@
 module SharedFilesystemStorage
   class SnapshotsController < ApplicationController
-    authorization_context 'shared_filesystem_storage'
-    authorization_required
-    
     def index
       snapshots = services.shared_filesystem_storage.snapshots_detail
       snapshots.each do |snapshot| 

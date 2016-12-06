@@ -1,6 +1,8 @@
 module SharedFilesystemStorage
   module Shares
     class RulesController < ApplicationController
+      authorization_context 'shared_filesystem_storage'
+      authorization_required
       
       def index
         render json: services.shared_filesystem_storage.share_rules(params[:share_id])
