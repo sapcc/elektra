@@ -1,5 +1,8 @@
 module SharedFilesystemStorage
   class ShareNetworksController < ApplicationController
+    authorization_context 'shared_filesystem_storage'
+    authorization_required
+    
     def index
       share_networks = services.shared_filesystem_storage.share_networks_detail
       # extend attributes with permissions

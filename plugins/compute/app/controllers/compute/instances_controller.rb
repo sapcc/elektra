@@ -1,9 +1,12 @@
 module Compute
   class InstancesController < Compute::ApplicationController
+    
+    authorization_context 'compute'
+    authorization_required
+    
     def index
       @instances = []
       if @scoped_project_id
-        enforce_permissions("::compute:instance_list")
         @instances = services.compute.servers
 
         # get/calculate quota data

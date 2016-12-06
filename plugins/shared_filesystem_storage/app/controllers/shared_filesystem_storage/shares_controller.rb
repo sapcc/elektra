@@ -1,5 +1,8 @@
 module SharedFilesystemStorage
   class SharesController < ApplicationController
+    authorization_context 'shared_filesystem_storage'
+    authorization_required
+    
     def index
       @shares = services.shared_filesystem_storage.shares_detail
       @shares.each do |share| 

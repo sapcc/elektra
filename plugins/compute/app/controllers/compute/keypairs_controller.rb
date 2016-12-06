@@ -2,9 +2,9 @@ module Compute
   class KeypairsController < ::DashboardController
 
     authorization_context 'compute'
+    authorization_required
 
     def index
-      enforce_permissions("::compute:keypair_list")
       @user_keypairs = services.compute.keypairs
     end
 

@@ -2,6 +2,7 @@ module Compute
   class FlavorsController < ::DashboardController
 
     authorization_context 'compute'
+    authorization_required
 
     def index
       @flavors = paginatable(per_page: 15) do |pagination_options|
