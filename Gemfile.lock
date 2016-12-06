@@ -129,11 +129,6 @@ PATH
   specs:
     shared_filesystem_storage (0.0.1)
 
-PATH
-  remote: plugins/webconsole
-  specs:
-    webconsole (0.0.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -601,4 +596,3 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
-  webconsole!
