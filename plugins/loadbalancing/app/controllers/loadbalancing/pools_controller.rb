@@ -117,7 +117,7 @@ module Loadbalancing
 
     def load_objects
       @pool = services.loadbalancing.find_pool(params[:id]) if params[:id]
-      @listener = services.loadbalancing.find_listener(@pool.listeners.first['id']) if @pool && @pool.listeners && @pool.listeners.first['id']
+      @listener = services.loadbalancing.find_listener(@pool.listeners.first['id']) if @pool && @pool.listeners && @pool.listeners.first
       @pool.listener = @listener if @listener
     end
 
