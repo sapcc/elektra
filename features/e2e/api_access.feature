@@ -6,6 +6,7 @@ Feature: API Access
     And I log in as test_user
     Then I am redirected to domain path "identity/home"
 
+  @wip
   Scenario: The Web Console page is reachable
     When I visit project path "webconsole"
     Then the page status code is successful
