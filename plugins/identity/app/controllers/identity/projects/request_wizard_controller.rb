@@ -37,6 +37,11 @@ module Identity
                         "name": "Approve",
                         "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol)}?overlay=#{plugin('identity').domains_create_project_path(project_id: nil)}"
                     }
+                },
+                nil, #no domain override
+                {
+                    domain_name: @scoped_domain_name,
+                    region: current_region
                 }
             )
             unless inquiry.errors?

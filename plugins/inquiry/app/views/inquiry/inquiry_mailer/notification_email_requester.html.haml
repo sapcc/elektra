@@ -27,6 +27,16 @@
       Your request details:
       %br
       = "---"
+      - if @inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['region']
+        %br
+        %string CC Region:
+        = @inquiry_step.inquiry.tags['region']
+      %br
+      %strong CC Domain:
+      - if (@inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['domain_name'])
+        = "#{@inquiry_step.inquiry.tags['domain_name']} (#{@inquiry_step.inquiry.domain_id})"
+      - else
+        = @inquiry_step.inquiry.domain_id
       %br
       %strong Resource:
       = @inquiry_step.inquiry.kind

@@ -4,11 +4,20 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
 
   %body
-    %p A request needs your attention!
+    %p A resource request needs your attention!
 
     %p
-      %b Domain:
-      = @inquiry_step.inquiry.domain_id
+      - if @inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['region']
+        %br
+        %b CC Region:
+        = @inquiry_step.inquiry.tags['region']
+
+      %br
+      %b CC Domain:
+      - if (@inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['domain_name'])
+        = "#{@inquiry_step.inquiry.tags['domain_name']} (#{@inquiry_step.inquiry.domain_id})"
+      - else
+        = @inquiry_step.inquiry.domain_id
 
       %br
       %b Request for:
@@ -44,6 +53,9 @@
       %br
       %b Request specific data:
       %pre= JSON.pretty_generate(@inquiry_step.inquiry.payload) rescue "Error during rendering of JSON payload!"
+      = "---"
+      %b Additional data:
+      %pre= JSON.pretty_generate(@inquiry_step.inquiry.tags) rescue "None"
       = "---"
 
     %p

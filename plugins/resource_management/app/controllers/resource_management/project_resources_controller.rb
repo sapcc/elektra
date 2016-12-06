@@ -68,6 +68,11 @@ module ResourceManagement
             "action": "#{base_url}?overlay=#{overlay_url}",
           },
         },
+        nil,
+        {
+            domain_name: @scoped_domain_name,
+            region: current_region
+        }
       )
       if inquiry.errors?
         @has_errors = true
