@@ -74,6 +74,18 @@
       as:                 :text,
       required:           false}
 
+    .form-group
+      = label_tag 'One time root password', nil, class: 'col-sm-4 control-label'
+      .col-sm-8
+        = link_to "Add to user data", '#', class: 'btn btn-primary', data: {toggle: 'initialRootPassword'}
+        %p.help-block
+          %i.fa.fa-info-circle
+
+          This is a one-time password only, <b>please remember it for your first login</b>. The password will be provisioned
+          onto the server via cloud-config. Its purpose is logging into the server via VNC console in case of severe errors
+          that prevent logging in via ssh.
+
+
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
