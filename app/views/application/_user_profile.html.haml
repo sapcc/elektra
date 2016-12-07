@@ -24,13 +24,12 @@
                   %br
                   %b Project:
                   = current_user.project_name
-              %tr
-                %th Roles
-                %td
+                  %br
+                  %b Assigned Roles: 
                   = current_user.role_names.join(', ')
                   - if current_user.is_allowed?('identity:project_member_list')
                     %br
-                    = link_to 'edit roles', plugin('identity').projects_members_path
+                    = link_to 'edit role assignments', plugin('identity').projects_members_path
 
 
         .modal-footer

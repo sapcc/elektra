@@ -1,6 +1,6 @@
 module Networking
   class NetworksController < DashboardController
-    before_filter :load_type
+    before_filter :load_type, except: [:subnets]
     def index
       @networks = services.networking.networks('router:external' => @network_type == 'external')
 
@@ -87,6 +87,10 @@ module Networking
         format.js {}
         format.html { redirect_to plugin('networking').send("networks_#{@network_type}_index_path") }
       end
+    end
+    
+    def subnets
+      render json: services.networking.subnets(network_id: params[:network_id])
     end
 
     private

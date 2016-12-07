@@ -1,4 +1,4 @@
-@javascript
+@javascript @admin
 Feature: Shared File System Storage
   Background:
     Given Test user has accepted terms of use

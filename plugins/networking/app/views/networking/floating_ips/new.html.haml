@@ -16,6 +16,10 @@
         as: :select,
         collection: @floating_networks
 
+    %fieldset#subnets
+      = f.input :floating_subnet_id,
+        as: :select,
+        collection: @floating_networks    
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
