@@ -1,7 +1,10 @@
 module UrlHelper
   # prefixed to not interfere with ActionDispatch::Routing::UrlFor
   def sap_url_for(servicename)
-    return "https://#{servicename}.#{current_region}.#{request.domain}/"
+    # special handling for global services
+    region = servicename == 'documentation' ? 'global' : "#{current_region}"
+    
+    return "https://#{servicename}.#{region}.#{request.domain}/"
   end
 
   def url_for_avatar
