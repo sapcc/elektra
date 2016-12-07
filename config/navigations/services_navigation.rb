@@ -77,8 +77,7 @@ SimpleNavigation::Configuration.run do |navigation|
      bare_metal_hana_nav.item :bare_metal_hana, 'HANA Servers', -> {plugin('bare_metal_hana').entry_path}, if: -> { services.available?(:bare_metal_hana,:nodes)}, highlights_on: Proc.new { params[:controller][/bare_metal_hana\/.*/] }
    end
 
-    primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "api-icon"},
-    if: -> {services.available?(:webconsole)} do |api_nav|
+    primary.item :api, 'API Access', nil, html: {class: "fancy-nav-header", 'data-icon': "api-icon"} do |api_nav|
       api_nav.item :web_console, 'Web Console', -> { plugin('webconsole').root_path}, if: -> { services.available?(:webconsole)}, highlights_on: Proc.new { params[:controller][/webconsole\/.*/] }
       api_nav.item :api_endpoints, 'API Endpoints for Clients', -> { plugin('identity').projects_api_endpoints_path}
 
