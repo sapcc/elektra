@@ -78,6 +78,9 @@
       = label_tag 'One time root password', nil, class: 'col-sm-4 control-label'
       .col-sm-8
         = link_to "Add to user data", '#', class: 'btn btn-primary', data: {toggle: 'initialRootPassword'}
+        %span.release-state-wrapper
+          = release_state_tag("experimental", "Experimental: Currently works for RHEL7. Other OS version still under development.")
+
         %p.help-block
           %i.fa.fa-info-circle
 
