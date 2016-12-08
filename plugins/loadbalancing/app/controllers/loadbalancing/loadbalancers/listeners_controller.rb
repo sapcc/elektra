@@ -61,13 +61,33 @@ module Loadbalancing
       def destroy
         @listener = services.loadbalancing.find_listener(params[:id])
         if @listener.destroy
+          @listener.in_transition = true
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           audit_logger.info(current_user, "has deleted", @listener)
-          redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener successfully deleted.'
+          flash.now[:error] = "Listenerwill be deleted."
+          render template: 'loadbalancing/loadbalancers/listeners/update_item.js'
+          #redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener successfully deleted.'
         else
           redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']),
                       flash: { error: "Listener deletion failed -> #{@listener.errors.full_messages.to_sentence}" }
         end
       end
+
+      # update instance table row (ajax call)
+      def update_item
+        begin
+          @listener = services.loadbalancing.find_listener(params[:id])
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+          respond_to do |format|
+            format.js do
+              @listener if @listener
+            end
+          end
+        rescue => e
+          return nil
+        end
+      end
+
 
       private
 

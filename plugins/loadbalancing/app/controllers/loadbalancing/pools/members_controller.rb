@@ -51,7 +51,7 @@ module Loadbalancing
             member.attributes = {pool_id: params[:pool_id], address: new_member['address'], protocol_port: new_member['protocol_port'],
                                  weight: new_member['weight'], subnet_id: vip_subnet_id}
 
-            # Horrible hack for adding members when LB is instate PENDING
+            # Horrible hack for adding members when LB is in state PENDING
             unless member.save
               raise if member.errors.messages.to_s.match("Invalid state PENDING_UPDATE of loadbalancer resource")
               success = false
@@ -79,7 +79,7 @@ module Loadbalancing
         pool = services.loadbalancing.find_pool(pool_id)
         if services.loadbalancing.delete_pool_member(pool_id, member_id)
           audit_logger.info(current_user, "has deleted", member)
-          redirect_to show_details_pool_path(pool_id), notice: 'Pool Member successfully deleted.'
+          redirect_to show_details_pool_path(pool_id)
         else
           redirect_to show_details_pool_path(pool_id),
                       flash: {error: "Pool Member deletion failed -> #{member.errors.full_messages.to_sentence}"}

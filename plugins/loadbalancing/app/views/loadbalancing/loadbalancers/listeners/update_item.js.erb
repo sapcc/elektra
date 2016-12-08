@@ -1,0 +1,6 @@
+<%if @listener%>
+$("#loadbalancer_listener_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: @listener})) %>");
+$("#loadbalancer_listener_<%=params[:id]%>").update();
+<%else%>
+$("#loadbalancer_listener_<%=params[:id]%>").remove();
+<%end%>

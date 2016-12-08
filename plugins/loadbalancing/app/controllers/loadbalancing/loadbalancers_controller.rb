@@ -30,7 +30,8 @@ module Loadbalancing
 
       if @loadbalancer.save
         audit_logger.info(current_user, "has created", @loadbalancer)
-        redirect_to loadbalancers_path, notice: 'Load Balancer successfully created.'
+        render template: 'loadbalancing/loadbalancers/create.js'
+        #redirect_to loadbalancers_path, notice: 'Load Balancer successfully created.'
       else
         @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
         render :new
@@ -58,11 +59,13 @@ module Loadbalancing
     def destroy
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       if @loadbalancer.destroy
+        @loadbalancer.provisioning_status = "PENDING_DELETE"
         audit_logger.info(current_user, "has deleted", @loadbalancer)
         flash.now[:error] = "Load Balancer will be deleted."
-        redirect_to loadbalancers_path
+        render template: 'loadbalancing/loadbalancers/update_item.js'
+#        redirect_to loadbalancers_path
       else
-        flash.now[:error] = "Load Balancer deletion failerd."
+        flash.now[:error] = "Load Balancer deletion failed."
         redirect_to loadbalancers_path
       end
     end
@@ -123,6 +126,20 @@ module Loadbalancing
             @loadbalancer.floating_ip = nil
           end
         }
+      end
+    end
+
+    # update instance table row (ajax call)
+    def update_item
+      begin
+        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+        respond_to do |format|
+          format.js do
+            @loadbalancer if @loadbalancer
+          end
+        end
+      rescue => e
+        return nil
       end
     end
 

@@ -88,7 +88,6 @@ module Loadbalancing
         return
       end
 
-      sleep 3
       count = 0
       p_error = false
       until @pool.destroy

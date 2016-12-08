@@ -43,7 +43,7 @@ module Identity
             end
           end
 
-          flash[:notice] = "Project #{@project.name} successfully created."
+          flash.now[:notice] = "Project #{@project.name} successfully created."
           if @inquiry
             inquiry = services.inquiry.set_inquiry_state(@inquiry.id, :approved, "Project #{@project.name} approved and created by #{current_user.full_name}")
             services.identity.grant_project_user_role_by_role_name(@project.id, inquiry.requester.uid, 'admin')
