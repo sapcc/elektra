@@ -34,7 +34,5 @@
             = active_service_breadcrumb
 
 
-        - if release_state
-          %span{class: "release-state release-state-#{release_state}", data: {toggle: "tooltip"}, title: "Experimental: There will be errors and/or missing features!"}
-            %i{class: "#{release_state}-icon"}
-            = release_state.titleize
+
+        = release_state_tag(release_state) if release_state

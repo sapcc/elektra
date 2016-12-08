@@ -311,4 +311,25 @@ module ApplicationHelper
     end
   end
 
+
+  def release_state_tag(release_state, explanation = nil)
+    unless explanation
+      explanation = case release_state
+                    when "experimental"
+                      "Experimental: There will be errors and/or missing features!"
+                    when "tech_preview"
+                      "Tech Preview: Functional preview. Not feature complete."
+                    when "beta"
+                      "Beta: Almost reade for release"
+                    end
+    end
+
+    capture_haml do
+      haml_tag :span, class: "release-state release-state-#{release_state}", data: {toggle: "tooltip"}, title: explanation do
+        haml_tag :i, class: "#{release_state}-icon"
+        haml_concat release_state.titleize
+      end
+    end
+  end
+
 end

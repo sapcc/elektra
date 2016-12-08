@@ -35,6 +35,8 @@ if (typeof(window.console) == "undefined" || typeof(window.console.log) == "unde
 $ ->
   # Tooltips
   $('abbr[title], abbr[data-original-title]').tooltip(delay: { "show": 300 })
+  # init tooltips
+  $('[data-toggle="tooltip"]').tooltip()
 
   # init Form
   Dashboard.initForm()
@@ -60,6 +62,9 @@ $ ->
     e.preventDefault()
     $('.plugin-help').toggleClass('visible')
 
+
+
+
   # ---------------------------------------------
   # Expandable Tree
 
@@ -78,7 +83,7 @@ $ ->
 
 
 # -------------------------------------------------------------------------------------------------------------
-# Initialize Modal Windows          
+# Initialize Modal Windows
 $(document).on 'modal:contentUpdated', (e) ->
   $( "[data-autocomplete-url]" ).each () ->
     $input = $(this)
@@ -93,7 +98,7 @@ $(document).on 'modal:contentUpdated', (e) ->
           .attr( "data-value", item.name )
           .append( item.name )
           .appendTo( ul );
-          
+
   try
     # define target selector dependent on id or class
     selector = "##{e.target.id}" if e.target.id
