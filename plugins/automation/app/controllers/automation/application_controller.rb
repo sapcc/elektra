@@ -1,7 +1,7 @@
 module Automation
 
   class ApplicationController < DashboardController
-    rescue_and_render_error_page [
+    rescue_and_render_exception_page [
       {
         "ArcClient::ApiError" => {
           header_title: "Monsoon Automation", 

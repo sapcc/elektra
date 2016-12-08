@@ -1,0 +1,20 @@
+- @header_title ||= "Application"
+- @title ||= "Warning"
+- @description ||= "Service unavailable"
+
+- if modal?
+  = content_for :title do
+    %span{class: "#{plugin_name}-icon warning-icon"}
+    %span.active
+      = "#{@header_title} Warning"
+
+  .modal-body
+    %h3= @title.html_safe
+    %p= h(@description)
+
+  .modal-footer
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+
+- else
+  %h3= @title.html_safe
+  %p= h(@description)

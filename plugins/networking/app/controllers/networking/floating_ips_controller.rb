@@ -1,5 +1,10 @@
 module Networking
   class FloatingIpsController < DashboardController
+    # set policy context
+    authorization_context 'networking'
+    # enforce permission checks. This will automatically investigate the rule name.
+    authorization_required
+    
     def index
       @floating_ips = services.networking.project_floating_ips(@scoped_project_id)    
       @quota_data = services.resource_management.quota_data([

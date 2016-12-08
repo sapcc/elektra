@@ -39,15 +39,15 @@ class DashboardController < ::ScopeController
     if error.message.match(/Could not find token/i)
       redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
     else
-      render_error_page(error,{title: 'Backend Service Error'})
+      render_exception_page(error,{title: 'Backend Service Error'})
     end
   end
 
   rescue_from "Core::ServiceLayer::Errors::ApiError" do |error|
     if error.response_data and error.response_data["error"] and error.response_data["error"]["code"]==403
-      render_error_page(error,{title: 'Permission Denied', description: error.response_data["error"]["message"] || "You are not authorized to request this page."})
+      render_exception_page(error,{title: 'Permission Denied', description: error.response_data["error"]["message"] || "You are not authorized to request this page."})
     else
-      render_error_page(error, title: 'Backend Service Error')
+      render_exception_page(error, title: 'Backend Service Error')
     end
   end
 
@@ -56,15 +56,17 @@ class DashboardController < ::ScopeController
   end
 
   # catch all mentioned errors and render error page
-  rescue_and_render_error_page [
+  rescue_and_render_exception_page [
     {
       "MonsoonOpenstackAuth::Authorization::SecurityViolation" => {
         title: 'Unauthorized', 
         sentry: false,
+        warning: true,
+        status: 401,
         description: -> (e,c) {
-          m = e.message
+          m = 'You are not authorized to view this page.'
           if e.involved_roles and e.involved_roles.length>0
-            m += " Please check (user profile or role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
+            m += " Please check (role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
           end 
           m
         }

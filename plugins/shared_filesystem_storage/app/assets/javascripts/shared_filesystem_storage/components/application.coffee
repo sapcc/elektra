@@ -165,7 +165,6 @@ shared_filesystem_storage.Application = React.createClass
 
       div { className: 'tab-content'},
         for tab in tabs
-          console.log tab, @can('list',tab.uid)
           if @can('list',tab.uid)
             React.createElement shared_filesystem_storage.Panel, 
               active: (@state.activeTabUid is tab.uid)

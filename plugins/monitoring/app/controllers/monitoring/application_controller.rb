@@ -5,7 +5,7 @@ module Monitoring
     authorization_context 'monitoring'
 
     # handle api errors
-    rescue_and_render_error_page [ 
+    rescue_and_render_exception_page [ 
       { "Core::ServiceLayer::Errors::ApiError" => { 
         title: 'API Error',
         description: -> e,_ { 

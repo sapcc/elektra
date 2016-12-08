@@ -5,20 +5,19 @@
     .toolbar
       = link_to 'Allocate new', plugin('networking').new_floating_ip_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-  - if current_user.is_allowed?("networking:floating_ip_list", {})
-    %table.table#floating_ips
-      %thead
-        %tr
-          %th Floating IP Address
-          %th Fixed IP Address
-          %th Status
-          %th.snug
-      %tbody
-        - if @floating_ips.length==0
-          %tr{data:{empty:true}}
-            %td{colspa: 5} No Floating IP available
-        - else
-          - @floating_ips.each do | floating_ip |
-            = render partial: 'item', locals: {floating_ip: floating_ip}
+  %table.table#floating_ips
+    %thead
+      %tr
+        %th Floating IP Address
+        %th Fixed IP Address
+        %th Status
+        %th.snug
+    %tbody
+      - if @floating_ips.length==0
+        %tr{data:{empty:true}}
+          %td{colspa: 5} No Floating IP available
+      - else
+        - @floating_ips.each do | floating_ip |
+          = render partial: 'item', locals: {floating_ip: floating_ip}
 - else
   = render "application/projects_list"

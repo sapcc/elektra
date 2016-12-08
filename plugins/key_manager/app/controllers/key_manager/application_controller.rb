@@ -1,7 +1,7 @@
 module KeyManager
 
   class ApplicationController < ::DashboardController
-    rescue_and_render_error_page [
+    rescue_and_render_exception_page [
       {
        "KeyManager::ApiError" => {
          header_title: "Monsoon Key-Manager",

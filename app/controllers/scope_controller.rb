@@ -54,7 +54,7 @@ class ScopeController < ::ApplicationController
     end
   end
   
-  rescue_and_render_error_page [
+  rescue_and_render_exception_page [
     {
       "Core::Error::ServiceUserNotAuthenticated" => {
         title: "Unsupported Domain",

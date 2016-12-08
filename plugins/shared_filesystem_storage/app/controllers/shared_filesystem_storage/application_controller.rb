@@ -11,22 +11,6 @@ module SharedFilesystemStorage
     # enforce permission checks. This will automatically investigate the rule name.
     authorization_required
     
-    # catch security violation errors
-    rescue_from MonsoonOpenstackAuth::Authorization::SecurityViolation do |e|
-      m = e.message
-      if e.involved_roles and e.involved_roles.is_a?(Array) and e.involved_roles.length>0
-        m += " Please check (user profile or role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
-      end 
-      m
-      
-      respond_to do |format|
-        format.json {render json: {error: m}, status: :unauthorized} 
-        format.html {
-          render_error_page(e, title: 'Unauthorized', description: m)
-        }
-      end
-    end
-    
     def show
       @permissions = {
         shares: {

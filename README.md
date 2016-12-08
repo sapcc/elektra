@@ -238,7 +238,7 @@ Catch Errors in Controller
 The Elektra ApplicationController provides a class method which allows the catching of errors and will render a well designed error page.
 
 ```ruby
-rescue_and_render_error_page [
+rescue_and_render_exception_pagepage [
   { "Excon::Error" => { title: 'Backend Service Error', description: 'Api Error', details: -> e {e.backtrace.join("\n")}}},
   { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }},
   "Core::ServiceLayer::Errors::ApiError"
@@ -247,15 +247,14 @@ rescue_and_render_error_page [
 
 Errors that are caught in this way, are rendered within the application layout so that the navigation remains visible. For example if a service is unavailable the user gets to see an error but she can still navigate to other services.
 
-### How to use
-
-rescue_and_render_error_page accepts an array of hashes and/or strings. In case you want to overwrite the rendered attributes you should provide a hash with a mapping.
+### How to urescue_and_render_exception_pagepage accepts an array of hashes and/or strings. In case you want to overwrite the rendered attributes you should provide a hash with a mapping.
 
 Available attributes:
 * ```title``` (error title)
 * ```description``` (error message)
 * ```details``` (some details like backtrace)
-* ```error_id``` (default is request uuid)
+* ```exception_id``` (default is request uuid)
+* ```warnign``` (default false. If true a warning page is rendered instead of error page)
 
 
 Display Quota Data
