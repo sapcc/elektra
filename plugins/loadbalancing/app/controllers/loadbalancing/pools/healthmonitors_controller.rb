@@ -19,8 +19,8 @@ module Loadbalancing
 
         if @healthmonitor.save
           audit_logger.info(current_user, "has created", @healthmonitor)
-          #render template: 'loadbalancing/pools/healthmonitors/update_item_with_close.js'
-          redirect_to show_details_pool_path(@pool.id), notice: 'Healthmonitor was successfully created.'
+          render template: 'loadbalancing/pools/healthmonitors/update_item_with_close.js'
+          #redirect_to show_details_pool_path(@pool.id), notice: 'Healthmonitor was successfully created.'
         else
           render :new
         end
@@ -32,6 +32,7 @@ module Loadbalancing
       end
 
       def update
+        @pool = services.loadbalancing.find_pool(params[:pool_id])
         @healthmonitor = services.loadbalancing.find_healthmonitor(params[:id])
         params[:healthmonitor][:type] = @healthmonitor.type
         if @healthmonitor.update(healthmonitor_params)
@@ -45,10 +46,12 @@ module Loadbalancing
 
       def destroy
         @healthmonitor = services.loadbalancing.find_healthmonitor(params[:id])
-        pool = services.loadbalancing.find_pool(@healthmonitor.pools.first['id'])
+        @pool = services.loadbalancing.find_pool(@healthmonitor.pools.first['id'])
         if @healthmonitor.destroy
           audit_logger.info(current_user, "has deleted", @healthmonitor)
-          redirect_to show_details_pool_path(pool.id), notice: 'Health Monitor successfully deleted.'
+          @healthmonitor = nil
+          render template: 'loadbalancing/pools/healthmonitors/update_item_with_close.js'
+          #redirect_to show_details_pool_path(pool.id), notice: 'Health Monitor successfully deleted.'
         else
           redirect_to show_details_pool_path(pool.id),
                       flash: {error: "Health Monitor  deletion failed -> #{@healthmonitor.errors.full_messages.to_sentence}"}

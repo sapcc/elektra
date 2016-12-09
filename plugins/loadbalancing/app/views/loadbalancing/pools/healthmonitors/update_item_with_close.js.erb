@@ -1,3 +1,8 @@
-$("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/pools/healthmonitors/item', locals: {healthmonitor: @healthmonitor })) %>");
+<%if @healthmonitor%>
+$("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/pools/healthmonitors/item', locals: {pool: @pool, healthmonitor: @healthmonitor })) %>");
 $("#healthmonitor").update();
 MoModal.close();
+<%else%>
+$("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/pools/healthmonitors/item', locals: {pool: @pool, healthmonitor: @healthmonitor })) %>");
+$("#healthmonitor").update();
+<%end%>
