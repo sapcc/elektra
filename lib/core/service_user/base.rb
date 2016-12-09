@@ -80,8 +80,8 @@ module Core
             domain_name: @user_domain_name,
             scoped_token: scope
           )
-        rescue => e     
-          if e.respond_to?(:code) and e.code==401 and scope[:domain].has_key?(:id)
+        rescue => e   
+          if e.respond_to?(:code) and [400,401].include?(e.code) and scope[:domain].has_key?(:id)
             #  try to authenticate service user by scope domain name
             scope = {domain: {name: @current_domain}}
             retry

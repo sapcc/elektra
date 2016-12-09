@@ -39,7 +39,9 @@ MonsoonOpenstackAuth.configure do |auth|
   auth.authorization.controller_action_map = {
     :index   => 'list',
     :show    => 'get',
-    :destroy => 'delete'
+    :destroy => 'delete',
+    :new     => 'create',
+    :edit    => 'update'
   }
 
   # optional, default=false
