@@ -33,6 +33,10 @@ module Monitoring
       read(:alarm_definition)["name"] || nil
     end
 
+    def alarm_description
+      read(:alarm_definition)["description"] || nil
+    end
+
     def used_metrics
       metrics = read(:metrics) || nil
       return nil unless metrics
