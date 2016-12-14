@@ -8,8 +8,8 @@
 = simple_form_for @listener, url: plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: @loadbalancer.id), method: :post, remote: request.xhr?, html: {id: 'listener_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @listener.errors.empty?
-      %p.alert.alert-error= @listener.errors.full_messages.to_sentence
+
+    = render :partial => 'loadbalancing/application/errors', locals: {object: @listener}
 
     = render partial: 'form', locals: {f: f, update: false}
 

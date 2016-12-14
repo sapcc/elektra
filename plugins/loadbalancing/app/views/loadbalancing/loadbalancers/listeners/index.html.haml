@@ -1,45 +1,36 @@
-
 = content_for :main_toolbar do
-  = link_to 'Load Balancing', plugin('loadbalancing').loadbalancers_path()
+  = link_to 'Load Balancers', plugin('loadbalancing').loadbalancers_path()
   = ' / '
-  = link_to "#{@loadbalancer.name} / Listeners" , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
+  = link_to "Listeners" , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
 
-.row
-  .col-md-9
-    - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      .toolbar.toolbar-aligntop
-        - if true #@loadbalancer.active?
-          = link_to 'Add New Listener', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
-        - else
-          = link_to 'Add New Listener', '#', disabled: true, class: 'btn btn-primary btn-sm'
+%ul.nav.nav-tabs
+  %li.active{role: "presentation"}= link_to 'Listeners', '#listeners', aria: {controls:"listeners"}, role: "tab", data: {toggle:"tab"}
+  %li{role: "presentation"}= link_to 'Pools', plugin('loadbalancing').send("loadbalancer_pools_path", loadbalancer_id: @loadbalancer.id)
 
-    %table.table.listeners
-      %tr
-        %th Name
-        %th Description
-        %th Protocol
-        %th Protocol Port
-        %th Pool
-        %th
-      -unless @listeners.blank?
-        - @listeners.each do |listener|
-          = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
-      -else
+.tab-content
+  #listeners.tab-pane.active{role: "tabpanel"}
+  .row
+    .col-md-9
+      - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        .toolbar.toolbar-aligntop
+          - if true #@loadbalancer.active?
+            = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          - else
+            = link_to 'Create new', '#', disabled: true, class: 'btn btn-primary btn-sm'
+
+      %table.table.listeners
         %tr
-          %td{colspan:5} No Listeners defined
-  .col-md-3
-    .infobox
-      %h4.action-heading
-        Loadbalancer Info
-      %table.table
-        %tbody
+          %th Name
+          %th Description
+          %th Protocol
+          %th Protocol Port
+          %th Default Pool
+          %th
+        -unless @listeners.blank?
+          - @listeners.each do |listener|
+            = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
+        -else
           %tr
-            %th.snug-nowrap
-              Name:
-            %td
-              = @loadbalancer.name
-          %tr
-            %th.snug-nowrap
-              Description:
-            %td
-              = @loadbalancer.description
+            %td{colspan:5} No Listeners defined
+    .col-md-3
+      = render :partial => 'loadbalancing/loadbalancers/info', locals: {loadbalancer: @loadbalancer}

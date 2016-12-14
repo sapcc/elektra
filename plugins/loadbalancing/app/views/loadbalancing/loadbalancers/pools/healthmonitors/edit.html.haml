@@ -5,11 +5,11 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @healthmonitor, url: plugin('loadbalancing').pool_healthmonitor_path(pool_id: @pool.id, id: @healthmonitor.id), method: :put, remote: request.xhr?, html: {id: 'healthmonitor_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @healthmonitor, url: plugin('loadbalancing').loadbalancer_pool_healthmonitor_path(loadbalancer_id: @loadbalancer.id, pool_id: @pool.id, id: @healthmonitor.id), method: :put, remote: request.xhr?, html: {id: 'healthmonitor_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @healthmonitor.errors.empty?
-      %p.alert.alert-error= @healthmonitor.errors.full_messages.to_sentence
+
+    = render :partial => 'loadbalancing/application/errors', locals: {object: @healthmonitor}
 
     = render partial: 'form', locals: {f: f, update: true}
 

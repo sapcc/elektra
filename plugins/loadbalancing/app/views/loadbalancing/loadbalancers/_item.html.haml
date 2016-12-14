@@ -26,6 +26,7 @@
           %i.fa.fa-globe.fa-fw
           = loadbalancer.floating_ip.floating_ip_address
   %td= loadbalancer.listeners.count
+  %td= loadbalancer.pools.count
 
   %td.snug
     .btn-group
@@ -39,11 +40,12 @@
       %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
         - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li= link_to 'Show', plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id), data: {modal: true}
-          %li= link_to 'Show Listeners', plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
+        - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) && loadbalancer.active?
+          %li= link_to 'Edit', plugin('loadbalancing').edit_loadbalancer_path(id: loadbalancer.id), data: {modal: true}
         - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) && loadbalancer.active?
           %li.divider
-          %li= link_to 'Edit', plugin('loadbalancing').edit_loadbalancer_path(id: loadbalancer.id), data: {modal: true}
-
+          %li= link_to 'Listeners', plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
+          %li= link_to 'Pools', plugin('loadbalancing').loadbalancer_pools_path(loadbalancer_id: loadbalancer.id)
         - if current_user.is_allowed?("loadbalancing:loadbalancer_assign_ip", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li.divider
           - if loadbalancer.floating_ip
@@ -51,7 +53,7 @@
           - else
             %li= link_to 'Attach Floating IP', new_floatingip_loadbalancer_path(id: loadbalancer.id), data: {modal: true }
 
-        - if loadbalancer.listeners.count == 0 and current_user.is_allowed?("loadbalancing:resource_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        - if loadbalancer.delete? and current_user.is_allowed?("loadbalancing:resource_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li.divider
           %li= link_to 'Delete',
             plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id),

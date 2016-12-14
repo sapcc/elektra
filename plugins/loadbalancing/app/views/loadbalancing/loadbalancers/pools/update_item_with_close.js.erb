@@ -1,0 +1,7 @@
+<%if @pool %>
+$("#pool").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/item_detail', locals: {pool: @pool })) %>");
+$("#pool").update();
+MoModal.close();
+<% else %>
+$("#pool").remove();
+<% end %>

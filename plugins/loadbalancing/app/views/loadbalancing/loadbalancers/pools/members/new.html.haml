@@ -11,7 +11,7 @@
     .toolbar
       %h4
         Members
-    = form_tag plugin('loadbalancing').pool_members_path(@pool.id), method: :post , remote: true, id: 'newMembers' do
+    = form_tag plugin('loadbalancing').loadbalancer_pool_members_path(@pool.id, loadbalancer_id: @loadbalancer.id), method: :post , remote: true, id: 'newMembers' do
       %table.table.table-condensed#newmembers
         %thead
           %tr
@@ -26,11 +26,12 @@
               %td{colspa: 4} No Members available
           - else
             - @members.each do | member |
-              = render partial: 'loadbalancing/pools/members/item', locals: {pool: @pool, member: member, nodestroy: :true}
-            - if @error_members
-              = render partial: 'loadbalancing/pools/members/add_members', locals: {pool: @pool, members: @error_members}
+              = render partial: 'loadbalancing/loadbalancers/pools/members/item', locals: {pool: @pool, member: member, nodestroy: :true}
+          - if @error_members
+            = render partial: 'loadbalancing/loadbalancers/pools/members/add_members', locals: {pool: @pool, members: @error_members}
 
       %div.buttons{class: 'modal-footer'}
+        = link_to 'Cancel', plugin('loadbalancing').show_details_loadbalancer_pool_path(id: @pool.id, loadbalancer_id: @loadbalancer.id), class: 'btn btn-default'
         - if current_user.is_allowed?('loadbalancing:resource_update', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           = button_tag "Save", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
 
@@ -42,7 +43,7 @@
     .toolbar
       %h4
         Servers
-    = form_tag plugin('loadbalancing').add_pool_members_path(@pool.id), method: :post, remote: true do
+    = form_tag plugin('loadbalancing').add_loadbalancer_pool_members_path(pool_id: @pool.id, loadbalancer_id: @loadbalancer.id), method: :post, remote: true do
       %table.table.table-condensed#ips
         %thead
           %tr
@@ -56,13 +57,11 @@
               %td{colspa: 3} No Servers available
           - else
             - @ips.each do | ip |
-              = render partial: 'loadbalancing/pools/members/ip_item', locals: {ip: ip}
+              = render partial: 'loadbalancing/loadbalancers/pools/members/ip_item', locals: {ip: ip}
 
       %div.buttons{class: 'modal-footer'}
-        =# button_tag "Cancel", { class: 'btn btn-default submit', data: {dismiss:"modal"} }
-        = link_to 'Cancel', plugin('loadbalancing').show_details_pool_path(id: @pool.id ), class: 'btn btn-default'
         - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-          = link_to 'Add External', plugin('loadbalancing').add_external_pool_members_path(pool_id: @pool.id ), class: 'btn btn-default', remote: true
+          = link_to 'Add External', plugin('loadbalancing').add_external_loadbalancer_pool_members_path(pool_id: @pool.id, loadbalancer_id: @loadbalancer.id ), class: 'btn btn-default', remote: true
           = button_tag "Add", { class: 'btn btn-primary pull-right submit', data: { disable_with: "Please wait..." } }
 
   .col-md-1

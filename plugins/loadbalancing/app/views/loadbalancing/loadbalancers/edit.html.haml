@@ -8,8 +8,8 @@
 = simple_form_for @loadbalancer, url: plugin('loadbalancing').loadbalancer_path(@loadbalancer.id), method: :put, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - unless @loadbalancer.errors.empty?
-      %p.alert.alert-error= @loadbalancer.errors.full_messages.to_sentence
+
+    = render :partial => 'loadbalancing/application/errors', locals: {object: @loadbalancer}
 
     %fieldset
       = f.input :name, required: false

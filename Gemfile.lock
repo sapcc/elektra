@@ -26,7 +26,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: a123e1e7e4088132d4c3056ea52dfeb37abe0165
+  revision: 6219aed87be735a05f8fbdf3c2aad3022aacf0dd
   branch: master
   specs:
     fog-openstack (0.1.17)
@@ -187,10 +187,6 @@ GEM
     babel-transpiler (0.7.0)
       babel-source (>= 4.0, < 6)
       execjs (~> 2.0)
-    better_errors (2.1.1)
-      coderay (>= 1.0.0)
-      erubis (>= 2.6.6)
-      rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bootstrap-kaminari-views (0.0.5)
@@ -531,7 +527,6 @@ DEPENDENCIES
   arc-client!
   automation!
   bare_metal_hana!
-  better_errors
   block_storage!
   bootstrap-sass
   byebug
@@ -596,3 +591,6 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.13.6

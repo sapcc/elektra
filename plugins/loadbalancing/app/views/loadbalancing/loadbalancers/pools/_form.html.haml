@@ -7,6 +7,9 @@
   = f.input :session_persistence_type, as: :select, collection: Loadbalancing::Pool::SESSION_PERSISTENCE_TYPES
   = f.input :session_persistence_cookie_name, required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')}
   - if @pool.listener
-    = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener.id,required: true, disabled: update, label: 'Listener'
+    = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener.id, disabled: update, label: 'Default Pool for Listener'
+  - elsif @pool.loadbalancer
+    = f.input :loadbalancer_id, as: :select, collection: @loadbalancers, selected: @pool.loadbalancer.id, disabled: update, label: 'Assigned to Loadbalancer'
   - else
-    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Listener'
+    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Listener', required: true
+    = f.input :loadbalancer_id, as: :select, collection: @loadbalancers, disabled: update, label: 'Load Balancer', required: true

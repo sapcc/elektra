@@ -1,0 +1,20 @@
+.infobox
+  %h4.action-heading
+    Loadbalancer Info
+  %table.table
+    %tbody
+      %tr
+        %th.snug-nowrap
+          Name:
+        %td
+          = loadbalancer.name
+      %tr
+        %th.snug-nowrap
+          Description:
+        %td
+          = loadbalancer.description
+      %tr
+        %th.snug-nowrap
+          IP Address:
+        %td
+          = loadbalancer.vip_address

@@ -3,7 +3,7 @@
     %h4
       Pool
       - if current_user.is_allowed?('loadbalancing:resource_update', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-        = link_to 'Edit', plugin('loadbalancing').edit_pool_path(id: @pool.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+        = link_to 'Edit', plugin('loadbalancing').edit_loadbalancer_pool_path(id: @pool.id, ), data: {modal: true}, class: 'btn btn-primary btn-sm'
 
   - if pool.blank?
     %table.table.datatable
@@ -36,10 +36,10 @@
             %tr
               %th Session Persistence Cookie Name
               %td= pool.session_persistence_cookie_name
-        - if pool.listener
-          %tr
+        %tr
+          - if pool.listener
             %th Assigned to Listener
-            - if pool.listener.loadbalancers && pool.listener.loadbalancers.first['id']
-              %td= link_to pool.listener.name, plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: pool.listener.loadbalancers.first['id'], id: pool.listener.id), data: {modal: true}
-            - else
-              %td= pool.listener.name if pool.listener
+            %td= link_to pool.listener.name, plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: pool.listener.loadbalancers.first['id'], id: pool.listener.id), data: {modal: true}
+          - elsif pool.loadbalancer
+            %th Assigned to Loadbalancer
+            %td= link_to pool.loadbalancer.name, plugin('loadbalancing').loadbalancer_path(id: pool.loadbalancer.id), data: {modal: true}

@@ -1,16 +1,15 @@
 = content_for :main_toolbar do
-  = link_to 'Loadbalancing / Load Balancers', plugin('loadbalancing').loadbalancers_path()
+  = link_to 'Load Balancers', plugin('loadbalancing').loadbalancers_path()
 
 %ul.nav.nav-tabs
   %li.active{role: "presentation"}= link_to 'Load Balancers', '#loadbalancers', aria: {controls:"loadbalancers"}, role: "tab", data: {toggle:"tab"}
-  %li{role: "presentation"}= link_to 'Pools', plugin('loadbalancing').send("pools_path")
 
 .tab-content
   #loadbalancers.tab-pane.active{role: "tabpanel"}
   .row
     .col-md-12
       - if current_user.is_allowed?("loadbalancing:resource_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-        .toolbar
+        .toolbar.toolbar-aligntop
           = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
       - if current_user.is_allowed?("loadbalancing:resource_list", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
@@ -23,6 +22,7 @@
               %th Provisioning Status
               %th IP Address
               %th Listeners
+              %th Pools
               %th.snug
           %tbody
             - if @loadbalancers.length==0

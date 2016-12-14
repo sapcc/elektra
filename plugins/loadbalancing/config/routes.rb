@@ -14,18 +14,19 @@ Loadbalancing::Engine.routes.draw do
         get 'update_item'
       end
     end
-  end
-  resources :pools do
-    get :show_details, on: :member
-    resources :members, module: :pools do
-      collection do
-        post :add
-        get :add_external
+    resources :pools, module: :loadbalancers do
+      get :show_details, on: :member
+      resources :members, module: :pools do
+        collection do
+          post :add
+          get :add_external
+        end
+        member do
+          get 'update_item'
+        end
       end
-      member do
+      resources :healthmonitors, module: :pools do
       end
-    end
-    resources :healthmonitors, module: :pools do
     end
   end
 end

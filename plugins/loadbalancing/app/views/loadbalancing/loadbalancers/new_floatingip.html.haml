@@ -5,9 +5,8 @@
   = simple_form_for @floating_ip, url: plugin('loadbalancing').attach_floatingip_loadbalancer_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
     %div{class: modal? ? 'modal-body' : ''}
-      - if @floating_ip.errors.present?
-        %p.alert.alert-error
-          = @floating_ip.errors.full_messages.to_sentence + '.'
+
+      = render :partial => 'loadbalancing/application/errors', locals: {object: @floating_ip}
 
       = f.input :ip_id,
         as: :select,

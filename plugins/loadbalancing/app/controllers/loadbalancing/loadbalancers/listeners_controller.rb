@@ -64,7 +64,7 @@ module Loadbalancing
           @listener.in_transition = true
           @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           audit_logger.info(current_user, "has deleted", @listener)
-          flash.now[:error] = "Listenerwill be deleted."
+          flash.now[:error] = "Listener will be deleted."
           render template: 'loadbalancing/loadbalancers/listeners/update_item.js'
           #redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener successfully deleted.'
         else

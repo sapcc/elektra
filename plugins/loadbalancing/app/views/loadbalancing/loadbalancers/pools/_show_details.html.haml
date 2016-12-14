@@ -1,0 +1,10 @@
+.row
+  .col-md-6
+    = render partial: 'loadbalancing/loadbalancers/pools/item_detail', locals: {loadbalancer: @loadbalancer, pool: @pool}
+
+  .col-md-6
+    = render partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item_nav', locals: {loadbalancer: @loadbalancer, pool: @pool, healthmonitor: @healthmonitor}
+
+.row
+  .col-md-12
+    = render partial: 'loadbalancing/loadbalancers/pools/members/index', locals: {loadbalancer: @loadbalancer, pool: @pool, members: @members, servers: @servers}

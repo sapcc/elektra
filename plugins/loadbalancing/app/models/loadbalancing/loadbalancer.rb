@@ -18,5 +18,9 @@ module Loadbalancing
       end
     end
 
+    def delete?
+      return (self.listeners.blank?  && self.pools.blank?)
+    end
+
   end
 end

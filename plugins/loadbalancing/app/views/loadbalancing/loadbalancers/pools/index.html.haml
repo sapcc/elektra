@@ -1,0 +1,32 @@
+= content_for :main_toolbar do
+  = link_to 'Load Balancers', plugin('loadbalancing').loadbalancers_path()
+  = ' / '
+  = link_to "Pools" , plugin('loadbalancing').loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id)
+
+%ul.nav.nav-tabs
+  %li{role: "presentation"}= link_to 'Listeners', plugin('loadbalancing').send("loadbalancer_listeners_path", loadbalancer_id: @loadbalancer.id)
+  %li.active{role: "presentation"}= link_to 'Pools', '#pools', aria: {controls:"pools"}, role: "tab", data: {toggle:"tab"}
+
+.tab-content
+  #pools.tab-pane.active{role: "tabpanel"}
+  .row
+    .col-md-9
+      - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        .toolbar.toolbar-aligntop
+          = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_pool_path(loadbalancer_id: @loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+      %table.table#pools
+        %tr
+          %th Name
+          %th Description
+          %th Protocol
+          %th Algorithm
+          %th
+        -unless @pools.blank?
+          - @pools.each do |pool|
+            = render partial: 'loadbalancing/loadbalancers/pools/item', locals: {loadbalancer: @loadbalancer, pool: pool}
+        -else
+          %tr
+            %td{colspan:5} No Pool defined
+    .col-md-3
+      = render :partial => 'loadbalancing/loadbalancers/info', locals: {loadbalancer: @loadbalancer}
