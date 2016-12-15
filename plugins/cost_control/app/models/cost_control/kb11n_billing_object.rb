@@ -43,7 +43,7 @@ module CostControl
     end
 
     def costs
-      attributes.fetch('Costs', '')
+      attributes.fetch('Costs', "0").to_s.sub(",",".").to_f
     end
 
     def currency
@@ -84,6 +84,10 @@ module CostControl
 
     def item_text
       attributes.fetch('Item_text', '')
+    end
+
+    def costs=(value)
+      @attributes['Costs'] = value
     end
 
     def to_s

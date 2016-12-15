@@ -49,7 +49,10 @@ module ServiceLayer
         kb11n_billing_objects = driver.map_to(CostControl::Kb11nBillingObject).get_kb11n_billing_objects(project_id)
         kb11n_billing_objects.each do |kb11n_billing_object|
           kb11n = new_kb11n_billing_object(kb11n_billing_object.attributes) if kb11n_billing_object.attributes
-          @kb11n_billing_objects << kb11n if kb11n
+          # add only secondary costs
+          if kb11n.cost_element.ends_with?('5')
+            @kb11n_billing_objects << kb11n
+          end
         end
       end
       return @kb11n_billing_objects

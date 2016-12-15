@@ -1,8 +1,7 @@
 require 'spec_helper'
-require 'webmock/rspec'
-WebMock.disable_net_connect!(allow_localhost: true)
 
 describe CostControl::ApplicationController, type: :controller do
+=begin
   routes { CostControl::Engine.routes }
 
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
@@ -20,5 +19,6 @@ describe CostControl::ApplicationController, type: :controller do
 
     allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
   end
+=end
 
 end
