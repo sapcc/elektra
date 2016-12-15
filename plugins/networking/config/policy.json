@@ -7,7 +7,7 @@
   "networking:floating_ip_get": "!",
   "networking:floating_ip_list": "@",
   "networking:floating_ip_create": "@",
-  "networking:floating_ip_delete": "rule:admin_or_network_owner",
+  "networking:floating_ip_delete": "@",
   "networking:floating_ip_associate": "!",
   "networking:floating_ip_disassociate": "@",
   "networking:security_group_get": "rule:cloud_admin or rule:admin_required",
@@ -28,7 +28,7 @@
   "networking:router_update": "rule:cloud_network_admin or rule:network_admin",
   "networking:router_get":    "rule:admin_or_network_owner",
   "networking:router_delete": "rule:cloud_network_admin or rule:network_admin",
-  
+
   "networking:rbac_policy_list": "rule:admin_or_network_owner",
   "networking:rbac_policy_create": "rule:cloud_network_admin or rule:network_admin",
   "networking:rbac_policy_delete": "rule:cloud_network_admin or rule:network_admin"

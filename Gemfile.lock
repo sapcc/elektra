@@ -26,7 +26,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: 6219aed87be735a05f8fbdf3c2aad3022aacf0dd
+  revision: ef937b01f722a8ed47574b6097aa08fb464cc4bb
   branch: master
   specs:
     fog-openstack (0.1.17)
@@ -596,6 +596,3 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
-
-BUNDLED WITH
-   1.13.6
