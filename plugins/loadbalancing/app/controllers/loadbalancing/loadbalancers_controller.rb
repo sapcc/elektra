@@ -11,7 +11,7 @@ module Loadbalancing
       end
 
       @quota_data = services.resource_management.quota_data([
-        {service_name: :networking, resource_name: :loadbalancers, usage: @loadbalancers.length},
+        {service_name: :loadbalancing, resource_name: :loadbalancers, usage: @loadbalancers.length},
       ])
     end
 

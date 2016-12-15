@@ -5,9 +5,11 @@ module Loadbalancing
       before_filter :load_objects
 
       def index
+        # get all pools for project and calc. quota
         @pools = services.loadbalancing.pools(tenant_id: @scoped_project_id)
-        @pools.reject!{|p| p.loadbalancers.first['id'] != @loadbalancer.id }
-        @quota_data = services.resource_management.quota_data([{service_name: :networking, resource_name: :pools, usage: @pools.length}])
+        @quota_data = services.resource_management.quota_data([{service_name: :loadbalancing, resource_name: :pools, usage: @pools.length}])
+        # delete pool from different loadbalancers
+        @pools.reject! { |p| p.loadbalancers.first['id'] != @loadbalancer.id }
       end
 
       def show_all
@@ -28,7 +30,7 @@ module Loadbalancing
       def new
         @pool = services.loadbalancing.new_pool
         @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id).keep_if { |l| l.default_pool_id.blank? }
-        @listeners.reject!{|l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
+        @listeners.reject! { |l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
         @loadbalancers = [@loadbalancer]
         if params[:listener_id]
           @listener = services.loadbalancing.find_listener(params[:listener_id])
@@ -48,7 +50,7 @@ module Loadbalancing
         else
           @loadbalancers = [@loadbalancer]
           @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id).keep_if { |l| l.default_pool_id.blank? }
-          @listeners.reject!{|l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
+          @listeners.reject! { |l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
           render :new
         end
       end
