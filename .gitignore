@@ -16,7 +16,7 @@ vendor/bundle
 /public/system/*
 /coverage/
 /spec/tmp/*
-**.orig
+*.orig
 rerun.txt
 pickle-email-*.html
 *.log
