@@ -91,7 +91,7 @@ module Loadbalancing
         end
 
         if h_error
-          redirect_to loadbalancer_pools_path(@loadbalancer), flash: {error: "Could not delete attached Healthmonitor #{@healthmonitor.errors.full_messages.to_sentence}"}
+          redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id), flash: {error: "Could not delete attached Healthmonitor #{@healthmonitor.errors.full_messages.to_sentence}"}
           return
         end
 

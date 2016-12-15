@@ -17,5 +17,5 @@
     - if modal?
       %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
     - else
-      = link_to 'Cancel', plugin('loadbalancing').pool_healthmonitors_path(@pool.id), class: 'btn btn-default'
+      = link_to 'Cancel', plugin('loadbalancing').loadbalancer_pool_healthmonitors_path(loadbalancer_id: @loadbalancer.id, pool_id: @pool.id), class: 'btn btn-default'
     %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Create
