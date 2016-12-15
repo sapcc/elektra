@@ -9,11 +9,10 @@ module BlockStorage
       if @scoped_project_id
         @snapshots = services.block_storage.snapshots
 
-        # # quota for block_storage is not implemented yet
-        # @quota_data = services.resource_management.quota_data([
-        #   {service_name: :block_storage, resource_name: :snapshots, usage: @snapshots.length}
-        #   {service_name: :block_storage, resource_name: :capacity}
-        # ])
+        @quota_data = services.resource_management.quota_data([
+          {service_name: :block_storage, resource_name: :snapshots, usage: @snapshots.length},
+          {service_name: :block_storage, resource_name: :capacity}
+        ])
       end
     end
 
