@@ -1,6 +1,6 @@
 - @listeners.each{|l| l.name += " (#{l.protocol})"}
 %fieldset
-  = f.input :name, required: false
+  = f.input :name, required: true
   = f.input :description
   = f.input :lb_algorithm, as: :select, collection: Loadbalancing::Pool::ALGORITHMS, required: true
   = f.input :protocol, as: :select, collection: Loadbalancing::Pool::PROTOCOLS, required: true,  disabled: update
@@ -11,5 +11,5 @@
   - elsif @pool.loadbalancer
     = f.input :loadbalancer_id, as: :select, collection: @loadbalancers, selected: @pool.loadbalancer.id, disabled: update, label: 'Assigned to Loadbalancer'
   - else
-    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Listener', required: true
+    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Default Pool for Listener', required: true
     = f.input :loadbalancer_id, as: :select, collection: @loadbalancers, disabled: update, label: 'Load Balancer', required: true

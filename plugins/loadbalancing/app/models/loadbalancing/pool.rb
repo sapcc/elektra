@@ -11,6 +11,8 @@ module Loadbalancing
     #validates :listener_id, presence: true
     validates_presence_of :session_persistence_cookie_name, :if => :app_cookie?, message: "Please enter a Cookie Name in case of Application Cookie persistence"
 
+    validate :listener_or_loadbalancer
+
     def app_cookie?
       session_persistence_type == 'APP_COOKIE' ? true : false
     end
@@ -23,6 +25,14 @@ module Loadbalancing
     def session_persistence_cookie_name
       return self.session_persistence['cookie_name'] if self.session_persistence
       return ''
+    end
+
+    def listener_or_loadbalancer
+      if self.listener_id.blank? and self.loadbalancer_id.blank?
+        errors.add(:loadbalancer_id, "Please choose a listener or a loadbalancer where the pool should belong to")
+        errors.add(:listener_id, "Please choose a listener or a loadbalancer where the pool should belong to")
+      end
+
     end
   end
 end

@@ -28,7 +28,8 @@ module Loadbalancing
       def new
         @pool = services.loadbalancing.new_pool
         @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id).keep_if { |l| l.default_pool_id.blank? }
-        @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
+        @listeners.reject!{|l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
+        @loadbalancers = [@loadbalancer]
         if params[:listener_id]
           @listener = services.loadbalancing.find_listener(params[:listener_id])
           @pool.listener = @listener if @listener
@@ -45,8 +46,9 @@ module Loadbalancing
           # render template: 'loadbalancing/loadbalancers/pools/update_item_with_close.js'
           redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id), notice: 'Pool was successfully created.'
         else
-          @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
-          @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id)
+          @loadbalancers = [@loadbalancer]
+          @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id).keep_if { |l| l.default_pool_id.blank? }
+          @listeners.reject!{|l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
           render :new
         end
       end
