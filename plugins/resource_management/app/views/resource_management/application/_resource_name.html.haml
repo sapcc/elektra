@@ -38,7 +38,7 @@
               - when :loadbalancers, :listeners
                 = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
               - when :pools, :healthmonitors
-                = link_to translated_name, plugin('loadbalancing').pools_path, title: linktitle
+                = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
           - when :dns
             - case name
               - when :zones, :recordsets
