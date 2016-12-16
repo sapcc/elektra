@@ -28,6 +28,12 @@ module CostControl
         raise Core::ServiceLayer::Errors::NotImplemented
       end
 
+      #### billing object
+
+      def get_billing_objects(project_id)
+        raise Core::ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end

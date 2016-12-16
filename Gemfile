@@ -70,7 +70,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = ['cost_control','webconsole'] #e.g. ['compute', 'cost_control']
+black_list = ['webconsole'] #e.g. ['compute', 'cost_control']
 if ENV.has_key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each{|plugin_name| black_list << plugin_name.strip}
 end

@@ -1,12 +1,5 @@
 %tr
   %td
-    - if kb11n_billing_object.cost_element.presence.ends_with?('5')
-      Secondary Costs
-    - elsif kb11n_billing_object.cost_element.presence.ends_with?('4')
-      Primary Costs
-    - else
-      Unknown
-  %td
     = kb11n_billing_object.doc_headertext.presence || content_tag('div', 'Not set', class: 'text-danger')
   %td
     = kb11n_billing_object.cost_element.presence || content_tag('div', 'Not set', class: 'text-danger')
@@ -15,4 +8,4 @@
   %td
     = kb11n_billing_object.rec_costcenter.presence || content_tag('div', 'Not set', class: 'text-danger')
   %td
-    = "#{kb11n_billing_object.costs.presence} #{kb11n_billing_object.currency.presence}" || content_tag('div', 'Not set', class: 'text-danger')
+    = "#{sprintf('%.2f',kb11n_billing_object.costs)} #{kb11n_billing_object.currency}"

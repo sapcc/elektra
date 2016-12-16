@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
-  revision: a18a49a5dee437e1f3d4e616ed87924326fd26cb
-  branch: master
-  specs:
-    elektra-extension (0.0.1)
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5a87ce484a6e8d3cd5ff3f61b25a528e77f652dc
   specs:
@@ -14,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack-sap-billing.git
-  revision: b43cf0d4cf9fb85a907cb277337357d539c91f62
+  revision: 7c736591760102d0ebd3ab0786fbd1b755a2a81b
   branch: master
   specs:
-    fog-openstack-sap-billing (0.0.9)
+    fog-openstack-sap-billing (0.1.0)
       fog-core (>= 1.40)
       fog-json (>= 1.0)
       fog-openstack (>= 0.1.11)
@@ -70,6 +63,12 @@ PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
+
+PATH
+  remote: plugins/cost_control
+  specs:
+    cost_control (0.0.1)
+      fog-openstack-sap-billing (~> 0.1.0)
 
 PATH
   remote: plugins/dns_service
@@ -541,11 +540,11 @@ DEPENDENCIES
   compass-rails
   compute!
   config
+  cost_control!
   cucumber-rails
   database_cleaner
   dns_service!
   dotenv-rails
-  elektra-extension!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   fog-openstack-sap-billing!
@@ -596,3 +595,6 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.12.5

@@ -76,13 +76,25 @@ module CostControl
       end
 
       def get_kb11n_billing_objects(project_id)
-        #handle_response do
-        begin
-          kb11n_billing_objects = fog.get_kb11n_billing_object(project: project_id, format: 'json').body
-        rescue ::Fog::Billing::OpenStack::NotFound
-          return {'id' => project_id}
+        handle_response do
+          begin
+            kb11n_billing_objects = fog.get_kb11n_billing_object(project: project_id, format: 'json').body
+          rescue ::Fog::Billing::OpenStack::NotFound
+            return {'id' => project_id}
+          end
+          return kb11n_billing_objects
         end
-        return kb11n_billing_objects
+      end
+
+      def get_billing_objects(project_id)
+        handle_response do
+          begin
+            billing_objects = fog.get_billing_object(project: project_id, format: 'json').body
+          rescue ::Fog::Billing::OpenStack::NotFound
+            return {'id' => project_id}
+          end
+          return billing_objects
+        end
       end
 
       private
