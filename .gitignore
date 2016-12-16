@@ -43,5 +43,6 @@ precompile
 build
 .procfile
 tags
+.tags
 
 .byebug_history

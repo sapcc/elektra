@@ -8,7 +8,7 @@ module ViewHelper
     # projects where the service user does not have permissions or deleted projects get 'N/A'
     project_name = remote_project ? remote_project.name : ''
   end
-    
+
   def project_id_and_name(project)
     if project
       # try to find project in friendly ids
@@ -30,4 +30,31 @@ module ViewHelper
       haml_concat 'N/A'
     end
   end
+
+  def render_available_regions
+    # read regions config, select only available regions
+    regs = Core::StaticConfig.regions
+    available_regions = regs.blank? ? Array.new : regs.select{ |dc| dc["available"]}
+
+    # render list with available regions
+    unless available_regions.blank?
+      capture_haml do
+        haml_tag :ul, class: "dropdown-menu", role: "menu" do
+          available_regions.each do |region|
+            class_name = current_region == region["regionkey"] ? "active" : ""
+            haml_tag :li, class: class_name do
+              # for now use only the base url for the link (i.e. no domain, no project path since those might not exist in the new region)
+              region_url = request.base_url.sub(current_region, region["regionkey"])
+              haml_tag :a, href: region_url do
+                haml_concat region["regionname"]
+              end
+            end
+          end
+        end
+      end
+    end
+
+
+  end
+
 end

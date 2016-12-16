@@ -16,6 +16,7 @@
           = link_to (@scoped_domain_name || params[:domain_id]), plugin('identity').domain_path(project_id:nil) if @scoped_domain_id
 
       %ul.nav.navbar-nav.navbar-right
+
         - unless logged_in?
           %li
             = link_to "Log in", monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: plugin('identity').domain_path), id: "navbar-login-btn"
@@ -37,16 +38,19 @@
               %li
                 = link_to 'Log out', monsoon_openstack_auth.logout_path(redirect_to: main_app.landing_page_url)
 
-        -# %li.dropdown
-        -#   %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-        -#     Region: Europe
-        -#     %span.caret
-        -#   %ul.dropdown-menu{:role => "menu"}
-        -#     %li
-        -#       %a{:href => "#"} Canada
-        -#     %li.active
-        -#       %a{:href => "#"} Europe
-        -#     %li
-        -#       %a{:href => "#"} US-East
-        -#     %li
-        -#       %a{:href => "#"} US-West
+
+        %li.dropdown
+          %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            = current_region.upcase
+            %span.caret
+
+          = render_available_regions
+          -# %ul.dropdown-menu{:role => "menu"}
+          -#   %li
+          -#     %a{:href => "#"} Canada
+          -#   %li.active
+          -#     %a{:href => "#"} Europe
+          -#   %li
+          -#     %a{:href => "#"} US-East
+          -#   %li
+          -#     %a{:href => "#"} US-West

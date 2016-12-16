@@ -192,9 +192,6 @@ class Worldmap
     # Group for the map features
     features = g.attr('class', 'features')
 
-    # Get correct regions config file (depending on landscape)
-    regions_config = '/regions_' + options.current_env + '.json'
-
     # Render Worldmap: Read topodata and convert to paths, add circles for cities
     d3.json '/world_countries.topojson', (error, geodata) ->
       if error
@@ -208,7 +205,7 @@ class Worldmap
         .attr 'd', path
 
       # Read cities from config file. Render circles for cities
-      d3.json regions_config, (error, data) ->
+      d3.json options.regions_config, (error, data) ->
         g.selectAll('circle')
           .data(data)
           .enter()
