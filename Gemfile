@@ -124,7 +124,7 @@ group :development, :test do
   gem "factory_girl_rails", "~> 4.0"
   gem "database_cleaner"
 
-  gem "better_errors"
+  # gem "better_errors"
   gem 'pry-rails'
 end
 
