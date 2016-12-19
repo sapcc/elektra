@@ -9,6 +9,7 @@
     - network.subnet_objects.each do |subnet|
       %strong= subnet.name
       = "(#{subnet.cidr})"
+      %br
   %td
     - project_id_and_name(network.tenant_id)
   %td= network.shared ? 'Yes' : 'No'
