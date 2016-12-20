@@ -38,6 +38,8 @@ init= () ->
     $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
 
   $('#floating_ip_floating_network_id').change () -> loadSubnets(this.value)
+  if $('#floating_ip_floating_network_id').val()
+    loadSubnets($('#floating_ip_floating_network_id').val())
 
   $('#floating_ip_floating_subnet_id').change () ->
     if this.value.trim().length==0
