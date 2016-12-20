@@ -35,6 +35,8 @@ module ViewHelper
     # read regions config, select only available regions
     regs = Core::StaticConfig.regions
     available_regions = regs.blank? ? Array.new : regs.select{ |dc| dc["available"]}
+    base_url = request.base_url
+    domain_path = request.path.split('/')[1] # get domain from path 
 
     # render list with available regions
     unless available_regions.blank?
@@ -44,7 +46,7 @@ module ViewHelper
             class_name = current_region == region["regionkey"] ? "active" : ""
             haml_tag :li, class: class_name do
               # for now use only the base url for the link (i.e. no domain, no project path since those might not exist in the new region)
-              region_url = request.base_url.sub(current_region, region["regionkey"])
+              region_url = "#{base_url.sub(current_region, region["regionkey"])}/#{domain_path}"
               haml_tag :a, href: region_url do
                 haml_concat region["regionname"]
               end

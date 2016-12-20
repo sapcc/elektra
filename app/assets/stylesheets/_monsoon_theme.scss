@@ -508,6 +508,14 @@ section {
 // Navigation
 // ---------------------------------------------------------------------------------
 
+// special top of page navbar
+.navbar-sap {
+  &.navbar-inverse .dropdown-menu > .active > a {
+    background: rgba(255, 255, 255, 0.25);
+    color: #999;
+  }
+}
+
 .nav-highlight {
   background: rgba(255, 255, 255, 0.1);
 }
@@ -625,6 +633,8 @@ section {
   margin-bottom: $line-height-computed;
 }
 
+
+
 // ---------------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------------
@@ -639,9 +649,7 @@ section {
   width: 62px;
 }
 
-.navbar-sap {
-  // border-bottom: 10px solid $sapgold;
-}
+
 
 // ---------------------------------------------------------------------------------
 // Footer
