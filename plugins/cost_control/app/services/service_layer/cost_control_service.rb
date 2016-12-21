@@ -3,12 +3,12 @@ module ServiceLayer
 
     def driver
       @driver ||= CostControl::Driver::Fog.new({
-        auth_url:   self.auth_url,
-        region:     self.region,
-        token:      self.token,
-        domain_id:  self.domain_id,
-        project_id: self.project_id,
-      })
+                                                   auth_url:   self.auth_url,
+                                                   region:     self.region,
+                                                   token:      self.token,
+                                                   domain_id:  self.domain_id,
+                                                   project_id: self.project_id,
+                                               })
     end
 
     def available?(action_name_sym=nil)
@@ -46,7 +46,7 @@ module ServiceLayer
     def find_kb11n_billing_objects(project_id)
       unless @kb11n_billing_objects
         @kb11n_billing_objects = []
-        kb11n_billing_objects = driver.map_to(CostControl::Kb11nBillingObject).get_kb11n_billing_objects(project_id)
+        kb11n_billing_objects  = driver.map_to(CostControl::Kb11nBillingObject).get_kb11n_billing_objects(project_id)
         kb11n_billing_objects.each do |kb11n_billing_object|
           kb11n = new_kb11n_billing_object(kb11n_billing_object.attributes) if kb11n_billing_object.attributes
           # add only secondary costs
@@ -67,7 +67,7 @@ module ServiceLayer
     def find_billing_objects(project_id)
       unless @billing_objects
         @billing_objects = []
-        billing_objects = driver.map_to(CostControl::BillingObject).get_billing_objects(project_id)
+        billing_objects  = driver.map_to(CostControl::BillingObject).get_billing_objects(project_id)
         billing_objects.each do |itm|
           billing_object = new_billing_object(itm.attributes) if itm.attributes
           @billing_objects << billing_object if billing_object
