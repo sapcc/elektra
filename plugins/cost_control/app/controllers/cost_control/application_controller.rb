@@ -9,8 +9,8 @@ module CostControl
                                          {
                                              "Fog::Billing::ApiError" => {
                                                  header_title: "Monsoon3 Cost Control",
-                                                 title: "No billing data available.",
-                                                 detail:      :detail
+                                                 title:        :title || "No billing data available.",
+                                                 description:  :detail
                                              }
                                          }
                                      ]

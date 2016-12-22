@@ -52,8 +52,10 @@ module CostControl
           @masterdata = services.cost_control.find_domain_masterdata(@scoped_domain_id)
         end
       rescue => exception
-        if exception.respond_to? :status and exception.status == 401 | 404 | 500 | 502
-          raise exception
+        if exception.respond_to? :status and exception.status == 401
+          raise ::Fog::Billing::ApiError.new("title" => "Only Project- or Domain Administrators can change the Cost Object.", "detail" => "Only Project- or Domain Administrators can change the Cost Object. Please request the project_admin or domain_role .")
+        else
+          raise ::Fog::Billing::ApiError.new("title" => "No billing data available.", "detail" => "We couldn't retrieve your billing data at this time. Please try again later.")
         end
       end
     end
@@ -63,10 +65,8 @@ module CostControl
         if @scoped_project_id
           @kb11n_billing_objects = services.cost_control.find_kb11n_billing_objects(@scoped_project_id)
         end
-      rescue Fog::Billing::ApiError => exception
-        if exception.respond_to? :status and exception.status == 401 | 404 | 500 | 502
-          raise exception
-        end
+      rescue => exception
+        raise ::Fog::Billing::ApiError.new("title" => "No billing data available", "detail" => "We couldn't retrieve your billing data at this time. Please try again later.")
       end
     end
 
@@ -75,10 +75,8 @@ module CostControl
         if @scoped_project_id
           @billing_objects = services.cost_control.find_billing_objects(@scoped_project_id)
         end
-      rescue Fog::Billing::ApiError => exception
-        if exception.respond_to? :status and exception.status == 401 | 404 | 500 | 502
-          raise exception
-        end
+      rescue => exception
+        raise ::Fog::Billing::ApiError.new("title" => "No billing data available", "detail" => "We couldn't retrieve your billing data at this time. Please try again later.")
       end
     end
 
