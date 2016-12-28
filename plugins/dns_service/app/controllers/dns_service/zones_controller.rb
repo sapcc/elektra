@@ -1,5 +1,5 @@
 module DnsService
-  class ZonesController < ApplicationController
+  class ZonesController < DnsService::ApplicationController
     before_filter ->(id = params[:id]) { load_zone id }, except: [:index]
 
     def index
@@ -23,11 +23,11 @@ module DnsService
         }.merge(@impersonate_option)
       )
     end
-    
+
     def new
       @zone = services.dns_service.new_zone
     end
-    
+
     def create
       @zone = services.dns_service.new_zone(params[:zone])
       if @zone.save
@@ -40,11 +40,11 @@ module DnsService
         render action: :new
       end
     end
-    
+
     def edit
       @zone = services.dns_service.find_zone(params[:id])
     end
-    
+
     def update
       @zone = services.dns_service.find_zone(params[:id])
       @zone.attributes=params[:zone]
@@ -66,6 +66,6 @@ module DnsService
         format.html{redirect_to zones_url  }
       end
     end
-      
+
   end
 end
