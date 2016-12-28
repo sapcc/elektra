@@ -63,6 +63,7 @@ SimpleNavigation::Configuration.run do |navigation|
       compute_nav.item :block_storage, 'Volumes & Snapshots', -> {plugin('block_storage').volumes_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage/] }
       compute_nav.item :images, 'Images', -> {plugin('image').os_images_public_index_path}, if: -> { services.available?(:image,:os_images) }, highlights_on: Proc.new { params[:controller][/image\/.*/] }
       compute_nav.item :flavors, 'Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+      compute_nav.item :keypairs, 'Key Pairs', -> { plugin('compute').keypairs_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{keypairs/?.*}] }
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
@@ -127,8 +128,8 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
       storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
-      storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')}, 
-        if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") }, 
+      storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')},
+        if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
         highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
