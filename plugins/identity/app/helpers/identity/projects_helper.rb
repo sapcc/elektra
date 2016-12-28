@@ -18,5 +18,9 @@ module Identity
 
     end
 
+    def role_label_long(role_name)
+      t("roles.#{role_name}") + " (#{role_name})"
+    end
+
   end
 end

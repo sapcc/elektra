@@ -9,6 +9,6 @@
     %br
     = user_description
 
-  %td{data: {roles_display: true, roles_current: user_roles.collect{|r| r[:name]} }}
+  %td{data: {roles_display: true, roles_current: user_roles.collect{|r| role_label_long(r[:name])} }}
   %td.snug
-    = select_tag("role_assignments[#{user_id}]",options_for_select(roles.collect{|r| [r.name, r.id] }, user_roles.collect{|r| r[:id]}), {multiple: true, data: {roles_select: true}, disabled: !can_update})
+    = select_tag("role_assignments[#{user_id}]",options_for_select(roles.collect{|r| [role_label_long(r.name), r.id] }, user_roles.collect{|r| r[:id]}), {multiple: true, data: {roles_select: true}, disabled: !can_update})
