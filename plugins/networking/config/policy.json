@@ -23,6 +23,7 @@
   "networking:network_external_create": "rule:cloud_network_admin",
   "networking:network_external_update": "rule:cloud_network_admin",
   "networking:network_external_delete": "rule:cloud_network_admin",
+  "networking:network_get:segments": "rule:cloud_network_admin",
 
   "networking:router_create": "rule:cloud_network_admin or rule:network_admin",
   "networking:router_update": "rule:cloud_network_admin or rule:network_admin",

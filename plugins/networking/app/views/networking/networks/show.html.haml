@@ -4,6 +4,12 @@
 .modal-body
   %ul.nav.nav-tabs
     %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
+    - if current_user.is_allowed?('networking:network_get:segments')
+      %li{role: "presentation"}
+        = link_to '#segments', aria: {controls:"segments"}, role: "tab", data: {toggle:"tab"} do
+          Segments
+          %span.badge= @network.segments.length
+
     %li{role: "presentation"}
       = link_to '#subnets', aria: {controls:"subnets"}, role: "tab", data: {toggle:"tab"} do
         Subnets
@@ -37,15 +43,22 @@
             %th External Network
             %td= @network.external ? 'Yes' : 'No'
           %tr
-            %th Provider Network
-            %td
-              = "Network Type: #{@network.provider_network_type}"
-              - unless (phys_net = @network.provider_physical_network).blank?
-                %br
-                = "Physical Network: #{@network.phys_net}"
-              - unless (seg_id = @network.provider_segmentation_id).blank?
-                %br
-                = "Segmentation ID: #{seg_id}"
+            %th Tags
+            %td= @network.tags
+
+    - if current_user.is_allowed?('networking:network_get:segments')
+      .tab-pane{role:"tabpanel", id:"segments"}
+        %table.table.datatable
+          %tbody
+            %tr
+              %th Network Type
+              %th Physical Network
+              %th Segmentation ID
+            - @network.segments.each do |segment|
+              %tr
+                %td= segment['provider:network_type']
+                %td= segment['provider:physical_network']
+                %td= segment['provider:segmentation_id']
 
     .tab-pane{role:"tabpanel", id:"subnets"}
       %table.table.datatable
