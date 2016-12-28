@@ -245,7 +245,7 @@ module ResourceManagement
       NETWORK_RESOURCE_MAP = {
         'network'             => :networks,
         'subnet'              => :subnets,
-        # 'subnetpool'          => :subnet_pools,
+        'subnetpool'          => :subnet_pools,
         'floatingip'          => :floating_ips,
         'router'              => :routers,
         'port'                => :ports,
@@ -274,9 +274,7 @@ module ResourceManagement
 
         networks              = handle_response { fog_network_connection.list_networks(net_options).body['networks'] }.length
         subnets               = handle_response { fog_network_connection.list_subnets(net_options).body['subnets'] }.length
-        # TODO: do we even need to handle subnet_pools quota-wise or will this stay cloud-admin only?
-        # TODO: if yes: needs implementation in fog
-        # subnet_pools          = handle_response { fog_network_connection.list_subnet_pools(net_options).body['subnet_pools'] }.length
+        subnet_pools          = handle_response { fog_network_connection.list_subnet_pools(net_options).body['subnetpools'] }.length
         floating_ips          = handle_response { fog_network_connection.list_floating_ips(net_options).body['floatingips'] }.length
         routers               = handle_response { fog_network_connection.list_routers(net_options).body['routers'] }.length
         ports                 = handle_response { fog_network_connection.list_ports(net_options).body['ports'] }.length
@@ -291,7 +289,7 @@ module ResourceManagement
         {
           networks:             networks,
           subnets:              subnets,
-          # subnet_pools:        subnet_pools,
+          subnet_pools:         subnet_pools,
           floating_ips:         floating_ips,
           routers:              routers,
           ports:                ports,

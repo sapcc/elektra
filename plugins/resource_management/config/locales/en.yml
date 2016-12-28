@@ -12,6 +12,7 @@ en:
     cores: Cores
     networks: Networks
     subnets: Subnets
+    subnet_pools: Subnet Pools
     routers: Routers
     rbac_policies: RBAC Policies
     ports: Ports

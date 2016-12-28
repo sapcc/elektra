@@ -38,7 +38,7 @@ module ResourceManagement
         new(:networking,     :floating_ips              ),
         new(:networking,     :networks                  ),
         new(:networking,     :subnets                   ),
-        # new(:networking,     :subnet_pools              ),
+        new(:networking,     :subnet_pools              ),
         new(:networking,     :ports                     ),
         new(:networking,     :routers                   ),
         new(:networking,     :security_groups           ),
