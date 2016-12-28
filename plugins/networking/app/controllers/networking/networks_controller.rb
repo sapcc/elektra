@@ -2,10 +2,16 @@ module Networking
   class NetworksController < DashboardController
     before_filter :load_type, except: [:subnets]
     def index
-      @networks = services.networking.networks('router:external' => @network_type == 'external')
+      filter_options = {
+        'router:external' => @network_type == 'external',
+        sort_key: 'name'
+      }
+      @networks = paginatable(per_page: 15) do |pagination_options|
+        services.networking.networks(filter_options.merge(pagination_options))
+      end
 
       # all networks but shared
-      usage = @networks.select{|n| n.shared==false}.length
+      usage = @networks.select { |n| n.shared == false }.length
       @quota_data = services.resource_management.quota_data([
         {service_name: :networking, resource_name: :networks, usage: usage}
       ])
@@ -88,7 +94,7 @@ module Networking
         format.html { redirect_to plugin('networking').send("networks_#{@network_type}_index_path") }
       end
     end
-    
+
     def subnets
       render json: services.networking.subnets(network_id: params[:network_id])
     end
