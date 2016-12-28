@@ -6,3 +6,23 @@ en:
     ssh-key:
       name: Name
       public_key: Public Key
+  roles:
+      admin: Keystone Administrator
+      member: Member
+      service: Service User
+      swiftoperator: Object Store Administrator
+      swiftreseller: Object Store Cloud Administrator
+      dns_admin: Designate Administrator
+      cloud_dns_admin: Designate Cloud Administrator
+      monasca-agent: Monitoring Agent
+      monasca-user: Monitoring User
+      monasca-viewer: Monitoring Read-Only
+      monitoring-delegate: Monitoring Delegate
+      cloud_image_admin: Glance Cloud Administrator
+      network_admin: Neutron Administrator
+      cloud_network_admin: Neutron Cloud Administrator
+      compute_viewer: Nova Read-Only
+      compute_admin: Nova Administrator
+      cloud_compute_admin: Nova Cloud Administrator
+      cfm_user: Cloud Frame User
+      cfm_admin: Cloud Frame Administrator
