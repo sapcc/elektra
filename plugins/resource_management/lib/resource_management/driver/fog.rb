@@ -285,6 +285,7 @@ module ResourceManagement
         listeners             = handle_response { fog_network_connection.list_lbaas_listeners(net_options).body['listeners'] }.length
         pools                 = handle_response { fog_network_connection.list_lbaas_pools(net_options).body['pools'] }.length
         healthmonitors        = handle_response { fog_network_connection.list_lbaas_healthmonitors(net_options).body['healthmonitors'] }.length
+        l7policies            = handle_response { fog_network_connection.list_lbaas_l7policies(net_options).body['l7policies'] }.length
 
         {
           networks:             networks,
@@ -299,7 +300,8 @@ module ResourceManagement
           loadbalancers:        loadbalancers,
           listeners:            listeners,
           pools:                pools,
-          healthmonitors:       healthmonitors
+          healthmonitors:       healthmonitors,
+          l7policies:           l7policies
         }
       end
 
@@ -309,7 +311,8 @@ module ResourceManagement
         'loadbalancer'        => :loadbalancers,
         'listener'            => :listeners,
         'pool'                => :pools,
-        'healthmonitor'       => :healthmonitors
+        'healthmonitor'       => :healthmonitors,
+        'l7policy'            => :l7policies
       }.freeze
 
       def set_project_quota_loadbalancing(_domain_id, project_id, values)
@@ -334,12 +337,14 @@ module ResourceManagement
         listeners             = handle_response { fog_network_connection.list_lbaas_listeners(net_options).body['listeners'] }.length
         pools                 = handle_response { fog_network_connection.list_lbaas_pools(net_options).body['pools'] }.length
         healthmonitors        = handle_response { fog_network_connection.list_lbaas_healthmonitors(net_options).body['healthmonitors'] }.length
+        l7policies            = handle_response { fog_network_connection.list_lbaas_l7policies(net_options).body['l7policies'] }.length
 
         {
           loadbalancers:        loadbalancers,
           listeners:            listeners,
           pools:                pools,
-          healthmonitors:       healthmonitors
+          healthmonitors:       healthmonitors,
+          l7policies:           l7policies
         }
       end
 

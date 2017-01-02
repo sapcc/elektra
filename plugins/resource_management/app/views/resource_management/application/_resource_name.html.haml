@@ -37,7 +37,7 @@
                 = link_to translated_name, plugin('networking').security_groups_path, title: linktitle
               - when :loadbalancers, :listeners
                 = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
-              - when :pools, :healthmonitors
+              - when :pools, :healthmonitors, :l7policies
                 = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
           - when :dns
             - case name

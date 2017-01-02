@@ -37,7 +37,7 @@ class DashboardController < ::ScopeController
   # so we try to catch this error here and redirect user to login screen
   rescue_from "Excon::Error::NotFound" do |error|
     if error.message.match(/Could not find token/i) or error.message.match(/Failed to validate token/i)
-      redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
+      #redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
     else
       render_exception_page(error,{title: 'Backend Service Error'})
     end
@@ -52,7 +52,7 @@ class DashboardController < ::ScopeController
   end
 
   rescue_from "Excon::Error::Unauthorized","MonsoonOpenstackAuth::Authentication::NotAuthorized" do
-    redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
+    #redirect_to monsoon_openstack_auth.login_path(domain_name: @scoped_domain_name, after_login: params[:after_login])
   end
 
   # catch all mentioned errors and render error page

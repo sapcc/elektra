@@ -29,3 +29,4 @@ en:
     listeners: Listeners
     pools: Pools
     healthmonitors: Health Monitors
+    l7policies: L7 Policies

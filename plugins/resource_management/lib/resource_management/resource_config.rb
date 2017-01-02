@@ -57,7 +57,8 @@ module ResourceManagement
         new(:loadbalancing,  :loadbalancers             ),
         new(:loadbalancing,  :listeners                 ),
         new(:loadbalancing,  :pools                     ),
-        new(:loadbalancing,  :healthmonitors            )
+        new(:loadbalancing,  :healthmonitors            ),
+        new(:loadbalancing,  :l7policies                )
       ]
 
       # only show resources for enabled services

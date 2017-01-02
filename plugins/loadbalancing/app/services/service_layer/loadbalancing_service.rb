@@ -86,6 +86,9 @@ module ServiceLayer
       Loadbalancing::Healthmonitor.new(driver,attributes)
     end
 
+    def l7policies(filter={})
+      driver.map_to(Loadbalancing::L7policy).l7policies(filter)
+    end
 
   end
 end

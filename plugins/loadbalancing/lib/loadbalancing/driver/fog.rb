@@ -127,6 +127,12 @@ module Loadbalancing
         handle_response { @fog.delete_lbaas_healthmonitor(healthmonitor_id) }
       end
 
+      ###################### L7 POLICIES #######################
+
+      def l7polcies(filter = {})
+        handle_response { @fog.list_lbaas_l7policies(filter).body['l7policies'] }
+      end
+
       def test(filter={})
         puts "test"
       end

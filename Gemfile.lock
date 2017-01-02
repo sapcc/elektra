@@ -26,7 +26,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: c6e2ac3b0c13a62ea15023bf103ecdbd476af139
+  revision: 89e74ed82ac2e4a18b27eebb06e068402c84a39f
   branch: master
   specs:
     fog-openstack (0.1.18)
@@ -42,7 +42,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: ed47025a5258bf26fdaca4822e4eddc30b642df5
+  revision: ce86603e713a7ee91ed16394f2850df48fbf9e88
   specs:
     monsoon-openstack-auth (0.8.6)
       excon
