@@ -56,7 +56,7 @@ module Identity
       if response
         audit_logger.info(current_user, "has deleted project", @project_id)
         flash[:notice] = "Project successfully deleted."
-        redirect_to plugin('identity').domain_path
+        redirect_to plugin('identity').domain_path(project_id: nil)
       else
         flash[:error] = response #"Something when wrong when trying to delete the project"
         redirect_to plugin('identity').project_path
