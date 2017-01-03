@@ -159,10 +159,6 @@ module Loadbalancing
       end
     end
 
-    def release_state
-      "experimental"
-    end
-
     def loadbalancer_params
       return params[:loadbalancer].merge(tenant_id: @scoped_project_id)
     end
