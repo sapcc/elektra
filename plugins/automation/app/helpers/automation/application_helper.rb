@@ -29,7 +29,7 @@ def grouped_chef_versions
         end
         haml_tag :div, {class: "col-sm-8"} do
           haml_tag :div, {class: "form-control-static"} do
-            haml_concat value
+            haml_concat html_escape(value)
           end
         end
       end
@@ -97,7 +97,7 @@ def grouped_chef_versions
                 data.split(',').each do |value|
                   haml_tag :div, {class: "tag"} do
                     haml_tag :div, {class: "value"} do
-                      haml_concat value
+                      haml_concat html_escape(value)
                     end
                   end
                 end

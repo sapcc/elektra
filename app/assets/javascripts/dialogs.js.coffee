@@ -26,7 +26,7 @@ $ ->
     link.attr('data-confirming','true')
     confirmTerm = link.attr('data-confirm-term')
               
-    message = link.attr 'data-confirm'
+    message = $("<div>").text(link.attr('data-confirm')).html();
     if link.attr('data-icon')!='false'
       message = '<i class="confirm-icon fa fa-fw fa-exclamation-triangle"></i>'+message
         
@@ -52,7 +52,7 @@ $ ->
     $confirmButton.click () -> $.rails.confirmed(link)
     
     if confirmTerm
-      label = link.attr("data-confirm-term-label") || 'Please confirm "'+confirmTerm+'"'
+      label = $("<div>").text(link.attr("data-confirm-term-label")).html() || 'Please confirm "'+confirmTerm+'"'
       $modalBody = $('<div class="modal-body"></div>')
       $confirmSection = $('<div class="confirm-term form-group string required"><label class="string required">'+label+' </label></div>').appendTo($modalBody)
       $confirmField = $('<input type="text"/>').appendTo($confirmSection)

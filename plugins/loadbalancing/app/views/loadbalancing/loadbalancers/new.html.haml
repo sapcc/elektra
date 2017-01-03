@@ -12,7 +12,7 @@
     = render :partial => 'loadbalancing/application/errors', locals: {object: @loadbalancer}
 
     %fieldset
-      = f.input :name, required: false
+      = f.input :name, required: true
       = f.input :description
       = f.input :vip_subnet_id, { label: "Private Network",
                                 wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
