@@ -68,12 +68,12 @@ module Core
 
       def authenticate
         # @scope_domain is a freindly id. So it can be the name or id
-        # That's why we try to load the service user by id and if it 
+        # That's why we try to load the service user by id and if it
         # raises an error then we try again by name.
-                
+
         # try to authenticate service user by scope domain id
         scope = {domain: {id: @current_domain}}
-        auth_user = @auth_users[@current_domain] = begin  
+        auth_user = @auth_users[@current_domain] = begin
           MonsoonOpenstackAuth.api_client.auth_user(
             @user_id,
             @password,
@@ -86,15 +86,15 @@ module Core
             scope = {domain: {name: @current_domain}}
             retry
           else
-            message = e.message + " (user_id: #{@user_id}, domain: #{@user_domain_name}, scope: #{scope})" 
-            raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)  
-          end 
+            message = e.message + " (user_id: #{@user_id}, domain: #{@user_domain_name}, scope: #{scope})"
+            raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)
+          end
         end
 
         # Unfortunately we can't use Fog directly. Fog tries to authenticate the user
         # by credentials and region using the service catalog. Our backends all use different regions.
-        # Therefore we use the auth gem to authenticate the user, get the service catalog and then 
-        # initialize the fog object. 
+        # Therefore we use the auth gem to authenticate the user, get the service catalog and then
+        # initialize the fog object.
         begin
           # save connection for current domain. This connection will be used for all further api calls.
           @drivers[@current_domain] = ::Core::ServiceUser::Driver.new({
@@ -104,7 +104,7 @@ module Core
             domain_id: auth_user.domain_id
           })
         rescue => e
-          message = e.message + " (token: #{auth_user.token}, domain_id: #{auth_user.domain_id}, region: #{Core.locate_region(auth_user)})" 
+          message = e.message + " (token: #{auth_user.token}, domain_id: #{auth_user.domain_id}, region: #{Core.locate_region(auth_user)})"
           raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)
         end
         return nil
