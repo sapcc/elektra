@@ -46,18 +46,19 @@
           dispatch(requestShareNetworksFailure())
           dispatch(app.showErrorDialog(title: 'Could not load share networks', message:jqXHR.responseText))
 
-  shouldFetchShareNetworks= (state) ->
-    shareNetworks = state.shareNetworks
+  count = 0
+  shouldFetchShareNetworks= (getState) ->
+    shareNetworks = getState().shareNetworks
     if shareNetworks.isFetching or shareNetworks.receivedAt
       false
-    else if !shareNetworks.items or !shareNetworks.items.length
+    else if !shareNetworks.receivedAt
       true
     else
       false
 
   fetchShareNetworksIfNeeded= () ->
     (dispatch, getState) ->
-      dispatch(fetchShareNetworks()) if shouldFetchShareNetworks(getState())
+      dispatch(fetchShareNetworks()) if shouldFetchShareNetworks(getState)
 
   requestDelete=(shareNetworkId) ->
     type: app.REQUEST_DELETE_SHARE_NETWORK
@@ -92,8 +93,10 @@
   openDeleteShareNetworkDialog=(shareNetworkId, options={}) ->
     (dispatch, getState) ->
       networkShares = []
-      for s in getState().shares.items
-        networkShares.push(s) if s.share_network_id==shareNetworkId
+      shares = getState().shares
+      if shares and shares.items
+        for s in shares.items
+          networkShares.push(s) if s.share_network_id==shareNetworkId
 
       if networkShares.length==0
         dispatch(app.showConfirmDialog({

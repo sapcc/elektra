@@ -43,6 +43,7 @@ module SharedFilesystemStorage
       share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
 
       if share_network.save
+        share_network.cidr=params[:share_network][:cidr] if params[:share_network][:cidr]
         share_network.permissions = {
           get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"),
           delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"),

@@ -31,7 +31,7 @@ AccessControl = ({
 
   div null,
     div className: 'modal-body',
-      if isFetching
+      if shareRules.isFetching
         div null,
           span className: 'spinner', null
           'Loading...'
@@ -45,11 +45,11 @@ AccessControl = ({
               th null, 'Status'
               th className: 'snug'
           tbody null,
-            if shareRules.length==0
+            if shareRules.items.length==0
               tr null,
                 td colSpan: 5, 'No Rules found.'
             else
-              for rule in shareRules
+              for rule in shareRules.items
                 React.createElement AccessControlItem, key: rule.id, rule: rule, shareNetwork: shareNetwork, handleDelete: handleDelete
 
             tr null,
@@ -76,9 +76,8 @@ AccessControl = ({
 
 AccessControl = connect(
   (state,ownProps) ->
-    shareRules: state.shareRules[ownProps.shareId].items
+    shareRules: (state.shareRules[ownProps.shareId] || {items: [], isFetching: false})
     shareNetwork: state.shareNetworks.items.find((n) -> n.id==ownProps.networkId)
-    isFetching: state.shareRules[ownProps.shareId].isFetching
     ruleForm: state.shareRuleForm
   (dispatch,ownProps) ->
     handleChange: (name,value) -> dispatch(updateShareRuleForm(name,value))

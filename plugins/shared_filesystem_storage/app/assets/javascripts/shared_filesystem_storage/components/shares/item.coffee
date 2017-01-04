@@ -13,7 +13,7 @@ ShareItem = React.createClass
     @stopPolling()
 
   startPolling: ()->
-    @polling = setInterval((() => @props.reloadShare(@props.share.id)), 1000)
+    @polling = setInterval((() => @props.reloadShare(@props.share.id)), 3000)
 
   stopPolling: () ->
     clearInterval(@polling)
@@ -24,6 +24,7 @@ ShareItem = React.createClass
     tr {className: ('updating' if share.isDeleting)},
       td null,
         a href: '#', onClick: ((e) -> e.preventDefault(); handleShow(share.id)), share.name || share.id
+      td null, share.availability_zone
       td null, share.share_proto
       td null, (share.size || 0) + ' GB'
       td null, (if share.is_public then 'public' else 'private')
@@ -35,14 +36,15 @@ ShareItem = React.createClass
         if shareNetwork
           span null,
             shareNetwork.name
-            span className: 'info-text', " "+shareNetwork.cidr
+            if shareNetwork.cidr
+              span className: 'info-text', " "+shareNetwork.cidr
             if shareRules
               if shareRules=='loading'
                 span className: 'spinner'
               else
                 span null,
                   br null
-                  for rule in shareRules.items
+                  for rule in shareRules
                     small key: rule.id,
                     "data-toggle": "tooltip",  "data-placement": "right",
                     title: "Access Level: #{if rule.access_level=='ro' then 'read only' else if 'rw' then 'read/write' else rule.access_level}",

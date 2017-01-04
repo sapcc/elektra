@@ -107,6 +107,7 @@
             dispatch(showDeleteShareDialog(shareId, ReactFormHelpers.Errors(data)))
           else
             dispatch(removeShare(shareId))
+            dispatch(app.removeShareRules(shareId))
         error: ( jqXHR, textStatus, errorThrown) ->
           dispatch(showDeleteShareDialog(shareId,jqXHR.responseText))
 

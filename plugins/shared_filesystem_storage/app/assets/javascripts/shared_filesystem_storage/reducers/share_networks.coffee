@@ -12,9 +12,10 @@
   requestShareNetworksFailure=(state,{})->
     ReactHelpers.mergeObjects({},state,{isFetching: false})
 
-  receiveShareNetworks=(state,{shareNetworks})->
+  receiveShareNetworks=(state,{shareNetworks,receivedAt})->
     ReactHelpers.mergeObjects({},state,{
       isFetching: false
+      receivedAt: receivedAt
       items: shareNetworks
     })
 

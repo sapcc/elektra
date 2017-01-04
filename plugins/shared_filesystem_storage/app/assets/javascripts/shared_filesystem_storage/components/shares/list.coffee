@@ -1,7 +1,7 @@
 #= require shared_filesystem_storage/components/shares/item
 
 { connect } = ReactRedux
-{ div, button, span, table, thead, tbody, tr, th, td } = React.DOM
+{ div, button, span, table, thead, tbody, tr, th, td, i } = React.DOM
 { ShareItem,
   fetchSharesIfNeeded,
   fetchShareNetworksIfNeeded,
@@ -26,6 +26,7 @@ ShareList = React.createClass
     if props.active
       props.loadSharesOnce()
       props.loadShareNetworksOnce()
+      props.loadShareRulesOnce(share.id) for share in @props.shares
 
   shareNetwork: (share) ->
     for network in @props.shareNetworks.items
@@ -56,6 +57,12 @@ ShareList = React.createClass
           thead null,
             tr null,
               th null, 'Name'
+              th null,
+                'AZ'
+                i className: 'fa fa-fw fa-info-circle',
+                "data-toggle": "tooltip",  "data-placement": "top",
+                title: "Availability Zone",
+                ref: ((el) ->$(el).tooltip())
               th null, 'Protocol'
               th null, 'Size'
               th null, 'Visibility'

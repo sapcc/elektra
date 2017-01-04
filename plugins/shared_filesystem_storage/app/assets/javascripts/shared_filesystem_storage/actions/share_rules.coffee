@@ -30,6 +30,10 @@
     shareId: shareId
     ruleId: ruleId
 
+  removeShareRules=(shareId) ->
+    type: app.DELETE_SHARE_RULES_SUCCESS
+    shareId: shareId
+
   requestShareRules= (shareId) ->
     type: app.REQUEST_SHARE_RULES
     shareId: shareId
@@ -127,5 +131,6 @@
   app.fetchShareRules              = fetchShareRules
   app.fetchShareRulesIfNeeded      = fetchShareRulesIfNeeded
   app.deleteShareRule              = deleteShareRule
+  app.removeShareRules             = removeShareRules 
   app.openShareAccessControlDialog = openShareAccessControlDialog
 )(shared_filesystem_storage)

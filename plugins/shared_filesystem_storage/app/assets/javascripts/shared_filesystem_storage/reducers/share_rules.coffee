@@ -17,7 +17,8 @@
 
   receiveShareRule=(state,{shareId,rule})->
     # return old state unless rules entry exists
-    return state unless state[shareId]
+    unless state[shareId]
+      return receiveShareRules(state,{shareId: shareId,rules: [rule]})
 
     # copy current rules
     rules = ReactHelpers.mergeObjects({},state[shareId])
@@ -70,7 +71,10 @@
     # return new state (copy old state with new rules)
     ReactHelpers.mergeObjects({},state,{"#{shareId}": rules})
 
-
+  deleteShareRulesSuccess=(state,{shareId}) ->
+    newState = ReactHelpers.mergeObjects({},state)
+    delete newState[shareId]
+    newState
 
   ######################### SHARE RULES #########################
   # {shareId: {items:Array, isFetching: Bool, receivedAt: Date} }
@@ -85,5 +89,6 @@
       when app.REQUEST_DELETE_SHARE_RULE then requestDeleteShareRule(state,action)
       when app.DELETE_SHARE_RULE_FAILURE then deleteShareRuleFailure(state,action)
       when app.DELETE_SHARE_RULE_SUCCESS then deleteShareRuleSuccess(state,action)
+      when app.DELETE_SHARE_RULES_SUCCESS then deleteShareRulesSuccess(state,action)
       else state
 )(shared_filesystem_storage)
