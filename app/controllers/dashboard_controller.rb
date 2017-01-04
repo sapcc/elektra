@@ -59,7 +59,7 @@ class DashboardController < ::ScopeController
   rescue_and_render_exception_page [
     {
       "MonsoonOpenstackAuth::Authorization::SecurityViolation" => {
-        title: 'Unauthorized', 
+        title: 'Unauthorized',
         sentry: false,
         warning: true,
         status: 401,
@@ -67,7 +67,7 @@ class DashboardController < ::ScopeController
           m = 'You are not authorized to view this page.'
           if e.involved_roles and e.involved_roles.length>0
             m += " Please check (role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
-          end 
+          end
           m
         }
       }

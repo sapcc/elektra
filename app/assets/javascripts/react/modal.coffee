@@ -1,0 +1,90 @@
+#= require react/helpers
+
+{ connect } = ReactRedux
+{ div, button, span, h4, ul, li } = React.DOM
+
+ReactModal = {
+  SHOW_MODAL: 'SHOW_MODAL'
+  HIDE_MODAL: 'HIDE_MODAL'
+}
+
+ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
+  connect((state) -> state)(
+    React.createClass
+      componentDidMount: ->
+        $(@refs.modal).modal 'show'
+        $(@refs.modal).on 'hidden.bs.modal', @handleClose
+
+      close: (e) ->
+        e.preventDefault() if e
+        $(@refs.modal).modal 'hide'
+
+      handleClose: () ->
+        if @props.dispatch
+          @props.dispatch(type: ReactModal.HIDE_MODAL, modalType: @props.modalType)
+
+      render: ->
+        options = ReactHelpers.mergeObjects({closeButton: true},options)
+        modalProps = (@props.modalProps || {})
+        childProps = ReactHelpers.mergeObjects(@props,{close: @close})
+        delete(childProps.modalProps)
+        childProps = ReactHelpers.mergeObjects(childProps,modalProps)
+
+        div
+          className:"modal fade",
+          "data-backdrop": (if options.static==true then 'static' else true),
+          tabIndex: "-1",
+          ref: 'modal',
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          div className: "modal-dialog #{'modal-lg' if options.large}", role: "document",
+            div className: "modal-content",
+              div className: "modal-header",
+                if options.closeButton
+                  button type: "button", className: "close", "data-dismiss": "modal", "aria-label": "Close",
+                    span "aria-hidden": "true", 'x'
+                h4 className: "modal-title", title
+              React.createElement WrappedComponent, childProps
+ )
+
+ReactModal.Reducer  = (state = [], action) ->
+  switch action.type
+    when ReactModal.SHOW_MODAL
+      contains = false
+      for m in state
+        if m.modalType==action.modalType
+          contains = true
+          break
+
+      return state if contains
+      newState = state.slice()
+      newState.push
+        modalType: action.modalType,
+        modalProps: action.modalProps
+      newState
+
+    when ReactModal.HIDE_MODAL
+      newState = state.slice()
+      for m,i in state
+        if m.modalType==action.modalType
+          newState.splice(i,1)
+      newState
+    else
+      return state
+
+ReactModal.Container = (reducerName,componentsMap) ->
+  ModalRoot = ({ modals }) ->
+    return null unless (modals and modals.length)
+    div null,
+      for modal in modals
+        if modal.modalType and componentsMap[modal.modalType]
+          React.createElement componentsMap[modal.modalType],
+            key: modal.modalType,
+            modalType: modal.modalType,
+            modalProps: modal.modalProps
+
+  ModalRoot = connect(
+    (state) -> modals: state[reducerName]
+  )(ModalRoot)
+
+@ReactModal = ReactModal

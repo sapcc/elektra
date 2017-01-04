@@ -1,0 +1,130 @@
+#= require react/form_helpers
+
+{ div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
+{ connect } = ReactRedux
+{ updateShareForm, submitShareForm } = shared_filesystem_storage
+protocols= ['NFS']
+
+NewShare = ({
+  close,
+  shareForm,
+  shareNetworks,
+  handleSubmit,
+  handleChange,
+  handleNewShareNetwork
+}) ->
+  onChange=(e) ->
+    e.preventDefault()
+    handleChange(e.target.name,e.target.value)
+
+  share = shareForm.data
+  form className: 'form form-horizontal', onSubmit: ((e) -> e.preventDefault(); handleSubmit()),
+    div className: 'modal-body',
+      if shareForm.errors
+        div className: 'alert alert-error', React.createElement ReactFormHelpers.Errors, errors: shareForm.errors
+
+      # Name
+      div className: "form-group string  share_name" ,
+        label className: "string  col-sm-4 control-label", htmlFor: "share_name", 'Name'
+        div className: "col-sm-8",
+          div className: "input-wrapper",
+            input
+              className: "string required form-control",
+              type: "text",
+              name: "name",
+              value: share.name || '',
+              onChange: onChange
+
+      # Description
+      div className: "form-group text optional share_description",
+        label className: "text optional col-sm-4 control-label", htmlFor: "share_description", "Description"
+        div className: "col-sm-8",
+          div className: "input-wrapper",
+            textarea
+              className: "text optional form-control",
+              name: "description",
+              value: (share.description || ''),
+              onChange: onChange
+
+      # Protocol
+      div className: "form-group select required share_protocol",
+        label className: "select required col-sm-4 control-label", htmlFor: "share_protocol",
+          abbr title: "required", '*'
+          'Protocol'
+        div className: "col-sm-8",
+          div className: "input-wrapper",
+            select name: "protocol", className: "select required form-control", name: 'share_proto', value: (share.share_proto || ''), onChange: onChange,
+              option null, ' '
+                for protocol in protocols
+                  option value: protocol, key: protocol, protocol
+
+      # Size
+      div className: "form-group required text optional share_size",
+        label className: "text required optional col-sm-4 control-label", htmlFor: "share_size",
+          abbr title: "required", '*'
+          "Size (GiB)"
+        div className: "col-sm-8",
+          div className: "input-wrapper",
+            input
+              className: "integer required optional form-control",
+              type: 'number',
+              name: "size",
+              value: (share.size || ''),
+              onChange: onChange
+
+      # Share networks
+      div className: "form-group required select share_share_network",
+        label className: "select required col-sm-4 control-label", htmlFor: "share_share_network",
+          abbr title: "required", '*'
+          'Share Network'
+        div className: "col-sm-8",
+          div className: "input-wrapper",
+            if shareNetworks
+              div null,
+                select name: "share_network_id", className: "required select form-control", value: (share.share_network_id || ''), onChange: onChange,
+                  option null, ' '
+                    for shareNetwork in shareNetworks
+                      option value: shareNetwork.id, key: shareNetwork.id, shareNetwork.name
+                if shareNetworks.length==0
+                  p className:'help-block',
+                    i className: "fa fa-info-circle"
+                    'There are no share networks defined yet. '
+                    a onClick: ((e) -> e.preventDefault(); handleNewShareNetwork()), href: '#', 'Create a new share network.'
+            else
+              span null,
+                span className: 'spinner', null
+                'Loading...'
+
+      div className: "form-group boolean optional hare_is_public",
+        div className: "col-sm-offset-4 col-sm-8",
+          div className: "checkbox",
+            label className: "boolean optional", htmlFor: "share_is_public",
+              input className: "boolean optional col-sm-8", type: "checkbox", value: share.is_public, name:"is_public", onChange: onChange
+              'Is public'
+            p className: 'help-block',
+              i className: "fa fa-info-circle"
+              'If set then all tenants will be able to see this share.'
+
+    div className: 'modal-footer',
+      button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
+      React.createElement ReactFormHelpers.SubmitButton,
+        label: 'Create',
+        loading: shareForm.isSubmitting,
+        disabled: !shareForm.isValid
+        onSubmit: (() -> handleSubmit(close))
+
+NewShare = connect(
+  (state) ->
+    shareForm: state.shareForm
+    shareNetworks: state.shareNetworks.items
+  (dispatch) ->
+    handleChange: (name,value) -> dispatch(updateShareForm(name,value))
+    handleSubmit: (callback) -> dispatch(submitShareForm(callback))
+    handleNewShareNetwork: () -> null
+)(NewShare)
+
+shared_filesystem_storage.NewShareModal = ReactModal.Wrapper('Create Share', NewShare,
+  large:true,
+  closeButton: false,
+  static: true
+)
