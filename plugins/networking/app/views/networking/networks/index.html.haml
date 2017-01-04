@@ -23,5 +23,7 @@
       - else
         - @networks.each do | network |
           = render partial: 'item', locals: {network: network}
+
+  = render_paginatable(@networks)
 - else
   = render "application/projects_list"
