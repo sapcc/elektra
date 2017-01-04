@@ -1,5 +1,9 @@
 module Compute
   class KeypairsController < ::DashboardController
+    before_filter do
+      @policy_default_params ||= {}
+      @policy_default_params[:target][:user_id] = current_user.id
+    end
 
     authorization_context 'compute'
     authorization_required
