@@ -14,8 +14,8 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/excon.git
-  revision: f8d09fe3da5f4eeadc222b37db83fec64b334c6e
-  branch: debug_header_error
+  revision: d39a7fcdbe1c79d418d710963e01eb15618e0c56
+  branch: master
   specs:
     excon (0.54.0)
 
@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: 89e74ed82ac2e4a18b27eebb06e068402c84a39f
+  revision: 819be96b58b90fb281fd566598b94bee3d1e8438
   branch: master
   specs:
     fog-openstack (0.1.18)
