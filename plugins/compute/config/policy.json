@@ -13,9 +13,9 @@
   "compute:instance_delete": "rule:context_is_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "compute:keypair_list": "rule:context_is_viewer and (not rule:monsoon2_domain)",
   "compute:keypair_create": "rule:context_is_editor and (not rule:monsoon2_domain)",
-  "compute:keypair_get": "(rule:context_is_admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
-  "compute:keypair_update": "(rule:context_is_admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
-  "compute:keypair_delete": "(rule:context_is_admin or user_id:%(target.user_id)s) and (not rule:monsoon2_domain)",
+  "compute:keypair_get": "rule:context_is_viewer and (not rule:monsoon2_domain)",
+  "compute:keypair_update": "rule:context_is_editor and (not rule:monsoon2_domain)",
+  "compute:keypair_delete": "rule:context_is_editor and (not rule:monsoon2_domain)",
 
   "cloud_admin_project": "role:admin and token.is_admin_project:true",
   "compute:flavor_create": "rule:cloud_admin_project",
