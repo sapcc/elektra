@@ -1,11 +1,5 @@
 module SharedFilesystemStorage
   class ApplicationController < ::DashboardController
-    # add project_id to default policy params (needed by policy rules).
-    before_filter do
-      @policy_default_params ||= { }
-      @policy_default_params[:project_id] = @scoped_project_id
-    end
-
     # set policy context
     authorization_context 'shared_filesystem_storage'
     # enforce permission checks. This will automatically investigate the rule name.
