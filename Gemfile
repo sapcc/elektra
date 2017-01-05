@@ -39,6 +39,8 @@ gem 'net-ssh'
 gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
 gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
+# we need https://github.com/sapcc/excon/commit/d39a7fcdbe1c79d418d710963e01eb15618e0c56
+gem 'excon', git: 'https://github.com/sapcc/excon.git', branch: :master
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
