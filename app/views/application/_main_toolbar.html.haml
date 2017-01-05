@@ -8,10 +8,14 @@
           = link_to(project.name,plugin('identity').project_path(project_id: project.id))
 
         - unless @active_project.blank?
-          .info-box.pull-right
+          .info-box
+            .info-text
+              Domain ID:
+              = @scoped_domain_id
             .info-text
               Project ID:
               = @active_project.id
+
 
             - if @quota_data and @quota_data.length>0
               .info-text.info-clickable

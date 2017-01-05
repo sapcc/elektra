@@ -889,9 +889,16 @@ footer, .footer {
   padding: $line-height-computed;
 
   h1 {
+    position: relative;
     margin: 0;
     font-size: $font-size-h2;
 
+    .info-box {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    
     .small {
       font-size: 45%;
       a {
