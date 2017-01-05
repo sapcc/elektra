@@ -16,6 +16,8 @@
 { div } = React.DOM
 { connect } = ReactRedux
 {
+  selectTab,
+  setCurrentTabToUrl,
   ShareList,
   SnapshotList,
   ShareNetworkList,
@@ -72,8 +74,8 @@ App = ({activeTabUid, selectTab, permissions}) ->
 App = connect(
   (state) -> activeTabUid: state.activeTab.uid,
   (dispatch) -> selectTab: (uid) ->
-    dispatch(shared_filesystem_storage.selectTab(uid))
-    window.location.hash = uid
+    dispatch(selectTab(uid))
+    setCurrentTabToUrl(uid)
 )(App)
 
 shared_filesystem_storage.App = App

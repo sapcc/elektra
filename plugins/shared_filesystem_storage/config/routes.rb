@@ -2,7 +2,6 @@ SharedFilesystemStorage::Engine.routes.draw do
   root to: 'application#show', as: :start
   #get '/', to: 'application#index', as: :start, constraints: { format: :html }
 
-  
   resources :shares, except: [:new,:edit], constraints: { format: :json } do
     resources :rules, module: 'shares', except: [:show,:new,:edit,:update]
     get :availability_zones, constraints: { format: :json }, on: :collection

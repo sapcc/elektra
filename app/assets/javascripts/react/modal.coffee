@@ -8,6 +8,17 @@ ReactModal = {
   HIDE_MODAL: 'HIDE_MODAL'
 }
 
+addModalUrlFragment=({modalType,modalProps})->
+  overlayParams = "&modal=#{modalType}"
+  overlayParams += "&#{k}=#{v}" for k,v of modalProps
+  if window.location.hash.indexOf('&modal')>=0
+    window.location.hash.replace(/&modal.*/,overlayParams)
+  else
+    window.location.hash += overlayParams
+
+removeModalUrlFragment=({modalType,modalProps})->
+  window.location.hash = window.location.hash.replace(/&modal.*/g,'')
+
 ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
   connect((state) -> state)(
     React.createClass
@@ -61,6 +72,8 @@ ReactModal.Reducer  = (state = [], action) ->
       newState.push
         modalType: action.modalType,
         modalProps: action.modalProps
+
+      #addModalUrlFragment(action)
       newState
 
     when ReactModal.HIDE_MODAL
@@ -68,6 +81,8 @@ ReactModal.Reducer  = (state = [], action) ->
       for m,i in state
         if m.modalType==action.modalType
           newState.splice(i,1)
+
+      #removeModalUrlFragment(action)
       newState
     else
       return state

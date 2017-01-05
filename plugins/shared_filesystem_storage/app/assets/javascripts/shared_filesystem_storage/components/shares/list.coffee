@@ -5,6 +5,7 @@
 { ShareItem,
   fetchSharesIfNeeded,
   fetchShareNetworksIfNeeded,
+  fetchAvailabilityZonesIfNeeded,
   openNewShareDialog,
   fetchShareRulesIfNeeded,
   reloadShare ,
@@ -26,6 +27,7 @@ ShareList = React.createClass
     if props.active
       props.loadSharesOnce()
       props.loadShareNetworksOnce()
+      props.loadAvailabilityZonesOnce()
       props.loadShareRulesOnce(share.id) for share in @props.shares
 
   shareNetwork: (share) ->
@@ -96,6 +98,7 @@ shared_filesystem_storage.ShareList  = connect(
   (dispatch) ->
     loadSharesOnce: () -> dispatch(fetchSharesIfNeeded())
     loadShareNetworksOnce: () -> dispatch(fetchShareNetworksIfNeeded())
+    loadAvailabilityZonesOnce: () -> dispatch(fetchAvailabilityZonesIfNeeded())
     handleNewShare: () -> dispatch(openNewShareDialog())
     loadShareRulesOnce: (shareId) -> dispatch(fetchShareRulesIfNeeded(shareId))
     handleShow: (shareId) -> dispatch(openShowShareDialog(shareId))

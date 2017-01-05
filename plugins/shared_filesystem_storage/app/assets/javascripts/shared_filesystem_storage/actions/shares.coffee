@@ -121,7 +121,6 @@
         for snapshot in snapshots.items
           shareSnapshots.push(snapshot) if snapshot.share_id==shareId
 
-      console.log shareSnapshots
       if shareSnapshots.length==0
         dispatch(app.showConfirmDialog({
           message: options.message || 'Do you really want to delete this share?' ,
@@ -201,6 +200,40 @@
           error: ( jqXHR, textStatus, errorThrown) ->
             dispatch(app.showErrorDialog(title: 'Could not save share', message:jqXHR.responseText))
 
+  ######################## AVAILABILITY ZONES ###########################
+  # Manila availability zones, not nova!!!
+  shouldFetchAvailabilityZones= (state) ->
+    azs = state.availabilityZones
+    if azs.isFetching
+      false
+    else if azs.receivedAt
+      false
+    else
+      true
+  requestAvailableZones= () ->
+    type: app.REQUEST_AVAILABLE_ZONES
+
+  requestAvailableZonesFailure= () ->
+    type: app.REQUEST_AVAILABLE_ZONES_FAILURE
+
+  receiveAvailableZones= (json) ->
+    type: app.RECEIVE_AVAILABLE_ZONES
+    availabilityZones: json
+    receivedAt: Date.now()
+
+  fetchAvailabilityZones=() ->
+    (dispatch) ->
+      dispatch(requestAvailableZones())
+      app.ajaxHelper.get '/shares/availability_zones',
+        success: (data, textStatus, jqXHR) ->
+          dispatch(receiveAvailableZones(data))
+        error: ( jqXHR, textStatus, errorThrown) ->
+          dispatch(requestAvailableZonesFailure())
+
+  fetchAvailabilityZonesIfNeeded= () ->
+    (dispatch, getState) ->
+      dispatch(fetchAvailabilityZones()) if shouldFetchAvailabilityZones(getState())
+
   # export
   app.fetchShares                 = fetchShares
   app.fetchSharesIfNeeded         = fetchSharesIfNeeded
@@ -216,4 +249,6 @@
   app.shareFormForUpdate          = shareFormForUpdate
   app.submitShareForm             = submitShareForm
   app.updateShareForm             = updateShareForm
+
+  app.fetchAvailabilityZonesIfNeeded = fetchAvailabilityZonesIfNeeded
 )(shared_filesystem_storage)

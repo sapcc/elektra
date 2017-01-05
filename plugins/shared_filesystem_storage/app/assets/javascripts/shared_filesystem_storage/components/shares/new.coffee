@@ -9,6 +9,7 @@ NewShare = ({
   close,
   shareForm,
   shareNetworks,
+  availabilityZones,
   handleSubmit,
   handleChange,
   handleNewShareNetwork
@@ -72,6 +73,27 @@ NewShare = ({
               value: (share.size || ''),
               onChange: onChange
 
+      # availability_zones
+      div className: "form-group  select share_az",
+        label className: "select  col-sm-4 control-label", htmlFor: "share_az",
+          'Availability Zone'
+        div className: "col-sm-8",
+          div className: "input-wrapper",
+            if availabilityZones.isFetching
+              span null,
+                span className: 'spinner', null
+                'Loading...'
+            else
+              div null,
+                select name: "availability_zone", className: "required select form-control", value: (share.availability_zone || ''), onChange: onChange,
+                  option null, ' '
+                    for az in availabilityZones.items
+                      option value: az.id, key: az.id, az.name
+                if availabilityZones.items.length==0
+                  p className:'help-block',
+                    i className: "fa fa-info-circle"
+                    'No availability zones available.'
+
       # Share networks
       div className: "form-group required select share_share_network",
         label className: "select required col-sm-4 control-label", htmlFor: "share_share_network",
@@ -79,21 +101,22 @@ NewShare = ({
           'Share Network'
         div className: "col-sm-8",
           div className: "input-wrapper",
-            if shareNetworks
+            if shareNetworks.isFetching
+              span null,
+                span className: 'spinner', null
+                'Loading...'
+            else
               div null,
                 select name: "share_network_id", className: "required select form-control", value: (share.share_network_id || ''), onChange: onChange,
                   option null, ' '
-                    for shareNetwork in shareNetworks
+                    for shareNetwork in shareNetworks.items
                       option value: shareNetwork.id, key: shareNetwork.id, shareNetwork.name
-                if shareNetworks.length==0
+                if shareNetworks.items.length==0
                   p className:'help-block',
                     i className: "fa fa-info-circle"
                     'There are no share networks defined yet. '
                     a onClick: ((e) -> e.preventDefault(); handleNewShareNetwork()), href: '#', 'Create a new share network.'
-            else
-              span null,
-                span className: 'spinner', null
-                'Loading...'
+
 
       div className: "form-group boolean optional hare_is_public",
         div className: "col-sm-offset-4 col-sm-8",
@@ -116,7 +139,8 @@ NewShare = ({
 NewShare = connect(
   (state) ->
     shareForm: state.shareForm
-    shareNetworks: state.shareNetworks.items
+    shareNetworks: state.shareNetworks
+    availabilityZones: state.availabilityZones
   (dispatch) ->
     handleChange: (name,value) -> dispatch(updateShareForm(name,value))
     handleSubmit: (callback) -> dispatch(submitShareForm(callback))

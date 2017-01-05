@@ -11,7 +11,8 @@
 composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 store = createStore(AppReducers, composeEnhancers(applyMiddleware(ReduxThunk.default)))
 
-store.dispatch(selectTab(window.location.hash.replace('#','')))
+activeTab = shared_filesystem_storage.getCurrentTabFromUrl()
+store.dispatch(selectTab(activeTab)) if activeTab
 
 AppProvider = ({permissions}) ->
   React.createElement Provider, store: store,

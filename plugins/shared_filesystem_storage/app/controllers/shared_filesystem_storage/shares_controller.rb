@@ -26,9 +26,7 @@ module SharedFilesystemStorage
     end
 
     def availability_zones
-      #TODO: load availability zones from manila (not implemented yet in FOG!)
-      # render json: services.shared_filesystem_storage.availability_zones
-      render json: []
+      render json: services.shared_filesystem_storage.availability_zones
     end
 
     def update

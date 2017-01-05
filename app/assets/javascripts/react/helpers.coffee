@@ -25,5 +25,5 @@ ReactHelpers.findInArray=(items,itemId) ->
       item = i
       break
   item
-       
+
 @ReactHelpers = ReactHelpers
