@@ -43,11 +43,12 @@
           %span.fa.fa-cog
           -# %span.spinner
 
-        - unless instance.os_ext_sts_task_state
-          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-            - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) and instance.status=='ACTIVE'
+        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+          - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+            %li= link_to 'VNC Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
 
-              %li= link_to 'VNC Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
+          -# Add other actions only if instance is not in a transitioning state (creating, starting, ...)
+          - unless instance.os_ext_sts_task_state
 
             - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               - if instance.floating_ips.length>0
