@@ -15,7 +15,7 @@
 
   "identity:project_api_endpoints": "role:admin or role:Member or role:member",
   "identity:project_web_console": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
-  
+
   "identity:domain_list": "rule:cloud_admin",
   "identity:domain_get": "(role:admin or role:Member or role:member) and domain_id:%(target.domain_id)s",
 
@@ -28,26 +28,26 @@
   "identity:project_member_list": "rule:cloud_admin or role:admin or role:member or role:Member",
   "identity:project_member_create": "rule:cloud_admin or role:admin",
   "identity:project_member_update": "rule:cloud_admin or role:admin",
-  
+
   "identity:project_group_list": "rule:cloud_admin or role:admin or role:member or role:Member",
   "identity:project_group_create": "rule:cloud_admin or role:admin",
   "identity:project_group_update": "rule:cloud_admin or role:admin",
-  
+
   "identity:group_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
   "identity:group_create": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
   "identity:group_update": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   "identity:group_delete": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
-  
+
   "identity:group_add_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   "identity:group_remove_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
-  
-  "identity:technical_user_list": "rule:cloud_admin or (role:admin and (domain_id:%(domain_id)s or domain_name:%(domain_id)s) )",
-  "identity:technical_user_get": "rule:cloud_admin or (role:admin and domain_id:%(target.user.domain_id)s )",
-  "identity:technical_user_create": "rule:cloud_admin or (role:admin and domain_id:%(user.domain_id)s )",
-  "identity:technical_user_update": "rule:cloud_admin or (role:admin and domain_id:%(user.domain_id)s )",
-  "identity:technical_user_reset_password": "rule:cloud_admin or (role:admin and domain_id:%(user.domain_id)s)",
+
+  "identity:technical_user_list": "rule:cloud_admin or (role:admin and not domain_id:nil)",
+  "identity:technical_user_get": "rule:cloud_admin or (role:admin and not domain_id:nil)",
+  "identity:technical_user_create": "rule:cloud_admin or (role:admin and not domain_id:nil)",
+  "identity:technical_user_update": "rule:cloud_admin or (role:admin and not domain_id:nil)",
+  "identity:technical_user_reset_password": "rule:cloud_admin or (role:admin and not domain_id:nil)",
   "identity:technical_user_delete": "!",
-  
+
   "identity:user_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
   "identity:user_show": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
   "identity:user_update": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)"
