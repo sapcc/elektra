@@ -24,7 +24,7 @@
 
 - else
   %div{class: modal? ? 'modal-body' : ''}
-    %p There is no floating IP available. Please allocate a new IP.
+    %p There is no floating IP available. Allocate a new IP. Please also note, that it'll not get attached automatically.
     = link_to 'Allocate IP', plugin('networking').new_floating_ip_path, data: {modal: true}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
