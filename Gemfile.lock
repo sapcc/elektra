@@ -14,8 +14,8 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/excon.git
-  revision: d39a7fcdbe1c79d418d710963e01eb15618e0c56
-  branch: master
+  revision: f8d09fe3da5f4eeadc222b37db83fec64b334c6e
+  branch: debug_header_error
   specs:
     excon (0.54.0)
 
