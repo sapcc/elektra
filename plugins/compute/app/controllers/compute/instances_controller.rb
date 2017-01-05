@@ -1,13 +1,8 @@
 module Compute
   class InstancesController < Compute::ApplicationController
-    before_filter do 
-      @policy_default_params ||= {}
-      @policy_default_params[:project] = @active_project
-    end
-    
     authorization_context 'compute'
     authorization_required
-    
+
     def index
       @instances = []
       if @scoped_project_id
