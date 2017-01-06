@@ -189,10 +189,6 @@ module Networking
 
       def create_router(params)
         name = params.delete("name")
-        p ">>>>>>>>>>>>>>>>>>>>>>>><"
-        p name
-        p params
-        p ':::::::'
         handle_response { @fog.create_router(name, params).body['router'] }
       end
 
