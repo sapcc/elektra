@@ -13,13 +13,6 @@ GIT
       rest-client (~> 2.0.0.rc3)
 
 GIT
-  remote: https://github.com/sapcc/excon.git
-  revision: d39a7fcdbe1c79d418d710963e01eb15618e0c56
-  branch: master
-  specs:
-    excon (0.54.0)
-
-GIT
   remote: https://github.com/sapcc/fog-openstack-sap-billing.git
   revision: 7c736591760102d0ebd3ab0786fbd1b755a2a81b
   branch: master
@@ -283,6 +276,7 @@ GEM
       railties (~> 4.0)
     equalizer (0.0.11)
     erubis (2.7.0)
+    excon (0.54.0)
     execjs (2.7.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -554,7 +548,6 @@ DEPENDENCIES
   dns_service!
   dotenv-rails
   elektra-extension!
-  excon!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   fog-openstack-sap-billing!
@@ -605,3 +598,6 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.13.6
