@@ -13,6 +13,7 @@
         = link_to volume_name, plugin('block_storage').volume_path(id: volume.id), data: {modal: true}
     - else
       %td= volume_name
+    %td= volume.availability_zone  
     %td= volume.description
     %td= volume.size
     - attachments = get_attachments(volume, @servers)
