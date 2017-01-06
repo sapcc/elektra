@@ -59,7 +59,7 @@
       group_method:  :last,
       label_method:  -> (image) { image_label_for_select(image) },
       selected:      @instance.image_id,
-      required:      true 
+      required:      true
 
     = f.input :network_ids, { label: "Private Network",
       wrapper_html:       { class: ('has-error' if @private_networks.empty?) },

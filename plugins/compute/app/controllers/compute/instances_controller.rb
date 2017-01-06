@@ -55,7 +55,6 @@ module Compute
 
       @flavors            = services.compute.flavors
       @images             = services.image.images
-      @images.each{|i| puts i.pretty_attributes}
 
       @availability_zones = services.compute.availability_zones
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)

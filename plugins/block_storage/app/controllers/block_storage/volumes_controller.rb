@@ -99,7 +99,10 @@ module BlockStorage
     def edit_attach
       @volume_server = VolumeServer.new
       @volume_server.volume = @volume
-      @volume_server.servers = services.compute.servers.keep_if { |s| SERVER_STATES_NEEDED_FOR_ATTACH.include? s.status }
+      @volume_server.servers = services.compute.servers.keep_if do |s|
+        SERVER_STATES_NEEDED_FOR_ATTACH.include?(s.status) and
+        s.availability_zone==@volume.availability_zone
+      end
     end
 
     def attach

@@ -12,9 +12,11 @@
     = f.input :server, { label: "Server",
       input_html:         {},
       prompt: "Select a server",
-      as:                 :select,
-      collection:         @volume_server.servers,
-      required:           true}
+      as:                 :grouped_select,
+      required:           true,
+      collection:         { "--#{@volume.availability_zone}" => @volume_server.servers},
+      label_method:       -> (s) { s.name },
+      group_method:       :last}
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?
