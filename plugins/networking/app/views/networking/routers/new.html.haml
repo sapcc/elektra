@@ -1,5 +1,4 @@
-- wrapper = @router.errors.present? ? :horizontal_form_disabled : :horizontal_form
-= simple_form_for @router, url: plugin('networking').routers_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: wrapper do |f|
+= simple_form_for @router, url: plugin('networking').routers_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @router.errors.present?
@@ -18,6 +17,13 @@
         collection:         @external_networks,
         selected:           @router.external_gateway_info,
         required:           true}
+
+      %fieldset#subnets
+        = info.simple_fields_for :external_fixed_ips do |fixed_ips|
+          = fixed_ips.input :subnet_id,
+            as: :select,
+            input_html: {name: "router[external_gateway_info][external_fixed_ips][][subnet_id]"},
+            collection: @subnets
 
     = f.input :internal_subnets, {label: "Internal Networks",
       input_html:         {multiple: true},
