@@ -112,24 +112,24 @@ module Networking
       def floating_ips(filter = {})
         handle_response { @fog.list_floating_ips(filter).body['floatingips'] }
       end
-      
+
       def get_floating_ip(id)
         handle_response{@fog.get_floating_ip(id).body['floatingip']}
       end
-      
+
       def create_floating_ip(params)
         network_id = params.delete(:floating_network_id)
         handle_response{@fog.create_floating_ip(network_id, params).body['floatingip']}
       end
-      
+
       def delete_floating_ip(floating_ip_id)
         handle_response{@fog.delete_floating_ip(floating_ip_id)}
       end
-      
+
       def associate_floating_ip(floating_ip_id, port_id, options = {})
         handle_response{@fog.associate_floating_ip(floating_ip_id, port_id, options).body['floatingip']}
       end
-      
+
       def disassociate_floating_ip(floating_ip_id, options = {})
         handle_response{@fog.disassociate_floating_ip(floating_ip_id, options).body['floatingip']}
       end
@@ -138,34 +138,34 @@ module Networking
       def security_groups(filter = {})
         handle_response { @fog.list_security_groups(filter).body['security_groups'] }
       end
-      
+
       def get_security_group(id)
         handle_response { @fog.get_security_group(id).body['security_group'] }
       end
-      
+
       def create_security_group(attributes={})
         handle_response { @fog.create_security_group(attributes).body['security_group']}
       end
 
-      
+
       def delete_security_group(security_group_id)
         handle_response { @fog.delete_security_group(security_group_id)}
       end
-      
+
       def list_security_group_rules(options = {})
         handle_response { @fog.list_security_group_rules(options).body['security_group_rules'] }
       end
-      
+
       def get_security_group_rule(security_group_rule_id)
         handle_response { @fog.get_security_group_rule(security_group_rule_id).body['security_group_rule'] }
       end
-      
+
       def create_security_group_rule(options = {})
         security_group_id = options.delete(:security_group_id)
         direction = options.delete(:direction)
         handle_response { @fog.create_security_group_rule(security_group_id, direction, options).body['security_group_rule']}
       end
-      
+
       def delete_security_group_rule(security_group_rule_id)
         handle_response { @fog.delete_security_group_rule(security_group_rule_id) }
       end
