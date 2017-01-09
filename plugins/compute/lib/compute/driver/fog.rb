@@ -102,6 +102,14 @@ module Compute
         handle_response { @fog.resume_server(server_id) }
       end
 
+      def add_fixed_ip(server_id, network_id)
+        handle_response{@fog.add_fixed_ip(server_id, network_id)}
+      end
+
+      def remove_fixed_ip(server_id, address)
+        handle_response{@fog.remove_fixed_ip(server_id, address)}
+      end
+
       ########################### FLAVORS #############################
       def flavors(filter={})
         handle_response { @fog.list_flavors_detail(filter).body['flavors'] }
@@ -117,31 +125,31 @@ module Compute
           true
         }
       end
-      
+
       def create_flavor(attributes)
         handle_response { @fog.create_flavor(attributes).body['flavor']}
       end
-      
+
       def add_flavor_access_to_tenant(flavor_id,tenant_id)
         handle_response {@fog.add_flavor_access(flavor_id, tenant_id).body['flavor_access']}
       end
-      
+
       def remove_flavor_access_from_tenant(flavor_id,tenant_id)
         handle_response{@fog.remove_flavor_access(flavor_id, tenant_id).body['flavor_access']}
       end
-      
+
       def list_flavor_members(flavor_id)
         handle_response{@fog.list_tenants_with_flavor_access(flavor_id).body['flavor_access']}
       end
-      
+
       def create_flavor_metadata(flavor_id,specs_data)
         handle_response{@fog.create_flavor_metadata(flavor_id, specs_data).body['extra_specs']}
       end
-      
+
       def delete_flavor_matadata(flavor_id,key)
         handle_response{ @fog.delete_flavor_metadata(flavor_id, key)}
       end
-      
+
       def get_flavor_metadata(flavor_id)
         handle_response{@fog.get_flavor_metadata(flavor_id).body['extra_specs']}
       end

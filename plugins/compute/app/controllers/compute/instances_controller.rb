@@ -181,6 +181,45 @@ module Compute
       end
     end
 
+    def attach_interface
+      @networks = services.networking.networks("router:external"=>false)
+    end
+
+    def add_fixed_ip
+      @instance = services.compute.find_server(params[:id])
+      @network_id = params[:fixed_ip][:network_id]
+      begin
+        @instance.add_fixed_ip(@network_id)
+        respond_to do |format|
+          format.html{redirect_to instances_url}
+          format.js{}
+        end
+      rescue => e
+        @errors = Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).join(', ')
+        @networks = services.networking.networks
+        render action: :attach_interface
+      end
+    end
+
+    def detach_interface
+      @instance = services.compute.find_server(params[:id])
+    end
+
+    def remove_fixed_ip
+      @instance = services.compute.find_server(params[:id])
+      @ip_address = params[:fixed_ip][:ip_address]
+      begin
+        @instance.remove_fixed_ip(@ip_address)
+        respond_to do |format|
+          format.html{redirect_to instances_url}
+          format.js{}
+        end
+      rescue => e
+        @errors = Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).join(', ')
+        render action: :detach_interface
+      end
+    end
+
     def new_size
       @instance = services.compute.find_server(params[:id])
       @flavors  = services.compute.flavors

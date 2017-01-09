@@ -6,6 +6,10 @@ Compute::Engine.routes.draw do
       get 'new_floatingip'
       get 'new_size'
       get 'new_snapshot'
+      get 'attach_interface'
+      get 'detach_interface'
+      put 'add_fixed_ip'
+      put 'remove_fixed_ip'
       put 'resize'
       put 'create_image'
       put 'confirm_resize'
@@ -22,7 +26,7 @@ Compute::Engine.routes.draw do
   end
 
   resources :keypairs
-  
+
   resources :flavors, except: [:show] do
     resources :members, module: :flavors, except: [:edit, :update, :show]
     resources :metadata, module: :flavors, except: [:edit, :update, :show], param: :key

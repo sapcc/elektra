@@ -1,0 +1,24 @@
+= content_for :title do
+  Attach Interface
+
+= simple_form_for :fixed_ip, url: plugin('compute').add_fixed_ip_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @errors
+      %p.alert.alert-error
+        = @errors
+
+
+    = f.input :network_id, {label: "Network",
+      input_html:         {},
+      as:                 :select,
+      collection:         @networks,
+      selected:           @network_id,
+      required:           true}
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    = button_tag "Attach", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
