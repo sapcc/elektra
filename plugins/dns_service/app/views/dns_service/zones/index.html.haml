@@ -25,3 +25,5 @@
     - else
       - @zones.each do | zone |
         = render partial: 'zone_item', locals: {zone: zone}
+
+= render_paginatable(@zones)        

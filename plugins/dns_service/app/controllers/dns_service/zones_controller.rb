@@ -3,7 +3,9 @@ module DnsService
     before_filter ->(id = params[:id]) { load_zone id }, except: [:index]
 
     def index
-      @zones = services.dns_service.zones(@admin_option)
+      @zones = paginatable(per_page: 20) do |pagination_options|
+        services.dns_service.zones(@admin_option.merge(pagination_options))
+      end
     end
 
     def show
