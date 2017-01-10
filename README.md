@@ -3,6 +3,8 @@
 Elektra
 =================
 
+![Elektra Landing Page](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_landing_page.png)
+
 Elektra is an opinionated Openstack Dashboard for Operators and Consumers of Openstack Services. Its goal is to make Openstack more accessible to end-users.
 
 To that end Elektra provides web UIs that turn operator actions into user self-services.
@@ -32,8 +34,8 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 * SAP Hana as a Service
 * SAP Kubernetes as a Service (2017)
 
-![Elektra Landing Page](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_landing_page.png)
 
+**Project Landing Page:**
 
 ![Elektra Project Screen](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_project_screen.png)
 
