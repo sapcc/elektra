@@ -1,7 +1,7 @@
 module Automation
   module ApplicationHelper
 
-def grouped_chef_versions
+    def grouped_chef_versions
 			result = []
 			major_versions = [""]
 			major_versions.concat ::Automation::AvailableChefVersions.get.map {|version| version[/^\d+/]}.uniq
@@ -137,6 +137,14 @@ def grouped_chef_versions
           end
         end
       end
+    end
+
+    def compute_name_with_image_name(instance)
+      name = instance.name
+      unless instance.image_object.try(:name).blank?
+        name += "(#{instance.image_object.try(:name)})"
+      end
+      name
     end
 
     def compute_ips(addresses)
