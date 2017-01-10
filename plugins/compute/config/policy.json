@@ -17,12 +17,13 @@
   "compute:keypair_update": "rule:context_is_editor and (not rule:monsoon2_domain)",
   "compute:keypair_delete": "rule:context_is_editor and (not rule:monsoon2_domain)",
 
-  "cloud_admin_project": "role:admin and token.is_admin_project:true",
-  "compute:flavor_create": "rule:cloud_admin_project",
-  "compute:flavor_delete": "rule:cloud_admin_project",
-  "compute:flavor_update": "rule:cloud_admin_project",
-  "compute:flavor_access_create": "rule:cloud_admin_project",
-  "compute:flavor_access_list": "rule:cloud_admin_project and not %(flavor.is_public?)s",
-  "compute:flavor_access_delete": "rule:cloud_admin_project",
-  "compute:flavor_manage_metadata": "rule:cloud_admin_project"
+  "compute:flavor_get": "rule:context_is_viewer",
+  "compute:flavor_list": "rule:context_is_viewer",
+  "compute:flavor_create": "rule:context_is_cloud_admin",
+  "compute:flavor_delete": "rule:context_is_cloud_admin",
+  "compute:flavor_update": "rule:context_is_cloud_admin",
+  "compute:flavor_access_create": "rule:context_is_cloud_admin",
+  "compute:flavor_access_list": "rule:context_is_cloud_admin and not %(flavor.is_public?)s",
+  "compute:flavor_access_delete": "rule:context_is_cloud_admin",
+  "compute:flavor_manage_metadata": "rule:context_is_cloud_admin"
 }
