@@ -3,7 +3,43 @@
 Elektra
 =================
 
-Elektra is an opinionated Openstack Dashboard for Operators and Consumers of Openstack Services.
+Elektra is an opinionated Openstack Dashboard for Operators and Consumers of Openstack Services. Its goal is to make Openstack more accessible to end-users.
+
+To that end Elektra provides web UIs that turn operator actions into user self-services.
+
+**User self-services:**
+* User onboarding
+* Project creation and configuration
+* Quota requests
+* Authorizations and access control for projects and services
+* Cost control
+
+**We have UIs for the following Openstack core services**:
+* Compute: servers, server images, server snapshots (Nova)
+* Block storage: volumes, volume snapshots (Cinder)
+* User and group roles assignemnts (Keystone)
+* Secure key store (Barbican)
+* Software-defined networks, routers, floating IPs, security groups (Neutron)
+* Loadbalancing (LBaaS)
+* DNS (Designate)
+* Object storage (Swift)
+* Shared file storage (Manila)
+* Monitoring (Monasca)
+
+**Extended services:**
+
+* SAP Automation as a Service
+* SAP Hana as a Service
+* SAP Kubernetes as a Service (2017)
+
+![Elektra Landing Page](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_landing_page.png)
+
+
+![Elektra Project Screen](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_project_screen.png)
+
+
+Installing and Running Elektra
+==============================
 
 
 Prerequisites
