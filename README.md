@@ -22,7 +22,7 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 * User and group roles assignemnts (Keystone)
 * Secure key store (Barbican)
 * Software-defined networks, routers, floating IPs, security groups (Neutron)
-* Loadbalancing (LBaaS)
+* Loadbalancing (Neutron LBaaS extension)
 * DNS (Designate)
 * Object storage (Swift)
 * Shared file storage (Manila)
