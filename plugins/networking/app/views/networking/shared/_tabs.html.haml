@@ -1,6 +1,6 @@
 %ul.nav.nav-tabs
   -# no need to render 'shared' separately - turns up in the private list and can be determined by owner
-  - %w(private external).each do |network_type|
+  - %w(external private).each do |network_type|
     - if tab == network_type
       %li.active{ role: 'presentation' }
         = link_to network_type.humanize + ' Networks', '#'

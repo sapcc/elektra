@@ -194,7 +194,7 @@ module Networking
 
     def available_networks
       # load all project networks
-      project_networks = services.networking.project_networks(@scoped_project_id)
+      project_networks = services.networking.networks
       # get external and internal networks
       return @available_networks if @available_networks
 
@@ -205,6 +205,7 @@ module Networking
         else
           network.subnet_objects.each do |subnet|
             # add if not attached
+            subnet.network_name=network.name
             @available_networks[:internal_subnets] << subnet unless attached_subnet_ids.include?(subnet.id)
           end
         end

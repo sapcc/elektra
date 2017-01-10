@@ -11,7 +11,7 @@
       collection:         [['UP', 'true'],['DOWN', 'false']]}
 
     = f.simple_fields_for :external_gateway_info do |info|
-      = info.input :network_id, {label: "External Network",
+      = info.input :network_id, {label: "Floating IP Network",
         input_html:         {},
         as:                 :select,
         collection:         @external_networks,
@@ -25,12 +25,14 @@
             input_html: {name: "router[external_gateway_info][external_fixed_ips][][subnet_id]"},
             collection: @subnets
 
-    = f.input :internal_subnets, {label: "Internal Networks",
+    = f.input :internal_subnets, {label: "Private Network Subnets",
       input_html:         {multiple: true},
       as:                 :select,
-      collection:         @internal_subnets,
-      selected:           [],
+      collection:         @internal_subnets.sort{|a,b| a.network_name<=>b.network_name},
+      selected:           nil,
+      label_method:       -> s {"#{s.name} (#{s.network_name})"},
       required:           true}
+
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

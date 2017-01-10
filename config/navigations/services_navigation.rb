@@ -99,7 +99,7 @@ SimpleNavigation::Configuration.run do |navigation|
                  if: -> { plugin_available?(:networking) || plugin_available?(:loadbalancing) || plugin_available?(:dns_service) } do |networking_nav|
                     networking_nav.item :networks,
                                         'Networks & Routers',
-                                        -> { plugin('networking').networks_private_index_path },
+                                        -> { plugin('networking').networks_external_index_path },
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/(networks|routers)/?.*}
                     networking_nav.item :floating_ips,
@@ -127,8 +127,8 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
       storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
-      storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')}, 
-        if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") }, 
+      storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')},
+        if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
         highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
     #   storage_nav.item :filesystem_storage, 'File System Storage', '#'
     #   storage_nav.item :repositories, 'Repositories', '#'
