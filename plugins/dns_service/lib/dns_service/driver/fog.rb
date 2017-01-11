@@ -21,15 +21,15 @@ module DnsService
       def get_zone(id, options = {})
         handle_response { @fog.get_zone(id, options).body }
       end
-      
+
       def create_zone(name, email, options={})
         handle_response{@fog.create_zone(name, email, options).body}
       end
-      
+
       def update_zone(id, attributes={})
         handle_response{@fog.update_zone(id, attributes).body}
       end
-      
+
       def delete_zone(id, options = {})
         handle_response{@fog.delete_zone(id, options).body}
       end
@@ -59,8 +59,8 @@ module DnsService
         }
       end
 
-      def delete_recordset(zone_id,recordset_id)
-        handle_response{ @fog.delete_recordset(zone_id, recordset_id).body }
+      def delete_recordset(zone_id,recordset_id, options={})
+        handle_response{ @fog.delete_recordset(zone_id, recordset_id, options).body }
       end
     end
   end
