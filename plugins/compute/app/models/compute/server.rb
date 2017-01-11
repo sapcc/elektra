@@ -6,7 +6,7 @@ module Compute
     validates :image_id, presence: {message: 'Please select an image'}
     validates :flavor_id, presence: {message: 'Please select a flavor'}
     validates :network_ids, presence: {message: 'Please select at least one network'}
-        
+
     NO_STATE    = 0
     RUNNING     = 1
     BLOCKED     = 2
@@ -17,9 +17,9 @@ module Compute
     SUSPENDED   = 7
     FAILED      = 8
     BUILDING    = 9
-    
+
     def power_state_string
-      case self.power_state 
+      case self.power_state
       when RUNNING then "Running"
       when BLOCKED then "Blocked"
       when PAUSED then "Paused"
@@ -29,7 +29,7 @@ module Compute
       when SUSPENDED then "Suspended"
       when FAILED then "Failed"
       when BUILDING then "Building"
-      else 
+      else
         'No State'
       end
     end
@@ -50,33 +50,33 @@ module Compute
         "user_data"         => Base64.encode64(read("user_data"))
         }.delete_if { |k, v| v.blank? }
     end
-    
+
     def security_groups
       read("security_groups") || []
     end
-    
+
     def availability_zone
       read("OS-EXT-AZ:availability_zone")
-    end 
-    
-    def power_state
-      read("OS-EXT-STS:power_state") 
     end
-    
+
+    def power_state
+      read("OS-EXT-STS:power_state")
+    end
+
     def vm_state
       read("OS-EXT-STS:vm_state")
     end
-    
-    def attr_host 
+
+    def attr_host
       read("OS-EXT-SRV-ATTR:host")
     end
-    
-    def volumes_attached 
+
+    def volumes_attached
       read("os-extended-volumes:volumes_attached")
     end
-    
+
     def task_state
-      task_state = read("OS-EXT-STS:task_state") 
+      task_state = read("OS-EXT-STS:task_state")
       return nil if task_state.nil? or task_state.empty? or task_state.downcase=='none'
       return task_state
     end
@@ -85,13 +85,13 @@ module Compute
     def ip_addresses
       addresses ? addresses.values.flatten.map{|x| x['addr']} : []
     end
-    
+
     def floating_ips
       @floating_ips ||= addresses.values.flatten.select do |ip|
-        ip["OS-EXT-IPS:type"]=="floating" 
+        ip["OS-EXT-IPS:type"]=="floating"
       end
     end
-    
+
     # borrowed from fog
     def floating_ip_addresses
       all_floating= addresses ? addresses.values.flatten.select{ |data| data["OS-EXT-IPS:type"]=="floating" }.map{|addr| addr["addr"] } : []
@@ -111,10 +111,10 @@ module Compute
       }
       all_floating.empty? ? manual : all_floating
     end
-    
+
     def flavor_object
       return nil if @flavor_object==false
-      
+
       if @flavor_object.nil?
         flavor_id = self.flavor.nil? ? nil : self.flavor["id"]
         if flavor_id
@@ -123,13 +123,13 @@ module Compute
           @flavor_object = false
         end
       end
-      
+
       return @flavor_object || nil
     end
-    
+
     def image_object
       return nil if @image_object==false
-      
+
       if @image_object.nil?
         image_id = self.image.nil? ? nil : self.image["id"]
         if image_id
@@ -138,18 +138,18 @@ module Compute
           @image_object = false
         end
       end
-      
+
       return @image_object || nil
     end
-    
+
     def metadata
       attribute_to_object("metadata",Compute::Metadata)
     end
-    
+
     def networks
       attribute_to_object("networks",Compute::Metadata)
     end
-    
+
     def attached_volumes
       if volumes_attached
         @driver.volumes.select{|vol|
@@ -160,13 +160,24 @@ module Compute
         []
       end
     end
-        
-    ####################### ACTIONS #####################    
+
+    ####################### ACTIONS #####################
+    def add_fixed_ip(network_id)
+      requires :id
+      p '>>>>>>>>>>>>>>>>>>>>>>>>>>'
+      @driver.add_fixed_ip(id,network_id)
+    end
+
+    def remove_fixed_ip(ip_address)
+      requires :id
+      @driver.remove_fixed_ip(id,ip_address)
+    end
+
     def terminate
       requires :id
       @driver.delete_server id
     end
-    
+
     def rebuild(image_ref, name, admin_pass=nil, metadata=nil, personality=nil)
       requires :id
       @driver.rebuild_server(id, image_ref, name, admin_pass, metadata, personality)
@@ -178,7 +189,7 @@ module Compute
       @driver.resize_server(id, flavor_ref)
       true
     end
-    
+
     def create_image(name, metadata = {})
       requires :id
       @driver.create_image(id,name, metadata)
@@ -220,7 +231,7 @@ module Compute
 
     def start
       requires :id
-      
+
       case status.downcase
       when 'paused'
         @driver.unpause_server(id)

@@ -1,0 +1,24 @@
+= content_for :title do
+  Detach Interface
+
+= simple_form_for @os_interface, url: plugin('compute').delete_interface_instance_path(id: @instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @os_interface.errors.present?
+      .alert.alert-error
+        = render_errors(@os_interface.errors)
+
+    = f.input :ip_address, {label: "Address",
+      input_html:         {},
+      as:                 :grouped_select,
+      collection:         @instance.addresses,
+      group_method:       :last,
+      label_method:       -> a {a['addr']},
+      value_method:       -> a {a['addr']},
+      required:           true}
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    = button_tag "Detach", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

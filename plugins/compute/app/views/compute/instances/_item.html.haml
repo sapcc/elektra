@@ -10,11 +10,11 @@
     - else
       = instance.name
   %td= instance.availability_zone
-  %td= instance.addresses.keys.join(', ') if instance.addresses
   %td.snug-nowrap
     - instance.addresses.each do |network_name, ip_values|
       -if ip_values and ip_values.length>0
         .list-group.borderless
+          = network_name
           - ip_values.each do |values|
             %p.list-group-item-text
               - if values["OS-EXT-IPS:type"]=='floating'
@@ -55,6 +55,10 @@
                 %li= link_to 'Detach Floating IP', plugin('compute').detach_floatingip_instance_path(id: instance.id, floating_ip: instance.floating_ips.first["addr"]), method: :delete, data: { confirm: 'Are you sure you want to detach floating?', ok: "Yes, detach it", confirmed: :loading_status}, remote: true
               - else
                 %li= link_to 'Attach Floating IP', new_floatingip_instance_path(id: instance.id), data: {modal: true }
+
+
+              %li= link_to 'Attach Interface', plugin('compute').attach_interface_instance_path(id: instance.id), data: { modal: true}
+              %li= link_to 'Detach Interface', plugin('compute').detach_interface_instance_path(id: instance.id), data: { modal: true}
 
               - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state
                 %li= link_to 'Start', start_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true

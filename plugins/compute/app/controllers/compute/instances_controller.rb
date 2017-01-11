@@ -181,6 +181,76 @@ module Compute
       end
     end
 
+    def attach_interface
+      @os_interface = services.compute.new_os_interface(params[:id])
+      @networks = services.networking.networks("router:external"=>false)
+    end
+
+    def create_interface
+      @os_interface = services.compute.new_os_interface(params[:id],params[:os_interface])
+      if @os_interface.save
+        @instance = services.compute.find_server(params[:id])
+        respond_to do |format|
+          format.html{redirect_to instances_url}
+          format.js{}
+        end
+      else
+        @networks = services.networking.networks("router:external"=>false)
+        render action: :attach_interface
+      end
+    end
+
+    def detach_interface
+      @instance = services.compute.find_server(params[:id])
+      @os_interface = services.compute.new_os_interface(params[:id])
+    end
+
+    def delete_interface
+      # create a new os_interface model based on params
+      @os_interface = services.compute.new_os_interface(params[:id],params[:os_interface])
+
+      # load all attached server interfaces
+      all_server_interfaces = services.compute.server_os_interfaces(params[:id])
+      # find the one which should be deleted
+      interface = all_server_interfaces.find do |i|
+        i.fixed_ips.first['ip_address']==@os_interface.ip_address
+      end
+
+      success = if interface
+        # destroy
+        @os_interface.id = @os_interface.port_id = interface.port_id
+        @os_interface.destroy
+      else
+        @os_interface.errors.add(:address,'Not found.')
+        false
+      end
+
+      if success
+        # load instance after deleting os interface!!!
+
+        # try to update instance state
+        timeout = 60
+        sleep_time = 3
+        loop do
+          @instance = services.compute.find_server(params[:id])
+          if timeout<=0 or @instance.addresses.values.flatten.length==all_server_interfaces.length-1
+            break
+          else
+            timeout -= sleep_time
+            sleep(sleep_time)
+          end
+        end
+        respond_to do |format|
+          format.html{redirect_to instances_url}
+          format.js{}
+        end
+      else
+        @instance = services.compute.find_server(params[:id])
+        @os_interface.ip_address=params[:os_interface][:ip_address]
+        render action: :detach_interface
+      end
+    end
+
     def new_size
       @instance = services.compute.find_server(params[:id])
       @flavors  = services.compute.flavors
