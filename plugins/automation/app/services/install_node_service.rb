@@ -75,6 +75,8 @@ class InstallNodeService
   end
 
   def process_request_external(instance_id, instance_os, automation_service, active_project, token)
+    messages = []
+
     # check if node already exists
     node_found = node_exists?(instance_id, automation_service)
     if node_found == true
@@ -94,7 +96,7 @@ class InstallNodeService
       raise InstallNodeError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.")
     end
 
-    {script: create_script(url, instance_os)}
+    {script: create_script(url, instance_os), messages: messages}
   end
 
   def registration_url(instance_id, active_project, token)
@@ -136,7 +138,7 @@ C:\\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} -
 
   def node_exists?(instance_id, automation_service)
     begin
-      automation_service.node(instance_id)
+      automation_service.node(URI.escape(instance_id))
     rescue ArcClient::ApiError => exception
       if exception.code == 404
         return false
