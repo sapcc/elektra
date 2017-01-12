@@ -17,11 +17,11 @@ module ServiceLayer
     def zones(filter = {})
       driver.map_to(DnsService::Zone).list_zones(filter)
     end
-    
+
     def new_zone(attributes={})
       DnsService::Zone.new(driver, attributes)
     end
-    
+
     def delete_zone(zone_id, options={})
       driver.map_to(DnsService::Zone).delete_zone(zone_id,options)
     end
