@@ -12,7 +12,7 @@ module Automation
 
     def flash_box(key, value)
       haml_tag :p, {class: "alert alert-#{key.to_s}", role: "alert"} do
-        haml_concat value.to_s
+        haml_concat html_escape(value)
       end
     end
 
