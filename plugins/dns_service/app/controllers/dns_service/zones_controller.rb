@@ -44,12 +44,11 @@ module DnsService
     end
 
     def edit
-      @zone = services.dns_service.find_zone(params[:id])
     end
 
     def update
-      @zone = services.dns_service.find_zone(params[:id])
-      @zone.attributes=params[:zone]
+      @zone.attributes = params[:zone].merge(@impersonate_option)
+
       if @zone.save
         flash.now[:notice] = "Zone successfully updated."
         respond_to do |format|
@@ -62,7 +61,7 @@ module DnsService
     end
 
     def destroy
-      @zone = services.dns_service.delete_zone(params[:id])
+      @zone = services.dns_service.delete_zone(params[:id], @impersonate_option)
       respond_to do |format|
         format.js{}
         format.html{redirect_to zones_url  }
