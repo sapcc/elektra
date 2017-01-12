@@ -19,7 +19,7 @@
     "lat":        39.98,
     "lon":        -75.40,
     "available":  false,
-    "date":       "Q3 2016"
+    "date":       "2017"
   },
   {
     "code":       "STC",
@@ -52,7 +52,7 @@
     "lat":        43.66,
     "lon":        -79.38,
     "available":  false,
-    "date":       "Q4 2016"
+    "date":       "2017"
   },
   {
     "code":       "SAP",
@@ -74,7 +74,7 @@
     "lat":        52.36,
     "lon":        4.895523,
     "available":  false,
-    "date":       "Q4 2016"
+    "date":       "2017"
   },
   {
     "code":       "MOS",
@@ -85,7 +85,7 @@
     "lat":        55.75,
     "lon":        37.62,
     "available":  false,
-    "date":       "Q4 2016"
+    "date":       "2017"
   },
   {
     "code":       "ZAF",
@@ -129,7 +129,7 @@
     "lat":        31.20,
     "lon":        121.47,
     "available":  false,
-    "date":       "Q4 2016"
+    "date":       "2017"
   },
   {
     "code":       "OSA",
@@ -140,7 +140,7 @@
     "lat":        34.68,
     "lon":        135.50,
     "available":  false,
-    "date":       "Q4 2016"
+    "date":       "2017"
   },
   {
     "code":       "TOK",
@@ -151,7 +151,7 @@
     "lat":        35.66,
     "lon":        139.77,
     "available":  false,
-    "date":       "Q4 2016"
+    "date":       "2017"
   },
   {
     "code":       "SYD",
