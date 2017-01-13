@@ -46,7 +46,7 @@ module Compute
     end
 
     def flavor_label_for_select(flavor)
-      "#{flavor.name}  (RAM: #{flavor.ram}MB, VCPUs: #{flavor.vcpus}, Disk: #{flavor.disk}GB)"
+      "#{flavor.name}  (RAM: #{Core::DataType.new(:bytes, :mega).format(flavor.ram)}, VCPUs: #{flavor.vcpus}, Disk: #{Core::DataType.new(:bytes, :giga).format(flavor.disk)} )"
     end
   end
 end
