@@ -22,7 +22,7 @@ module Compute
       private_images.each{|hypervisor,images| result << ["--#{hypervisor}",images]}
       result
     end
-    
+
     def grouped_flavors(flavors)
       public_flavors = []
       private_flavors = []
@@ -34,17 +34,17 @@ module Compute
         end
       end
       result = []
-      result << ['Public',public_flavors.sort{|a,b| a.ram<=>b.ram and a.vcpus<=>b.vcpus and a.disk<=>b.disk}] if public_flavors.length>0     
-      result << ['Private',private_flavors.sort{|a,b| a.ram<=>b.ram and a.vcpus<=>b.vcpus and a.disk<=>b.disk}] if private_flavors.length>0
+      result << ['Public',public_flavors.sort_by{|a| [a.ram, a.vcpus]}] if public_flavors.length>0
+      result << ['Private',private_flavors.sort_by{|a| [a.ram, a.vcpus]}] if private_flavors.length>0
       result
     end
-    
+
     def image_label_for_select(image)
       label = "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format})"
       label += ". Project: #{project_name(image.owner)}" if image.visibility=='private'
       label
     end
-    
+
     def flavor_label_for_select(flavor)
       "#{flavor.name}  (RAM: #{flavor.ram}MB, VCPUs: #{flavor.vcpus}, Disk: #{flavor.disk}GB)"
     end
