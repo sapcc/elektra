@@ -5,14 +5,9 @@
   icon_hint: 'Runlist is an array of strings. See hint for more information.',
   help_hint: t('automation.help_hint.string_array')
 
-  = f.input :chef_attributes, as: :hidden
+  = f.input :chef_attributes, as: :hidden, input_html: { data: { chef_attributes_field_reference: true} }
 
-  .form-group
-    %label.text.optional.col-sm-4.control-label
-      Attributes
-    .col-sm-8
-      .input-wrapper
-        #jsoneditor{data:{mode: "code", content_id: "$('#forms_automation_chef_attributes').val()"}}
+  - form_horizontal_json_editor("chef_attributes", "forms_chef_automation_chef_attributes_json_editor", "Attributes", "optional", "$('*[data-chef-attributes-field-reference=\"true\"]').val()", "$('*[data-chef-attributes-field-reference=\"true\"]')", @automation)
 
   = f.input :chef_version, 
       as: :grouped_select,

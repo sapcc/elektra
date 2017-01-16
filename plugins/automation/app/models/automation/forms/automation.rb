@@ -55,9 +55,9 @@ module Automation
       # Rest call for creating a autoamtion
       automation = automation_service.new()
       automation.form_to_attributes(self.attributes)
-      success = automation.save
+      success = automation.save!
       unless success
-        messages = !automation.errors.blank? && !automation.errors.messages.blank? ? automation.errors.messages : {}
+        messages = automation.errors.blank? ? {} : automation.errors
         assign_errors(messages)
       end
       success
@@ -66,9 +66,9 @@ module Automation
     def update!(automation_service)
       automation = automation_service.find(self.id)
       automation.form_to_attributes(self.attributes)
-      success = automation.save
+      success = automation.save!
       unless success
-        messages = !automation.errors.blank? && !automation.errors.messages.blank? ? automation.errors.messages : {}
+        messages = automation.errors.blank? ? {} : automation.errors
         assign_errors(messages)
       end
       success

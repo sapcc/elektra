@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
-  revision: a2ab91bb90d727d99cc4fa7ef3528439167ea290
+  revision: 17fc5ad64a0a0c9305c2423821cc6f0a5bc173f7
   specs:
     lyra-client (0.1.1)
 
@@ -598,3 +598,6 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.13.6

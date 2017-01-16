@@ -11,7 +11,7 @@
     options =
       mode: $('#jsoneditor').data('mode'),
       onChange: (event) ->
-        $('#forms_automation_chef_attributes').val(editor.getText())
+        eval($('#jsoneditor').data('on-change-update-field')).val(editor.getText())
         return
 
     # build the editor

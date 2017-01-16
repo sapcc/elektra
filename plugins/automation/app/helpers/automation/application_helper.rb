@@ -35,7 +35,32 @@ module Automation
       end
     end
 
-    def form_horizontal_json_editor(label, value)
+    def form_horizontal_json_editor(attribute_name, id, label, label_classes, content, on_change_update_field, object)
+      has_error = false
+      if !object.blank? && !object.errors.blank? && !object.errors.messages.blank? && !object.errors.messages[attribute_name.to_sym].blank?
+        has_error = true
+      end
+
+      haml_tag :div, {class: "form-group #{has_error ? 'has-error' : ''}", id: id} do
+        haml_tag :label, {class: "text col-sm-4 control-label #{label_classes}"} do
+          haml_concat label
+        end
+        haml_tag :div, {class: "col-sm-8"} do
+          haml_tag :div, {class: "input-wrapper"} do
+            haml_tag :div, {id: "jsoneditor", data:{mode:"code", content_id: content, on_change_update_field: on_change_update_field}}
+          end
+          if has_error
+            object.errors.messages[attribute_name.to_sym].each do |message|
+              haml_tag :span, {class: "help-block"} do
+                haml_concat message
+              end
+            end
+          end
+        end
+      end
+    end
+
+    def form_horizontal_static_json_editor(label, value)
       haml_tag :div, {class: "form-group"} do
         haml_tag :label, {class: "col-sm-4 control-label"} do
           haml_concat label
