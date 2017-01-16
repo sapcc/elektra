@@ -39,6 +39,10 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 
 ![Elektra Project Screen](https://github.com/sapcc/documents/raw/master/screenshots/sapcc_elektra_project_screen.png)
 
+Where does the name come from?
+------------------------------
+In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Clouds with a silver lining.
+
 
 Installing and Running Elektra
 ==============================
