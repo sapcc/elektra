@@ -41,8 +41,7 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 
 Where does the name come from?
 ------------------------------
-In Greek mythology Elektra, i.e. the bright or brilliant one, was a daughter of Oceanus and Tethys.
-She was the nymph wife of the sea-god Thaumas and the mother of Iris the Rainbow and the storm-wind Harpies.
+In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Clouds with a silver lining.
 
 
 Installing and Running Elektra
