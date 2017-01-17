@@ -20,7 +20,7 @@
         = link_to 'New Private Network', plugin('networking').send("new_networks_private_path"), data: {modal: true}, class: 'btn btn-primary'
       - else
         = 'Please read '
-        = link_to 'how to get a private network.', "#{sap_url_for('documentation')}docs/guides/advanced_private-network.html", target: '_blank'
+        = link_to 'about CC Networking.', "#{sap_url_for('documentation')}docs/learn/network/ccloud_networking.html", target: '_blank'
 
     = f.input :name
     =# f.input :max_count, as: :integer #, input_wrapper_html: {class: 'col-sm-2'}
