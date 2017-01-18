@@ -1,3 +1,30 @@
+.bs-callout.bs-callout-warning.bs-callout-emphasize
+  .row
+    .col-md-8
+      %h4 Set a Cost Object
+      %p Please provide a cost object against which we can bill the services consumed by this project
+    .col-md-4
+      %a.btn.pull-right Set Cost Object
+
+.bs-callout.bs-callout-warning.bs-callout-emphasize
+  .row
+    .col-md-8
+      %h4 Choose Networking Setup
+      %p Depending on your project you will need a different network setup. This choice will define the network your servers get deployed into. There are three levels to choose from:
+      %ol
+        %li
+          %strong Shared network.
+          Access: public. Availability: Internal
+        %li
+          %strong Managed private network.
+          A private network is set up for you to use. Access: Restricted (requires special permissions and security concept). Availability: Internal and External
+        %li
+          %strong Self-managed private network.
+          You set up and manage your own private network. Access: Very Restricted (requires special permissions and security concept). Availability: Internal and External
+    .col-md-4
+      %a.btn.pull-right(href="#") Choose network configuration
+
+
 .row
   .col-md-9
     = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
