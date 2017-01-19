@@ -10,15 +10,14 @@ RSpec.describe InstallNodeService do
       @url = 'some_nice_url'
       @script = 'some cool script'
       @automation_service = double('automation_service')
-      @active_project = double('active_project', id: 'miau', domain_id: 'bup')
       @service = InstallNodeService.new()
     end
 
     it 'should raise an exception if instance_id is empty or nil' do
       # empty
-      expect { @service.process_request('', '', '', nil, nil, '', '') }.to raise_error(InstallNodeParamError)
+      expect { @service.process_request('', '', '', nil, nil) }.to raise_error(InstallNodeParamError)
       # blank
-      expect { @service.process_request(nil, '', '', nil, nil, '', '') }.to raise_error(InstallNodeParamError)
+      expect { @service.process_request(nil, '', '', nil, nil) }.to raise_error(InstallNodeParamError)
     end
 
     context 'compute instance' do
@@ -31,7 +30,7 @@ RSpec.describe InstallNodeService do
         Object.const_set 'NotFound', Class.new(StandardError)
         compute_service = double('compute_service')
         allow(compute_service).to receive(:find_server){ raise Core::ServiceLayer::Errors::ApiError.new(NotFound.new('test')) }
-        expect { @service.process_request(@instance_id, @instance_type, '', compute_service, nil, '', '') }.to raise_error(InstallNodeParamError)
+        expect { @service.process_request(@instance_id, @instance_type, '', compute_service, nil) }.to raise_error(InstallNodeParamError)
       end
 
       it "should not raise an error if agent already exists on the instance" do
@@ -39,7 +38,7 @@ RSpec.describe InstallNodeService do
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ true }
 
-        expect { @service.process_request(@instance_id, @instance_type, '', compute_service, @automation_service, @active_project, '') }.to raise_error(InstallNodeInstanceOSNotFound)
+        expect { @service.process_request(@instance_id, @instance_type, '', compute_service, @automation_service) }.to raise_error(InstallNodeInstanceOSNotFound)
       end
 
       it "should raise an exception if instance_os and image metadata os_family are empty or nil" do
@@ -47,8 +46,8 @@ RSpec.describe InstallNodeService do
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ raise ::ArcClient::ApiError.new('{"code":404}') }
 
-        expect { @service.process_request(@instance_id, @instance_type,  '', compute_service, @automation_service, '', '') }.to raise_error(InstallNodeInstanceOSNotFound, "Instance OS empty or not known")
-        expect { @service.process_request(@instance_id, @instance_type, nil, compute_service, @automation_service, '', '') }.to raise_error(InstallNodeInstanceOSNotFound, "Instance OS empty or not known")
+        expect { @service.process_request(@instance_id, @instance_type,  '', compute_service, @automation_service) }.to raise_error(InstallNodeInstanceOSNotFound, "Instance OS empty or not known")
+        expect { @service.process_request(@instance_id, @instance_type, nil, compute_service, @automation_service) }.to raise_error(InstallNodeInstanceOSNotFound, "Instance OS empty or not known")
       end
 
       it "should get the image metadata os_family when input param instance_os is empty or nil" do
@@ -56,9 +55,9 @@ RSpec.describe InstallNodeService do
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ raise ::ArcClient::ApiError.new('{"code":404}') }
         allow(RestClient::Request).to receive(:new).and_return( double('response', execute: {url: @url}.to_json) )
-        allow(@service).to receive(:create_script).with(@url,@os).and_return( @script )
+        allow(@automation_service).to receive(:node_install_script).and_return( @script )
 
-        expect( @service.process_request(@instance_id, @instance_type, '', compute_service, @automation_service, @active_project, '') ).to match( {log_info: '',  messages: [], instance: instance, script: @script} )
+        expect( @service.process_request(@instance_id, @instance_type, '', compute_service, @automation_service) ).to match( {log_info: '',  messages: [], instance: instance, script: @script} )
       end
 
       it "should return the right log info" do
@@ -66,9 +65,9 @@ RSpec.describe InstallNodeService do
         compute_service = double('compute_service', find_server: instance)
         allow(@automation_service).to receive(:node){ raise ::ArcClient::ApiError.new('{"code":404}') }
         allow(RestClient::Request).to receive(:new).and_return(double('response', execute: {url: @url}.to_json))
-        allow(@service).to receive(:create_script).with(@url, @os).and_return( @script )
+        allow(@automation_service).to receive(:node_install_script).and_return( @script )
 
-        expect( @service.process_request(@instance_id, @instance_type, '', compute_service, @automation_service, @active_project, '') ).to match( {log_info: 'this_is_the_ip / mo_hash', messages: [], instance: instance, script: @script} )
+        expect( @service.process_request(@instance_id, @instance_type, '', compute_service, @automation_service) ).to match( {log_info: 'this_is_the_ip / mo_hash', messages: [], instance: instance, script: @script} )
       end
 
     end

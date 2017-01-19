@@ -11,7 +11,7 @@ class InstallNodeNoInstructionsFound < InstallNodeError; end
 
 class InstallNodeService
 
-  def process_request(instance_id, instance_type, instance_os, compute_service, automation_service, active_project, token)
+  def process_request(instance_id, instance_type, instance_os, compute_service, automation_service)
     # check instance id
     if instance_id.blank?
       raise InstallNodeParamError.new('Instance ID empty', {type: 'instance_id'})
@@ -19,16 +19,16 @@ class InstallNodeService
 
     # check just in case of compute instance
     if instance_type == 'compute'
-      return process_request_compute(instance_id, instance_os, compute_service, automation_service, active_project, token)
+      return process_request_compute(instance_id, instance_os, compute_service, automation_service)
     else
-      return process_request_external(instance_id, instance_os, automation_service, active_project, token)
+      return process_request_external(instance_id, instance_os, automation_service)
     end
 
   end
 
   private
 
-  def process_request_compute(instance_id, instance_os, compute_service, automation_service, active_project, token)
+  def process_request_compute(instance_id, instance_os, compute_service, automation_service)
     messages = []
 
     # get the compute instance
@@ -57,7 +57,8 @@ class InstallNodeService
     # if instance_os is not given then we check the metadata or we ask for
     if instance_os.blank?
       # check image metadata
-      if instance.image_object.nil? || instance.image_object.metadata.nil? || instance.image_object.metadata['os_family'].blank? || ( instance.image_object.metadata['os_family'] != 'windows' && instance.image_object.metadata['os_family'] != 'linux')
+      if instance.image_object.nil? || instance.image_object.metadata.nil? || instance.image_object.metadata['os_family'].blank? ||
+        ( instance.image_object.metadata['os_family'] != ::Automation::Node::OsTypes::WINDOWS && instance.image_object.metadata['os_family'] != ::Automation::Node::OsTypes::LINUX)
         raise InstallNodeInstanceOSNotFound.new("Instance OS empty or not known", {instance: instance, messages: messages})
       else
         instance_os = instance.image_object.metadata['os_family']
@@ -65,16 +66,17 @@ class InstallNodeService
     end
 
     # get the registration url and log info
-    url = begin
-      registration_url(instance_id, active_project, token)
+    script = begin
+      automation_service.node_install_script(instance_id, {"headers" => { "Accept" => accept_header(instance_os) }})
     rescue
+      Rails.logger.error "Automation-plugin: show_instructions: process_request_compute: #{exception.message}"
       raise InstallNodeError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.", {instance: instance, messages: messages})
     end
 
-    {log_info: create_login_info(instance), instance: instance, script: create_script(url, instance_os), messages:messages}
+    {log_info: create_login_info(instance), instance: instance, script: script, messages:messages}
   end
 
-  def process_request_external(instance_id, instance_os, automation_service, active_project, token)
+  def process_request_external(instance_id, instance_os, automation_service)
     messages = []
 
     # check if node already exists
@@ -89,24 +91,22 @@ class InstallNodeService
     end
 
     # get the registration url and log info
-    url = begin
-      registration_url(instance_id, active_project, token)
+    script = begin
+      automation_service.node_install_script(instance_id, {"headers" => { "Accept" => accept_header(instance_os) }})
     rescue => exception
       Rails.logger.error "Automation-plugin: show_instructions: process_request_external: #{exception.message}"
       raise InstallNodeError.new("Internal Server Error. Something went wrong while processing your request. Please try again later.")
     end
 
-    {script: create_script(url, instance_os), messages: messages}
+    {script:script, messages: messages}
   end
 
-  def registration_url(instance_id, active_project, token)
-    response = RestClient::Request.new(method: :post,
-                                       url: AUTOMATION_CONF['arc_pki_url'],
-                                       headers: {'X-Auth-Token': token},
-                                       timeout: 5,
-                                       payload: {"CN": instance_id, "names": [{"OU": active_project.id, "O": active_project.domain_id}] }.to_json).execute
-    response_hash = JSON.parse(response)
-    response_hash.fetch('url', "")
+  def accept_header(instance_os)
+    if instance_os == ::Automation::Node::OsTypes::WINDOWS
+      return "text/x-powershellscript"
+    else
+      return "text/x-shellscript"
+    end
   end
 
   def create_login_info(instance)
@@ -120,20 +120,6 @@ class InstallNodeService
       result << " / #{dns_name}"
     end
     result
-  end
-
-  def create_script(url, instance_os)
-    if instance_os == 'linux'
-      return "curl --create-dirs -o /opt/arc/arc #{AUTOMATION_CONF['arc_updates_url']}/arc/#{instance_os}/amd64/latest
-chmod +x /opt/arc/arc
-/opt/arc/arc init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
-    elsif instance_os == 'windows'
-      return "mkdir C:\\monsoon\\arc
-powershell (new-object System.Net.WebClient).DownloadFile('#{AUTOMATION_CONF['arc_updates_url']}/arc/#{instance_os}/amd64/latest','C:\\monsoon\\arc\\arc.exe')
-C:\\monsoon\\arc\\arc.exe init --endpoint #{AUTOMATION_CONF['arc_broker_url']} --update-uri #{AUTOMATION_CONF['arc_updates_url']} --registration-url #{url}"
-    else
-      raise InstallNodeNoInstructionsFound.new("No instructions found for this os #{instance_os}")
-    end
   end
 
   def node_exists?(instance_id, automation_service)
