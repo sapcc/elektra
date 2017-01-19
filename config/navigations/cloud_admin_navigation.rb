@@ -63,6 +63,7 @@ SimpleNavigation::Configuration.run do |navigation|
     ccadmin_nav.item :project_members, 'Project User Role Assignments', -> {plugin('identity').projects_cloud_admin_project_members_path}, if: -> { services.available?(:identity) }
     ccadmin_nav.item :project_groups, 'Project Group Role Assignments', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+    ccadmin_nav.item :hypervisors, 'Show Hypervisors', -> { plugin('compute').hypervisors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{hypervisors/?.*}] }
   end
 
   primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,

@@ -36,6 +36,10 @@ module ServiceLayer
       driver.map_to(Compute::Server).servers(filter)
     end
 
+    def hypervisors(filter = {})
+      driver.map_to(Compute::Hypervisor).hypervisors(filter)
+    end
+
     def images
       driver.map_to(Compute::Image).images
     end

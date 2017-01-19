@@ -110,6 +110,12 @@ module Compute
         handle_response{@fog.remove_fixed_ip(server_id, address)}
       end
 
+      ############################# HYPERVISORS ##############################
+
+      def hypervisors(filter = {})
+        handle_response { @fog.list_hypervisors_detail(filter).body['hypervisors'] }
+      end
+
       ############################# OS INTERFACES ##############################
       def create_os_interface(server_id,options={})
         handle_response{@fog.create_os_interface(server_id,options).body['interfaceAttachment']}

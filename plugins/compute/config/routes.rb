@@ -27,6 +27,10 @@ Compute::Engine.routes.draw do
 
   resources :keypairs
 
+  resources :hypervisors do
+    resources :servers, module: :hypervisors, expect: [:edit, :update, :show]
+  end
+
   resources :flavors, except: [:show] do
     resources :members, module: :flavors, except: [:edit, :update, :show]
     resources :metadata, module: :flavors, except: [:edit, :update, :show], param: :key

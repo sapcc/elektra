@@ -1,0 +1,24 @@
+= content_for :main_toolbar do
+  Hypervisors
+
+%table.table
+  %thead
+    %tr
+      %th Hostname
+      %th Type
+      %th VCPUs (used)
+      %th VCPUs (total)
+      %th RAM (used)
+      %th RAM (total)
+      %th Local Storage (used)
+      %th Local Storage (total)
+      %th Instances
+      %th
+  %tbody#hypervisors_table
+    - if @hypervisors.blank?
+      %tr
+        %td{colspan: 3}
+          No hypervisors available
+    - else
+      - @hypervisors.each do |hypervisor|
+        = render partial: 'item', locals: {hypervisor: hypervisor}
