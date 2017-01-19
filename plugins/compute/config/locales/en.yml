@@ -1,0 +1,8 @@
+en:
+  compute:
+    icon_hints:
+      user_attributes: "The Root pass button generates a one-time password, <b>please remember it for your first login</b>. \
+      The password will be provisioned onto the server via cloud-config.Its purpose is logging into the server via \
+      VNC console in case of severe errors that prevent logging in via ssh. \
+      <br/> \
+      The Automation button generates a script."
