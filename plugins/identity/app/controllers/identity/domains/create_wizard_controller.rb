@@ -30,7 +30,7 @@ module Identity
 
           audit_logger.info(current_user, "has created", @project)
 
-          if services.available?(:cost_control)
+          if services.available?(:cost_control) and not cost_params.nil?
 
             cost_params.merge!(id: @project.id)
 
@@ -53,7 +53,7 @@ module Identity
           end
         else
           # put cost_params back into @project where the view can find them to re-render the form
-          @project.cost_control = cost_params
+          @project.cost_control = cost_params unless cost_params.nil?
 
           flash.now[:error] = @project.errors.full_messages.to_sentence
           render action: :new
