@@ -63,6 +63,7 @@ SimpleForm.setup do |config|
 
     b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
       ba.wrapper tag: 'div', class: 'input-wrapper' do |i|
+        i.use :before_field_html
         i.use :input, class: 'form-control'
         i.use :help_hint
       end
@@ -85,6 +86,7 @@ SimpleForm.setup do |config|
 
     b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
       ba.wrapper tag: 'div', class: 'input-wrapper' do |i|
+        i.use :before_field_html
         i.use :input, class: 'form-control', readonly: true, disabled: true
         i.use :help_hint
       end
