@@ -478,6 +478,11 @@ section {
 
   .btn {
     @extend .btn-sm;
+
+    &.btn-xs {
+      @extend .btn-xs;
+    }
+
   }
 
   .btn-primary {
@@ -898,7 +903,7 @@ footer, .footer {
       top: 0;
       right: 0;
     }
-    
+
     .small {
       font-size: 45%;
       a {
