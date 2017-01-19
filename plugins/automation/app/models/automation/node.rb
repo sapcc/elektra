@@ -3,6 +3,11 @@ module Automation
   class Node < ArcClient::Agent
     include ::Automation::Helpers
 
+    module OsTypes
+      LINUX = "linux"
+      WINDOWS = "windows"
+    end
+
     attr_accessor :id, :name
 
     def self.create_nodes(_agents={})
@@ -23,7 +28,7 @@ module Automation
     end
 
     def self.os_types
-      {"linux" => 'Linux', 'windows' => 'Windows'}
+      {OsTypes::LINUX => 'Linux', OsTypes::WINDOWS => 'Windows'}
     end
 
     def name
