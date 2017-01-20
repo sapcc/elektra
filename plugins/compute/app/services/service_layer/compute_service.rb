@@ -36,8 +36,19 @@ module ServiceLayer
       driver.map_to(Compute::Server).servers(filter)
     end
 
+    ##################### HYPERVISORS #########################
+
     def hypervisors(filter = {})
       driver.map_to(Compute::Hypervisor).hypervisors(filter)
+    end
+
+    def find_hypervisor(id)
+      return nil if id.blank?
+      driver.map_to(Compute::Hypervisor).get_hypervisor(id)
+    end
+
+    def hypervisor_servers(id)
+      driver.map_to(Compute::HypervisorServer).hypervisor_servers(id)
     end
 
     def images

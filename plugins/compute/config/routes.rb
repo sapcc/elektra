@@ -28,7 +28,7 @@ Compute::Engine.routes.draw do
   resources :keypairs
 
   resources :hypervisors do
-    resources :servers, module: :hypervisors, expect: [:edit, :update, :show]
+    resources :servers, module: :hypervisors, except: [:edit, :update, :show]
   end
 
   resources :flavors, except: [:show] do

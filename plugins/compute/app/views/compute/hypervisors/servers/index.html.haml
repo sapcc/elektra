@@ -1,0 +1,5 @@
+= content_for :main_toolbar do
+  Hypervisor Servers
+
+.js-table-server
+  = render partial: 'server_table', locals: {hypervisor_servers: @hypervisor_servers}

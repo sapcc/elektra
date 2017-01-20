@@ -1,23 +1,23 @@
 / = content_for :title do
 /   Show
-  
+
 .modal-body
   %ul.nav.nav-tabs
-    %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} 
-    %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}  
-    %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}  
+    %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Volumes Attached ', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}  
-  
+    %li{role: "presentation"}= link_to 'Volumes Attached ', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+
   .tab-content
     .tab-pane.active{role:"tabpanel", id:"information"}
       %table.table.datatable
         %tbody
           %tr
             %th Name
-            %td= @instance.name 
+            %td= @instance.name
           %tr
             %th ID
             %td= @instance.id
@@ -33,11 +33,19 @@
           %tr
             %th Time Since Created
             %td= @instance.updated_at
+          - if @instance.attr_host
+            %tr
+              %th Host
+              %td= @instance.attr_host
           %tr
-            %th Host
-            %td= @instance.attr_host
-            
-    .tab-pane{role:"tabpanel", id:"specs"}        
+            %th Project
+            %td
+              -if @instance.tenant_id != @scoped_project_id
+                - project_id_and_name(@instance.tenant_id)
+              - else
+                = project_name(@instance.tenant_id)
+
+    .tab-pane{role:"tabpanel", id:"specs"}
       %table.table.datatable
         %tbody
           %tr
@@ -55,8 +63,8 @@
           %tr
             %th Disk
             %td= "#{@instance.flavor_object.disk}GB"
-      
-    .tab-pane{role:"tabpanel", id:"ip_addresses"}  
+
+    .tab-pane{role:"tabpanel", id:"ip_addresses"}
       %table.table.datatable
         %tbody
           - @instance.addresses.each do |name,values|
@@ -65,13 +73,13 @@
               %td
                 %ul
                   - values.each do |address|
-                    %li= address["addr"] 
-    
+                    %li= address["addr"]
+
     .tab-pane{role:"tabpanel", id:"sec_groups"}
       %table.table.datatable
         %tbody
           - security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
-          - (@instance_security_groups || []).each do |sg|
+          - (@instance_security_groups.compact || []).each do |sg|
             %tr
               %th= sg.name
               %td
@@ -89,13 +97,13 @@
             %th Keypair
             %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
 
-    .tab-pane{role:"tabpanel", id:"metadata"}  
+    .tab-pane{role:"tabpanel", id:"metadata"}
       %table.table.datatable
-        %tbody 
+        %tbody
           %tr
             %th Image Name
-            %td= @instance.image_object.name rescue '-' 
-          - @instance.metadata.attributes.each do |k,v| 
+            %td= @instance.image_object.name rescue '-'
+          - @instance.metadata.attributes.each do |k,v|
             %tr
               %th= k
               %td= v.blank? ? "N/A" : v
@@ -124,4 +132,3 @@
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
     - else
       = link_to "Close", plugin('compute').instances_url, class: 'btn btn-default'
-    

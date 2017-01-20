@@ -2,9 +2,9 @@
 
   %td
     - if current_user.is_allowed?("compute:hypervisor_get")
-      = link_to hypervisor.name, plugin('compute').hypervisor_path(id: hypervisor.id), data: {modal: true}
+      = link_to hypervisor.host, plugin('compute').hypervisor_path(id: hypervisor.id), data: {modal: true}
     - else
-      = hypervisor.name
+      = hypervisor.host
 
   %td= hypervisor.type
   %td= Core::DataType.new(:number).format(hypervisor.vcpus_used)
@@ -15,7 +15,7 @@
   %td= Core::DataType.new(:bytes, :giga).format(hypervisor.local_gb)
   %td
     - if current_user.is_allowed?("compute:hypervisor_servers")
-      = link_to hypervisor.running_vms, plugin('compute').hypervisor_servers_path(hypervisor_id: hypervisor.id), data: {modal: true}
+      = link_to hypervisor.running_vms, plugin('compute').hypervisor_servers_path(hypervisor_id: hypervisor.id)
     - else
       = hypervisor.running_vms
 

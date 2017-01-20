@@ -1,0 +1,3 @@
+<% unless @hypervisor_servers.count.nil? %>
+$('.js-table-server').html("<%= escape_javascript(render partial: 'server_table', locals: {hypervisor_servers: @hypervisor_servers}) %>");
+<% end %>

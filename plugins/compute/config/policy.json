@@ -17,9 +17,9 @@
   "compute:keypair_update": "rule:context_is_editor and (not rule:monsoon2_domain)",
   "compute:keypair_delete": "rule:context_is_editor and (not rule:monsoon2_domain)",
 
-  "compute:hypervisor_get": "!",
+  "compute:hypervisor_get": "rule:context_is_cloud_admin",
   "compute:hypervisor_list": "rule:context_is_cloud_admin",
-  "compute:hypervisor_servers": "!",
+  "compute:hypervisor_servers": "rule:context_is_cloud_admin",
 
   "compute:flavor_get": "rule:context_is_viewer",
   "compute:flavor_list": "rule:context_is_viewer",

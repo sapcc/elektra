@@ -1,0 +1,18 @@
+%table.table
+  %thead
+    %tr
+      %th ID
+      %th Name
+      %th
+  %tbody#hypervisor_servers_table
+    - unless hypervisor_servers.count
+      %tr
+        %td{colspan: 3}
+          No hypervisor servers available
+    - else
+      - hypervisor_servers.each do |server|
+        = render partial: 'item', locals: {server: server}
+
+= paginate hypervisor_servers, theme: 'twitter-bootstrap-3', remote: true, params: {model: 'hypervisor_servers'}
+
+= link_to 'Back to Hypervisor overview', plugin('compute').hypervisors_path, class: 'btn btn-default'

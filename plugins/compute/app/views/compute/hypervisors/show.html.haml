@@ -1,0 +1,42 @@
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th Host
+        %td= @hypervisor.host
+      %tr
+        %th Name
+        %td= @hypervisor.name
+      %tr
+        %th Type
+        %td= @hypervisor.type
+      -# %tr
+      -#   %th Version
+      -#   %td= @hypervisor.version
+      -# %tr
+      -#   %th Host IP
+      -#   %td= @hypervisor.host_ip
+      - if @hypervisor.disabled_reason
+        %tr
+          %th Reason for Disablement
+          %td= @hypervisor.disabled_reason
+      %tr
+        %th State
+        %td= @hypervisor.state
+      %tr
+        %th Status
+        %td= @hypervisor.status
+      - if @hypervisor.cpu_info.present?
+        %tr
+          %th CPU Info
+          %td.big-data-cell
+            = @hypervisor.cpu_info
+
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Close' } } Close
+    - else
+      = link_to 'Back', plugin('compute').hypervisors_url, class: 'btn btn-default'
