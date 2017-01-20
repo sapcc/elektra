@@ -26,8 +26,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: acfc956a2648652a361fb5499c7390e176ab1128
-
+  revision: bd7f11e4f0da66813f2d431029c574f694773462
   branch: master
   specs:
     fog-openstack (0.1.19)
@@ -599,9 +598,3 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 2.0)
-<<<<<<< HEAD
-
-BUNDLED WITH
-   1.13.7
-=======
->>>>>>> add dns trasfer requests
