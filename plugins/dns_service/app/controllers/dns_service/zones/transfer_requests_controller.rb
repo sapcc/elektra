@@ -2,7 +2,9 @@ module DnsService
   module Zones
     class TransferRequestsController < DnsService::ApplicationController
       def index
-        @zone_transfer_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
+        @zone_transfer_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE').select do |r|
+          r.project_id.nil? or r.project_id!=@scoped_project_id 
+        end
       end
 
       def new

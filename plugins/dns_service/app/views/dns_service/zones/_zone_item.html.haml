@@ -5,6 +5,8 @@
 
 %tr{id: "zone_#{zone.id}", class: className}
   %td
+    - if active_zone_transfer_requests[zone.id]
+      %i.fa.fa-fw.fa-truck{ data: {toggle:"tooltip", placement:"bottom", title: "There is a transfer request for this zone."}}
     - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes)
       = link_to zone.name, zone_path(zone.id)
     - else

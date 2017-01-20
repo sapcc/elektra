@@ -6,7 +6,17 @@ module DnsService
       @zones = paginatable(per_page: 20) do |pagination_options|
         services.dns_service.zones(@admin_option.merge(pagination_options))
       end
-      @zone_transfer_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
+
+      active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
+
+      @zone_transfer_requests = active_requests.select do |r|
+        r.project_id.nil? or r.project_id!=@scoped_project_id
+      end
+
+      @active_zone_transfer_requests = active_requests.inject({}) do |hash,r|
+        hash[r.zone_id] = r if r.project_id==@scoped_project_id
+        hash
+      end
     end
 
     def show
