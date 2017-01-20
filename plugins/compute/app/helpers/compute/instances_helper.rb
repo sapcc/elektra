@@ -17,7 +17,7 @@ module Compute
       end
       result = []
       result << ['Public',public_images.delete('unknown') ||[]]
-      public_images.each{|hypervisor,images| result << ["--#{hypervisor}",images]}
+      public_images.each{|hypervisor,images| result << ["--#{hypervisor}",images.collect{|image| [image_label_for_select(image), image.id, data: {vmware_ostype: image.vmware_ostype}]}]}
       result << ['Private',private_images.delete('unknown') || []]
       private_images.each{|hypervisor,images| result << ["--#{hypervisor}",images]}
       result

@@ -57,7 +57,6 @@
       as:            :grouped_select,
       collection:    grouped_images(@images),
       group_method:  :last,
-      label_method:  -> (image) { image_label_for_select(image) },
       selected:      @instance.image_id,
       required:      true
 
@@ -74,6 +73,7 @@
       label:              "User data",
       as:                 :text,
       required:           false,
+      input_html:         {rows: "15"},
       before_field_html:  "#{render partial: 'cloud_init_menu'}",
       icon_hint:          t("compute.icon_hints.user_attributes")
 

@@ -1,6 +1,7 @@
 module Compute
   class InstancesController < Compute::ApplicationController
     before_filter :all_projects
+    before_action :automation_data, only: [:new, :create]
 
     authorization_context 'compute'
     authorization_required
@@ -53,7 +54,6 @@ module Compute
 
       @flavors            = services.compute.flavors
       @images             = services.image.images
-
       @availability_zones = services.compute.availability_zones
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
@@ -301,6 +301,29 @@ module Compute
 
     def destroy
       execute_instance_action('terminate')
+    end
+
+    def automation_script
+      accept_header = begin
+        body = JSON.parse(request.body.read)
+        os_type = body.fetch('vmwareOstype', '')
+        if os_type.include? "windows"
+          "text/x-powershellscript"
+        else
+          "text/cloud-config"
+        end
+      rescue => exception
+        Rails.logger.error "Compute-plugin: automation_script: error getting os_type: #{exception.message}"
+      end
+      script = services.automation.node_install_script("", {"headers" => { "Accept" => accept_header }})
+      render :json => {script: script}
+    rescue => exception
+      Rails.logger.error "Compute-plugin: automation_script: error getting atuomation script: #{exception.message}"
+      render :json => {}
+    end
+
+    def automation_data
+      @automation_script_action = automation_script_instances_path()
     end
 
     private
