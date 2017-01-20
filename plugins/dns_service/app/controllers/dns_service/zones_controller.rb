@@ -6,6 +6,7 @@ module DnsService
       @zones = paginatable(per_page: 20) do |pagination_options|
         services.dns_service.zones(@admin_option.merge(pagination_options))
       end
+      @zone_transfer_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
     end
 
     def show

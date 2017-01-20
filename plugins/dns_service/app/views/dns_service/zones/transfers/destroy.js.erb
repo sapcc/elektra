@@ -1,0 +1,11 @@
+<% if @zone_transfer_request.id %>
+  html = "<%= j(render(partial: 'dns_service/zones/transfers/item', locals: {zone_transfer_request: @zone_transfer_request })) %>";
+<% else %>
+  html = "<%= j(render(partial: 'dns_service/zones/transfers/form', locals: {zone_transfer_request: @zone_transfer_request })) %>";
+<% end %>
+
+$('#zone-transfer-request').fadeOut('slow', function(){
+  $('#zone-transfer-request').html(html);
+  $('#zone-transfer-request').fadeIn('slow');
+  $(document).trigger('modal:contentUpdated');
+});

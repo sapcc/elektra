@@ -1,3 +1,8 @@
+- if @zone_transfer_requests.length>0
+  .alert.alert-info
+    %p There are zone transfer requests available.
+    = link_to 'show', transfer_requests_path, data: { modal: true }
+
 - if current_user.is_allowed?("dns_service:zone_create")
   .toolbar
     = link_to 'Create new', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
@@ -26,4 +31,4 @@
       - @zones.each do | zone |
         = render partial: 'zone_item', locals: {zone: zone}
 
-= render_paginatable(@zones)        
+= render_paginatable(@zones)

@@ -1,5 +1,6 @@
 module ApplicationHelper
   def render_paginatable(items)
+    return if !items or items.length==0
     if @pagination_enabled
       content_tag(:div, class: 'pagination') do
         concat(content_tag(:span, "#{@pagination_seen_items+1} - #{@pagination_seen_items+items.length} ", class: 'current-window'))

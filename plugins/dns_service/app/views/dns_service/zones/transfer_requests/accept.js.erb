@@ -1,0 +1,7 @@
+<% if @zone_transfer_request.errors.empty? %>
+  $('.alert.alert-error').addClass('hidden').empty();
+  $("#zone_transfer_request_<%=@zone_transfer_request.id%>").remove();
+<% else %>
+  $('.alert.alert-error').removeClass('hidden').text('<%=@zone_transfer_request.errors.full_messages.to_sentence%>');
+  $("#zone_transfer_request_<%=@zone_transfer_request.id%>").removeClass('updating');
+<% end %>
