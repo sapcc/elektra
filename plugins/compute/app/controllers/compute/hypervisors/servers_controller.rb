@@ -6,7 +6,8 @@ module Compute
         per_page = 20
 
         servers = services.compute.hypervisor_servers(@hypervisor.name)
-        @hypervisor_servers = Kaminari.paginate_array(servers, total_count: servers.count).page(page).per(per_page)
+        count = servers.count
+        @hypervisor_servers = count ? Kaminari.paginate_array(servers, total_count: count).page(page).per(per_page) : Kaminari.paginate_array([]).page(1)
       end
     end
   end

@@ -5,7 +5,7 @@
       %th Name
       %th
   %tbody#hypervisor_servers_table
-    - unless hypervisor_servers.count
+    - unless hypervisor_servers.present?
       %tr
         %td{colspan: 3}
           No hypervisor servers available
