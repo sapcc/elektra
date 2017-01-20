@@ -19,6 +19,12 @@ $state-danger-bg:       #f2dede;
 $state-danger-border:   #ebcccc;
 $state-danger-text:     #a94442;
 
+/* Bootstrap descriptive colors */
+$brand-primary: $medium-blue;
+$brand-info:    lighten($bright-blue, 10%);
+$brand-success: $medium-green;
+$brand-warning: lighten($bright-orange, 5%);
+$brand-danger:  #e22;
 
 
 
@@ -994,6 +1000,10 @@ footer, .footer {
   border-left-width: 5px;
   border-radius: 3px;
 
+  p {
+    @include pie-clearfix;
+  }
+
   .callout-footer {
     border-top: 1px solid #eee;
     padding-top: 5px;
@@ -1008,10 +1018,18 @@ footer, .footer {
 
     .btn {
       @extend .btn-primary;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-primary;
     }
 
     a {
-      color: darken($btn-primary-border, 10);
+      color: darken($brand-primary, 10);
     }
   }
 
@@ -1026,6 +1044,14 @@ footer, .footer {
 
     .btn {
       @extend .btn-info;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-info;
     }
   }
 
@@ -1038,10 +1064,18 @@ footer, .footer {
 
     .btn {
       @extend .btn-success;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-success;
     }
 
     a {
-      color: darken($btn-success-border, 10);
+      color: darken($brand-success, 10);
     }
   }
 
@@ -1054,10 +1088,18 @@ footer, .footer {
 
     .btn {
       @extend .btn-warning;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-warning;
     }
 
     a {
-      color: darken($btn-warning-border, 10);
+      color: darken($brand-warning, 10);
     }
   }
 
@@ -1070,10 +1112,18 @@ footer, .footer {
 
     .btn {
       @extend .btn-danger;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-danger;
     }
 
     a, h1,h2,h3,h4,h5,h6  {
-      color: darken($btn-danger-border, 10);
+      color: darken($brand-danger, 10);
     }
 
   }
