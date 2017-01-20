@@ -62,6 +62,43 @@ module DnsService
       def delete_recordset(zone_id,recordset_id, options={})
         handle_response{ @fog.delete_recordset(zone_id, recordset_id, options).body }
       end
+
+      #################### ZONE TRANSFER #########################
+      def create_zone_transfer_request(options = {})
+        zone_id = options.delete(:zone_id)
+        handle_response{@fog.create_zone_transfer_request(zone_id, options).body}
+      end
+
+      def list_zone_transfer_requests(options={})
+        handle_response{@fog.list_zone_transfer_requests(options).body['transfer_requests']}
+      end
+
+      def get_zone_transfer_request(id)
+        handle_response{@fog.get_zone_transfer_request(id).body}
+      end
+
+      def update_zone_transfer_request(id, options = {})
+        description = options.delete(:description)
+        handle_response{@fog.update_zone_transfer_request(id, description, options).body}
+      end
+
+      def delete_zone_transfer_request(id)
+        handle_response{@fog.delete_zone_transfer_request(id).body}
+      end
+
+      def create_zone_transfer_accept(options={})
+        key = options[:key]
+        zone_transfer_request_id = options[:zone_transfer_request_id]
+        handle_response{@fog.create_zone_transfer_accept(key, zone_transfer_request_id).body}
+      end
+
+      def list_zone_transfer_accepts(options = {})
+        handle_response{@fog.list_zone_transfer_accepts(options).body['transfer_accepts']}
+      end
+
+      def get_zone_transfer_accept(id)
+        handle_response{@fog.get_zone_transfer_accept(id).body}
+      end
     end
   end
 end

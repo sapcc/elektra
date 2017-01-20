@@ -1,0 +1,14 @@
+<% unless @zone_transfer_request.errors.blank? %>
+  $('#zone-transfers .form-wrapper .error').text('<%=@zone_transfer_request.errors.full_messages.to_sentence%>');
+<% else %>
+  $('#zone-transfers .form-wrapper .error').text('');
+  var html="<%= j(render(partial: 'dns_service/zones/transfers/item', locals: {zone_transfer: @zone_transfer_request })) %>"
+
+
+  if($("table#zone-transfers tr[data-empty]").length==1) {
+    $("table#zone-transfers tr[data-empty]").replaceWith(html);
+  } else {
+    $("table#zone-transfers tbody").prepend(html);
+  }
+  $('#zone-transfers .form-wrapper').fadeOut();
+<% end %>

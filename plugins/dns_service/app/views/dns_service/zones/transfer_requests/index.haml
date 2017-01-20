@@ -1,0 +1,54 @@
+= content_for :title do
+  Zone Transfer Requests
+
+.modal-body
+  #zone_transfer_requests
+    .alert.alert-error.hidden
+    %table.table.zone_transfer_requests
+      %thead
+        %tr
+          %th Zone
+          %th Description
+          %th
+      %tbody
+        - if @zone_transfer_requests.length==0
+          %tr{data: {empty: true}}
+            %td{colspa: 4}
+              = 'No transfered zones available.'
+        - else
+          - @zone_transfer_requests.each do | zt |
+            %tr{id: "zone_transfer_request_#{zt.id}"}
+              %td
+                = zt.zone_name
+                %br
+                %span.info-text= zt.zone_id
+              %td
+                = zt.description
+                - if zt.target_project_id or zt.key
+                  %br
+                  - if zt.target_project_id
+                    Project:
+                    - project_id_and_name(zt.target_project_id)
+                  - if zt.key
+                    - if zt.target_project_id
+                      %br
+                    = "Key: #{zt.key}"
+
+              %td
+                %form.form-inline.pull-right.transfer-request-accept{action: plugin('dns_service').accept_transfer_request_path(id: zt.id), method: :put, "data-remote": "true"}
+                  .form-group{style: 'display: none;'}
+                    .input-group
+                      %input.form-control.input-sm{name: 'key', placeholder: 'Transfer Key'}
+                      .input-group-addon
+                        %i.fa.fa-fw.fa-info-circle{ data: {toggle:"tooltip", placement:"bottom", title: "Key that is used as part of the zone transfer accept process. This is only shown to the creator, and must be communicated out of band."}}
+                        -# %i.fa.fa-fw.fa-times.danger
+                  %button.btn.btn-primary.btn-sm{type: 'submit', data: {url: plugin('dns_service').accept_transfer_request_path(id: zt.id) }} Accept
+
+- if modal?
+  .modal-footer
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
+
+:javascript
+  $(document).ready(function(){
+    $('#zone_transfer_requests').initAcceptButtons();
+  });

@@ -2,19 +2,24 @@
   "context_is_cloud_dns_admin": "role:cloud_dns_admin",
   "context_is_dns_admin": "role:dns_admin",
   "admin": "rule:context_is_cloud_dns_admin or is_admin:True",
+  "primary_zone": "%(zone.type)s==SECONDARY",
   "owner": "project_id:%(tenant_id)s",
   "admin_or_owner": "rule:admin or rule:owner",
-  "zone_primary_or_admin": "(%(zone_type)s=='PRIMARY' and rule:admin_or_owner) or (%(zone_type)s=='SECONDARY' and is_admin:True)",
+  "cloud_dns_admin_or_dns_admin": "rule: context_is_cloud_dns_admin or rule:context_is_dns_admin",
+  "zone_primary_or_admin": "(%(zone.type)s=='PRIMARY' and rule:admin_or_owner) or (%(zone.type)s=='SECONDARY' and is_admin:True)",
 
   "dns_service:all_projects": "rule:admin",
   "dns_service:zone_list": "rule:admin_or_owner",
   "dns_service:zone_get": "rule:admin_or_owner",
-  "dns_service:zone_create": "rule:context_is_cloud_dns_admin",
-  "dns_service:zone_update": "rule:context_is_cloud_dns_admin",
-  "dns_service:zone_delete": "rule:context_is_cloud_dns_admin",
+  "dns_service:zone_create": "rule:cloud_dns_admin_or_dns_admin",
+  "dns_service:zone_update": "rule:cloud_dns_admin_or_dns_admin",
+  "dns_service:zone_delete": "rule:cloud_dns_admin_or_dns_admin",
   "dns_service:recordset_list": "rule:admin_or_owner",
   "dns_service:recordset_get": "rule:admin_or_owner",
   "dns_service:recordset_create": "rule:zone_primary_or_admin",
   "dns_service:recordset_update": "rule:zone_primary_or_admin",
-  "dns_service:recordset_delete": "rule:zone_primary_or_admin"
+  "dns_service:recordset_delete": "rule:zone_primary_or_admin",
+
+  "dns_service:transfer_request_create": "rule:cloud_dns_admin_or_dns_admin and project_id:%(zone.project_id)s",
+  "dns_service:transfer_request_accept": "rule:admin_or_owner or project_id:%(request.project_id)s or %(request.project_id)s==nil"
 }

@@ -5,6 +5,8 @@
 
 %tr{id: "zone_#{zone.id}", class: className}
   %td
+    - if active_zone_transfer_requests[zone.id]
+      %i.fa.fa-fw.fa-truck{ data: {toggle:"tooltip", placement:"bottom", title: "There is a transfer request for this zone."}}
     - if current_user.is_allowed?("dns_service:zone_get", zone: zone.attributes)
       = link_to zone.name, zone_path(zone.id)
     - else
@@ -31,5 +33,7 @@
             %li= link_to 'Manage Records', plugin('dns_service').zone_path(zone.id)
           - if current_user.is_allowed?("dns_service:zone_update", zone: zone.attributes)
             %li= link_to 'Edit', plugin('dns_service').edit_zone_path(zone.id), data: {modal: true}
-          - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes) 
+          - if current_user.is_allowed?("dns_service:transfer_request_create", zone: zone.attributes)
+            %li= link_to 'Zone Transfer', plugin('dns_service').new_zone_transfer_request_path(zone_id: zone.id), data: {modal: true}
+          - if current_user.is_allowed?("dns_service:zone_delete", zone: zone.attributes)
             %li= link_to 'Delete', plugin('dns_service').zone_path(zone.id), method: :delete, data: { confirm: 'Are you sure you want to delete this zone?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

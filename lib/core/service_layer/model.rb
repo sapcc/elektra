@@ -24,20 +24,20 @@ module Core
       def id
         @id
       end
-      
+
       def id=(id)
         @id=id
       end
-      
+
       def attributes
         @attributes.merge(id:@id)
       end
-      
+
       def as_json(options=nil)
         attributes
       end
 
-      # look in attributes if a method is missing  
+      # look in attributes if a method is missing
       def method_missing(method_sym, *arguments, &block)
         attribute_name = method_sym.to_s
         attribute_name = attribute_name.chop if attribute_name.ends_with?('=')
@@ -113,7 +113,7 @@ module Core
           end
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-          
+
           Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
           return false
         end
@@ -218,7 +218,6 @@ module Core
           self.attributes= created_attributes
         rescue => e
           raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-
           Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
 
           return false
@@ -242,17 +241,17 @@ module Core
         end
         return true
       end
-      
+
       # msp to driver create method
       def perform_driver_create(create_attributes)
         @driver.send("create_#{@class_name}", create_attributes)
       end
-      
+
       # map to driver update method
       def perform_driver_update(id,update_attributes)
         @driver.send("update_#{@class_name}", id, update_attributes)
       end
-      
+
       # map to driver delete method
       def perform_driver_delete(id)
         @driver.send("delete_#{@class_name}", id)

@@ -1,0 +1,59 @@
+.modal-body
+  %table.table.no-borders
+    %tbody
+      %tr
+        %th{width: '200px'} Target Project ID
+        %td= @zone_transfer_request.target_project_id
+      %tr
+        %th
+          Key
+          %i.fa.fa-fw.fa-info-circle{ data: {toggle:"tooltip", placement:"bottom", title: "Key that is used as part of the zone transfer accept process. This is only shown to the creator, and must be communicated out of band."}}
+        %td
+          %b= @zone_transfer_request.key
+      %tr
+        %th Status
+        %td
+          = @zone_transfer_request.status
+          %b
+            - if @zone_transfer_request.status=='COMPLETED'
+              (accepted)
+            - else
+              (not accepted yet)
+
+      %tr
+        %th
+          %a{ href: '#details', data: {toggle: "collapse"}, aria: { expanded: "false", controls: "details"}}
+            Details
+            %span.caret
+        %td
+
+  .collapse#details
+    %table.table.no-borders
+      %tbody
+        %tr
+          %th{width: '200px'} Description
+          %td= @zone_transfer_request.description
+        %tr
+          %th ID
+          %td= @zone_transfer_request.id
+        %tr
+          %th Zone Name
+          %td= @zone_transfer_request.zone_name
+        %tr
+          %th Zone ID
+          %td= @zone_transfer_request.zone_id
+        %tr
+          %th Project ID
+          %td= @zone_transfer_request.project_id
+        %tr
+          %th Created At
+          %td= @zone_transfer_request.created_at
+        %tr
+          %th Updated At
+          %td= @zone_transfer_request.updated_at
+
+
+
+.modal-footer
+  = link_to 'Delete', plugin('dns_service').transfer_request_path(id: @zone_transfer_request.id,zone_id:@zone_transfer_request.zone_id), method: :delete, remote: true, class: 'btn btn-danger',data: { disable_with: "Please wait..." }
+  %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

@@ -45,5 +45,30 @@ module ServiceLayer
     def delete_recordset(zone_id, id, options = {})
       driver.delete_recordset(zone_id, id, options)
     end
+
+    ################## ZONE TRANSFER #####################
+    def zone_transfer_requests(options={})
+      driver.map_to(DnsService::ZoneTransferRequest).list_zone_transfer_requests(options)
+    end
+
+    def new_zone_transfer_request(zone_id,attributes={})
+      DnsService::ZoneTransferRequest.new(driver,attributes.merge(zone_id: zone_id))
+    end
+
+    def find_zone_transfer_request(id)
+      driver.map_to(DnsService::ZoneTransferRequest).get_zone_transfer_request(id)
+    end
+
+    def zone_transfer_accepts(options={})
+      driver.map_to(DnsService::ZoneTransferAccept).list_zone_transfer_accepts(options)
+    end
+
+    def new_zone_transfer_accept(attributes={})
+      DnsService::ZoneTransferRequest.new(driver,attributes)
+    end
+
+    def find_zone_transfer_accept(id)
+      driver.map_to(DnsService::ZoneTransferAccept).get_zone_transfer_accept(id)
+    end
   end
 end

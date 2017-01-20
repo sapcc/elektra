@@ -1,0 +1,23 @@
+= form_for zone_transfer_request, url: plugin('dns_service').zone_transfer_requests_path(zone_id: zone_transfer_request.zone_id), method: :post, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} } do |f|
+  .modal-body
+    .form-group.string.required.target_project_id
+      - if zone_transfer_request.errors.present?
+        .alert.alert-error
+          = render_errors(zone_transfer_request.errors)
+      %label.string.required.col-sm-4.control-label{ for: "target_project_id"}
+        %abbr{title: "required"} *
+        Target Project
+      .col-sm-8
+        .input-wrapper
+          = f.text_field :target_project_id, data: {autocomplete_url: main_app.find_cached_projects_path}, class: "form-control", placeholder: 'Project (name or ID) with whom the zone is transfered.'
+
+    .form-group.string.description
+      %label.string.col-sm-4.control-label{ for: "description"}
+        Description
+      .col-sm-8
+        .input-wrapper
+          = f.text_area :description, class: "form-control"
+
+  .modal-footer
+    = button_tag "Create", { class: 'btn btn-primary', data: { disable_with: "Please wait..." } }
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

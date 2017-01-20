@@ -164,7 +164,6 @@ module Compute
     ####################### ACTIONS #####################
     def add_fixed_ip(network_id)
       requires :id
-      p '>>>>>>>>>>>>>>>>>>>>>>>>>>'
       @driver.add_fixed_ip(id,network_id)
     end
 

@@ -1,0 +1,8 @@
+= content_for :title do
+  Zone Transfer Request
+
+#zone-transfer-request
+  - if @zone_transfer_request.id
+    = render partial: 'request', locals: {zone_transfer_request: @zone_transfer_request}
+  - else
+    = render partial: 'form', locals: {zone_transfer_request: @zone_transfer_request}

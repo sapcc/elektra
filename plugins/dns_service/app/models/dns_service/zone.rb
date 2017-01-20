@@ -18,8 +18,11 @@ module DnsService
       zone_attributes.delete_if { |k, v| v.blank? }
     end
 
-    # map to driver create method
+    # msp to driver create method
     def perform_driver_create(create_attributes)
+      # TODO: remove this line
+      create_attributes[:attributes] = (create_attributes[:attributes].nil? ? {internal: 'true'} : create_attributes[:attributes])
+
       name  = create_attributes.delete("name")
       email = create_attributes.delete("email")
       @driver.create_zone(name, email, create_attributes)
