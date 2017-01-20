@@ -6,17 +6,17 @@
         %th Host
         %td= @hypervisor.host
       %tr
+        %th Host IP
+        %td= @hypervisor.host_ip
+      %tr
         %th Name
         %td= @hypervisor.name
       %tr
         %th Type
         %td= @hypervisor.type
-      -# %tr
-      -#   %th Version
-      -#   %td= @hypervisor.version
-      -# %tr
-      -#   %th Host IP
-      -#   %td= @hypervisor.host_ip
+      %tr
+        %th Version
+        %td= @hypervisor.version
       - if @hypervisor.disabled_reason
         %tr
           %th Reason for Disablement

@@ -2,10 +2,6 @@ module Compute
   module Hypervisors
     class ServersController < Compute::HypervisorsController
       def index
-        servers
-      end
-
-      def servers
         page = params[:page] || 1
         per_page = 20
 

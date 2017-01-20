@@ -2,7 +2,7 @@
 
   %td
     - if current_user.is_allowed?("compute:instance_get")
-      = link_to server.id, plugin('compute').instance_path(id: server.id), target: '_blank'
+      = link_to server.id, plugin('compute').instance_path(id: server.id), data: {modal: true}
     - else
       = server.id
 
