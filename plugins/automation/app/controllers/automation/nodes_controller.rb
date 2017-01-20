@@ -38,7 +38,7 @@ module Automation
       @instance_os = params[:instance_os]
       @os_types = ::Automation::Node.os_types
 
-      result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation, @active_project, current_user.token)
+      result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation)
 
       @instance = result[:instance]
       @login_info = result[:log_info]

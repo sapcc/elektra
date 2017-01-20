@@ -56,6 +56,10 @@ module ServiceLayer
       !response.nil?
     end
 
+    def node_install_script(common_name = "", options = {})
+      client.create_pki_token!(token, common_name, options)
+    end
+
     #
     # Jobs (ArcClient)
     #

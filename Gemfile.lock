@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/arc-client.git
-  revision: 5a87ce484a6e8d3cd5ff3f61b25a528e77f652dc
+  revision: 737301cef97424de3d1e4aa62c7063fa9940bde7
   specs:
     arc-client (0.7.1)
       rest-client (~> 2.0.0.rc3)
@@ -268,7 +268,7 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
-    domain_name (0.5.20161021)
+    domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.0.2)
     dotenv-rails (2.0.2)
