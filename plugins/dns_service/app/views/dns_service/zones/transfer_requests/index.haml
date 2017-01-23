@@ -14,7 +14,7 @@
         - if @zone_transfer_requests.length==0
           %tr{data: {empty: true}}
             %td{colspa: 4}
-              = 'No transfered zones available.'
+              = 'No transferred zones available.'
         - else
           - @zone_transfer_requests.each do | zt |
             %tr{id: "zone_transfer_request_#{zt.id}"}

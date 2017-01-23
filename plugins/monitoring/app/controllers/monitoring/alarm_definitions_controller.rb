@@ -50,7 +50,7 @@ module Monitoring
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
     end
     
-    # this is used when the generated expression is transfered to the create alarm definitions view
+    # this is used when the generated expression is transferred to the create alarm definitions view
     def from_expression_wizzard_new
       @head = 'Create Alarm Definition'
       expression = params['expression'] || ''
@@ -81,7 +81,7 @@ module Monitoring
       render action: 'new_with_expression'
     end
 
-    # this is used when the modified expression is transfered to the edit alarm definitions view
+    # this is used when the modified expression is transferred to the edit alarm definitions view
     def from_expression_wizzard_edit
       expression = params[:expression]
       if expression 
