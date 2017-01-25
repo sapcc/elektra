@@ -9,6 +9,9 @@
       = link_to instance.name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
     - else
       = instance.name
+  - if @all_projects
+    %td
+      - project_id_and_name(instance.tenant_id)
   %td= instance.availability_zone
   %td.snug-nowrap
     - instance.addresses.each do |network_name, ip_values|
