@@ -6,6 +6,7 @@
   "context_is_editor": "rule:context_is_admin or rule:member",
   "context_is_viewer":  "rule:context_is_editor or rule:viewer",
 
+  "compute:all_projects": "rule:context_is_admin",
   "compute:instance_get": "rule:context_is_viewer",
   "compute:instance_list": "rule:context_is_viewer",
   "compute:instance_create": "rule:context_is_editor and (not rule:monsoon2_domain or rule:project_parent)",

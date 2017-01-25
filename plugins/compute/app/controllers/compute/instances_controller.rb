@@ -1,12 +1,16 @@
 module Compute
   class InstancesController < Compute::ApplicationController
+    before_filter :all_projects
+
     authorization_context 'compute'
     authorization_required
 
     def index
       @instances = []
       if @scoped_project_id
-        @instances = services.compute.servers
+        @instances = paginatable(per_page: 10) do |pagination_options|
+          services.compute.servers(@admin_option.merge(pagination_options))
+        end
 
         # get/calculate quota data
         cores = 0
@@ -371,6 +375,13 @@ module Compute
         @active_project_id = local_project.key if local_project
       end
       return @active_project_id
+    end
+
+    private
+
+    def all_projects
+      @all_projects = current_user.is_allowed?('compute:all_projects')
+      @admin_option = @all_projects ? { all_tenants: 1 } : {}
     end
   end
 end

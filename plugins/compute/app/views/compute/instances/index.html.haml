@@ -9,9 +9,11 @@
     %thead
       %tr
         %th Name
+        - if @all_projects
+          %th Owning Project
         %th
           AZ
-          %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}         
+          %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
         %th IPs
         %th OS
         %th Size
@@ -25,5 +27,7 @@
       - else
         - @instances.each do | instance |
           = render partial: 'item', locals: {instance: instance}
+
+  = render_paginatable(@instances)
 - else
   = render "application/projects_list"
