@@ -1,6 +1,7 @@
 .row
   .col-md-9
     -# Configuration modules
+    -# Once a module has been completed successfully, change class to bs-callout-success and replace button with %i.fa.fa-check.fa-3x
     .bs-callout.bs-callout-success.bs-callout-emphasize
       .row
         .col-md-8
@@ -9,6 +10,7 @@
         .col-md-4
           %i.fa.fa-check.fa-3x.pull-right
 
+    -# This is a standard module for a configuration the user hasn't done yet
     .bs-callout.bs-callout-info.bs-callout-emphasize
       .row
         .col-md-8
@@ -27,17 +29,38 @@
         .col-md-4
           %a.btn.pull-right(href="#") Choose network configuration
 
+    -# This is a standard module for a configuration the user hasn't done yet
+    .bs-callout.bs-callout-info.bs-callout-emphasize
+      .row
+        .col-md-8
+          %h4 Request Resource Quotas
+          %p
+          %ol
+            %li
+              %strong Shared network.
+              Access: public. Availability: Internal
+            %li
+              %strong Managed private network.
+              A private network is set up for you to use. Access: Restricted (requires special permissions and security concept). Availability: Internal and External
+            %li
+              %strong Self-managed private network.
+              You set up and manage your own private network. Access: Very Restricted (requires special permissions and security concept). Availability: Internal and External
+        .col-md-4
+          %a.btn.pull-right(href="#") Choose network configuration
+
+    -# This is an example for an optional module. A user may choose not to do the configuration now. Add the "Do this later button" below and the "(Optional)" text
     .bs-callout.bs-callout-info.bs-callout-emphasize
       .row
         .col-md-8
           %h4 Activate Block Storage (Optional)
-          %p You probably want to activate block storage as is required for certain features like snapshots, OS image uploads and more. This is optional and can also be done at a later stage in the Block Storage service itself.
+          %p You probably want to activate block storage as it is required for certain features like snapshots, OS image uploads and more. This is optional and can also be done at a later stage in the Block Storage service itself.
 
         .col-md-4
           %p
             %a.btn.pull-right(href="#") Activate block storage
+          -# For optional configurations add this button. Clicking it will mark the module as completed
           %p
-            %a.btn.btn-default.pull-right(href="#") Do this later
+            %a.btn.btn-default.btn-xs.pull-right(href="#") Do this later
 
 
 
