@@ -12,22 +12,16 @@ module Compute
           services.compute.servers(@admin_option.merge(pagination_options))
         end
 
-        # get/calculate quota data
-        cores = 0
-        ram = 0
-        @instances.each do |i|
-          flavor = i.flavor_object
-          if flavor
-            cores += flavor.vcpus.to_i
-            ram += flavor.ram.to_i
-          end
-        end
+        # get/calculate quota data for non-admin view
+        unless @all_projects
+          usage = services.compute.usage
 
-        @quota_data = services.resource_management.quota_data([
-          {service_name: :compute, resource_name: :instances, usage: @instances.length},
-          {service_name: :compute, resource_name: :cores, usage: cores},
-          {service_name: :compute, resource_name: :ram, usage: ram}
-        ])
+          @quota_data = services.resource_management.quota_data([
+            {service_name: :compute, resource_name: :instances, usage: usage.instances},
+            {service_name: :compute, resource_name: :cores, usage: usage.cores},
+            {service_name: :compute, resource_name: :ram, usage: usage.ram}
+          ])
+        end
       end
     end
 

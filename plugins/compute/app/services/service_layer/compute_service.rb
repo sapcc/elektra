@@ -36,6 +36,10 @@ module ServiceLayer
       driver.map_to(Compute::Server).servers(filter)
     end
 
+    def usage(filter = {})
+      driver.map_to(Compute::Usage).usage(filter)
+    end
+
     ##################### HYPERVISORS #########################
 
     def hypervisors(filter = {})
