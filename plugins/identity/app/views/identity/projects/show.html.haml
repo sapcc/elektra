@@ -1,5 +1,18 @@
+-# Add an if-clause here so that this special toolbar title only if the project isn't active yet
+- content_for :main_toolbar do
+  Configure new Project
+
+
 .row
   .col-md-9
+    -#  Show this whole section including the intro text only if the project is new or not completely configured yet. As soon as the project is active, don't show any of this, instead render the navigation, as before
+    -# All of this should probably live in a partial
+
+    -#  ------------------------------------------------------------------- unless project.active? ----------------------------------------------------------------------
+    %h1.heading-top Welcome to your new Project
+    %p.lead Before you can properly use this project there are a number of things that need to be configured. Once you have made it through all the configuration steps your project will be ready and fully useable.
+
+
     -# Configuration modules
     -# Once a module has been completed successfully, change class to bs-callout-success and replace button with %i.fa.fa-check.fa-3x
     .bs-callout.bs-callout-success.bs-callout-emphasize
@@ -19,7 +32,7 @@
           %ol
             %li
               %strong Shared network.
-              Access: public. Availability: Internal
+              If you don't know why you would need a private network this is probably for you. Access: public. Availability: Internal
             %li
               %strong Managed private network.
               A private network is set up for you to use. Access: Restricted (requires special permissions and security concept). Availability: Internal and External
@@ -27,26 +40,17 @@
               %strong Self-managed private network.
               You set up and manage your own private network. Access: Very Restricted (requires special permissions and security concept). Availability: Internal and External
         .col-md-4
-          %a.btn.pull-right(href="#") Choose network configuration
+          %a.btn.pull-right(href="#") Choose Network Configuration
 
     -# This is a standard module for a configuration the user hasn't done yet
     .bs-callout.bs-callout-info.bs-callout-emphasize
       .row
         .col-md-8
           %h4 Request Resource Quotas
-          %p
-          %ol
-            %li
-              %strong Shared network.
-              Access: public. Availability: Internal
-            %li
-              %strong Managed private network.
-              A private network is set up for you to use. Access: Restricted (requires special permissions and security concept). Availability: Internal and External
-            %li
-              %strong Self-managed private network.
-              You set up and manage your own private network. Access: Very Restricted (requires special permissions and security concept). Availability: Internal and External
+          %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
+
         .col-md-4
-          %a.btn.pull-right(href="#") Choose network configuration
+          %a.btn.pull-right(href="#") Request Quotas
 
     -# This is an example for an optional module. A user may choose not to do the configuration now. Add the "Do this later button" below and the "(Optional)" text
     .bs-callout.bs-callout-info.bs-callout-emphasize
@@ -57,16 +61,17 @@
 
         .col-md-4
           %p
-            %a.btn.pull-right(href="#") Activate block storage
+            %a.btn.pull-right(href="#") Activate Block Storage
           -# For optional configurations add this button. Clicking it will mark the module as completed
           %p
             %a.btn.btn-default.btn-xs.pull-right(href="#") Do this later
 
 
-
+    -#  ------------------------------------------------------------------- else ----------------------------------------------------------------------
 
     -# commented out for now. Add some logic to only render navigation if project is active
     -# = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
+
 
   .col-md-3
     .infobox
