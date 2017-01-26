@@ -110,6 +110,10 @@ module Compute
         handle_response{@fog.remove_fixed_ip(server_id, address)}
       end
 
+      def usage(filter = {})
+        handle_response { @fog.get_limits(filter).body['limits']['absolute'] }
+      end
+
       ############################# HYPERVISORS ##############################
 
       def hypervisors(filter = {})
