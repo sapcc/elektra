@@ -28,19 +28,10 @@
       .row
         .col-md-8
           %h4 Choose Networking Setup
-          %p Depending on your project you will need a different network setup. This choice will define the network your servers get deployed into. There are three levels to choose from:
-          %ol
-            %li
-              %strong Shared network.
-              If you don't know why you would need a private network this is probably for you. Access: public. Availability: Internal
-            %li
-              %strong Managed private network.
-              A private network is set up for you to use. Access: Restricted (requires special permissions and security concept). Availability: Internal and External
-            %li
-              %strong Self-managed private network.
-              You set up and manage your own private network. Access: Very Restricted (requires special permissions and security concept). Availability: Internal and External
+          %p Configure your network. You can either create your own private network or if within your organisation networks are already available you can have an existing one made available to this project.
+
         .col-md-4
-          %a.btn.pull-right(href="#") Choose Network Configuration
+          %a.btn.pull-right(href="#") Set Network
 
     -# This is a standard module for a configuration the user hasn't done yet
     .bs-callout.bs-callout-info.bs-callout-emphasize
@@ -52,7 +43,7 @@
         .col-md-4
           %a.btn.pull-right(href="#") Request Quotas
 
-    -# This is an example for an optional module. A user may choose not to do the configuration now. Add the "Do this later button" below and the "(Optional)" text
+    -# This is an example for an optional module. A user may choose not to do the configuration now. Add the "Do this later button" below and the "(Optional)" text. The Swift activation is not necessarily optional, this is just to show what it would look like.
     .bs-callout.bs-callout-info.bs-callout-emphasize
       .row
         .col-md-8
