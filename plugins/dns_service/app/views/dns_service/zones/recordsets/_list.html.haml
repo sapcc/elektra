@@ -1,4 +1,4 @@
-- if current_user.is_allowed?("dns_service:recordset_create", zone_type: zone.type) && @scoped_project_id == zone.project_id
+- if current_user.is_allowed?("dns_service:recordset_create", zone: zone) && @scoped_project_id == zone.project_id
   .toolbar.toolbar-aligntop
     = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary btn-lg'
 
