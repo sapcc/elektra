@@ -317,9 +317,6 @@ module Compute
       end
       script = services.automation.node_install_script("", {"headers" => { "Accept" => accept_header }})
       render :json => {script: script}
-    rescue => exception
-      Rails.logger.error "Compute-plugin: automation_script: error getting atuomation script: #{exception.message}"
-      render :json => {}
     end
 
     def automation_data

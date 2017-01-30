@@ -4,6 +4,7 @@ initialRootPasswordLength = 16
 @automationBootstrap=(event) ->
   event.preventDefault()
   event.stopPropagation()
+  button = $(event.target)
   action = $(event.target).data('automationScriptAction')
   icon = $(event.target).find('i.fa-plus')
   icon.addClass('hide')
@@ -20,7 +21,10 @@ initialRootPasswordLength = 16
     data: JSON.stringify(osImageJSON)
     success: ( data, textStatus, jqXHR ) ->
       addScriptToUserAttributes(data.script, os_image)
+    error: (xhr, bleep, error) ->
+      attachPopover(button, 'Error', 'Something went wrong while processing your request. Please try again later.')
     complete: () ->
+      console.log("complete")
       icon.removeClass('hide')
       spinner.addClass('hide')
 
@@ -36,13 +40,7 @@ initialRootPasswordLength = 16
     $('#server_user_data').val("#{$('#server_user_data').val()}#{password}")
   else
     button = $(event.target)
-    button.popover(
-      title: 'Error'
-      content: "This doesn't semm to be a valid cloud config. Cloud config files starts with #cloud-config"
-    )
-    button.popover('show')
-    button.on 'blur', ->
-      button.popover('destroy')
+    attachPopover(button, 'Error', "This doesn't semm to be a valid cloud config. Cloud config files starts with #cloud-config")
 
 @addScriptToUserAttributes = (script, os_image) ->
   osTypeWindows = os_image.search("windows")
@@ -56,26 +54,22 @@ initialRootPasswordLength = 16
     # not empty
     if osTypeWindows >= 0
       # windows
-      button.popover(
-        title: 'Error'
-        content: "Bootstrapping the automation agent on windows can’t be combined with other user data."
-      )
-      button.popover('show')
-      button.on 'blur', ->
-        button.popover('destroy')
+      attachPopover(button, 'Error', "Bootstrapping the automation agent on windows can’t be combined with other user data.")
     else
       # linux
       if userDataFieldText.match("^#cloud-config")
         $('#server_user_data').val("#{$('#server_user_data').val()}\n\n#{script}")
       else
-        button.popover(
-          title: 'Error'
-          content: "This doesn't semm to be a valid cloud config. Cloud config files starts with #cloud-config"
-        )
-        button.popover('show')
-        button.on 'blur', ->
-          button.popover('destroy')
+        attachPopover(button, 'Error', "This doesn't semm to be a valid cloud config. Cloud config files starts with #cloud-config")
 
+@attachPopover = (element, title, body) ->
+  element.popover(
+    title: title
+    content: body
+  )
+  element.popover('show')
+  element.on 'blur', ->
+    element.popover('destroy')
 
 @randString = (set, size) ->
   dataSet = set.split(',')
