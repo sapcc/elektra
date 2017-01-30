@@ -1,8 +1,7 @@
 en:
   compute:
     icon_hints:
-      user_attributes: "The Root pass button generates a one-time password, <b>please remember it for your first login</b>. \
-      The password will be provisioned onto the server via cloud-config.Its purpose is logging into the server via \
-      VNC console in case of severe errors that prevent logging in via ssh. \
-      <br/> \
-      The Automation button generates a script."
+      user_attributes: "The generated root password needs to be changed on first use, <b>please save it</b>.<br/> \
+      It is useful for the VNC console in case access to the instance via SSH or RDP is not working. \
+      <br/><br/> \
+      The Automation option bootstraps the required node agent on the instance."
