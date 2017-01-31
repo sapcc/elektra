@@ -43,6 +43,7 @@ module DnsService
 
     def create
       @zone = services.dns_service.new_zone(params[:zone])
+  
       if @zone.save
         flash.now[:notice] = "Zone successfully created."
         respond_to do |format|
