@@ -3,7 +3,7 @@ module DnsService
     class TransferRequestsController < DnsService::ApplicationController
       def index
         @zone_transfer_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE').select do |r|
-          r.project_id.nil? or r.project_id!=@scoped_project_id 
+          r.project_id.nil? or r.project_id!=@scoped_project_id
         end
       end
 
@@ -17,15 +17,7 @@ module DnsService
         @zone_transfer_request = services.dns_service.new_zone_transfer_request(
           params[:zone_id], params[:zone_transfer_request]
         )
-        @project = service_user.find_project_by_name_or_id(@zone_transfer_request.target_project_id)
-        if @project
-          @zone_transfer_request.target_project_id=@project.id
-          #@zone_transfer_request.project_id = @scoped_project_id
-          @zone_transfer_request.save
-        else
-          @zone_transfer_request.errors.add(:target_project_id, 'Could not find project.')
-        end
-
+        @zone_transfer_request.save
       end
 
       def destroy
