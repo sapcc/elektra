@@ -23,6 +23,8 @@
                 = link_to translated_name, plugin('block_storage').volumes_path, title: linktitle
               - when :snapshots
                 = link_to translated_name, plugin('block_storage').snapshots_path, title: linktitle
+              - else 
+                = translated_name
           - when :compute
             = link_to translated_name, plugin('compute').instances_path(), title: linktitle
           - when :networking
@@ -39,10 +41,14 @@
                 = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
               - when :pools, :healthmonitors, :l7policies
                 = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
+              - else
+                = translated_name
           - when :dns
             - case name
               - when :zones, :recordsets
                 = link_to translated_name, plugin('dns_service').zones_path, title: linktitle
+              - else
+                = translated_name
           - else
             = translated_name
       - else
