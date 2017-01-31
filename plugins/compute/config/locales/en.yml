@@ -1,0 +1,7 @@
+en:
+  compute:
+    icon_hints:
+      user_attributes: "The generated root password needs to be changed on first use, <b>please save it</b>.<br/> \
+      It is useful for the VNC console in case access to the instance via SSH or RDP is not working. \
+      <br/><br/> \
+      The Automation option bootstraps the required node agent on the instance."

@@ -23,6 +23,7 @@ Compute::Engine.routes.draw do
       put 'attach_floatingip'
       delete 'detach_floatingip'
     end
+    post 'automation_script', :on => :collection
   end
 
   resources :keypairs

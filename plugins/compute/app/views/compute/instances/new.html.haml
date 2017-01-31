@@ -57,7 +57,6 @@
       as:            :grouped_select,
       collection:    grouped_images(@images),
       group_method:  :last,
-      label_method:  -> (image) { image_label_for_select(image) },
       selected:      @instance.image_id,
       required:      true
 
@@ -70,26 +69,13 @@
       required:           true,
       label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" }}
 
-    = f.input :user_data, { label: "User data",
+    = f.input :user_data,
+      label:              "User data",
       as:                 :text,
-      required:           false}
-
-    .form-group
-      = label_tag 'One time root password', nil, class: 'col-sm-4 control-label'
-      .col-sm-8
-        = link_to "Add to user data", '#', class: 'btn btn-primary', data: {toggle: 'initialRootPassword'}
-        %span.release-state-wrapper
-          = release_state_tag("experimental", "Experimental: Currently works for RHEL7. Other OS versions still under development.")
-
-        %p.help-block
-          %i.fa.fa-info-circle
-
-          This is a one-time password only, <b>please remember it for your first login</b>. The password will be provisioned
-          onto the server via cloud-config. Its purpose is logging into the server via VNC console in case of severe errors
-          that prevent logging in via ssh.
-
-          = link_to 'Read more', "#{sap_url_for('documentation')}docs/servers/start/one_time_root_password.html"
-
+      required:           false,
+      input_html:         {rows: "15"},
+      before_field_html:  "#{render partial: 'cloud_init_menu'}",
+      icon_hint:          t("compute.icon_hints.user_attributes")
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
