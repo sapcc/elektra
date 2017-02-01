@@ -1,4 +1,12 @@
 .news
+  - date = Time.new(2017,02,01)
+  .new{data:{date: date}}
+    .author-title= "Maurice Schreiber - #{date}"
+
+    :markdown
+      If you want to disable the rendering of the exception pages, that are hiding the error trace:
+
+        * Add `NO_EXCEPTION_PAGE = true` to your env
 
   - date = Time.new(2016,10,13)
   .new{data:{date: date}}

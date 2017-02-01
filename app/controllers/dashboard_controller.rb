@@ -66,7 +66,7 @@ class DashboardController < ::ScopeController
         description: -> (e,c) {
           m = 'You are not authorized to view this page.'
           if e.involved_roles and e.involved_roles.length>0
-            m += " Please check (role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
+            m += " Please check (role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}."
           end
           m
         }
