@@ -66,7 +66,7 @@ class DashboardController < ::ScopeController
         description: -> (e,c) {
           m = 'You are not authorized to view this page.'
           if e.involved_roles and e.involved_roles.length>0
-            m += " Please check (role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}." 
+            m += " Please check (role assignments) if you have one of the following roles: #{e.involved_roles.flatten.join(', ')}."
           end
           m
         }
@@ -205,6 +205,7 @@ class DashboardController < ::ScopeController
     if @scoped_project_id
       # @active_project ||= @user_domain_projects.find { |project| project.id == @scoped_project_id }
       @active_project = services.identity.find_project(@scoped_project_id, [:subtree_as_ids, :parents_as_ids])
+      FriendlyIdEntry.update_project_entry(@active_project)
       @webcli_endpoint = current_user.service_url("webcli")
     end
 
