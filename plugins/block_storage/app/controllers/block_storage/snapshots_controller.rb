@@ -4,6 +4,9 @@ module BlockStorage
   class SnapshotsController < ApplicationController
     before_action :set_snapshot, except: [:index]
 
+    authorization_context 'block_storage'
+    authorization_required
+
     # GET /snapshots
     def index
       if @scoped_project_id
