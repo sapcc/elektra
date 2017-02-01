@@ -5,12 +5,15 @@ module BlockStorage
     before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach]
     protect_from_forgery except: [:attach, :detach]
 
+    authorization_context 'block_storage'
+    authorization_required
+
     SERVER_STATES_NEEDED_FOR_ATTACH = ['ACTIVE', 'PAUSED', 'SHUTOFF', 'VERIFY_RESIZE', 'SOFT_DELETED']
     SLEEP = 1
 
     # GET /volumes
     def index
-      @servers = services.compute.servers()
+      @servers = services.compute.servers
       @action_id = params[:id]
       if @scoped_project_id
         @volumes = services.block_storage.volumes
@@ -25,7 +28,7 @@ module BlockStorage
 
     # GET /volumes/1
     def show
-      @servers = services.compute.servers() if @volume.status == "in-use"
+      @servers = services.compute.servers if @volume.status == 'in-use'
     end
 
     # GET /volumes/new

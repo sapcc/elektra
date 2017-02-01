@@ -24,5 +24,8 @@ en:
       compute_viewer: Nova Read-Only
       compute_admin: Nova Administrator
       cloud_compute_admin: Nova Cloud Administrator
+      volume_viewer: Cinder Read-Only
+      volume_admin: Cinder Administrator
+      cloud_volume_admin: Cinder Cloud Administrator
       cfm_user: Cloud Frame User
       cfm_admin: Cloud Frame Administrator

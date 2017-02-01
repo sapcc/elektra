@@ -33,6 +33,7 @@ module ServiceLayer
     end
 
     def servers(filter={})
+      return [] unless current_user.is_allowed?('compute:instance_list')
       driver.map_to(Compute::Server).servers(filter)
     end
 
