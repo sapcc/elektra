@@ -1,15 +1,21 @@
-- @listeners.each{|l| l.name += " (#{l.protocol})"}
+- protos = {}
+- @listeners.each do |l|
+  - l.name += " (#{l.protocol})"
+  - protos[l.id] = l.protocol == 'TERMINATED_HTTPS' ? 'HTTP' : l.protocol
+
 %fieldset
   = f.input :name, required: true
   = f.input :description
   = f.input :lb_algorithm, as: :select, collection: Loadbalancing::Pool::ALGORITHMS, required: true
-  = f.input :protocol, as: :select, collection: Loadbalancing::Pool::PROTOCOLS, required: true,  disabled: update
+  = f.input :protocol, as: :select, collection: [@pool.protocol], required: true,  disabled: update
   = f.input :session_persistence_type, as: :select, collection: Loadbalancing::Pool::SESSION_PERSISTENCE_TYPES
   = f.input :session_persistence_cookie_name, required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')}
-  - if @pool.listener
-    = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener.id, disabled: update, label: 'Default Pool for Listener'
-  - elsif @pool.loadbalancer
-    = f.input :loadbalancer_id, as: :select, collection: @loadbalancers, selected: @pool.loadbalancer.id, disabled: update, label: 'Assigned to Loadbalancer'
+  - if @pool.listener_id
+    = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener_id, disabled: update, label: 'Default Pool for Listener'
   - else
-    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Default Pool for Listener', required: true
-    = f.input :loadbalancer_id, as: :select, collection: @loadbalancers, disabled: update, label: 'Load Balancer', required: true
+    = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Default Pool for Listener'
+  = f.input :loadbalancer_id, as: :select, collection: [@loadbalancer], disabled: true, label: 'Load Balancer'
+
+=content_for :javascripts do
+  :javascript
+    protodata = #{protos.to_json};

@@ -1,5 +1,5 @@
+- data = {}
 - if member.in_transition?
-  - data = {}
   - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_pool_member_path(loadbalancer_id: loadbalancer.id, pool_id: pool.id, id: member.id)
   - data[:interval]=2500
 

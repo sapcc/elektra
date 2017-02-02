@@ -79,8 +79,8 @@ module Loadbalancing
         handle_response{ @fog.update_lbaas_pool(id, attributes).body['pool'] }
       end
 
-      def delete_pool(pool_id)
-        handle_response { @fog.delete_lbaas_pool(pool_id) }
+      def delete_pool(id)
+        handle_response { @fog.delete_lbaas_pool(id) }
       end
 
       def pool_members(filter = {})
@@ -127,14 +127,53 @@ module Loadbalancing
         handle_response { @fog.delete_lbaas_healthmonitor(healthmonitor_id) }
       end
 
-      ###################### L7 POLICIES #######################
+      ###################### L7 POLICIES and L7 RULES #######################
 
-      def l7polcies(filter = {})
+      def l7policies(filter = {})
         handle_response { @fog.list_lbaas_l7policies(filter).body['l7policies'] }
       end
 
-      def test(filter={})
-        puts "test"
+      def get_l7policy(id)
+        handle_response { @fog.get_lbaas_l7policy(id).body['l7policy'] }
+      end
+
+      def create_l7policy(attributes={})
+        listener_id = attributes.delete("listener_id")
+        action = attributes.delete("action")
+        handle_response { @fog.create_lbaas_l7policy(listener_id, action, attributes).body['l7policy'] }
+      end
+
+      def update_l7policy(id, attributes={})
+        handle_response{ @fog.update_lbaas_l7policy(id, attributes).body['l7policy'] }
+      end
+
+      def delete_l7policy(id)
+        handle_response { @fog.delete_lbaas_l7policy(id) }
+      end
+
+
+      def l7rules(l7policy_id, filter = {})
+        handle_response { @fog.list_lbaas_l7rules(l7policy_id, filter).body['rules'] }
+      end
+
+      def get_l7rule(policy_id, id)
+        handle_response { @fog.get_lbaas_l7rule(policy_id, id).body['rule'] }
+      end
+
+      def create_l7rule(attributes={})
+        l7policy_id = attributes.delete("l7policy_id")
+        type = attributes.delete("type")
+        compare_type = attributes.delete("compare_type")
+        value = attributes.delete("value")
+        handle_response { @fog.create_lbaas_l7rule(l7policy_id, type, compare_type, value, attributes).body['rule'] }
+      end
+
+      def update_l7rule(l7policy_id, id, attributes={})
+        handle_response{ @fog.update_lbaas_l7rule(l7policy_id, id, attributes).body['rule'] }
+      end
+
+      def delete_l7rule(l7policy_id, id)
+        handle_response { @fog.delete_lbaas_l7rule(l7policy_id, id) }
       end
 
     end

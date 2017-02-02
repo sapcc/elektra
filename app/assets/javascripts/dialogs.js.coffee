@@ -147,8 +147,8 @@ class @InfoDialog
     
   # class method  
   @showError: (message, details=null) ->
-    error_wrapper = '<div class="bs-callout bs-callout-danger">'      
-    error_wrapper += '<h3>Error</h3><p>'+message+'</p>'  
+    error_wrapper = '<div>'
+    error_wrapper += '<p>'+message+'</p>'
       
     if details
       error_wrapper += '<p><a href="#", data-toggle="show-error-details">Show error details <i class="fa fa-caret-down"></i></a></p>'

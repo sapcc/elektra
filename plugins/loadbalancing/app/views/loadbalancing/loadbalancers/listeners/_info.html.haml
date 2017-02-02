@@ -1,25 +1,30 @@
 .infobox
   %h4.action-heading
-    Loadbalancer Info
+    Listener Info
   %table.table
     %tbody
       %tr
         %th.snug-nowrap
           Name:
         %td
-          = loadbalancer.name
+          = listener.name
       %tr
         %th.snug-nowrap
           Description:
         %td
-          = loadbalancer.description
+          = listener.description
       %tr
         %th.snug-nowrap
           ID:
         %td
-          = loadbalancer.id
+          = listener.id
       %tr
         %th.snug-nowrap
-          IP Address:
+          Protocol:
         %td
-          = loadbalancer.vip_address
+          = listener.protocol
+      %tr
+        %th.snug-nowrap
+          Port:
+        %td
+          = listener.protocol_port
