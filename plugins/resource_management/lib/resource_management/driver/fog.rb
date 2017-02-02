@@ -227,11 +227,48 @@ module ResourceManagement
 
       def query_project_usage_block_storage(_domain_id, project_id)
         usage = handle_response { fog_block_storage_connection.get_quota_usage(project_id).body['quota_set'] }
-
         {
           capacity:   usage['gigabytes']['in_use'],
           volumes:    usage['volumes']['in_use'],
           snapshots:  usage['snapshots']['in_use']
+        }
+      end
+
+      ### SHARED FILESYSTEM STORAGE: MANILA ###################################################################
+
+      def fog_shared_filesystem_storage_connection
+        # hint: remove caching if it makes problems with token expiration
+        @fog_shared_filesystem_storage ||= ::Fog::SharedFileSystem::OpenStack.new(service_user_auth_params)
+      end
+
+      SHARED_FILESYSTEM_STORAGE_RESOURCE_MAP = {
+        'share_networks'     => :share_networks,
+        'gigabytes'          => :share_capacity,
+        'shares'             => :shares,
+        'snapshot_gigabytes' => :snapshot_capacity,
+        'snapshots'          => :share_snapshots
+      }.freeze
+
+      def set_project_quota_shared_filesystem_storage(_domain_id, project_id, values)
+        return unless values.present? && project_id.present?
+        quota_values = values.map { |k, v| [SHARED_FILESYSTEM_STORAGE_RESOURCE_MAP.invert[k], v] }.to_h
+        handle_response { fog_shared_filesystem_storage_connection.update_quota(project_id, quota_values) }
+      end
+
+      def query_project_quota_shared_filesystem_storage(_domain_id, project_id)
+        quotas = handle_response { fog_shared_filesystem_storage_connection.get_quota(project_id).body['quota_set'] }
+        quotas.map { |k, v| [SHARED_FILESYSTEM_STORAGE_RESOURCE_MAP[k], v] }.to_h
+      end
+
+      def query_project_usage_shared_filesystem_storage(_domain_id, project_id)
+        limits = handle_response { fog_shared_filesystem_storage_connection.get_limits.body['limits']['absolute'] }
+
+        {
+          share_networks:    limits['totalShareNetworksUsed'],
+          shares:            limits['totalSharesUsed'],
+          share_capacity:    limits['totalShareGigabytesUsed'],
+          share_snapshots:   limits['totalShareSnapshotsUsed'],
+          snapshot_capacity: limits['totalSnapshotGigabytesUsed']
         }
       end
 

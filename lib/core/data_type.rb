@@ -76,8 +76,8 @@ module Core
       #   "1020 KB"
       PRETTY_FORMAT_BYTES.each_with_index do |unit, idx|
         next if idx < @target_unit_index
-        # is this unit large enough?
-        if value < 1024
+        # is this unit large enough? or have we reached the biggest known format?
+        if value < 1024 || unit == PRETTY_FORMAT_BYTES.last
           str = "%.2f" % value
           str.sub!(/[.]?0+$/, '') if str =~ /[.]/ # strip trailing zeros after dot
           return "#{str} #{unit}"

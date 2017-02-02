@@ -22,12 +22,13 @@ module ResourceManagement
       return @all if @all
 
       @all = []
-      @all << new(:compute,        :compute)
-      @all << new(:networking,     :networking)
-      @all << new(:loadbalancing,  :networking)
-      @all << new(:dns,            :dns)
-      @all << new(:block_storage,  :storage)
-      @all << new(:object_storage, :storage)
+      @all << new(:compute,                   :compute)
+      @all << new(:networking,                :networking)
+      @all << new(:loadbalancing,             :networking)
+      @all << new(:dns,                       :dns)
+      @all << new(:block_storage,             :storage)
+      @all << new(:object_storage,            :storage)
+      @all << new(:shared_filesystem_storage, :storage)
       return @all
     end
 
