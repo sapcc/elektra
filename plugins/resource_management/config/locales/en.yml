@@ -5,6 +5,7 @@ en:
     networking: Network
     block_storage: Block Storage
     object_storage: Object Storage
+    shared_filesystem_storage: Shared Filesystem Storage
     loadbalancing: Loadbalancing
     floating_ips: Floating IPs
     ram: RAM

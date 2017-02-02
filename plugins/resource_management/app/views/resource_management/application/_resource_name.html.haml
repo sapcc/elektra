@@ -35,11 +35,11 @@
           - when :shared_filesystem_storage
             - case name
               - when :share_capacity, :shares
-                = link_to translated_name, plugin('shared_filesystem_storage').shares_path, title: linktitle
+                = link_to translated_name, plugin('shared_filesystem_storage').start_path('shares'), title: linktitle
               - when :snapshot_capacity, :share_snapshots
-                = link_to translated_name, plugin('shared_filesystem_storage').snapshots_path, title: linktitle
+                = link_to translated_name, plugin('shared_filesystem_storage').start_path(anchor: 'snapshots'), title: linktitle
               - when :share_networks
-                = link_to translated_name, plugin('shared_filesystem_storage').share_networks_path, title: linktitle
+                = link_to translated_name, plugin('shared_filesystem_storage').start_path(anchor: 'share-networks'), title: linktitle
               - else
                 = translated_name
           - when :compute
