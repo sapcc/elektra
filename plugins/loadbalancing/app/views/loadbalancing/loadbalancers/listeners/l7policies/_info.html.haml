@@ -1,0 +1,31 @@
+.infobox
+  %h4.action-heading
+    L7 Policy Info
+  %table.table
+    %tbody
+      %tr
+        %th.snug-nowrap
+          Name:
+        %td
+          = l7policy.name
+      %tr
+        %th.snug-nowrap
+          Description:
+        %td
+          = l7policy.description
+      %tr
+        %th.snug-nowrap
+          ID:
+        %td
+          = l7policy.id
+      %tr
+        %th.snug-nowrap
+          Action:
+        %td
+          = l7policy.action
+      - if l7policy.redirect_url || l7policy.redirect_pool_id
+        %tr
+          %th.snug-nowrap
+            Redirect To:
+          %td
+            = l7policy.redirect_pool_id.blank? ? l7policy.redirect_url : l7policy.redirect_pool_id

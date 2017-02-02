@@ -1,0 +1,6 @@
+<%if @listener && !@listener.errors.blank?%>
+  InfoDialog.showError("<%=@listener.errors.full_messages[0]%>");
+  $("#loadbalancer_listener_<%=params[:id]%>").removeClass('updating');
+<%else%>
+  $("#loadbalancer_listener_<%=params[:id]%>").remove();
+<%end%>

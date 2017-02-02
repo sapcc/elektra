@@ -21,7 +21,7 @@ module Loadbalancing
         @listener = services.loadbalancing.new_listener
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         containers = services.key_manager.containers()
-        @containers = containers[:elements].map { |c| [c.name, c.container_ref] }  if containers
+        @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
       end
 
       def create
@@ -35,7 +35,7 @@ module Loadbalancing
         else
           @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           containers = services.key_manager.containers()
-          @containers = containers[:elements].map { |c| [c.name, c.container_ref] }  if containers
+          @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
           render :new
         end
       end
@@ -50,7 +50,7 @@ module Loadbalancing
         # @listener.attributes = listener_params.delete_if { |key, value| value.blank? }
         if @listener.update(listener_params)
           audit_logger.info(current_user, "has updated", @listener)
-          redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id'] ), notice: 'Listener was successfully updated.'
+          redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener was successfully updated.'
         else
           @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           render :edit
@@ -60,17 +60,9 @@ module Loadbalancing
 
       def destroy
         @listener = services.loadbalancing.find_listener(params[:id])
-        if @listener.destroy
-          @listener.in_transition = true
-          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
-          audit_logger.info(current_user, "has deleted", @listener)
-          flash.now[:error] = "Listener will be deleted."
-          render template: 'loadbalancing/loadbalancers/listeners/update_item.js'
-          #redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener successfully deleted.'
-        else
-          redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']),
-                      flash: { error: "Listener deletion failed -> #{@listener.errors.full_messages.to_sentence}" }
-        end
+        @listener.destroy
+        audit_logger.info(current_user, "has deleted", @listener)
+        render template: 'loadbalancing/loadbalancers/listeners/destroy_item.js'
       end
 
       # update instance table row (ajax call)

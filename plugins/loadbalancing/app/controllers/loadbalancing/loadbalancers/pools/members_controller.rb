@@ -70,15 +70,9 @@ module Loadbalancing
           pool_id = params[:pool_id]
           member_id = params[:id]
           @member = services.loadbalancing.find_pool_member(pool_id, member_id)
-          if services.loadbalancing.delete_pool_member(pool_id, member_id)
-            @member.in_transition = true
-            audit_logger.info(current_user, "has deleted", @member)
-            render template: 'loadbalancing/loadbalancers/pools/members/update_item.js'
-            #redirect_to show_details_loadbalancer_pool_path(pool_id)
-          else
-            redirect_to show_details_loadbalancer_pool_path(id: pool_id, loadbalancer_id: @loadbalancer.id),
-                        flash: {error: "Pool Member deletion failed -> #{@member.errors.full_messages.to_sentence}"}
-          end
+          services.loadbalancing.delete_pool_member(pool_id, member_id)
+          audit_logger.info(current_user, "has deleted", @member)
+          render template: 'loadbalancing/loadbalancers/pools/members/destroy_item.js'
         end
 
         # update instance table row (ajax call)

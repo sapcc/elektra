@@ -37,9 +37,9 @@
               %th Session Persistence Cookie Name
               %td= pool.session_persistence_cookie_name
         %tr
-          - if pool.listener
+          - if listener
             %th Assigned to Listener
-            %td= link_to pool.listener.name, plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: pool.listener.loadbalancers.first['id'], id: pool.listener.id), data: {modal: true}
-          - elsif pool.loadbalancer
+            %td= link_to listener.name, plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: loadbalancer.id, id: listener.id), data: {modal: true}
+          - else
             %th Assigned to Loadbalancer
-            %td= link_to pool.loadbalancer.name, plugin('loadbalancing').loadbalancer_path(id: pool.loadbalancer.id), data: {modal: true}
+            %td= link_to loadbalancer.name, plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id), data: {modal: true}

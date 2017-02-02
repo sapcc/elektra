@@ -1,5 +1,5 @@
 <%if @pool %>
-$("#pool").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/item_detail', locals: {pool: @pool, loadbalancer: @loadbalancer})) %>");
+$("#pool").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/item_detail', locals: {loadbalancer: @loadbalancer, pool: @pool, listener: @listener})) %>");
 $("#pool").update();
 MoModal.close();
 <% else %>

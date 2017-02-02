@@ -40,15 +40,9 @@ module Loadbalancing
         end
 
         def destroy
-          if @healthmonitor.destroy
-            audit_logger.info(current_user, "has deleted", @healthmonitor)
-            @healthmonitor = nil
-            render template: 'loadbalancing/loadbalancers/pools/healthmonitors/update_item_with_close.js'
-            #redirect_to show_details_pool_path(pool.id), notice: 'Health Monitor successfully deleted.'
-          else
-            redirect_to show_details_loadbalancer_pool_path(pool.id),
-                        flash: {error: "Health Monitor  deletion failed -> #{@healthmonitor.errors.full_messages.to_sentence}"}
-          end
+          @healthmonitor.destroy
+          audit_logger.info(current_user, "has deleted", @healthmonitor)
+          render template: 'loadbalancing/loadbalancers/pools/healthmonitors/destroy_item.js'
         end
 
 

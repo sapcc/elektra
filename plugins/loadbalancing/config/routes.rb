@@ -13,7 +13,18 @@ Loadbalancing::Engine.routes.draw do
       member do
         get 'update_item'
       end
+      resources :l7policies, module: :listeners do
+        member do
+          get 'update_item'
+        end
+        resources :l7rules, module: :l7policies do
+          member do
+            get 'update_item'
+          end
+        end
+      end
     end
+
     resources :pools, module: :loadbalancers do
       get :show_details, on: :member
       resources :members, module: :pools do

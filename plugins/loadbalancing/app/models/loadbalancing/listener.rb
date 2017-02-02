@@ -9,7 +9,7 @@ module Loadbalancing
     attr_accessor :in_transition
 
     def in_transition?
-      in_transition
+      false
     end
 
   end

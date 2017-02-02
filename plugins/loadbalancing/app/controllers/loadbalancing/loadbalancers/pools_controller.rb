@@ -29,50 +29,40 @@ module Loadbalancing
 
       def new
         @pool = services.loadbalancing.new_pool
-        @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id).keep_if { |l| l.default_pool_id.blank? }
-        @listeners.reject! { |l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
-        @loadbalancers = [@loadbalancer]
+        @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
         if params[:listener_id]
-          @listener = services.loadbalancing.find_listener(params[:listener_id])
-          @pool.listener = @listener if @listener
+          @pool.listener_id = params[:listener_id]
         end
+        @pool.loadbalancer_id = @loadbalancer.id
         @pool.protocol = params[:proto] if params[:proto] && params[:proto] != 'TERMINATED_HTTPS'
         @pool.protocol = 'HTTP' if params[:proto] && params[:proto] == 'TERMINATED_HTTPS'
       end
 
       def create
         @pool = services.loadbalancing.new_pool
-        @pool.attributes = pool_params.delete_if { |key, value| value.blank? }.merge(session_persistence)
+        @pool.attributes = pool_params.delete_if { |key, value| value.blank? }.merge(session_persistence).merge({loadbalancer_id: params[:loadbalancer_id]})
         if @pool.save
           audit_logger.info(current_user, "has created", @pool)
           # render template: 'loadbalancing/loadbalancers/pools/update_item_with_close.js'
           redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id), notice: 'Pool was successfully created.'
         else
-          @loadbalancers = [@loadbalancer]
-          @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id).keep_if { |l| l.default_pool_id.blank? }
-          @listeners.reject! { |l| l.loadbalancers.first['id'] != @loadbalancer.id } if @listeners
+          @pool.loadbalancer_id = @loadbalancer.id
+          @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
           render :new
         end
       end
 
       def edit
-        @listeners = services.loadbalancing.listeners(tenant_id: @scoped_project_id)
-        @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
+        @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
       end
 
       def update
         update_params = pool_params.merge!(session_persistence)
-        listener_id = @pool.listeners.first['id'] if @pool.listeners.first
         if @pool.update(update_params)
-          listener = services.loadbalancing.find_listener(listener_id) if listener_id
-          @pool.listener = listener
-          @pool.loadbalancer = @loadbalancer
-          @listeners = services.loadbalancing.listeners()
-          @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
           audit_logger.info(current_user, "has updated", @pool)
           render template: 'loadbalancing/loadbalancers/pools/update_item_with_close.js'
-          #redirect_to pool_path(@pool.id), notice: 'Pool was successfully updated.'
         else
+          @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
           render :edit
         end
       end
@@ -130,8 +120,8 @@ module Loadbalancing
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id]) if params[:loadbalancer_id]
         if @pool
           @listener = services.loadbalancing.find_listener(@pool.listeners.first['id']) if @pool.listeners.first
-          @pool.listener = @listener if @listener
-          @pool.loadbalancer = @loadbalancer if @loadbalancer
+          @pool.listener_id = @listener.id if @listener
+          @pool.loadbalancer_id = @loadbalancer.id
         end
       end
 

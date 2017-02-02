@@ -3,7 +3,7 @@ module Loadbalancing
 
     ALGORITHMS=['ROUND_ROBIN', 'LEAST_CONNECTIONS', 'SOURCE_IP']
     SESSION_PERSISTENCE_TYPES=['SOURCE_IP', 'HTTP_COOKIE', 'APP_COOKIE']
-    PROTOCOLS= ['TCP', 'HTTP', 'HTTPS']
+    PROTOCOLS=['TCP', 'HTTP', 'HTTPS']
 
     validates :name, presence: true
     validates :lb_algorithm, presence: true
@@ -11,7 +11,7 @@ module Loadbalancing
     #validates :listener_id, presence: true
     validates_presence_of :session_persistence_cookie_name, :if => :app_cookie?, message: "Please enter a Cookie Name in case of Application Cookie persistence"
 
-    validate :listener_or_loadbalancer
+    #validate :listener_or_loadbalancer
 
     def app_cookie?
       session_persistence_type == 'APP_COOKIE' ? true : false
