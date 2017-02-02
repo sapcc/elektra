@@ -17,9 +17,9 @@ module Compute
       end
       result = []
       result << ['Public',public_images.delete('unknown') ||[]]
-      public_images.each{|hypervisor,images| result << ["--#{hypervisor}",images.collect{|image| [image_label_for_select(image), image.id, data: {vmware_ostype: image.vmware_ostype}]}]}
+      public_images.each{|hypervisor,images| result << ["--#{hypervisor}",images.collect{|image| [image_label_for_select(image), image.id, data: {vmware_ostype: image.vmware_ostype}]} ]}
       result << ['Private',private_images.delete('unknown') || []]
-      private_images.each{|hypervisor,images| result << ["--#{hypervisor}",images]}
+      private_images.each{|hypervisor,images| result << ["--#{hypervisor}",images.collect{|image| [image_label_for_select(image), image.id, data: {vmware_ostype: image.vmware_ostype}]} ]}
       result
     end
 
@@ -40,8 +40,9 @@ module Compute
     end
 
     def image_label_for_select(image)
+      owner = image.private ? image.owner : nil
       label = "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format})"
-      label += ". Project: #{project_name(image.owner)}" if image.visibility=='private'
+      label += ". Project: #{project_name(image.owner)}" if owner
       label
     end
 
