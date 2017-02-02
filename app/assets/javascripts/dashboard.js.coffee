@@ -33,6 +33,16 @@ if (typeof(window.console) == "undefined" || typeof(window.console.log) == "unde
 # Initialize Dashboard App
 
 $ ->
+  # enter the cloud on enter key
+  $enterCloudButton = $('#enter_the_cloud_button')
+  if $enterCloudButton.length>0
+    $(document).keyup (e) ->
+      code = e.which
+      if code==13
+        e.preventDefault()
+        window.location = $enterCloudButton.attr('href');
+
+
   # Tooltips
   $('abbr[title], abbr[data-original-title]').tooltip(delay: { "show": 300 })
   # init tooltips

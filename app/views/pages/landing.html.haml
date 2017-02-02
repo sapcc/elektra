@@ -5,7 +5,7 @@
         .col-sm-8
           %h1 SAP Converged Cloud
           %p From Playground to Production on one Infrastructure-as-a-Service (IaaS), powered by OpenStack, SAP HANA and Monsoon Automation
-          = link_to "Enter the cloud", plugin('identity').domain_path(domain_id: params[:domain_id], project_id:nil), class: "btn btn-outline-negative btn-lg"
+          = link_to "Enter the cloud", plugin('identity').domain_path(domain_id: params[:domain_id], project_id:nil), id: 'enter_the_cloud_button', class: "btn btn-outline-negative btn-lg"
         .col-sm-4
           %span.moo-cloud-white
           -# .row
