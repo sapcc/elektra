@@ -51,7 +51,8 @@ class FriendlyIdEntry < ActiveRecord::Base
   end
 
   def self.update_project_entry(project)
-    if project
+    return nil if project.nil? or !(project.id.is_a?(String) or project.id.is_a?(Fixnum))
+    if project and project.id
       sql = [
         "class_name=? and lower(key)=? and lower(scope)=?",
         'Project',
