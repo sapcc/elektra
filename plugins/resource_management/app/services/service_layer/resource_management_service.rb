@@ -78,7 +78,14 @@ module ServiceLayer
     # 1. Cleanup Resource objects for deleted domains from local DB.
     # 2. Use sync_domain() to create and/or update Resource objects for all
     #    projects in all known domains.
-    def sync_all_domains(options={})
+    def sync_all_domains
+      discover_domains
+      ResourceManagement::Resource.
+        where(project_id: nil).where.not(scope_name: nil).
+        pluck('DISTINCT domain_id').each { |domain_id| sync_domain(domain_id) }
+    end
+
+    def discover_domains
       # list all domains
       domain_name_by_id = {}
       services_identity.domains.each do |domain|
@@ -87,26 +94,34 @@ module ServiceLayer
 
       # check which domains exist in the DB and in Keystone
       all_domain_ids = domain_name_by_id.keys
-      Rails.logger.info "ResourceManagement > sync_all_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
+      Rails.logger.info "ResourceManagement > discover_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
       db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
       # drop Resource objects for deleted domains (unless we are using a
       # Keystone router, in which case services_identity.domains() is not
       # guaranteed to return a full domain list since it only queries one of
       # potentially many backend Keystones)
-      if has_keystone_router?
-        additional_domain_ids = (all_domain_ids + db_domain_ids).uniq - all_domain_ids
-        all_domain_ids = (all_domain_ids + db_domain_ids).uniq
-        Rails.logger.warn "ResourceManagement > sync_all_domains: will not trust domain list; also looking at known domains: #{additional_domain_ids.join(' ')}"
-      else
+      unless has_keystone_router?
         old_domain_ids = db_domain_ids - all_domain_ids
-        Rails.logger.info "ResourceManagement > sync_all_domains: cleaning up deleted domains: #{old_domain_ids.join(' ')}"
+        Rails.logger.info "ResourceManagement > discover_domains: cleaning up deleted domains: #{old_domain_ids.join(' ')}"
         ResourceManagement::Resource.where(domain_id: old_domain_ids).destroy_all()
-        all_domain_ids = all_domain_ids - old_domain_ids
       end
 
-      # call sync_domain on all existing domains
-      all_domain_ids.each { |domain_id| sync_domain(domain_id, options.merge(domain_name: domain_name_by_id[domain_id])) }
+      # mark existing domains (TODO: hack, because the DB schema is not in 2NF)
+      (all_domain_ids - db_domain_ids).each do |domain_id|
+        ResourceManagement::Resource.where(
+          cluster_id: nil,
+          domain_id:  domain_id,
+          project_id: nil,
+          service:    'none',
+          name:       'domain_exists',
+        ).first_or_create(
+          scope_name:     domain_name_by_id[domain_id],
+          approved_quota: 0,
+          current_quota:  0,
+          usage:          0,
+        )
+      end
     end
 
     # Discover existing projects in a domain, then:
@@ -114,7 +129,8 @@ module ServiceLayer
     # 2. Create Resource objects for new projects in local DB.
     def sync_domain(domain_id, options={})
       # get domain name
-      domain_name = options[:domain_name] || services_identity.find_domain(domain_id).name rescue ''
+      domain_name = ResourceManagement::Resource.where(project_id: nil, domain_id: domain_id).pluck('DISTINCT scope_name').first \
+        || (services_identity.find_domain(domain_id).name rescue '')
 
       # foreach resource in an enabled service...
       ResourceManagement::ResourceConfig.all.each do |resource|

@@ -63,29 +63,14 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
   describe '#sync_all_domains' do
 
-    it 'syncs all domains' do
+    it 'syncs all domains and all projects within the domains' do
       all_domains = service.services_identity.domains.map(&:id).sort
+      all_projects = service.services_identity.projects.map(&:id).sort
 
       service.sync_all_domains
 
       expect(ResourceManagement::Resource.pluck(:domain_id).uniq.sort).to eq(all_domains)
-    end
-
-    it 'syncs projects in known domains only for with_projects = true' do
-      all_projects = service.services_identity.projects.map(&:id).sort
-
-      service.sync_all_domains
-      ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
-
-      service.sync_all_domains # this should be a no-op since there are no new domains/projects
-
-      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
-      expect(updated_projects).to eq([])
-
-      service.sync_all_domains(with_projects: true)
-
-      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
-      expect(updated_projects).to eq(all_projects)
+      expect(ResourceManagement::Resource.where.not(project_id: nil).pluck(:project_id).uniq.sort).to eq(all_projects)
     end
 
     # This assertion ensures that all assertions about sync_domain and sync_project also hold for sync_all_domains.
@@ -94,8 +79,9 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
       service.sync_all_domains
 
-      # since we stubbed the part that's doing all the work, nothing was created
-      expect(ResourceManagement::Resource.count).to eq(0)
+      # since we stubbed the part that's doing all the work, nothing was
+      # created (except for the dummy resource that flags existing domains)
+      expect(ResourceManagement::Resource.count).to eq(service.services_identity.domains.count)
     end
 
     context 'when talking to a standard Keystone' do
