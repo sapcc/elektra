@@ -131,14 +131,34 @@ module ServiceLayer
       end
     end
 
-    def sync_domain(domain_id, domain_name=nil)
+    # Syncs all projects in this domain. If `timeout_secs > 0`, raises
+    # `Interrupt` after that many seconds (but only after completing the
+    # project sync that's running at that point).
+    def sync_domain(domain_id, domain_name=nil, timeout_secs=0)
+      start_time = Time.now
+
       domain_name ||= ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).pluck('DISTINCT scope_name').first || ''
       init_domain(domain_id, domain_name)
-
       discover_projects(domain_id)
-      ResourceManagement::Resource.
-        where(domain_id: domain_id).where.not(project_id: nil).
-        pluck('DISTINCT project_id').each { |project_id| sync_project(domain_id, project_id) }
+
+      while true
+        # among the projects that have not been updated since this method was invoked...
+        resources = ResourceManagement::Resource.where(domain_id: domain_id).where('project_id IS NOT NULL AND updated_at < ?', start_time)
+        # ...find the project that has the most ancient data and update it
+        project_id = resources.order(updated_at: :asc).limit(1).pluck(:project_id).first
+
+        if project_id.nil?
+          # all projects are in sync
+          return
+        else
+          sync_project(domain_id, project_id)
+        end
+
+        # check if we're taking to long
+        if timeout_secs > 0
+          raise Interrupt, "running time for sync_domain() exceeded" if Time.now.to_f - start_time.to_f > timeout_secs
+        end
+      end
     end
 
     # Discover existing projects in a domain, then:

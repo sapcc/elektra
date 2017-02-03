@@ -222,11 +222,16 @@ module ResourceManagement
     end
 
     def sync_now
-      services.resource_management.sync_domain(@scoped_domain_id, @scoped_domain_name)
+      options = {}
       begin
-        redirect_to :back
+        services.resource_management.sync_domain(@scoped_domain_id, @scoped_domain_name, 40) # timeout after 40 seconds
+      rescue Interrupt
+        options[:flash] = { error: "Could not sync all projects before timeout. Please try again." }
+      end
+      begin
+        redirect_to :back, options
       rescue ActionController::RedirectBackError
-        redirect_to admin_path()
+        redirect_to admin_path(), options
       end
     end
 
