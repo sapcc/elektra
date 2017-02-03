@@ -100,7 +100,7 @@ module ResourceManagement
     end
 
     def sync_now
-      services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id)
+      services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError

@@ -139,7 +139,7 @@ module ResourceManagement
 
     def sync_now
       service = services.resource_management
-      service.sync_all_domains(with_projects: true)
+      service.sync_all_domains
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError

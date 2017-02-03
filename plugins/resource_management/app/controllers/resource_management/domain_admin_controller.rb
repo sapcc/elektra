@@ -222,7 +222,7 @@ module ResourceManagement
     end
 
     def sync_now
-      services.resource_management.sync_domain(@scoped_domain_id, with_projects: true)
+      services.resource_management.sync_domain(@scoped_domain_id, @scoped_domain_name)
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError

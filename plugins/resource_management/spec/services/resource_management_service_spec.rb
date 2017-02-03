@@ -80,8 +80,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       service.sync_all_domains
 
       # since we stubbed the part that's doing all the work, nothing was
-      # created (except for the dummy resource that flags existing domains)
-      expect(ResourceManagement::Resource.count).to eq(service.services_identity.domains.count)
+      # created (except for the domain quotas)
+      expect(ResourceManagement::Resource.count).to eq(service.services_identity.domains.count * ResourceManagement::ResourceConfig.all.count)
     end
 
     context 'when talking to a standard Keystone' do
@@ -158,6 +158,13 @@ RSpec.describe ServiceLayer::ResourceManagementService do
 
       created_projects = ResourceManagement::Resource.where.not(project_id: nil).pluck(:project_id).uniq.sort
       expect(created_projects).to eq(domain_projects)
+
+      ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
+
+      service.sync_domain(domain_id)
+
+      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
+      expect(updated_projects).to eq(domain_projects)
     end
 
     it 'initializes approved_quota when called the first time' do
@@ -168,22 +175,6 @@ RSpec.describe ServiceLayer::ResourceManagementService do
         expect(r.size).to eq(1)
         expect(r.first.approved_quota).to eq(0)
       end
-    end
-
-    it 'syncs existing projects in this domain only for with_projects = true' do
-      service.sync_domain(domain_id)
-
-      ResourceManagement::Resource.update_all(updated_at: 1.hour.ago) # to check which records have been updated
-
-      service.sync_domain(domain_id)
-
-      updated_records = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago)
-      expect(updated_records.size).to eq(0)
-
-      service.sync_domain(domain_id, with_projects: true)
-
-      updated_projects = ResourceManagement::Resource.where('project_id IS NOT NULL AND updated_at >= ?', 1.minute.ago).pluck(:project_id).uniq.sort
-      expect(updated_projects).to eq(domain_projects)
     end
 
     it 'cleans data for deleted projects' do
@@ -211,7 +202,8 @@ RSpec.describe ServiceLayer::ResourceManagementService do
       service.sync_domain(domain_id)
 
       # since we stubbed the part that's updating projects, no records should have been created for projects
-      expect(ResourceManagement::Resource.where.not(project_id: nil).count).to eq(0)
+      # (except for the "needs_sync" dummy records)
+      expect(ResourceManagement::Resource.where.not(project_id: nil).count).to eq(domain_projects.count)
     end
 
   end

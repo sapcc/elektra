@@ -74,10 +74,6 @@ module ServiceLayer
       return self
     end
 
-    # Discover existing domains, then:
-    # 1. Cleanup Resource objects for deleted domains from local DB.
-    # 2. Use sync_domain() to create and/or update Resource objects for all
-    #    projects in all known domains.
     def sync_all_domains
       discover_domains
       ResourceManagement::Resource.
@@ -85,6 +81,9 @@ module ServiceLayer
         pluck('DISTINCT domain_id').each { |domain_id| sync_domain(domain_id) }
     end
 
+    # Discover existing domains, then:
+    # 1. Cleanup Resource objects for deleted domains from local DB.
+    # 2. Initialize approved_quota = 0 for new domains.
     def discover_domains
       # list all domains
       domain_name_by_id = {}
@@ -94,7 +93,6 @@ module ServiceLayer
 
       # check which domains exist in the DB and in Keystone
       all_domain_ids = domain_name_by_id.keys
-      Rails.logger.info "ResourceManagement > discover_domains: domains in Keystone are: #{all_domain_ids.join(' ')}"
       db_domain_ids = ResourceManagement::Resource.pluck('DISTINCT domain_id')
 
       # drop Resource objects for deleted domains (unless we are using a
@@ -107,36 +105,16 @@ module ServiceLayer
         ResourceManagement::Resource.where(domain_id: old_domain_ids).destroy_all()
       end
 
-      # mark existing domains (TODO: hack, because the DB schema is not in 2NF)
-      (all_domain_ids - db_domain_ids).each do |domain_id|
-        ResourceManagement::Resource.where(
-          cluster_id: nil,
-          domain_id:  domain_id,
-          project_id: nil,
-          service:    'none',
-          name:       'domain_exists',
-        ).first_or_create(
-          scope_name:     domain_name_by_id[domain_id],
-          approved_quota: 0,
-          current_quota:  0,
-          usage:          0,
-        )
-      end
+      # initialize discovered domains, thus enabling listing of domain IDs on local database
+      all_domain_ids.each { |domain_id| init_domain(domain_id, domain_name_by_id[domain_id]) }
     end
 
-    # Discover existing projects in a domain, then:
-    # 1. Cleanup Resource objects for deleted projects from local DB.
-    # 2. Create Resource objects for new projects in local DB.
-    def sync_domain(domain_id, options={})
-      # get domain name
-      domain_name = ResourceManagement::Resource.where(project_id: nil, domain_id: domain_id).pluck('DISTINCT scope_name').first \
-        || (services_identity.find_domain(domain_id).name rescue '')
-
+    def init_domain(domain_id, domain_name)
       # foreach resource in an enabled service...
       ResourceManagement::ResourceConfig.all.each do |resource|
         # ...initialize the Resource entry of the domain with approved_quota=0
-        # (this is useful if the domain was created outside of the dashboard
-        # and no quota has been approved for it yet)
+        # (when the domain has just been discovered, no one can possibly have
+        # approved quota yet)
         res = ResourceManagement::Resource.where(
           cluster_id: nil, # TODO: take cluster assignment into account for brokered services
           domain_id:  domain_id,
@@ -151,7 +129,22 @@ module ServiceLayer
         res.scope_name = domain_name
         res.touch # includes res.save if res.changed?
       end
+    end
 
+    def sync_domain(domain_id, domain_name=nil)
+      domain_name ||= ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).pluck('DISTINCT scope_name').first || ''
+      init_domain(domain_id, domain_name)
+
+      discover_projects(domain_id)
+      ResourceManagement::Resource.
+        where(domain_id: domain_id).where.not(project_id: nil).
+        pluck('DISTINCT project_id').each { |project_id| sync_project(domain_id, project_id) }
+    end
+
+    # Discover existing projects in a domain, then:
+    # 1. Cleanup Resource objects for deleted projects from local DB.
+    # 2. Create Resource objects for new projects in local DB.
+    def discover_projects(domain_id)
       # check which projects exist in the DB and in Keystone
       project_name_for_id = {}
       begin
@@ -163,26 +156,37 @@ module ServiceLayer
       end
 
       all_project_ids = project_name_for_id.keys
-      Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
-      db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).where.not(project_id: nil).pluck('DISTINCT project_id')
+      db_project_ids = ResourceManagement::Resource.
+        where(domain_id: domain_id).where.not(project_id: nil).
+        pluck('DISTINCT project_id')
 
       # don't trust an empty project list; it could mean that we're lacking
-      # permission to query Keystone for the projects in this domain
+      # permission to query Keystone for the projects in this domain (see
+      # above)
       if all_project_ids.empty?
-        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will not trust empty project list; also looking at known projects: #{db_project_ids.join(' ')}"
-        all_project_ids = db_project_ids
+        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): got empty project list from Keystone; could be unauthorized to list projects -> will not attempt to cleanup deleted projects from my local DB"
+      else
+        # drop Resource objects for deleted projects
+        old_project_ids = db_project_ids - all_project_ids
+        Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): cleaning up deleted projects in domain #{domain_id}: #{old_project_ids.join(' ')}"
+        ResourceManagement::Resource.where(domain_id: domain_id, project_id: old_project_ids).destroy_all()
       end
 
-      # drop Resource objects for deleted projects
-      old_project_ids = db_project_ids - all_project_ids
-      Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): cleaning up deleted projects: #{old_project_ids.join(' ')}"
-      ResourceManagement::Resource.where(domain_id: domain_id, project_id: old_project_ids).destroy_all()
-      db_project_ids = db_project_ids - old_project_ids
-
-      # initialize Resource objects for new domains (by recursing into sync_project)
-      # or refresh all projects when options[:with_projects] is given
-      project_ids_to_update = options[:with_projects] ? all_project_ids : (all_project_ids - db_project_ids)
-      project_ids_to_update.each { |project_id| sync_project(domain_id, project_id, project_name_for_id[project_id]) }
+      # mark new projects that have not been synced yet (TODO: hack, because DB is not in 2NF)
+      (all_project_ids - db_project_ids).each do |project_id|
+        ResourceManagement::Resource.where(
+          cluster_id: nil,
+          domain_id:  domain_id,
+          project_id: project_id,
+          service:    'resource_management',
+          name:       'needs_sync',
+        ).first_or_create(
+          scope_name:     project_name_for_id[project_id],
+          approved_quota: 0,
+          current_quota:  0,
+          usage:          0,
+        )
+      end
     end
 
     # Update Resource entries for the given project with fresh current_quota
@@ -190,8 +194,10 @@ module ServiceLayer
     def sync_project(domain_id, project_id, project_name=nil)
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
 
-      # get the project name
-      project_name ||= services_identity.find_project(project_id).name rescue ''
+      # get the project name (FIXME: this breaks if the project name is changed
+      # in Keystone, but there are entries with the old scope_name in our DB)
+      project_name ||= ResourceManagement::Resource.where(project_id: project_id).pluck('DISTINCT scope_name').first \
+        || (services_identity.find_project(project_id).name rescue '')
 
       # fetch current quotas and usage for this project from all services
       actual_quota = {}
@@ -245,6 +251,9 @@ module ServiceLayer
           object.touch # set the updated_at timestamp that's displayed as data age
         end
       end
+
+      # remove needs_sync dummy resource, if any
+      ResourceManagement::Resource.where(project_id: 'project_id', name: 'needs_sync').destroy_all()
     end
 
     # Takes an array of Resource records and applies the current_quota values
