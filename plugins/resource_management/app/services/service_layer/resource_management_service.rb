@@ -153,16 +153,22 @@ module ServiceLayer
       end
 
       # check which projects exist in the DB and in Keystone
-      project_name_for_id = enumerate_projects(domain_id, domain_name)
+      project_name_for_id = {}
+      begin
+        services_identity.projects(domain_id: domain_id).each do |project|
+          project_name_for_id[project.id] = project.name
+        end
+      rescue Excon::Errors::Unauthorized
+        project_name_for_id = {}
+      end
+
       all_project_ids = project_name_for_id.keys
       Rails.logger.info "ResourceManagement > sync_domain(#{domain_id}): projects in Keystone are: #{all_project_ids.join(' ')}"
       db_project_ids = ResourceManagement::Resource.where(domain_id: domain_id).where.not(project_id: nil).pluck('DISTINCT project_id')
 
-      # if using a Keystone router, don't trust an empty project list; it could
-      # mean that we're querying the wrong backend and can thus not see the
-      # domain (TODO: account for that in the driver by selecting the proper
-      # backend)
-      if has_keystone_router? and all_project_ids.empty?
+      # don't trust an empty project list; it could mean that we're lacking
+      # permission to query Keystone for the projects in this domain
+      if all_project_ids.empty?
         Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will not trust empty project list; also looking at known projects: #{db_project_ids.join(' ')}"
         all_project_ids = db_project_ids
       end
@@ -272,39 +278,6 @@ module ServiceLayer
       value = ENV.fetch('HAS_KEYSTONE_ROUTER', '0')
       Rails.logger.debug "HAS_KEYSTONE_ROUTER = '#{value}'"
       return value == '1'
-    end
-
-    # List all projects that exist in the given domain, as a hash of { id => name_or_nil }.
-    def enumerate_projects(domain_id, domain_name)
-      # extrawurst for legacy monsoon2: consider only relevant projects
-      # 1. skip legacy organizations (= Keystone projects with ID starting with "o-")
-      # 2. skip legacy projects that are not Swift-enabled (by checking for role assignments to "swiftoperator")
-      # This radically reduces the syncing time (since only about half of the
-      # Keystone projects are legacy projects, and only a small fraction of
-      # those actually use Swift).
-      if domain_name == 'monsoon2'
-        # resolve role name into ID
-        role_name = 'swiftoperator'
-        role_id   = services_identity.find_role_by_name(role_name).id
-        Rails.logger.warn "ResourceManagement > sync_domain(#{domain_id}): will only consider projects with #{role_name} role assignment"
-
-        # iterate over role assignments
-        result = {}
-        services_identity.role_assignments("role.id" => role_id).each do |assignment|
-          if project_id = assignment.scope.fetch('project', {})['id']
-            # IDs of actual projects start with "p-"; this filters legacy organizations
-            result[project_id] = nil if project_id.start_with?('p-')
-          end
-        end
-        return result
-      end
-
-      # the usual case: list all projects
-      result = {}
-      services_identity.projects(domain_id: domain_id).each do |project|
-        result[project.id] = project.name
-      end
-      return result
     end
 
   end
