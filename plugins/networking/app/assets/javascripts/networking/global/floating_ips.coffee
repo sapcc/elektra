@@ -6,7 +6,7 @@ showSubnets= (subnets) ->
   $select.empty()
 
   $select.append('<option value=""></option>')
-  $select.append('<option value="'+subnet.id+'">'+subnet.name+'</option>') for subnet in subnets
+  $select.append('<option value="'+subnet.id+'">'+subnet.name+' ('+subnet.cidr+')'+'</option>') for subnet in subnets
 
   $('fieldset#subnets .form-group').show()
 
