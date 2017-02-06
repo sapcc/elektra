@@ -53,9 +53,25 @@ module ServiceLayer
     end
 
 
+    # When this service queries Keystone, it uses the dashboard's service user
+    # (who has cloud-admin privileges). This is required because we allow a
+    # low-privileged service user to trigger quota/usage syncing, but need
+    # permissions to list domains and projects.
+    class PatchedIdentityDriver < ::Identity::Driver::Fog
+      def initialize(auth_url, region)
+        @auth_url = auth_url
+        @region   = region
+        @fog = ::Fog::Identity::OpenStack::V3.new(service_user_auth_params)
+      end
+    end
+
     # This is used in the unit test to replace services.identity by a mock.
     def services_identity
-      @services_identity || services.identity
+      if @services_identity.nil?
+        @services_identity = ServiceLayer::IdentityService.new(auth_url, region, nil)
+        @services_identity.instance_variable_set(:@driver, PatchedIdentityDriver.new(auth_url, region))
+      end
+      return @services_identity
     end
 
     def available?(action_name_sym=nil)
