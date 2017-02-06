@@ -6,6 +6,10 @@ module Networking
       read('router:external')
     end
 
+    def external?
+      external == true
+    end
+
     def provider_network_type
       read('provider:network_type')
     end

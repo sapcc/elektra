@@ -1,6 +1,5 @@
 module Networking
   class RoutersController < DashboardController
-
     def index
       @routers = services.networking.routers(tenant_id:@scoped_project_id)
 
@@ -101,7 +100,7 @@ module Networking
       @internal_subnets = []
 
       project_networks.each do |network|
-        if network.attributes["router:external"]==true
+        if network.external?
           @external_networks << network
         else
           network.subnet_objects.each do |subnet|
@@ -147,7 +146,7 @@ module Networking
         @internal_subnets = []
 
         project_networks.each do |network|
-          if network.attributes["router:external"]==true
+          if network.external?
             @external_networks << network
           else
             network.subnet_objects.each do |subnet|
@@ -185,12 +184,6 @@ module Networking
     end
 
     protected
-    def attached_subnet_ids
-      # get all router attached ports
-      ports = services.networking.ports(device_owner:'network:router_interface',tenant_id:@scoped_project_id)
-      # get subnet ids
-      @attached_subnet_ids ||= (ports || []).inject([]){|array,port| port.fixed_ips.each{|ip| array << ip["subnet_id"]}; array}
-    end
 
     def available_networks
       # load all project networks
@@ -200,18 +193,16 @@ module Networking
 
       @available_networks = { external_networks: [], internal_subnets: [] }
       project_networks.each do |network|
-        if network.attributes["router:external"]==true
+        if network.external?
           @available_networks[:external_networks] << network
         else
           network.subnet_objects.each do |subnet|
-            # add if not attached
-            subnet.network_name=network.name
-            @available_networks[:internal_subnets] << subnet unless attached_subnet_ids.include?(subnet.id)
+            subnet.network_name = network.name
+            @available_networks[:internal_subnets] << subnet
           end
         end
       end
       @available_networks
     end
-
   end
 end
