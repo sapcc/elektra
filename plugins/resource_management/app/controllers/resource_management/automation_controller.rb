@@ -6,6 +6,11 @@ module ResourceManagement
     # requires cloud_admin permission to use (intended for use with a privileged technical user)
     authorization_required
 
+    # bypass Terms-of-Use check for technical users
+    def check_terms_of_use
+      return
+    end
+
     def sync_domain
       domain_name = params.require(:domain_name)
       domain = services.identity.domains(name: domain_name).first
