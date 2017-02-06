@@ -303,8 +303,6 @@ module Monitoring
       #  - statistical function is set with avg, if it is not existing
       # metric, threshold and threshold value are required
       
-      # remove all white spaces
-      expression.gsub!(/\s/,'')
       # parse expression
       result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/)
 
