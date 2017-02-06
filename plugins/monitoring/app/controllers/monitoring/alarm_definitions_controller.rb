@@ -296,13 +296,14 @@ module Monitoring
 
     private
     
-    def parse_expression(expression)
+    def parse_expression(expression_original)
 
       # at the moment period, statistical function and dimensions are optional
       #  - period is set with 60 seconds, if it is not existing
       #  - statistical function is set with avg, if it is not existing
       # metric, threshold and threshold value are required
       
+      expression = expression_original.clone
       # parse expression
       result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/)
 
@@ -314,6 +315,8 @@ module Monitoring
         # pp result
         # puts '###################'
         
+        # remove all white spaces
+        expression.gsub!(/\s/,'')
         #check existing statistical function
         if result[0][0] =~ /avg|min|max|sum|count/
           @statistical_function = result[0][0]
@@ -325,7 +328,7 @@ module Monitoring
           result.insert(0,result[0])
         end
         
-        @metric               = result[1][0] || 'ERROR'
+        @metric = result[1][0] || 'ERROR'
 
         # check existing dimensions
         if result[2][0] =~ /\{.*\}/
@@ -350,8 +353,8 @@ module Monitoring
           result.insert(3,result[3])
         end
         
-        @threshold            = result[4][0] || 'ERROR'
-        @threshold_value      = result[5][0] || 'ERROR'
+        @threshold       = result[4][0] || 'ERROR'
+        @threshold_value = result[5][0] || 'ERROR'
         
         # rebuild the brackets for validity check
         unless statistical_function_string.empty?
@@ -365,7 +368,13 @@ module Monitoring
         
         # rebuild expression to check if everything was going right
         @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
-        @parsed_expression_success = true
+         # puts @parsed_expression
+         # puts expression
+        if @parsed_expression == expression
+          @parsed_expression_success = true
+        else 
+          @parsed_expression_success = false
+        end
       rescue
         @parsed_expression = "Cannot parse! This expression was probably not created with the expression wizard."
         @parsed_expression_success = false
