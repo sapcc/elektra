@@ -224,7 +224,11 @@ module ResourceManagement
     def sync_now
       options = {}
       begin
-        services.resource_management.sync_domain(@scoped_domain_id, @scoped_domain_name, 40) # timeout after 40 seconds
+        services.resource_management.sync_domain(
+          @scoped_domain_id, @scoped_domain_name,
+          timeout_secs: 40,  # abort after 40 seconds to avoid HTTP connection timeout (~1 minute)
+          refresh_secs: 600, # do not try to update data that's newer than 10 minutes
+        )
       rescue Interrupt
         options[:flash] = { error: "Could not sync all projects before timeout. Please try again." }
       end

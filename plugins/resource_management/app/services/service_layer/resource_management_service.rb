@@ -147,20 +147,29 @@ module ServiceLayer
       end
     end
 
-    # Syncs all projects in this domain. If `timeout_secs > 0`, raises
-    # `Interrupt` after that many seconds (but only after completing the
-    # project sync that's running at that point).
-    def sync_domain(domain_id, domain_name=nil, timeout_secs=0)
+    # Syncs all projects in this domain.
+    #
+    # If `options[:timeout_secs] > 0`, raises `Interrupt` after that many
+    # seconds (but only after completing the project sync that's running at
+    # that point).
+    #
+    # If `options[:refresh_secs] > 0`, do not attempt to update quota/usage
+    # data that's less than that many seconds old.
+    def sync_domain(domain_id, domain_name=nil, options={})
       start_time = Time.now
+      base_time = start_time
+      if options[:refresh_secs] > 0
+        base_time = start_time - options[:refresh_secs].seconds
+      end
 
       domain_name ||= ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).pluck('DISTINCT scope_name').first || ''
       init_domain(domain_id, domain_name)
       discover_projects(domain_id)
 
-      if timeout_secs > 0
+      if options[:timeout_secs] > 0
         while true
           # among the projects that have not been updated since this method was invoked...
-          resources = ResourceManagement::Resource.where(domain_id: domain_id).where('project_id IS NOT NULL AND updated_at < ?', start_time)
+          resources = ResourceManagement::Resource.where(domain_id: domain_id).where('project_id IS NOT NULL AND updated_at < ?', base_time)
           # ...find the project that has the most ancient data and update it
           project_id = resources.order(updated_at: :asc).limit(1).pluck(:project_id).first
 
@@ -172,7 +181,7 @@ module ServiceLayer
           end
 
           # check if we're taking to long
-          raise Interrupt, "running time for sync_domain() exceeded" if Time.now.to_f - start_time.to_f > timeout_secs
+          raise Interrupt, "running time for sync_domain() exceeded" if Time.now.to_f - start_time.to_f > options[:timeout_secs]
         end
       else
         # simplified code-path without timeouts
@@ -294,7 +303,7 @@ module ServiceLayer
       end
 
       # remove needs_sync dummy resource, if any
-      ResourceManagement::Resource.where(project_id: 'project_id', name: 'needs_sync').destroy_all()
+      ResourceManagement::Resource.where(project_id: project_id, name: 'needs_sync').destroy_all()
     end
 
     # Takes an array of Resource records and applies the current_quota values

@@ -41,5 +41,9 @@ ResourceManagement::Engine.routes.draw do
     get 'capacity/:id' => 'cloud_admin#edit_capacity',   as: 'edit_capacity'
     put 'capacity/:id' => 'cloud_admin#update_capacity', as: 'update_capacity'
   end
- 
+
+  scope 'automation', as: 'automation' do
+    get 'sync_domain' => 'automation#sync_domain'
+  end
+
 end
