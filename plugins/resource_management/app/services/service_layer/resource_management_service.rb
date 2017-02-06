@@ -158,7 +158,7 @@ module ServiceLayer
     def sync_domain(domain_id, domain_name=nil, options={})
       start_time = Time.now
       base_time = start_time
-      if options[:refresh_secs] > 0
+      if options.fetch(:refresh_secs, 0) > 0
         base_time = start_time - options[:refresh_secs].seconds
       end
 
@@ -166,7 +166,7 @@ module ServiceLayer
       init_domain(domain_id, domain_name)
       discover_projects(domain_id)
 
-      if options[:timeout_secs] > 0
+      if options.fetch(:timeout_secs, 0) > 0
         while true
           # among the projects that have not been updated since this method was invoked...
           resources = ResourceManagement::Resource.where(domain_id: domain_id).where('project_id IS NOT NULL AND updated_at < ?', base_time)
