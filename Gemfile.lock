@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/arc-client.git
-  revision: 007df73948aee19f5628854b4fee54d0a108cc9a
+  revision: 5d9b922d3c19d02f0cd87c7cc93f80802a960b50
   specs:
     arc-client (0.7.1)
       rest-client (~> 2.0.0.rc3)
