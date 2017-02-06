@@ -1,7 +1,7 @@
 module Networking
   class RoutersController < DashboardController
     def index
-      @routers = services.networking.routers(tenant_id:@scoped_project_id)
+      @routers = services.networking.routers(tenant_id: @scoped_project_id)
 
       usage = @routers.length
       @quota_data = services.resource_management.quota_data([
@@ -60,7 +60,7 @@ module Networking
       ])
 
       # build new router object (no api call done yet!)
-      @router = services.networking.new_router("admin_state_up" => true)
+      @router = services.networking.new_router('admin_state_up' => true)
 
       networks = available_networks
       @external_networks = networks[:external_networks]
@@ -69,16 +69,16 @@ module Networking
 
     def create
       # get selected subnets and remove them from params
-      @selected_internal_subnets = (params[:router].delete(:internal_subnets) || []).reject { |c| c.empty? }
+      @selected_internal_subnets = (params[:router].delete(:internal_subnets) || []).reject(&:empty?)
       # build new router object
       @router = services.networking.new_router(params[:router])
 
       if @router.save
         # router is created -> add subnets as interfaces
-        services.networking.add_router_interfaces(@router.id,@selected_internal_subnets)
-        audit_logger.info(current_user, "has created", @router)
+        services.networking.add_router_interfaces(@router.id, @selected_internal_subnets)
+        audit_logger.info(current_user, 'has created', @router)
 
-        flash.now[:notice] = "Router successfully created."
+        flash.now[:notice] = 'Router successfully created.'
         redirect_to plugin('networking').routers_path
       else
         # didn't save -> render new
@@ -91,15 +91,14 @@ module Networking
 
     def edit
       @router = services.networking.find_router(params[:id])
-      @external_network = services.networking.network(@router.external_gateway_info["network_id"])
+      @external_network = services.networking.network(@router.external_gateway_info['network_id'])
 
-      # load all project networks
-      project_networks = services.networking.project_networks(@scoped_project_id)
+      networks = services.networking.networks
 
       @external_networks = []
       @internal_subnets = []
 
-      project_networks.each do |network|
+      networks.each do |network|
         if network.external?
           @external_networks << network
         else
@@ -110,47 +109,45 @@ module Networking
         end
       end
 
-      attached_ports = services.networking.ports(device_id: @router.id, device_owner:'network:router_interface')
-      @selected_internal_subnet_ids = attached_ports.inject([]){|array,port| port.fixed_ips.each{|ip| array << ip["subnet_id"]}; array}
+      attached_ports = services.networking.ports(device_id: @router.id, device_owner: 'network:router_interface')
+      @selected_internal_subnet_ids = attached_ports.inject([]){|array, port| port.fixed_ips.each{ |ip| array << ip['subnet_id']}; array }
     end
 
     def update
       # get selected subnets and remove them from params
       params[:router].delete(:external_gateway_info)
-      @selected_internal_subnet_ids = (params[:router].delete(:internal_subnets) || []).reject { |c| c.empty? }
+      @selected_internal_subnet_ids = (params[:router].delete(:internal_subnets) || []).reject(&:empty?)
       # build new router object
       @router = services.networking.find_router(params[:id])
       @router.name = params[:router][:name]
       @router.admin_state_up = params[:router][:admin_state_up]
 
       if @router.save
-        attached_ports = services.networking.ports(device_id: @router.id, device_owner:'network:router_interface')
-        @old_selected_internal_subnet_ids = attached_ports.inject([]){|array,port| port.fixed_ips.each{|ip| array << ip["subnet_id"]}; array}
+        attached_ports = services.networking.ports(device_id: @router.id, device_owner: 'network:router_interface')
+        @old_selected_internal_subnet_ids = attached_ports.inject([]){|array, port| port.fixed_ips.each{ |ip| array << ip['subnet_id']}; array }
 
-        to_be_detached = (@old_selected_internal_subnet_ids-@selected_internal_subnet_ids)
-        to_be_attached = (@selected_internal_subnet_ids-@old_selected_internal_subnet_ids)
+        to_be_detached = (@old_selected_internal_subnet_ids - @selected_internal_subnet_ids)
+        to_be_attached = (@selected_internal_subnet_ids - @old_selected_internal_subnet_ids)
 
-        services.networking.remove_router_interfaces(@router.id,to_be_detached)
-        services.networking.add_router_interfaces(@router.id,to_be_attached)
-        audit_logger.info(current_user, "has updated", @router)
+        services.networking.remove_router_interfaces(@router.id, to_be_detached)
+        services.networking.add_router_interfaces(@router.id, to_be_attached)
+        audit_logger.info(current_user, 'has updated', @router)
 
-        flash.now[:notice] = "Router successfully created."
+        flash.now[:notice] = 'Router successfully created.'
         redirect_to plugin('networking').routers_path
       else
-        @external_network = services.networking.network(@router.external_gateway_info["network_id"])
+        @external_network = services.networking.network(@router.external_gateway_info['network_id'])
 
-        # load all project networks
-        project_networks = services.networking.project_networks(@scoped_project_id)
+        networks = services.networking.networks
 
         @external_networks = []
         @internal_subnets = []
 
-        project_networks.each do |network|
+        networks.each do |network|
           if network.external?
             @external_networks << network
           else
             network.subnet_objects.each do |subnet|
-              # add if not attached
               @internal_subnets << subnet
             end
           end
@@ -173,7 +170,7 @@ module Networking
           audit_logger.info(current_user, "has deleted", @router)
           flash.now[:notice] = "Router successfully deleted."
         else
-          flash.now[:error] = @router.errors.full_messages.to_sentence #"Something when wrong when trying to delete the project"
+          flash.now[:error] = @router.errors.full_messages.to_sentence
         end
       end
 
