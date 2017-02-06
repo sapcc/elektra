@@ -14,8 +14,9 @@
     - else
       .col-sm-2.has-help-hint.search-field
         = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help: search_help }
-      .col-sm-1.col-sm-offset-9
-        = link_to "New", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-sm', data: {modal:true}
+      .col-sm-4.col-sm-offset-6
+        = link_to "Wizard",plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-primary btn-sm', title: 'use wizard to create a new alarm definition',data: {modal:true}
+        = link_to "New", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-sm', title: 'create new alarm definition', data: {modal:true}
 
 #definitions_list
   = render partial: 'list'
