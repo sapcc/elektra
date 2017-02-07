@@ -305,8 +305,11 @@ module Monitoring
       # metric, threshold and threshold value are required
       
       expression = expression_original.clone
-      # parse expression
-      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/)
+      
+      # remove all white spaces for better parsing
+      expression.gsub!(/\s/,'')
+      # parse expression (/i case insensitive)
+      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/i)
 
       dimensions_string           = ""
       period_string               = ""
@@ -316,10 +319,8 @@ module Monitoring
         # pp result
         # puts '###################'
         
-        # remove all white spaces
-        expression.gsub!(/\s/,'')
         #check existing statistical function
-        if result[0][0] =~ /avg|min|max|sum|count/
+        if result[0][0] =~ /avg|min|max|sum|count/i
           @statistical_function = result[0][0]
           statistical_function_string = result[0][0]
         else
@@ -328,7 +329,7 @@ module Monitoring
           # without statistical function we need to take care of the correct order
           result.insert(0,result[0])
         end
-        
+
         @metric = result[1][0] || 'ERROR'
 
         # check existing dimensions
@@ -369,8 +370,8 @@ module Monitoring
         
         # rebuild expression to check if everything was going right
         @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
-          puts @parsed_expression
-          puts expression
+        #  puts @parsed_expression
+        #  puts expression
         if @parsed_expression == expression
           @parsed_expression_success = true
         else 
