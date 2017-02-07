@@ -34,6 +34,8 @@ module Monitoring
         return content_tag(:span, icon('envelope-o'), style: "cursor:help", title: 'notification by email' )
       elsif type == "WEBHOOK"
         return content_tag(:span, icon('globe'), style: "cursor:help", title: 'notification by webhook' )
+      elsif type == "SLACK"
+        return content_tag(:span, icon('slack'), style: "cursor:help", title: 'notification by slack' )
       else
         return content_tag(:strong, '?')
       end
