@@ -11,6 +11,17 @@ module Networking
 
     PORT_RANGE_RULE = PREDEFINED_RULE_TYPES.inject({}){|hash,(rule_name,rule)| hash[rule['port_range'].to_s]= rule; hash }
 
+    validate :ip_prefix
+
+    def ip_prefix
+      begin
+        IPAddr.new self.remote_ip_prefix unless self.remote_ip_prefix.blank?
+      rescue => e
+        errors.add(:remote_ip_prefix, "Please enter a valid IP Address")
+      end
+    end
+
+
     def port_range
       if port_range_min.blank? && port_range_max.blank?
         nil

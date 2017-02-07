@@ -48,11 +48,14 @@ module Networking
           if rule_params[:remote_source]=='remote_ip_prefix'
             attributes[:remote_ip_prefix]=rule_params[:remote_ip_prefix]
             unless rule_params[:remote_ip_prefix].blank?
-              ip = IPAddr.new rule_params[:remote_ip_prefix]
-              if ip.ipv4?
-                attributes[:ethertype] = 'ipv4'
-              elsif ip.ipv6?
-                attributes[:ethertype] = 'ipv6'
+              ip_error = false
+              ip = IPAddr.new rule_params[:remote_ip_prefix] rescue ip_error = true
+              unless ip_error
+                if ip.ipv4?
+                  attributes[:ethertype] = 'ipv4'
+                elsif ip.ipv6?
+                  attributes[:ethertype] = 'ipv6'
+                end
               end
             else
               attributes[:ethertype] = 'ipv4'

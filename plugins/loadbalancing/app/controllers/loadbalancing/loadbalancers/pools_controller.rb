@@ -6,10 +6,8 @@ module Loadbalancing
 
       def index
         # get all pools for project and calc. quota
-        @pools = services.loadbalancing.pools(tenant_id: @scoped_project_id)
+        @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
         @quota_data = services.resource_management.quota_data([{service_name: :loadbalancing, resource_name: :pools, usage: @pools.length}])
-        # delete pool from different loadbalancers
-        @pools.reject! { |p| p.loadbalancers.first['id'] != @loadbalancer.id }
       end
 
       def show_all

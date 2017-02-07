@@ -70,6 +70,9 @@ module Loadbalancing
             end
           end
 
+          def release_state
+            "experimental"
+          end
 
           private
 

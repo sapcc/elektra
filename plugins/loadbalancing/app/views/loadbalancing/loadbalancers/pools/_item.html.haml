@@ -4,6 +4,7 @@
   %td= pool.description
   %td= pool.protocol
   %td= pool.lb_algorithm
+  %td= pool.members ? pool.members.count : 0
   %td.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }

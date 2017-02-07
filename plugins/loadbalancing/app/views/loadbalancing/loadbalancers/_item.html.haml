@@ -25,8 +25,10 @@
         %p.list-group-item-text
           %i.fa.fa-globe.fa-fw
           = loadbalancer.floating_ip.floating_ip_address
-  %td= loadbalancer.listeners.count
-  %td= loadbalancer.pools.count
+  - nlisteners = loadbalancer.listeners ? loadbalancer.listeners.count : 0
+  %td= link_to nlisteners, plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id) if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+  - npools = loadbalancer.pools ? loadbalancer.pools.count : 0
+  %td= link_to npools, plugin('loadbalancing').loadbalancer_pools_path(loadbalancer_id: loadbalancer.id) if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
 
   %td.snug
     .btn-group
