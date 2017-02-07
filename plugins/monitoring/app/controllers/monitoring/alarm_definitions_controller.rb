@@ -83,9 +83,10 @@ module Monitoring
 
     # this is used when the modified expression is transferred to the edit alarm definitions view
     def from_expression_wizzard_edit
-      expression = params[:expression]
-      if expression 
-        @alarm_definition.expression = expression
+      @expression = params[:expression]
+      parse_expression(@expression)
+      if @expression 
+        @alarm_definition.expression = @expression
       end
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
       render action: 'edit_with_expression'
@@ -368,8 +369,8 @@ module Monitoring
         
         # rebuild expression to check if everything was going right
         @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
-         # puts @parsed_expression
-         # puts expression
+          puts @parsed_expression
+          puts expression
         if @parsed_expression == expression
           @parsed_expression_success = true
         else 

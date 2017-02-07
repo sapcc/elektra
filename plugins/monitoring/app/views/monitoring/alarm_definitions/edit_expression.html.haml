@@ -4,7 +4,7 @@
 - unless modal?
   %h4 Edit Expression 
 
-- if @parsed_expression != @expression
+- if not @parsed_expression_success
   .modal-body
     = form_tag plugin('monitoring').from_expression_wizzard_edit_alarm_definitions_path(), method: :post, remote: modal?, id: 'expression_data'  do
       = hidden_field_tag 'id', @alarm_definition_id
