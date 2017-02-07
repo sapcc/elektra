@@ -4,6 +4,7 @@ module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:new_request, :create_request]
+    before_filter :check_first_visit,     only: [:index, :show_area]
 
     authorization_required
 
@@ -87,6 +88,13 @@ module ResourceManagement
       end
     end
 
+    def new_package_request
+    end
+
+    def create_package_request
+      # TODO
+    end
+
     def show_area
       @area = params.require(:area).to_sym
 
@@ -113,6 +121,14 @@ module ResourceManagement
     def load_project_resource
       @project_resource = ResourceManagement::Resource.find(params.require(:id))
       raise ActiveRecord::RecordNotFound if @project_resource.id.nil? or @project_resource.project_id.nil?
+    end
+
+    def check_first_visit
+      # if no quota has been approved yet, the user may request an initial
+      # package of quotas
+      @can_request_package = ResourceManagement::Resource.
+        where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).
+        maximum(:approved_quota) == 0
     end
 
   end

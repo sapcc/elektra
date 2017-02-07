@@ -29,6 +29,8 @@
   "resource_management:project_resource_sync_now": "rule:project_admin",
   "resource_management:project_resource_new_request": "rule:access_to_project",
   "resource_management:project_resource_create_request": "rule:access_to_project",
+  "resource_management:project_resource_new_package_request": "rule:access_to_project",
+  "resource_management:project_resource_create_package_request": "rule:access_to_project",
 
   "resource_management:automation_sync_domain": "rule:cloud_admin",
   "resource_management:automation_dump_data": "rule:cloud_admin"

@@ -1,5 +1,9 @@
 en:
   resource_management:
+    packages:
+      S: Small
+      M: Medium
+      L: Large
     compute: Compute
     storage: Storage
     networking: Network

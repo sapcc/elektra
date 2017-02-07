@@ -43,3 +43,17 @@
 .quota-row {
     padding-top:20px;
 }
+
+table.package-comparison {
+  &.without-insignificant .insignificant {
+    display: none;
+  }
+
+  &.with-insignificant .not-insignificant {
+    display: none;
+  }
+
+  td.resource-name {
+    width: 60%;
+  }
+}

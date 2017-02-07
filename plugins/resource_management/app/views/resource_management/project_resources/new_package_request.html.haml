@@ -1,0 +1,27 @@
+= content_for :title do
+  Request quota package
+
+%div{ class: modal? ? 'modal-body' : '' }
+
+  %table.table.table-hover.package-comparison.without-insignificant
+    %thead
+      %tr
+        %th &nbsp;
+        - ResourceManagement::PackageConfig::PACKAGES.each do |pkg|
+          %th= t("resource_management.packages.#{pkg}")
+    %tbody
+      - prev_service = ''
+      - ResourceManagement::ResourceConfig.all.each do |res|
+        %tr{ class: res.significant? ? 'significant' : 'insignificant' }
+          %td.resource-name= t("resource_management.#{res.service.name}") + " > " + t("resource_management.#{res.name}")
+          - ResourceManagement::PackageConfig::PACKAGES.each do |pkg|
+            %td= res.data_type.format(res.value_for_package(pkg))
+      %tr
+        %td
+          %a{ href: "javascript:void(0)", onclick: "$('.package-comparison').toggleClass('with-insignificant without-insignificant')" }
+            %span.insignificant Less Details
+            %span.not-insignificant More Details
+        - ResourceManagement::PackageConfig::PACKAGES.each do |pkg|
+          %td
+            -# TODO add link
+            %button.btn.btn-primary.btn-sm Request
