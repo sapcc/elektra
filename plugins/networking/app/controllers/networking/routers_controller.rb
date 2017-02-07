@@ -1,5 +1,7 @@
 module Networking
   class RoutersController < DashboardController
+    before_filter :fill_available_networks, only: [:new, :create, :edit, :update]
+
     def index
       @routers = services.networking.routers(tenant_id: @scoped_project_id)
 
@@ -61,10 +63,6 @@ module Networking
 
       # build new router object (no api call done yet!)
       @router = services.networking.new_router('admin_state_up' => true)
-
-      networks = available_networks
-      @external_networks = networks[:external_networks]
-      @internal_subnets = networks[:internal_subnets]
     end
 
     def create
@@ -82,9 +80,6 @@ module Networking
         redirect_to plugin('networking').routers_path
       else
         # didn't save -> render new
-        networks = available_networks
-        @external_networks = networks[:external_networks]
-        @internal_subnets = networks[:internal_subnets]
         render action: :new
       end
     end
@@ -92,22 +87,6 @@ module Networking
     def edit
       @router = services.networking.find_router(params[:id])
       @external_network = services.networking.network(@router.external_gateway_info['network_id'])
-
-      networks = services.networking.networks
-
-      @external_networks = []
-      @internal_subnets = []
-
-      networks.each do |network|
-        if network.external?
-          @external_networks << network
-        else
-          network.subnet_objects.each do |subnet|
-            # add if not attached
-            @internal_subnets << subnet
-          end
-        end
-      end
 
       attached_ports = services.networking.ports(device_id: @router.id, device_owner: 'network:router_interface')
       @selected_internal_subnet_ids = attached_ports.inject([]){|array, port| port.fixed_ips.each{ |ip| array << ip['subnet_id']}; array }
@@ -138,20 +117,6 @@ module Networking
       else
         @external_network = services.networking.network(@router.external_gateway_info['network_id'])
 
-        networks = services.networking.networks
-
-        @external_networks = []
-        @internal_subnets = []
-
-        networks.each do |network|
-          if network.external?
-            @external_networks << network
-          else
-            network.subnet_objects.each do |subnet|
-              @internal_subnets << subnet
-            end
-          end
-        end
         render action: :new
       end
     end
@@ -182,24 +147,34 @@ module Networking
 
     protected
 
-    def available_networks
-      # load all project networks
-      project_networks = services.networking.networks
-      # get external and internal networks
-      return @available_networks if @available_networks
+    def allowed_networks
+      # only cloud admin can cross-assign interfaces
+      if current_user.is_allowed?('cloud_network_admin')
+        services.networking.networks
+      else
+        # FIXME: not even shared networks are permitted for non cloud admin
+        # this is a neutron bug https://bugs.launchpad.net/neutron/+bug/1662477
+        # should be: services.networking.project_networks(@scoped_project_id)
+        services.networking.project_only_networks(@scoped_project_id)
+      end
+    end
 
-      @available_networks = { external_networks: [], internal_subnets: [] }
-      project_networks.each do |network|
+    def fill_available_networks
+      return if @external_networks && @internal_subnets
+
+      @external_networks = []
+      @internal_subnets  = []
+
+      allowed_networks.each do |network|
         if network.external?
-          @available_networks[:external_networks] << network
+          @external_networks << network
         else
           network.subnet_objects.each do |subnet|
             subnet.network_name = network.name
-            @available_networks[:internal_subnets] << subnet
+            @internal_subnets << subnet
           end
         end
       end
-      @available_networks
     end
   end
 end
