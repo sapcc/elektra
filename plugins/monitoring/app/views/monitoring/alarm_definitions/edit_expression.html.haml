@@ -101,7 +101,7 @@
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - unless modal?
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
-    %button.btn.btn-primary.hide{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
+    %button.btn.btn-primary.hide-on-start{ type: 'submit', form:'expression_data', id: 'alarm_definition_ready_btn' }
       Next
 
   :javascript

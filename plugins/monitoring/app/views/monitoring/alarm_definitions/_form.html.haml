@@ -56,15 +56,19 @@
          $('#alarm_actions').toggle('fast');
       });
       
+      // I do not use the modal link here because I need to handle already entered values like name and description 
+      // to store it vor later when the user comes back to the create alarm definition screen
       $('#use_wizard_btm').click(
         function(){
-          use_wizard();
+          use_wizard("#{plugin('monitoring').create_expression_alarm_definitions_path()}");
         }
       );
+
     });
     
-    function use_wizard() {
+    function use_wizard(url) {
       
+      // keep entered values for later
       var data = {
           modal: true,
           modal_transition: true,
@@ -81,19 +85,24 @@
       $('#modal-holder').find('.modal').find('.modal-body').html('<div class="loading-spinner"></div><div class="loading-text">Loading...</div>');
       $.ajax({
         dataType: 'html',
-        url: "#{plugin('monitoring').create_expression_alarm_definitions_path()}",
+        url: url,
         data: data,
         success: function(data, textStatus, jqXHR) {
           var $back, $data, $footer;
           $data = $(data);
           $footer = $data.find('.modal-footer');
-          if ($footer.length > 0) {
-            $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>');
-            $back.click(function() {
-              return History.back();
-            });
-            $footer.prepend($back);
-          }
+          
+          // add back button but I think it is not usefull here
+          // because if the user clicks the back buitton everthing what he entered bevore is lost
+          // so only cancel should be availaber
+          
+          //if ($footer.length > 0) {
+          //  $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>');
+          //  $back.click(function() {
+          //    return History.back();
+          //  });
+          //  $footer.prepend($back);
+          //}
           $('#modal-holder').find('.modal').modal('hide');
           $('#modal-holder').html($data).find('.modal').modal();
         }
