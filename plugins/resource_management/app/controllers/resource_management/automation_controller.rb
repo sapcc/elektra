@@ -46,18 +46,29 @@ module ResourceManagement
     end
 
     def dump_data
-      # TODO
+      region = [Rails.application.config.default_region].flatten.first
+      # when dumping project resource data, skip internal dummy records with service == "resource_management"
+      project_resources = ResourceManagement::Resource.where("project_id IS NOT NULL AND service != 'resource_management'")
+
+      full_data = {
+        metadata: { version: 1 },
+        data: project_resources.map do |res|
+          {
+            domain_id: res.domain_id,
+            project_id: res.project_id,
+            resource_class: res.service,
+            resource_type: res.name,
+            quota: res.current_quota,
+            usage: res.usage,
+            last_information_at: res.updated_at.iso8601,
+            region: region,
+          }
+        end,
+      }
+      render json: full_data.to_json
     end
 
     private
-
-    def service
-      cfg = Rails.application.config
-      @service ||= ::ServiceLayer::ResourceManagementService.new(
-        cfg.keystone_endpoint,
-        [cfg.default_region].flatten.first,
-      )
-    end
 
   end
 end

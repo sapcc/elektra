@@ -44,6 +44,7 @@ ResourceManagement::Engine.routes.draw do
 
   scope 'automation', as: 'automation' do
     get 'sync_domain' => 'automation#sync_domain'
+    get 'dump_data'   => 'automation#dump_data'
   end
 
 end
