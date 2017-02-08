@@ -8,7 +8,7 @@ module ResourceManagement
     authorization_required
 
     def index
-      @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id)
+      @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).where.not(service: 'resource_management')
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
       @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
 
