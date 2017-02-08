@@ -22,6 +22,8 @@
   "resource_management:domain_admin_create_request": "rule:domain_admin",
   "resource_management:domain_admin_review_request": "rule:domain_admin",
   "resource_management:domain_admin_approve_request": "rule:domain_admin",
+  "resource_management:domain_admin_review_package_request": "rule:domain_admin",
+  "resource_management:domain_admin_approve_package_request": "rule:domain_admin",
 
   "access_to_project": "not project_id:nil",
   "resource_management:project_resource_list": "rule:access_to_project",

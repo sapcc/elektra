@@ -4,7 +4,7 @@ module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:new_request, :create_request]
-    before_filter :check_first_visit,     only: [:index, :show_area]
+    before_filter :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
     authorization_required
 
@@ -92,7 +92,52 @@ module ResourceManagement
     end
 
     def create_package_request
-      # TODO
+      unless @can_request_package
+        respond_to do |format|
+          format.js { render inline: 'alert("Error: You may not request a quota package anymore.")' }
+        end
+      end
+
+      # validate input
+      pkg = params[:package]
+      unless ResourceManagement::PackageConfig::PACKAGES.include?(pkg)
+        respond_to do |format|
+          format.js { render inline: 'alert("Error: Invalid quota package name specified.")' }
+        end
+      end
+
+      # create inquiry
+      base_url = plugin('resource_management').admin_path(domain_id: @scoped_domain_name, project_id: nil)
+      overlay_url = plugin('resource_management').admin_review_package_request_path(domain_id: @scoped_domain_name, project_id: nil)
+
+      inquiry = services.inquiry.create_inquiry(
+        'project_quota_package',
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg}",
+        current_user,
+        {
+          project_id: @scoped_project_id,
+          package:    pkg,
+        },
+        service_user.list_scope_admins({domain_id: @scoped_domain_id}),
+        {
+          "approved": {
+            "name": "Approve",
+            "action": "#{base_url}?overlay=#{overlay_url}",
+          },
+        },
+        nil,
+        {
+            domain_name: @scoped_domain_name,
+            region: current_region,
+        },
+      )
+
+      unless inquiry.errors?
+        # reload view to show the "Quota package requested" header
+        respond_to do |format|
+          format.js { render inline: 'Dashboard.hideModal();document.location.reload();' }
+        end
+      end
     end
 
     def show_area
@@ -129,6 +174,9 @@ module ResourceManagement
       @can_request_package = ResourceManagement::Resource.
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).
         maximum(:approved_quota) == 0
+      @has_requested_package = Inquiry::Inquiry.
+        where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package').
+        count > 0
     end
 
   end

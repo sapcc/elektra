@@ -121,6 +121,12 @@ module ResourceManagement
       end
     end
 
+    def review_package_request
+    end
+
+    def approve_package_request
+    end
+
     def new_request
       # prepare data for usage display
       prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
