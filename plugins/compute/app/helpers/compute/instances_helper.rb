@@ -6,19 +6,19 @@ module Compute
       private_images = {}
       images.each do |image|
         if image.visibility=='public'
-          type = (image.hypervisor_type || 'unknown')
+          type = (image.hypervisor_type || 'no hypervisor type')
           public_images[type] ||= []
           public_images[type] << image
         elsif image.visibility=='private'
-          type = (image.hypervisor_type || 'unknown')
+          type = (image.hypervisor_type || 'no hypervisor type')
           private_images[type] ||= []
           private_images[type] << image
         end
       end
       result = []
-      result << ['Public',public_images.delete('unknown') ||[]]
+      result << ['Public', []]
       public_images.each{|hypervisor,images| result << ["--#{hypervisor}",images.collect{|image| [image_label_for_select(image), image.id, data: {vmware_ostype: image.vmware_ostype}]} ]}
-      result << ['Private',private_images.delete('unknown') || []]
+      result << ['Private', []]
       private_images.each{|hypervisor,images| result << ["--#{hypervisor}",images.collect{|image| [image_label_for_select(image), image.id, data: {vmware_ostype: image.vmware_ostype}]} ]}
       result
     end
