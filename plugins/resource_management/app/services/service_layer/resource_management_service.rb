@@ -168,17 +168,21 @@ module ServiceLayer
 
       if options.fetch(:timeout_secs, 0) > 0
         while true
-          # among the projects that have not been updated since this method was invoked...
-          resources = ResourceManagement::Resource.where(domain_id: domain_id).where('project_id IS NOT NULL AND updated_at < ?', base_time)
-          # ...find the project that has the most ancient data and update it
-          project_id = resources.order(updated_at: :asc).limit(1).pluck(:project_id).first
-
+          # start with the projects that have not been synced at all
+          project_id = ResourceManagement::Resource.where(domain_id: domain_id, name: 'needs_sync').where.not(project_id: nil).limit(1).pluck(:project_id).first
           if project_id.nil?
-            # all projects are in sync
-            return
-          else
-            sync_project(domain_id, project_id)
+            # among the projects that have not been updated since this method was invoked...
+            resources = ResourceManagement::Resource.where(domain_id: domain_id).where('project_id IS NOT NULL AND updated_at < ?', base_time)
+            # ...find the project that has the most ancient data and update it
+            project_id = resources.order(updated_at: :asc).limit(1).pluck(:project_id).first
+
+            if project_id.nil?
+              # all projects are in sync
+              return
+            end
           end
+
+          sync_project(domain_id, project_id)
 
           # check if we're taking to long
           raise Interrupt, "running time for sync_domain() exceeded" if Time.now.to_f - start_time.to_f > options[:timeout_secs]
