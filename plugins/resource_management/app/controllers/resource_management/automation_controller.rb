@@ -53,13 +53,14 @@ module ResourceManagement
       full_data = {
         metadata: { version: 1 },
         data: project_resources.map do |res|
+          dt = res.data_type
           {
             domain_id: res.domain_id,
             project_id: res.project_id,
             resource_class: res.service,
             resource_type: res.name,
-            quota: res.current_quota,
-            usage: res.usage,
+            quota: dt.normalize(res.current_quota),
+            usage: dt.normalize(res.usage),
             last_information_at: res.updated_at.iso8601,
             region: region,
           }

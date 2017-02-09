@@ -149,4 +149,21 @@ RSpec.describe Core::DataType do
     end
   end
 
+  describe '#normalize' do
+
+    it 'is a no-op for the base datatypes' do
+      [ 0, 42, 1234567 ].each do |value|
+        expect(datatype_number.normalize(value)).to eq(value)
+        expect(datatype_bytes.normalize(value)).to eq(value)
+      end
+    end
+
+    it 'promotes megabytes to bytes' do
+      [ 0, 42, 1234567 ].each do |value|
+        expect(datatype_mega_bytes.normalize(value)).to eq(value * 1024 * 1024)
+      end
+    end
+
+  end
+
 end

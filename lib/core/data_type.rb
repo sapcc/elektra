@@ -57,6 +57,21 @@ module Core
       send("parse_#{@type}", value)
     end
 
+    # If this data type is a subtype, convert the given value for the subtype
+    # into the corresponding value for the base type. For example:
+    #
+    #    megabytes = Core::DataType.new(:bytes, :mega)
+    #    bytes     = Core::DataType.new(:bytes)
+    #
+    #    value_megabytes = 42
+    #    value_bytes     = megabytes.normalize(value_megabytes) # 45097156608
+    #
+    #    puts megabytes.format(value_megabytes) # "42 MiB"
+    #    puts     bytes.format(value_bytes)     # still "42 MiB"
+    def normalize(value)
+      send("normalize_#{@type}", value)
+    end
+
     private
 
     def format_number(value)
@@ -120,6 +135,16 @@ module Core
       # now only a positive number should be left
       raise ArgumentError, "value #{value} is not numeric" unless value =~ /\A\d+?([.,]\d+)?\Z/
       return (value.gsub(',', '.').to_f * unit).to_i
+    end
+
+    def normalize_number(value)
+      # :number does not have subtypes, so all values are normalized
+      return value
+    end
+
+    def normalize_bytes(value)
+      # convert values from the subtype (e.g. megabytes) into the base type (bytes)
+      return value * (1 << (10 * @target_unit_index))
     end
 
     def initialize_sub_type(sub_type)
