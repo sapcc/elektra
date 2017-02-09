@@ -8,24 +8,27 @@ en:
       public_key: Public Key
   roles:
       admin: Keystone Administrator
-      member: Member
-      service: Service User
-      swiftoperator: Object Store Administrator
-      swiftreseller: Object Store Cloud Administrator
-      dns_admin: Designate Administrator
+      cfm_admin: Cloud Frame Administrator
+      cfm_user: Cloud Frame User
+      cloud_compute_admin: Nova Cloud Administrator
       cloud_dns_admin: Designate Cloud Administrator
+      cloud_image_admin: Glance Cloud Administrator
+      cloud_network_admin: Neutron Cloud Administrator
+      cloud_sharedfilesystem_admin: Manila Cloud Administrator
+      cloud_volume_admin: Cinder Cloud Administrator
+      compute_admin: Nova Administrator
+      compute_viewer: Nova Read-Only
+      dns_admin: Designate Administrator
+      member: Member
       monasca-agent: Monitoring Agent
       monasca-user: Monitoring User
       monasca-viewer: Monitoring Read-Only
       monitoring-delegate: Monitoring Delegate
-      cloud_image_admin: Glance Cloud Administrator
       network_admin: Neutron Administrator
-      cloud_network_admin: Neutron Cloud Administrator
-      compute_viewer: Nova Read-Only
-      compute_admin: Nova Administrator
-      cloud_compute_admin: Nova Cloud Administrator
-      volume_viewer: Cinder Read-Only
+      service: Service User
+      sharedfilesystem_admin: Manila Administrator
+      sharedfilesystem_viewer: Manila Read-Only
+      swiftoperator: Object Store Administrator
+      swiftreseller: Object Store Cloud Administrator
       volume_admin: Cinder Administrator
-      cloud_volume_admin: Cinder Cloud Administrator
-      cfm_user: Cloud Frame User
-      cfm_admin: Cloud Frame Administrator
+      volume_viewer: Cinder Read-Only
