@@ -10,6 +10,3 @@
       = link_to 'Request more',plugin('resource_management').admin_new_request_path(id: data[:domain_resource].id), data: {modal: true}, class: 'btn btn-primary btn-sm'
     - else
       = link_to 'Request more','#', data: {modal: true}, class: 'btn btn-default btn-sm disabled'
-  - if data[:domain_resource].id
-    .col-md-1.quota-configure
-      = link_to 'Configure', plugin('resource_management').admin_edit_default_quota_path(id: data[:domain_resource].id), class: 'btn btn-default btn-sm', data: {modal: true}

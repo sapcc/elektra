@@ -26,8 +26,6 @@ ResourceManagement::Engine.routes.draw do
     post 'approve_request' => 'domain_admin#approve_request'
     get  'review_package_request'  => 'domain_admin#review_package_request'
     post 'approve_package_request' => 'domain_admin#approve_package_request'
-    get  'default_quota/:id' => 'domain_admin#edit_default_quota', as: 'edit_default_quota'
-    put  'default_quota/:id' => 'domain_admin#update_default_quota', as: 'update_default_quota'
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do

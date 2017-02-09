@@ -4,7 +4,7 @@ module ResourceManagement
   class DomainAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
-    before_filter :load_domain_resource, only: [:new_request, :create_request, :edit_default_quota, :update_default_quota]
+    before_filter :load_domain_resource, only: [:new_request, :create_request]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
     before_filter :load_package_inquiry, only: [:review_package_request, :approve_package_request]
 
@@ -20,23 +20,6 @@ module ResourceManagement
       end
     end
 
-    def edit_default_quota
-      @default_quota = nil;
-      if @resource.default_quota
-        previous_value = params[:resource] ? params[:resource][:default_quota] : nil
-        @default_quota = previous_value || @resource.data_type.format(@resource.default_quota)
-      end
-    end
-
-    def update_default_quota
-      if @resource.update(params.require(:resource).permit(:default_quota))
-        render 'update_default_quota'
-      else
-        @has_errors = true
-        render action: :edit_default_quota
-      end
-    end
-
     def show_area
       @area = params.require(:area).to_sym
       @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
@@ -46,7 +29,7 @@ module ResourceManagement
         format.html
         format.js # update only status bars
       end
- 
+
     end
 
     def edit
