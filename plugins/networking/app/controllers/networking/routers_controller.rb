@@ -152,10 +152,7 @@ module Networking
       if current_user.is_allowed?('cloud_network_admin')
         services.networking.networks
       else
-        # FIXME: not even shared networks are permitted for non cloud admin
-        # this is a neutron bug https://bugs.launchpad.net/neutron/+bug/1662477
-        # should be: services.networking.project_networks(@scoped_project_id)
-        services.networking.project_only_networks(@scoped_project_id)
+        services.networking.project_networks(@scoped_project_id)
       end
     end
 
@@ -168,7 +165,10 @@ module Networking
       allowed_networks.each do |network|
         if network.external?
           @external_networks << network
-        else
+        # FIXME: shared networks are not permitted for non cloud admin
+        # this is a neutron bug https://bugs.launchpad.net/neutron/+bug/1662477
+        # should be just 'else'
+        elsif !network.shared?
           network.subnet_objects.each do |subnet|
             subnet.network_name = network.name
             @internal_subnets << subnet

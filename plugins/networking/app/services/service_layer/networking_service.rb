@@ -29,16 +29,6 @@ module ServiceLayer
       result
     end
 
-    def project_only_networks(project_id)
-      result = []
-      driver.networks.each do |n|
-        if n['tenant_id'] == project_id
-          result << Networking::Network.new(driver, n)
-        end
-      end
-      result
-    end
-
     def network(id)
       driver.map_to(Networking::Network).get_network(id) if id.present?
     end

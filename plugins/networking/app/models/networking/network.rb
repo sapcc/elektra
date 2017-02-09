@@ -10,6 +10,10 @@ module Networking
       external == true
     end
 
+    def shared?
+      shared == true
+    end
+
     def provider_network_type
       read('provider:network_type')
     end
