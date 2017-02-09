@@ -6,7 +6,7 @@ module ResourceManagement
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
     before_filter :load_domain_resource, only: [:new_request, :create_request, :edit_default_quota, :update_default_quota]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
-    before_filter :load_package_inquiry, only: [:review_package_request, :approve_packgae_request]
+    before_filter :load_package_inquiry, only: [:review_package_request, :approve_package_request]
 
     authorization_required
 
@@ -163,7 +163,7 @@ module ResourceManagement
       end
 
       # obtain quota/usage for the project in question
-      ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @target_project_id).each do |res|
+      @project_resources.each do |res|
         @stats[res.service.to_sym][res.name.to_sym].merge!(
           project_current_quota: res.current_quota,
           project_approved_quota: res.approved_quota,
@@ -183,7 +183,17 @@ module ResourceManagement
     end
 
     def approve_package_request
-      raise 'TODO: implement this'
+      # apply quotas from package to project
+      @project_resources.each do |res|
+        quota = res.config.value_for_package(@package)
+        res.approved_quota = quota
+        res.current_quota = quota
+        res.save!
+      end
+
+      services.resource_management.apply_current_quota(@project_resources)
+      services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
+      render action: 'approve_request'
     end
 
     def new_request
