@@ -6,6 +6,7 @@ module ResourceManagement
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
     before_filter :load_domain_resource, only: [:new_request, :create_request, :edit_default_quota, :update_default_quota]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
+    before_filter :load_package_inquiry, only: [:review_package_request, :approve_packgae_request]
 
     authorization_required
 
@@ -122,9 +123,67 @@ module ResourceManagement
     end
 
     def review_package_request
+      @stats = {}
+      ResourceManagement::ResourceConfig.all.each do |res|
+        service_stats = @stats[res.service.name] ||= {}
+        service_stats[res.name] ||= {
+          domain_approved_quota:  0,
+          total_current_quota:    0,
+          total_approved_quota:   0,
+          total_usage:            0,
+          project_current_quota:  0,
+          project_approved_quota: 0,
+        }
+      end
+
+      # obtain quotas for this domain
+      ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: nil).each do |res|
+        @stats[res.service.to_sym][res.name.to_sym][:domain_approved_quota] = res.approved_quota
+      end
+
+      # obtain quota/usage sums for all projects in this domain
+      ResourceManagement::Resource.
+        where(domain_id: @scoped_domain_id).
+        group(:service, :name).
+        # disregard unlimited quotas (current_quota == -1 etc.)
+        pluck(:service, :name, 'SUM(GREATEST(0,current_quota))', 'SUM(GREATEST(0,approved_quota))', 'SUM(usage)').
+        each do |service,resource,current_quota,approved_quota,usage|
+          @stats[service.to_sym][resource.to_sym].merge!(
+            total_current_quota:  current_quota,
+            total_approved_quota: approved_quota,
+            total_usage:          usage,
+          )
+      end
+
+      # check if some projects have infinite quota
+      ResourceManagement::Resource.where(domain_id: @scoped_domain_id).
+        where("project_id IS NOT NULL AND current_quota < 0").
+        each do |res|
+          @stats[res.service.to_sym][res.name.to_sym][:total_current_quota] = -1
+      end
+
+      # obtain quota/usage for the project in question
+      ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @target_project_id).each do |res|
+        @stats[res.service.to_sym][res.name.to_sym].merge!(
+          project_current_quota: res.current_quota,
+          project_approved_quota: res.approved_quota,
+        )
+      end
+
+      @target_project_name = services.identity.find_project(@target_project_id).name
+
+      # show only those resources in the review screen where the approval of
+      # the request would increase the current_quota allocated to the project
+      @relevant_resources = ResourceManagement::ResourceConfig.all.select do |res|
+        data = @stats[res.service.name][res.name]
+        old_quota = data[:project_current_quota]
+        new_quota = res.value_for_package(@package)
+        new_quota > old_quota && old_quota >= 0
+      end
     end
 
     def approve_package_request
+      raise 'TODO: implement this'
     end
 
     def new_request
@@ -264,7 +323,7 @@ module ResourceManagement
         render html: 'Could not find inquiry!'
         return
       end
-      
+
       enforce_permissions("resource_management:admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
 
       # load additional data
@@ -272,9 +331,30 @@ module ResourceManagement
       @project_resource = ResourceManagement::Resource.find(data[:resource_id])
       @project_name = services.identity.find_project(@project_resource.project_id).name
       @domain_resource = ResourceManagement::Resource.where(domain_id:@scoped_domain_id, project_id:nil, service:data[:service], name:data[:resource]).first
- 
     end
- 
+
+    def load_package_inquiry
+      @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
+      # Error Handling
+      unless @inquiry
+        render html: 'Could not find inquiry!'
+        return
+      end
+
+      enforce_permissions("resource_management:admin_approve_package_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
+
+      # load additional data
+      data = @inquiry.payload.symbolize_keys
+      @package = data[:package]
+      @target_project_id = data[:project_id]
+
+      # if project resources have not been created yet, do so now
+      @project_resources = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @target_project_id)
+      if @project_resources.where.not(service: 'resource_management').count == 0
+        services.resource_management.sync_project(@scoped_domain_id, @target_project_id)
+      end
+    end
+
     def prepare_data_for_resource_list(services, options={})
       # load resources for domain and projects within this domain
       resources = ResourceManagement::Resource.

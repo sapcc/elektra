@@ -312,8 +312,7 @@ module ServiceLayer
 
     # Takes an array of Resource records and applies the current_quota values
     # in them in the backend. This currently only works when all resources are
-    # for the same project and service, but a future expansion to support
-    # arbitrary sets of resources is possible without changing the interface.
+    # for the same project.
     #
     # The interface is chosen such that quota updates for the same project and
     # service can be grouped in one REST call.
@@ -325,14 +324,18 @@ module ServiceLayer
       if resources.size > 1
         raise ArgumentError, "resources for multiple domains given"  if resources.map(&:domain_id).uniq.size > 1
         raise ArgumentError, "resources for multiple projects given" if resources.map(&:project_id).uniq.size > 1
-        raise ArgumentError, "resources for multiple services given" if resources.map(&:service).uniq.size > 1
       end
 
       values = {}
-      resources.each { |r| values[r.name.to_sym] = r.current_quota }
+      resources.each do |res|
+        values[res.service.to_sym] ||= {}
+        values[res.service.to_sym][res.name.to_sym] = res.current_quota
+      end
 
       res = resources.first
-      driver.set_project_quota(res.domain_id, res.project_id, res.service.to_sym, values)
+      values.each do |service, subvalues|
+        driver.set_project_quota(res.domain_id, res.project_id, service, subvalues)
+      end
     end
 
     private
