@@ -3,6 +3,7 @@ module ObjectStorage
 
     authorization_required
     before_filter :load_params
+    before_filter :load_quota_data, only: [ :index, :show ]
 
     def new_object
       @form = ObjectStorage::Forms::CreateObject.new(file: nil, name: '')

@@ -34,5 +34,11 @@ module ObjectStorage
       return metadata
     end
 
+    def load_quota_data
+      @quota_data = services.resource_management.quota_data([
+        { service_name: :object_storage, resource_name: :capacity }
+      ])
+    end
+
   end
 end
