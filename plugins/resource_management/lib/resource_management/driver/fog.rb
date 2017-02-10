@@ -59,8 +59,8 @@ module ResourceManagement
       def query_project_quota_object_storage(domain_id, project_id)
         metadata = get_swift_account_metadata(domain_id, project_id)
         if metadata.empty?
-          # this is the case if account is not accesible or not created
-          return { capacity: nil }
+          # this is the case if account is not accessible or does not exist
+          return { capacity: 0 }
         else
           return { capacity: metadata.fetch('X-Account-Meta-Quota-Bytes', -1).to_i }
         end
@@ -69,8 +69,8 @@ module ResourceManagement
       def query_project_usage_object_storage(domain_id, project_id)
         metadata = get_swift_account_metadata(domain_id, project_id)
         if metadata.empty?
-          # this is the case if account is not accesible or not created
-          return { capacity: nil }
+          # this is the case if account is not accessible or does not exist
+          return { capacity: 0 }
         else
           return { capacity: metadata['X-Account-Bytes-Used'].to_i }
         end
@@ -91,9 +91,17 @@ module ResourceManagement
               headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
             )
           rescue ::Fog::Storage::OpenStack::NotFound
-            return
+            # account does not exist yet - if there is a non-zero quota, enable it now
+            if values[:capacity] > 0
+              connection.send(:request,
+                expects: [201],
+                method:  'PUT',
+                path:    '',
+                query:   { format: 'json' },
+                headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
+              )
+            end
           end
-          return
         end
       end
 

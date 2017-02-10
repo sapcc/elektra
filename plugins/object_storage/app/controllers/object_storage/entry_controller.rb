@@ -12,7 +12,11 @@ module ObjectStorage
           # check that account management is allowed otherwise we are in trouble
           capabilities = services.object_storage.capabilities
           if capabilities['swift']['allow_account_management']
-            render action: 'no_swift_account'
+            if services.resource_management.available?
+              render action: 'no_swift_account_because_no_quota'
+            else
+              render action: 'no_swift_account'
+            end
           else
             render action: 'no_swift_account_and_account_management'
           end
