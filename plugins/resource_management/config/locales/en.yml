@@ -4,6 +4,7 @@ en:
       S: Small
       M: Medium
       L: Large
+    unlimited: Unlimited
     compute: Compute
     storage: Storage
     networking: Network

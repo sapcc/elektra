@@ -9,11 +9,16 @@ module ResourceManagement
     end
 
     def available
-      total - usage
+      total < 0 ? -1 : total - usage
     end
 
     def display_string
-      "#{@data_type.format(available)} #{I18n.t("resource_management.#{@name}")}"
+      if available >= 0
+        value_string = @data_type.format(available)
+      else
+        value_string = I18n.t('resource_management.unlimited')
+      end
+      return "#{value_string} #{I18n.t("resource_management.#{@name}")}"
     end
   end
 end
