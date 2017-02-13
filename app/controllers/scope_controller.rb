@@ -53,6 +53,11 @@ class ScopeController < ::ApplicationController
     else
       raise Core::Error::DomainNotFound.new("Domain #{domain_id} not found!")
     end
+    if @scoped_project_id
+      @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      @active_project_profile.update_wizard_status('networking','done')
+      @active_project_profile.update_wizard_status('block_storage','done')
+    end
   end
 
   rescue_and_render_exception_page [

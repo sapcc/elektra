@@ -26,6 +26,11 @@ module Identity
     end
 
     def show
+      if @active_project_profile.nil? or @active_project_profile.wizard_finished?
+        render template: 'identity/projects/show'
+      else
+        render template: 'identity/projects/show_wizard'
+      end
     end
 
     def edit

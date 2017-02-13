@@ -1,0 +1,103 @@
+
+- profile = @active_project_profile
+- status_done = ProjectProfile::STATUS_DONE
+- status_skiped = ProjectProfile::STATUS_SKIPED
+- cost_control_status = profile.wizard_status('cost_control')
+- networking_status = profile.wizard_status('networking')
+- block_storage_status = profile.wizard_status('block_storage')
+- resource_management_status = profile.wizard_status('resource_management')
+
+-# Add an if-clause here so that this special toolbar title only if the project isn't active yet
+- content_for :main_toolbar do
+  Configure new Project
+
+.row
+  .col-md-9
+    -#  Show this whole section including the intro text only if the project is new or not completely configured yet. As soon as the project is active, don't show any of this, instead render the navigation, as before
+    -# All of this should probably live in a partial
+
+    -#  ------------------------------------------------------------------- unless project.active? ----------------------------------------------------------------------
+    %h1.heading-top Welcome to your new Project
+    %p.lead Before you can properly use this project there are a number of things that need to be configured. Once you have made it through all the configuration steps your project will be ready and fully useable.
+
+
+    -# Configuration modules
+    -# Once a module has been completed successfully, change class to bs-callout-success and replace button with %i.fa.fa-check.fa-3x
+    .bs-callout.bs-callout-emphasize{class: callout_css_class(cost_control_status)}
+      .row
+        .col-md-8
+          %h4 Set a Cost Object
+          %p Please provide a cost object against which we can bill the services consumed by this project
+        .col-md-4
+          - if cost_control_status==ProjectProfile::STATUS_DONE
+            %i.fa.fa-check.fa-3x.pull-right
+          - else
+            %a.btn.pull-right(href="#") Set Cost Object
+
+    -# This is a standard module for a configuration the user hasn't done yet
+    .bs-callout.bs-callout-emphasize{class: callout_css_class(networking_status)}
+      .row
+        .col-md-8
+          %h4 Choose Networking Setup
+          %p Configure your network. You can either create your own private network or if within your organisation networks are already available you can have an existing one made available to this project.
+
+        .col-md-4
+          - if networking_status==ProjectProfile::STATUS_SKIPED
+            skiped
+            %a.btn.pull-right(href="#") Set Network
+          - elsif networking_status==ProjectProfile::STATUS_DONE
+            %i.fa.fa-check.fa-3x.pull-right
+          - else
+            %p
+              %a.btn.pull-right(href="#") Set Network
+            %p
+              %a.btn.btn-default.btn-xs.pull-right(href="#") Do this later
+
+
+    -# This is a standard module for a configuration the user hasn't done yet
+    .bs-callout.bs-callout-emphasize{class: callout_css_class(resource_management_status)}
+      .row
+        .col-md-8
+          %h4 Request Resource Quotas
+          %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
+
+        .col-md-4
+          - if resource_management_status==ProjectProfile::STATUS_SKIPED
+            skiped
+            %a.btn.pull-right(href="#") Request Quotas
+          - elsif resource_management_status==ProjectProfile::STATUS_DONE
+            %i.fa.fa-check.fa-3x.pull-right
+          - else
+            %p
+              %a.btn.pull-right(href="#") Request Quotas
+            %p
+              %a.btn.btn-default.btn-xs.pull-right(href="#") Do this later
+
+    -# This is an example for an optional module. A user may choose not to do the configuration now. Add the "Do this later button" below and the "(Optional)" text. The Swift activation is not necessarily optional, this is just to show what it would look like.
+    .bs-callout.bs-callout-emphasize{class: callout_css_class(block_storage_status)}
+      .row
+        .col-md-8
+          %h4 Activate Block Storage (Optional)
+          %p You probably want to activate block storage as it is required for certain features like snapshots, OS image uploads and more. This is optional and can also be done at a later stage in the Block Storage service itself.
+
+        .col-md-4
+          - if block_storage_status==ProjectProfile::STATUS_SKIPED
+            skiped
+            %a.btn.pull-right(href="#") Activate Block Storage
+          - elsif block_storage_status==ProjectProfile::STATUS_DONE
+            %i.fa.fa-check.fa-3x.pull-right
+          - else
+            %p
+              %a.btn.pull-right(href="#") Activate Block Storage
+            %p
+              %a.btn.btn-default.btn-xs.pull-right(href="#") Do this later
+
+
+    = wizard_step(title: 'Test', description: 'Test', mandatory: false, status: nil) do |button_type|
+      - if button_type == :action_button
+        - link_to 'accept', '#'
+      - if button_type == :skip_button
+        - link_to 'skip', '#'
+
+  .col-md-3
+    = render partial: 'identity/projects/additional_infos'
