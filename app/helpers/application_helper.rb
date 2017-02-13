@@ -17,20 +17,12 @@ module ApplicationHelper
 
   # This class is used to create scoped urls for plugin url helpers
   class PluginUrlHelper
-    # caching, do not create a plugin helper twice
-    def self.plugin_helper(helper,plugin_name,scope)
-      @@plugin_helpers ||= {}
-      helper = @@plugin_helpers[plugin_name] ||= new(helper,plugin_name)
-      helper.scope=scope
-      helper
-    end
-
-    attr_accessor :scope
     # helper is ApplicationHelper, scope is a hash ({domain_id: DOMAIN_ID, project_id: PROJECT_ID})
-    def initialize(helper,plugin_name)
+    def initialize(helper,plugin_name,scope)
       @plugin_name     = plugin_name
       @plugin          = helper.send("#{plugin_name}_plugin")
       @main_app        = helper.main_app
+      @scope           = scope
     end
 
     # def root_path
@@ -66,7 +58,7 @@ module ApplicationHelper
 
   def plugin(name)
     if plugin_available?(name)
-      PluginUrlHelper.plugin_helper(self,name,{domain_id: @scoped_domain_fid, project_id: @scoped_project_fid})
+      PluginUrlHelper.new(self,name,{domain_id: @scoped_domain_fid, project_id: @scoped_project_fid})
     end
   end
 
