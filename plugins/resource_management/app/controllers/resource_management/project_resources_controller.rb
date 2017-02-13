@@ -18,7 +18,7 @@ module ResourceManagement
       # warn about resources where current_quota was set to exceed the approved value
       @warning_resources = @all_resources.where("usage <= approved_quota AND current_quota > approved_quota").to_a
       # also warn about resources where usage approaches the current_quota
-      @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota").to_a
+      @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota AND usage > 0").to_a
     end
 
     def new_request
@@ -175,7 +175,7 @@ module ResourceManagement
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).
         maximum(:approved_quota) == 0
       @has_requested_package = Inquiry::Inquiry.
-        where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package').
+        where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package', aasm_state: 'open').
         count > 0
     end
 
