@@ -14,7 +14,7 @@
     - else
       = resource_bar(fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
 
-  - if current_user.is_allowed?('resource_management:project_resource_new_request')
+  - if current_user.is_allowed?('resource_management:project_resource_new_request') and not @has_requested_package
     .col-md-1.quota-request-more
       - if data.current_quota >= 0
         = link_to 'Request more',plugin('resource_management').resources_new_request_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
