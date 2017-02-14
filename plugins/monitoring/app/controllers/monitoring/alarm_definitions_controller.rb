@@ -279,11 +279,10 @@ module Monitoring
         start_time: t.iso8601
       })
       
-      threshold_value =  suggest_threshold(name,'avg')
       # default init with empty array
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
-      render json: { suggested_threshold_value: threshold_value, dimensions: dimensions }
+      render json: { dimensions: dimensions }
     end
 
     # used by wizard to render a new dimension row
@@ -398,26 +397,6 @@ module Monitoring
       @alarm_definition = services.monitoring.get_alarm_definition(id)
       # @alarm_definition is loaded before destroy and update so we only need to take care in one place
       raise ActiveRecord::RecordNotFound, "The alarm definition with id #{params[:id]} was not found. Maybe it was deleted from someone else?" unless @alarm_definition.try(:id)
-    end
-
-    def suggest_threshold(name,statistic)
-      t = Time.now.utc - (60*120)
-      # get statistics to suggest a god threshold value
-      statistic = services.monitoring.list_statistics({
-        name: name, 
-        start_time: t.iso8601,
-        statistics: statistic,
-        merge_metrics: true
-      })
-      # get random value and retry 6 times if value is zero
-      retry_value = 6
-      threshold_value = 0
-      while retry_value > 0 and threshold_value == 0
-        threshold_value = statistic.statistics.sample[1].to_i
-        retry_value -= 1
-      end
-      
-      threshold_value
     end
 
   end

@@ -224,9 +224,6 @@
             return;
           }
           
-          // set suggested threshold_value
-          $('#threshold_value').val(data.suggested_threshold_value);
-          
           // only used if we load it first time
           if( !RegExp(/Metric/).test($('#metric_list div.form-group label.control-label').text()) ) {
             $('#prefilter').fadeOut();

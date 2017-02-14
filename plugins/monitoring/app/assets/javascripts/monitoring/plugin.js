@@ -78,7 +78,7 @@ monitoring.render_statistic = function(ID,DATA) {
       
       chart.margin({"left":30,"right":30,"top":5,"bottom":30});
       chart.useInteractiveGuideline(true);
-      chart.xAxis.tickFormat(function(d) { return d + ' min' });
+      //chart.xAxis.tickFormat(function(d) { return d + ' measuring points' });
 
       d3.select('#'+ID)
         .datum(DATA)
