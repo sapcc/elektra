@@ -1,9 +1,9 @@
 #backend_error
 = f.input :name, 
   input_html: { autofocus: true }
-= f.input :description
+= f.input :description, as: :text
 
-= f.input :expression, readonly:true
+= f.input :expression, readonly:true, as: :text
 
 - severity = @alarm_definition.severity || 'LOW'
 = f.input :severity, 
