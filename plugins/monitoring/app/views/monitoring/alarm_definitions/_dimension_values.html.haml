@@ -1,10 +1,14 @@
 .col-md-6
   .form-group
     = label_tag 'dimension-value', 'and value', class:'control-label'
-    %select.dimension-value.form-control{ onchange: 'filter_metrics_by_dimension();',title: 'choose value', data: { "live-search" => "true"} }
-      - @dimensions.each do |dimension|
-        %option{value: dimension.value} #{dimension.value}
-    %span.help-block
-      All values related to category 
-      %strong=@name
+    - unless @dimensions.empty?
+      %select.dimension-value.form-control{ onchange: 'filter_metrics_by_dimension();',title: 'choose value', data: { "live-search" => "true"} }
+        - @dimensions.each do |dimension|
+          %option{value: dimension.value} #{dimension.value}
+      %span.help-block
+        All values related to category 
+        %strong=@name
+    - else
+      .help-block
+        nothing found, please reset you filter 
 
