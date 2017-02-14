@@ -52,7 +52,7 @@ module Loadbalancing
                 @error_members << member
               end
             rescue
-              sleep 1
+              sleep 3
               retry if count < 10
             end
           end if new_servers

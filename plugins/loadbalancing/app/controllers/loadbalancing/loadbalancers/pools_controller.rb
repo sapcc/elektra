@@ -34,6 +34,7 @@ module Loadbalancing
         @pool.loadbalancer_id = @loadbalancer.id
         @pool.protocol = params[:proto] if params[:proto] && params[:proto] != 'TERMINATED_HTTPS'
         @pool.protocol = 'HTTP' if params[:proto] && params[:proto] == 'TERMINATED_HTTPS'
+        @protocols = @pool.protocol.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
       end
 
       def create
