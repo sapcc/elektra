@@ -43,9 +43,12 @@ initialRootPasswordLength = 16
     attachPopover(button, 'Error', "This doesn't semm to be a valid cloud config. Cloud config files starts with #cloud-config")
 
 @addScriptToUserAttributes = (script, os_image) ->
+  button = $('a[data-toggle="automationBootstrap"]')
+  if os_image == "" || os_image == null
+    attachPopover(button, 'Error', "Missing property 'vmware_ostype' on the image provided. Please follow the steps described in the documentation to upload a compatible image. <a href='https://documentation.global.cloud.sap/docs/image/start/customer.html'>See customer images documentation</a>")
+    return
   osTypeWindows = os_image.search("windows")
   userDataFieldText = $('#server_user_data').val()
-  button = $('a[data-toggle="automationBootstrap"]')
 
   if !userDataFieldText.trim()
     # empty
@@ -66,6 +69,7 @@ initialRootPasswordLength = 16
   element.popover(
     title: title
     content: body
+    html: true
   )
   element.popover('show')
   element.on 'blur', ->
