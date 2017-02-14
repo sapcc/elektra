@@ -304,6 +304,12 @@ module Monitoring
       # metric, threshold and threshold value are required
       
       expression = expression_original.clone
+      # check for compounded expression
+      if expression =~ /( or | and )/i
+         # compounded espressions are not supported
+         @parsed_expression_success = false
+         return
+      end
       
       # remove all white spaces for better parsing
       expression.gsub!(/\s/,'')
