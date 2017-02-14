@@ -264,7 +264,7 @@ module Monitoring
 
     def dimension_values
       @name = params.require(:name)
-      @dimension_values = services.monitoring.get_dimension_values_by_dimension(@name)
+      @dimensions = services.monitoring.get_dimension_values_by_dimension_name(@name)
       # because of ajax call we render the partial
       render partial: "dimension_values"
     end

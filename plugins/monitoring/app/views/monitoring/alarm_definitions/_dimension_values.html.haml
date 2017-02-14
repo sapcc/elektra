@@ -2,8 +2,8 @@
   .form-group
     = label_tag 'dimension-value', 'and value', class:'control-label'
     %select.dimension-value.form-control{ onchange: 'filter_metrics_by_dimension();',title: 'choose value', data: { "live-search" => "true"} }
-      - @dimension_values.each do |dimension_value|
-        %option{value: dimension_value} #{dimension_value}
+      - @dimensions.each do |dimension|
+        %option{value: dimension.value} #{dimension.value}
     %span.help-block
       All values related to category 
       %strong=@name
