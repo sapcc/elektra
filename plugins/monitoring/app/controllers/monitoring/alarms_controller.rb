@@ -5,27 +5,35 @@ module Monitoring
     before_filter :load_alarm, except: [ :index, :filter_and_search ]
 
     def index
+      @context = "alarms"
       @index = 1
-      # to initialy load the filter - apply_filter and filter_and_search
-      @state    = params[:state] if params[:state] 
-      @severity = params[:severity] if params[:severity]
+      notification_methods_search = cookies[:alarms_search] || ''
+      unless notification_methods_search.empty?
+        filter_and_search
+      else
+        # to initialy load the filter - apply_filter and filter_and_search
+        @state    = params[:state] if params[:state] 
+        @severity = params[:severity] if params[:severity]
+      end
     end
 
     def filter_and_search
-      @search = params[:search]
+      @search = params[:search] || cookies[:alarms_search] || ''
       query = {
         search: @search,
       }.reject { |k,v| v.blank? }
       
-      query[:state] = params[:state].upcase if params[:state] and params[:state] != 'All'
-      query[:severity] = params[:severity].upcase if params[:severity] and params[:severity] != 'All'
+      state = params[:state] || cookies[:filter_alarm_state] || ''
+      severity = params[:severity] || cookies[:filter_alarm_severity] || ''
+      query[:state] = state.upcase if state and state != 'All'
+      query[:severity] = severity.upcase if severity and severity != 'All'
 
       all_alarms = services.monitoring.alarms(query)
       @alarms_count = all_alarms.length
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]
       @alarms = Kaminari.paginate_array(all_alarms).page(params[:page]).per(10)
-      render action: 'reload_list'
+      render action: 'index'
     end
 
     def show
@@ -56,7 +64,7 @@ module Monitoring
       respond_to do |format|
         format.js do
           index
-          render action: 'reload_list'
+          render action: 'index'
         end
         format.html { redirect_to plugin('monitoring').alarms_path() }
       end
