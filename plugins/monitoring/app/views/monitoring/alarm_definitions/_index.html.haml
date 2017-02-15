@@ -28,13 +28,13 @@
         }
       });
     // set value from past search
-    $('#alarm_definitions_search').val($.cookie("alarm_definition_search"));  
+    $('#alarm_definitions_search').val($.cookie("alarm_definitions_search"));  
   });
   
   function search() {
     var search_string = $('#alarm_definitions_search').val();
     // remember search string that we have a valid search after reloading the page
-    $.cookie("alarm_definition_search", search_string, { expires: 1, path: '#{plugin('monitoring').alarm_definitions_path()}' });
+    $.cookie("alarm_definitions_search", search_string, { expires: 1 });
     $.ajax({ 
       url: "#{plugin('monitoring').search_alarm_definitions_path()}",
       data: { 

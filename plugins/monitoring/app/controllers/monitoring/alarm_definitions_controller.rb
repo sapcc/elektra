@@ -18,7 +18,8 @@ module Monitoring
     ]
     
     def index
-      alarm_definition_search = cookies[:alarm_definition_search] || ''
+      @context = 'alarm_definitions'
+      alarm_definition_search = cookies[:alarm_definitions_search] || ''
       unless alarm_definition_search.empty?
         search
       else
@@ -29,7 +30,7 @@ module Monitoring
     end
 
     def search
-      @search = params[:search] || cookies[:alarm_definition_search] || ''
+      @search = params[:search] || cookies[:alarm_definitions_search] || ''
       searched_alarm_definitions = services.monitoring.alarm_definitions(@search)
       @alarm_definitions_count = searched_alarm_definitions.length
       @alarm_definitions = Kaminari.paginate_array(searched_alarm_definitions).page(params[:page]).per(10)
