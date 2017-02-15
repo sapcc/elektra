@@ -9,7 +9,7 @@ class ProjectProfile < ActiveRecord::Base
     'resource_management'
   ]
 
-  STATUS_SKIPED = 'skiped'
+  STATUS_SKIPPED = 'skipped'
   STATUS_DONE = 'done'
 
   class UnregisteredWizardService < StandardError; end
@@ -18,7 +18,7 @@ class ProjectProfile < ActiveRecord::Base
   def self.find_or_create_by_project_id(project_id)
     profile = self.where(project_id: project_id).first
     unless profile
-      profile = self.create(project_id: project_id, wizard_payload: initial_wizard_payload)
+      profile = self.create(project_id: project_id, wizard_payload: {})
     end
     profile
   end
@@ -34,19 +34,19 @@ class ProjectProfile < ActiveRecord::Base
   end
 
   def wizard_finished?
-    wizard_payload.values.select{|status| ![STATUS_DONE,STATUS_SKIPED].include?(status)}.length==0
+    wizard_payload.values.select{|status| ![STATUS_DONE,STATUS_SKIPPED].include?(status)}.length==0
   end
 
   def has_pending_wizard_services?
-    wizard_payload.values.select{|status| status==STATUS_SKIPED}.length>0
+    wizard_payload.values.select{|status| status==STATUS_SKIPPED}.length>0
   end
 
   def update_wizard_status(service_name,status)
     unless INITIAL_WIZARD_PAYLOAD_SERVICES.include?(service_name.to_s)
       raise UnregisteredWizardService.new("Service #{service_name} is not registered yet.")
     end
-    unless [STATUS_DONE,STATUS_SKIPED,nil].include?(status)
-      raise BadStatus.new("Valid values for status are nil,'done','skiped'.")
+    unless [STATUS_DONE,STATUS_SKIPPED,nil].include?(status)
+      raise BadStatus.new("Valid values for status are nil,'done','skipped'.")
     end
     wizard_payload[service_name.to_s]=status
     save

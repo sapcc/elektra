@@ -1,7 +1,7 @@
 
 - profile = @active_project_profile
 - status_done = ProjectProfile::STATUS_DONE
-- status_skiped = ProjectProfile::STATUS_SKIPED
+- status_skipped = ProjectProfile::STATUS_SKIPPED
 - cost_control_status = profile.wizard_status('cost_control')
 - networking_status = profile.wizard_status('networking')
 - block_storage_status = profile.wizard_status('block_storage')
@@ -42,8 +42,8 @@
           %p Configure your network. You can either create your own private network or if within your organisation networks are already available you can have an existing one made available to this project.
 
         .col-md-4
-          - if networking_status==ProjectProfile::STATUS_SKIPED
-            skiped
+          - if networking_status==ProjectProfile::STATUS_SKIPPED
+            skipped
             %a.btn.pull-right(href="#") Set Network
           - elsif networking_status==ProjectProfile::STATUS_DONE
             %i.fa.fa-check.fa-3x.pull-right
@@ -62,8 +62,8 @@
           %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
 
         .col-md-4
-          - if resource_management_status==ProjectProfile::STATUS_SKIPED
-            skiped
+          - if resource_management_status==ProjectProfile::STATUS_SKIPPED
+            skipped
             %a.btn.pull-right(href="#") Request Quotas
           - elsif resource_management_status==ProjectProfile::STATUS_DONE
             %i.fa.fa-check.fa-3x.pull-right
@@ -81,8 +81,8 @@
           %p You probably want to activate block storage as it is required for certain features like snapshots, OS image uploads and more. This is optional and can also be done at a later stage in the Block Storage service itself.
 
         .col-md-4
-          - if block_storage_status==ProjectProfile::STATUS_SKIPED
-            skiped
+          - if block_storage_status==ProjectProfile::STATUS_SKIPPED
+            skipped
             %a.btn.pull-right(href="#") Activate Block Storage
           - elsif block_storage_status==ProjectProfile::STATUS_DONE
             %i.fa.fa-check.fa-3x.pull-right
