@@ -20,6 +20,15 @@
   = render partial: 'list'
 
 :javascript
+
+  // load the logon page if we got a new location
+  // that happens when the token was invalid
+  function check_logon_state(XHR) {
+    if(XHR.getResponseHeader('Location')) {
+      window.location = "#{ monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: plugin('monitoring').alarm_definitions_path()) }";
+    }
+  }
+
   $(function() {
     $('#alarm_definitions_search')
       .keypress(function (e) {
@@ -39,6 +48,9 @@
       url: "#{plugin('monitoring').search_alarm_definitions_path()}",
       data: { 
         search: search_string
+      },
+      complete: function(xhr) { 
+        check_logon_state(xhr);
       },
       dataType: 'script'
     });
