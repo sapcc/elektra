@@ -18,17 +18,21 @@ module Monitoring
     ]
     
     def index
-      all_alarm_definitions = services.monitoring.alarm_definitions
-      @alarm_definitions_count = all_alarm_definitions.length
-      @alarm_definitions = Kaminari.paginate_array(all_alarm_definitions).page(params[:page]).per(10)
+      alarm_definition_search = cookies[:alarm_definition_search]
+      unless alarm_definition_search.empty?
+        search
+      else
+        all_alarm_definitions = services.monitoring.alarm_definitions
+        @alarm_definitions_count = all_alarm_definitions.length
+        @alarm_definitions = Kaminari.paginate_array(all_alarm_definitions).page(params[:page]).per(10)
+      end
     end
 
     def search
-      @search = params[:search]
+      @search = params[:search] || cookies[:alarm_definition_search]
       searched_alarm_definitions = services.monitoring.alarm_definitions(@search)
       @alarm_definitions_count = searched_alarm_definitions.length
       @alarm_definitions = Kaminari.paginate_array(searched_alarm_definitions).page(params[:page]).per(10)
-      render action: 'index'
     end
 
     def show
@@ -394,7 +398,7 @@ module Monitoring
           index
           render action: 'reload_list'
         end
-        format.html { redirect_to plugin('monitoring').alarm_definitions_path }
+        format.html { redirect_to plugin('monitoring').alarm_definitions_path() }
       end
     end
 

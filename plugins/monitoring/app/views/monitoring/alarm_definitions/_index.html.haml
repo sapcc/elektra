@@ -1,0 +1,45 @@
+= content_for :main_toolbar do 
+  Monitoring 
+  
+= render partial: '/monitoring/application/tabs', locals: { tab: 'alarm_definitions', count: @alarm_definitions_count }
+
+- search_help = 'Search in name, severity, description and expression field'
+.toolbar
+  .row
+    - unless current_user.is_allowed?("monitoring:alarm_definition_create")
+      .col-sm-2.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help: search_help }
+    - else
+      .col-sm-2.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'alarm_definitions_search', help: search_help }
+      .col-sm-4.col-sm-offset-6
+        = link_to "Wizard",plugin('monitoring').create_expression_alarm_definitions_path(), class: 'btn btn-primary btn-sm', title: 'use wizard to create a new alarm definition',data: {modal:true}
+        = link_to "New", plugin('monitoring').new_alarm_definition_path(), class: 'btn btn-primary btn-sm', title: 'create new alarm definition', data: {modal:true}
+
+#definitions_list
+  = render partial: 'list'
+
+:javascript
+  $(function() {
+    $('#alarm_definitions_search')
+      .keypress(function (e) {
+        if (e.which == 13) {
+          search();
+        }
+      });
+    // set value from past search
+    $('#alarm_definitions_search').val($.cookie("alarm_definition_search"));  
+  });
+  
+  function search() {
+    var search_string = $('#alarm_definitions_search').val();
+    // remember search string that we have a valid search after reloading the page
+    $.cookie("alarm_definition_search", search_string, { expires: 1, path: '#{plugin('monitoring').alarm_definitions_path()}' });
+    $.ajax({ 
+      url: "#{plugin('monitoring').search_alarm_definitions_path()}",
+      data: { 
+        search: search_string
+      },
+      dataType: 'script'
+    });
+  }
