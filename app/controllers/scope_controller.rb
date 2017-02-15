@@ -56,7 +56,9 @@ class ScopeController < ::ApplicationController
     if @scoped_project_id
       @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
       @active_project_profile.update_wizard_status('networking','done')
-      @active_project_profile.update_wizard_status('block_storage','done')
+      @active_project_profile.update_wizard_status('block_storage','skipped')
+      @active_project_profile.update_wizard_status('cost_control','done')
+      @active_project_profile.update_wizard_status('resource_management',nil)
     end
   end
 

@@ -26,7 +26,7 @@ module Identity
       css_class = 'bs-callout-'
       css_class += if status==ProjectProfile::STATUS_DONE
         'success'
-      elsif status==ProjectProfile::STATUS_SKIPED
+      elsif status==ProjectProfile::STATUS_SKIPPED
         'warning'
       else
         'info'
@@ -39,15 +39,19 @@ module Identity
       description = options[:description]
       mandatory = options[:mandatory] || false
       status = options[:status]
+      action_button = options[:action_button]
+      skip_button = options[:skip_button]
+
+      action_link = link_to(action_button[:label] || 'Activate',action_button[:url], data: {modal: true})
+      # skip_link = 
+
       css_class = case status
       when ProjectProfile::STATUS_DONE then 'success'
-      when ProjectProfile::STATUS_SKIPED then 'warning'
+      when ProjectProfile::STATUS_SKIPPED then 'warning'
       else 'info'
       end
-      action_button = block.call(:action_button)
-      skip_button = block.call(:skip_button)
 
-      byebug
+      #byebug
       content_tag :div, class: "bs-callout bs-callout-emphasize bs-callout-#{css_class}" do
         content_tag :div, class: 'row' do
           concat(content_tag(:div, class: 'col-md-8') do
@@ -55,9 +59,9 @@ module Identity
             concat content_tag(:p, description)
           end)
           concat(content_tag(:div, class: 'col-md-4') do
-            if status==ProjectProfile::STATUS_SKIPED
-              concat(content_tag :span, 'skiped', class: 'pull-right')
-              concat(action_button)
+            if status==ProjectProfile::STATUS_SKIPPED
+              concat(content_tag :span, 'skipped', class: 'pull-right')
+              concat(link_to(action_button[:label] || 'Activate',action_button[:url], data: {modal: true}))
             elsif status==ProjectProfile::STATUS_DONE
               content_tag :i, '', class: 'fa fa-check fa-3x pull-right'
             else
