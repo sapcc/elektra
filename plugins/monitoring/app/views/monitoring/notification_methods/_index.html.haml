@@ -1,0 +1,46 @@
+= content_for :main_toolbar do 
+  Monitoring 
+= render partial: '/monitoring/application/tabs', locals: { tab: 'notification_methods', count: @notification_methods_count }
+
+-# not active
+-#.backend-error
+
+- search_help = 'Search in name and address field'
+.toolbar
+  .row
+    - unless current_user.is_allowed?("monitoring:notification_method_create")
+      .col-sm-2.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
+    - else
+      .col-sm-2.has-help-hint.search-field
+        = render partial: '/monitoring/application/search', locals: { id:'notification_methods_search', help:search_help }
+      .col-sm-1.col-sm-offset-9
+        = link_to "New", plugin('monitoring').new_notification_method_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
+
+#notification_methods_list
+  = render partial: 'list'
+
+:javascript
+  $(function() {
+    $('#notification_methods_search').keypress(function (e) {
+      if (e.which == 13) {
+        search();
+      }
+    });
+    // set value from past search
+    $('#notification_methods_search').val($.cookie("notification_methods_search"));  
+  });
+  
+  function search() {
+    var search_string = $('#notification_methods_search').val();
+    // remember search string that we have a valid search after reloading the page
+    $.cookie("notification_methods_search", search_string, { expires: 1 });
+    $.ajax({ 
+      url: "#{plugin('monitoring').search_notification_methods_path()}",
+      data: { 
+        search: $('#notification_methods_search').val() 
+      },
+      dataType: 'script'
+    });
+  }
+

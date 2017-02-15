@@ -9,8 +9,9 @@
 :javascript 
   $(function() {
     $('#clear_search').click(function(){
-      $('#alarm_definitions_search').val('');
-      $.cookie("alarm_definition_search", '', { expires: 1, path: '#{plugin('monitoring').alarm_definitions_path()}' });
+      var context = "#{@context}_search";
+      $('#'+context).val('');
+      $.cookie(context, '', { expires: 1 });
       search();
     })
   });
