@@ -70,5 +70,11 @@ module ServiceLayer
     def find_zone_transfer_accept(id)
       driver.map_to(DnsService::ZoneTransferAccept).get_zone_transfer_accept(id)
     end
+
+    ################## Pools #####################
+    def pools(filter = {})
+      return [] unless current_user.is_allowed?('dns_service:pool_list')
+      driver.map_to(DnsService::Pool).list_pools(filter)
+    end
   end
 end
