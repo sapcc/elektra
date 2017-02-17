@@ -1,6 +1,6 @@
 %tr{id: "recordset_#{recordset.id}"}
   %td.big-data-cell
-    - if current_user.is_allowed?("dns_service:zone_get", recordset: recordset.attributes)
+    - if current_user.is_allowed?("dns_service:recordset_get", recordset: recordset.attributes, zone: zone)
       = link_to recordset.name, zone_recordset_path(zone_id:zone.id,id:recordset.id), data: {modal: true}
     - else
       = recordset.name
@@ -13,7 +13,6 @@
     - else
       = recordset.records
 
-  %td= recordset.priority
   %td= recordset.ttl
   %td.snug
     - if recordset.type!='NS' and (current_user.is_allowed?("dns_service:recordset_update", zone: zone) or current_user.is_allowed?("dns_service:recordset_delete", zone: zone))

@@ -18,6 +18,8 @@
   "dns_service:recordset_update": "rule:zone_primary_or_admin",
   "dns_service:recordset_delete": "rule:zone_primary_or_admin",
 
+  "dns_service:pool_list": "rule:context_is_cloud_dns_admin",
+
   "dns_service:transfer_request_create": "rule:cloud_dns_admin_or_dns_admin and project_id:%(zone.project_id)s",
   "dns_service:transfer_request_accept": "rule:dns_admin_or_zone_owner or project_id:%(request.project_id)s or %(request.project_id)s==nil"
 }

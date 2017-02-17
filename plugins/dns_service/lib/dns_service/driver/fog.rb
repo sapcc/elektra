@@ -99,6 +99,11 @@ module DnsService
       def get_zone_transfer_accept(id)
         handle_response{@fog.get_zone_transfer_accept(id).body}
       end
+
+      #################### Pools #########################
+      def list_pools(filter = {})
+        handle_response { @fog.list_pools(filter).body['pools'] }
+      end
     end
   end
 end
