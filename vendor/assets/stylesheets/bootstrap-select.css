@@ -26,7 +26,8 @@ select.selectpicker {
 .bootstrap-select > .dropdown-toggle.bs-placeholder:hover,
 .bootstrap-select > .dropdown-toggle.bs-placeholder:focus,
 .bootstrap-select > .dropdown-toggle.bs-placeholder:active {
-  color: #999;
+  /*commented because in some conditions the dropdown looks like disabled*/
+  /*color: #999;*/
 }
 .bootstrap-select > select {
   position: absolute !important;

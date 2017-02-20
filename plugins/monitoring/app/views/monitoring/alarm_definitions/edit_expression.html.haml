@@ -97,7 +97,7 @@
             = link_to "Reload", '#', id: 'reload_statistic_btn', onclick:'show_statistic()', class: '%button btn btn-default btn-xs pull-right'
             %svg#statistic{style:"width:425px; height:225px;"}
             %span.help-block
-              The graph shows the historical data from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
+              The graph shows the historical measuring points from the last 2 hours. Playing with the dimensions, statistical function and period should help you to find a good treshold value.
   .buttons{ class: modal? ? 'modal-footer' : '' }
     - unless modal?
       = link_to "Cancel", plugin('monitoring').alarm_definitions_path(), class: 'btn btn-default'
