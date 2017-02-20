@@ -1,10 +1,5 @@
 .toolbar.toolbar-aligntop
-  = link_to '#', class: 'btn btn-default btn-xs', data: {toggle: 'initialRootPassword'} do
-    %i.fa.fa-plus.fa-fw
-    Root Pass
   = link_to "#", class: 'btn btn-default btn-xs', data: {toggle: 'automationBootstrap', automation_script_action: @automation_script_action} do
     %i.fa.fa-plus.fa-fw
     %i.loading-spinner-button.hide
     Automation
-  %span.release-state-wrapper
-    = release_state_tag("experimental", "Experimental: Currently root password works for RHEL7. Other OS versions still under development.")
