@@ -50,8 +50,8 @@ module ServiceLayer
 
     end
 
-    def alarm_states_history(id)
-      driver.map_to(Monitoring::AlarmState).alarm_states_history(id)
+    def alarm_states_history(id,options = {})
+      driver.map_to(Monitoring::AlarmState).alarm_states_history(id,options)
     end
 
     def notification_methods(search = nil)
