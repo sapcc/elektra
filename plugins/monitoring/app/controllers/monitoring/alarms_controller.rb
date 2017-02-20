@@ -7,14 +7,12 @@ module Monitoring
     def index
       @context = "alarms"
       @index = 1
-      notification_methods_search = cookies[:alarms_search] || ''
-      unless notification_methods_search.empty?
-        filter_and_search
-      else
-        # to initialy load the filter - apply_filter and filter_and_search
-        @state    = params[:state] if params[:state] 
-        @severity = params[:severity] if params[:severity]
-      end
+      
+      # set default if nothing was given
+      @state = params[:state] || cookies[:filter_alarm_state] || 'Alarm'
+      @severity = params[:severity] || cookies[:filter_alarm_severity] || 'All'
+      
+      # note: take a look to _filter partial
     end
 
     def filter_and_search
@@ -23,9 +21,10 @@ module Monitoring
         search: @search,
       }.reject { |k,v| v.blank? }
       
-      state = params[:state] || cookies[:filter_alarm_state] || ''
-      severity = params[:severity] || cookies[:filter_alarm_severity] || ''
-      query[:state] = state.upcase if state and state != 'All'
+      state    = params[:state] || cookies[:filter_alarm_state]
+      severity = params[:severity] || cookies[:filter_alarm_severity]
+      
+      query[:state]    = state.upcase if state and state != 'All'
       query[:severity] = severity.upcase if severity and severity != 'All'
 
       all_alarms = services.monitoring.alarms(query)

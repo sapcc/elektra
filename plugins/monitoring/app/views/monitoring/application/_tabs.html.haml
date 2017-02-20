@@ -14,7 +14,7 @@
         %span.loading-place
   - else 
     %li{role: 'presentation'}
-      = link_to "Alarms", plugin('monitoring').alarms_path(state: 'Alarm')
+      = link_to "Alarms", plugin('monitoring').alarms_path()
   - if tab == 'alarm_definitions'
     %li.active{role: 'presentation'}
       = link_to '#' do

@@ -28,8 +28,9 @@ Filter by:
 
   // set filter on start
   $(function(){
-    var severity = $.cookie("filter_alarm_severity") || '';
-    var state = $.cookie("filter_alarm_state") || ''
+    // get default values or use defined filter from the user
+    var severity = "#{@severity}" || $.cookie("filter_alarm_severity");
+    var state = "#{@state}" || $.cookie("filter_alarm_state");
     
     // set defaults if nothing was found 
     if (severity != '' && state != '' ) {
@@ -69,8 +70,8 @@ Filter by:
 
   function apply_filter() {
 
-    alarm_severity = $.cookie("filter_alarm_severity") || ''
-    alarm_status = $.cookie("filter_alarm_state") || 'All'
+    alarm_severity = $.cookie("filter_alarm_severity") || '';
+    alarm_status = $.cookie("filter_alarm_state") ||''
 
     $.ajax({ 
       url: "#{plugin('monitoring').filter_alarms_path()}",
