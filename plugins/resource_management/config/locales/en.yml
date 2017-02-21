@@ -1,6 +1,7 @@
 en:
   resource_management:
     packages:
+      P: Package # for when there is only one package
       S: Small
       M: Medium
       L: Large

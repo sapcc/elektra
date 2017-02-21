@@ -8,7 +8,8 @@ module ResourceManagement
 
   class PackageConfig
     # NOTE: when adding new packages, please also add the human-readable name to plugins/resource_management/config/locales/en.yml
-    PACKAGES = ['S', 'M', 'L']
+    PACKAGES = [ 'P' ]
+    # PACKAGES = ['S', 'M', 'L']
 
     attr_reader :values
 
