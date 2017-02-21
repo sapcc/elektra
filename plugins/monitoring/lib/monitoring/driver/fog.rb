@@ -3,6 +3,9 @@ module Monitoring
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
+      # https://github.com/sapcc/monasca-api/blob/master/docs/monasca-api-spec.md
+      # https://github.com/sapcc/fog-openstack/tree/master/lib/fog/monitoring
+
       def initialize(params_or_driver)
         # support initialization by given driver
         if params_or_driver.is_a?(::Fog::Monitoring::OpenStack)

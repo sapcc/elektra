@@ -18,17 +18,22 @@ module Monitoring
     ]
     
     def index
-      all_alarm_definitions = services.monitoring.alarm_definitions
-      @alarm_definitions_count = all_alarm_definitions.length
-      @alarm_definitions = Kaminari.paginate_array(all_alarm_definitions).page(params[:page]).per(10)
+      @context = 'alarm_definitions'
+      alarm_definition_search = cookies[:alarm_definitions_search] || ''
+      unless alarm_definition_search.empty?
+        search
+      else
+        all_alarm_definitions = services.monitoring.alarm_definitions
+        @alarm_definitions_count = all_alarm_definitions.length
+        @alarm_definitions = Kaminari.paginate_array(all_alarm_definitions).page(params[:page]).per(10)
+      end
     end
 
     def search
-      @search = params[:search]
+      @search = params[:search] || cookies[:alarm_definitions_search] || ''
       searched_alarm_definitions = services.monitoring.alarm_definitions(@search)
       @alarm_definitions_count = searched_alarm_definitions.length
       @alarm_definitions = Kaminari.paginate_array(searched_alarm_definitions).page(params[:page]).per(10)
-      render action: 'index'
     end
 
     def show
@@ -83,9 +88,10 @@ module Monitoring
 
     # this is used when the modified expression is transferred to the edit alarm definitions view
     def from_expression_wizzard_edit
-      expression = params[:expression]
-      if expression 
-        @alarm_definition.expression = expression
+      @expression = params[:expression]
+      parse_expression(@expression)
+      if @expression 
+        @alarm_definition.expression = @expression
       end
       @notification_methods = services.monitoring.notification_methods.sort_by(&:name)
       render action: 'edit_with_expression'
@@ -263,7 +269,7 @@ module Monitoring
 
     def dimension_values
       @name = params.require(:name)
-      @dimension_values = services.monitoring.get_dimension_values_by_dimension(@name)
+      @dimensions = services.monitoring.get_dimension_values_by_dimension_name(@name)
       # because of ajax call we render the partial
       render partial: "dimension_values"
     end
@@ -278,11 +284,10 @@ module Monitoring
         start_time: t.iso8601
       })
       
-      threshold_value =  suggest_threshold(name,'avg')
       # default init with empty array
       dimensions = Hash.new{ |h, k| h[k] = [] }
       metrics.map{ |metric| metric.dimensions.select{ |key, value| dimensions[key] << value }}
-      render json: { suggested_threshold_value: threshold_value, dimensions: dimensions }
+      render json: { dimensions: dimensions }
     end
 
     # used by wizard to render a new dimension row
@@ -296,17 +301,25 @@ module Monitoring
 
     private
     
-    def parse_expression(expression)
+    def parse_expression(expression_original)
 
       # at the moment period, statistical function and dimensions are optional
       #  - period is set with 60 seconds, if it is not existing
       #  - statistical function is set with avg, if it is not existing
       # metric, threshold and threshold value are required
       
-      # remove all white spaces
+      expression = expression_original.clone
+      # check for compounded expression
+      if expression =~ /(\sor\s|\sand\s)/i
+         # compounded espressions are not supported
+         @parsed_expression_success = false
+         return
+      end
+      
+      # remove all white spaces for better parsing
       expression.gsub!(/\s/,'')
-      # parse expression
-      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/)
+      # parse expression (/i case insensitive)
+      result = expression.scan(/(avg|min|max|sum|count|\w+(\.?\w+)*|\{.*\}|<=|<|>=|>|\d*\.?\d+)/i)
 
       dimensions_string           = ""
       period_string               = ""
@@ -317,7 +330,7 @@ module Monitoring
         # puts '###################'
         
         #check existing statistical function
-        if result[0][0] =~ /avg|min|max|sum|count/
+        if result[0][0] =~ /avg|min|max|sum|count/i
           @statistical_function = result[0][0]
           statistical_function_string = result[0][0]
         else
@@ -326,8 +339,8 @@ module Monitoring
           # without statistical function we need to take care of the correct order
           result.insert(0,result[0])
         end
-        
-        @metric               = result[1][0] || 'ERROR'
+
+        @metric = result[1][0] || 'ERROR'
 
         # check existing dimensions
         if result[2][0] =~ /\{.*\}/
@@ -352,8 +365,8 @@ module Monitoring
           result.insert(3,result[3])
         end
         
-        @threshold            = result[4][0] || 'ERROR'
-        @threshold_value      = result[5][0] || 'ERROR'
+        @threshold       = result[4][0] || 'ERROR'
+        @threshold_value = result[5][0] || 'ERROR'
         
         # rebuild the brackets for validity check
         unless statistical_function_string.empty?
@@ -367,7 +380,9 @@ module Monitoring
         
         # rebuild expression to check if everything was going right
         @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
-        @parsed_expression_success = true
+        #  puts @parsed_expression
+        #  puts expression
+        @parsed_expression_success = @parsed_expression == expression
       rescue
         @parsed_expression = "Cannot parse! This expression was probably not created with the expression wizard."
         @parsed_expression_success = false
@@ -380,7 +395,7 @@ module Monitoring
           index
           render action: 'reload_list'
         end
-        format.html { redirect_to plugin('monitoring').alarm_definitions_path }
+        format.html { redirect_to plugin('monitoring').alarm_definitions_path() }
       end
     end
 
@@ -389,26 +404,6 @@ module Monitoring
       @alarm_definition = services.monitoring.get_alarm_definition(id)
       # @alarm_definition is loaded before destroy and update so we only need to take care in one place
       raise ActiveRecord::RecordNotFound, "The alarm definition with id #{params[:id]} was not found. Maybe it was deleted from someone else?" unless @alarm_definition.try(:id)
-    end
-
-    def suggest_threshold(name,statistic)
-      t = Time.now.utc - (60*120)
-      # get statistics to suggest a god threshold value
-      statistic = services.monitoring.list_statistics({
-        name: name, 
-        start_time: t.iso8601,
-        statistics: statistic,
-        merge_metrics: true
-      })
-      # get random value and retry 6 times if value is zero
-      retry_value = 6
-      threshold_value = 0
-      while retry_value > 0 and threshold_value == 0
-        threshold_value = statistic.statistics.sample[1].to_i
-        retry_value -= 1
-      end
-      
-      threshold_value
     end
 
   end

@@ -15,5 +15,5 @@
         - if current_user.is_allowed?("monitoring:alarm_definition_update")
           %li= link_to 'Edit', plugin('monitoring').edit_alarm_definition_path(alarm_definition.id), data: { modal: true }
         - if current_user.is_allowed?("monitoring:alarm_definition_delete")
-          %li= link_to 'Delete', plugin('monitoring').alarm_definition_path(alarm_definition.id), method: :delete, data: { confirm: "Are you sure? <br><small>Deleting an Alarm Definition will delete all Alarms associated with it.</small>" }
+          %li= link_to 'Delete', plugin('monitoring').alarm_definition_path(alarm_definition.id), method: :delete, data: { confirm: "Are you sure? Deleting an Alarm Definition will delete all Alarms associated with it." }
 

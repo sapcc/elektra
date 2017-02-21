@@ -27,10 +27,12 @@ Filter by:
 :javascript
 
   // set filter on start
-  $(function(){ 
-    var severity = '#{@severity || ''}';
-    var state = '#{@state || ''}';
+  $(function(){
+    // get default values or use defined filter from the user
+    var severity = "#{@severity}" || $.cookie("filter_alarm_severity");
+    var state = "#{@state}" || $.cookie("filter_alarm_state");
     
+    // set defaults if nothing was found 
     if (severity != '' && state != '' ) {
       set_filter('Status',state);
       set_filter('Severity',severity,true);
@@ -50,17 +52,27 @@ Filter by:
   });
 
   function set_filter(TYPE,VALUE,APPLY) {
+    // set value in drop down list
     $("#"+TYPE.toLowerCase()+"_filter").text(TYPE+":"+VALUE);
-    $("#"+TYPE.toLowerCase()+"_filter").data('filter',VALUE);
+    
+    // store filter for later usage
+    if(TYPE == "Status") {
+      $.cookie("filter_alarm_state",VALUE,{ expires: 1 });
+    }
+    if(TYPE == "Severity") {
+      $.cookie("filter_alarm_severity",VALUE,{ expires: 1 });
+    }
+    
     if (APPLY) {
       apply_filter();
     }
   }
 
   function apply_filter() {
-    $('#alarms_search').val('');
-    alarm_severity = $('#severity_filter').data('filter') || ''
-    alarm_status = $('#status_filter').data('filter') || 'All'
+
+    alarm_severity = $.cookie("filter_alarm_severity") || '';
+    alarm_status = $.cookie("filter_alarm_state") ||''
+
     $.ajax({ 
       url: "#{plugin('monitoring').filter_alarms_path()}",
       data: { 

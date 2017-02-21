@@ -50,8 +50,8 @@ module ServiceLayer
 
     end
 
-    def alarm_states_history(id)
-      driver.map_to(Monitoring::AlarmState).alarm_states_history(id)
+    def alarm_states_history(id,options = {})
+      driver.map_to(Monitoring::AlarmState).alarm_states_history(id,options)
     end
 
     def notification_methods(search = nil)
@@ -82,8 +82,8 @@ module ServiceLayer
       Monitoring::AlarmDefinition.new(driver,attributes)
     end
     
-    def get_dimension_values_by_dimension(name)
-      driver.map_to(Monitoring::Dimension).list_dimension_values(name)[0].values()
+    def get_dimension_values_by_dimension_name(name)
+      driver.map_to(Monitoring::Dimension).list_dimension_values(name)
     end
 
     def get_metric(attributes={}) 

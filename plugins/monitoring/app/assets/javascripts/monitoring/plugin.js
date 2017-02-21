@@ -76,9 +76,11 @@ monitoring.render_statistic = function(ID,DATA) {
     nv.addGraph(function() {
       var chart = nv.models.lineChart();
       
-      chart.margin({"left":30,"right":30,"top":5,"bottom":30});
+      chart.margin({"left":30,"right":30,"top":5,"bottom":50});
       chart.useInteractiveGuideline(true);
-      chart.xAxis.tickFormat(function(d) { return d + ' min' });
+      chart.xAxis.axisLabel('data points (count)');
+      
+      //chart.xAxis.tickFormat(function(d) { return d + ' measuring points' });
 
       d3.select('#'+ID)
         .datum(DATA)

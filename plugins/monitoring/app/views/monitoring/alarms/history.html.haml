@@ -6,10 +6,11 @@
   .toolbar
     .row
       .col-md-4
-        Alarm changes (
-        %span{id:'count'}= @alarm_states_count
-        )
-
+        Alarm state changes
+      .col-md-8.text-right
+        %small
+          %strong 
+            limit to 20
   .row
     .col-md-12
       #alarm_states_list

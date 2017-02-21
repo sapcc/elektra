@@ -1,5 +1,5 @@
 = content_for :title do
-  Edit Notification Method
+  Edit Notification Channel
 
 = simple_modal_form_for @notification_method, submit_action: 'Update', url: plugin('monitoring').notification_method_path(@notification_method.id), method: :put, cancel_url: plugin('monitoring').notification_methods_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form, autofocus: 'notification_method_name' do |f|
   = render partial: 'form', locals: {f:f} 

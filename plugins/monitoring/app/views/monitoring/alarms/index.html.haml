@@ -28,23 +28,33 @@
   $(function() {
     $('#alarms_search').keypress(function (e) {
       if (e.which == 13) {
-         alarm_severity = $('#severity_filter').data('filter') || ''
-         alarm_status = $('#status_filter').data('filter') || 'All'
-         
-         $.ajax({ 
-          url: "#{plugin('monitoring').search_alarms_path()}",
-          data: { 
-            search: $('#alarms_search').val(),
-            severity: alarm_severity,
-            state: alarm_status,
-            do_not_redirect: true 
-          },
-          complete: function(xhr) { 
-            check_logon_state(xhr);
-          },
-          dataType: 'script'
-        });
+        search();
       }
     });
+    // set value from past search
+    $('#alarms_search').val($.cookie("alarms_search"));  
   });
+  
+  function search() {
+    alarm_severity = $.cookie("filter_alarm_severity") || '';
+    alarm_status = $.cookie("filter_alarm_state") ||''
+
+    var search_string = $('#alarms_search').val();
+    // remember search string that we have a valid search after reloading the page
+    $.cookie("alarms_search", search_string, { expires: 1 });
+
+    $.ajax({ 
+     url: "#{plugin('monitoring').search_alarms_path()}",
+     data: { 
+       search: $('#alarms_search').val(),
+       severity: alarm_severity,
+       state: alarm_status,
+       do_not_redirect: true 
+     },
+     complete: function(xhr) { 
+       check_logon_state(xhr);
+     },
+     dataType: 'script'
+  });
+  }
   

@@ -1,6 +1,17 @@
--# ripped from /config/initializers/simple_form/help_hint.rb
-.help-hint.search-field-hint
-  %a{data: {content: help, popover: {type:'help-hint'}, toggle:'popover'}, href:'#', role:'button'}
+.search-field-hint
+  %a{id: 'clear_search', title: "clear search", href:'#', role:'button'}
+    = icon('times')
+  %a{data: {content: help, popover: {type:'help-hint'}, toggle:'popover'}, href:'#', role:'button', style:'padding-left:13px'}
     %span.fa-stack
       = icon 'square fa-stack-2x'
       = icon 'info fa-inverse fa-stack-1x' 
+
+:javascript 
+  $(function() {
+    $('#clear_search').click(function(){
+      var context = "#{@context}_search";
+      $('#'+context).val('');
+      $.cookie(context, '', { expires: 1 });
+      search();
+    })
+  });

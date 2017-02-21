@@ -20,7 +20,7 @@
     .col-md-9.details-value= @alarm_definition.expression
   .row
     .col-md-3.details-label 
-      %strong Filter by:
+      %strong Separate by:
     .col-md-9.details-value= @alarm_definition.match_by 
   %hr
   .row
@@ -39,51 +39,9 @@
     .col-md-3.details-label 
       %strong Undetermined Actions:
     .col-md-9.details-value= @alarm_definition.undetermined_actions.map{|notification_method_id| @notification_methods_hash[notification_method_id].name  }.join(',') 
-  %hr
-  .row
-    .col-md-3.details-label 
-      %strong Statistic:
-    .col-md-8
-      %svg#statistic{style:"width:500px; height:250px;"}
-      %span.help-block
-        The graph shows the historical data from the last 2 hours.
 
 .buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: { dismiss:"modal" }} Close
   - else
     = link_to "Back", plugin('monitoring').alarm_definitions_path, class: 'btn btn-default'
-    
-:javascript
-  $(function(){
-
-    // cleanup left overs
-    // http://stackoverflow.com/questions/22452112/nvd3-clear-svg-before-loading-new-chart
-    // http://stackoverflow.com/questions/28560835/issue-with-useinteractiveguideline-in-nvd3-js
-    // https://github.com/Caged/d3-tip/issues/133
-    d3.selectAll("svg > *").remove();
-    d3.select("#statistic")
-      .on("mousemove", null)
-      .on("mouseout", null)
-      .on("dblclick", null)
-      .on("click", null);
-    d3.select(".nvtooltip").remove();
-    
-    $('#statistic').html('<text class="nvd3 nv-noData" dy="-.7em" style="text-anchor: middle;" x="250" y="125"}>Loading Data.</text>');
-
-    $.post( "#{plugin('monitoring').statistics_alarm_definitions_path()}", {
-      metric: "#{@metric}",
-      dimensions: "#{@dimensions}",
-      period: "#{@period}",
-      threshold: "#{@threshold_value}",
-      statistical_function: "#{@statistical_function}",
-      // in case of invalid token we don't want to follow the redirect from the server to the logon page
-      // instead we handle that case in check_logon_state()
-      do_not_redirect: true
-    },function(data,status,xhr) {
-      monitoring.render_statistic('statistic',data);
-    }).error (function(xhr) {
-      $('#statistic').empty();
-    });
-
-  });
