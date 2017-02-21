@@ -78,7 +78,7 @@ monitoring.render_statistic = function(ID,DATA) {
       
       chart.margin({"left":30,"right":30,"top":5,"bottom":50});
       chart.useInteractiveGuideline(true);
-      chart.xAxis.axisLabel('Measuring points (count)');
+      chart.xAxis.axisLabel('data points (count)');
       
       //chart.xAxis.tickFormat(function(d) { return d + ' measuring points' });
 
