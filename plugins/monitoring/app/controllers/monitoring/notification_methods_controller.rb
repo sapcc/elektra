@@ -59,11 +59,13 @@ module Monitoring
     private
 
     def back_to_notification_method_list
+      # only load the notification methods list
       respond_to do |format|
         format.js do
           index
-          render action: 'reload_list'
+          render action: 'list'
         end
+        # render index site
         format.html { redirect_to plugin('monitoring').notification_methods_path }
       end
     end

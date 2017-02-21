@@ -390,11 +390,13 @@ module Monitoring
     end
 
     def back_to_alarm_definition_list
+      # only load the alarm defintions list
       respond_to do |format|
         format.js do
           index
-          render action: 'reload_list'
+          render action: 'list'
         end
+        # render index site
         format.html { redirect_to plugin('monitoring').alarm_definitions_path() }
       end
     end

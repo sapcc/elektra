@@ -47,7 +47,7 @@
                   "#{latest_alarm_state.reason}"
           .row
             .col-md-12.text-right
-              = link_to 'Show Definition', plugin('monitoring').alarm_definition_path(@alarm.alarm_definition_id) , class: 'btn btn-primary btn-sm', data: { modal_transition: true }
+              = link_to 'Show Definition', plugin('monitoring').alarm_definition_path(@alarm.alarm_definition_id) , class: 'btn btn-default btn-sm', data: { modal_transition: true }
     .panel.panel-info
       .panel-heading
         .panel-title
