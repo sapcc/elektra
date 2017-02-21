@@ -32,7 +32,7 @@ module Monitoring
       alarm_definitions = services.monitoring.alarm_definitions
       @alarm_definitions = Hash[alarm_definitions.map{ |a| [a.id, a] }]
       @alarms = Kaminari.paginate_array(all_alarms).page(params[:page]).per(10)
-      render action: 'index'
+      render action: 'reload_list'
     end
 
     def show
@@ -65,7 +65,7 @@ module Monitoring
       respond_to do |format|
         format.js do
           index
-          render action: 'list'
+          render action: 'reload_list'
         end
         # render index site
         format.html { redirect_to plugin('monitoring').alarms_path() }
