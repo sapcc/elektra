@@ -15,7 +15,7 @@
   .form-group
     .row
       = label_tag 'filter_by', 'Separate by', class: 'control-label col-sm-4'
-      .col-sm-8
+      .col-sm-8.seperate-by
         - @filter_by.each do |dimensions_key|
           - if dimensions_key != ""
             = label_tag dimensions_key, dimensions_key.capitalize, class: 'filter-by-label'
