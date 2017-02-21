@@ -310,7 +310,7 @@ module Monitoring
       
       expression = expression_original.clone
       # check for compounded expression
-      if expression =~ /( or | and )/i
+      if expression =~ /(\sor\s|\sand\s)/i
          # compounded espressions are not supported
          @parsed_expression_success = false
          return
@@ -382,11 +382,7 @@ module Monitoring
         @parsed_expression = statistical_function_string+@metric+dimensions_string+period_string+@threshold+@threshold_value
         #  puts @parsed_expression
         #  puts expression
-        if @parsed_expression == expression
-          @parsed_expression_success = true
-        else 
-          @parsed_expression_success = false
-        end
+        @parsed_expression_success = @parsed_expression == expression
       rescue
         @parsed_expression = "Cannot parse! This expression was probably not created with the expression wizard."
         @parsed_expression_success = false
