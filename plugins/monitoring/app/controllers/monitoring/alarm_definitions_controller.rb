@@ -393,7 +393,7 @@ module Monitoring
       respond_to do |format|
         format.js do
           index
-          render action: 'reload_list'
+          render action: 'index'
         end
         format.html { redirect_to plugin('monitoring').alarm_definitions_path() }
       end
