@@ -26,7 +26,7 @@ module Monitoring
       match_by = read(:match_by)
       return nil unless match_by
       return nil if match_by.empty?
-      match_by.join(", ")
+      match_by.respond_to?(:join) ? match_by.join(", ") : match_by
     end
   end
 end
