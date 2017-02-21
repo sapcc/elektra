@@ -53,7 +53,8 @@ module Compute
       @instance = services.compute.new_server
 
       @flavors            = services.compute.flavors
-      @images             = services.image.images
+      @images             = services.image.all_images
+
       @availability_zones = services.compute.availability_zones
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
