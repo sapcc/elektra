@@ -66,7 +66,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-
+gem 'puma', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
@@ -98,9 +98,6 @@ group :development do
 
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
-  # We stick to 2.x until this is fixed:
-  # https://github.com/banister/binding_of_caller/issues/59
-  gem 'puma', '~> 2.16'
 
   gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
 end
@@ -123,7 +120,6 @@ group :development, :test do
   gem "rspec-rails"
   gem "factory_girl_rails", "~> 4.0"
   gem "database_cleaner"
-  # gem "better_errors"
 
   gem 'pry-rails'
 end
