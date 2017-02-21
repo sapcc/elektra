@@ -61,11 +61,13 @@ module Monitoring
     private
 
     def back_to_alarm_list
+      # only load the alarm list
       respond_to do |format|
         format.js do
           index
-          render action: 'index'
+          render action: 'list'
         end
+        # render index site
         format.html { redirect_to plugin('monitoring').alarms_path() }
       end
     end
