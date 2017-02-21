@@ -18,14 +18,13 @@
         %li
           = link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_id)
 
-      - if @active_project_profile.nil? or @active_project_profile.wizard_finished?
-        %ol.context-list
-          %li.dropdown.dropdown-mega
-            %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
-              %i{class: selected_category_icon}
-              = selected_service_name
-              %span.caret
-            = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
+      %ol.context-list
+        %li.dropdown.dropdown-mega
+          %a.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            %i{class: selected_category_icon}
+            = selected_service_name
+            %span.caret
+          = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
 
     .special-crumb
       - if services.available?(:webconsole) and plugin_name!='webconsole'

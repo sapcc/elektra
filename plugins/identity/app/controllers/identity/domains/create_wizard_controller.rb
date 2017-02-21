@@ -26,22 +26,10 @@ module Identity
         if @project.save
           services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
           services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')
+          services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
           services.identity.clear_auth_projects_tree_cache
 
           audit_logger.info(current_user, "has created", @project)
-
-          if services.available?(:cost_control) and not cost_params.nil?
-
-            cost_params.merge!(id: @project.id)
-
-            # normalize value from inherited cost object checkbox to boolean
-            cost_params['cost_object_inherited'] = cost_params.fetch('cost_object_inherited', '')=='1'
-
-            cost_control_masterdata = services.cost_control.new_project_masterdata(cost_params)
-            if cost_control_masterdata.save
-              audit_logger.info(current_user, "has assigned", @project, "to cost center #{cost_control_masterdata.cost_object_string}")
-            end
-          end
 
           flash.now[:notice] = "Project #{@project.name} successfully created."
           if @inquiry
