@@ -28,39 +28,11 @@
       label: 'Separate by',
       icon_hint: 'Comma-separated list of dimensions. A separate alarm will be created for every distinct dimension value.'
 
-.row
-  .col-md-8.col-md-offset-4
-    = f.input :actions_enabled, as: :boolean, label: 'Send status notifications for:'
-
-#alarm_actions
-  .row
-    .col-md-8.col-md-offset-4
-      %p.help-block
-        Note: to select or deselect multiple notification channels use strg + left mouse button  
-  = f.input :ok_actions, 
-      label: 'OK',collection: @notification_methods.map{|s| [s.name, s.id]}, 
-      input_html: { multiple: true, size: 3 }, 
-      include_hidden: false 
-  = f.input :alarm_actions, 
-      label: 'Alarm',
-      collection: @notification_methods.map{|s| [s.name, s.id]}, 
-      input_html: { multiple: true, size: 3 }, 
-      include_hidden: false 
-  = f.input :undetermined_actions, 
-      label: 'Undetermined',
-      collection: @notification_methods.map{|s| [s.name, s.id]}, 
-      input_html: { multiple: true, size: 3 }, 
-      include_hidden: false 
+= render partial: "form_notification_channels", locals:{f:f}
 
 = content_for :javascripts do
   :javascript
     $(function() {
-      $('#alarm_actions').toggle($('#alarm_definition_actions_enabled').is(':checked'))
- 
-      $('#alarm_definition_actions_enabled').change(function(){
-         $('#alarm_actions').toggle('fast');
-      });
-      
       // I do not use the modal link here because I need to handle already entered values like name and description 
       // to store it vor later when the user comes back to the create alarm definition screen
       $('#use_wizard_btm').click(
@@ -68,7 +40,6 @@
           use_wizard("#{plugin('monitoring').create_expression_alarm_definitions_path()}");
         }
       );
-
     });
     
     function use_wizard(url) {
