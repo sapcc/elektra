@@ -1,0 +1,70 @@
+
+= wizard_step(title: 'Project', mandatory: true, status: ProjectProfile::STATUS_DONE) do
+  %table.table.no-borders
+    %tbody
+      %tr
+        %th{width: "30%"} Name
+        %td= @active_project.name
+      %tr
+        %th Description
+        %td= @active_project.description
+
+- if @active_project_profile
+
+  -# Configuration modules
+  -# Once a module has been completed successfully, change class to bs-callout-success and replace button with %i.fa.fa-check.fa-3x
+  - if @billing_data and @billing_data.cost_object_id
+    = wizard_step({title: 'Cost Center',
+      mandatory: true,
+      status: @active_project_profile.wizard_status('cost_control')}) do
+      %table.table.no-borders
+        %tbody
+          %tr
+            %th{width: "30%"} Cost Object
+            %td= @billing_data.cost_object_id
+  - else
+    = wizard_step({title: 'Cost Center',
+      mandatory: true,
+      action_button: {label: 'Set Cost Object', url:plugin('cost_control').edit_cost_object_path},
+      status: @active_project_profile.wizard_status('cost_control')}) do
+      %p Please provide a cost object against which we can bill the services consumed by this project
+
+
+  -# This is a standard module for a configuration the user hasn't done yet
+  = wizard_step({title: 'Choose Networking Setup',
+    mandatory: true,
+    action_button: {label: 'Set Network', url:plugin('networking').networks_external_index_path},
+    status: @active_project_profile.wizard_status('networking')}) do
+    %p Configure your network. You can either create your own private network or if within your organisation networks are already available you can have an existing one made available to this project.
+
+
+  -# This is a standard module for a configuration the user hasn't done yet
+  - if @quota_inquiry.present?
+    - if @quota_inquiry.aasm_state=='open'
+      = wizard_step({title: 'Request Resource Quotas',
+        mandatory: true,
+        status: 'pending'}) do
+        %p
+          Your request is being checked. Please have some patience.
+          = link_to 'Show request', plugin('inquiry').inquiry_path(id: @quota_inquiry.id), data: {modal: true}
+
+    - elsif @quota_inquiry.aasm_state=='rejected'
+      = wizard_step({title: 'Request Resource Quotas',
+        mandatory: true,
+        action_button: {label: 'Edit Request', url: plugin('inquiry').edit_inquiry_path(id: @quota_inquiry.id, state: 'open')},
+        status: 'pending'}) do
+        %p Your request has been rejected. Please check the reason and reopen the request.
+
+  - if !@quota_inquiry.present? or @quota_inquiry.aasm_state=='approved'
+    = wizard_step({title: 'Request Resource Quotas',
+      mandatory: true,
+      action_button: {label: 'Request Quotas', url: plugin('resource_management').resources_new_package_request_path},
+      status: @active_project_profile.wizard_status('resource_management')}) do
+      - if @quota_inquiry.present? and @quota_inquiry.aasm_state=='approved'
+        %table.table.no-borders
+          %tbody
+            %tr
+              %th{width:"30%"} Package
+              %td= @quota_inquiry.payload["package"]
+      - else
+        %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.

@@ -39,15 +39,35 @@ module Identity
       description = options[:description]
       mandatory = options[:mandatory] || false
       status = options[:status]
-      action_button = options[:action_button]
-      skip_button = options[:skip_button]
+      action_button_options = options[:action_button]
+      skip_button_options = options[:skip_button]
 
-      action_link = link_to(action_button[:label] || 'Activate',action_button[:url], data: {modal: true})
-      # skip_link = 
+      if action_button_options
+        label = action_button_options[:label] || 'Activate'
+        url = action_button_options[:url]
+        css_class = 'btn btn-info pull-right'
+        if url
+          action_button = link_to(label,url, data: {modal: true, wizard_action_button: true}, class: css_class)
+        else
+          action_button = link_to(label,'javascript:void(0)')
+        end
+      end
+
+      if skip_button_options
+        label = skip_button_options[:label] || 'Do this later'
+        url = skip_button_options[:url]
+        css_class = 'btn btn-default btn-xs pull-right'
+        if url
+          skip_button = link_to(label,url, class: css_class)
+        else
+          skip_button = link_to(label,'javascript:void(0)')
+        end
+      end
 
       css_class = case status
       when ProjectProfile::STATUS_DONE then 'success'
       when ProjectProfile::STATUS_SKIPPED then 'warning'
+      when 'pending' then 'default'
       else 'info'
       end
 
@@ -56,17 +76,17 @@ module Identity
         content_tag :div, class: 'row' do
           concat(content_tag(:div, class: 'col-md-8') do
             concat content_tag(:h4, title)
-            concat content_tag(:p, description)
+            block.call
           end)
           concat(content_tag(:div, class: 'col-md-4') do
             if status==ProjectProfile::STATUS_SKIPPED
               concat(content_tag :span, 'skipped', class: 'pull-right')
-              concat(link_to(action_button[:label] || 'Activate',action_button[:url], data: {modal: true}))
+              concat(action_button)
             elsif status==ProjectProfile::STATUS_DONE
               content_tag :i, '', class: 'fa fa-check fa-3x pull-right'
             else
-              content_tag :p, action_button
-              content_tag :p, skip_button
+              concat(content_tag :p, action_button)
+              concat(content_tag :p, skip_button)
             end
           end)
         end

@@ -5,7 +5,6 @@ class ProjectProfile < ActiveRecord::Base
   INITIAL_WIZARD_PAYLOAD_SERVICES = [
     'cost_control',
     'networking',
-    'block_storage',
     'resource_management'
   ]
 
@@ -14,6 +13,10 @@ class ProjectProfile < ActiveRecord::Base
 
   class UnregisteredWizardService < StandardError; end
   class BadStatus < StandardError; end
+
+  def self.find_project_id(project_id)
+    self.where(project_id: project_id).first
+  end
 
   def self.find_or_create_by_project_id(project_id)
     profile = self.where(project_id: project_id).first
@@ -49,7 +52,8 @@ class ProjectProfile < ActiveRecord::Base
       raise BadStatus.new("Valid values for status are nil,'done','skipped'.")
     end
     wizard_payload[service_name.to_s]=status
-    save
+    write_attribute('wizard_payload',wizard_payload)
+    self.save!
   end
 
   private

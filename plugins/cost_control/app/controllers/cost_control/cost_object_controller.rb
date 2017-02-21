@@ -29,15 +29,17 @@ module CostControl
 
       # normalize "cost_object_inherited" to Boolean
       attrs[:cost_object_inherited] = attrs[:cost_object_inherited] == '1'
+#########
 
       if @masterdata.update_attributes(attrs)
-        redirect_to plugin('cost_control').cost_object_path
-        return
+        respond_to do |format|
+          format.html { redirect_to plugin('cost_control').cost_object_path }
+          format.js{}
+        end
       else
-        if @scoped_project_id
-          render action: 'project_edit'
-        else
-          render action: 'domain_edit'
+        respond_to do |format|
+          format.html { @scoped_project_id.nil? ? render(action: 'domain_edit') : render(action: 'project_edit') }
+          format.js{}
         end
       end
     end

@@ -196,8 +196,9 @@ module ResourceManagement
       unless inquiry.errors?
         # reload view to show the "Quota package requested" header
         respond_to do |format|
-          format.js { render inline: 'Dashboard.hideModal();document.location.reload();' }
+          format.js {  }
         end
+        return
       end
     end
 

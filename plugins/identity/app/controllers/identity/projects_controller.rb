@@ -1,8 +1,11 @@
 module Identity
   class ProjectsController < ::DashboardController
-
     before_filter :project_id_required, except: [:index, :create, :new, :user_projects]
     before_filter :get_project_id,  except: [:index, :create, :new]
+
+    before_filter :check_wizard_status, only: [:show]
+    before_filter :load_and_update_wizard_status, only: [:show_wizard]
+
     before_filter do
       @scoped_project_fid = params[:project_id] || @project_id
     end
@@ -26,11 +29,10 @@ module Identity
     end
 
     def show
-      if @active_project_profile.nil? or @active_project_profile.wizard_finished?
-        render template: 'identity/projects/show'
-      else
-        render template: 'identity/projects/show_wizard'
-      end
+      render template: '/identity/projects/show'
+    end
+
+    def show_wizard
     end
 
     def edit
@@ -102,6 +104,45 @@ module Identity
       @project_id = params[:id] || params[:project_id]
       entry = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project',@scoped_domain_id,@project_id)
       @project_id = entry.key if entry
+    end
+
+    def check_wizard_status
+      @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      unless @active_project_profile.wizard_finished?
+        redirect_to plugin('identity').project_wizard_url
+      end
+    end
+
+    def load_and_update_wizard_status
+      if @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+        # try to find a quota inquiry and get status of it
+        @quota_inquiry = services.inquiry.get_inquiries({
+          kind: 'project_quota_package',
+          project_id: @scoped_project_id,
+          domain_id: @scoped_domain_id
+        }).first
+
+        if @quota_inquiry.present? and @quota_inquiry.aasm_state=='approved'
+          @active_project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
+        else
+          @active_project_profile.update_wizard_status('resource_management',nil)
+        end
+
+        @billing_data = services.cost_control.find_project_masterdata(@scoped_project_id)
+        if @billing_data and @billing_data.cost_object_id
+          @active_project_profile.update_wizard_status('cost_control',ProjectProfile::STATUS_DONE)
+        else
+          @active_project_profile.update_wizard_status('cost_control',nil)
+        end
+
+        if false
+          @active_project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
+        else
+          @active_project_profile.update_wizard_status('networking',nil)
+        end
+
+        #byebug
+      end
     end
   end
 end
