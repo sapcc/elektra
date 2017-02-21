@@ -29,9 +29,14 @@
       icon_hint: 'Comma-separated list of dimensions. A separate alarm will be created for every distinct dimension value.'
 
 .row
-  .col-md-8.col-md-offset-3
+  .col-md-8.col-md-offset-4
     = f.input :actions_enabled, as: :boolean, label: 'Send status notifications for:'
+
 #alarm_actions
+  .row
+    .col-md-8.col-md-offset-4
+      %p.help-block
+        Note: to select or deselect multiple notification channels use strg + left mouse button  
   = f.input :ok_actions, 
       label: 'OK',collection: @notification_methods.map{|s| [s.name, s.id]}, 
       input_html: { multiple: true, size: 3 }, 
