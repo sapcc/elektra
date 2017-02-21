@@ -63,7 +63,7 @@ module Monitoring
       respond_to do |format|
         format.js do
           index
-          render action: 'list'
+          render action: 'reload_list'
         end
         # render index site
         format.html { redirect_to plugin('monitoring').notification_methods_path }
