@@ -34,7 +34,7 @@ module ResourceManagement
         @project_resource.add_validation_error(:current_quota, "empty value is invalid")
       else 
         begin
-          # check that current value is higher that new value
+           # check that current value is higher that new value
           if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
               @project_resource.current_quota < @project_resource.data_type.parse(value)
               @project_resource.add_validation_error(:current_quota, "is invalid: because the reduced quota value of #{value} is higher than your current quota")
@@ -50,7 +50,9 @@ module ResourceManagement
         end
       end
       
-      unless @project_resource.save
+      if @project_resource.save
+        services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
+      else
         @has_errors = true
         render action: 'new_reduce_quota'
       end
