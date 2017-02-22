@@ -26,45 +26,44 @@ module ResourceManagement
     def new_request
     end
 
-    def new_reduce_quota
-    end
-    
     def reduce_quota
-      value = params[:resource][:current_quota]
-      
-      if value.empty?
-        @project_resource.add_validation_error(:current_quota, "empty value is invalid")
-      else 
-        begin
-           # check that current value is higher that new value
-          if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
-              @project_resource.current_quota < @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value of #{value} is higher than your current quota")
-          elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
-                @project_resource.current_quota == @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value is the same as your current quota")
-          else
-            @project_resource.approved_quota = @project_resource.data_type.parse(value)
-            @project_resource.current_quota = @project_resource.data_type.parse(value)
-          end
-        rescue ArgumentError => e
-          @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
-        end
-      end
-
-      if @project_resource.save
-        services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
+      if params[:resource] 
+        value = params[:resource][:current_quota]
         
-        # load data to reload the bars
-        # which services belong to this area?
-        @area = @project_resource.config.service.area.to_s
-        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
+        if value.empty?
+          @project_resource.add_validation_error(:current_quota, "empty value is invalid")
+        else 
+          begin
+             # check that current value is higher that new value
+            if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
+                @project_resource.current_quota < @project_resource.data_type.parse(value)
+                @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value of #{value} is higher than your current quota")
+            elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
+                  @project_resource.current_quota == @project_resource.data_type.parse(value)
+                @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value is the same as your current quota")
+            else
+              @project_resource.approved_quota = @project_resource.data_type.parse(value)
+              @project_resource.current_quota = @project_resource.data_type.parse(value)
+            end
+          rescue ArgumentError => e
+            @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
+          end
+        end
   
-        # load all resources for these services
-        @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
-      else
-        # error case
-        render action: 'new_reduce_quota'
+        if @project_resource.save
+          services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
+          
+          # load data to reload the bars
+          # which services belong to this area?
+          @area = @project_resource.config.service.area.to_s
+          @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
+    
+          # load all resources for these services
+          @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
+        else
+          # error case
+          render action: 'new_reduce_quota'
+        end
       end
     end
 
