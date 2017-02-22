@@ -4,13 +4,15 @@ module ResourceManagement
   class DomainAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
-    before_filter :load_domain_resource, only: [:new_request, :create_request]
+    before_filter :load_domain_resource, only: [:new_request, :create_request, :new_reduce_quota]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
     before_filter :load_package_inquiry, only: [:review_package_request, :approve_package_request]
 
     authorization_required
 
     def index
+      @index = true
+      
       @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
       prepare_data_for_resource_list(@all_services, overview: true)
 
@@ -66,6 +68,15 @@ module ResourceManagement
       respond_to do |format|
         format.js
       end
+    end
+
+    def new_reduce_quota
+      # prepare data for usage display
+      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+    end
+    
+    def reduce_quota
+    
     end
 
     def review_request

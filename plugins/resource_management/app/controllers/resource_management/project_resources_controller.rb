@@ -60,7 +60,6 @@ module ResourceManagement
         # which services belong to this area?
         @area = @project_resource.config.service.area.to_s
         @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-        raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
   
         # load all resources for these services
         @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)

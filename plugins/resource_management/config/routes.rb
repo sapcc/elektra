@@ -28,6 +28,8 @@ ResourceManagement::Engine.routes.draw do
     post 'approve_request' => 'domain_admin#approve_request'
     get  'review_package_request'  => 'domain_admin#review_package_request'
     post 'approve_package_request' => 'domain_admin#approve_package_request'
+    get  'new_reduce_quota' => 'domain_admin#new_reduce_quota'
+    post 'reduce_quota' => 'domain_admin#reduce_quota'
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do
