@@ -9,6 +9,8 @@ module ResourceManagement
     authorization_required
 
     def index
+      @index = true
+      
       @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).where.not(service: 'resource_management')
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
       @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
@@ -25,6 +27,7 @@ module ResourceManagement
     end
 
     def new_reduce_quota
+
     end
     
     def reduce_quota
@@ -49,9 +52,18 @@ module ResourceManagement
           @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
         end
       end
-      
+
       if @project_resource.save
         services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
+        
+        # load data to reload the bars
+        # which services belong to this area?
+        @area = @project_resource.config.service.area.to_s
+        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
+        raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
+  
+        # load all resources for these services
+        @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
       else
         @has_errors = true
         render action: 'new_reduce_quota'

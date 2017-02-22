@@ -1,0 +1,17 @@
+- @area_services.each do |service|
+  - if service != @area
+    -# show service name if not equal to area name
+    -# (this means that a service named like its area should always be at the top)
+    %h3= t("resource_management.#{service}")
+  - resources = @resources.select { |r| r.service == service.to_s }.sort_by { |r| r.name }
+  - if resources.empty?
+    .bs-callout
+      No #{t("resource_management.#{service}")} Quotas found!
+  - else
+    - resources.each do |resource|
+      = render :partial => 'bar', :locals => { :overview => false,  :data => resource }
+
+- if current_user.is_allowed?('resource_management:project_resource_sync_now')
+  = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_path }
+- else
+  = render partial: 'data_age'
