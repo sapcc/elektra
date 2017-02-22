@@ -40,7 +40,7 @@ module ServiceLayer
     def domains(filter={})
       driver.map_to(Identity::Domain).domains(filter)
     end
-    
+
     ###################### USERS ##########################
     def users(filter={})
       driver.map_to(Identity::User).users(filter)
@@ -53,11 +53,11 @@ module ServiceLayer
     def new_user(attributes={})
       Identity::User.new(driver, attributes)
     end
-    
+
     def delete_user(id)
       driver.delete_user(id)
     end
-    
+
 
     ##################### PROJECTS #########################
     def new_project(attributes={})
@@ -89,7 +89,7 @@ module ServiceLayer
         Identity::ProjectTree.new(projects)
       end
     end
-    
+
     def clear_auth_projects_tree_cache
       Rails.cache.delete("#{current_user.token}/auth_projects_tree")
     end
@@ -110,7 +110,7 @@ module ServiceLayer
     def revoke_project_user_role(project_id, user_id, role_id)
       driver.revoke_project_user_role(project_id, user_id, role_id)
     end
-    
+
     def grant_project_group_role(project_id, group_id, role_id)
       driver.grant_project_group_role(project_id, group_id, role_id)
     end
@@ -146,35 +146,35 @@ module ServiceLayer
     def groups(filter={})
       driver.map_to(Identity::Group).groups(filter)
     end
-    
+
     def create_group(attributes)
       driver.map_to(Identity::Group).create_group(attributes)
     end
-    
+
     def delete_group(group_id)
       driver.delete_group(group_id)
     end
-    
+
     def new_group(attributes={})
       Identity::Group.new(driver, attributes)
     end
-    
+
     def find_group(id)
       driver.map_to(Identity::Group).get_group(id)
     end
-    
+
     def group_members(group_id,filter={})
       driver.map_to(Identity::User).group_members(group_id,filter)
     end
-    
+
     def add_group_member(group_id,user_id)
       driver.add_group_member(group_id,user_id)
     end
-    
+
     def remove_group_member(group_id,user_id)
       driver.remove_group_member(group_id,user_id)
     end
-    
+
     def find_role(id)
       return nil if id.blank?
       roles.select { |r| r.id==id }.first
@@ -195,7 +195,7 @@ module ServiceLayer
     def revoke_domain_user_role(domain_id, user_id, role_id)
       driver.revoke_domain_user_role(domain_id, user_id, role_id)
     end
-    
+
 
     ###################### TOKENS ###########################
     def validate_token(token)
