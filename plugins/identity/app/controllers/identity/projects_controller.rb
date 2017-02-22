@@ -106,49 +106,72 @@ module Identity
     end
 
     def check_wizard_status
-      @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
-      unless @active_project_profile.wizard_finished?
+      project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      unless project_profile.wizard_finished?("cost_control","networking","resource_management")
         redirect_to plugin('identity').project_wizard_url
       end
     end
 
     def load_and_update_wizard_status
-      if @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+      @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+
+      # check and update quota status
+      unless @project_profile.wizard_finished?("resource_management")
         if services.resource_management.has_project_quotas?
-          @active_project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
+          @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
         else
           # try to find a quota inquiry and get status of it
-          @quota_inquiry = services.inquiry.get_inquiries({
+          quota_inquiry = services.inquiry.get_inquiries({
             kind: 'project_quota_package',
             project_id: @scoped_project_id,
             domain_id: @scoped_domain_id
           }).first
 
-          @active_project_profile.update_wizard_status('resource_management',nil)
+          if quota_inquiry.present?
+            status = (quota_inquiry.aasm_state=='approved' ? STATUS_DONE : STATUS_PENDING)
+            @project_profile.update_wizard_status(
+              'resource_management',
+              status,
+              { inquiry_id: quota_inquiry.id, aasm_state: quota_inquiry.aasm_state, package: quota_inquiry.package }
+            )
+          else
+            @project_profile.update_wizard_status('resource_management',nil)
+          end
         end
+      end
 
-        @billing_data = services.cost_control.find_project_masterdata(@scoped_project_id)
-        if @billing_data and @billing_data.cost_object_id
-          @active_project_profile.update_wizard_status('cost_control',ProjectProfile::STATUS_DONE)
+      # check and update cost control status
+      unless @project_profile.wizard_finished?("cost_control")
+
+        #billing_data = services.cost_control.find_project_masterdata(@scoped_project_id)
+        billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id)
+        if billing_data and billing_data.cost_object_id
+          @project_profile.update_wizard_status(
+            'cost_control',
+            ProjectProfile::STATUS_DONE,
+            {cost_object: billing_data.cost_object_id}
+          )
         else
-          @active_project_profile.update_wizard_status('cost_control',nil)
+          @project_profile.update_wizard_status('cost_control',nil)
         end
+      end
 
-        @floatingip_network = services.networking.domain_floatingip_network(@scoped_domain_name)
-        @rbacs = service_user.cloud_admin_service(:networking).rbacs({
-          object_id: @floatingip_network.id,
+      unless @project_profile.wizard_finished?('networking')
+        networking_service = service_user.cloud_admin_service(:networking)
+        floatingip_network = networking_service.domain_floatingip_network(@scoped_domain_name)
+        rbacs = networking_service.rbacs({
+          object_id: floatingip_network.id,
           object_type: 'network',
           target_tenant: @scoped_project_id
         })
 
-        if @rbacs.length>0
-          @active_project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
+        if rbacs.length>0
+          @project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
         else
-          @active_project_profile.update_wizard_status('networking',nil)
+          @project_profile.update_wizard_status('networking',nil)
         end
-
-        #byebug
       end
+
     end
   end
 end
