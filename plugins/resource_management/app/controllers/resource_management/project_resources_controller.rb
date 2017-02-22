@@ -3,7 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
-    before_filter :load_project_resource, only: [:new_request, :create_request, :new_reduce_quota]
+    before_filter :load_project_resource, only: [:new_request, :create_request, :new_reduce_quota, :reduce_quota]
     before_filter :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
     authorization_required
@@ -28,6 +28,32 @@ module ResourceManagement
     end
     
     def reduce_quota
+      value = params[:resource][:current_quota]
+      
+      if value.empty?
+        @project_resource.add_validation_error(:current_quota, "empty value is invalid")
+      else 
+        begin
+          # check that current value is higher that new value
+          if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
+              @project_resource.current_quota < @project_resource.data_type.parse(value)
+              @project_resource.add_validation_error(:current_quota, "is invalid: because the reduced quota value of #{value} is higher than your current quota")
+          elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
+                @project_resource.current_quota == @project_resource.data_type.parse(value)
+              @project_resource.add_validation_error(:current_quota, "is meaningless: because the reduced quota value is the same as your current quota")
+          else
+            @project_resource.approved_quota = @project_resource.data_type.parse(value)
+            @project_resource.current_quota = @project_resource.data_type.parse(value)
+          end
+        rescue ArgumentError => e
+          @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
+        end
+      end
+      
+      unless @project_resource.save
+        @has_errors = true
+        render action: 'new_reduce_quota'
+      end
     end
 
     def create_request

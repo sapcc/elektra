@@ -7,15 +7,15 @@
 
     %fieldset
       - if @project_resource.data_type.to_sym == :number
-        = f.input :approved_quota, label: 'Reduce quota'
+        = f.input :current_quota, label: 'Your current quota'
       - else
-        - current_value = @project_resource.data_type.format(@project_resource.approved_quota)
-        - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
-        = f.input :approved_quota, label: 'Reduce quota', as: :string, input_html: { value: previous_value || current_value }
+        - current_value = @project_resource.data_type.format(@project_resource.current_quota)
+        - previous_value = params[:resource] ? params[:resource][:current_quota] : nil
+        = f.input :current_quota, label: 'Your current quota', as: :string, input_html: { value: previous_value || current_value }
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
     - else
       = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
-    %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}, data: { confirm: "Are you sure to reduce your quota?" }} Reduce
+    %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Reduce
