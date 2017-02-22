@@ -33,7 +33,7 @@
   -# This is a standard module for a configuration the user hasn't done yet
   = wizard_step({title: 'Choose Networking Setup',
     mandatory: true,
-    action_button: {label: 'Set Network', url:plugin('networking').networks_external_index_path},
+    action_button: {label: 'Set Network', url:plugin('networking').new_network_wizard_path},
     status: @active_project_profile.wizard_status('networking')}) do
     %p Configure your network. You can either create your own private network or if within your organisation networks are already available you can have an existing one made available to this project.
 

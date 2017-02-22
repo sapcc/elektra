@@ -29,7 +29,6 @@ module Identity
     end
 
     def show
-      render template: '/identity/projects/show'
     end
 
     def show_wizard
@@ -135,7 +134,14 @@ module Identity
           @active_project_profile.update_wizard_status('cost_control',nil)
         end
 
-        if false
+        @floatingip_network = services.networking.domain_floatingip_network(@scoped_domain_name)
+        @rbacs = service_user.cloud_admin_service(:networking).rbacs({
+          object_id: @floatingip_network.id,
+          object_type: 'network',
+          target_tenant: @scoped_project_id
+        })
+
+        if @rbacs.length>0
           @active_project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
         else
           @active_project_profile.update_wizard_status('networking',nil)

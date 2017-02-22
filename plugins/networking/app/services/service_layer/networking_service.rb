@@ -33,6 +33,17 @@ module ServiceLayer
       driver.map_to(Networking::Network).get_network(id) if id.present?
     end
 
+    def domain_floatingip_network(domain_name)
+      name_candidates = ["FloatingIp-external-#{domain_name}",
+      "FloatingIp-internal-#{domain_name}",
+      "Converged Cloud External"]
+      name_candidates.each do |name|
+        network = driver.map_to(Networking::Network).networks("router:external"=>true, "name" => name).first
+        return network if network
+      end
+      return nil
+    end
+
     def new_network(attributes={})
       Networking::Network.new(driver,attributes)
     end
