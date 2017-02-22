@@ -1,5 +1,5 @@
 - @area_services.each do |service|
-  - if service != @area
+  - if service.to_s != @area.to_s
     -# show service name if not equal to area name
     -# (this means that a service named like its area should always be at the top)
     %h3= t("resource_management.#{service}")
