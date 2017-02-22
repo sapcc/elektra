@@ -3,7 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
-    before_filter :load_project_resource, only: [:new_request, :create_request]
+    before_filter :load_project_resource, only: [:new_request, :create_request, :new_reduce_quota]
     before_filter :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
     authorization_required
@@ -22,6 +22,12 @@ module ResourceManagement
     end
 
     def new_request
+    end
+
+    def new_reduce_quota
+    end
+    
+    def reduce_quota
     end
 
     def create_request

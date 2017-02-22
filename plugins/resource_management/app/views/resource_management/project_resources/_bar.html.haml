@@ -1,7 +1,7 @@
 .row
   = render partial: 'resource_name', locals: { resource: data, scope: 'resources', overview: overview }
 
-  .col-md-7
+  .col-md-6
     - data_type      = data.data_type
     - usage          = data.usage
     - current_quota  = data.current_quota
@@ -20,3 +20,5 @@
         = link_to 'Request more',plugin('resource_management').resources_new_request_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
       - else
         = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
+    .col-md-1.quota-request-more
+      = link_to 'Reduce',plugin('resource_management').resources_new_reduce_quota_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
