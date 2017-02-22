@@ -39,10 +39,10 @@ module ResourceManagement
            # check that current value is higher that new value
           if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
               @project_resource.current_quota < @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "is invalid: because the reduced quota value of #{value} is higher than your current quota")
+              @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value of #{value} is higher than your current quota")
           elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
                 @project_resource.current_quota == @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "is meaningless: because the reduced quota value is the same as your current quota")
+              @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value is the same as your current quota")
           else
             @project_resource.approved_quota = @project_resource.data_type.parse(value)
             @project_resource.current_quota = @project_resource.data_type.parse(value)

@@ -1,5 +1,5 @@
 = content_for :title do
-  Reduce Quota: #{t("resource_management.#{@project_resource.service}")} &gt; #{t("resource_management.#{@project_resource.name}")}
+  Reduce Current Quota: #{t("resource_management.#{@project_resource.service}")} &gt; #{t("resource_management.#{@project_resource.name}")}
 
 =simple_form_for @project_resource, url: resources_reduce_quota_path(id: @project_resource.id), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
   
