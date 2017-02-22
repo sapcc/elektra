@@ -27,7 +27,6 @@ module ResourceManagement
     end
 
     def new_reduce_quota
-
     end
     
     def reduce_quota
@@ -64,7 +63,7 @@ module ResourceManagement
         # load all resources for these services
         @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
       else
-        @has_errors = true
+        # error case
         render action: 'new_reduce_quota'
       end
     end
