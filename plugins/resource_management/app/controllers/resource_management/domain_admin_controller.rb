@@ -71,20 +71,23 @@ module ResourceManagement
     end
 
     def reduce_quota
+      # Note: this function is used in two ways
+      # first show the reduce quota window
+      # second: reduce the quota
       
       unless params[:resource]
-        # first show the reduce quota window 
+        # show the reduce quota window 
         # prepare data for usage display
         prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
       else
-        # second reduce the quota
+        # reduce the quota
         value = params[:resource][:approved_quota]
         
         if value.empty?
           @resource.add_validation_error(:approved_quota, "empty value is invalid")
         else 
           begin
-             # check that current value is higher that new value
+            # pre check value
             if @resource.approved_quota < @resource.data_type.parse(value) 
                 @resource.add_validation_error(:approved_quota, "wrong value: because the reduced quota value of #{value} is higher than your approved quota")
             elsif @resource.approved_quota == @resource.data_type.parse(value) 
@@ -97,7 +100,7 @@ module ResourceManagement
           end
         end
         
-        # save to database
+        # save the new quota to database
         if @resource.save
           @area = @resource.service.to_sym
           @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)

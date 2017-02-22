@@ -6,8 +6,7 @@ ResourceManagement::Engine.routes.draw do
     get  '/' => 'project_resources#index'
     get  ':area',  to: 'project_resources#show_area', constraints: { area: area_regex }, as: 'area'
     get  'request'  => 'project_resources#new_request', as: 'new_request'
-    get  'new_reduce_quota' => 'project_resources#new_reduce_quota'
-    post 'reduce_quota' => 'project_resources#reduce_quota'
+    match 'reduce_quota' => 'project_resources#reduce_quota', via: [:get, :post]
     post 'request'  => 'project_resources#create_request', as: 'create_request'
     get  'sync_now' => 'project_resources#sync_now'
     get  'request-package'          => 'project_resources#new_package_request', as: 'new_package_request'

@@ -23,6 +23,6 @@
     - unless @index
       .col-md-1.quota-request-more
         - if current_quota > 0
-          = link_to 'Reduce',plugin('resource_management').resources_new_reduce_quota_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          = link_to 'Reduce',plugin('resource_management').resources_reduce_quota_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
         - else 
           = link_to 'Reduce', '#', class: 'btn btn-primary btn-sm disabled'
