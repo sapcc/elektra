@@ -9,6 +9,13 @@ module ServiceLayer
       )
     end
 
+    def has_project_quotas?
+      ResourceManagement::Resource.where({
+        domain_id: (current_user.domain_id || current_user.project_domain_id),
+        project_id: current_user.project_id
+      }).length>0
+    end
+
     def quota_data(options=[])
       result = []
 

@@ -114,16 +114,16 @@ module Identity
 
     def load_and_update_wizard_status
       if @active_project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
-        # try to find a quota inquiry and get status of it
-        @quota_inquiry = services.inquiry.get_inquiries({
-          kind: 'project_quota_package',
-          project_id: @scoped_project_id,
-          domain_id: @scoped_domain_id
-        }).first
-
-        if @quota_inquiry.present? and @quota_inquiry.aasm_state=='approved'
+        if services.resource_management.has_project_quotas?
           @active_project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
         else
+          # try to find a quota inquiry and get status of it
+          @quota_inquiry = services.inquiry.get_inquiries({
+            kind: 'project_quota_package',
+            project_id: @scoped_project_id,
+            domain_id: @scoped_domain_id
+          }).first
+
           @active_project_profile.update_wizard_status('resource_management',nil)
         end
 
