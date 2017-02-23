@@ -10,10 +10,16 @@ module ServiceLayer
     end
 
     def has_project_quotas?
-      ResourceManagement::Resource.where({
+      resources = ResourceManagement::Resource.where({
         domain_id: (current_user.domain_id || current_user.project_domain_id),
         project_id: current_user.project_id
-      }).length>0
+      })
+
+      if resources.length>0
+        resources.maximum(:approved_quota) > 0
+      else
+        return false
+      end
     end
 
     def quota_data(options=[])

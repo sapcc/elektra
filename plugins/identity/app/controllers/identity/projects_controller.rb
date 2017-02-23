@@ -106,9 +106,12 @@ module Identity
     end
 
     def check_wizard_status
-      project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
-      unless project_profile.wizard_finished?("cost_control","networking","resource_management")
-        redirect_to plugin('identity').project_wizard_url
+      unless (@scoped_domain_name=='ccadmin' and @scoped_project_name=='cloud_admin')
+        project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+
+        unless project_profile.wizard_finished?("cost_control","networking","resource_management")
+          redirect_to plugin('identity').project_wizard_url
+        end
       end
     end
 
@@ -128,11 +131,11 @@ module Identity
           }).first
 
           if quota_inquiry.present?
-            status = (quota_inquiry.aasm_state=='approved' ? STATUS_DONE : STATUS_PENDING)
+            status = (quota_inquiry.aasm_state=='approved' ? ProjectProfile::STATUS_DONE : ProjectProfile::STATUS_PENDING)
             @project_profile.update_wizard_status(
               'resource_management',
               status,
-              { inquiry_id: quota_inquiry.id, aasm_state: quota_inquiry.aasm_state, package: quota_inquiry.package }
+              { inquiry_id: quota_inquiry.id, aasm_state: quota_inquiry.aasm_state, package: quota_inquiry.payload["package"] }
             )
           else
             @project_profile.update_wizard_status('resource_management',nil)
@@ -157,6 +160,9 @@ module Identity
       end
 
       unless @project_profile.wizard_finished?('networking')
+        if current_user.has_role?('admin') and !current_user.has_role?('network_admin')
+          services.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
+        end
         networking_service = service_user.cloud_admin_service(:networking)
         floatingip_network = networking_service.domain_floatingip_network(@scoped_domain_name)
         rbacs = networking_service.rbacs({

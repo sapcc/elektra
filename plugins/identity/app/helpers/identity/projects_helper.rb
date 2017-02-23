@@ -22,18 +22,6 @@ module Identity
       t("roles.#{role_name}") + " (#{role_name})"
     end
 
-    def callout_css_class(status)
-      css_class = 'bs-callout-'
-      css_class += if status==ProjectProfile::STATUS_DONE
-        'success'
-      elsif status==ProjectProfile::STATUS_SKIPPED
-        'warning'
-      else
-        'info'
-      end
-      css_class
-    end
-
     def wizard_step(options={},&block)
       title = options[:title]
       description = options[:description]
@@ -49,7 +37,7 @@ module Identity
         if url
           action_button = link_to(label,url, data: {modal: true, wizard_action_button: true}, class: css_class)
         else
-          action_button = link_to(label,'javascript:void(0)')
+          action_button = link_to(label,'javascript:void(0)', class: css_class, disabled: true)
         end
       end
 
