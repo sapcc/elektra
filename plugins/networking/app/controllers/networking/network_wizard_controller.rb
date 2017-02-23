@@ -22,7 +22,7 @@ module Networking
 
     def create
       @network_wizard = Networking::NetworkWizard.new(nil,params[:network_wizard])
-      byebug
+
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
 
@@ -62,7 +62,7 @@ module Networking
     end
 
     def find_floatingip_network
-      @floatingip_network = services.networking.domain_floatingip_network(@scoped_domain_name)
+      @floatingip_network = cloaud_admin_networking.domain_floatingip_network(@scoped_domain_name)
     end
 
     def load_rbacs
