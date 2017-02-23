@@ -138,12 +138,12 @@ module Automation
     end
 
     def nodes_with_jobs
-      page = params[:page]||1
-      per_page = 5
+      @node_page = params[:page]||1
+      per_page = 10
       service = IndexNodesService.new(services.automation, services.compute)
-      result = service.list_nodes_with_jobs(page, per_page)
+      result = service.list_nodes_with_jobs(@node_page, per_page)
 
-      @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(page).per(per_page)
+      @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(@node_page).per(per_page)
       @jobs = result[:jobs]
       @addresses = result[:addresses]
       @external_nodes = result[:external_nodes]
