@@ -25,6 +25,7 @@
   "compute:hypervisor_get": "rule:context_is_cloud_compute_admin",
   "compute:hypervisor_list": "rule:context_is_cloud_compute_admin",
   "compute:hypervisor_servers": "rule:context_is_cloud_compute_admin",
+  "compute:host_aggregate_list": "rule:context_is_cloud_compute_admin",
 
   "compute:flavor_get": "rule:context_is_compute_viewer",
   "compute:flavor_list": "rule:context_is_compute_viewer",

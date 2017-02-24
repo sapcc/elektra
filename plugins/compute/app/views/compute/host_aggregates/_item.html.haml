@@ -1,0 +1,8 @@
+%tr{id: "host_aggregate_#{host_aggregate.name}"}
+
+  %td= host_aggregate.name
+  %td
+    %ul
+    - host_aggregate.hosts.each do |host|
+      %li= host
+  %td.snug

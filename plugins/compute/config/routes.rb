@@ -28,6 +28,8 @@ Compute::Engine.routes.draw do
 
   resources :keypairs
 
+  resources :host_aggregates
+
   resources :hypervisors do
     resources :servers, module: :hypervisors, except: [:edit, :update, :show]
   end

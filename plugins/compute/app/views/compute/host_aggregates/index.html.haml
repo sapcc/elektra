@@ -1,0 +1,19 @@
+= render_navigation(context: :compute_admin, expand_all: true)
+
+= content_for :main_toolbar do
+  Host Aggregates
+
+%table.table
+  %thead
+    %tr
+      %th Name
+      %th Hosts
+      %th
+  %tbody#aggregates_table
+    - if @host_aggregates.blank?
+      %tr
+        %td{colspan: 3}
+          No host aggregates available
+    - else
+      - @host_aggregates.each do |aggregate|
+        = render partial: 'item', locals: {host_aggregate: aggregate}
