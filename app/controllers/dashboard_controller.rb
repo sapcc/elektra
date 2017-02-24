@@ -9,10 +9,12 @@ class DashboardController < ::ScopeController
     referer_url = request.referer
     referer_url = "#{URI(referer_url).path}?#{URI(referer_url).query}" rescue nil
 
-    if requested_url=~/(\?|\&)modal=true/ and referer_url=~/(\?|\&)overlay=.+/
-      params[:after_login] = referer_url
-    else
-      params[:after_login] = requested_url
+    unless params[:after_login]
+      if requested_url=~/(\?|\&)modal=true/ and referer_url=~/(\?|\&)overlay=.+/
+        params[:after_login] = referer_url
+      else
+        params[:after_login] = requested_url
+      end
     end
   end
 
@@ -24,6 +26,10 @@ class DashboardController < ::ScopeController
                           project: -> c { c.instance_variable_get('@scoped_project_id') },
                           rescope: false,
                           except: :terms_of_use
+
+  # after_login is used by monsoon_openstack_auth gem.
+  # After the authentication process has finished the after_login can be removed.
+  before_filter{params.delete(:after_login)}
 
   # check if user has accepted terms of use. Otherwise it is a new, unboarded user.
   before_filter :check_terms_of_use, except: [:accept_terms_of_use, :terms_of_use]
