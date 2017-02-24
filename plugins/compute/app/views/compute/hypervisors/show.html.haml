@@ -6,6 +6,15 @@
         %th Host
         %td= @hypervisor.host
       %tr
+        %th VCPU Usage
+        %td= vcpus_of(@hypervisor)
+      %tr
+        %th RAM Usage
+        %td= memory_of(@hypervisor)
+      %tr
+        %th Local Storage Usage
+        %td= local_storage_of(@hypervisor)
+      %tr
         %th Host IP
         %td= @hypervisor.host_ip
       %tr

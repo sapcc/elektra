@@ -7,12 +7,12 @@
       = hypervisor.host
 
   %td= hypervisor.type
-  %td= Core::DataType.new(:number).format(hypervisor.vcpus_used)
-  %td= Core::DataType.new(:number).format(hypervisor.vcpus)
-  %td= Core::DataType.new(:bytes, :mega).format(hypervisor.memory_mb_used)
-  %td= Core::DataType.new(:bytes, :mega).format(hypervisor.memory_mb)
-  %td= Core::DataType.new(:bytes, :giga).format(hypervisor.local_gb_used)
-  %td= Core::DataType.new(:bytes, :giga).format(hypervisor.local_gb)
+  %td= hypervisor.vcpus_used
+  %td= hypervisor.vcpus_total
+  %td= hypervisor.memory_used
+  %td= hypervisor.memory_total
+  %td= hypervisor.local_storage_used
+  %td= hypervisor.local_storage_total
   %td
     - if current_user.is_allowed?("compute:hypervisor_servers")
       = link_to hypervisor.running_vms, plugin('compute').hypervisor_servers_path(hypervisor_id: hypervisor.id)
