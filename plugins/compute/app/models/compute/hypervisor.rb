@@ -21,7 +21,8 @@ module Compute
     end
 
     def vcpus_total
-      Core::DataType.new(:number).format(read('vcpus'))
+      vcpus = CPU_OVERCOMMIT * read('vcpus').to_i
+      Core::DataType.new(:number).format(vcpus)
     end
 
     def memory_used
