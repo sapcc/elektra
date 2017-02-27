@@ -6,6 +6,8 @@ ResourceManagement::Engine.routes.draw do
     get  '/' => 'project_resources#index'
     get  ':area',  to: 'project_resources#show_area', constraints: { area: area_regex }, as: 'area'
     get  'request'  => 'project_resources#new_request', as: 'new_request'
+    get  'confirm_reduce_quota' => 'project_resources#confirm_reduce_quota'
+    post 'reduce_quota' => 'project_resources#reduce_quota'
     post 'request'  => 'project_resources#create_request', as: 'create_request'
     get  'sync_now' => 'project_resources#sync_now'
     get  'request-package'          => 'project_resources#new_package_request', as: 'new_package_request'
@@ -26,6 +28,8 @@ ResourceManagement::Engine.routes.draw do
     post 'approve_request' => 'domain_admin#approve_request'
     get  'review_package_request'  => 'domain_admin#review_package_request'
     post 'approve_package_request' => 'domain_admin#approve_package_request'
+    post 'reduce_quota' => 'domain_admin#reduce_quota'
+    get  'confirm_reduce_quota' => 'domain_admin#confirm_reduce_quota'
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do

@@ -4,13 +4,15 @@ module ResourceManagement
   class DomainAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
-    before_filter :load_domain_resource, only: [:new_request, :create_request]
+    before_filter :load_domain_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
     before_filter :load_package_inquiry, only: [:review_package_request, :approve_package_request]
 
     authorization_required
 
     def index
+      @index = true
+      
       @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
       prepare_data_for_resource_list(@all_services, overview: true)
 
@@ -33,6 +35,7 @@ module ResourceManagement
     end
 
     def edit
+      # please do not delete
     end
 
     def cancel
@@ -65,6 +68,50 @@ module ResourceManagement
 
       respond_to do |format|
         format.js
+      end
+    end
+
+    def confirm_reduce_quota
+      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+    end
+
+    def reduce_quota
+
+      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+      value = params[:resource][:approved_quota]
+
+      if value.empty?
+        @resource.add_validation_error(:approved_quota, "empty value is invalid")
+      else 
+        begin
+          parsed_value = @resource.data_type.parse(value)
+          # pre check value
+          if @resource.approved_quota < parsed_value
+              @resource.add_validation_error(:approved_quota, "wrong value: because the wanted quota value of #{value} is higher than your approved quota")
+          elsif @resource_status[:current_quota_sum] > parsed_value
+            @resource.add_validation_error(:approved_quota, "wrong value: it is now allowed to reduce the quota below your current used quota value of #{@resource_status[:current_quota_sum]}")
+          elsif @resource.approved_quota == parsed_value
+              @resource.add_validation_error(:approved_quota, "wrong value: because the wanted quota value is the same as your approved quota")
+          else
+            @resource.approved_quota = parsed_value
+          end
+        rescue ArgumentError => e
+          @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+        end
+      end
+      
+      # save the new quota to database
+      if @resource.save
+        @area = @resource.service.to_sym
+        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
+        prepare_data_for_resource_list(@area_services)
+      else
+        # reload the reduce quota window with error
+        respond_to do |format|
+          format.html do
+            render action: 'confirm_reduce_quota'
+          end
+        end
       end
     end
 

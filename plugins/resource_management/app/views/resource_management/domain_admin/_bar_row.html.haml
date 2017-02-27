@@ -10,3 +10,9 @@
       = link_to 'Request more',plugin('resource_management').admin_new_request_path(id: data[:domain_resource].id), data: {modal: true}, class: 'btn btn-primary btn-sm'
     - else
       = link_to 'Request more','#', data: {modal: true}, class: 'btn btn-default btn-sm disabled'
+  - unless @index
+    .col-md-1.quota-request-more
+      - if data[:current_quota_sum] > 0
+        = link_to 'Reduce',plugin('resource_management').admin_confirm_reduce_quota_path(id: data[:domain_resource].id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+      - else 
+        = link_to 'Reduce', '#', class: 'btn btn-primary btn-sm disabled'

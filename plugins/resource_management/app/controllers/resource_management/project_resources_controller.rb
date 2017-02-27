@@ -3,12 +3,14 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
-    before_filter :load_project_resource, only: [:new_request, :create_request]
+    before_filter :load_project_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_filter :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
     authorization_required
 
     def index
+      @index = true
+      
       @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).where.not(service: 'resource_management')
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
       @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
@@ -21,7 +23,62 @@ module ResourceManagement
       @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota AND usage > 0").to_a
     end
 
+    def confirm_reduce_quota
+      # please do not delete
+    end
+
+    def reduce_quota
+
+      value = params[:resource][:current_quota]
+      
+      if value.empty?
+        @project_resource.add_validation_error(:current_quota, "empty value is invalid")
+      else 
+        begin
+          parsed_value = @project_resource.data_type.parse(value)
+          # pre check value
+          if @project_resource.approved_quota < parsed_value &&
+             @project_resource.current_quota < parsed_value
+            @project_resource.add_validation_error(:current_quota, "wrong value: because the wanted quota value of #{value} is higher than your current quota")
+          elsif @project_resource.usage > parsed_value
+            @project_resource.add_validation_error(:current_quota, "wrong value: it is now allowed to reduce the quota below your current usage")
+          elsif @project_resource.approved_quota == parsed_value &&
+                @project_resource.current_quota == parsed_value
+            @project_resource.add_validation_error(:current_quota, "wrong value: because the wanted quota value is the same as your current quota")
+          else
+            @project_resource.approved_quota = parsed_value
+            @project_resource.current_quota = parsed_value
+          end
+        rescue ArgumentError => e
+          @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
+        end
+      end
+
+      # save the new quota to the database
+      if @project_resource.save
+        # apply new quota in target service
+        services.resource_management.apply_current_quota(@project_resource) 
+        
+        # load data to reload the bars in the main view
+        # which services belong to this area?
+        @area = @project_resource.config.service.area.to_s
+        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
+  
+        # load all resources for these services
+        @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
+      else
+        # reload the reduce quota window with error
+        respond_to do |format|
+          format.html do
+            render action: 'confirm_reduce_quota'
+          end
+        end
+      end
+
+    end
+
     def new_request
+      # please do not delete
     end
 
     def create_request
@@ -89,6 +146,7 @@ module ResourceManagement
     end
 
     def new_package_request
+      # please do not delete
     end
 
     def create_package_request
@@ -146,7 +204,6 @@ module ResourceManagement
       # which services belong to this area?
       @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
-
       # load all resources for these services
       @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
       @min_updated_at, @max_updated_at = @resources.pluck("MIN(updated_at), MAX(updated_at)").first
