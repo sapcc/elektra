@@ -3,7 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
-    before_filter :load_project_resource, only: [:new_request, :create_request, :reduce_quota]
+    before_filter :load_project_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_filter :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
     authorization_required
@@ -23,59 +23,57 @@ module ResourceManagement
       @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota AND usage > 0").to_a
     end
 
-    def reduce_quota
-      # Note: this function is used in two ways
-      # first show the reduce quota window
-      # second: reduce the quota
-      
-      if params[:resource] 
-        # reduce the quota
-        value = params[:resource][:current_quota]
-        
-        if value.empty?
-          @project_resource.add_validation_error(:current_quota, "empty value is invalid")
-        else 
-          begin
-            # pre check value
-            if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
-               @project_resource.current_quota < @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value of #{value} is higher than your current quota")
-            elsif @project_resource.usage > @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "wrong value: it is now allowed to reduce the quota below your current usage")
-            elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
-                  @project_resource.current_quota == @project_resource.data_type.parse(value)
-              @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value is the same as your current quota")
-            else
-              @project_resource.approved_quota = @project_resource.data_type.parse(value)
-              @project_resource.current_quota = @project_resource.data_type.parse(value)
-            end
-          rescue ArgumentError => e
-            @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
-          end
-        end
+    def confirm_reduce_quota
+      # please do not delete
+    end
 
-        # save the new quota to the database
-        if @project_resource.save
-          # apply new quota in target service
-          services.resource_management.apply_current_quota(@project_resource) 
-          
-          # load data to reload the bars in the main view
-          # which services belong to this area?
-          @area = @project_resource.config.service.area.to_s
-          @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-    
-          # load all resources for these services
-          @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
-        else
-          # reload the reduce quota window with error
-          respond_to do |format|
-            format.html do
-              render action: 'reduce_quota'
-            end
+    def reduce_quota
+
+      value = params[:resource][:current_quota]
+      
+      if value.empty?
+        @project_resource.add_validation_error(:current_quota, "empty value is invalid")
+      else 
+        begin
+          # pre check value
+          if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
+             @project_resource.current_quota < @project_resource.data_type.parse(value)
+            @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value of #{value} is higher than your current quota")
+          elsif @project_resource.usage > @project_resource.data_type.parse(value)
+            @project_resource.add_validation_error(:current_quota, "wrong value: it is now allowed to reduce the quota below your current usage")
+          elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
+                @project_resource.current_quota == @project_resource.data_type.parse(value)
+            @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value is the same as your current quota")
+          else
+            @project_resource.approved_quota = @project_resource.data_type.parse(value)
+            @project_resource.current_quota = @project_resource.data_type.parse(value)
+          end
+        rescue ArgumentError => e
+          @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
+        end
+      end
+
+      # save the new quota to the database
+      if @project_resource.save
+        # apply new quota in target service
+        services.resource_management.apply_current_quota(@project_resource) 
+        
+        # load data to reload the bars in the main view
+        # which services belong to this area?
+        @area = @project_resource.config.service.area.to_s
+        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
+  
+        # load all resources for these services
+        @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
+      else
+        # reload the reduce quota window with error
+        respond_to do |format|
+          format.html do
+            render action: 'confirm_reduce_quota'
           end
         end
       end
-      
+
     end
 
     def new_request
