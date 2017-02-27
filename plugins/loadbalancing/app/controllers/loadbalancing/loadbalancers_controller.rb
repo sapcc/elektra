@@ -1,5 +1,6 @@
 module Loadbalancing
   class LoadbalancersController < DashboardController
+
     def index
       @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
       @fips = services.networking.project_floating_ips(@scoped_project_id)
@@ -140,6 +141,16 @@ module Loadbalancing
         end
       rescue => e
         return nil
+      end
+    end
+
+    # used for polling state information
+    def get_item
+      begin
+        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+        render json: { provisioning_status: @loadbalancer.provisioning_status }
+      rescue => e
+        render json: { provisioning_status: 'UNKNOWN' }
       end
     end
 

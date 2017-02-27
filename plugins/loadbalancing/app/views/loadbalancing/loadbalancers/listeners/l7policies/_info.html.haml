@@ -5,6 +5,11 @@
     %tbody
       %tr
         %th.snug-nowrap
+          State:
+        %td
+          .state{data:{update_loadbalancer_state: plugin('loadbalancing').get_item_loadbalancer_path(id: loadbalancer.id), initial_loadbalancer_state: loadbalancer.provisioning_status}}
+      %tr
+        %th.snug-nowrap
           Name:
         %td
           = l7policy.name
@@ -16,7 +21,7 @@
       %tr
         %th.snug-nowrap
           ID:
-        %td
+        %td.small
           = l7policy.id
       %tr
         %th.snug-nowrap

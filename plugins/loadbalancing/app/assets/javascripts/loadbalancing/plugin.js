@@ -30,7 +30,7 @@ loadbalancing.name = function() {
 
 // This is always executed on page load.
 $(document).ready(function(){
-  // ...
+  $('[data-update-loadbalancer-state]').loadbalancerState();
 }); 
     
 // Call function from other files inside this plugin using the variable loadbalancing

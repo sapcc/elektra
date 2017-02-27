@@ -33,4 +33,4 @@
             %td{colspan:6} No L7 Rules defined
       =# render_paginatable(@l7rules)
     .col-md-3
-      = render :partial => 'loadbalancing/loadbalancers/listeners/l7policies/info', locals: {l7policy: @l7policy}
+      = render :partial => 'loadbalancing/loadbalancers/listeners/l7policies/info', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: @l7policy}

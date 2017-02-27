@@ -46,6 +46,7 @@ module Loadbalancing
           redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id), notice: 'Pool was successfully created.'
         else
           @pool.loadbalancer_id = @loadbalancer.id
+          @protocols = @pool.listener_id.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
           @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
           render :new
         end
@@ -70,43 +71,24 @@ module Loadbalancing
         @pool = services.loadbalancing.find_pool(params[:id])
         @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool.healthmonitor_id
 
-        count = 0
-        h_error = false
+
         if @healthmonitor
-          until @healthmonitor.destroy
-            if count > 10
-              h_error = true
-              break
-            end
-            count += 1
-            sleep 1
+          unless services.loadbalancing.execute(params[:loadbalancer_id]) {@healthmonitor.destroy}
+            redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id),
+                        flash: {error: "Could not delete attached Healthmonitor #{@healthmonitor.errors.full_messages.to_sentence}"} and return
           end
         end
 
-        if h_error
-          redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id), flash: {error: "Could not delete attached Healthmonitor #{@healthmonitor.errors.full_messages.to_sentence}"}
-          return
-        end
+        pool_deleted = true
+        pool_deleted = services.loadbalancing.execute(params[:loadbalancer_id]) {@pool.destroy} if @pool
 
-        count = 0
-        p_error = false
-        until @pool.destroy
-          if count > 10
-            p_error = true
-            break
-          end
-          count += 1
-          sleep 1
-        end
-
-        sleep 3
-        if !p_error and !h_error and @healthmonitor
+        if pool_deleted and @healthmonitor
           audit_logger.info(current_user, "has deleted", @pool)
           audit_logger.info(current_user, "has deleted", @healthmonitor)
-          redirect_to request.referer, notice: 'Pool and Healthmonitor successfully deleted.'
-        elsif !p_error and !h_error and !@healthmonitor
+          redirect_to request.referer, notice: 'Pool and Healthmonitor will be deleted.'
+        elsif pool_deleted && !@healthmonitor
           audit_logger.info(current_user, "has deleted", @pool)
-          redirect_to request.referer, notice: 'Pool successfully deleted.'
+          redirect_to request.referer, notice: 'Pool will be deleted.'
         else
           redirect_to request.referer, flash: {error: "Pool deletion failed -> #{@pool.errors.full_messages.to_sentence}"}
         end

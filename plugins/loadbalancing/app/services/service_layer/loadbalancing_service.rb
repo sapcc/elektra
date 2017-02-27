@@ -4,18 +4,16 @@ module ServiceLayer
 
     def driver
       @driver ||= Loadbalancing::Driver::Fog.new({
-        auth_url:   self.auth_url,
-        region:     self.region,
-        token:      self.token,
-        domain_id:  self.domain_id,
-        project_id: self.project_id  
-      })
+                                                     auth_url: self.auth_url,
+                                                     region: self.region,
+                                                     token: self.token,
+                                                     domain_id: self.domain_id,
+                                                     project_id: self.project_id
+                                                 })
     end
-    
+
     def available?(action_name_sym=nil)
-      # check if loadbalancers call responds without error
-      @available ||= driver.map_to(Loadbalancing::Loadbalancer).loadbalancers() rescue false
-      return @available
+      not current_user.service_url('network', region: region).nil?
     end
 
     def test
@@ -31,7 +29,7 @@ module ServiceLayer
     end
 
     def new_loadbalancer(attributes={})
-      Loadbalancing::Loadbalancer.new(driver,attributes)
+      Loadbalancing::Loadbalancer.new(driver, attributes)
     end
 
     def listeners(filter={})
@@ -43,7 +41,7 @@ module ServiceLayer
     end
 
     def new_listener(attributes={})
-      Loadbalancing::Listener.new(driver,attributes)
+      Loadbalancing::Listener.new(driver, attributes)
     end
 
     def pools(filter={})
@@ -55,7 +53,7 @@ module ServiceLayer
     end
 
     def new_pool(attributes={})
-      Loadbalancing::Pool.new(driver,attributes)
+      Loadbalancing::Pool.new(driver, attributes)
     end
 
     def pool_members(filter={})
@@ -71,7 +69,7 @@ module ServiceLayer
     end
 
     def new_pool_member(attributes={})
-      Loadbalancing::PoolMember.new(driver,attributes)
+      Loadbalancing::PoolMember.new(driver, attributes)
     end
 
     def healthmonitors(filter={})
@@ -83,7 +81,7 @@ module ServiceLayer
     end
 
     def new_healthmonitor(attributes={})
-      Loadbalancing::Healthmonitor.new(driver,attributes)
+      Loadbalancing::Healthmonitor.new(driver, attributes)
     end
 
     def l7policies(filter={})
@@ -95,7 +93,7 @@ module ServiceLayer
     end
 
     def new_l7policy(attributes={})
-      Loadbalancing::L7policy.new(driver,attributes)
+      Loadbalancing::L7policy.new(driver, attributes)
     end
 
     def l7rules(l7policy_id, filter={})
@@ -115,7 +113,31 @@ module ServiceLayer
     end
 
     def new_l7rule(attributes={})
-      Loadbalancing::L7rule.new(driver,attributes)
+      Loadbalancing::L7rule.new(driver, attributes)
+    end
+
+    def loadbalancer_changeable?(id)
+      lb = find_loadbalancer(id)
+      return false unless lb
+      count = 0
+      until ['ACTIVE', 'ERROR'].include?(lb.provisioning_status)
+        if count >= 20
+          return false
+        else
+          sleep 3
+          count += 1
+          lb = find_loadbalancer(id)
+        end
+      end
+      return true
+    end
+
+    def execute(id, &block)
+      if loadbalancer_changeable?(id)
+        return block.call
+      else
+        return false
+      end
     end
 
   end
