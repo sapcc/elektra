@@ -27,7 +27,8 @@ ResourceManagement::Engine.routes.draw do
     post 'approve_request' => 'domain_admin#approve_request'
     get  'review_package_request'  => 'domain_admin#review_package_request'
     post 'approve_package_request' => 'domain_admin#approve_package_request'
-    match  'reduce_quota' => 'domain_admin#reduce_quota', via: [:get, :post]
+    post 'reduce_quota' => 'domain_admin#reduce_quota'
+    get  'confirm_reduce_quota' => 'domain_admin#confirm_reduce_quota'
   end
 
   scope 'cloud_admin', as: 'cloud_admin' do
