@@ -3,11 +3,11 @@
   "image:image_list": "role:admin or role:Member or role:member",
   "image:image_create": "role:admin",
   "image:image_update": "role:admin or user_id:%(image.user_id)s",
-  "image:image_delete": "role:admin-from-image or user_id:%(image.user_id)s",
+  "image:image_delete": "project_id:%(image.owner)s",
   "image:image_suggested": "not role:cloud_image_admin",
   "image:image_publish": "role:cloud_image_admin",
   "image:image_unpublish": "role:cloud_image_admin",
-  
+
   "image:member_create": "project_id:%(image.owner)s",
   "image:member_update": "@",
   "image:member_delete": "project_id:%(image.owner)s",
