@@ -1,7 +1,7 @@
 - data = {}
 - if loadbalancer.in_transition?
   - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
-  - data[:interval]=2500
+  - data[:interval]=10000
 
 
 %tr{id: "loadbalancer_#{loadbalancer.id}", data: data }

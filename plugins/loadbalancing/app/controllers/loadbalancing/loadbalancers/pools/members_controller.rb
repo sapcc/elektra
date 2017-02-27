@@ -33,29 +33,27 @@ module Loadbalancing
           # OS Bug, Subnet not optional, has to be set to VIP subnet
           vip_subnet_id = @loadbalancer.vip_subnet_id
 
-          new_servers = params[:servers]
+          new_servers = params[:servers] || []
           @error_members = []
           success = true
           new_servers.each do |new_member|
-            count = 0
             begin
-              count += 1
               member = services.loadbalancing.new_pool_member
               member.attributes = {pool_id: params[:pool_id], address: new_member['address'], protocol_port: new_member['protocol_port'],
                                    weight: new_member['weight'], subnet_id: vip_subnet_id}
 
-              # Horrible hack for adding members when LB is in state PENDING
-              unless member.save
-                raise if member.errors.messages.to_s.match("Invalid state PENDING_UPDATE of loadbalancer resource")
+              msuccess = services.loadbalancing.execute(@loadbalancer.id) { member.save }
+              unless msuccess
                 success = false
                 member.id = SecureRandom.hex
                 @error_members << member
               end
             rescue
-              sleep 3
-              retry if count < 10
+              success = false
+              member.id = SecureRandom.hex
+              @error_members << member
             end
-          end if new_servers
+          end
 
           if success
             redirect_to show_details_loadbalancer_pool_path(id: params[:pool_id], loadbalancer_id: params[:loadbalancer_id]), notice: 'Members successfully created.'
@@ -66,11 +64,12 @@ module Loadbalancing
           end
         end
 
+
         def destroy
           pool_id = params[:pool_id]
           member_id = params[:id]
           @member = services.loadbalancing.find_pool_member(pool_id, member_id)
-          services.loadbalancing.delete_pool_member(pool_id, member_id)
+          services.loadbalancing.execute(@loadbalancer.id) { services.loadbalancing.delete_pool_member(pool_id, member_id) }
           audit_logger.info(current_user, "has deleted", @member)
           render template: 'loadbalancing/loadbalancers/pools/members/destroy_item.js'
         end

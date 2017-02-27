@@ -2,8 +2,9 @@ module Loadbalancing
   module Loadbalancers
     class ListenersController < DashboardController
 
+      before_filter :load_objects, except: [:show]
+
       def index
-        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
         @quota_data = services.resource_management.quota_data([{service_name: :loadbalancing, resource_name: :listeners,
                                                                 usage: services.loadbalancing.listeners(tenant_id: @scoped_project_id).length}])
@@ -11,7 +12,6 @@ module Loadbalancing
 
 
       def show
-        #@loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         @listener = services.loadbalancing.find_listener(params[:id])
         @pools = [services.loadbalancing.find_pool(@listener.default_pool_id)] if @listener.default_pool_id
       end
@@ -19,21 +19,17 @@ module Loadbalancing
 
       def new
         @listener = services.loadbalancing.new_listener
-        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         containers = services.key_manager.containers()
         @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
       end
 
       def create
         @listener = services.loadbalancing.new_listener
-        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
-        @listener.attributes = params[:listener].delete_if { |key, value| value.blank? }.merge(loadbalancer_id: @loadbalancer.id)
-        @listener.sni_container_refs.reject! { |c| c.empty? } if @listener.sni_container_refs
+        @listener.attributes = listener_params.delete_if { |key, value| value.blank? }.merge(loadbalancer_id: @loadbalancer.id)
         if @listener.save
           audit_logger.info(current_user, "has created", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: params[:loadbalancer_id]), notice: 'Listener successfully created.'
         else
-          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
           containers = services.key_manager.containers()
           @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
           render :new
@@ -42,17 +38,18 @@ module Loadbalancing
 
       def edit
         @listener = services.loadbalancing.find_listener(params[:id])
-        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+        containers = services.key_manager.containers()
+        @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
       end
 
       def update
         @listener = services.loadbalancing.find_listener(params[:id])
-        # @listener.attributes = listener_params.delete_if { |key, value| value.blank? }
         if @listener.update(listener_params)
           audit_logger.info(current_user, "has updated", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener was successfully updated.'
         else
-          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+          containers = services.key_manager.containers()
+          @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
           render :edit
         end
       end
@@ -83,8 +80,16 @@ module Loadbalancing
 
       private
 
+      def load_objects
+        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id]) if params[:loadbalancer_id]
+      end
+
+
       def listener_params
-        return params[:listener]
+        p = params[:listener]
+        # clear array with empty objects because backend can't deal with it
+        p['sni_container_refs'].reject! { |c| c.empty? }
+       return p
       end
 
     end

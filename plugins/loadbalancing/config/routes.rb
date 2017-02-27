@@ -7,6 +7,7 @@ Loadbalancing::Engine.routes.draw do
       put 'attach_floatingip'
       delete 'detach_floatingip'
       get 'update_item'
+      get 'get_item'
     end
 
     resources :listeners, module: :loadbalancers do
