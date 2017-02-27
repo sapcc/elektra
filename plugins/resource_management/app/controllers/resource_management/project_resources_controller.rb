@@ -35,18 +35,19 @@ module ResourceManagement
         @project_resource.add_validation_error(:current_quota, "empty value is invalid")
       else 
         begin
+          parsed_value = @project_resource.data_type.parse(value)
           # pre check value
-          if @project_resource.approved_quota < @project_resource.data_type.parse(value) &&
-             @project_resource.current_quota < @project_resource.data_type.parse(value)
-            @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value of #{value} is higher than your current quota")
-          elsif @project_resource.usage > @project_resource.data_type.parse(value)
+          if @project_resource.approved_quota < parsed_value &&
+             @project_resource.current_quota < parsed_value
+            @project_resource.add_validation_error(:current_quota, "wrong value: because the wanted quota value of #{value} is higher than your current quota")
+          elsif @project_resource.usage > parsed_value
             @project_resource.add_validation_error(:current_quota, "wrong value: it is now allowed to reduce the quota below your current usage")
-          elsif @project_resource.approved_quota == @project_resource.data_type.parse(value) &&
-                @project_resource.current_quota == @project_resource.data_type.parse(value)
-            @project_resource.add_validation_error(:current_quota, "wrong value: because the reduced quota value is the same as your current quota")
+          elsif @project_resource.approved_quota == parsed_value &&
+                @project_resource.current_quota == parsed_value
+            @project_resource.add_validation_error(:current_quota, "wrong value: because the wanted quota value is the same as your current quota")
           else
-            @project_resource.approved_quota = @project_resource.data_type.parse(value)
-            @project_resource.current_quota = @project_resource.data_type.parse(value)
+            @project_resource.approved_quota = parsed_value
+            @project_resource.current_quota = parsed_value
           end
         rescue ArgumentError => e
           @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)

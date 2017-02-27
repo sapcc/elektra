@@ -79,20 +79,21 @@ module ResourceManagement
 
       prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
       value = params[:resource][:approved_quota]
-      
+
       if value.empty?
         @resource.add_validation_error(:approved_quota, "empty value is invalid")
       else 
         begin
+          parsed_value = @resource.data_type.parse(value)
           # pre check value
-          if @resource.approved_quota < @resource.data_type.parse(value) 
-              @resource.add_validation_error(:approved_quota, "wrong value: because the reduced quota value of #{value} is higher than your approved quota")
-          elsif @resource_status[:current_quota_sum] > @resource.data_type.parse(value)
+          if @resource.approved_quota < parsed_value
+              @resource.add_validation_error(:approved_quota, "wrong value: because the wanted quota value of #{value} is higher than your approved quota")
+          elsif @resource_status[:current_quota_sum] > parsed_value
             @resource.add_validation_error(:approved_quota, "wrong value: it is now allowed to reduce the quota below your current used quota value of #{@resource_status[:current_quota_sum]}")
-          elsif @resource.approved_quota == @resource.data_type.parse(value) 
-              @resource.add_validation_error(:approved_quota, "wrong value: because the reduced quota value is the same as your approved quota")
+          elsif @resource.approved_quota == parsed_value
+              @resource.add_validation_error(:approved_quota, "wrong value: because the wanted quota value is the same as your approved quota")
           else
-            @resource.approved_quota = @resource.data_type.parse(value)
+            @resource.approved_quota = parsed_value
           end
         rescue ArgumentError => e
           @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
