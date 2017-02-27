@@ -22,6 +22,7 @@ pickle-email-*.html
 *.log
 .env*
 .idea
+.ruby-version
 /bin
 !/bin/rails
 !/bin/rake
