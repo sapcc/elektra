@@ -78,6 +78,10 @@ module ResourceManagement
       
     end
 
+    def new_request
+      # please do not delete
+    end
+
     def create_request
       old_value = @project_resource.approved_quota
       data_type = @project_resource.data_type
@@ -143,6 +147,7 @@ module ResourceManagement
     end
 
     def new_package_request
+      # please do not delete
     end
 
     def create_package_request

@@ -35,6 +35,7 @@ module ResourceManagement
     end
 
     def edit
+      # please do not delete
     end
 
     def cancel
