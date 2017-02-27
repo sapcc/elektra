@@ -79,6 +79,12 @@ module ResourceManagement
       def set_project_quota_object_storage(domain_id, project_id, values)
         return unless values.has_key?(:capacity)
 
+        headers = {
+          'x-account-meta-quota-bytes' => values[:capacity],
+          # this header brought to you by https://github.com/sapcc/swift-addons
+          'x-account-project-domain-id-override' => domain_id,
+        }
+
         with_service_user_connection_for_swift(project_id) do |connection|
           # the post_account request is not yet implemented in Fog (TODO: add it),
           # so let's use request() directly
@@ -88,7 +94,7 @@ module ResourceManagement
               method:  'POST',
               path:    '',
               query:   { format: 'json' },
-              headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
+              headers: headers,
             )
           rescue ::Fog::Storage::OpenStack::NotFound
             # account does not exist yet - if there is a non-zero quota, enable it now
@@ -98,7 +104,7 @@ module ResourceManagement
                 method:  'PUT',
                 path:    '',
                 query:   { format: 'json' },
-                headers: { 'x-account-meta-quota-bytes' => values[:capacity] },
+                headers: headers,
               )
             end
           end
