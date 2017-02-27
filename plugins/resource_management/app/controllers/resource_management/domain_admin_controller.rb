@@ -75,10 +75,9 @@ module ResourceManagement
       # first show the reduce quota window
       # second: reduce the quota
       
+      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
       unless params[:resource]
         # show the reduce quota window 
-        # prepare data for usage display
-        prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
       else
         # reduce the quota
         value = params[:resource][:approved_quota]
@@ -90,6 +89,8 @@ module ResourceManagement
             # pre check value
             if @resource.approved_quota < @resource.data_type.parse(value) 
                 @resource.add_validation_error(:approved_quota, "wrong value: because the reduced quota value of #{value} is higher than your approved quota")
+            elsif @resource_status[:current_quota_sum] > @resource.data_type.parse(value)
+              @resource.add_validation_error(:approved_quota, "wrong value: it is now allowed to reduce the quota below your current used quota value of #{@resource_status[:current_quota_sum]}")
             elsif @resource.approved_quota == @resource.data_type.parse(value) 
                 @resource.add_validation_error(:approved_quota, "wrong value: because the reduced quota value is the same as your approved quota")
             else
