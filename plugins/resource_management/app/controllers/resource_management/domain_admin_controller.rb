@@ -178,11 +178,13 @@ module ResourceManagement
         # disregard unlimited quotas (current_quota == -1 etc.)
         pluck(:service, :name, 'SUM(GREATEST(0,current_quota))', 'SUM(GREATEST(0,approved_quota))', 'SUM(usage)').
         each do |service,resource,current_quota,approved_quota,usage|
-          @stats[service.to_sym][resource.to_sym].merge!(
-            total_current_quota:  current_quota,
-            total_approved_quota: approved_quota,
-            total_usage:          usage,
-          )
+          if service != 'resource_management'
+            @stats[service.to_sym][resource.to_sym].merge!(
+              total_current_quota:  current_quota,
+              total_approved_quota: approved_quota,
+              total_usage:          usage,
+            )
+          end
       end
 
       # check if some projects have infinite quota
