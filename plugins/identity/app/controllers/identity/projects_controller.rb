@@ -145,7 +145,6 @@ module Identity
 
       # check and update cost control status
       unless @project_profile.wizard_finished?("cost_control")
-
         #billing_data = services.cost_control.find_project_masterdata(@scoped_project_id)
         billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id)
         if billing_data and billing_data.cost_object_id

@@ -18,7 +18,7 @@ module ResourceManagement
 
       respond_to do |format|
         format.html
-        format.js # update only status bars 
+        format.js # update only status bars
       end
     end
 
@@ -62,7 +62,7 @@ module ResourceManagement
         services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
         @project_resource.save
       end
-      
+
       # prepare data for view
       prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
 
@@ -325,10 +325,10 @@ module ResourceManagement
       @projects = Kaminari.paginate_array(projects).page(params[:page]).per(6)
 
       respond_to do |format|
-        format.html 
+        format.html
         format.js
       end
- 
+
     end
 
     def sync_now
@@ -436,7 +436,7 @@ module ResourceManagement
 
         # show warning in infobox when there are critical quotas
         @show_warning = true if is_critical
- 
+
         @resource_status[service.to_sym] << {
           name:                       name,
           current_quota_sum:          current_quota_sum,
