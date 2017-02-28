@@ -27,5 +27,5 @@
 
 :javascript
   $(function() {
-    $.get("#{plugin('resource_management').resources_initial_sync_path()}");
+    $.get("#{escape_javascript(plugin('resource_management').resources_initial_sync_path())}");
   });
