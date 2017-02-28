@@ -145,6 +145,15 @@ module ResourceManagement
       end
     end
 
+    def initial_sync
+      # do the magic inital sync for the package request from project wizard
+      synced = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).where.not(service: 'resource_management').size > 0
+      unless synced
+        sync_now(true)
+      end
+      render :nothing => true, :status => 200, :content_type => 'text/html'
+    end
+
     def new_package_request
       # please do not delete
     end
@@ -163,7 +172,7 @@ module ResourceManagement
           format.js { render inline: 'alert("Error: Invalid quota package name specified.")' }
         end
       end
-
+      
       # create inquiry
       base_url = plugin('resource_management').admin_path(domain_id: @scoped_domain_name, project_id: nil)
       overlay_url = plugin('resource_management').admin_review_package_request_path(domain_id: @scoped_domain_name, project_id: nil)
@@ -209,12 +218,14 @@ module ResourceManagement
       @min_updated_at, @max_updated_at = @resources.pluck("MIN(updated_at), MAX(updated_at)").first
     end
 
-    def sync_now
+    def sync_now(direct = false)
       services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
-      begin
-        redirect_to :back
-      rescue ActionController::RedirectBackError
-        redirect_to resources_path()
+      unless direct
+        begin
+          redirect_to :back
+        rescue ActionController::RedirectBackError
+          redirect_to resources_path()
+        end
       end
     end
 

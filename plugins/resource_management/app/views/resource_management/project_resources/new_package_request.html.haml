@@ -23,4 +23,9 @@
             %span.not-insignificant More Details
         - ResourceManagement::PackageConfig::PACKAGES.each do |pkg|
           %td
-            = link_to 'Request', plugin('resource_management').resources_create_package_request_path(package: pkg), class: 'btn btn-primary btn-sm', method: 'POST', remote: true
+            = link_to 'Request', plugin('resource_management').resources_create_package_request_path(package: pkg), class: 'btn btn-primary btn-sm', method: 'POST', remote: true, data: { disable_with: 'Please wait...'}
+
+:javascript
+  $(function() {
+    $.get("#{escape_javascript(plugin('resource_management').resources_initial_sync_path())}");
+  });
