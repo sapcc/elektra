@@ -25,6 +25,7 @@ en:
       monasca-viewer: Monitoring Read-Only
       monitoring-delegate: Monitoring Delegate
       network_admin: Neutron Administrator
+      network_viewer: Neutron Read-Only
       service: Service User
       sharedfilesystem_admin: Manila Administrator
       sharedfilesystem_viewer: Manila Read-Only

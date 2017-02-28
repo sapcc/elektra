@@ -7,6 +7,8 @@ ALLOWED_ROLES = %w(
   monasca-user
   monasca-viewer
   monitoring-delegate
+  network_admin
+  network_viewer
   sharedfilesystem_viewer
   swiftoperator
   volume_admin
