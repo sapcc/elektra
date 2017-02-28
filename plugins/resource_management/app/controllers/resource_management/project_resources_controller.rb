@@ -218,7 +218,7 @@ module ResourceManagement
       @min_updated_at, @max_updated_at = @resources.pluck("MIN(updated_at), MAX(updated_at)").first
     end
 
-    def sync_now(direct)
+    def sync_now(direct = false)
       services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
       unless direct
         begin
