@@ -1225,31 +1225,37 @@ tr.state-active {
 }
 
 tr.state-paused {
-  td:first-child {
-    &:before {
-      font-family: 'Glyphicons Halflings';
-      content: "\e034";
-      color: #FFCC33;
+  &:not(.deleting):not(.updating) {
+    td:first-child {
+      &:before {
+        font-family: 'Glyphicons Halflings';
+        content: "\e034";
+        color: #FFCC33;
+      }
     }
   }
 }
 
 tr.state-shutoff {
-  td:first-child {
-    &:before {
-      font-family: 'Glyphicons Halflings';
-      content: "\e034";
-      color: #000000;
+  &:not(.deleting):not(.updating) {
+    td:first-child {
+      &:before {
+        font-family: 'Glyphicons Halflings';
+        content: "\e034";
+        color: #000000;
+      }
     }
   }
 }
 
 tr.state-error {
-  td:first-child {
-    &:before {
-      font-family: 'Glyphicons Halflings';
-      content: "\e034";
-      color: red;
+  &:not(.deleting):not(.updating) {
+    td:first-child {
+      &:before {
+        font-family: 'Glyphicons Halflings';
+        content: "\e034";
+        color: red;
+      }
     }
   }
 }
