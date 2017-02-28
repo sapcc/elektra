@@ -12,6 +12,7 @@ Bundler.require(*Rails.groups)
 module MonsoonDashboard
   class Application < Rails::Application
     config.react.addons = true
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -80,13 +81,13 @@ module MonsoonDashboard
 
     config.debug_api_calls = ENV.has_key?('DEBUG_API_CALLS')
     config.debug_policy_engine = ENV.has_key?('DEBUG_POLICY_ENGINE')
-    
-    
+
+
     config.ssl_verify_peer = if ENV.has_key?('ELEKTRA_SSL_VERIFY_PEER')
-      ENV['ELEKTRA_SSL_VERIFY_PEER'].to_s=='true' 
+      ENV['ELEKTRA_SSL_VERIFY_PEER'].to_s=='true'
     else
       true
-    end  
+    end
 
     ############## REGION ###############
     config.default_region = ENV['MONSOON_DASHBOARD_REGION'] || ['eu-de-1','staging','europe']
