@@ -291,9 +291,15 @@ module ServiceLayer
           current_quota:  this_actual_quota,
           approved_quota: 0,
         ) do |obj|
+          auto_approved = resource.auto_approved_quota
+          if auto_approved > 0 and obj.approved_quota == 0 and this_actual_quota == auto_approved and this_actual_usage == auto_approved
+            this_actual_quota = auto_approved
+            obj.current_quota = this_actual_quota
+            obj.approved_quota = this_actual_quota
+            apply_current_quota(obj)
           # enforce default quotas for newly created projects, if not done by the responsible service itself
           # default quota is used only if it was setuped by the domain admin
-          if this_actual_quota == -1 and not domain_resource.try(:default_quota).nil?
+          elsif this_actual_quota == -1 and not domain_resource.try(:default_quota).nil?
             this_actual_quota = domain_resource.default_quota
             obj.current_quota = this_actual_quota
             obj.approved_quota = this_actual_quota
