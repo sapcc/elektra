@@ -49,8 +49,12 @@ module Core
       @type
     end
 
-    def format(value)
-      send("format_#{@type}", value)
+    def format(value, options = {delimiter: true})
+      formated_value = send("format_#{@type}", value)
+      unless options[:delimiter]
+        formated_value.gsub!(/\u202F/,'')
+      end
+      formated_value
     end
 
     def parse(value)

@@ -20,6 +20,10 @@ RSpec.describe Core::DataType do
       expect(datatype_number.format(12345)).to     match(/^12[[:space:]]345$/)
       expect(datatype_number.format(1234567)).to   match(/^1[[:space:]]234[[:space:]]567$/)
       expect(datatype_number.format(123456789)).to match(/^123[[:space:]]456[[:space:]]789$/)
+      # check with no delimiter (used for editable fields)
+      expect(datatype_number.format(12345, delimiter: false)).to     match(/^12345$/)
+      expect(datatype_number.format(1234567, delimiter: false)).to   match(/^1234567$/)
+      expect(datatype_number.format(123456789, delimiter: false)).to match(/^123456789$/)
     end
 
     it 'renders byte values with appropriate units' do
