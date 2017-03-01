@@ -1,1 +1,1 @@
-<%= render partial: 'edit_js', locals: { resource_id: @project_resource.id, value: @project_resource.data_type.format(@project_resource.approved_quota) } %>
+<%= render partial: 'edit_js', locals: { resource_id: @project_resource.id, value: @project_resource.data_type.format(@project_resource.approved_quota,false) } %>
