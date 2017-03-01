@@ -163,6 +163,9 @@ module ServiceLayer
       end
 
       domain_name ||= ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).pluck('DISTINCT scope_name').first || ''
+      # disabled for legacy because it's not working correctly anyway
+      return if domain_name == 'monsoon2'
+
       init_domain(domain_id, domain_name)
       discover_projects(domain_id)
 
@@ -247,6 +250,9 @@ module ServiceLayer
     # and usage values (and create missing Resource entries as necessary).
     def sync_project(domain_id, project_id, project_name=nil)
       Rails.logger.info "ResourceManagement > sync_project(#{domain_id}, #{project_id})"
+
+      # disabled for legacy monsoon2 because it's not working correctly anyway
+      return if project_id.start_with?('p-')
 
       # get the project name (FIXME: this breaks if the project name is changed
       # in Keystone, but there are entries with the old scope_name in our DB)
