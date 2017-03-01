@@ -47,8 +47,9 @@ module ResourceManagement
 
     def dump_data
       region = [Rails.application.config.default_region].flatten.first
+      monsoon2_domain_id = ResourceManagement::Resource.where(scope_name: 'monsoon2', project_name: nil).pluck(:domain_id).first
       # when dumping project resource data, skip internal dummy records with service == "resource_management"
-      project_resources = ResourceManagement::Resource.where("project_id IS NOT NULL AND service != 'resource_management'")
+      project_resources = ResourceManagement::Resource.where("project_id IS NOT NULL AND service != 'resource_management' AND domain_id != ?", monsoon2_domain_id)
 
       full_data = {
         metadata: { version: 1 },
