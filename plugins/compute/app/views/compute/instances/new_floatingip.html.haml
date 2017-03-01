@@ -1,7 +1,7 @@
 = content_for :title do
   Attach Floating IP
 
-- if @available_ips.length>0
+- if @grouped_fips.length>0
   = simple_form_for @floating_ip, url: plugin('compute').attach_floatingip_instance_path(id:params[:id]), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'allocate_ip' }, wrapper: :horizontal_form do |f|
 
     %div{class: modal? ? 'modal-body' : ''}
@@ -10,10 +10,10 @@
           = @floating_ip.errors.full_messages.to_sentence + '.'
 
       = f.input :ip_id,
-        as: :select,
-        collection: @available_ips.collect{|fip| ["#{fip.floating_ip_address} (#{@networks[fip.floating_network_id].try(:name)})",fip.id] },
+        :as => :grouped_select,
+        :collection   => @grouped_fips,
+        :group_method => :last,
         include_blank: false
-
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?

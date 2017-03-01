@@ -12,8 +12,8 @@ module Loadbalancing
       end
 
       @quota_data = services.resource_management.quota_data([
-        {service_name: :loadbalancing, resource_name: :loadbalancers, usage: @loadbalancers.length},
-      ])
+                                                                {service_name: :loadbalancing, resource_name: :loadbalancers, usage: @loadbalancers.length},
+                                                            ])
     end
 
     def show
@@ -22,19 +22,19 @@ module Loadbalancing
 
     def new
       @loadbalancer = services.loadbalancing.new_loadbalancer
-      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
+      @private_networks = services.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services.networking.available?
     end
 
     def create
       @loadbalancer = services.loadbalancing.new_loadbalancer()
-      @loadbalancer.attributes = loadbalancer_params.delete_if{ |key,value| value.blank?}
+      @loadbalancer.attributes = loadbalancer_params.delete_if { |key, value| value.blank? }
 
       if @loadbalancer.save
         audit_logger.info(current_user, "has created", @loadbalancer)
         render template: 'loadbalancing/loadbalancers/create.js'
         #redirect_to loadbalancers_path, notice: 'Load Balancer successfully created.'
       else
-        @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
+        @private_networks = services.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services.networking.available?
         render :new
       end
 
@@ -42,7 +42,7 @@ module Loadbalancing
 
     def edit
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
-      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
+      @private_networks = services.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services.networking.available?
     end
 
     def update
@@ -80,7 +80,7 @@ module Loadbalancing
     def attach_floatingip
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       vip_port_id = @loadbalancer.vip_port_id
-      @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
+      @floating_ip = Networking::FloatingIp.new(nil, params[:floating_ip])
 
       success = begin
         @floating_ip = services.networking.attach_floatingip(params[:floating_ip][:ip_id], vip_port_id)
@@ -90,7 +90,7 @@ module Loadbalancing
           false
         end
       rescue => e
-        @floating_ip.errors.add('message',e.message)
+        @floating_ip.errors.add('message', e.message)
         false
       end
 
@@ -98,8 +98,8 @@ module Loadbalancing
         audit_logger.info(current_user, "has attached", @floating_ip, "to loadbalancer", params[:id])
 
         respond_to do |format|
-          format.html{redirect_to loadbalancers_url}
-          format.js{
+          format.html { redirect_to loadbalancers_url }
+          format.js {
             @loadbalancer.floating_ip = @floating_ip
           }
         end
@@ -117,11 +117,11 @@ module Loadbalancing
       end
 
       respond_to do |format|
-        format.html{
+        format.html {
           sleep(3)
           redirect_to loadbalancers_url
         }
-        format.js{
+        format.js {
           if @floating_ip and @floating_ip.port_id.nil?
             @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
             @loadbalancer.floating_ip = nil
@@ -148,9 +148,9 @@ module Loadbalancing
     def get_item
       begin
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
-        render json: { provisioning_status: @loadbalancer.provisioning_status }
+        render json: {provisioning_status: @loadbalancer.provisioning_status}
       rescue => e
-        render json: { provisioning_status: 'UNKNOWN' }
+        render json: {provisioning_status: 'UNKNOWN'}
       end
     end
 
@@ -158,16 +158,31 @@ module Loadbalancing
     private
 
     def collect_available_ips
-      @networks = {}
-      @available_ips = []
+      @grouped_fips = {}
+      networks = {}
+      subnets = {}
       services.networking.project_floating_ips(@scoped_project_id).each do |fip|
         if fip.fixed_ip_address.nil?
-          unless @networks[fip.floating_network_id]
-            @networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id)
+          networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id) unless networks[fip.floating_network_id]
+          net = networks[fip.floating_network_id]
+          unless net.subnets.blank?
+            net.subnets.each do |subid|
+              subnets[subid] = services.networking.subnet(subid) unless subnets[subid]
+              sub = subnets[subid]
+              cidr = NetAddr::CIDR.create(sub.cidr)
+              if cidr.contains?(fip.floating_ip_address)
+                @grouped_fips[sub.name] ||= []
+                @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
+                break
+              end
+            end
+          else
+            @grouped_fips[net.name] ||= []
+            @grouped_fips[net.name] << [fip.floating_ip_address, fip.id]
           end
-          @available_ips << fip
         end
       end
+      return
     end
 
     def loadbalancer_params

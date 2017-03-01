@@ -373,6 +373,7 @@ GEM
     multipart-post (2.0.0)
     nenv (0.2.0)
     net-ssh (3.0.2)
+    netaddr (1.5.1)
     netrc (0.11.0)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
@@ -569,6 +570,7 @@ DEPENDENCIES
   monitoring!
   monsoon-openstack-auth!
   net-ssh
+  netaddr
   networking!
   object_storage!
   pg

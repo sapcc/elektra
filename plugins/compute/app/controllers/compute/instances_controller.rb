@@ -327,14 +327,28 @@ module Compute
     private
 
     def collect_available_ips
-      @networks = {}
-      @available_ips = []
+      @grouped_fips = {}
+      networks = {}
+      subnets = {}
       services.networking.project_floating_ips(@scoped_project_id).each do |fip|
         if fip.fixed_ip_address.nil?
-          unless @networks[fip.floating_network_id]
-            @networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id)
+          networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id) unless networks[fip.floating_network_id]
+          net = networks[fip.floating_network_id]
+          unless net.subnets.blank?
+            net.subnets.each do |subid|
+              subnets[subid] = services.networking.subnet(subid) unless subnets[subid]
+              sub = subnets[subid]
+              cidr = NetAddr::CIDR.create(sub.cidr)
+              if cidr.contains?(fip.floating_ip_address)
+                @grouped_fips[sub.name] ||= []
+                @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
+                break
+              end
+            end
+          else
+            @grouped_fips[net.name] ||= []
+            @grouped_fips[net.name] << [fip.floating_ip_address, fip.id]
           end
-          @available_ips << fip
         end
       end
     end

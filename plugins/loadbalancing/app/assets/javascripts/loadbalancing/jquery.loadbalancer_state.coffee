@@ -44,5 +44,5 @@ renderState = (state, pstate) ->
     state.data('title', 'The last request for the Load Balancer status did not succeed. Status will get updated soon.')
   else
     $status.addClass('label-warning')
-    state.data('title', 'Configuration changes are in progress. Please DO NOT any changes to the Load Balancer until it is in state ACTIVE again')
+    state.data('title', 'Configuration changes are in progress. Please DO NOT do any changes to the Load Balancer until it is in state ACTIVE again')
   state.html($status)
