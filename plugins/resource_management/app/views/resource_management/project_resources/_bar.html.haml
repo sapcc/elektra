@@ -26,4 +26,4 @@
         - if current_quota > 0
           = link_to 'Reduce',plugin('resource_management').resources_confirm_reduce_quota_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
         - else 
-          = link_to 'Reduce', '#', class: 'btn btn-primary btn-sm disabled'
+          = link_to 'Reduce', '#', class: 'btn btn-default btn-sm disabled'
