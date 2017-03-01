@@ -53,8 +53,19 @@ module Identity
     end
 
     def destroy
+      
+      # first close all open and rejeced requests
+      inquirys = Inquiry::Inquiry.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :aasm_state => ['open','rejected'])
+      inquirys.each do |inquiry|
+        state_change_result = inquiry.change_state(:closed, 'Closed, because project was deleted!', current_user)
+        unless state_change_result
+          flash[:error] = "Something went wrong when trying to close all open or rejected requests for this project"
+          redirect_to plugin('identity').project_path
+        end
+      end
+      
+      # second delete the project itself
       response = service_user.delete_project(@project_id)
-
       if response
         audit_logger.info(current_user, "has deleted project", @project_id)
         flash[:notice] = "Project successfully deleted."
