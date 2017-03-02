@@ -19,9 +19,9 @@ module ServiceLayer
       driver.map_to(Networking::Network).networks(filter)
     end
 
-    def project_networks(project_id)
+    def project_networks(project_id,filter=nil)
       result = []
-      driver.networks.each do |n|
+      driver.networks(filter).each do |n|
         if n['shared'] == true || n['tenant_id'] == project_id
           result << Networking::Network.new(driver, n)
         end

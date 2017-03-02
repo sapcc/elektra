@@ -10,7 +10,7 @@ module ResourceManagement
 
     def index
       @index = true
-      
+
       @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).where.not(service: 'resource_management')
       # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
       @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
@@ -30,10 +30,10 @@ module ResourceManagement
     def reduce_quota
 
       value = params[:resource][:current_quota]
-      
+
       if value.empty?
         @project_resource.add_validation_error(:current_quota, "empty value is invalid")
-      else 
+      else
         begin
           parsed_value = @project_resource.data_type.parse(value)
           # pre check value
@@ -57,13 +57,13 @@ module ResourceManagement
       # save the new quota to the database
       if @project_resource.save
         # apply new quota in target service
-        services.resource_management.apply_current_quota(@project_resource) 
-        
+        services.resource_management.apply_current_quota(@project_resource)
+
         # load data to reload the bars in the main view
         # which services belong to this area?
         @area = @project_resource.config.service.area.to_s
         @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-  
+
         # load all resources for these services
         @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
       else
@@ -166,7 +166,7 @@ module ResourceManagement
           format.js { render inline: 'alert("Error: Invalid quota package name specified.")' }
         end
       end
-      
+
       # create inquiry
       base_url = plugin('resource_management').admin_path(domain_id: @scoped_domain_name, project_id: nil)
       overlay_url = plugin('resource_management').admin_review_package_request_path(domain_id: @scoped_domain_name, project_id: nil)
@@ -193,12 +193,10 @@ module ResourceManagement
         },
       )
 
-      unless inquiry.errors?
-        # reload view to show the "Quota package requested" header
-        respond_to do |format|
-          format.js {  }
-        end
-        return
+      if inquiry.errors.empty?
+        render template: '/resource_management/project_resources/create_package_request.js'
+      else
+        render action: :new_package_request
       end
     end
 
