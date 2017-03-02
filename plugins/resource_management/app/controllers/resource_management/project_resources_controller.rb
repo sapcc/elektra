@@ -159,12 +159,6 @@ module ResourceManagement
     end
 
     def create_package_request
-      unless @can_request_package
-        respond_to do |format|
-          format.js { render inline: 'alert("Error: You may not request a quota package anymore.")' }
-        end
-      end
-
       # validate input
       pkg = params[:package]
       unless ResourceManagement::PackageConfig::PACKAGES.include?(pkg)
@@ -239,11 +233,11 @@ module ResourceManagement
     def check_first_visit
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
-      @can_request_package = true
+      @show_package_request_banner = true
       ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).where('approved_quota > 0').each do |res|
         auto = res.config.auto_approved_quota
         if res.approved_quota != auto or res.current_quota != auto or res.usage != auto
-          @can_request_package = false
+          @show_package_request_banner = false
         end
       end
       @has_requested_package = Inquiry::Inquiry.

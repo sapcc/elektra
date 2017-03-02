@@ -5,9 +5,13 @@
     domain administrator.
   %p
     If you need more resources, you can request a larger quota from your domain administrator.
+    - unless @show_package_request_banner or @has_requested_package
+      You can also enlarge several quotas at once by requesting a pre-defined quota package.
+  - unless @show_package_request_banner or @has_requested_package
+    %p= link_to 'Request quota package', plugin('resource_management').resources_new_package_request_path, class: 'btn btn-default btn-sm', data: {modal: true}
   - if @warning
     %p.text-danger
       %strong Note:
       Some of your current quotas exceed your approved quota. The approved quota will
-      appear as an extra mark on the bar to the left. For this case an
-      automatic alert is issued to your domain administrator.
+      appear as an extra mark on the bar to the left. An automatic alert is
+      issued to your domain administrator.

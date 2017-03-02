@@ -3,6 +3,11 @@
 
 %div{ class: modal? ? 'modal-body' : '' }
 
+  - unless @show_package_request_banner
+    %p
+      %span.label.label-info Note
+      &nbsp;A package request can only enlarge quotas. It will never reduce any of your quotas below the already-approved level.
+
   %table.table.table-hover.package-comparison.without-insignificant
     %thead
       %tr

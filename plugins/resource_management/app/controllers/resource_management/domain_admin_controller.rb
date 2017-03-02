@@ -215,9 +215,12 @@ module ResourceManagement
     end
 
     def approve_package_request
-      # apply quotas from package to project
+      # apply quotas from package to project, but take existing approved quotas into account
       @project_resources.each do |res|
-        quota = res.config.value_for_package(@package)
+        quota = [
+          res.config.value_for_package(@package),
+          res.approved_quota,
+        ].max
         res.approved_quota = quota
         res.current_quota = quota
         res.save!
