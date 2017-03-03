@@ -34,13 +34,11 @@
       - if @recordset.created_at
         %tr
           %th Created at
-          - created_at = @recordset.created_at.is_a?(Time) ? @recordset.created_at : DateTime.parse(@recordset.created_at)
-          %td= created_at.strftime("%b. %d, %Y, %l:%M %P") rescue created_at
+          %td= @recordset.pretty_created_at
       - if @recordset.updated_at
         %tr
           %th Updated at
-          - updated_at = @recordset.updated_at.is_a?(Time) ? @recordset.updated_at : DateTime.parse(@recordset.updated_at)
-          %td= updated_at.strftime("%b. %d, %Y, %l:%M %P") rescue updated_at
+          %td= @recordset.pretty_updated_at
 
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?

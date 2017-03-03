@@ -29,10 +29,10 @@
             %td= @instance.availability_zone
           %tr
             %th Created
-            %td= @instance.created_at
+            %td= @instance.pretty_created_at
           %tr
-            %th Time Since Created
-            %td= @instance.updated_at
+            %th Updated
+            %td= @instance.pretty_updated_at
           - if @instance.attr_host
             %tr
               %th Host

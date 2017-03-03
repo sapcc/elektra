@@ -15,7 +15,7 @@
         = f.input :name, readonly: true
 
         = f.input :created do
-          %div= Core::Formatter.format_modification_time(DateTime.parse(@image.created_at.to_s))
+          %div= @image.pretty_created_at
 
         = f.input :visibility do
           %div

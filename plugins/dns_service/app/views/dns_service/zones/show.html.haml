@@ -55,7 +55,7 @@
                 .small
                   %b= name.humanize
                 - if name=='created_at' or name=='updated_at'
-                  = DateTime.parse(value).strftime("%b. %d, %Y, %l:%M %P") rescue value
+                  = @zone.send("pretty_#{name}")
                 - elsif name == 'pool_id'
                   = pool_name_and_description(value, @pools)
                 - else
