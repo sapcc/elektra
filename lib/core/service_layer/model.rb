@@ -157,12 +157,20 @@ module Core
 
       def created_at
         value = read("created") || read("created_at")
-        Time.parse(value) if value
+        DateTime.parse(value) if value
+      end
+
+      def pretty_created_at
+        Core::Formatter.format_modification_time(created_at) if created_at
       end
 
       def updated_at
         value = read("updated") || read("updated_at")
-        Time.parse(value) if value
+        DateTime.parse(value) if value
+      end
+
+      def pretty_updated_at
+        Core::Formatter.format_modification_time(updated_at) if updated_at
       end
 
       def attributes_for_create

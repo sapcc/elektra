@@ -38,7 +38,7 @@
     - if instance.fault
       %br
       %span.info-text= instance.fault["message"]
-  %td= instance.created_at
+  %td= instance.pretty_created_at
   %td.snug
     - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("compute:instance_update", {})
       .btn-group
