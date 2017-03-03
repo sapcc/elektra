@@ -108,6 +108,7 @@ module Identity
     def check_wizard_status
       unless (@scoped_domain_name=='ccadmin' and @scoped_project_name=='cloud_admin')
         project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+
         unless project_profile.wizard_finished?("cost_control","networking","resource_management")
           redirect_to plugin('identity').project_wizard_url
         end
