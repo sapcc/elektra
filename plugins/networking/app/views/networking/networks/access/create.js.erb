@@ -1,10 +1,15 @@
-var html="<%= j(render(partial: 'networking/networks/access/rbac_item', locals:{rbac: @rbac})) %>"
+<% if @rbac.errors.empty? %>
+  $('#new_rbac_form .alert-error').empty().addClass('hidden');
+  var html="<%= j(render(partial: 'networking/networks/access/rbac_item', locals:{rbac: @rbac})) %>"
 
 
-if($("table#rbacs tr[data-empty]").length==1) {
-  $("table#rbacs tr[data-empty]").replaceWith(html);
-} else {
-  $("table#rbacs tbody").prepend(html);
-}
+  if($("table#rbacs tr[data-empty]").length==1) {
+    $("table#rbacs tr[data-empty]").replaceWith(html);
+  } else {
+    $("table#rbacs tbody").prepend(html);
+  }
 
-$('[data-control-rbac-form]').rbacFormControl('hide');
+  $('[data-control-rbac-form]').rbacFormControl('hide');
+<% else %>
+  $('#new_rbac_form .alert-error').html('<%=@rbac.errors.full_messages.to_sentence%>').removeClass('hidden');
+<% end %>

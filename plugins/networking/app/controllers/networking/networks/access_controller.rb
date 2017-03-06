@@ -2,13 +2,13 @@ module Networking
   class Networks::AccessController < NetworksController
     def index
       @rbacs = services.networking.rbacs(object_id: @network_id, object_type: 'network')
-      
+
       rbac_target_tenant_ids = services.networking.rbacs(object_id: @network_id, object_type: 'network').collect{|rbac| rbac.target_tenant}
 
       @rbac_auth_projects = []
-      @user_domain_projects.each do |project| 
+      @user_domain_projects.each do |project|
         next if project.id==@scoped_project_id or rbac_target_tenant_ids.include?(project.id)
-        @rbac_auth_projects << "#{project.id} (#{project.name})" 
+        @rbac_auth_projects << "#{project.id} (#{project.name})"
       end
     end
 
@@ -22,20 +22,7 @@ module Networking
         @rbac.target_tenant = @rbac.target_tenant.split('(').first.strip
       end
 
-      if @rbac.save
-        render action: :create
-        #redirect_to plugin('networking').send("networks_#{@network_type}_access_index_path", @network_id)
-      else
-        rbac_target_tenant_ids = services.networking.rbacs(object_id: @network_id, object_type: 'network').collect{|rbac| rbac.target_tenant}
-
-        @rbac_auth_projects = []
-        @user_domain_projects.each do |project| 
-          next if project.id==@scoped_project_id or rbac_target_tenant_ids.include?(project.id)
-          @rbac_auth_projects << "#{project.id} (#{project.name})" 
-        end
-        
-        render action: :new
-      end
+      @rbac.save
     end
 
     def destroy

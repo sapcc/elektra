@@ -68,7 +68,7 @@ module Inquiry
       end
 
       event :close, :error => :error_on_event, :guards => Proc.new { |*args| can_close?(*args) } do
-        transitions :from => [:approved, :rejected], :to => :closed, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_close?]
+        transitions :from => [:approved, :rejected, :open], :to => :closed, :after => Proc.new { |*args| log_process_step(*args) }, :guards => [:can_close?]
       end
 
     end
