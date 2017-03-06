@@ -6,6 +6,7 @@
     %thead
       %tr
         %th.snug Action
+        %th ID
         %th Target Project
         %th.snug
     %tbody
@@ -15,10 +16,10 @@
       - else
         - @rbacs.each do | rbac |
           = render partial: 'rbac_item', locals: {rbac: rbac}
-          
+
       - if current_user.is_allowed?("networking:rbac_policy_create",{tenant_id:@scoped_project_id})
         = render partial: 'networking/networks/access/new_rbac_form'
-            
+
 
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?
