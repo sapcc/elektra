@@ -228,7 +228,7 @@ module ResourceManagement
       end
 
       @services_with_error = services.resource_management.apply_current_quota(@project_resources)
-      #services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
+      services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
       
       render action: 'approved_request'
     end
