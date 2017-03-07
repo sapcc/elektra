@@ -177,11 +177,15 @@ module Identity
         end
         networking_service = service_user.cloud_admin_service(:networking)
         floatingip_network = networking_service.domain_floatingip_network(@scoped_domain_name)
-        rbacs = networking_service.rbacs({
-          object_id: floatingip_network.id,
-          object_type: 'network',
-          target_tenant: @scoped_project_id
-        })
+        rbacs = if floatingip_network
+          networking_service.rbacs({
+            object_id: floatingip_network.id,
+            object_type: 'network',
+            target_tenant: @scoped_project_id
+          })
+        else
+          []
+        end
 
         if rbacs.length>0
           @project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
