@@ -80,7 +80,7 @@ module Core
             domain_name: @user_domain_name,
             scoped_token: scope
           )
-        rescue => e   
+        rescue => e
           if e.respond_to?(:code) and [400,401].include?(e.code) and scope[:domain].has_key?(:id)
             #  try to authenticate service user by scope domain name
             scope = {domain: {name: @current_domain}}
@@ -108,6 +108,35 @@ module Core
           raise ::Core::ServiceUser::Errors::AuthenticationError.new(message)
         end
         return nil
+      end
+
+      def domain_admin_service(name)
+        ::Core::ServiceLayer::ServicesManager.service(name,{
+          auth_url: ::Core.keystone_auth_endpoint,
+          region: Core.locate_region(auth_user),
+          token: auth_user.token,
+          domain_id: auth_user.domain_id
+        })
+      end
+
+      def cloud_admin_service(name)
+        cloud_admin = MonsoonOpenstackAuth.api_client.auth_user(
+          Rails.configuration.service_user_id,
+          Rails.configuration.service_user_password,
+          domain_name: Rails.configuration.service_user_domain_name,
+          scoped_token: {
+            project: {
+              name: Rails.configuration.cloud_admin_project,
+              domain: {name: Rails.configuration.cloud_admin_domain}
+            }
+          }
+        )
+
+        ::Core::ServiceLayer::ServicesManager.service(name,{
+          auth_url: ::Core.keystone_auth_endpoint,
+          region: Core.locate_region(auth_user),
+          token: cloud_admin.token
+        })
       end
 
       # Execute a block in a different domain scope, i.e. driver_method() will

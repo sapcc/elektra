@@ -1,0 +1,14 @@
+
+-#  ------------------------------------------------------------------- unless project.active? ----------------------------------------------------------------------
+- content_for :main_toolbar do
+  Configure new Project
+
+.row
+  .col-md-9
+    %h1.heading-top Welcome to your new Project
+    %p.lead Before you can properly use this project there are a number of things that need to be configured. Once you have made it through all the configuration steps your project will be ready and fully useable.
+
+    .wizard_steps{data: {wizard_update_url: plugin('identity').project_wizard_path}}
+      = render partial: '/identity/projects/wizard_steps'
+  .col-md-3
+    = render partial: 'identity/projects/additional_infos'

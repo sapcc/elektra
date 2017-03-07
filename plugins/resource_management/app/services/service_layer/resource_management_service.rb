@@ -9,6 +9,63 @@ module ServiceLayer
       )
     end
 
+    def has_project_quotas?
+      # "block_storage:capacity -> 16"
+      # "block_storage:snapshots -> 2"
+      # "block_storage:volumes -> 2"
+      # "compute:cores -> 10"
+      # "compute:instances -> 5"
+      # "compute:ram -> 8192"
+      # "dns:records -> 5"
+      # "dns:recordsets -> 5"
+      # "dns:zones -> 1"
+      # "loadbalancing:healthmonitors -> 0"
+      # "loadbalancing:l7policies -> 0"
+      # "loadbalancing:listeners -> 0"
+      # "loadbalancing:loadbalancers -> 0"
+      # "loadbalancing:pools -> 0"
+      # "networking:floating_ips -> 2"
+      # "networking:networks -> 1"
+      # "networking:ports -> 50"
+      # "networking:rbac_policies -> 5"
+      # "networking:routers -> 1"
+      # "networking:security_group_rules -> 16"
+      # "networking:security_groups -> 2"
+      # "networking:subnet_pools -> 0"
+      # "networking:subnets -> 1"
+      # "object_storage:capacity -> 274877906944"
+      # "shared_filesystem_storage:share_capacity -> 0"
+      # "shared_filesystem_storage:share_networks -> 0"
+      # "shared_filesystem_storage:share_snapshots -> 0"
+      # "shared_filesystem_storage:shares -> 0"
+      # "shared_filesystem_storage:snapshot_capacity -> 0"
+
+      #"networking:networks" or ( "compute:cores and compute:instances and compute:ram and object_storage:capacity")
+
+      resources = ResourceManagement::Resource.where({
+        domain_id: (current_user.domain_id || current_user.project_domain_id),
+        project_id: current_user.project_id
+      })
+
+      # return true if approved_quota of the resource networking:networks is greater than 0
+      return true if resources.where({
+        service: 'networking',
+        name: 'networks'
+      }).collect{|r| (r.approved_quota || 0)}.min.try(:>,0)
+
+      # OR
+      # return true if the sum of approved_quota of the resources compute:instances,
+      # compute:ram, compute:cores and object_storage:capacity is greater than 0
+      return true if resources.where({
+        service: ['compute','object_storage'],
+        name: ['instances','ram','cores','capacity']
+      }).collect{|r| (r.approved_quota || 0)}.min.try(:>,0)
+
+      # OR
+      # return false
+      return false
+    end
+
     def quota_data(options=[])
       result = []
 

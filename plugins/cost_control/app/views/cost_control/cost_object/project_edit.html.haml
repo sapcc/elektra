@@ -11,10 +11,10 @@
   .only-when-not-inherited
     = f.input :cost_object_type, label: 'Type', collection: types.keys, label_method: -> (k) { types[k] }
     = f.input :cost_object_id, label: 'ID'
-  .row
-    .col-md-8.col-md-offset-4
-      = f.check_box :cost_object_inherited
-      = f.label :cost_object_inherited, 'Inherited'
+  -# .row
+  -#   .col-md-8.col-md-offset-4
+  -#     = f.check_box :cost_object_inherited
+  -#     = f.label :cost_object_inherited, 'Inherited'
   .row
     .help-block.col-sm-8.col-sm-offset-4
       A cost object is an element that we can bill for services rendered.

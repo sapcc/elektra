@@ -1,10 +1,10 @@
-class @MoModal 
+class @MoModal
   modal_holder_selector = '#modal-holder'
   modal_selector = '.modal'
   modal_is_loading = false
-  
+
   loading = """
-      <div class="modal " data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal loading-dialog" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm">
           <div class="modal-content">
             <div class="modal-body"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div>
@@ -12,7 +12,7 @@ class @MoModal
         </div>
       </div>
       """
-      
+
   @init= () ->
     $(document).on 'click', 'a[data-modal=true]', -> MoModal.load(this)
     $(document).on 'click', '[data-modal-transition]', -> MoModal.replace(this)
@@ -21,11 +21,11 @@ class @MoModal
     $(document).on 'ajax:error', modal_holder_selector+' form[data-inline!="true"]', (event,jqXHR, textStatus, errorThrown) -> showError(jqXHR, textStatus, errorThrown)
 
   @close= () -> $('#modal-holder').find('.modal').modal('hide')
-  
+
   @load= (anker)->
     if jQuery.type(anker) == "string"
       location = anker
-    else   
+    else
       $button = $(anker)
       #$button.addClass('loading')
       location = $(anker).attr('href')
@@ -46,15 +46,15 @@ class @MoModal
         # console.log 'done'
         #$button.removeClass('loading')
         InfoDialog.hideLoading()
-      
+
         url = xhr.getResponseHeader('Location')
-      
+
         # got a redirect response
         if url
           # close modal window
           $('#modal-holder').find('.modal').modal('hide')
           window.location = url
-        else  
+        else
           if $('.modal-backdrop').length==0 # prevent multiple overlays on double click
             # open modal with content from ajax response
             $(modal_holder_selector).html(data).find(modal_selector).modal()
@@ -63,29 +63,29 @@ class @MoModal
       .complete () ->
         modal_is_loading = false
     return false
-    
+
   @replace= (anker) ->
     $(modal_holder_selector).find(modal_selector).find('.modal-body').html('<div class="loading-spinner"></div><div class="loading-text">Loading...</div>')
-    
+
     $.ajax
       dataType: 'html',
       url: $(anker).attr('href'),
       data: {modal: true, modal_transition: true},
-      error: showError, 
+      error: showError,
       success: (data, textStatus, jqXHR) ->
         $data = $(data)
         $footer = $data.find('.modal-footer')
         if $footer.length>0
           # add back button to footer
-          $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>') 
+          $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>')
           $back.click () -> History.back()
           $footer.prepend($back)
 
         $(modal_holder_selector).find(modal_selector).modal('hide')
         $(modal_holder_selector).html($data).find(modal_selector).modal()
         triggerUpdateEvent()
-    return false  
-  
+    return false
+
   showError= (jqXHR, textStatus, errorThrown) ->
     # console.log("jqXHR",jqXHR)
     # console.log("textStatus",textStatus)
@@ -101,10 +101,10 @@ class @MoModal
     catch e
       errorMessage = errorThrown
       details = null
-        
+
     InfoDialog.showError(errorMessage,details)
-    
-  triggerUpdateEvent= -> 
+
+  triggerUpdateEvent= ->
     $modalHolder = $(modal_holder_selector)
     target = {id: $modalHolder.prop('id'), class: $modalHolder.prop('class')}
     # $(document).trigger('modal:contentUpdated',{id: $modalHolder.prop('id'), class: $modalHolder.prop('class')})
@@ -113,7 +113,7 @@ class @MoModal
   handleAjaxSuccess= (event, data, status, xhr)->
     url = xhr.getResponseHeader('Location')
     response_type = (xhr.getResponseHeader("content-type") || "")
-          
+
     if url # url is presented
       # close modal window
       $('#modal-holder').find('.modal').modal('hide')
@@ -126,19 +126,19 @@ class @MoModal
       # $('.modal-backdrop').remove()
     else
       # assume response is a html
-      # modal has the fade effect 
+      # modal has the fade effect
       if $($(modal_holder_selector).find(modal_selector)).hasClass('fade')
         # replace content of old modal
         $oldModal = $(modal_holder_selector)
         $newContent = $(data)
         $oldModal.find(selector).replaceWith( $newContent.find(selector) ) for selector in ['.modal-body','.modal-footer']
-      else  
+      else
         # Remove old modal backdrop
         $('.modal-backdrop').remove()
         # Replace old modal with new one
         $(modal_holder_selector).html(data).find(modal_selector).modal()
-      
+
       triggerUpdateEvent()
     return false
 
-$ -> MoModal.init()           
+$ -> MoModal.init()

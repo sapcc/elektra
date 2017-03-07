@@ -1,0 +1,47 @@
+= content_for :title do
+  Setup New Network
+
+= simple_form_for @network_wizard, url: plugin('networking').network_wizard_index_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+    - unless @network_wizard.errors.blank?
+      %p.alert.alert-error= @network_wizard.errors.full_messages.to_sentence
+
+    = f.input :setup_options, as: :hidden, input_html: {name: "network_wizard[setup_options][]"}      
+    -# wizard type
+    - if @network_wizard.setup_options.length>1
+      %fieldset
+        .form-group.string.network_wizard_wizard_type
+          %label.radio.control-label{for: "network_wizard_setup_option"} Setup Options
+
+          %label.radio-inline
+            %input{type:"radio", name:"network_wizard[setup_option]", value:"advanced", checked: @network_wizard.setup_option=='advanced', "aria-controls": "advanced", role: "tab", "data-target": "#advanced"} advanced
+          %label.radio-inline
+            %input{type:"radio", name:"network_wizard[setup_option]", value:"simple", checked: @network_wizard.setup_option=='simple', "aria-controls": "simple", role: "tab", "data-target": "#simple"} simple
+
+    - else
+      = f.input :setup_option, as: :hidden
+    .tab-content
+      - if @network_wizard.setup_options.include?('advanced')
+        .tab-pane.fade#advanced{class: ('in active' if @network_wizard.setup_option=='advanced')}
+          %p
+            Wizard is going to assign the FloatingIP-Network
+            <b>#{@network_wizard.floatingip_network_name}</b> to Project
+            <b>#{@scoped_project_name}</b> via RBAC.
+
+      - if @network_wizard.setup_options.include?('simple')
+        .tab-pane.fade#simple{class: ('in active' if @network_wizard.setup_option=='simple')}
+          %p
+            Wizard is going to assign the FloatingIP-Network
+            <b>#{@network_wizard.floatingip_network_name}</b>, create a Private
+            Network as well as a Router and connect the networks to each other.
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Setup
+
+:javascript
+  $('input[name="network_wizard[setup_option]"]').click(function () {
+    console.log(this.id)
+    $(this).tab('show');
+  });

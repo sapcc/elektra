@@ -77,7 +77,7 @@ module Inquiry
         flash[:notice] = "Request successfully deleted."
         render template: 'inquiry/inquiries/update.js'
       else
-        flash[:error] = @inquiry.errors.full_messages.to_sentence
+        flash.now[:error] = @inquiry.errors.full_messages.to_sentence
         redirect_to :inquiries
       end
     end
