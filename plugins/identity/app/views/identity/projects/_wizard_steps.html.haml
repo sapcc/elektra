@@ -1,0 +1,93 @@
+- finished = @project_profile.wizard_finished?('cost_control','networking','resource_management')
+- can_setup_cost_object = current_user.is_allowed?("cost_control:cost_object_get")
+- can_setup_network = current_user.is_allowed?("networking:network_wizard_get")
+- can_setup_quota = current_user.is_allowed?("resource_management:project_resource_new_package_request")
+
+- if !finished and (!can_setup_quota or !can_setup_network or !can_setup_quota)
+  .alert.alert-danger
+    This Project is not ready for use. Please contact the project admin to do a proper setup.
+
+= wizard_step(title: 'Project', mandatory: true, status: ProjectProfile::STATUS_DONE) do
+  %table.table.no-borders
+    %tbody
+      %tr
+        %th{width: "30%"} Name
+        %td= @active_project.name
+      %tr
+        %th Description
+        %td= @active_project.description
+
+-# COST CONTROL
+= wizard_step({title: 'Cost Center',
+  mandatory: true,
+  action_button: ({label: 'Set Cost Object', url:plugin('cost_control').edit_cost_object_path} if can_setup_cost_object),
+  status: @project_profile.wizard_status('cost_control')}) do
+  - if @project_profile.wizard_finished?('cost_control')
+    - data = @project_profile.wizard_data('cost_control')
+    - if data and data['cost_object']
+      %table.table.no-borders
+        %tbody
+          %tr
+            %th{width: "30%"} Cost Object
+            %td= data['cost_object']
+    - else
+      %p The Cost Object exists.
+
+  - else
+    %p Please provide a cost object against which we can bill the services consumed by this project
+
+-# RESOURCE MANAGEMENT
+- quota_data = @project_profile.wizard_data('resource_management')
+
+- if @project_profile.wizard_finished?('resource_management')
+  = wizard_step({title: 'Request Resource Quotas',
+    mandatory: true,
+    status: 'done'}) do
+    %p This project already has quota.
+    - if quota_data and quota_data['aasm_state']=='approved'
+      %table.table.no-borders
+        %tbody
+          %tr
+            %th{width:"30%"} Package
+            %td= @quota_inquiry.payload["package"]
+
+- else
+  - if quota_data
+    - if quota_data['aasm_state']=='open'
+      = wizard_step({title: 'Request Resource Quotas',
+        mandatory: true,
+        status: 'pending'}) do
+        %p
+          Your request is being checked. Please have some patience.
+          = link_to 'Show request', plugin('inquiry').inquiry_path(id: quota_data[:inquiry_id]), data: {modal: true}
+
+    - elsif quota_data['aasm_state']=='rejected'
+      = wizard_step({title: 'Request Resource Quotas',
+        mandatory: true,
+        action_button: ({label: 'Edit Request', url: plugin('inquiry').edit_inquiry_path(id: quota_data[:inquiry_id], state: 'open')} if can_setup_quota),
+        status: 'pending'}) do
+        %p Your request has been rejected. Please check the reason and reopen the request.
+
+  - else
+    = wizard_step({title: 'Request Resource Quotas',
+      mandatory: true,
+      action_button: ({label: 'Request Quotas', url: plugin('resource_management').resources_new_package_request_path} if can_setup_quota),
+      status: nil}) do
+      %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
+
+-# NETWORKING
+- action_button = {label: 'Set Network', url: (plugin('networking').new_network_wizard_path if @project_profile.wizard_finished?('resource_management')) }
+= wizard_step({title: 'Choose Networking Setup',
+  mandatory: true,
+  action_button: (action_button if can_setup_network),
+  status: @project_profile.wizard_status('networking')}) do
+  - if @project_profile.wizard_finished?('networking')
+    %p The network is set up.
+  - else
+    - unless @project_profile.wizard_finished?('resource_management')
+      %b Please request quota first.
+    %p Configure your network. You can either create your own private network or if within your organisation networks are already available you can have an existing one made available to this project.
+
+- if @project_profile.wizard_finished?('cost_control','networking','resource_management')
+  %p
+    = link_to 'Continue', project_path, class: 'btn btn-info pull-right'

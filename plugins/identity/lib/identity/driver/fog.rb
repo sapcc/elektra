@@ -14,7 +14,7 @@ module Identity
           # @fog = ::Fog::IdentityV3::OpenStack.new(auth_params)
         end
       end
-      
+
       def auth_token
         @fog.auth_token rescue nil
       end
@@ -264,31 +264,31 @@ module Identity
       def groups(filter={})
         handle_response{@fog.list_groups(filter).body['groups']}
       end
-      
+
       def group_members(group_id,filter={})
         handle_response{@fog.list_group_users(group_id,filter).body['users']}
       end
-      
+
       def add_group_member(group_id,user_id)
         handle_response{@fog.add_user_to_group(group_id,user_id)}
       end
-      
+
       def remove_group_member(group_id,user_id)
         handle_response{@fog.remove_user_from_group(group_id, user_id)}
       end
-      
+
       def get_group(id)
         handle_response{@fog.get_group(id).body['group']}
       end
-      
+
       def create_group(group_attributes)
         handle_response{@fog.create_group(group_attributes).body['group']}
       end
-      
+
       def delete_group(group_id)
         handle_response{@fog.delete_group(group_id)}
       end
-      
+
       def update_group(id,attributes)
         handle_response{@fog.update_group(id,attributes).body['group']}
       end

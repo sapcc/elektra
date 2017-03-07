@@ -57,7 +57,8 @@ module Compute
 
       @availability_zones = services.compute.availability_zones
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
-      @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true} if services.networking.available?
+      @private_networks   = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
+
       @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
       @instance.errors.add :private_network,  'not available' if @private_networks.blank?

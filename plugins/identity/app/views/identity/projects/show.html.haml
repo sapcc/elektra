@@ -1,56 +1,5 @@
 .row
   .col-md-9
     = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
-
   .col-md-3
-    .infobox
-      %h4.action-heading
-        Project Info
-        - can_edit = current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-        - can_delete = current_user.is_allowed?('identity:project_delete',{target: {project: @active_project }})
-        - if can_delete or can_edit
-          .dropdown.header-action
-            %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
-            %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-              - if can_edit
-                %li
-                  = link_to plugin('identity').edit_project_path, title: "Edit project info", data: {modal: true, toggle: "tooltip", placement: "left"} do
-                    %i.fa.fa-edit.fa-fw
-                    Edit Project
-              - if can_delete and @active_project.subprojects_ids.blank?
-                %li.divider{role: "separator"}
-                %li
-                  = link_to delete_project_path(@active_project.id), method: :delete, data: {confirm:'This will also delete all assigned roles. Are you sure?', ok: 'Yes, delete it!', confirm_term: @active_project.name, confirm_term_label: "Type project name to confirm (#{@active_project.name})" } do
-                    %i.fa.fa-trash.fa-fw
-                    Delete Project
-                    / %i.fa.fa-exclamation-triangle
-
-
-      %table.table
-        %tbody
-          %tr
-            %th.snug-nowrap
-              Name:
-            %td
-              = @active_project.name
-          %tr
-            %th.snug-nowrap
-              Description:
-            %td
-              = @active_project.description
-
-
-    - if current_user.is_allowed?('identity:project_request')
-      %h4.action-heading
-        Sub Projects
-        -# Todo - This is not working because user is always project scoped and can't do domain based actions
-        - if current_user.is_allowed?('identity:project_create',{project: {domain_id: @scoped_domain_id}})
-          = link_to plugin('identity').domains_create_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
-            %i.fa.fa-plus-square-o
-        - else
-          = link_to plugin('identity').projects_request_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
-            %i.fa.fa-plus-square-o
-    - if @active_project.subprojects_ids.blank?
-      %p None available.
-    - else
-      %p= subprojects_tree(@active_project.subprojects_ids,@user_domain_projects, class: 'content-list subprojects')
+    = render partial: 'identity/projects/additional_infos'
