@@ -4,7 +4,7 @@ module Identity
     before_filter :get_project_id,  except: [:index, :create, :new]
 
     # Do not check the wizard state and don't redirect to wizard page.
-    # This should be activated after all tests in staging are finished!
+    # TODO: this should be activated after all tests in staging are finished!
     #before_filter :check_wizard_status, only: [:show]
     before_filter :load_and_update_wizard_status, only: [:show_wizard]
 

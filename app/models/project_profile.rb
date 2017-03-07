@@ -20,7 +20,7 @@ class ProjectProfile < ActiveRecord::Base
 
   def wizard_payload
     return @wizard_payload if @wizard_payload
-    payload = read_attribute('wizard_payload') || {}
+    @wizard_payload = read_attribute('wizard_payload') || {}
   end
 
   def wizard_status(key)

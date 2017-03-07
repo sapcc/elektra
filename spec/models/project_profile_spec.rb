@@ -6,46 +6,19 @@ RSpec.describe ProjectProfile, type: :model do
     expect(ProjectProfile.new).to respond_to(:wizard_payload)
   end
 
-  it "should return default payload" do
-    profile = ProjectProfile.new
-    expect(profile.wizard_payload.keys.sort).to eq(ProjectProfile::INITIAL_WIZARD_PAYLOAD_SERVICES.sort)
+  it "should respond to wizard_status" do
+    expect(ProjectProfile.new).to respond_to(:wizard_status)
   end
 
-  it "should not overwrite registered services" do
-    profile = ProjectProfile.new
-    profile.wizard_payload = {'test' => 'test'}
-    expect(profile.wizard_payload.keys.sort).to eq(ProjectProfile::INITIAL_WIZARD_PAYLOAD_SERVICES.sort)
+  it "should respond to wizard_data" do
+    expect(ProjectProfile.new).to respond_to(:wizard_data)
   end
 
-  it "should remove unregistered services from wizard payload" do
-    profile = ProjectProfile.new
-    profile.wizard_payload = {'cost_control' => 'skiped', 'test' => 'done'}
-    profile.save
-    profile.reload
-    expect(profile.wizard_payload.keys.include?('test')).to be(false)
+  it "should respond to update_wizard_status" do
+    expect(ProjectProfile.new).to respond_to(:update_wizard_status)
   end
 
   describe 'ProjectProfile#update_wizard_status' do
-    it "should raise an error on unregistered service" do
-      profile = ProjectProfile.new
-      expect{
-        profile.update_wizard_status('test','done')
-      }.to raise_error(ProjectProfile::UnregisteredWizardService)
-    end
-
-    it "should not raise an error on registered service" do
-      profile = ProjectProfile.new
-      expect{
-        profile.update_wizard_status('cost_control','done')
-      }.not_to raise_error
-    end
-
-    it "should raise an error on bad status" do
-      profile = ProjectProfile.new
-      expect{
-        profile.update_wizard_status('cost_control','pending')
-      }.to raise_error(ProjectProfile::BadStatus)
-    end
 
     it "should update wizard status" do
       profile = ProjectProfile.new
@@ -53,22 +26,57 @@ RSpec.describe ProjectProfile, type: :model do
       profile.reload
       expect(profile.wizard_status('cost_control')).to eq('done')
     end
+
+    it "should update wizard data" do
+      profile = ProjectProfile.new
+      profile.update_wizard_status('cost_control','done',{'test' => 'test'})
+      profile.reload
+      expect(profile.wizard_data('cost_control')).to eq({'test' => 'test'})
+    end
+
+    it "should reset wizard state to nil" do
+      profile = ProjectProfile.new
+      profile.update_wizard_status('cost_control',nil)
+      profile.reload
+      expect(profile.wizard_status('cost_control')).to be(nil)
+    end
+
+    it "should remove wizard data" do
+      profile = ProjectProfile.new
+      profile.update_wizard_status('cost_control',nil)
+      profile.reload
+      expect(profile.wizard_data('cost_control')).to be(nil)
+    end
   end
 
   describe 'ProjectProfile#wizard_finished?' do
-    it "should return true " do
-      profile = ProjectProfile.new
-      status = 'done'
-      ProjectProfile::INITIAL_WIZARD_PAYLOAD_SERVICES.each do |key|
-        profile.update_wizard_status(key,status)
-        status = status=='done' ? 'skiped' : 'done'
+    context 'some services have not finished yet' do
+      before :each do
+        @profile = ProjectProfile.new
       end
-      expect(profile.wizard_finished?).to eq(true)
+
+      it "should return false" do
+        expect(@profile.wizard_finished?('test1')).to eq(false)
+      end
+
+      it "should return false for multiple services" do
+        expect(@profile.wizard_finished?('test1','test2')).to eq(false)
+      end
     end
 
-    it "should return false" do
-      profile = ProjectProfile.new
-      expect(profile.wizard_finished?).to eq(false)
+    context 'one service has finished' do
+      before :each do
+        @profile = ProjectProfile.new
+        @profile.update_wizard_status('test1','done')
+      end
+
+      it "should return true" do
+        expect(@profile.wizard_finished?('test1')).to eq(true)
+      end
+
+      it "should return false" do
+        expect(@profile.wizard_finished?('test1','test2')).to eq(false)
+      end
     end
   end
 
@@ -79,16 +87,10 @@ RSpec.describe ProjectProfile, type: :model do
     end
   end
 
-  describe 'ProjectProfile#has_pending_wizard_services?' do
-    it 'should return false' do
+  describe 'ProjectProfile#wizard_data' do
+    it "should return nil" do
       profile = ProjectProfile.new
-      expect(profile.has_pending_wizard_services?).to eq(false)
-    end
-
-    it 'should return true' do
-      profile = ProjectProfile.new
-      profile.update_wizard_status('networking',ProjectProfile::STATUS_SKIPED)
-      expect(profile.has_pending_wizard_services?).to eq(true)
+      expect(profile.wizard_data('cost_control')).to be(nil)
     end
   end
 end
