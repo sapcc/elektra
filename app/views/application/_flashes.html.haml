@@ -1,4 +1,11 @@
-.flashes
+.flashes.empty-flashes{title:'click to hide'}
   - flash.each do |key, value|
     %p{class: "alert alert-#{key}"}
       = value
+
+:javascript
+  $(function(){
+    $('.empty-flashes').click(function(){
+      $(this).empty();
+    })
+  })
