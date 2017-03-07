@@ -146,7 +146,6 @@ module ResourceManagement
         end
         @services_with_error = services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
-        render action: 'approved_request'
       else
         self.review_request
         render action: 'review_request'
@@ -230,7 +229,7 @@ module ResourceManagement
       @services_with_error = services.resource_management.apply_current_quota(@project_resources)
       services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
       
-      render action: 'approved_request'
+      render action: 'approve_request'
     end
 
     def new_request

@@ -2,6 +2,8 @@
   $(".flashes").append("<%= escape_javascript(render "/resource_management/application/set_quota_error") %>");
 <% end %>
 
-//close the window
+// close modal window
 Dashboard.hideModal();
-$('#resource_area').html("<%= escape_javascript(render partial: 'resource_area') %>");
+// reload remote inquries
+PollingService.update('inquiries');
+PollingService.update('projects');
