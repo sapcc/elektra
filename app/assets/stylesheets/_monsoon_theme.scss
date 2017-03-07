@@ -6,6 +6,26 @@
 
 $font-size-medium: ceil(($font-size-base * 1.125));
 $context-breadcrumb-font-size: $font-size-medium;
+$state-info-bg:         #d9edf7;
+$state-info-border:     #bcdff1;
+$state-info-text:       #31708f;
+$state-warning-bg:      #fcf8e3;
+$state-warning-border:  #faf2cc;
+$state-warning-text:    #8a6d3b;
+$state-success-bg:      #dff0d8;
+$state-success-border:  #d0e9c6;
+$state-success-text:    #3c763d;
+$state-danger-bg:       #f2dede;
+$state-danger-border:   #ebcccc;
+$state-danger-text:     #a94442;
+
+/* Bootstrap descriptive colors */
+$brand-primary: $medium-blue;
+$brand-info:    lighten($bright-blue, 10%);
+$brand-success: $medium-green;
+$brand-warning: lighten($bright-orange, 5%);
+$brand-danger:  #e22;
+
 
 
 // ---------------------------------------------------------------------------------
@@ -980,6 +1000,10 @@ footer, .footer {
   border-left-width: 5px;
   border-radius: 3px;
 
+  p {
+    @include pie-clearfix;
+  }
+
   .callout-footer {
     border-top: 1px solid #eee;
     padding-top: 5px;
@@ -992,8 +1016,20 @@ footer, .footer {
   &.bs-callout-primary {
     border-left-color: $btn-primary-border;
 
+    .btn {
+      @extend .btn-primary;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-primary;
+    }
+
     a {
-      color: darken($btn-primary-border, 10);
+      color: darken($brand-primary, 10);
     }
   }
 
@@ -1005,6 +1041,18 @@ footer, .footer {
       border-left-color: $bright-blue;
       background: lighten($alert-info-bg, 5);
     }
+
+    .btn {
+      @extend .btn-info;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-info;
+    }
   }
 
   &.bs-callout-success {
@@ -1014,8 +1062,20 @@ footer, .footer {
       background: lighten($alert-success-bg, 5);
     }
 
+    .btn {
+      @extend .btn-success;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-success;
+    }
+
     a {
-      color: darken($btn-success-border, 10);
+      color: darken($brand-success, 10);
     }
   }
 
@@ -1026,8 +1086,20 @@ footer, .footer {
       background: lighten($alert-warning-bg, 2);
     }
 
+    .btn {
+      @extend .btn-warning;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-warning;
+    }
+
     a {
-      color: darken($btn-warning-border, 10);
+      color: darken($brand-warning, 10);
     }
   }
 
@@ -1038,8 +1110,20 @@ footer, .footer {
       background: lighten($alert-danger-bg, 5);
     }
 
+    .btn {
+      @extend .btn-danger;
+
+      &.btn-default {
+        @extend .btn-default;
+      }
+    }
+
+    .fa {
+      color: $brand-danger;
+    }
+
     a, h1,h2,h3,h4,h5,h6  {
-      color: darken($btn-danger-border, 10);
+      color: darken($brand-danger, 10);
     }
 
   }
@@ -1063,7 +1147,8 @@ blockquote, .bs-callout {
 // ---------------------------------------------------------------------------------
 
 .infobox {
-  border-top: 10px solid $sapgold;
+  border-top: 10px solid $bright-blue;
+
 
   .table {
     th, td {

@@ -19,9 +19,9 @@ module ServiceLayer
       driver.map_to(Networking::Network).networks(filter)
     end
 
-    def project_networks(project_id)
+    def project_networks(project_id,filter=nil)
       result = []
-      driver.networks.each do |n|
+      driver.networks(filter).each do |n|
         if n['shared'] == true || n['tenant_id'] == project_id
           result << Networking::Network.new(driver, n)
         end
@@ -31,6 +31,17 @@ module ServiceLayer
 
     def network(id)
       driver.map_to(Networking::Network).get_network(id) if id.present?
+    end
+
+    def domain_floatingip_network(domain_name)
+      name_candidates = ["FloatingIp-external-#{domain_name}",
+      "FloatingIp-internal-#{domain_name}",
+      "Converged Cloud External"]
+      name_candidates.each do |name|
+        network = driver.map_to(Networking::Network).networks("router:external"=>true, "name" => name).first
+        return network if network
+      end
+      return nil
     end
 
     def new_network(attributes={})

@@ -287,7 +287,5 @@ class DashboardController < ::ScopeController
       end
 
     end
-
   end
-
 end

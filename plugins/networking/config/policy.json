@@ -32,5 +32,8 @@
 
   "networking:rbac_policy_list": "rule:admin_or_network_owner",
   "networking:rbac_policy_create": "rule:cloud_network_admin or rule:network_admin",
-  "networking:rbac_policy_delete": "rule:cloud_network_admin or rule:network_admin"
+  "networking:rbac_policy_delete": "rule:cloud_network_admin or rule:network_admin",
+
+  "networking:network_wizard_get": "rule:cloud_network_admin or rule:network_admin",
+  "networking:network_wizard_create": "rule:cloud_network_admin or rule:network_admin"
 }

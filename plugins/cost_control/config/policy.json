@@ -1,5 +1,5 @@
 {
-    "cost_control:cost_object_get": "",
+    "cost_control:cost_object_get": "rule:project_admin or rule:domain_admin",
     "cost_control:cost_object_edit": "rule:project_admin or rule:domain_admin",
     "cost_control:cost_object_update": "rule:project_admin or rule:domain_admin",
     "cost_control:kb11n_billing_object_get": ""
