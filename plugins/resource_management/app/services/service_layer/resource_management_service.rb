@@ -345,9 +345,17 @@ module ServiceLayer
       end
 
       res = resources.first
+      services_with_error = ""
       values.each do |service, subvalues|
-        driver.set_project_quota(res.domain_id, res.project_id, service, subvalues)
+        begin
+          driver.set_project_quota(res.domain_id, res.project_id, service, subvalues)
+        rescue
+          services_with_error += "#{service}, "
+        end
       end
+      
+      services_with_error
+      
     end
 
     private
