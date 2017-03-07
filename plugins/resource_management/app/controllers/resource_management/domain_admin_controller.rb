@@ -226,7 +226,7 @@ module ResourceManagement
         res.save!
       end
 
-      services.resource_management.apply_current_quota(@project_resources)
+      services.resource_management.apply_current_quota(@project_resources.reject { |res| res.usage > res.approved_quota })
       services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
       render action: 'approve_request'
     end
