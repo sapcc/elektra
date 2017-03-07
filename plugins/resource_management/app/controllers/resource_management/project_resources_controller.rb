@@ -57,7 +57,7 @@ module ResourceManagement
       # save the new quota to the database
       if @project_resource.save
         # apply new quota in target service
-        services.resource_management.apply_current_quota(@project_resource)
+        @services_with_error = services.resource_management.apply_current_quota(@project_resource)
 
         # load data to reload the bars in the main view
         # which services belong to this area?
