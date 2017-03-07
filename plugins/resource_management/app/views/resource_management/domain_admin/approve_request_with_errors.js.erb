@@ -1,7 +1,0 @@
-$('#error_message').html('There was an error to aprove the quota for for one or more services: <%= escape_javascript(@services_with_error) %>');
-$('#error_message').removeClass('hide');
-
-Dashboard.hideModal();
-// reload remote inquries
-PollingService.update('inquiries');
-PollingService.update('projects');

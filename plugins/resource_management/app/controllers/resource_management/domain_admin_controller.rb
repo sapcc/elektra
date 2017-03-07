@@ -145,13 +145,7 @@ module ResourceManagement
           comment += ", comment from approver: #{params[:resource][:comment]}"
         end
         @services_with_error = services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
-        
-        if @services_with_error.empty?
-          services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
-          render action: 'approve_request'
-        else
-          render action: 'approve_request_with_errors'
-        end
+        render action: 'approve_request'
       else
         self.review_request
         render action: 'review_request'
@@ -233,13 +227,6 @@ module ResourceManagement
       end
 
       @services_with_error = services.resource_management.apply_current_quota(@project_resources)
-      services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
-      
-      if @services_with_error.empty?
-        render action: 'approve_request'
-      else
-        render action: 'approve_request_with_errors'
-      end
     end
 
     def new_request
