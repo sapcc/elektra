@@ -1,7 +1,7 @@
 <% if @services_with_error.empty? %>
-  $('#aproved_quota_error').addClass('hide');
+  $('#set_quota_error').addClass('hide');
 <% else %>
-  $(".flashes").html("<%= escape_javascript(render "aproved_quota_error") %>");
+  $(".flashes").html("<%= escape_javascript(render "set_quota_error") %>");
 <% end %>
 
 // close modal window
