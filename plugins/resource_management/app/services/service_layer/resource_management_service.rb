@@ -40,19 +40,30 @@ module ServiceLayer
       # "shared_filesystem_storage:shares -> 0"
       # "shared_filesystem_storage:snapshot_capacity -> 0"
 
+      #"networking:networks" or ( "compute:cores and compute:instances and compute:ram and object_storage:capacity")
+
       resources = ResourceManagement::Resource.where({
         domain_id: (current_user.domain_id || current_user.project_domain_id),
-        project_id: current_user.project_id,
-        service: ['compute','networking','object_storage'],
-        name: ['instances','ram','cores','capacity']
+        project_id: current_user.project_id
       })
 
-      if resources.length>0
-        resources.each{|r| return false if r.approved_quota.nil? or r.approved_quota==0}
-        return true
-      else
-        return false
-      end
+      # return true if approved_quota of the resource networking:networks is greater than 0
+      return true if resources.where({
+        service: 'networking',
+        name: 'networks'
+      }).collect{|r| (r.approved_quota || 0)}.min.try(:>,0)
+
+      # OR
+      # return true if the sum of approved_quota of the resources compute:instances,
+      # compute:ram, compute:cores and object_storage:capacity is greater than 0
+      return true if resources.where({
+        service: ['compute','object_storage'],
+        name: ['instances','ram','cores','capacity']
+      }).collect{|r| (r.approved_quota || 0)}.min.try(:>,0)
+
+      # OR
+      # return false
+      return false
     end
 
     def quota_data(options=[])

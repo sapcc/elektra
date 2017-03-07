@@ -3,7 +3,9 @@ module Identity
     before_filter :project_id_required, except: [:index, :create, :new, :user_projects]
     before_filter :get_project_id,  except: [:index, :create, :new]
 
-    before_filter :check_wizard_status, only: [:show]
+    # Do not check the wizard state and don't redirect to wizard page.
+    # This should be activated after all tests in staging are finished!
+    #before_filter :check_wizard_status, only: [:show]
     before_filter :load_and_update_wizard_status, only: [:show_wizard]
 
     before_filter do
@@ -59,7 +61,7 @@ module Identity
     end
 
     def destroy
-      
+
       # first close all open and rejeced requests
       inquirys = Inquiry::Inquiry.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :aasm_state => ['open','rejected'])
       inquirys.each do |inquiry|
@@ -69,7 +71,7 @@ module Identity
           redirect_to plugin('identity').project_path
         end
       end
-      
+
       # second delete the project itself
       response = service_user.delete_project(@project_id)
       if response
