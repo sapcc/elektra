@@ -1,7 +1,5 @@
 = content_for :main_toolbar do
   Your Requests
 
-%p.alert.alert-error.hide#error_message
-
 .inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
   = render partial: 'inquiries_widget', locals: {admin_view: false, remote_links: false}

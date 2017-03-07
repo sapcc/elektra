@@ -1,0 +1,11 @@
+<% if @services_with_error.empty? %>
+  $('#aproved_quota_error').addClass('hide');
+<% else %>
+  $(".flashes").html("<%= escape_javascript(render "aproved_quota_error") %>");
+<% end %>
+
+// close modal window
+Dashboard.hideModal();
+// reload remote inquries
+PollingService.update('inquiries');
+PollingService.update('projects');
