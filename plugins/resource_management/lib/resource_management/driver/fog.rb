@@ -275,14 +275,38 @@ module ResourceManagement
       end
 
       def query_project_usage_shared_filesystem_storage(_domain_id, project_id)
-        limits = handle_response { fog_shared_filesystem_storage_connection.get_limits.body['limits']['absolute'] }
+        # get_limits only works in project scope, not with service user
+        # quota_get reports usage with microversion 2.25, we are currently on 2.15
+        # TODO: make either of the above work to reduce costs of api-calls
+        share_options = { project_id: project_id, all_tenants: 1 }
+
+        shares = handle_response do
+          fog_shared_filesystem_storage_connection.list_shares_detail(share_options).body['shares']
+        end
+        snapshots = handle_response do
+          fog_shared_filesystem_storage_connection.list_snapshots_detail(share_options).body['snapshots']
+        end
+        share_networks = handle_response do
+          fog_shared_filesystem_storage_connection.list_share_networks(share_options).body['share_networks']
+        end
+
+        share_capacity = 0
+        snapshot_capacity = 0
+
+        shares.each do |share|
+          share_capacity += share['size'].to_i
+        end
+
+        snapshots.each do |snapshot|
+          snapshot_capacity += snapshot['share_size'].to_i
+        end
 
         {
-          share_networks:    limits['totalShareNetworksUsed'],
-          shares:            limits['totalSharesUsed'],
-          share_capacity:    limits['totalShareGigabytesUsed'],
-          share_snapshots:   limits['totalShareSnapshotsUsed'],
-          snapshot_capacity: limits['totalSnapshotGigabytesUsed']
+          shares:            shares.length,
+          share_snapshots:   snapshots.length,
+          share_networks:    share_networks.length,
+          share_capacity:    share_capacity,
+          snapshot_capacity: snapshot_capacity
         }
       end
 
