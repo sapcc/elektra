@@ -9,10 +9,13 @@
       = render :partial => 'loadbalancing/application/errors', locals: {object: @floating_ip}
 
       = f.input :ip_id,
-        :as => :grouped_select,
-        :collection   => @grouped_fips,
-        :group_method => :last,
-        include_blank: false
+        prompt: "Select a Floating IP",
+        as: :grouped_select,
+        collection: @grouped_fips,
+        group_method: :last,
+        include_blank: false,
+        required: true,
+        label: 'Floating IP'
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?

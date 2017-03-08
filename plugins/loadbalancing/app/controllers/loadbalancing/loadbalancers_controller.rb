@@ -148,6 +148,7 @@ module Loadbalancing
     def get_item
       begin
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+        #puts ">>>>>>>>>>>>>>>>>>>>>>>>>>   #{ @loadbalancer.provisioning_status}   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
         render json: {provisioning_status: @loadbalancer.provisioning_status}
       rescue => e
         render json: {provisioning_status: 'UNKNOWN'}

@@ -54,6 +54,7 @@ module Loadbalancing
 
       def edit
         @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
+        @protocols = @pool.listener_id.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
       end
 
       def update
@@ -63,6 +64,7 @@ module Loadbalancing
           render template: 'loadbalancing/loadbalancers/pools/update_item_with_close.js'
         else
           @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
+          @protocols = @pool.listener_id.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
           render :edit
         end
       end
