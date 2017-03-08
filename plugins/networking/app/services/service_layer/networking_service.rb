@@ -11,6 +11,14 @@ module ServiceLayer
       })
     end
 
+    def network_ip_availability(network_id)
+      driver.map_to(Networking::NetworkIpAvailability).get_network_ip_availability(network_id)
+    end
+
+    def network_ip_availabilities
+      driver.map_to(Networking::NetworkIpAvailability).list_network_ip_availabilities
+    end
+
     def available?(_action_name_sym = nil)
       driver.available
     end

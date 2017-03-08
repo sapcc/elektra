@@ -15,6 +15,21 @@ module Networking
       end
 
       ########################### NETWORKS #############################
+
+      def get_network_ip_availability(network_id)
+        handle_response {
+          @fog.get_network_ip_availability(network_id).body['network_ip_availability']
+        }
+      end
+
+      def list_network_ip_availabilities
+        handle_response {
+          @fog.list_network_ip_availabilities.body['network_ip_availabilities']
+        }
+      end
+
+
+
       def networks(filter={})
         handle_response{
           @fog.list_networks(filter).body['networks']
