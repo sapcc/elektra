@@ -52,7 +52,7 @@ module ResourceManagement
         new(:networking,                :networks,                    pkg(true, 1)),
         new(:networking,                :subnets,                     pkg(false, 1)),
         new(:networking,                :subnet_pools,                pkg(false, 0)),
-        new(:networking,                :ports,                       pkg(false, 50)),
+        new(:networking,                :ports,                       pkg(false, 500)),
         new(:networking,                :routers,                     pkg(false, 1)),
         new(:networking,                :security_groups,             pkg(false, 2),  auto_approved_quota: 1), # auto-approve initial "default" security group
         new(:networking,                :security_group_rules,        pkg(false, 16), auto_approved_quota: 4), # auto-approve initial "default" security group
