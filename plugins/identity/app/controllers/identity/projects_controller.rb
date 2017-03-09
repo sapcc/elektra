@@ -118,7 +118,6 @@ module Identity
     end
 
     def check_wizard_status
-
       unless (@scoped_domain_name=='ccadmin' and @scoped_project_name=='cloud_admin')
         service_names = ["cost_control","networking","resource_management"].keep_if do |name|
           services.available?(name.to_sym)
@@ -135,84 +134,84 @@ module Identity
       @wizard_finished = true
       @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
-      # check and update quota status
-      if services.available?(:resource_management)
-        @resource_management_service_available = true
-        unless @project_profile.wizard_finished?("resource_management")
-          @wizard_finished = false
-          if services.resource_management.has_project_quotas?
-            @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
-          else
-            # try to find a quota inquiry and get status of it
-            quota_inquiry = services.inquiry.get_inquiries({
-              kind: 'project_quota_package',
-              project_id: @scoped_project_id,
-              domain_id: @scoped_domain_id
-            }).first
-
-            if quota_inquiry.present?
-              status = (quota_inquiry.aasm_state=='approved' ? ProjectProfile::STATUS_DONE : ProjectProfile::STATUS_PENDING)
-              @project_profile.update_wizard_status(
-                'resource_management',
-                status,
-                { inquiry_id: quota_inquiry.id, aasm_state: quota_inquiry.aasm_state, package: quota_inquiry.payload["package"] }
-              )
-            else
-              @project_profile.update_wizard_status('resource_management',nil)
-            end
+      # for all services do
+      ['resource_management','cost_control','networking'].each do |service_name|
+        if services.available?(service_name.to_sym)
+          # set instance variable service available to true
+          self.instance_variable_set("@#{service_name}_service_available",true)
+          unless @project_profile.wizard_finished?(service_name)
+            # update wizard status for current service 
+            @wizard_finished &= self.send("update_#{service_name}_wizard_status")
           end
         end
       end
+    end
 
-      # check and update cost control status
-      if services.available?(:cost_control)
-        @cost_control_service_available = true
-        unless @project_profile.wizard_finished?("cost_control")
-          @wizard_finished = false
-          #billing_data = services.cost_control.find_project_masterdata(@scoped_project_id)
-          billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id)
-          if billing_data and billing_data.cost_object_id
-            @project_profile.update_wizard_status(
-              'cost_control',
-              ProjectProfile::STATUS_DONE,
-              {cost_object: billing_data.cost_object_id}
-            )
-          else
-            @project_profile.update_wizard_status('cost_control',nil)
-          end
+    ################### HELPER METHODS #########################
+    def update_resource_management_wizard_status
+      if services.resource_management.has_project_quotas?
+        @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
+      else
+        # try to find a quota inquiry and get status of it
+        quota_inquiry = services.inquiry.get_inquiries({
+          kind: 'project_quota_package',
+          project_id: @scoped_project_id,
+          domain_id: @scoped_domain_id
+        }).first
+
+        if quota_inquiry.present?
+          status = (quota_inquiry.aasm_state=='approved' ? ProjectProfile::STATUS_DONE : ProjectProfile::STATUS_PENDING)
+          @project_profile.update_wizard_status(
+            'resource_management',
+            status,
+            { inquiry_id: quota_inquiry.id, aasm_state: quota_inquiry.aasm_state, package: quota_inquiry.payload["package"] }
+          )
+        else
+          @project_profile.update_wizard_status('resource_management',nil)
         end
       end
+      @project_profile.wizard_finished?("resource_management")
+    end
 
-      if services.available?(:networking)
-        @networking_service_available = true
-        unless @project_profile.wizard_finished?('networking')
-          @wizard_finished = false
-          if current_user.has_role?('admin') and !current_user.has_role?('network_admin')
-            network_admin_role = services.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
-            # Hack: extend current_user context to add the new assigned role
-            current_user.context["roles"] << { "id" => network_admin_role.id, "name" => network_admin_role.name }
-          end
+    def update_cost_control_wizard_status
+      billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id)
+      if billing_data and billing_data.cost_object_id
+        @project_profile.update_wizard_status(
+          'cost_control',
+          ProjectProfile::STATUS_DONE,
+          {cost_object: billing_data.cost_object_id}
+        )
+      else
+        @project_profile.update_wizard_status('cost_control',nil)
+      end
+      @project_profile.wizard_finished?("cost_control")
+    end
 
-          networking_service = service_user.cloud_admin_service(:networking)
-          floatingip_network = networking_service.domain_floatingip_network(@scoped_domain_name)
-          rbacs = if floatingip_network
-            networking_service.rbacs({
-              object_id: floatingip_network.id,
-              object_type: 'network',
-              target_tenant: @scoped_project_id
-            })
-          else
-            []
-          end
-
-          if rbacs.length>0
-            @project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
-          else
-            @project_profile.update_wizard_status('networking',nil)
-          end
-        end
+    def update_networking_wizard_status
+      if current_user.has_role?('admin') and !current_user.has_role?('network_admin')
+        network_admin_role = services.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
+        # Hack: extend current_user context to add the new assigned role
+        current_user.context["roles"] << { "id" => network_admin_role.id, "name" => network_admin_role.name }
       end
 
+      networking_service = service_user.cloud_admin_service(:networking)
+      floatingip_network = networking_service.domain_floatingip_network(@scoped_domain_name)
+      rbacs = if floatingip_network
+        networking_service.rbacs({
+          object_id: floatingip_network.id,
+          object_type: 'network',
+          target_tenant: @scoped_project_id
+        })
+      else
+        []
+      end
+
+      if rbacs.length>0
+        @project_profile.update_wizard_status('networking',ProjectProfile::STATUS_DONE)
+      else
+        @project_profile.update_wizard_status('networking',nil)
+      end
+      @project_profile.wizard_finished?("networking")
     end
   end
 end
