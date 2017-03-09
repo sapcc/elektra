@@ -74,6 +74,7 @@ module ResourceManagement
       all_resources = ResourceManagement::Resource.where(approved_quota: 0).where('usage != 0 OR current_quota != 0')
       count1 = all_resources.size
 
+      messages = []
       all_resources.pluck('DISTINCT project_id').each do |pid|
         resources = all_resources.where(project_id: pid).to_a
         resources.each do |res|
@@ -81,7 +82,8 @@ module ResourceManagement
           res.save
         end
 
-        services.resource_management.apply_current_quota(resources)
+        failed_services = services.resource_management.apply_current_quota(resources)
+        failed_services.each { |srv| messages.append("apply failed for project #{pid}, service #{srv}") }
       end
 
       all_resources = ResourceManagement::Resource.where('approved_quota != current_quota')
@@ -94,10 +96,12 @@ module ResourceManagement
           res.save
         end
 
-        services.resource_management.apply_current_quota(resources)
+        failed_services = services.resource_management.apply_current_quota(resources)
+        failed_services.each { |srv| messages.append("apply failed for project #{pid}, service #{srv}") }
       end
 
-      render plain: "#{count1}+#{count2} resources fixed"
+      messages.unshift("#{count1}+#{count2} resources fixed")
+      render plain: messages.join("\n")
     end
 
     private
