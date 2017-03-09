@@ -101,6 +101,7 @@ module ServiceLayer
     def grant_project_user_role_by_role_name(project_id, user_id, role_name)
       role = service_user.find_role_by_name(role_name)
       driver.grant_project_user_role(project_id, user_id, role.id)
+      role
     end
 
     def grant_project_user_role(project_id, user_id, role_id)
