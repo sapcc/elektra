@@ -70,6 +70,36 @@ module ResourceManagement
       render json: full_data.to_json
     end
 
+    def make_everything_okay
+      all_resources = ResourceManagement::Resource.where(approved_quota: 0).where('usage != 0 OR current_quota != 0')
+      count1 = all_resources.size
+
+      all_resources.pluck('DISTINCT project_id').each do |pid|
+        resources = all_resources.where(project_id: pid).to_a
+        resources.each do |res|
+          res.approved_quota = res.current_quota = [res.current_quota,res.usage].max
+          res.save
+        end
+
+        services.resource_management.apply_current_quota(resources)
+      end
+
+      all_resources = ResourceManagement::Resource.where('approved_quota != current_quota')
+      count2 = all_resources.size
+
+      all_resources.pluck('DISTINCT project_id').each do |pid|
+        resources = all_resources.where(project_id: pid).to_a
+        resources.each do |res|
+          res.current_quota = res.approved_quota
+          res.save
+        end
+
+        services.resource_management.apply_current_quota(resources)
+      end
+
+      render plain: "#{count1}+#{count2} resources fixed"
+    end
+
     private
 
   end
