@@ -1,6 +1,5 @@
 {
   "context_is_cloud_volume_admin":  "role:cloud_volume_admin",
-  "owner": "project_id:%(project_id)s",
   "member": "role:member or role:Member",
   "volume_viewer": "role:volume_viewer",
   "volume_admin": "role:volume_admin",
