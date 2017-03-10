@@ -77,7 +77,7 @@
 -# NETWORKING
 - if @networking_service_available
   - can_setup_network = current_user.is_allowed?("networking:network_wizard_get")
-  - action_button = {label: 'Set Network', url: (plugin('networking').new_network_wizard_path if @project_profile.wizard_finished?('resource_management')) }
+  - action_button = {label: 'Set Network', url: (plugin('networking').new_network_wizard_path ) }
   = wizard_step({title: 'Configure Your Network',
     mandatory: true,
     action_button: (action_button if can_setup_network),

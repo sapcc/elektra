@@ -37,7 +37,7 @@
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
-    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Setup
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'}, disabled: (!@network_wizard.errors.blank?) } Setup
 
 :javascript
   $('input[name="network_wizard[setup_option]"]').click(function () {
