@@ -2,6 +2,7 @@ module Networking
   class Networks::AccessController < NetworksController
     def index
       @rbacs = services.networking.rbacs(object_id: @network_id, object_type: 'network')
+      @network = services.networking.network(@network_id)
 
       rbac_target_tenant_ids = services.networking.rbacs(object_id: @network_id, object_type: 'network').collect{|rbac| rbac.target_tenant}
 
