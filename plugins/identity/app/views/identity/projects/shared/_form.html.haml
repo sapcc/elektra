@@ -1,6 +1,6 @@
 = hidden_field_tag :inquiry_id, params[:inquiry_id]
 
-- if @project.parent_id
+- if @project.parent_id and @project.parent_name
   = form.input :parent_name,
     input_html:  { maxlength: 255, value: @project.parent_name },
     disabled:    true,
@@ -17,9 +17,3 @@
 = form.input :description, { as: :text,
   placeholder: 'Additional information about this project'}
 = form.input :enabled, as: :hidden, :input_html => { value: true}
-
-
--#- with_cost_object ||= false
--#- if with_cost_object && plugin_available?(:cost_control) && services.cost_control.available?
--#  = form.simple_fields_for :cost_control, @cost_control_metadata do |f|
--#    - render partial: '/cost_control/cost_object/form', locals: { form: f, long_labels: true }
