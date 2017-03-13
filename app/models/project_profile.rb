@@ -36,6 +36,8 @@ class ProjectProfile < ActiveRecord::Base
 
   def wizard_finished?(*service_names)
     status = true
+    service_names = service_names.first if service_names.first.is_a?(Array)
+
     service_names.each do |service_name|
       status &= (wizard_payload[service_name] and
       wizard_payload[service_name]["status"]==STATUS_DONE)

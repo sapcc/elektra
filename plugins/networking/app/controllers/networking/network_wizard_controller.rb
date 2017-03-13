@@ -11,12 +11,12 @@ module Networking
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
 
-        if @rbacs and @rbacs.length>0
-          @network_wizard.setup_options = ["simple"]
-          @network_wizard.setup_option = "simple"
-        end
+        # if @rbacs and @rbacs.length>0
+        #   @network_wizard.setup_options = ["simple"]
+        #   @network_wizard.setup_option = "simple"
+        # end
       else
-        @network_wizard.errors.add(:floatingip_network, "Could not fine FloatingIP-Network")
+        @network_wizard.errors.add(:floatingip_network, "Could not find FloatingIP-Network")
       end
     end
 
@@ -45,7 +45,7 @@ module Networking
 
         end
       else
-        @network_wizard.errors.add(:floatingip_network, "Could not fine FloatingIP-Network")
+        @network_wizard.errors.add(:floatingip_network, "Could not find FloatingIP-Network")
       end
 
 

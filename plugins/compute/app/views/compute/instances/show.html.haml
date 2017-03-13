@@ -46,23 +46,26 @@
                 = project_name(@instance.tenant_id)
 
     .tab-pane{role:"tabpanel", id:"specs"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Flavor
-            %td= @instance.flavor_object.name
-          %tr
-            %th Flavor ID
-            %td= @instance.flavor_object.id
-          %tr
-            %th RAM
-            %td= "#{@instance.flavor_object.ram}MB"
-          %tr
-            %th VCPUs
-            %td= "#{@instance.flavor_object.vcpus} VCPU"
-          %tr
-            %th Disk
-            %td= "#{@instance.flavor_object.disk}GB"
+      - if @instance.flavor_object
+        %table.table.datatable
+          %tbody
+            %tr
+              %th Flavor
+              %td= @instance.flavor_object.name
+            %tr
+              %th Flavor ID
+              %td= @instance.flavor_object.id
+            %tr
+              %th RAM
+              %td= "#{@instance.flavor_object.ram}MB"
+            %tr
+              %th VCPUs
+              %td= "#{@instance.flavor_object.vcpus} VCPU"
+            %tr
+              %th Disk
+              %td= "#{@instance.flavor_object.disk}GB"
+      - else
+        No instance specifications
 
     .tab-pane{role:"tabpanel", id:"ip_addresses"}
       %table.table.datatable

@@ -7,7 +7,7 @@
     - unless @network_wizard.errors.blank?
       %p.alert.alert-error= @network_wizard.errors.full_messages.to_sentence
 
-    = f.input :setup_options, as: :hidden, input_html: {name: "network_wizard[setup_options][]"}      
+    = f.input :setup_options, as: :hidden, input_html: {name: "network_wizard[setup_options][]"}
     -# wizard type
     - if @network_wizard.setup_options.length>1
       %fieldset
@@ -26,8 +26,7 @@
         .tab-pane.fade#advanced{class: ('in active' if @network_wizard.setup_option=='advanced')}
           %p
             Wizard is going to assign the FloatingIP-Network
-            <b>#{@network_wizard.floatingip_network_name}</b> to Project
-            <b>#{@scoped_project_name}</b> via RBAC.
+            <b>#{@network_wizard.floatingip_network_name}</b>
 
       - if @network_wizard.setup_options.include?('simple')
         .tab-pane.fade#simple{class: ('in active' if @network_wizard.setup_option=='simple')}
@@ -38,7 +37,7 @@
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
-    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Setup
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'}, disabled: (!@network_wizard.errors.blank?) } Setup
 
 :javascript
   $('input[name="network_wizard[setup_option]"]').click(function () {

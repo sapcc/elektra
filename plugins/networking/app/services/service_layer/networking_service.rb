@@ -42,6 +42,9 @@ module ServiceLayer
     end
 
     def domain_floatingip_network(domain_name)
+      # ccadmin, cc3test -> FloatingIP-internal-monsoon3
+      domain_name = 'monsoon3' if ['ccadmin','cc3test'].include?(domain_name)
+
       name_candidates = ["FloatingIP-external-#{domain_name}",
       "FloatingIP-internal-#{domain_name}",
       "Converged Cloud External"]
