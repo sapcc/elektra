@@ -482,6 +482,10 @@ module ResourceManagement
         quota_values = values.map { |k, v| [DNS_RESOURCE_MAP.invert[k], v] }.to_h
         # activating admin action
         quota_values[:all_projects] = true
+        # if we change quota for recordsets, we automatically adjust records
+        if zone_recordsets = quota_values['zone_recordsets']
+          quota_values['zone_records'] = zone_recordsets * 20 # 20 is the default records_per_recordset quota
+        end
         handle_response { fog_dns_connection.update_quota(project_id, quota_values) }
       end
 
@@ -498,6 +502,7 @@ module ResourceManagement
 
         # max count of recordsets per zone per project
         # FIXME: very expensive - check the previous version for a simpler solution or use ceilometer
+        # need to iterate over zones, as quota is per zone, total project usage (which can be queried) would not help
         zones_response.body['zones'].each do |zone|
           total_count = fog_dns_connection.list_recordsets(
             zone_id: zone['id'],
@@ -513,10 +518,7 @@ module ResourceManagement
 
         {
           zones:      zones_count,
-          recordsets: recordsets,
-          # we cannot easily count the records (just not worth it)
-          # so we display the possible max
-          records:    recordsets * 20 # 20 is default records_per_recordset quota
+          recordsets: recordsets
         }
       end
     end

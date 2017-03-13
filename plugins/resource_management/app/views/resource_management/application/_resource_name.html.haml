@@ -64,7 +64,7 @@
                 = translated_name
           - when :dns
             - case name
-              - when :zones, :recordsets, :records
+              - when :zones, :recordsets
                 = link_to translated_name, plugin('dns_service').zones_path, title: linktitle
               - else
                 = translated_name

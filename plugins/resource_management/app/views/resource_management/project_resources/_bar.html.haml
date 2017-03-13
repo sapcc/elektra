@@ -1,29 +1,31 @@
-.row
-  = render partial: 'resource_name', locals: { resource: data, scope: 'resources', overview: overview }
+- resource = data
+- if resource.config
+  .row
+    = render partial: 'resource_name', locals: { resource: resource, scope: 'resources', overview: overview }
 
-  .col-md-6
-    - data_type      = data.data_type
-    - usage          = data.usage
-    - current_quota  = data.current_quota
-    - approved_quota = data.approved_quota
-    -# to render the warning in good_to_know partial
-    - @warning       = true if current_quota > approved_quota or current_quota == -1
+    .col-md-6
+      - data_type      = data.data_type
+      - usage          = data.usage
+      - current_quota  = data.current_quota
+      - approved_quota = data.approved_quota
+      -# to render the warning in good_to_know partial
+      - @warning       = true if current_quota > approved_quota or current_quota == -1
 
-    - if current_quota >= 0
-      = resource_bar(fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
-    - else
-      = resource_bar(fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
-
-  - if current_user.is_allowed?('resource_management:project_resource_new_request') and not @has_requested_package
-    .col-md-1.quota-request-more
       - if current_quota >= 0
-        = link_to 'Request more',plugin('resource_management').resources_new_request_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+        = resource_bar(fill: usage, maximum: current_quota, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
       - else
-        = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
-  - if current_user.is_allowed?('resource_management:confirm_reduce_quota')
-    - unless @index
+        = resource_bar(fill: usage, maximum: { value: -1, label: "Quota currently unlimited" }, threshold: { value: approved_quota, label: "Approved quota: $VALUE" }, data_type: data_type)
+
+    - if current_user.is_allowed?('resource_management:project_resource_new_request') and not @has_requested_package
       .col-md-1.quota-request-more
-        - if current_quota > 0
-          = link_to 'Reduce',plugin('resource_management').resources_confirm_reduce_quota_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
-        - else 
-          = link_to 'Reduce', '#', class: 'btn btn-default btn-sm disabled'
+        - if current_quota >= 0
+          = link_to 'Request more',plugin('resource_management').resources_new_request_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+        - else
+          = link_to 'Request more','#', class: 'btn btn-primary btn-sm disabled'
+    - if current_user.is_allowed?('resource_management:confirm_reduce_quota')
+      - unless @index
+        .col-md-1.quota-request-more
+          - if current_quota > 0
+            = link_to 'Reduce',plugin('resource_management').resources_confirm_reduce_quota_path(id: data.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          - else
+            = link_to 'Reduce', '#', class: 'btn btn-default btn-sm disabled'

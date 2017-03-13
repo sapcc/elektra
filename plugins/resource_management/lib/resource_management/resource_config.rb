@@ -59,7 +59,6 @@ module ResourceManagement
         new(:networking,                :rbac_policies,               pkg(false, 5)),
         new(:dns,                       :zones,                       pkg(false, 1)),
         new(:dns,                       :recordsets,                  pkg(false, 5)),
-        new(:dns,                       :records,                     pkg(false, 5)),
         new(:block_storage,             :capacity,                    pkg(true, 16), data_type: :bytes, data_sub_type: :giga),
         new(:block_storage,             :snapshots,                   pkg(false, 2)),
         new(:block_storage,             :volumes,                     pkg(false, 2)),
