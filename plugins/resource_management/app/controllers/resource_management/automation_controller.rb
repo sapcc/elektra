@@ -71,40 +71,19 @@ module ResourceManagement
     end
 
     def make_everything_okay
-      all_resources = ResourceManagement::Resource.where(approved_quota: 0).where('usage != 0 OR current_quota != 0')
-      count1 = all_resources.size
-
       messages = []
-      all_resources.pluck('DISTINCT project_id').each do |pid|
-        resources = all_resources.where(project_id: pid).to_a
-        resources.each do |res|
-          res.approved_quota = res.current_quota = [res.current_quota,res.usage].max
-          res.save
+      resources = ResourceManagement::Resource.where(service: 'dns', name: 'recordsets').where.not(project_id: nil).to_a
+      resources.each do |res|
+        # re-apply recordset quotas to set the records quota which is now derived from the recordsets quota
+        failed_services = services.resource_management.apply_current_quota(res)
+        if failed_services.size > 0
+          messages.append("dns/records quota reset failed for project #{res.project_id} (#{res.scope_name} in domain #{res.domain_id})")
         end
-
-        failed_services = services.resource_management.apply_current_quota(resources)
-        failed_services.each { |srv| messages.append("apply failed for project #{pid}, service #{srv}") }
       end
 
-      all_resources = ResourceManagement::Resource.where('approved_quota != current_quota')
-      count2 = all_resources.size
-
-      all_resources.pluck('DISTINCT project_id').each do |pid|
-        resources = all_resources.where(project_id: pid).to_a
-        resources.each do |res|
-          res.current_quota = res.approved_quota
-          res.save
-        end
-
-        failed_services = services.resource_management.apply_current_quota(resources)
-        failed_services.each { |srv| messages.append("apply failed for project #{pid}, service #{srv}") }
-      end
-
-      messages.unshift("#{count1}+#{count2} resources fixed")
+      messages.unshift("#{resources.size} quotas touched")
       render plain: messages.join("\n")
     end
-
-    private
 
   end
 end
