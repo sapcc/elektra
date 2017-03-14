@@ -1,4 +1,4 @@
-= content_for :title do 
+= content_for :title do
   Create new project
 
 = simple_form_for @project, url: plugin('identity').domains_create_project_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
@@ -6,7 +6,7 @@
     - if @project.errors.present?
       .alert.alert-error
         = render_errors(@project.errors)
-    
+
     = render partial: 'identity/projects/shared/form', locals: { form: f, with_cost_object: true }
   %div{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

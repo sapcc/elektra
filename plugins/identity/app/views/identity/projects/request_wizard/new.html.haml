@@ -1,12 +1,33 @@
-= content_for :title do 
+= content_for :title do
   Request new project
-  
-= simple_form_for @project, url: plugin('identity').projects_request_project_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+= simple_form_for @project, url: plugin('identity').projects_request_project_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - unless @project.errors["message"].blank?
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
 
+    %p
+      A project is a container hosting your resources.
+      %br
+      Each project has a set of quotas that guarantee and limit the resource consumption.
+      %br
+      A project is also the entity that allows role assignment to users controlling their permissions on the project.
+
+    - if @scoped_domain_name=='monsoon3'
+      .alert.alert-warning
+        This project is <strong>internal only</strong>. This means there is direct
+        access from your laptop to floating IPs of your project, but there is NO
+        option to create internet facing systems. In order to setup a project that is internet facing please #{link_to 'read further info here', '//documentation.global.cloud.sap', target: '_blank'}
+    - else
+      .alert.alert-warning
+        This project is <strong>internet facing</strong>. You can access your floating IP only through
+        dedicated #{link_to 'jump hosts', '//documentation.global.cloud.sap/docs/jump/', target: '_blank'}.
+        In order to open connections to systems in other networks or zones you need to
+        request opening firewalls as applicable to your line of business’ security process.
+
+
     = render partial: 'identity/projects/shared/form', locals: { form: f, with_cost_object: true }
+    = render partial: 'identity/projects/shared/additional_form', locals: { form: f}
 
   %div{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

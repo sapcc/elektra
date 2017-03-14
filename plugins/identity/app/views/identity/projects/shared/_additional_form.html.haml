@@ -1,0 +1,27 @@
+%h4 Please answer the below questions to the best of your knowledge:
+
+%p
+  <strong>Note: </strong> the values below are informational only for the purpose of approval.
+  All values can be changed after project creation using our resource management self service.
+
+
+= form.input :directly_generating_revenue, label: 'Is your use case directly generating (cloud) revenue?',
+  as: :radio_buttons
+
+= form.input :solution_description,
+  label: 'Describe Your solution',
+  as: :text,
+  input_html: {rows: 6, value: "Solution name: \nWhich services does your solution provide?\nWhich software technology is your solution based on?\nIs your solution new or are you migrating from another infrastructure? If yes, which?"},
+  hint: 'Solution name, Which services does your solution provide?, Which software technology is your solution based on?, Is your solution new or are you migrating from another infrastructure? If yes, which?'
+
+= form.input :resource_demand,
+  label: "Resource Requirements",
+  as: :text,
+  input_html: {rows: 6, value: "Memory:\nCPU:\nBlock Storage (VM attached storage / disk storage):\nObject Storage:\nNFS/CIFS Storage:" },
+  hint: raw("Memory, CPU, Block Storage (VM attached storage / disk storage) #{link_to 'Learn more about compute resources', '//documentation.global.cloud.sap/docs/servers/details.html', target: '_blank'}, Object Storage #{link_to 'Learn more about object storage', '//documentation.global.cloud.sap/docs/blockstore/details.html', target: '_blank'}, NFS/CIFS Storage #{link_to 'Learn more about file system storage', '//documentation.global.cloud.sap/docs/filestore/details.html', target:'_blank'}")
+
+= form.input :organisation_description,
+  label: "Your Organisation",
+  as: :text,
+  input_html: {rows: 3, value: "Manager’s Name and User ID:\nCost Object (that your consumption can be charged to):" },
+  hint: raw("Manager’s Name and User ID, Cost Object (that your consumption can be charged to)")
