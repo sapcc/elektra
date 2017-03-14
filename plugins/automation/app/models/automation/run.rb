@@ -13,17 +13,6 @@ module Automation
       Time.at(time_diff.to_i.abs).utc.strftime "%H:%M:%S"
     end
 
-    def state_to_string
-      case self.state
-        when State::Run::PREPARING then "Preparing"
-        when State::Run::EXECUTING then "Executing"
-        when State::Run::FAILED then "Failed"
-        when State::Run::COMPLETED then "Completed"
-        else
-          State::MISSING
-      end
-    end
-
     def owner_name
       if self.attributes.fetch('owner', {})["name"].nil?
         return self.attributes.fetch('owner', {})["id"]

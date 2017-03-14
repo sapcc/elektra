@@ -27,6 +27,12 @@
   }
 }
 
+.show_details {
+  .row {
+    margin-bottom: 5px;
+  }
+}
+
 // Index
 
 .loading-spinner-section {
@@ -71,14 +77,6 @@ a[data-popover-type='job-history'] {
 
 pre {
   margin-top: 10px;
-}
-
-// Jobs
-
-.job_details {
-  .row {
-    margin-bottom: 5px;
-  }
 }
 
 // Automations

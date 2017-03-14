@@ -213,15 +213,28 @@ module Automation
       end
     end
 
+    def job_icon_state(status)
+      case status
+        when ::Automation::State::Job::QUEUED
+          haml_tag :i, {class: "fa fa-square state_success"}
+        when ::Automation::State::Job::EXECUTING
+          haml_tag :i, {class: "fa fa-spinner fa-spin"}
+        when ::Automation::State::Job::FAILED
+          haml_tag :i, {class: "fa fa-square state_failed"}
+        when ::Automation::State::Job::COMPLETED
+          haml_tag :i, {class: "fa fa-square state_success"}
+      end
+    end
+
     def job_state(status)
       case status
         when State::Job::FAILED
           haml_tag :span, {class: "state_failed"} do
-            haml_concat status.to_s
+            haml_concat status.to_s.humanize
           end
         else
           haml_tag :span do
-            haml_concat status.to_s
+            haml_concat status.to_s.humanize
           end
       end
     end
@@ -267,25 +280,25 @@ module Automation
     def run_icon_state(state)
       case state
         when ::Automation::State::Run::PREPARING
-          haml_tag :i, {class: "fa fa-square state_success", data: {popover_type: 'job-history'}}
+          haml_tag :i, {class: "fa fa-square state_success"}
         when ::Automation::State::Run::EXECUTING
-          haml_tag :i, {class: "fa fa-spinner fa-spin", data: {popover_type: 'job-history'}}
+          haml_tag :i, {class: "fa fa-spinner fa-spin"}
         when ::Automation::State::Run::FAILED
-          haml_tag :i, {class: "fa fa-square state_failed", data: {popover_type: 'job-history'}}
+          haml_tag :i, {class: "fa fa-square state_failed"}
         when ::Automation::State::Run::COMPLETED
-          haml_tag :i, {class: "fa fa-square state_success", data: {popover_type: 'job-history'}}
+          haml_tag :i, {class: "fa fa-square state_success"}
       end
     end
 
-    def run_state(state, state_string)
+    def run_state(state)
       case state
         when State::Run::FAILED
           haml_tag :span, {class: "state_failed"} do
-            haml_concat state_string
+            haml_concat state.to_s.humanize
           end
         else
           haml_tag :span do
-            haml_concat state_string
+            haml_concat state.to_s.humanize
           end
       end
     end

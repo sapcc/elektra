@@ -8,13 +8,22 @@
     %h3
       Details
 
-    .run_details
+    .show_details
       .row
         .col-md-2
           %b
             Automation:
         .col-md-4
           = @run.automation_name
+
+      .row
+        .col-md-2
+          %b Revision:
+        .col-md-10
+          -if @run.revision_from_github?
+            = link_to @run.repository_revision, @run.revision_link, target: "_blank"
+          -else
+            = @run.repository_revision
 
       .row
         .col-md-2
@@ -39,15 +48,6 @@
             Duration:
         .col-md-4.js-run-duration
           = @run.duration
-
-      .row
-        .col-md-2
-          %b Revision:
-        .col-md-10
-          -if @run.revision_from_github?
-            = link_to @run.repository_revision, @run.revision_link, target: "_blank"
-          -else
-            = @run.repository_revision
 
 
 

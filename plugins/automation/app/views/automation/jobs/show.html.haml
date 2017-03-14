@@ -9,7 +9,7 @@
     %h3
       Details
 
-    .job_details
+    .show_details
       .row
         .col-md-2
           %b
@@ -30,14 +30,15 @@
       .row
         .col-md-2
           %b
-            Status:
-        .col-md-4
-          - job_state(@job.status)
-        .col-md-2
-          %b
             Owner:
         .col-md-4
           = @job.owner_name
+        .col-md-2
+          %b
+            Status:
+        .col-md-4
+          - job_icon_state(@job.status)
+          - job_state(@job.status)
 
       .row
         .col-md-2
