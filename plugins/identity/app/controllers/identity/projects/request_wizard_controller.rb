@@ -5,7 +5,7 @@ module Identity
       before_filter do
         enforce_permissions("identity:project_request",{domain_id: @scoped_domain_id})
       end
-      
+
       def new
         @project = Identity::Project.new(nil,{})
         @project.enabled = true
@@ -23,6 +23,8 @@ module Identity
         @project.attributes=params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
 
         inquiry = nil
+        #byebug
+        #service_user.list_scope_resource_admins(domain_id: @scoped_domain_id)
 
         if @project.valid?
           begin
