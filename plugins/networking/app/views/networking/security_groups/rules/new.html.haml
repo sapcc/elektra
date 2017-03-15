@@ -10,54 +10,56 @@
   %div{class: modal? ? 'modal-body' : ''}
     - unless @rule.errors.empty?
       %p.alert.alert-error= @rule.errors.full_messages.to_sentence
-    
-    .row  
-      .col-sm-6 
+
+    .row
+      .col-sm-6
         = f.input :type, as: :select, collection: Networking::SecurityGroupRule::TYPE_LABELS, selected: @rule_type
-        
+
         %fieldset
           = f.input :protocol, as: :select, collection: Networking::SecurityGroupRule::PROTOCOL_LABELS
           = f.input :direction, as: :select, collection: [["Ingress","ingress"],["Egress","egress"]]
-              
+
           = f.input :port_range, { label: 'Port Range',
             hint: 'Example for range 0-80 and single port 80',
             wrapper_html: {class: ('hidden' if @rule.protocol=='icmp')} }
-            
+
           = f.input :icmp_type, { label: 'ICMP Type',
             as: :integer,
             wrapper_html: {class: "#{'hidden' unless @rule.protocol=='icmp'}"},
-            hint: 'ICMP Type is a number between 0 and 255' } 
+            hint: 'ICMP Type is a number between 0 and 255' }
           = f.input :icmp_code, { label: 'ICMP Code',
             as: :integer,
             wrapper_html: {class: "#{'hidden' unless @rule.protocol=='icmp'}"},
-            hint: 'ICMP Code is a number between 0 and 15' }   
-        
-        %fieldset   
+            hint: 'ICMP Code is a number between 0 and 15' }
+
+        %fieldset
           = f.input :remote_source, as: :select, collection: [["IP Address","remote_ip_prefix"],["Security Group", "remote_group_id"]], selected: @rule.remote_ip_prefix.blank? ? 'remote_group_id' : 'remote_ip_prefix'
-          
+
           = f.input :remote_group_id, {label: 'Security Group',
-            as: :select, 
-            collection: @security_groups, 
+            as: :select,
+            collection: @security_groups,
             selected: @security_groups.first.id,
             wrapper_html: {class: ("hidden" unless @rule.remote_ip_prefix.blank?)} }
-            
+
           = f.input :ethertype, {label: 'Ether Type',
-            as: :select, 
-            collection: [["IPv4","ipv4"],["IPv6","ipv6"]], 
+            as: :select,
+            collection: [["IPv4","ipv4"],["IPv6","ipv6"]],
             selected: "ipv4",
-            wrapper_html: {class: ("hidden" unless @rule.remote_ip_prefix.blank?) } }  
-            
+            wrapper_html: {class: ("hidden" unless @rule.remote_ip_prefix.blank?) } }
+
           = f.input :remote_ip_prefix, { label: 'IP Address',
             hint: 'Example for IPv4 0.0.0.0/0 and IPv6 ::/0',
             wrapper_html: {class: ("hidden" if @rule.remote_ip_prefix.blank? )} }
-          
+
+          = f.input :description, { label: 'Description' }
+
       .col-sm-6
         .bs-callout.bs-callout-primary.small
           - if Networking::SecurityGroupRule::DESCRIPTIONS.keys.length>0
             - Networking::SecurityGroupRule::DESCRIPTIONS.each do |name, text|
               %h4= name.humanize unless name=='rules'
-              %p= text    
-      
+              %p= text
+
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel

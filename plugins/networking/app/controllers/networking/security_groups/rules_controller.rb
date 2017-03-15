@@ -31,6 +31,7 @@ module Networking
 
         unless rule_params.blank?
           attributes = {
+            description: rule_params[:description],
             protocol: rule_params[:protocol],
             direction: rule_params[:direction],
             security_group_id: params[:security_group_id]
