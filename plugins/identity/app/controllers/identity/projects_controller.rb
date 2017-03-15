@@ -140,7 +140,7 @@ module Identity
           # set instance variable service available to true
           self.instance_variable_set("@#{service_name}_service_available",true)
           unless @project_profile.wizard_finished?(service_name)
-            # update wizard status for current service 
+            # update wizard status for current service
             @wizard_finished &= self.send("update_#{service_name}_wizard_status")
           end
         end
@@ -174,7 +174,7 @@ module Identity
     end
 
     def update_cost_control_wizard_status
-      billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id)
+      billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id) rescue nil
       if billing_data and billing_data.cost_object_id
         @project_profile.update_wizard_status(
           'cost_control',
