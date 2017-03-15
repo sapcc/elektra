@@ -8,7 +8,7 @@ showSubnets= (subnets) ->
   $select.append('<option value=""></option>')
   for subnet in subnets
     available_ips = (subnet.total_ips-subnet.used_ips)
-    $select.append('<option '+("disabled=\"disabled\"" if available_ips<=0)+' value="'+subnet.subnet_id+'">'+subnet.subnet_name+' ('+subnet.cidr+', available IPs: '+available_ips+')'+'</option>') 
+    $select.append('<option '+("disabled=\"disabled\"" if available_ips<=0)+' value="'+subnet.subnet_id+'">'+subnet.subnet_name+' ('+subnet.cidr+', available IPs: '+available_ips+')'+'</option>')
 
   $('fieldset#subnets .form-group').show()
 
@@ -35,6 +35,7 @@ loadSubnets= (networkId) ->
     )
 
 init= () ->
+  console.log 'INIT'
   if $('#floating_ip_floating_subnet_id').length==0 || ($('#floating_ip_floating_subnet_id')[0].value || '').trim().length==0
     $('fieldset#subnets .form-group').hide()
     $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
