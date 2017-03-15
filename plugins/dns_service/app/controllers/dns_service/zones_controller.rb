@@ -1,7 +1,7 @@
 module DnsService
   class ZonesController < DnsService::ApplicationController
     before_filter ->(id = params[:id]) { load_zone id }, except: [:index]
-    before_filter :load_pools, only: [:index, :show]
+    before_filter :load_pools, only: [:index, :show, :update, :create]
 
     def index
       @zones = paginatable(per_page: 20) do |pagination_options|

@@ -277,6 +277,11 @@ module Core
         end
       end
 
+      def list_scope_resource_admins(scope={})
+        role = self.find_role_by_name('resource_admin') rescue nil
+        list_scope_assigned_users(scope.merge(role: role))
+      end
+
       # Returns admins for the given scope (e.g. project_id: PROJECT_ID, domain_id: DOMAIN_ID)
       # This method looks recursively for project, parent_projects and domain admins until it finds at least one.
       # It should always return a non empty list (at least the domain admins).
