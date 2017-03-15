@@ -23,8 +23,6 @@ module Identity
         @project.attributes=params.fetch(:project, {}).merge(domain_id: @scoped_domain_id)
 
         inquiry = nil
-        #byebug
-        #service_user.list_scope_resource_admins(domain_id: @scoped_domain_id)
 
         if @project.valid?
           begin
@@ -33,7 +31,8 @@ module Identity
                 "#{@project.name} - #{@project.description}",
                 current_user,
                 @project.attributes.to_json,
-                service_user.list_scope_admins(domain_id: @scoped_domain_id),
+                service_user.list_scope_resource_admins(domain_id: @scoped_domain_id)
+                #service_user.list_scope_admins(domain_id: @scoped_domain_id),
                 {
                     "approved": {
                         "name": "Approve",
