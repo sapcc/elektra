@@ -16,9 +16,4 @@ RSpec.describe "networking/floating_ips/new.html.haml", type: :view do
     expect(rendered).to match /id="floating_ip_floating_subnet_id"/
   end
 
-  it "the subnet select box contains three options" do
-    render
-
-    expect(rendered).to match /id="floating_ip_floating_subnet_id"/
-  end
 end
