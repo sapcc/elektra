@@ -6,7 +6,9 @@ showSubnets= (subnets) ->
   $select.empty()
 
   $select.append('<option value=""></option>')
-  $select.append('<option value="'+subnet.id+'">'+subnet.name+'</option>') for subnet in subnets
+  for subnet in subnets
+    available_ips = (subnet.total_ips-subnet.used_ips)
+    $select.append('<option '+("disabled=\"disabled\"" if available_ips<=0)+' value="'+subnet.subnet_id+'">'+subnet.subnet_name+' ('+subnet.cidr+', available IPs: '+available_ips+')'+'</option>')
 
   $('fieldset#subnets .form-group').show()
 
