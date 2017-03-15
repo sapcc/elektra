@@ -8,15 +8,20 @@ module Automation
     AUTOMATION_TYPE_MANIPULATED = I18n.t('automation.errors.automation_type_manipulated')
 
     def index
+      @pag_params = {automation: {page: 0}, run: {page: 0}}
       if request.xhr?
         if params[:model] == 'run'
+          @pag_params[:run][:page] = params[:page]
           runs_with_jobs(params[:page])
         elsif params[:model] == 'automation'
+          @pag_params[:automation][:page] = params[:page]
           automations(params[:page])
         end
       else
-        automations(params[:page])
-        runs_with_jobs(params[:page])
+        @pag_params[:automation][:page] = params.fetch('pag_params', {}).fetch('automation', {}).fetch('page', 0)
+        @pag_params[:run][:page] = params.fetch('pag_params', {}).fetch('run', {}).fetch('page', 0)
+        automations(@pag_params[:automation][:page])
+        runs_with_jobs(@pag_params[:run][:page])
       end
     end
 

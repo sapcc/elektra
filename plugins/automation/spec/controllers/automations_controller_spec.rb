@@ -37,6 +37,30 @@ describe Automation::AutomationsController, type: :controller do
       expect(response).to render_template(:index)
     end
 
+    describe "@pag_params" do
+
+      it "should set up pagination object" do
+        get :index, default_params
+        expect(assigns(:pag_params)).to eq({:automation=>{:page=>0}, :run=>{:page=>0}})
+      end
+
+      it "should set the righ params when loading the page" do
+        get :index, default_params.merge(:pag_params => {:automation=>{:page=>"2"}, :run=>{:page=>"3"}})
+        expect(assigns(:pag_params)).to eq({:automation=>{:page=>"2"}, :run=>{:page=>"3"}})
+      end
+
+      it "should updated just the run param when ajax" do
+        xhr :get, :index, default_params.merge({:page => "5", :model => "run"})
+        expect(assigns(:pag_params)).to eq({:automation=>{:page=>0}, :run=>{:page=>"5"}})
+      end
+
+      it "should updated just the automation param when ajax" do
+        xhr :get, :index, default_params.merge({:page => "5", :model => "automation"})
+        expect(assigns(:pag_params)).to eq({:automation=>{:page=>"5"}, :run=>{:page=>0}})
+      end
+
+    end
+
   end
 
   describe "GET 'new'" do
