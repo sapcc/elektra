@@ -25,6 +25,13 @@ module Automation
       end
     end
 
+    def index_update_runs
+      @pag_params = {automation: {page: 0}, run: {page: 0}}
+      @pag_params[:run][:page] = params[:page]
+      runs_with_jobs(params[:page])
+      render partial: 'table_runs'
+    end
+
     def new
       @automation_types = ::Automation::Automation.types
       @automation = ::Automation::Forms::Automation.new()

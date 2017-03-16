@@ -12,7 +12,9 @@ Automation::Engine.routes.draw do
     get ':id/show_log', to: 'jobs#show_data', defaults: { attr: 'log' }, :on => :collection, as: 'show_log'
   end
 
-  resources :automations, only: [:index, :new, :create, :show, :edit, :update, :destroy]
+  resources :automations, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
+    get 'index_update_runs', :on => :collection
+  end
 
   resources :runs, only: [:show] do
     get ':id/show_log/', to: 'runs#show_log', :on => :collection, as: 'show_payload'

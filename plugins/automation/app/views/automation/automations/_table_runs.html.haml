@@ -1,4 +1,4 @@
-.automations_table
+.runs_table{data: {update_path: plugin('automation').index_update_runs_automations_path(page: @pag_params[:run][:page]), update_interval: 10}}
   %table.table
     %thead
       %tr
@@ -9,11 +9,9 @@
         %th State
         %th Jobs
     %tbody
-      - if runs.empty?
+      - if @runs.empty?
         %tr
           %td{colspan: 6} No automation runs available
       - else
-        -runs.each do | run |
+        -@runs.each do | run |
           = render partial: 'table_runs_item', locals: {run: run}
-
-= paginate runs, :theme => 'twitter-bootstrap-3', :remote => true, :params => {model: 'run'}

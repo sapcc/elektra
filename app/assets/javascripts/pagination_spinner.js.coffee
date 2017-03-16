@@ -10,14 +10,16 @@ class PaginationSpinner
     @initialize options
 
   initialize: (@options) ->
-    # create a wrapper for the table
-    @el.find('table').wrap( "<div class='pagination-wrapper'></div>" );
-    # add the spinner element
-    @el.find('.pagination-wrapper').prepend('<span class="spinner hide"></p>' );
-    # add event to the pagination links
-    @el.find('ul.pagination a').click (event) =>
-      @el.find('table').addClass('dimmed')
-      @el.find('.pagination-wrapper .spinner').removeClass('hide')
+    if @el.find('.pagination-wrapper').length == 0
+      # create a wrapper for the table
+      @el.wrapInner( "<div class='pagination-wrapper'></div>" );
+      @el.find('.pagination-wrapper').wrapInner( "<div class='pagination-content'></div>" );
+      # add the spinner element
+      @el.find('.pagination-wrapper').prepend('<span class="spinner hide"></p>' );
+      # add event to the pagination links
+      @el.find('ul.pagination a').click (event) =>
+        @el.find('.pagination-content').addClass('dimmed')
+        @el.find('.pagination-wrapper .spinner').removeClass('hide')
 
 $.fn.initPaginationSpinner = (options) ->
   options = options || {}
