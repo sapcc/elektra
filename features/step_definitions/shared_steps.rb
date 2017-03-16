@@ -9,7 +9,7 @@ And(/^I log in as test_user/) do
 end
 
 Given(/^I am not logged in$/) do
-  visit "/auth/logout" 
+  visit "/auth/logout"
 end
 
 Given /^Test user has accepted terms of use$/ do
@@ -35,6 +35,20 @@ Then(/^I see a "(.*?)" (button|link)$/) do |button_text,l|
   expect(page).to have_selector('a', text: button_text)
 end
 
+Then(/^I see a selectbox with id "(.*?)"$/) do |id|
+  expect(page).to have_select(id)
+end
+
+And(/^options of "(.*?)" contains names and ids$/) do |id|
+  option = find_field(id).all('option').last
+  expect(option.value).not_to eq("undefined")
+  expect(option.text).not_to eq("undefined")
+end
+
+When(/^I wait for (\d+) seconds?$/) do |n|
+  sleep(n.to_i)
+end
+
 Then(/^I don't see a "(.*?)" (button|link)$/) do |button_text,l|
   expect(page).not_to have_selector('a', text: button_text)
 end
@@ -47,7 +61,7 @@ Then(/^the page status code is successful$/) do
 end
 
 Given(/I am on the root page$/) do
-  visit "/" 
+  visit "/"
 end
 
 When(/^I visit domain$/) do

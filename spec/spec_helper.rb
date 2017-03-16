@@ -4,7 +4,7 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 
 require File.join(Gem.loaded_specs['monsoon-openstack-auth'].full_gem_path,'spec/support/authentication_stub')
-require_relative 'shared/admin_services_stub' 
+require_relative 'shared/admin_services_stub'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -63,16 +63,16 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.include FactoryGirl::Syntax::Methods
-  
+
   config.include AuthenticationStub
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
   end
   config.before(:all) do
-    
+
     DatabaseCleaner.start
-    
+
     # set test config variables
     Rails.configuration.keystone_endpoint = "http://localhost:8183/v3/auth/tokens"
     Rails.configuration.default_region = "europe"
@@ -83,10 +83,10 @@ RSpec.configure do |config|
   config.after(:all) do
     DatabaseCleaner.clean
   end
-  
+
   config.before(:each) do
     stub_authentication
-    
+
     allow(Core::ServiceUser::Base).to receive(:load).and_return(double('service_user').as_null_object)
   end
 
