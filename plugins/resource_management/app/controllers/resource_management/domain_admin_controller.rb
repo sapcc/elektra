@@ -55,6 +55,24 @@ module ResourceManagement
         return
       end
 
+      # check if the new project quota fits within the domain's budget
+      old_project_quota_sum = ResourceManagement::Resource.
+        where(domain_id: @scoped_domain_id, service: @project_resource.service, name: @project_resource.name).
+        where.not(project_id: nil).
+        pluck('SUM(GREATEST(approved_quota, current_quota, 0))').first
+
+      new_project_quota_sum = old_project_quota_sum - @project_resource.approved_quota + value
+      @domain_resource = ResourceManagement::Resource.find_by(
+        domain_id: @scoped_domain_id, project_id: nil,
+        service: @project_resource.service, name: @project_resource.name,
+      )
+      if new_project_quota_sum > @domain_resource.approved_quota
+        max_value = @domain_resource.approved_quota - old_project_quota_sum + @project_resource.approved_quota
+        msg = "Domain quota for #{@project_resource.service}/#{@project_resource.name} exceeded (maximum acceptable project quota is #{@project_resource.config.data_type.format(max_value)})"
+        render text: msg, status: :bad_request
+        return
+      end
+
       # do only a upgrade if the values are different otherwise it meaningless
       if @project_resource.approved_quota != value || @project_resource.current_quota != value
         @project_resource.approved_quota = value
@@ -76,7 +94,6 @@ module ResourceManagement
     end
 
     def reduce_quota
-
       prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
       value = params[:resource][:approved_quota]
 
@@ -121,6 +138,7 @@ module ResourceManagement
 
       # calculate projected @project_status after approval
       @desired_quota = @inquiry.payload['desired_quota']
+      @maximum_quota = @domain_resource.approved_quota - @resource_status[:current_quota_sum] + @project_resource.approved_quota
       @domain_status_new = {
         usage_sum:                  @resource_status[:usage_sum],
         current_quota_sum:          @resource_status[:current_quota_sum] - @project_resource.approved_quota + @desired_quota,
@@ -130,13 +148,27 @@ module ResourceManagement
     end
 
     def approve_request
-      value = params.require(:resource).require(:approved_quota)
-      # check new value a last time
+      valid = true
       begin
-        @project_resource.approved_quota = @project_resource.data_type.parse(value)
-        @project_resource.current_quota = @project_resource.data_type.parse(value)
-      rescue ArgumentError => e
+        @desired_quota = @project_resource.data_type.parse(params.require(:resource).require(:approved_quota))
+      rescue => e
         @project_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+        valid = false
+      end
+
+      # check against domain quota
+      _, _ = prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
+      maximum_quota = @domain_resource.approved_quota - @resource_status[:current_quota_sum] + @project_resource.approved_quota
+      if valid && @desired_quota > maximum_quota
+        max_quota_str = @project_resource.data_type.format(maximum_quota)
+        @project_resource.add_validation_error(:approved_quota, "is too large (would exceed total domain quota), maximum acceptable project quota is #{max_quota_str}")
+        valid = false
+      end
+
+      # do not even attempt to edit the @project_resource when we know the value to be invalid
+      if valid
+        @project_resource.approved_quota = @desired_quota
+        @project_resource.current_quota = @desired_quota
       end
 
       if @project_resource.save
@@ -157,12 +189,13 @@ module ResourceManagement
       ResourceManagement::ResourceConfig.all.each do |res|
         service_stats = @stats[res.service.name] ||= {}
         service_stats[res.name] ||= {
-          domain_approved_quota:  0,
-          total_current_quota:    0,
-          total_approved_quota:   0,
-          total_usage:            0,
-          project_current_quota:  0,
-          project_approved_quota: 0,
+          domain_approved_quota:   0,
+          total_current_quota:     0,
+          total_approved_quota:    0,
+          total_usage:             0,
+          project_current_quota:   0,
+          project_approved_quota:  0,
+          new_total_current_quota: 0,
         }
       end
 
@@ -187,13 +220,6 @@ module ResourceManagement
           end
       end
 
-      # check if some projects have infinite quota
-      ResourceManagement::Resource.where(domain_id: @scoped_domain_id).
-        where("project_id IS NOT NULL AND current_quota < 0").
-        each do |res|
-          @stats[res.service.to_sym][res.name.to_sym][:total_current_quota] = -1
-      end
-
       # obtain quota/usage for the project in question
       @project_resources.each do |res|
         @stats[res.service.to_sym][res.name.to_sym].merge!(
@@ -203,6 +229,27 @@ module ResourceManagement
       end
 
       @target_project_name = services.identity.find_project(@target_project_id).name
+
+      # check if request fits into domain quotas
+      @can_approve = true
+      ResourceManagement::ResourceConfig.all.each do |res|
+        data = @stats[res.service.name][res.name]
+        if data[:project_current_quota] < 0
+          data[:new_total_current_quota] = data[:total_current_quota] + res.value_for_package(@package)
+        else
+          data[:new_total_current_quota] = data[:total_current_quota] - data[:project_current_quota] + res.value_for_package(@package)
+        end
+        if data[:new_total_current_quota] > data[:domain_approved_quota]
+          @can_approve = false
+        end
+      end
+
+      # check if some projects have infinite quota
+      ResourceManagement::Resource.where(domain_id: @scoped_domain_id).
+        where("project_id IS NOT NULL AND current_quota < 0").
+        each do |res|
+          @stats[res.service.to_sym][res.name.to_sym][:total_current_quota] = -1
+      end
 
       # show only those resources in the review screen where the approval of
       # the request would increase the current_quota allocated to the project
