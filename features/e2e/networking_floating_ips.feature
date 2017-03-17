@@ -11,6 +11,7 @@ Feature: Floating IP's
     Then the page status code is successful
     And I see "Floating IPs"
 
+  @admin
   Scenario: New Floating IP Dialog comes up
     When I visit project path "networking/floating_ips"
     And I click on "Allocate new"
