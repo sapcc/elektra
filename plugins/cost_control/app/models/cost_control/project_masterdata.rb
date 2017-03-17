@@ -9,7 +9,7 @@ module CostControl
     COST_OBJECT_TYPES = {
       'CC'  => 'Cost Center',
       'IO'  => 'Internal Order',
-      'PC'  => 'Profit Center',
+      #'PC'  => 'Profit Center',
       'SO'  => 'Sales Order',
       'WBS' => 'WBS element',
     }
