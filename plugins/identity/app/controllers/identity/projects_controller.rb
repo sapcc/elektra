@@ -184,7 +184,7 @@ module Identity
         @project_profile.update_wizard_status(
           'cost_control',
           ProjectProfile::STATUS_DONE,
-          {cost_object: billing_data.cost_object_id}
+          {cost_object: billing_data.cost_object_id, type: billing_data.cost_object_type }
         )
       else
         @project_profile.update_wizard_status('cost_control',nil)

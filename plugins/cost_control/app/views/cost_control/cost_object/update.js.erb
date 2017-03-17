@@ -1,5 +1,10 @@
-MoModal.close();
+<% if @masterdata.errors.present? %>
+  $('.alert-error').removeClass('hidden').html("<%=@masterdata.errors.full_messages.to_sentence%>")
+<% else %>
+  $('.alert-error').empty().addClass('hidden')
+  MoModal.close();
 
-if (window.location.href.indexOf('<%=plugin("cost_control").cost_object_url%>')>-1) {
-  window.location.reload();
-}
+  if (window.location.href.indexOf('<%=plugin("cost_control").cost_object_url%>')>-1) {
+    window.location.reload();
+  }
+<% end %>

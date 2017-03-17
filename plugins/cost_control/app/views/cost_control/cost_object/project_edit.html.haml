@@ -4,9 +4,10 @@
 - pl = plugin('cost_control')
 
 =simple_modal_form_for @masterdata, submit_action: 'Save', url: pl.cost_object_path, method: :put, cancel_url: pl.cost_object_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
-  - if @masterdata.errors.present?
-    %p.alert.alert-error
-      = @masterdata.errors.full_messages.to_sentence + '.'
+  %p.alert.alert-error{class: ('hidden' unless @masterdata.errors.present?) }
+    - if @masterdata.errors.present?
+      = @masterdata.errors.full_messages.to_sentence
+
   - types = CostControl::ProjectMasterdata::COST_OBJECT_TYPES
   .only-when-not-inherited
     = f.input :cost_object_type, label: 'Type', collection: types.keys, label_method: -> (k) { types[k] }

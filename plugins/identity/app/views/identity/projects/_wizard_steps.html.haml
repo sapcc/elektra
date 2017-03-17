@@ -24,6 +24,10 @@
       - if data and data['cost_object']
         %table.table.no-borders
           %tbody
+            - if  data['type']
+              %tr
+                %th{width: "30%"} Type
+                %td= data['type']
             %tr
               %th{width: "30%"} Cost Object
               %td= data['cost_object']

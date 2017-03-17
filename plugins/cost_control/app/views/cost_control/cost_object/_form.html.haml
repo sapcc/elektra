@@ -1,4 +1,5 @@
 - types = CostControl::ProjectMasterdata::COST_OBJECT_TYPES
+
 .only-when-not-inherited
   - if @project.respond_to?(:cost_control)
     = form.input :cost_object_type, label: long_labels ? 'Cost Object Type' : 'Type', collection: types.keys, label_method: -> (k) { types[k] }, selected: @project.cost_control['cost_object_type']
