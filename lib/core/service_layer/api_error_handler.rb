@@ -3,10 +3,13 @@ module Core
     class ApiErrorHandler
 
       def self.get_api_error_messages(error)
+        
         if error.respond_to?(:response_data) and error.response_data
+          puts error.response_data
           return read_error_messages(error.response_data)
         elsif error.respond_to?(:response) and error.response and error.response.body
           response_data = JSON.parse(error.response.body) rescue error.response.body
+          puts response_data
           return read_error_messages(response_data)
         else
           # try to parse error from exception 
@@ -23,7 +26,8 @@ module Core
       def self.read_error_messages(hash,messages=[])
         return [ hash.to_s ] unless hash.respond_to?(:each)
         hash.each do |k,v|
-          messages << v if k=='message' or k=='type'
+          # title and description are realted to monasca error response
+          messages << v if k=='message' or k=='type' or k=='title' or k=='description'
           if v.is_a?(Hash)
             read_error_messages(v,messages)
           elsif v.is_a?(Array)
