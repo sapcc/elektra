@@ -5,11 +5,9 @@ module Core
       def self.get_api_error_messages(error)
         
         if error.respond_to?(:response_data) and error.response_data
-          puts error.response_data
           return read_error_messages(error.response_data)
         elsif error.respond_to?(:response) and error.response and error.response.body
           response_data = JSON.parse(error.response.body) rescue error.response.body
-          puts response_data
           return read_error_messages(response_data)
         else
           # try to parse error from exception 
