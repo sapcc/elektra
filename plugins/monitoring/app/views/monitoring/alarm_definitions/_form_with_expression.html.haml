@@ -1,4 +1,7 @@
-#backend_error
+- if @alarm_definition.errors.present?
+  %p.alert.alert-error
+    = @alarm_definition.errors.full_messages[0]
+
 = f.input :name, 
   input_html: { autofocus: true }
 = f.input :description, as: :text
