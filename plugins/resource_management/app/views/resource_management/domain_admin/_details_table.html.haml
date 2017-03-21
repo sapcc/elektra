@@ -1,18 +1,16 @@
 %table.table.resource-details
   %thead
     %tr
-      %th.sortable#project_row
-        Project
-        = icon 'sort-asc'
+      %th Project
       %th.sortable#approved_quota_row
         Approved Quota
-        = icon 'sort-asc'
+        = icon 'sort-amount-asc'
       %th.sortable#current_quota_row
         Current Quota
-        = icon 'sort-asc'
+        = icon 'sort-amount-asc'
       %th.sortable#usage_row
         Usage
-        = icon 'sort-asc'
+        = icon 'sort-amount-asc'
       %th Actions
   %tbody
     - @projects.each do |project_resource|
@@ -25,5 +23,14 @@
     #{render partial: 'details_table_script.js', locals: { scope: 'admin'} }
     $(function() {
       $( ".sortable" ).click(function() {
+        var sort_icon = $(this).find('i');
+        console.log(sort_icon);
+        if ( sort_icon.hasClass('fa-sort-amount-asc' )) {
+          sort_icon.removeClass( 'fa-sort-amount-asc' );
+          sort_icon.addClass( 'fa-sort-amount-desc' );
+        } else {
+          sort_icon.addClass( 'fa-sort-amount-asc' );
+          sort_icon.removeClass( 'fa-sort-amount-desc' );
+        }
       });
     });
