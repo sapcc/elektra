@@ -34,10 +34,10 @@ Feature: Projects
   @admin
   Scenario: Visit own requests
     When I visit domain path "identity/home"
-    Then I see "Your Requests" button
-    When I click on "Your Requests"
+    Then I see "My Requests" button
+    When I click on "My Requests"
     Then the page status code is successful
-    And  I see "Your Requests"
+    And  I see "My Requests"
 
   @admin
   Scenario: Manage Requests
