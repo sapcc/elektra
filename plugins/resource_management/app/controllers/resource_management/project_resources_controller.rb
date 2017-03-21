@@ -119,7 +119,8 @@ module ResourceManagement
           resource: @project_resource.name,
           desired_quota: new_value,
         },
-        service_user.list_scope_admins({domain_id: @scoped_domain_id}),
+        service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
+        #service_user.list_scope_admins({domain_id: @scoped_domain_id}),
         {
           "approved": {
             "name": "Approve",
@@ -179,7 +180,8 @@ module ResourceManagement
           project_id: @scoped_project_id,
           package:    pkg,
         },
-        service_user.list_scope_admins({domain_id: @scoped_domain_id}),
+        service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
+        #service_user.list_scope_admins({domain_id: @scoped_domain_id}),
         {
           "approved": {
             "name": "Approve",

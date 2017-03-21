@@ -81,7 +81,7 @@
 
     %ul.plain-list
       %li
-        = link_to 'Your Requests', plugin('inquiry').inquiries_path
+        = link_to 'My Requests', plugin('inquiry').inquiries_path
 
     - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
       %h5
