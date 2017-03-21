@@ -7,7 +7,9 @@
   .row
     .col-md-12
       %h2
-        %small Details
+        %small 
+          Details
+          %span.loading-place
       #details_table
         = render partial: "details_table"
 
@@ -20,6 +22,3 @@
 = content_for :javascripts do
   :javascript
     #{render partial: 'sort_details_table_script.js'}
-
-
-

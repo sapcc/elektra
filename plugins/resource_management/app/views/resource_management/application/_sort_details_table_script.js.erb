@@ -7,18 +7,13 @@ $(function() {
   }
 
   $( ".sortable" ).click(function() {
+
+    var sort_order = 'asc';
     var sort_icon = $(this).find('i');
-    var sort_order = '';
     if ( sort_icon.hasClass('fa-sort-amount-asc' )) {
-      sort_icon.removeClass( 'fa-sort-amount-asc' );
-      sort_icon.addClass( 'fa-sort-amount-desc' );
       sort_order = 'desc';
-    } else {
-      sort_icon.addClass( 'fa-sort-amount-asc' );
-      sort_icon.removeClass( 'fa-sort-amount-desc' );
-      sort_order = 'asc';
     }
-    
+
     $.ajax({ 
       url: "<%= plugin('resource_management').admin_details_path() %>",
       data: { 
@@ -26,6 +21,15 @@ $(function() {
         column: $(this).attr('id'),
         service: "<%= @service %>",
         resource: "<%= @resource %>",
+      },
+      complete: function(xhr){
+        if ( sort_order == 'desc' ) {
+          sort_icon.removeClass( 'fa-sort-amount-asc' );
+          sort_icon.addClass( 'fa-sort-amount-desc' );
+        } else {
+          sort_icon.addClass( 'fa-sort-amount-asc' );
+          sort_icon.removeClass( 'fa-sort-amount-desc' );
+        }
       },
       dataType: 'script',
     });
