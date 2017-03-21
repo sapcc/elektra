@@ -1,4 +1,7 @@
-#backend_error
+- if @notification_method.errors.present?
+  %p.alert.alert-error
+    = @notification_method.errors.full_messages[0]
+    
 = f.input :name, placeholder: 'Enter name', :input_html => { autofocus: true }
 - type = @notification_method.type || 'EMAIL'
 = f.input :type, collection: @notification_method.supported_types, selected:type 
