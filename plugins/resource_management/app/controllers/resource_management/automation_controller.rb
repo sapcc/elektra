@@ -71,7 +71,7 @@ module ResourceManagement
     end
 
     def dump_approved_quotas
-      data = ResourceManagement::Resource.pluck(:domain_id, :project_id, :service, :name, :approved_quota).each do |array|
+      data = ResourceManagement::Resource.pluck(:domain_id, :project_id, :service, :name, :approved_quota).map do |array|
         d, p, s, n, a = array
         { domain_id: d, project_id: p, service: s, resource: n, approved_quota: a }
       end
