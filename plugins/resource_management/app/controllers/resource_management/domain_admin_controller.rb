@@ -309,25 +309,30 @@ module ResourceManagement
       
       # sort
       @sort_order  = params[:sort_order] || 'asc'
-      @sort_column = params[:sort_column] || 
-
+      @sort_column = params[:sort_column] || ''
+      sort_by = @sort_column.gsub("_column", "")
 
       @service  = params.require(:service).to_sym
       @resource = params.require(:resource).to_sym
       @area     = ResourceManagement::ServiceConfig.find(@service).area
 
       # some parts of data collection are shared with update()
-      project_resources = prepare_data_for_details_view(@service, @resource)
+      project_resources = prepare_data_for_details_view(@service, @resource, sort_by, @sort_order)
 
-      # prepare the projects table
-      projects = project_resources.to_a.sort_by do |project_resource|
-        # find warning level for project
-        warning_level = view_context.warning_level_for_project(project_resource)
-        sort_order    = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
-        # sort projects by warning level, then by name
-        project_name = project_resource.scope_name || project_resource.project_id
-        [ sort_order, project_name.downcase ]
+      projects = project_resources
+      # show danger and warning projects on top if no sort by is given
+      if sort_by.empty?
+        ## prepare the projects table
+        projects = project_resources.to_a.sort_by do |project_resource|
+          # find warning level for project
+          warning_level = view_context.warning_level_for_project(project_resource)
+          sort_order    = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
+          # sort projects by warning level, then by name
+          project_name = project_resource.scope_name || project_resource.project_id
+          [ sort_order, project_name.downcase ]
+        end
       end
+     
       @projects = Kaminari.paginate_array(projects).page(params[:page]).per(6)
 
       respond_to do |format|
@@ -454,22 +459,27 @@ module ResourceManagement
     end
 
     # Some data collection that's shared between the details() and update() actions.
-    def prepare_data_for_details_view(service, resource)
+    def prepare_data_for_details_view(service, resource, sort_by = "", sort_order = "ASC")
       # load domain resource and corresponding project resources
       resources = ResourceManagement::Resource.
         where(domain_id: @scoped_domain_id, service: service, name: resource)
 
       domain_resource   = resources.where(project_id: nil).first
-      project_resources = resources.where.not(project_id: nil)
+
+      min_current_quota ,current_quota_sum ,usage_sum = 0,0,0
+      unless sort_by.empty?
+        project_resources = resources.where.not(project_id: nil).order("#{sort_by} #{sort_order.upcase}")
+      else
+        project_resources = resources.where.not(project_id: nil)
+        # statistics over project resources
+        min_current_quota, current_quota_sum, usage_sum = project_resources.
+          pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
+      end
 
       # when no domain resource record exists yet, use an empty mock object
       domain_resource ||= ResourceManagement::Resource.new(
         domain_id: @scoped_domain_id, service: service, name: resource, approved_quota: 0,
       )
-
-      # statistics over project resources
-      min_current_quota, current_quota_sum, usage_sum = project_resources.
-        pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
 
       @resource_status = {
         name:                       resource,

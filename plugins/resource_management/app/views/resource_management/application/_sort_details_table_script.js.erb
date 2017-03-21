@@ -18,7 +18,7 @@ $(function() {
       url: "<%= plugin('resource_management').admin_details_path() %>",
       data: { 
         sort_order: sort_order,
-        column: $(this).attr('id'),
+        sort_column: $(this).attr('id'),
         service: "<%= @service %>",
         resource: "<%= @resource %>",
       },
