@@ -12,7 +12,7 @@ module Monitoring
       else
         all_notification_methods = services.monitoring.notification_methods.sort_by(&:name)
         @notification_methods_count = all_notification_methods.length
-      @notification_methods = Kaminari.paginate_array(all_notification_methods).page(params[:page]).per(10)
+        @notification_methods = Kaminari.paginate_array(all_notification_methods).page(params[:page]).per(10)
       end
     end
 
