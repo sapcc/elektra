@@ -18,7 +18,9 @@ en:
       cloud_volume_admin: Cinder Cloud Administrator
       compute_admin: Nova Administrator
       compute_viewer: Nova Read-Only
+      dns_viewer: Designate Read-Only
       dns_admin: Designate Administrator
+      image_viewer: Glance Read-Only
       member: Member
       monasca-agent: Monitoring Agent
       monasca-user: Monitoring User
