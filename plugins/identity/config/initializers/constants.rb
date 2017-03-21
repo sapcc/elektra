@@ -9,6 +9,7 @@ ALLOWED_ROLES = %w(
   monitoring-delegate
   network_admin
   network_viewer
+  sharedfilesystem_admin
   sharedfilesystem_viewer
   swiftoperator
   volume_admin
