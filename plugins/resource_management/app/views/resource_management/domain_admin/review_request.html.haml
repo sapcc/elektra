@@ -22,6 +22,12 @@
       .col-md-2.quota-label.text-muted Preview
       .col-md-9= render partial: 'bar', locals: { data: @domain_status_new, render_quota: true }
 
+    - if @desired_quota > @maximum_quota
+      %p.text-danger{style:"margin-top:1rem"}
+        This request would exceed your domain quota. You can only approve a project quota of
+        %strong= @project_resource.data_type.format(@maximum_quota)
+        or less.
+
     %fieldset
       - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
       - if @project_resource.data_type.to_sym == :number

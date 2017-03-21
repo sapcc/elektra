@@ -30,7 +30,7 @@
             - data = @stats[res.service.name][res.name]
             - dt = res.data_type
             - domain_quota = data[:domain_approved_quota]
-            - new_total_quota = data[:total_current_quota] - data[:project_current_quota] + res.value_for_package(@package)
+            - new_total_quota = data[:new_total_current_quota]
             %tr{ class: new_total_quota > domain_quota ? 'bg-danger' : (new_total_quota > 0.8 * domain_quota ? 'bg-warning' : '') }
               %td
                 = t("resource_management.#{res.service.name}")
@@ -43,6 +43,13 @@
                 = dt.format(new_total_quota)
               %td= dt.format(data[:total_usage])
 
+    - unless @can_approve
+      %p.text-danger
+        You cannot approve this request because it would exceed your approved domain quota (see resources marked red).
+
   .buttons{class: modal? ? 'modal-footer' : ''}
-    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
-    %button.btn.btn-primary{type:'submit', data:{disable_with: "Please wait..."}} Approve
+    - if @can_approve
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      %button.btn.btn-primary{type:'submit', data:{disable_with: "Please wait..."}} Approve
+    - else
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
