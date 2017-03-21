@@ -52,7 +52,7 @@ ResourceManagement::Engine.routes.draw do
   scope 'automation', as: 'automation' do
     get 'sync_domain' => 'automation#sync_domain'
     get 'dump_data'   => 'automation#dump_data'
-    get 'make_everything_okay' => 'automation#make_everything_okay'
+    get 'dump_approved_quotas' => 'automation#dump_approved_quotas'
   end
 
 end

@@ -70,19 +70,13 @@ module ResourceManagement
       render json: full_data.to_json
     end
 
-    def make_everything_okay
-      messages = []
-      resources = ResourceManagement::Resource.where(service: 'dns', name: 'recordsets').where.not(project_id: nil).to_a
-      resources.each do |res|
-        # re-apply recordset quotas to set the records quota which is now derived from the recordsets quota
-        failed_services = services.resource_management.apply_current_quota(res)
-        if failed_services.size > 0
-          messages.append("dns/records quota reset failed for project #{res.project_id} (#{res.scope_name} in domain #{res.domain_id})")
-        end
+    def dump_approved_quotas
+      data = ResourceManagement::Resource.pluck(:domain_id, :project_id, :service, :name, :approved_quota).each do |array|
+        d, p, s, n, a = array
+        { domain_id: d, project_id: p, service: s, resource: n, approved_quota: a }
       end
 
-      messages.unshift("#{resources.size} quotas touched")
-      render plain: messages.join("\n")
+      render json: data
     end
 
   end
