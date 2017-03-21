@@ -2,7 +2,11 @@
 
 %tr{ class: warning_level_for_project(project_resource), data: { project: project_resource.project_id, resource: project_resource.id } }
   %td.col-md-3
-    = project_resource.scope_name || project_resource.project_id
+    - if project_resource.scope_name
+      = project_resource.scope_name
+      .small.text-muted= project_resource.project_id
+    - else
+      = project_resource.project_id
   %td.col-md-3
     .resource-approved-quota.input-group.input-group-sm
       = data_type.format(project_resource.approved_quota)
