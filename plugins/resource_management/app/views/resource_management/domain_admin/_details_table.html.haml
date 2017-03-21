@@ -1,10 +1,18 @@
 %table.table.resource-details
   %thead
     %tr
-      %th Project
-      %th Approved Quota
-      %th Current Quota
-      %th Usage
+      %th.sortable#project_row
+        Project
+        = icon 'sort-asc'
+      %th.sortable#approved_quota_row
+        Approved Quota
+        = icon 'sort-asc'
+      %th.sortable#current_quota_row
+        Current Quota
+        = icon 'sort-asc'
+      %th.sortable#usage_row
+        Usage
+        = icon 'sort-asc'
       %th Actions
   %tbody
     - @projects.each do |project_resource|
@@ -15,3 +23,7 @@
 = content_for :javascripts do
   :javascript
     #{render partial: 'details_table_script.js', locals: { scope: 'admin'} }
+    $(function() {
+      $( ".sortable" ).click(function() {
+      });
+    });
