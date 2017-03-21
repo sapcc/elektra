@@ -35,7 +35,6 @@ loadSubnets= (networkId) ->
     )
 
 init= () ->
-  console.log 'INIT'
   if $('#floating_ip_floating_subnet_id').length==0 || ($('#floating_ip_floating_subnet_id')[0].value || '').trim().length==0
     $('fieldset#subnets .form-group').hide()
     $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
