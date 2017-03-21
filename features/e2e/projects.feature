@@ -14,14 +14,14 @@ Feature: Projects
   Scenario: Member buttons
     When I visit domain path "identity/home"
     Then I see "Request a New Project" button
-    And  I see "Your Requests" button
+    And  I see "My Requests" button
 
   @member
   Scenario: Visit own requests
     When I visit domain path "identity/home"
-    Then I see "Your Requests" button
-    When I click on "Your Requests"
-    Then I see "Your Requests"
+    Then I see "My Requests" button
+    When I click on "My Requests"
+    Then I see "My Requests"
 
   @admin
   Scenario: Create new Project
