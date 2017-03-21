@@ -2,13 +2,13 @@
   %thead
     %tr
       %th Project
-      %th.sortable#approved_quota_row
+      %th.sortable#approved_quota_column
         Approved Quota
         = icon 'sort-amount-asc'
-      %th.sortable#current_quota_row
+      %th.sortable#current_quota_column
         Current Quota
         = icon 'sort-amount-asc'
-      %th.sortable#usage_row
+      %th.sortable#usage_column
         Usage
         = icon 'sort-amount-asc'
       %th Actions
@@ -20,17 +20,5 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'details_table_script.js', locals: { scope: 'admin'} }
-    $(function() {
-      $( ".sortable" ).click(function() {
-        var sort_icon = $(this).find('i');
-        console.log(sort_icon);
-        if ( sort_icon.hasClass('fa-sort-amount-asc' )) {
-          sort_icon.removeClass( 'fa-sort-amount-asc' );
-          sort_icon.addClass( 'fa-sort-amount-desc' );
-        } else {
-          sort_icon.addClass( 'fa-sort-amount-asc' );
-          sort_icon.removeClass( 'fa-sort-amount-desc' );
-        }
-      });
-    });
+    #{render partial: 'details_table_script.js', locals: { scope: 'admin', resource: @resource, service: @service} }
+

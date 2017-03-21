@@ -17,5 +17,9 @@
       = link_to "Show all #{t("resource_management.#{@service}")} quotas", plugin('resource_management').admin_area_path(area: @area), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
+= content_for :javascripts do
+  :javascript
+    #{render partial: 'sort_details_table_script.js'}
+
 
 

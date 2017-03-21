@@ -306,6 +306,11 @@ module ResourceManagement
 
     def details
       @show_all_button = true if params[:overview] == 'true'
+      
+      # sort
+      @sort_order  = params[:sort_order] || 'asc'
+      @sort_column = params[:sort_column] || 
+
 
       @service  = params.require(:service).to_sym
       @resource = params.require(:resource).to_sym

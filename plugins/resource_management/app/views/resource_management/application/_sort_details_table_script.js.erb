@@ -1,0 +1,33 @@
+$(function() {
+  
+  var current_sort_order = "<%= @sort_order %>";
+  if (current_sort_order == 'desc') {
+    $("#<%= @sort_column %>").find('i').removeClass( 'fa-sort-amount-asc' );
+    $("#<%= @sort_column %>").find('i').addClass( 'fa-sort-amount-desc' );
+  }
+
+  $( ".sortable" ).click(function() {
+    var sort_icon = $(this).find('i');
+    var sort_order = '';
+    if ( sort_icon.hasClass('fa-sort-amount-asc' )) {
+      sort_icon.removeClass( 'fa-sort-amount-asc' );
+      sort_icon.addClass( 'fa-sort-amount-desc' );
+      sort_order = 'desc';
+    } else {
+      sort_icon.addClass( 'fa-sort-amount-asc' );
+      sort_icon.removeClass( 'fa-sort-amount-desc' );
+      sort_order = 'asc';
+    }
+    
+    $.ajax({ 
+      url: "<%= plugin('resource_management').admin_details_path() %>",
+      data: { 
+        sort_order: sort_order,
+        column: $(this).attr('id'),
+        service: "<%= @service %>",
+        resource: "<%= @resource %>",
+      },
+      dataType: 'script',
+    });
+  });
+});

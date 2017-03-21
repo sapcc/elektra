@@ -44,17 +44,17 @@
     $.cookie("alarms_search", search_string, { expires: 1 });
 
     $.ajax({ 
-     url: "#{plugin('monitoring').search_alarms_path()}",
-     data: { 
-       search: $('#alarms_search').val(),
-       severity: alarm_severity,
-       state: alarm_status,
-       do_not_redirect: true 
-     },
-     complete: function(xhr) { 
-       check_logon_state(xhr);
-     },
-     dataType: 'script'
-  });
+      url: "#{plugin('monitoring').search_alarms_path()}",
+      data: { 
+        search: $('#alarms_search').val(),
+        severity: alarm_severity,
+        state: alarm_status,
+        do_not_redirect: true 
+      },
+      complete: function(xhr) { 
+        check_logon_state(xhr);
+      },
+      dataType: 'script'
+    });
   }
   
