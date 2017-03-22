@@ -1,10 +1,18 @@
 %table.table.resource-details
   %thead
     %tr
-      %th Project
-      %th Approved Quota
-      %th Current Quota
-      %th Usage
+      %th.sortable#scope_name_column 
+        Project
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.sortable#approved_quota_column
+        Approved Quota
+        %i.fa.fa-sort-amount-asc.hide-sort-order
+      %th.sortable#current_quota_column
+        Current Quota
+        %i.fa.fa-sort-amount-asc.hide-sort-order
+      %th.sortable#usage_column
+        Usage
+        %i.fa.fa-sort-amount-asc.hide-sort-order
       %th Actions
   %tbody
     - @projects.each do |project_resource|
@@ -14,4 +22,5 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'details_table_script.js', locals: { scope: 'admin'} }
+    #{render partial: 'details_table_script.js', locals: { scope: 'admin', resource: @resource, service: @service} }
+

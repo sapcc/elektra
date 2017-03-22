@@ -7,7 +7,9 @@
   .row
     .col-md-12
       %h2
-        %small Details
+        %small 
+          Details
+          %span.loading-place
       #details_table
         = render partial: "details_table"
 
@@ -17,5 +19,6 @@
       = link_to "Show all #{t("resource_management.#{@service}")} quotas", plugin('resource_management').admin_area_path(area: @area), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
-
-
+= content_for :javascripts do
+  :javascript
+    #{render partial: 'sort_details_table_script.js'}

@@ -1,0 +1,51 @@
+$(function() {
+  
+  var current_sort_order = "<%= @sort_order %>";
+  var sort_column = "<%= @sort_column %>";
+  var sort_type = "amount";
+  if (sort_column == "scope_name_column") {sort_type = "alpha"}
+  
+  if (current_sort_order == 'desc') {
+    $("#"+sort_column).find('i').removeClass( "fa-sort-"+sort_type+"-asc" );
+    $("#"+sort_column).find('i').addClass( "fa-sort-"+sort_type+"-desc" );
+  }
+
+  // console.log("current sort order:"+current_sort_order);
+  // console.log("sort type:"+sort_type);
+
+  // show user sort option
+  $( ".sortable" ).mouseenter(function() {
+    $(this).find('i').fadeIn( "fast");
+  });
+  $( ".sortable" ).mouseleave(function() {
+    $(this).find('i').fadeOut( "fast");
+  });
+  // remove mouse actions for active column
+  $("#"+sort_column).unbind('mouseenter');
+  $("#"+sort_column).unbind('mouseleave');
+  $("#"+sort_column).find('i').css('display','inline');
+
+  $( ".sortable" ).click(function() {
+    var sort_order = 'asc';
+    var sort_icon = $(this).find('i');
+    if ( sort_icon.hasClass("fa-sort-"+sort_type+"-asc" )) {
+      sort_order = 'desc';
+    }
+    // console.log("sort order:"+sort_order);
+
+    // to prevent hide icon
+    $(this).unbind('mouseenter');
+    $(this).unbind('mouseleave');
+
+    $.ajax({ 
+      url: "<%= plugin('resource_management').admin_details_path() %>",
+      data: { 
+        sort_order: sort_order,
+        sort_column: $(this).attr('id'),
+        service: "<%= @service %>",
+        resource: "<%= @resource %>",
+      },
+      dataType: 'script',
+    });
+  });
+});
