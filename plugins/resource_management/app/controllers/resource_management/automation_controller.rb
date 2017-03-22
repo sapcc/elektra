@@ -73,6 +73,9 @@ module ResourceManagement
     def dump_approved_quotas
       data = ResourceManagement::Resource.pluck(:domain_id, :project_id, :service, :name, :approved_quota).map do |array|
         d, p, s, n, a = array
+        if srv = ResourceManagement::ServiceConfig.find(s)
+          s = srv.catalog_type # map old ResourceManagement service names to Limes service types
+        end
         { domain_id: d, project_id: p, service: s, resource: n, approved_quota: a }
       end
 

@@ -6,12 +6,14 @@ module ResourceManagement
   #
   # - name (Symbol): the name of this service
   # - area (Symbol): used for grouping similar services in the UI
+  # - catalog_type (String): the "type" attribute of this service in the Keystone catalog
   class ServiceConfig
-    attr_reader :name, :area
+    attr_reader :name, :area, :catalog_type
 
-    def initialize(name, area)
+    def initialize(name, area, catalog_type)
       @name = name.to_sym
       @area = area.to_sym
+      @catalog_type = catalog_type.to_s
     end
 
     def resources
@@ -22,13 +24,13 @@ module ResourceManagement
       return @all if @all
 
       @all = []
-      @all << new(:compute,                   :compute)
-      @all << new(:networking,                :networking)
-      @all << new(:loadbalancing,             :networking)
-      @all << new(:dns,                       :dns)
-      @all << new(:block_storage,             :storage)
-      @all << new(:object_storage,            :storage)
-      @all << new(:shared_filesystem_storage, :storage)
+      @all << new(:compute,                   :compute,    'compute')
+      @all << new(:networking,                :networking, 'network')
+      @all << new(:loadbalancing,             :networking, 'network')
+      @all << new(:dns,                       :dns,        'dns')
+      @all << new(:block_storage,             :storage,    'volumev2')
+      @all << new(:object_storage,            :storage,    'object-store')
+      @all << new(:shared_filesystem_storage, :storage,    'sharev2')
       return @all
     end
 
@@ -44,7 +46,7 @@ module ResourceManagement
 
     def self.mock!
       # replace services by a single, predictable mock service
-      @all = [ ServiceConfig.new(:mock_service, :mock_area) ]
+      @all = [ ServiceConfig.new(:mock_service, :mock_area, 'mock_service') ]
     end
 
     def self.unmock!
