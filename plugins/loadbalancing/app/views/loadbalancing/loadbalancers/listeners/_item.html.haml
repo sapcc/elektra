@@ -36,8 +36,8 @@
             %li= link_to 'Delete Default Pool', plugin('loadbalancing').loadbalancer_pool_path(id: listener.default_pool_id, loadbalancer_id: loadbalancer.id),
               method: :delete,
               data: { confirm: 'Are you sure you want to delete this pool?',
-              ok: "Yes, delete it",
-              confirmed: :loading_status}
+                ok: "Yes, delete it",
+                confirmed: :loading_status}
           - else
             %li= link_to 'New Default Pool', plugin('loadbalancing').new_loadbalancer_pool_path(listener_id: listener.id, loadbalancer_id: loadbalancer.id, proto: listener.protocol), data: {modal: true}
         - if current_user.is_allowed?("loadbalancing:resource_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})

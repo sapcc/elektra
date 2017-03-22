@@ -1,4 +1,5 @@
 $.fn.loadbalancerState = (options = {}) ->
+
   path = $(this).data('update-loadbalancer-state')
   return unless path
 
@@ -6,9 +7,12 @@ $.fn.loadbalancerState = (options = {}) ->
   state.attr('data-toggle','tooltip').attr('data-placement','top')
   state.tooltip(title: () -> state.data('title'))
 
-  istate = $(this).data('initial-loadbalancer-state')
-  renderState(state, istate)
+  if options.enforce_state
+    istate = options.enforce_state
+  else
+    istate = $(this).data('initial-loadbalancer-state')
 
+  renderState(state, istate)
   getState(state, istate, path)
 
 getState = (state, istate, path) ->

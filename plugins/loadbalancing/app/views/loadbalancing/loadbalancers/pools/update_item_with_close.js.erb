@@ -1,7 +1,9 @@
 <%if @pool %>
 $("#pool").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/item_detail', locals: {loadbalancer: @loadbalancer, pool: @pool, listener: @listener})) %>");
 $("#pool").update();
+$('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});
 MoModal.close();
 <% else %>
 $("#pool").remove();
+$('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});
 <% end %>

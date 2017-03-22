@@ -2,8 +2,10 @@
 <%if @healthmonitor%>
   $("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item_nav', locals: {loadbalancer: @loadbalancer, pool: @pool, healthmonitor: @healthmonitor })) %>");
   $("#healthmonitor").update();
+  $('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});
   MoModal.close();
 <%else%>
   $("#healthmonitor").replaceWith("<%= j(render(partial: 'loadbalancing/loadbalancers/pools/healthmonitors/item_nav', locals: {loadbalancer: @loadbalancer, pool: @pool, healthmonitor: @healthmonitor })) %>");
   $("#healthmonitor").update();
+  $('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});
 <%end%>

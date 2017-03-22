@@ -4,3 +4,4 @@
 <%else%>
   $("#member_<%=params[:id]%>").remove();
 <%end%>
+$('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});
