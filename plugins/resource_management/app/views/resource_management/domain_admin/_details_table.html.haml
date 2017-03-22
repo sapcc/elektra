@@ -3,16 +3,16 @@
     %tr
       %th.sortable#scope_name_column 
         Project
-        %i.fa.fa-sort-alpha-asc{style:'display:none'}
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
       %th.sortable#approved_quota_column
         Approved Quota
-        %i.fa.fa-sort-amount-asc{style:'display:none'}
+        %i.fa.fa-sort-amount-asc.hide-sort-order
       %th.sortable#current_quota_column
         Current Quota
-        %i.fa.fa-sort-amount-asc{style:'display:none'}
+        %i.fa.fa-sort-amount-asc.hide-sort-order
       %th.sortable#usage_column
         Usage
-        %i.fa.fa-sort-amount-asc{style:'display:none'}
+        %i.fa.fa-sort-amount-asc.hide-sort-order
       %th Actions
   %tbody
     - @projects.each do |project_resource|

@@ -32,7 +32,11 @@ $(function() {
       sort_order = 'desc';
     }
     // console.log("sort order:"+sort_order);
-    
+
+    // to prevent hide icon
+    $(this).unbind('mouseenter');
+    $(this).unbind('mouseleave');
+
     $.ajax({ 
       url: "<%= plugin('resource_management').admin_details_path() %>",
       data: { 
