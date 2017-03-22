@@ -70,7 +70,7 @@ module Networking
       @selected_internal_subnets = (params[:router].delete(:internal_subnets) || []).reject(&:empty?)
       # build new router object
       @router = services.networking.new_router(params[:router])
-
+      @router.internal_subnets = @selected_internal_subnets
       if @router.save
         # router is created -> add subnets as interfaces
         services.networking.add_router_interfaces(@router.id, @selected_internal_subnets)
