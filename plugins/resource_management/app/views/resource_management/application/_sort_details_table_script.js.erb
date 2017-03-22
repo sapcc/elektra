@@ -1,19 +1,27 @@
 $(function() {
   
   var current_sort_order = "<%= @sort_order %>";
+  var sort_column = "<%= @sort_column %>";
+  var sort_type = "amount";
+  if (sort_column == "scope_name_column") {sort_type = "alpha"}
+  
   if (current_sort_order == 'desc') {
-    $("#<%= @sort_column %>").find('i').removeClass( 'fa-sort-amount-asc' );
-    $("#<%= @sort_column %>").find('i').addClass( 'fa-sort-amount-desc' );
+    $("#"+sort_column).find('i').removeClass( "fa-sort-"+sort_type+"-asc" );
+    $("#"+sort_column).find('i').addClass( "fa-sort-"+sort_type+"-desc" );
   }
+  
+  // console.log("current sort order:"+current_sort_order);
+  // console.log("sort type:"+sort_type);
 
   $( ".sortable" ).click(function() {
-
     var sort_order = 'asc';
     var sort_icon = $(this).find('i');
-    if ( sort_icon.hasClass('fa-sort-amount-asc' )) {
+    if ( sort_icon.hasClass("fa-sort-"+sort_type+"-asc" )) {
       sort_order = 'desc';
     }
-
+    
+    // console.log("sort order:"+sort_order);
+    
     $.ajax({ 
       url: "<%= plugin('resource_management').admin_details_path() %>",
       data: { 
@@ -21,15 +29,6 @@ $(function() {
         sort_column: $(this).attr('id'),
         service: "<%= @service %>",
         resource: "<%= @resource %>",
-      },
-      complete: function(xhr){
-        if ( sort_order == 'desc' ) {
-          sort_icon.removeClass( 'fa-sort-amount-asc' );
-          sort_icon.addClass( 'fa-sort-amount-desc' );
-        } else {
-          sort_icon.addClass( 'fa-sort-amount-asc' );
-          sort_icon.removeClass( 'fa-sort-amount-desc' );
-        }
       },
       dataType: 'script',
     });

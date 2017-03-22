@@ -1,7 +1,9 @@
 %table.table.resource-details
   %thead
     %tr
-      %th Project
+      %th.sortable#scope_name_column 
+        Project
+        = icon 'sort-alpha-asc'
       %th.sortable#approved_quota_column
         Approved Quota
         = icon 'sort-amount-asc'
