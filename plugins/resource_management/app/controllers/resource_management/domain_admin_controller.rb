@@ -467,13 +467,13 @@ module ResourceManagement
       domain_resource   = resources.where(project_id: nil).first
 
       min_current_quota ,current_quota_sum ,usage_sum = 0,0,0
-      unless sort_by.empty?
-        project_resources = resources.where.not(project_id: nil).order("#{sort_by} #{sort_order.upcase}")
-      else
+      if sort_by.empty?
         project_resources = resources.where.not(project_id: nil)
         # statistics over project resources
         min_current_quota, current_quota_sum, usage_sum = project_resources.
           pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
+      else
+        project_resources = resources.where.not(project_id: nil).order("#{sort_by} #{sort_order.upcase}")
       end
 
       # when no domain resource record exists yet, use an empty mock object
