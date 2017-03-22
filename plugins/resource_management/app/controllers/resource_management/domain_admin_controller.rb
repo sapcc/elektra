@@ -233,14 +233,16 @@ module ResourceManagement
       # check if request fits into domain quotas
       @can_approve = true
       ResourceManagement::ResourceConfig.all.each do |res|
-        data = @stats[res.service.name][res.name]
-        if data[:project_current_quota] < 0
-          data[:new_total_current_quota] = data[:total_current_quota] + res.value_for_package(@package)
-        else
-          data[:new_total_current_quota] = data[:total_current_quota] - data[:project_current_quota] + res.value_for_package(@package)
-        end
-        if data[:new_total_current_quota] > data[:domain_approved_quota]
-          @can_approve = false
+        if res.value_for_package(@package) > 0
+          data = @stats[res.service.name][res.name]
+          if data[:project_current_quota] < 0
+            data[:new_total_current_quota] = data[:total_current_quota] + res.value_for_package(@package)
+          else
+            data[:new_total_current_quota] = data[:total_current_quota] - data[:project_current_quota] + res.value_for_package(@package)
+          end
+          if data[:new_total_current_quota] > data[:domain_approved_quota]
+            @can_approve = false
+          end
         end
       end
 
