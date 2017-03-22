@@ -9,9 +9,21 @@ $(function() {
     $("#"+sort_column).find('i').removeClass( "fa-sort-"+sort_type+"-asc" );
     $("#"+sort_column).find('i').addClass( "fa-sort-"+sort_type+"-desc" );
   }
-  
+
   // console.log("current sort order:"+current_sort_order);
   // console.log("sort type:"+sort_type);
+
+  // show user sort option
+  $( ".sortable" ).mouseenter(function() {
+    $(this).find('i').fadeIn( "fast");
+  });
+  $( ".sortable" ).mouseleave(function() {
+    $(this).find('i').fadeOut( "fast");
+  });
+  // remove mouse actions for active column
+  $("#"+sort_column).unbind('mouseenter');
+  $("#"+sort_column).unbind('mouseleave');
+  $("#"+sort_column).find('i').css('display','inline');
 
   $( ".sortable" ).click(function() {
     var sort_order = 'asc';
@@ -19,7 +31,6 @@ $(function() {
     if ( sort_icon.hasClass("fa-sort-"+sort_type+"-asc" )) {
       sort_order = 'desc';
     }
-    
     // console.log("sort order:"+sort_order);
     
     $.ajax({ 
