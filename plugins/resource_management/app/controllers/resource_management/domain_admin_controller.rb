@@ -66,7 +66,7 @@ module ResourceManagement
         domain_id: @scoped_domain_id, project_id: nil,
         service: @project_resource.service, name: @project_resource.name,
       )
-      if new_project_quota_sum > @domain_resource.approved_quota
+      if value < 0 or (value > @project_resource.approved_quota and new_project_quota_sum > @domain_resource.approved_quota)
         max_value = @domain_resource.approved_quota - old_project_quota_sum + @project_resource.approved_quota
         msg = "Domain quota for #{@project_resource.service}/#{@project_resource.name} exceeded (maximum acceptable project quota is #{@project_resource.config.data_type.format(max_value)})"
         render text: msg, status: :bad_request
