@@ -1,0 +1,19 @@
+= content_for :main_toolbar do
+  OpenStack Object Lookup
+
+= simple_form_for @os_object, url: plugin('lookup').show_object_path(id:params[:id]), method: :put, remote: request.xhr?, html: { data: { modal: false } }, wrapper: :horizontal_form do |f|
+
+  %div
+    %fieldset
+      = f.input :os_type,
+        prompt: 'Select an Object Type',
+        as: :select,
+        collection: @types,
+        include_blank: false,
+        required: true,
+        label: 'OpenStack Object'
+      = f.input :query, required: true, label: 'Object Identifier', placeholder: 'UUID'
+      = f.hidden_field :lookup_method, value: 'show'
+
+    %br
+      = button_tag 'Lookup', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait...' } }

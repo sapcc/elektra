@@ -1,0 +1,6 @@
+{
+  "lookup:os_object_show_instance":  "role:cloud_compute_admin",
+  "lookup:os_object_show_network_private":  "role:cloud_network_admin",
+  "lookup:os_object_show_network_external":  "role:cloud_network_admin",
+  "lookup:os_object_list":  "rule:lookup:os_object_show_instance or rule:lookup:os_object_show_network_private or rule:lookup:os_object_show_network_external"
+}
