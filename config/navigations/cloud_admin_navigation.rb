@@ -64,6 +64,7 @@ SimpleNavigation::Configuration.run do |navigation|
     ccadmin_nav.item :project_groups, 'Project Group Role Assignments', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     ccadmin_nav.item :hypervisors, 'Show Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
+    ccadmin_nav.item :lookup, 'OpenStack Object Lookup', -> { plugin('lookup').root_path }, highlights_on: -> { params[:controller][%r{lookup/?.*}] }
   end
 
   primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
