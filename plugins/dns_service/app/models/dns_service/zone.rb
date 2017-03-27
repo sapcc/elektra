@@ -1,5 +1,8 @@
 module DnsService
   class Zone < Core::ServiceLayer::Model
+    validates :name, presence: {message: 'Please provide the domain name'}
+    validates :email, presence: {message: 'Please provide an email'}
+    
     def attributes_for_create
       zone_attributes = attributes
       zone_attributes[:ttl] = zone_attributes[:ttl].to_i if zone_attributes[:ttl]

@@ -1,6 +1,6 @@
 class Delegates::Inquiry
 
-  delegate :id, :description, :payload, :aasm_state, :requester, :errors, :errors?, :valid?, to: :real_inquiry
+  delegate :id, :description, :payload, :domain_id, :project_id, :aasm_state, :requester, :errors, :errors?, :valid?, to: :real_inquiry
 
   def initialize inquiry
     @real_inquiry = inquiry
@@ -8,7 +8,7 @@ class Delegates::Inquiry
 
   def present?
     !real_inquiry.nil?
-  end  
+  end
 
   private
   attr_reader :real_inquiry

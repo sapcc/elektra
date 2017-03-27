@@ -89,7 +89,7 @@ module DnsService
       def create_zone_transfer_accept(options={})
         key = options[:key]
         zone_transfer_request_id = options[:zone_transfer_request_id]
-        handle_response{@fog.create_zone_transfer_accept(key, zone_transfer_request_id).body}
+        handle_response{@fog.create_zone_transfer_accept(key, zone_transfer_request_id, project_id: options[:target_project_id]).body}
       end
 
       def list_zone_transfer_accepts(options = {})

@@ -1,0 +1,8 @@
+- if zone.errors.present?
+  .alert.alert-error
+    = render_errors(zone.errors)
+
+= f.input :name,  required: true
+= f.input :email, required: true
+= f.input :ttl,   required: false, as: :integer, input_html: {value: zone.ttl || 7200}
+= f.input :description, required: false, as: :text

@@ -1,0 +1,108 @@
+= content_for :title do
+  Request New Zone
+
+= simple_form_for @zone_request, url: plugin('dns_service').create_zone_request_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: 'modal-body'}
+    - if @zone_request.errors.present?
+      .alert.alert-error
+        = render_errors(@zone_request.errors)
+
+    = f.input :domain_type, required: true do
+      %p
+        You can request a subdomain at c.#{current_region}.cloud.sap or a root domain
+      %span.radio
+        %label
+          = f.radio_button :domain_type, "subdomain", data: {target: '#subdomain_panel'}
+          Subdomain
+          -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "c.#{current_region}.cloud.sap"}}
+      %span.radio
+        %label
+          = f.radio_button :domain_type, "rootdomain", data: {target: '#rootdomain_panel'}
+          Rootdomain
+          -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
+
+    .tab-content
+      .tab-pane{ role: "tabpanel", id: "subdomain_panel", class: ('active' if @zone_request.domain_type=='subdomain') }
+        = f.simple_fields_for :subdomain do |subdomain|
+          = subdomain.input :name, required: true, input_wrapper_html: { style: "width: 70%" } do
+            .input-group
+              = subdomain.text_field :name, value: @zone_request.name, class: "form-control text-right"
+              %span.input-group-addon c.#{current_region}.cloud.sap.
+
+          = subdomain.input :email, required: true,
+            input_html: {value: @zone_request.email},
+            input_wrapper_html: { style: "width: 70%" }
+
+          = subdomain.input :ttl, required: false,
+            as: :integer,
+            input_html: {value: (@zone_request.ttl || 7200)},
+            input_wrapper_html: { style: "width: 20%" },
+            icon_hint: 'Time to live in seconds'
+
+          = subdomain.input :description, required: false,
+            input_html: {value: @zone_request.description},
+            as: :text
+
+      .tab-pane{ role: "tabpanel", id: "rootdomain_panel", class: ('active' if @zone_request.domain_type=='rootdomain') }
+        = f.simple_fields_for :rootdomain do |rootdomain|
+          = rootdomain.input :rootdomain_type, as: :select,
+            collection: [["External","external"],["SAP Internal","internal"]] do
+            = f.select :rootdomain_type, [["External","external"],["SAP Internal","internal"]], {include_blank: true}, class: "select required form-control", style: "width: 70%"
+            %p.help-block
+              %i.fa.fa-info-circle
+              Internal domains are SAP Domains.
+            .additional_infos.hidden#external
+              - if @external_pool
+                %p
+                  Please delegate (#{link_to 'how to','#'}) your domain to one of following DNS servers:
+                  %ul
+                    - @external_pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
+                      %li= record["hostname"]
+
+            .additional_infos.hidden#internal
+              - if @internal_pool
+                %p
+                  Please delegate (#{link_to 'how to','#'}) your domain to one of following DNS servers:
+                  %ul
+                    - @internal_pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
+                      %li= record["hostname"]
+
+
+          .rootdomain_fields.hidden
+            = rootdomain.input :name, required: true,
+              input_html: {value: @zone_request.name},
+              input_wrapper_html: { style: "width: 70%" }
+
+            = rootdomain.input :email, required: true,
+              input_html: {value: @zone_request.email},
+              input_wrapper_html: { style: "width: 70%" }
+
+            = rootdomain.input :ttl, required: false,
+              as: :integer,
+              input_html: {value: @zone_request.ttl || 7200},
+              input_wrapper_html: { style: "width: 20%" },
+              icon_hint: 'Time to live in seconds'
+
+            = rootdomain.input :description, required: false,
+              input_html: {value: @zone_request.description},
+              as: :text
+
+  %div.buttons{class: 'modal-footer' }
+    %button.btn.btn-default{type: 'button', data: {dismiss: 'modal'}, aria: {label: 'Cancel'}} Cancel
+    = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
+
+:javascript
+  $('input[name="zone_request[domain_type]"]').click(function () {
+    $(this).tab('show');
+  });
+
+  $('[name="zone_request[rootdomain_type]"]').change(function(){
+    $('.additional_infos').addClass('hidden');
+    if (this.value) {
+      $('.additional_infos#'+this.value).removeClass('hidden');
+      $('.rootdomain_fields').removeClass('hidden');
+    } else {
+      $('.rootdomain_fields').addClass('hidden');
+    }
+  })
