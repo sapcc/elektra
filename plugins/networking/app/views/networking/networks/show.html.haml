@@ -45,6 +45,10 @@
           %tr
             %th Tags
             %td= @network.tags
+          %tr
+            %th Project
+            %td
+              - project_id_and_name(@network.tenant_id)
 
     - if current_user.is_allowed?('networking:network_get:segments') && @network.segments.present?
       .tab-pane{role:"tabpanel", id:"segments"}
