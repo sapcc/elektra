@@ -8,9 +8,10 @@
       .alert.alert-error
         = render_errors(@zone_request.errors)
 
-    = f.input :domain_type, required: true do
+    = f.input :domain_type, required: true, label: 'Type' do
       %p
-        You can request a subdomain at c.#{current_region}.cloud.sap or a root domain
+        You can request a subdomain at c.#{current_region}.cloud.sap or a domain
+        which is hosted at SAP or public name server.
       %span.radio
         %label
           = f.radio_button :domain_type, "subdomain", data: {target: '#subdomain_panel'}
@@ -19,7 +20,7 @@
       %span.radio
         %label
           = f.radio_button :domain_type, "rootdomain", data: {target: '#rootdomain_panel'}
-          Rootdomain
+          Domain
           -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
 
     .tab-content
@@ -46,16 +47,19 @@
 
       .tab-pane{ role: "tabpanel", id: "rootdomain_panel", class: ('active' if @zone_request.domain_type=='rootdomain') }
         = f.simple_fields_for :rootdomain do |rootdomain|
-          = rootdomain.input :rootdomain_type, as: :select,
-            collection: [["External","external"],["SAP Internal","internal"]] do
-            = f.select :rootdomain_type, [["External","external"],["SAP Internal","internal"]], {include_blank: true}, class: "select required form-control", style: "width: 70%"
-            %p.help-block
-              %i.fa.fa-info-circle
-              Internal domains are SAP Domains.
+          = rootdomain.input :rootdomain_type, as: :select, label: 'Accessibility',
+            collection: [["Public Hosted Domain","external"],["SAP Hosted Domain","internal"]] do
+            = f.select :rootdomain_type, [["Public Hosted Domain","external"],["SAP Hosted Domain","internal"]], {include_blank: true}, class: "select required form-control", style: "width: 70%"
+            -# %p.help-block
+            -#   %i.fa.fa-info-circle
+            -#   Internal domains are SAP Domains.
             .additional_infos.hidden#external
               - if @external_pool
                 %p
-                  Please delegate (#{link_to 'how to','#'}) your domain to one of following DNS servers:
+                  %br
+                  Before the Domain Name System will start to route queries for this domain to Converged Cloud name servers,
+                  you must update the name server records either with the current DNS service or with the registrar for the
+                  domain, as applicable. For more information, click #{link_to 'here','#'}.
                   %ul
                     - @external_pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
                       %li= record["hostname"]
@@ -63,7 +67,10 @@
             .additional_infos.hidden#internal
               - if @internal_pool
                 %p
-                  Please delegate (#{link_to 'how to','#'}) your domain to one of following DNS servers:
+                  %br
+                  Before the Domain Name System will start to route queries for this domain to Converged Cloud name servers,
+                  you must update the name server records either with the current DNS service or with the registrar for the
+                  domain, as applicable. For more information, click #{link_to 'here','#'}.
                   %ul
                     - @internal_pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
                       %li= record["hostname"]
