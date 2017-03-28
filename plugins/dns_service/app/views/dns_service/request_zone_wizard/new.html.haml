@@ -53,10 +53,6 @@
               class: "select required form-control",
               style: "width: 70%"
 
-            = rootdomain.input_field :domain_pool_name, as: :hidden
-            -# %p.help-block
-            -#   %i.fa.fa-info-circle
-            -#   Internal domains are SAP Domains.
             - if @pools.length>0
               .ns-records{class: ('hidden' if @zone_request.domain_pool.blank?)}
                 %p
@@ -102,12 +98,10 @@
     $('.ns-records ul').addClass('hidden');
     $('')
     if (this.value) {
-      $('#zone_request_rootdomain_domain_pool_name').val($(this).find('option[value="'+this.value+'"]').text());
       $('.ns-records').removeClass('hidden');
       $('.ns-records ul#'+this.value).removeClass('hidden');
       $('.rootdomain_fields').removeClass('hidden');
     } else {
-      $('#zone_request_rootdomain_domain_pool_name').val(null);
       $('.ns-records').addClass('hidden');
       $('.rootdomain_fields').addClass('hidden');
     }

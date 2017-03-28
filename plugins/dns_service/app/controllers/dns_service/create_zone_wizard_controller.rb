@@ -8,15 +8,15 @@ module DnsService
       if @inquiry
         payload = @inquiry.payload
         @zone_request.attributes = payload
+        @pool = load_pool(@zone_request.domain_pool)
       end
     end
 
     def create
       @zone_request = ::DnsService::ZoneRequest.new(nil,params[:zone_request])
-      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
-      pool = cloud_admin_dns_service.find_pool(@zone_request.domain_pool)
       @zone = services.dns_service.new_zone(@zone_request.attributes)
-      @zone.write("attributes",pool.read("attributes"))
+      @pool = load_pool(@zone_request.domain_pool)
+      @zone.write("attributes",@pool.read("attributes"))
 
       if @zone.save
         @zone_transfer_request = services.dns_service.new_zone_transfer_request(
@@ -46,6 +46,11 @@ module DnsService
     def load_inquiry
       return if params[:inquiry_id].blank?
       @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
+    end
+
+    def load_pool(pool_id)
+      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
+      cloud_admin_dns_service.find_pool(pool_id)
     end
 
   end

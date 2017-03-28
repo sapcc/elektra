@@ -15,7 +15,8 @@
     - if @zone_request.domain_type=='rootdomain'
       = f.input :domain_pool, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
       = f.input :domain_pool, as: :hidden
-      = f.input :domain_pool_name, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
+      = f.input :pool_name, required: true, input_html: { disabled: true, value: @pool.name}, input_wrapper_html: { style: "width: 70%" }
+      = f.input :attributes, as: :text, required: true, input_html: { disabled: true, value: @pool.read("attributes")}, input_wrapper_html: { style: "width: 70%" }
 
     = f.input :name, required: true, input_wrapper_html: { style: "width: 70%" }
     = f.input :email, required: true, input_wrapper_html: { style: "width: 70%" }
