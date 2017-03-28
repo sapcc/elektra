@@ -104,6 +104,10 @@ module DnsService
       def list_pools(filter = {})
         handle_response { @fog.list_pools(filter).body['pools'] }
       end
+
+      def get_pool(id)
+        handle_response { @fog.get_pool(id).body }
+      end
     end
   end
 end

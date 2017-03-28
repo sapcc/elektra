@@ -13,8 +13,10 @@ module DnsService
 
     def create
       @zone_request = ::DnsService::ZoneRequest.new(nil,params[:zone_request])
-
+      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
+      pool = cloud_admin_dns_service.find_pool(@zone_request.domain_pool)
       @zone = services.dns_service.new_zone(@zone_request.attributes)
+      @zone.write("attributes",pool.read("attributes"))
 
       if @zone.save
         @zone_transfer_request = services.dns_service.new_zone_transfer_request(
@@ -32,7 +34,7 @@ module DnsService
         @zone.errors.each{|k,m| @zone_request.errors.add(k,m)}
       end
 
-      if @zone_transfer_request.errors.empty?
+      if @zone_request.errors.empty?
         render action: :create
       else
         render action: :new

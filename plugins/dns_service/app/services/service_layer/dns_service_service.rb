@@ -76,5 +76,9 @@ module ServiceLayer
       #return [] unless current_user.is_allowed?('dns_service:pool_list')
       driver.map_to(DnsService::Pool).list_pools(filter) rescue []
     end
+
+    def find_pool(id)
+      driver.map_to(DnsService::Pool).get_pool(id) rescue nil
+    end
   end
 end

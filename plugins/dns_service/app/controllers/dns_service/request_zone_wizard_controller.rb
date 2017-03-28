@@ -3,9 +3,7 @@ module DnsService
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)
 
-      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
-      @internal_pool = cloud_admin_dns_service.pools(name: 'default').first
-      @external_pool = cloud_admin_dns_service.pools(name: 'akamai_pool').first
+      load_pools
     end
 
     def create
@@ -13,6 +11,7 @@ module DnsService
       domain_type = params[:zone_request][:domain_type]
       @zone_request.attributes = params[:zone_request][domain_type]
       @zone_request.domain_type = domain_type
+      @zone_request.name += "." unless @zone_request.name.last=='.'
 
       inquiry = nil
 
@@ -39,18 +38,20 @@ module DnsService
               },
               @cloud_admin_domain.id # approver domain
           )
-          unless inquiry.errors?
-            flash.now[:notice] = "Zone request successfully created"
-            audit_logger.info(current_user, "has requested zone #{@zone_request.attributes}")
-            render template: 'dns_service/request_zone_wizard/create.js'
-          else
-            render action: :new
+          unless inquiry.errors.empty?
+            inquiry.errors.each{|k,m| @zone_request.errors.add(k,m)}
           end
         rescue => e
           @zone_request.errors.add("message",e.message)
-          render action: :new
         end
+      end
+
+      if @zone_request.errors.empty?
+        flash.now[:notice] = "Zone request successfully created"
+        audit_logger.info(current_user, "has requested zone #{@zone_request.attributes}")
+        render template: 'dns_service/request_zone_wizard/create.js'
       else
+        load_pools
         render action: :new
       end
     end
@@ -80,6 +81,11 @@ module DnsService
         end
       end
       admins
+    end
+
+    def load_pools
+      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
+      @pools = cloud_admin_dns_service.pools
     end
 
   end

@@ -10,23 +10,23 @@
 
     = f.input :domain_type, required: true, label: 'Type' do
       %p
-        You can request a subdomain at c.#{current_region}.cloud.sap or a domain
-        which is hosted at SAP or public name server.
+        You can request a subdomain at c.#{current_region}.cloud.sap or transfer
+        a custom domain which is hosted at SAP or a public name server.
       %span.radio
         %label
           = f.radio_button :domain_type, "subdomain", data: {target: '#subdomain_panel'}
-          Subdomain
+          Subdomain (&lt;SUBDOMAIN&gt;.c.#{current_region}.cloud.sap.)
           -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "c.#{current_region}.cloud.sap"}}
       %span.radio
         %label
           = f.radio_button :domain_type, "rootdomain", data: {target: '#rootdomain_panel'}
-          Domain
+          Custom Domain
           -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
 
     .tab-content
       .tab-pane{ role: "tabpanel", id: "subdomain_panel", class: ('active' if @zone_request.domain_type=='subdomain') }
         = f.simple_fields_for :subdomain do |subdomain|
-          = subdomain.input :name, required: true, input_wrapper_html: { style: "width: 70%" } do
+          = subdomain.input :name, label: 'Domain Name', required: true, input_wrapper_html: { style: "width: 70%" } do
             .input-group
               = subdomain.text_field :name, value: @zone_request.name, class: "form-control text-right"
               %span.input-group-addon c.#{current_region}.cloud.sap.
@@ -47,39 +47,33 @@
 
       .tab-pane{ role: "tabpanel", id: "rootdomain_panel", class: ('active' if @zone_request.domain_type=='rootdomain') }
         = f.simple_fields_for :rootdomain do |rootdomain|
-          = rootdomain.input :rootdomain_type, as: :select, label: 'Accessibility',
-            collection: [["Public Hosted Domain","external"],["SAP Hosted Domain","internal"]] do
-            = f.select :rootdomain_type, [["Public Hosted Domain","external"],["SAP Hosted Domain","internal"]], {include_blank: true}, class: "select required form-control", style: "width: 70%"
+          = rootdomain.input :domain_pool, as: :select, label: 'Domain Pool' do
+            = rootdomain.select :domain_pool, @pools.collect{|pool| [(pool.attributes["label"] || pool.name.humanize),pool.id]},
+              {include_blank: true, selected: @zone_request.domain_pool},
+              class: "select required form-control",
+              style: "width: 70%"
+
+            = rootdomain.input_field :domain_pool_name, as: :hidden
             -# %p.help-block
             -#   %i.fa.fa-info-circle
             -#   Internal domains are SAP Domains.
-            .additional_infos.hidden#external
-              - if @external_pool
+            - if @pools.length>0
+              .ns-records{class: ('hidden' if @zone_request.domain_pool.blank?)}
                 %p
                   %br
-                  Before the Domain Name System will start to route queries for this domain to Converged Cloud name servers,
+                  Before the Domain Name System can start to route queries for this domain to the correct name servers,
                   you must update the name server records either with the current DNS service or with the registrar for the
-                  domain, as applicable. For more information, click #{link_to 'here','#'}.
-                  %ul
-                    - @external_pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
+                  domain, as applicable. The new name server records are listed below. #{link_to 'See the documentation for more information','#'}.
+                - @pools.each do |pool|
+                  %ul{id: pool.id, class: ('hidden' unless @zone_request.domain_pool==pool.id)}
+                    - pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
                       %li= record["hostname"]
 
-            .additional_infos.hidden#internal
-              - if @internal_pool
-                %p
-                  %br
-                  Before the Domain Name System will start to route queries for this domain to Converged Cloud name servers,
-                  you must update the name server records either with the current DNS service or with the registrar for the
-                  domain, as applicable. For more information, click #{link_to 'here','#'}.
-                  %ul
-                    - @internal_pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
-                      %li= record["hostname"]
-
-
-          .rootdomain_fields.hidden
-            = rootdomain.input :name, required: true,
+          .rootdomain_fields{class: ('hidden' if @zone_request.domain_pool.blank?)}
+            = rootdomain.input :name, label: 'Domain Name', required: true,
               input_html: {value: @zone_request.name},
-              input_wrapper_html: { style: "width: 70%" }
+              input_wrapper_html: { style: "width: 70%" },
+              icon_hint: "A fully qualified domain name, e.g. example.com."
 
             = rootdomain.input :email, required: true,
               input_html: {value: @zone_request.email},
@@ -104,12 +98,17 @@
     $(this).tab('show');
   });
 
-  $('[name="zone_request[rootdomain_type]"]').change(function(){
-    $('.additional_infos').addClass('hidden');
+  $('[name="zone_request[rootdomain][domain_pool]"]').change(function(){
+    $('.ns-records ul').addClass('hidden');
+    $('')
     if (this.value) {
-      $('.additional_infos#'+this.value).removeClass('hidden');
+      $('#zone_request_rootdomain_domain_pool_name').val($(this).find('option[value="'+this.value+'"]').text());
+      $('.ns-records').removeClass('hidden');
+      $('.ns-records ul#'+this.value).removeClass('hidden');
       $('.rootdomain_fields').removeClass('hidden');
     } else {
+      $('#zone_request_rootdomain_domain_pool_name').val(null);
+      $('.ns-records').addClass('hidden');
       $('.rootdomain_fields').addClass('hidden');
     }
-  })
+  });

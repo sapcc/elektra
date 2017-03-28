@@ -8,13 +8,14 @@
       .alert.alert-error
         = render_errors(@zone_request.errors)
 
-    = hidden_field_tag :inquiry_id, params[:inquiry_id]    
+    = hidden_field_tag :inquiry_id, params[:inquiry_id]
     = f.input :domain_type, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
     = f.input :domain_type, as: :hidden
 
     - if @zone_request.domain_type=='rootdomain'
-      = f.input :rootdomain_type, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
-      = f.input :rootdomain_type, as: :hidden
+      = f.input :domain_pool, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
+      = f.input :domain_pool, as: :hidden
+      = f.input :domain_pool_name, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
 
     = f.input :name, required: true, input_wrapper_html: { style: "width: 70%" }
     = f.input :email, required: true, input_wrapper_html: { style: "width: 70%" }
