@@ -1,5 +1,5 @@
 = content_for :title do
-  Create New Zone
+  Create New Domain
 
 = simple_form_for @zone_request, url: plugin('dns_service').create_zone_wizard_path(project_id: 'master'), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 

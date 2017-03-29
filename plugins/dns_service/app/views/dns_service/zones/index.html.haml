@@ -8,7 +8,7 @@
     = link_to 'Create New', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 - elsif current_user.is_allowed?("dns_service:request_zone")
   .toolbar
-    = link_to 'Request New Zone', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    = link_to 'Request New Domain', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
 %table.table.zones
   %thead
