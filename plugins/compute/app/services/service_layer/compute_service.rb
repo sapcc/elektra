@@ -56,6 +56,12 @@ module ServiceLayer
       driver.map_to(Compute::HypervisorServer).hypervisor_servers(id)
     end
 
+    ##################### SERVICES #########################
+
+    def services(filter = {})
+      driver.map_to(Compute::Service).services(filter)
+    end
+
     ##################### HOST AGGREGATES #########################
 
     def host_aggregates(filter = {})
