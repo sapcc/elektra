@@ -49,5 +49,9 @@ module Lookup
       @query = params[:query]
       raise 'query parameter missing' unless @query
     end
+
+    def release_state
+      'experimental'
+    end
   end
 end
