@@ -38,9 +38,6 @@ ShowShare = React.createClass
                   span className: 'spinner'
 
             tr null,
-              th null, 'Visibility'
-              td null, (if share.is_public then 'public' else 'private')
-            tr null,
               th null, 'Availability zone'
               td null, share.availability_zone
 

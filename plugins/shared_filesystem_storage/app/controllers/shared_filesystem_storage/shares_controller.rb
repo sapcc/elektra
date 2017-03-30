@@ -73,8 +73,21 @@ module SharedFilesystemStorage
     protected
 
     def share_params
-      params.require(:share).permit(:share_proto,:size,:name,:description,:display_name,:display_description,:share_type,:volume_type,
-      :snapshot_id,:is_public,:metadata,:share_network_id,:consistency_group_id,:availability_zone)
+      params.require(:share).permit(
+        :share_proto,
+        :size,
+        :name,
+        :description,
+        :display_name,
+        :display_description,
+        :share_type,
+        :volume_type,
+        :snapshot_id,
+        :metadata,
+        :share_network_id,
+        :consistency_group_id,
+        :availability_zone
+      )
     end
   end
 end

@@ -67,7 +67,6 @@ ShareList = React.createClass
                 ref: ((el) ->$(el).tooltip())
               th null, 'Protocol'
               th null, 'Size'
-              th null, 'Visibility'
               th null, 'Status'
               th style:{width: '30%'}, 'Network'
               th null, ''

@@ -27,7 +27,6 @@ ShareItem = React.createClass
       td null, share.availability_zone
       td null, share.share_proto
       td null, (share.size || 0) + ' GB'
-      td null, (if share.is_public then 'public' else 'private')
       td null,
         if share.status=='creating'
           span className: 'spinner'

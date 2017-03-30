@@ -117,17 +117,6 @@ NewShare = ({
                     'There are no share networks defined yet. '
                     a onClick: ((e) -> e.preventDefault(); handleNewShareNetwork()), href: '#', 'Create a new share network.'
 
-
-      div className: "form-group boolean optional hare_is_public",
-        div className: "col-sm-offset-4 col-sm-8",
-          div className: "checkbox",
-            label className: "boolean optional", htmlFor: "share_is_public",
-              input className: "boolean optional col-sm-8", type: "checkbox", value: share.is_public, name:"is_public", onChange: onChange
-              'Is public'
-            p className: 'help-block',
-              i className: "fa fa-info-circle"
-              'If set then all tenants will be able to see this share.'
-
     div className: 'modal-footer',
       button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
       React.createElement ReactFormHelpers.SubmitButton,
