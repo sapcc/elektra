@@ -1,0 +1,23 @@
+= render_navigation(context: :compute_admin, expand_all: true)
+
+= content_for :main_toolbar do
+  Services
+
+%table.table
+  %thead
+    %tr
+      %th Host
+      %th
+        AZ
+        %i.fa.fa-fw.fa-info-circle{data: { toggle: 'tooltip', placement: 'top', title: 'Availability Zone'}}
+      %th State
+      %th Status
+      %th.snug
+  %tbody#services_table
+    - if @compute_services.blank?
+      %tr
+        %td{ colspan: 3 }
+          No services available
+    - else
+      - @compute_services.each do |service|
+        = render partial: 'item', locals: { service: service }

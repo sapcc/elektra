@@ -23,12 +23,19 @@ Compute::Engine.routes.draw do
       put 'attach_floatingip'
       delete 'detach_floatingip'
     end
-    post 'automation_script', :on => :collection
+    post 'automation_script', on: :collection
   end
 
   resources :keypairs
 
   resources :host_aggregates
+
+  resources :services, constraints: { id: %r{[^\/]+} } do
+    member do
+      put 'enable'
+      put 'disable'
+    end
+  end
 
   resources :hypervisors do
     resources :servers, module: :hypervisors, except: [:edit, :update, :show]

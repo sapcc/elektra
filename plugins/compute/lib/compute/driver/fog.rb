@@ -129,6 +129,24 @@ module Compute
         handle_response { @fog.list_hypervisor_servers(name).body['hypervisors'].first['servers'] }
       end
 
+      ############################# SERVICES ##############################
+
+      def services(filter = {})
+        handle_response { @fog.list_services(filter).body['services'] }
+      end
+
+      def disable_service_reason(host, name, reason, options = {})
+        handle_response { @fog.disable_service_log_reason(host, name, reason, options) }
+      end
+
+      def disable_service(host, name, options = {})
+        handle_response { @fog.disable_service(host, name, options) }
+      end
+
+      def enable_service(host, name, options = {})
+        handle_response { @fog.enable_service(host, name, options) }
+      end
+
       ##################### HOST AGGREGATES #########################
 
       def host_aggregates(filter = {})

@@ -8,8 +8,14 @@ SimpleNavigation::Configuration.run do |navigation|
                  if: -> { plugin_available?(:compute) },
                  highlights_on: %r{compute/host_aggregates/?.*}
 
+   primary.item :compute_admin,
+                'Compute Services',
+                -> { plugin('compute').services_path },
+                if: -> { plugin_available?(:compute) },
+                highlights_on: %r{compute/services/?.*}
+
     primary.item :compute_admin,
-                 'Hypervisors',
+                 'Hypervisor Stats',
                  -> { plugin('compute').hypervisors_path },
                  if: -> { plugin_available?(:compute) },
                  highlights_on: %r{compute/hypervisors/?.*}
