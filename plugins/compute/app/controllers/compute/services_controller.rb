@@ -4,7 +4,8 @@ module Compute
     authorization_required
 
     def index
-      @compute_services = services.compute.services(binary: 'nova-compute')
+      compute_services = services.compute.services(binary: 'nova-compute')
+      @compute_services = compute_services.sort_by(&:zone) if compute_services
     end
 
     def enable
