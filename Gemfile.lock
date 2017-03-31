@@ -111,6 +111,11 @@ PATH
     loadbalancing (0.0.1)
 
 PATH
+  remote: plugins/lookup
+  specs:
+    lookup (0.0.1)
+
+PATH
   remote: plugins/monitoring
   specs:
     monitoring (0.0.1)
@@ -566,6 +571,7 @@ DEPENDENCIES
   jquery-ui-rails
   key_manager!
   loadbalancing!
+  lookup!
   lyra-client!
   monitoring!
   monsoon-openstack-auth!
@@ -602,4 +608,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.14.5
+   1.14.6
