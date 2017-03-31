@@ -1,4 +1,4 @@
-%tr{id: "service_#{service.id}"}
+%tr{id: "service_#{service.id}", class: "#{service.enabled? ? '' : 'state-shutoff'}" }
 
   %td= service.host
   %td= service.zone
@@ -8,6 +8,7 @@
     - if service.disabled_reason
       %br
       %span.info-text= service.disabled_reason
+  %td= service.pretty_updated_at
   %td.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown'}, aria: { expanded: true} }
@@ -26,5 +27,5 @@
               method: :put
           - if current_user.is_allowed?('compute:service_update')
             %li= link_to 'Edit Disablement Reason',
-              plugin('compute').edit_service_path(service.host),
+              plugin('compute').edit_service_path(service.host, reason: service.disabled_reason),
               data: { modal: true }

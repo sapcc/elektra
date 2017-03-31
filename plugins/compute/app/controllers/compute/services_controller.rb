@@ -20,7 +20,7 @@ module Compute
     end
 
     def edit
-      @service = Compute::Service.new(nil, id: params['id'])
+      @service = Compute::Service.new(nil, id: params['id'], reason: params['reason'])
     end
 
     def update
