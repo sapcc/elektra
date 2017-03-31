@@ -30,6 +30,10 @@
       %tr
         %th Priority
         %td= @recordset.priority
+      %tr
+        %th Project
+        %td
+          - project_id_and_name(@recordset.project_id)
 
       - if @recordset.created_at
         %tr
@@ -44,4 +48,4 @@
   - if modal?
     %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Close
   - else
-    = link_to 'Back', plugin('networking').floating_ips_path, class: 'btn btn-default'
+    = link_to 'Back', plugin('dns_service').zone_path(@recordset.zone_id), class: 'btn btn-default'

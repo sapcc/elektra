@@ -1,0 +1,5 @@
+en:
+  dns_record: 'DNS Record'
+  instance: 'Server'
+  network_private: 'Network (Private)'
+  network_external: 'Network (External)'

@@ -11,8 +11,9 @@ module Lookup
       allowed_objects << 'instance'         if current_user.is_allowed?('lookup:os_object_show_instance')
       allowed_objects << 'network_private'  if current_user.is_allowed?('lookup:os_object_show_network_private')
       allowed_objects << 'network_external' if current_user.is_allowed?('lookup:os_object_show_network_external')
+      allowed_objects << 'dns_record'       if current_user.is_allowed?('lookup:os_object_show_dns_record')
       allowed_objects.each do |type|
-        @types[type.humanize] = type
+        @types[t(type)] = type
       end
       @os_object = Lookup::OsObject.new(nil)
     end
@@ -40,6 +41,12 @@ module Lookup
 
     def show_network_external
       redirect_to plugin('networking').networks_external_path(id: @query)
+    end
+
+    def show_dns_record
+      record = services.dns_service.recordsets(all_projects: true, name: "#{@query}*").first unless record
+      raise 'no matching record found' unless record
+      redirect_to plugin('dns_service').zone_recordset_path(zone_id: record.zone_id, id: record.id)
     end
 
     private

@@ -1,0 +1,22 @@
+.bs-callout.bs-callout-primary
+  %p
+    Valid Identifiers vary by Object:
+    %table.table.identifiers
+      %thead
+        %tr
+          %th Type
+          %th Identifier
+          %th Comment
+      %tbody
+        %tr
+          %td Instance
+          %td UUID
+          %td exact match
+        %tr
+          %td Network
+          %td UUID
+          %td exact match
+        %tr
+          %td DNS Record
+          %td Name
+          %td wildcard, first hit is returned
