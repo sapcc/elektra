@@ -1,0 +1,29 @@
+.modal-body
+
+  %table.table.datatable
+    %tbody
+      %tr
+        %th ID
+        %td= @project.id
+      %tr
+        %th Name
+        %td= @project.name
+      %tr
+        %th Domain
+        %td
+          - domain_id_and_name(@project.domain_id)
+      %tr
+        %th Description
+        %td= @project.description
+      - if @project.parent_id && @project.parent_id != @project.domain_id
+        %tr
+          %th Parent
+          %td
+            - project_id_and_name(@project.parent_id)
+
+- if modal?
+  .modal-footer
+    - if modal?
+      %button.btn.btn-default{ type: 'button', data: { dismiss: 'modal' }, aria: { label: 'Close' } } Close
+    - else
+      = link_to 'Back', plugin('compute').hypervisors_url, class: 'btn btn-default'
