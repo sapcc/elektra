@@ -21,6 +21,13 @@
           %td
             - project_id_and_name(@project.parent_id)
 
+      - if @project.subprojects_ids.present?
+        - @project.subprojects_ids.each do |sub_id, _|
+          %tr
+            %th Child
+            %td
+              - project_id_and_name(sub_id)
+
 - if modal?
   .modal-footer
     - if modal?
