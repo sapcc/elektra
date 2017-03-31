@@ -12,6 +12,7 @@ module Lookup
       allowed_objects << 'network_private'  if current_user.is_allowed?('lookup:os_object_show_network_private')
       allowed_objects << 'network_external' if current_user.is_allowed?('lookup:os_object_show_network_external')
       allowed_objects << 'dns_record'       if current_user.is_allowed?('lookup:os_object_show_dns_record')
+      allowed_objects << 'project'          if current_user.is_allowed?('lookup:os_object_show_project')
       allowed_objects.each do |type|
         @types[t(type)] = type
       end
@@ -30,9 +31,7 @@ module Lookup
     end
 
     def show_project
-      raise 'not implemented'
-      # project#show currently only can display the active project
-      # redirect_to plugin('identity').project_path(id: @query)
+      redirect_to plugin('identity').project_view_path(id: @query)
     end
 
     def show_network_private
@@ -44,7 +43,9 @@ module Lookup
     end
 
     def show_dns_record
-      record = services.dns_service.recordsets(all_projects: true, name: "#{@query}*").first unless record
+      # TODO: remove default wildcard search and document capabilities
+      # TODO: display all results, not just the first
+      record = services.dns_service.recordsets(all_projects: true, name: "*#{@query}*").first
       raise 'no matching record found' unless record
       redirect_to plugin('dns_service').zone_recordset_path(zone_id: record.zone_id, id: record.id)
     end

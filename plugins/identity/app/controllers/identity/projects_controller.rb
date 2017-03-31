@@ -32,6 +32,10 @@ module Identity
     def show
     end
 
+    def view
+      @project = services.identity.find_project(@project_id)
+    end
+
     def show_wizard
     end
 
