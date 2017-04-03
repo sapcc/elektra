@@ -2,7 +2,8 @@
   %h4.action-heading
     Project Info
     - can_edit = current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-    - can_delete = current_user.is_allowed?('identity:project_delete',{target: {project: @active_project }})
+    -# - can_delete = current_user.is_allowed?('identity:project_delete',{target: {project: @active_project }})
+    - can_delete = false # never allow project delete (until we figure out a way to do this without creating orphans everywhere)
     - if can_delete or can_edit
       .dropdown.header-action
         %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
