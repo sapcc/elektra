@@ -8,7 +8,7 @@
   }
 
   .worldmap-city {
-    fill: lighten($light-sapgold, 25);
+    fill: lighten($light-sapgold, 20);
     stroke: #666;
     cursor: pointer;
 
@@ -20,11 +20,11 @@
 
     &.notavailable {
       cursor: crosshair;
-      fill: #bbb;
+      fill: #eee;
       stroke: #666;
 
       &.cominglater {
-        fill: #eee;
+        fill: #fefefe;
         stroke: #777;
       }
     }
