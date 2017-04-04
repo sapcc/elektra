@@ -59,7 +59,7 @@
     "regionname": "EU-NL-1",
     "lat":        52.36,
     "lon":        4.895523,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
