@@ -2,6 +2,7 @@ ALLOWED_ROLES = %w(
   admin
   compute_admin
   compute_viewer
+  dns_viewer
   member
   monasca-agent
   monasca-user
