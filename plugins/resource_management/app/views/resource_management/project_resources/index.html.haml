@@ -4,27 +4,12 @@
 
 .row.quota-row
   .col-md-9
-    - if @critical_resources.blank? and @warning_resources.blank? and @nearly_full_resources.blank?
-      .bs-callout.bs-callout-info
-        No signs of critical resource usage found.
-
-    - unless @critical_resources.blank?
-      %h3 Usage exceeds approved quota
-      -# sort resources by name (and by service for resources with the same name)
-      - @critical_resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
-        = render partial: 'bar', locals: { overview: true, data: resource }
-
-    - unless @warning_resources.blank?
-      %h3 Current quota exceeds approved quota
-      -# sort resources by name (and by service for resources with the same name)
-      - @warning_resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
-        = render partial: 'bar', locals: { overview: true, data: resource }
-
-    - unless @nearly_full_resources.blank?
+    - @critical_resources.sort_by { |r| [ r.name, r.config.service.name ] }.each do |res|
+      = render partial: 'bar', locals: { resource: res, overview: true }
+    - unless @nearly_full_resources.empty?
       %h3 Current quota nearly used up
-      -# sort resources by name (and by service for resources with the same name)
-      - @nearly_full_resources.sort_by { |r| [ r.name, r.service ] }.each do |resource|
-        = render partial: 'bar', locals: { overview: true, data: resource }
+      - @nearly_full_resources.sort_by { |r| [ r.name, r.config.service.name ] }.each do |res|
+        = render partial: 'bar', locals: { resource: res, overview: true }
 
     - if current_user.is_allowed?('resource_management:project_resource_sync_now')
       = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_path }

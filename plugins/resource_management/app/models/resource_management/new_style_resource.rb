@@ -18,6 +18,10 @@ module ResourceManagement
       end
     end
 
+    def data_type
+      Core::DataType.from_unit_name(read(:unit) || '')
+    end
+
     def project_id
       read(:project_id)
     end

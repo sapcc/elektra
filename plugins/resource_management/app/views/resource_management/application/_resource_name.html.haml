@@ -5,7 +5,7 @@
 
 .col-md-2.quota-label
   .text-muted
-    - conf = resource.config
+    - conf = config || resource.config
     - name = conf.name
     - service = conf.service.name
     - area = conf.service.area

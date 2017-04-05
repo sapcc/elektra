@@ -9,18 +9,30 @@ module ResourceManagement
     authorization_required
 
     def index
+      @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @min_updated_at = @project.services.map(&:updated_at).min
+      @max_updated_at = @project.services.map(&:updated_at).max
+
+      # find resources to show
+      resources = @project.services.map(&:resources).flatten
+      @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
+      @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
+
       @index = true
+    end
 
-      @all_resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id).where.not(service: 'resource_management')
-      # data age display should use @all_resources which we looked at, even those that do not appear to be critical right now
-      @min_updated_at, @max_updated_at = @all_resources.pluck("MIN(updated_at), MAX(updated_at)").first
+    def show_area(area = nil)
+      @area = area || params.require(:area).to_sym
 
-      # resources are critical if the usage exceeds the approved quota
-      @critical_resources = @all_resources.where("usage > approved_quota").to_a
-      # warn about resources where current_quota was set to exceed the approved value
-      @warning_resources = @all_resources.where("usage <= approved_quota AND current_quota > approved_quota").to_a
-      # also warn about resources where usage approaches the current_quota
-      @nearly_full_resources = @all_resources.where("usage <= approved_quota AND current_quota <= approved_quota AND usage >= 0.8 * approved_quota AND usage > 0").to_a
+      # which services belong to this area?
+      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
+
+      # load all resources for these services
+      @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id, services: @area_services.map(&:catalog_type))
+      @resources = @project.services.map(&:resources).flatten
+      @min_updated_at = @project.services.map(&:updated_at).min
+      @max_updated_at = @project.services.map(&:updated_at).max
     end
 
     def confirm_reduce_quota
@@ -60,12 +72,7 @@ module ResourceManagement
         @services_with_error = services.resource_management.apply_current_quota(@project_resource)
 
         # load data to reload the bars in the main view
-        # which services belong to this area?
-        @area = @project_resource.config.service.area.to_s
-        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-
-        # load all resources for these services
-        @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
+        show_area(@project_resource.config.service.area.to_s)
       else
         # reload the reduce quota window with error
         respond_to do |format|
@@ -200,17 +207,6 @@ module ResourceManagement
       else
         render action: :new_package_request
       end
-    end
-
-    def show_area
-      @area = params.require(:area).to_sym
-
-      # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
-      # load all resources for these services
-      @resources = ResourceManagement::Resource.where(:domain_id => @scoped_domain_id, :project_id => @scoped_project_id, :service => @area_services)
-      @min_updated_at, @max_updated_at = @resources.pluck("MIN(updated_at), MAX(updated_at)").first
     end
 
     def sync_now(direct = false)
