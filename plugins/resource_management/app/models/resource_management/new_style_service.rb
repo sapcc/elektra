@@ -1,0 +1,44 @@
+module ResourceManagement
+  class NewStyleService < Core::ServiceLayer::Model
+
+    def type
+      read(:type).to_sym
+    end
+
+    def project_id
+      read(:project_id)
+    end
+    def domain_id
+      read(:domain_id)
+    end
+    def cluster_id
+      read(:cluster_id)
+    end
+
+    def resources
+      metadata = {
+        service_type: read(:type).to_sym,
+        project_id:   read(:project_id),
+        domain_id:    read(:domain_id),
+        cluster_id:   read(:cluster_id),
+      }.reject { |k,v| v.nil? }
+
+      read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@driver, data.merge(metadata)) }
+    end
+
+    def updated_at
+      tst = read(:scraped_at)
+      tst ? Time.at(tst) : nil
+    end
+
+    def min_updated_at
+      tst = read(:min_scraped_at)
+      tst ? Time.at(tst) : nil
+    end
+    def max_updated_at
+      tst = read(:max_scraped_at)
+      tst ? Time.at(tst) : nil
+    end
+
+  end
+end

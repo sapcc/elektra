@@ -5,6 +5,138 @@ module ResourceManagement
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
+      ##########################################################################
+      # new-style interface
+
+      def get_project_data(domain_id, project_id=nil, options={})
+        resources = ResourceManagement::Resource.where(domain_id: domain_id)
+        resources = resources.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        resources = resources.where(name: options[:resources]) if options[:resources]
+        if project_id.nil?
+          resources = resources.where.not(project_id: nil)
+        else
+          resources = resources.where(project_id: project_id)
+        end
+
+        projects = []
+        resources.each do |res|
+          next unless res.config # ignore dummy resources
+          _, service, resource = locate_entity_service_resource(projects, res.project_id, res.config)
+
+          service[:scraped_at] = res.updated_at.to_i
+          unit_name = res.config.data_type.unit_name
+          resource[:unit]  = unit_name if unit_name != ""
+          resource[:quota] = res.approved_quota
+          resource[:usage] = res.usage
+          if res.current_quota != res.approved_quota
+            resource[:backend_quota] = res.current_quota
+          end
+        end
+
+        if project_id.nil?
+          return projects
+        else
+          raise Excon::Errors::NotFound, "project #{project_id} not found" if projects.empty?
+          return projects.first
+        end
+      end
+
+      def get_domain_data(domain_id=nil, options={})
+        domain_resources = ResourceManagement::Resource.where(project_id: nil)
+        domain_resources = domain_resources.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        domain_resources = domain_resources.where(name: options[:resources]) if options[:resources]
+        if domain_id.nil?
+          domain_resources = domain_resources.where.not(domain_id: nil)
+        else
+          domain_resources = domain_resources.where(domain_id: domain_id)
+        end
+
+        domains = []
+        domain_resources.each do |res|
+          next unless res.config # ignore dummy resources
+          _, _, resource = locate_entity_service_resource(domains, res.domain_id, res.config)
+          resource[:quota] = res.approved_quota
+          resource[:usage] = 0
+          resource[:projects_quota] = 0
+        end
+
+        project_resources = ResourceManagement::Resource.where.not(project_id: nil)
+        project_resources = project_resources.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        project_resources = project_resources.where(name: options[:resources]) if options[:resources]
+        unless domain_id.nil?
+          project_resources = project_resources.where(domain_id: domain_id)
+        end
+
+        project_resources.group('domain_id,service,name').pluck('domain_id,service,name,SUM(approved_quota),SUM(GREATEST(COALESCE(current_quota, 0), 0)),MIN(updated_at),MAX(updated_at)').each do |values|
+          domain_id, service_type, resource_name, sum_approved, sum_nonzero_current, min_updated_at,max_updated_at = values
+
+          service_type = service_type.to_sym
+          resource_name = resource_name.to_sym
+          resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
+          next unless resource_config # ignore dummy resources
+          _, service, resource = locate_entity_service_resource(domains, domain_id, resource_config)
+
+          service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
+          service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
+          resource[:quota] ||= 0
+          resource[:projects_quota] = sum_approved
+          resource[:backend_quota] = sum_nonzero_current if sum_approved != sum_nonzero_current
+        end
+
+        project_resources.where('current_quota < 0').group('domain_id,service,name').pluck('domain_id,service,name').each do |values|
+          domain_id, service_type, resource_name = values
+
+          service_type = service_type.to_sym
+          resource_name = resource_name.to_sym
+          resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
+          next unless resource_config # ignore dummy resources
+          _, _, resource = locate_entity_service_resource(domains, domain_id, resource_config)
+
+          resource[:infinite_backend_quota] = true
+        end
+
+        if domain_id.nil?
+          return domains
+        else
+          raise Excon::Errors::NotFound, "domain #{domain_id} not found" if domains.empty?
+          return domains.first
+        end
+      end
+
+      private
+
+      def locate_entity_service_resource(entities, entity_id, resource_config)
+        entity = entities.find { |e| e[:id] == entity_id }
+        if entity.nil?
+          entity = { id: entity_id, services: [] }
+          entities.append(entity)
+        end
+
+        service_type = resource_config.service.catalog_type
+        service = entity[:services].find { |s| s[:type] == service_type }
+        if service.nil?
+          service = { type: service_type, resources: [] }
+          entity[:services].append(service)
+        end
+
+        resource = service[:resources].find { |r| r[:name] == resource_config.name }
+        if resource.nil?
+          resource = { name: resource_config.name }
+          service[:resources].append(resource)
+        end
+
+        return entity, service, resource
+      end
+
+      def limes_services_to_frontend_services(services)
+        ResourceManagement::ServiceConfig.all.select { |srv| services.include?(srv.catalog_type) }.map(&:name).uniq
+      end
+
+      ##########################################################################
+      # old-style interface
+
+      public
+
       # Query quotas for the given project from the given service.
       # Returns a hash with resource names as keys. The service argument and
       # the resource names in the result are symbols, with acceptable values
