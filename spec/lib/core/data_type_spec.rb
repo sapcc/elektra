@@ -170,4 +170,35 @@ RSpec.describe Core::DataType do
 
   end
 
+  describe '#unit_name' do
+
+    it 'serializes the unit name used by Limes' do
+      expect(Core::DataType.new(:number).unit_name).to eq("")
+      expect(Core::DataType.new(:bytes).unit_name).to eq("B")
+      expect(Core::DataType.new(:bytes, :kilo).unit_name).to eq("KiB")
+      expect(Core::DataType.new(:bytes, :mega).unit_name).to eq("MiB")
+      expect(Core::DataType.new(:bytes, :giga).unit_name).to eq("GiB")
+      expect(Core::DataType.new(:bytes, :tera).unit_name).to eq("TiB")
+      expect(Core::DataType.new(:bytes, :peta).unit_name).to eq("PiB")
+      expect(Core::DataType.new(:bytes,  :exa).unit_name).to eq("EiB")
+    end
+
+  end
+
+  describe '#from_unit_name' do
+
+    it 'is the reverse of #unit_name' do
+      ["","B","KiB","MiB","GiB","TiB","PiB","EiB"].each do |unit|
+        expect(Core::DataType.from_unit_name(unit).unit_name).to eq(unit)
+      end
+    end
+
+    it 'does not accept anything else' do
+      ["blargh","kb","G","Bytes",42].each do |unit|
+        expect { Core::DataType.from_unit_name(unit) }.to raise_error(ArgumentError)
+      end
+    end
+
+  end
+
 end

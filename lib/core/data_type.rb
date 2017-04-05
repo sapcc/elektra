@@ -49,6 +49,27 @@ module Core
       @type
     end
 
+    def unit_name
+      return "" if @type == :number
+      return "B" if @target_unit_index == 0
+      return PRETTY_FORMAT_BYTES[@target_unit_index]
+    end
+
+    def self.from_unit_name(unit_name)
+      unit_name = unit_name.to_s
+      if unit_name == ""
+        return self.new(:number)
+      elsif unit_name == "B"
+        return self.new(:bytes)
+      else
+        index = PRETTY_FORMAT_BYTES.index(unit_name)
+        if index != nil && index != 0
+          return self.new(:bytes, ALLOWED_SUB_TYPES[index])
+        end
+      end
+      raise ArgumentError, "unknown unit name: #{unit_name}"
+    end
+
     def format(value, options = {delimiter: true})
       formated_value = send("format_#{@type}", value)
       unless options[:delimiter]
