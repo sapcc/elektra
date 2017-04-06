@@ -18,6 +18,10 @@
       = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
 
       %label.sr-only{:for => "password"} Password
-      = password_field_tag :password, nil, placeholder: "Passwort", required: "", class: "form-control bottom-input"
+      = password_field_tag :password, nil, placeholder: "Passwort", required: "", class: "form-control #{'bottom-input' unless @two_factor_required}"
+
+      - if @two_factor_required
+        %label.sr-only{:for => "two_factor_passcode"} SecurID Passcode
+        = text_field_tag :two_factor_passcode, nil, placeholder: "SecureID Passcode", required: "", class: "form-control bottom-input"
 
       %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in

@@ -25,6 +25,7 @@ class DashboardController < ::ScopeController
                           domain_name: -> c { c.instance_variable_get("@scoped_domain_name") },
                           project: -> c { c.instance_variable_get('@scoped_project_id') },
                           rescope: false,
+                          two_factor: :two_factor_required?,
                           except: :terms_of_use
 
   # after_login is used by monsoon_openstack_auth gem.
@@ -148,6 +149,14 @@ class DashboardController < ::ScopeController
     name = params[:name] || params[:term] || ""
     projects = FriendlyIdEntry.search('Project',@scoped_domain_id,name)
     render json: projects.collect{|project| {id: project.key, name: project.name}}.to_json
+  end
+
+
+  def two_factor_required?
+    if ENV['TWO_FACTOR_AUTH_DOMAINS']
+      return ENV['TWO_FACTOR_AUTH_DOMAINS'].gsub(/\s+/, '').split(',').include?(@scoped_domain_name)
+    end
+    return false
   end
 
   protected

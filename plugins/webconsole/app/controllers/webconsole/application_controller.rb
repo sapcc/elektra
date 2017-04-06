@@ -68,5 +68,9 @@ module Webconsole
         super options, response_status
       end
     end
+
+    def two_factor_required?
+      true
+    end
   end
 end

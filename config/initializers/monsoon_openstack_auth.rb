@@ -10,7 +10,7 @@ end
 MonsoonOpenstackAuth.configure do |auth|
   # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
   # auth.connection_driver = DriverClass
-    
+
   auth.connection_driver.api_endpoint = Rails.application.config.keystone_endpoint
   auth.connection_driver.ssl_verify_peer = Rails.configuration.ssl_verify_peer
 
@@ -46,5 +46,9 @@ MonsoonOpenstackAuth.configure do |auth|
 
   # optional, default=false
   auth.debug=auth.debug_api_calls=Rails.configuration.debug_api_calls
-end
 
+  auth.two_factor_authentication_method = -> username,passcode {
+    # place here the code to authenticate against a rsa securID Server. 
+    true
+  }
+end
