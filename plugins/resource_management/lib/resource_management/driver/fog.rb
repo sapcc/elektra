@@ -103,6 +103,45 @@ module ResourceManagement
         end
       end
 
+      def put_project_data(domain_id, project_id, services)
+        quotas = {}
+
+        ResourceManagement::Resource.where(domain_id: domain_id, project_id: project_id).each do |db_res|
+          cfg = db_res.config
+          srv = services.find { |s| s[:type] == cfg.service.catalog_type.to_sym } or next
+          res = srv[:resources].find { |r| r[:name] == cfg.name }                 or next
+
+          db_res.approved_quota = res[:quota]
+          db_res.current_quota  = res[:quota]
+          next unless db_res.changed?
+          db_res.save!
+
+          quotas[db_res.service] ||= {}
+          quotas[db_res.service][db_res.name.to_sym] = res[:quota]
+        end
+
+        services_with_error = []
+        quotas.each do |service, values|
+          begin
+            set_project_quota(domain_id, project_id, service, values)
+          rescue
+            services_with_error.append(service.to_s)
+          end
+        end
+        return services_with_error
+      end
+
+      def put_domain_data(domain_id, services)
+        ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).each do |db_res|
+          cfg = db_res.config
+          srv = services.find { |s| s[:type] == cfg.service.catalog_type } or next
+          res = srv[:resources].find { |r| r[:name] == cfg.name }          or next
+
+          db_res.approved_quota = res[:quota]
+          db_res.save! if db_res.changed?
+        end
+      end
+
       private
 
       def locate_entity_service_resource(entities, entity_id, resource_config)

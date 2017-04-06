@@ -27,7 +27,7 @@ module ResourceManagement
         cluster_id:        read(:cluster_id),
       }.reject { |k,v| v.nil? }
 
-      read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@driver, data.merge(metadata)) }
+      @resources ||= read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@driver, data.merge(metadata)) }
     end
 
     def updated_at

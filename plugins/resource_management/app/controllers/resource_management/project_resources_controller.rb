@@ -40,39 +40,29 @@ module ResourceManagement
     end
 
     def reduce_quota
-
-      value = params[:resource][:current_quota]
-
+      value = params[:new_style_resource][:quota]
       if value.empty?
-        @project_resource.add_validation_error(:current_quota, "empty value is invalid")
+        @resource.add_validation_error(:quota, 'is missing')
       else
         begin
-          parsed_value = @project_resource.data_type.parse(value)
-          # pre check value
-          if @project_resource.approved_quota < parsed_value &&
-             @project_resource.current_quota < parsed_value
-            @project_resource.add_validation_error(:current_quota, "wrong value: because the wanted quota value of #{value} is higher than your current quota")
-          elsif @project_resource.usage > parsed_value
-            @project_resource.add_validation_error(:current_quota, "wrong value: it is now allowed to reduce the quota below your current usage")
-          elsif @project_resource.approved_quota == parsed_value &&
-                @project_resource.current_quota == parsed_value
-            @project_resource.add_validation_error(:current_quota, "wrong value: because the wanted quota value is the same as your current quota")
+          value = @resource.data_type.parse(value)
+
+          # NOTE: there are additional validations in the NewStyleResource class
+          if @resource.quota < value
+            @resource.add_validation_error(:quota, 'is higher than current quota')
           else
-            @project_resource.approved_quota = parsed_value
-            @project_resource.current_quota = parsed_value
+            @resource.quota = value
           end
         rescue ArgumentError => e
-          @project_resource.add_validation_error(:current_quota, 'is invalid: ' + e.message)
+          @resource.add_validation_error(:quota, 'is invalid: ' + e.message)
         end
       end
 
       # save the new quota to the database
-      if @project_resource.save
-        # apply new quota in target service
-        @services_with_error = services.resource_management.apply_current_quota(@project_resource)
-
+      if @resource.save
+        @services_with_error = @resource.services_with_error
         # load data to reload the bars in the main view
-        show_area(@project_resource.config.service.area.to_s)
+        show_area(@resource.config.service.area.to_s)
       else
         # reload the reduce quota window with error
         respond_to do |format|
@@ -81,7 +71,6 @@ module ResourceManagement
           end
         end
       end
-
     end
 
     def new_request
@@ -173,6 +162,7 @@ module ResourceManagement
         respond_to do |format|
           format.js { render inline: 'alert("Error: Invalid quota package name specified.")' }
         end
+        return
       end
 
       # create inquiry
@@ -223,8 +213,13 @@ module ResourceManagement
     private
 
     def load_project_resource
-      @project_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @project_resource.id.nil? or @project_resource.project_id.nil?
+      @project = services.resource_management.find_project(
+        @scoped_domain_id, @scoped_project_id,
+        services: Array.wrap(params.require(:service)),
+        resources: Array.wrap(params.require(:resource)),
+      )
+      service   = @project.services.first or raise ActiveRecord::RecordNotFound
+      @resource = service.resources.first or raise ActiveRecord::RecordNotFound
     end
 
     def check_first_visit

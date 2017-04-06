@@ -1,5 +1,9 @@
 module ResourceManagement
   class NewStyleResource < Core::ServiceLayer::Model
+    include ManualValidation
+
+    validates_presence_of :quota
+    validate :validate_quota
 
     def name
       read(:name).to_sym
@@ -58,6 +62,38 @@ module ResourceManagement
     end
     def domains_quota
       read(:domains_quota) || 0
+    end
+
+    def save
+      return self.valid? && perform_update
+    end
+
+    def perform_update
+      services = [{
+        type: service_type,
+        resources: [{
+          name: name,
+          quota: quota,
+        }],
+      }]
+      if project_id and project_domain_id
+        @services_with_error = @driver.put_project_data(project_domain_id, project_id, services)
+      elsif domain_id
+        @driver.put_domain_data(domain_id, services)
+      else
+        raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
+      end
+    end
+
+    # TODO: remove this after the switch to Limes
+    def services_with_error
+      return @services_with_error || []
+    end
+
+    private
+
+    def validate_quota
+      errors.add(:quota, 'is below usage') if usage > quota
     end
 
   end

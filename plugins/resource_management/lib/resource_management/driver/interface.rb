@@ -52,6 +52,24 @@ module ResourceManagement
         raise ServiceLayer::Errors::NotImplemented
       end
 
+      # Set quotas for the given project. `services` is the request body
+      # expected by Limes, minus the outermost two JSON objects (i.e.  starting
+      # at the `services` level).
+      #
+      # The legacy (non-Limes) implementation will return an array of service
+      # names, indicating those backend services where the quota update failed.
+      # The Limes-powered implementation shall return an empty array instead.
+      def put_project_data(domain_id, project_id, services)
+        raise ServiceLayer::Errors::NotImplemented
+      end
+
+      # Set quotas for the given domain. `services` is the request body
+      # expected by Limes, minus the outermost two JSON objects (i.e.  starting
+      # at the `services` level).
+      def put_domain_data(domain_id, services)
+        raise ServiceLayer::Errors::NotImplemented
+      end
+
     end
   end
 end
