@@ -8,6 +8,9 @@ module ResourceManagement
     def project_id
       read(:project_id)
     end
+    def project_domain_id
+      read(:project_domain_id)
+    end
     def domain_id
       read(:domain_id)
     end
@@ -17,10 +20,11 @@ module ResourceManagement
 
     def resources
       metadata = {
-        service_type: read(:type).to_sym,
-        project_id:   read(:project_id),
-        domain_id:    read(:domain_id),
-        cluster_id:   read(:cluster_id),
+        service_type:      read(:type).to_sym,
+        project_id:        read(:project_id),
+        project_domain_id: read(:project_domain_id),
+        domain_id:         read(:domain_id),
+        cluster_id:        read(:cluster_id),
       }.reject { |k,v| v.nil? }
 
       read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@driver, data.merge(metadata)) }

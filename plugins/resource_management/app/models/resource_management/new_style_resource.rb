@@ -25,6 +25,9 @@ module ResourceManagement
     def project_id
       read(:project_id)
     end
+    def project_domain_id
+      read(:project_domain_id)
+    end
     def domain_id
       read(:domain_id)
     end

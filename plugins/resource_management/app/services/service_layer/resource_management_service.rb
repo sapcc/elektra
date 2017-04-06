@@ -10,19 +10,19 @@ module ServiceLayer
     end
 
     def find_project(domain_id, project_id, options={})
-      driver.map_to(ResourceManagement::Project).get_project_data(domain_id, project_id, options)
+      driver.map_to(ResourceManagement::Project, domain_id: domain_id).get_project_data(domain_id, project_id, options)
     end
 
     def list_projects(domain_id, options={})
-      driver.map_to(ResourceManagement::Project).get_project_data(domain_id, nil, options)
+      driver.map_to(ResourceManagement::Project, domain_id: domain_id).get_project_data(domain_id, nil, options)
     end
 
     def find_domain(domain_id, options={})
-      driver.map_to(ResourceManagement::Project).get_domain_data(domain_id, options)
+      driver.map_to(ResourceManagement::Domain).get_domain_data(domain_id, options)
     end
 
     def list_domains(options={})
-      driver.map_to(ResourceManagement::Project).get_domain_data(nil, options)
+      driver.map_to(ResourceManagement::Domain).get_domain_data(nil, options)
     end
 
     def has_project_quotas?

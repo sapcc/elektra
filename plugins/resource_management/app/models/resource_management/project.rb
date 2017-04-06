@@ -5,9 +5,16 @@ module ResourceManagement
       read(:id)
     end
 
+    def domain_id
+      read(:domain_id)
+    end
+
     def services
-      project_id = read(:id)
-      read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(project_id: project_id)) }
+      metadata = {
+        project_id:        read(:id),
+        project_domain_id: read(:domain_id),
+      }
+      read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }
     end
 
   end
