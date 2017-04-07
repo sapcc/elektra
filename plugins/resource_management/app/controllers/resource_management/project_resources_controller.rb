@@ -168,10 +168,7 @@ module ResourceManagement
         'project_quota_package',
         "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg}",
         current_user,
-        {
-          project_id: @scoped_project_id,
-          package:    pkg,
-        },
+        { package: pkg },
         service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
         {
           "approved": {

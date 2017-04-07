@@ -175,100 +175,44 @@ module ResourceManagement
     end
 
     def review_package_request
-      @stats = {}
-      ResourceManagement::ResourceConfig.all.each do |res|
-        service_stats = @stats[res.service.name] ||= {}
-        service_stats[res.name] ||= {
-          domain_approved_quota:   0,
-          total_current_quota:     0,
-          total_approved_quota:    0,
-          total_usage:             0,
-          project_current_quota:   0,
-          project_approved_quota:  0,
-          new_total_current_quota: 0,
-        }
-      end
+      @project = services.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
+      @domain  = services.resource_management.find_domain(@scoped_domain_id)
 
-      # obtain quotas for this domain
-      ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: nil).each do |res|
-        @stats[res.service.to_sym][res.name.to_sym][:domain_approved_quota] = res.approved_quota
-      end
-
-      # obtain quota/usage sums for all projects in this domain
-      ResourceManagement::Resource.
-        where(domain_id: @scoped_domain_id).
-        group(:service, :name).
-        # disregard unlimited quotas (current_quota == -1 etc.)
-        pluck(:service, :name, 'SUM(GREATEST(0,current_quota))', 'SUM(GREATEST(0,approved_quota))', 'SUM(usage)').
-        each do |service,resource,current_quota,approved_quota,usage|
-          if service != 'resource_management'
-            @stats[service.to_sym][resource.to_sym].merge!(
-              total_current_quota:  current_quota,
-              total_approved_quota: approved_quota,
-              total_usage:          usage,
-            )
-          end
-      end
-
-      # obtain quota/usage for the project in question
-      @project_resources.each do |res|
-        @stats[res.service.to_sym][res.name.to_sym].merge!(
-          project_current_quota: res.current_quota,
-          project_approved_quota: res.approved_quota,
-        )
-      end
-
-      @target_project_name = services.identity.find_project(@target_project_id).name
+      @target_project_name = services.identity.find_project(@inquiry.project_id).name
 
       # check if request fits into domain quotas
       @can_approve = true
-      ResourceManagement::ResourceConfig.all.each do |res|
-        if res.value_for_package(@package) > 0
-          data = @stats[res.service.name][res.name]
-          if data[:project_current_quota] < 0
-            data[:new_total_current_quota] = data[:total_current_quota] + res.value_for_package(@package)
-          else
-            data[:new_total_current_quota] = data[:total_current_quota] - data[:project_current_quota] + res.value_for_package(@package)
-          end
-          if data[:new_total_current_quota] > data[:domain_approved_quota]
-            @can_approve = false
-          end
-        end
-      end
-
-      # check if some projects have infinite quota
-      ResourceManagement::Resource.where(domain_id: @scoped_domain_id).
-        where("project_id IS NOT NULL AND current_quota < 0").
-        each do |res|
-          @stats[res.service.to_sym][res.name.to_sym][:total_current_quota] = -1
-      end
-
       # show only those resources in the review screen where the approval of
       # the request would increase the current_quota allocated to the project
-      @relevant_resources = ResourceManagement::ResourceConfig.all.select do |res|
-        data = @stats[res.service.name][res.name]
-        old_quota = data[:project_current_quota]
-        new_quota = res.value_for_package(@package)
-        new_quota > old_quota && old_quota >= 0
+      @relevant_resources = []
+      ResourceManagement::ResourceConfig.all.each do |cfg|
+        domain_resource  =  @domain.find_resource(cfg)
+        project_resource = @project.find_resource(cfg)
+
+        new_projects_quota = domain_resource.projects_quota - project_resource.quota + cfg.value_for_package(@package)
+        if new_projects_quota > domain_resource.quota
+          @can_approve = false
+        end
+
+        if cfg.value_for_package(@package) > project_resource.quota
+          @relevant_resources.append(cfg)
+        end
       end
     end
 
     def approve_package_request
       # apply quotas from package to project, but take existing approved quotas into account
-      @project_resources.each do |res|
-        quota = [
-          res.config.value_for_package(@package),
-          res.approved_quota,
-        ].max
-        res.approved_quota = quota
-        res.current_quota = quota
-        res.save!
+      @project = services.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
+      @project.resources.each do |res|
+        new_quota = res.config.value_for_package(@package)
+        res.quota = [ res.quota, new_quota ].max
       end
 
-      @services_with_error = services.resource_management.apply_current_quota(@project_resources.reject { |res| res.usage > res.approved_quota })
-      services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
-
-      render action: 'approve_request'
+      if @project.save
+        @services_with_error = @project.services_with_error
+        services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
+        render action: 'approve_request'
+      end
     end
 
     def new_request
@@ -449,13 +393,11 @@ module ResourceManagement
       enforce_permissions("resource_management:admin_approve_package_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
 
       # load additional data
-      data = @inquiry.payload.symbolize_keys
-      @package = data[:package]
-      @target_project_id = data[:project_id]
+      @package = @inquiry.payload.symbolize_keys[:package]
 
       # if project resources have not been created yet, do so now
-      @project_resources = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @target_project_id)
-      if @project_resources.where.not(service: 'resource_management').count == 0
+      project_resources = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @inquiry.project_id)
+      if project_resources.where.not(service: 'resource_management').count == 0
         services.resource_management.sync_project(@scoped_domain_id, @target_project_id)
       end
     end

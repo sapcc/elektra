@@ -4,6 +4,10 @@
 
 .row.quota-row
   .col-md-9
+    -if @critical_resources.blank? and @nearly_full_resources.blank?
+      .bs-callout.bs-callout-info
+        No signs of critical resource usage found.
+
     - @critical_resources.sort_by { |r| [ r.name, r.config.service.name ] }.each do |res|
       = render partial: 'bar', locals: { resource: res, overview: true }
     - unless @nearly_full_resources.empty?
