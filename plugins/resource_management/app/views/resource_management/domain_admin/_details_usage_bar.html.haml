@@ -3,12 +3,12 @@
     .text-muted
       Quota usage
   .col-md-9
-    = render partial: 'bar', locals: { data: @resource_status }
+    = render partial: 'bar', locals: { resource: @domain_resource }
 .row
   .col-md-2.quota-label
     .text-muted
       Resource usage
   .col-md-9
-    = render partial: 'bar', locals: { data: @resource_status, render_usage: true }
+    = render partial: 'bar', locals: { resource: @domain_resource, render_usage: true }
 
 

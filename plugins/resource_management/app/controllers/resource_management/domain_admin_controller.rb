@@ -12,7 +12,7 @@ module ResourceManagement
 
     def index
       @index = true
-      
+
       @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
       prepare_data_for_resource_list(@all_services, overview: true)
 
@@ -99,7 +99,7 @@ module ResourceManagement
 
       if value.empty?
         @resource.add_validation_error(:approved_quota, "empty value is invalid")
-      else 
+      else
         begin
           parsed_value = @resource.data_type.parse(value)
           # pre check value
@@ -116,7 +116,7 @@ module ResourceManagement
           @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
         end
       end
-      
+
       # save the new quota to database
       if @resource.save
         @area = @resource.service.to_sym
@@ -133,51 +133,41 @@ module ResourceManagement
     end
 
     def review_request
-      # prepare data for view
-      _, _ = prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
-
-      # calculate projected @project_status after approval
       @desired_quota = @inquiry.payload['desired_quota']
-      @maximum_quota = @domain_resource.approved_quota - @resource_status[:current_quota_sum] + @project_resource.approved_quota
-      @domain_status_new = {
-        usage_sum:                  @resource_status[:usage_sum],
-        current_quota_sum:          @resource_status[:current_quota_sum] - @project_resource.approved_quota + @desired_quota,
-        domain_resource:            @domain_resource,
-        has_infinite_current_quota: @resource_status[:has_infinite_current_quota],
-      }
+      @maximum_quota = @domain_resource.quota - @domain_resource.projects_quota + @project_resource.quota
+
+      # calculate projected domain status after approval
+      @domain_resource_projected = @domain_resource.clone
+      @domain_resource_projected.projects_quota += @desired_quota - @project_resource.quota
     end
 
     def approve_request
-      valid = true
       begin
-        @desired_quota = @project_resource.data_type.parse(params.require(:resource).require(:approved_quota))
+        @desired_quota = @project_resource.data_type.parse(params.require(:new_style_resource).require(:quota))
       rescue => e
-        @project_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
-        valid = false
+        @project_resource.add_validation_error(:quota, 'is invalid: ' + e.message)
       end
 
-      # check against domain quota
-      _, _ = prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
-      maximum_quota = @domain_resource.approved_quota - @resource_status[:current_quota_sum] + @project_resource.approved_quota
-      if valid && @desired_quota > maximum_quota
-        max_quota_str = @project_resource.data_type.format(maximum_quota)
-        @project_resource.add_validation_error(:approved_quota, "is too large (would exceed total domain quota), maximum acceptable project quota is #{max_quota_str}")
-        valid = false
+      # check that domain quota is not exceeded
+      @maximum_quota = @domain_resource.quota - @domain_resource.projects_quota + @project_resource.quota
+      if @desired_quota and @desired_quota > @maximum_quota
+        max_quota_str = @project_resource.data_type.format(@maximum_quota)
+        @project_resource.add_validation_error(:quota, "is too large (would exceed total domain quota), maximum acceptable project quota is #{max_quota_str}")
       end
 
-      # do not even attempt to edit the @project_resource when we know the value to be invalid
-      if valid
-        @project_resource.approved_quota = @desired_quota
-        @project_resource.current_quota = @desired_quota
+      # do not even attempt to edit the @project_resource when we know the value to be invalid (this
+      # would break the re-rendering of the "review_request" view)
+      if @project_resource.valid?
+        @project_resource.quota = @desired_quota
       end
 
       if @project_resource.save
-        comment = "New project quota is #{@project_resource.data_type.format(@project_resource.approved_quota)}"
-        if params[:resource][:comment].present?
-          comment += ", comment from approver: #{params[:resource][:comment]}"
+        comment = "New project quota is #{@project_resource.data_type.format(@project_resource.quota)}"
+        if params[:new_style_resource][:comment].present?
+          comment += ", comment from approver: #{params[:new_style_resource][:comment]}"
         end
-        @services_with_error = services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
+        @services_with_error = @project_resource.services_with_error
       else
         self.review_request
         render action: 'review_request'
@@ -355,7 +345,7 @@ module ResourceManagement
 
     def details
       @show_all_button = true if params[:overview] == 'true'
-      
+
       # sort
       @sort_order  = params[:sort_order] || 'asc'
       @sort_column = params[:sort_column] || ''
@@ -381,7 +371,7 @@ module ResourceManagement
           [ sort_order, project_name.downcase ]
         end
       end
-     
+
       @projects = Kaminari.paginate_array(projects).page(params[:page]).per(6)
 
       respond_to do |format|
@@ -433,9 +423,19 @@ module ResourceManagement
 
       # load additional data
       data = @inquiry.payload.symbolize_keys
-      @project_resource = ResourceManagement::Resource.find(data[:resource_id])
-      @project_name = services.identity.find_project(@project_resource.project_id).name
-      @domain_resource = ResourceManagement::Resource.where(domain_id:@scoped_domain_id, project_id:nil, service:data[:service], name:data[:resource]).first
+      raise ArgumentError, "inquiry #{@inquiry.id} has not been migrated to new format!" if data.include?(:resource_id)
+
+      @project_resource = services.resource_management.find_project(
+        @scoped_domain_id, @inquiry.project_id,
+        services:  [ data[:service]  ],
+        resources: [ data[:resource] ],
+      ).resources.first or raise ActiveRecord::RecordNotFound
+
+      @domain_resource = services.resource_management.find_domain(
+        @scoped_domain_id,
+        services:  [ data[:service]  ],
+        resources: [ data[:resource] ],
+      ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
     def load_package_inquiry

@@ -78,45 +78,43 @@ module ResourceManagement
     end
 
     def create_request
-      old_value = @project_resource.approved_quota
-      data_type = @project_resource.data_type
-      new_value = params.require(:resource).require(:approved_quota)
+      old_value = @resource.quota
+      data_type = @resource.data_type
+      new_value = params.require(:new_style_resource).require(:quota)
 
       # parse and validate value
       begin
         new_value = data_type.parse(new_value)
-        @project_resource.approved_quota = new_value
+        @resource.quota = new_value
         # check that the value is higher the the old value
         if new_value <= old_value || data_type.format(new_value) == data_type.format(old_value)
-          @project_resource.add_validation_error(:approved_quota, 'must be larger than current value')
+          @resource.add_validation_error(:quota, 'must be larger than current value')
         end
       rescue ArgumentError => e
-        @project_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+        @resource.add_validation_error(:quota, 'is invalid: ' + e.message)
       end
       # back to square one if validation failed
-      unless @project_resource.validate
-        @has_errors = true
+      unless @resource.validate
         # prepare data for usage display
         render action: :new_request
         return
       end
 
       # now we can create the inquiry
-      base_url    = plugin('resource_management').admin_area_path(area: @project_resource.config.service.area.to_s, domain_id: @scoped_domain_id, project_id: nil)
+      cfg         = @resource.config
+      base_url    = plugin('resource_management').admin_area_path(area: cfg.service.area.to_s, domain_id: @scoped_domain_id, project_id: nil)
       overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota',
-        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@project_resource.data_type.format(new_value - old_value)} #{@project_resource.service}/#{@project_resource.name}",
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
         current_user,
         {
-          resource_id: @project_resource.id,
-          service: @project_resource.service,
-          resource: @project_resource.name,
+          service: cfg.service.catalog_type,
+          resource: cfg.name,
           desired_quota: new_value,
         },
         service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
-        #service_user.list_scope_admins({domain_id: @scoped_domain_id}),
         {
           "approved": {
             "name": "Approve",
@@ -130,9 +128,6 @@ module ResourceManagement
         }
       )
       if inquiry.errors?
-        @has_errors = true
-        # prepare data for usage display
-        prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
         render action: :new_request
         return
       end
@@ -178,7 +173,6 @@ module ResourceManagement
           package:    pkg,
         },
         service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
-        #service_user.list_scope_admins({domain_id: @scoped_domain_id}),
         {
           "approved": {
             "name": "Approve",
@@ -213,13 +207,11 @@ module ResourceManagement
     private
 
     def load_project_resource
-      @project = services.resource_management.find_project(
+      @resource = services.resource_management.find_project(
         @scoped_domain_id, @scoped_project_id,
         services: Array.wrap(params.require(:service)),
         resources: Array.wrap(params.require(:resource)),
-      )
-      service   = @project.services.first or raise ActiveRecord::RecordNotFound
-      @resource = service.resources.first or raise ActiveRecord::RecordNotFound
+      ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
     def check_first_visit

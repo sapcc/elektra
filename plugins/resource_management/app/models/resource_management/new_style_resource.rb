@@ -55,6 +55,9 @@ module ResourceManagement
     def projects_quota
       read(:projects_quota) || 0
     end
+    def infinite_backend_quota
+      read(:infinite_backend_quota) || false
+    end
 
     # cluster only
     def capacity
@@ -88,6 +91,10 @@ module ResourceManagement
     # TODO: remove this after the switch to Limes
     def services_with_error
       return @services_with_error || []
+    end
+
+    def clone
+      return self.class.new(@driver, attributes.clone)
     end
 
     private

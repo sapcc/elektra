@@ -5,6 +5,9 @@
   
   %div{class: modal? ? 'modal-body' : ''}
 
+    - unless @resource.errors.empty?
+      %p.alert.alert-error= @resource.errors.full_messages.to_sentence
+
     %fieldset
       - if @resource.data_type.to_sym == :number
         = f.input :quota, label: 'Your quota'
