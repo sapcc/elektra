@@ -24,8 +24,6 @@ module ResourceManagement
           _, service, resource = locate_entity_service_resource(projects, res.project_id, res.config)
 
           service[:scraped_at] = res.updated_at.to_i
-          unit_name = res.config.data_type.unit_name
-          resource[:unit]  = unit_name if unit_name != ""
           resource[:quota] = res.approved_quota
           resource[:usage] = res.usage
           if res.current_quota != res.approved_quota
@@ -163,6 +161,9 @@ module ResourceManagement
           resource = { name: resource_config.name }
           service[:resources].append(resource)
         end
+
+        unit_name = resource_config.data_type.unit_name
+        resource[:unit]  = unit_name if unit_name != ""
 
         return entity, service, resource
       end

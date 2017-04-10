@@ -19,5 +19,24 @@ module ResourceManagement
       return srv.resources.find { |r| r.name == config.name }
     end
 
+    def save
+      return resources.all?(&:valid?) && perform_update
+    end
+
+    def perform_update
+      data = services.map do |srv|
+        {
+          type: srv.type,
+          resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
+        }
+      end
+      @services_with_error = @driver.put_domain_data(id, data)
+    end
+
+    # TODO: remove this after the switch to Limes
+    def services_with_error
+      return @services_with_error || []
+    end
+
   end
 end

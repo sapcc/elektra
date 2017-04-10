@@ -1,5 +1,5 @@
 .row
-  = render partial: 'resource_name', locals: { config: resource.config, scope: 'resources', overview: overview }
+  = render partial: 'resource_name', locals: { resource: resource, scope: 'resources', overview: overview }
 
   .col-md-6
     = resource_bar(fill: resource.usage, maximum: resource.quota, data_type: resource.data_type)

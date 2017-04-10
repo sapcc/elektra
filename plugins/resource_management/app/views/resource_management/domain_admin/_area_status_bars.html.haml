@@ -1,11 +1,14 @@
 - @area_services.each do |service|
-  - if @area != service
-    %h3= t("resource_management.#{service}")
-  - if @resource_status[service]
-    - @resource_status[service].sort_by { |data| data[:domain_resource].name }.each do |data|
-      = render :partial => 'bar_row', :locals => { :overview => false,  :data => data, :service => service }
-  - else
+  - if service.name.to_s != @area.to_s
+    -# show service name if not equal to area name
+    -# (this means that a service named like its area should always be at the top)
+    %h3= t("resource_management.#{service.name}")
+  - resources = @resources.select { |r| r.config.service.name == service.name }.sort_by(&:name)
+  - if resources.empty?
     .bs-callout
-      No #{t("resource_management.#{service}")} Quotas found!
-= render :partial => 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_path }
+      No #{t("resource_management.#{service.name}")} quotas found!
+  - else
+    - resources.each do |res|
+      = render partial: 'bar_row', locals: { resource: res, overview: false }
+= render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_path }
 

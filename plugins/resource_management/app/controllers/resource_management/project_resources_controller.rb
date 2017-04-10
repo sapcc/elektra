@@ -14,7 +14,7 @@ module ResourceManagement
       @max_updated_at = @project.services.map(&:updated_at).max
 
       # find resources to show
-      resources = @project.services.map(&:resources).flatten
+      resources = @project.resources
       @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
       @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
 
@@ -30,7 +30,7 @@ module ResourceManagement
 
       # load all resources for these services
       @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id, services: @area_services.map(&:catalog_type))
-      @resources = @project.services.map(&:resources).flatten
+      @resources = @project.resources
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
     end

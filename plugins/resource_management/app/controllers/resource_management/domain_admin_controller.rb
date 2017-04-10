@@ -11,27 +11,29 @@ module ResourceManagement
     authorization_required
 
     def index
-      @index = true
+      @domain = services.resource_management.find_domain(@scoped_domain_id)
+      @min_updated_at = @domain.services.map(&:min_updated_at).min
+      @max_updated_at = @domain.services.map(&:max_updated_at).max
 
-      @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
-      prepare_data_for_resource_list(@all_services, overview: true)
-
-      respond_to do |format|
-        format.html
-        format.js # update only status bars
+      # find resources to show
+      @critical_resources = @domain.resources.reject do |res|
+        res.backend_quota.nil? and not res.infinite_backend_quota? and res.quota >= res.projects_quota
       end
+
+      @index = true
     end
 
-    def show_area
-      @area = params.require(:area).to_sym
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-      prepare_data_for_resource_list(@area_services)
+    def show_area(area = nil)
+      @area = area || params.require(:area).to_sym
 
-      respond_to do |format|
-        format.html
-        format.js # update only status bars
-      end
+      # which services belong to this area?
+      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
 
+      @domain = services.resource_management.find_domain(@scoped_domain_id, services: @area_services.map(&:catalog_type))
+      @resources = @domain.resources
+      @min_updated_at = @domain.services.map(&:min_updated_at).min
+      @max_updated_at = @domain.services.map(&:max_updated_at).max
     end
 
     def edit
@@ -119,9 +121,7 @@ module ResourceManagement
 
       # save the new quota to database
       if @resource.save
-        @area = @resource.service.to_sym
-        @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-        prepare_data_for_resource_list(@area_services)
+        show_area(@resource.service.to_sym)
       else
         # reload the reduce quota window with error
         respond_to do |format|

@@ -55,7 +55,7 @@ module ResourceManagement
     def projects_quota
       read(:projects_quota) || 0
     end
-    def infinite_backend_quota
+    def infinite_backend_quota?
       read(:infinite_backend_quota) || false
     end
 
@@ -100,7 +100,11 @@ module ResourceManagement
     private
 
     def validate_quota
-      errors.add(:quota, 'is below usage') if usage > quota
+      if project_id
+        errors.add(:quota, 'is below usage') if usage > quota
+      elsif domain_id
+        errors.add(:quota, 'is less than sum of project quotas') if projects_quota > quota
+      end
     end
 
   end
