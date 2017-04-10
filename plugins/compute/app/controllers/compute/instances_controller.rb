@@ -4,7 +4,7 @@ module Compute
     before_action :automation_data, only: [:new, :create]
 
     authorization_context 'compute'
-    authorization_required
+    authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip]
 
     def index
       @instances = []
@@ -111,6 +111,7 @@ module Compute
     end
 
     def new_floatingip
+      enforce_permissions("::networking:floating_ip_associate")
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
 
@@ -118,6 +119,7 @@ module Compute
     end
 
     def attach_floatingip
+      enforce_permissions("::networking:floating_ip_associate")
       @instance_port = services.networking.ports(device_id: params[:id]).first
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
 
@@ -156,6 +158,7 @@ module Compute
     end
 
     def detach_floatingip
+      enforce_permissions("::networking:floating_ip_disassociate")
       begin
         floating_ips = services.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
         @floating_ip = services.networking.detach_floatingip(floating_ips.first.id)
