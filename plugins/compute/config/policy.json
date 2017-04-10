@@ -19,6 +19,8 @@
   "compute:keypair_update": "rule:context_is_compute_editor and (not rule:monsoon2_domain)",
   "compute:keypair_delete": "rule:context_is_compute_editor and (not rule:monsoon2_domain)",
 
+  "compute:instance_console": "rule:context_is_compute_editor and (not rule:monsoon2_domain)",
+
   "compute:attach_volume": "rule:context_is_compute_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "compute:detach_volume": "rule:context_is_compute_editor and (not rule:monsoon2_domain or rule:project_parent)",
 
