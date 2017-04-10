@@ -1,9 +1,9 @@
 / = content_for :title do
 /   Show
-  
+
 .modal-body
   %ul.nav.nav-tabs
-    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"} 
+    %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}
       = link_to '#payload', aria: {controls:"payload"}, role: "tab", data: {toggle:"tab"} do
         Payload
@@ -35,6 +35,12 @@
           %tr
             %th State
             %td= @inquiry.aasm_state
+          %tr
+            %th Created
+            %td= @inquiry.created_at.getlocal.strftime("%F %T")
+          %tr
+            %th Updated
+            %td= @inquiry.updated_at.getlocal.strftime("%F %T")
 
     .tab-pane{role:"tabpanel", id:"payload"}
       = render partial: 'payload', locals: {inquiry: @inquiry}
@@ -47,4 +53,3 @@
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 - else
   = link_to "Close", plugin('inquiry').inquiries_url(), class: 'btn btn-default'
-    

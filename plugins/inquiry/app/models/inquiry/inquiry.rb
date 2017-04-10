@@ -1,7 +1,8 @@
 module Inquiry
   class Inquiry < ActiveRecord::Base
     include Filterable
-    paginates_per 10
+    paginates_per 20
+    default_scope { order(updated_at: :desc) } # default sort order
 
     has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
