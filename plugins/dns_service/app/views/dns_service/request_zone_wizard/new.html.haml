@@ -60,7 +60,8 @@
                   %br
                   Before the Domain Name System can start to route queries for this domain to the correct name servers,
                   you must update the name server records either with the current DNS service or with the registrar for the
-                  domain, as applicable. The new name server records are listed below. #{link_to 'See the documentation for more information','#'}.
+                  domain, as applicable. The new name server records are listed below.
+                  -#{link_to 'See the documentation for more information','#'}.
                 - @pools.each do |pool|
                   %ul{id: pool.id, class: ('hidden' unless @zone_request.domain_pool==pool.id)}
                     - pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
