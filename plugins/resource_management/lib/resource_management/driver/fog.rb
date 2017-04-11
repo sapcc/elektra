@@ -21,7 +21,7 @@ module ResourceManagement
         projects = []
         resources.each do |res|
           next unless res.config # ignore dummy resources
-          _, service, resource = locate_entity_service_resource(projects, res.project_id, res.config)
+          _, service, resource = locate_entity_service_resource(projects, res.project_id, res.scope_name, res.config)
 
           service[:scraped_at] = res.updated_at.to_i
           resource[:quota] = res.approved_quota
@@ -52,7 +52,7 @@ module ResourceManagement
         domains = []
         domain_resources.each do |res|
           next unless res.config # ignore dummy resources
-          _, _, resource = locate_entity_service_resource(domains, res.domain_id, res.config)
+          _, _, resource = locate_entity_service_resource(domains, res.domain_id, res.scope_name, res.config)
           resource[:quota] = res.approved_quota
           resource[:usage] = 0
           resource[:projects_quota] = 0
@@ -72,7 +72,7 @@ module ResourceManagement
           resource_name = resource_name.to_sym
           resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
           next unless resource_config # ignore dummy resources
-          _, service, resource = locate_entity_service_resource(domains, domain_id, resource_config)
+          _, service, resource = locate_entity_service_resource(domains, domain_id, nil, resource_config)
 
           service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
           service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
@@ -142,7 +142,7 @@ module ResourceManagement
 
       private
 
-      def locate_entity_service_resource(entities, entity_id, resource_config)
+      def locate_entity_service_resource(entities, entity_id, entity_name, resource_config)
         entity = entities.find { |e| e[:id] == entity_id }
         if entity.nil?
           entity = { id: entity_id, services: [] }
@@ -161,6 +161,8 @@ module ResourceManagement
           resource = { name: resource_config.name }
           service[:resources].append(resource)
         end
+
+        entity[:name] = entity_name unless entity_name.nil?
 
         unit_name = resource_config.data_type.unit_name
         resource[:unit]  = unit_name if unit_name != ""

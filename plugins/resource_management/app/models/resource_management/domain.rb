@@ -1,9 +1,14 @@
 module ResourceManagement
   class Domain < Core::ServiceLayer::Model
 
+    def name
+      read(:name)
+    end
+
     def services
       metadata = {
-        domain_id: id,
+        domain_id:   id,
+        domain_name: name,
       }
 
       @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }

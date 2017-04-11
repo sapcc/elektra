@@ -1,6 +1,10 @@
 module ResourceManagement
   class Project < Core::ServiceLayer::Model
 
+    def name
+      read(:name)
+    end
+
     def domain_id
       read(:domain_id)
     end
@@ -9,6 +13,7 @@ module ResourceManagement
       metadata = {
         project_id:        id,
         project_domain_id: read(:domain_id),
+        project_name:      name,
       }
 
       @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }

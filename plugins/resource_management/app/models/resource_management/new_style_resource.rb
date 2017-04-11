@@ -29,11 +29,17 @@ module ResourceManagement
     def project_id
       read(:project_id)
     end
+    def project_name
+      read(:project_name)
+    end
     def project_domain_id
       read(:project_domain_id)
     end
     def domain_id
       read(:domain_id)
+    end
+    def domain_name
+      read(:domain_name)
     end
     def cluster_id
       read(:cluster_id)
