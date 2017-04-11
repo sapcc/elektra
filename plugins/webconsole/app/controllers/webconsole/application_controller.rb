@@ -69,8 +69,6 @@ module Webconsole
       end
     end
 
-    def two_factor_required?
-      true
-    end
+
   end
 end

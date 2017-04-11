@@ -44,7 +44,6 @@ GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
   revision: 701882cf6299f01a16719aba02576ff4f9f46659
   branch: two_factor_auth
-
   specs:
     monsoon-openstack-auth (0.8.6)
       excon
@@ -474,6 +473,7 @@ GEM
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    ruby-radius (1.1)
     ruby_parser (3.7.2)
       sexp_processor (~> 4.1)
     sass (3.4.19)
@@ -596,6 +596,7 @@ DEPENDENCIES
   responders
   rspec
   rspec-rails
+  ruby-radius
   sass-rails
   sass_inline_svg
   sdoc (~> 0.4.0)
