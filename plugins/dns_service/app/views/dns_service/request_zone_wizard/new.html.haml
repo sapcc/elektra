@@ -48,7 +48,8 @@
       .tab-pane{ role: "tabpanel", id: "rootdomain_panel", class: ('active' if @zone_request.domain_type=='rootdomain') }
         = f.simple_fields_for :rootdomain do |rootdomain|
           = rootdomain.input :domain_pool, as: :select, label: 'Domain Pool' do
-            = rootdomain.select :domain_pool, @pools.collect{|pool| [(pool.attributes["label"] || pool.name.humanize),pool.id]},
+
+            = rootdomain.select :domain_pool, @pools.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize),pool.id]},
               {include_blank: true, selected: @zone_request.domain_pool},
               class: "select required form-control",
               style: "width: 70%"
