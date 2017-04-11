@@ -134,20 +134,18 @@ module Automation
     end
 
     def automations
-      # TODO: whe should collect all automations and implement an dropdown scrollable to execute the automation
+      # TODO: whe should collect all automations and implement a dropdown scrollable to execute the automation
       @automations = services.automation.automations(1,100)
     end
 
     def nodes_with_jobs
       @node_page = params[:page]||1
       per_page = 10
-      service = IndexNodesService.new(services.automation, services.compute)
+      service = IndexNodesService.new(services.automation)
       result = service.list_nodes_with_jobs(@node_page, per_page)
 
       @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(@node_page).per(per_page)
       @jobs = result[:jobs]
-      @addresses = result[:addresses]
-      @external_nodes = result[:external_nodes]
     end
 
   end
