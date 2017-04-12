@@ -70,6 +70,18 @@ module ResourceManagement
       render json: full_data.to_json
     end
 
+    def dump_capacities
+      data = ResourceManagement::Capacity.pluck(:service, :resource, :value, :comment).map do |array|
+        s, n, v, c = array
+        if srv = ResourceManagement::ServiceConfig.find(s)
+          s = srv.catalog_type # map old ResourceManagement service names to Limes service types
+        end
+        { service: s, resource: n, capacity: v, comment: c.presence || 'imported from Elektra' }
+      end
+
+      render json: data
+    end
+
     def dump_approved_quotas
       data = ResourceManagement::Resource.pluck(:domain_id, :project_id, :service, :name, :approved_quota).map do |array|
         d, p, s, n, a = array

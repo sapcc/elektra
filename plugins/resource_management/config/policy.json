@@ -45,5 +45,6 @@
 
   "resource_management:automation_sync_domain": "rule:context_is_cloud_resource_admin",
   "resource_management:automation_dump_data": "rule:context_is_cloud_resource_admin",
+  "resource_management:automation_dump_capacities": "rule:context_is_cloud_resource_admin",
   "resource_management:automation_dump_approved_quotas": "rule:context_is_cloud_resource_admin"
 }
