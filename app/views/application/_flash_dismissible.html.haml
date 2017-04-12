@@ -1,0 +1,5 @@
+%div{class: "alert alert-#{key.to_s} alert-dismissible word-wrap", 'role' => 'alert','aria-expanded' => 'true'}
+  %button.close{type:'button', data: {dismiss: 'alert'}, "aria-label" => "Close"}
+    %span{'aria-hidden' => 'true'}
+      &times;
+  = value.html_safe

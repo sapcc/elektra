@@ -1,4 +1,8 @@
 .flashes
   - flash.each do |key, value|
-    %p{class: "alert alert-#{key}"}
-      = value
+    - key = key.to_s.downcase
+    - if ['success', 'info', 'warning', 'danger'].include? key
+      = render partial: 'application/flash_dismissible', locals: {key: key, value: value}
+    - else
+      - key = key.start_with?('default_') ? key.sub(/^default_/, '') : key
+      = render partial: 'application/flash', locals: {key: key, value: value}
