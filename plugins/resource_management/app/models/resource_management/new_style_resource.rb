@@ -44,6 +44,9 @@ module ResourceManagement
     def cluster_id
       read(:cluster_id)
     end
+    def sortable_name
+      (project_name or domain_name or cluster_id).downcase
+    end
 
     def usage
       read(:usage) || 0
@@ -55,6 +58,11 @@ module ResourceManagement
     end
     def backend_quota
       read(:backend_quota) || nil
+    end
+
+    # project only
+    def current_quota
+      read(:backend_quota) || quota
     end
 
     # domain only

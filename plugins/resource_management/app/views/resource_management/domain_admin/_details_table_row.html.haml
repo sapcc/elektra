@@ -1,24 +1,18 @@
 - data_type = project_resource.data_type
 
-%tr{ class: warning_level_for_project(project_resource), data: { project: project_resource.project_id, resource: project_resource.id } }
+%tr{ class: project_resource.current_quota == project_resource.quota ? '' : 'danger', data: { project: project_resource.project_id } }
   %td.col-md-3
-    - if project_resource.scope_name
-      = project_resource.scope_name
-      .small.text-muted= project_resource.project_id
-    - else
-      = project_resource.project_id
+    = project_resource.project_name
+    .small.text-muted= project_resource.project_id
   %td.col-md-3
     .resource-approved-quota.input-group.input-group-sm
-      = data_type.format(project_resource.approved_quota)
+      = data_type.format(project_resource.quota)
   %td.col-md-2
     .resource-current-quota
-      - if project_resource.current_quota == -1
-        Unlimited
-      - else
-        = data_type.format(project_resource.current_quota)
+      = data_type.format(project_resource.current_quota)
   %td.col-md-2
     = data_type.format(project_resource.usage)
   %td.col-md-2
     .resource-actions
-      = link_to 'Edit', plugin('resource_management').admin_edit_path(id: project_resource.id), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
+      = link_to 'Edit', plugin('resource_management').admin_edit_path(project: project_resource.project_id, service: project_resource.service_type, resource: project_resource.name), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
 

@@ -1,12 +1,14 @@
 function set_approved_quota(button) {
-  // resource ID is annotated on the row
+  // project ID is annotated on the row
   row = $(button).closest('tr');
 
   $.ajax({
     url: '<%= escape_javascript(plugin('resource_management').send("#{scope}_update_path")) %>',
     dataType: 'script',
     data: {
-      id:    row.data('resource'),
+      project:  row.data('project'),
+      service:  "<%= escape_javascript(@config.service.catalog_type) %>",
+      resource: "<%= escape_javascript(@config.name.to_s) %>",
       value: row.find('.resource-approved-quota-edit').val(),
     },
     error: function(xhr) {
@@ -18,19 +20,21 @@ function set_approved_quota(button) {
 };
 
 function reset_approved_quota(button) {
-  // resource ID is annotated on the row
+  // project ID is annotated on the row
   row = $(button).closest('tr');
 
   $.ajax({
     url: '<%= escape_javascript(plugin('resource_management').send("#{scope}_cancel_path")) %>',
     dataType: 'script',
     data: {
-      id: row.data('resource'),
+      project:  row.data('project'),
+      service:  "<%= escape_javascript(@config.service.catalog_type) %>",
+      resource: "<%= escape_javascript(@config.name.to_s) %>",
     }
   });
 };
 
-function update_resource_row(resource_id, row_html) {
+function update_resource_row(scope, id, row_html) {
   //replace the existing row with the new one
-  $('.resource-details tr[data-resource="' + resource_id + '"]').replaceWith(row_html);
+  $('.resource-details tr[data-' + scope + '="' + id + '"]').replaceWith(row_html);
 }

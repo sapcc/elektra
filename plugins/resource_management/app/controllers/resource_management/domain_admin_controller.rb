@@ -47,44 +47,37 @@ module ResourceManagement
     end
 
     def update
-      # validate new quota value
-      value = params.require(:value)
+      old_quota = @project_resource.quota
       begin
-        value = @project_resource.data_type.parse(value)
-        raise ArgumentError, 'New quota may not be lower than current usage!' if value < @project_resource.usage
+        new_quota = @project_resource.data_type.parse(params.require(:value))
       rescue ArgumentError => e
         render text: e.message, status: :bad_request
-        return
       end
 
-      # check if the new project quota fits within the domain's budget
-      old_project_quota_sum = ResourceManagement::Resource.
-        where(domain_id: @scoped_domain_id, service: @project_resource.service, name: @project_resource.name).
-        where.not(project_id: nil).
-        pluck('SUM(GREATEST(approved_quota, current_quota, 0))').first
-
-      new_project_quota_sum = old_project_quota_sum - @project_resource.approved_quota + value
-      @domain_resource = ResourceManagement::Resource.find_by(
-        domain_id: @scoped_domain_id, project_id: nil,
-        service: @project_resource.service, name: @project_resource.name,
+      # check if new quota fits within domain quota (TODO: this should be done by Limes)
+      domain = services.resource_management.find_domain(@scoped_domain_id,
+        services: [ @project_resource.service_type.to_s ],
+        resources: [ @project_resource.name.to_s ],
       )
-      if value < 0 or (value > @project_resource.approved_quota and new_project_quota_sum > @domain_resource.approved_quota)
-        max_value = @domain_resource.approved_quota - old_project_quota_sum + @project_resource.approved_quota
-        msg = "Domain quota for #{@project_resource.service}/#{@project_resource.name} exceeded (maximum acceptable project quota is #{@project_resource.config.data_type.format(max_value)})"
+      domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "domain resource not found"
+      old_projects_quota = domain_resource.projects_quota
+      new_projects_quota = old_projects_quota - old_quota + new_quota
+
+      if new_quota < 0 or new_projects_quota > domain_resource.quota
+        max_value = domain_resource.quota - old_projects_quota + old_quota
+        msg = "Domain quota for #{@project_resource.service}/#{@project_resource.name} exceeded (maximum acceptable project quota is #{@project_resource.data_type.format(max_value)})"
         render text: msg, status: :bad_request
         return
       end
 
-      # do only a upgrade if the values are different otherwise it meaningless
-      if @project_resource.approved_quota != value || @project_resource.current_quota != value
-        @project_resource.approved_quota = value
-        @project_resource.current_quota  = value
-        services.resource_management.apply_current_quota(@project_resource) # apply quota in target service
-        @project_resource.save
+      # set quota
+      @project_resource.quota = new_quota
+      unless @project_resource.save
+        render text: @project_resource.errors.full_messages.to_sentence, status: :bad_request
       end
 
-      # prepare data for view
-      prepare_data_for_details_view(@project_resource.service.to_sym, @project_resource.name.to_sym)
+      # make sure that row is not rendered with red background color
+      @project_resource.backend_quota = nil
 
       respond_to do |format|
         format.js
@@ -295,28 +288,35 @@ module ResourceManagement
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
 
-      @service  = params.require(:service).to_sym
-      @resource = params.require(:resource).to_sym
-      @area     = ResourceManagement::ServiceConfig.find(@service).area
+      service_type  = params.require(:service).to_s
+      resource_name = params.require(:resource).to_sym
+      @config       = ResourceManagement::ResourceConfig.all.find do |c|
+        c.name == resource_name and c.service.catalog_type == service_type
+      end or raise ActiveRecord::RecordNotFound, "no such resource"
 
-      # some parts of data collection are shared with update()
-      project_resources = prepare_data_for_details_view(@service, @resource, sort_by, @sort_order)
+      domain = services.resource_management.find_domain(@scoped_domain_id, services: service_type, resources: resource_name.to_s)
+      @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "no such domain"
+      projects = services.resource_management.list_projects(@scoped_domain_id, services: service_type, resources: resource_name.to_s)
+      @project_resources = projects.map { |p| p.resources.first }.reject(&:nil?)
 
-      projects = project_resources
+      # TODO: evaluate sort_by, @sort_order
+
       # show danger and warning projects on top if no sort by is given
       if sort_by.empty?
         ## prepare the projects table
-        projects = project_resources.to_a.sort_by do |project_resource|
-          # find warning level for project
-          warning_level = view_context.warning_level_for_project(project_resource)
-          sort_order    = { "danger" => 0, "warning" => 1 }.fetch(warning_level, 2)
+        @project_resources = @project_resources.sort_by do |res|
+          # warn about projects with mismatching frontend<->backend quota
+          sort_order = res.backend_quota.nil? ? 1 : 0
           # sort projects by warning level, then by name
-          project_name = project_resource.scope_name || project_resource.project_id
-          [ sort_order, project_name.downcase ]
+          [ sort_order, (res.project_name || res.project_id).downcase ]
         end
+      else
+        sort_method = sort_by.to_sym
+        @project_resources.sort_by! { |r| [ r.send(sort_method), r.sortable_name ] }
+        @project_resources.reverse! if @sort_order.downcase == 'desc'
       end
 
-      @projects = Kaminari.paginate_array(projects).page(params[:page]).per(6)
+      @project_resources = Kaminari.paginate_array(@project_resources).page(params[:page]).per(6)
 
       respond_to do |format|
         format.html
@@ -346,8 +346,12 @@ module ResourceManagement
     private
 
     def load_project_resource
-      @project_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @project_resource.domain_id != @scoped_domain_id or @project_resource.project_id.nil?
+      project = services.resource_management.find_project(
+        @scoped_domain_id, params.require(:project),
+        services: [ params.require(:service) ],
+        resources: [ params.require(:resource) ],
+      ) or raise ActiveRecord::RecordNotFound, "project #{params[:project]} not found"
+      @project_resource = project.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
 
     def load_domain_resource
@@ -399,53 +403,6 @@ module ResourceManagement
       project_resources = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @inquiry.project_id)
       if project_resources.where.not(service: 'resource_management').count == 0
         services.resource_management.sync_project(@scoped_domain_id, @target_project_id)
-      end
-    end
-
-    def prepare_data_for_resource_list(services, options={})
-      # load resources for domain and projects within this domain
-      resources = ResourceManagement::Resource.
-        where(domain_id: @scoped_domain_id, service: services)
-
-      domain_resources  = resources.where(project_id: nil).to_a
-      project_resources = resources.where.not(project_id: nil)
-
-      # check data age (see _data_age partial view)
-      @min_updated_at, @max_updated_at = project_resources.pluck("MIN(updated_at), MAX(updated_at)").first
-
-      # examine project quotas and usage
-      stats = project_resources.
-        group("service, name").
-        pluck("service, name, MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)")
-
-      # prepare data for each resource for display
-      @resource_status = Hash.new { |h,k| h[k] = [] }
-      stats.each do |stat|
-        service, name, min_current_quota, current_quota_sum, usage_sum = *stat
-        has_infinite_current_quota = min_current_quota < 0
-
-        # use existing domain resource, or create an empty mock object as a placeholder
-        domain_resource = domain_resources.find { |q| q.service == service && q.name == name }
-        domain_resource ||= ResourceManagement::Resource.new(
-          service: service, name: name, approved_quota: -1,
-        )
-
-        # on overview, show only critical quotas
-        is_critical = current_quota_sum > domain_resource.approved_quota or has_infinite_current_quota
-        if options[:overview]
-          next unless is_critical
-        end
-
-        # show warning in infobox when there are critical quotas
-        @show_warning = true if is_critical
-
-        @resource_status[service.to_sym] << {
-          name:                       name,
-          current_quota_sum:          current_quota_sum,
-          usage_sum:                  usage_sum,
-          has_infinite_current_quota: has_infinite_current_quota,
-          domain_resource:            domain_resource,
-        }
       end
     end
 
