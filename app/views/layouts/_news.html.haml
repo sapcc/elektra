@@ -1,4 +1,23 @@
 .news
+  - date = Time.new(2017,04,12)
+  .new{data:{date: date}}
+    .author-title= "Arturo Reuschenbach - #{date}"
+
+    :markdown
+      #### Flash messages dismissible
+
+      Flash messages have changed. Now:
+
+        * flash.now[:success] --> will be auto dismissible
+
+        * flash.now[:info] --> will be auto dismissible
+
+        * flash.now[:warning] --> dismissible clicking the X button
+
+        * flash.now[:danger] --> dismissible clicking the X button
+
+        * flash.now[:default_{type}] --> you get the default flash message, no dismissible button and not auto dismissible.
+
   - date = Time.new(2017,02,01)
   .new{data:{date: date}}
     .author-title= "Maurice Schreiber - #{date}"
