@@ -1,4 +1,10 @@
 DnsService::Engine.routes.draw do
+  get "request-zone-wizard" => 'request_zone_wizard#new', as: :new_zone_request
+  post "request-zone-wizard" => 'request_zone_wizard#create', as: :create_zone_request
+
+  get "create-zone-wizard" => 'create_zone_wizard#new'
+  post "create-zone-wizard" => 'create_zone_wizard#create'
+
   resources :zones do
     scope module: :zones do
       resources :recordsets

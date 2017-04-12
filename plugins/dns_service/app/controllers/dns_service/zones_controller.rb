@@ -84,7 +84,7 @@ module DnsService
     private
 
     def load_pools
-      @pools = services.dns_service.pools
+      @pools = current_user.is_allowed?("dns_service:pool_list") ? services.dns_service.pools : []
     end
   end
 end

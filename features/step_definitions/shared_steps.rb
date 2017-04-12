@@ -31,6 +31,14 @@ When /^I click on "(.*?)"$/ do |button|
   click_on(button)
 end
 
+When /^I choose "(.*?)" radiobutton$/ do |radio|
+  choose(radio)
+end
+
+Then /^I see active panel "(.*?)"$/ do |panel_id|
+  page.should have_css("##{panel_id}.active")
+end
+
 Then(/^I see a "(.*?)" (button|link)$/) do |button_text,l|
   expect(page).to have_selector('a', text: button_text)
 end

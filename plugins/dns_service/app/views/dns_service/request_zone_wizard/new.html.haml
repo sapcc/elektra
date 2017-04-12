@@ -1,0 +1,110 @@
+= content_for :title do
+  Request New Domain
+
+= simple_form_for @zone_request, url: plugin('dns_service').create_zone_request_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+
+  %div{class: 'modal-body'}
+    - if @zone_request.errors.present?
+      .alert.alert-error
+        = render_errors(@zone_request.errors)
+
+    = f.input :domain_type, required: true, label: 'Type' do
+      %p
+        You can request a subdomain at c.#{current_region}.cloud.sap or transfer
+        a custom domain which is hosted at SAP or a public name server.
+      %span.radio
+        %label
+          = f.radio_button :domain_type, "subdomain", data: {target: '#subdomain_panel'}
+          Subdomain (&lt;SUBDOMAIN&gt;.c.#{current_region}.cloud.sap.)
+          -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "c.#{current_region}.cloud.sap"}}
+      %span.radio
+        %label
+          = f.radio_button :domain_type, "rootdomain", data: {target: '#rootdomain_panel'}
+          Custom Domain
+          -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
+
+    .tab-content
+      .tab-pane{ role: "tabpanel", id: "subdomain_panel", class: ('active' if @zone_request.domain_type=='subdomain') }
+        = f.simple_fields_for :subdomain do |subdomain|
+          = subdomain.input :name, label: 'Domain Name', required: true, input_wrapper_html: { style: "width: 70%" } do
+            .input-group
+              = subdomain.text_field :name, value: @zone_request.name, class: "form-control text-right"
+              %span.input-group-addon c.#{current_region}.cloud.sap.
+
+          = subdomain.input :email, required: true,
+            input_html: {value: @zone_request.email},
+            input_wrapper_html: { style: "width: 70%" }
+
+          = subdomain.input :ttl, required: false,
+            as: :integer,
+            input_html: {value: (@zone_request.ttl || 7200)},
+            input_wrapper_html: { style: "width: 20%" },
+            icon_hint: 'Time to live in seconds'
+
+          = subdomain.input :description, required: false,
+            input_html: {value: @zone_request.description},
+            as: :text
+
+      .tab-pane{ role: "tabpanel", id: "rootdomain_panel", class: ('active' if @zone_request.domain_type=='rootdomain') }
+        = f.simple_fields_for :rootdomain do |rootdomain|
+          = rootdomain.input :domain_pool, as: :select, label: 'Domain Pool' do
+
+            = rootdomain.select :domain_pool, @pools.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize),pool.id]},
+              {include_blank: true, selected: @zone_request.domain_pool},
+              class: "select required form-control",
+              style: "width: 70%"
+
+            - if @pools.length>0
+              .ns-records{class: ('hidden' if @zone_request.domain_pool.blank?)}
+                %p
+                  %br
+                  Before the Domain Name System can start to route queries for this domain to the correct name servers,
+                  you must update the name server records either with the current DNS service or with the registrar for the
+                  domain, as applicable. The new name server records are listed below.
+                  -#{link_to 'See the documentation for more information','#'}.
+                - @pools.each do |pool|
+                  %ul{id: pool.id, class: ('hidden' unless @zone_request.domain_pool==pool.id)}
+                    - pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
+                      %li= record["hostname"]
+
+          .rootdomain_fields{class: ('hidden' if @zone_request.domain_pool.blank?)}
+            = rootdomain.input :name, label: 'Domain Name', required: true,
+              input_html: {value: @zone_request.name},
+              input_wrapper_html: { style: "width: 70%" },
+              icon_hint: "A fully qualified domain name, e.g. example.com."
+
+            = rootdomain.input :email, required: true,
+              input_html: {value: @zone_request.email},
+              input_wrapper_html: { style: "width: 70%" }
+
+            = rootdomain.input :ttl, required: false,
+              as: :integer,
+              input_html: {value: @zone_request.ttl || 7200},
+              input_wrapper_html: { style: "width: 20%" },
+              icon_hint: 'Time to live in seconds'
+
+            = rootdomain.input :description, required: false,
+              input_html: {value: @zone_request.description},
+              as: :text
+
+  %div.buttons{class: 'modal-footer' }
+    %button.btn.btn-default{type: 'button', data: {dismiss: 'modal'}, aria: {label: 'Cancel'}} Cancel
+    = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
+
+:javascript
+  $('input[name="zone_request[domain_type]"]').click(function () {
+    $(this).tab('show');
+  });
+
+  $('[name="zone_request[rootdomain][domain_pool]"]').change(function(){
+    $('.ns-records ul').addClass('hidden');
+    $('')
+    if (this.value) {
+      $('.ns-records').removeClass('hidden');
+      $('.ns-records ul#'+this.value).removeClass('hidden');
+      $('.rootdomain_fields').removeClass('hidden');
+    } else {
+      $('.ns-records').addClass('hidden');
+      $('.rootdomain_fields').addClass('hidden');
+    }
+  });

@@ -61,8 +61,8 @@ SimpleForm.setup do |config|
     b.optional :readonly
     b.use :label, class: 'col-sm-4 control-label'
 
-    b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
-      ba.wrapper tag: 'div', class: 'input-wrapper' do |i|
+    b.wrapper tag: 'div', html: { class: 'col-sm-8' } do |ba|
+      ba.wrapper :input_wrapper, tag: 'div', class: 'input-wrapper' do |i|
         i.use :before_field_html
         i.use :input, class: 'form-control'
         i.use :help_hint
@@ -123,7 +123,7 @@ SimpleForm.setup do |config|
       wr.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end
   end
-  
+
   config.wrappers :horizontal_boolean_4x8, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
     b.optional :readonly
@@ -137,7 +137,7 @@ SimpleForm.setup do |config|
       wr.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end
   end
-  
+
   config.wrappers :horizontal_radio_and_checkboxes_4x8, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
     b.optional :readonly
@@ -150,7 +150,7 @@ SimpleForm.setup do |config|
       ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end
   end
-  
+
 
   config.wrappers :horizontal_radio_and_checkboxes, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
