@@ -5,4 +5,4 @@
       = render partial: 'application/flash_dismissible', locals: {key: key, value: value}
     - else
       - key = key.start_with?('default_') ? key.sub(/^default_/, '') : key
-      = render partial: 'application/flash', locals: {key: key, value: value}
+      = render partial: 'application/flash_default', locals: {key: key, value: value}
