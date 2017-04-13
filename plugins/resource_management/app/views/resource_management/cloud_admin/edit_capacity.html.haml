@@ -1,25 +1,21 @@
 =content_for :title do
-  Edit resource: #{t("resource_management.#{@capacity.service}")} &gt; #{t("resource_management.#{@capacity.resource}")}
+  - cfg = @cluster_resource.config
+  Edit resource: #{t("resource_management.#{cfg.service.name}")} &gt; #{t("resource_management.#{cfg.name}")}
 
-=simple_form_for @capacity, url: cloud_admin_update_capacity_path(@capacity.id), method: :put, remote: request.xhr?, html: { data: { modal: true } } do |f|
+=simple_form_for @cluster_resource, url: cloud_admin_update_capacity_path(service: @cluster_resource.service_type, resource: @cluster_resource.name), method: :put, remote: request.xhr?, html: { data: { modal: true } } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    - if @has_errors
-      %p.alert.alert-error= @capacity.errors.full_messages.to_sentence
+    - unless @cluster_resource.errors.empty?
+      %p.alert.alert-error= @cluster_resource.errors.full_messages.to_sentence
 
     %fieldset
-      - data_type = @capacity.data_type
+      - data_type = @cluster_resource.data_type
       - if data_type.to_sym == :number
-        = f.input :value, label: 'Available capacity'
+        = f.input :capacity, label: 'Available capacity'
       - else
-        - previous_value = params[:capacity] ? params[:capacity][:value] : nil
-        = f.input :value, label: 'Available capacity', as: :string, input_html: { value: previous_value || @capacity.data_type.format(@capacity.value) }
-      %p.help-block
-        In some cases, capacity values can be measured by an appropriate tool.
-        In other cases, it comes down to counting the hardware that's there.
-        Use your own judgment. You can add a comment explaining why you chose this value below.
-
-        = f.input :comment
+        - previous_value = params[:new_style_resource] ? params[:new_style_resource][:capacity] : nil
+        = f.input :capacity, label: 'Available capacity', as: :string, input_html: { value: previous_value || @cluster_resource.data_type.format(@cluster_resource.capacity) }
+      = f.input :comment, label: 'How did you arrive at this value?'
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
       - if modal?

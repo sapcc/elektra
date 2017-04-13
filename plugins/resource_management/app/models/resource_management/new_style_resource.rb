@@ -2,8 +2,9 @@ module ResourceManagement
   class NewStyleResource < Core::ServiceLayer::Model
     include ManualValidation
 
-    validates_presence_of :quota
+    validates_presence_of :quota, unless: :cluster_id
     validate :validate_quota
+    validates_presence_of :comment, if: Proc.new { |res| res.capacity.try(:>, 0) }
 
     def name
       read(:name).to_sym
@@ -94,14 +95,18 @@ module ResourceManagement
       services = [{
         type: service_type,
         resources: [{
-          name: name,
-          quota: quota,
-        }],
+          name:     name,
+          quota:    read(:quota),
+          capacity: read(:capacity),
+          comment:  read(:comment),
+        }.reject { |_,v| v.nil? }],
       }]
       if project_id and project_domain_id
         @services_with_error = @driver.put_project_data(project_domain_id, project_id, services)
       elsif domain_id
         @driver.put_domain_data(domain_id, services)
+      elsif cluster_id
+        @driver.put_cluster_data(services)
       else
         raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
       end

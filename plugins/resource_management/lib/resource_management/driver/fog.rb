@@ -147,7 +147,7 @@ module ResourceManagement
 
           if capacity.value >= 0
             resource[:capacity] = capacity.value
-            resource[:comment]  = capacity.comment || ''
+            resource[:comment]  = capacity.comment.presence || 'unknown'
           end
         end
 
@@ -195,15 +195,15 @@ module ResourceManagement
 
       def put_cluster_data(services)
         services.each do |service|
-          service_type = service.type.to_s
-          resources.each do |resource|
-            resource_name = resource.name.to_sym
+          service_type = service[:type].to_s
+          service[:resources].each do |resource|
+            resource_name = resource[:name].to_sym
             cfg = ResourceManagement::ResourceConfig.all.find { |r| r.name == resource_name and r.service.catalog_type == service_type }
             next unless cfg
 
             capacity = ResourceManagement::Capacity.where(
-              service:  cfg.service.name,
-              resource: cfg.name,
+              service:  cfg.service.name.to_s,
+              resource: cfg.name.to_s,
             ).first_or_create(
               value:   resource[:capacity],
               comment: resource[:comment],

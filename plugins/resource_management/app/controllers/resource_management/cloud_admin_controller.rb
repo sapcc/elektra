@@ -4,6 +4,7 @@ module ResourceManagement
   class CloudAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_domain_resource, only: [:edit, :cancel, :update]
+    before_filter :load_cluster_resource, only: [:edit_capacity, :update_capacity]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
 
     authorization_required
@@ -30,16 +31,24 @@ module ResourceManagement
     end
 
     def edit_capacity
-      @capacity = ResourceManagement::Capacity.find(params[:id])
+      # please do not delete
     end
 
     def update_capacity
-      @capacity = ResourceManagement::Capacity.find(params[:id])
-
-      if @capacity.update(params.require(:capacity).permit(:value, :comment))
-        render 'resource_management/cloud_admin/update_capacity.js'
+      new_value = params.require(:new_style_resource)[:capacity]
+      if new_value.blank?
+        new_value = -1
       else
-        @has_errors = true
+        begin
+          new_value = @cluster_resource.data_type.parse(new_value)
+        rescue => e
+          @cluster_resource.add_validation_error(:capacity, 'is invalid: ' + e.message)
+        end
+      end
+
+      @cluster_resource.capacity = new_value
+      @cluster_resource.comment  = params[:new_style_resource][:comment] || ''
+      unless @cluster_resource.save
         render action: :edit_capacity
       end
     end
@@ -150,6 +159,14 @@ module ResourceManagement
         resources: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "domain #{params[:domain]} not found"
       @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
+    end
+
+    def load_cluster_resource
+      cluster = services.resource_management.find_cluster(
+        services:  [ params.require(:service) ],
+        resources: [ params.require(:resource) ],
+      ) or raise ActiveRecord::RecordNotFound, "cluster not found"
+      @cluster_resource = cluster.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
 
     def load_inquiry
