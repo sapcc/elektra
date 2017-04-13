@@ -55,7 +55,13 @@ module Compute
       @flavors            = services.compute.flavors
       @images             = services.image.all_images
 
-      @availability_zones = services.compute.availability_zones
+      azs = services.compute.availability_zones
+      if azs
+        @availability_zones = azs.select { |az| az.zoneState['available'] }
+      else
+        @instance.errors.add :availability_zone, 'not available'
+      end
+
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
 
