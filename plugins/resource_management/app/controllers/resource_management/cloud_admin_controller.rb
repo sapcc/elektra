@@ -9,25 +9,24 @@ module ResourceManagement
     authorization_required
 
     def index
-      @all_services = ResourceManagement::ServiceConfig.all.map(&:name)
-      prepare_data_for_resource_list(@all_services, overview: true)
+      @cluster = services.resource_management.find_cluster
+      @resources = @cluster.resources
 
-      respond_to do |format|
-        format.html
-        format.js # update only status bars
-      end
+      @min_updated_at = @cluster.services.map(&:min_updated_at).min
+      @max_updated_at = @cluster.services.map(&:max_updated_at).max
     end
 
-    def show_area
-      @area = params.require(:area).to_sym
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area).map(&:name)
-      prepare_data_for_resource_list(@area_services)
+    def show_area(area = nil)
+      @area = area || params.require(:area).to_sym
 
-      respond_to do |format|
-        format.html
-        format.js # update only status bars
-      end
+      # which services belong to this area?
+      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
 
+      @cluster= services.resource_management.find_cluster(services: @area_services.map(&:catalog_type))
+      @resources = @cluster.resources
+      @min_updated_at = @cluster.services.map(&:min_updated_at).min
+      @max_updated_at = @cluster.services.map(&:max_updated_at).max
     end
 
     def edit_capacity

@@ -1,11 +1,9 @@
-- if @resource_status.blank?
+- if @resources.blank?
   .bs-callout.bs-callout-info
     Nothing to report! Everything is fine.
 - else
-  - @all_services.sort.each do |service|
-    - resources = @resource_status[service] || []
-    - resources.sort_by { |r| r[:name] }.each do |resource|
-      = render partial: 'bar_row', locals: { overview: true,  data: resource, service: service }
+  - @resources.sort_by { |r| [ r.name, r.config.service.name ] }.each do |res|
+    = render partial: 'bar_row', locals: { overview: true, resource: res }
 
 -# commented out because For other non swift quotas the user acting as cloud admin would need an admin role in each and every domain
 -# this is right now not possible so we don't want to roll out a feature now to production (in thant case for swift) and than take it 
