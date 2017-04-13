@@ -41,8 +41,7 @@ gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: 
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
 gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 
-#gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git', branch: :two_factor_auth_new
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'ruby-radius'

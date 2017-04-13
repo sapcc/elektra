@@ -50,17 +50,17 @@ MonsoonOpenstackAuth.configure do |auth|
 
   auth.two_factor_authentication_method = -> username,passcode {
     # place here the code to authenticate against a rsa securID Server.
-    servers = ENV['TWO_FACTOR_RADIUS_URLS'].split(',')
+    servers = ENV['TWO_FACTOR_RADIUS_SERVERS'].split(',')
     secret = ENV['TWO_FACTOR_RADIUS_SECRET']
 
-    # byebug
-    servers.each do |server|
-      auth = Radius::Auth.new(server, 'localhost', 10) # radius_server, localhost, timeout
+    servers.each_index do |index|
+      auth = Radius::Auth.new(servers[index], 'localhost', 10) # radius_server, localhost, timeout
       begin
         return (auth.check_passwd(username, passcode, secret))
       rescue => e
-        puts "::::::::::::::."
-        p e
+        raise e if index==servers.length-1
+        # puts "::::::::::::::."
+        # p e
       end
     end
     return false
