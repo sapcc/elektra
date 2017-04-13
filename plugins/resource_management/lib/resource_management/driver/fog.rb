@@ -101,6 +101,59 @@ module ResourceManagement
         end
       end
 
+      def get_cluster_data(options={})
+        resources = ResourceManagement::Resource
+        resources = resources.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        resources = resources.where(name: options[:resources]) if options[:resources]
+
+        clusters = []
+
+        resources.where(project_id: nil).where.not(domain_id: nil).group('service,name').pluck('service,name,SUM(approved_quota)').each do |values|
+          service_type, resource_name, domains_quota = values
+
+          service_type = service_type.to_sym
+          resource_name = resource_name.to_sym
+          resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
+          next unless resource_config # ignore dummy resources
+          _, _, resource = locate_entity_service_resource(clusters, "ccloud", nil, resource_config)
+
+          resource[:domains_quota] = domains_quota
+        end
+
+        resources.where.not(project_id: nil).group('service,name').pluck('service,name,SUM(usage),MIN(updated_at),MAX(updated_at)').each do |values|
+          service_type, resource_name, projects_usage, min_updated_at, max_updated_at = values
+
+          service_type = service_type.to_sym
+          resource_name = resource_name.to_sym
+          resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
+          next unless resource_config # ignore dummy resources
+          _, service, resource = locate_entity_service_resource(clusters, "ccloud", nil, resource_config)
+
+          service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
+          service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
+          resource[:usage] = projects_usage
+        end
+
+        capacities = ResourceManagement::Capacity
+        capacities = capacities.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        capacities = capacities.where(resource: options[:capacities]) if options[:capacities]
+        if capacities.is_a?(Class)
+          capacities = capacities.all
+        end
+
+        capacities.each do |capacity|
+          next unless capacity.config # ignore dummy capacities (are there any?)
+          _, _, resource = locate_entity_service_resource(clusters, "ccloud", nil, capacity.config)
+
+          if capacity.value >= 0
+            resource[:capacity] = capacity.value
+            resource[:comment]  = capacity.comment || ''
+          end
+        end
+
+        return clusters.first
+      end
+
       def put_project_data(domain_id, project_id, services)
         quotas = {}
 
@@ -137,6 +190,29 @@ module ResourceManagement
 
           db_res.approved_quota = res[:quota]
           db_res.save! if db_res.changed?
+        end
+      end
+
+      def put_cluster_data(services)
+        services.each do |service|
+          service_type = service.type.to_s
+          resources.each do |resource|
+            resource_name = resource.name.to_sym
+            cfg = ResourceManagement::ResourceConfig.all.find { |r| r.name == resource_name and r.service.catalog_type == service_type }
+            next unless cfg
+
+            capacity = ResourceManagement::Capacity.where(
+              service:  cfg.service.name,
+              resource: cfg.name,
+            ).first_or_create(
+              value:   resource[:capacity],
+              comment: resource[:comment],
+            )
+
+            capacity.value   = resource[:capacity]
+            capacity.comment = resource[:comment]
+            capacity.save if capacity.changed?
+          end
         end
       end
 
