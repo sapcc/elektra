@@ -3,7 +3,12 @@ module ServiceLayer
   class ResourceManagementService < Core::ServiceLayer::Service
 
     def driver
-      @driver ||= ResourceManagement::Driver::Fog.new(
+      #@driver ||= ResourceManagement::Driver::Fog.new(
+      #  auth_url: self.auth_url,
+      #  region:   self.region,
+      #)
+      
+      @driver ||= ResourceManagement::Driver::Misty.new(
         auth_url: self.auth_url,
         region:   self.region,
       )
