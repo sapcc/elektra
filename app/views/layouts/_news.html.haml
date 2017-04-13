@@ -8,15 +8,24 @@
 
       Flash messages have changed. Now:
 
-        * flash.now[:success] --> will be auto dismissible
+        * flash[:success] --> will be auto dismissible
 
-        * flash.now[:info] --> will be auto dismissible
+        * flash[:info] --> will be auto dismissible
 
-        * flash.now[:warning] --> dismissible clicking the X button
+        * flash[:notice] --> will be auto dismissible
 
-        * flash.now[:danger] --> dismissible clicking the X button
+        * flash[:warning] --> dismissible clicking the X button
 
-        * flash.now[:default_{type}] --> you get the default flash message, no dismissible button and not auto dismissible.
+        * flash[:danger] --> dismissible clicking the X button
+
+        * flash[:alert] --> dismissible clicking the X button
+
+        * flash[:error] --> dismissible clicking the X button
+
+        * flash[:keep_{type}] --> auto dismissible flahes will be not automatic dismissed. Dismissible but not auto dimissble.
+
+        * flash[:default_{type}] --> you get the default flash message, no dismissible button and not auto dismissible.
+
 
   - date = Time.new(2017,02,01)
   .new{data:{date: date}}
