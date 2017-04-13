@@ -85,38 +85,35 @@ module ResourceManagement
     end
 
     def confirm_reduce_quota
-      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+      # please do not delete
     end
 
     def reduce_quota
-      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
-      value = params[:resource][:approved_quota]
-
+      old_quota = @resource.quota
+      value = params[:new_style_resource][:quota]
       if value.empty?
-        @resource.add_validation_error(:approved_quota, "empty value is invalid")
+        @resource.add_validation_error(:quota, 'is missing')
       else
         begin
-          parsed_value = @resource.data_type.parse(value)
-          # pre check value
-          if @resource.approved_quota < parsed_value
-              @resource.add_validation_error(:approved_quota, "wrong value: because the wanted quota value of #{value} is higher than your approved quota")
-          elsif @resource_status[:current_quota_sum] > parsed_value
-            @resource.add_validation_error(:approved_quota, "wrong value: it is now allowed to reduce the quota below your current used quota value of #{@resource_status[:current_quota_sum]}")
-          elsif @resource.approved_quota == parsed_value
-              @resource.add_validation_error(:approved_quota, "wrong value: because the wanted quota value is the same as your approved quota")
+          value = @resource.data_type.parse(value)
+
+          # NOTE: there are additional validations in the NewStyleResource class
+          if @resource.quota < value
+            @resource.add_validation_error(:quota, 'is higher than current quota')
           else
-            @resource.approved_quota = parsed_value
+            @resource.quota = value
           end
         rescue ArgumentError => e
-          @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+          @resource.add_validation_error(:quota, 'is invalid: ' + e.message)
         end
       end
 
       # save the new quota to database
       if @resource.save
-        show_area(@resource.service.to_sym)
+        show_area(@resource.config.service.area)
       else
         # reload the reduce quota window with error
+        @resource.quota = old_quota
         respond_to do |format|
           format.html do
             render action: 'confirm_reduce_quota'
@@ -355,8 +352,11 @@ module ResourceManagement
     end
 
     def load_domain_resource
-      @resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @resource.domain_id != @scoped_domain_id or not @resource.project_id.nil?
+      @resource = services.resource_management.find_domain(
+        @scoped_domain_id,
+        services: Array.wrap(params.require(:service)),
+        resources: Array.wrap(params.require(:resource)),
+      ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
     def load_inquiry

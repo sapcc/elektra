@@ -132,8 +132,8 @@ module ResourceManagement
       def put_domain_data(domain_id, services)
         ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).each do |db_res|
           cfg = db_res.config
-          srv = services.find { |s| s[:type] == cfg.service.catalog_type } or next
-          res = srv[:resources].find { |r| r[:name] == cfg.name }          or next
+          srv = services.find { |s| s[:type].to_s == cfg.service.catalog_type }   or next
+          res = srv[:resources].find { |r| r[:name].to_sym == cfg.name }          or next
 
           db_res.approved_quota = res[:quota]
           db_res.save! if db_res.changed?
