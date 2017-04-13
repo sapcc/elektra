@@ -32,6 +32,25 @@ module ResourceManagement
             end
           end
         end
+        
+      end
+
+      def get_domain_data(domain_id=nil, options={})
+        query = Excon::Utils.query_string(query:options).sub!(/^\?/, '')
+        # need to check nil query because nil is not working as optional parameter in misty
+        if domain_id.nil?
+          if query.nil?
+            @misty.resources.get_domains.body['domains']
+          else
+            @misty.resources.get_domain(query).body['domains']
+          end
+        else
+          if query.nil?
+            @misty.resources.get_domain(domain_id).body['domain']
+          else
+            @misty.resources.get_domain(domain_id,query).body['domain']
+          end
+        end
       end
 
     end
