@@ -11,13 +11,25 @@ module ResourceManagement
       end
 
       def get_project_data(domain_id, project_id=nil, options={})
+
+        query = Excon::Utils.query_string(query:options).sub!(/^\?/, '')
+
         if project_id.nil?
+          # need to check nil query because nil is not working as optional parameter in misty
           handle_response do
-            @misty.resources.get_projects(domain_id).body['projects']
+            if query.nil?
+              @misty.resources.get_projects(domain_id).body['projects']
+            else
+              @misty.resources.get_projects(domain_id,query).body['projects']
+            end
           end
         else
           handle_response do
-            @misty.resources.get_project(domain_id,project_id).body['project']
+            if query.nil?
+              @misty.resources.get_project(domain_id,project_id).body['project']
+            else
+              @misty.resources.get_project(domain_id,project_id,query).body['project']
+            end
           end
         end
       end
