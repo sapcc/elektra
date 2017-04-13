@@ -81,34 +81,29 @@ module ResourceManagement
     end
 
     def review_request
-      # prepare data for view
-      _, _ = prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
-
-      # calculate projected @cloud_status after approval
       @desired_quota = @inquiry.payload['desired_quota']
-      @cloud_status_new = {
-        capacity:         @cloud_status[:capacity],
-        usage_sum:        @cloud_status[:usage_sum],
-        domain_quota_sum: @cloud_status[:domain_quota_sum] - @resource.approved_quota + @desired_quota,
-      }
+
+      # calculate projected cluster status after approval
+      @cluster_resource_projected = @cluster_resource.clone
+      @cluster_resource_projected.domains_quota += @desired_quota - @domain_resource.quota
     end
 
     def approve_request
-      # set new quota value
-      value = params.require(:resource).require(:approved_quota)
+      old_quota = @domain_resource.quota
       begin
-        @resource.approved_quota = @resource.data_type.parse(value)
+        @domain_resource.quota = @domain_resource.data_type.parse(params.require(:new_style_resource).require(:quota))
       rescue ArgumentError => e
-        @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+        @domain_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
       end
 
-      if @resource.save
-        comment = "New domain quota is #{@resource.data_type.format(@resource.approved_quota)}"
-        if params[:resource][:comment].present?
-          comment += ", comment from approver: #{params[:resource][:comment]}"
+      if @domain_resource.save
+        comment = "New domain quota is #{@domain_resource.data_type.format(@domain_resource.quota)}"
+        if params[:new_style_resource][:comment].present?
+          comment += ", comment from approver: #{params[:new_style_resource][:comment]}"
         end
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
       else
+        @domain_resource.quota = old_quota
         self.review_request
         render action: 'review_request'
       end
@@ -150,13 +145,16 @@ module ResourceManagement
     private
 
     def load_domain_resource
-      @domain_resource = ResourceManagement::Resource.find(params.require(:id))
-      raise ActiveRecord::RecordNotFound if @domain_resource.domain_id.nil? or not @domain_resource.project_id.nil?
+      domain = services.resource_management.find_domain(
+        params.require(:domain),
+        services:  [ params.require(:service) ],
+        resources: [ params.require(:resource) ],
+      ) or raise ActiveRecord::RecordNotFound, "domain #{params[:domain]} not found"
+      @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
 
     def load_inquiry
       @inquiry = services.inquiry.get_inquiry(params[:inquiry_id])
-
       unless @inquiry
         render html: 'Could not find inquiry!'
         return
@@ -164,27 +162,20 @@ module ResourceManagement
 
       enforce_permissions("resource_management:cloud_admin_approve_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
 
-      # validate payload (these are all validations that I never expect to
-      # fail, so I don't spend much time on presenting the errors)
+      # load additional data
       data = @inquiry.payload.symbolize_keys
+      raise ArgumentError, "inquiry #{@inquiry.id} has not been migrated to new format!" if data.include?(:resource_id)
 
-      @resource = ResourceManagement::Resource.find(data[:resource_id])
-      if (not @resource) or @resource.domain_id.nil? or not @resource.project_id.nil?
-        render html: 'Invalid resource record ID specified in inquiry payload!', status: :unprocessable_entity
-        return
-      end
+      @domain_resource = services.resource_management.find_domain(
+        @inquiry.domain_id,
+        services:  [ data[:service]  ],
+        resources: [ data[:resource] ],
+      ).resources.first or raise ActiveRecord::RecordNotFound
 
-      unless @resource.service.to_s == data[:service].to_s || @resource.name.to_s == data[:resource].to_s
-        render html: 'Inquiry payload contains inconsistent data!', status: :unprocessable_entity
-        return
-      end
-
-      if @resource.approved_quota >= data[:desired_quota].to_i
-        render html: 'Approved quota is already larger than the requested value. Is this an old inquiry?', status: :unprocessable_entity
-        return
-      end
-
-      @domain_name = services.identity.find_domain(@resource.domain_id).name rescue @resource.domain_id
+      @cluster_resource = services.resource_management.find_cluster(
+        services:  [ data[:service]  ],
+        resources: [ data[:resource] ],
+      ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
     def prepare_data_for_resource_list(services, options={})

@@ -25,6 +25,11 @@ module ServiceLayer
       driver.map_to(ResourceManagement::Domain).get_domain_data(nil, options)
     end
 
+    # weird naming (given that there is only one cluster), but I'd rather be consistent with above
+    def find_cluster(options={})
+      driver.map_to(ResourceManagement::Cluster).get_cluster_data(options)
+    end
+
     def has_project_quotas?
       resources = ResourceManagement::Resource.where({
         domain_id: (current_user.domain_id || current_user.project_domain_id),

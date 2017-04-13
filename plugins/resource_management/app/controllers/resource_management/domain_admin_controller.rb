@@ -206,50 +206,51 @@ module ResourceManagement
     end
 
     def new_request
-      # prepare data for usage display
-      prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
+      # please do not delete
     end
 
     def create_request
-      # parse and validate value
-      old_value = @resource.approved_quota
+      old_value = @resource.quota
       data_type = @resource.data_type
-      value = params.require(:resource).require(:approved_quota)
+      new_value = params.require(:new_style_resource).require(:quota)
+
+      # parse and validate value
       begin
-        value = data_type.parse(value)
-        @resource.approved_quota = value
-        if value <= old_value || data_type.format(value) == data_type.format(old_value)
+        new_value = data_type.parse(new_value)
+        @resource.quota = new_value
+        if new_value <= old_value || data_type.format(new_value) == data_type.format(old_value)
           # the second condition catches slightly larger values that round to the same representation, e.g. 100.000001 GiB
-          @resource.add_validation_error(:approved_quota, 'must be larger than current value')
+          @resource.add_validation_error(:quota, 'must be larger than current value')
         end
       rescue ArgumentError => e
-        @resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+        @resource.add_validation_error(:quota, 'is invalid: ' + e.message)
       end
-
       # back to square one if validation failed
       unless @resource.validate
-        @has_errors = true
-        # prepare data for usage display
-        prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
         render action: :new_request
         return
       end
 
       # create inquiry
-      base_url    = plugin('resource_management').cloud_admin_area_path(area: @resource.config.service.area.to_s, domain_id: Rails.configuration.cloud_admin_domain,
-                                                                        project_id: Rails.configuration.cloud_admin_project)
-      overlay_url = plugin('resource_management').cloud_admin_review_request_path(domain_id: Rails.configuration.cloud_admin_domain,
-                                                                                  project_id: Rails.configuration.cloud_admin_project)
+      cfg      = @resource.config
+      base_url = plugin('resource_management').cloud_admin_area_path(
+        area: cfg.service.area.to_s,
+        domain_id:  Rails.configuration.cloud_admin_domain,
+        project_id: Rails.configuration.cloud_admin_project,
+      )
+      overlay_url = plugin('resource_management').cloud_admin_review_request_path(
+        domain_id:  Rails.configuration.cloud_admin_domain,
+        project_id: Rails.configuration.cloud_admin_project,
+      )
 
       inquiry = services.inquiry.create_inquiry(
         'domain_quota',
-        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(value - old_value)} #{@resource.service}/#{@resource.name}",
+        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
         current_user,
         {
-          resource_id: @resource.id,
-          service: @resource.service,
-          resource: @resource.name,
-          desired_quota: value,
+          service: cfg.service.catalog_type,
+          resource: cfg.name,
+          desired_quota: new_value,
         },
         service_user.list_ccadmins(),
         {
@@ -265,9 +266,6 @@ module ResourceManagement
         }
       )
       if inquiry.errors?
-        @has_errors = true
-        # prepare data for usage display
-        prepare_data_for_details_view(@resource.service.to_sym, @resource.name.to_sym)
         render action: :new_request
         return
       end
@@ -404,40 +402,6 @@ module ResourceManagement
       if project_resources.where.not(service: 'resource_management').count == 0
         services.resource_management.sync_project(@scoped_domain_id, @target_project_id)
       end
-    end
-
-    # Some data collection that's shared between the details() and update() actions.
-    def prepare_data_for_details_view(service, resource, sort_by = "", sort_order = "ASC")
-      # load domain resource and corresponding project resources
-      resources = ResourceManagement::Resource.
-        where(domain_id: @scoped_domain_id, service: service, name: resource)
-
-      domain_resource   = resources.where(project_id: nil).first
-
-      min_current_quota ,current_quota_sum ,usage_sum = 0,0,0
-      if sort_by.empty?
-        project_resources = resources.where.not(project_id: nil)
-        # statistics over project resources
-        min_current_quota, current_quota_sum, usage_sum = project_resources.
-          pluck("MIN(current_quota), SUM(GREATEST(current_quota,0)), SUM(usage)").first
-      else
-        project_resources = resources.where.not(project_id: nil).order("#{sort_by} #{sort_order.upcase}")
-      end
-
-      # when no domain resource record exists yet, use an empty mock object
-      domain_resource ||= ResourceManagement::Resource.new(
-        domain_id: @scoped_domain_id, service: service, name: resource, approved_quota: 0,
-      )
-
-      @resource_status = {
-        name:                       resource,
-        current_quota_sum:          current_quota_sum,
-        usage_sum:                  usage_sum,
-        has_infinite_current_quota: min_current_quota < 0,
-        domain_resource:            domain_resource,
-      }
-
-      return project_resources # this is used for further data collection by details()
     end
 
   end

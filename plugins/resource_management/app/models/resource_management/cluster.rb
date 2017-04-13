@@ -1,14 +1,9 @@
 module ResourceManagement
-  class Domain < Core::ServiceLayer::Model
-
-    def name
-      read(:name)
-    end
+  class Cluster < Core::ServiceLayer::Model
 
     def services
       metadata = {
-        domain_id:   id,
-        domain_name: name,
+        cluster_id: id,
       }
 
       @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }
@@ -32,15 +27,10 @@ module ResourceManagement
       data = services.map do |srv|
         {
           type: srv.type,
-          resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
+          resources: srv.resources.map { |res| { name: res.name, capacity: res.capacity, comment: res.comment || '' } },
         }
       end
-      @driver.put_domain_data(id, data)
-    end
-
-    # TODO: remove after the switch to Limes
-    def services_with_error
-      []
+      @driver.put_cluster_data(id, data)
     end
 
   end

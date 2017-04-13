@@ -1,11 +1,9 @@
-- render_quota ||= false
-- capacity = data[:capacity]
-- fill     = render_quota ? data[:domain_quota_sum] : data[:usage_sum]
+- render_usage = false if !render_usage
+- fill = render_usage ? resource.usage : resource.domains_quota
 
-- if capacity.value < 0
-  -# special case if capacity was not yet maintained
-  = resource_bar(fill: fill, maximum: { value: -1, label: "No total capacity maintained" }, threshold: { value: fill, label: "" }, data_type: capacity.data_type)
+- if resource.capacity.nil?
+  = resource_bar(fill: fill, maximum: { value: -1, label: "No total capacity maintained" }, threshold: { value: fill, label: "" }, data_type: resource.data_type)
 - else
-  -# normal case (capacity is also given as threshold to account for the case
-  -# that fill > capacity for overcommittable resources)
-  = resource_bar(fill: fill, maximum: [fill, capacity.value].max, threshold: { value: capacity.value, label: "Capacity: $VALUE" }, data_type: capacity.data_type)
+  -# capacity is also given as threshold to account for the case
+  -# that fill > capacity for overcommittable resources
+  = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, data_type: resource.data_type)

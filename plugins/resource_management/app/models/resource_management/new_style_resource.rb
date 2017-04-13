@@ -75,7 +75,12 @@ module ResourceManagement
 
     # cluster only
     def capacity
-      read(:capacity) || -1
+      c = read(:capacity)
+      return (c && c >= 0) ? c : nil
+    end
+    def comment
+      return nil if capacity.nil?
+      read(:comment) || nil
     end
     def domains_quota
       read(:domains_quota) || 0

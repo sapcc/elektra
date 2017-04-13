@@ -1,22 +1,24 @@
 = content_for :title do
-  Request more: #{t("resource_management.#{@resource.service}")} &gt; #{t("resource_management.#{@resource.name}")}
+  - cfg = @resource.config
+  Request more: #{t("resource_management.#{cfg.service.name}")} &gt; #{t("resource_management.#{cfg.name}")}
 
-=simple_form_for @resource, url: admin_create_request_path(id: @resource.id), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
+=simple_form_for @resource, url: admin_create_request_path(service: @resource.service_type, resource: @resource.name), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
-    #usage_bars
-      = render :partial => "details_usage_bar"
 
-    - if @has_errors
+    - @domain_resource = @resource
+    #usage_bars= render :partial => "details_usage_bar"
+
+    - unless @resource.errors.empty?
       %p.alert.alert-error= @resource.errors.full_messages.to_sentence
 
     %fieldset
       - if @resource.data_type.to_sym == :number
-        = f.input :approved_quota, label: 'Desired quota'
+        = f.input :quota, label: 'Desired quota'
       - else
-        - current_value = @resource.data_type.format(@resource.approved_quota)
-        - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
-        = f.input :approved_quota, label: 'Desired quota', as: :string, input_html: { value: previous_value || current_value }
+        - current_value = @resource.data_type.format(@resource.quota)
+        - previous_value = params[:new_style_resource] ? params[:new_style_resource][:quota] : nil
+        = f.input :quota, label: 'Desired quota', as: :string, input_html: { value: previous_value || current_value }
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

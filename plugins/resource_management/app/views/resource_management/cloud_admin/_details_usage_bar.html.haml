@@ -1,6 +1,6 @@
 .row
-  .col-md-2.quota-label.text-muted Resource usage
-  .col-md-9= render partial: 'bar', locals: { data: @cloud_status }
-.row
   .col-md-2.quota-label.text-muted Quota usage
-  .col-md-9= render partial: 'bar', locals: { data: @cloud_status, render_quota: true }
+  .col-md-9= render partial: 'bar', locals: { resource: @cluster_resource }
+.row
+  .col-md-2.quota-label.text-muted Resource usage
+  .col-md-9= render partial: 'bar', locals: { resource: @cluster_resource, render_usage: true }
