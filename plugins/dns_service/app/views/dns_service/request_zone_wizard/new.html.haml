@@ -29,7 +29,7 @@
           = subdomain.input :name, label: 'Domain Name', required: true, input_wrapper_html: { style: "width: 70%" } do
             .input-group
               = subdomain.text_field :name, value: @zone_request.name, class: "form-control text-right"
-              %span.input-group-addon c.#{current_region}.cloud.sap.
+              %span.input-group-addon .c.#{current_region}.cloud.sap.
 
           = subdomain.input :email, required: true,
             input_html: {value: @zone_request.email},

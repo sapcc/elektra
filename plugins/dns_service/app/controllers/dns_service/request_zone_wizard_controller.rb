@@ -11,7 +11,7 @@ module DnsService
       domain_type = params[:zone_request][:domain_type]
       @zone_request.attributes = params[:zone_request][domain_type]
       @zone_request.domain_type = domain_type
-      @zone_request.name += "." unless @zone_request.name.last=='.'
+      @zone_request.name.chomp!('.') if @zone_request.name.last=='.'
 
       inquiry = nil
 
