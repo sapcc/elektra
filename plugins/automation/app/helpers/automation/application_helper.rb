@@ -178,15 +178,17 @@ module Automation
           if ip_values and ip_values.length>0
             haml_tag :div, {class: "list-group borderless"} do
               ip_values.each do |values|
-                haml_tag :p, {class: "list-group-item-text"} do
-                  if values["OS-EXT-IPS:type"]=='floating'
-                    haml_tag :i, {class: "fa fa-globe fa-fw"}
-                  elsif values["OS-EXT-IPS:type"]=='fixed'
-                    haml_tag :i, {class: "fa fa-desktop fa-fw"}
-                  end
-                  haml_concat values["addr"]
-                  haml_tag :span, {class: "info-text"} do
-                    haml_concat values["OS-EXT-IPS:type"]
+                unless values["addr"].blank?
+                  haml_tag :p, {class: "list-group-item-text"} do
+                    if values["OS-EXT-IPS:type"]=='floating'
+                      haml_tag :i, {class: "fa fa-globe fa-fw"}
+                    elsif values["OS-EXT-IPS:type"]=='fixed'
+                      haml_tag :i, {class: "fa fa-desktop fa-fw"}
+                    end
+                    haml_concat values["addr"]
+                    haml_tag :span, {class: "info-text"} do
+                      haml_concat values["OS-EXT-IPS:type"]
+                    end
                   end
                 end
               end
