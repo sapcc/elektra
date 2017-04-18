@@ -4,7 +4,7 @@
 .modal-body
 
   .modal-flashes
-    = render "automation/shared/dismissible_flashes.html"
+    = render "application/flashes.html"
 
   %ul.nav.nav-tabs
     %li.active{role: "presentation"}= link_to 'Details', '#details', aria: {controls:"facts"}, role: "tab", data: {toggle:"tab"}
