@@ -1,10 +1,15 @@
 module DnsService
   class Zone < Core::ServiceLayer::Model
+    validates :name, presence: {message: 'Please provide the domain name'}
+    validates :email, presence: {message: 'Please provide an email'}
+
     def attributes_for_create
       zone_attributes = attributes
       zone_attributes[:ttl] = zone_attributes[:ttl].to_i if zone_attributes[:ttl]
       zone_attributes[:name] = zone_attributes[:name].strip if zone_attributes[:name]
       zone_attributes[:email] = zone_attributes[:email].strip if zone_attributes[:email]
+      zone_attributes[:attributes] = zone_attributes[:attributes] if zone_attributes[:attributes]
+
       zone_attributes.delete(:id)
       zone_attributes.delete_if { |k, v| v.blank? }
     end

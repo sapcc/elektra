@@ -45,6 +45,10 @@
           %tr
             %th Tags
             %td= @network.tags
+          - if @network.dns_domain.present?
+            %tr
+              %th DNS Domain
+              %td= @network.dns_domain
           %tr
             %th Project
             %td

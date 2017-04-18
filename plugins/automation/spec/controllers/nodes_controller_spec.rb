@@ -14,7 +14,7 @@ describe Automation::NodesController, type: :controller do
   before :each do
     stub_authentication
     stub_admin_services
-    
+
     identity_driver = double('identity_service_driver').as_null_object
     compute_driver = double('compute_service_driver').as_null_object
     client = double('arc_client').as_null_object
@@ -28,7 +28,7 @@ describe Automation::NodesController, type: :controller do
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_service).and_return(automation_service)
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_run_service).and_return(automation_run_service)
   end
-  
+
   describe "GET 'index'" do
 
     before :each do
@@ -50,7 +50,6 @@ describe Automation::NodesController, type: :controller do
       get :index, default_params
       expect(@nodes[:elements]).to eq(assigns(:nodes))
       expect(@nodes[:jobs]).to include(assigns(:jobs))
-      expect(@nodes[:addresses]).to include(assigns(:addresses))
     end
 
   end
@@ -76,7 +75,6 @@ describe Automation::NodesController, type: :controller do
       xhr :get, :index_update, default_params
       expect(@nodes[:elements]).to eq(assigns(:nodes))
       expect(@nodes[:jobs]).to include(assigns(:jobs))
-      expect(@nodes[:addresses]).to include(assigns(:addresses))
     end
 
   end

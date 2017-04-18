@@ -96,7 +96,7 @@ module Automation
       automation_name = params[:automation_name]
       run = services.automation.automation_execute(automation_id,"@identity='#{node_id}'")
       if run.save
-        flash.now[:success] = "Automation #{automation_name} was successfully executed. Click following #{view_context.link_to('link', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe} to see the details."
+        flash.now[:keep_success] = "<b>#{automation_name}</b> successfully executed. See all runs on the Automations tab. #{view_context.link_to('Show details for this run.', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe}"
       else
         flash.now[:error] = I18n.t('automation.errors.node_executing_automation_error', name: automation_name, errors: run.errors)
       end
@@ -134,19 +134,18 @@ module Automation
     end
 
     def automations
-      @automations = services.automation.automations
+      # TODO: whe should collect all automations and implement a dropdown scrollable to execute the automation
+      @automations = services.automation.automations(1,100)
     end
 
     def nodes_with_jobs
       @node_page = params[:page]||1
       per_page = 10
-      service = IndexNodesService.new(services.automation, services.compute)
+      service = IndexNodesService.new(services.automation)
       result = service.list_nodes_with_jobs(@node_page, per_page)
 
       @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(@node_page).per(per_page)
       @jobs = result[:jobs]
-      @addresses = result[:addresses]
-      @external_nodes = result[:external_nodes]
     end
 
   end

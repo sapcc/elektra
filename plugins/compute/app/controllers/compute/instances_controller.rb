@@ -4,7 +4,7 @@ module Compute
     before_action :automation_data, only: [:new, :create]
 
     authorization_context 'compute'
-    authorization_required
+    authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip]
 
     def index
       @instances = []
@@ -55,7 +55,13 @@ module Compute
       @flavors            = services.compute.flavors
       @images             = services.image.all_images
 
-      @availability_zones = services.compute.availability_zones
+      azs = services.compute.availability_zones
+      if azs
+        @availability_zones = azs.select { |az| az.zoneState['available'] }
+      else
+        @instance.errors.add :availability_zone, 'not available'
+      end
+
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
 
@@ -111,6 +117,7 @@ module Compute
     end
 
     def new_floatingip
+      enforce_permissions("::networking:floating_ip_associate")
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
 
@@ -118,6 +125,7 @@ module Compute
     end
 
     def attach_floatingip
+      enforce_permissions("::networking:floating_ip_associate")
       @instance_port = services.networking.ports(device_id: params[:id]).first
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
 
@@ -156,6 +164,7 @@ module Compute
     end
 
     def detach_floatingip
+      enforce_permissions("::networking:floating_ip_disassociate")
       begin
         floating_ips = services.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
         @floating_ip = services.networking.detach_floatingip(floating_ips.first.id)

@@ -1,0 +1,7 @@
+- keep = keep || false
+- auto_dismissible_types = ['success', 'info', 'notice']
+%div{class: "alert alert-#{key} alert-dismissible word-wrap #{"auto-dismissible" if keep == false && auto_dismissible_types.include?(key)}", 'role' => 'alert','aria-expanded' => 'true'}
+  %button.close{type:'button', data: {dismiss: 'alert'}, "aria-label" => "Close"}
+    %span{'aria-hidden' => 'true'}
+      &times;
+  = value.html_safe

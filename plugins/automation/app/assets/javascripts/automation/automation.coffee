@@ -34,7 +34,11 @@
     url: $(event.target).data('link'),
     dataType: 'html',
     success: ( data, textStatus, jqXHR ) ->
-      $(".flashes").append(data)
+      # do not auto dismiss the success alerts.
+      if $(data).hasClass('flashes')
+        $(".flashes").append($(data).contents())
+      else
+        $(".flashes").append(data)
     complete: () ->
       spinner.addClass('hide')
       btn_group.removeClass('hide')

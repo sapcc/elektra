@@ -1,4 +1,33 @@
 .news
+  - date = Time.new(2017,04,12)
+  .new{data:{date: date}}
+    .author-title= "Arturo Reuschenbach - #{date}"
+
+    :markdown
+      #### Flash messages dismissible
+
+      Flash messages have changed. Now:
+
+        * flash[:success] --> will be auto dismissible
+
+        * flash[:info] --> will be auto dismissible
+
+        * flash[:notice] --> will be auto dismissible
+
+        * flash[:warning] --> dismissible clicking the X button
+
+        * flash[:danger] --> dismissible clicking the X button
+
+        * flash[:alert] --> dismissible clicking the X button
+
+        * flash[:error] --> dismissible clicking the X button
+
+        * flash[:keep_{type}] --> auto dismissible flahes will be not automatic dismissed. Dismissible but not auto dimissble.
+
+        * flash[:default_{type}] --> you get the default flash message, no dismissible button and not auto dismissible.
+
+      Manually rendered auto dimissible flashes has to be initialized: initAutoDismissibleFlash()
+
   - date = Time.new(2017,02,01)
   .new{data:{date: date}}
     .author-title= "Maurice Schreiber - #{date}"

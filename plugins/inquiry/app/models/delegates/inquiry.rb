@@ -8,7 +8,7 @@ class Delegates::Inquiry
 
   def present?
     !real_inquiry.nil?
-  end  
+  end
 
   private
   attr_reader :real_inquiry

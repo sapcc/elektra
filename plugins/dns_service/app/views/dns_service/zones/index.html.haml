@@ -5,7 +5,10 @@
 
 - if current_user.is_allowed?("dns_service:zone_create")
   .toolbar
-    = link_to 'Create new', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    = link_to 'Create New', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+- elsif current_user.is_allowed?("dns_service:request_zone")
+  .toolbar
+    = link_to 'Request New Domain', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
 %table.table.zones
   %thead
@@ -23,9 +26,10 @@
       %tr{data: {empty: true}}
         %td{colspa: 6}
           = 'No zones available.'
-          = link_to "#{sap_url_for('documentation')}docs/learn/network/how-to-create-dns-zone.html", class: "btn", title: "Open documentation in new window.", target: "_blank" do
-            %i.fa.fa-external-link
-            How to get a DNS zone
+          - unless current_user.is_allowed?("dns_service:zone_create") or current_user.is_allowed?("dns_service:request_zone")
+            = link_to "#{sap_url_for('documentation')}docs/learn/network/how-to-create-dns-zone.html", class: "btn", title: "Open documentation in new window.", target: "_blank" do
+              %i.fa.fa-external-link
+              How to get a DNS zone
     - else
       - @zones.each do | zone |
         = render partial: 'zone_item', locals: {zone: zone, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}

@@ -2,10 +2,9 @@
   %table.table
     %thead
       %tr
-        %th.snug
         %th Name
         %th Platform
-        %th IP
+        %th IPs
         %th Tags
         %th Online
         %th Job history
@@ -16,4 +15,4 @@
           %td{colspan: 8} No nodes available
       - else
         -nodes.each do | node |
-          = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {}), addresses: addresses.fetch(node.id.to_sym, {}), is_external_node: external_nodes.fetch(node.id.to_sym, false)}
+          = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {})}

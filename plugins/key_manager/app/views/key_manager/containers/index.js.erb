@@ -1,4 +1,5 @@
-$(".flashes").html("<%= escape_javascript( render "automation/shared/dismissible_flashes.html" ) %>");
+$(".flashes").html("<%= escape_javascript( render "application/flashes.html" ) %>");
+initAutoDismissibleFlash();
 
 <% unless @containers.nil? %>
 $(".js-table-container").html("<%= escape_javascript(render partial: 'table_containers', locals: {containers: @containers}) %>");

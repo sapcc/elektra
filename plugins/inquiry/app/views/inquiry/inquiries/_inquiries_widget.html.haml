@@ -11,9 +11,9 @@
       .tab-content
         .inquiries.spinner
         #openinquiries.tab-pane.active{role: "tabpanel"}
-          = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {domain_id: domain_id, processor_id: current_user.id, state: ['open']})
+          = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {approver_domain_id: domain_id, processor_id: current_user.id, state: ['open']})
         #allinquiries.tab-pane{role: "tabpanel"}
-          = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page,filter: {domain_id: domain_id, processor_id: current_user.id, state: ['closed','approved','rejected']})
+          = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page,filter: {approver_domain_id: domain_id, processor_id: current_user.id, state: ['closed','approved','rejected']})
     - else
       .inquiries.spinner
       = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {domain_id: current_user.user_domain_id, requester_id:current_user.id})

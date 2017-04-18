@@ -6,19 +6,13 @@ RSpec.describe IndexNodesService do
 
     it "should raise an error if no automation_service is given" do
       compute_service = double('compute_service')
-      expect { IndexNodesService.new(nil, compute_service)}.to raise_error(IndexNodesServiceParamError)
-    end
-
-    it "should raise an error if no compute_service is given" do
-      automation_service = double('automation_service')
-      expect { IndexNodesService.new(automation_service, nil)}.to raise_error(IndexNodesServiceParamError)
+      expect { IndexNodesService.new(nil, )}.to raise_error(IndexNodesServiceParamError)
     end
 
     it "should initialize an object" do
       automation_service = double('automation_service')
-      compute_service = double('compute_service')
-      expect { IndexNodesService.new(automation_service, compute_service)}.not_to raise_error
-      expect(IndexNodesService.new(automation_service, compute_service)).not_to be_nil
+      expect { IndexNodesService.new(automation_service)}.not_to raise_error
+      expect(IndexNodesService.new(automation_service)).not_to be_nil
     end
 
   end
@@ -40,7 +34,7 @@ RSpec.describe IndexNodesService do
       servers = [double('server1', id: "test_1", addresses: addresses), double('server2', id: "test_2", addresses: {})]
       allow(compute_service).to receive(:servers) { servers }
 
-      expect(IndexNodesService.new(automation_service, compute_service).list_nodes_with_jobs(1,5)).to match( {:elements=>[node1, node2], :jobs=>{:test_1=>node1_jobs, :external_node_id=>node2_jobs}, :addresses => {test_1: addresses}, :external_nodes => {:external_node_id => true}} )
+      expect(IndexNodesService.new(automation_service).list_nodes_with_jobs(1,5)).to match( {:elements=>[node1, node2], :jobs=>{:test_1=>node1_jobs, :external_node_id=>node2_jobs}} )
     end
 
   end

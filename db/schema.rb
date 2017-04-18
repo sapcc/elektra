@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170202112736) do
+ActiveRecord::Schema.define(version: 20170322150505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,13 +49,14 @@ ActiveRecord::Schema.define(version: 20170202112736) do
     t.text     "description"
     t.json     "payload"
     t.string   "aasm_state"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.string   "project_id"
     t.string   "domain_id"
     t.json     "callbacks"
     t.integer  "requester_id"
     t.json     "tags"
+    t.string   "approver_domain_id"
   end
 
   create_table "inquiry_inquiries_processors", id: false, force: :cascade do |t|

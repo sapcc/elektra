@@ -1,7 +1,8 @@
 module Inquiry
   class Inquiry < ActiveRecord::Base
     include Filterable
-    paginates_per 10
+    paginates_per 20
+    default_scope { order(updated_at: :desc) } # default sort order
 
     has_many :process_steps, -> { order(:created_at) }, dependent: :destroy
 
@@ -21,6 +22,7 @@ module Inquiry
     scope :processor_id, -> (processor_id) { Inquiry.includes(:processors).where(inquiry_processors: {uid: processor_id}) }
     scope :kind, -> (kind) { where kind: kind }
     scope :domain_id, -> (domain_id) { where domain_id: domain_id }
+    scope :approver_domain_id, -> (approver_domain_id) { where approver_domain_id: approver_domain_id }
     scope :project_id, -> (project_id) { where project_id: project_id }
 
     after_create :transition_to_open
