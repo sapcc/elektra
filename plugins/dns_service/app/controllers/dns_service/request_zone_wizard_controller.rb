@@ -59,7 +59,6 @@ module DnsService
     protected
     def list_ccadmin_master_dns_admins
       cloud_admin_identity = service_user.cloud_admin_service('identity')
-      dns_admin_role = cloud_admin_identity.find_role_by_name('dns_admin') rescue nil
       cloud_dns_admin_role = cloud_admin_identity.find_role_by_name('cloud_dns_admin') rescue nil
 
       @cloud_admin_domain = cloud_admin_identity.domains(name: Rails.configuration.cloud_admin_domain).first
@@ -67,8 +66,7 @@ module DnsService
       @master_project = cloud_admin_identity.projects(name: 'master', domain_id: @cloud_admin_domain.id).first
       return [] unless @master_project
 
-      role_assignments = cloud_admin_identity.role_assignments("scope.project.id" => @master_project.id, "role.id" => dns_admin_role.id, effective: true, include_subtree: true) #rescue []
-      role_assignments.concat cloud_admin_identity.role_assignments("scope.project.id" => @master_project.id, "role.id" => cloud_dns_admin_role.id, effective: true, include_subtree: true)
+      role_assignments = cloud_admin_identity.role_assignments("scope.project.id" => @master_project.id, "role.id" => cloud_dns_admin_role.id, effective: true, include_subtree: true)
       admins = []
 
       user_ids = role_assignments.collect{|ra| ra.user["id"]}.uniq
