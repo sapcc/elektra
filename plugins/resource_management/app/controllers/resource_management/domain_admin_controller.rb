@@ -4,7 +4,7 @@ module ResourceManagement
   class DomainAdminController < ::ResourceManagement::ApplicationController
 
     before_filter :load_project_resource, only: [:edit, :cancel, :update]
-    before_filter :load_domain_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
+    before_filter :load_domain_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota, :cancel, :update]
     before_filter :load_inquiry, only: [:review_request, :approve_request]
     before_filter :load_package_inquiry, only: [:review_package_request, :approve_package_request]
 
@@ -52,15 +52,11 @@ module ResourceManagement
         new_quota = @project_resource.data_type.parse(params.require(:value))
       rescue ArgumentError => e
         render text: e.message, status: :bad_request
+        return
       end
 
       # check if new quota fits within domain quota (TODO: this should be done by Limes)
-      domain = services.resource_management.find_domain(@scoped_domain_id,
-        services: [ @project_resource.service_type.to_s ],
-        resources: [ @project_resource.name.to_s ],
-      )
-      domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "domain resource not found"
-      old_projects_quota = domain_resource.projects_quota
+      old_projects_quota = @domain_resource.projects_quota
       new_projects_quota = old_projects_quota - old_quota + new_quota
 
       if new_quota < 0 or new_projects_quota > domain_resource.quota
@@ -78,6 +74,8 @@ module ResourceManagement
 
       # make sure that row is not rendered with red background color
       @project_resource.backend_quota = nil
+      # make sure that usage bars are rendered with correct quota sum
+      @domain_resource.projects_quota += new_quota - old_quota
 
       respond_to do |format|
         format.js

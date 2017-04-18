@@ -1,6 +1,6 @@
 - data_type = project_resource.data_type
 
-%tr{ class: project_resource.current_quota == project_resource.quota ? '' : 'danger', data: { project: project_resource.project_id } }
+%tr{ class: project_resource.current_quota == project_resource.quota ? '' : 'danger', data: { id: project_resource.project_id } }
   %td.col-md-3
     = project_resource.project_name
     .small.text-muted= project_resource.project_id
@@ -14,5 +14,5 @@
     = data_type.format(project_resource.usage)
   %td.col-md-2
     .resource-actions
-      = link_to 'Edit', plugin('resource_management').admin_edit_path(project: project_resource.project_id, service: project_resource.service_type, resource: project_resource.name), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
+      = link_to 'Edit', plugin('resource_management').admin_edit_path(id: project_resource.project_id, service: project_resource.service_type, resource: project_resource.name), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
 

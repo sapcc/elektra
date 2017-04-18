@@ -26,7 +26,7 @@ module ServiceLayer
     end
 
     # weird naming (given that there is only one cluster), but I'd rather be consistent with above
-    def find_cluster(options={})
+    def find_current_cluster(options={})
       driver.map_to(ResourceManagement::Cluster).get_cluster_data(options)
     end
 

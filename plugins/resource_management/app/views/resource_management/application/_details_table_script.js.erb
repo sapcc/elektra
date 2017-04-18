@@ -6,7 +6,7 @@ function set_approved_quota(button) {
     url: '<%= escape_javascript(plugin('resource_management').send("#{scope}_update_path")) %>',
     dataType: 'script',
     data: {
-      project:  row.data('project'),
+      id:       row.data('id'),
       service:  "<%= escape_javascript(@config.service.catalog_type) %>",
       resource: "<%= escape_javascript(@config.name.to_s) %>",
       value: row.find('.resource-approved-quota-edit').val(),
@@ -20,21 +20,21 @@ function set_approved_quota(button) {
 };
 
 function reset_approved_quota(button) {
-  // project ID is annotated on the row
+  // project/domain ID is annotated on the row
   row = $(button).closest('tr');
 
   $.ajax({
     url: '<%= escape_javascript(plugin('resource_management').send("#{scope}_cancel_path")) %>',
     dataType: 'script',
     data: {
-      project:  row.data('project'),
+      id:       row.data('id'),
       service:  "<%= escape_javascript(@config.service.catalog_type) %>",
       resource: "<%= escape_javascript(@config.name.to_s) %>",
     }
   });
 };
 
-function update_resource_row(scope, id, row_html) {
+function update_resource_row(id, row_html) {
   //replace the existing row with the new one
-  $('.resource-details tr[data-' + scope + '="' + id + '"]').replaceWith(row_html);
+  $('.resource-details tr[data-id="' + id + '"]').replaceWith(row_html);
 }

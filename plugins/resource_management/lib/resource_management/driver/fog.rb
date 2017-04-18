@@ -66,13 +66,13 @@ module ResourceManagement
         end
 
         project_resources.group('domain_id,service,name').pluck('domain_id,service,name,SUM(approved_quota),SUM(GREATEST(COALESCE(current_quota, 0), 0)),MIN(updated_at),MAX(updated_at)').each do |values|
-          domain_id, service_type, resource_name, sum_approved, sum_nonzero_current, min_updated_at,max_updated_at = values
+          this_domain_id, service_type, resource_name, sum_approved, sum_nonzero_current, min_updated_at,max_updated_at = values
 
           service_type = service_type.to_sym
           resource_name = resource_name.to_sym
           resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
           next unless resource_config # ignore dummy resources
-          _, service, resource = locate_entity_service_resource(domains, domain_id, nil, resource_config)
+          _, service, resource = locate_entity_service_resource(domains, this_domain_id, nil, resource_config)
 
           service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
           service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
@@ -82,13 +82,13 @@ module ResourceManagement
         end
 
         project_resources.where('current_quota < 0').group('domain_id,service,name').pluck('domain_id,service,name').each do |values|
-          domain_id, service_type, resource_name = values
+          this_domain_id, service_type, resource_name = values
 
           service_type = service_type.to_sym
           resource_name = resource_name.to_sym
           resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
           next unless resource_config # ignore dummy resources
-          _, _, resource = locate_entity_service_resource(domains, domain_id, resource_config)
+          _, _, resource = locate_entity_service_resource(domains, this_domain_id, nil, resource_config)
 
           resource[:infinite_backend_quota] = true
         end

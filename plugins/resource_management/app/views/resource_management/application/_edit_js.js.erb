@@ -1,4 +1,4 @@
-var row = $('.resource-details tr[data-<%= scope %>="<%= id %>"]');
+var row = $('.resource-details tr[data-id="<%= id %>"]');
 row.find('.resource-approved-quota').html('<input type="text" class="form-control resource-approved-quota-edit" value="<%= value %>" autofocus>');
 row.find('.resource-actions').html("<%= escape_javascript( render partial: 'edit_buttons')%>")
 
