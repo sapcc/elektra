@@ -47,7 +47,8 @@
     .container
       .content{class: "#{plugin_name if plugin_name}"}
         = render "application/help_text"
-        = render "application/flashes"
+        .flashes
+          = render "application/flashes"
         = yield
 
 

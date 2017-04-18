@@ -47,7 +47,8 @@
 
     .container
       .content
-        = render "application/flashes"
+        .flashes
+          = render "application/flashes"
         = yield
 
     %footer.footer
