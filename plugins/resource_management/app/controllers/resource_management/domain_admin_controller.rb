@@ -340,7 +340,7 @@ module ResourceManagement
 
     def load_project_resource
       project = services.resource_management.find_project(
-        @scoped_domain_id, params.require(:project),
+        @scoped_domain_id, params.require(:id),
         services: [ params.require(:service) ],
         resources: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "project #{params[:project]} not found"
