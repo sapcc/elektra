@@ -176,7 +176,7 @@ module ResourceManagement
         project_resource = @project.find_resource(cfg)
 
         new_projects_quota = domain_resource.projects_quota - project_resource.quota + cfg.value_for_package(@package)
-        if new_projects_quota > domain_resource.quota
+        if new_projects_quota > domain_resource.projects_quota and new_projects_quota > domain_resource.quota
           @can_approve = false
         end
 
