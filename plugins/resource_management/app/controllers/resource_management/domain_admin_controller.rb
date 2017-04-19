@@ -47,6 +47,8 @@ module ResourceManagement
     end
 
     def update
+      @domain_resource = @resource # XXX cleanup
+
       old_quota = @project_resource.quota
       begin
         new_quota = @project_resource.data_type.parse(params.require(:value))
@@ -59,8 +61,8 @@ module ResourceManagement
       old_projects_quota = @domain_resource.projects_quota
       new_projects_quota = old_projects_quota - old_quota + new_quota
 
-      if new_quota < 0 or new_projects_quota > domain_resource.quota
-        max_value = domain_resource.quota - old_projects_quota + old_quota
+      if new_quota < 0 or new_projects_quota > @domain_resource.quota
+        max_value = @domain_resource.quota - old_projects_quota + old_quota
         msg = "Domain quota for #{@project_resource.service}/#{@project_resource.name} exceeded (maximum acceptable project quota is #{@project_resource.data_type.format(max_value)})"
         render text: msg, status: :bad_request
         return
