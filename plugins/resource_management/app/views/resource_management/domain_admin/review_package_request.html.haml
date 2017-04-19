@@ -5,6 +5,9 @@
   =hidden_field_tag :inquiry_id, params[:inquiry_id]
 
   %div{class: modal? ? 'modal-body' : ''}
+    - unless (@errors || []).empty?
+      %p.alert.alert-error= @errors.full_messages.to_sentence
+
     %p
       The project
       %strong= @target_project_name

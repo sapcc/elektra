@@ -1,6 +1,8 @@
 module ResourceManagement
   class Project < Core::ServiceLayer::Model
 
+    validate :validate_resources
+
     def name
       read(:name)
     end
@@ -30,7 +32,7 @@ module ResourceManagement
     end
 
     def save
-      return resources.all?(&:valid?) && perform_update
+      return self.valid? && perform_update
     end
 
     def perform_update
@@ -46,6 +48,15 @@ module ResourceManagement
     # TODO: remove this after the switch to Limes
     def services_with_error
       return @services_with_error || []
+    end
+
+    private
+
+    def validate_resources
+      resources.each do |res|
+        next if res.valid?
+        errors.add("resource #{res.service_type}/#{res.name}", "is broken: #{res.errors.full_messages.to_sentence}")
+      end
     end
 
   end

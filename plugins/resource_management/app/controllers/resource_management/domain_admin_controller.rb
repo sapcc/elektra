@@ -198,6 +198,10 @@ module ResourceManagement
         @services_with_error = @project.services_with_error
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, 'Approved')
         render action: 'approve_request'
+      else
+        @errors = @project.errors
+        review_package_request
+        render action: 'review_package_request'
       end
     end
 
