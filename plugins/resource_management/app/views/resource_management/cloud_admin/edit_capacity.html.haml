@@ -14,7 +14,7 @@
         = f.input :capacity, label: 'Available capacity'
       - else
         - previous_value = params[:new_style_resource] ? params[:new_style_resource][:capacity] : nil
-        = f.input :capacity, label: 'Available capacity', as: :string, input_html: { value: previous_value || @cluster_resource.data_type.format(@cluster_resource.capacity) }
+        = f.input :capacity, label: 'Available capacity', as: :string, input_html: { value: previous_value || @cluster_resource.capacity.try { |val| @cluster_resource.data_type.format(val) } || '' }
       = f.input :comment, label: 'How did you arrive at this value?'
 
     %div.buttons{class: modal? ? 'modal-footer' : ''}
