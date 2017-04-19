@@ -130,6 +130,7 @@ module ResourceManagement
     end
 
     def approve_request
+      old_quota = @project_resource.quota
       begin
         @desired_quota = @project_resource.data_type.parse(params.require(:new_style_resource).require(:quota))
       rescue => e
@@ -143,11 +144,7 @@ module ResourceManagement
         @project_resource.add_validation_error(:quota, "is too large (would exceed total domain quota), maximum acceptable project quota is #{max_quota_str}")
       end
 
-      # do not even attempt to edit the @project_resource when we know the value to be invalid (this
-      # would break the re-rendering of the "review_request" view)
-      if @project_resource.valid?
-        @project_resource.quota = @desired_quota
-      end
+      @project_resource.quota = @desired_quota
 
       if @project_resource.save
         comment = "New project quota is #{@project_resource.data_type.format(@project_resource.quota)}"
@@ -157,6 +154,7 @@ module ResourceManagement
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
         @services_with_error = @project_resource.services_with_error
       else
+        @project_resource.quota = old_quota # reset quota to render view correctly
         self.review_request
         render action: 'review_request'
       end
