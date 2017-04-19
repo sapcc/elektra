@@ -1,8 +1,9 @@
-.flashes
-  - flash.each do |key, value|
-    - key = key.to_s.downcase
-    - if ['success', 'info', 'warning', 'danger'].include? key
-      = render partial: 'application/flash_dismissible', locals: {key: key, value: value}
-    - else
-      - key = key.start_with?('default_') ? key.sub(/^default_/, '') : key
-      = render partial: 'application/flash', locals: {key: key, value: value}
+- flash.each do |key, value|
+  - key = key.to_s.downcase
+  - types = ['success', 'info', 'notice', 'warning', 'danger', 'alert', 'error']
+  - if types.include? key
+    = render partial: 'application/flash_dismissible', locals: {key: key, value: value}
+  - elsif key.start_with?('keep_') && types.include?(key.sub(/^keep_/, ''))
+    = render partial: 'application/flash_dismissible', locals: {key: key.sub(/^keep_/, ''), value: value, keep: true}
+  - else
+    = render partial: 'application/flash_default', locals: {key: key.sub(/^default_/, ''), value: value}

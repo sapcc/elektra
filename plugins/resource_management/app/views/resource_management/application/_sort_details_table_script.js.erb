@@ -3,7 +3,7 @@ $(function() {
   var current_sort_order = "<%= @sort_order %>";
   var sort_column = "<%= @sort_column %>";
   var sort_type = "amount";
-  if (sort_column == "scope_name_column") {sort_type = "alpha"}
+  if (sort_column == "sortable_name_column") {sort_type = "alpha"}
   
   if (current_sort_order == 'desc') {
     $("#"+sort_column).find('i').removeClass( "fa-sort-"+sort_type+"-asc" );
@@ -42,8 +42,8 @@ $(function() {
       data: { 
         sort_order: sort_order,
         sort_column: $(this).attr('id'),
-        service: "<%= @service %>",
-        resource: "<%= @resource %>",
+        service: "<%= @config.service.catalog_type %>",
+        resource: "<%= @config.name %>",
       },
       dataType: 'script',
     });

@@ -4,16 +4,17 @@ module Core
       # this class maps the response to a given container class
       # e.g. list_domains -> [Indentity::Domain], get_domain -> Indentity::Domain
       class Mapper
-        def initialize(driver,klass)
+        def initialize(driver,klass,additional_attributes={})
           @driver=driver
           @klass=klass
+          @additional_attributes = additional_attributes
         end
 
         def map(response)
           if response.is_a?(Array)
-            response.collect{|attributes| @klass.new(@driver,attributes)}
+            response.collect{|attributes| @klass.new(@driver,attributes.merge(@additional_attributes))}
           else
-            @klass.new(@driver,response)
+            @klass.new(@driver,response.merge(@additional_attributes))
           end
         end
 
@@ -53,11 +54,11 @@ module Core
         end
 
         # use a mapper for response
-        def map_to(klass)
+        def map_to(klass, additional_attributes={})
           unless (klass<=Core::ServiceLayer::Model)
             raise Core::ServiceLayer::Errors::BadMapperClass.new("#{klass} is not a subclass of Core::ServiceLayer::Model")
           end
-          Mapper.new(self,klass)
+          Mapper.new(self,klass,additional_attributes)
         end
       end
     end

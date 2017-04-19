@@ -1,0 +1,135 @@
+module ResourceManagement
+  class NewStyleResource < Core::ServiceLayer::Model
+    include ManualValidation
+
+    validates_presence_of :quota, unless: :cluster_id
+    validate :validate_quota
+    validates_presence_of :comment, if: Proc.new { |res| res.capacity.try(:>, 0) }
+
+    def name
+      read(:name).to_sym
+    end
+
+    def service_type
+      read(:service_type)
+    end
+
+    def config
+      return @config unless @config.nil?
+      name = read(:name).to_sym
+      type = read(:service_type).to_s
+      return @config = ResourceManagement::ResourceConfig.all.find do |res|
+        res.name == name && res.service.catalog_type == type
+      end
+    end
+
+    def data_type
+      Core::DataType.from_unit_name(read(:unit) || '')
+    end
+
+    def project_id
+      read(:project_id)
+    end
+    def project_name
+      read(:project_name)
+    end
+    def project_domain_id
+      read(:project_domain_id)
+    end
+    def domain_id
+      read(:domain_id)
+    end
+    def domain_name
+      read(:domain_name)
+    end
+    def cluster_id
+      read(:cluster_id)
+    end
+    def sortable_name
+      (project_name or domain_name or cluster_id).downcase
+    end
+
+    def usage
+      read(:usage) || 0
+    end
+
+    # domain and project only
+    def quota
+      read(:quota) || 0
+    end
+    def backend_quota
+      read(:backend_quota) || nil
+    end
+
+    # project only
+    def current_quota
+      read(:backend_quota) || quota
+    end
+
+    # domain only
+    def projects_quota
+      read(:projects_quota) || 0
+    end
+    def infinite_backend_quota?
+      read(:infinite_backend_quota) || false
+    end
+
+    # cluster only
+    def capacity
+      c = read(:capacity)
+      return (c && c >= 0) ? c : nil
+    end
+    def comment
+      return nil if capacity.nil?
+      read(:comment) || nil
+    end
+    def domains_quota
+      read(:domains_quota) || 0
+    end
+
+    def save
+      return self.valid? && perform_update
+    end
+
+    def perform_update
+      services = [{
+        type: service_type,
+        resources: [{
+          name:     name,
+          quota:    read(:quota),
+          capacity: read(:capacity),
+          comment:  read(:comment),
+        }.reject { |_,v| v.nil? }],
+      }]
+      if project_id and project_domain_id
+        @services_with_error = @driver.put_project_data(project_domain_id, project_id, services)
+      elsif domain_id
+        @driver.put_domain_data(domain_id, services)
+      elsif cluster_id
+        @driver.put_cluster_data(services)
+      else
+        raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
+      end
+    end
+
+    # TODO: remove this after the switch to Limes
+    def services_with_error
+      return @services_with_error || []
+    end
+
+    def clone
+      return self.class.new(@driver, attributes.clone)
+    end
+
+    private
+
+    def validate_quota
+      if project_id
+        errors.add(:quota, 'is below usage') if usage > quota
+      elsif domain_id
+        errors.add(:quota, 'is less than sum of project quotas') if projects_quota > quota
+      end
+    end
+
+  end
+end

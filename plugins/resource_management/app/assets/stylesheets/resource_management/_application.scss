@@ -65,3 +65,14 @@ table.package-comparison {
 .hide-sort-order {
   display:none;
 }
+
+/**********************************************************************/
+/* new stuff */
+
+.quota-warning {
+  font-size: 80%;
+
+  & > .fa-warning {
+    margin-right: 0.5em;
+  }
+}

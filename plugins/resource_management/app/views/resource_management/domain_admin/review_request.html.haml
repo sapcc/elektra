@@ -1,18 +1,18 @@
 = content_for :title do
-  Review Request for more: #{t("resource_management.#{@project_resource.service}")} &gt; #{t("resource_management.#{@project_resource.name}")}
+  Review Request for more: #{t("resource_management.#{@project_resource.config.service.name}")} &gt; #{t("resource_management.#{@project_resource.name}")}
 
 = simple_form_for @project_resource, url: plugin('resource_management').admin_approve_request_path, method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
   =hidden_field_tag :inquiry_id, params[:inquiry_id]
 
   %div{class: modal? ? 'modal-body' : ''}
     #usage_bars
-      = render partial: 'details_usage_bar'
+      = render partial: 'details_usage_bar', locals: { resource: @domain_resource }
 
     %p
       The project
       %strong= @project_name
       requests that their quota be extended from
-      %strong= @project_resource.data_type.format(@project_resource.approved_quota)
+      %strong= @project_resource.data_type.format(@project_resource.quota)
       to
       = succeed '.' do
         %strong>= @project_resource.data_type.format(@desired_quota)
@@ -20,7 +20,7 @@
 
     .row
       .col-md-2.quota-label.text-muted Preview
-      .col-md-9= render partial: 'bar', locals: { data: @domain_status_new, render_quota: true }
+      .col-md-9= render partial: 'bar', locals: { resource: @domain_resource_projected }
 
     - if @desired_quota > @maximum_quota
       %p.text-danger{style:"margin-top:1rem"}
@@ -28,15 +28,18 @@
         %strong= @project_resource.data_type.format(@maximum_quota)
         or less.
 
+    - unless @project_resource.errors.empty?
+      %p.alert.alert-error= @project_resource.errors.full_messages.to_sentence
+
     %fieldset
-      - previous_value = params[:resource] ? params[:resource][:approved_quota] : nil
+      - previous_value = params[:new_style_resource] ? params[:new_style_resource][:quota] : nil
       - if @project_resource.data_type.to_sym == :number
-        = f.input :approved_quota, label: 'New project quota', input_html: { value: previous_value || @desired_quota }
+        = f.input :quota, label: 'New project quota', input_html: { value: previous_value || @desired_quota }
       - else
         - requested_value = @project_resource.data_type.format(@desired_quota)
-        = f.input :approved_quota, label: 'New project quota', as: :string, input_html: { value: previous_value || requested_value }
+        = f.input :quota, label: 'New project quota', as: :string, input_html: { value: previous_value || requested_value }
 
-      - previous_comment = params[:resource] ? params[:resource][:comment] : nil
+      - previous_comment = params[:new_style_resource] ? params[:new_style_resource][:comment] : nil
       = f.input :comment, label: 'Comment', as: :string, input_html: { value: previous_comment, placeholder: 'Optional'}
 
   .buttons{class: modal? ? 'modal-footer' : ''}

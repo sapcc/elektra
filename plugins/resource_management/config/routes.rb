@@ -45,8 +45,8 @@ ResourceManagement::Engine.routes.draw do
     get  'review_request'  => 'cloud_admin#review_request'
     post 'approve_request' => 'cloud_admin#approve_request'
 
-    get 'capacity/:id' => 'cloud_admin#edit_capacity',   as: 'edit_capacity'
-    put 'capacity/:id' => 'cloud_admin#update_capacity', as: 'update_capacity'
+    get 'capacity' => 'cloud_admin#edit_capacity',   as: 'edit_capacity'
+    put 'capacity' => 'cloud_admin#update_capacity', as: 'update_capacity'
   end
 
   scope 'automation', as: 'automation' do

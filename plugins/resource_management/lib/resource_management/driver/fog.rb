@@ -21,11 +21,9 @@ module ResourceManagement
         projects = []
         resources.each do |res|
           next unless res.config # ignore dummy resources
-          _, service, resource = locate_entity_service_resource(projects, res.project_id, res.config)
+          _, service, resource = locate_entity_service_resource(projects, res.project_id, res.scope_name, res.config)
 
           service[:scraped_at] = res.updated_at.to_i
-          unit_name = res.config.data_type.unit_name
-          resource[:unit]  = unit_name if unit_name != ""
           resource[:quota] = res.approved_quota
           resource[:usage] = res.usage
           if res.current_quota != res.approved_quota
@@ -36,8 +34,7 @@ module ResourceManagement
         if project_id.nil?
           return projects
         else
-          raise Excon::Errors::NotFound, "project #{project_id} not found" if projects.empty?
-          return projects.first
+          return projects.empty? ? { id: project_id, services: [] } : projects.first
         end
       end
 
@@ -54,7 +51,7 @@ module ResourceManagement
         domains = []
         domain_resources.each do |res|
           next unless res.config # ignore dummy resources
-          _, _, resource = locate_entity_service_resource(domains, res.domain_id, res.config)
+          _, _, resource = locate_entity_service_resource(domains, res.domain_id, res.scope_name, res.config)
           resource[:quota] = res.approved_quota
           resource[:usage] = 0
           resource[:projects_quota] = 0
@@ -68,13 +65,13 @@ module ResourceManagement
         end
 
         project_resources.group('domain_id,service,name').pluck('domain_id,service,name,SUM(approved_quota),SUM(GREATEST(COALESCE(current_quota, 0), 0)),MIN(updated_at),MAX(updated_at)').each do |values|
-          domain_id, service_type, resource_name, sum_approved, sum_nonzero_current, min_updated_at,max_updated_at = values
+          this_domain_id, service_type, resource_name, sum_approved, sum_nonzero_current, min_updated_at,max_updated_at = values
 
           service_type = service_type.to_sym
           resource_name = resource_name.to_sym
           resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
           next unless resource_config # ignore dummy resources
-          _, service, resource = locate_entity_service_resource(domains, domain_id, resource_config)
+          _, service, resource = locate_entity_service_resource(domains, this_domain_id, nil, resource_config)
 
           service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
           service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
@@ -84,13 +81,13 @@ module ResourceManagement
         end
 
         project_resources.where('current_quota < 0').group('domain_id,service,name').pluck('domain_id,service,name').each do |values|
-          domain_id, service_type, resource_name = values
+          this_domain_id, service_type, resource_name = values
 
           service_type = service_type.to_sym
           resource_name = resource_name.to_sym
           resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
           next unless resource_config # ignore dummy resources
-          _, _, resource = locate_entity_service_resource(domains, domain_id, resource_config)
+          _, _, resource = locate_entity_service_resource(domains, this_domain_id, nil, resource_config)
 
           resource[:infinite_backend_quota] = true
         end
@@ -98,14 +95,128 @@ module ResourceManagement
         if domain_id.nil?
           return domains
         else
-          raise Excon::Errors::NotFound, "domain #{domain_id} not found" if domains.empty?
-          return domains.first
+          return domains.empty? ? { id: domain_id, services: [] } : domains.first
+        end
+      end
+
+      def get_cluster_data(options={})
+        resources = ResourceManagement::Resource
+        resources = resources.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        resources = resources.where(name: options[:resources]) if options[:resources]
+
+        clusters = []
+
+        resources.where(project_id: nil).where.not(domain_id: nil).group('service,name').pluck('service,name,SUM(approved_quota)').each do |values|
+          service_type, resource_name, domains_quota = values
+
+          service_type = service_type.to_sym
+          resource_name = resource_name.to_sym
+          resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
+          next unless resource_config # ignore dummy resources
+          _, _, resource = locate_entity_service_resource(clusters, "ccloud", nil, resource_config)
+
+          resource[:domains_quota] = domains_quota
+        end
+
+        resources.where.not(project_id: nil).group('service,name').pluck('service,name,SUM(usage),MIN(updated_at),MAX(updated_at)').each do |values|
+          service_type, resource_name, projects_usage, min_updated_at, max_updated_at = values
+
+          service_type = service_type.to_sym
+          resource_name = resource_name.to_sym
+          resource_config = ResourceManagement::ResourceConfig.all.find { |r| r.service_name == service_type && r.name == resource_name }
+          next unless resource_config # ignore dummy resources
+          _, service, resource = locate_entity_service_resource(clusters, "ccloud", nil, resource_config)
+
+          service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
+          service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
+          resource[:usage] = projects_usage
+        end
+
+        capacities = ResourceManagement::Capacity
+        capacities = capacities.where(service: limes_services_to_frontend_services(options[:services])) if options[:services]
+        capacities = capacities.where(resource: options[:capacities]) if options[:capacities]
+        if capacities.is_a?(Class)
+          capacities = capacities.all
+        end
+
+        capacities.each do |capacity|
+          next unless capacity.config # ignore dummy capacities (are there any?)
+          _, _, resource = locate_entity_service_resource(clusters, "ccloud", nil, capacity.config)
+
+          if capacity.value >= 0
+            resource[:capacity] = capacity.value
+            resource[:comment]  = capacity.comment.presence || 'unknown'
+          end
+        end
+
+        return clusters.first
+      end
+
+      def put_project_data(domain_id, project_id, services)
+        quotas = {}
+
+        ResourceManagement::Resource.where(domain_id: domain_id, project_id: project_id).each do |db_res|
+          cfg = db_res.config
+          srv = services.find { |s| s[:type] == cfg.service.catalog_type.to_sym } or next
+          res = srv[:resources].find { |r| r[:name] == cfg.name }                 or next
+
+          db_res.approved_quota = res[:quota]
+          db_res.current_quota  = res[:quota]
+          next unless db_res.changed?
+          db_res.save!
+
+          quotas[db_res.service] ||= {}
+          quotas[db_res.service][db_res.name.to_sym] = res[:quota]
+        end
+
+        services_with_error = []
+        quotas.each do |service, values|
+          begin
+            set_project_quota(domain_id, project_id, service, values)
+          rescue
+            services_with_error.append(service.to_s)
+          end
+        end
+        return services_with_error
+      end
+
+      def put_domain_data(domain_id, services)
+        ResourceManagement::Resource.where(domain_id: domain_id, project_id: nil).each do |db_res|
+          cfg = db_res.config
+          srv = services.find { |s| s[:type].to_s == cfg.service.catalog_type }   or next
+          res = srv[:resources].find { |r| r[:name].to_sym == cfg.name }          or next
+
+          db_res.approved_quota = res[:quota]
+          db_res.save! if db_res.changed?
+        end
+      end
+
+      def put_cluster_data(services)
+        services.each do |service|
+          service_type = service[:type].to_s
+          service[:resources].each do |resource|
+            resource_name = resource[:name].to_sym
+            cfg = ResourceManagement::ResourceConfig.all.find { |r| r.name == resource_name and r.service.catalog_type == service_type }
+            next unless cfg
+
+            capacity = ResourceManagement::Capacity.where(
+              service:  cfg.service.name.to_s,
+              resource: cfg.name.to_s,
+            ).first_or_create(
+              value:   resource[:capacity],
+              comment: resource[:comment],
+            )
+
+            capacity.value   = resource[:capacity]
+            capacity.comment = resource[:comment]
+            capacity.save if capacity.changed?
+          end
         end
       end
 
       private
 
-      def locate_entity_service_resource(entities, entity_id, resource_config)
+      def locate_entity_service_resource(entities, entity_id, entity_name, resource_config)
         entity = entities.find { |e| e[:id] == entity_id }
         if entity.nil?
           entity = { id: entity_id, services: [] }
@@ -124,6 +235,11 @@ module ResourceManagement
           resource = { name: resource_config.name }
           service[:resources].append(resource)
         end
+
+        entity[:name] = entity_name unless entity_name.nil?
+
+        unit_name = resource_config.data_type.unit_name
+        resource[:unit]  = unit_name if unit_name != ""
 
         return entity, service, resource
       end

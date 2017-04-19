@@ -1,6 +1,0 @@
-- flash.each_with_index do |(key,value),index|
-  %div{class: "alert alert-#{key.to_s} alert-dismissible word-wrap", 'role' => 'alert'}
-    %button.close{type:'button', data: {dismiss: 'alert'}, "aria-label" => "Close"}
-      %span{'aria-hidden' => 'true'}
-        &times;
-    = value.html_safe

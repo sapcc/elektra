@@ -7,10 +7,10 @@
       %th Usage
       %th Actions
   %tbody
-    - @domains.each do |domain_status|
-      = render partial: 'details_table_row', locals: { domain_status: domain_status }
+    - @domain_resources.each do |resource|
+      = render partial: 'details_table_row', locals: { resource: resource }
 
-= paginate @domains, theme: 'twitter-bootstrap-3', remote: true
+= paginate @domain_resources, theme: 'twitter-bootstrap-3', remote: true
 
 = content_for :javascripts do
   :javascript
