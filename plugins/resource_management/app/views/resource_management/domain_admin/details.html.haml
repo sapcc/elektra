@@ -1,5 +1,5 @@
 = content_for(:title, "Details for resource: #{t("resource_management.#{@config.service.name}")} > #{t("resource_management.#{@config.name}")}")
-.modal-body
+.modal-body.clearfix
   %p.alert.alert-danger{style: "display:none"}
   #usage_bars= render partial: "details_usage_bar"
 
