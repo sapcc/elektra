@@ -7,17 +7,17 @@ module ResourceManagement
 
       def initialize(params_or_driver)
           super(params_or_driver)
-          @misty = ::Misty::Cloud.new(:auth => misty_auth_params, :region_id => @region, :log_level => 2, :ssl_verify_mode => false)
+          @misty = ::Misty::Cloud.new(:auth => misty_auth_params, :region_id => @region, :log_level => 2, :ssl_verify_mode => false, :http_proxy => ENV['http_proxy'])
       end
 
       def get_project_data(domain_id, project_id=nil, options={})
-
-        query = Excon::Utils.query_string(query:options).sub!(/^\?/, '')
-
+        
+        # need to check nil query because nil is not working as optional parameter in misty
+        query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
+        
         if project_id.nil?
-          # need to check nil query because nil is not working as optional parameter in misty
           handle_response do
-            if query.nil?
+            if query.empty?
               @misty.resources.get_projects(domain_id).body['projects']
             else
               @misty.resources.get_projects(domain_id,query).body['projects']
@@ -25,7 +25,7 @@ module ResourceManagement
           end
         else
           handle_response do
-            if query.nil?
+            if query.empty?
               @misty.resources.get_project(domain_id,project_id).body['project']
             else
               @misty.resources.get_project(domain_id,project_id,query).body['project']
@@ -36,21 +36,35 @@ module ResourceManagement
       end
 
       def get_domain_data(domain_id=nil, options={})
-        query = Excon::Utils.query_string(query:options).sub!(/^\?/, '')
+        
         # need to check nil query because nil is not working as optional parameter in misty
+        query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
+        
         if domain_id.nil?
-          if query.nil?
+          if query.empty?
             @misty.resources.get_domains.body['domains']
           else
-            @misty.resources.get_domain(query).body['domains']
+            @misty.resources.get_domains(query).body['domains']
           end
         else
-          if query.nil?
+          if query.empty?
             @misty.resources.get_domain(domain_id).body['domain']
           else
             @misty.resources.get_domain(domain_id,query).body['domain']
           end
         end
+      end
+
+      def get_cluster_data(options={})
+        
+        # need to check nil query because nil is not working as optional parameter in misty
+        query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
+        if query.empty?
+          @misty.resources.get_current_cluster.body['cluster']
+        else
+          @misty.resources.get_current_cluster(query).body['cluster']
+        end
+        
       end
 
     end
