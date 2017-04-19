@@ -369,6 +369,8 @@ module ResourceManagement
       data = @inquiry.payload.symbolize_keys
       raise ArgumentError, "inquiry #{@inquiry.id} has not been migrated to new format!" if data.include?(:resource_id)
 
+      services.resource_management.ensure_project_synced(@scoped_domain_id, @inquiry.project_id)
+
       @project_resource = services.resource_management.find_project(
         @scoped_domain_id, @inquiry.project_id,
         services:  [ data[:service]  ],
@@ -395,11 +397,7 @@ module ResourceManagement
       # load additional data
       @package = @inquiry.payload.symbolize_keys[:package]
 
-      # if project resources have not been created yet, do so now
-      project_resources = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @inquiry.project_id)
-      if project_resources.where.not(service: 'resource_management').count == 0
-        services.resource_management.sync_project(@scoped_domain_id, @target_project_id)
-      end
+      services.resource_management.ensure_project_synced(@scoped_domain_id, @inquiry.project_id)
     end
 
   end

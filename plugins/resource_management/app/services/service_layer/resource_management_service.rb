@@ -290,6 +290,14 @@ module ServiceLayer
       end
     end
 
+    # Ensure that Resource records for this project have been synced at least once.
+    def ensure_project_synced(domain_id, project_id, project_name=nil)
+      project_resources = ResourceManagement::Resource.where(domain_id: domain_id, project_id: project_id)
+      if project_resources.where.not(service: 'resource_management').count == 0
+        sync_project(domain_id, project_id)
+      end
+    end
+
     # Update Resource entries for the given project with fresh current_quota
     # and usage values (and create missing Resource entries as necessary).
     def sync_project(domain_id, project_id, project_name=nil)

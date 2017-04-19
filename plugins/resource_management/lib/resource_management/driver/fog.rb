@@ -34,8 +34,7 @@ module ResourceManagement
         if project_id.nil?
           return projects
         else
-          raise Excon::Errors::NotFound, "project #{project_id} not found" if projects.empty?
-          return projects.first
+          return projects.empty? ? { id: project_id, services: [] } : projects.first
         end
       end
 
@@ -96,8 +95,7 @@ module ResourceManagement
         if domain_id.nil?
           return domains
         else
-          raise Excon::Errors::NotFound, "domain #{domain_id} not found" if domains.empty?
-          return domains.first
+          return domains.empty? ? { id: domain_id, services: [] } : domains.first
         end
       end
 
