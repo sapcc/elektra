@@ -139,10 +139,7 @@ module ResourceManagement
 
     def initial_sync
       # do the magic inital sync for the package request from project wizard
-      synced = ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).where.not(service: 'resource_management').size > 0
-      unless synced
-        sync_now(true)
-      end
+      services.resource_management.ensure_project_synced(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
       render :nothing => true, :status => 200, :content_type => 'text/html'
     end
 
@@ -190,14 +187,12 @@ module ResourceManagement
       end
     end
 
-    def sync_now(direct = false)
+    def sync_now
       services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
-      unless direct
-        begin
-          redirect_to :back
-        rescue ActionController::RedirectBackError
-          redirect_to resources_path()
-        end
+      begin
+        redirect_to :back
+      rescue ActionController::RedirectBackError
+        redirect_to resources_path()
       end
     end
 

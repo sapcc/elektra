@@ -294,7 +294,7 @@ module ServiceLayer
     def ensure_project_synced(domain_id, project_id, project_name=nil)
       project_resources = ResourceManagement::Resource.where(domain_id: domain_id, project_id: project_id)
       if project_resources.where.not(service: 'resource_management').count == 0
-        sync_project(domain_id, project_id)
+        sync_project(domain_id, project_id, project_name)
       end
     end
 
