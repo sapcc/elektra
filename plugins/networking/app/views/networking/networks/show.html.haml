@@ -73,12 +73,14 @@
         %tbody
           %tr
             %th Name
+            %th ID
             %th CIDR
             %th Gateway IP
             %th Actions
           - @subnets.each do |subnet|
             %tr
               %td= subnet.name
+              %td= subnet.id
               %td= subnet.cidr
               %td= subnet.gateway_ip
               %td

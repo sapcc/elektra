@@ -26,9 +26,6 @@
           input_html: { value: @subnet.try(:name) } }
         = subnets.input :cidr, { label: "#{Networking::Subnet.human_attribute_name(:cidr)}",
           input_html: { value: @subnet.try(:cidr), placeholder: "Must be within #{@network_type=='private' ? '10.180.0.0/16' : '10.44.32.0/24'} range!" } }
-        = subnets.input :enable_dhcp, { label: "#{Networking::Subnet.human_attribute_name(:enable_dhcp)}",
-            as: :boolean, input_html: { checked: @subnet.try(:enable_dhcp) },  wrapper: :horizontal_boolean_4x8 }
-
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

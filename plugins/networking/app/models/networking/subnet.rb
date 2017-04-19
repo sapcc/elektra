@@ -13,8 +13,7 @@ module Networking
         "name" => name,
         "ip_version" => ip_version,
         "cidr" => cidr,
-        "network_id" => network_id,
-        "enable_dhcp" => ["1","true",1,true].include?(enable_dhcp)
+        "network_id" => network_id
       }.delete_if { |k, v| v.nil? }
     end
 
