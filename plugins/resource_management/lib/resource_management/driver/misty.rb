@@ -14,17 +14,15 @@ module ResourceManagement
         
         # need to check nil query because nil is not working as optional parameter in misty
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
-        
-        if project_id.nil?
-          handle_response do
+
+        handle_response do
+          if project_id.nil?
             if query.empty?
               @misty.resources.get_projects(domain_id).body['projects']
             else
               @misty.resources.get_projects(domain_id,query).body['projects']
             end
-          end
-        else
-          handle_response do
+          else
             if query.empty?
               @misty.resources.get_project(domain_id,project_id).body['project']
             else
@@ -39,18 +37,19 @@ module ResourceManagement
         
         # need to check nil query because nil is not working as optional parameter in misty
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
-        
-        if domain_id.nil?
-          if query.empty?
-            @misty.resources.get_domains.body['domains']
+        handle_response do
+          if domain_id.nil?
+            if query.empty?
+              @misty.resources.get_domains.body['domains']
+            else
+              @misty.resources.get_domains(query).body['domains']
+            end
           else
-            @misty.resources.get_domains(query).body['domains']
-          end
-        else
-          if query.empty?
-            @misty.resources.get_domain(domain_id).body['domain']
-          else
-            @misty.resources.get_domain(domain_id,query).body['domain']
+            if query.empty?
+              @misty.resources.get_domain(domain_id).body['domain']
+            else
+              @misty.resources.get_domain(domain_id,query).body['domain']
+            end
           end
         end
       end
@@ -59,12 +58,28 @@ module ResourceManagement
         
         # need to check nil query because nil is not working as optional parameter in misty
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
-        if query.empty?
-          @misty.resources.get_current_cluster.body['cluster']
-        else
-          @misty.resources.get_current_cluster(query).body['cluster']
+        handle_response do
+          if query.empty?
+            @misty.resources.get_current_cluster.body['cluster']
+          else
+            @misty.resources.get_current_cluster(query).body['cluster']
+          end
         end
         
+      end
+
+      def put_project_data(domain_id, project_id, services)
+        handle_response do
+          @misty.resources.set_quota_for_project(domain_id,project_id, :project => {:services => services})
+        end
+        # FIXME: related to @services_with_error, can be removed when we remove the old code
+        return []
+      end
+      
+      def put_domain_data(domain_id, services)
+      end
+      
+      def put_cluster_data(services)
       end
 
     end
