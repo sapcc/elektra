@@ -87,6 +87,11 @@ module ResourceManagement
       end
        
       def put_cluster_data(services)
+        handle_response do
+          @misty.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
+        end
+        # FIXME: related to @services_with_error, can be removed when we remove the old code
+        return []
       end
 
     end
