@@ -64,8 +64,8 @@ module ResourceManagement
           project_resources = project_resources.where(domain_id: domain_id)
         end
 
-        project_resources.group('domain_id,service,name').pluck('domain_id,service,name,SUM(approved_quota),SUM(GREATEST(COALESCE(current_quota, 0), 0)),MIN(updated_at),MAX(updated_at)').each do |values|
-          this_domain_id, service_type, resource_name, sum_approved, sum_nonzero_current, min_updated_at,max_updated_at = values
+        project_resources.group('domain_id,service,name').pluck('domain_id,service,name,SUM(approved_quota),SUM(usage),SUM(GREATEST(COALESCE(current_quota, 0), 0)),MIN(updated_at),MAX(updated_at)').each do |values|
+          this_domain_id, service_type, resource_name, sum_approved, sum_usage, sum_nonzero_current, min_updated_at,max_updated_at = values
 
           service_type = service_type.to_sym
           resource_name = resource_name.to_sym
@@ -76,6 +76,7 @@ module ResourceManagement
           service[:max_scraped_at] = [service[:max_scraped_at], max_updated_at.to_i].reject(&:nil?).max
           service[:min_scraped_at] = [service[:min_scraped_at], min_updated_at.to_i].reject(&:nil?).min
           resource[:quota] ||= 0
+          resource[:usage] = sum_usage
           resource[:projects_quota] = sum_approved
           resource[:backend_quota] = sum_nonzero_current if sum_approved != sum_nonzero_current
         end
