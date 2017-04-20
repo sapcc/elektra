@@ -1,5 +1,7 @@
 require 'misty/openstack/limes'
 
+# FIXME: check error handling for 404, 500 or 401
+
 module ResourceManagement
   module Driver
     class Misty < Interface
@@ -77,8 +79,13 @@ module ResourceManagement
       end
       
       def put_domain_data(domain_id, services)
+        handle_response do
+          @misty.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
+        end
+        # FIXME: related to @services_with_error, can be removed when we remove the old code
+        return []
       end
-      
+       
       def put_cluster_data(services)
       end
 
