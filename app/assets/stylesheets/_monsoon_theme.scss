@@ -1755,6 +1755,10 @@ input[type='checkbox'], input[type='radio'] {
   right: 5px;
   top: -25px;
   color: #ccc;
+
+  &.two-factor-info {
+    top: -45px;
+  }
 }
 
 

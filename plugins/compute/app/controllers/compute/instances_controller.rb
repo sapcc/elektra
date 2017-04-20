@@ -334,6 +334,14 @@ module Compute
       @automation_script_action = automation_script_instances_path()
     end
 
+    def two_factor_required?
+      if action_name=='console'
+        true
+      else
+        super
+      end
+    end
+
     private
 
     def collect_available_ips
@@ -415,8 +423,6 @@ module Compute
       end
       return @active_project_id
     end
-
-    private
 
     def all_projects
       @all_projects = current_user.is_allowed?('compute:all_projects')

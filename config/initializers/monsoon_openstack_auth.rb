@@ -1,3 +1,4 @@
+require 'radius/auth'
 def policy_paths
   paths = ["config/policy.json"]
   Core::PluginsManager.available_plugins.each do |p|
@@ -10,7 +11,7 @@ end
 MonsoonOpenstackAuth.configure do |auth|
   # connection driver, default MonsoonOpenstackAuth::Driver::Default (Fog)
   # auth.connection_driver = DriverClass
-    
+
   auth.connection_driver.api_endpoint = Rails.application.config.keystone_endpoint
   auth.connection_driver.ssl_verify_peer = Rails.configuration.ssl_verify_peer
 
@@ -46,5 +47,23 @@ MonsoonOpenstackAuth.configure do |auth|
 
   # optional, default=false
   auth.debug=auth.debug_api_calls=Rails.configuration.debug_api_calls
-end
 
+  auth.two_factor_enabled = (ENV['TWO_FACTOR_AUTHENTICATION']=='on')
+  auth.two_factor_authentication_method = -> username,passcode {
+    # place here the code to authenticate against a rsa securID Server.
+    servers = ENV['TWO_FACTOR_RADIUS_SERVERS'].split(',')
+    secret = ENV['TWO_FACTOR_RADIUS_SECRET']
+
+    servers.each_index do |index|
+      auth = Radius::Auth.new(servers[index], 'localhost', 10) # radius_server, localhost, timeout
+      begin
+        return (auth.check_passwd(username, passcode, secret))
+      rescue => e
+        raise e if index==servers.length-1
+        # puts "::::::::::::::."
+        # p e
+      end
+    end
+    return false
+  }
+end

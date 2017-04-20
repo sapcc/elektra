@@ -44,6 +44,8 @@ gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sa
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
+gem 'ruby-radius'
+
 # Extras
 gem 'config'
 

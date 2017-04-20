@@ -1,7 +1,11 @@
 %footer.footer
   - if current_user
-    .token-info
+    .token-info{class: ('two-factor-info' if cookies['two_factor_authentication'])}
       = raw "Token expires at: #{current_user.token_expires_at.to_time.localtime.strftime('%d.%m.%Y %H:%M:%S')} (ca. <span id='token-counter'>#{((current_user.token_expires_at.to_time-Time.now)/60).round}</span> minutes)"
+      - if cookies['two_factor_authentication']
+        %br
+        = "Two-Factor Authentication is still valid!" 
+
       :javascript
         setInterval(function(){ var counter = parseInt($('#token-counter').text()); $('#token-counter').text(counter-1) }, 60000);
 
