@@ -7,20 +7,8 @@ module ResourceManagement
     class Misty < Interface
       include Core::ServiceLayer::MistyDriver::ClientHelper
 
-      def handle_response
-        yield
-      end
-
       def initialize(params_or_driver)
         super(params_or_driver)
-        auth = misty_auth_params
-        @misty = ::Misty::Cloud.new(
-          :auth             => auth,
-          :region_id        => @region,
-          :log_level        => 2,
-          :ssl_verify_mode  => false,
-          :http_proxy       => ENV['http_proxy'],
-        )
       end
 
       def get_project_data(domain_id, project_id=nil, options={})
@@ -30,15 +18,15 @@ module ResourceManagement
         handle_response do
           if project_id.nil?
             if query.empty?
-              @misty.resources.get_projects(domain_id).body['projects']
+              misty.resources.get_projects(domain_id).body['projects']
             else
-              @misty.resources.get_projects(domain_id,query).body['projects']
+              misty.resources.get_projects(domain_id,query).body['projects']
             end
           else
             if query.empty?
-              @misty.resources.get_project(domain_id,project_id).body['project']
+              misty.resources.get_project(domain_id,project_id).body['project']
             else
-              @misty.resources.get_project(domain_id,project_id,query).body['project']
+              misty.resources.get_project(domain_id,project_id,query).body['project']
             end
           end
         end
@@ -50,15 +38,15 @@ module ResourceManagement
         handle_response do
           if domain_id.nil?
             if query.empty?
-              @misty.resources.get_domains.body['domains']
+              misty.resources.get_domains.body['domains']
             else
-              @misty.resources.get_domains(query).body['domains']
+              misty.resources.get_domains(query).body['domains']
             end
           else
             if query.empty?
-              @misty.resources.get_domain(domain_id).body['domain']
+              misty.resources.get_domain(domain_id).body['domain']
             else
-              @misty.resources.get_domain(domain_id,query).body['domain']
+              misty.resources.get_domain(domain_id,query).body['domain']
             end
           end
         end
@@ -69,16 +57,16 @@ module ResourceManagement
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
         handle_response do
           if query.empty?
-            @misty.resources.get_current_cluster.body['cluster']
+            misty.resources.get_current_cluster.body['cluster']
           else
-            @misty.resources.get_current_cluster(query).body['cluster']
+            misty.resources.get_current_cluster(query).body['cluster']
           end
         end
       end
 
       def put_project_data(domain_id, project_id, services)
         handle_response do
-          @misty.resources.set_quota_for_project(domain_id,project_id, :project => {:services => services})
+          misty.resources.set_quota_for_project(domain_id,project_id, :project => {:services => services})
         end
         # FIXME: related to @services_with_error, can be removed when we remove the old code
         return []
@@ -86,7 +74,7 @@ module ResourceManagement
 
       def put_domain_data(domain_id, services)
         handle_response do
-          @misty.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
+          misty.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
         end
         # FIXME: related to @services_with_error, can be removed when we remove the old code
         return []
@@ -94,7 +82,7 @@ module ResourceManagement
 
       def put_cluster_data(services)
         handle_response do
-          @misty.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
+          misty.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
         end
         # FIXME: related to @services_with_error, can be removed when we remove the old code
         return []
@@ -102,7 +90,7 @@ module ResourceManagement
 
       def sync_project_asynchronously(domain_id, project_id)
         handle_response do
-          @misty.resources.sync_project(domain_id, project_id)
+          misty.resources.sync_project(domain_id, project_id)
         end
         return nil
       end
