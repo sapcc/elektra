@@ -35,7 +35,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty-limes.git
-  revision: 3f37b5fcdae00344c5f8499f34ed0527c3cb39fe
+  revision: a99a86bf87c659cb4e5e968417623283ff70865a
   specs:
     misty-limes (0.2.2)
 
