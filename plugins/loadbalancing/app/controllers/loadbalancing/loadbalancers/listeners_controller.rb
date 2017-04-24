@@ -6,7 +6,7 @@ module Loadbalancing
 
       def index
         @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
-        @quota_data = services.resource_management.quota_data([{service_name: :loadbalancing, resource_name: :listeners,
+        @quota_data = services.resource_management.quota_data([{service_type: :network, resource_name: :listeners,
                                                                 usage: services.loadbalancing.listeners(tenant_id: @scoped_project_id).length}])
       end
 

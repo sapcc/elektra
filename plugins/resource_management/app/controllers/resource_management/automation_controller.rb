@@ -13,25 +13,31 @@ module ResourceManagement
 
     def dump_data
       region = [Rails.application.config.default_region].flatten.first
-      monsoon2_domain_id = ResourceManagement::Resource.where(scope_name: 'monsoon2', project_id: nil).pluck(:domain_id).first
-      # when dumping project resource data, skip internal dummy records with service == "resource_management"
-      project_resources = ResourceManagement::Resource.where("project_id IS NOT NULL AND service != 'resource_management' AND domain_id != ?", monsoon2_domain_id)
+      result = []
+
+      services.resource_management.list_domains(services: ['none']).map(&:id).each do |domain_id|
+        services.resource_management.list_projects(domain_id).each do |project|
+          project.services.each do |srv|
+            srv.resources.each do |res|
+              dt = res.data_type
+              result << {
+                domain_id: domain_id,
+                project_id: res.project_id,
+                resource_class: res.config.service.name,
+                resource_type: res.name,
+                quota: dt.normalize(res.backend_quota || res.quota),
+                usage: dt.normalize(res.usage),
+                last_information_at: srv.updated_at.iso8601,
+                region: region,
+              }
+            end
+          end
+        end
+      end
 
       full_data = {
         metadata: { version: 1 },
-        data: project_resources.map do |res|
-          dt = res.data_type
-          {
-            domain_id: res.domain_id,
-            project_id: res.project_id,
-            resource_class: res.service,
-            resource_type: res.name,
-            quota: dt.normalize(res.current_quota),
-            usage: dt.normalize(res.usage),
-            last_information_at: res.updated_at.iso8601,
-            region: region,
-          }
-        end,
+        data: result,
       }
       render json: full_data.to_json
     end

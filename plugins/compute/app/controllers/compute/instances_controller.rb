@@ -18,9 +18,9 @@ module Compute
           usage = services.compute.usage
 
           @quota_data = services.resource_management.quota_data([
-            {service_name: :compute, resource_name: :instances, usage: usage.instances},
-            {service_name: :compute, resource_name: :cores, usage: usage.cores},
-            {service_name: :compute, resource_name: :ram, usage: usage.ram}
+            {service_type: :compute, resource_name: :instances, usage: usage.instances},
+            {service_type: :compute, resource_name: :cores, usage: usage.cores},
+            {service_type: :compute, resource_name: :ram, usage: usage.ram}
           ])
         end
       end
@@ -45,9 +45,9 @@ module Compute
     def new
       # get usage from db
       @quota_data = services.resource_management.quota_data([
-        {service_name: :compute, resource_name: :instances},
-        {service_name: :compute, resource_name: :cores},
-        {service_name: :compute, resource_name: :ram}
+        {service_type: :compute, resource_name: :instances},
+        {service_type: :compute, resource_name: :cores},
+        {service_type: :compute, resource_name: :ram}
       ])
 
       @instance = services.compute.new_server

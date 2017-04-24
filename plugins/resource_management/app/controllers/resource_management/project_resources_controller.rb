@@ -205,13 +205,7 @@ module ResourceManagement
     def check_first_visit
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
-      @show_package_request_banner = true
-      ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).where('approved_quota > 0').each do |res|
-        auto = res.config.auto_approved_quota
-        if res.approved_quota != auto or res.current_quota != auto or res.usage != auto
-          @show_package_request_banner = false
-        end
-      end
+      @show_package_request_banner = services.resource_management.has_project_quotas?
       @has_requested_package = Inquiry::Inquiry.
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package', aasm_state: 'open').
         count > 0

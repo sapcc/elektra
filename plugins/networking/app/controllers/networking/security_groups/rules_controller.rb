@@ -21,7 +21,7 @@ module Networking
         @rule = services.networking.new_security_group_rule(attributes)
 
         @quota_data = services.resource_management.quota_data([
-          {service_name: :networking, resource_name: :security_group_rules}
+          {service_type: :network, resource_name: :security_group_rules}
         ])
       end
 
@@ -75,7 +75,7 @@ module Networking
           @security_group = @security_groups.select{|sg| sg.id==params[:security_group_id]}.first
 
           @quota_data = services.resource_management.quota_data([
-            {service_name: :networking, resource_name: :security_group_rules}
+            {service_type: :network, resource_name: :security_group_rules}
           ])
           render action: :new
         end

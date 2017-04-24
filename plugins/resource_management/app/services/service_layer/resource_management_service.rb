@@ -41,69 +41,44 @@ module ServiceLayer
     end
 
     def has_project_quotas?
-      resources = ResourceManagement::Resource.where({
-        domain_id: (current_user.domain_id || current_user.project_domain_id),
-        project_id: current_user.project_id
-      })
-
+      project = find_project(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,
+        services:  [ 'compute',                   'network',  'object-store' ],
+        resources: [ 'instances', 'ram', 'cores', 'networks', 'capacity'     ],
+      )
       # return true if approved_quota of the resource networking:networks is greater than 0
-      return true if resources.where({
-        service: 'networking',
-        name: 'networks'
-      }).collect{|r| (r.approved_quota || 0)}.min.try(:>,0)
-
       # OR
       # return true if the sum of approved_quota of the resources compute:instances,
       # compute:ram, compute:cores and object_storage:capacity is greater than 0
-      return true if resources.where({
-        service: ['compute','object_storage'],
-        name: ['instances','ram','cores','capacity']
-      }).collect{|r| (r.approved_quota || 0)}.min.try(:>,0)
-
-      return false
+      return project.resources.any? { |r| r.quota > 0 }
     end
 
     def quota_data(options=[])
+      return [] if options.empty?
+
+      project = find_project(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,
+        services: options.collect { |vals| vals[:service_type] },
+        resources: options.collect { |vals| vals[:resource_name] },
+      )
+
       result = []
-
-      return result if options.empty?
-
-      domain_id = current_user.domain_id || current_user.project_domain_id
-      project_id = current_user.project_id
-
-      options.each do |values|
-        resource = ResourceManagement::Resource.where({
-          domain_id: domain_id,
-          project_id: project_id,
-          service: values[:service_name].to_s,
-          name: values[:resource_name].to_s
-        }).first
-
+      options.each do |vals|
+        service = project.services.find { |srv| srv.type == vals[:service_type].to_sym }
+        next if service.nil?
+        resource = service.resources.find { |res| res.name == vals[:resource_name].to_sym }
         next if resource.nil?
 
-        if values[:usage] and values[:usage].is_a?(Fixnum) and resource.usage != values[:usage]
+        if values[:usage] and values[:usage].is_a?(Fixnum)
           resource.usage = values[:usage]
-          resource.save
         end
 
-        data_type = ResourceManagement::ServiceConfig.find(values[:service_name]).
-          try { |srv| srv.resources.find { |r| r.name == values[:resource_name] } }.
-          try { |res| res.data_type }
-
-        unless data_type
-          # if this error occurs, add the resource to lib/resource_management/{service,resource}_config.rb
-          # and to the driver (please do not try to patch around; this will make a horrible mess)
-          raise ArgumentError, "unknown resource '#{values[:service_name]}/#{values[:resource_name]}'"
-        end
-
-        result << ResourceManagement::QuotaData.new(
-          name: resource.name,
-          total: resource.current_quota,
-          usage: resource.usage,
-          data_type: data_type,
-        )
+        result << resource
       end
-      result
+
+      return result
     end
 
   end

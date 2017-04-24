@@ -36,7 +36,7 @@ module ObjectStorage
 
     def load_quota_data
       @quota_data = services.resource_management.quota_data([
-        { service_name: :object_storage, resource_name: :capacity }
+        { service_type: :'object-store', resource_name: :capacity }
       ])
     end
 

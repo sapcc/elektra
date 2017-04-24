@@ -121,6 +121,14 @@ module ResourceManagement
       return self.class.new(@driver, attributes.clone)
     end
 
+    # for quota display in other services
+    def available
+      return quota < 0 ? -1 : quota - usage
+    end
+    def available_as_display_string
+      return "#{@data_type.format(remaining)} #{I18n.t("resource_management.#{@name}")}"
+    end
+
     private
 
     def validate_quota

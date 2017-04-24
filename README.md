@@ -309,9 +309,9 @@ If the variable ```@quota_data``` is set the view will display all data inside t
 This will load quota data from the database and update the usage attribute.
 ```ruby
 @quota_data = services.resource_management.quota_data([
-  {service_name: 'compute', resource_name: 'instances', usage: @instances.length},
-  {service_name: 'compute', resource_name: 'cores', usage: cores},
-  {service_name: 'compute', resource_name: 'ram', usage: ram}
+  {service_type: 'compute', resource_name: 'instances', usage: @instances.length},
+  {service_type: 'compute', resource_name: 'cores', usage: cores},
+  {service_type: 'compute', resource_name: 'ram', usage: ram}
 ])
 ```
 
@@ -319,9 +319,9 @@ Same example but without updating the usage attribute. It just loads the values 
 
 ```ruby
 @quota_data = services.resource_management.quota_data([
-  {service_name: 'compute', resource_name: 'instances'},
-  {service_name: 'compute', resource_name: 'cores'},
-  {service_name: 'compute', resource_name: 'ram'}
+  {service_type: 'compute', resource_name: 'instances'},
+  {service_type: 'compute', resource_name: 'cores'},
+  {service_type: 'compute', resource_name: 'ram'}
 ])
 ```
 

@@ -7,7 +7,7 @@ module Loadbalancing
       def index
         # get all pools for project and calc. quota
         @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
-        @quota_data = services.resource_management.quota_data([{service_name: :loadbalancing, resource_name: :pools, usage: @pools.length}])
+        @quota_data = services.resource_management.quota_data([{service_type: :network, resource_name: :pools, usage: @pools.length}])
       end
 
       def show_all
