@@ -1,5 +1,5 @@
 .news
-  - date = Time.new(2017,04,12)
+  - date = Time.new(2017,04,24)
   .new{data:{date: date}}
     .author-title= "Arturo Reuschenbach - #{date}"
 
@@ -25,6 +25,8 @@
         * flash[:keep_{type}] --> auto dismissible flahes will be not automatic dismissed. Dismissible but not auto dimissble.
 
         * flash[:default_{type}] --> you get the default flash message, no dismissible button and not auto dismissible.
+
+        * flash[:{type}_htmlsafe] --> you get the dismissible flash message with html safe cotent. All flashes are default not html safe.
 
       Manually rendered auto dimissible flashes has to be initialized: initAutoDismissibleFlash()
 
