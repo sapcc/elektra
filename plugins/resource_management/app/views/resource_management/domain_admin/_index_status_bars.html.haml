@@ -4,5 +4,5 @@
 - else
   - @resources.sort_by { |r| [ r.name, r.config.service.name ] }.each do |res|
     = render partial: 'bar_row', locals: { overview: true, resource: resource }
--# data age display needs to always be visible! (if there are no warnings it might be because of outdated data)
-= render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_path }
+
+= render partial: 'data_age'

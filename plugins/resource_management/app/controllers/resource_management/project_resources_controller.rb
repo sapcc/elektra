@@ -137,12 +137,6 @@ module ResourceManagement
       end
     end
 
-    def initial_sync
-      # do the magic inital sync for the package request from project wizard
-      services.resource_management.ensure_project_synced(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
-      render :nothing => true, :status => 200, :content_type => 'text/html'
-    end
-
     def new_package_request
       # please do not delete
     end
@@ -188,7 +182,9 @@ module ResourceManagement
     end
 
     def sync_now
-      services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
+      services.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
+      # TODO: use Ajax magic to poll Limes and update the display once the sync is done
+      flash.now[:notice] = "Sync for this project has been requested, and should complete within the next 1-2 minutes."
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError

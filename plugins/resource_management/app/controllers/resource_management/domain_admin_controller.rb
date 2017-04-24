@@ -296,8 +296,6 @@ module ResourceManagement
       projects = services.resource_management.list_projects(@scoped_domain_id, services: service_type, resources: resource_name.to_s)
       @project_resources = projects.map { |p| p.resources.first }.reject(&:nil?)
 
-      # TODO: evaluate sort_by, @sort_order
-
       # show danger and warning projects on top if no sort by is given
       if sort_by.empty?
         ## prepare the projects table
@@ -320,24 +318,6 @@ module ResourceManagement
         format.js
       end
 
-    end
-
-    def sync_now
-      options = {}
-      begin
-        services.resource_management.sync_domain(
-          @scoped_domain_id, @scoped_domain_name,
-          timeout_secs: 40,  # abort after 40 seconds to avoid HTTP connection timeout (~1 minute)
-          refresh_secs: 600, # do not try to update data that's newer than 10 minutes
-        )
-      rescue Interrupt
-        options[:flash] = { error: "Could not sync all projects before timeout. Please try again." }
-      end
-      begin
-        redirect_to :back, options
-      rescue ActionController::RedirectBackError
-        redirect_to admin_path(), options
-      end
     end
 
     private

@@ -11,9 +11,4 @@
     - resources.sort_by(&:name).each do |res|
       = render partial: 'bar_row', locals: { resource: res, overview: false }
 
--# commented out because For other non swift quotas the user acting as cloud admin would need an admin role in each and every domain
--# this is right now not possible so we don't want to roll out a feature now to production (in thant case for swift) and than take it 
--# away from the user. First we need more clarity here...
-=render partial: 'data_age' #, locals: { sync_now_url: plugin('resource_management').cloud_admin_sync_now_path }
-
-
+=render partial: 'data_age'

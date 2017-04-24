@@ -11,40 +11,6 @@ module ResourceManagement
       return
     end
 
-    def sync_domain
-      domain_name = params.require(:domain_name)
-      domain = services.identity.domains(name: domain_name).first
-      if domain.nil?
-        render plain: "ERROR: cannot find domain \"#{domain_name}\"", status: :bad_request
-        return
-      end
-
-      # sync quota/usage data for domain and projects in this domain
-      begin
-        services.resource_management.sync_domain(
-          domain.id, domain_name,
-          timeout_secs: 50,   # abort after 50 seconds to avoid HTTP connection timeout (~1 minute)
-          refresh_secs: 1800, # do not try to update data that's newer than 30 minutes ago
-        )
-      rescue Interrupt
-        # not yet done - restart the sync by redirecting the client to the same
-        # URL (this might look like an infinite redirect, so the client should
-        # be prepared to handle a long redirection chain,
-        # e.g. `curl -L --max-redirs -1`)
-        redirect_to plugin('resource_management').automation_sync_domain_url(
-          project_id:  @scoped_project_name,
-          domain_id:   @scoped_domain_name,
-          domain_name: domain_name,
-        )
-        return
-      end
-
-      # sync finished - tell the client to sleep until the first data becomes stale again
-      min_updated_at = ResourceManagement::Resource.where(domain_id: domain.id).minimum(:updated_at)
-      sleep_seconds = (((min_updated_at + 1800.seconds) - Time.now) / 1.second).round
-      render plain: "please sleep for #{sleep_seconds} seconds", status: :ok
-    end
-
     def dump_data
       region = [Rails.application.config.default_region].flatten.first
       monsoon2_domain_id = ResourceManagement::Resource.where(scope_name: 'monsoon2', project_id: nil).pluck(:domain_id).first
@@ -68,30 +34,6 @@ module ResourceManagement
         end,
       }
       render json: full_data.to_json
-    end
-
-    def dump_capacities
-      data = ResourceManagement::Capacity.pluck(:service, :resource, :value, :comment).map do |array|
-        s, n, v, c = array
-        if srv = ResourceManagement::ServiceConfig.find(s)
-          s = srv.catalog_type # map old ResourceManagement service names to Limes service types
-        end
-        { service: s, resource: n, capacity: v, comment: c.presence || 'imported from Elektra' }
-      end
-
-      render json: data
-    end
-
-    def dump_approved_quotas
-      data = ResourceManagement::Resource.pluck(:domain_id, :project_id, :service, :name, :approved_quota).map do |array|
-        d, p, s, n, a = array
-        if srv = ResourceManagement::ServiceConfig.find(s)
-          s = srv.catalog_type # map old ResourceManagement service names to Limes service types
-        end
-        { domain_id: d, project_id: p, service: s, resource: n, approved_quota: a }
-      end
-
-      render json: data
     end
 
   end
