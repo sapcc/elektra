@@ -126,7 +126,7 @@ module ResourceManagement
       return quota < 0 ? -1 : quota - usage
     end
     def available_as_display_string
-      return "#{@data_type.format(remaining)} #{I18n.t("resource_management.#{@name}")}"
+      return "#{data_type.format(available)} #{I18n.t("resource_management.#{name}")}"
     end
 
     private

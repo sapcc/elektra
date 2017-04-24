@@ -60,15 +60,15 @@ module ServiceLayer
       project = find_project(
         current_user.domain_id || current_user.project_domain_id,
         current_user.project_id,
-        services: options.collect { |vals| vals[:service_type] },
-        resources: options.collect { |vals| vals[:resource_name] },
+        services: options.collect { |values| values[:service_type] },
+        resources: options.collect { |values| values[:resource_name] },
       )
 
       result = []
-      options.each do |vals|
-        service = project.services.find { |srv| srv.type == vals[:service_type].to_sym }
+      options.each do |values|
+        service = project.services.find { |srv| srv.type == values[:service_type].to_sym }
         next if service.nil?
-        resource = service.resources.find { |res| res.name == vals[:resource_name].to_sym }
+        resource = service.resources.find { |res| res.name == values[:resource_name].to_sym }
         next if resource.nil?
 
         if values[:usage] and values[:usage].is_a?(Fixnum)
