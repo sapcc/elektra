@@ -41,7 +41,7 @@ module Networking
 
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save
-            flash[:notice] = 'Network successfully created.'
+            flash[:notice] = "Network successfully created. If you want to attach floating IPs to objects in this network you will need to #{view_context.link_to('create a router', plugin('networking').routers_path).html_safe} connecting this network to the floating IP network."
             audit_logger.info(current_user, "has created", @network)
             audit_logger.info(current_user, "has created", @subnet)
             redirect_to plugin('networking').send("networks_#{@network_type}_index_path")

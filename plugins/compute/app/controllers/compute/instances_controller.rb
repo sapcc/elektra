@@ -121,19 +121,22 @@ module Compute
     def attach_floatingip
       enforce_permissions("::networking:floating_ip_associate")
       @instance_port = services.networking.ports(device_id: params[:id]).first
-      @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
+      # @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
+      @floating_ip = services.networking.new_floating_ip(params[:floating_ip])
 
-      success = begin
-        @floating_ip = services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
-        if @floating_ip.port_id
-          true
-        else
-          false
-        end
-      rescue => e
-        @floating_ip.errors.add('message',e.message)
-        false
-      end
+      success = @floating_ip.attach(@instance_port.id)
+
+      # success = begin
+      #   @floating_ip = services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
+      #   if @floating_ip.port_id
+      #     true
+      #   else
+      #     false
+      #   end
+      # rescue => e
+      #   @floating_ip.errors.add('message',e.message)
+      #   false
+      # end
 
       if success
         audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
