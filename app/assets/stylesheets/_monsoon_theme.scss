@@ -972,6 +972,13 @@ footer, .footer {
   @extend .alert-info;
 }
 
+.alert a {
+  color: #333;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+
 .alert-extended {
   padding: 0;
 
