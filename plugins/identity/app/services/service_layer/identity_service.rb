@@ -5,13 +5,16 @@ module ServiceLayer
     attr_reader :region
 
     def driver
-      @driver ||= Identity::Driver::Fog.new({
-                                                auth_url: self.auth_url,
-                                                region: self.region,
-                                                token: self.token,
-                                                domain_id: self.domain_id,
-                                                project_id: self.project_id
-                                            })
+      unless @driver
+        auth = {
+          auth_url:   self.auth_url,
+          region:     self.region,
+          token:      self.token,
+          domain_id:  self.domain_id,
+          project_id: self.project_id
+        }
+        @driver = Identity::Driver::Fog.new(auth, with_limes: services.resource_management.available?)
+      end
       @driver
     end
 
