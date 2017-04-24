@@ -61,6 +61,9 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
+# Limes
+gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'token-auth'
+gem 'misty-limes', git: 'https://github.com/sapcc/misty-limes.git'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'

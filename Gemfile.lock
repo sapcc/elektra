@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
-  revision: a18a49a5dee437e1f3d4e616ed87924326fd26cb
-  branch: master
-  specs:
-    elektra-extension (0.0.1)
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5d9b922d3c19d02f0cd87c7cc93f80802a960b50
   specs:
@@ -39,6 +32,20 @@ GIT
   revision: 17fc5ad64a0a0c9305c2423821cc6f0a5bc173f7
   specs:
     lyra-client (0.1.1)
+
+GIT
+  remote: https://github.com/sapcc/misty-limes.git
+  revision: 3f37b5fcdae00344c5f8499f34ed0527c3cb39fe
+  specs:
+    misty-limes (0.2.2)
+
+GIT
+  remote: https://github.com/sapcc/misty.git
+  revision: 52431c9ed2f09b31417a952090512239ee765f69
+  branch: token-auth
+  specs:
+    misty (0.5.1)
+      json (>= 1.8.3, < 3)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
@@ -553,7 +560,6 @@ DEPENDENCIES
   database_cleaner
   dns_service!
   dotenv-rails
-  elektra-extension!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   fog-openstack-sap-billing!
@@ -573,6 +579,8 @@ DEPENDENCIES
   loadbalancing!
   lookup!
   lyra-client!
+  misty!
+  misty-limes!
   monitoring!
   monsoon-openstack-auth!
   net-ssh

@@ -5,11 +5,18 @@ require 'misty/openstack/limes'
 module ResourceManagement
   module Driver
     class Misty < Interface
-      include Core::ServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::MistyDriver::ClientHelper
 
       def initialize(params_or_driver)
           super(params_or_driver)
-          @misty = ::Misty::Cloud.new(:auth => misty_auth_params, :region_id => @region, :log_level => 2, :ssl_verify_mode => false, :http_proxy => ENV['http_proxy'])
+          auth = misty_auth_params
+          @misty = ::Misty::Cloud.new(
+            :auth             => auth,
+            :region_id        => @region,
+            :log_level        => 2,
+            :ssl_verify_mode  => false,
+            :http_proxy       => ENV['http_proxy']
+          )
       end
 
       def get_project_data(domain_id, project_id=nil, options={})
