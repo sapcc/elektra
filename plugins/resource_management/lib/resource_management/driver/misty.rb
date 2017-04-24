@@ -13,7 +13,6 @@ module ResourceManagement
       end
 
       def get_project_data(domain_id, project_id=nil, options={})
-        
         # need to check nil query because nil is not working as optional parameter in misty
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
 
@@ -32,11 +31,9 @@ module ResourceManagement
             end
           end
         end
-        
       end
 
       def get_domain_data(domain_id=nil, options={})
-        
         # need to check nil query because nil is not working as optional parameter in misty
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
         handle_response do
@@ -57,7 +54,6 @@ module ResourceManagement
       end
 
       def get_cluster_data(options={})
-        
         # need to check nil query because nil is not working as optional parameter in misty
         query = Excon::Utils.query_string(query:options).sub(/^\?/, '')
         handle_response do
@@ -67,7 +63,6 @@ module ResourceManagement
             @misty.resources.get_current_cluster(query).body['cluster']
           end
         end
-        
       end
 
       def put_project_data(domain_id, project_id, services)
@@ -77,7 +72,7 @@ module ResourceManagement
         # FIXME: related to @services_with_error, can be removed when we remove the old code
         return []
       end
-      
+
       def put_domain_data(domain_id, services)
         handle_response do
           @misty.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
@@ -85,13 +80,20 @@ module ResourceManagement
         # FIXME: related to @services_with_error, can be removed when we remove the old code
         return []
       end
-       
+
       def put_cluster_data(services)
         handle_response do
           @misty.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
         end
         # FIXME: related to @services_with_error, can be removed when we remove the old code
         return []
+      end
+
+      def sync_project_asynchronously(domain_id, project_id)
+        handle_response do
+          @misty.resources.sync_project(domain_id, project_id)
+        end
+        return nil
       end
 
     end
