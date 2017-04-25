@@ -10,7 +10,6 @@ module ResourceManagement
 
     def index
       @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
-      pp @project
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
       # find resources to show
