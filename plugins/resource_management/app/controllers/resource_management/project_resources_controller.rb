@@ -59,7 +59,6 @@ module ResourceManagement
 
       # save the new quota to the database
       if @resource.save
-        @services_with_error = @resource.services_with_error
         # load data to reload the bars in the main view
         show_area(@resource.config.service.area.to_s)
       else

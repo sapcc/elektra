@@ -81,8 +81,6 @@ module ResourceManagement
             misty.resources.set_quota_for_project(domain_id,project_id, :project => {:services => services})
           end
         end
-        # FIXME: related to @services_with_error, can be removed when we remove the old code
-        return []
       end
 
       def put_domain_data(domain_id, services)

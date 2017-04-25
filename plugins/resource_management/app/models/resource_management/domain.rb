@@ -38,10 +38,5 @@ module ResourceManagement
       @driver.put_domain_data(id, data)
     end
 
-    # TODO: remove after the switch to Limes
-    def services_with_error
-      []
-    end
-
   end
 end

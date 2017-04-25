@@ -102,7 +102,7 @@ module ResourceManagement
         }.reject { |_,v| v.nil? }],
       }]
       if project_id and project_domain_id
-        @services_with_error = @driver.put_project_data(project_domain_id, project_id, services)
+        @driver.put_project_data(project_domain_id, project_id, services)
       elsif domain_id
         @driver.put_domain_data(domain_id, services)
       elsif cluster_id
@@ -110,11 +110,6 @@ module ResourceManagement
       else
         raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
       end
-    end
-
-    # TODO: remove this after the switch to Limes
-    def services_with_error
-      return @services_with_error || []
     end
 
     def clone

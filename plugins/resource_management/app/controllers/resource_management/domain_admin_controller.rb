@@ -154,7 +154,6 @@ module ResourceManagement
           comment += ", comment from approver: #{params[:new_style_resource][:comment]}"
         end
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
-        @services_with_error = @project_resource.services_with_error
       else
         @project_resource.quota = old_quota # reset quota to render view correctly
         self.review_request
