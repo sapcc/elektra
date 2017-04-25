@@ -96,7 +96,7 @@ module Automation
       automation_name = params[:automation_name]
       run = services.automation.automation_execute(automation_id,"@identity='#{node_id}'")
       if run.save
-        flash.now[:keep_success] = "<b>#{automation_name}</b> successfully executed. See all runs on the Automations tab. #{view_context.link_to('Show details for this run.', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe}"
+        flash.now[:keep_success_htmlsafe] = "<b>#{automation_name}</b> successfully executed. See all runs on the Automations tab. #{view_context.link_to('Show details for this run.', plugin('automation').run_path(id: run.id), data: {modal: true}).html_safe}"
       else
         flash.now[:error] = I18n.t('automation.errors.node_executing_automation_error', name: automation_name, errors: run.errors)
       end
