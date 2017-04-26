@@ -9,37 +9,36 @@
       -# (to avoid that users use this expensive function multiple times in quick succession)
       - if can_sync
         &ndash;
-        %span.syncing-message
+        %span.syncing-message.hidden
           Syncing
           %span.loading
         = link_to 'Sync now', "javascript:sync_now()", class: 'sync-now'
   -elsif local_assigns.has_key?(:sync_now_url)
     .col-md-12.small.text-muted
       No usage data available &ndash;
-      %span.syncing-message
+      %span.syncing-message.hidden
         Syncing
         %span.loading
       = link_to 'Sync now',"javascript:sync_now()", class: 'sync-now'
-.row
-  .col-md-7.col-md-offset-2.small.text-muted.alert.alert-warning.syncing-error
-    There was a problem to finish the sync in the given time. Please try again or come back later.
 
 - if can_sync
+  - error_message = "Could not complete sync before timeout. Please try again later."
   - content_for :javascripts do
     :javascript
+
+       function sync_now_error() {
+         $('.sync-now').show();
+         $('.syncing-message').hide();
+         $('.flashes').append("#{escape_javascript(render partial: 'flash_dismissible', locals: { key: 'warning', value: error_message })}");
+       }
 
        function sync_now() {
         $('.sync-now').hide();
         $('.syncing-message').show();
-        $('.syncing-error').hide();
         $.ajax({
           url: "#{sync_now_url}",
           dataType: 'script',
-          error: function() {
-            $('.sync-now').show();
-            $('.syncing-error').show();
-            $('.syncing-message').hide();
-          }
+          error: sync_now_error,
         });
        }
 
@@ -56,20 +55,14 @@
                 window.setTimeout(function(){ sync_now_polling(startTime, retryCounter + 1); }, 5000);
               }
               else {
-                $('.sync-now').show();
-                $('.syncing-error').show();
-                $('.syncing-message').hide();
+                sync_now_error();
               }
             }
             else {
               location.reload();
             }
           },
-          error: function() {
-            $('.sync-now').show();
-            $('.syncing-error').show();
-            $('.syncing-message').hide();
-          }
+          error: sync_now_error,
         });
       }
 
