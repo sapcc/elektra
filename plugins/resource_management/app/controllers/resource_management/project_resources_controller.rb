@@ -9,23 +9,22 @@ module ResourceManagement
     authorization_required
 
     def index
-    
       @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
-        
+
       # special case to poll elektra during sync now process
       if params.include?(:if_updated_since)
         render :json => { :sync_running => params[:if_updated_since].to_i > @min_updated_at.to_time.to_i }
         return
-      else
-        # find resources to show
-        resources = @project.resources
-        @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
-        @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
-  
-        @index = true
       end
+
+      # find resources to show
+      resources = @project.resources
+      @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
+      @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
+
+      @index = true
     end
 
     def show_area(area = nil)
@@ -189,7 +188,7 @@ module ResourceManagement
 
     def sync_now
       services.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
-      @start_time = (Time.now.to_f).to_i
+      @start_time = Time.now.to_i
     end
 
     private
