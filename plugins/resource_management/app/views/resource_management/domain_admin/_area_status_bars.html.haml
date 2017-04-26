@@ -10,5 +10,5 @@
   - else
     - resources.each do |res|
       = render partial: 'bar_row', locals: { resource: res, overview: false }
-= render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').admin_sync_now_path }
 
+= render partial: 'data_age'

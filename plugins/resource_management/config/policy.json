@@ -5,7 +5,6 @@
 
   "resource_management:cloud_admin_list": "rule:context_is_cloud_resource_admin",
   "resource_management:cloud_admin_show_area": "rule:context_is_cloud_resource_admin",
-  "resource_management:cloud_admin_sync_now": "rule:context_is_cloud_resource_admin",
   "resource_management:cloud_admin_details": "rule:context_is_cloud_resource_admin",
   "resource_management:cloud_admin_edit": "rule:context_is_cloud_resource_admin",
   "resource_management:cloud_admin_update": "rule:context_is_cloud_resource_admin",
@@ -17,7 +16,6 @@
 
   "resource_management:domain_admin_list": "rule:context_is_domain_resource_viewer",
   "resource_management:domain_admin_show_area": "rule:context_is_domain_resource_viewer",
-  "resource_management:domain_admin_sync_now": "rule:context_is_domain_resource_admin",
   "resource_management:domain_admin_details": "rule:context_is_domain_resource_viewer",
   "resource_management:domain_admin_edit": "rule:context_is_domain_resource_admin",
   "resource_management:domain_admin_update": "rule:context_is_domain_resource_admin",
@@ -35,7 +33,6 @@
   "resource_management:project_resource_list": "rule:access_to_project",
   "resource_management:project_resource_show_area": "rule:access_to_project",
   "resource_management:project_resource_sync_now": "rule:project_admin",
-  "resource_management:project_resource_inital_sync": "rule:project_admin",
   "resource_management:project_resource_new_request": "rule:project_admin",
   "resource_management:project_resource_create_request": "rule:project_admin",
   "resource_management:project_resource_new_package_request": "rule:project_admin",
@@ -43,8 +40,5 @@
   "resource_management:project_resource_reduce_quota": "rule:project_admin",
   "resource_management:project_resource_confirm_reduce_quota": "rule:project_admin",
 
-  "resource_management:automation_sync_domain": "rule:context_is_cloud_resource_admin",
-  "resource_management:automation_dump_data": "rule:context_is_cloud_resource_admin",
-  "resource_management:automation_dump_capacities": "rule:context_is_cloud_resource_admin",
-  "resource_management:automation_dump_approved_quotas": "rule:context_is_cloud_resource_admin"
+  "resource_management:automation_dump_data": "rule:context_is_cloud_resource_admin"
 }

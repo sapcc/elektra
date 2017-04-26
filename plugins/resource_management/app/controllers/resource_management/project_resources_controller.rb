@@ -12,7 +12,6 @@ module ResourceManagement
       @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
-
       # find resources to show
       resources = @project.resources
       @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
@@ -60,7 +59,6 @@ module ResourceManagement
 
       # save the new quota to the database
       if @resource.save
-        @services_with_error = @resource.services_with_error
         # load data to reload the bars in the main view
         show_area(@resource.config.service.area.to_s)
       else
@@ -137,12 +135,6 @@ module ResourceManagement
       end
     end
 
-    def initial_sync
-      # do the magic inital sync for the package request from project wizard
-      services.resource_management.ensure_project_synced(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
-      render :nothing => true, :status => 200, :content_type => 'text/html'
-    end
-
     def new_package_request
       # please do not delete
     end
@@ -188,7 +180,9 @@ module ResourceManagement
     end
 
     def sync_now
-      services.resource_management.sync_project(@scoped_domain_id, @scoped_project_id, @scoped_project_name)
+      services.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
+      # TODO: use Ajax magic to poll Limes and update the display once the sync is done
+      flash.now[:notice] = "Sync for this project has been requested, and should complete within the next 1-2 minutes."
       begin
         redirect_to :back
       rescue ActionController::RedirectBackError
@@ -209,13 +203,7 @@ module ResourceManagement
     def check_first_visit
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
-      @show_package_request_banner = true
-      ResourceManagement::Resource.where(domain_id: @scoped_domain_id, project_id: @scoped_project_id).where('approved_quota > 0').each do |res|
-        auto = res.config.auto_approved_quota
-        if res.approved_quota != auto or res.current_quota != auto or res.usage != auto
-          @show_package_request_banner = false
-        end
-      end
+      @show_package_request_banner = ! services.resource_management.has_project_quotas?
       @has_requested_package = Inquiry::Inquiry.
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package', aasm_state: 'open').
         count > 0

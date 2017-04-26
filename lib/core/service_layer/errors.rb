@@ -20,7 +20,11 @@ module Core
               @response_data = { text: error.response.body }
             end
           end
-          error_name = error.class.name.to_s.split('::').last
+          if error.respond_to?(:error_name) # used by ResMgmt::Driver::Misty::BackendError
+            error_name = error.error_name
+          else
+            error_name = error.class.name.to_s.split('::').last
+          end
           super(error)
           @type = error_name
         end

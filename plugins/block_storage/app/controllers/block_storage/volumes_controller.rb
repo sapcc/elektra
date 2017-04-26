@@ -19,8 +19,8 @@ module BlockStorage
         @volumes = services.block_storage.volumes
 
         @quota_data = services.resource_management.quota_data([
-          {service_name: :block_storage, resource_name: :volumes, usage: @volumes.length},
-          {service_name: :block_storage, resource_name: :capacity}
+          {service_type: :volumev2, resource_name: :volumes, usage: @volumes.length},
+          {service_type: :volumev2, resource_name: :capacity}
         ])
 
       end

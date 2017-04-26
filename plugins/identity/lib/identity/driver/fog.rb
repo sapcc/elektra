@@ -3,16 +3,17 @@ module Identity
     # Compute calls
     class Fog < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
+      include Core::ServiceLayer::MistyDriver::ClientHelper # for usage of Limes
 
-      def initialize(params_or_driver)
+      def initialize(params_or_driver, options={})
         # support initialization by given driver
         if params_or_driver.is_a?(::Fog::Identity::OpenStack::V3::Real)
           @fog = params_or_driver
         else
           super(params_or_driver)
           @fog = ::Fog::Identity::OpenStack::V3.new(auth_params)
-          # @fog = ::Fog::IdentityV3::OpenStack.new(auth_params)
         end
+        @with_limes = options.delete(:with_limes) || false
       end
 
       def auth_token
@@ -38,7 +39,11 @@ module Identity
       end
 
       def create_project(params={})
-        handle_response{ @fog.create_project(params).body['project'] }
+        response = handle_response{ @fog.create_project(params).body['project'] }
+        if @with_limes && params.include?(:domain_id)
+          handle_response { misty.resources.discover_projects(params[:domain_id]) }
+        end
+        response
       end
 
       def update_project(id,params={})

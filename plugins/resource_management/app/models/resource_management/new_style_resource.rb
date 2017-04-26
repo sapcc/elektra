@@ -102,7 +102,7 @@ module ResourceManagement
         }.reject { |_,v| v.nil? }],
       }]
       if project_id and project_domain_id
-        @services_with_error = @driver.put_project_data(project_domain_id, project_id, services)
+        @driver.put_project_data(project_domain_id, project_id, services)
       elsif domain_id
         @driver.put_domain_data(domain_id, services)
       elsif cluster_id
@@ -112,13 +112,16 @@ module ResourceManagement
       end
     end
 
-    # TODO: remove this after the switch to Limes
-    def services_with_error
-      return @services_with_error || []
-    end
-
     def clone
       return self.class.new(@driver, attributes.clone)
+    end
+
+    # for quota display in other services
+    def available
+      return quota < 0 ? -1 : quota - usage
+    end
+    def available_as_display_string
+      return "#{data_type.format(available)} #{I18n.t("resource_management.#{name}")}"
     end
 
     private

@@ -139,16 +139,6 @@ module ResourceManagement
       @domain_resources = Kaminari.paginate_array(@domain_resources).page(params[:page]).per(6)
     end
 
-    def sync_now
-      service = services.resource_management
-      service.sync_all_domains
-      begin
-        redirect_to :back
-      rescue ActionController::RedirectBackError
-        render text: "Synced!"
-      end
-    end
-
     private
 
     def load_domain_resource

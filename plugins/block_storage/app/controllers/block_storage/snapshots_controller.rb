@@ -13,8 +13,8 @@ module BlockStorage
         @snapshots = services.block_storage.snapshots
 
         @quota_data = services.resource_management.quota_data([
-          {service_name: :block_storage, resource_name: :snapshots, usage: @snapshots.length},
-          {service_name: :block_storage, resource_name: :capacity}
+          {service_type: :volumev2, resource_name: :snapshots, usage: @snapshots.length},
+          {service_type: :volumev2, resource_name: :capacity}
         ])
       end
     end

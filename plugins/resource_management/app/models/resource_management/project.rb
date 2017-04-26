@@ -42,12 +42,7 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
         }
       end
-      @services_with_error = @driver.put_project_data(domain_id, id, data)
-    end
-
-    # TODO: remove this after the switch to Limes
-    def services_with_error
-      return @services_with_error || []
+      @driver.put_project_data(domain_id, id, data)
     end
 
     private

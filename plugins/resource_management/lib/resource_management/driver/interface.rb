@@ -3,34 +3,7 @@ module ResourceManagement
     class Interface < Core::ServiceLayer::Driver::Base
 
       ##########################################################################
-      # old-style interface
-
-      # Query quotas for the given project from the given service.
-      # Returns a hash with resource names as keys. The service argument and
-      # the resource names in the result are symbols, with acceptable values
-      # defined in ResourceManagement::{ResourceConfig,ServiceConfig}.
-      def query_project_quota(domain_id, project_id, service)
-        raise ServiceLayer::Errors::NotImplemented
-      end
-
-      # Query usage values for the given project from the given service.
-      # Returns a hash with resource names as keys. The service argument and
-      # the resource names in the result are symbols, with acceptable values
-      # defined in ResourceManagement::{ResourceConfig,ServiceConfig}.
-      def query_project_usage(domain_id, project_id, service)
-        raise ServiceLayer::Errors::NotImplemented
-      end
-
-      # Set quotas for the given project in the given service. `values` must be
-      # a hash with resource names as keys. The service argument and resource
-      # names are symbols, with acceptable values defined in
-      # ResourceManagement::{ResourceConfig,ServiceConfig}.
-      def set_project_quota(domain_id, project_id, service, values)
-        raise ServiceLayer::Errors::NotImplemented
-      end
-
-      ##########################################################################
-      # new-style interface
+      # read operations
 
       # Get resource data for the given project (or all projects if the project
       # ID is nil). options[:services] can be set to a list of services to
@@ -59,6 +32,9 @@ module ResourceManagement
         raise ServiceLayer::Errors::NotImplemented
       end
 
+      ##########################################################################
+      # write operations
+
       # Set quotas for the given project. `services` is the request body
       # expected by Limes, minus the outermost two JSON objects (i.e. starting
       # at the `services` level).
@@ -81,6 +57,15 @@ module ResourceManagement
       # expected by Limes, minus the outermost two JSON objects (i.e. starting
       # at the `services` level).
       def put_cluster_data(services)
+        raise ServiceLayer::Errors::NotImplemented
+      end
+
+      ##########################################################################
+      # actions
+
+      # Make Limes sync backend quotas/usage for the given project asynchronously.
+      # Returns nothing on success.
+      def sync_project_asynchronously(domain_id, project_id)
         raise ServiceLayer::Errors::NotImplemented
       end
 

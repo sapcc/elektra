@@ -1,7 +1,3 @@
-<% unless @services_with_error.empty? %>
-  $(".flashes").append("<%= escape_javascript(render "/resource_management/application/set_quota_error") %>");
-<% end %>
-
 // close modal window
 Dashboard.hideModal();
 // reload remote inquries
