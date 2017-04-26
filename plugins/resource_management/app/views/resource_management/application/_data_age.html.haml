@@ -40,25 +40,22 @@
             $('.syncing-error').show();
             $('.syncing-message').hide();
           }
-          });
+        });
        }
 
-       var sync_counter = 0;
-       function sync_now_polling(START_TIME) {
+       function sync_now_polling(startTime, retryCounter) {
 
         $.ajax({
           url: "#{plugin('resource_management').resources_path}",
           data : {
-            'if_updated_since': START_TIME
+            'if_updated_since': startTime
           },
           success: function(response){
             if(response.sync_running) {
-              if(sync_counter <= 3) {
-                window.setTimeout(function(){ sync_now_polling(START_TIME); }, 5000);
-                sync_counter++;
+              if(retryCounter <= 3) {
+                window.setTimeout(function(){ sync_now_polling(startTime, retryCounter + 1); }, 5000);
               }
               else {
-                sync_counter == 0;
                 $('.sync-now').show();
                 $('.syncing-error').show();
                 $('.syncing-message').hide();
@@ -69,7 +66,6 @@
             }
           },
           error: function() {
-            sync_counter == 0;
             $('.sync-now').show();
             $('.syncing-error').show();
             $('.syncing-message').hide();
