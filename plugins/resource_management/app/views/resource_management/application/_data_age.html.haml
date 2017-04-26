@@ -7,9 +7,71 @@
       -# (to avoid that users use this expensive function multiple times in quick succession)
       - if local_assigns.has_key?(:sync_now_url) && @min_updated_at < 1.minutes.ago
         &ndash;
-        = link_to 'Sync now', sync_now_url
+        %span.syncing-message
+          Syncing
+          %span.loading
+        = link_to 'Sync now', "javascript:sync_now()", class: 'sync-now'
   -elsif local_assigns.has_key?(:sync_now_url)
     .col-md-12.small.text-muted
       No usage data available &ndash;
-      = link_to 'Sync now', sync_now_url
+      %span.syncing-message
+        Syncing
+        %span.loading
+      = link_to 'Sync now',"javascript:sync_now()", class: 'sync-now'
+.row
+  .col-md-7.col-md-offset-2.small.text-muted.alert.alert-warning.syncing-error
+    There was a problem to finish the sync in the given time. Please try again or come back later.
 
+:javascript
+
+   function sync_now() {
+    $('.sync-now').hide();
+    $('.syncing-message').show();
+    $('.syncing-error').hide();
+    $.ajax({ 
+      url: "#{sync_now_url}",
+      dataType: 'script',
+      error: function() {
+        $('.sync-now').show();
+        $('.syncing-error').show();
+        $('.syncing-message').hide();
+      }
+      });
+   }
+
+   var sync_counter = 0;
+   function sync_now_polling(START_TIME) {
+    
+    $.ajax({ 
+      url: "#{plugin('resource_management').resources_path}",
+      data : {
+        'if_updated_since': START_TIME
+      },
+      success: function(response){
+        if(response.sync_running) {
+          if(sync_counter <= 3) {
+            console.log('syncing');
+            window.setTimeout(function(){ sync_now_polling(START_TIME); }, 5000);
+            sync_counter++;
+          } 
+          else {
+            sync_counter == 0;
+            $('.sync-now').show();
+            $('.syncing-error').show();
+            $('.syncing-message').hide();
+          }
+        }
+        else {
+          console.log('sync done');
+          location.reload();
+        }
+      },
+      error: function() {
+        sync_counter == 0;
+        $('.sync-now').show();
+        $('.syncing-error').show();
+        $('.syncing-message').hide();
+      }
+    });
+  }
+  

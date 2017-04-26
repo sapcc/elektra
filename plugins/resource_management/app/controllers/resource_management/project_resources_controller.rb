@@ -9,15 +9,23 @@ module ResourceManagement
     authorization_required
 
     def index
+    
       @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
-      # find resources to show
-      resources = @project.resources
-      @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
-      @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
-
-      @index = true
+        
+      # special case to poll elektra during sync now process
+      if params.include?(:if_updated_since)
+        render :json => { :sync_running => params[:if_updated_since].to_i > @min_updated_at.to_time.to_i }
+        return
+      else
+        # find resources to show
+        resources = @project.resources
+        @critical_resources    = resources.reject { |res| res.backend_quota.nil? }
+        @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
+  
+        @index = true
+      end
     end
 
     def show_area(area = nil)
@@ -181,13 +189,7 @@ module ResourceManagement
 
     def sync_now
       services.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
-      # TODO: use Ajax magic to poll Limes and update the display once the sync is done
-      flash.now[:notice] = "Sync for this project has been requested, and should complete within the next 1-2 minutes."
-      begin
-        redirect_to :back
-      rescue ActionController::RedirectBackError
-        redirect_to resources_path()
-      end
+      @start_time = (Time.now.to_f).to_i
     end
 
     private
