@@ -3,13 +3,5 @@
   -if @min_updated_at and @max_updated_at
     .col-md-10.col-md-offset-2.small.text-muted
       Usage data last updated #{data_age_as_string(@min_updated_at, @max_updated_at)}
-      -# show "Sync now" if available, but only for data older than one minute
-      -# (to avoid that users use this expensive function multiple times in quick succession)
-      - if local_assigns.has_key?(:sync_now_url) && @min_updated_at < 1.minutes.ago
-        &ndash;
-        = link_to 'Sync now', sync_now_url
-  -elsif local_assigns.has_key?(:sync_now_url)
-    .col-md-12.small.text-muted
-      No usage data available &ndash;
-      = link_to 'Sync now', sync_now_url
-
+      -# allow the calling view to embed a "Sync Now" button
+      = yield
