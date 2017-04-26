@@ -11,7 +11,8 @@
     - resources.each do |res|
       = render partial: 'bar', locals: { resource: res, overview: false }
 
-- if current_user.is_allowed?('resource_management:project_resource_sync_now')
-  = render partial: 'data_age', locals: { sync_now_url: plugin('resource_management').resources_sync_now_path }
+- if current_user.is_allowed?('resource_management:project_resource_sync_now') and @min_updated_at < 1.minute.ago
+  = render layout: 'data_age' do
+    = render partial: 'sync_now_button'
 - else
   = render partial: 'data_age'
