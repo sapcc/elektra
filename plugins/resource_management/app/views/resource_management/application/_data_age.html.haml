@@ -50,7 +50,7 @@
       success: function(response){
         if(response.sync_running) {
           if(sync_counter <= 3) {
-            console.log('syncing');
+            //console.log('syncing');
             window.setTimeout(function(){ sync_now_polling(START_TIME); }, 5000);
             sync_counter++;
           } 
@@ -62,7 +62,7 @@
           }
         }
         else {
-          console.log('sync done');
+          //console.log('sync done');
           location.reload();
         }
       },
