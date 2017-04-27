@@ -13,7 +13,10 @@ module ServiceLayer
           domain_id:  self.domain_id,
           project_id: self.project_id
         }
-        @driver = Identity::Driver::Fog.new(auth, with_limes: services.resource_management.available?)
+        # cannot use services.resource_management.available? directly because
+        # `services` might not have been set if this service instance was
+        # created via e.g. service_user.domain_admin_service()
+        @driver = Identity::Driver::Fog.new(auth, with_limes: services.try(&:resource_management).try(&:available?))
       end
       @driver
     end
