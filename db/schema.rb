@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170322150505) do
+ActiveRecord::Schema.define(version: 20170427103721) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,35 +95,6 @@ ActiveRecord::Schema.define(version: 20170322150505) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
-
-  create_table "resource_management_capacities", force: :cascade do |t|
-    t.string   "cluster_id"
-    t.string   "service"
-    t.string   "resource"
-    t.integer  "value",      limit: 8
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.string   "comment"
-  end
-
-  add_index "resource_management_capacities", ["service", "resource"], name: "resource_management_capacities_master_index", using: :btree
-
-  create_table "resource_management_resources", force: :cascade do |t|
-    t.string   "cluster_id"
-    t.string   "domain_id",                null: false
-    t.string   "project_id"
-    t.string   "service"
-    t.string   "name"
-    t.integer  "current_quota",  limit: 8
-    t.integer  "approved_quota", limit: 8
-    t.integer  "usage",          limit: 8
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "scope_name"
-    t.integer  "default_quota",  limit: 8
-  end
-
-  add_index "resource_management_resources", ["domain_id", "project_id", "service", "name"], name: "resource_management_resources_master_index", using: :btree
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false
