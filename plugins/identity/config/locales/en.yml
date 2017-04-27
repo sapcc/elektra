@@ -14,6 +14,7 @@ en:
       cloud_dns_admin: Designate Cloud Administrator
       cloud_image_admin: Glance Cloud Administrator
       cloud_network_admin: Neutron Cloud Administrator
+      cloud_resource_admin: Limes Cloud Administrator
       cloud_sharedfilesystem_admin: Manila Cloud Administrator
       cloud_volume_admin: Cinder Cloud Administrator
       compute_admin: Nova Administrator
@@ -28,6 +29,8 @@ en:
       monitoring-delegate: Monitoring Delegate
       network_admin: Neutron Administrator
       network_viewer: Neutron Read-Only
+      resource_admin: Limes Administrator
+      resource_viewer: Limes Read-Only
       service: Service User
       sharedfilesystem_admin: Manila Administrator
       sharedfilesystem_viewer: Manila Read-Only
