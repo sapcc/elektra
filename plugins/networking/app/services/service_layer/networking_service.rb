@@ -67,7 +67,7 @@ module ServiceLayer
       Networking::Subnet.new(driver,attributes)
     end
 
-    def subnets(filter)
+    def subnets(filter = {})
       driver.map_to(Networking::Subnet).subnets(filter)
     end
 

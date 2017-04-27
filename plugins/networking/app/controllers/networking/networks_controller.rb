@@ -10,10 +10,13 @@ module Networking
         services.networking.networks(filter_options.merge(pagination_options))
       end
 
-      # all networks but shared
-      usage = @networks.select { |n| n.shared == false }.length
+      # all owned networks + subnets without pagination + filtering
+      usage_networks = services.networking.networks.select { |n| n.tenant_id == @scoped_project_id }.length
+      usage_subnets = services.networking.subnets.select { |s| s.tenant_id == @scoped_project_id }.length
+
       @quota_data = services.resource_management.quota_data([
-        {service_type: :network, resource_name: :networks, usage: usage}
+        {service_type: :network, resource_name: :networks, usage: usage_networks},
+        {service_type: :network, resource_name: :subnets, usage: usage_subnets}
       ])
     end
 
