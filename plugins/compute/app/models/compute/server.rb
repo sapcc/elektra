@@ -6,6 +6,7 @@ module Compute
     validates :image_id, presence: {message: 'Please select an image'}
     validates :flavor_id, presence: {message: 'Please select a flavor'}
     validates :network_ids, presence: {message: 'Please select at least one network'}
+    validates :keypair_id, presence: {message: "Please choose a keypair for us to provision to the server. Otherwise you will not be able to log in."}
 
     NO_STATE    = 0
     RUNNING     = 1
