@@ -32,7 +32,7 @@
       = @inquiry_step.inquiry.aasm.human_state
 
     %p
-      - inquiries_url = @inquiry_step.inquiry.kind.downcase.start_with?("domain") ? admin_inquiries_url(domain_id: Rails.configuration.cloud_admin_domain,project_id: Rails.configuration.cloud_admin_project) : admin_inquiries_url(domain_id: @inquiry_step.inquiry.domain_id)
+      - inquiries_url = @inquiry_step.inquiry.approver_domain_id.blank? ? admin_inquiries_url(domain_id: @inquiry_step.inquiry.domain_id) : admin_inquiries_url(domain_id: @inquiry_step.inquiry.approver_domain_id)
       %a(href="#{inquiries_url}") Click here to enter the request processing.
 
 
