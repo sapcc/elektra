@@ -87,8 +87,8 @@ $ ->
   $ -> $('.searchable').searchable()
 
   # ajax paginate
-  $ -> $('.ajax-paginate').ajaxPaginate()
-  
+  $ -> $('*[data-ajax-paginate]').ajaxPaginate()
+
   # show search form for searchable
   $('[data-trigger="show-searchable-search"]').click (e) ->
     $(this).toggleClass('active')

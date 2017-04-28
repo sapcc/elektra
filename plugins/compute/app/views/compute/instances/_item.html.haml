@@ -1,3 +1,4 @@
+-# search_name and marker_id are important for searchable and ajax_paginate plugins! 
 - data = {search_name: instance.name+'_'+instance.id+'_'+instance.status, marker_id: instance.id}
 - if instance.task_state
   - data[:update_url]=plugin('compute').update_item_instance_path(id:instance.id, target_state: local_assigns[:target_state])
