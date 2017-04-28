@@ -48,8 +48,8 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty.git
-  revision: 52431c9ed2f09b31417a952090512239ee765f69
-  branch: token-auth
+  revision: 5fd74d475a7dfda52985ee078aa53c891322bcf3
+  branch: revert-proxy-handling
   specs:
     misty (0.5.1)
       json (>= 1.8.3, < 3)

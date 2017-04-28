@@ -64,7 +64,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # gem 'therubyracer', platforms: :ruby
 
 # Limes
-gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'token-auth'
+gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'revert-proxy-handling'
 gem 'misty-limes', git: 'https://github.com/sapcc/misty-limes.git'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
