@@ -7,9 +7,10 @@ module Compute
     authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip]
 
     def index
+      # params[:per_page]=2
       @instances = []
       if @scoped_project_id
-        @instances = paginatable(per_page: 10) do |pagination_options|
+        @instances = paginatable(per_page: (params[:per_page] || 10)) do |pagination_options|
           services.compute.servers(@admin_option.merge(pagination_options))
         end
 
@@ -18,11 +19,17 @@ module Compute
           usage = services.compute.usage
 
           @quota_data = services.resource_management.quota_data([
-            {service_type: :compute, resource_name: :instances, usage: usage.instances},
-            {service_type: :compute, resource_name: :cores, usage: usage.cores},
-            {service_type: :compute, resource_name: :ram, usage: usage.ram}
+            {service_name: :compute, resource_name: :instances, usage: usage.instances},
+            {service_name: :compute, resource_name: :cores, usage: usage.cores},
+            {service_name: :compute, resource_name: :ram, usage: usage.ram}
           ])
         end
+      end
+
+      if request.xhr?
+        render partial: 'list', locals: {instances: @instances}
+      else
+        render action: :index
       end
     end
 
