@@ -1,11 +1,17 @@
 = render "intro"
 
 - if @scoped_project_id
-  - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-    .toolbar
+  .toolbar
+    .pull-left
+      .has-feedback
+        = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'project name'
+        %i.glyphicon.glyphicon-search.form-control-feedback
+
+    - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
       = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-  %table.table.instances
+
+  %table.table.instances.searchable{data:{search_input: '#search_instances_input'}}
     %thead
       %tr
         %th Name
@@ -26,9 +32,11 @@
         %tr{data: {empty: true}}
           %td{colspan: 8} No instances available
       - else
-        - @instances.each do | instance |
-          = render partial: 'item', locals: {instance: instance}
+        = render partial: 'list', locals: {instances: @instances}
 
-  = render_paginatable(@instances)
+  - if @pagination_has_next
+    .ajax-paginate.pull-right{ data: { list_selector: 'table.instances tbody'} }
+
+  =# render_paginatable(@instances)
 - else
   = render "application/projects_list"

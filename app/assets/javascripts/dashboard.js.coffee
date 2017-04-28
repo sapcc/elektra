@@ -86,6 +86,9 @@ $ ->
   # init all DOM elements found by css class '.searchable' as searchable
   $ -> $('.searchable').searchable()
 
+  # ajax paginate
+  $ -> $('.ajax-paginate').ajaxPaginate()
+  
   # show search form for searchable
   $('[data-trigger="show-searchable-search"]').click (e) ->
     $(this).toggleClass('active')
