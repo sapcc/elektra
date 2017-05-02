@@ -57,7 +57,7 @@ module ResourceManagement
         new(:networking,                :security_groups,             pkg(false, 2),  auto_approved_quota: 1), # auto-approve initial "default" security group
         new(:networking,                :security_group_rules,        pkg(false, 16), auto_approved_quota: 4), # auto-approve initial "default" security group
         new(:networking,                :rbac_policies,               pkg(false, 5)),
-        new(:dns,                       :zones,                       pkg(false, 1)),
+        new(:dns,                       :zones,                       pkg(false, 0)),
         new(:dns,                       :recordsets,                  pkg(false, 5)),
         new(:block_storage,             :capacity,                    pkg(true, 16), data_type: :bytes, data_sub_type: :giga),
         new(:block_storage,             :snapshots,                   pkg(false, 2)),

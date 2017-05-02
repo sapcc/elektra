@@ -72,6 +72,7 @@ module ResourceManagement
       @project_resource.quota = new_quota
       unless @project_resource.save
         render text: @project_resource.errors.full_messages.to_sentence, status: :bad_request
+        return
       end
 
       # make sure that row is not rendered with red background color
