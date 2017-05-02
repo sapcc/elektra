@@ -4,6 +4,7 @@ module Compute
     def grouped_images(images)
       public_images = {}
       private_images = {}
+      images.sort_by!{|image| image.name}
       images.each do |image|
         if image.visibility=='public'
           type = (image.hypervisor_type || 'no hypervisor type')

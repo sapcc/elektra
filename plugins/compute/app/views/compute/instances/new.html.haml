@@ -50,14 +50,14 @@
       required:           true,
       collection:         grouped_flavors(@flavors),
       group_method:       :last,
-      selected:           @instance.flavor_id,
+      include_blank:      "Choose flavor",
       label_method:       -> (flavor) { flavor_label_for_select(flavor) }}
 
     = f.input :image_id, label: 'Image',
       as:            :grouped_select,
       collection:    grouped_images(@images),
       group_method:  :last,
-      selected:      @instance.image_id,
+      include_blank: "Choose image",
       required:      true
 
     = f.input :network_ids, { label: "Private Network",

@@ -70,8 +70,8 @@ module Compute
       @instance.errors.add :private_network,  'not available' if @private_networks.blank?
       @instance.errors.add :image,            'not available' if @images.blank?
 
-      @instance.flavor_id             = @flavors.first.try(:id)
-      @instance.image_id              = params[:image_id] || @images.first.try(:id)
+      # @instance.flavor_id             = @flavors.first.try(:id)
+      # @instance.image_id              = params[:image_id] || @images.first.try(:id)
       @instance.availability_zone_id  = @availability_zones.first.try(:id)
       @instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
       @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
