@@ -4,6 +4,7 @@ en:
       key_value_pairs: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
       string_array: "Array of strings are separated by ','. Start a new entry by hitting the Enter key or ','. You can also copy and paste a string containing strings following this pattern: 'value1,value2...'"
       json: "JSON Schema defines seven primitive types for JSON values: array, boolean, integer, number, null, object and string. Example: {'title':'root'}"
+      max_time_out: "Max timeout is 86.400 seconds (24 hours)."
     messages:
       automation_removed_successfully: "Automation #{name} removed successfully."
       node_updated_succesfully: "Node was successfully updated."
