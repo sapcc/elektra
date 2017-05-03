@@ -11,12 +11,14 @@
     - form_horizontal_static_input('Repository', @automation.repository)
     - form_horizontal_static_input('Repository version', @automation.repository_revision)
     - form_horizontal_static_input('Timeout', @automation.timeout)
+    -# No use case for automation tags right now
     -# - form_horizontal_static_hash('Tags', @automation.tags)
     - form_horizontal_static_input('Type', @automation.type)
 
     - if @automation.type == ::Automation::Automation::Types::CHEF
       - form_horizontal_static_array('Runlist', @automation.run_list)
       - form_horizontal_static_json_editor('Attributes', @automation.chef_attributes)
+      - form_horizontal_static_input('Chef version', @automation.chef_version)
       - form_horizontal_static_input('Log level', @automation.log_level)
     - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
       - form_horizontal_static_input('Path', @automation.path)
