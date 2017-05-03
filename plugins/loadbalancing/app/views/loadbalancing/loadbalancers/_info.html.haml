@@ -4,8 +4,8 @@
   %table.table
     %tbody
       %tr
-        %th.snug-nowrap
-          State:
+        %th
+          Provisioning Status:
         %td
           .state{data:{update_loadbalancer_state: plugin('loadbalancing').get_item_loadbalancer_path(id: loadbalancer.id), initial_loadbalancer_state: loadbalancer.provisioning_status}}
       %tr
