@@ -9,3 +9,5 @@
     .col-md-1.quota-configure
       - if resource.comment.present? or resource.capacity.nil?
         = link_to 'Configure', plugin('resource_management').cloud_admin_edit_capacity_path(service: resource.service_type, resource: resource.name), data: { modal: true }, class: 'btn btn-default btn-sm', title: 'Manage capacity data'
+      - else
+        = link_to 'Configure', '#', disabled: true, class: 'btn btn-default btn-sm', title: 'Managed by Limes', data: { toggle: 'popover', placement: 'right', content: 'Please check the Limes configuration for how this capacity is determined.' }
