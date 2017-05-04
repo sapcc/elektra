@@ -1,4 +1,4 @@
-%tr
+%tr{id: "automation_#{automation.id}"}
   %td
     = link_to(automation.form_attribute('name'),  plugin('automation').automation_path(id: automation.id), data: {modal: true})
   %td= automation.form_attribute('type')

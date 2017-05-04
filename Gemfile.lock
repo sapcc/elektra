@@ -36,7 +36,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
-  revision: 17fc5ad64a0a0c9305c2423821cc6f0a5bc173f7
+  revision: 5846553e5e657943d936130a0c8fa9d0a1805a5f
   specs:
     lyra-client (0.1.1)
 
