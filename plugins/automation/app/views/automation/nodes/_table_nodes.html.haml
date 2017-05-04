@@ -1,4 +1,5 @@
-.nodes_table{data: {update_path: plugin('automation').index_update_nodes_path(page: @node_page), update_interval: 10}}
+- data = {update_path: plugin('automation').index_update_nodes_path(page: @node_page), update_interval: 10}
+.nodes_table{data: data}
   %table.table
     %thead
       %tr

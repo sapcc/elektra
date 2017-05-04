@@ -134,8 +134,7 @@ module Automation
     end
 
     def automations
-      # TODO: whe should collect all automations and implement a dropdown scrollable to execute the automation
-      @automations = services.automation.automations(1,100)
+      @automations = services.automation.automations_collect_all
     end
 
     def nodes_with_jobs

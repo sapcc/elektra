@@ -96,6 +96,26 @@ module ServiceLayer
       automation_service.find(:all, {}, { page: page, per_page: per_page })
     end
 
+    def automations_collect_all
+      page = 1
+      per_page = 100
+      automations = []
+      # first call
+      partial_collection = automation_service.find(:all, {}, { page: page, per_page: per_page })
+      # collect information to loop
+      page = partial_collection.current_page
+      total_pages = partial_collection.total_pages
+      automations = partial_collection.elements
+      # loop
+      while page < total_pages
+        page += 1
+        partial_collection = automation_service.find(:all, {}, { page: page, per_page: per_page })
+        automations += partial_collection.elements
+        break if page > 10 # avoid endlos loop 10 * 100 = 1000 automations. This should cover all cases
+      end
+      automations
+    end
+
     def automation(automation_id)
       automation_service.find(automation_id, {})
     end

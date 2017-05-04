@@ -28,7 +28,7 @@
     .btn-group{data: {node_id: node.id}}
       %button.btn.btn-default.btn-sm.dropdown-toggle{type: "button", data: {toggle: "dropdown"}, "aria-haspopup" => "true", "aria-expanded" => "false"}
         %i.fa.fa-gears.fa-fw
-      %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+      %ul.dropdown-menu.dropdown-menu-right.dropdown-scrolly{ role:"menu"}
         %li.dropdown-header
           Run Automation
         - @automations.each do |automation|
