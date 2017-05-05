@@ -4,8 +4,13 @@
   .toolbar
     .pull-left
       .has-feedback
-        = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'project name'
+        = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
         %i.glyphicon.glyphicon-search.form-control-feedback
+
+      .has-feedback-help
+        %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. You may load more (or all) servers using the buttons. Existing search terms will be applied to the loaded items automatically. Clear the input field to see all currently loaded servers."}}
+          %i.fa.fa-question-circle
+
 
     - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
       = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
@@ -37,7 +42,7 @@
   -# if has next items (comes from paginate helper in controller) render the
   -# ajax paginate plugin (identified by data-ajax-paginate)
   - if @pagination_has_next
-    .pull-right{ data: { ajax_paginate: true, list_selector: 'table.instances tbody'} }
+    .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.instances tbody'} }
 
   =# render_paginatable(@instances)
 - else
