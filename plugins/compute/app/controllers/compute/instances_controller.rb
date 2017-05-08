@@ -4,7 +4,7 @@ module Compute
     before_action :automation_data, only: [:new, :create]
 
     authorization_context 'compute'
-    authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip]
+    authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :new_snapshot]
 
     def index
       @instances = []

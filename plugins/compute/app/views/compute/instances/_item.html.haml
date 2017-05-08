@@ -1,7 +1,7 @@
 - data = {}
 - if instance.task_state
   - data[:update_url]=plugin('compute').update_item_instance_path(id:instance.id, target_state: local_assigns[:target_state])
-  - data[:interval]=2500
+  - data[:interval]=10000
 
 %tr{class: "state-#{instance.status.downcase if instance.status} #{'task-state ' + instance.task_state if instance.task_state}", data: data, id: "instance_#{instance.id}"}
   %td

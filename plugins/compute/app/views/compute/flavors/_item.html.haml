@@ -4,10 +4,10 @@
     - unless flavor.is_public?
       %i.fa.fa-lock.text-danger
     = flavor.name
-    %br  
+    %br
     %span.info-text= flavor.id
-      
-  %td= flavor.vcpus						
+
+  %td= flavor.vcpus
   %td= flavor.ram
   %td= flavor.disk
   %td= flavor.ephemeral
@@ -23,11 +23,10 @@
           - if current_user.is_allowed?("compute:flavor_update", flavor: flavor)
             %li= link_to 'Edit', plugin('compute').edit_flavor_path(id: flavor.id), data: {modal: true}
           - if current_user.is_allowed?("compute:flavor_access_list", flavor: flavor)
-            %li= link_to 'Access Control', plugin('compute').flavor_members_path(flavor_id: flavor.id), data: {modal: true}  
+            %li= link_to 'Access Control', plugin('compute').flavor_members_path(flavor_id: flavor.id), data: {modal: true}
           - if current_user.is_allowed?("compute:flavor_manage_metadata", flavor: flavor)
-            %li= link_to 'Manage Metadata', plugin('compute').flavor_metadata_path(flavor_id: flavor.id), data: {modal: true}  
-            
+            %li= link_to 'Manage Metadata', plugin('compute').flavor_metadata_path(flavor_id: flavor.id), data: {modal: true}
+
           - if current_user.is_allowed?("compute:flavor_delete", flavor: flavor)
             %li= link_to 'Delete', plugin('compute').flavor_path(id: flavor.id), method: :delete, data: { confirm: 'Are you sure you want to delete this flavor?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true
-    - else
-      = "-"        
+    

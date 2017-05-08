@@ -114,33 +114,30 @@ module Compute
     end
 
     def flavor_object
-      return nil if @flavor_object==false
+      return @flavor_object unless @flavor_object.nil?
 
-      if @flavor_object.nil?
-        flavor_id = self.flavor.nil? ? nil : self.flavor["id"]
-        if flavor_id
-          @flavor_object = @driver.map_to(Compute::Flavor).get_flavor(flavor_id) rescue false
-        else
-          @flavor_object = false
-        end
+      id = self.flavor["id"]
+      return nil if id.blank?
+
+      flavor = Rails.cache.fetch("server_flavor_#{id}", expires_in: 24.hours) do
+        @driver.get_flavor(id) rescue nil
       end
+      return nil if flavor.nil?
+      @flavor_object = Compute::Flavor.new(self.driver,flavor)
 
-      return @flavor_object || nil
     end
 
     def image_object
-      return nil if @image_object==false
+      return @image_object unless @image_object.nil?
 
-      if @image_object.nil?
-        image_id = self.image.nil? ? nil : self.image["id"]
-        if image_id
-          @image_object = @driver.map_to(Compute::Image).get_image(image_id) rescue false
-        else
-          @image_object = false
-        end
+      id = self.image["id"]
+      return nil if id.blank?
+
+      image = Rails.cache.fetch("server_image_#{id}", expires_in: 24.hours) do
+        @driver.get_image(id) rescue nil
       end
-
-      return @image_object || nil
+      return nil if image.nil?
+      @image_object = Compute::Image.new(self.driver,image)
     end
 
     def metadata

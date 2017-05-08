@@ -1,10 +1,5 @@
 module ServiceLayer
   class ComputeService < Core::ServiceLayer::Service
-    @@images_mutex = Mutex.new
-    @@flavors_mutex = Mutex.new
-    @@images = {}
-    @@flavors = {}
-
     def driver
       @driver ||= Compute::Driver::Fog.new({
         auth_url:   self.auth_url,
@@ -73,15 +68,7 @@ module ServiceLayer
     end
 
     def image(id)
-      return nil if id.blank?
-
-      image = @@images[id]
-      unless image
-        @@images_mutex.synchronize do
-          image = @@images[id] = driver.get_image(id)
-        end
-      end
-      Compute::Image.new(driver,image)
+      driver.map_to(Compute::Image).get_image(id) rescue nil
     end
 
     def new_os_interface(server_id,attributes={})
