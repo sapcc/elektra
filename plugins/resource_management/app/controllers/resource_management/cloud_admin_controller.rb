@@ -118,6 +118,10 @@ module ResourceManagement
     def details
       @show_all_button = true if params[:overview] == 'true'
 
+      @sort_order  = params[:sort_order] || 'asc'
+      @sort_column = params[:sort_column] || ''
+      sort_by = @sort_column.gsub("_column", "")
+
       service_type  = params.require(:service).to_s
       resource_name = params.require(:resource).to_sym
       @config       = ResourceManagement::ResourceConfig.all.find do |c|
@@ -129,14 +133,28 @@ module ResourceManagement
       domains = services.resource_management.list_domains(services: service_type, resources: resource_name.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 
-      @domain_resources.sort_by! do |res|
-        # warn about domains with projects_quota or usage exceeding domain quota
-        sort_order = res.quota < [res.projects_quota, res.usage].max ? 0 : 1
-        # sort domains by warning level, then by name
-        [ sort_order, (res.domain_name || res.domain_id).downcase ]
+      # show danger and warning projects on top if no sort by is given
+      if sort_by.empty?
+        @domain_resources.sort_by! do |res|
+          # warn about domains with projects_quota or usage exceeding domain quota
+          sort_order = res.quota < [res.projects_quota, res.usage].max ? 0 : 1
+          # sort domains by warning level, then by name
+          [ sort_order, (res.domain_name || res.domain_id).downcase ]
+        end
+      else
+        sort_method = sort_by.to_sym
+        @domain_resources.sort_by! { |r| [ r.send(sort_method), r.sortable_name ] }
+        @domain_resources.reverse! if @sort_order.downcase == 'desc'
       end
+
       # prepare the domains table
       @domain_resources = Kaminari.paginate_array(@domain_resources).page(params[:page]).per(6)
+
+      respond_to do |format|
+        format.html
+        format.js
+      end
+
     end
 
     private

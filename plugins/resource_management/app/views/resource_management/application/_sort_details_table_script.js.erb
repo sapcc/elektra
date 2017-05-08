@@ -38,7 +38,7 @@ $(function() {
     $(this).unbind('mouseleave');
 
     $.ajax({ 
-      url: "<%= plugin('resource_management').admin_details_path() %>",
+      url: "<%= details_path %>",
       data: { 
         sort_order: sort_order,
         sort_column: $(this).attr('id'),

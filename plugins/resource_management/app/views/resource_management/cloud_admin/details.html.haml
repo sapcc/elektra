@@ -5,7 +5,9 @@
     = render partial: "details_usage_bar"
 
   %h2
-    %small Details
+    %small
+      Details
+      %span.loading-place
   #details_table
     = render partial: "details_table"
 
@@ -15,5 +17,7 @@
       = link_to "Show all #{t("resource_management.#{@config.service.name}")} quotas", plugin('resource_management').cloud_admin_area_path(area: @config.service.area), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
-
+= content_for :javascripts do
+  :javascript
+    #{render partial: 'sort_details_table_script.js', locals: {details_path: plugin('resource_management').cloud_admin_details_path()}}
 
