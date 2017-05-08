@@ -1,1 +1,2 @@
 $("#details_table").html("<%= escape_javascript(render(partial: 'details_table')) %>");
+<%= render partial: 'sort_details_table_script.js', locals: {details_path: plugin('resource_management').cloud_admin_details_path()} %>

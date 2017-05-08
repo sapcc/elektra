@@ -18,4 +18,4 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'sort_details_table_script.js'}
+    #{render partial: 'sort_details_table_script.js', locals: {details_path: plugin('resource_management').admin_details_path()}}
