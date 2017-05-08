@@ -4,7 +4,10 @@ module Compute
     def grouped_images(images)
       public_images = {}
       private_images = {}
-      images.sort_by!{|image| image.name}
+      # before sorting delete images that don't have a name
+      # if for whatever reason in the future we want to show images without names in the list
+      # this needs to be adjusted
+      images.delete_if{|image| image.name.nil?}.sort_by!{|image| image.name}
       images.each do |image|
         if image.visibility=='public'
           type = (image.hypervisor_type || 'no hypervisor type')
