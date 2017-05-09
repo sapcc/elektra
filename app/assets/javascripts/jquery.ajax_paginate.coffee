@@ -6,10 +6,10 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     listSelector: null
     loadNextButton: true
     loadAllButton: false
-    loadNextLabel: 'Load Next Items'
-    loadAllLabel: 'Load All Items'
-    loadNextItemsCssClass: 'btn btn-success'
-    loadAllItemsCssClass: 'btn btn-primary'
+    loadNextLabel: 'Load Next'
+    loadAllLabel: 'Load All'
+    loadNextItemsCssClass: 'btn btn-primary btn-sm'
+    loadAllItemsCssClass: 'btn btn-default btn-sm'
 
   # merge defaults and options
   settings = $.extend( {}, defaults, options )
@@ -18,7 +18,7 @@ jQuery.fn.ajaxPaginate= ( options ) ->
   this.each () ->
     $container = $(this)
     # define spinner element
-    $spinner = $('<span class="spinner"></span>').appendTo($container).hide()
+    $spinner = $('<div><span class="spinner"></span> Loading&hellip;</div>').appendTo($container).hide()
     # define buttons container
     $buttons = $('<div></div>').appendTo($container)
 
@@ -113,7 +113,6 @@ jQuery.fn.ajaxPaginate= ( options ) ->
         clearTimeout(timer) if timer
         timer = setTimeout(loadAllOnSearch,1000)
 
-
     # add load next items button
     if settings.loadNextButton
       $loadNextButton = $("<button class='#{loadNextItemsCssClass}'>#{loadNextLabel}</button> ").appendTo($buttons)
@@ -125,7 +124,7 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     # add load all items button
     if settings.loadAllButton
       $buttons.append('&nbsp;')
-      $loadAllButton = $(" <button class='#{loadAllItemsCssClass}'>#{loadAllLabel}</button> ").appendTo($buttons)
+      $loadAllButton = $(" <button class='#{loadAllItemsCssClass}' data-toggle='tooltip' title='This might take a while!'>#{loadAllLabel}</button> ").appendTo($buttons)
       $loadAllButton.click () ->
         showLoading()
         loadAll (data) -> hideLoading()
