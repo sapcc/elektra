@@ -1,21 +1,15 @@
 job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
 
-@init_table_info_popover= () ->
-  $('[data-toggle="popover"][data-popover-type="table-info-hint"]').popover
-    placement: 'top'
-    trigger: 'focus'
-  $('[data-toggle="popover"][data-popover-type="table-info-hint"]').on 'click', (e) ->
-    e.stopPropagation()
-    e.preventDefault()
-
 @init_history_popover= () ->
   # init popovers elements
   init_job_popover()
 
 @init_job_popover= () ->
+  # init the popover
   $(job_popover_matcher).popover
     placement: 'top'
     html: true
+    container: '.js-nodes-table'
 
   # add click handler to the popovers to hide popover if other popover is clicked
   $(job_popover_matcher).on 'click', job_popover_close_other_popovers_handler
@@ -44,11 +38,7 @@ job_popover_matcher = '[data-toggle="popover"][data-popover-type="job-history"]'
 $ ->
   # add handlers to the polling update event
   $(document).on('polling:update_complete', init_history_popover)
-  $(document).on('polling:update_complete', init_table_info_popover)
 
 
   # init history popovers elements
   init_job_popover()
-
-  # init table info hints
-  init_table_info_popover()
