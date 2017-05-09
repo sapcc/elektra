@@ -7,7 +7,7 @@ module Compute
     authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :new_snapshot]
 
     def index
-      params[:per_page]=2
+      params[:per_page]=6
       @instances = []
       if @scoped_project_id
         @instances = paginatable(per_page: (params[:per_page] || 10)) do |pagination_options|
