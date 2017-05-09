@@ -3,9 +3,9 @@
 - if @scoped_project_id
   .toolbar
     .pull-left
-      .has-feedback
+      .has-feedback.has-feedback-searchable
         = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
-        %i.glyphicon.glyphicon-search.form-control-feedback
+
 
       .has-feedback-help
         %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. You may load more (or all) servers using the buttons. Existing search terms will be applied to the loaded items automatically. Clear the input field to see all currently loaded servers."}}

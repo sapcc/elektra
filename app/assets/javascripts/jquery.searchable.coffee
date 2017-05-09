@@ -5,6 +5,10 @@ jQuery.fn.searchable= ( options ) ->
     searchResultCssClass: 'search-result'
     hasSearchResultCssClass: 'has-search-result'
     searchInputCssClass: 'search-input'
+    searchInputWrapperCssClass: 'search-input-wrapper'
+    searchInputType: 'clearButton'
+    searchIconCssClass: 'fa-search'
+    searchIconClearCssClass: 'fa-times-circle'
 
   # merge defaults and options
   if typeof options is 'string'
@@ -44,8 +48,24 @@ jQuery.fn.searchable= ( options ) ->
     $searchInput = if data.searchInput && $(data.searchInput).length>0
       $(data.searchInput)
     else
-      $inputWrapper = $("<div class='#{settings.searchInputCssClass}-wrapper'></div>").insertBefore($searchableList)
+      $inputWrapper = $("<div class='#{settings.searchInputWrapperCssClass}'></div>").insertBefore($searchableList)
       $("<input type='text' class='#{settings.searchInputCssClass}'/>").appendTo($inputWrapper)
+
+
+    # Add search icon
+    $searchIconWrapper = $("<span class='form-control-feedback'></span>").insertAfter($searchInput)
+    $searchIcon = $("<i class='fa #{settings.searchIconCssClass}'></i>").appendTo($searchIconWrapper)
+    # search icon behaviour
+    $searchIconWrapper.click ->
+      # clicking on the wrapper will empty the search input if it's currently not empty
+      if $searchInput.val().length > 0
+        $searchInput.val('') # empty input
+        $searchIcon.removeClass("#{settings.searchIconClearCssClass}").addClass("#{settings.searchIconCssClass}") # switch icon class back to magnifying glass
+        $searchIconWrapper.removeClass("not-empty") # this class is necessary to be able to style the wrapper depending on which icon is displayed
+
+
+      updateSearchResult($searchableList,$searchInput.val())
+
 
     if action
       switch action
@@ -53,6 +73,15 @@ jQuery.fn.searchable= ( options ) ->
     else
       # new value in search input is presented
       $searchInput.keyup () ->
+        # switch search icon from magnifying glass to clear icon and back depending on whether the search input is empty or not
+        if $searchInput.val().length > 0
+          $searchIcon.removeClass("#{settings.searchIconCssClass}").addClass("#{settings.searchIconClearCssClass}")
+          $searchIconWrapper.addClass("not-empty") # for styling the wrapper
+        else
+          $searchIcon.removeClass("#{settings.searchIconClearCssClass}").addClass("#{settings.searchIconCssClass}")
+          $searchIconWrapper.removeClass("not-empty")
+
+
         updateSearchResult($searchableList,$searchInput.val())
 
       $searchableList.bind('DOMNodeInserted DOMNodeRemoved', () -> updateSearchResult($searchableList,$searchInput.val()))
