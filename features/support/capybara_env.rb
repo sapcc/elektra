@@ -5,16 +5,16 @@ require 'cucumber/rspec/doubles'
 # phantomjs is required by poltergeist
 require 'phantomjs'
 
-# Poltergeist is a headless web driver for capybara  
+# Poltergeist is a headless web driver for capybara
 # Register slightly larger than default window size...
 
 Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, { 
+  Capybara::Poltergeist::Driver.new(app, {
     phantomjs: Phantomjs.path,
     debug: false, # change this to true to troubleshoot
     timeout: 180,
-    phantomjs_options: ['--ssl-protocol=any', 
-                        '--ignore-ssl-errors=true', 
+    phantomjs_options: ['--ssl-protocol=any',
+                        '--ignore-ssl-errors=true',
                         '--proxy-type=none']
   })
 end
@@ -39,4 +39,4 @@ Capybara.javascript_driver = :poltergeist
 Capybara.server_port       = find_available_port # Needed for runnning multiple features simultaniously
 Capybara.app_host          = ENV['CAPYBARA_APP_HOST'] || "http://localhost:#{Capybara.server_port}"
 Capybara.run_server        = ENV['CAPYBARA_APP_HOST'].nil?
-Capybara.default_wait_time = 5
+Capybara.default_wait_time = 15
