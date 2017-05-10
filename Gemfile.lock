@@ -48,8 +48,8 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty.git
-  revision: 5fd74d475a7dfda52985ee078aa53c891322bcf3
-  branch: revert-proxy-handling
+  revision: 92ef1f3679dc1f4e6c0cb27fd59b8b896f8983fd
+  branch: master
   specs:
     misty (0.5.1)
       json (>= 1.8.3, < 3)
