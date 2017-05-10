@@ -1,5 +1,5 @@
-# @javascript
-# Feature: DNS
+@javascript
+Feature: DNS
 #   Background:
 #     Given Test user has accepted terms of use
 #     Given I visit domain path "identity/home"
@@ -15,7 +15,7 @@
 #   Scenario: Request New Domain Button is visible
 #     When I visit project path "dns-service/zones"
 #     Then I see a "Request New Domain" button
-# 
+#
 #
 #   Scenario: The Request Domain Dialog comes up
 #     When I visit project path "dns-service/zones"
