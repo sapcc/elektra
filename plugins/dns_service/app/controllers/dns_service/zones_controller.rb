@@ -4,7 +4,7 @@ module DnsService
     before_filter :load_pools, only: [:index, :show, :update, :create]
 
     def index
-      @zones = paginatable(per_page: 2) do |pagination_options|
+      @zones = paginatable(per_page: 20) do |pagination_options|
         services.dns_service.zones(@admin_option.merge(pagination_options))
       end
 

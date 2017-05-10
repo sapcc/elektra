@@ -3,14 +3,18 @@
     %p There are zone transfer requests available.
     = link_to 'show', transfer_requests_path, data: { modal: true }
 
-- if current_user.is_allowed?("dns_service:zone_create")
-  .toolbar
+.toolbar
+  .pull-left
+    .has-feedback
+      = text_field_tag 'search_zones_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
+      %i.glyphicon.glyphicon-search.form-control-feedback
+
+  - if current_user.is_allowed?("dns_service:zone_create")
     = link_to 'Create New', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
-- elsif current_user.is_allowed?("dns_service:request_zone")
-  .toolbar
+  - elsif current_user.is_allowed?("dns_service:request_zone")
     = link_to 'Request New Domain', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-%table.table.zones
+%table.table.zones.searchable{data:{search_input: '#search_zones_input'}}
   %thead
     %tr
       %th Name

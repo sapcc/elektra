@@ -7,10 +7,10 @@ module Compute
     authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :new_snapshot]
 
     def index
-      params[:per_page]=6
+      params[:per_page]= 20
       @instances = []
       if @scoped_project_id
-        @instances = paginatable(per_page: (params[:per_page] || 10)) do |pagination_options|
+        @instances = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
           services.compute.servers(@admin_option.merge(pagination_options))
         end
 

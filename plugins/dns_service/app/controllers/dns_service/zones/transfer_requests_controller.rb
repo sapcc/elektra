@@ -17,7 +17,9 @@ module DnsService
         @zone_transfer_request = services.dns_service.new_zone_transfer_request(
           params[:zone_id], params[:zone_transfer_request]
         )
-        @zone_transfer_request.save
+        if @zone_transfer_request.save
+          services.dns_service.reset_cache_for_zone_transfer_requests
+        end
       end
 
       def destroy
@@ -26,6 +28,7 @@ module DnsService
         )
         if @zone_transfer_request.destroy
           @zone_transfer_request.id=nil
+          services.dns_service.reset_cache_for_zone_transfer_requests
         end
       end
 
@@ -33,7 +36,9 @@ module DnsService
         @zone_transfer_request = services.dns_service.new_zone_transfer_request(nil)
         @zone_transfer_request.id = params[:id]
         @zone_transfer_request.key= params[:key]
-        @zone_transfer_request.accept
+        if @zone_transfer_request.accept
+          services.dns_service.reset_cache_for_zone_transfer_requests
+        end
       end
 
     end
