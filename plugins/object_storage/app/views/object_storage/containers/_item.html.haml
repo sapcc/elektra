@@ -2,10 +2,12 @@
   %td.name-with-icon
     %span.fa.fa-fw.fa-hdd-o{ title: 'Container' }
     =link_to container.name, plugin('object_storage').list_objects_path(container.name), title: 'List contents'
-  %td= format_bytes(container.bytes_used)
-  %td= Core::DataType.new(:number).format(container.object_count)
+  %td{id: "#{container.name}_total_size"}
+    =format_bytes(container.bytes_used)
+  %td{id: "#{container.name}_item_count"}
+    =Core::DataType.new(:number).format(container.object_count)
   %td.snug
-    .btn-group
+    .btn-group{id: "#{container.name}_menu"}
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: 'button', data: { toggle: 'dropdown' }, aria: { expanded: true } }
         %span.fa.fa-cog
 

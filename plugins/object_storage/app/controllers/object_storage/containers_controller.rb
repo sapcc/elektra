@@ -41,14 +41,16 @@ module ObjectStorage
       @container = services.object_storage.new_container(name: "")
     end
 
-    def empty
+    def pre_empty
       @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
       unless @form.validate
         render action: 'confirm_emptying'
         return
       end
+    end
+
+    def empty
       @container.empty!
-      back_to_container_list
     end
 
     def create
@@ -73,7 +75,7 @@ module ObjectStorage
       if attrs.delete(:has_web_index) != '1'
         attrs[:web_index] = '' # disable web_index if unselected in UI
       end
-      
+
       attrs[:web_file_listing] = attrs[:web_file_listing] == '1'
 
 
