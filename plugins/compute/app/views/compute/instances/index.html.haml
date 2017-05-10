@@ -7,7 +7,7 @@
         = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
 
       .has-feedback-help
-        %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. You may load more (or all) servers using the buttons. Existing search terms will be applied to the loaded items automatically. Clear the input field to see all currently loaded servers."}}
+        %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
           %i.fa.fa-question-circle
 
 
