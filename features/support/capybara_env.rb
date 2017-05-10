@@ -35,8 +35,8 @@ ensure
   server.close if server
 end
 
-Capybara.javascript_driver = :poltergeist
-Capybara.server_port       = find_available_port # Needed for runnning multiple features simultaniously
-Capybara.app_host          = ENV['CAPYBARA_APP_HOST'] || "http://localhost:#{Capybara.server_port}"
-Capybara.run_server        = ENV['CAPYBARA_APP_HOST'].nil?
-Capybara.default_wait_time = 15
+Capybara.javascript_driver      = :poltergeist
+Capybara.server_port            = find_available_port # Needed for runnning multiple features simultaniously
+Capybara.app_host               = ENV['CAPYBARA_APP_HOST'] || "http://localhost:#{Capybara.server_port}"
+Capybara.run_server             = ENV['CAPYBARA_APP_HOST'].nil?
+Capybara.default_max_wait_time  = 15
