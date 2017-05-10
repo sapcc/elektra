@@ -1,9 +1,9 @@
 - if volume
+  - data = {search_name: volume.name+'_'+volume.id, marker_id: volume.id}
   - transition = false
   - volume_name = volume.name.present? ? volume.name : volume.id
   - if local_assigns.has_key?(:target_state) && volume.in_transition?(target_state)
     - transition = true
-    - data = {}
     - data[:update_url]=plugin('block_storage').update_item_volume_path(id:volume.id, target_state: target_state)
     - data[:interval]=2500
 
@@ -16,7 +16,7 @@
     %td= volume.availability_zone
     %td= volume.description
     %td= volume.size
-    - attachments = get_attachments(volume, @servers)
+    - attachments = get_attachments(volume, servers)
     - if !attachments.blank?
       - attachments.each do |att|
         - if att[:server_name]
