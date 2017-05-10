@@ -8,7 +8,7 @@ ObjectStorage::Engine.routes.draw do
       get  :confirm_deletion
       get  :confirm_emptying
       post :pre_empty
-      get  :empty
+      post :empty
       get  :show_access_control
       post :update_access_control
     end

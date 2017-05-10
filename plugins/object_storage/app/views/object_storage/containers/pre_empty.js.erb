@@ -5,4 +5,4 @@ Dashboard.hideModal();Dashboard
 $('#<%=@container.name%>_item_count').html('<small>emptying </small><span class="loading"></span>');
 $('#<%=@container.name%>_menu.btn-group button').attr('disabled','disabled');
 // empty container
-$.get("<%=plugin('object_storage').empty_container_path(@container.name)%>");
+$.post("<%=plugin('object_storage').empty_container_path(@container.name)%>");
