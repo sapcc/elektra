@@ -515,9 +515,14 @@ section {
     margin-bottom: 6px;
   }
 
-  .has-feedback {
+  .has-feedback.has-feedback-searchable {
     display: inline-block;
     width: 250px;
+
+    .form-control-feedback.not-empty {
+      cursor: pointer;
+      pointer-events: all;
+    }
   }
 
   .has-feedback-help {
@@ -1656,6 +1661,8 @@ table.searchable.search-mode {
     display: table-row;
   }
 }
+
+
 
 
 // ------------------------------------

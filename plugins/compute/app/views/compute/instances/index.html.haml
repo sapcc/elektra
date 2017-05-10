@@ -3,9 +3,8 @@
 - if @scoped_project_id
   .toolbar
     .pull-left
-      .has-feedback
+      .has-feedback.has-feedback-searchable
         = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
-        %i.glyphicon.glyphicon-search.form-control-feedback
 
       .has-feedback-help
         %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. You may load more (or all) servers using the buttons. Existing search terms will be applied to the loaded items automatically. Clear the input field to see all currently loaded servers."}}
@@ -42,7 +41,7 @@
   -# if has next items (comes from paginate helper in controller) render the
   -# ajax paginate plugin (identified by data-ajax-paginate)
   - if @pagination_has_next
-    .pull-right{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input', next_css_class: 'btn btn-primary'} }
+    .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
 
 
   =# render_paginatable(@instances)
