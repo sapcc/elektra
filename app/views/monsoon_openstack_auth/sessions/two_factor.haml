@@ -17,7 +17,7 @@
       = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
 
       %label.sr-only{:for => "passcode"} Password
-      = password_field_tag :passcode, nil, placeholder: "Passcode", required: "", class: "form-control bottom-input"
+      = text_field_tag :passcode, nil, placeholder: "SecurID Passcode", required: "", class: "form-control bottom-input"
 
       %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in
 
