@@ -43,6 +43,9 @@ module KeyManager
     include ActiveModel::Conversion
     include ActiveModel::Validations
     prepend ::KeyManager::FogModelExtensions
+    include ActiveModel::Validations::Callbacks
+
+    strip_attributes
 
     identity :container_ref
 
