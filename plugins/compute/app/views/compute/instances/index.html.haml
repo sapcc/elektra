@@ -42,7 +42,7 @@
   -# if has next items (comes from paginate helper in controller) render the
   -# ajax paginate plugin (identified by data-ajax-paginate)
   - if @pagination_has_next
-    .pull-right{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input', next_css_class: 'btn btn-primary'} }
+    .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
 
   =# render_paginatable(@instances)
 - else

@@ -2,8 +2,7 @@
 jQuery.fn.ajaxPaginate= ( options ) ->
   # default values for all paginate plugins
   defaults =
-    searchInputSelector: null
-    listSelector: null
+    listSelector: null,
     loadNextButton: true
     loadAllButton: false
     loadNextLabel: 'Load Next'
@@ -23,7 +22,6 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     $buttons = $('<div></div>').appendTo($container)
 
     # default only for the current pagination (this)
-    searchInputSelector = $container.data('searchInputSelector') || settings.searchInputSelector
     listSelector = $container.data('listSelector') || settings.listSelector
     loadNextButton = if typeof $container.data('nextButton') != 'undefined' then $container.data('nextButton') else true
     loadAllButton = if typeof $container.data('allButton') != 'undefined' then $container.data('allButton') else false
@@ -33,98 +31,69 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     loadAllItemsCssClass = $container.data('allCssClass') || settings.loadAllItemsCssClass
     loadAllMode = false
 
-    stopLoadAll = false
-    loading = false
-
-    # initial values
-    # page
-    $container.data('currentPage',1)
-    # complete
-    $container.data('completed',false)
-
     # show loading indicator (hide buttons)
-    showLoading=() -> $buttons.fadeOut 'slow', () -> $spinner.show()
+    showLoad=() -> $buttons.fadeOut 'slow', () -> $spinner.show()
     # hide loading indicator and show buttons
-    hideLoading=() -> $spinner.hide(); unless $container.data('completed') then $buttons.fadeIn('slow')
+    hideLoad=() -> $spinner.hide(); $buttons.fadeIn('slow')
 
     loadNext=(callback) ->
-      # return if there is an ajax load running
-      return if loading
-      # if completed call callback and return
-      if $container.data('completed')
-        callback() if callback
-        return
-
       # get next page from container data
       nextPage = $container.data('currentPage')+1
       # get last marker
       marker = $($('*[data-marker-id]').last()).data('markerId')
       # load next items via ajax
-
-      loading = true
       $.get '', {page: nextPage, marker: marker}, (data) ->
-        loading = false
-        # check if data is empty
-        if (typeof data == 'undefined') or data.trim().length==0
-          # data is empty -> completed
-          $container.data('completed',true)
-        else
-          $container.data('completed',false)
-          # update the list
-          $(listSelector).append(data)
-          # update the page count
-          $container.data('currentPage',nextPage)
+        # update the list
+        $(listSelector).append(data)
+        # remove duplicates from list
+        removeDupes($(listSelector))
+        # update the page count
+        $container.data('currentPage',nextPage)
         # call the callback method
         callback(data) if callback
 
-
-    # load recursively next items until all items are loaded or stopAllLoad is true
     loadAll=(callback) ->
-      return if stopLoadAll
-      if $container.data('completed')
-        callback() if callback
-        return
       # load next items
       loadNext (data) ->
-        loadAll(callback)
-
-    # if a search input selector is provided
-    if searchInputSelector
-      timer = null
-      loadAllOnSearch=()->
-        value = $(searchInputSelector).val()
-        if (typeof value != 'undefined') and value.trim().length>0
-          showLoading()
-          loadNext () ->
-            if $container.data('completed')
-              hideLoading() unless loading
-            else
-              loadAllOnSearch()
+        # if items are empty hide the loading indicator and return
+        if (typeof data == 'undefined') or data.trim().length==0
+          callback() if callback
         else
-          hideLoading() unless loading
+          # there are items, so call loadAll method again and get next items
+          loadAll(callback)
+
+    # initial page counter value
+    $container.data('currentPage',1)
+
+    # remove duplicates in list from DOM
+    removeDupes=(items) ->
+      uniqueMarkers = {}; # save unique markers here
+
+      items.children().each ->
+        # if unique marker already exists in unique list remove the corresponding item from the DOM
+        if (uniqueMarkers[$(this).attr('data-marker-id')])
+          $(this).remove()
+        else
+          # item hasn't been seen so far, add it to unique list
+          uniqueMarkers[$(this).attr('data-marker-id')] = true
 
 
-      $(searchInputSelector).keyup (e) ->
-        clearTimeout(timer) if timer
-        timer = setTimeout(loadAllOnSearch,200)
 
-      $(searchInputSelector).keyup (e) ->
-        console.log 'keyup'
-        clearTimeout(timer) if timer
-        timer = setTimeout(loadAllOnSearch,1000)
+    # add load all items button
+    if settings.loadAllButton
+      $loadAllButton = $(" <button class='#{loadAllItemsCssClass}' data-toggle='tooltip' title='This might take a while!'>#{loadAllLabel}</button> ").appendTo($buttons)
+      $loadAllButton.tooltip();
+      $loadAllButton.click () ->
+        showLoad()
+        loadAll () -> $spinner.hide()
 
     # add load next items button
     if settings.loadNextButton
       $loadNextButton = $("<button class='#{loadNextItemsCssClass}'>#{loadNextLabel}</button> ").appendTo($buttons)
       $loadNextButton.click (e) ->
-        showLoading()
-        loadNext () -> hideLoading()
-
-
-    # add load all items button
-    if settings.loadAllButton
-      $buttons.append('&nbsp;')
-      $loadAllButton = $(" <button class='#{loadAllItemsCssClass}' data-toggle='tooltip' title='This might take a while!'>#{loadAllLabel}</button> ").appendTo($buttons)
-      $loadAllButton.click () ->
-        showLoading()
-        loadAll (data) -> hideLoading()
+        showLoad()
+        loadNext (data) ->
+          if (typeof data == 'undefined') or data.trim().length==0
+            $spinner.hide()
+          else
+            hideLoad()
