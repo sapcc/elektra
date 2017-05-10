@@ -47,7 +47,9 @@ module Core
 
     def self.strip_string(value)
       if value.respond_to?(:strip)
-        value = value.blank? ? nil : value.strip
+        unless value.blank?
+          value = value.strip
+        end
       end
 
       value
