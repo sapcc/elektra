@@ -1,16 +1,25 @@
 = render_navigation(context: :block_storage, expand_all: true)
 
 - if @scoped_project_id
-  - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id}, target: {scoped_domain_name: @scoped_domain_name} })
-    .toolbar
+  .toolbar
+    .pull-left
+      .has-feedback.has-feedback-searchable
+        = text_field_tag 'search_volumes_input', '', class: "form-control", placeholder: 'Volume name or ID'
+
+      .has-feedback-help
+        %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by volume name or ID in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+          %i.fa.fa-question-circle
+
+    - if current_user.is_allowed?("block_storage:volume_create", {volume: {user_id: current_user.id}, target: {scoped_domain_name: @scoped_domain_name} })
       = link_to 'Create new', plugin('block_storage').new_volume_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
-%table.table.volumes
+
+%table.table.volumes.searchable{data:{search_input: '#search_volumes_input'}}
   %thead
     %tr
       %th Volume Name
       %th
         AZ
-        %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}         
+        %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
       %th Description
       %th Size(GB)
       %th Attached to
@@ -23,5 +32,8 @@
       %tr
         %td{colspa: 5} No volumes available
     - else
-      - @volumes.each do | volume |
-        = render partial: 'item', locals: {volume: volume, servers: @servers}
+      = render partial: 'list', locals: {volumes: @volumes, servers: @servers}
+
+
+- if @pagination_has_next
+  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.volumes tbody', search_input_selector: '#search_volumes_input'} }

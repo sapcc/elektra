@@ -1,4 +1,6 @@
-- data = {}
+-# search_name and marker_id are important for searchable and ajax_paginate plugins!
+- real_status = instance.task_state.nil? ? instance.status : instance.task_state # instance.status isn't always what we need. E.g. when an instance is spawned, the task_state contains the state we are interested in
+- data = {search_name: instance.name+'_'+instance.id+'_'+real_status, marker_id: instance.id}
 - if instance.task_state
   - data[:update_url]=plugin('compute').update_item_instance_path(id:instance.id, target_state: local_assigns[:target_state])
   - data[:interval]=10000

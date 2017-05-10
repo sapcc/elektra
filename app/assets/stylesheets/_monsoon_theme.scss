@@ -514,6 +514,23 @@ section {
     margin-top: 6px;
     margin-bottom: 6px;
   }
+
+  .has-feedback.has-feedback-searchable {
+    float: left;
+    width: 250px;
+
+    .form-control-feedback.not-empty {
+      cursor: pointer;
+      pointer-events: all;
+    }
+  }
+
+  .has-feedback-help {
+    float: left;
+    padding-left: 8px;
+    font-size: $font-size-medium;
+    line-height: $input-height-base;
+  }
 }
 
 .toolbar-secondary {
@@ -1639,8 +1656,27 @@ table.searchable.search-mode {
       display: table-row;
     }
   }
+
+  // ensure table head is always shown
+  thead tr {
+    display: table-row;
+  }
 }
 
+
+
+
+// ------------------------------------
+// Pagination
+// ------------------------------------
+
+.ajax-paginate {
+  float: right;
+
+  .btn {
+    margin-left: 8px;
+  }
+}
 
 
 // ---------------------------------------------------------------------------------

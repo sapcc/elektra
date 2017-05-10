@@ -18,6 +18,15 @@ module DnsService
         hash[r.zone_id] = r if r.project_id==@scoped_project_id
         hash
       end
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        render partial: 'list', locals: {zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
+      else
+        # comon case, render index page with layout
+        render action: :index
+      end
     end
 
     def show
