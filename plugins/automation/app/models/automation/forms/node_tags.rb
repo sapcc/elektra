@@ -8,9 +8,12 @@ module Automation
     extend ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Validations
+    include ActiveModel::Validations::Callbacks
 
     attribute :agent_id, String
     attribute :tags, String #JSON
+
+    strip_attributes
 
     def persisted?
       false

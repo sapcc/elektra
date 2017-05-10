@@ -72,8 +72,11 @@ module KeyManager
     include ActiveModel::Conversion
     include ActiveModel::Validations
     prepend ::KeyManager::FogModelExtensions
+    include ActiveModel::Validations::Callbacks
 
     identity :secret_ref
+
+    strip_attributes
 
     # validation
     validates_presence_of :name, :secret_type, :payload, :payload_content_type

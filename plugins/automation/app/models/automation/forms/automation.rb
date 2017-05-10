@@ -5,6 +5,7 @@ module Automation
     extend ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Validations
+    include ActiveModel::Validations::Callbacks
 
     attribute :id, String
     attribute :type, String
@@ -25,6 +26,7 @@ module Automation
     attribute :arguments, String # Array[String]
     attribute :environment, String #JSON
 
+    strip_attributes
 
     # validation
     validates_presence_of :name, :repository, :repository_revision, :type, :timeout

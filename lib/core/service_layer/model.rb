@@ -1,3 +1,5 @@
+require_relative '../strip_attributes'
+
 module Core
   module ServiceLayer
     class Model
@@ -5,6 +7,10 @@ module Core
       extend ActiveModel::Translation
       include ActiveModel::Conversion
       include ActiveModel::Validations
+      include Core::StripAttributes
+      include ActiveModel::Validations::Callbacks
+
+      strip_attributes
 
       attr_reader :errors
 
