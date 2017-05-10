@@ -4,7 +4,7 @@ module DnsService
     before_filter :load_pools, only: [:index, :show, :update, :create]
 
     def index
-      @zones = paginatable(per_page: 20) do |pagination_options|
+      @zones = paginatable(per_page: 2) do |pagination_options|
         services.dns_service.zones(@admin_option.merge(pagination_options))
       end
 
@@ -17,6 +17,15 @@ module DnsService
       @active_zone_transfer_requests = active_requests.inject({}) do |hash,r|
         hash[r.zone_id] = r if r.project_id==@scoped_project_id
         hash
+      end
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        render partial: 'list', locals: {zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
+      else
+        # comon case, render index page with layout
+        render action: :index
       end
     end
 
