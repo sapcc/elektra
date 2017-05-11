@@ -31,16 +31,6 @@ module Automation
       {OsTypes::LINUX => 'Linux', OsTypes::WINDOWS => 'Windows'}
     end
 
-    def name
-      if !self.tags.blank? && !self.tags['name'].blank?
-        return self.tags['name']
-      end
-      if !self.automation_facts.hostname.blank?
-        return self.automation_facts.hostname
-      end
-      self.id
-    end
-
     def attributes_to_form
       attr = self.marshal_dump.clone
       attr.keys.each do |key|
