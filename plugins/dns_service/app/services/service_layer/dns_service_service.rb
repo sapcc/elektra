@@ -48,7 +48,7 @@ module ServiceLayer
 
     ################## ZONE TRANSFER #####################
     def zone_transfer_requests(options={})
-      Rails.cache.fetch("zone_transfer_requests_#{options.to_s}", expires_in: 1.hours) do
+      Rails.cache.fetch("#{project_id}_zone_transfer_requests_#{options.to_s}", expires_in: 1.hours) do
         driver.map_to(DnsService::ZoneTransferRequest).list_zone_transfer_requests(options)
       end
 
@@ -82,7 +82,7 @@ module ServiceLayer
     ################## Pools #####################
     def pools(filter = {})
       #return [] unless current_user.is_allowed?('dns_service:pool_list')
-      Rails.cache.fetch("zone_pools", expires_in: 24.hours) do
+      Rails.cache.fetch("#{project_id}_zone_pools", expires_in: 24.hours) do
         driver.map_to(DnsService::Pool).list_pools(filter) rescue []
       end
 

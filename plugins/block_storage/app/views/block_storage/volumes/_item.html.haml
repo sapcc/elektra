@@ -1,5 +1,5 @@
 - if volume
-  - data = {search_name: volume.name+'_'+volume.id, marker_id: volume.id}
+  - data = {search_name: "#{volume.name} #{volume.description} #{volume.size}", marker_id: volume.id}
   - transition = false
   - volume_name = volume.name.present? ? volume.name : volume.id
   - if local_assigns.has_key?(:target_state) && volume.in_transition?(target_state)

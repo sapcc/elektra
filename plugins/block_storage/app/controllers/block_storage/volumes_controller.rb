@@ -13,16 +13,30 @@ module BlockStorage
 
     # GET /volumes
     def index
-      @servers = services.compute.servers
+      #@servers = services.compute.servers
+      @servers = Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
+        services.compute.servers
+      end
       @action_id = params[:id]
       if @scoped_project_id
-        @volumes = services.block_storage.volumes
+
+        @volumes = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
+          services.block_storage.volumes(pagination_options)
+        end
 
         @quota_data = services.resource_management.quota_data([
           {service_type: :volumev2, resource_name: :volumes, usage: @volumes.length},
           {service_type: :volumev2, resource_name: :capacity}
         ])
 
+        # this is relevant in case an ajax paginate call is made.
+        # in this case we don't render the layout, only the list!
+        if request.xhr?
+          render partial: 'list', locals: {volumes: @volumes, servers: @servers}
+        else
+          # comon case, render index page with layout
+          render action: :index
+        end
       end
     end
 
