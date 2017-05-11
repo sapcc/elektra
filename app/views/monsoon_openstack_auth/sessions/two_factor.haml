@@ -1,8 +1,6 @@
 = inside_layout 'login' do
   .container
 
-
-
     = form_tag(check_passcode_path(after_login: params[:after_login]), class: "form-signin") do
       %h2.form-signin-heading Two-Factor Verification
       %p Enter your D/I/C number and SecureID passcode
@@ -11,7 +9,9 @@
       = hidden_field_tag :domain_id, @domain_id
       = hidden_field_tag :domain_name, @domain_name
 
-      = render "application/flashes"
+      =# render "application/flashes"
+      - flash.each do |name, msg|
+        .alert{class: "alert-#{name}"}= msg
 
       %label.sr-only{:for => "username"} User ID
       = text_field_tag :username, @username, autofocus: "", placeholder: "User ID", required: "", class: "form-control"
