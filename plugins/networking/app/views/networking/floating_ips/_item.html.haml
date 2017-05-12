@@ -1,9 +1,13 @@
-%tr{id: "floating_ip_#{floating_ip.id}"}
+%tr{id: "floating_ip_#{floating_ip.id}", data: {search_name: "#{floating_ip.floating_ip_address} #{floating_ip.subnet_object.name}", marker_id: floating_ip.id}}
   %td
-    %i.fa.fa-globe.fa-fw
-    = floating_ip.floating_ip_address
+    .pull-left
+      %i.fa.fa-globe.fa-fw
+    .pull-left
+      = floating_ip.floating_ip_address
+      - if floating_ip.subnet_object
+        %span.info-text= " (#{floating_ip.subnet_object.name})"
   %td
-    - if floating_ip.fixed_ip_address.present? 
+    - if floating_ip.fixed_ip_address.present?
       = link_to plugin('networking').floating_ip_path(floating_ip.id), data: {modal: true} do
         %i.fa.fa-desktop.fa-fw
         = floating_ip.fixed_ip_address
