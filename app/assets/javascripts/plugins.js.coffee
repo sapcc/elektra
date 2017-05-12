@@ -1,3 +1,6 @@
+polling_update_url_count = {}
+polling_update_interval = 10000
+
 $.fn.update = () ->
   this.each () ->
     $element  = $(this)
@@ -6,7 +9,12 @@ $.fn.update = () ->
     url       = $element.data('updateUrl')
     # return if no update url defined
     return this unless url
-    interval  = $element.data('interval') || 5000
+
+    polling_update_url_count[url] = (polling_update_url_count[url] || 0) + 1
+    count = polling_update_url_count[url]
+    return if (count*polling_update_interval)>5*60*1000
+
+    interval  = $element.data('interval') || polling_update_interval
 
     setTimeout () ->
       $.ajax
