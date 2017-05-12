@@ -6,10 +6,22 @@ module Networking
     authorization_required
 
     def index
-      @floating_ips = services.networking.project_floating_ips(@scoped_project_id)
+      @floating_ips = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
+        services.networking.project_floating_ips(@scoped_project_id, pagination_options.merge(sort_key: [:floating_ip_address], sort_dir: [:desc]))
+      end
+      #@floating_ips = services.networking.project_floating_ips(@scoped_project_id, sort_key: [:floating_ip_address], sort_dir: [:desc])
       @quota_data = services.resource_management.quota_data([
         {service_type: :network, resource_name: :floating_ips, usage: @floating_ips.length}
       ])
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        render partial: 'list', locals: {floating_ips: @floating_ips}
+      else
+        # comon case, render index page with layout
+        render action: :index
+      end
     end
 
     def show
