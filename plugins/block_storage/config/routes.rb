@@ -8,6 +8,9 @@ BlockStorage::Engine.routes.draw do
       get 'edit_detach'
       put 'detach'
       get 'update_item'
+
+      get 'new_status'
+      post 'reset_status'
     end
   end
   resources :snapshots, except: [:new, :create] do

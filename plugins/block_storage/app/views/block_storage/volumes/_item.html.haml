@@ -57,4 +57,7 @@
               %li= link_to 'Detach', plugin('block_storage').edit_detach_volume_path(id: volume.id), data: {modal: true}
             - if current_user.is_allowed?("block_storage:volume_delete", {target: {scoped_domain_name: @scoped_domain_name}}) and volume.deletable?
               %li.divider
-              %li= link_to 'Delete', plugin('block_storage').volume_path(id: volume.id), method: :delete, data: { confirm: 'Are you sure you want to delete this volume?' }, remote: true
+              %li= link_to 'Delete', plugin('block_storage').volume_path(id: volume.id), method: :delete, data: { confirm: 'Are you sure you want to delete this volume?',  confirmed: :loading_status }, remote: true
+            - if current_user.is_allowed?("block_storage:volume_reset_status")
+              %li.divider
+              %li= link_to 'Reset Status', plugin('block_storage').new_status_volume_path(id: volume.id), data: { modal: true }

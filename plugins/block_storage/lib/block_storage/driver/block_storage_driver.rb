@@ -3,6 +3,8 @@ module BlockStorage
     class BlockStorageDriver < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
+      class Error < StandardError; end;
+
       def initialize(params)
         super(params)
         @connection = ::Fog::Volume::OpenStack.new(auth_params)
@@ -67,6 +69,23 @@ module BlockStorage
 
       def test(filter={})
         puts "test"
+      end
+
+      def volume_action(id,status={})
+        nedded_keys = ["status","attach_status","migration_status"]
+        keys = status.keys.collect{|key| key.to_s}
+
+        raise Error.new("incomplete status data") unless keys.sort==nedded_keys.sort
+
+        data = {
+          "os-reset_status" => {
+            "status" => status[:status],
+            "attach_status" => status[:attach_status],
+            "migration_status" => status[:migration_status]
+          }
+        }
+
+        handle_response{ @connection.action(id, data)}
       end
 
     end
