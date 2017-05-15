@@ -12,7 +12,7 @@
         %th Name
         %th Status
         %th External Network
-        %th External IPs
+        %th External IP / Subnet
         %th.snug
     %tbody
       - if @routers.length==0
@@ -23,8 +23,15 @@
           %tr{id: "router_#{router.id}"}
             %td= link_to router.name, plugin('networking').router_path(router.id), data: {modal: true}
             %td= router.status
-            %td= router.external_gateway_info["network_id"]
-            %td= router.external_ip
+            %td
+              = router.network_object.try(:name)
+              %br
+              %span.info-text= router.network_object.try(:id)
+            %td
+              - router.ip_subnet_objects.each do |ip,subnet|
+                = "#{ip} / "
+                %span.info-text= subnet.name
+
             %td.snug
               .btn-group
                 %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
