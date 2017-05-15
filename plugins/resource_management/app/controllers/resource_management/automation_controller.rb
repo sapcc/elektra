@@ -21,10 +21,10 @@ module ResourceManagement
             srv.resources.each do |res|
               dt = res.data_type
               result << {
-                domain_name: domain.name,
-                project_name: project.name,
                 domain_id: domain.id,
+                domain_name: domain.name,
                 project_id: res.project_id,
+                project_name: project.name,
                 resource_class: res.config.service.name,
                 resource_type: res.name,
                 quota: dt.normalize(res.backend_quota || res.quota),
