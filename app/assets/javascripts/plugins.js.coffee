@@ -1,5 +1,5 @@
 polling_update_url_count = {}
-polling_update_interval = 10000
+polling_update_interval = 30000
 
 $.fn.update = () ->
   this.each () ->
