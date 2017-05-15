@@ -16,7 +16,7 @@
     %td= volume.availability_zone
     %td= volume.description
     %td= volume.size
-    - attachments = get_attachments(volume, servers)
+    - attachments = get_attachments(volume, local_assigns[:servers])
     - if !attachments.blank?
       - attachments.each do |att|
         - if att[:server_name]
