@@ -15,14 +15,16 @@ module ResourceManagement
       region = [Rails.application.config.default_region].flatten.first
       result = []
 
-      services.resource_management.list_domains(services: ['none']).map(&:id).each do |domain_id|
-        services.resource_management.list_projects(domain_id).each do |project|
+      services.resource_management.list_domains(services: ['none']).each do |domain|
+        services.resource_management.list_projects(domain.id).each do |project|
           project.services.each do |srv|
             srv.resources.each do |res|
               dt = res.data_type
               result << {
-                domain_id: domain_id,
+                domain_id: domain.id,
+                domain_name: domain.name,
                 project_id: res.project_id,
+                project_name: project.name,
                 resource_class: res.config.service.name,
                 resource_type: res.name,
                 quota: dt.normalize(res.backend_quota || res.quota),
