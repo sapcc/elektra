@@ -1,0 +1,2 @@
+$("#snapshot_<%=@snapshot.id%>").replaceWith("<%= j(render(partial: 'block_storage/snapshots/item', locals: {snapshot: @snapshot })) %>");
+MoModal.close();

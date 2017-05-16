@@ -3,6 +3,8 @@ module BlockStorage
     class BlockStorageDriver < Interface
       include Core::ServiceLayer::FogDriver::ClientHelper
 
+      class Error < StandardError; end;
+
       def initialize(params)
         super(params)
         @connection = ::Fog::Volume::OpenStack.new(auth_params)
@@ -69,6 +71,34 @@ module BlockStorage
         puts "test"
       end
 
+      def reset_status(id,status={})
+        data = {
+          "os-reset_status" => {
+          }
+        }
+        ["status","attach_status","migration_status"].each do |key|
+          data["os-reset_status"][key.to_s] = (status[key.to_sym] || status[key.to_s])
+        end
+        handle_response{ @connection.action(id, data)}
+      end
+
+      def force_delete(id)
+        data = {
+          "os-force_delete" => nil
+        }
+        handle_response{ @connection.action(id, data)}
+      end
+
+      def reset_snapshot_status(id,status={})
+        data = {
+          "os-reset_status" => {
+          }
+        }
+        ["status","attach_status","migration_status"].each do |key|
+          data["os-reset_status"][key.to_s] = (status[key.to_sym] || status[key.to_s])
+        end
+        handle_response{ @connection.snapshot_action(id, data)}
+      end
     end
   end
 end

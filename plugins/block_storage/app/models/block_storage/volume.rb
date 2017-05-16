@@ -3,7 +3,30 @@ module BlockStorage
     validates :name, :description, :size, presence: true
     attr_accessor :assigned_server
 
+    STATUS = [
+      # 'creating',
+      'available',
+      # 'attaching',
+      # 'detaching',
+      # 'in-use',
+      # 'maintenance',
+      # 'deleting',
+      # 'awaiting-transfer',
+      'error',
+      # 'error_deleting',
+      # 'backing-up',
+      # 'restoring-backup',
+      # 'error_backing-up',
+      # 'error_restoring',
+      # 'error_extending',
+      # 'downloading',
+      # 'uploading',
+      # 'retyping',
+      # 'extending'
+    ]
+
     def in_transition? target_state
+      return false unless target_state
       Rails.logger.info { "Checking state transition for volume #{self.name} : target state: #{target_state} - actual state: #{self.status}" }
       if target_state.include? self.status
         return false
@@ -18,6 +41,40 @@ module BlockStorage
 
     def snapshotable?
       return self.status == 'available'
+    end
+
+    # { status: '...', attach_status: '...', migration_status: '...' }
+    def reset_status(new_status)
+      begin
+        @driver.reset_status(self.id,{status: new_status})
+        self.status = new_status
+        return true
+      rescue => e
+        raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+
+        Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+        return false
+      end
+    end
+
+    def force_delete
+      begin
+        @driver.force_delete(self.id)
+        return true
+      rescue => e
+        raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+
+        Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+        return false
+      end
+    end
+
+    def attached?
+      status=='in-use'
+    end
+
+    def migrating?
+      status=='maintenance'
     end
 
   end

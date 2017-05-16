@@ -1,6 +1,6 @@
-- data = {}
+- data = {search_name: "#{snapshot.name} #{snapshot.description} #{snapshot.size}", marker_id: snapshot.id}
 - if snapshot
-  %tr
+  %tr{id:"snapshot_#{snapshot.id}", data: data}
     - if current_user.is_allowed?("block_storage:snapshot_get", {target: {scoped_domain_name: @scoped_domain_name}})
       %td
         = link_to snapshot.name, plugin('block_storage').snapshot_path(id: snapshot.id), data: {modal: true}
@@ -23,3 +23,6 @@
             - if current_user.is_allowed?("block_storage:snapshot_delete", {target: {scoped_domain_name: @scoped_domain_name}})
               %li.divider
               %li= link_to 'Delete', plugin('block_storage').snapshot_path(id: snapshot.id), method: :delete, data: { confirm: 'Are you sure you want to delete this snapshot?' }
+            - if current_user.is_allowed?("block_storage:snapshot_reset_status")
+              %li.divider
+              %li= link_to 'Reset Status', plugin('block_storage').new_status_snapshot_path(id: snapshot.id), data: { modal: true }

@@ -10,12 +10,23 @@ module BlockStorage
     # GET /snapshots
     def index
       if @scoped_project_id
-        @snapshots = services.block_storage.snapshots
+        @snapshots = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
+          services.block_storage.snapshots(pagination_options)
+        end
 
         @quota_data = services.resource_management.quota_data([
           {service_type: :volumev2, resource_name: :snapshots, usage: @snapshots.length},
           {service_type: :volumev2, resource_name: :capacity}
         ])
+
+        # this is relevant in case an ajax paginate call is made.
+        # in this case we don't render the layout, only the list!
+        if request.xhr?
+          render partial: 'list', locals: {snapshots: @snapshots}
+        else
+          # comon case, render index page with layout
+          render action: :index
+        end
       end
     end
 
@@ -57,6 +68,21 @@ module BlockStorage
       render 'block_storage/volumes/new.html'
     end
 
+
+    def new_status
+    end
+
+    def reset_status
+      @snapshot.reset_status(params[:snapshot][:status])
+      # reload snapshot
+      @snapshot = services.block_storage.get_snapshot(params[:id])
+      if @snapshot.status==params[:snapshot][:status]
+        audit_logger.info(current_user, "has reset", @snapshot)
+        render template: 'block_storage/snapshots/reset_status.js'
+      else
+        render action: :new_status
+      end
+    end
 
     private
     # Use callbacks to share common setup or constraints between actions.

@@ -2,7 +2,8 @@ require_dependency "block_storage/application_controller"
 
 module BlockStorage
   class VolumesController < ApplicationController
-    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach]
+    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach, :new_status, :reset_status,:force_delete]
+
     protect_from_forgery except: [:attach, :detach]
 
     authorization_context 'block_storage'
@@ -14,9 +15,7 @@ module BlockStorage
     # GET /volumes
     def index
       #@servers = services.compute.servers
-      @servers = Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
-        services.compute.servers
-      end
+      @servers = get_cached_servers
       @action_id = params[:id]
       if @scoped_project_id
 
@@ -42,14 +41,13 @@ module BlockStorage
 
     # GET /volumes/1
     def show
-      @servers = services.compute.servers if @volume.status == 'in-use'
+      @servers = get_cached_servers if @volume.status == 'in-use'
     end
 
     # GET /volumes/new
     def new
       @volume = services.block_storage_.new_volume
       @availability_zones = services.compute.availability_zones
-
     end
 
     # POST /volumes
@@ -178,6 +176,31 @@ module BlockStorage
 
     end
 
+    def new_status
+    end
+
+    def reset_status
+      @volume.reset_status(params[:volume][:status])
+      # reload volume
+      @volume = services.block_storage.get_volume(params[:id])
+      if @volume.status==params[:volume][:status]
+        @servers = get_cached_servers if @volume.status == 'in-use'
+        audit_logger.info(current_user, "has reset", @volume)
+        render template: 'block_storage/volumes/reset_status.js'
+      else
+        render action: :new_status
+      end
+    end
+
+    def force_delete
+      if @volume.force_delete
+        audit_logger.info(current_user, "has deleted (force-delete)", @volume)
+      end
+      @volume.status = 'deleting'
+      @target_state = target_state_for_action 'destroy'
+      sleep(SLEEP)
+      render template: 'block_storage/volumes/update_item.js'
+    end
 
     # DELETE /volumes/1
     def destroy
@@ -208,6 +231,13 @@ module BlockStorage
     end
 
     private
+
+    def get_cached_servers
+      Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
+        services.compute.servers
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_volume
       @volume = services.block_storage.get_volume(params[:id])
