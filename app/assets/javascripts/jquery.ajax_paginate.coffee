@@ -109,7 +109,6 @@ jQuery.fn.ajaxPaginate= ( options ) ->
         timer = setTimeout(loadAllOnSearch,200)
 
       $(searchInputSelector).keyup (e) ->
-        console.log 'keyup'
         clearTimeout(timer) if timer
         timer = setTimeout(loadAllOnSearch,1000)
 

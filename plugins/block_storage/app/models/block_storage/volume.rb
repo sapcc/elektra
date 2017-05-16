@@ -25,16 +25,6 @@ module BlockStorage
       'extending'
     ]
 
-    ATTACH_STATUS = [
-      'attached',
-      'detached'
-    ]
-
-    MIGRATION_STATUS = [
-      'migrating'
-    ]
-
-
     def in_transition? target_state
       return false unless target_state
       Rails.logger.info { "Checking state transition for volume #{self.name} : target state: #{target_state} - actual state: #{self.status}" }
@@ -54,10 +44,22 @@ module BlockStorage
     end
 
     # { status: '...', attach_status: '...', migration_status: '...' }
-    def reset_status(status={})
+    def reset_status(new_status)
       begin
-        @driver.volume_action(self.id,status)
-        self.status = status[:status]
+        @driver.reset_status(self.id,{status: new_status})
+        self.status = new_status
+        return true
+      rescue => e
+        raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+
+        Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+        return false
+      end
+    end
+
+    def force_delete
+      begin
+        @driver.force_delete(self.id)
         return true
       rescue => e
         raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?

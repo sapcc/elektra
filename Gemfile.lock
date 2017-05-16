@@ -26,7 +26,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
-  revision: 888c10a7cfd10cd7f5ed97dcd879b62758784e9d
+  revision: 6126c39b5c3af08647d0a4105207c6f82522d3a2
   branch: master
   specs:
     fog-openstack (0.1.19)

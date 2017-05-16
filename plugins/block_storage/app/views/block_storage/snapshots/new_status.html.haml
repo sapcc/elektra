@@ -1,15 +1,15 @@
 = content_for :title do
   Reset Status
 
-= simple_form_for @volume, url: plugin('block_storage').reset_status_volume_path(id: @volume.id), method: :post, remote: request.xhr?, html: {id: 'form_volume_status', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form  do |f|
+= simple_form_for @snapshot, url: plugin('block_storage').reset_status_snapshot_path(id: @snapshot.id), method: :post, remote: request.xhr?, html: {id: 'form_snapshot_status', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form  do |f|
   %div{class: modal? ? 'modal-body' : ''}
 
-    = render partial: 'errors', locals: {data: @volume}
+    = render partial: 'errors', locals: {data: @snapshot}
 
     %p
       = f.input :status,
         as: :select,
-        collection: BlockStorage::Volume::STATUS,
+        collection: BlockStorage::Snapshot::STATUS,
         include_blank: false
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

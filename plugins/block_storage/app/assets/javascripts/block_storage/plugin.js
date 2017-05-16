@@ -11,27 +11,27 @@
 // about supported directives.
 //
 // Every Plugin file is surrounded with a closure by dashboard.
-// It means that your plugin js code runs in own namespace and can't 
-// break any code of other plugins. If you want to make your code available 
-// outside this closure you should bind functions to block_storage. 
-//  
-//       
-//= require_tree .   
-  
+// It means that your plugin js code runs in own namespace and can't
+// break any code of other plugins. If you want to make your code available
+// outside this closure you should bind functions to block_storage.
+//
+//
+//= require_tree .
+
 // This function is visible only inside this file.
 function test() {
-  //...  
-}    
+  //...
+}
 
 // This function is available from everywhere by calling block_storage.name()
 block_storage.name = function() {
   "block_storage"
-} 
+}
 
 // This is always executed on page load.
 $(document).ready(function(){
   // ...
-}); 
-    
+});
+
 // Call function from other files inside this plugin using the variable block_storage
-//block_storage.anyFunction()    
+//block_storage.anyFunction()
