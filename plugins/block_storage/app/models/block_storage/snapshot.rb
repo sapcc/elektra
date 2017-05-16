@@ -3,11 +3,11 @@ module BlockStorage
     validates :name, :description, presence: true
 
     STATUS = [
-      'creating',
+      # 'creating',
       'available',
-      'deleting',
+      # 'deleting',
       'error',
-      'error_deleting'
+      # 'error_deleting'
     ]
 
     # { status: '...', attach_status: '...', migration_status: '...' }

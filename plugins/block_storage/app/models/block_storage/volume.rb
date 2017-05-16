@@ -4,25 +4,25 @@ module BlockStorage
     attr_accessor :assigned_server
 
     STATUS = [
-      'creating',
+      # 'creating',
       'available',
-      'attaching',
-      'detaching',
-      'in-use',
-      'maintenance',
-      'deleting',
-      'awaiting-transfer',
+      # 'attaching',
+      # 'detaching',
+      # 'in-use',
+      # 'maintenance',
+      # 'deleting',
+      # 'awaiting-transfer',
       'error',
-      'error_deleting',
-      'backing-up',
-      'restoring-backup',
-      'error_backing-up',
-      'error_restoring',
-      'error_extending',
-      'downloading',
-      'uploading',
-      'retyping',
-      'extending'
+      # 'error_deleting',
+      # 'backing-up',
+      # 'restoring-backup',
+      # 'error_backing-up',
+      # 'error_restoring',
+      # 'error_extending',
+      # 'downloading',
+      # 'uploading',
+      # 'retyping',
+      # 'extending'
     ]
 
     def in_transition? target_state
