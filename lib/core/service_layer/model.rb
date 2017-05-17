@@ -125,8 +125,8 @@ module Core
         end
       end
 
-      def attributes=(new_attributes={})
-        @attributes = new_attributes.clone
+      def attributes=(new_attributes)
+        @attributes = (new_attributes || {}).clone
         # delete id from attributes!
         new_id = nil
         if @attributes["id"] or @attributes[:id]
