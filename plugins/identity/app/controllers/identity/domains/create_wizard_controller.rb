@@ -24,6 +24,8 @@ module Identity
 
         @project.enabled = @project.enabled == 'true'
 
+        @project.escape_attributes!
+        
         if @project.save
           # services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
           # services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')

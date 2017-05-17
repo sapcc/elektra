@@ -96,7 +96,7 @@ module Core
 
       def update(attributes={})
         attributes.each do |key, value|
-          send("#{key.to_s}=", escape_value(value))
+          send("#{key.to_s}=", value)
         end
         return save
       end
@@ -125,10 +125,8 @@ module Core
         end
       end
 
-      def attributes=(new_attributes)
-        escaped_attributes = {}
-        (new_attributes || {}).each{|k,v| escaped_attributes[k]=escape_value(v)}
-        @attributes = escaped_attributes
+      def attributes=(new_attributes={})
+        @attributes = new_attributes.clone
         # delete id from attributes!
         new_id = nil
         if @attributes["id"] or @attributes[:id]
@@ -136,6 +134,11 @@ module Core
         end
         # if current_id is nil then overwrite it with new_id.
         @id = new_id if (@id.nil? or (@id.is_a?(String) and @id.empty?))
+      end
+
+      def escape_attributes!
+        escaped_attributes = (@attributes || {}).clone
+        escaped_attributes.each{|k,v| @attributes[k]=escape_value(v)}
       end
 
       # callbacks
@@ -190,7 +193,7 @@ module Core
       end
 
       def write(attribute_name, value)
-        @attributes[attribute_name.to_s] = escape_value(value)
+        @attributes[attribute_name.to_s] = value
       end
 
       def read(attribute_name)
