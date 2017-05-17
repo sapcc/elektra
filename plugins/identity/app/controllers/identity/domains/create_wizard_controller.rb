@@ -21,7 +21,10 @@ module Identity
         # so use admin identity for that!
         @project = services.identity.new_project
         @project.attributes = project_params
+
         @project.enabled = @project.enabled == 'true'
+
+        byebug
 
         if @project.save
           # services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')

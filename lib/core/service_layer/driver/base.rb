@@ -13,8 +13,10 @@ module Core
         def map(response)
           if response.is_a?(Array)
             response.collect{|attributes| @klass.new(@driver,attributes.merge(@additional_attributes))}
-          else
+          elsif response.is_a?(Hash)
             @klass.new(@driver,response.merge(@additional_attributes))
+          else
+            nil  
           end
         end
 

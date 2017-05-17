@@ -36,6 +36,7 @@ module MonsoonDashboard
     config.active_record.raise_in_transactional_callbacks = true
 
     config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
+
     require 'prometheus/client/rack/collector'
 
     # build a map from the plugins

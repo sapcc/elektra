@@ -109,7 +109,8 @@ $(document).on 'modal:contentUpdated', (e) ->
     }).data('ui-autocomplete')._renderItem = ( ul, item ) ->
         return $( "<li>" )
           .attr( "data-value", item.name )
-          .append( item.name )
+          .text(item.name)
+          .append( "<br/><span class='info-text'>#{item.id}</span>" )
           .appendTo( ul );
 
   try

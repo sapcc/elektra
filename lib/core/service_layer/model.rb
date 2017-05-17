@@ -96,7 +96,7 @@ module Core
 
       def update(attributes={})
         attributes.each do |key, value|
-          send("#{key.to_s}=", value)
+          send("#{key.to_s}=", escape_value(value))
         end
         return save
       end
@@ -126,7 +126,9 @@ module Core
       end
 
       def attributes=(new_attributes)
-        @attributes = (new_attributes || {}).clone
+        escaped_attributes = {}
+        new_attributes.each{|k,v| escaped_attributes[k]=escape_value(v)}
+        @attributes = escaped_attributes
         # delete id from attributes!
         new_id = nil
         if @attributes["id"] or @attributes[:id]
@@ -188,12 +190,17 @@ module Core
       end
 
       def write(attribute_name, value)
-        @attributes[attribute_name.to_s] = value
+        @attributes[attribute_name.to_s] = escape_value(value)
       end
 
       def read(attribute_name)
         value = @attributes[attribute_name.to_s]
         value = @attributes[attribute_name.to_sym] if value.nil?
+        value
+      end
+
+      def escape_value(value)
+        value = CGI::escapeHTML(value) if value.is_a?(String)
         value
       end
 
