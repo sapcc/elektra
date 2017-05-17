@@ -127,7 +127,7 @@ module Core
 
       def attributes=(new_attributes)
         escaped_attributes = {}
-        new_attributes.each{|k,v| escaped_attributes[k]=escape_value(v)}
+        (new_attributes || {}).each{|k,v| escaped_attributes[k]=escape_value(v)}
         @attributes = escaped_attributes
         # delete id from attributes!
         new_id = nil
