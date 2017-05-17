@@ -54,9 +54,8 @@ GIT
     misty (0.5.1)
       json (>= 1.8.3, < 3)
 
-GIT
-  remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 209829551624a34e00d88b940ace079a121b6717
+PATH
+  remote: ../monsoon-openstack-auth
   specs:
     monsoon-openstack-auth (0.8.6)
       excon
