@@ -180,7 +180,7 @@ module BlockStorage
     end
 
     def reset_status
-      @volume.reset_status(params[:volume][:status])
+      @volume.reset_status(params[:volume])
       # reload volume
       @volume = services.block_storage.get_volume(params[:id])
       if @volume.status==params[:volume][:status]

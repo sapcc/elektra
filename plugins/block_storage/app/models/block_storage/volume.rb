@@ -23,7 +23,12 @@ module BlockStorage
       # 'uploading',
       # 'retyping',
       # 'extending'
-    ]
+    ].freeze
+
+    ATTACH_STATUS = %w(
+      attached
+      detached
+    ).freeze
 
     def in_transition? target_state
       return false unless target_state
@@ -44,17 +49,15 @@ module BlockStorage
     end
 
     # { status: '...', attach_status: '...', migration_status: '...' }
-    def reset_status(new_status)
-      begin
-        @driver.reset_status(self.id,{status: new_status})
-        self.status = new_status
-        return true
-      rescue => e
-        raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+    def reset_status(status = {})
+      @driver.reset_status(id, status)
+      self.status = status[:status]
+      return true
+    rescue => e
+      raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
 
-        Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-        return false
-      end
+      Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+      return false
     end
 
     def force_delete
