@@ -1,5 +1,30 @@
 = content_for :main_toolbar do
-  Requests for processing
+  Requests for Processing
 
-.inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
-  = render partial: 'inquiries_widget', locals: {admin_view: true, remote_links: false}
+-# .inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
+-#   = render partial: 'inquiries_widget', locals: {admin_view: true, remote_links: false}
+
+.row
+  .col-sm-12
+    - if (current_user.is_allowed?("identity:inquiry_admin_list") or current_user.is_allowed?("cloud_admin"))
+
+      -# %ul.nav.nav-tabs
+      -#   %li.active{role: "presentation"}= link_to 'Pending Requests', '#openinquiries', aria: {controls:"openinquiries"}, role: "tab", data: {toggle:"tab"}
+      -#   %li{role: "presentation"}= link_to 'Processed Requests', '#allinquiries', aria: {controls:"allinquiries"}, role: "tab", data: {toggle:"tab"}
+
+      = render partial: "inquiry/shared/tabs", locals: {admin_view: true}
+
+      .tab-content
+        - container_id = SecureRandom.hex
+        = render partial: 'inquiry/shared/index_toolbar', locals: {container_id: container_id}
+        .inquiries.spinner
+        - if params[:show_only] == "processed"
+          = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page,filter: {approver_domain_id: @domain_id, processor_id: current_user.id, state: ['closed','approved','rejected']}, container_id: container_id)
+        - else
+          = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {approver_domain_id: @domain_id, processor_id: current_user.id, state: ['open']}, container_id: container_id)
+
+    - else
+      -# .inquiries.spinner
+      -# = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {domain_id: current_user.user_domain_id, requester_id:current_user.id})
+      .alert.alert-info
+        You don't have permission to see these requests. This is for admins only!

@@ -32,7 +32,7 @@ module Inquiry
 
     # This method creates a div with data needed attributes. The content is loaded via ajax by PollingService
     def remote_inquiries(options={})
-      container_id = SecureRandom.hex
+      container_id = options[:container_id]
 
       content_tag(:div, id: container_id) do
         content_tag(:div, '', data: {
