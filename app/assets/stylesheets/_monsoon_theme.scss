@@ -1686,6 +1686,10 @@ table.searchable.search-mode {
 .form-inline {
   .form-group {
     margin-right: 3px;
+
+    label {
+      margin-right: 5px;
+    }
   }
 }
 

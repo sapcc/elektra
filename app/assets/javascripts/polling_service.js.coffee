@@ -88,7 +88,7 @@ class @PollingService
   # fire an update event. All elements which data-update-path matches the given name will be updated!
   # For example, update('inquiries') will update data-update-path='inquiriy/inquiries/list'.
   @update= (name) ->
-    $("*[data-update-path*='#{name}']").each () -> updateElement(this)
+    $("*[data-update-path*=" + name + "]").each () -> updateElement(this)
 
   # Pop element from the update queue.
   # Element selector -> css selector

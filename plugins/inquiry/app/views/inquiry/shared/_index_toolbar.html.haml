@@ -1,0 +1,7 @@
+.toolbar
+  .pull-left
+    %form.form-inline#inquiry-filter-form
+      .form-group
+        %label(for="inquiry-kind-filter") Filter
+        = select_tag "filter[kind]", options_for_select(@kinds_of_inquiries, (params[:filter][:kind] if params[:filter])), class: "form-control", id: "inquiry-kind-filter"
+        = text_field_tag "show_only", params[:show_only], hidden: true

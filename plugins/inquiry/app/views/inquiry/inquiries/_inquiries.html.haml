@@ -1,4 +1,4 @@
-.inquiries-container{data: {update_path: plugin('inquiry').inquiries_path(params.merge(partial:true)), update_interval: 30}}
+.inquiries-container
   %table.table
     %thead
       %tr
@@ -11,13 +11,10 @@
     %tbody
       - if @inquiries.length==0
         %tr
-          %td{colspa: 6} No inquiries available
+          %td{colspa: 6} No requests available
       - else
         - @inquiries.each do | inquiry |
-          = render partial: 'item', locals: {inquiry: inquiry, remote_links: remote_links}
+          = render partial: 'item', locals: {inquiry: inquiry, remote_links: true}
 
   .pagination
-    = paginate @inquiries, :window => 1, :outer_window => 1, remote: remote_links, :theme => 'twitter-bootstrap-3'
-
-:javascript
-  $(".inquiries.spinner").remove();
+    = paginate @inquiries, :window => 1, :outer_window => 1, :theme => 'twitter-bootstrap-3'

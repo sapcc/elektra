@@ -1,5 +1,16 @@
 = content_for :main_toolbar do
-  Requests for processing
+  Requests for Processing
 
-.inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
-  = render partial: 'inquiries_widget', locals: {admin_view: true, remote_links: false}
+- if (current_user.is_allowed?("identity:inquiry_admin_list") or current_user.is_allowed?("cloud_admin"))
+
+  = render partial: 'inquiry/shared/tabs', locals: {admin_view: true}
+
+  .tab-content
+    = render partial: 'inquiry/shared/index_toolbar'
+
+    = render partial: 'inquiries'
+
+
+- else
+  .alert.alert-info
+    You don't have permission to see these requests. This is for admins only!

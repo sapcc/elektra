@@ -1,5 +1,10 @@
 = content_for :main_toolbar do
   My Requests
 
-.inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
-  = render partial: 'inquiries_widget', locals: {admin_view: false, remote_links: false}
+
+= render partial: 'inquiry/shared/tabs', locals: {admin_view: false}
+
+.tab-content
+  = render partial: 'inquiry/shared/index_toolbar'
+
+  = render partial: 'inquiries'
