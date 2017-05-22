@@ -30,3 +30,13 @@
     @include spinner(6em);
   }
 }
+
+.inquiries.spinner {
+  margin-top: 12px;
+  margin-left: 10px;
+}
+
+.inquiries-filter.spinner {
+  visibility: hidden;
+  margin-left: 8px;
+}

@@ -9,6 +9,7 @@ module Inquiry
     def index
       @domain_id = current_user.is_allowed?("cloud_admin") ? nil : current_user.user_domain_id
 
+      # This is true if an update is made via the PollingService
       if params[:partial]
         filter = params[:filter] ? params[:filter] : {}
         @page = params[:page] || 1
@@ -20,6 +21,8 @@ module Inquiry
           format.js
         end
       else
+        # This case is the initial page load
+        
         # get all different types of inquiries from the database
         @kinds_of_inquiries = [["All",""]] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
 
