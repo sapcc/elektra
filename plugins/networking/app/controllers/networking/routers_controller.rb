@@ -72,7 +72,6 @@ module Networking
       @router = services.networking.new_router(params[:router])
       @router.internal_subnets = @selected_internal_subnets
 
-      byebug
       if @router.save
         # router is created -> add subnets as interfaces
         services.networking.add_router_interfaces(@router.id, @selected_internal_subnets)
