@@ -71,6 +71,8 @@ module Networking
       # build new router object
       @router = services.networking.new_router(params[:router])
       @router.internal_subnets = @selected_internal_subnets
+
+      byebug
       if @router.save
         # router is created -> add subnets as interfaces
         services.networking.add_router_interfaces(@router.id, @selected_internal_subnets)
@@ -87,19 +89,31 @@ module Networking
     def edit
       @router = services.networking.find_router(params[:id])
       @external_network = services.networking.network(@router.external_gateway_info['network_id'])
-
-      attached_ports = services.networking.ports(device_id: @router.id, device_owner: 'network:router_interface')
-      @selected_internal_subnet_ids = attached_ports.inject([]){|array, port| port.fixed_ips.each{ |ip| array << ip['subnet_id']}; array }
+      @router_interface_ports = services.networking.ports(device_id: @router.id, device_owner: "network:router_interface")
+      @router_internal_subnet_ids =  @router_interface_ports.inject([]) do |array,port|
+        (port.fixed_ips || []).each{|fixed_ip| array << fixed_ip["subnet_id"]}
+        array
+      end
+      @router_external_subnet_ids = if @router.external_gateway_info["external_fixed_ips"].nil?
+        []
+      else
+        @router.external_gateway_info["external_fixed_ips"].collect{|data| data['subnet_id']}
+      end
     end
 
     def update
       # get selected subnets and remove them from params
-      params[:router].delete(:external_gateway_info)
       @selected_internal_subnet_ids = (params[:router].delete(:internal_subnets) || []).reject(&:empty?)
+
       # build new router object
       @router = services.networking.find_router(params[:id])
       @router.name = params[:router][:name]
       @router.admin_state_up = params[:router][:admin_state_up]
+      #if @router.external_gateway_info['network_id'].nil?
+        @router.external_gateway_info = params[:router][:external_gateway_info]
+
+      #end
+      @router.internal_subnets = @selected_internal_subnet_ids
 
       if @router.save
         attached_ports = services.networking.ports(device_id: @router.id, device_owner: 'network:router_interface')
@@ -110,6 +124,7 @@ module Networking
 
         services.networking.remove_router_interfaces(@router.id, to_be_detached)
         services.networking.add_router_interfaces(@router.id, to_be_attached)
+
         audit_logger.info(current_user, 'has updated', @router)
 
         flash.now[:notice] = 'Router successfully created.'
@@ -117,7 +132,7 @@ module Networking
       else
         @external_network = services.networking.network(@router.external_gateway_info['network_id'])
 
-        render action: :new
+        render action: :edit
       end
     end
 

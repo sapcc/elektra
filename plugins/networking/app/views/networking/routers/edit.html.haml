@@ -1,5 +1,4 @@
-- wrapper = @router.errors.present? ? :horizontal_form_disabled : :horizontal_form
-= simple_form_for @router, url: plugin('networking').router_path(@router.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: wrapper do |f|
+= simple_form_for @router, url: plugin('networking').router_path(@router.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @router.errors.present?
@@ -7,18 +6,34 @@
         = @router.errors.full_messages.to_sentence + '.'
 
     = f.input :name
-    = f.input :external_gateway_info,
-      {input_html: {value: @external_network.present? ? @external_network.name : 'No external gateway set.', disabled:true}}
-    = f.input :admin_state_up, {label: 'Admin State',
-      as:                 :select,
-      collection:         [['UP', 'true'],['DOWN', 'false']]}
+    -# = f.input :external_gateway_info,
+    -#   {input_html: {value: @external_network.present? ? @external_network.name : 'No external gateway set.', disabled:true}}
+    -# = f.input :admin_state_up, {label: 'Admin State',
+    -#   as:                 :select,
+    -#   collection:         [['UP', 'true'],['DOWN', 'false']]}
+    = f.simple_fields_for :external_gateway_info do |info|
+      = info.input :network_id, {label: "Floating IP Network",
+        input_html: {disabled: @external_network.present?},
+        input_html:         {},
+        as:                 :select,
+        collection:         @external_networks,
+        selected:           @router.external_gateway_info,
+        required:           true}
 
-    = f.input :internal_subnets, {label: "Internal Networks",
+      %fieldset#subnets
+        = info.simple_fields_for :external_fixed_ips do |fixed_ips|
+          = fixed_ips.input :subnet_id,
+            as: :select,
+            input_html: {name: "router[external_gateway_info][external_fixed_ips][][subnet_id]"},
+            collection: @subnets,
+            selected: @router_external_subnet_ids
+
+    = f.input :internal_subnets, {label: "Private Network Subnets",
       input_html:         {multiple: true},
-      include_blank:      true,
       as:                 :select,
-      collection:         @internal_subnets,
-      selected:           @selected_internal_subnet_ids,
+      collection:         @internal_subnets.sort{|a,b| a.network_name<=>b.network_name},
+      selected:           @router_internal_subnet_ids,
+      label_method:       -> s {"#{s.name} (#{s.network_name})"},
       required:           true}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
