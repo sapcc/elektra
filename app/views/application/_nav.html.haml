@@ -36,7 +36,7 @@
                 %li= link_to "Key Pairs", plugin('compute').keypairs_path
                 %li.divider
               %li
-                = link_to 'Log out', monsoon_openstack_auth.logout_path(redirect_to: main_app.landing_page_url)
+                = link_to 'Log out', monsoon_openstack_auth.logout_path(redirect_to: main_app.landing_page_url, auth_domain: @scoped_domain_name)
 
 
         %li.dropdown
