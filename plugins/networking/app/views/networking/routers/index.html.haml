@@ -28,9 +28,10 @@
               %br
               %span.info-text= router.network_object.try(:id)
             %td
-              - router.ip_subnet_objects.each do |ip,subnet|
-                = "#{ip} / "
-                %span.info-text= subnet.name
+              - if router.ip_subnet_objects
+                - router.ip_subnet_objects.each do |ip,subnet|
+                  = "#{ip} / "
+                  %span.info-text= subnet.name
 
             %td.snug
               .btn-group
