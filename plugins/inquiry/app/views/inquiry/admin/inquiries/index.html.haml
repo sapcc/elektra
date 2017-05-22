@@ -1,5 +1,19 @@
 = content_for :main_toolbar do
-  Requests for processing
+  Requests for Processing
 
-.inquiry-widget{id: SecureRandom.hex, data: {widget: :inquiry}}
-  = render partial: 'inquiries_widget', locals: {admin_view: true, remote_links: false}
+
+- if (current_user.is_allowed?("identity:inquiry_admin_list") or current_user.is_allowed?("cloud_admin"))
+
+  = render partial: "inquiry/shared/tabs", locals: {admin_view: true}
+
+  - container_id = SecureRandom.hex
+  = render partial: 'inquiry/shared/index_toolbar', locals: {container_id: container_id}
+
+  .inquiries.spinner
+
+  - state = params[:show_only] == "processed" ? ['closed','approved','rejected'] : ['open']
+  = remote_inquiries(per_page: Inquiry::Inquiry.default_per_page, filter: {approver_domain_id: @domain_id, processor_id: current_user.id, state: state}, container_id: container_id)
+
+- else
+  .alert.alert-info
+    You don't have permission to see these requests. This is for admins only!

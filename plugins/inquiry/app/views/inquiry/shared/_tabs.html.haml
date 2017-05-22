@@ -1,0 +1,8 @@
+%ul.nav.nav-tabs
+  - processed_active = params[:controller][/inquiries/] && params[:show_only] == "processed"
+  - if admin_view
+    %li{ role: 'presentation', class: ("active" if !processed_active) }= link_to 'Pending Requests', admin_inquiries_path()
+    %li{ role: 'presentation', class: ("active" if processed_active) }= link_to 'Processed Requests', admin_inquiries_path(show_only: "processed")
+  - else
+    %li{ role: 'presentation', class: ("active" if !processed_active) }= link_to 'Pending Requests', inquiries_path()
+    %li{ role: 'presentation', class: ("active" if processed_active) }= link_to 'Processed Requests', inquiries_path(show_only: "processed")
