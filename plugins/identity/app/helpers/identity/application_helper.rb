@@ -29,7 +29,15 @@ module Identity
             concat(content_tag(:i, '', class: "node-icon"))
 
             unless node.root?
-              concat link_to(node.name, plugin('identity').project_path(project_id: node.friendly_id))
+              name = node.name
+              name = name.truncate(options[:truncate]) if options[:truncate]
+              tooltip_options = if name.length<node.name.length
+                {data: {toggle: "tooltip"}, title: node.name}
+              else
+                {}
+              end
+
+              concat link_to(name, plugin('identity').project_path(project_id: node.friendly_id), tooltip_options)
             end
 
             if has_children

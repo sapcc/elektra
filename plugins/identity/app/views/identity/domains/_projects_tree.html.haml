@@ -11,4 +11,4 @@
       %i.glyphicon.glyphicon-search.form-control-feedback
 
 
-  = render_project_tree(@user_domain_projects_tree.root.children, html: {class: 'searchable', data:{search_input: '#search-input'} })
+  = render_project_tree(@user_domain_projects_tree.root.children, truncate: 36, html: {class: 'searchable', data:{search_input: '#search-input'} })
