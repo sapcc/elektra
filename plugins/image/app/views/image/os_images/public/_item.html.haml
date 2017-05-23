@@ -2,8 +2,10 @@
   %td
     - if current_user.is_allowed?('image:image_get', {})
       = link_to image.name, plugin('image').send("os_images_public_path", image.id), data: { modal: true, cancel: 'Close' }
+    - else
+      = image.name  
   %td= image.disk_format
-  %td= byte_to_human(image.size)    
+  %td= byte_to_human(image.size)
 
   %td= image.status
   %td.snug
@@ -15,4 +17,4 @@
           - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
             %li= link_to 'Launch Instance', plugin('compute').new_instance_path(image_id: image.id), data: {modal: true}
           - if current_user.is_allowed?("image:image_unpublish")
-            %li= link_to 'Unpublish', plugin('image').os_images_public_unpublish_path(public_id:image.id), method: :put, remote:true, data: {loading_status: true}  
+            %li= link_to 'Unpublish', plugin('image').os_images_public_unpublish_path(public_id:image.id), method: :put, remote:true, data: {loading_status: true}

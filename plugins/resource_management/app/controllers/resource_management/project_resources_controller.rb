@@ -6,12 +6,14 @@ module ResourceManagement
     before_filter :load_project_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_filter :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
+    authorization_context 'resource_management'
     authorization_required
 
     def index
       @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
+
 
       # special case to poll elektra during sync now process
       if params.include?(:if_updated_since)
@@ -202,6 +204,7 @@ module ResourceManagement
     end
 
     def check_first_visit
+      enforce_permissions(":resource_management:project_resource_list")
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
       @show_package_request_banner = ! services.resource_management.has_project_quotas?

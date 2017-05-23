@@ -160,6 +160,7 @@ module ResourceManagement
     private
 
     def load_domain_resource
+      enforce_permissions(":resource_management:cloud_admin_list")
       domain = services.resource_management.find_domain(
         params.require(:id),
         services:  [ params.require(:service) ],

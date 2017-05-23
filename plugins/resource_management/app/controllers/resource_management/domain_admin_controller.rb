@@ -332,6 +332,7 @@ module ResourceManagement
     end
 
     def load_domain_resource
+      enforce_permissions(":resource_management:domain_admin_list")
       @resource = services.resource_management.find_domain(
         @scoped_domain_id,
         services: Array.wrap(params.require(:service)),
