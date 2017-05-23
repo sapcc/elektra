@@ -45,7 +45,7 @@ Feature: Projects
     Then I see "Manage Requests" button
     When I click on "Manage Requests"
     Then the page status code is successful
-    And  I see "Requests for processing"
+    And  I see "Requests for Processing"
 
   @admin
   Scenario: Group Management
