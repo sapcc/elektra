@@ -47,8 +47,8 @@ module Compute
 
     def show
       @instance = services.compute.find_server(params[:id])
-      @instance_security_groups = @instance.security_groups.collect do |sg|
-        services.networking.security_groups(tenant_id: @scoped_project_id, name: sg['name']).first
+      @instance_security_groups = @instance.security_groups_details.collect do |sg|
+        services.networking.security_groups(tenant_id: @scoped_project_id, id: sg.id).first
       end
     end
 
@@ -353,6 +353,75 @@ module Compute
       end
     end
 
+    def edit_securitygroups
+      @instance = services.compute.find_server(params[:id])
+      @instance_security_groups = @instance.security_groups_details
+      @instance_security_groups_keys = []
+      @instance_security_groups.each do |sg|
+        @instance_security_groups_keys << sg.id
+      end
+      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+    end
+
+    def assign_securitygroups
+      @instance = services.compute.find_server(params[:id])
+      @instance_security_groups = @instance.security_groups_details
+      @instance_security_groups_ids = []
+      @instance_security_groups.each do |sg|
+        @instance_security_groups_ids << sg.id
+      end
+
+      to_be_assigned = []
+      to_be_unassigned = []
+
+      sgs = params['sgs']
+      if sgs.blank?
+        flash.now[:error] = "Please assign at least one security group to the server"
+        @instance = services.compute.find_server(params[:id])
+        @instance_security_groups = @instance.security_groups_details
+        @instance_security_groups_keys = []
+        @instance_security_groups.each do |sg|
+          @instance_security_groups_keys << sg.id
+        end
+        @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+        render action: :edit_securitygroups and return
+      else
+        sgs.each do |sg|
+          to_be_assigned << sg unless @instance_security_groups_ids.include?(sg)
+        end
+        @instance_security_groups_ids.each do |sg|
+          to_be_unassigned << sg unless sgs.include?(sg)
+        end
+
+        begin
+          to_be_assigned.each do |sg|
+            execute_instance_action('assign_security_group',sg, false)
+          end
+
+          to_be_unassigned.each do |sg|
+            execute_instance_action('unassign_security_group',sg, false)
+          end
+
+          respond_to do |format|
+            format.html{redirect_to instances_url}
+          end
+
+        rescue => e
+          @instance = services.compute.find_server(params[:id])
+          @instance_security_groups = @instance.security_groups_details
+          @instance_security_groups_keys = []
+          @instance_security_groups.each do |sg|
+            @instance_security_groups_keys << sg.id
+          end
+          @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+          flash.now[:error] = "An error happend while assigning/unassigned security groups to the server. Error: #{e}"
+          render action: :edit_securitygroups and return
+        end
+      end
+
+
+    end
+
     private
 
     def collect_available_ips
@@ -382,7 +451,7 @@ module Compute
       end
     end
 
-    def execute_instance_action(action=action_name,options=nil)
+    def execute_instance_action(action=action_name,options=nil, with_rendering=true)
       instance_id = params[:id]
       @instance = services.compute.find_server(instance_id) rescue nil
 
@@ -399,7 +468,7 @@ module Compute
         end
       end
 
-      render template: 'compute/instances/update_item.js'
+      render template: 'compute/instances/update_item.js' if with_rendering
       #redirect_to instances_url
     end
 

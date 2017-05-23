@@ -51,6 +51,7 @@
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
           - if current_user.is_allowed?("compute:instance_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
             %li= link_to 'VNC Console', console_instance_path(id: instance.id), target: '_blank'#data: { modal: true, load_console: true}
+            %li.divider
 
           -# Add other actions only if instance is not in a transitioning state (creating, starting, ...)
           - unless instance.os_ext_sts_task_state
@@ -65,6 +66,9 @@
               %li= link_to 'Attach Interface', plugin('compute').attach_interface_instance_path(id: instance.id), data: { modal: true}
               %li= link_to 'Detach Interface', plugin('compute').detach_interface_instance_path(id: instance.id), data: { modal: true}
 
+              %li= link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id), data: { modal: true}
+
+              %li.divider
               - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state
                 %li= link_to 'Start', start_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true
 

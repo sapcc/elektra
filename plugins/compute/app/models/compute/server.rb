@@ -56,6 +56,10 @@ module Compute
       read("security_groups") || []
     end
 
+    def security_groups_details
+      @driver.map_to(Networking::SecurityGroup).server_security_groups self.id
+    end
+
     def availability_zone
       read("OS-EXT-AZ:availability_zone")
     end
@@ -260,5 +264,18 @@ module Compute
       @driver.detach_volume(id, volume_id)
       true
     end
+
+    def assign_security_group(sg_id)
+      requires :id
+      @driver.add_security_group(id, sg_id)
+      true
+    end
+
+    def unassign_security_group(sg_id)
+      requires :id
+      @driver.remove_security_group(id, sg_id)
+      true
+    end
+
   end
 end

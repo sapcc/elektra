@@ -256,6 +256,14 @@ module Compute
         }
       end
 
+      def add_security_group(id, sg_id)
+        handle_response { @fog.add_security_group(id, sg_id) }
+      end
+
+      def remove_security_group(id, sg_id)
+        handle_response { @fog.remove_security_group(id, sg_id) }
+      end
+
       ########################### VOLUMES #############################
       def create_volume(params={})
         handle_response { @fog.create_volume(name, description, size, options).body['volume'] }
