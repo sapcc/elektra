@@ -79,6 +79,9 @@ module ServiceLayer
       end
 
       return result
+      # even if my user has the role resource_viewer the API throws the Unauthorized exception!
+    rescue Core::ServiceLayer::Errors::ApiError => e
+      []
     end
 
   end
