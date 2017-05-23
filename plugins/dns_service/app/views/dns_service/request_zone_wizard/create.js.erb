@@ -1,2 +1,4 @@
 
 MoModal.close();
+// set the flash
+$('.flashes').html('<p class="alert alert-notice"><%= escape_javascript(flash[:notice])%> </p>');

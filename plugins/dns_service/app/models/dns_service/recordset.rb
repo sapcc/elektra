@@ -1,5 +1,7 @@
 module DnsService
   class Recordset < Core::ServiceLayer::Model
+    validates :records, format: { with:  /\A.+\.\z/, message: "The Canonical Name should end with a dot."}, if: Proc.new { |recordset| recordset.type=='cname' }
+
     TYPE_LABELS = {
       "A - Address record" => "a",
       "AAAA - IPv6 address record" => "aaaa",
