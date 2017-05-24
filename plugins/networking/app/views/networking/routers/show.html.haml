@@ -63,7 +63,7 @@
           %tr
             %th Name
             %th Fixed IPs
-            %th Status
+            -# %th Status
             %th Type
             %th Admin State
 
@@ -76,7 +76,7 @@
                   = fixed_ip["ip_address"]
                   %br
 
-              %td= port.status
+              -# %td= port.status
               %td= port.device_owner
               %td= port.admin_state_up ? 'UP' : 'DOWN'
 
