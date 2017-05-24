@@ -108,10 +108,13 @@ module Networking
       @router = services.networking.find_router(params[:id])
       @router.name = params[:router][:name]
       @router.admin_state_up = params[:router][:admin_state_up]
-      #if @router.external_gateway_info['network_id'].nil?
-        @router.external_gateway_info = params[:router][:external_gateway_info]
 
-      #end
+      if params[:router][:external_gateway_info].blank? or params[:router][:external_gateway_info][:network_id].blank?
+        @router.external_gateway_info = {}
+      else
+        @router.external_gateway_info =  params[:router][:external_gateway_info]
+      end
+
       @router.internal_subnets = @selected_internal_subnet_ids
 
       if @router.save

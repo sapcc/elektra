@@ -6,25 +6,22 @@
         = @router.errors.full_messages.to_sentence + '.'
 
     = f.input :name
-    -# = f.input :external_gateway_info,
-    -#   {input_html: {value: @external_network.present? ? @external_network.name : 'No external gateway set.', disabled:true}}
-    -# = f.input :admin_state_up, {label: 'Admin State',
-    -#   as:                 :select,
-    -#   collection:         [['UP', 'true'],['DOWN', 'false']]}
+
     = f.simple_fields_for :external_gateway_info do |info|
       = info.input :network_id, {label: "Floating IP Network",
         input_html: {disabled: @external_network.present?},
         input_html:         {},
         as:                 :select,
+        include_blank:      'Clear Gateway',
         collection:         @external_networks,
-        selected:           @router.external_gateway_info,
+        selected:           @router.external_gateway_info.fetch("network_id",nil),
         required:           true}
 
       %fieldset#subnets
         = info.simple_fields_for :external_fixed_ips do |fixed_ips|
           = fixed_ips.input :subnet_id,
             as: :select,
-            input_html: {name: "router[external_gateway_info][external_fixed_ips][][subnet_id]"},
+            input_html: {name: "router[external_gateway_info][external_fixed_ips][][subnet_id]", data: {selected: @router_external_subnet_ids}},
             collection: @subnets,
             selected: @router_external_subnet_ids
 
