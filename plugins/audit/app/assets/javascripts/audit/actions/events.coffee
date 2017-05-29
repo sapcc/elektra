@@ -7,10 +7,10 @@
     type: app.REQUEST_EVENTS_FAILURE
     error: error
 
-  receiveEvents= (offset,json) ->
+  receiveEvents= (json,total) ->
     type: app.RECEIVE_EVENTS
     events: json
-    offset: offset
+    total: total
 
   loadEvents= () ->
     (dispatch,getState) ->
@@ -68,7 +68,7 @@
         ],
         "total": 5
       }
-      setTimeout((() -> dispatch(receiveEvents(data["events"]))), 2000)
+      setTimeout((() -> dispatch(receiveEvents(data["events"],data["total"]))), 1000)
 
 
       return if isFetching
@@ -84,6 +84,10 @@
     (dispatch) ->
       dispatch(updateOffset(offset))
       dispatch(loadEvents())
+
+  updateOffset=(offset)->
+    type: app.UPDATE_OFFSET
+    offset: offset
 
   updateFilter=(eventType,eventTerm)->
     type: app.UPDATE_FILTER

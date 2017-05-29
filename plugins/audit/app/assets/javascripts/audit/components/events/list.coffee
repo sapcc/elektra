@@ -1,26 +1,30 @@
 #= require audit/components/events/item
 
 # import
-{ div, span, table, tbody, thead, tr, th, td } = React.DOM
+{ div, span, table, tbody, thead, tr, th, td, input } = React.DOM
 { connect } = ReactRedux
 { EventItem } = audit
 
-Events = ({events, isFetching}) ->
+Events = ({events, isFetching, loadEvents, filterEvents}) ->
   div null,
-    div className: 'toolbar'
+    div className: 'toolbar',
+      input onChange: ((e) -> filterEvents('test','test'))
 
-    if isFetching
-      span className: 'spinner'
-    else
-      table className: 'table events',
-        thead null,
+    table className: 'table events',
+      thead null,
+        tr null,
+          th null, 'Event Type'
+          th null, 'Resource Name'
+      tbody null,
+        for event in events
+          unless event.isVisible==false
+            React.createElement EventItem, key: event.event_id, event: event
+
+        if isFetching
           tr null,
-            th null, 'Event Type'
-            th null, 'Resource Name'
-        tbody null,
-          for event in events
-            unless event.isVisible==false
-              React.createElement EventItem, key: event.event_id, event: event
+            td colSpan: 2,
+              span className: 'spinner'
+
 
 # export
 audit.EventList = Events
