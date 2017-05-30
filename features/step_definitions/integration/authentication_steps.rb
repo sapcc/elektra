@@ -7,7 +7,7 @@ Then(/^I am redirected to login page$/) do
 end
 
 Then(/^I see login form$/) do
-  expect(page).to have_selector("form[action='/auth/sessions']")
+  expect(page).to have_selector("form[action^='/auth/sessions']")
 end
 
 And(/^I click on user navigation$/) do
@@ -20,6 +20,3 @@ end
 def current_path
   URI.parse(current_url).path
 end
-
-
-
