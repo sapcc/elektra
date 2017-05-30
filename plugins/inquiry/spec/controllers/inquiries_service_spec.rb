@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Inquiry::InquiriesController, type: :controller do
   routes { Inquiry::Engine.routes }
 
-  
-
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 
   before(:all) do
@@ -15,6 +13,7 @@ describe Inquiry::InquiriesController, type: :controller do
   before :each do
     stub_authentication
     stub_admin_services
+    get :index, domain_id:AuthenticationStub.domain_id
     @payload = {:key1 => "value1", :key2 => "value2"}.to_json
     @processors = [controller.current_user]
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
