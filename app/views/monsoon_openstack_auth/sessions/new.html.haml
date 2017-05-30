@@ -1,7 +1,11 @@
 = inside_layout 'login' do
   .container
 
-    = form_tag(sessions_path, class: "form-signin") do
+    = form_tag(sessions_path(after_login: params[:after_login]), class: "form-signin") do
+      = hidden_field_tag :domain_id, @domain_id
+      = hidden_field_tag :domain_name, @domain_name
+      = hidden_field_tag :two_factor, @two_factor
+
       %h2.form-signin-heading Please sign in
 
       .flashes

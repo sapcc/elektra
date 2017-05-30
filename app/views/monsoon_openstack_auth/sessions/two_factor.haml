@@ -2,6 +2,9 @@
   .container
 
     = form_tag(check_passcode_path(after_login: params[:after_login]), class: "form-signin") do
+      = hidden_field_tag :domain_id, @domain_id
+      = hidden_field_tag :domain_name, @domain_name
+
       %h2.form-signin-heading Two-Factor Verification
       %p Enter your D/I/C number and SecureID passcode
 
