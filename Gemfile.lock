@@ -54,10 +54,12 @@ GIT
     misty (0.5.1)
       json (>= 1.8.3, < 3)
 
-PATH
-  remote: ../monsoon-openstack-auth
+GIT
+  remote: https://github.com/sapcc/monsoon-openstack-auth.git
+  revision: 4602e25bc493c6824921d84c293ea012d655fb16
+  tag: v1.0.0
   specs:
-    monsoon-openstack-auth (0.8.6)
+    monsoon-openstack-auth (1.0.0)
       excon
       hashie
       rails
