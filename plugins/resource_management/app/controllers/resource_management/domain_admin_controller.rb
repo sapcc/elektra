@@ -127,6 +127,8 @@ module ResourceManagement
       @desired_quota = @inquiry.payload['desired_quota']
       @maximum_quota = @domain_resource.quota - @domain_resource.projects_quota + @project_resource.quota
 
+      @project_name = services.identity.find_project(@inquiry.project_id).name
+
       # calculate projected domain status after approval
       @domain_resource_projected = @domain_resource.clone
       @domain_resource_projected.projects_quota += @desired_quota - @project_resource.quota
