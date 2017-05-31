@@ -8,15 +8,19 @@
     #usage_bars
       = render partial: 'details_usage_bar', locals: { resource: @domain_resource }
 
-    %p
-      The project
-      %strong= @project_name
-      requests that their quota be extended from
-      %strong= @project_resource.data_type.format(@project_resource.quota)
-      to
-      = succeed '.' do
-        %strong>= @project_resource.data_type.format(@desired_quota)
-      This will increase quota usage to:
+    .row
+      .col-md-11
+        The project
+        %strong= @project_name
+        requests that their quota be extended from
+        %strong= @project_resource.data_type.format(@project_resource.quota)
+        to
+        = succeed " " do
+          %strong>= @project_resource.data_type.format(@desired_quota)
+        (current resource usage is
+        = succeed ")." do
+          %strong= @project_resource.data_type.format(@project_resource.usage)
+        This will increase the domain quota usage to:
 
     .row
       .col-md-2.quota-label.text-muted Preview
