@@ -4,9 +4,6 @@ ALLOWED_ROLES = %w(
   compute_viewer
   dns_viewer
   member
-  monasca-agent
-  monasca-user
-  monasca-viewer
   monitoring-delegate
   network_admin
   network_viewer
