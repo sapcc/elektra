@@ -131,11 +131,6 @@ PATH
     lookup (0.0.1)
 
 PATH
-  remote: plugins/monitoring
-  specs:
-    monitoring (0.0.1)
-
-PATH
   remote: plugins/networking
   specs:
     networking (0.0.1)
@@ -591,7 +586,6 @@ DEPENDENCIES
   lyra-client!
   misty!
   misty-limes!
-  monitoring!
   monsoon-openstack-auth!
   net-ssh
   netaddr
@@ -627,4 +621,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.14.6
+   1.15.0

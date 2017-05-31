@@ -1,6 +1,0 @@
-= content_for :title do
-  New Notification Channel
-
-= simple_modal_form_for @notification_method, submit_action: 'Create', url: plugin('monitoring').notification_methods_path, method: :post, cancel_url: plugin('monitoring').notification_methods_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form, autofocus: 'notification_method_name' do |f|
-  = render partial: 'form', locals: {f:f}
-

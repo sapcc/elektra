@@ -136,13 +136,13 @@ SimpleNavigation::Configuration.run do |navigation|
     #   storage_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :monitoring, 'Monitoring, Logs, Cost Control', nil,
+    primary.item :resource_management, 'Logs, Cost Control', nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
-      if: -> {services.available?(:resource_management,:resources) or plugin_available?(:monitoring) or services.available?(:cost_control)} do |monitoring_nav|
+      if: -> {services.available?(:resource_management,:resources) or services.available?(:cost_control)} do |monitoring_nav|
       # monitoring_nav.item :metrics, 'Metrics', '#'
       # monitoring_nav.item :logs, 'Logs', '#'
+      # monitoring_nav.item :monitoring, 'Monitoring', '#'
       monitoring_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
-      monitoring_nav.item :monitoring,          'Monitoring',          -> {plugin('monitoring').entry_path}, if: -> { plugin_available?(:monitoring) && services.available?(:monitoring)}, highlights_on: Proc.new { params[:controller][/monitoring\/.*/] }
       monitoring_nav.item :cost_control,        'Cost Control',        -> {plugin('cost_control').cost_object_path}, if: -> { services.available?(:cost_control) }, highlights_on: Proc.new { params[:controller][/cost_control\/.*/] }
 
       # monitoring_nav.dom_attributes = {class: 'content-list'}
