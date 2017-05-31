@@ -28,6 +28,7 @@ class DashboardController < ::ScopeController
                           two_factor: :two_factor_required?,
                           except: :terms_of_use
 
+
   # after_login is used by monsoon_openstack_auth gem.
   # After the authentication process has finished the after_login can be removed.
   before_filter{params.delete(:after_login)}
