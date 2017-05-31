@@ -136,7 +136,7 @@ SimpleNavigation::Configuration.run do |navigation|
     #   storage_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :resource_management, 'Logs, Cost Control', nil,
+    primary.item :resource_management, 'Capacity & Cost Control', nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
       if: -> {services.available?(:resource_management,:resources) or services.available?(:cost_control)} do |monitoring_nav|
       # monitoring_nav.item :metrics, 'Metrics', '#'

@@ -23,7 +23,6 @@ en:
       dns_admin: Designate Administrator
       image_viewer: Glance Read-Only
       member: Member
-      monitoring-delegate: Monitoring Delegate
       network_admin: Neutron Administrator
       network_viewer: Neutron Read-Only
       resource_admin: Limes Administrator
