@@ -1,4 +1,4 @@
-module ViewHelper
+module ViewHelper  
   def project_name(id)
     # try to find project in friendly ids
     remote_project = FriendlyIdEntry.find_by_class_scope_and_key_or_slug('Project',@scoped_domain_id,id)

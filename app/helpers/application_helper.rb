@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def page_title
+    "CCloud #{@scoped_domain_name if @scoped_domain_name} #{current_region if current_region}"
+  end
+
   def render_paginatable(items)
     return if !@pagination_enabled || !items || items.length.zero?
     content_tag(:div, class: 'pagination') do
