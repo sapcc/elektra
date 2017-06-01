@@ -10,11 +10,11 @@
     -# = content_for :javascripts do
     :javascript
       //window.History = { options: { html4Mode: true} };
-      window.pluginName = "#{plugin_name}"
-      window.scopedDomainId = "#{@scoped_domain_id}"
-      window.scopedDomainFid = "#{@scoped_domain_fid}"
-      window.scopedProjectId = "#{@scoped_project_id}"
-      window.scopedProjectFid = "#{@scoped_project_fid}"
+      window.pluginName = "#{plugin_name}";
+      window.scopedDomainId = "#{@scoped_domain_id}";
+      window.scopedDomainFid = "#{@scoped_domain_fid}";
+      window.scopedProjectId = "#{@scoped_project_id}";
+      window.scopedProjectFid = "#{@scoped_project_fid}";
 
     = javascript_include_tag 'raven'
     - if $sentry_public_dsn
@@ -37,7 +37,6 @@
     = csrf_meta_tags
 
   %body{class: "#{body_class}"}
-
     = render "nav"
     = render "breadcrumb"
     = render "main_toolbar"
@@ -59,3 +58,14 @@
     = yield :javascripts
 
     #modal-holder
+
+  :javascript
+
+    $(document).ready(function(){
+      try {
+        window.policy = new PolicyEngine(#{policy.to_js});
+
+        // usage:
+        //console.log(policy.isAllowed("identity:project_get"))
+      } catch(e) { }
+    });
