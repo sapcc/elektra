@@ -1,5 +1,0 @@
-= content_for :title do
-  Edit Alarm Definition
-
-= simple_modal_form_for @alarm_definition, submit_action: 'Update', url: plugin('monitoring').alarm_definition_path(@alarm_definition.id), method: :put, cancel_url: plugin('monitoring').alarm_definitions_path, html: { class: 'form-horizontal' }, wrapper: :horizontal_form, autofocus: 'alarm_definition_name' do |f|
-  = render partial: 'form', locals: {f:f,edit:true}

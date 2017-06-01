@@ -23,8 +23,7 @@ module Core
       def self.read_error_messages(hash,messages=[])
         return [ hash.to_s ] unless hash.respond_to?(:each)
         hash.each do |k,v|
-          # title and description are related to monasca error response
-          messages << v if k=='message' or k=='type' or k=='title' or k=='description'
+          messages << v if k=='message' or k=='type' 
           if v.is_a?(Hash)
             read_error_messages(v,messages)
           elsif v.is_a?(Array)

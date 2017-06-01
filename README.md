@@ -26,7 +26,6 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 * DNS (Designate)
 * Object storage (Swift)
 * Shared file storage (Manila)
-* Monitoring (Monasca)
 
 **Extended services:**
 
