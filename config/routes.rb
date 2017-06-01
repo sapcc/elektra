@@ -31,9 +31,9 @@ Rails.application.routes.draw do
 
   # root to: 'pages#show', id: 'landing'
 
-  root(to: redirect do |params, request| 
+  root(to: redirect do |params, request|
     domain_id = request.query_parameters["domain_id"]
-    "/#{domain_id || Rails.application.config.default_domain}" 
+    "/#{domain_id || Rails.application.config.default_domain}"
   end)
-  
+
 end
