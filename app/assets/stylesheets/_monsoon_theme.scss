@@ -1265,7 +1265,7 @@ blockquote, .bs-callout {
   margin-top: $line-height-computed * 2;
 }
 
-td, th {
+div, td, th {
   &.snug {
     width: 1px;
   }
