@@ -22,7 +22,7 @@ module Inquiry
         end
       else
         # This case is the initial page load
-        
+
         # get all different types of inquiries from the database
         @kinds_of_inquiries = [["All",""]] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
 
@@ -97,7 +97,7 @@ module Inquiry
     end
 
     def set_inquiry
-      @inquiry = Inquiry.find(params[:id])
+      @inquiry = Inquiry::Inquiry.find(params[:id])
     end
 
 
