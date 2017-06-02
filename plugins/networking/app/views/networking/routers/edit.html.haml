@@ -1,4 +1,4 @@
-= simple_form_for @router, url: plugin('networking').router_path(@router.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @router, url: plugin('networking').router_path(@router.id), method: :put, remote: request.xhr?, html: {data: {modal: true, router_form: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @router.errors.present?

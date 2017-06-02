@@ -1,4 +1,4 @@
-= simple_form_for @router, url: plugin('networking').routers_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @router, url: plugin('networking').routers_path, method: :post, remote: request.xhr?, html: {data: {modal: true,router_form: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - if @router.errors.present?
@@ -10,12 +10,13 @@
       as:                 :select,
       collection:         [['UP', 'true'],['DOWN', 'false']]}
 
+
     = f.simple_fields_for :external_gateway_info do |info|
       = info.input :network_id, {label: "Floating IP Network",
         input_html:         {},
         as:                 :select,
         collection:         @external_networks,
-        selected:           @router.external_gateway_info,
+        selected:           @router.external_gateway_info.fetch("network_id",nil),
         required:           true}
 
       %fieldset#subnets
