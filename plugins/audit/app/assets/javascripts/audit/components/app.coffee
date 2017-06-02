@@ -21,5 +21,5 @@ audit.App = connect(
     isFetching: state.events.isFetching
   (dispatch) ->
     loadEvents: (offset) -> dispatch(fetchEvents(offset))
-    filterEvents: (type,term) -> dispatch(filterEvents(type,term))
+    filterEvents: (type, term) -> dispatch(filterEvents(type, term))
 )(App)

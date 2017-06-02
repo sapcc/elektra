@@ -1,3 +1,4 @@
-%h1 Audit Index
+= content_for :main_toolbar do
+  Audit Log
 
-= react_component 'audit.AppProvider', permissions: {}
+= react_component 'audit.AppProvider', permissions: {}, token: current_user.token, eventsApi: @events_endpoint

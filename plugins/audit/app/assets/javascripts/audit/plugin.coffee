@@ -1,4 +1,5 @@
 #= require react/helpers
+#= require moment.min
 #= require audit/constants
 #= require audit/reducers/index
 #= require audit/actions/index
@@ -12,8 +13,9 @@
 composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 store = createStore(AppReducers, composeEnhancers(applyMiddleware(ReduxThunk.default)))
 
-AppProvider = ({permissions}) ->
+AppProvider = ({permissions, token, eventsApi}) ->
+  audit.ajaxHelper = new ReactAjaxHelper(eventsApi, authToken: token)
   React.createElement Provider, store: store,
-    React.createElement App, permissions: permissions
+    React.createElement App, {permissions: permissions}
 
 audit.AppProvider = AppProvider

@@ -1,5 +1,5 @@
 ((app) ->
-  ########################### SHARES ##############################
+  ########################### EVENTS ##############################
   initialEventState =
     error: null
     total: 0
@@ -39,7 +39,7 @@
       error: null
     })
 
-  # shares reducer
+  # events reducer
   app.events = (state = initialEventState, action) ->
     switch action.type
       when app.REQUEST_EVENTS then requestEvents(state,action)
