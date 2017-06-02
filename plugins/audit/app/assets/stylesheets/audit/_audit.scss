@@ -1,3 +1,39 @@
+// TABLE LAYOUT
+.events {
+  display: table;
+}
+
+.events-head {
+  display: table-row;
+  font-weight: bold;
+
+  .event-cell {
+    border-bottom: 2px solid #ddd;
+  }
+}
+
+.event-cell {
+  display: table-cell;
+  padding: 8px;
+}
+
+.events-list {
+  display: table-row-group;
+}
+
+.event {
+  display: table-row;
+
+  .event-cell {
+    border-top: 1px solid #ddd;
+  }
+
+  &:first-child .event-cell {
+    border-top: none;
+  }
+}
+
+
 .resource-id {
   font-size: $font-size-small;
   color: #aaa;
