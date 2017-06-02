@@ -13,8 +13,11 @@ Events = ({events, isFetching, loadEvents, filterEvents}) ->
     table className: 'table events',
       thead null,
         tr null,
+          th null, 'Time'
+          th null, 'Source'
           th null, 'Event Type'
-          th null, 'Resource Name'
+          th null, 'Resource'
+          th null, 'User'
       tbody null,
         for event in events
           unless event.isVisible==false
