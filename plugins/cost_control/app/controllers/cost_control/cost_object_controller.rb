@@ -30,9 +30,17 @@ module CostControl
 
       # normalize "cost_object_inherited" to Boolean
       attrs[:cost_object_inherited] = attrs[:cost_object_inherited] == '1'
-#########
 
       if @masterdata.update_attributes(attrs)
+        ############## Update Project Wizard Status for Cost Object
+        project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+        project_profile.update_wizard_status(
+          'cost_control',
+          ProjectProfile::STATUS_DONE,
+          {cost_object: @masterdata.cost_object_id, type: @masterdata.cost_object_type }
+        )
+        ############### end
+
         respond_to do |format|
           format.html { redirect_to plugin('cost_control').cost_object_path }
           format.js{}
