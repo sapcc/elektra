@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   # lifeliness
   # check without db connection. It only checks that a request reaches the Middleware layer, and nothing else.
-  # /system/lifeliness is frozen in the MiddlewareHealthcheck to reduce object allocation
+  # /system/liveliness is frozen in the MiddlewareHealthcheck to reduce object allocation
   scope "/system" do
     # readiness, check with db connection
     get :readiness, to: "health#show"

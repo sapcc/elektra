@@ -6,7 +6,7 @@ class MiddlewareHealthcheck
   end
 
   def call(env)
-    if env['PATH_INFO'.freeze] == '/system/lifeliness'.freeze
+    if env['PATH_INFO'.freeze] == '/system/liveliness'.freeze
       return OK_RESPONSE
     else
       @app.call(env)
