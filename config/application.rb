@@ -118,6 +118,8 @@ module MonsoonDashboard
         from: 'Converged Cloud <noreply+ConvergedCloud@sap.corp>'
     }
 
+    # Add middleware healthcheck that to hit the db
+    config.middleware.insert_after "Rails::Rack::Logger", "MiddlewareHealthcheck"
   end
 
 end

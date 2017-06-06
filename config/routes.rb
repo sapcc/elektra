@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   mount MonsoonOpenstackAuth::Engine => '/auth'
 
+  # lifeliness
+  # check without db connection. It only checks that a request reaches the Middleware layer, and nothing else.
+  # /system/lifeliness is frozen in the MiddlewareHealthcheck to reduce object allocation
   scope "/system" do
+    # readiness, check with db connection
+    get :readiness, to: "health#show"
+    # TODO: remove the health path when we are sure it is not anymore being used.
     get :health, to: "health#show"
   end
 
