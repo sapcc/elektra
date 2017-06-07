@@ -12,14 +12,16 @@ Events = ({events, isFetching, loadEvents, filterEvents}) ->
 
     div className: 'events',
       div className: 'events-head',
+        div className: 'event-cell', ''
         div className: 'event-cell', 'Time'
         div className: 'event-cell', 'Source'
         div className: 'event-cell', 'Event Type'
         div className: 'event-cell', 'Resource'
-        div className: 'event-cell', 'User'
+        div className: 'event-cell user-cell', 'User'
       div className: 'events-list',
         for event in events
           unless event.isVisible==false
+            console.log(event)
             React.createElement EventItem, key: event.event_id, event: event
 
         if isFetching

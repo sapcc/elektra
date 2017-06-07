@@ -17,12 +17,20 @@
   padding: 8px;
 }
 
+.user-cell {
+  width: 21%;
+}
+
 .events-list {
   display: table-row-group;
 }
 
 .event {
   display: table-row;
+
+  .event-overview, .event-details {
+    display: table-row;
+  }
 
   .event-cell {
     border-top: 1px solid #ddd;
