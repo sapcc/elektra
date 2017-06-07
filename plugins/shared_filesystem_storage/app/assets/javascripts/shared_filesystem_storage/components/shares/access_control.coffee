@@ -1,5 +1,6 @@
 #= require shared_filesystem_storage/components/shares/access_control_form
 #= require shared_filesystem_storage/components/shares/access_control_item
+#= require react/transition_groups
 
 { div,table,thead,tbody,tr,th,td,form,select,h4,label,span,input,button,abbr,select,option,a,i,small } = React.DOM
 { connect } = ReactRedux
@@ -12,8 +13,6 @@
   AccessControlForm,
   AccessControlItem
 } = shared_filesystem_storage
-
-ReactCSSTransitionGroup = React.createFactory React.addons.CSSTransitionGroup
 
 AccessControl = ({
   shareId,
@@ -54,7 +53,7 @@ AccessControl = ({
 
             tr null,
               td colSpan: 4,
-                ReactCSSTransitionGroup  transitionName: "css-transition-fade", transitionEnterTimeout: 500, transitionLeaveTimeout: 300,
+                ReactTransitionGroups.Fade null,
                   unless ruleForm.isHidden
                     React.createElement AccessControlForm, { handleChange, handleSubmit, ruleForm }
               td null,

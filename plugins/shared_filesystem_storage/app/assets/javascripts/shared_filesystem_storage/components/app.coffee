@@ -1,6 +1,7 @@
 #= require shared_filesystem_storage/components/shares/list
 #= require shared_filesystem_storage/components/share_networks/list
 #= require shared_filesystem_storage/components/snapshots/list
+#= require shared_filesystem_storage/components/security_services/list
 #= require shared_filesystem_storage/components/shares/show
 #= require shared_filesystem_storage/components/shares/new
 #= require shared_filesystem_storage/components/shares/edit
@@ -21,6 +22,7 @@
   ShareList,
   SnapshotList,
   ShareNetworkList,
+  SecurityServiceList,
   ShowShareModal,
   EditShareModal,
   NewShareModal,
@@ -37,6 +39,7 @@ tabs = [
   { name: 'Shares', uid: 'shares', permissionKey: 'shares', component: ShareList },
   { name: 'Snapshots', uid: 'snapshots', permissionKey: 'snapshots', component: SnapshotList}
   { name: 'Share Networks', uid: 'share-networks', permissionKey: 'share_networks', component: ShareNetworkList}
+  { name: 'Security Services', uid: 'security-services', permissionKey: 'security_services', component: SecurityServiceList}
 ]
 
 modalComponents =

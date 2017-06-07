@@ -2,7 +2,7 @@
 
 { div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateShareForm, submitShareForm } = shared_filesystem_storage
+{ updateShareForm, submitShareForm, selectTab, openNewShareNetworkDialog } = shared_filesystem_storage
 protocols= ['NFS']
 
 NewShare = ({
@@ -115,7 +115,7 @@ NewShare = ({
                   p className:'help-block',
                     i className: "fa fa-info-circle"
                     'There are no share networks defined yet. '
-                    a onClick: ((e) -> e.preventDefault(); handleNewShareNetwork()), href: '#', 'Create a new share network.'
+                    a onClick: ((e) -> handleNewShareNetwork(e)), href: '#', 'Create a new share network.'
 
     div className: 'modal-footer',
       button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
@@ -130,10 +130,11 @@ NewShare = connect(
     shareForm: state.shareForm
     shareNetworks: state.shareNetworks
     availabilityZones: state.availabilityZones
-  (dispatch) ->
+  (dispatch,ownProps) ->
     handleChange: (name,value) -> dispatch(updateShareForm(name,value))
     handleSubmit: (callback) -> dispatch(submitShareForm(callback))
-    handleNewShareNetwork: () -> null
+    handleNewShareNetwork: (e) ->
+      ownProps.close e, () -> dispatch(selectTab("share-networks"))
 )(NewShare)
 
 shared_filesystem_storage.NewShareModal = ReactModal.Wrapper('Create Share', NewShare,

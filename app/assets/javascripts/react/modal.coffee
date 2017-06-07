@@ -6,6 +6,7 @@
 ReactModal = {
   SHOW_MODAL: 'SHOW_MODAL'
   HIDE_MODAL: 'HIDE_MODAL'
+  HIDE_ALL: 'HIDE_ALL'
 }
 
 addModalUrlFragment=({modalType,modalProps})->
@@ -26,8 +27,9 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
         $(@refs.modal).modal 'show'
         $(@refs.modal).on 'hidden.bs.modal', @handleClose
 
-      close: (e) ->
+      close: (e,callback) ->
         e.preventDefault() if e
+        $(@refs.modal).on('hidden.bs.modal', callback) if callback
         $(@refs.modal).modal 'hide'
 
       handleClose: () ->
@@ -84,6 +86,8 @@ ReactModal.Reducer  = (state = [], action) ->
 
       #removeModalUrlFragment(action)
       newState
+    when ReactModal.HIDE_ALL
+      []
     else
       return state
 

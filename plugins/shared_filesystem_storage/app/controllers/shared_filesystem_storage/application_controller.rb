@@ -18,6 +18,10 @@ module SharedFilesystemStorage
         share_networks: {
           list: current_user.is_allowed?("shared_filesystem_storage:share_network_list"),
           create: current_user.is_allowed?("shared_filesystem_storage:share_network_create")
+        },
+        security_services: {
+          list: current_user.is_allowed?("shared_filesystem_storage:security_service_list"),
+          create: current_user.is_allowed?("shared_filesystem_storage:security_service_create")
         }
       }
     end

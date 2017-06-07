@@ -13,7 +13,7 @@ ShareItem = React.createClass
     @stopPolling()
 
   startPolling: ()->
-    @polling = setInterval((() => @props.reloadShare(@props.share.id)), 3000)
+    @polling = setInterval((() => @props.reloadShare(@props.share.id)), 10000)
 
   stopPolling: () ->
     clearInterval(@polling)
