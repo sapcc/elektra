@@ -3,11 +3,13 @@ Loadbalancing::Engine.routes.draw do
   get 'listener_details/:id', to: 'loadbalancers/listeners#show', as: 'listener_details'
   resources :loadbalancers do
     member do
+      get 'update_status'
       get 'new_floatingip'
       put 'attach_floatingip'
       delete 'detach_floatingip'
       get 'update_item'
       get 'get_item'
+      get 'update_statuses'
     end
 
     resources :listeners, module: :loadbalancers do

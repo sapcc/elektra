@@ -1,5 +1,9 @@
 module Loadbalancing
-  class LoadbalancersController < DashboardController
+  class LoadbalancersController < ApplicationController
+    # set policy context
+    authorization_context 'loadbalancing'
+    # enforce permission checks. This will automatically investigate the rule name.
+    authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :update_item, :get_item]
 
     def index
       @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
@@ -18,6 +22,29 @@ module Loadbalancing
 
     def show
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      statuses = services.loadbalancing.loadbalancer_statuses(params[:id])
+      @statuses = statuses.state
+    end
+
+=begin
+    def update_statuses
+      begin
+        @statuses = services.loadbalancing.loadbalancer_statuses(params[:id])
+        if @statuses
+          render json: @statuses
+        else
+          render json: {}
+        end
+      rescue => e
+        render json: {}
+      end
+    end
+=end
+
+    def update_status
+      begin
+        @states = services.loadbalancing.loadbalancer_statuses(params[:id])
+      end
     end
 
     def new
@@ -38,7 +65,7 @@ module Loadbalancing
         render :new
       end
 
-    end
+      @attributes    end
 
     def edit
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
@@ -78,6 +105,9 @@ module Loadbalancing
     end
 
     def attach_floatingip
+
+      enforce_permissions("loadbalancing:loadbalancer_assign_ip")
+
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       vip_port_id = @loadbalancer.vip_port_id
       @floating_ip = Networking::FloatingIp.new(nil, params[:floating_ip])
@@ -110,6 +140,7 @@ module Loadbalancing
     end
 
     def detach_floatingip
+      enforce_permissions("loadbalancing:loadbalancer_assign_ip")
       begin
         @floating_ip = services.networking.detach_floatingip(params[:floating_ip_id])
       rescue => e

@@ -1,10 +1,12 @@
 %tr{id: "loadbalancer_pool_#{pool.id}"}
   %td
-    = link_to pool.name, plugin('loadbalancing').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
+    = link_to name_or_id(pool.name, pool.id), plugin('loadbalancing').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
   %td= pool.description
   %td= pool.protocol
   %td= pool.lb_algorithm
   %td= pool.members ? pool.members.count : 0
+  %td
+    %label{class: 'spinner',data: {op_status: "#{pool.id}"}}
   %td.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }

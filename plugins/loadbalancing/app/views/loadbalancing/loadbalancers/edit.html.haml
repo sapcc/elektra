@@ -5,16 +5,22 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @loadbalancer, url: plugin('loadbalancing').loadbalancer_path(@loadbalancer.id), method: :put, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @loadbalancer, url: plugin('loadbalancing').loadbalancer_path(@loadbalancer.id), method: :put, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
 
     = render :partial => 'loadbalancing/application/errors', locals: {object: @loadbalancer}
 
-    %fieldset
-      = f.input :name, required: false
-      = f.input :description
-      = f.input :vip_address, disabled: true
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: true}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "Load Balancer"
+          %p= "The Load Balancer object defines the internal IP address under which all associated listeners can be reached. For external access a Floating IP can be attached to the Load Balancer."
+          %h4= "Private Network"
+          %p= "The network which provides the internal IP of the load balancer."
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

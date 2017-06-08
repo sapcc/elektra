@@ -16,14 +16,15 @@
         .toolbar.toolbar-aligntop
           = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_l7policy_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-      %table.table.listeners
+      %table.table.l7policies
         %tr
-          %th Name
+          %th Name/ID
           %th Description
           %th Position
           %th Action
           %th Redirect To
           %th= '#Rules'
+          %th State
 
         - unless @l7policies.blank?
           - @l7policies.each do |l7policy|

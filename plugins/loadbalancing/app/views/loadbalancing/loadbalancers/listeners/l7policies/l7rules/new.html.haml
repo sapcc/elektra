@@ -11,8 +11,29 @@
 
     = render :partial => 'loadbalancing/application/errors', locals: {object: @l7rule}
 
-    = render partial: 'form', locals: {f: f, update: false}
+    = render :partial => 'loadbalancing/application/errors', locals: {object: @l7policy}
 
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: false}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "L7 Rule"
+          %p= "An L7 Rule is a single, simple logical test which returns either true or false. It is associated with an L7 policy. The policy action will be executed when ALL L7 Rules are matched."
+          %h4= "Type"
+          %p
+            L7 rules have the following types:
+            %ul
+              %li="HOST_NAME: The rule does a comparison between the HTTP/1.1 hostname in the request against the value parameter in the rule."
+              %li="PATH: The rule compares the path portion of the HTTP URI against the value parameter in the rule."
+              %li="FILE_TYPE: The rule compares the last portion of the URI against the value parameter in the rule. (eg. txt, jpg)."
+              %li="HEADER: The rule looks for a header defined in the key parameter and compares it against the value parameter in the rule."
+              %li="COOKIE: The rule looks for a cookie named by the key parameter and compares it against the value parameter in the rule."
+          %h4= "Compare Type"
+          %p= "Defines how to compare the value field. A regex has to be a Perl type regular expression."
+          %h4= "Use inverse comparisation (NOT)"
+          %p= "The inverted rule result will be used for the policy evaluation."
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

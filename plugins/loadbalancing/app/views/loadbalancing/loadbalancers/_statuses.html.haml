@@ -1,0 +1,16 @@
+%h3
+  All load balancer objects states
+-#%p
+  = link_to 'pretty formatted', "#pretty_formatted", data: { toggle: "collapse" }
+  .collapse#pretty_formatted
+    %table.table
+      %tbody
+        - statuses.each do |k,v|
+          %tr
+            %th= k rescue ''
+            %td= simple_format(v) rescue ''
+
+%p
+  = link_to 'Load balancer objects states', "#states", data: { toggle: "collapse" }
+  .collapse#states{class: "collapse in"}
+    %pre= JSON.pretty_generate(statuses) rescue "Error during rendering of Status information!"

@@ -1,8 +1,7 @@
 - data = {}
-- if loadbalancer.in_transition?
-  - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
-  - data[:interval]=10000
-
+- data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
+- data[:update_interval]=60
+- data[:update_immediately]='true'
 
 %tr{id: "loadbalancer_#{loadbalancer.id}", data: data }
 
@@ -10,9 +9,9 @@
     - if loadbalancer.in_transition?
       %span{class: 'spinner'}
     - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      = link_to loadbalancer.name, plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
+      = link_to name_or_id(loadbalancer.name, loadbalancer.id), plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
     - else
-      %td= loadbalancer.name
+      %td= name_or_id(loadbalancer.name, loadbalancer.id)
   %td= loadbalancer.description
   %td= loadbalancer.operating_status
   %td= loadbalancer.provisioning_status

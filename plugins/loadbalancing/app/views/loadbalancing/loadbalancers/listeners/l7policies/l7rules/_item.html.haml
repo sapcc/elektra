@@ -1,8 +1,8 @@
 - data = {}
 - if l7rule.in_transition?
-  - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: loadbalancer.id,
+  - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: loadbalancer.id,
                                                                                                      listener_id: listener.id, l7policy_id: l7policy.id, id: l7rule.id)
-  - data[:interval]=2500
+  - data[:update_interval]=2500
 
 %tr{id: "loadbalancer_listener_l7policy_l7rule_#{l7rule.id}", data: data }
   %td
@@ -17,6 +17,8 @@
       = icon('check')
     - else
       = icon('times')
+  %td
+    %label{class: 'spinner', data: {prov_status: "#{l7policy.id}"}}
 
   %td.snug
     .btn-group

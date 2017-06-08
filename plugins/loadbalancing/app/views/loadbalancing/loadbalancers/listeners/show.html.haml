@@ -6,8 +6,8 @@
   %table.table.datatable
     %tbody
       %tr
-        %th Name
-        %td= @listener.name
+        %th Name/ID
+        %td= name_or_id(@listener.name, @listener.id)
       %tr
         %th Description
         %td= @listener.description
@@ -20,6 +20,13 @@
       %tr
         %th Protocol Port
         %td= @listener.protocol_port
+      %tr
+        %th Connection Limit
+        %td= @listener.connection_limit
+      - if @pool
+        %tr
+          %th Default Pool
+          %td= "#{@pool.name} ( #{@pool.id} )"
 
 - if modal?
   .modal-footer

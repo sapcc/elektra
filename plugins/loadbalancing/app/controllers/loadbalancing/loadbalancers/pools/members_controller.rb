@@ -1,15 +1,22 @@
 module Loadbalancing
   module Loadbalancers
     module Pools
-      class MembersController < DashboardController
+      class MembersController < ApplicationController
 
         before_filter :load_objects, only: [:new, :destroy, :update_item, :create]
+
+        # set policy context
+        authorization_context 'loadbalancing'
+        # enforce permission checks. This will automatically investigate the rule name.
+        authorization_required except: [:add, :add_external, :update_item]
 
         def new
           load_members
         end
 
         def add
+          enforce_permissions("loadbalancing:member_create")
+
           ips = params['ips'] || []
           @new_members = []
           ips.each do |ip|
@@ -22,6 +29,8 @@ module Loadbalancing
         end
 
         def add_external
+          enforce_permissions("loadbalancing:member_create")
+
           @new_members = []
           member = services.loadbalancing.new_pool_member(id: SecureRandom.hex)
           member.attributes = {pool_id: params[:pool_id], address: nil, weight: 1}

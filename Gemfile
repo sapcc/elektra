@@ -110,7 +110,7 @@ end
 
 group :development, :test do
 
-  # load .env needed for cucumber tests!
+  # load .env.bak needed for cucumber tests!
   gem 'dotenv-rails'
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

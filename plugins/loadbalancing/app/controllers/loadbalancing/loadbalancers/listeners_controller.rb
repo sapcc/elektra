@@ -1,8 +1,13 @@
 module Loadbalancing
   module Loadbalancers
-    class ListenersController < DashboardController
+    class ListenersController < ApplicationController
 
       before_filter :load_objects, except: [:show]
+
+      # set policy context
+      authorization_context 'loadbalancing'
+      # enforce permission checks. This will automatically investigate the rule name.
+      authorization_required except: [:update_item]
 
       def index
         @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
@@ -13,12 +18,13 @@ module Loadbalancing
 
       def show
         @listener = services.loadbalancing.find_listener(params[:id])
-        @pools = [services.loadbalancing.find_pool(@listener.default_pool_id)] if @listener.default_pool_id
+        @pool = services.loadbalancing.find_pool(@listener.default_pool_id) if @listener.default_pool_id
       end
 
 
       def new
         @listener = services.loadbalancing.new_listener
+        @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
         containers = services.key_manager.containers()
         @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
       end
@@ -32,6 +38,7 @@ module Loadbalancing
         else
           containers = services.key_manager.containers()
           @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
+          @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
           render :new
         end
       end
@@ -40,16 +47,20 @@ module Loadbalancing
         @listener = services.loadbalancing.find_listener(params[:id])
         containers = services.key_manager.containers()
         @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
+        @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
       end
 
       def update
         @listener = services.loadbalancing.find_listener(params[:id])
+        lparams = listener_params
+        lparams[:default_pool_id] = nil if lparams[:default_pool_id].blank? # only nil resets the default pool id
         if @listener.update(listener_params)
           audit_logger.info(current_user, "has updated", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener was successfully updated.'
         else
           containers = services.key_manager.containers()
           @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
+          @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
           render :edit
         end
       end
@@ -83,7 +94,6 @@ module Loadbalancing
       def load_objects
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id]) if params[:loadbalancer_id]
       end
-
 
       def listener_params
         p = params[:listener]

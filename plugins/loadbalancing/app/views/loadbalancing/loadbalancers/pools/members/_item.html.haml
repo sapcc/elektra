@@ -1,9 +1,4 @@
-- data = {}
-- if member.in_transition?
-  - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_pool_member_path(loadbalancer_id: loadbalancer.id, pool_id: pool.id, id: member.id)
-  - data[:interval]=2500
-
-%tr{id: "member_#{member.id}", data: data}
+%tr{id: "member_#{member.id}"}
   %td
     - if member.in_transition?
       %span{class: 'spinner'}
@@ -12,6 +7,8 @@
     = member.protocol_port
   %td
     = member.weight
+  %td
+    %label{class: 'spinner', data: {op_status: "#{member.id}"}}
   %td.snug
     - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {}) and member.id and (!defined?(nodestroy) or nodestroy != :true)
       .btn-group
