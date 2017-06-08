@@ -97,7 +97,7 @@ module Inquiry
     end
 
     def set_inquiry
-      @inquiry = Inquiry::Inquiry.find(params[:id])
+      @inquiry = ::Inquiry::Inquiry.find(params[:id])
     end
 
 
