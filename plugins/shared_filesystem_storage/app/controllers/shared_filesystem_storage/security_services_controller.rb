@@ -1,0 +1,76 @@
+module SharedFilesystemStorage
+  class SecurityServicesController < ApplicationController
+
+    def index
+      security_services = services.shared_filesystem_storage.security_services_detail
+      security_services.each do |security_service|
+        security_service.permissions = {
+          delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
+          update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
+        }
+      end
+      render json: security_services
+    end
+
+    def show
+      security_service = services.shared_filesystem_storage.find_security_service(params[:id])
+      security_service.permissions = {
+        delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
+        update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
+      }
+      render json: security_service
+    end
+
+    def update
+      security_service = services.shared_filesystem_storage.new_security_service(security_service_params)
+      security_service.id = params[:id]
+
+      if security_service.save
+        security_service.permissions = {
+          delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
+          update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
+        }
+        render json: security_service
+      else
+        render json: { errors: security_service.errors }
+      end
+    end
+
+    def create
+      security_service = services.shared_filesystem_storage.new_security_service(security_service_params)
+
+      if security_service.save
+        security_service.permissions = {
+          delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
+          update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
+        }
+        render json: security_service
+      else
+        render json: { errors: security_service.errors}
+      end
+    end
+
+    def destroy
+      security_service = services.shared_filesystem_storage.new_security_service
+      security_service.id=params[:id]
+
+      if security_service.destroy
+        head :no_content
+      else
+        render json: { errors: security_service.errors}
+      end
+    end
+
+    protected
+    def security_service_params
+      params.require(:security_service).permit(
+        :description,
+        :dns_ip,
+        :user,
+        :password,
+        :type,
+        :name
+      )
+    end
+  end
+end

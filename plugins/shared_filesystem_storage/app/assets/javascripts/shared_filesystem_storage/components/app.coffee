@@ -26,6 +26,9 @@
   ShowShareModal,
   EditShareModal,
   NewShareModal,
+  ShowSecurityServiceModal,
+  EditSecurityServiceModal,
+  NewSecurityServiceModal,
   EditSnapshotModal,
   NewSnapshotModal,
   ShowSnapshotModal,
@@ -46,6 +49,9 @@ modalComponents =
   'SHOW_SHARE': ShowShareModal
   'NEW_SHARE': NewShareModal
   'EDIT_SHARE': EditShareModal
+  'SHOW_SECURITY_SERVICE': ShowSecurityServiceModal
+  'NEW_SECURITY_SERVICE': NewSecurityServiceModal
+  'EDIT_SECURITY_SERVICE': EditSecurityServiceModal
   'SHARE_ACCESS_CONTROL': ShareAccessControl
   'EDIT_SNAPSHOT': EditSnapshotModal
   'NEW_SNAPSHOT': NewSnapshotModal
