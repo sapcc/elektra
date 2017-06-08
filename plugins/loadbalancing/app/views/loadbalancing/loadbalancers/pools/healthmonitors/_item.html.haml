@@ -9,9 +9,9 @@
   %table.table.datatable
     %thead
     %tbody
-      -#%tr
-        %th Name
-        %td= healthmonitor.name
+      %tr
+        %th Name/ID
+        %td= name_or_id(healthmonitor.name, healthmonitor.id)
       %tr
         %th Type
         %td= healthmonitor.type

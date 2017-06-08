@@ -2,9 +2,14 @@ module Loadbalancing
   module Loadbalancers
     module Listeners
       module L7policies
-        class L7rulesController < DashboardController
+        class L7rulesController < ApplicationController
 
           before_filter :load_objects, except: [:create]
+
+          # set policy context
+          authorization_context 'loadbalancing'
+          # enforce permission checks. This will automatically investigate the rule name.
+          authorization_required except: [:update_item]
 
           def index
             @l7rules = paginatable(per_page: 20) do |pagination_options|
@@ -68,10 +73,6 @@ module Loadbalancing
             rescue => e
               return nil
             end
-          end
-
-          def release_state
-            "experimental"
           end
 
           private

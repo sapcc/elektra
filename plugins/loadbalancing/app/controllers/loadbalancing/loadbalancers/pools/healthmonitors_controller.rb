@@ -1,9 +1,14 @@
 module Loadbalancing
   module Loadbalancers
     module Pools
-      class HealthmonitorsController < DashboardController
+      class HealthmonitorsController < ApplicationController
 
         before_filter :load_objects
+
+        # set policy context
+        authorization_context 'loadbalancing'
+        # enforce permission checks. This will automatically investigate the rule name.
+        authorization_required except: []
 
         def new
           @healthmonitor = services.loadbalancing.new_healthmonitor

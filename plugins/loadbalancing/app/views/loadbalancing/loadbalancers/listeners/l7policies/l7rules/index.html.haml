@@ -25,6 +25,7 @@
           %th Key
           %th Value
           %th Invers
+          %th State
         - unless @l7rules.blank?
           - @l7rules.each do |l7rule|
             = render partial: 'loadbalancing/loadbalancers/listeners/l7policies/l7rules/item', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: @l7policy, l7rule: l7rule}

@@ -17,12 +17,14 @@
 
       %table.table#pools
         %tr
-          %th Name
+          %th Name/ID
           %th Description
           %th Protocol
           %th Algorithm
           %th= '#Members'
-          %th
+          %th State
+          %th.snug
+
         -unless @pools.blank?
           - @pools.each do |pool|
             = render partial: 'loadbalancing/loadbalancers/pools/item', locals: {loadbalancer: @loadbalancer, pool: pool}

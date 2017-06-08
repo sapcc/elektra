@@ -1,23 +1,25 @@
 - data = {}
 - if listener.in_transition?
-  - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_listener_path(loadbalancer_id:loadbalancer.id, id: listener.id)
-  - data[:interval]=2500
+  - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_listener_path(loadbalancer_id:loadbalancer.id, id: listener.id)
+  - data[:update_interval]=15
 
 %tr{id: "loadbalancer_listener_#{listener.id}", data: data }
   %td
     - if listener.in_transition?
       %span{class: 'spinner'}
-    = link_to listener.name, plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id)
+    = link_to name_or_id(listener.name, listener.id), plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id)
   %td= listener.description
   %td= listener.protocol
   %td= listener.protocol_port
   %td
     - if listener.default_pool_id
       = link_to plugin('loadbalancing').show_details_loadbalancer_pool_path( loadbalancer_id: loadbalancer.id, id: listener.default_pool_id ) do
-        %i.fa.fa-check
+        %i.fa.fa-check{title: "#{listener.default_pool_id}"}
     - else
       = link_to plugin('loadbalancing').new_loadbalancer_pool_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, proto: listener.protocol), data: {modal: true} do
         %i.fa.fa-times
+  %td
+    %label{class: 'spinner', data: {op_status: "#{listener.id}"}}
 
   %td.snug
     .btn-group

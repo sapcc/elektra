@@ -1,13 +1,13 @@
 - data = {}
 - if l7policy.in_transition?
-  - data[:update_url]=plugin('loadbalancing').update_item_loadbalancer_listener_l7policy_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, id: l7policy.id)
-  - data[:interval]=2500
+  - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_listener_l7policy_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, id: l7policy.id)
+  - data[:update_interval]=15
 
 %tr{id: "loadbalancer_listener_l7policy_#{l7policy.id}", data: data }
   %td
     - if l7policy.in_transition?
       %span{class: 'spinner'}
-    = link_to l7policy.name, plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id)
+    = link_to name_or_id(l7policy.name, l7policy.id), plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id)
   %td= l7policy.description
   %td= l7policy.position
   %td= l7policy.action
@@ -17,6 +17,8 @@
     %td= l7policy.redirect_url
   - nrules = l7policy.rules ? l7policy.rules.count : 0
   %td= link_to nrules, plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id) if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+  %td
+    %label{class: 'spinner', data: {prov_status: "#{l7policy.id}"}}
 
   %td.snug
     .btn-group

@@ -1,4 +1,4 @@
-.infobox
+.infobox{data: {update_path: plugin('loadbalancing').update_status_loadbalancer_path(id: loadbalancer.id, format: :js), update_interval: 30, update_immediately: 'true'}}
   %h4.action-heading
     Listener Info
   %table.table
@@ -7,7 +7,7 @@
         %th
           Provisioning Status:
         %td
-          .state{data:{update_loadbalancer_state: plugin('loadbalancing').get_item_loadbalancer_path(id: loadbalancer.id), initial_loadbalancer_state: loadbalancer.provisioning_status}}
+          %label{class: 'spinner', data: {prov_status: "#{listener.id}"}}
       %tr
         %th.snug-nowrap
           Name:

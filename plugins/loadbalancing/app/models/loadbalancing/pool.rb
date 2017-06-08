@@ -5,7 +5,7 @@ module Loadbalancing
     SESSION_PERSISTENCE_TYPES=['SOURCE_IP', 'HTTP_COOKIE', 'APP_COOKIE']
     PROTOCOLS=['TCP', 'HTTP', 'HTTPS']
 
-    validates :name, presence: true
+    #validates :name, presence: true
     validates :lb_algorithm, presence: true
     validates :protocol, presence: true
     #validates :listener_id, presence: true

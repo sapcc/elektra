@@ -5,23 +5,23 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @loadbalancer, url: plugin('loadbalancing').loadbalancers_path, method: :post, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @loadbalancer, url: plugin('loadbalancing').loadbalancers_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
 
     = render :partial => 'loadbalancing/application/errors', locals: {object: @loadbalancer}
 
-    %fieldset
-      = f.input :name, required: true
-      = f.input :description
-      = f.input :vip_subnet_id, { label: "Private Network",
-                                wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
-                                as:                 :select,
-                                collection:         @private_networks,
-                                selected:           @loadbalancer.vip_subnet_id,
-                                required:           true,
-                                value_method:       -> (net) { net.subnet_objects.map(&:id).first },
-                                label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" }}
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: false}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "Load Balancer"
+          %p= "The Load Balancer object defines the internal IP address under which all associated listeners can be reached. For external access a Floating IP can be attached to the Load Balancer."
+          %h4= "Private Network"
+          %p= "The network which provides the internal IP of the load balancer."
+
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

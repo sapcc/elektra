@@ -32,6 +32,10 @@ module ServiceLayer
       Loadbalancing::Loadbalancer.new(driver, attributes)
     end
 
+    def loadbalancer_statuses(id)
+      driver.map_to(Loadbalancing::Statuses).get_loadbalancer_statuses(id)
+    end
+
     def listeners(filter={})
       driver.map_to(Loadbalancing::Listener).listeners(filter)
     end

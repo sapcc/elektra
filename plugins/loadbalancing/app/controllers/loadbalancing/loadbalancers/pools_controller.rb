@@ -1,8 +1,13 @@
 module Loadbalancing
   module Loadbalancers
-    class PoolsController < DashboardController
+    class PoolsController < ApplicationController
 
       before_filter :load_objects
+
+      # set policy context
+      authorization_context 'loadbalancing'
+      # enforce permission checks. This will automatically investigate the rule name.
+      authorization_required except: [:show_all, :show_details]
 
       def index
         # get all pools for project and calc. quota
@@ -11,18 +16,21 @@ module Loadbalancing
       end
 
       def show_all
+        enforce_permissions("loadbalancing:pool_get")
+
         @members = services.loadbalancing.pool_members(@pool.id) if @pool
         @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool and @pool.healthmonitor_id
       end
 
       def show_details
+        enforce_permissions("loadbalancing:pool_get")
+
         @members = services.loadbalancing.pool_members(@pool.id) if @pool
         begin
           @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool and @pool.healthmonitor_id
         rescue
           @healthmonitor = nil
         end
-
       end
 
       def new

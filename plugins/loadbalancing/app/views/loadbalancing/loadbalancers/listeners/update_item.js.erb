@@ -4,4 +4,4 @@ $("#loadbalancer_listener_<%=params[:id]%>").update();
 <%else%>
 $("#loadbalancer_listener_<%=params[:id]%>").remove();
 <%end%>
-$('[data-update-loadbalancer-state]').loadbalancerState({enforce_state: 'PENDING_UPDATE'});
+PollingService.update('<%=@loadbalancer.id%>/update_status')

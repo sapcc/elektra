@@ -43,7 +43,7 @@ Rails.application.configure do
 
   # better error and web_console is only working when you accessing from localhost
   # if you running the development server on a remote machine use TRUSTED_IP
-  # for that take a look to the .env and set the variable or run "TRUSTED_IP=192.168.1.1 forman start"
+  # for that take a look to the .env.bak and set the variable or run "TRUSTED_IP=192.168.1.1 forman start"
   if ENV['TRUSTED_IP']
     # to use better errors not only on localhost
     BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']

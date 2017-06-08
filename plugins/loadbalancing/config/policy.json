@@ -1,8 +1,59 @@
 {
-  "loadbalancing:resource_get": "role:admin or role:member",
-  "loadbalancing:resource_list": "role:admin or role:member",
-  "loadbalancing:resource_create": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
-  "loadbalancing:resource_update": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
-  "loadbalancing:resource_delete": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)",
-  "loadbalancing:loadbalancer_assign_ip": "(role:admin or role:member) and (not rule:monsoon2_domain or rule:project_parent)"
+  "context_is_cloud_network_admin":  "role:cloud_network_admin",
+  "network_admin":  "role:network_admin",
+  "network_viewer": "role:network_viewer",
+  "member": "role:member or role:Member",
+  "context_is_network_admin": "rule:context_is_cloud_network_admin or rule:network_admin",
+  "context_is_network_editor": "rule:context_is_network_admin or rule:member",
+  "context_is_network_viewer":  "rule:context_is_network_editor or rule:network_viewer",
+
+  "loadbalancing:loadbalancer_get": "rule:context_is_network_viewer",
+  "loadbalancing:loadbalancer_list": "rule:context_is_network_viewer",
+  "loadbalancing:loadbalancer_create": "rule:context_is_network_editor",
+  "loadbalancing:loadbalancer_update": "rule:context_is_network_editor",
+  "loadbalancing:loadbalancer_delete": "rule:context_is_network_editor",
+  "loadbalancing:loadbalancer_assign_ip": "rule:context_is_network_editor",
+
+  "loadbalancing:pool_get": "rule:context_is_network_viewer",
+  "loadbalancing:pool_list": "rule:context_is_network_viewer",
+  "loadbalancing:pool_create": "rule:context_is_network_editor",
+  "loadbalancing:pool_update": "rule:context_is_network_editor",
+  "loadbalancing:pool_delete": "rule:context_is_network_editor",
+
+  "loadbalancing:listener_get": "rule:context_is_network_viewer",
+  "loadbalancing:listener_list": "rule:context_is_network_viewer",
+  "loadbalancing:listener_create": "rule:context_is_network_editor",
+  "loadbalancing:listener_update": "rule:context_is_network_editor",
+  "loadbalancing:listener_delete": "rule:context_is_network_editor",
+
+  "loadbalancing:healthmonitor_get": "rule:context_is_network_viewer",
+  "loadbalancing:healthmonitor_list": "rule:context_is_network_viewer",
+  "loadbalancing:healthmonitor_create": "rule:context_is_network_editor",
+  "loadbalancing:healthmonitor_update": "rule:context_is_network_editor",
+  "loadbalancing:healthmonitor_delete": "rule:context_is_network_editor",
+
+  "loadbalancing:l7policy_get": "rule:context_is_network_viewer",
+  "loadbalancing:l7policy_list": "rule:context_is_network_viewer",
+  "loadbalancing:l7policy_create": "rule:context_is_network_editor",
+  "loadbalancing:l7policy_update": "rule:context_is_network_editor",
+  "loadbalancing:l7policy_delete": "rule:context_is_network_editor",
+
+  "loadbalancing:l7rule_get": "rule:context_is_network_viewer",
+  "loadbalancing:l7rule_list": "rule:context_is_network_viewer",
+  "loadbalancing:l7rule_create": "rule:context_is_network_editor",
+  "loadbalancing:l7rule_update": "rule:context_is_network_editor",
+  "loadbalancing:l7rule_delete": "rule:context_is_network_editor",
+
+  "loadbalancing:member_get": "rule:context_is_network_viewer",
+  "loadbalancing:member_list": "rule:context_is_network_viewer",
+  "loadbalancing:member_create": "rule:context_is_network_editor",
+  "loadbalancing:member_update": "rule:context_is_network_editor",
+  "loadbalancing:member_delete": "rule:context_is_network_editor",
+
+  "loadbalancing:resource_get": "rule:context_is_network_viewer",
+  "loadbalancing:resource_list": "rule:context_is_network_viewer",
+  "loadbalancing:resource_create": "rule:context_is_network_editor",
+  "loadbalancing:resource_update": "rule:context_is_network_editor",
+  "loadbalancing:resource_delete": "rule:context_is_network_editor"
+
 }

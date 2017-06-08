@@ -6,8 +6,8 @@
   %table.table.datatable
     %tbody
       %tr
-        %th Name
-        %td= @l7policy.name
+        %th Name/ID
+        %td= name_or_id(@l7policy.name, @l7policy.id)
       %tr
         %th Description
         %td= @l7policy.description

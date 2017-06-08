@@ -6,8 +6,8 @@
   %table.table.datatable
     %tbody
       %tr
-        %th Name
-        %td= @pool.name
+        %th Name/ID
+        %td= name_or_id(@pool.name, @pool.id)
       %tr
         %th Description
         %td= @pool.description

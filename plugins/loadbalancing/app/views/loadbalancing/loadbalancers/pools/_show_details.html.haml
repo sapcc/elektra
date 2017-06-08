@@ -1,3 +1,4 @@
+-# .row{data: {update_path: plugin('loadbalancing').update_status_loadbalancer_path(id: @loadbalancer.id, format: :js), update_interval: 3, update_immediately: true}}
 .row
   .col-md-4
     = render partial: 'loadbalancing/loadbalancers/pools/item_detail', locals: {loadbalancer: @loadbalancer, pool: @pool, listener: @listener }
@@ -10,4 +11,4 @@
     = render :partial => 'loadbalancing/loadbalancers/info', locals: {loadbalancer: @loadbalancer}
 .row
   .col-md-12
-    = render partial: 'loadbalancing/loadbalancers/pools/members/index', locals: {loadbalancer: @loadbalancer, pool: @pool, members: @members, servers: @servers}
+    = render partial: 'loadbalancing/loadbalancers/pools/members/index', locals: {loadbalancer: @loadbalancer, pool: @pool, members: @members, servers: @servers, statuses: @statuses}

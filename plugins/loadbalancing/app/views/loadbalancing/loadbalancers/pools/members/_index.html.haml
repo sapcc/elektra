@@ -12,6 +12,7 @@
           %th IP Address
           %th Protocol Port
           %th Weight
+          %th State
           %th.snug
       %tbody
         - if members.blank?
@@ -19,4 +20,4 @@
             %td{colspa: 3} No Members available
         - else
           - members.each do | member |
-            = render partial: 'loadbalancing/loadbalancers/pools/members/item', locals: {loadbalancer: loadbalancer, pool: pool, member: member}
+            = render partial: 'loadbalancing/loadbalancers/pools/members/item', locals: {loadbalancer: loadbalancer, pool: pool, member: member, statuses: statuses}

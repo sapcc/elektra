@@ -5,13 +5,28 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @l7policy, url: plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), method: :post, remote: request.xhr?, html: {id: 'l7policy_form', class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
+= simple_form_for @l7policy, url: plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), method: :post, remote: request.xhr?, html: {id: 'l7policy_form', data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
 
     = render :partial => 'loadbalancing/application/errors', locals: {object: @l7policy}
 
-    = render partial: 'form', locals: {f: f, update: false}
+    .row
+      .col-sm-6
+        = render partial: 'form', locals: {f: f, update: false}
+
+      .col-sm-6
+        .bs-callout.bs-callout-primary.small
+          %h3= "L7 Policy"
+          %p= "L7 Polices can be used to REJECT requests or REDIRECT traffic to specific pools or urls."
+          %p= "The policy action will be executed when ALL L7 Rules are matched (Rules are combined with an AND). If you need an OR create another L7 Policy with the same action and the needed rules."
+          %h4= "Position"
+          %p= "L7 Policies are evaluated in the order as defined by the 'position' attribute. The first one that matches a given request will be the one whose action is followed."
+          %p= "If no policy matches a given request, then the request is routed to the listener's default pool (if it exists)."
+          %h4= "Action"
+          %p= "Will be executed when all L7 Rules are matched"
+
+
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

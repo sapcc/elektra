@@ -1,9 +1,9 @@
 = content_for :main_toolbar do
   = link_to 'Loadbalancers', plugin('loadbalancing').loadbalancers_path()
   = " / "
-  = link_to @loadbalancer.name , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
+  = link_to name_or_id(@loadbalancer.name, @loadbalancer.id), plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
   = " / "
-  = link_to @listener.name , plugin('loadbalancing').listener_show_details_path(@listener.id)
+  = link_to name_or_id(@listener.name, @listener.id), plugin('loadbalancing').listener_show_details_path(@listener.id)
 
 .row
   .col-md-9

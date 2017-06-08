@@ -36,7 +36,11 @@ module Loadbalancing
       def delete_loadbalancer(loadbalancer_id)
         handle_response { @fog.delete_lbaas_loadbalancer(loadbalancer_id) }
       end
-      
+
+      def get_loadbalancer_statuses(loadbalancer_id)
+        handle_response { @fog.get_lbaas_loadbalancer_statuses(loadbalancer_id).body['statuses'] }
+      end
+
       def listeners(filter = {})
         handle_response { @fog.list_lbaas_listeners(filter).body['listeners'] }
       end

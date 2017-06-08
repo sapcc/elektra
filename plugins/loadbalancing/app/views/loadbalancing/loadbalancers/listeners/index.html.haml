@@ -20,12 +20,14 @@
 
       %table.table.listeners
         %tr
-          %th Name
+          %th Name/ID
           %th Description
           %th Protocol
           %th Protocol Port
           %th Default Pool
-          %th
+          %th State
+          %th.snug
+
         -unless @listeners.blank?
           - @listeners.each do |listener|
             = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
