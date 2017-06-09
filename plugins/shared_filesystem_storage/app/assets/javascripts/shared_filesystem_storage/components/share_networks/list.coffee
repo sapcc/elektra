@@ -7,10 +7,12 @@
   fetchShareNetworksIfNeeded,
   fetchNetworksIfNeeded,
   fetchNetworkSubnetsIfNeeded,
+  fetchSecurityServicesIfNeeded,
   openNewShareNetworkDialog,
   openDeleteShareNetworkDialog,
   openShowShareNetworkDialog,
   openEditShareNetworkDialog,
+  openShareNetworkSecurityServicesDialog
 } = shared_filesystem_storage
 
 ShareNetworkList = React.createClass
@@ -23,6 +25,7 @@ ShareNetworkList = React.createClass
   loadDependencies: (props) ->
     if props.active
       props.loadShareNetworksOnce()
+      props.loadSecurityServicesOnce()
       props.loadNetworksOnce()
       props.loadSubnetsOnce(shareNetwork.neutron_net_id) for shareNetwork in props.shareNetworks
 
@@ -69,6 +72,7 @@ ShareNetworkList = React.createClass
                 handleShow: @props.handleShow,
                 handleEdit: @props.handleEdit,
                 handleDelete: @props.handleDelete,
+                handleShareNetworkSecurityServices: @props.handleShareNetworkSecurityServices
                 network: @network(shareNetwork),
                 subnet: @subnet(shareNetwork)
 
@@ -80,12 +84,14 @@ ShareNetworkList = connect(
     subnets: state.subnets
   (dispatch) ->
     loadShareNetworksOnce: () -> dispatch(fetchShareNetworksIfNeeded())
+    loadSecurityServicesOnce: () -> dispatch(fetchSecurityServicesIfNeeded())
     loadNetworksOnce: () -> dispatch(fetchNetworksIfNeeded())
     handleNewShareNetwork: () -> dispatch(openNewShareNetworkDialog())
     loadSubnetsOnce: (neutronNetworkId) -> dispatch(fetchNetworkSubnetsIfNeeded(neutronNetworkId))
     handleShow: (shareNetwork) -> dispatch(openShowShareNetworkDialog(shareNetwork))
     handleDelete: (shareNetworkId) -> dispatch(openDeleteShareNetworkDialog(shareNetworkId))
     handleEdit: (shareNetwork) -> dispatch(openEditShareNetworkDialog(shareNetwork))
+    handleShareNetworkSecurityServices: (shareNetworkId) -> dispatch(openShareNetworkSecurityServicesDialog(shareNetworkId))
 )(ShareNetworkList)
 
 shared_filesystem_storage.ShareNetworkList = ShareNetworkList

@@ -10,7 +10,9 @@ SharedFilesystemStorage::Engine.routes.draw do
   end
   resources :snapshots, except: [:show,:new,:edit], constraints: { format: :json }
   resources :security_services, except: [:show,:new,:edit], constraints: { format: :json }
+
   resources :share_networks, except: [:show,:new,:edit], constraints: { format: :json }, path: 'share-networks' do
+    resources :security_services, module: 'security_services', except: [:show,:new,:edit,:update]
     get :networks, constraints: { format: :json }, on: :collection
     get :subnets, constraints: { format: :json }, on: :collection
   end

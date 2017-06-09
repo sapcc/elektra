@@ -5,6 +5,7 @@ ShareNetworkItem = ({
   handleShow,
   handleDelete,
   handleEdit,
+  handleShareNetworkSecurityServices,
   network,
   subnet
 })->
@@ -36,7 +37,7 @@ ShareNetworkItem = ({
         else
           div null, "#{subnet.name} #{subnet.cidr}"
       else
-        'Not found'    
+        'Not found'
 
     td { className: "snug" },
       if shareNetwork.permissions.delete or shareNetwork.permissions.update
@@ -51,5 +52,9 @@ ShareNetworkItem = ({
             if shareNetwork.permissions.update
               li null,
                 a { href: '#', onClick: ((e) -> e.preventDefault(); handleEdit(shareNetwork)) }, 'Edit'
+            if shareNetwork.permissions.update
+              li null,
+                a { href: '#', onClick: ((e) -> e.preventDefault(); handleShareNetworkSecurityServices(shareNetwork.id)) }, 'Security Servieces'
+
 
 shared_filesystem_storage.ShareNetworkItem = ShareNetworkItem
