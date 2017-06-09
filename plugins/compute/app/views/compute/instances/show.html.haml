@@ -9,7 +9,9 @@
     %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Volumes Attached ', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+    %li{role: "presentation"}= link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+    - if current_user.is_allowed?("compute:all_projects")
+      %li{ role: 'presentation' }= link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
 
   .tab-content
     .tab-pane.active{role:"tabpanel", id:"information"}
@@ -128,6 +130,11 @@
               %tr
                 %td= vol.displayName || vol.name
                 %td= vol.attachments.first['device']
+
+    - if current_user.is_allowed?("compute:all_projects")
+      .tab-pane{role: 'tabpanel', id: 'actions'}
+        %ul
+          %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
 
 - if modal?
   .modal-footer
