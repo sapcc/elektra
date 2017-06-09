@@ -1,10 +1,13 @@
 #= require shared_filesystem_storage/components/shares/list
 #= require shared_filesystem_storage/components/share_networks/list
 #= require shared_filesystem_storage/components/snapshots/list
-#= require shared_filesystem_storage/components/security_services/list
 #= require shared_filesystem_storage/components/shares/show
 #= require shared_filesystem_storage/components/shares/new
 #= require shared_filesystem_storage/components/shares/edit
+#= require shared_filesystem_storage/components/security_services/list
+#= require shared_filesystem_storage/components/security_services/show
+#= require shared_filesystem_storage/components/security_services/new
+#= require shared_filesystem_storage/components/security_services/edit
 #= require shared_filesystem_storage/components/shares/access_control
 #= require shared_filesystem_storage/components/snapshots/edit
 #= require shared_filesystem_storage/components/snapshots/new

@@ -2,22 +2,19 @@ module SharedFilesystemStorage
   class SecurityServicesController < ApplicationController
 
     def index
-      security_services = services.shared_filesystem_storage.security_services_detail
-      security_services.each do |security_service|
-        security_service.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
-        }
+      security_services = if current_user.is_allowed?("shared_filesystem_storage:security_service_get")
+        services.shared_filesystem_storage.security_services_detail
+      else
+        services.shared_filesystem_storage.security_services
       end
+
+      security_services.each{ |security_service| set_permissions(security_service)}
       render json: security_services
     end
 
     def show
       security_service = services.shared_filesystem_storage.find_security_service(params[:id])
-      security_service.permissions = {
-        delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
-        update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
-      }
+      set_permissions(security_service)
       render json: security_service
     end
 
@@ -26,10 +23,7 @@ module SharedFilesystemStorage
       security_service.id = params[:id]
 
       if security_service.save
-        security_service.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
-        }
+        set_permissions(security_service)
         render json: security_service
       else
         render json: { errors: security_service.errors }
@@ -40,10 +34,7 @@ module SharedFilesystemStorage
       security_service = services.shared_filesystem_storage.new_security_service(security_service_params)
 
       if security_service.save
-        security_service.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:security_service_update")
-        }
+        set_permissions(security_service)
         render json: security_service
       else
         render json: { errors: security_service.errors}
@@ -71,6 +62,14 @@ module SharedFilesystemStorage
         :type,
         :name
       )
+    end
+
+    def set_permissions(security_service)
+      security_service.permissions = {
+        delete: current_user.is_allowed?("shared_filesystem_storage:security_service_delete"),
+        update: current_user.is_allowed?("shared_filesystem_storage:security_service_update"),
+        get: current_user.is_allowed?("shared_filesystem_storage:security_service_get")
+      }
     end
   end
 end

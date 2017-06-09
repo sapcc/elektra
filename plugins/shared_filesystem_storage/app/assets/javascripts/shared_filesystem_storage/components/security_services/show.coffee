@@ -1,38 +1,63 @@
-#= require react/tabs
-
 { div, span, br, button, a, table, tbody, thead, tr, th, td } = React.DOM
 
-ShowSnapshot = ({snapshot,close}) ->
+ShowSecurityService = ({securityService,close}) ->
   div null,
     div className: 'modal-body',
       table className: 'table no-borders',
-        tbody null,
-          tr null,
-            th null, "Name"
-            td null, snapshot.name
-          tr null,
-            th null, "ID"
-            td null, snapshot.id
-          tr null,
-            th null, "Status"
-            td null, snapshot.status
-          tr null,
-            th null, "Description"
-            td null, snapshot.description
-          tr null,
-            th null, "Share ID"
-            td null, snapshot.share_id
-          tr null,
-            th null, "Share Size"
-            td null, snapshot.share_size+' GiB'
-          tr null,
-            th null, "Protocol"
-            td null, snapshot.share_proto
-          tr null,
-            th null, 'Created At'
-            td null, snapshot.created_at
+        unless securityService.permissions.get
+          tbody null,
+            tr null,
+              th null, "Type"
+              td null, securityService.type
+            tr null,
+              th null, "Name"
+              td null, securityService.name
+            tr null,
+              th null, "ID"
+              td null, securityService.id
+            tr null,
+              th null, "Status"
+              td null, securityService.status
+        else
+          tbody null,
+            tr null,
+              th null, "Type"
+              td null, securityService.type
+            tr null,
+              th null, "Name"
+              td null, securityService.name
+            tr null,
+              th null, "ID"
+              td null, securityService.id
+            tr null,
+              th null, "Status"
+              td null, securityService.status
+            tr null,
+              th null, "Description"
+              td null, securityService.description
+            tr null,
+              th null, "DNS IP"
+              td null, securityService.dns_ip
+            tr null,
+              th null, "User"
+              td null, securityService.user
+            tr null,
+              th null, "Password"
+              td null, securityService.password
+            tr null,
+              th null, 'Domain'
+              td null, securityService.domain
+            tr null,
+              th null, 'Server'
+              td null, securityService.server
+            tr null,
+              th null, 'Created At'
+              td null, securityService.created_at
+            tr null,
+              th null, 'Updated At'
+              td null, securityService.updated_at
 
     div className: 'modal-footer',
       button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
 
-shared_filesystem_storage.ShowSnapshotModal = ReactModal.Wrapper('Snapshot Details', ShowSnapshot, large:true)
+shared_filesystem_storage.ShowSecurityServiceModal = ReactModal.Wrapper('SecurityService Details', ShowSecurityService, large:true)

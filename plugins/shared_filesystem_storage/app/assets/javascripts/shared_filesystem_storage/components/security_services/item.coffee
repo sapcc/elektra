@@ -14,10 +14,21 @@ SecurityServiceItem = ({
       br null
       span className: 'info-text', securityService.id
 
-    td null, securityService.description
     td null, securityService.type
     td null, securityService.status
     td className: "snug",
-      null
+      if securityService.permissions.delete or securityService.permissions.update
+        div { className: 'btn-group' },
+          button { className: 'btn btn-default btn-sm dropdown-toggle', type: 'button', 'data-toggle': 'dropdown', 'aria-expanded': true},
+            span {className: 'fa fa-cog' }
+
+          ul { className: 'dropdown-menu dropdown-menu-right', role: "menu" },
+            if securityService.permissions.delete
+              li null,
+                a { href: '#', onClick: ((e) -> e.preventDefault(); handleDelete(securityService.id))}, 'Delete'
+            if securityService.permissions.update
+              li null,
+                a { href: '#', onClick: ((e) -> e.preventDefault(); handleEdit(securityService)) }, 'Edit'
+
 
 shared_filesystem_storage.SecurityServiceItem = SecurityServiceItem

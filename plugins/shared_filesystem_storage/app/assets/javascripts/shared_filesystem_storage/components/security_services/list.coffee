@@ -37,7 +37,6 @@ SecurityServiceList = React.createClass
           thead null,
             tr null,
               th null, 'Name'
-              th null, 'Description'
               th null, 'Type'
               th null, 'Status'
               th null, ''
@@ -46,7 +45,7 @@ SecurityServiceList = React.createClass
               tr null,
                 td { colSpan: 5 }, 'No Security Service found.'
             for securityService in @props.securityServices
-              React.createElement securityServiceItem,
+              React.createElement SecurityServiceItem,
                 key: securityService.id,
                 securityService: securityService
                 handleShow: @props.handleShow
@@ -60,9 +59,9 @@ SecurityServiceList = connect(
   (dispatch) ->
     loadSecurityServicesOnce: () -> dispatch(fetchSecurityServicesIfNeeded())
     handleNewSecurityService: () -> dispatch(openNewSecurityServiceDialog())
-    handleShow: (SecurityService) -> dispatch(openShowSecurityServiceDialog(SecurityService))
-    handleDelete: (SecurityServiceId) -> dispatch(openDeleteSecurityServiceDialog(SecurityServiceId))
-    handleEdit: (SecurityService) -> dispatch(openEditSecurityServiceDialog(SecurityService))
+    handleShow: (securityService) -> dispatch(openShowSecurityServiceDialog(securityService))
+    handleDelete: (securityServiceId) -> dispatch(openDeleteSecurityServiceDialog(securityServiceId))
+    handleEdit: (securityService) -> dispatch(openEditSecurityServiceDialog(securityService))
 )(SecurityServiceList)
 
 shared_filesystem_storage.SecurityServiceList = SecurityServiceList

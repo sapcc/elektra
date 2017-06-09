@@ -1,9 +1,9 @@
 ((app) ->
   #################### SECURITY_SERVICES #########################
-  showSecurityServiceModal= (securitServiceId) ->
+  showSecurityServiceModal= (securityService) ->
     type: ReactModal.SHOW_MODAL,
     modalType: 'SHOW_SECURITY_SERVICE',
-    modalProps: {securitServiceId}
+    modalProps: {securityService}
 
   newSecurityServiceModal= () ->
     type: ReactModal.SHOW_MODAL,
@@ -146,6 +146,7 @@
     type: app.PREPARE_SECURITY_SERVICE_FORM
     method: 'post'
     action: "/security_services"
+    data: {type: 'active_directory'}
 
   securityServiceFormForUpdate=(securityService) ->
     type: app.PREPARE_SECURITY_SERVICE_FORM
@@ -168,7 +169,7 @@
       if securityServiceForm.isValid
         dispatch(type: app.SUBMIT_SECURITY_SERVICE_FORM)
         app.ajaxHelper[securityServiceForm.method] securityServiceForm.action,
-          data: { securityService: securityServiceForm.data }
+          data: { security_service: securityServiceForm.data }
           success: (data, textStatus, jqXHR) ->
             if data.errors
               dispatch(securityServiceFormFailure(data.errors))
