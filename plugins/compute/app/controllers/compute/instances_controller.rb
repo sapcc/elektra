@@ -468,8 +468,11 @@ module Compute
         end
       end
 
-      render template: 'compute/instances/update_item.js' if with_rendering
-      #redirect_to instances_url
+      if request.xhr?
+        render template: 'compute/instances/update_item.js' if with_rendering
+      else
+        redirect_to instances_url
+      end
     end
 
     def target_state_for_action(action)
