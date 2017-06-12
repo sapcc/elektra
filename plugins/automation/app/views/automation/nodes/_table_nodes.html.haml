@@ -1,4 +1,4 @@
-- data = {update_path: plugin('automation').index_update_nodes_path(page: @node_page), update_interval: 10}
+- data = {update_path: plugin('automation').nodes_path(page: @node_page, filter: @filter), update_interval: 10}
 .nodes_table.js-nodes-table{data: data}
   %table.table
     %thead
@@ -13,7 +13,7 @@
     %tbody
       - if nodes.empty?
         %tr
-          %td{colspan: 8} No nodes available
+          %td{colspan: 7} No nodes available
       - else
         -nodes.each do | node |
           = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {})}

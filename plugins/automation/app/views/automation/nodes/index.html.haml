@@ -4,8 +4,17 @@
   .tab-pane.active{role:"tabpanel", id:"nodes-pane"}
 
     .toolbar
-      = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+      .row
+        .col-lg-3
+          .toolbar-search-box{data: {toggle: 'automationSearch', search_dimmed_area: 'js-search-dimmed-area', search_render_area: 'js-search-render-area'}}
+            = form_tag plugin('automation').nodes_path() do
+              .input-group
+                = text_field_tag 'js-search_input', '', class: "form-control", placeholder: 'Name tag, hostname or ID'
+                .span.input-group-btn
+                  %button.btn.btn-default.btn-default-size{type: "submit"} Go
+        .col-md-3.col-md-offset-6
+          = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-    = render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs}
-
-    = paginate @nodes, :theme => 'twitter-bootstrap-3'
+    .search-dimmed-area.js-search-dimmed-area
+      .search-render-area.js-search-render-area
+        = render partial: 'table_nodes_pagination'

@@ -9,7 +9,6 @@ $(".js-table-params").data("run-page", "<%= @pag_params[:run][:page] %>");
 <% end %>
 
 var params = { pag_params: {automation: {page: $(".js-table-params").data("automation-page")}, run: {page: $(".js-table-params").data("run-page")}} };
-console.log(params)
 history.replaceState(null, "", location.pathname + "?" + $.param( params ));
 
 // reload the pagination spinner

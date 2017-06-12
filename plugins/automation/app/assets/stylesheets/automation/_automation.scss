@@ -37,6 +37,25 @@
   }
 }
 
+.search-dimmed-area {
+  .search-spinner {
+    @include spinner;
+    
+    position: absolute;
+    z-index: 11;
+    top: 50%;
+    left: 50%;
+    height: 50px;
+    width: 50px;
+    margin-left: -25px;
+    margin-top: -25px;
+  }
+
+  .search-render-area {
+    @include pie-clearfix;
+  }
+}
+
 // Index
 
 .loading-spinner-section {

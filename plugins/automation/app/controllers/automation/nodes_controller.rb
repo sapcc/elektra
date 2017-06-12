@@ -3,14 +3,21 @@ require 'ostruct'
 module Automation
 
   class NodesController < ::Automation::ApplicationController
+    before_action :search_options, only: [:index, :index_update]
     before_action :nodes_with_jobs, only: [:index, :index_update]
     before_action :automations, only: [:index, :index_update]
 
     def index
-    end
-
-    def index_update
-      render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs, addresses: @addresses, external_nodes: @external_nodes}, layout: false
+      if request.xhr?
+        if params[:search].nil?
+          # search
+          render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs}, layout: false
+        else
+          # polling
+          render partial: 'table_nodes_pagination', layout: false
+        end
+      end
+      # plain index page
     end
 
     def show
@@ -133,15 +140,28 @@ module Automation
       end
     end
 
+    def search_options
+      if !params[:search].blank?
+        params[:page] = 1
+        search_text = params[:search]
+        # name tag, hostname or id
+        params[:filter] = "name = '#{search_text}' OR @hostname = '#{search_text}' OR @identity = '#{search_text}'"
+      end
+    end
+
     def automations
       @automations = services.automation.automations_collect_all
     end
 
     def nodes_with_jobs
+
+      # set defaults
       @node_page = params[:page]||1
+      @filter = params[:filter]||""
       per_page = 10
+
       service = IndexNodesService.new(services.automation)
-      result = service.list_nodes_with_jobs(@node_page, per_page)
+      result = service.list_nodes_with_jobs(@node_page, per_page, @filter)
 
       @nodes = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(@node_page).per(per_page)
       @jobs = result[:jobs]

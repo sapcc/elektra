@@ -17,9 +17,9 @@ class IndexNodesService
     @automation_service = _automation_service
   end
 
-  def list_nodes_with_jobs(page, per_page)
+  def list_nodes_with_jobs(page, per_page, filter = "")
     # get nodes from arc
-    nodes = @automation_service.nodes("", ['online', 'platform', 'platform_version', 'hostname', 'os', 'ipaddress', 'metadata_public_ipv4'], page, per_page)
+    nodes = @automation_service.nodes(filter, ['online', 'platform', 'platform_version', 'hostname', 'os', 'ipaddress', 'metadata_public_ipv4'], page, per_page)
 
     # init variables
     jobs = {}

@@ -1,7 +1,6 @@
 Automation::Engine.routes.draw do
 
   resources :nodes, only: [:index, :show, :update, :destroy] do
-    get 'index_update', :on => :collection
     get 'install', :on => :collection
     post 'show_instructions', :on => :collection
     get 'run_automation', :on => :collection
