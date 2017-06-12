@@ -15,7 +15,7 @@ class PaginationSpinner
       @el.wrapInner( "<div class='pagination-wrapper'></div>" );
       @el.find('.pagination-wrapper').wrapInner( "<div class='pagination-content'></div>" );
       # add the spinner element
-      @el.find('.pagination-wrapper').prepend('<span class="spinner hide"></p>' );
+      @el.find('.pagination-wrapper').prepend('<span class="spinner hide"></span>' );
       # add event to the pagination links
       @el.find('ul.pagination a').click (event) =>
         @el.find('.pagination-content').addClass('dimmed')
