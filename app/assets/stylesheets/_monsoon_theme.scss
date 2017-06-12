@@ -503,6 +503,10 @@ section {
       @extend .btn-xs;
     }
 
+    &.btn-default-size {
+      @include button-size($padding-base-vertical, $padding-base-horizontal, $font-size-base, $line-height-base, $btn-border-radius-base);
+    }
+
   }
 
   .btn-primary {
