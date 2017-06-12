@@ -504,7 +504,9 @@ section {
     }
 
     &.btn-default-size {
-      @include button-size($padding-base-vertical, $padding-base-horizontal, $font-size-base, $line-height-base, $btn-border-radius-base);
+      padding: $padding-base-vertical $padding-base-horizontal;
+      font-size: $font-size-base;
+      line-height: $line-height-base;
     }
 
   }
