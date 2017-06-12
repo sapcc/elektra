@@ -10,6 +10,7 @@ class AutomationSearch
     # css class of the dimmed and render area
     this.searchDimmedArea = @el.data('search-dimmed-area')
     this.searchRenderArea = @el.data('search-render-area')
+    this.searchErrorArea = @el.data('search-error-area')
     # add spinner to the dimmed area
     $('.'+this.searchDimmedArea).prepend('<span class="search-spinner hide"></p>' );
     # event on submit input
@@ -20,6 +21,8 @@ class AutomationSearch
     e.preventDefault()
     searchbaseUrl = $(e.target).attr('action')
     searchValue = this.el.find('input#js-search_input').val()
+    # remove error content
+    $('.'+this.searchErrorArea).html('')
     if this.process_text != searchValue
       this.process_text = searchValue
       searchUrl = buildUrl(searchbaseUrl, 'search', searchValue)
@@ -38,8 +41,8 @@ class AutomationSearch
           $('[data-toggle="paginationSpinner"]').initPaginationSpinner()
         .fail () ->
           dimmArea($this, false)
-          # TODO show an error
-          
+          $('.'+$this.searchErrorArea).html('Search error. Try again later.')
+
 
       timeout
     )
