@@ -5,12 +5,17 @@
 #= require shared_filesystem_storage/components/shares/new
 #= require shared_filesystem_storage/components/shares/edit
 #= require shared_filesystem_storage/components/shares/access_control
+#= require shared_filesystem_storage/components/security_services/list
+#= require shared_filesystem_storage/components/security_services/show
+#= require shared_filesystem_storage/components/security_services/new
+#= require shared_filesystem_storage/components/security_services/edit
 #= require shared_filesystem_storage/components/snapshots/edit
 #= require shared_filesystem_storage/components/snapshots/new
 #= require shared_filesystem_storage/components/snapshots/show
 #= require shared_filesystem_storage/components/share_networks/new
 #= require shared_filesystem_storage/components/share_networks/edit
 #= require shared_filesystem_storage/components/share_networks/show
+#= require shared_filesystem_storage/components/share_networks/share_network_security_services
 #= require react/dialogs
 
 { div } = React.DOM
@@ -21,29 +26,39 @@
   ShareList,
   SnapshotList,
   ShareNetworkList,
+  SecurityServiceList,
   ShowShareModal,
   EditShareModal,
   NewShareModal,
+  ShowSecurityServiceModal,
+  EditSecurityServiceModal,
+  NewSecurityServiceModal,
   EditSnapshotModal,
   NewSnapshotModal,
   ShowSnapshotModal,
   ShareAccessControl,
   NewShareNetworkModal,
   EditShareNetworkModal,
-  ShowShareNetworkModal
+  ShowShareNetworkModal,
+  ShareNetworkSecurityServices
 } = shared_filesystem_storage
 
 tabs = [
   { name: 'Shares', uid: 'shares', permissionKey: 'shares', component: ShareList },
   { name: 'Snapshots', uid: 'snapshots', permissionKey: 'snapshots', component: SnapshotList}
   { name: 'Share Networks', uid: 'share-networks', permissionKey: 'share_networks', component: ShareNetworkList}
+  { name: 'Security Services', uid: 'security-services', permissionKey: 'security_services', component: SecurityServiceList}
 ]
 
 modalComponents =
   'SHOW_SHARE': ShowShareModal
   'NEW_SHARE': NewShareModal
   'EDIT_SHARE': EditShareModal
+  'SHOW_SECURITY_SERVICE': ShowSecurityServiceModal
+  'NEW_SECURITY_SERVICE': NewSecurityServiceModal
+  'EDIT_SECURITY_SERVICE': EditSecurityServiceModal
   'SHARE_ACCESS_CONTROL': ShareAccessControl
+  'SHARE_NETWORK_SECURITY_SERVICES': ShareNetworkSecurityServices
   'EDIT_SNAPSHOT': EditSnapshotModal
   'NEW_SNAPSHOT': NewSnapshotModal
   'SHOW_SNAPSHOT': ShowSnapshotModal

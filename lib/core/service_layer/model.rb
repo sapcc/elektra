@@ -237,33 +237,45 @@ module Core
         create_attrs = self.attributes_for_create.with_indifferent_access
         create_attrs.delete(:id)
 
-        begin
+        # begin
+        #   created_attributes = perform_driver_create(create_attrs) #@driver.send("create_#{@class_name}", create_attrs)
+        #   self.attributes= created_attributes
+        # rescue => e
+        #   raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+        #   Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+        #
+        #   return false
+        # end
+        rescue_errors do
           created_attributes = perform_driver_create(create_attrs) #@driver.send("create_#{@class_name}", create_attrs)
           self.attributes= created_attributes
-        rescue => e
-          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-          Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-
-          return false
+          after_create
+          return true
         end
+
         #self.attributes = @model.attributes
-        after_create
-        return true
+
       end
 
       def perform_update
-        begin
+        # begin
+        #   update_attrs = attributes_for_update.with_indifferent_access
+        #   update_attrs.delete(:id)
+        #   updated_attributes = perform_driver_update(id,update_attrs) #@driver.send("update_#{@class_name}", id, update_attrs)
+        #   self.attributes=updated_attributes if updated_attributes
+        # rescue => e
+        #   raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+        #
+        #   Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+        #   return false
+        # end
+        rescue_errors do
           update_attrs = attributes_for_update.with_indifferent_access
           update_attrs.delete(:id)
           updated_attributes = perform_driver_update(id,update_attrs) #@driver.send("update_#{@class_name}", id, update_attrs)
           self.attributes=updated_attributes if updated_attributes
-        rescue => e
-          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-
-          Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-          return false
+          return true
         end
-        return true
       end
 
       # msp to driver create method
@@ -279,6 +291,16 @@ module Core
       # map to driver delete method
       def perform_driver_delete(id)
         @driver.send("delete_#{@class_name}", id)
+      end
+
+      def rescue_errors(&block)
+        begin
+          block.call
+        rescue => e
+          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+          Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
+          return false
+        end
       end
 
     end

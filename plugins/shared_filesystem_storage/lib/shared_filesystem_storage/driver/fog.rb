@@ -157,49 +157,39 @@ module SharedFilesystemStorage
         handle_response { @fog.update_share_network(id,params).body['share_network'] }
 			end
 
-      def add_security_group_to_share_network
-				raise 'Not implemented yet!'
-        #handle_response { @fog.add_security_group_to_share_network() }
+      def add_security_service_to_share_network(security_service_id, share_network_id)
+				handle_response { @fog.add_security_service_to_share_network(security_service_id, share_network_id) }
 			end
 
-      def remove_security_group_from_share_network
-				raise 'Not implemented yet!'
-        #handle_response { @fog.remove_security_group_from_share_network() }
+      def remove_security_service_from_share_network(security_service_id, share_network_id)
+				handle_response { @fog.remove_security_service_from_share_network(security_service_id, share_network_id) }
 			end
 
 
       # security service
-      def list_security_services
-				raise 'Not implemented yet!'
-        #handle_response { @fog.list_security_services() }
+      def list_security_services(filter={})
+				handle_response { @fog.list_security_services(filter).body['security_services'] }
 			end
 
-      def list_security_services_detail
-				raise 'Not implemented yet!'
-        #handle_response { @fog.list_security_services_detail() }
+      def list_security_services_detail(filter={})
+        handle_response { @fog.list_security_services_detail(filter).body['security_services'] }
 			end
 
-      def get_security_service
-				raise 'Not implemented yet!'
-        #handle_response { @fog.get_security_service() }
+      def get_security_service(id)
+				handle_response { @fog.get_security_service(id).body['security_service'] }
 			end
 
-      def create_security_service
-				raise 'Not implemented yet!'
-        #handle_response { @fog.create_security_service() }
+      def create_security_service(type, name, attributes={})
+        handle_response { @fog.create_security_service(type, name, attributes ).body['security_service'] }
 			end
 
-      def delete_security_service
-				raise 'Not implemented yet!'
-        #handle_response { @fog.delete_security_service() }
+      def delete_security_service(id)
+				handle_response { @fog.delete_security_service(id) }
 			end
 
-      def update_security_service
-				raise 'Not implemented yet!'
-        #handle_response { @fog.update_security_service() }
+      def update_security_service(id, attributes={})
+				handle_response { @fog.update_security_service(id,attributes).body['security_service'] }
 			end
-
-
     end
   end
 end

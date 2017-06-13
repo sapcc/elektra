@@ -1,5 +1,6 @@
 #= require shared_filesystem_storage/components/shares/access_control_form
 #= require shared_filesystem_storage/components/shares/access_control_item
+#= require react/transition_groups
 
 { div,table,thead,tbody,tr,th,td,form,select,h4,label,span,input,button,abbr,select,option,a,i,small } = React.DOM
 { connect } = ReactRedux
@@ -10,10 +11,9 @@
   showShareRuleForm,
   deleteShareRule,
   AccessControlForm,
-  AccessControlItem
+  AccessControlItem,
+  shareRuleFormForCreate
 } = shared_filesystem_storage
-
-ReactCSSTransitionGroup = React.createFactory React.addons.CSSTransitionGroup
 
 AccessControl = ({
   shareId,
@@ -54,7 +54,7 @@ AccessControl = ({
 
             tr null,
               td colSpan: 4,
-                ReactCSSTransitionGroup  transitionName: "css-transition-fade", transitionEnterTimeout: 500, transitionLeaveTimeout: 300,
+                ReactTransitionGroups.Fade null,
                   unless ruleForm.isHidden
                     React.createElement AccessControlForm, { handleChange, handleSubmit, ruleForm }
               td null,
@@ -68,7 +68,7 @@ AccessControl = ({
                   a
                     className: 'btn btn-primary btn-sm',
                     href: '#',
-                    onClick: ((e) -> e.preventDefault(); showForm()),
+                    onClick: ((e) -> e.preventDefault(); showForm(shareId)),
                     i className: 'fa fa-plus'
 
     div className: 'modal-footer',
@@ -84,7 +84,9 @@ AccessControl = connect(
     handleSubmit: -> dispatch(submitShareRuleForm(ownProps.shareId))
     handleDelete: (ruleId) -> dispatch(deleteShareRule(ownProps.shareId,ruleId))
     hideForm: -> dispatch(hideShareRuleForm())
-    showForm: -> dispatch(showShareRuleForm())
+    showForm: (shareId) ->
+      dispatch(shareRuleFormForCreate(shareId))
+      dispatch(showShareRuleForm())
 )(AccessControl)
 shared_filesystem_storage.ShareAccessControl = ReactModal.Wrapper('Share Access Control', AccessControl,
   large:true

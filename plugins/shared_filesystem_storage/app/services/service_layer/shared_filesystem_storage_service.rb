@@ -93,5 +93,28 @@ module ServiceLayer
     def delete_share_network(id)
       driver.delete_share_network(id)
     end
+
+    ####################################################
+    #                 SECURITY SERVICES              #
+    ####################################################
+    def security_services(filter = {})
+      driver.map_to(SharedFilesystemStorage::SecurityService).list_security_services(filter)
+    end
+
+    def new_security_service(params={})
+      SharedFilesystemStorage::SecurityService.new(driver,params)
+    end
+
+    def security_services_detail(filter = {})
+      driver.map_to(SharedFilesystemStorage::SecurityService).list_security_services_detail(filter)
+    end
+
+    def find_security_service(id)
+      driver.map_to(SharedFilesystemStorage::SecurityService).get_security_service(id)
+    end
+
+    def delete_security_service(id)
+      driver.delete_security_service(id)
+    end
   end
 end

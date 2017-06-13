@@ -23,5 +23,5 @@ ReactErrorDialog = ({title,message,close}) ->
 
 @ReactErrorDialog = ReactModal.Wrapper('Error', ReactErrorDialog,
   closeButton: false,
-  static: true
+  static: false
 )

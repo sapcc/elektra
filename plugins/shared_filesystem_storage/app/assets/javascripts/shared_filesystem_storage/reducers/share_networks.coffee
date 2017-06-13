@@ -6,6 +6,14 @@
     updatedAt: null
     isFetching: false
 
+  toggleShareNetworkIsNewStatus=(state,{id,isNew}) ->
+    index = ReactHelpers.findIndexInArray(state.items,id)
+    return state if index<0
+
+    items = state.items.slice()
+    items[index].isNew = isNew
+    ReactHelpers.mergeObjects({},state,{items})
+
   requestShareNetworks=(state,{})->
     ReactHelpers.mergeObjects({},state,{isFetching: true})
 
@@ -76,6 +84,7 @@
       when app.REQUEST_DELETE_SHARE_NETWORK then requestDeleteShareNetwork(state,action)
       when app.DELETE_SHARE_NETWORK_FAILURE then deleteShareNetworkFailure(state,action)
       when app.DELETE_SHARE_NETWORK_SUCCESS then deleteShareNetworkSuccess(state,action)
+      when app.TOGGLE_SHARE_NETWORK_IS_NEW_STATUS then toggleShareNetworkIsNewStatus(state,action)
       else state
 
 )(shared_filesystem_storage)
