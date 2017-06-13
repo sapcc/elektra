@@ -133,8 +133,9 @@
 
     - if current_user.is_allowed?("compute:all_projects")
       .tab-pane{role: 'tabpanel', id: 'actions'}
-        %ul
-          %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
+        %ul.plain-list.plain-list-widespaced
+          %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
+
 
 - if modal?
   .modal-footer

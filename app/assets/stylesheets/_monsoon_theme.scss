@@ -140,6 +140,12 @@ ul {
     padding-left: 0;
     list-style-type: none;
     margin-bottom: $line-height-computed;
+
+    &.plain-list-widespaced {
+      li {
+        padding-bottom: 8px;
+      }
+    }
   }
 }
 
