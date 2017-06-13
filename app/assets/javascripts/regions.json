@@ -104,7 +104,7 @@
     "regionname": "AP-CN-1",
     "lat":        31.20,
     "lon":        121.47,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
