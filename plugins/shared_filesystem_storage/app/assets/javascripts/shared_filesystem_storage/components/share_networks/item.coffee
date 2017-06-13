@@ -77,6 +77,6 @@ ShareNetworkItem = ({
                 a { href: '#', onClick: ((e) -> e.preventDefault(); handleEdit(shareNetwork)) }, 'Edit'
             if shareNetwork.permissions.update
               li null,
-                a { href: '#', onClick: ((e) -> e.preventDefault(); console.log(shareNetwork); handleShareNetworkSecurityServices(shareNetwork.id)) }, 'Security Servieces'
+                a { href: '#', onClick: ((e) -> e.preventDefault(); console.log(shareNetwork); handleShareNetworkSecurityServices(shareNetwork.id)) }, 'Security Services'
 
 shared_filesystem_storage.ShareNetworkItem = ShareNetworkItem
