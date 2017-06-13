@@ -54,31 +54,6 @@ describe Automation::NodesController, type: :controller do
 
   end
 
-  describe "GET xhr 'index_update'" do
-
-    before :each do
-      # mock the nodes with jobs
-      @nodes = ::Automation::FakeFactory.new.nodes
-      @nodes[:jobs] = {}
-      @nodes[:addresses] = {}
-      indexServiceNode = double('index_service_node', list_nodes_with_jobs: @nodes)
-      allow(IndexNodesService).to receive(:new).and_return(indexServiceNode)
-    end
-
-    it "returns http success" do
-      xhr :get, :index_update, default_params
-      expect(response).to be_success
-      expect(response).to render_template(:_table_nodes)
-    end
-
-    it "should assign variables" do
-      xhr :get, :index_update, default_params
-      expect(@nodes[:elements]).to eq(assigns(:nodes))
-      expect(@nodes[:jobs]).to include(assigns(:jobs))
-    end
-
-  end
-
   describe "GET 'show'" do
 
     it "returns http success" do
