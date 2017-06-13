@@ -31,6 +31,8 @@ module DnsService
         @recordset.records = params[:recordset][:records]
         @recordset.description = params[:recordset][:description]
         @recordset.ttl = params[:recordset][:ttl]
+        # only impersonate other project if allowed
+        @recordset.project_id = nil unless @all_projects
 
         if @recordset.save
           flash.now[:notice] = "Recordset successfully updated."
