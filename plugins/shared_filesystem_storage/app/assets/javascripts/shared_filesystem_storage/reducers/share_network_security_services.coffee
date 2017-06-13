@@ -4,51 +4,51 @@
     newState = ReactHelpers.mergeObjects({},state)
     shareNetworkSecurityServices = newState[shareNetworkId] || {}
 
-    newState[shareNetworkId] = ReactHelpers.mergeObjects({},shareNetworkSecurityServices,{isFetching:true})
+    newState[shareNetworkId] = ReactHelpers.mergeObjects({items: []},shareNetworkSecurityServices,{isFetching:true})
     newState
 
-  receiveShareNetworkSecurityServices=(state,{shareNetworkId,receivedAt,shareNetworkSecurityServices})->
+  receiveShareNetworkSecurityServices=(state,{shareNetworkId,receivedAt,securityServices})->
     newState = ReactHelpers.mergeObjects({},state)
     newState[shareNetworkId] =
       isFetching: false
       receivedAt: receivedAt
-      items: shareNetworkSecurityServices
+      items: securityServices
     newState
 
-  receiveShareNetworkSecurityService=(state,{shareNetworkId,shareNetworkSecurityService})->
+  receiveShareNetworkSecurityService=(state,{shareNetworkId,securityService})->
     # return old state unless shareNetworkSecurityServices entry exists
     unless state[shareNetworkId]
-      return receiveShareNetworkSecurityServices(state,{shareNetworkId: shareNetworkId,shareNetworkSecurityServices: [shareNetworkSecurityService]})
+      return receiveShareNetworkSecurityServices(state,{shareNetworkId: shareNetworkId,shareNetworkSecurityServices: [securityService]})
 
     # copy current shareNetworkSecurityServices
     shareNetworkSecurityServices = ReactHelpers.mergeObjects({},state[shareNetworkId])
-    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(shareNetworkSecurityServices.items,shareNetworkSecurityService.id)
+    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(shareNetworkSecurityServices.items,securityService.id)
     if shareNetworkSecurityServiceIndex>=0
-      shareNetworkSecurityServices.items[shareNetworkSecurityServiceIndex] = shareNetworkSecurityService
+      shareNetworkSecurityServices.items[shareNetworkSecurityServiceIndex] = securityService
     else
-      shareNetworkSecurityServices.items.push(shareNetworkSecurityService)
+      shareNetworkSecurityServices.items.push(securityService)
 
     # return new state (copy old state with new shareNetworkSecurityServices)
     ReactHelpers.mergeObjects({},state,{"#{shareNetworkId}": shareNetworkSecurityServices})
 
 
-  requestDeleteShareNetworkSecurityService=(state,{shareNetworkId,shareNetworkSecurityServiceId})->
+  requestDeleteShareNetworkSecurityService=(state,{shareNetworkId,securityServiceId})->
     # return old state unless shareNetworkSecurityServices entry exists
     return state unless (state[shareNetworkId] and state[shareNetworkId].items)
-    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(state[shareNetworkId].items,shareNetworkSecurityServiceId)
+    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(state[shareNetworkId].items,securityServiceId)
     return state if shareNetworkSecurityServiceIndex<0
 
     # copy current shareNetworkSecurityServices
     shareNetworkSecurityServices = ReactHelpers.mergeObjects({},state[shareNetworkId])
     # mark as deleting
-    shareNetworkSecurityServices.isDeleting=true
+    shareNetworkSecurityServices.items[shareNetworkSecurityServiceIndex].isDeleting=true
     # return new state (copy old state with new shareNetworkSecurityServices)
     ReactHelpers.mergeObjects({},state,{"#{shareNetworkId}": shareNetworkSecurityServices})
 
-  deleteShareNetworkSecurityServiceFailure=(state,{shareNetworkId,shareNetworkSecurityServiceId})->
+  deleteShareNetworkSecurityServiceFailure=(state,{shareNetworkId,securityServiceId})->
     # return old state unless shareNetworkSecurityServices entry exists
     return state unless (state[shareNetworkId] and state[shareNetworkId].items)
-    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(state[shareNetworkId].items,shareNetworkSecurityServiceId)
+    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(state[shareNetworkId].items,securityServiceId)
     return state if shareNetworkSecurityServiceIndex<0
 
     # copy current shareNetworkSecurityServices
@@ -58,10 +58,10 @@
     # return new state (copy old state with new shareNetworkSecurityServices)
     ReactHelpers.mergeObjects({},state,{"#{shareNetworkId}": shareNetworkSecurityServices})
 
-  deleteShareNetworkSecurityServiceSuccess=(state,{shareNetworkId,shareNetworkSecurityServiceId})->
+  deleteShareNetworkSecurityServiceSuccess=(state,{shareNetworkId,securityServiceId})->
     # return old state unless shareNetworkSecurityServices entry exists
     return state unless (state[shareNetworkId] and state[shareNetworkId].items)
-    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(state[shareNetworkId].items,shareNetworkSecurityServiceId)
+    shareNetworkSecurityServiceIndex = ReactHelpers.findIndexInArray(state[shareNetworkId].items,securityServiceId)
     return state if shareNetworkSecurityServiceIndex<0
 
     # copy current shareNetworkSecurityServices
@@ -83,12 +83,12 @@
 
   app.shareNetworkSecurityServices = (state = initialShareNetworkSecurityServicesState, action) ->
     switch action.type
-      when app.RECEIVE_SHARE_RULES then receiveShareNetworkSecurityServices(state,action)
-      when app.REQUEST_SHARE_RULES then requestShareNetworkSecurityServices(state,action)
-      when app.RECEIVE_SHARE_RULE then receiveShareNetworkSecurityService(state,action)
-      when app.REQUEST_DELETE_SHARE_RULE then requestDeleteShareNetworkSecurityService(state,action)
-      when app.DELETE_SHARE_RULE_FAILURE then deleteShareNetworkSecurityServiceFailure(state,action)
-      when app.DELETE_SHARE_RULE_SUCCESS then deleteShareNetworkSecurityServiceSuccess(state,action)
-      when app.DELETE_SHARE_RULES_SUCCESS then deleteShareNetworkSecurityServicesSuccess(state,action)
+      when app.RECEIVE_SHARE_NETWORK_SECURITY_SERVICES then receiveShareNetworkSecurityServices(state,action)
+      when app.REQUEST_SHARE_NETWORK_SECURITY_SERVICES then requestShareNetworkSecurityServices(state,action)
+      when app.RECEIVE_SHARE_NETWORK_SECURITY_SERVICE then receiveShareNetworkSecurityService(state,action)
+      when app.REQUEST_DELETE_SHARE_NETWORK_SECURITY_SERVICE then requestDeleteShareNetworkSecurityService(state,action)
+      when app.DELETE_SHARE_NETWORK_SECURITY_SERVICE_FAILURE then deleteShareNetworkSecurityServiceFailure(state,action)
+      when app.DELETE_SHARE_NETWORK_SECURITY_SERVICE_SUCCESS then deleteShareNetworkSecurityServiceSuccess(state,action)
+      when app.DELETE_SHARE_NETWORK_SECURITY_SERVICES_SUCCESS then deleteShareNetworkSecurityServicesSuccess(state,action)
       else state
 )(shared_filesystem_storage)

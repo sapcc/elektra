@@ -1,4 +1,5 @@
 {tr,td,br,span,div,ul,li,button,a,i} = React.DOM
+{ connect } = ReactRedux
 
 ShareNetworkItem = ({
   shareNetwork,
@@ -9,13 +10,35 @@ ShareNetworkItem = ({
   network,
   subnet
 })->
+  #console.log shares
+  className = if shareNetwork.isDeleting
+    'updating'
+  else if shareNetwork.isNew
+    'bg-info'
+  else
+    ''
 
-  tr {className: ('updating' if shareNetwork.isDeleting)},
+  tr {className: className},
+    td null,
+      if shareNetwork.isNew
+        a
+          className: ''
+          title: "Empty Network",
+          tabIndex: "0",
+          role: "button",
+          "data-toggle": "popover",
+          "data-placement": "top",
+          "data-trigger": "focus",
+          "data-content": "This network does not contain any shares or security services. Please note that once a share is created on this network, you will no longer be able to add a security service. Please add the security service first if necessary.",
+          ref: ((el) ->$(el).popover()),
+          i className: 'fa fa-fw fa-info-circle'
+
     td null,
       if shareNetwork.permissions.get
         a href: "#", onClick: ((e) -> e.preventDefault(); handleShow(shareNetwork)), shareNetwork.name
       else
         shareNetwork.name
+
     td null,
       if network
         if network=='loading'
@@ -54,7 +77,6 @@ ShareNetworkItem = ({
                 a { href: '#', onClick: ((e) -> e.preventDefault(); handleEdit(shareNetwork)) }, 'Edit'
             if shareNetwork.permissions.update
               li null,
-                a { href: '#', onClick: ((e) -> e.preventDefault(); handleShareNetworkSecurityServices(shareNetwork.id)) }, 'Security Servieces'
-
+                a { href: '#', onClick: ((e) -> e.preventDefault(); console.log(shareNetwork); handleShareNetworkSecurityServices(shareNetwork.id)) }, 'Security Servieces'
 
 shared_filesystem_storage.ShareNetworkItem = ShareNetworkItem

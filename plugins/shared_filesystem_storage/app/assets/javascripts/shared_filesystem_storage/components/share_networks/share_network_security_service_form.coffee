@@ -2,16 +2,7 @@
 { connect } = ReactRedux
 { updateShareNetworkSecurityServiceForm, submitShareNetworkSecurityServiceForm } = shared_filesystem_storage
 
-ShareNetworkSecurityServiceForm = ({shareNetworkSecurityServiceForm, securityServices, shareNetworkSecurityServices, shareNetwork, handleSubmit, handleChange}) ->
-  securityServices = [] unless securityServices
-  assignedSecurityServices = shareNetworkSecurityServices.items || []
-  assignedSecurityServicesIds = []
-  assignedSecurityServicesIds.push(ecurityService.id) for securityService in assignedSecurityServices
-  availableSecurityServices = []
-
-  for securityService in securityServices
-    availableSecurityServices.push(securityService) if assignedSecurityServicesIds.indexOf(securityService.id)<0
-
+ShareNetworkSecurityServiceForm = ({shareNetworkSecurityServiceForm, securityServices, shareNetworkSecurityServices, availableSecurityServices, shareNetwork, handleSubmit, handleChange}) ->
   onChange=(e) ->
     handleChange(e.target.name,e.target.value)
 
@@ -24,7 +15,7 @@ ShareNetworkSecurityServiceForm = ({shareNetworkSecurityServiceForm, securitySer
 
     div className: "form-group",
       label className: 'sr-only', htmlFor: "access_type", 'Security Service'
-      select name: "security_service_id", className: "select required form-control", onChange: onChange,
+      select name: "id", className: "select required form-control", onChange: onChange,
         option value: '', 'Select Security Service'
         for securityService in availableSecurityServices
           option { value: securityService.id, key: securityService.id }, "#{securityService.name} (#{securityService.type})"

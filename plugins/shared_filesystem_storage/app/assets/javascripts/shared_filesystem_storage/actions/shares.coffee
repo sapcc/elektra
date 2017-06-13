@@ -196,6 +196,7 @@
             else
               dispatch(receiveShare(data))
               dispatch(resetShareForm())
+              dispatch(app.toggleShareNetworkIsNewStatus(data.share_network_id,false))
               successCallback() if successCallback
           error: ( jqXHR, textStatus, errorThrown) ->
             dispatch(app.showErrorDialog(title: 'Could not save share', message:jqXHR.responseText))

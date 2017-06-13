@@ -98,8 +98,9 @@
     type: app.SHARE_RULE_FORM_FAILURE
     errors: errors
 
-  showShareRuleForm=() ->
+  showShareRuleForm=(shareId) ->
     type: app.SHOW_SHARE_RULE_FORM
+
   hideShareRuleForm=()->
     type: app.HIDE_SHARE_RULE_FORM
 
@@ -131,6 +132,6 @@
   app.fetchShareRules              = fetchShareRules
   app.fetchShareRulesIfNeeded      = fetchShareRulesIfNeeded
   app.deleteShareRule              = deleteShareRule
-  app.removeShareRules             = removeShareRules 
+  app.removeShareRules             = removeShareRules
   app.openShareAccessControlDialog = openShareAccessControlDialog
 )(shared_filesystem_storage)

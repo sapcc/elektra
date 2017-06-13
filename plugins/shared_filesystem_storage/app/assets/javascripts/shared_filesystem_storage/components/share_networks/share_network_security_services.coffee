@@ -12,12 +12,27 @@
   deleteShareNetworkSecurityService,
   ShareNetworkSecurityServiceForm,
   ShareNetworkSecurityServiceItem,
-  fetchShareNetworkSecurityServicesIfNeeded
+  fetchShareNetworkSecurityServicesIfNeeded,
+  shareNetworkSecurityServiceFormForCreate
 } = shared_filesystem_storage
 
 ShareNetworkSecurityServices = React.createClass
   componentDidMount: ->
     @props.loadShareNetworkSecurityServicesOnce(@props.shareNetwork.id)
+
+  availableSecurityServices:() ->
+    securityServices = [] unless @props.securityServices
+    assignedSecurityServices = @props.shareNetworkSecurityServices.items || []
+    assignedSecurityServicesIds = []
+    assignedSecurityServicesTypes = []
+    for securityService in assignedSecurityServices
+      assignedSecurityServicesIds.push(securityService.id)
+      assignedSecurityServicesTypes.push(securityService.type)
+    available = []
+    for securityService in @props.securityServices
+      if assignedSecurityServicesIds.indexOf(securityService.id)<0 and assignedSecurityServicesTypes.indexOf(securityService.type)<0
+        available.push(securityService)
+    available
 
   render: ->
     {
@@ -36,6 +51,7 @@ ShareNetworkSecurityServices = React.createClass
       loadShareNetworkSecurityServicesOnce
     } = @props
 
+    availableSecurityServices = @availableSecurityServices()
     div null,
       div className: 'modal-body',
         if shareNetworkSecurityServices.isFetching
@@ -59,24 +75,27 @@ ShareNetworkSecurityServices = React.createClass
                 for securityService in shareNetworkSecurityServices.items
                   React.createElement ShareNetworkSecurityServiceItem, key: securityService.id, securityService: securityService, shareNetwork: shareNetwork, handleDelete: handleDelete
 
-              tr null,
-                td colSpan: 4,
-                  ReactTransitionGroups.Fade null,
+
+              if availableSecurityServices.length>0
+                tr null,
+                  td colSpan: 4,
+                    ReactTransitionGroups.Fade null,
+                      unless shareNetworkSecurityServiceForm.isHidden
+                        React.createElement ShareNetworkSecurityServiceForm, { securityServices, shareNetworkSecurityServices, handleChange, handleSubmit, shareNetworkSecurityServiceForm, availableSecurityServices }
+                  td null,
+
                     unless shareNetworkSecurityServiceForm.isHidden
-                      React.createElement ShareNetworkSecurityServiceForm, { securityServices, shareNetworkSecurityServices, handleChange, handleSubmit, shareNetworkSecurityServiceForm }
-                td null,
-                  unless shareNetworkSecurityServiceForm.isHidden
-                    a
-                      className: 'btn btn-default btn-sm',
-                      href: '#',
-                      onClick: ((e) -> e.preventDefault(); hideForm()),
-                      i className: 'fa fa-close'
-                  else
-                    a
-                      className: 'btn btn-primary btn-sm',
-                      href: '#',
-                      onClick: ((e) -> e.preventDefault(); showForm()),
-                      i className: 'fa fa-plus'
+                      a
+                        className: 'btn btn-default btn-sm',
+                        href: '#',
+                        onClick: ((e) -> e.preventDefault(); hideForm()),
+                        i className: 'fa fa-close'
+                    else
+                      a
+                        className: 'btn btn-primary btn-sm',
+                        href: '#',
+                        onClick: ((e) -> e.preventDefault(); showForm(shareNetworkId)),
+                        i className: 'fa fa-plus'
 
       div className: 'modal-footer',
         button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
@@ -91,9 +110,11 @@ ShareNetworkSecurityServices = connect(
     loadShareNetworkSecurityServicesOnce: (shareNetworkId) -> dispatch(fetchShareNetworkSecurityServicesIfNeeded(shareNetworkId))
     handleChange: (name,value) -> dispatch(updateShareNetworkSecurityServiceForm(name,value))
     handleSubmit: -> dispatch(submitShareNetworkSecurityServiceForm(ownProps.shareNetworkId))
-    handleDelete: (ruleId) -> dispatch(deleteShareNetworkSecurityService(ownProps.shareNetworkId,ruleId))
+    handleDelete: (securityServiceId) -> dispatch(deleteShareNetworkSecurityService(ownProps.shareNetworkId,securityServiceId))
     hideForm: -> dispatch(hideShareNetworkSecurityServiceForm())
-    showForm: -> dispatch(showShareNetworkSecurityServiceForm())
+    showForm: (shareNetworkId) ->
+      dispatch(shareNetworkSecurityServiceFormForCreate(shareNetworkId))
+      dispatch(showShareNetworkSecurityServiceForm())
 )(ShareNetworkSecurityServices)
 shared_filesystem_storage.ShareNetworkSecurityServices = ReactModal.Wrapper('Share Network Security Service', ShareNetworkSecurityServices,
   large:true

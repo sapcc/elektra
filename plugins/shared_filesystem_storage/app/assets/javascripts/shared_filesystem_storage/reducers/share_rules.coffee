@@ -41,7 +41,7 @@
     # copy current rules
     rules = ReactHelpers.mergeObjects({},state[shareId])
     # mark as deleting
-    rules.isDeleting=true
+    rules.items[ruleIndex].isDeleting=true
     # return new state (copy old state with new rules)
     ReactHelpers.mergeObjects({},state,{"#{shareId}": rules})
 

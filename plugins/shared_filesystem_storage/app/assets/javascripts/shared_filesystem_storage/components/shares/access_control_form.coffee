@@ -10,7 +10,7 @@ AccessControlForm = ({ruleForm, shareNetwork, handleSubmit, handleChange}) ->
 
   accessTypes =
     ip: 'ip'
-    # user: 'user'
+    user: 'user'
     # cert: 'cert'
   accessLevels =
     ro: 'read-only'

@@ -47,7 +47,7 @@
   fetchShareNetworkSecurityServices= (shareNetworkId) ->
     (dispatch) ->
       dispatch(requestShareNetworkSecurityServices(shareNetworkId))
-      app.ajaxHelper.get "/share_networks/#{shareNetworkId}/security_services",
+      app.ajaxHelper.get "/share-networks/#{shareNetworkId}/security-services",
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveShareNetworkSecurityServices(shareNetworkId,data))
         error: ( jqXHR, textStatus, errorThrown) ->
@@ -69,22 +69,22 @@
   deleteShareNetworkSecurityService= (shareNetworkId,securityServiceId) ->
     (dispatch) ->
       dispatch(requestDeleteShareNetworkSecurityService(shareNetworkId,securityServiceId))
-      app.ajaxHelper.delete "/share_networks/#{shareNetworkId}/security_services/#{securityServiceId}",
+      app.ajaxHelper.delete "/share-networks/#{shareNetworkId}/security-services/#{securityServiceId}",
         success: (data, textStatus, jqXHR) ->
           if data and data.errors
             dispatch(deleteShareNetworkSecurityServiceFailure(shareNetworkId,securityServiceId))
-            dispatch(app.showErrorDialog(title: 'Could not load share network security services', message:jqXHR.responseText))
+            dispatch(app.showErrorDialog(title: 'Could not remove security service from share network', message:jqXHR.responseText))
           else
             dispatch(removeShareNetworkSecurityService(shareNetworkId,securityServiceId))
         error: ( jqXHR, textStatus, errorThrown) ->
           dispatch(deleteShareNetworkSecurityServiceFailure(shareNetworkId,securityServiceId))
-          dispatch(app.showErrorDialog(title: 'Could not load share network security services', message:jqXHR.responseText))
+          dispatch(app.showErrorDialog(title: 'Could not remove security service from share network', message:jqXHR.responseText))
 
   ########################### SHARE RULE FORM #########################
   shareNetworkSecurityServiceFormForCreate=(shareNetworkId)->
     type: app.PREPARE_SHARE_NETWORK_SECURITY_SERVICE_FORM
     method: 'post'
-    action: "/share_networks/#{shareNetworkId}/security_services"
+    action: "/share-networks/#{shareNetworkId}/security-services"
 
   updateShareNetworkSecurityServiceForm= (name,value) ->
     type: app.UPDATE_SHARE_NETWORK_SECURITY_SERVICE_FORM
@@ -94,12 +94,13 @@
   resetShareNetworkSecurityServiceForm= () ->
     type: app.RESET_SHARE_NETWORK_SECURITY_SERVICE_FORM
 
-  shareNetworkSecurityServiceFormFailure=(errors) ->
+  shareNetworkSecurityServiceFormFailure=(errors={}) ->
     type: app.SHARE_NETWORK_SECURITY_SERVICE_FORM_FAILURE
     errors: errors
 
   showShareNetworkSecurityServiceForm=() ->
     type: app.SHOW_SHARE_NETWORK_SECURITY_SERVICE_FORM
+
   hideShareNetworkSecurityServiceForm=()->
     type: app.HIDE_SHARE_NETWORK_SECURITY_SERVICE_FORM
 
@@ -109,16 +110,18 @@
       if shareNetworkSecurityServiceForm.isValid
         dispatch(type: app.SUBMIT_SHARE_NETWORK_SECURITY_SERVICE_FORM)
         app.ajaxHelper[shareNetworkSecurityServiceForm.method] shareNetworkSecurityServiceForm.action,
-          data: { rule: shareNetworkSecurityServiceForm.data }
+          data: { security_service: shareNetworkSecurityServiceForm.data }
           success: (data, textStatus, jqXHR) ->
             if data.errors
               dispatch(shareNetworkSecurityServiceFormFailure(data.errors))
             else
               dispatch(receiveShareNetworkSecurityService(shareNetworkId, data))
               dispatch(resetShareNetworkSecurityServiceForm())
+              dispatch(app.toggleShareNetworkIsNewStatus(shareNetworkId,false))
               successCallback() if successCallback
           error: ( jqXHR, textStatus, errorThrown) ->
-            dispatch(app.showErrorDialog(title: 'Could not save share network security service', message:jqXHR.responseText))
+            dispatch(shareNetworkSecurityServiceFormFailure({'internal error': ['Could not add security service to share network']}))
+            dispatch(app.showErrorDialog(title: 'Could not add security service to share network', message:jqXHR.responseText))
 
   # export
   app.submitShareNetworkSecurityServiceForm         = submitShareNetworkSecurityServiceForm

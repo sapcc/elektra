@@ -11,7 +11,8 @@
   showShareRuleForm,
   deleteShareRule,
   AccessControlForm,
-  AccessControlItem
+  AccessControlItem,
+  shareRuleFormForCreate
 } = shared_filesystem_storage
 
 AccessControl = ({
@@ -67,7 +68,7 @@ AccessControl = ({
                   a
                     className: 'btn btn-primary btn-sm',
                     href: '#',
-                    onClick: ((e) -> e.preventDefault(); showForm()),
+                    onClick: ((e) -> e.preventDefault(); showForm(shareId)),
                     i className: 'fa fa-plus'
 
     div className: 'modal-footer',
@@ -83,7 +84,9 @@ AccessControl = connect(
     handleSubmit: -> dispatch(submitShareRuleForm(ownProps.shareId))
     handleDelete: (ruleId) -> dispatch(deleteShareRule(ownProps.shareId,ruleId))
     hideForm: -> dispatch(hideShareRuleForm())
-    showForm: -> dispatch(showShareRuleForm())
+    showForm: (shareId) ->
+      dispatch(shareRuleFormForCreate(shareId))
+      dispatch(showShareRuleForm())
 )(AccessControl)
 shared_filesystem_storage.ShareAccessControl = ReactModal.Wrapper('Share Access Control', AccessControl,
   large:true

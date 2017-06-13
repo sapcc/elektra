@@ -157,11 +157,11 @@ module SharedFilesystemStorage
         handle_response { @fog.update_share_network(id,params).body['share_network'] }
 			end
 
-      def add_security_group_to_share_network(security_service_id, share_network_id)
+      def add_security_service_to_share_network(security_service_id, share_network_id)
 				handle_response { @fog.add_security_service_to_share_network(security_service_id, share_network_id) }
 			end
 
-      def remove_security_group_from_share_network(security_service_id, share_network_id)
+      def remove_security_service_from_share_network(security_service_id, share_network_id)
 				handle_response { @fog.remove_security_service_from_share_network(security_service_id, share_network_id) }
 			end
 

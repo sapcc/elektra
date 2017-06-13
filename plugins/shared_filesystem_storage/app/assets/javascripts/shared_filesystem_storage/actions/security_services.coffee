@@ -41,7 +41,7 @@
   fetchSecurityServices= () ->
     (dispatch) ->
       dispatch(requestSecurityServices())
-      app.ajaxHelper.get '/security_services',
+      app.ajaxHelper.get '/security-services',
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveSecurityServices(data))
         error: ( jqXHR, textStatus, errorThrown) ->
@@ -74,7 +74,7 @@
       return unless canReloadSecurityService(getState(),securityServiceId)
 
       dispatch(requestSecurityService(securityServiceId))
-      app.ajaxHelper.get "/security_services/#{securityServiceId}",
+      app.ajaxHelper.get "/security-services/#{securityServiceId}",
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveSecurityService(data))
         error: ( jqXHR, textStatus, errorThrown) ->
@@ -101,7 +101,7 @@
   deleteSecurityService= (securityServiceId) ->
     (dispatch, getState) ->
       dispatch(requestDelete(securityServiceId))
-      app.ajaxHelper.delete "/security_services/#{securityServiceId}",
+      app.ajaxHelper.delete "/security-services/#{securityServiceId}",
         success: (data, textStatus, jqXHR) ->
           if data and data.errors
             dispatch(showDeleteSecurityServiceDialog(securityServiceId, ReactFormHelpers.Errors(data)))
@@ -145,14 +145,14 @@
   securityServiceFormForCreate=()->
     type: app.PREPARE_SECURITY_SERVICE_FORM
     method: 'post'
-    action: "/security_services"
+    action: "/security-services"
     data: {type: 'active_directory'}
 
   securityServiceFormForUpdate=(securityService) ->
     type: app.PREPARE_SECURITY_SERVICE_FORM
     data: securityService
     method: 'put'
-    action: "/security_services/#{securityService.id}"
+    action: "/security-services/#{securityService.id}"
 
   securityServiceFormFailure=(errors) ->
     type: app.SECURITY_SERVICE_FORM_FAILURE

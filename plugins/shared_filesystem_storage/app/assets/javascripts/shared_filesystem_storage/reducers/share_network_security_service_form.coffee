@@ -3,6 +3,7 @@
 
   initialShareNetworkSecurityServiceFormState =
     method: 'post'
+    action: ''
     data: {}
     isSubmitting: false
     errors: null
@@ -27,7 +28,7 @@
       data:data
       errors: null
       isSubmitting: false
-      isValid: (data.security_service_id)
+      isValid: (data.id)
     })
 
   submitShareNetworkSecurityServiceForm=(state,{})->

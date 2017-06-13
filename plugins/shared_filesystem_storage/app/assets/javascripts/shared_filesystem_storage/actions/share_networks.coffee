@@ -36,6 +36,11 @@
     type: app.RECEIVE_SHARE_NETWORK
     shareNetwork: json
 
+  toggleShareNetworkIsNewStatus=(shareNetworkId,isNew) ->
+    type: app.TOGGLE_SHARE_NETWORK_IS_NEW_STATUS
+    id: shareNetworkId
+    isNew: isNew
+
   fetchShareNetworks= () ->
     (dispatch) ->
       dispatch(requestShareNetworks())
@@ -152,6 +157,7 @@
               dispatch(shareNetworkFormFailure(data.errors))
             else
               dispatch(receiveShareNetwork(data))
+              dispatch(toggleShareNetworkIsNewStatus(data.id,true)) if shareNetworkForm.method=='post'
               dispatch(resetShareNetworkForm())
               successCallback() if successCallback
           error: ( jqXHR, textStatus, errorThrown) ->
@@ -240,4 +246,5 @@
   app.shareNetworkFormForUpdate          = shareNetworkFormForUpdate
   app.submitShareNetworkForm             = submitShareNetworkForm
   app.updateShareNetworkForm             = updateShareNetworkForm
+  app.toggleShareNetworkIsNewStatus      = toggleShareNetworkIsNewStatus
 )(shared_filesystem_storage)

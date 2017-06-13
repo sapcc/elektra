@@ -57,6 +57,7 @@ ShareNetworkList = React.createClass
         table { className: 'table share-networks' },
           thead null,
             tr null,
+              th null
               th null, 'Name'
               th null, 'Neutron Net'
               th null, 'Neutron Subnet'
@@ -64,7 +65,7 @@ ShareNetworkList = React.createClass
           tbody null,
             if @props.shareNetworks.length==0
               tr null,
-                td {colSpan: 6},'No Share Networks found.'
+                td {colSpan: 5},'No Share Networks found.'
             for shareNetwork in @props.shareNetworks
               React.createElement ShareNetworkItem,
                 key: shareNetwork.id,
