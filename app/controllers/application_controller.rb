@@ -54,9 +54,8 @@ module ErrorRenderer
         @sentry_public_dsn = URI.parse(ENV['SENTRY_DSN']).tap {|u| u.password=nil}.to_s if ENV['SENTRY_DSN']
         @sentry_user       = { name: current_user.full_name || current_user.name, email: current_user.email } if current_user
 
-        if request.xhr? && params[:polling_service]
-          render "/application/exceptions/error_polling.js", format: "JS"
-        else
+        # no render error if polling service
+        unless params[:polling_service]
           respond_to do |format|
             format.html { render '/application/exceptions/error.html' }
             format.js { render "/application/exceptions/error.js" }
