@@ -1,3 +1,3 @@
 %div{data: {toggle: 'paginationSpinner'}}
   = render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs}
-  = paginate @nodes, :theme => 'twitter-bootstrap-3'
+  = paginate @nodes, :theme => 'twitter-bootstrap-3', :remote => true

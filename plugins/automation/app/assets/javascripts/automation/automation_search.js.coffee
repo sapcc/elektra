@@ -5,8 +5,6 @@ class AutomationSearch
     @initialize options
 
   initialize: (@options) ->
-    # current processed text
-    this.process_text = ''
     # css class of the dimmed and render area
     this.searchDimmedArea = @el.data('search-dimmed-area')
     this.searchRenderArea = @el.data('search-render-area')
@@ -23,11 +21,12 @@ class AutomationSearch
     searchValue = this.el.find('input#js-search_input').val()
     # remove error content
     $('.'+this.searchErrorArea).html('')
-    if this.process_text != searchValue
-      this.process_text = searchValue
-      searchUrl = buildUrl(searchbaseUrl, 'search', searchValue)
-      dimmArea(this, true)
-      filter(this, searchUrl, 0)
+    # add search services
+    searchUrl = buildUrl(searchbaseUrl, 'search_service', true)
+    # add search value
+    searchUrl = buildUrl(searchUrl, 'search', searchValue)
+    dimmArea(this, true)
+    filter(this, searchUrl, 0)
 
   filter= (_this, searchUrl, timeout) ->
     $this = _this

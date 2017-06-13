@@ -9,11 +9,12 @@
           .toolbar-search-box{data: {toggle: 'automationSearch', search_dimmed_area: 'js-search-dimmed-area', search_render_area: 'js-search-render-area', search_error_area: 'js-search-error-area'}}
             = form_tag plugin('automation').nodes_path() do
               .input-group
-                = text_field_tag 'js-search_input', '', class: "form-control", placeholder: 'Name tag, hostname or ID'
+                = text_field_tag 'js-search_input', '', class: "form-control", placeholder: 'Name tag, hostname or ID', value: @search
                 .span.input-group-btn
-                  %button.btn.btn-default.btn-default-size{type: "submit"} Go
+                  %button.btn.btn-default.btn-default-size{type: "submit"}
+                    %i.fa.fa-search
         .col-md-3
-          .js-search-error-area.search-error-area.text-danger            
+          .js-search-error-area.search-error-area.text-danger
         .col-md-3.col-md-offset-3
           = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 

@@ -9,12 +9,16 @@ module Automation
 
     def index
       if request.xhr?
-        if params[:search].nil?
-          # search
-          render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs}, layout: false
-        else
+        if params[:polling_service]
           # polling
+          render partial: 'table_nodes', locals: {nodes: @nodes, jobs: @jobs}, layout: false
+        elsif params[:search_service]
+          # search
+          params.delete(:search_service) # remove param to not be rendered in the pagination links
           render partial: 'table_nodes_pagination', layout: false
+        else
+          # pagination
+          # render index.js.erb
         end
       end
       # plain index page
@@ -141,11 +145,12 @@ module Automation
     end
 
     def search_options
-      if !params[:search].blank?
+      search_text = params[:search]
+      search_query = "name ^ '*#{search_text}*' OR @hostname ^ '*#{search_text}*' OR @identity ^ '*#{search_text}*'"
+      if !search_text.nil? && search_query != params[:filter]
         params[:page] = 1
-        search_text = params[:search]
         # name tag, hostname or id
-        params[:filter] = "name = '#{search_text}' OR @hostname = '#{search_text}' OR @identity = '#{search_text}'"
+        params[:filter] = search_query
       end
     end
 
@@ -154,10 +159,10 @@ module Automation
     end
 
     def nodes_with_jobs
-
       # set defaults
       @node_page = params[:page]||1
       @filter = params[:filter]||""
+      @search = params[:search]||""
       per_page = 10
 
       service = IndexNodesService.new(services.automation)
