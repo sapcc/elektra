@@ -51,8 +51,12 @@
     margin-top: -25px;
   }
 }
+
 .search-error-area {
   margin-top: 6px;
+}
+.search-info-tooltip {
+  padding-left: 0px;
 }
 .search-render-area {
   @include pie-clearfix;

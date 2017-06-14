@@ -146,7 +146,7 @@ module Automation
 
     def search_options
       search_text = params[:search]
-      search_query = "name ^ '*#{search_text}*' OR @hostname ^ '*#{search_text}*' OR @identity ^ '*#{search_text}*'"
+      search_query = SearchNodesService.search_query(search_text)
       if !search_text.nil? && search_query != params[:filter]
         params[:page] = 1
         # name tag, hostname or id
