@@ -40,6 +40,16 @@ NewSecurityService = ({
             select name: "protocol", className: "select required form-control", name: 'type', value: (securityService.type || ''), onChange: onChange,
               for type,typeLabel of {'active_directory': 'Active Directory'}
                 option value: type, key: type, typeLabel
+
+      # Organizational Unit
+      div { className: "form-group string required security_service_ou" },
+        label { className: "string required col-sm-4 control-label", htmlFor: "security_service_ou" },
+          abbr title: "required", '*'
+          'OU (Organizational Unit)'
+        div { className: "col-sm-8" },
+          div { className: "input-wrapper" },
+            input { className: "string required form-control", type: "text", name: "ou", value: (securityService.ou || ''), onChange: onChange }
+
       # Name
       div { className: "form-group string required security_service_name" },
         label { className: "string required col-sm-4 control-label", htmlFor: "security_service_name" },
