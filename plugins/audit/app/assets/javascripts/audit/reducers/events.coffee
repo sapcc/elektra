@@ -39,6 +39,18 @@
       error: null
     })
 
+
+  # Event Details
+  
+  toggleEventDetailsVisible= (state,{eventId, detailsVisible}) ->
+    index = ReactHelpers.findIndexInArray(state.items,eventId, 'event_id')
+    return state if index<0
+
+    newState = ReactHelpers.cloneHashMap(state)
+    newState.items[index].detailsVisible = detailsVisible
+    newState
+
+
   # events reducer
   app.events = (state = initialEventState, action) ->
     switch action.type
@@ -47,6 +59,7 @@
       when app.REQUEST_EVENTS_FAILURE then requestEventsFailure(state,action)
       when app.UPDATE_FILTER then updateFilter(state,action)
       when app.UPDATE_OFFSET then updateOffset(state,action)
+      when app.TOGGLE_EVENT_DETAILS_VISIBLE then toggleEventDetailsVisible(state,action)
       else state
 
 )(audit)

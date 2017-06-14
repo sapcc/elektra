@@ -52,8 +52,27 @@
       dispatch(updateFilter(filterType,filterTerm))
       dispatch(loadEvents())
 
+
+  # EVENT DETAILS
+
+  toggleEventDetails= (event) ->
+    (dispatch,getState) ->
+      currentState = getState()
+      dispatch(toggleEventDetailsVisible(event))
+
+
+  toggleEventDetailsVisible= (event) ->
+    type: app.TOGGLE_EVENT_DETAILS_VISIBLE
+    eventId: event.event_id
+    detailsVisible: !event.detailsVisible
+
+
+
+
+
   # export
-  app.fetchEvents                  = fetchEvents
-  app.filterEvents                 = filterEvents
+  app.fetchEvents                 = fetchEvents
+  app.filterEvents                = filterEvents
+  app.toggleEventDetails          = toggleEventDetails
 
 )(audit)

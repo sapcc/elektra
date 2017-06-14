@@ -20,12 +20,12 @@ Events = ({events, isFetching, loadEvents, filterEvents}) ->
         div className: 'event-cell user-cell', 'User'
       div className: 'events-list',
         for event in events
-          unless event.isVisible==false
-            console.log(event)
-            React.createElement EventItem, key: event.event_id, event: event
+          React.createElement EventItem, key: event.event_id, event: event
 
         if isFetching
-          span className: 'spinner'
+          div className: 'event',
+            div className: 'event-cell',
+              span className: 'spinner'
 
 
 # export

@@ -10,10 +10,10 @@ ReactHelpers.mergeObjects = (obj1,obj2,obj3={}) ->
 ReactHelpers.cloneHashMap=(obj)->
   JSON.parse(JSON.stringify( obj ))
 
-ReactHelpers.findIndexInArray=(items,itemId) ->
+ReactHelpers.findIndexInArray=(items,itemId, itemIdKey = 'id') ->
   index=-1
   for item,i in items
-    if item.id==itemId
+    if item[itemIdKey]==itemId
       index=i
       break
   index
