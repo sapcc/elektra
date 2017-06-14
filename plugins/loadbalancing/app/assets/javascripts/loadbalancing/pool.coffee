@@ -34,9 +34,9 @@ changePersistenceType=(poolSelect) ->
   persistence_select_val = persistence_select.find(":selected").val()
   persistence_select.empty()
   if protocol == 'TCP'
-    session_persistence_type = ['', 'SOURCE_IP']
+    session_persistence_type = [' ', 'SOURCE_IP']
   else
-    session_persistence_type = ['', 'SOURCE_IP', 'HTTP_COOKIE', 'APP_COOKIE']
+    session_persistence_type = [' ', 'SOURCE_IP', 'HTTP_COOKIE', 'APP_COOKIE']
   $.each session_persistence_type, (key, value) ->
     if value == persistence_select_val
       persistence_select.append('<option value=' + value + ' selected>' + value + '</option>')

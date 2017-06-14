@@ -26,7 +26,7 @@
       - if @pool
         %tr
           %th Default Pool
-          %td= "#{@pool.name} ( #{@pool.id} )"
+          %td= "#{name_or_id(@pool.name, @pool.id)} ( #{@pool.id} )"
 
 - if modal?
   .modal-footer

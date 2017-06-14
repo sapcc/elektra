@@ -1,6 +1,6 @@
 - protos = {}
 - @listeners.each do |l|
-  - l.name += " (#{l.protocol})"
+  - l.name = "#{name_or_id(l.name, l.id)} (#{l.protocol})"
   - protos[l.id] = l.protocol == 'TERMINATED_HTTPS' ? 'HTTP' : l.protocol
 
 %fieldset

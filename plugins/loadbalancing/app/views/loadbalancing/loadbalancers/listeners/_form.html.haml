@@ -6,7 +6,7 @@
                               hint: 'A port number between 1 and 65535',
                               input_html: { type: :number, min: 1, max: 65535 }}
   = f.input :protocol, as: :select, collection: Loadbalancing::Listener::PROTOCOLS, disabled: update
-  = f.input :default_pool_id, as: :select, collection: @pools
+  = f.input :default_pool_id, as: :select, collection: @pools, label_method: -> p {name_or_id(p.name, p.id)}
   = f.input :connection_limit, { label: 'Connection Limit',
                                  hint: 'Value -1 means infinite connections are allowed.',
                                  input_html: { type: :number, min: -1 , value: @listener.connection_limit || -1 }}
