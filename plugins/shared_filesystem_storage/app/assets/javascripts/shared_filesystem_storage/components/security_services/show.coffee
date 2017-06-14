@@ -24,6 +24,9 @@ ShowSecurityService = ({securityService,close}) ->
               th null, "Type"
               td null, securityService.type
             tr null,
+              th null, "OU (Organizational Unit)"
+              td null, securityService.ou  
+            tr null,
               th null, "Name"
               td null, securityService.name
             tr null,

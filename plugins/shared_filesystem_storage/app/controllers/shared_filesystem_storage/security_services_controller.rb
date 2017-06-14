@@ -60,7 +60,10 @@ module SharedFilesystemStorage
         :user,
         :password,
         :type,
-        :name
+        :name,
+        :domain,
+        :server,
+        :ou
       )
     end
 

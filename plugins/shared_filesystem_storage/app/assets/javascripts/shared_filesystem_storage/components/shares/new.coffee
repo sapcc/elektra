@@ -3,7 +3,7 @@
 { div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
 { updateShareForm, submitShareForm, selectTab, openNewShareNetworkDialog } = shared_filesystem_storage
-protocols= ['NFS']
+protocols= ['NFS','CIFS']
 
 NewShare = ({
   close,
