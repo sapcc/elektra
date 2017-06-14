@@ -17,13 +17,5 @@
       %input{ type: 'number', min: 0, max: 256, name: "servers[][weight]", value: "#{member.weight}", required: true }
     %td.snug
       - if current_user.is_allowed?('loadbalancing:resource_delete', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-        = link_to "javascript:$('#member_#{member.id}').remove();", { class: 'btn btn-default' } do
+        = link_to "#", { class: 'btn btn-default btn-sm pool-member-remove', data: {target: "#member_#{member.id}"} } do
           %i.fa.fa-minus
-
-
-=content_for :javascripts do
-  :javascript
-
-    function minus(id) {
-      $(id).remove();
-    }

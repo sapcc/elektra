@@ -41,9 +41,22 @@ module Loadbalancing
     end
 =end
 
+    # Get statuses object for one loadbalancer
     def update_status
       begin
         @states = services.loadbalancing.loadbalancer_statuses(params[:id])
+      end
+    end
+
+    # get statuses for all loadbalancers in project (for index)
+    def update_all_status
+      begin
+        @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
+        @states = []
+        @loadbalancers.each do |lb|
+          @states << services.loadbalancing.loadbalancer_statuses(lb.id)
+        end
+        @states
       end
     end
 
@@ -90,8 +103,7 @@ module Loadbalancing
         @loadbalancer.provisioning_status = "PENDING_DELETE"
         audit_logger.info(current_user, "has deleted", @loadbalancer)
         flash.now[:error] = "Load Balancer will be deleted."
-        render template: 'loadbalancing/loadbalancers/update_item.js'
-#        redirect_to loadbalancers_path
+        render template: 'loadbalancing/loadbalancers/destroy_item.js'
       else
         flash.now[:error] = "Load Balancer deletion failed."
         redirect_to loadbalancers_path
@@ -165,6 +177,12 @@ module Loadbalancing
     def update_item
       begin
         @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+        @fips = services.networking.project_floating_ips(@scoped_project_id)
+        @fips.each do |fip|
+          @loadbalancer.floating_ip = @loadbalancer.vip_port_id == fip.port_id ? fip : nil
+          break if @loadbalancer.floating_ip
+        end
+
         respond_to do |format|
           format.js do
             @loadbalancer if @loadbalancer

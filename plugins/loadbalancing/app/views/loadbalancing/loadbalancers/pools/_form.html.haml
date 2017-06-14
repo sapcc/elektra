@@ -8,8 +8,8 @@
   = f.input :description
   = f.input :lb_algorithm, as: :select, collection: Loadbalancing::Pool::ALGORITHMS, required: true
   = f.input :protocol, as: :select, collection: @protocols, required: true,  disabled: update
-  = f.input :session_persistence_type, as: :select, collection: Loadbalancing::Pool::SESSION_PERSISTENCE_TYPES, disabled: update
-  = f.input :session_persistence_cookie_name, label: 'Cookie Name', required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')}, disabled: update
+  = f.input :session_persistence_type, as: :select, collection: Loadbalancing::Pool::SESSION_PERSISTENCE_TYPES  #, disabled: update
+  = f.input :session_persistence_cookie_name, label: 'Cookie Name', required: true, wrapper_html: {class: ("hidden" unless @pool.session_persistence_type == 'APP_COOKIE')} #, disabled: update
   - if @pool.listener_id
     = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener_id, disabled: update, label: 'Default Pool for Listener'
   - else

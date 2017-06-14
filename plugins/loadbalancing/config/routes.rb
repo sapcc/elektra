@@ -2,6 +2,9 @@ Loadbalancing::Engine.routes.draw do
   get '/' => 'loadbalancers#index', as: :entry
   get 'listener_details/:id', to: 'loadbalancers/listeners#show', as: 'listener_details'
   resources :loadbalancers do
+    collection do
+      get 'update_all_status'
+    end
     member do
       get 'update_status'
       get 'new_floatingip'

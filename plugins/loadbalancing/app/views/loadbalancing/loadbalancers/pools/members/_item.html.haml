@@ -7,8 +7,9 @@
     = member.protocol_port
   %td
     = member.weight
-  %td
-    %label{class: 'spinner', data: {op_status: "#{member.id}"}}
+  -if (!defined?(nodestroy) or nodestroy != :true)
+    %td
+      %label{class: 'spinner', data: {op_status: "#{member.id}"}}
   %td.snug
     - if current_user.is_allowed?("loadbalancing:loadbalancer_delete", {}) and member.id and (!defined?(nodestroy) or nodestroy != :true)
       .btn-group

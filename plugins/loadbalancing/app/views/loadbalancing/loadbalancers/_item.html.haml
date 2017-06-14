@@ -1,7 +1,8 @@
 - data = {}
-- data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
-- data[:update_interval]=60
-- data[:update_immediately]='true'
+- if loadbalancer.in_transition?
+  - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
+  - data[:update_interval]=60
+  - data[:update_immediately]='true'
 
 %tr{id: "loadbalancer_#{loadbalancer.id}", data: data }
 
@@ -13,8 +14,10 @@
     - else
       %td= name_or_id(loadbalancer.name, loadbalancer.id)
   %td= loadbalancer.description
-  %td= loadbalancer.operating_status
-  %td= loadbalancer.provisioning_status
+  %td
+    %label{class: 'spinner', data: {op_status: "#{loadbalancer.id}"}}
+  %td
+    %label{class: 'spinner', data: {prov_status: "#{loadbalancer.id}"}}
   %td.snug-nowrap
     .list-group.borderless
       %p.list-group-item-text
