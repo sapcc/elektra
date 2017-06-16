@@ -51,7 +51,7 @@ SimpleForm.setup do |config|
     b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
   end
 
-  # please keep in sync with :horizontal_form_disabled
+  # please keep in sync with :horizontal_form_disabled, horizontal_radio_and_checkboxes_4x8
   config.wrappers :horizontal_form, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
     b.use :placeholder
@@ -74,7 +74,7 @@ SimpleForm.setup do |config|
   end
 
 
-  # please keep in sync with :horizontal_form
+  # please keep in sync with :horizontal_form, horizontal_radio_and_checkboxes_4x8
   config.wrappers :horizontal_form_disabled, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
     b.use :placeholder
@@ -145,9 +145,13 @@ SimpleForm.setup do |config|
     b.use :label, class: 'col-sm-4 control-label'
 
     b.wrapper tag: 'div', class: 'col-sm-8' do |ba|
-      ba.use :input
+      ba.wrapper tag: 'div', class: 'input-wrapper' do |i|
+        i.use :input
+        i.use :help_hint
+      end
+
       ba.use :error, wrap_with: { tag: 'span', class: 'help-block' }
-      ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
+      ba.use :icon_hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end
   end
 

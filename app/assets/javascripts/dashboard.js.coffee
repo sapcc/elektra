@@ -32,6 +32,12 @@ if (typeof(window.console) == "undefined" || typeof(window.console.log) == "unde
 # -------------------------------------------------------------------------------------------------------------
 # Initialize Dashboard App
 
+# init help hint popovers
+@initHelpHint= () ->
+  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
+    placement: 'top'
+    trigger: 'focus'
+
 $ ->
   # enter the cloud on enter key
   $enterCloudButton = $('#enter_the_cloud_button')
@@ -63,9 +69,7 @@ $ ->
   $("#accept_tos").click -> $("#register-button").prop('disabled', not $(this).prop('checked') )
 
   # init help hint popovers
-  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
-    placement: 'top'
-    trigger: 'focus'
+  initHelpHint()
 
   # help text toggle
   $('[data-toggle="help"]').click (e) ->
@@ -129,9 +133,8 @@ $(document).on 'modal:contentUpdated', (e) ->
   # init all DOM elements found by css class '.searchable' as searchable
   $("##{e.target.id} .searchable").searchable()
 
-  $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
-    placement: 'top'
-    trigger: 'focus'
+  # init help hint popovers
+  initHelpHint()
 
   # -------------
   # init tooltips

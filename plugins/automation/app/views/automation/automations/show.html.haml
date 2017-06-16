@@ -19,7 +19,7 @@
       - form_horizontal_static_array('Runlist', @automation.run_list)
       - form_horizontal_static_json_editor('Attributes', @automation.chef_attributes)
       - form_horizontal_static_input('Chef version', @automation.chef_version.blank? ? 'Latest' : @automation.chef_version)
-      - form_horizontal_static_input('Log level', @automation.log_level)
+      - form_horizontal_static_input('Debug', @automation.debug)
     - elsif @automation.type == ::Automation::Automation::Types::SCRIPT
       - form_horizontal_static_input('Path', @automation.path)
       - form_horizontal_static_array('Arguments', @automation.arguments)

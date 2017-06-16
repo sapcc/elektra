@@ -20,6 +20,7 @@ module Automation
     attribute :chef_attributes, String #JSON
     attribute :log_level, String
     attribute :chef_version, String
+    attribute :debug, Boolean
 
     # script
     attribute :path, String
