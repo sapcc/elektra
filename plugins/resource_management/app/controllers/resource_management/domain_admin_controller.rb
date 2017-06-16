@@ -178,6 +178,7 @@ module ResourceManagement
       ResourceManagement::ResourceConfig.all.each do |cfg|
         domain_resource  =  @domain.find_resource(cfg)
         project_resource = @project.find_resource(cfg)
+        next if domain_resource.nil? or project_resource.nil?
 
         new_projects_quota = domain_resource.projects_quota - project_resource.quota + cfg.value_for_package(@package)
         if new_projects_quota > domain_resource.projects_quota and new_projects_quota > domain_resource.quota
