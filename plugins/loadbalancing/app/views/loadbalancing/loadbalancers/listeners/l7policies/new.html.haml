@@ -1,5 +1,5 @@
 = content_for :title do
-  New L7 Policy
+  New Policy
 
 - if modal?
   .flashes_area
@@ -17,11 +17,11 @@
 
       .col-sm-6
         .bs-callout.bs-callout-primary.small
-          %h3= "L7 Policy"
-          %p= "L7 Polices can be used to REJECT requests or REDIRECT traffic to specific pools or urls."
-          %p= "The policy action will be executed when ALL L7 Rules are matched (Rules are combined with an AND). If you need an OR create another L7 Policy with the same action and the needed rules."
+          %h3= "Policy"
+          %p= "Policies can be used to REJECT requests or REDIRECT traffic to specific pools or urls."
+          %p= "The policy action will be executed when ALL L7 Rules are matched (Rules are combined with an AND). If you need an OR create another Policy with the same action and the needed rules."
           %h4= "Position"
-          %p= "L7 Policies are evaluated in the order as defined by the 'position' attribute. The first one that matches a given request will be the one whose action is followed."
+          %p= "Policies are evaluated in the order as defined by the 'position' attribute. The first one that matches a given request will be the one whose action is followed."
           %p= "If no policy matches a given request, then the request is routed to the listener's default pool (if it exists)."
           %h4= "Action"
           %p= "Will be executed when all L7 Rules are matched"

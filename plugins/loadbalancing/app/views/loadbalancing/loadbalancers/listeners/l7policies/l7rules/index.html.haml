@@ -3,7 +3,7 @@
   = ' / '
   = link_to "Listeners" , plugin('loadbalancing').loadbalancer_listeners_path(@loadbalancer.id)
   = ' / '
-  = link_to "L7 Policies" , plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id)
+  = link_to "Policies" , plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id)
   = ' / '
   = link_to "L7 Rules" , plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id)
 
