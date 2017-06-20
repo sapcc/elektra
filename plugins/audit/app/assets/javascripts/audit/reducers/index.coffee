@@ -4,6 +4,6 @@
 
 ((app) ->
   app.AppReducers = combineReducers({
-    events:             app.events,
+    events:             app.events
   })
 )(audit)

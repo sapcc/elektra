@@ -26,4 +26,24 @@ ReactHelpers.findInArray=(items,itemId) ->
       break
   item
 
+# Updates attributes of items in an item list in state. Updates are passed as a hash map (attribute-key: attribute-value)
+ReactHelpers.updateItemInList=(state, itemId, itemIdKey, updates = {}) ->
+  index = ReactHelpers.findIndexInArray(state.items, itemId, itemIdKey)
+  return state if index<0
+
+  newState = ReactHelpers.cloneHashMap(state)
+  for key,value of updates
+    newState.items[index][key] = value
+
+  newState
+
+
+# Get value of given attribute from item in list
+ReactHelpers.getItemAttribute=(items, itemId, itemIdKey, attributeKey) ->
+  index = ReactHelpers.findIndexInArray(items, itemId, itemIdKey)
+  return '' if index<0
+
+  items[index][attributeKey]
+
+
 @ReactHelpers = ReactHelpers
