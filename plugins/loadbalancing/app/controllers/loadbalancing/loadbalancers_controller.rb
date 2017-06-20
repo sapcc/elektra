@@ -1,5 +1,5 @@
 module Loadbalancing
-  class LoadbalancersController < ApplicationController
+  class LoadbalancersController < ::Loadbalancing::ApplicationController
     # set policy context
     authorization_context 'loadbalancing'
     # enforce permission checks. This will automatically investigate the rule name.
@@ -8,10 +8,28 @@ module Loadbalancing
     def index
       @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
       @fips = services.networking.project_floating_ips(@scoped_project_id)
+
+      @private_networks = services.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services.networking.available?
+      @subnets = {}
+      @private_networks.each do |pn|
+        unless pn.subnets.blank?
+          pn.subnets.each do |subid|
+            @subnets[subid] = services.networking.subnet(subid) unless @subnets[subid]
+          end
+        end
+      end
+
       @loadbalancers.each do |lb|
         @fips.each do |fip|
           lb.floating_ip = lb.vip_port_id == fip.port_id ? fip : nil
           break if lb.floating_ip
+        end
+        @subnets.each do |id, sub|
+          cidr = NetAddr::CIDR.create(sub.cidr)
+          if cidr.contains?(lb.vip_address)
+            lb.subnet = sub
+            break
+          end
         end
       end
 

@@ -20,9 +20,12 @@
     %label{class: 'spinner', data: {prov_status: "#{loadbalancer.id}"}}
   %td.snug-nowrap
     .list-group.borderless
+      - if loadbalancer.subnet
+        %p.list-group-item-text
+          = loadbalancer.subnet.name
       %p.list-group-item-text
-        %i.fa.fa-desktop.fa-fw
-        = loadbalancer.vip_address
+      %i.fa.fa-desktop.fa-fw
+      = loadbalancer.vip_address
       - if loadbalancer.floating_ip
         %p.list-group-item-text
           %i.fa.fa-globe.fa-fw

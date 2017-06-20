@@ -1,4 +1,5 @@
 module Loadbalancing
-  class ApplicationController < DashboardController
+  class ApplicationController < ::DashboardController
+
   end
 end
