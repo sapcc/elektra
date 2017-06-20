@@ -34,6 +34,7 @@ if (typeof(window.console) == "undefined" || typeof(window.console.log) == "unde
 
 # init help hint popovers
 @initHelpHint= () ->
+  $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0")
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'
     trigger: 'focus'
