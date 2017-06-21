@@ -1,7 +1,7 @@
 {
   "context_is_cloud_resource_admin": "role:cloud_resource_admin",
-  "context_is_domain_resource_admin": "role:resource_admin and not domain_id:nil",
-  "context_is_domain_resource_viewer": "(role:resource_admin or role:resource_viewer) and not domain_id:nil",
+  "context_is_domain_resource_admin": "(role:resource_admin or role:cloud_resource_admin) and not domain_id:nil",
+  "context_is_domain_resource_viewer": "(role:resource_admin or role:resource_viewer or role:cloud_resource_admin) and not domain_id:nil",
 
   "resource_management:cloud_admin_list": "rule:context_is_cloud_resource_admin",
   "resource_management:cloud_admin_show_area": "rule:context_is_cloud_resource_admin",
