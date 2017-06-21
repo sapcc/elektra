@@ -150,7 +150,11 @@ module Loadbalancing
           false
         end
       rescue => e
-        @floating_ip.errors.add('message', e.message)
+        if e.type == 'NotFound'
+          @floating_ip.errors.add('Error:', 'Could not attach floating IP to load balancer. Please verify that a router between private and floating ip network exists.')
+        else
+          @floating_ip.errors.add('message', e.message)
+        end
         false
       end
 
