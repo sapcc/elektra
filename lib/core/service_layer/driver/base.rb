@@ -16,7 +16,7 @@ module Core
           elsif response.is_a?(Hash)
             @klass.new(@driver,response.merge(@additional_attributes))
           else
-            nil  
+            nil
           end
         end
 
@@ -38,6 +38,7 @@ module Core
           @token          = params[:token]
           @domain_id      = params[:domain_id]
           @project_id     = params[:project_id]
+          @connection_options = (params[:connection_options] || {})
         end
 
         def handle_response(&block)

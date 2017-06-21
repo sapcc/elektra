@@ -5,7 +5,6 @@ module Identity
 
     # check wizard state and redirect unless finished
     before_filter :check_wizard_status, only: [:show]
-    before_filter :load_and_update_wizard_status, only: [:show_wizard]
 
     before_filter do
       @scoped_project_fid = params[:project_id] || @project_id
@@ -37,6 +36,8 @@ module Identity
     end
 
     def show_wizard
+      load_and_update_wizard_status if request.xhr?
+
     end
 
     def edit
@@ -196,6 +197,7 @@ module Identity
 
     def update_cost_control_wizard_status
       billing_data = service_user.domain_admin_service(:cost_control).find_project_masterdata(@scoped_project_id)
+
       if billing_data and billing_data.cost_object_id
         @project_profile.update_wizard_status(
           'cost_control',

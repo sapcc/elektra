@@ -8,6 +8,7 @@ module ServiceLayer
                                                    token:      self.token,
                                                    domain_id:  self.domain_id,
                                                    project_id: self.project_id,
+                                                   connection_options: {connect_timeout: 10, read_timeout: 10, write_timeout: 10}
                                                })
     end
 
@@ -19,7 +20,9 @@ module ServiceLayer
 
     def find_project_masterdata(project_id)
       return new_project_masterdata if project_id.blank?
-      driver.map_to(CostControl::ProjectMasterdata).get_project_masterdata(project_id)
+      #Fog.wait_for 5 do
+        driver.map_to(CostControl::ProjectMasterdata).get_project_masterdata(project_id)
+      #end
     end
 
     def new_project_masterdata(attributes={})

@@ -9,6 +9,15 @@
     %p.lead Before you can properly use this project there are a number of things that need to be configured. Once you have made it through all the configuration steps your project will be ready and fully useable.
 
     .wizard_steps{data: {wizard_update_url: plugin('identity').project_wizard_path}}
-      = render partial: '/identity/projects/wizard_steps'
+      =# render partial: '/identity/projects/wizard_steps'
+      %span.spinner
+      Loading ...
   .col-md-3
     = render partial: 'identity/projects/additional_infos'
+
+:javascript
+  $(document).ready(function(){
+    var $wizardContainer = $('[data-wizard-update-url]');
+    var url = $wizardContainer.data('wizardUpdateUrl');
+    $.ajax({url: url, method: 'GET', dataType: 'script'});
+  });
