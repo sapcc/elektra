@@ -71,6 +71,7 @@ describe Identity::ProjectsController, type: :controller do
       @profile.update_wizard_status('cost_control',nil)
       @profile.update_wizard_status('resource_management',nil)
       @profile.update_wizard_status('networking',nil)
+      allow(controller.request).to receive(:xhr?).and_return true
       allow(controller).to receive(:update_resource_management_wizard_status).and_return(true)
       allow(controller).to receive(:update_networking_wizard_status).and_return(true)
       allow(controller).to receive(:update_cost_control_wizard_status).and_return(true)
