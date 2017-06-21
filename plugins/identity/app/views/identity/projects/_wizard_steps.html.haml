@@ -36,6 +36,11 @@
 
     - else
       %p Please provide a cost object against which we can bill the services consumed by this project
+- else
+  = wizard_step({title: 'Cost Center',
+    mandatory: true,
+    status: 'pending'}) do
+    %p The Cost Center service is currently unavailable.
 
 -# RESOURCE MANAGEMENT
 - if @resource_management_service_available
@@ -78,6 +83,12 @@
         status: nil}) do
         %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
 
+- else
+  = wizard_step({title: 'Request Resource Quotas',
+    mandatory: true,
+    status: 'pending'}) do
+    %p The Resource Management service is currently unavailable.
+
 -# NETWORKING
 - if @networking_service_available
   - can_setup_network = current_user.is_allowed?("networking:network_wizard_get")
@@ -92,6 +103,12 @@
       - unless @project_profile.wizard_finished?('resource_management')
         %b Please request quota first.
       %p Here you can configure the network for your project.
+
+- else
+  = wizard_step({title: 'Set Network',
+    mandatory: true,
+    status: 'pending'}) do
+    %p Teh Network service is currently unavailable.
 
 - if @wizard_finished
   %p
