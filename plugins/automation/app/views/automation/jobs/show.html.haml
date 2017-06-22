@@ -102,5 +102,3 @@
 %div{class: modal? ? 'modal-footer' : ''}
   - if modal?
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-  - else
-    = link_to "Close", plugin('automation').agents_url(), class: 'btn btn-default'
