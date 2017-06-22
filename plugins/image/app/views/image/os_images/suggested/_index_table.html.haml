@@ -1,4 +1,4 @@
-%table.table
+%table.table.suggested_images.searchable{data:{search_input: '#search_suggested_images_input'}}
   %thead
     %tr
       %th Name
@@ -11,6 +11,5 @@
     - if @images.empty?
       %tr
         %td{colspan: 6} No suggested images found.
-    - else    
-      - @images.each do |image|
-        = render partial: "item", locals: { image: image }
+    - else
+      = render partial: 'list', locals: { images: @images }

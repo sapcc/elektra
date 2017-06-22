@@ -1,15 +1,15 @@
-%tr{id: "image_#{image.id}"}
+%tr{id: "image_#{image.id}", data: {search_name: image.name+'_'+image.id, marker_id: image.id}}
   %td
     - if current_user.is_allowed?('image:image_suggested') and image.owner!=@scoped_project_id
       %i.fa.fa-share.fa-fw
     - if current_user.is_allowed?('image:image_get', {})
       = link_to image.name, plugin('image').send("os_images_private_path", image.id), data: {modal: true, cancel: 'Close'}
     - else
-      = image.name  
+      = image.name
     - if current_user.is_allowed?('image:image_suggested') and image.owner!=@scoped_project_id
       %br
       %span.info-text shared image
-        
+
   %td= image.disk_format
   %td= byte_to_human(image.size)
   %td

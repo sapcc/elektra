@@ -1,6 +1,6 @@
-%tr{id: "image_#{image.id}"}
+%tr{id: "image_#{image.id}", data: {search_name: image.name+'_'+image.id, marker_id: image.id}}
   %td
-    = image.name  
+    = image.name
     %br
     %span.info-text= image.id
   %td= image.disk_format

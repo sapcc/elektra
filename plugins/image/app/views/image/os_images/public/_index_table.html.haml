@@ -1,18 +1,15 @@
-.row
-  %table.table
-    %thead
-      %tr
-        %th Name
-        %th Format
-        %th Size
-        %th.snug Status
-        %th
+%table.table.public_images.searchable{data:{search_input: '#search_public_images_input'}}
+  %thead
+    %tr
+      %th Name
+      %th Format
+      %th Size
+      %th.snug Status
+      %th
 
-    %tbody
-      - if @images.empty?
-        %tr
-          %td{colspan: 4} No public images found.
-      - else    
-        - @images.each do |image|
-          = render partial: "item", locals: { image: image }
-    
+  %tbody
+    - if @images.empty?
+      %tr
+        %td{colspan: 4} No public images found.
+    - else
+      = render partial: 'list', locals: { images: @images }
