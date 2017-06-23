@@ -257,8 +257,33 @@ module Identity
         handle_response{ @fog.get_role(id).body['role']}
       end
 
+      # def role_assignments(filter={})
+      #   handle_response{ @fog.list_role_assignments(filter).body['role_assignments'] }
+      # end
       def role_assignments(filter={})
-        handle_response{ @fog.list_role_assignments(filter).body['role_assignments'] }
+        effective = filter.delete(:effective)
+        handle_response {
+          assignments = @fog.list_role_assignments(filter).body['role_assignments']
+
+          # return if no effective filter required
+          return assignments unless effective
+
+          assignments.each_with_object([]) do |ra,array|
+            if ra['user'].present?
+              array << ra
+            elsif ra['group'].present?
+              @fog.list_group_users(ra['group']['id'],filter).body['users'].collect do |user|
+                user_ra = {
+                  'role' => ra['role'],
+                  'scope' => ra['scope'],
+                  'user' => { 'id' => user['id'] }
+                }
+                array << user_ra
+              end
+            end
+            array
+          end
+        }
       end
 
       def delete_role(id)

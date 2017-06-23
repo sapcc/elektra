@@ -45,8 +45,8 @@ module Core
             # please don't add non-supported Excon connection keys here (f.i. :debug)!
           }
 
-          if @connection_options
-            result.merge(@connection_options || {})
+          if @connection_options and @connection_options.is_a?(Hash)
+            result.merge!(@connection_options)
           end
 
           result
