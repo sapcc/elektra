@@ -30,6 +30,9 @@
   if os_image == "" || os_image == null
     attachPopover(button, 'Error', "Missing property 'vmware_ostype' on the image provided. Please follow the steps described in the documentation to upload a compatible image. <a href='https://documentation.global.cloud.sap/docs/image/start/customer.html'>See customer images documentation</a>")
     return
+  if typeof os_image == "undefined"
+    attachPopover(button, 'Error', "Please choose an image.")
+    return
   osTypeWindows = os_image.search("windows")
   userDataFieldText = $('#server_user_data').val()
 
