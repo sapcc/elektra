@@ -1,7 +1,7 @@
 module DnsService
   class Zone < Core::ServiceLayer::Model
 
-    validates :name, presence: {message: 'Please provide the domain name'}
+    validates :name, presence: {message: 'Please provide the domain name'}, on: :create
     validates :email, presence: {message: 'Please provide an email'}
 
     def attributes_for_create
