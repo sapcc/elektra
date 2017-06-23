@@ -19,7 +19,9 @@
     %fieldset#subnets
       = f.input :floating_subnet_id,
         as: :select,
-        collection: @floating_networks    
+        collection: @floating_networks
+
+      = f.input :description, { label: 'Description' }
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
