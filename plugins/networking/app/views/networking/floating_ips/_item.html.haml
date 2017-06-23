@@ -11,6 +11,7 @@
       = link_to plugin('networking').floating_ip_path(floating_ip.id), data: {modal: true} do
         %i.fa.fa-desktop.fa-fw
         = floating_ip.fixed_ip_address
+  %td= floating_ip.description
   %td= floating_ip.status
 
   %td.snug
@@ -20,6 +21,8 @@
           %span.fa.fa-cog
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+          - if current_user.is_allowed?("networking:floating_ip_update", {floating_ip: floating_ip})
+            %li= link_to 'Edit', plugin('networking').edit_floating_ip_path(floating_ip.id), data: {modal: true}
           - if current_user.is_allowed?("networking:floating_ip_delete", {floating_ip: floating_ip})
             %li= link_to 'Release',
               plugin('networking').floating_ip_path(id: floating_ip.id),

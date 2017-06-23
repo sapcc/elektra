@@ -10,6 +10,7 @@
   "networking:floating_ip_get": "rule:context_is_network_viewer",
   "networking:floating_ip_list": "rule:context_is_network_viewer",
   "networking:floating_ip_create": "rule:context_is_network_editor",
+  "networking:floating_ip_update": "rule:context_is_network_editor",
   "networking:floating_ip_delete": "rule:context_is_network_editor",
   "networking:floating_ip_associate": "rule:context_is_network_editor",
   "networking:floating_ip_disassociate": "rule:context_is_network_editor",

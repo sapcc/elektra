@@ -8,7 +8,15 @@ module Networking
     def attributes_for_create
       {
         'floating_network_id' => read('floating_network_id'),
+        'description'         => read('description'),
         'subnet_id'           => read('floating_subnet_id')
+      }.delete_if { |_k, v| v.blank? }
+    end
+
+    def attributes_for_update
+      {
+        'description' => read('description'),
+        'port_id'     => read('port_id')
       }.delete_if { |_k, v| v.blank? }
     end
 

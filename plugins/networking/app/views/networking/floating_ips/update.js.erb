@@ -1,0 +1,2 @@
+$('tr#floating_ip_<%=@floating_ip.id%>').replaceWith("<%= j(render(partial: 'networking/floating_ips/item', locals: {floating_ip: @floating_ip} )) %>");
+MoModal.close();

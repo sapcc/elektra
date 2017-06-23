@@ -68,6 +68,27 @@ module Networking
       end
     end
 
+    def edit
+      @floating_ip = services_ng.networking.find_floating_ip(params[:id])
+    end
+
+    def update
+      @floating_ip = services_ng.networking.find_floating_ip(params[:id])
+      # save existing port_id, blame neutron API for needing that on no-op
+      port_id = @floating_ip.attributes['port_id']
+      @floating_ip.attributes = params[:floating_ip]
+      @floating_ip.port_id = port_id
+
+      if @floating_ip.save
+        respond_to do |format|
+          format.html { redirect_to floating_ips_url }
+          format.js { render 'update.js' }
+        end
+      else
+        render action: :edit
+      end
+    end
+
     def destroy
       @floating_ip = services_ng.networking.new_floating_ip
       @floating_ip.id = params[:id]
