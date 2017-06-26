@@ -8,12 +8,15 @@ module DnsService
       if @inquiry
         payload = @inquiry.payload
         @zone_request.attributes = payload
+        @zone_request.name = "#{@zone_request.name}." unless @zone_request.name.last=='.'
         @pool = load_pool(@zone_request.domain_pool)
       end
     end
 
     def create
       @zone_request = ::DnsService::ZoneRequest.new(nil,params[:zone_request])
+      @zone_request.name = "#{@zone_request.name}." unless @zone_request.name.last=='.'
+
       @zone = services.dns_service.new_zone(@zone_request.attributes)
       @pool = load_pool(@zone_request.domain_pool)
       @zone.write("attributes",@pool.read("attributes"))
