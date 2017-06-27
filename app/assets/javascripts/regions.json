@@ -32,7 +32,7 @@
     "regionname": "NA-US-3",
     "lat":        33.44,
     "lon":        -112.07,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
@@ -113,7 +113,7 @@
     "regionname": "AP-JP-1",
     "lat":        34.68,
     "lon":        135.50,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
