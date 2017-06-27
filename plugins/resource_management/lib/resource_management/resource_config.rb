@@ -62,7 +62,7 @@ module ResourceManagement
         new(:block_storage,             :capacity,                    pkg(true, 16), data_type: :bytes, data_sub_type: :giga),
         new(:block_storage,             :snapshots,                   pkg(false, 2)),
         new(:block_storage,             :volumes,                     pkg(false, 2)),
-        new(:object_storage,            :capacity,                    pkg(true, 256 << 30), data_type: :bytes),
+        new(:object_storage,            :capacity,                    pkg(true, 1 << 30), data_type: :bytes),
         new(:shared_filesystem_storage, :share_networks,              pkg(false, 0)),
         new(:shared_filesystem_storage, :shares,                      pkg(false, 0)),
         new(:shared_filesystem_storage, :share_snapshots,             pkg(false, 0)),
