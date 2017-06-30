@@ -46,7 +46,11 @@ module Core
           }
 
           if @connection_options and @connection_options.is_a?(Hash)
-            result.merge!(@connection_options)
+            if result[:connection_options]
+              result[:connection_options].merge!(@connection_options)
+            else
+              result[:connection_options] = @connection_options
+            end
           end
 
           result
