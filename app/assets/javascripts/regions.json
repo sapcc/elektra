@@ -14,7 +14,7 @@
     "regionname": "NA-US-1",
     "lat":        39.98,
     "lon":        -75.40,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
