@@ -15,6 +15,7 @@ en:
       cloud_image_admin: Glance Cloud Administrator
       cloud_network_admin: Neutron Cloud Administrator
       cloud_resource_admin: Limes Cloud Administrator
+      cloud_resource_viewer: Limes Cloud Read-Only
       cloud_sharedfilesystem_admin: Manila Cloud Administrator
       cloud_volume_admin: Cinder Cloud Administrator
       compute_admin: Nova Administrator
