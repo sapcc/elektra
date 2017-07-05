@@ -4,7 +4,8 @@
 # the controller should respond_to current_user (monsoon-openstack-auth gem)
 module ServicesNg
   def self.included(base)
-    base.send :helper_method, :services, :services_ng, :current_region
+    base.send :helper_method, :services_ng, :service_user_ng,
+              :cloud_admin_ng, :current_region
   end
 
   # try to find a region based on catalog and default region

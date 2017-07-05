@@ -31,8 +31,9 @@ module Core
             end
           end
 
-          def initialize(response)
+          def initialize(response, elektra_service = nil)
             @origin_response = response
+            @elektra_service = elektra_service
           end
 
           def data
@@ -47,11 +48,10 @@ module Core
             klazz, data = self.class.extract_class_and_data(
               klazz_or_map,
               @origin_response.body
-            ) do |obj|
+            )
+            ClientWrapper.map_to(klazz, data, options) do |obj|
               obj.service = @elektra_service
             end
-
-            ClientWrapper.map_to(klazz, data, options)
           end
         end
 
@@ -79,7 +79,7 @@ module Core
         def handle_response
           response = yield
           raise ::Core::Api::Error, response if response.code.to_i >= 400
-          Response.new(response)
+          Response.new(response, @elektra_service)
         end
       end
 
