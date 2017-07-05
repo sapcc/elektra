@@ -8,13 +8,13 @@ module Services
   # load services provider
   def services(region=current_region)
     # initialize services unless already initialized
-    @services ||= Core::ServiceLayer::ServicesManager.new(region)  
+    @services ||= Core::ServiceLayer::ServicesManager.new(region)
     # update current_user
     @services.service_user = service_user
-    @services.current_user = current_user 
+    @services.current_user = current_user
     @services
   end
-  
+
   # try to find a region based on catalog and default region
   def current_region
     @services_current_region ||= ::Core.locate_region(service_user, Rails.configuration.default_region)
