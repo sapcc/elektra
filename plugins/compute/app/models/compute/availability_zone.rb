@@ -1,5 +1,5 @@
 module Compute
-  class AvailabilityZone < Core::ServiceLayer::Model
+  class AvailabilityZone < Core::ServiceLayerNg::Model
     def id
       read("zoneName")
     end

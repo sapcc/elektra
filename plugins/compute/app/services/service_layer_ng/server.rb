@@ -1,6 +1,13 @@
 module ServiceLayerNg
   # This module implements Openstack Domain API
   module Server
+
+    def new_server(params={})
+      # this is used for inital create server dialog
+      debug "[compute-service][Server] -> new_server"
+      Compute::Server.new(params)
+    end
+
     def servers(filter={},use_cache = false)
       debug "[compute-service][Server] -> servers -> GET servers/detail"
 
@@ -16,5 +23,12 @@ module ServiceLayerNg
 
       api.map_to(Compute::Server,server_data)
     end
+
+    def find_server(id)
+      debug "[compute-service][Server] -> find_server -> GET /servers/#{id}"
+      return nil if id.empty?
+      api.compute.show_server_details(id).map_to(Compute::Server)
+    end
+    
   end
 end

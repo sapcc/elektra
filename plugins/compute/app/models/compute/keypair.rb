@@ -1,5 +1,5 @@
 module Compute
-  class Keypair < Core::ServiceLayer::Model
+  class Keypair < Core::ServiceLayerNg::Model
 
     validate :public_key_valid?
     validates :name, :public_key, presence: true

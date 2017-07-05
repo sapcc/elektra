@@ -1,5 +1,5 @@
 module Compute
-  class Flavor < Core::ServiceLayer::Model
+  class Flavor < Core::ServiceLayerNg::Model
     def to_s
       "#{self.name}, #{self.vcpus} VCPUs, #{self.disk}GB Disk, #{self.ram}MB Ram" 
     end    

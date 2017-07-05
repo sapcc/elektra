@@ -9,20 +9,22 @@ module Compute
     def index
       params[:per_page]= 20
       @instances = []
+      
       if @scoped_project_id
         @instances = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
           services_ng.compute.servers(@admin_option.merge(pagination_options))
         end
-
+  
         # get/calculate quota data for non-admin view
         unless @all_projects
           usage = services_ng.compute.usage
-
+  
           @quota_data = services.resource_management.quota_data([
             {service_name: :compute, resource_name: :instances, usage: usage.instances},
             {service_name: :compute, resource_name: :cores, usage: usage.cores},
             {service_name: :compute, resource_name: :ram, usage: usage.ram}
           ])
+        
         end
       end
 
@@ -37,8 +39,8 @@ module Compute
     end
 
     def console
-      @instance = services.compute.find_server(params[:id])
-      @console = services.compute.vnc_console(params[:id])
+      @instance = Server2.find(params[:id])
+      @console = @instance.vnc_console
       respond_to do |format|
         format.html{ render action: :console, layout: 'compute/console'}
         format.json{ render json: { url: @console.url }}
@@ -46,7 +48,7 @@ module Compute
     end
 
     def show
-      @instance = services.compute.find_server(params[:id])
+      @instance = services_ng.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details.collect do |sg|
         services.networking.security_groups(tenant_id: @scoped_project_id, id: sg.id).first
       end
@@ -60,12 +62,12 @@ module Compute
         {service_type: :compute, resource_name: :ram}
       ])
 
-      @instance = services.compute.new_server
+      @instance = services_ng.compute.new_server
 
-      @flavors            = services.compute.flavors
+      @flavors            = services_ng.compute.flavors
       @images             = services.image.all_images
 
-      azs = services.compute.availability_zones
+      azs = services_ng.compute.availability_zones
       if azs
         @availability_zones = azs.select { |az| az.zoneState['available'] }
         @availability_zones.sort_by!{|az| az.zoneName}
@@ -76,7 +78,7 @@ module Compute
       @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
       @private_networks   = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
 
-      @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
+      @keypairs = services_ng.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
       @instance.errors.add :private_network,  'not available' if @private_networks.blank?
       @instance.errors.add :image,            'not available' if @images.blank?
@@ -94,7 +96,7 @@ module Compute
 
     # update instance table row (ajax call)
     def update_item
-      @instance = services.compute.find_server(params[:id]) rescue nil
+      @instance = services_ng.compute.find_server(params[:id]) rescue nil
       @target_state = params[:target_state]
 
       respond_to do |format|
@@ -107,29 +109,29 @@ module Compute
     end
 
     def create
-      @instance = services.compute.new_server
+      @instance = services_ng.compute.new_server
       params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
       @instance.attributes=params[@instance.model_name.param_key]
 
       if @instance.save
         flash.now[:notice] = "Instance successfully created."
         audit_logger.info(current_user, "has created", @instance)
-        @instance = services.compute.find_server(@instance.id)
+        @instance = services_ng.compute.find_server(@instance.id)
         render template: 'compute/instances/create.js'
       else
-        @flavors = services.compute.flavors
+        @flavors = services_ng.compute.flavors
         @images = services.image.images
-        @availability_zones = services.compute.availability_zones
+        @availability_zones = services_ng.compute.availability_zones
         @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
         @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
-        @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
+        @keypairs = services_ng.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
         render action: :new
       end
     end
 
     def new_floatingip
       enforce_permissions("::networking:floating_ip_associate")
-      @instance = services.compute.find_server(params[:id])
+      @instance = services_ng.compute.find_server(params[:id])
       collect_available_ips
 
       @floating_ip = Networking::FloatingIp.new(nil)
@@ -148,11 +150,7 @@ module Compute
           false
         end
       rescue => e
-        if e.type == 'NotFound'
-          @floating_ip.errors.add('Error:', 'Could not attach floating IP to server. Please verify that a router between private and floating ip network exists.')
-        else
-          @floating_ip.errors.add('message', e.message)
-        end
+        @floating_ip.errors.add('message',e.message)
         false
       end
 
@@ -162,7 +160,7 @@ module Compute
         respond_to do |format|
           format.html{redirect_to instances_url}
           format.js{
-            @instance = services.compute.find_server(params[:id])
+            @instance = services_ng.compute.find_server(params[:id])
             addresses = @instance.addresses[@instance.addresses.keys.first]
             addresses ||= []
             addresses << {
@@ -194,7 +192,7 @@ module Compute
         }
         format.js{
           if @floating_ip and @floating_ip.port_id.nil?
-            @instance = services.compute.find_server(params[:id])
+            @instance = services_ng.compute.find_server(params[:id])
             addresses = @instance.addresses[@instance.addresses.keys.first]
             if addresses and addresses.is_a?(Array)
               addresses.delete_if{|values| values["OS-EXT-IPS:type"]=="floating"}
@@ -206,14 +204,14 @@ module Compute
     end
 
     def attach_interface
-      @os_interface = services.compute.new_os_interface(params[:id])
+      @os_interface = services_ng.compute.new_os_interface(params[:id])
       @networks = services.networking.networks("router:external"=>false)
     end
 
     def create_interface
-      @os_interface = services.compute.new_os_interface(params[:id],params[:os_interface])
+      @os_interface = services_ng.compute.new_os_interface(params[:id],params[:os_interface])
       if @os_interface.save
-        @instance = services.compute.find_server(params[:id])
+        @instance = services_ng.compute.find_server(params[:id])
         respond_to do |format|
           format.html{redirect_to instances_url}
           format.js{}
@@ -225,16 +223,16 @@ module Compute
     end
 
     def detach_interface
-      @instance = services.compute.find_server(params[:id])
-      @os_interface = services.compute.new_os_interface(params[:id])
+      @instance = services_ng.compute.find_server(params[:id])
+      @os_interface = services_ng.compute.new_os_interface(params[:id])
     end
 
     def delete_interface
       # create a new os_interface model based on params
-      @os_interface = services.compute.new_os_interface(params[:id],params[:os_interface])
+      @os_interface = services_ng.compute.new_os_interface(params[:id],params[:os_interface])
 
       # load all attached server interfaces
-      all_server_interfaces = services.compute.server_os_interfaces(params[:id])
+      all_server_interfaces = services_ng.compute.server_os_interfaces(params[:id])
       # find the one which should be deleted
       interface = all_server_interfaces.find do |i|
         i.fixed_ips.first['ip_address']==@os_interface.ip_address
@@ -256,7 +254,7 @@ module Compute
         timeout = 60
         sleep_time = 3
         loop do
-          @instance = services.compute.find_server(params[:id])
+          @instance = services_ng.compute.find_server(params[:id])
           if timeout<=0 or @instance.addresses.values.flatten.length==all_server_interfaces.length-1
             break
           else
@@ -269,15 +267,15 @@ module Compute
           format.js{}
         end
       else
-        @instance = services.compute.find_server(params[:id])
+        @instance = services_ng.compute.find_server(params[:id])
         @os_interface.ip_address=params[:os_interface][:ip_address]
         render action: :detach_interface
       end
     end
 
     def new_size
-      @instance = services.compute.find_server(params[:id])
-      @flavors  = services.compute.flavors
+      @instance = services_ng.compute.find_server(params[:id])
+      @flavors  = services_ng.compute.flavors
     end
 
     def resize
@@ -358,7 +356,7 @@ module Compute
     end
 
     def edit_securitygroups
-      @instance = services.compute.find_server(params[:id])
+      @instance = services_ng.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_keys = []
       @instance_security_groups.each do |sg|
@@ -368,7 +366,7 @@ module Compute
     end
 
     def assign_securitygroups
-      @instance = services.compute.find_server(params[:id])
+      @instance = services_ng.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details
       @instance_security_groups_ids = []
       @instance_security_groups.each do |sg|
@@ -381,7 +379,7 @@ module Compute
       sgs = params['sgs']
       if sgs.blank?
         flash.now[:error] = "Please assign at least one security group to the server"
-        @instance = services.compute.find_server(params[:id])
+        @instance = services_ng.compute.find_server(params[:id])
         @instance_security_groups = @instance.security_groups_details
         @instance_security_groups_keys = []
         @instance_security_groups.each do |sg|
@@ -411,7 +409,7 @@ module Compute
           end
 
         rescue => e
-          @instance = services.compute.find_server(params[:id])
+          @instance = services_ng.compute.find_server(params[:id])
           @instance_security_groups = @instance.security_groups_details
           @instance_security_groups_keys = []
           @instance_security_groups.each do |sg|
@@ -457,7 +455,7 @@ module Compute
 
     def execute_instance_action(action=action_name,options=nil, with_rendering=true)
       instance_id = params[:id]
-      @instance = services.compute.find_server(instance_id) rescue nil
+      @instance = services_ng.compute.find_server(instance_id) rescue nil
 
       @target_state=nil
       if @instance and (@instance.task_state || '')!='deleting'
@@ -465,18 +463,15 @@ module Compute
         if result
           audit_logger.info(current_user, "has triggered action", action, "on", @instance)
           sleep(2)
-          @instance = services.compute.find_server(instance_id) rescue nil
+          @instance = services_ng.compute.find_server(instance_id) rescue nil
 
           @target_state = target_state_for_action(action)
           @instance.task_state ||= task_state(@target_state) if @instance
         end
       end
 
-      if request.xhr?
-        render template: 'compute/instances/update_item.js' if with_rendering
-      else
-        redirect_to instances_url
-      end
+      render template: 'compute/instances/update_item.js' if with_rendering
+      #redirect_to instances_url
     end
 
     def target_state_for_action(action)
