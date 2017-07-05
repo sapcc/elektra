@@ -28,9 +28,6 @@ class ApplicationController < ActionController::Base
 
   helper_method :modal?, :plugin_name
 
-  # check if the requested domain is the same as that of the current user.
-  before_filter :same_domain_check
-
   # catch all api errors and render exception page
   rescue_and_render_exception_page [
     { 'Excon::Error' => { title: 'Backend Service Error' } },
@@ -63,26 +60,9 @@ class ApplicationController < ActionController::Base
 
   def plugin_name
     if @plugin_name.blank?
-      tokens = self.class.name.split('::').collect { |token| token.underscore }
+      tokens = self.class.name.split('::').collect(&:underscore)
       @plugin_name = tokens.find { |t| Core::PluginsManager.plugin?(t) }
     end
     @plugin_name
-  end
-
-  protected
-
-  def same_domain_check
-    if current_user && current_user.user_domain_id &&
-       service_user && service_user.domain_id
-      if current_user.user_domain_id != service_user.domain_id
-        # requested domain differs from the domain of current user
-        @current_domain_name = current_user.user_domain_name
-        @new_domain_name = service_user.domain_name
-
-        @domain_switch = true
-        # render domain switch view
-        render template: 'application/domain_switch'
-      end
-    end
   end
 end

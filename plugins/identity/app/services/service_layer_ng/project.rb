@@ -11,9 +11,21 @@ module ServiceLayerNg
       map_to(Identity::Project, attributes)
     end
 
-    def find_project(id = nil, options = {})
+    def find_project!(id = nil, options = {})
       return nil if id.blank?
       api.identity.show_project_details(id, options).map_to(Identity::ProjectNg)
+    end
+
+    def find_project(id = nil, options = {})
+      find_project!(id, options)
+    rescue
+      nil
+    end
+
+    def user_projects(user_id, filter = {})
+      api.identity
+         .list_projects_for_user(user_id, filter)
+         .map_to(Identity::ProjectNg)
     end
 
     def projects_by_user_id(user_id)
@@ -52,6 +64,18 @@ module ServiceLayerNg
 
     def projects(filter = {})
       api.identity.list_projects(filter).map_to(Identity::ProjectNg)
+    end
+
+    ################### MODEL INTERFACE #################
+    # This method is used by model.
+    # It has to return the data hash.
+    def update_project(id, params)
+      api.identity.update_project(id, project: params).data
+    end
+
+    # This method is used by model.
+    def delete_project(id)
+      api.identity.delete_project(id)
     end
   end
 end
