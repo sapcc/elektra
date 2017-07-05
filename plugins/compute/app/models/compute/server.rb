@@ -51,13 +51,18 @@ module Compute
         "user_data"         => Base64.encode64(read("user_data"))
         }.delete_if { |k, v| v.blank? }
     end
+    
+    def self.prepare_filter(query)
+      return Excon::Utils.query_string(query: query).sub(/^\?/, '')
+    end
 
     def security_groups
       read("security_groups") || []
     end
 
     def security_groups_details
-      @driver.map_to(Networking::SecurityGroup).server_security_groups self.id
+      puts @service.class
+      @service.security_groups_details self.id
     end
 
     def availability_zone
@@ -123,12 +128,7 @@ module Compute
       id = self.flavor["id"]
       return nil if id.blank?
 
-      flavor = Rails.cache.fetch("server_flavor_#{id}", expires_in: 24.hours) do
-        @driver.get_flavor(id) rescue nil
-      end
-      return nil if flavor.nil?
-      @flavor_object = Compute::Flavor.new(self.driver,flavor)
-
+      @service.flavor(id,true) rescue nil
     end
 
     def image_object
@@ -137,11 +137,7 @@ module Compute
       id = self.image["id"]
       return nil if id.blank?
 
-      image = Rails.cache.fetch("server_image_#{id}", expires_in: 24.hours) do
-        @driver.get_image(id) rescue nil
-      end
-      return nil if image.nil?
-      @image_object = Compute::Image.new(self.driver,image)
+      @service.image(id,true) rescue nil
     end
 
     def metadata
@@ -153,11 +149,8 @@ module Compute
     end
 
     def attached_volumes
-      if volumes_attached
-        @driver.volumes.select{|vol|
-          vol["attachments"].find { |attachment| attachment["serverId"] == id or attachment["server_id"] == id}
-        }.collect{|v| Compute::OsVolume.new(@driver,v)} #map to OsVolume
-
+      unless volumes_attached.empty?
+        @service.volumes(id)
       else
         []
       end
@@ -166,68 +159,68 @@ module Compute
     ####################### ACTIONS #####################
     def add_fixed_ip(network_id)
       requires :id
-      @driver.add_fixed_ip(id,network_id)
+      @service.add_fixed_ip(id,network_id)
     end
 
     def remove_fixed_ip(ip_address)
       requires :id
-      @driver.remove_fixed_ip(id,ip_address)
+      @service.remove_fixed_ip(id,ip_address)
     end
 
     def terminate
       requires :id
-      @driver.delete_server id
+      @service.delete_server id
     end
 
     def rebuild(image_ref, name, admin_pass=nil, metadata=nil, personality=nil)
       requires :id
-      @driver.rebuild_server(id, image_ref, name, admin_pass, metadata, personality)
+      @service.rebuild_server(id, image_ref, name, admin_pass, metadata, personality)
       true
     end
 
     def resize(flavor_ref)
       requires :id
-      @driver.resize_server(id, flavor_ref)
+      @service.resize_server(id, flavor_ref)
       true
     end
 
     def create_image(name, metadata = {})
       requires :id
-      @driver.create_image(id,name, metadata)
+      @service.create_image(id,name, metadata)
       true
     end
 
     def revert_resize
       requires :id
-      @driver.revert_resize_server(id)
+      @service.revert_resize_server(id)
       true
     end
 
     def confirm_resize
       requires :id
-      @driver.confirm_resize_server(id)
+      @service.confirm_resize_server(id)
       true
     end
 
     def reboot(type = 'SOFT')
       requires :id
-      @driver.reboot_server(id, type)
+      @service.reboot_server(id, type)
       true
     end
 
     def stop
       requires :id
-      @driver.stop_server(id)
+      @service.stop_server(id)
     end
 
     def pause
       requires :id
-      @driver.pause_server(id)
+      @service.pause_server(id)
     end
 
     def suspend
       requires :id
-      @driver.suspend_server(id)
+      @service.suspend_server(id)
     end
 
     def start
@@ -235,47 +228,48 @@ module Compute
 
       case status.downcase
       when 'paused'
-        @driver.unpause_server(id)
+        @service.unpause_server(id)
       when 'suspended'
-        @driver.resume_server(id)
+        @service.resume_server(id)
       else
-        @driver.start_server(id)
+        @service.start_server(id)
       end
     end
 
     def create_image(name, metadata={})
       requires :id
-      @driver.create_image(id, name, metadata)
+      @service.create_image(id, name, metadata)
     end
 
     def reset_vm_state(vm_state)
       requires :id
-      @driver.reset_server_state id, vm_state
+      @service.reset_server_state id, vm_state
     end
 
     def attach_volume(volume_id, device_name)
       requires :id
-      @driver.attach_volume(volume_id, id, device_name)
+      @service.attach_volume(volume_id, id, device_name)
       true
     end
 
     def detach_volume(volume_id)
       requires :id
-      @driver.detach_volume(id, volume_id)
+      @service.detach_volume(id, volume_id)
       true
     end
 
     def assign_security_group(sg_id)
       requires :id
-      @driver.add_security_group(id, sg_id)
+      @service.add_security_group(id, sg_id)
       true
     end
 
     def unassign_security_group(sg_id)
       requires :id
-      @driver.remove_security_group(id, sg_id)
+      @service.remove_security_group(id, sg_id)
       true
     end
 
   end
 end
+
