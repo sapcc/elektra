@@ -1,5 +1,5 @@
 module Compute
-  class Usage < Core::ServiceLayer::Model
+  class Usage < Core::ServiceLayerNg::Model
     def cores
       read('totalCoresUsed')
     end

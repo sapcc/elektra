@@ -10,8 +10,8 @@ module ServiceLayerNg
     end
 
     def usage(filter = {})
-      puts "[compute-service] -> usage -> GET /limits"
-      api.compute.show_rate_and_absolute_limits(filter).map_to(Compute::UsageNg)
+      debug "[compute-service] -> usage -> GET /limits"
+      api.compute.show_rate_and_absolute_limits(filter).map_to(Compute::Usage)
     end
 
   end

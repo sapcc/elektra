@@ -2,7 +2,7 @@ module ServiceLayerNg
   # This module implements Openstack Domain API
   module Server
     def servers(filter={},use_cache = false)
-      puts "[compute-service][Server] -> servers -> GET servers/detail"
+      debug "[compute-service][Server] -> servers -> GET servers/detail"
 
       server_data = nil
       unless use_cache
@@ -14,7 +14,7 @@ module ServiceLayerNg
         end
       end
 
-      api.map_to(Compute::ServerNg,server_data)
+      api.map_to(Compute::Server,server_data)
     end
   end
 end
