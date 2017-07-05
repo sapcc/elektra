@@ -24,6 +24,14 @@ module Core
       def api
         @api ||= ::Core::Api::ClientWrapper.new(@api_client, self)
       end
+
+      def map_to(klass, data, options = {})
+        api.map_to(klass, data, options) do |obj|
+          obj.service = self
+          yield obj if block_given?
+          obj
+        end
+      end
     end
   end
 end
