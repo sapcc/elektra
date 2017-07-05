@@ -4,9 +4,9 @@ module ServiceLayerNg
 
   # This class implements the identity api
   class IdentityService < Core::ServiceLayerNg::Service
-    include Users
-    include Projects
-    include Domains
+    include User
+    include Project
+    include Domain
 
     def available?(_action_name_sym = nil)
       !current_user.service_url('identity', region: region).nil?

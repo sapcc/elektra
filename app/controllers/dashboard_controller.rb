@@ -44,6 +44,7 @@ class DashboardController < ::ScopeController
   before_filter do
     #services_ng.identity
     #service_user_ng.identity
+    byebug
   end
 
   # even if token is not expired yet we get sometimes the error "token not found"

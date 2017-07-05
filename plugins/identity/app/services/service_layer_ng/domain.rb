@@ -2,7 +2,7 @@
 
 module ServiceLayerNg
   # This module implements Openstack Domain API
-  module Domains
+  module Domain
     def find_domain(id)
       return nil if id.blank?
       api.identity.show_domain_details(id).map_to(Identity::DomainNg)
