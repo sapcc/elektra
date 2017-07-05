@@ -72,6 +72,92 @@ module ServiceLayerNg
         "os-getVNCConsole" => {'type' => console_type }
       ).map_to(Compute::VncConsole)
     end
+
+    def rebuild_server(server_id, image_ref, name, admin_pass=nil, metadata=nil, personality=nil)
+      debug "[compute-service][Server] -> rebuild_server -> POST /action"
+
+      # prepare data
+      data = {'rebuild' => {
+        'imageRef' => image_ref,
+        'name'     => name
+      }}
+      data['rebuild']['adminPass'] = admin_pass if admin_pass
+      data['rebuild']['metadata'] = metadata if metadata
+      if personality
+        body['rebuild']['personality'] = []
+        personality.each do |file|
+          data['rebuild']['personality'] << {
+            'contents' => Base64.encode64(file['contents']),
+            'path'     => file['path']
+          }
+        end
+      end
+
+      api.compute.rebuild_server_rebuild_action(server_id,data)
+    end
+
+    def resize_server(server_id, flavor_ref)
+      debug "[compute-service][Server] -> resize_server -> POST /servers/#{server_id}/action"
+      api.compute.resize_server_resize_action(server_id, 'resize' => {'flavorRef' => flavor_ref})
+    end
+
+    def confirm_resize_server(server_id)
+      debug "[compute-service][Server] -> confirm_resize_server -> POST /servers/#{server_id}/action"
+      api.compute.confirm_resized_server_confirmresize_action(server_id, 'confirmResize' => nil)
+    end
+
+    def revert_resize_server(server_id)
+      debug "[compute-service][Server] -> revert_resize_server -> POST /servers/#{server_id}/action"
+      api.compute.revert_resized_server_revertresize_action(server_id, 'revertResize' => nil)
+    end
+
+    def start_server(server_id)
+      debug "[compute-service][Server] -> start_server -> POST /servers/#{server_id}/action"
+      api.compute.start_server_os_start_action(server_id, 'os-start' => nil)
+    end
+
+    def stop_server(server_id)
+      debug "[compute-service][Server] -> stop_server -> POST /servers/#{server_id}/action"
+       api.compute.stop_server_os_stop_action(server_id, 'os-stop' => nil)
+    end
+
+    def reboot_server(server_id, type)
+      debug "[compute-service][Server] -> reboot_server ->  /servers/#{server_id}/action"
+      api.compute.reboot_server_reboot_action(
+        server_id,
+        'reboot' => {'type' => type}
+      )
+    end
+
+    def suspend_server(server_id)
+      debug "[compute-service][Server] -> suspend_server -> POST /servers/#{server_id}/action"
+      api.compute.suspend_server_suspend_action(server_id, 'suspend' => nil)
+    end
+
+    def pause_server(server_id)
+      debug "[compute-service][Server] -> pause_server -> POST /servers/#{server_id}/action"
+      api.compute.pause_server_pause_action(server_id, 'pause' => nil)
+    end
+
+    def unpause_server(server_id)
+      debug "[compute-service][Server] -> unpause_server -> POST /action"
+      api.compute.unpause_server_unpause_action(server_id, 'unpause' => nil)
+    end
+
+    def reset_server_state(server_id, state)
+      debug "[compute-service][Server] -> reset_server_state -> POST /servers/#{server_id}/action"
+      api.compute.reset_server_state_os_resetstate_action(server_id, 'os-resetState' => {'state' => state})
+    end
+
+    def rescue_server(server_id)
+      debug "[compute-service][Server] -> rescue_server -> POST /servers/#{server_id}/action"
+      api.compute.rescue_server_rescue_action(server_id, 'rescue' => nil)
+    end
+
+    def resume_server(server_id)
+      debug "[compute-service][Server] -> resume_server -> POST /servers/#{server_id}/action"
+      api.compute.resume_suspended_server_resume_action(server_id, 'resume' => nil)
+    end
     
   end
 end
