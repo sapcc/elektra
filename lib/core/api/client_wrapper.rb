@@ -96,7 +96,7 @@ module Core
             create_map_object(klazz, item.merge(options), &block)
           end
         elsif data.is_a?(Hash)
-          create_map_object(klazz, item.merge(options), &block)
+          create_map_object(klazz, data.merge(options), &block)
         else
           data
         end

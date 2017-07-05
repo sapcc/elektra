@@ -4,88 +4,14 @@ module ServiceLayerNg
 
   # This class implements the identity api
   class IdentityService < Core::ServiceLayerNg::Service
+    include Users
+    include Projects
+    include Domains
+
     def available?(_action_name_sym = nil)
       !current_user.service_url('identity', region: region).nil?
     end
 
-    def has_projects?
-      driver.auth_projects.count>0
-    end
-
-    ##################### DOMAINS #########################
-    def find_domain id
-      return nil if id.blank?
-      driver.map_to(Identity::Domain).get_domain(id)
-    end
-
-    def new_domain(attributes={})
-      Identity::Domain.new(@driver, attributes)
-    end
-
-    def auth_domains
-      @domains ||= driver.auth_domains.collect { |attributes| Identity::Domain.new(@driver, attributes) }
-    end
-
-    def domains(filter={})
-      driver.map_to(Identity::Domain).domains(filter)
-    end
-
-    ###################### USERS ##########################
-    def users(filter = {})
-      api.identity.list_users(filter).map_to(Identity::UserNg)
-    end
-
-    def find_user(id)
-      driver.map_to(Identity::User).get_user(id)
-    end
-
-    def new_user(attributes={})
-      Identity::User.new(driver, attributes)
-    end
-
-    def delete_user(id)
-      driver.delete_user(id)
-    end
-
-
-    ##################### PROJECTS #########################
-    def new_project(attributes={})
-      Identity::Project.new(driver, attributes)
-    end
-
-    def find_project(id=nil, options=[])
-      return nil if id.blank?
-      driver.map_to(Identity::Project).get_project(id, options)
-    end
-
-    def projects_by_user_id(user_id)
-      driver.map_to(Identity::Project).user_projects(user_id)
-    end
-
-    def auth_projects(domain_id=nil)
-      # caching
-      @auth_projects ||= driver.map_to(Identity::Project).auth_projects
-
-      return @auth_projects if domain_id.nil?
-      @auth_projects.select { |project| project.domain_id==domain_id }
-    end
-
-    def auth_projects_tree(projects=auth_projects)
-      if projects && !projects.first.kind_of?(Identity::Project)
-        projects.collect! { |project| ::Identity::Project.new(@driver, project.attributes.merge(id:project.id)) }
-      end
-      @projects_tree ||= Rails.cache.fetch("#{current_user.token}/auth_projects_tree", expires_in: 60.seconds) do
-        Identity::ProjectTree.new(projects)
-      end
-    end
-
-    def clear_auth_projects_tree_cache
-      Rails.cache.delete("#{current_user.token}/auth_projects_tree")
-    end
-
-    def projects(filter={})
-      driver.map_to(Identity::Project).projects(filter)
-    end
 
     def grant_project_user_role_by_role_name(project_id, user_id, role_name)
       role = service_user.find_role_by_name(role_name)
@@ -185,13 +111,6 @@ module ServiceLayerNg
     def revoke_domain_user_role(domain_id, user_id, role_id)
       driver.revoke_domain_user_role(domain_id, user_id, role_id)
     end
-
-
-    ###################### TOKENS ###########################
-    def validate_token(token)
-      driver.validate(token) rescue false
-    end
-
 
   end
 end
