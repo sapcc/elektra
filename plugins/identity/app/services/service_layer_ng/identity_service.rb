@@ -1,27 +1,11 @@
-module ServiceLayer
+# frozen_string_literal: true
 
-  class IdentityService < Core::ServiceLayer::Service
-    attr_reader :region
+module ServiceLayerNg
 
-    def driver
-      unless @driver
-        auth = {
-          auth_url:   self.auth_url,
-          region:     self.region,
-          token:      self.token,
-          domain_id:  self.domain_id,
-          project_id: self.project_id
-        }
-        # cannot use services.resource_management.available? directly because
-        # `services` might not have been set if this service instance was
-        # created via e.g. service_user.domain_admin_service()
-        @driver = Identity::Driver::Fog.new(auth, with_limes: services.try(&:resource_management).try(&:available?))
-      end
-      @driver
-    end
-
-    def available?(action_name_sym=nil)
-      not current_user.service_url('identity', region: region).nil?
+  # This class implements the identity api
+  class IdentityService < Core::ServiceLayerNg::Service
+    def available?(_action_name_sym = nil)
+      !current_user.service_url('identity', region: region).nil?
     end
 
     def has_projects?
@@ -47,8 +31,8 @@ module ServiceLayer
     end
 
     ###################### USERS ##########################
-    def users(filter={})
-      driver.map_to(Identity::User).users(filter)
+    def users(filter = {})
+      api.identity.list_users(filter).map_to(Identity::UserNg)
     end
 
     def find_user(id)

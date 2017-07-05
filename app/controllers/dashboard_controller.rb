@@ -41,6 +41,12 @@ class DashboardController < ::ScopeController
   before_filter :load_user_projects, except: [:terms_of_use]
   before_filter :set_mailer_host
 
+  before_filter do
+    #services_ng.identity
+    #service_user_ng.identity
+    byebug
+  end
+
   # even if token is not expired yet we get sometimes the error "token not found"
   # so we try to catch this error here and redirect user to login screen
   rescue_from "Excon::Error::NotFound" do |error|
