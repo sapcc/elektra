@@ -11,12 +11,12 @@ module Compute
       @instances = []
       if @scoped_project_id
         @instances = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
-          services.compute.servers(@admin_option.merge(pagination_options))
+          services_ng.compute.servers(@admin_option.merge(pagination_options))
         end
 
         # get/calculate quota data for non-admin view
         unless @all_projects
-          usage = services.compute.usage
+          usage = services_ng.compute.usage
 
           @quota_data = services.resource_management.quota_data([
             {service_name: :compute, resource_name: :instances, usage: usage.instances},
