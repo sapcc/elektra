@@ -2,7 +2,7 @@
 
 module ServiceLayerNg
   # This module implements Openstack Project API
-  module Projects
+  module Project
     def has_projects?
       api.identity.get_available_project_scopes.data.length.positive?
     end

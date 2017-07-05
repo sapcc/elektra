@@ -2,7 +2,7 @@
 
 module ServiceLayerNg
   # This module implements Openstack User API
-  module Users
+  module User
     def users(filter = {})
       api.identity.list_users(filter).map_to(Identity::UserNg)
     end
