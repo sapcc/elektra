@@ -1,5 +1,5 @@
 module Compute
-  class Service < Core::ServiceLayer::Model
+  class Service < Core::ServiceLayerNg::Model
     def name
       read('binary')
     end

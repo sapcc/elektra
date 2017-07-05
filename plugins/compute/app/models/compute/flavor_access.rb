@@ -1,5 +1,5 @@
 module Compute
-  class FlavorAccess < Core::ServiceLayer::Model
+  class FlavorAccess < Core::ServiceLayerNg::Model
     def save
       # execute before callback
       before_save

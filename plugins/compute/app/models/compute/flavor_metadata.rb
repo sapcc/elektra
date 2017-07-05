@@ -1,5 +1,5 @@
 module Compute
-  class FlavorMetadata < Core::ServiceLayer::Model
+  class FlavorMetadata < Core::ServiceLayerNg::Model
     def save
       raise "Do not use save. Use add and remove instead"
     end

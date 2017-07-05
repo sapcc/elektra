@@ -1,4 +1,4 @@
 module Compute
-  class HostAggregate < Core::ServiceLayer::Model
+  class HostAggregate < Core::ServiceLayerNg::Model
   end
 end

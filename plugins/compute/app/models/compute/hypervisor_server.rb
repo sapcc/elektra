@@ -1,5 +1,5 @@
 module Compute
-  class HypervisorServer < Core::ServiceLayer::Model
+  class HypervisorServer < Core::ServiceLayerNg::Model
     def id
       read('uuid')
     end

@@ -1,5 +1,5 @@
 module Compute
-  class OsVolume < Core::ServiceLayer::Model
+  class OsVolume < Core::ServiceLayerNg::Model
     def attachment_by_server_id(server_id)
       attachments.find{|a|a["server_id"]==server_id}
     end

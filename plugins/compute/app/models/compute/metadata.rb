@@ -1,5 +1,5 @@
 module Compute
-  class Metadata < Core::ServiceLayer::Model
+  class Metadata < Core::ServiceLayerNg::Model
 
   end
 end
