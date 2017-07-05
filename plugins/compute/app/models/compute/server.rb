@@ -61,7 +61,6 @@ module Compute
     end
 
     def security_groups_details
-      puts @service.class
       @service.security_groups_details self.id
     end
 
