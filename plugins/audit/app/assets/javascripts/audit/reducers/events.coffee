@@ -9,14 +9,16 @@
     filterTerm: null
     items: []
     isFetching: false
+    filterStartTime: ''
+    filterEndTime: ''
 
-  updateFilter=(state,{filterType,filterTerm}) ->
+  updateFilterStartTime = (state,{filterStartTime}) ->
     ReactHelpers.mergeObjects({},state,{
-      filterType: filterType
-      filterTerm: filterTerm
+      filterStartTime: filterStartTime
     })
 
-  updateOffset=(state,{offset}) ->
+
+  updateOffset = (state,{offset}) ->
     ReactHelpers.mergeObjects({},state,{
       offset: offset
     })
@@ -26,13 +28,13 @@
       isFetching: true
     })
 
-  requestEventsFailure=(state,{error})->
+  requestEventsFailure = (state,{error})->
     ReactHelpers.mergeObjects({},state,{
       isFetching: false
       error: error
     })
 
-  receiveEvents=(state,{events,total})->
+  receiveEvents = (state,{events,total})->
     ReactHelpers.mergeObjects({},state,{
       isFetching: false
       items: events
@@ -42,7 +44,7 @@
 
   # Event Details
 
-  toggleEventDetailsVisible= (state,{eventId, detailsVisible}) ->
+  toggleEventDetailsVisible = (state,{eventId, detailsVisible}) ->
     newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
       detailsVisible: detailsVisible
     })
@@ -52,13 +54,13 @@
       isFetchingDetails: true
     })
 
-  requestEventDetailsFailure=(state,{eventId, error}) ->
+  requestEventDetailsFailure = (state,{eventId, error}) ->
     newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
       isFetchingDetails: false
       error: error
     })
 
-  receiveEventDetails=(state,{eventId, eventDetails}) ->
+  receiveEventDetails = (state,{eventId, eventDetails}) ->
     newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
       details: eventDetails
       isFetchingDetails: false
@@ -72,7 +74,7 @@
       when app.REQUEST_EVENTS                 then requestEvents(state,action)
       when app.RECEIVE_EVENTS                 then receiveEvents(state,action)
       when app.REQUEST_EVENTS_FAILURE         then requestEventsFailure(state,action)
-      when app.UPDATE_FILTER                  then updateFilter(state,action)
+      when app.UPDATE_FILTER_START_TIME       then updateFilterStartTime(state,action)
       when app.UPDATE_OFFSET                  then updateOffset(state,action)
       when app.TOGGLE_EVENT_DETAILS_VISIBLE   then toggleEventDetailsVisible(state,action)
       when app.REQUEST_EVENT_DETAILS          then requestEventDetails(state,action)
