@@ -23,7 +23,7 @@
       filterType      = events.filterType
       filterTerm      = events.filterTerm
       filterStartTime = events.filterStartTime
-      filterEndTime   = ''
+      filterEndTime   = events.filterEndTime
 
 
       dispatch(requestEvents())
@@ -66,7 +66,17 @@
         dispatch(loadEvents())
       # TODO: Add else case with validation error display for user
 
+  updateFilterEndTime = (filterEndTime) ->
+    type: app.UPDATE_FILTER_END_TIME
+    filterEndTime: filterEndTime
 
+  filterEventsEndTime = (filterEndTime) ->
+    (dispatch) ->
+      # trigger api call only if the given start time is a valid date or empty string
+      if moment(filterEndTime).isValid() || ReactHelpers.isEmptyString(filterEndTime)
+        dispatch(updateFilterEndTime(filterEndTime))
+        dispatch(loadEvents())
+      # TODO: Add else case with validation error display for user
 
 
 
@@ -124,6 +134,7 @@
   # export
   app.fetchEvents                 = fetchEvents
   app.filterEventsStartTime       = filterEventsStartTime
+  app.filterEventsEndTime         = filterEventsEndTime
   app.toggleEventDetails          = toggleEventDetails
 
 )(audit)

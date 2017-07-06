@@ -17,6 +17,10 @@
       filterStartTime: filterStartTime
     })
 
+  updateFilterEndTime = (state,{filterEndTime}) ->
+    ReactHelpers.mergeObjects({},state,{
+      filterEndTime: filterEndTime
+    })
 
   updateOffset = (state,{offset}) ->
     ReactHelpers.mergeObjects({},state,{
@@ -75,6 +79,7 @@
       when app.RECEIVE_EVENTS                 then receiveEvents(state,action)
       when app.REQUEST_EVENTS_FAILURE         then requestEventsFailure(state,action)
       when app.UPDATE_FILTER_START_TIME       then updateFilterStartTime(state,action)
+      when app.UPDATE_FILTER_END_TIME         then updateFilterEndTime(state,action)
       when app.UPDATE_OFFSET                  then updateOffset(state,action)
       when app.TOGGLE_EVENT_DETAILS_VISIBLE   then toggleEventDetailsVisible(state,action)
       when app.REQUEST_EVENT_DETAILS          then requestEventDetails(state,action)

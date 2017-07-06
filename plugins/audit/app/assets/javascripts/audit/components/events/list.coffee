@@ -5,15 +5,15 @@
 # import
 { div, span, label, i, input, table, thead, tbody, tr, th, td } = React.DOM
 { connect } = ReactRedux
-{ EventItem, EventItemDetails, filterEventsStartTime } = audit
+{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime } = audit
 
-Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterStartTime, filterEndTime}) ->
+Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterEventsEndTime, filterStartTime, filterEndTime}) ->
   div null,
     div className: 'toolbar toolbar-controlcenter',
       label null, 'Time range:'
       React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, onChange: ((e) -> filterEventsStartTime(e))
       span className: 'toolbar-input-divider', '\u2013' # EN DASH: &ndash;
-      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, onChange: ((e) -> filterEventsStartTime(e))
+      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, onChange: ((e) -> filterEventsEndTime(e))
 
 
 
@@ -53,9 +53,12 @@ Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterStartTim
 
 Events = connect(
   (state) ->
-    filterStartTime: state.filterStartTime
+    filterStartTime:  state.filterStartTime
+    filterEndTime:    state.filterEndTime
   (dispatch) ->
     filterEventsStartTime: (filterStartTime) -> dispatch(filterEventsStartTime(filterStartTime))
+    filterEventsEndTime: (filterEndTime) -> dispatch(filterEventsEndTime(filterEndTime))
+
 
 )(Events)
 
