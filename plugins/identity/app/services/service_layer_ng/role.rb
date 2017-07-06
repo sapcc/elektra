@@ -4,7 +4,7 @@ module ServiceLayerNg
   # This module implements Openstack Role API
   module Role
     def roles
-      @roles ||= api.identity.list_roles.map_to(Identity::RoleNg)
+      @roles ||= api.identity.list_roles.map_to(Identity::Role)
     end
 
     def find_role(id)

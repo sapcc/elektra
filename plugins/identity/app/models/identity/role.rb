@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module Identity
-  class Role < Core::ServiceLayer::Model
-    
+  # This class represents the Openstack Role
+  class Role < Core::ServiceLayerNg::Model
   end
 end

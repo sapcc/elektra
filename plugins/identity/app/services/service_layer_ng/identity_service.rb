@@ -12,7 +12,7 @@ module ServiceLayerNg
     include OsCredential
 
     def available?(_action_name_sym = nil)
-      !current_user.service_url('identity', region: region).nil?
+      api.has_service?('identity', region)
     end
   end
 end

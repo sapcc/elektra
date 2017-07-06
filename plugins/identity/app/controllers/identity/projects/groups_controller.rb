@@ -4,25 +4,25 @@ module Identity
       before_filter :load_roles, except: [:new]
 
       def new
-        enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
+        enforce_permissions('identity:project_group_create',{domain_id: @scoped_domain_id})
         @groups = service_user.groups(domain_id: @scoped_domain_id)
       end
 
       def create
-        enforce_permissions("identity:project_group_create",{domain_id: @scoped_domain_id})
+        enforce_permissions('identity:project_group_create',{domain_id: @scoped_domain_id})
 
         load_role_assignments
         @groups = service_user.groups(domain_id: @scoped_domain_id)
         @group = @groups.select{|group| group.name==params[:group_name] || group.id==params[:group_name]}.first rescue nil
 
         if @group.nil? or @group.id.nil?
-          @error = "Group not found."
+          @error = 'Group not found.'
           render action: :new
         elsif @group_roles[@group.id]
-          @error = "Group is already assigned to this project."
+          @error = 'Group is already assigned to this project.'
           render action: :new
         elsif @group.domain_id!=@scoped_domain_id
-          @error = "Group is not a member of this domain."
+          @error = 'Group is not a member of this domain.'
           render action: :new
         else
           render action: :create
@@ -33,17 +33,17 @@ module Identity
         @members = begin
           service_user.group_members(params[:group_id])
         rescue
-          services.identity.group_members(params[:group_id])
+          services_ng.identity.group_members(params[:group_id])
         end
       end
 
       def index
-        enforce_permissions("identity:project_group_list",{domain_id: @scoped_domain_id})
+        enforce_permissions('identity:project_group_list',{domain_id: @scoped_domain_id})
         load_role_assignments
       end
 
       def update
-        enforce_permissions("identity:project_group_update",{domain_id: @scoped_domain_id})
+        enforce_permissions('identity:project_group_update',{domain_id: @scoped_domain_id})
         load_role_assignments
 
         available_role_ids = @roles.collect{|r| r.id}
@@ -81,7 +81,7 @@ module Identity
           end
         end
 
-        audit_logger.info(current_user, "has updated group role assignments for project #{@scoped_project_name} (#{@scoped_project_id})")
+        audit_logger.info(current_user, 'has updated group role assignments for project #{@scoped_project_name} (#{@scoped_project_id})')
 
         redirect_to projects_groups_path
       end
@@ -94,15 +94,15 @@ module Identity
       end
 
       def load_role_assignments
-        #@role_assignments ||= services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
-        @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id, include_names: true, include_subtree: true)
+        #@role_assignments ||= services_ng.identity.role_assignments('scope.project.id'=>@scoped_project_id)
+        @role_assignments ||= service_user.role_assignments('scope.project.id'=>@scoped_project_id, include_names: true, include_subtree: true)
         @group_roles ||= @role_assignments.inject({}) do |hash,ra|
-          group_id = (ra.group || {}).fetch("id",nil)
-          project_id = (ra.scope || {}).fetch("project",{}).fetch("id",nil)
+          group_id = (ra.group || {}).fetch('id',nil)
+          project_id = (ra.scope || {}).fetch('project',{}).fetch('id',nil)
           # ignore user role assignments
           if group_id and project_id==@scoped_project_id
-            hash[group_id] ||= {role_ids: [], roles:[], name: ra.group.fetch("name",'unknown')}
-            hash[group_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
+            hash[group_id] ||= {role_ids: [], roles:[], name: ra.group.fetch('name','unknown')}
+            hash[group_id][:roles] << { id: ra.role['id'], name: ra.role['name'] }
           end
           hash
         end

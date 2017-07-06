@@ -8,7 +8,7 @@ module Core
 
       def initialize(response)
         if response
-          @code = response.code
+          @code = response.code.try(:to_i)
           @code_type = code_type
           @error_type = error_type
 

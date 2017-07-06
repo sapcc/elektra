@@ -4,11 +4,11 @@ module ServiceLayerNg
   # This module implements Openstack User API
   module User
     def users(filter = {})
-      api.identity.list_users(filter).map_to(Identity::UserNg)
+      api.identity.list_users(filter).map_to(Identity::User)
     end
 
     def find_user!(id)
-      api.identity.show_user_details(id).map_to(Identity::UserNg)
+      api.identity.show_user_details(id).map_to(Identity::User)
     end
 
     def find_user(id)
@@ -18,7 +18,7 @@ module ServiceLayerNg
     end
 
     def new_user(attributes = {})
-      map_to(Identity::UserNg, attributes)
+      map_to(Identity::User, attributes)
     end
 
     # A special case of list_scope_admins that returns a list of CC admins.

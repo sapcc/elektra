@@ -84,6 +84,17 @@ class DashboardController < ::ScopeController
     )
   end
 
+  rescue_from 'Core::Api::Error' do |exception|
+    if exception.code.to_i == 401
+      redirect_to monsoon_openstack_auth.login_path(
+        domain_name: @scoped_domain_name, after_login: params[:after_login]
+      )
+    else
+      render_exception_page(exception, title: exception.code_type,
+                                       description: :message)
+    end
+  end
+
   # catch all mentioned errors and render error page
   rescue_and_render_exception_page [
     {
@@ -107,7 +118,7 @@ class DashboardController < ::ScopeController
 
   def rescope_token
     if @scoped_project_id.nil? &&
-       service_user_ng.identity.role_assignments(
+       service_user.identity.role_assignments(
          'user.id' => current_user.id,
          'scope.domain.id' => @scoped_domain_id,
          'effective' => true
@@ -157,8 +168,10 @@ class DashboardController < ::ScopeController
 
   def find_users_by_name
     name = params[:name] || params[:term] || ''
-    users = UserProfile.search_by_name(name).uniq(&:uid)
-    render json: users
+    users = UserProfile.search_by_name(name).to_a.uniq(&:name)
+    render json: users.collect { |u|
+      { id: u.full_name, name: u.name, full_name: u.full_name, email: u.email }
+    }
   end
 
   def find_cached_domains
@@ -242,7 +255,7 @@ class DashboardController < ::ScopeController
     # get all projects for user (this might be expensive, might need caching,
     # ajaxifying, ...)
     @user_domain_projects ||= begin
-                                service_user_ng.identity.user_projects(
+                                service_user.identity.user_projects(
                                   current_user.id,
                                   domain_id: @scoped_domain_id
                                 ).sort_by(&:name)
@@ -333,14 +346,12 @@ class DashboardController < ::ScopeController
       help_links = File.join(plugin.path, 'plugin_help_links.md')
     end
 
-
     # load plugin specific help text
-    @plugin_help_text = File.new(help_file, "r").read if File.exists?(help_file)
-
+    @plugin_help_text = File.new(help_file, 'r').read if File.exist?(help_file)
+    return unless File.exist?(help_links)
     # load plugin specific help links
-    if File.exists?(help_links)
-      @plugin_help_links = File.new(help_links, "r").read
-      @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}', sap_url_for('documentation'))
-    end
+    @plugin_help_links = File.new(help_links, 'r').read
+    @plugin_help_links = @plugin_help_links.gsub('#{@sap_docu_url}',
+                                                 sap_url_for('documentation'))
   end
 end

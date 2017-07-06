@@ -12,10 +12,11 @@ module Core
 
       strip_attributes
 
-      attr_reader :errors
-      attr_accessor :service, :id
+      attr_reader :errors, :service
+      attr_accessor :id
 
-      def initialize(params = nil)
+      def initialize(service, params = nil)
+        @service = service
         self.attributes = params
         # get just the name of class without namespaces
         @class_name = self.class.name.split('::').last.underscore
@@ -23,6 +24,10 @@ module Core
         @errors = ActiveModel::Errors.new(self)
         # execute after callback
         after_initialize
+      end
+
+      def inspect
+        attributes.to_s
       end
 
       def attributes

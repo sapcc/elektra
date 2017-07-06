@@ -9,14 +9,11 @@ class ApplicationController < ActionController::Base
 
   # includes services method
   # use: services.SERVICE_NAME.METHOD_NAME
-  # (e.g. services.identity.auth_projects)
+  # (e.g. services_ng.identity.auth_projects)
   # TODO: should be removed after switch to misty
   include Services
 
   include ServicesNg
-  # TODO: should be removed after switch to misty
-  include ServiceUser
-
   include CurrentUserWrapper
   include Core::Paginatable
 

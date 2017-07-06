@@ -23,18 +23,25 @@ module ErrorRenderer
       value = lambda do |param|
         v = map[param.to_sym] || map[param.to_s]
         return nil if v.nil?
-        return exception.send(v).to_s if v.kind_of?(Symbol)
-        return v.call(exception,self).to_s if v.kind_of?(Proc)
+        return exception.send(v).to_s if v.is_a?(Symbol)
+        return v.call(exception, self).to_s if v.is_a?(Proc)
         return v.to_s
       end
-
+      # byebug
+      status = if exception.respond_to?(:status)
+                 exception.status
+               elsif exception.respond_to?(:code)
+                 exception.code
+               else
+                 503
+               end
       begin
         @title = value.call(:title) || exception.class.name.split('::').last.humanize
         @description = value.call(:description) || (exception.message rescue exception.to_s)
         @details = value.call(:details) || exception.class.name+"\n"+(exception.backtrace rescue '').join("\n")
         @exception_id = value.call(:exception_id) || request.uuid
         @warning = value.call(:warning) || false
-        @status = value.call(:status) || (exception.respond_to?(:status)? exception.status: 503)
+        @status = value.call(:status) || status
       rescue => e
         @title = e.class.name.split('::').last.humanize
         @description = e.message
@@ -43,8 +50,6 @@ module ErrorRenderer
         @warning = false
         @status = 503
       end
-
-      status = @status
 
       unless @warning
         logger.error(@exception_id+": "+@title+". "+@description)
@@ -106,9 +111,9 @@ module ErrorRenderer
           klass = nil
           exception_mapping.each do |class_name,mapping|
             found_class = eval(class_name)
-            next if klass and found_class > klass
+            next if klass && found_class > klass
 
-            if found_class>exception.class
+            if found_class > exception.class
               map = mapping
             end
           end

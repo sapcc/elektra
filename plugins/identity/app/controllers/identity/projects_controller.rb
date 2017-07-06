@@ -32,7 +32,7 @@ module Identity
     end
 
     def view
-      @project = services.identity.find_project(@project_id, [:subtree_as_ids, :parents_as_ids])
+      @project = services_ng.identity.find_project(@project_id, [:subtree_as_ids, :parents_as_ids])
     end
 
     def show_wizard
@@ -41,12 +41,12 @@ module Identity
     end
 
     def edit
-      @project = services.identity.find_project(@project_id)
+      @project = services_ng.identity.find_project(@project_id)
     end
 
     def update
       params[:project][:enabled] = (params[:project][:enabled]==true or params[:project][:enabled]=='true') ? true : false
-      @project = services.identity.find_project(@project_id)
+      @project = services_ng.identity.find_project(@project_id)
       @project.attributes = params[:project]
       @project.domain_id=@scoped_domain_id
 
@@ -212,7 +212,7 @@ module Identity
 
     def update_networking_wizard_status
       if current_user.has_role?('admin') and !current_user.has_role?('network_admin')
-        network_admin_role = services.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
+        network_admin_role = services_ng.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
         # Hack: extend current_user context to add the new assigned role
         current_user.context["roles"] << { "id" => network_admin_role.id, "name" => network_admin_role.name }
       end
