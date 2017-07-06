@@ -14,3 +14,22 @@
   font-size: $font-size-small;
   color: #aaa;
 }
+
+// TOOLBAR
+
+.toolbar.toolbar-controlcenter {
+  display: flex;
+
+  label, span {
+    line-height: 34px; // to match input height
+  }
+
+  label {
+    margin-bottom: 0;
+    padding-right: 8px;
+  }
+
+  .toolbar-input-divider {
+    padding: 0 8px;
+  }
+}
