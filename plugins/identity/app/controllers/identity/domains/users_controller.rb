@@ -3,12 +3,12 @@ module Identity
     class UsersController < DashboardController
       def index
         enforce_permissions("identity:user_list", domain_id: @scoped_domain_id)
-        @users = services.identity.users(domain_id:@scoped_domain_id)
+        @users = services_ng.identity.users(domain_id:@scoped_domain_id)
       end
       
       def enable
         enforce_permissions("identity:user_update", domain_id: @scoped_domain_id)
-        @user = services.identity.find_user(params[:user_id])
+        @user = services_ng.identity.find_user(params[:user_id])
         @user.enabled=true
         if @user.save
           flash.now[:notice] = "User #{@user.name} has been enabled!"
@@ -24,7 +24,7 @@ module Identity
       
       def disable
         enforce_permissions("identity:user_update", domain_id: @scoped_domain_id)
-        @user = services.identity.find_user(params[:user_id])
+        @user = services_ng.identity.find_user(params[:user_id])
         @user.enabled=false
         if @user.save
           flash.now[:notice] = "User #{@user.name} has been disabled!"

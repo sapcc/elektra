@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/flystack/misty.git
-  revision: 681eefc7dd1208f56ab3cdb6eba9285fa8568bb1
+  revision: 4e64326129ff2fb4c41692874580258764add50b
   branch: master
   specs:
-    misty (0.6.2)
+    misty (0.7.0)
       json (>= 1.8.3, < 3)
 
 GIT

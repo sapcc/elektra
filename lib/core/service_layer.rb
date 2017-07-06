@@ -60,7 +60,7 @@ module Core
         end
       end
 
-      # this method is called every time the services.identity or services.volume ect. in controller is requested.
+      # this method is called every time the services_ng.identity or services.volume ect. in controller is requested.
       # See InstanceMethods#services
       def method_missing(method_sym, *arguments, &block)
         # ignore classes

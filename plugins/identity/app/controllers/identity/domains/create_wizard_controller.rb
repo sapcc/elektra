@@ -19,7 +19,7 @@ module Identity
 
         # user is not allowed to create a project (maybe)
         # so use admin identity for that!
-        @project = services.identity.new_project
+        @project = services_ng.identity.new_project
         @project.attributes = project_params
 
         @project.enabled = @project.enabled == 'true'
@@ -27,10 +27,10 @@ module Identity
         @project.escape_attributes!
         
         if @project.save
-          # services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
-          # services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')
-          # services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
-          # services.identity.clear_auth_projects_tree_cache
+          # services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
+          # services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')
+          # services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
+          # services_ng.identity.clear_auth_projects_tree_cache
 
           audit_logger.info(current_user, "has created", @project)
 
@@ -38,24 +38,24 @@ module Identity
           if @inquiry
             if @inquiry.requester and @inquiry.requester.uid
               # give requester needed roles
-              services.identity.grant_project_user_role_by_role_name(@project.id, @inquiry.requester.uid, 'admin')
-              services.identity.grant_project_user_role_by_role_name(@project.id, @inquiry.requester.uid, 'member')
-              services.identity.grant_project_user_role_by_role_name(@project.id, @inquiry.requester.uid, 'network_admin')
+              services_ng.identity.grant_project_user_role_by_role_name(@project.id, @inquiry.requester.uid, 'admin')
+              services_ng.identity.grant_project_user_role_by_role_name(@project.id, @inquiry.requester.uid, 'member')
+              services_ng.identity.grant_project_user_role_by_role_name(@project.id, @inquiry.requester.uid, 'network_admin')
             end
 
             inquiry = services.inquiry.set_inquiry_state(@inquiry.id, :approved, "Project #{@project.name} approved and created by #{current_user.full_name}")
-            services.identity.grant_project_user_role_by_role_name(@project.id, inquiry.requester.uid, 'admin')
+            services_ng.identity.grant_project_user_role_by_role_name(@project.id, inquiry.requester.uid, 'admin')
             render 'identity/domains/create_wizard/create.js'
           else
             # there is no requiry -> current user is the creator of this project.
             # give current user all needed roles
-            services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
-            services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')
-            services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
+            services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'admin')
+            services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'member')
+            services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
 
             redirect_to :domain
           end
-          services.identity.clear_auth_projects_tree_cache
+          services_ng.identity.clear_auth_projects_tree_cache
         else
           # put cost_params back into @project where the view can find them to re-render the form
           @project.cost_control = cost_params unless cost_params.nil?

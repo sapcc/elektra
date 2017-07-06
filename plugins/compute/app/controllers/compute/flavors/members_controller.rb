@@ -13,7 +13,7 @@ module Compute
 
         # validate if we are allowed to :)
         if current_user.is_allowed?('identity:project_get')
-          @project = services.identity.find_project(@member.tenant_id.strip)
+          @project = services_ng.identity.find_project(@member.tenant_id.strip)
           if @project.nil?
             @member.errors.add(:project, "Could not find project #{@member.tenant_id}")
             return

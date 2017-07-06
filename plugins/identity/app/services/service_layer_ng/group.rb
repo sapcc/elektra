@@ -4,11 +4,11 @@ module ServiceLayerNg
   # This module implements Openstack Group API
   module Group
     def user_groups
-      api.identity.list_groups_to_which_a_user_belongs.map_to(Identity::GroupNg)
+      api.identity.list_groups_to_which_a_user_belongs.map_to(Identity::Group)
     end
 
     def groups(filter = {})
-      api.identity.list_groups(filter).map_to(Identity::GroupNg)
+      api.identity.list_groups(filter).map_to(Identity::Group)
     end
 
     # This method is used by model.
@@ -23,11 +23,11 @@ module ServiceLayerNg
     end
 
     def new_group(attributes = {})
-      map_to(Identity::GroupNg, attributes)
+      map_to(Identity::Group, attributes)
     end
 
     def find_group!(id)
-      api.identity.show_group_details(id).map_to(Identity::GroupNg)
+      api.identity.show_group_details(id).map_to(Identity::Group)
     end
 
     def find_group(id)
@@ -39,7 +39,7 @@ module ServiceLayerNg
     def group_members(group_id, filter = {})
       api.identity
          .list_users_in_group(group_id, filter)
-         .map_to(Identity::UserNg)
+         .map_to(Identity::User)
     end
 
     def add_group_member(group_id, user_id)

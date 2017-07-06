@@ -40,7 +40,7 @@ module Networking
           end
           #byebug
         end
-        #services.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
+        #services_ng.identity.grant_project_user_role_by_role_name(@project.id, current_user.id, 'network_admin')
         if @network_wizard.setup_option=='simple'
 
         end

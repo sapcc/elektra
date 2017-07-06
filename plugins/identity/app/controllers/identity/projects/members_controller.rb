@@ -84,13 +84,13 @@ module Identity
 
       # FIXME: duplicated in GroupsController
       def load_roles
-        @roles = service_user.roles.keep_if { |role| ALLOWED_ROLES.include?(role.name) }.sort_by(&:name)
+        @roles = service_user.identity.roles.keep_if { |role| ALLOWED_ROLES.include?(role.name) }.sort_by(&:name)
       end
 
       def load_role_assignments
-        #@role_assignments ||= services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
+        #@role_assignments ||= services_ng.identity.role_assignments("scope.project.id"=>@scoped_project_id)
         # we need to add include_subtree option to have permissions. But this causes that other projects then current are included in this list.
-        @role_assignments ||= service_user.role_assignments("scope.project.id"=>@scoped_project_id, include_names: true, include_subtree: true)
+        @role_assignments ||= service_user.identity.role_assignments("scope.project.id"=>@scoped_project_id, include_names: true, include_subtree: true)
 
         @user_roles ||= @role_assignments.inject({}) do |hash,ra|
           user_id = (ra.user || {}).fetch("id",nil)

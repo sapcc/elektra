@@ -49,8 +49,11 @@ module Core
               klazz_or_map,
               @origin_response.body
             )
-            ClientWrapper.map_to(klazz, data, options) do |obj|
-              obj.service = @elektra_service
+
+            if @elektra_service.try(:respond_to?, :map_to)
+              @elektra_service.map_to(klazz, data, options)
+            else
+              ClientWrapper.map_to(klazz, data, options)
             end
           end
         end
@@ -102,11 +105,29 @@ module Core
         end
       end
 
-      def map_to(*args)
-        self.class.map_to(*args)
+      def map_to(*args, &block)
+        self.class.map_to(*args, &block)
+      end
+
+      def catalog
+        @api_client.auth.catalog
+      end
+
+      def token
+        @api_client.auth.token
+      end
+
+      def has_service?(name, region = nil)
+        service = catalog.find do |service|
+          [service['name'], service['type']].include?(name)
+        end
+
+        return service.present? unless region
+        service['endpoints'].select { |e| e['region'] == region }.size.positive?
       end
 
       def initialize(api_client, elektra_service)
+        @api_client = api_client
         # create class methods for each service.
         # identity, compute, networking ....
         Misty.services.collect(&:name).each do |name|

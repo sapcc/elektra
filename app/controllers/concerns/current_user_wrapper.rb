@@ -10,8 +10,7 @@ module CurrentUserWrapper
       return @current_user_wrapper
     end
 
-    @current_user_wrapper = CurrentUserWrapper.new(super, session,
-                                                   service_user_ng)
+    @current_user_wrapper = CurrentUserWrapper.new(super, session, service_user)
   end
 
   # Wrapper for current user

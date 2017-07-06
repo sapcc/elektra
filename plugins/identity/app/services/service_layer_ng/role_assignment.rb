@@ -6,7 +6,7 @@ module ServiceLayerNg
     def role_assignments(filter = {})
       effective = filter.delete(:effective) || filter.delete('effective')
       assignments = api.identity.list_role_assignments(filter)
-                       .map_to(Identity::RoleAssignmentNg)
+                       .map_to(Identity::RoleAssignment)
       # return if no effective filter required
       return assignments unless effective
 
@@ -19,7 +19,7 @@ module ServiceLayerNg
           array << ra
         elsif ra.group.present?
           group_members(ra.group['id']).data.each do |user|
-            array << map_to(Identity::RoleAssignmentNg,
+            array << map_to(Identity::RoleAssignment,
                             'role' => ra.role,
                             'scope' => ra.scope,
                             'user' => { 'id' => user.id })

@@ -4,8 +4,8 @@
 # the controller should respond_to current_user (monsoon-openstack-auth gem)
 module ServicesNg
   def self.included(base)
-    base.send :helper_method, :services_ng, :service_user_ng,
-              :cloud_admin_ng, :current_region
+    base.send :helper_method, :services_ng, :service_user,
+              :cloud_admin, :current_region
   end
 
   # try to find a region based on catalog and default region
@@ -22,8 +22,8 @@ module ServicesNg
     @services_ng ||= Core::ServiceLayerNg::ServicesManager.new(api_client)
   end
 
-  def service_user_ng
-    return @service_user_ng if @service_user_ng
+  def service_user
+    return @service_user if @service_user
 
     friendly_id = FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
       'Domain', nil, params[:domain_id]
@@ -32,14 +32,13 @@ module ServicesNg
     scope_domain = (friendly_id && friendly_id.key) ||
                    params[:domain_id] || Rails.configuration.default_domain
 
-    @service_user_ng ||= Core::ServiceLayerNg::ServicesManager.new(
-      Core::Api::ClientManager
-      .service_user_api_client(scope_domain)
+    @service_user ||= Core::ServiceLayerNg::ServicesManager.new(
+      Core::Api::ClientManager.service_user_api_client(scope_domain)
     )
   end
 
-  def cloud_admin_ng
-    @cloud_admin_ng ||= Core::ServiceLayerNg::ServicesManager.new(
+  def cloud_admin
+    @cloud_admin ||= Core::ServiceLayerNg::ServicesManager.new(
       Core::Api::ClientManager.cloud_admin_api_client
     )
   end

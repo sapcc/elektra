@@ -9,12 +9,12 @@ module ServiceLayerNg
 
     def find_credential(id = nil)
       return nil if id.blank?
-      api.identity.show_credential_details(id).map_to(Identity::OsCredentialNg)
+      api.identity.show_credential_details(id).map_to(Identity::OsCredential)
     end
 
     def credentials(filter = {})
       @user_credentials ||= api.identity.list_credentials(filter)
-                               .map_to(Identity::OsCredentialNg)
+                               .map_to(Identity::OsCredential)
     end
   end
 end
