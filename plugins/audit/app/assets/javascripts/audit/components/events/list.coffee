@@ -3,14 +3,18 @@
 
 
 # import
-{ div, span, i, input, table, thead, tbody, tr, th, td } = React.DOM
+{ div, span, label, i, input, table, thead, tbody, tr, th, td } = React.DOM
 { connect } = ReactRedux
 { EventItem, EventItemDetails, filterEventsStartTime } = audit
 
-Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterStartTime}) ->
+Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterStartTime, filterEndTime}) ->
   div null,
-    div className: 'toolbar',
-      React.createElement Datetime, value: filterStartTime, onChange: ((e) -> filterEventsStartTime(e))
+    div className: 'toolbar toolbar-controlcenter',
+      label null, 'Time range:'
+      React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, onChange: ((e) -> filterEventsStartTime(e))
+      span className: 'toolbar-input-divider', '\u2013' # EN DASH: &ndash;
+      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, onChange: ((e) -> filterEventsStartTime(e))
+
 
 
       # input onChange: ((e) -> filterEvents('test','test'))
