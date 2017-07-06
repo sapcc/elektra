@@ -2,7 +2,7 @@
 
 { div } = React.DOM
 { connect } = ReactRedux
-{ EventList, fetchEvents, filterEvents } = audit
+{ EventList, fetchEvents, filterEventsStartTime } = audit
 
 App = React.createClass
   componentDidMount: ->
@@ -12,14 +12,16 @@ App = React.createClass
     React.createElement EventList,
       events: @props.events,
       isFetching: @props.isFetching,
-      filterEvents: @props.filterEvents,
-      loadEvents: @props.loadEvents
+      filterEventsStartTime: @props.filterEventsStartTime,
+      loadEvents: @props.loadEvents,
+      filterStartTime: @props.filterStartTime
 
 audit.App = connect(
   (state) ->
     events: state.events.items
     isFetching: state.events.isFetching
+    filterStartTime: state.events.filterStartTime
   (dispatch) ->
     loadEvents: (offset) -> dispatch(fetchEvents(offset))
-    filterEvents: (type, term) -> dispatch(filterEvents(type, term))
+    # filterEventsStartTime: (filterStartTime) -> dispatch(filterEventsStartTime(filterStartTime))
 )(App)

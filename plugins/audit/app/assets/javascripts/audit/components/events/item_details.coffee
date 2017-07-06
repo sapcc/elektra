@@ -2,7 +2,6 @@
 
 { div, button, span, pre, a, i, br, tr, td} = React.DOM
 { connect } = ReactRedux
-# { toggleEventDetails } = audit
 
 
 EventDetails = ({event}) ->
@@ -15,13 +14,6 @@ EventDetails = ({event}) ->
         JSON.stringify(event.details, null, 2)
 
 
-
-
-# Event = connect(
-#   (state) ->
-#   (dispatch) ->
-#     toggleDetails: (event) -> dispatch(toggleEventDetails(event))
-# )(Event)
 
 
 # export

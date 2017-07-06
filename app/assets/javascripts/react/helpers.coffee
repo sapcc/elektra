@@ -7,10 +7,10 @@ ReactHelpers.mergeObjects = (obj1,obj2,obj3={}) ->
   result[key] = obj3[key] for key of obj3
   result
 
-ReactHelpers.cloneHashMap=(obj)->
+ReactHelpers.cloneHashMap = (obj)->
   JSON.parse(JSON.stringify( obj ))
 
-ReactHelpers.findIndexInArray=(items,itemId, itemIdKey = 'id') ->
+ReactHelpers.findIndexInArray = (items,itemId, itemIdKey = 'id') ->
   index=-1
   for item,i in items
     if item[itemIdKey]==itemId
@@ -18,7 +18,7 @@ ReactHelpers.findIndexInArray=(items,itemId, itemIdKey = 'id') ->
       break
   index
 
-ReactHelpers.findInArray=(items,itemId) ->
+ReactHelpers.findInArray = (items,itemId) ->
   item = null
   for i in items
     if i.id==itemId
@@ -27,7 +27,7 @@ ReactHelpers.findInArray=(items,itemId) ->
   item
 
 # Updates attributes of items in an item list in state. Updates are passed as a hash map (attribute-key: attribute-value)
-ReactHelpers.updateItemInList=(state, itemId, itemIdKey, updates = {}) ->
+ReactHelpers.updateItemInList = (state, itemId, itemIdKey, updates = {}) ->
   index = ReactHelpers.findIndexInArray(state.items, itemId, itemIdKey)
   return state if index<0
 
@@ -39,11 +39,18 @@ ReactHelpers.updateItemInList=(state, itemId, itemIdKey, updates = {}) ->
 
 
 # Get value of given attribute from item in list
-ReactHelpers.getItemAttribute=(items, itemId, itemIdKey, attributeKey) ->
+ReactHelpers.getItemAttribute = (items, itemId, itemIdKey, attributeKey) ->
   index = ReactHelpers.findIndexInArray(items, itemId, itemIdKey)
   return '' if index<0
 
   items[index][attributeKey]
+
+
+# Turn given value into a String and check if length is 0
+ReactHelpers.isEmptyString = (s) ->
+  return true if String(s).length == 0
+
+
 
 
 @ReactHelpers = ReactHelpers
