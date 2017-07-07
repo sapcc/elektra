@@ -60,9 +60,10 @@ module Core
                 expires: current_user.context['expires_at'],
                 token: current_user.token
               }
-            }
-          }.merge(default_client_params)
+            },
+          }.merge(default_client_params).merge(SERVICE_OPTIONS)
         )
+        
       end
 
       def self.create_service_user_api_client(scope_domain)
