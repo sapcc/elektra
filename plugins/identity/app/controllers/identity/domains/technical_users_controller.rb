@@ -1,18 +1,26 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 module Identity
   module Domains
+    # Technical users
     class TechnicalUsersController < ::DashboardController
 
-      authorization_required only: [:index, :new, :create]
+      authorization_required only: %i[index new create]
 
       def index
-        services_ng.identity.users(domain_id:@scoped_domain_id, "name__startswith" => 'T' ).length
-        @technical_users = services_ng.identity.users(domain_id:@scoped_domain_id, "name__startswith" => 'T' ).select{|user| user.name.start_with?("T")}
+        services_ng.identity.users(domain_id: @scoped_domain_id,
+                                   'name__startswith' => 'T').length
+        @technical_users = services_ng.identity.users(
+          domain_id: @scoped_domain_id, 'name__startswith' => 'T'
+        ).select { |user| user.name.start_with?('T') }
       end
 
       def new
-        @technical_user = services_ng.identity.new_user(description: "Created by #{current_user.name}. Purpose: ")
+        @technical_user = services_ng.identity.new_user(
+          description: "Created by #{current_user.name}. Purpose: "
+        )
       end
 
       def create
@@ -26,7 +34,10 @@ module Identity
         @technical_user = services_ng.identity.new_user(attributes)
         @password = attributes[:password]
         if @technical_user.save
-          audit_logger.info(current_user, "has created technical user #{@technical_user.name} (#{@technical_user.id})")
+          audit_logger.info(
+            current_user,
+            "has created technical user #{@technical_user.name} (#{@technical_user.id})"
+          )
           render action: :create
         else
           render action: :new
@@ -35,12 +46,12 @@ module Identity
 
       def edit
         @technical_user = services_ng.identity.find_user(params[:id])
-        enforce_permissions("identity:technical_user_update", user: @technical_user)
+        enforce_permissions('identity:technical_user_update', user: @technical_user)
       end
 
       def update
         @technical_user = services_ng.identity.find_user(params[:id])
-        enforce_permissions("identity:technical_user_update", user: @technical_user)
+        enforce_permissions('identity:technical_user_update', user: @technical_user)
 
         @technical_user.description = params[:user][:description]
         if @technical_user.save
@@ -53,12 +64,12 @@ module Identity
 
       def reset_password
         @technical_user = services_ng.identity.find_user(params[:id])
-        enforce_permissions("identity:technical_user_reset_password", user: @technical_user)
+        enforce_permissions('identity:technical_user_reset_password', user: @technical_user)
       end
 
       def change_password
         @technical_user = services_ng.identity.find_user(params[:id])
-        enforce_permissions("identity:technical_user_reset_password", user: @technical_user)
+        enforce_permissions('identity:technical_user_reset_password', user: @technical_user)
 
         @new_password = generate_password
         @technical_user.password = @new_password
@@ -72,7 +83,7 @@ module Identity
 
       def destroy
         @technical_user = services_ng.identity.find_user(params[:id])
-        enforce_permissions("identity:technical_user_delete", user: @technical_user)
+        enforce_permissions('identity:technical_user_delete', user: @technical_user)
 
         if @technical_user.destroy
           audit_logger.info(current_user, "has deleted technical user #{@technical_user.name} (#{@technical_user.id})")
@@ -83,8 +94,9 @@ module Identity
       end
 
       private
-      def generate_password(length=15)
-        Array.new(length){[*"A".."Z", *"a".."z",*"0".."9"].sample}.join
+
+      def generate_password(length = 15)
+        Array.new(length) { [*"A".."Z", *"a".."z",*"0".."9"].sample }.join
       end
     end
   end

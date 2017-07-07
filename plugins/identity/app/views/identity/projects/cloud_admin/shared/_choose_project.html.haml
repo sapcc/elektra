@@ -1,20 +1,33 @@
 = form_tag url_for(params), method: :get, class: 'form-horizontal' do
   .form-group.string.col-sm-12.well
-    %label.string.required.col-sm-2.control-label
-      %abbr{title: "required"}*
-      Project ID
+    .row
 
-    .col-sm-5
-      .input-wrapper
-        %input.string.required.form-control#pid{name:"pid", value:params[:pid]}
-      %p.help-block
-        %i.fa.fa-info-circle
-        ID of a project where you want to change role assignments
-    .col-sm-2
-      = submit_tag 'Change Project', class: 'btn btn-primary'
+      %label.string.required.control-label.col-sm-2
+        Domain
 
-    .col-sm-3
-      - if @project or @domain
-        = "Domain: #{@domain.name}" if @domain
-        %br
-        = "Project: #{@project.name}" if @project
+      .col-sm-5
+        .input-wrapper
+          %input.string.required.form-control#pid{name:"domain", value:params[:domain]}
+        %p.help-block
+          %i.fa.fa-info-circle
+          Domain name or ID
+    .row
+      %label.string.required.control-label.col-sm-2
+        %abbr{title: "required"}*
+        Project
+
+      .col-sm-5
+        .input-wrapper
+          %input.string.required.form-control#pid{name:"project", value:params[:project]}
+        %p.help-block
+          %i.fa.fa-info-circle
+          Project name or ID
+
+      .col-sm-2
+        = submit_tag 'Choose Project', class: 'btn btn-primary'
+
+      .col-sm-3
+        - if @project or @domain
+          = "Domain: #{@domain.name}" if @domain
+          %br
+          = "Project: #{@project.name}" if @project

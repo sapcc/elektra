@@ -58,6 +58,12 @@ module ServiceLayerNg
     ################### MODEL INTERFACE #################
     # This method is used by model.
     # It has to return the data hash.
+    def create_project(params)
+      api.identity.create_project(project: params).data
+    end
+
+    # This method is used by model.
+    # It has to return the data hash.
     def update_project(id, params)
       api.identity.update_project(id, project: params).data
     end

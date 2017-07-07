@@ -6,7 +6,6 @@ module Core
     class ClientWrapper
       # Wrapper for misty services
       class Service
-
         # Wrapper for Response
         class Response
           # delegates some methods to origin response
@@ -53,7 +52,26 @@ module Core
             if @elektra_service.try(:respond_to?, :map_to)
               @elektra_service.map_to(klazz, data, options)
             else
-              ClientWrapper.map_to(klazz, data, options)
+              self.class.map_to(klazz, data, options)
+            end
+          end
+
+          def self.create_map_object(klazz, params = {}, &block)
+            obj = klazz.new(params)
+            block.call(obj) if block_given?
+            obj
+          end
+
+          # This method is used to map raw data to a Object.
+          def self.map_to(klazz, data, options = {}, &block)
+            if data.is_a?(Array)
+              data.collect do |item|
+                create_map_object(klazz, item.merge(options), &block)
+              end
+            elsif data.is_a?(Hash)
+              create_map_object(klazz, data.merge(options), &block)
+            else
+              data
             end
           end
         end
@@ -86,29 +104,6 @@ module Core
         end
       end
 
-      def self.create_map_object(klazz, params = {}, &block)
-        obj = klazz.new(params)
-        block.call(obj) if block_given?
-        obj
-      end
-
-      # This method is used to map raw data to a Object.
-      def self.map_to(klazz, data, options = {}, &block)
-        if data.is_a?(Array)
-          data.collect do |item|
-            create_map_object(klazz, item.merge(options), &block)
-          end
-        elsif data.is_a?(Hash)
-          create_map_object(klazz, data.merge(options), &block)
-        else
-          data
-        end
-      end
-
-      def map_to(*args, &block)
-        self.class.map_to(*args, &block)
-      end
-
       def catalog
         @api_client.auth.catalog
       end
@@ -118,8 +113,8 @@ module Core
       end
 
       def has_service?(name, region = nil)
-        service = catalog.find do |service|
-          [service['name'], service['type']].include?(name)
+        service = catalog.find do |s|
+          [s['name'], s['type']].include?(name)
         end
 
         return service.present? unless region

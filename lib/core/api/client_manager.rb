@@ -13,6 +13,7 @@ module Core
         {
           region_id:       Core.region_from_auth_url,
           ssl_verify_mode: Rails.configuration.ssl_verify_peer,
+          interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'public',
           log_level:       Logger::INFO,
 
           # needed because of wrong urls in service catalog.
@@ -68,7 +69,7 @@ module Core
         misty_params = {
           auth: {
             url:            ::Core.keystone_auth_endpoint,
-            user:           Rails.application.config.service_user_id,
+            user:           Rails.application.config.service_user_id+'a',
             user_domain:    Rails.application.config.service_user_domain_name,
             password:       Rails.application.config.service_user_password,
             domain:         scope_domain
@@ -76,7 +77,9 @@ module Core
         }.merge(default_client_params)
 
         begin
-          Misty::Cloud.new(misty_params)
+          a = Misty::Cloud.new(misty_params)
+          byebug
+          a
         rescue Misty::Auth::AuthenticationError => _e
           unless misty_params[:auth][:domain_id]
             misty_params[:auth].delete(:domain)

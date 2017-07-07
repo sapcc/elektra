@@ -257,7 +257,7 @@ module ResourceManagement
           resource: cfg.name,
           desired_quota: new_value,
         },
-        service_user.list_ccadmins(),
+        service_user.identity.list_ccadmins,
         {
           "approved": {
             "name": "Approve",
