@@ -45,9 +45,11 @@ module ServiceLayer
       # ccadmin, cc3test -> FloatingIP-internal-monsoon3
       domain_name = 'monsoon3' if ['ccadmin','cc3test'].include?(domain_name)
 
-      name_candidates = ["FloatingIP-external-#{domain_name}",
-      "FloatingIP-internal-#{domain_name}",
-      "Converged Cloud External"]
+      # WARNING: QUICK HACK FOR NEW FIP NETWORK IN EU-DE-1 This needs to be fixed asap to something generic
+      name_candidates = [ "FloatingIP-external-monsoon3-02",
+                          "FloatingIP-external-#{domain_name}",
+                          "FloatingIP-internal-#{domain_name}",
+                          "Converged Cloud External"]
       name_candidates.each do |name|
         network = driver.map_to(Networking::Network).networks("router:external"=>true, "name" => name).first
         return network if network
