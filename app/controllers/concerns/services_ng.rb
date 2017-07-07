@@ -23,7 +23,8 @@ module ServicesNg
   end
 
   def service_user
-    return @service_user if @service_user
+    # byebug
+    return @service_user if @service_user_loaded
 
     friendly_id = FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
       'Domain', nil, params[:domain_id]
@@ -32,6 +33,7 @@ module ServicesNg
     scope_domain = (friendly_id && friendly_id.key) ||
                    params[:domain_id] || Rails.configuration.default_domain
 
+    @service_user_loaded = true
     @service_user ||= Core::ServiceLayerNg::ServicesManager.new(
       Core::Api::ClientManager.service_user_api_client(scope_domain)
     )

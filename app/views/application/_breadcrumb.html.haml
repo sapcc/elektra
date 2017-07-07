@@ -24,7 +24,7 @@
             %i{class: selected_category_icon}
             = selected_service_name
             %span.caret
-          = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
+          =# render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
 
     .special-crumb
       - if services.available?(:webconsole) and plugin_name!='webconsole'

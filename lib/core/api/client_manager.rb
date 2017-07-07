@@ -69,7 +69,7 @@ module Core
         misty_params = {
           auth: {
             url:            ::Core.keystone_auth_endpoint,
-            user:           Rails.application.config.service_user_id+'a',
+            user:           Rails.application.config.service_user_id,#+'a',
             user_domain:    Rails.application.config.service_user_domain_name,
             password:       Rails.application.config.service_user_password,
             domain:         scope_domain
@@ -77,15 +77,19 @@ module Core
         }.merge(default_client_params)
 
         begin
-          a = Misty::Cloud.new(misty_params)
-          byebug
-          a
+          Misty::Cloud.new(misty_params)
         rescue Misty::Auth::AuthenticationError => _e
           unless misty_params[:auth][:domain_id]
             misty_params[:auth].delete(:domain)
             misty_params[:auth][:domain_id] = scope_domain
+            retry
           end
-          retry
+
+          raise ::Core::Error::ServiceUserNotAuthenticated,
+                <<~ERROR
+                  Could not authenticate service user.
+                  domain: #{scope_domain}"
+                ERROR
         end
       end
 

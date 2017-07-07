@@ -27,10 +27,19 @@ class ApplicationController < ActionController::Base
 
   # catch all api errors and render exception page
   rescue_and_render_exception_page [
-    { 'Excon::Error' => { title: 'Backend Service Error' } },
-    { 'Fog::OpenStack::Errors::ServiceError' => {
-      title: 'Backend Service Error'
-    } }
+    {
+      'Excon::Error' => { title: 'Backend Service Error' }
+    },
+    {
+      'Fog::OpenStack::Errors::ServiceError' =>
+        { title: 'Backend Service Error' }
+    },
+    {
+      'Core::Error::ServiceUserNotAuthenticated' => {
+        title: 'Service User Authentication Error',
+        description: :message
+      }
+    }
   ]
 
   def modal?
