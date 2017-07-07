@@ -73,10 +73,19 @@ module ServiceLayerNg
 
     def vnc_console(server_id,console_type='novnc')
       debug "[compute-service][Server] -> vnc_console -> POST /action"
-      api.compute.get_vnc_console_os_getvncconsole_action(
+      api.compute.get_vnc_console_os_getvncconsole_action_deprecated(
         server_id,
         "os-getVNCConsole" => {'type' => console_type }
       ).map_to(Compute::VncConsole)
+      
+      # TODO: since 2.5 remote-console should be available but for some reason it is not working
+      #       got a 404 not available
+      #api.compute.create_remote_console(
+      #  id,
+      #  "remote_console" => {
+      #    'protocol'=>'vnc',
+      #    'type' => console_type 
+      #}
     end
 
     def rebuild_server(server_id, image_ref, name, admin_pass=nil, metadata=nil, personality=nil)
