@@ -14,7 +14,7 @@ module Compute
         @instances = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
           services_ng.compute.servers(@admin_option.merge(pagination_options))
         end
-  
+
         # get/calculate quota data for non-admin view
         unless @all_projects
           usage = services_ng.compute.usage

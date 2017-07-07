@@ -9,7 +9,7 @@ module ServiceLayerNg
         @user_keypairs = []
         keypairs = api.compute.list_keypairs.map_to(Compute::Keypair)
         keypairs.each do |k|
-          kp = Compute::Keypair.new()
+          kp = Compute::Keypair.new(self)
           kp.attributes = k.keypair if k.keypair
           @user_keypairs << kp if kp
         end
