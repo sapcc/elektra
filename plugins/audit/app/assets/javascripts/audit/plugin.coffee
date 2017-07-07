@@ -6,6 +6,8 @@
 #= require audit/actions/index
 #= require audit/components/app
 #= require audit/helpers/data-format-helpers
+#= require audit/helpers/checks
+
 
 { createStore, applyMiddleware, compose } = Redux
 { Provider, connect } = ReactRedux
