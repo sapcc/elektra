@@ -13,7 +13,7 @@ module KeyManager
       @secret = services.key_manager.secret_with_metadata_payload(params[:id])
       # get the user name from the openstack id
       begin
-        @user = service_user.find_user(@secret.creator_id).name
+        @user = service_user.identity.find_user(@secret.creator_id).name
       rescue
       end
     end
