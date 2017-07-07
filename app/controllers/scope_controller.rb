@@ -77,12 +77,6 @@ class ScopeController < ::ApplicationController
     },
     {
       'Core::Error::DomainNotFound' => { title: 'Bad Domain' }
-    },
-    {
-      'Core::ServiceUser::Errors::AuthenticationError' => {
-        title: 'Service User Authentication Error',
-        description: :message
-      }
     }
   ]
 end
