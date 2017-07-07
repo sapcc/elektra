@@ -11,9 +11,9 @@ Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterEventsEn
   div null,
     div className: 'toolbar toolbar-controlcenter',
       label null, 'Time range:'
-      React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, onChange: ((e) -> filterEventsStartTime(e))
+      React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> filterEventsStartTime(e))
       span className: 'toolbar-input-divider', '\u2013' # EN DASH: &ndash;
-      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, onChange: ((e) -> filterEventsEndTime(e))
+      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> filterEventsEndTime(e))
 
 
 

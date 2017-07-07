@@ -33,7 +33,7 @@
         data: {
           limit: limit
           offset: offset
-          time: AuditDataFormatHelpers.buildTimeFilter(filterStartTime, filterEndTime)
+          time: AuditDataFormatter.buildTimeFilter(filterStartTime, filterEndTime)
         }
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveEvents(data["events"],data["total"]))

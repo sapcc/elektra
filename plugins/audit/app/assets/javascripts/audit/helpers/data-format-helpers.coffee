@@ -1,6 +1,6 @@
-AuditDataFormatHelpers = {}
+AuditDataFormatter = {}
 
-AuditDataFormatHelpers.buildTimeFilter = (filterStartTime, filterEndTime) ->
+AuditDataFormatter.buildTimeFilter = (filterStartTime, filterEndTime) ->
   timeFilter = ''
 
   if filterStartTime != null && (moment.isMoment(filterStartTime) || !ReactHelpers.isEmptyString(filterStartTime))
@@ -15,4 +15,4 @@ AuditDataFormatHelpers.buildTimeFilter = (filterStartTime, filterEndTime) ->
 
 
 
-@AuditDataFormatHelpers = AuditDataFormatHelpers
+@AuditDataFormatter = AuditDataFormatter
