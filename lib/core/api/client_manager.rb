@@ -69,7 +69,7 @@ module Core
         misty_params = {
           auth: {
             url:            ::Core.keystone_auth_endpoint,
-            user:           Rails.application.config.service_user_id,#+'a',
+            user:           Rails.application.config.service_user_id,
             user_domain:    Rails.application.config.service_user_domain_name,
             password:       Rails.application.config.service_user_password,
             domain:         scope_domain

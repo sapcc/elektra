@@ -112,7 +112,7 @@ module Core
         @api_client.auth.token
       end
 
-      def has_service?(name, region = nil)
+      def catalog_include_service?(name, region = nil)
         service = catalog.find do |s|
           [s['name'], s['type']].include?(name)
         end

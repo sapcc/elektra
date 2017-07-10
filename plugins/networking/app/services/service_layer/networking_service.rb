@@ -20,7 +20,8 @@ module ServiceLayer
     end
 
     def available?(_action_name_sym = nil)
-      driver.available
+      # driver.available
+      !current_user.service_url('network', region: region).nil?
     end
 
     def networks(filter={})
