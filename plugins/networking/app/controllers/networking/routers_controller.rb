@@ -42,7 +42,7 @@ module Networking
       when 'gateway'
         render partial: 'networking/routers/node_details/gateway', locals: {external_network: services.networking.network(params[:id])}
       when 'server'
-        server = services.compute.find_server(params[:id]) rescue nil
+        server = services_ng.compute.find_server(params[:id]) rescue nil
         port = services.networking.ports(device_id: server.id).first if server
         render partial: 'networking/routers/node_details/server', locals: {server: server, port: port}, status: server.nil? ? 404 : 200
       else
