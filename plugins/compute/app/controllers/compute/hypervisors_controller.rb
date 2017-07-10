@@ -6,7 +6,7 @@ module Compute
     authorization_required
 
     def index
-      @hypervisors = services.compute.hypervisors
+      @hypervisors = services_ng.compute.hypervisors
     end
 
     def show
@@ -19,7 +19,7 @@ module Compute
     end
 
     def load_hv(id)
-      @hypervisor = services.compute.find_hypervisor(id)
+      @hypervisor = services_ng.compute.find_hypervisor(id)
     end
   end
 end
