@@ -46,7 +46,7 @@ module ServiceLayer
       domain_name = 'monsoon3' if ['ccadmin','cc3test'].include?(domain_name)
 
       # WARNING: QUICK HACK FOR NEW FIP NETWORK IN EU-DE-1 This needs to be fixed asap to something generic
-      name_candidates = [ "FloatingIP-external-monsoon3-02",
+      name_candidates = [ "FloatingIP-external-#{domain_name}-02",
                           "FloatingIP-external-#{domain_name}",
                           "FloatingIP-internal-#{domain_name}",
                           "Converged Cloud External"]
