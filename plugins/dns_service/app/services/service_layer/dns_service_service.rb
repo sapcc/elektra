@@ -11,7 +11,8 @@ module ServiceLayer
     end
 
     def available?(_action_name_sym = nil)
-      driver.available
+      # driver.available
+      !current_user.service_url('designate', region: region).nil?
     end
 
     def zones(filter = {})

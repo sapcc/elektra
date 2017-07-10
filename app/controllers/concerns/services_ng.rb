@@ -16,14 +16,15 @@ module ServicesNg
   end
 
   def services_ng
-    return unless current_user
-    api_client = Core::Api::ClientManager
-                 .user_api_client(current_user)
+    api_client = begin
+                   Core::Api::ClientManager.user_api_client(current_user)
+                 rescue
+                   nil
+                 end
     @services_ng ||= Core::ServiceLayerNg::ServicesManager.new(api_client)
   end
 
   def service_user
-    # byebug
     return @service_user if @service_user_loaded
 
     friendly_id = FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
