@@ -21,6 +21,7 @@ module Automation
           # render index.js.erb
         end
       end
+      
       # plain index page
     end
 
@@ -35,7 +36,7 @@ module Automation
 
     def install
       begin
-        @compute_instances = services.compute.servers
+        @compute_instances = services_ng.compute.servers
       rescue => exception
         logger.error exception.message
         @compute_instances = []
@@ -49,7 +50,7 @@ module Automation
       @instance_os = params[:instance_os]
       @os_types = ::Automation::Node.os_types
 
-      result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation)
+      result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services_ng.compute, services.automation)
 
       @instance = result[:instance]
       @login_info = result[:log_info]
@@ -164,7 +165,7 @@ module Automation
       @filter = params[:filter]||""
       @search = params[:search]||""
       per_page = 10
-
+      
       service = IndexNodesService.new(services.automation)
       result = service.list_nodes_with_jobs(@node_page, per_page, @filter)
 
