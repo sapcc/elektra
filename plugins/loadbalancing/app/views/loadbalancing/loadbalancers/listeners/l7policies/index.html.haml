@@ -14,7 +14,13 @@
     .col-md-9
       - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
         .toolbar.toolbar-aligntop
-          = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_l7policy_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          %button.btn.btn-primary.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
+            Create New
+          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+            %li= link_to 'L7 Policy', plugin('loadbalancing').new_loadbalancer_listener_l7policy_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), data: {modal: true}
+            - unless @pre_polices.blank?
+              %li.divider
+              %li= link_to 'Extended Policy', plugin('loadbalancing').new_pre_loadbalancer_listener_l7policies_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id), data: {modal: true}
 
       %table.table.l7policies
         %tr
@@ -31,7 +37,7 @@
             = render partial: 'loadbalancing/loadbalancers/listeners/l7policies/item', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: l7policy}
         -else
           %tr
-            %td{colspan:6} No Policies defined
+            %td{colspan:7} No Policies defined
       =# render_paginatable(@l7policies)
     .col-md-3
       = render :partial => 'loadbalancing/loadbalancers/listeners/info', locals: {loadbalancer: @loadbalancer, listener: @listener}

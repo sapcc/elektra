@@ -1,0 +1,5 @@
+en:
+  loadbalancing:
+    policies:
+      proxy_protocol_2edF_v1_0: 'Proxy Protocol'
+      x_forwarded_for_2edF_v1_0: 'X Forwarded For'

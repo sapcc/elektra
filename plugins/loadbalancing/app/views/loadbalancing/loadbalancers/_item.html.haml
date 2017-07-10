@@ -1,4 +1,4 @@
-- data = {}
+- data = {search_name: "#{loadbalancer.name} #{loadbalancer.description} #{loadbalancer.floating_ip.floating_ip_address if loadbalancer.floating_ip}", marker_id: loadbalancer.id}
 - if loadbalancer.in_transition?
   - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
   - data[:update_interval]=60
@@ -69,5 +69,3 @@
             data: { confirm: 'Are you sure you want to delete this Load Balancer?',
               ok: "Yes, delete it",
               confirmed: :loading_status}
-
-

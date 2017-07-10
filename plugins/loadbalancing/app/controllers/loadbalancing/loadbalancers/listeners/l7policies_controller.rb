@@ -15,8 +15,8 @@ module Loadbalancing
             services.loadbalancing.l7policies({loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id],
                                                sort_key: 'position', sort_dir: 'asc'}.merge(pagination_options))
           end
+          @pre_polices = get_unused_predefined_policies
         end
-
 
         def new
           @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
@@ -26,15 +26,28 @@ module Loadbalancing
         def create
           @l7policy = services.loadbalancing.new_l7policy
           @l7policy.attributes = l7policy_params.merge(listener_id: @listener.id)
+          @l7policy.action = 'REJECT' if @l7policy.predefined?
+          @l7policy.position = 999 if @l7policy.predefined?
+          @l7policy.redirect_pool_id = nil if @l7policy.predefined?
+          @l7policy.redirect_url = nil if @l7policy.predefined?
           if @l7policy.save
             audit_logger.info(current_user, "has created", @l7policy)
             redirect_to loadbalancer_listener_l7policies_path(loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id]), notice: 'L7 Policy created.'
           else
-            @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
-            render :new
+            if @l7policy.predefined?
+              @pre_polices = get_unused_predefined_policies
+              render :new_pre
+            else
+              @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
+              render :new
+            end
           end
         end
 
+        def new_pre
+          @l7policy = services.loadbalancing.new_l7policy
+          @pre_polices = get_unused_predefined_policies
+        end
 
         def show
           @l7policy = services.loadbalancing.find_l7policy(params[:id])
@@ -80,6 +93,23 @@ module Loadbalancing
         end
 
         private
+
+        def get_unused_predefined_policies
+          @policies = Loadbalancing::L7policy.predefined(@listener.protocol )
+          used = services.loadbalancing.l7policies({loadbalancer_id: @loadbalancer.id, listener_id: @listener.id})
+          pre_polices = []
+          @policies.each do |p|
+            found = false
+            used.each do |u|
+              if p[:ids].include? u.name
+                found = true
+                break
+              end
+            end
+            pre_polices << p if !found
+          end
+          return pre_polices
+        end
 
         def l7policy_params
           p = params[:l7policy]
