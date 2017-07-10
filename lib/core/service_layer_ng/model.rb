@@ -193,9 +193,7 @@ module Core
         value = read(attribute_name)
 
         return nil unless value
-        Core::Api::ClientWrapper.map_to(klass, value) do |obj|
-          obj.service = @service
-        end
+        @service.map_to(klass, value)
       end
 
       protected
