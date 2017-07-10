@@ -3,12 +3,12 @@ module Compute
     class MembersController < Image::ApplicationController
 
       def index
-        @flavor = services.compute.flavor(params[:flavor_id])
-        @members = services.compute.flavor_members(params[:flavor_id])
+        @flavor = services_ng.compute.flavor(params[:flavor_id])
+        @members = services_ng.compute.flavor_members(params[:flavor_id])
       end
 
       def create
-        @member = services.compute.new_flavor_access(params[:member])
+        @member = services_ng.compute.new_flavor_access(params[:member])
         @member.flavor_id = params[:flavor_id]
 
         # validate if we are allowed to :)
@@ -24,7 +24,7 @@ module Compute
       end
 
       def destroy
-        member = services.compute.new_flavor_access
+        member = services_ng.compute.new_flavor_access
         member.flavor_id = params[:flavor_id]
         member.tenant_id = params[:id]
         @success = member.destroy

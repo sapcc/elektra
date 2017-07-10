@@ -33,7 +33,7 @@ module Compute
         unless id.blank?
           # try to delete the "old" flavor
           begin 
-            @driver.delete_flavor(id) 
+            @service.delete_flavor(id) 
           rescue Core::ServiceLayer::Errors::ApiError => api_error
             unless api_error.type=='NotFound'
               Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(api_error).each{|message| self.errors.add(:api, message)}
@@ -52,11 +52,11 @@ module Compute
         
         # create the new flavor. Caution: if this operation fails then it is just a delete.
         begin
-          self.attributes= @driver.create_flavor(new_attributes)
+          self.attributes= @service.create_flavor(new_attributes)
           success = true
           
         rescue => e
-          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+          raise e unless defined?(@service.handle_api_errors?) and @service.handle_api_errors?
           Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
           success = false
         end
@@ -80,10 +80,5 @@ module Compute
         }.delete_if { |k, v| v.blank? }
     end
     
-    protected
-    # deactivate perform_create method. Use save instead!
-    def perform_create
-      raise 'Do not use this method in flavor. Use save instead'
-    end
   end
 end

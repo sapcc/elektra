@@ -6,16 +6,16 @@ module Compute
 
     def index
       @flavors = paginatable(per_page: 15) do |pagination_options|
-        services.compute.flavors({is_public: 'None'}.merge(pagination_options))
+        services_ng.compute.flavors({is_public: 'None'}.merge(pagination_options))
       end
     end
 
     def new
-      @flavor = services.compute.new_flavor
+      @flavor = services_ng.compute.new_flavor
     end
 
     def create
-      @flavor = services.compute.new_flavor(params[:flavor])
+      @flavor = services_ng.compute.new_flavor(params[:flavor])
       if @flavor.save
         respond_to do |format|
           format.html{redirect_to plugin('compute').flavors_url}
@@ -27,11 +27,11 @@ module Compute
     end
     
     def edit
-      @flavor = services.compute.flavor(params[:id])
+      @flavor = services_ng.compute.flavor(params[:id])
     end
     
     def update
-      @flavor = services.compute.flavor(params[:id])
+      @flavor = services_ng.compute.flavor(params[:id])
       @flavor.attributes = params[:flavor]
       if @flavor.save
         respond_to do |format|
@@ -44,7 +44,7 @@ module Compute
     end
 
     def destroy
-      @flavor = services.compute.flavor(params[:id])
+      @flavor = services_ng.compute.flavor(params[:id])
       @error = 'Could not delete Flavor' unless @flavor.destroy
       
       respond_to do |format|
