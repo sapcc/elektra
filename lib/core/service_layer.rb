@@ -10,11 +10,11 @@ module Core
   module ServiceLayer
 
     class ServicesManager
-      attr_accessor :current_user,:service_user
+      attr_accessor :current_user, :service_user, :services_ng
 
       class << self
         # create a service for given params
-        def service(service_name,params={})
+        def service(service_name, params = {})
           # construct the class name of requested service.
           # For example ServiceLayer::IdentityService.
           # Services must be located in app/services/service_layer
@@ -52,13 +52,10 @@ module Core
         @region = region
       end
 
-      def available?(service_name,action_name=nil)
-
-        begin
-          self.send(service_name.to_sym).send(:available?,(action_name.nil? ? nil : action_name.to_sym))
-        rescue
-          false
-        end
+      def available?(service_name, action_name = nil)
+        send(service_name.to_sym).send(:available?, (action_name.nil? ? nil : action_name.to_sym))
+      rescue
+        services_ng.available?(service_name, action_name)
       end
 
       # this method is called every time the services_ng.identity or services.volume ect. in controller is requested.

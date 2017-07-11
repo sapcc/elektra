@@ -21,5 +21,18 @@ module ServiceLayerNg
     def new_rbac(attributes = {})
       map_to(Networking::Rbac, attributes)
     end
+
+    # Model Interface
+    def create_rbac(attributes)
+      api.networking.create_rbac_policy(rbac_policy: attributes).data
+    end
+
+    def delete_rbac(id)
+      api.networking.delete_rbac_policy(id)
+    end
+
+    def update_rbac(id, attributes)
+      api.networking.update_rbac_policy(id, rbac_policy: attributes).data
+    end
   end
 end

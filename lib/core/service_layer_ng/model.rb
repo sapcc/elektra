@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require_relative '../strip_attributes'
 
 module Core
   module ServiceLayerNg
+    # Describes the Openstack Model
     class Model
       extend ActiveModel::Naming
       extend ActiveModel::Translation

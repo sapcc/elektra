@@ -37,5 +37,18 @@ module ServiceLayerNg
       end
       map_to(Networking::Subnet, subnet_data)
     end
+
+    #################### Model Interface #################
+    def create_subnet(attributes)
+      api.networking.create_subnet(subnet: attributes).data
+    end
+
+    def update_subnet(id, attributes)
+      api.networking.update_subnet(id, subnet: attributes).data
+    end
+
+    def delete_subnet(id)
+      api.networking.delete_subnet(id)
+    end
   end
 end

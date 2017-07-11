@@ -5,37 +5,36 @@ module Networking
     before_filter :find_floatingip_network, :load_rbacs
 
     def new
-      @network_wizard = Networking::NetworkWizard.new(
-        nil,
-        setup_options: ['advanced'],
-        setup_option: 'advanced'
+      @network_wizard = services_ng.networking.new_network_wizard(
+        setup_options: ['advanced'], setup_option: 'advanced'
       )
 
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
-
         # if @rbacs and @rbacs.length>0
         #   @network_wizard.setup_options = ["simple"]
         #   @network_wizard.setup_option = "simple"
         # end
       else
-        @network_wizard.errors.add(:floatingip_network, 'Could not find FloatingIP-Network')
+        @network_wizard.errors.add(
+          :floatingip_network, 'Could not find FloatingIP-Network'
+        )
       end
     end
 
     def create
-      @network_wizard = Networking::NetworkWizard.new(nil,params[:network_wizard])
+      @network_wizard = services_ng.networking.new_network_wizard(
+        params[:network_wizard]
+      )
 
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
 
-        if @rbacs.nil? or @rbacs.length==0
-          cloaud_admin_networking = cloud_admin.networking
-          rbac = cloaud_admin_networking.new_rbac
-          rbac.object_id     = @floatingip_network.id
-          rbac.object_type   = 'network'
-          rbac.action        = 'access_as_shared'
-          rbac.target_tenant = @scoped_project_id
+        if @rbacs.nil? || @rbacs.length.zero?
+          rbac = cloaud_admin_networking.new_rbac(
+            object_id: @floatingip_network.id, object_type: 'network',
+            action: 'access_as_shared', target_tenant: @scoped_project_id
+          )
 
           unless rbac.save
             rbac.errors.each do |name, message|

@@ -37,5 +37,18 @@ module ServiceLayerNg
         )
       end
     end
+
+    ################### Model Interface ###################
+    def create_router(attributes)
+      api.networking.create_router(router: attributes).data
+    end
+
+    def update_router(id, attributes)
+      api.networking.update_router(id, router: attributes).data
+    end
+
+    def delete_router(id)
+      api.networking.delete_router(id)
+    end
   end
 end

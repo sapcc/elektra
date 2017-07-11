@@ -17,5 +17,18 @@ module ServiceLayerNg
     rescue
       nil
     end
+
+    ################### Model Interface #############
+    def create_port(attributes)
+      api.networking.create_port(port: attributes).data
+    end
+
+    def update_port(id, attributes)
+      api.networking.update_port(id, port: attributes).data
+    end
+
+    def delete_port(id)
+      api.networking.delete_port(id)
+    end
   end
 end

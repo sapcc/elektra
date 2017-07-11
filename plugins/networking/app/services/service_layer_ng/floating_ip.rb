@@ -42,6 +42,15 @@ module ServiceLayerNg
       nil
     end
 
+    ################## Model Interface ##################
+    def create_floating_ip(attributes)
+      api.networking.create_floating_ip(floatingip: attributes).data
+    end
+
+    def update_floating_ip(id, attributes)
+      api.networking.update_floating_ip(id, floatingip: attributes).data
+    end
+
     def delete_floating_ip(id)
       api.networking.delete_floating_ip(id)
     end

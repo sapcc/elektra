@@ -3,6 +3,10 @@
 module ServiceLayerNg
   # Implements Openstack Network
   module Network
+    def new_network_wizard(attributes = {})
+      map_to(Networking::NetworkWizard, attributes)
+    end
+
     def network_ip_availability(network_id)
       api.networking.show_network_ip_availability(network_id)
          .map_to(Networking::NetworkIpAvailability)
@@ -62,6 +66,19 @@ module ServiceLayerNg
 
     def new_network(attributes = {})
       map_to(Networking::Network, attributes)
+    end
+
+    ############## Model Interface ##############
+    def create_network(attributes)
+      api.networking.create_network(network: attributes).data
+    end
+
+    def update_network(id, attributes)
+      api.networking.update_network(id, network: attributes).data
+    end
+
+    def delete_network(id)
+      api.networking.delete_network(id)
     end
   end
 end

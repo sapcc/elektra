@@ -195,13 +195,13 @@ module Identity
     end
 
     def update_cost_control_wizard_status
-      billing_data = services.cost_control
-                             .find_project_masterdata(@scoped_project_id)
+      billing_data = services.cost_control.find_project_masterdata(
+        @scoped_project_id
+      )
 
       if billing_data && billing_data.cost_object_id
         @project_profile.update_wizard_status(
-          'cost_control',
-          ProjectProfile::STATUS_DONE,
+          'cost_control', ProjectProfile::STATUS_DONE,
           cost_object: billing_data.cost_object_id,
           type: billing_data.cost_object_type
         )

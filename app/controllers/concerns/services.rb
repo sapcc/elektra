@@ -12,6 +12,7 @@ module Services
     # update current_user
     @services.service_user = service_user
     @services.current_user = current_user
+    @services.services_ng = services_ng
     @services
   end
 
