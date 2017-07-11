@@ -17,5 +17,40 @@ module ServiceLayerNg
       return @user_keypairs
     end
 
+    def new_keypair(params = {})
+      # this is used for inital create keypair dialog
+      debug "[compute-service][Keypair] -> new_keypair"
+      Compute::Keypair.new(self,params)
+    end
+
+    def create_keypair(params = {})
+
+      debug "[compute-service][Keypair] -> create_keypair -> POST /os-keypairs"
+      debug "[compute-service][Keypair] -> create_keypair -> Parameter: #{params}"
+
+      data = {
+        'keypair' => {
+          'name' => params['name']
+        }
+      }
+
+      data['keypair']['public_key'] = params['public_key'] unless params['public_key'].nil?
+
+      api.compute.create_or_import_keypair(data).data
+
+    end
+
+    def find_keypair(keypair_name=nil)
+      debug "[compute-service][Keypair] -> find_keypair -> GET /os-keypairs/#{keypair_name}"
+      return nil if keypair_name.blank?
+      api.compute.show_keypair_details(keypair_name).map_to(Compute::Keypair)
+    end
+
+    def delete_keypair(keypair_name=nil)
+      debug "[compute-service] -> delete_keypair -> DELETE /os-keypairs/#{keypair_name} "
+      return nil if keypair_name.blank?
+      api.compute.delete_keypair(keypair_name)
+    end
+
   end
 end
