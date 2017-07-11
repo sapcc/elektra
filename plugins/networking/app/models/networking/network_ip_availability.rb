@@ -1,5 +1,5 @@
 module Networking
-  class NetworkIpAvailability < Core::ServiceLayer::Model
+  class NetworkIpAvailabilityNg < Core::ServiceLayerNg::Model
 
   end
 end

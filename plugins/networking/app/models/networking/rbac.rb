@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Networking
-  class Rbac < Core::ServiceLayer::Model
+  # represents the Openstack RBAC
+  class Rbac < Core::ServiceLayerNg::Model
   end
 end

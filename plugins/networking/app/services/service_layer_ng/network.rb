@@ -5,29 +5,29 @@ module ServiceLayerNg
   module Network
     def network_ip_availability(network_id)
       api.networking.show_network_ip_availability(network_id)
-         .map_to(Networking::NetworkIpAvailabilityNg)
+         .map_to(Networking::NetworkIpAvailability)
     end
 
     def network_ip_availabilities
       api.networking.list_network_ip_availability
-         .map_to(Networking::NetworkIpAvailabilityNg)
+         .map_to(Networking::NetworkIpAvailability)
     end
 
     def networks(filter = {})
-      api.networking.list_networks(filter).map_to(Networking::NetworkNg)
+      api.networking.list_networks(filter).map_to(Networking::Network)
     end
 
     def project_networks(project_id, filter = nil)
       api.networking.networks(filter).data.each_with_object([]) do |n, array|
         if n['shared'] == true || n['tenant_id'] == project_id
-          array << map_to(Networking::NetworkNg, n)
+          array << map_to(Networking::Network, n)
         end
       end
     end
 
     def find_network!(id)
       return nil unless id
-      api.networking.show_network_details(id).map_to(Networking::NetworkNg)
+      api.networking.show_network_details(id).map_to(Networking::Network)
     end
 
     def find_network(id)
@@ -36,24 +36,32 @@ module ServiceLayerNg
       nil
     end
 
+    def cached_network(id)
+      network_data = Rails.cache.fetch("network_#{id}", expires_in: 2.hours) do
+        api.networking.show_network_details(id).data
+      end
+      map_to(Networking::Network, network_data)
+    end
+
     def domain_floatingip_network(domain_name)
       # ccadmin, cc3test -> FloatingIP-internal-monsoon3
       domain_name = 'monsoon3' if %w[ccadmin cc3test].include?(domain_name)
 
-      name_candidates = ["FloatingIP-external-#{domain_name}",
+      name_candidates = ["FloatingIP-external-#{domain_name}-02",
+                         "FloatingIP-external-#{domain_name}",
                          "FloatingIP-internal-#{domain_name}",
                          'Converged Cloud External']
       name_candidates.each do |name|
         network = api.networking.list_networks(
           'router:external' => true, 'name' => name
-        ).map_to(Networking::NetworkNg).first
+        ).map_to(Networking::Network).first
         return network if network
       end
       nil
     end
 
     def new_network(attributes = {})
-      map_to(Networking::NetworkNg, attributes)
+      map_to(Networking::Network, attributes)
     end
   end
 end

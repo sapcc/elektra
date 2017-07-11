@@ -1,5 +1,5 @@
 module Networking
-  class NetworkWizard < Core::ServiceLayer::Model
+  class NetworkWizard < Core::ServiceLayerNg::Model
 
   end
 end

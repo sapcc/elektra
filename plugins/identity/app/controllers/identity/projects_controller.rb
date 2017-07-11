@@ -34,7 +34,6 @@ module Identity
         end
         format.js
       end
-
     end
 
     def show; end
