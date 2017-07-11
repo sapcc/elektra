@@ -5,11 +5,13 @@ module ServiceLayerNg
   class NetworkingService < Core::ServiceLayerNg::Service
 
     def network_ip_availability(network_id)
-      driver.map_to(Networking::NetworkIpAvailability).get_network_ip_availability(network_id)
+      api.networking.show_network_ip_availability(network_id)
+         .map_to(Networking::NetworkIpAvailabilityNg)
     end
 
     def network_ip_availabilities
-      driver.map_to(Networking::NetworkIpAvailability).list_network_ip_availabilities
+      api.networking.list_network_ip_availability
+         .map_to(Networking::NetworkIpAvailabilityNg)
     end
 
     def available?(_action_name_sym = nil)
@@ -104,16 +106,20 @@ module ServiceLayerNg
          end
     end
 
-    def attach_floatingip(floating_ip_id, port_id, options = {})
-      driver.map_to(Networking::FloatingIp).associate_floating_ip(floating_ip_id,port_id,options)
+    def attach_floatingip(floating_ip_id, port_id)
+      api.networking.update_floating_ip(
+        floating_ip_id, floatingip: { port_id: port_id }
+      ).map_to(Networking::FloatingIpNg)
     end
 
     def detach_floatingip(floating_ip_id)
-      driver.map_to(Networking::FloatingIp).disassociate_floating_ip(floating_ip_id)
+      api.networking.update_floating_ip(
+        floating_ip_id, floatingip: { port_id: nil }
+      ).map_to(Networking::FloatingIpNg)
     end
 
-    def new_floating_ip(params = {})
-      map_to(Networking::FloatingIpNg, params)
+    def new_floating_ip(attributes = {})
+      map_to(Networking::FloatingIpNg, attributes)
     end
 
     def find_floating_ip!(id)
@@ -195,36 +201,38 @@ module ServiceLayerNg
 
     def add_router_interfaces(router_id,interface_ids)
       interface_ids.each do |interface_id|
-        driver.add_router_interface(router_id, interface_id)
+        api.networking.add_interface_to_router(
+          router_id, subnet_id: interface_id
+        )
       end
     end
 
-    def remove_router_interfaces(router_id, interface_ids,options={})
+    def remove_router_interfaces(router_id, interface_ids)
       interface_ids.each do |interface_id|
-        driver.remove_router_interface(router_id, interface_id,options)
+        api.networking.remove_interface_from_router(
+          router_id, subnet_id: interface_id
+        )
       end
     end
-
-    ####################### PORTS #############################
-    # def ports(filter={})
-    #   driver.map_to(Networking::Router).routers(filter)
-    # end
-    #
-    # def find_router(id)
-    #   driver.map_to(Networking::Router).get_router(id)
-    # end
 
     ####################### RBACS #############################
     def rbacs(filter = {})
-      driver.map_to(Networking::Rbac).rbacs(filter)
+      api.networking.list_rbac_policies(filter).map_to(Networking::RbacNg)
+    end
+
+    def find_rbac!(id)
+      return nil unless id
+      api.networking.show_rbac_policy_details(id).map_to(Networking::RbacNg)
     end
 
     def find_rbac(id)
-      driver.map_to(Networking::Rbac).get_rbac(id)
+      find_rbac!(id)
+    rescue
+      nil
     end
 
-    def new_rbac(attributes={})
-      Networking::Rbac.new(driver,attributes)
+    def new_rbac(attributes = {})
+      map_to(Networking::Rbac, attributes)
     end
   end
 end
