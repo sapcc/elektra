@@ -8,7 +8,6 @@ module Networking
       @network_wizard = services_ng.networking.new_network_wizard(
         setup_options: ['advanced'], setup_option: 'advanced'
       )
-
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
         # if @rbacs and @rbacs.length>0
@@ -35,7 +34,6 @@ module Networking
             object_id: @floatingip_network.id, object_type: 'network',
             action: 'access_as_shared', target_tenant: @scoped_project_id
           )
-
           unless rbac.save
             rbac.errors.each do |name, message|
               @network_wizard.errors.add(name, message)

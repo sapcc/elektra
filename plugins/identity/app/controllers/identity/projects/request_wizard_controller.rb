@@ -23,7 +23,7 @@ module Identity
         @project = services_ng.identity.new_project
         @project.attributes = params.fetch(:project, {})
                                     .merge(domain_id: @scoped_domain_id)
-                       
+                                    
         if @project.valid?
           begin
             inquiry = services.inquiry.create_inquiry(

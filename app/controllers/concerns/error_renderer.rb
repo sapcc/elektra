@@ -35,6 +35,7 @@ module ErrorRenderer
                else
                  503
                end
+
       begin
         @title = value.call(:title) || exception.class.name.split('::').last.humanize
         @description = value.call(:description) || (exception.message rescue exception.to_s)

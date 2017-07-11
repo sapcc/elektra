@@ -70,6 +70,7 @@ module ServiceLayerNg
 
       # do nothing if role is nil
       return admins if role.nil?
+
       begin
         if project_id # project_id is presented
           # get role_assignments for this project_id

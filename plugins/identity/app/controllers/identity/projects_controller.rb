@@ -127,11 +127,13 @@ module Identity
 
     def check_wizard_status
       return if %w[ccadmin cloud_admin].include?(@scoped_domain_name)
+
       service_names = %w[cost_control networking resource_management].keep_if do |name|
         services.available?(name.to_sym)
       end
 
       project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
+
       return if project_profile.wizard_finished?(service_names)
       redirect_to plugin('identity').project_wizard_url
     end
