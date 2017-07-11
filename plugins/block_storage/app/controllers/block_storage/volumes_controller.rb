@@ -14,7 +14,6 @@ module BlockStorage
 
     # GET /volumes
     def index
-      #@servers = services.compute.servers
       @servers = get_cached_servers
       @action_id = params[:id]
       if @scoped_project_id
@@ -47,7 +46,7 @@ module BlockStorage
     # GET /volumes/new
     def new
       @volume = services.block_storage_.new_volume
-      @availability_zones = services.compute.availability_zones
+      @availability_zones = services_ng.compute.availability_zones
     end
 
     # POST /volumes
@@ -67,7 +66,7 @@ module BlockStorage
           redirect_to volumes_path
         end
       else
-        @availability_zones = services.compute.availability_zones
+        @availability_zones = services_ng.compute.availability_zones
         @volume.errors[:base] << "Volume creation failed!"
         render :new
       end
@@ -114,7 +113,7 @@ module BlockStorage
     def edit_attach
       @volume_server = VolumeServer.new
       @volume_server.volume = @volume
-      @volume_server.servers = services.compute.servers.keep_if do |s|
+      @volume_server.servers = services_ng.compute.servers.keep_if do |s|
         SERVER_STATES_NEEDED_FOR_ATTACH.include?(s.status) and
         s.availability_zone==@volume.availability_zone
       end
@@ -126,24 +125,24 @@ module BlockStorage
       @volume_server.device = nil if @volume_server.device.blank?
       if @volume_server.valid?
         begin
-          if services.compute.attach_volume(@volume_server.volume.id, @volume_server.server, @volume_server.device)
+          if services_ng.compute.attach_volume(@volume_server.volume.id, @volume_server.server, @volume_server.device)
             @volume.status = 'attaching'
             @target_state = target_state_for_action 'attach'
             sleep(SLEEP)
             audit_logger.info(current_user, "has attached", @volume, "to", @volume_server.server['server_id'])
             render template: 'block_storage/volumes/update_item_with_close.js'
           else
-            @volume_server.servers = services.compute.servers
+            @volume_server.servers = services_ng.compute.servers
             @volume_server.errors[:base] << "Volume attachment failed!"
             render :edit_attach and return
           end
         rescue Exception => e
-          @volume_server.servers = services.compute.servers
+          @volume_server.servers = services_ng.compute.servers
           @volume_server.errors[:base] << "Volume attachment failed! #{e.message}"
           render :edit_attach and return
         end
       else
-        @volume_server.servers = services.compute.servers
+        @volume_server.servers = services_ng.compute.servers
         render :edit_attach and return
       end
     end
@@ -159,7 +158,7 @@ module BlockStorage
       @volume_server.volume = @volume
       @volume_server.server = @volume.attachments.first
       begin
-        if services.compute.detach_volume(@volume_server.volume.id, @volume_server.server['server_id'])
+        if services_ng.compute.detach_volume(@volume_server.volume.id, @volume_server.server['server_id'])
           @volume.status = 'detaching'
           @target_state = target_state_for_action 'detach'
           sleep(SLEEP)
@@ -233,9 +232,7 @@ module BlockStorage
     private
 
     def get_cached_servers
-      Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
-        services.compute.servers
-      end
+      services_ng.compute.servers({},true)
     end
 
     # Use callbacks to share common setup or constraints between actions.
