@@ -22,10 +22,37 @@ module ServiceLayerNg
       nil
     end
 
-    def user_projects(user_id, filter = {})
+    def user_projects!(user_id, filter = {})
       api.identity
          .list_projects_for_user(user_id, filter)
          .map_to(Identity::Project)
+    end
+
+    def user_projects(user_id, filter = {})
+      user_projects!(user_id, filter)
+    rescue
+      []
+    end
+
+    def cached_project(id, filter = {})
+      project_attrs = Rails.cache.fetch(
+        "project/#{id}", expires_in: 1.minute
+      ) do
+        api.identity.show_project_details(id, filter).data
+      end
+      map_to(Identity::Project, project_attrs)
+    end
+
+    def cached_user_projects(user_id, filter = {})
+      # Rails.cache.delete("#{api.token}/user_domain_projects")
+      user_domain_projects_data = Rails.cache.fetch(
+        "#{api.token}/user_domain_projects", expires_in: 1.minute
+      ) do
+        api.identity.list_projects_for_user(user_id, filter).data
+      end
+      user_domain_projects_data.collect do |project_attrs|
+        map_to(Identity::Project, project_attrs)
+      end
     end
 
     def projects_by_user_id(user_id)

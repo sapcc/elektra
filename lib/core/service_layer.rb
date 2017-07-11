@@ -57,7 +57,6 @@ module Core
         begin
           self.send(service_name.to_sym).send(:available?,(action_name.nil? ? nil : action_name.to_sym))
         rescue
-          # byebug
           false
         end
       end

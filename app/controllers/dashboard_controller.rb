@@ -254,23 +254,32 @@ class DashboardController < ::ScopeController
   def load_user_projects
     # get all projects for user (this might be expensive, might need caching,
     # ajaxifying, ...)
-    @user_domain_projects ||= begin
-                                service_user.identity.user_projects(
-                                  current_user.id,
-                                  domain_id: @scoped_domain_id
-                                ).sort_by(&:name)
-                              rescue
-                                []
-                              end
+    @user_domain_projects ||= service_user.identity.cached_user_projects(
+      current_user.id, domain_id: @scoped_domain_id
+    ).sort_by(&:name)
 
     return unless @scoped_project_id
     # load active project
-    @active_project = services_ng.identity.find_project(
+    @active_project ||= services_ng.identity.cached_project(
       @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
     )
     FriendlyIdEntry.update_project_entry(@active_project)
-
   end
+
+  # def load_user_projects
+  #   # get all projects for user (this might be expensive, might need caching,
+  #   # ajaxifying, ...)
+  #   @user_domain_projects ||= service_user.identity.user_projects(
+  #     current_user.id, domain_id: @scoped_domain_id
+  #   ).sort_by(&:name)
+  #
+  #   return unless @scoped_project_id
+  #   # load active project
+  #   @active_project ||= services_ng.identity.find_project(
+  #     @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
+  #   )
+  #   FriendlyIdEntry.update_project_entry(@active_project)
+  # end
 
   def load_webcli_endpoint
     @webcli_endpoint = current_user.service_url('webcli')

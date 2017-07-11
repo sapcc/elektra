@@ -31,7 +31,7 @@ module Core
       end
 
       def attributes
-        @attributes.merge(id: @id)
+        @attributes.merge(id: @id).with_indifferent_access
       end
 
       def as_json(_options = nil)

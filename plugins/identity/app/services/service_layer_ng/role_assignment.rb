@@ -18,11 +18,11 @@ module ServiceLayerNg
         if ra.user.present?
           array << ra
         elsif ra.group.present?
-          group_members(ra.group['id']).data.each do |user|
+          api.identity.list_users_in_group(ra.group['id']).data.each do |user|
             array << map_to(Identity::RoleAssignment,
                             'role' => ra.role,
                             'scope' => ra.scope,
-                            'user' => { 'id' => user.id })
+                            'user' => { 'id' => user['id'] })
           end
         end
       end

@@ -23,9 +23,8 @@ module CurrentUserWrapper
 
       # already saved user details in session
       old_user_details = (@session[:current_user_details] || {})
-
       # check if user id from session differs from current_user id
-      return if current_user.try(:id) == old_user_details['id']
+      return if current_user.try(:id) == old_user_details[:id]
 
       # load user details for current_user
       user = service_user.identity.find_user(current_user.id)
@@ -57,12 +56,12 @@ module CurrentUserWrapper
 
     # Email is not provided by current_user. So add it here.
     def email
-      (@session[:current_user_details] || {})['email']
+      (@session[:current_user_details] || {})[:email]
     end
 
     # Fullname is not provided by current_user. So add it here.
     def full_name
-      (@session[:current_user_details] || {})['description']
+      (@session[:current_user_details] || {})[:description]
     end
   end
 end

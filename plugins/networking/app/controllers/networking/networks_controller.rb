@@ -102,7 +102,6 @@ module Networking
       availability = cloud_admin.networking.network_ip_availability(params[:network_id]) rescue nil
       # subnets = services.networking.subnets(network_id: params[:network_id])
       #render json: services.networking.subnets(network_id: params[:network_id])
-      # byebug
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 

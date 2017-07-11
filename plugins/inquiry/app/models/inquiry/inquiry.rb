@@ -36,6 +36,18 @@ module Inquiry
       Inquiry.find_by_sql("SELECT DISTINCT ON (inquiry_inquiries.id) inquiry_inquiries.* FROM inquiry_inquiries INNER JOIN inquiry_processors ON inquiry_processors.id = inquiry_inquiries.requester_id WHERE inquiry_processors.uid ='#{requester_id}'")
     end
 
+    def self.processor_open_requests(domain_id, processor_id)
+      where(aasm_state: 'open', approver_domain_id: domain_id).to_a.keep_if do |r|
+        r.processors.collect(&:uid).include?(processor_id)
+      end
+    end
+
+    def self.requestor_open_requests(domain_id, user_id)
+      where(aasm_state: 'open', domain_id: domain_id).to_a.keep_if do |r|
+        r.requester.uid == user_id
+      end
+    end
+
     include AASM
     aasm do
 
