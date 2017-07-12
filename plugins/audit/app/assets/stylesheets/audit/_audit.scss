@@ -24,9 +24,8 @@
     line-height: 34px; // to match input height
   }
 
-  label {
-    margin-bottom: 0;
-    padding-right: 8px;
+  label, .inputwrapper{
+    margin: 0 8px 0 0;
   }
 
   .toolbar-input-divider {

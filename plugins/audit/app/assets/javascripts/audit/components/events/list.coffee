@@ -3,17 +3,30 @@
 
 
 # import
-{ div, span, label, i, input, table, thead, tbody, tr, th, td } = React.DOM
+{ div, span, label, select, option, input, i, table, thead, tbody, tr, th, td } = React.DOM
 { connect } = ReactRedux
-{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime } = audit
+{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType } = audit
 
-Events = ({events, isFetching, loadEvents, filterEventsStartTime, filterEventsEndTime, filterStartTime, filterEndTime}) ->
+Events = ({events, isFetching, loadEvents, handleStartTimeChange, handleEndTimeChange, handleFilterTypeChange, filterStartTime, filterEndTime, filterType, filterTerm}) ->
   div null,
     div className: 'toolbar toolbar-controlcenter',
+      label null, 'Filter:'
+      div className: 'inputwrapper',
+        select name: 'filterType', className: 'form-control', value: filterType, onChange: ((e) -> handleFilterTypeChange(e.target.value)),
+          option value: '', 'Select attribute '
+          option value: 'source',  'Source'
+          option value: 'event_type', 'Event Type'
+          option value: 'resource_type', 'Resource Type'
+          option value: 'user_name', 'User ID'
+
+      div className: 'inputwrapper',
+        input className: 'form-control', value: filterTerm, placeholder: 'Enter lookup value'
+      span className: 'toolbar-input-divider'
+
       label null, 'Time range:'
-      React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> filterEventsStartTime(e))
+      React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> handleStartTimeChange(e))
       span className: 'toolbar-input-divider', '\u2013' # EN DASH: &ndash;
-      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> filterEventsEndTime(e))
+      React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> handleEndTimeChange(e))
 
 
 
@@ -55,9 +68,11 @@ Events = connect(
   (state) ->
     filterStartTime:  state.filterStartTime
     filterEndTime:    state.filterEndTime
+    filterType:       state.filterType
   (dispatch) ->
-    filterEventsStartTime: (filterStartTime) -> dispatch(filterEventsStartTime(filterStartTime))
-    filterEventsEndTime: (filterEndTime) -> dispatch(filterEventsEndTime(filterEndTime))
+    handleStartTimeChange:  (filterStartTime) -> dispatch(filterEventsStartTime(filterStartTime))
+    handleEndTimeChange:    (filterEndTime)   -> dispatch(filterEventsEndTime(filterEndTime))
+    handleFilterTypeChange: (filterType)      -> dispatch(filterEventsFilterType(filterType))
 
 
 )(Events)
