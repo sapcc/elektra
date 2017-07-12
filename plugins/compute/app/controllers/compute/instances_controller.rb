@@ -48,7 +48,7 @@ module Compute
     def show
       @instance = services.compute.find_server(params[:id])
       @instance_security_groups = @instance.security_groups_details.collect do |sg|
-        services.networking.security_groups(tenant_id: @scoped_project_id, id: sg.id).first
+        services_ng.networking.security_groups(tenant_id: @scoped_project_id, id: sg.id).first
       end
     end
 
@@ -73,8 +73,8 @@ module Compute
         @instance.errors.add :availability_zone, 'not available'
       end
 
-      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
-      @private_networks   = services.networking.project_networks(@scoped_project_id, "router:external"=>false) if services.networking.available?
+      @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
+      @private_networks   = services_ng.networking.project_networks(@scoped_project_id, "router:external"=>false) if services_ng.networking.available?
 
       @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
@@ -120,8 +120,8 @@ module Compute
         @flavors = services.compute.flavors
         @images = services.image.images
         @availability_zones = services.compute.availability_zones
-        @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
-        @private_networks   = services.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
+        @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
+        @private_networks   = services_ng.networking.project_networks(@scoped_project_id).delete_if{|n| n.attributes["router:external"]==true}
         @keypairs = services.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
         render action: :new
       end
@@ -137,11 +137,11 @@ module Compute
 
     def attach_floatingip
       enforce_permissions("::networking:floating_ip_associate")
-      @instance_port = services.networking.ports(device_id: params[:id]).first
+      @instance_port = services_ng.networking.ports(device_id: params[:id]).first
       @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
 
       success = begin
-        @floating_ip = services.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
+        @floating_ip = services_ng.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
         if @floating_ip.port_id
           true
         else
@@ -181,8 +181,8 @@ module Compute
     def detach_floatingip
       enforce_permissions("::networking:floating_ip_disassociate")
       begin
-        floating_ips = services.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
-        @floating_ip = services.networking.detach_floatingip(floating_ips.first.id)
+        floating_ips = services_ng.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
+        @floating_ip = services_ng.networking.detach_floatingip(floating_ips.first.id)
       rescue => e
         flash.now[:error] = "Could not detach Floating IP. Error: #{e.message}"
       end
@@ -207,7 +207,7 @@ module Compute
 
     def attach_interface
       @os_interface = services.compute.new_os_interface(params[:id])
-      @networks = services.networking.networks("router:external"=>false)
+      @networks = services_ng.networking.networks("router:external"=>false)
     end
 
     def create_interface
@@ -219,7 +219,7 @@ module Compute
           format.js{}
         end
       else
-        @networks = services.networking.networks("router:external"=>false)
+        @networks = services_ng.networking.networks("router:external"=>false)
         render action: :attach_interface
       end
     end
@@ -364,7 +364,7 @@ module Compute
       @instance_security_groups.each do |sg|
         @instance_security_groups_keys << sg.id
       end
-      @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+      @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
     end
 
     def assign_securitygroups
@@ -387,7 +387,7 @@ module Compute
         @instance_security_groups.each do |sg|
           @instance_security_groups_keys << sg.id
         end
-        @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+        @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
         render action: :edit_securitygroups and return
       else
         sgs.each do |sg|
@@ -417,7 +417,7 @@ module Compute
           @instance_security_groups.each do |sg|
             @instance_security_groups_keys << sg.id
           end
-          @security_groups = services.networking.security_groups(tenant_id: @scoped_project_id)
+          @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
           flash.now[:error] = "An error happend while assigning/unassigned security groups to the server. Error: #{e}"
           render action: :edit_securitygroups and return
         end
@@ -432,13 +432,13 @@ module Compute
       @grouped_fips = {}
       networks = {}
       subnets = {}
-      services.networking.project_floating_ips(@scoped_project_id).each do |fip|
+      services_ng.networking.project_floating_ips(@scoped_project_id).each do |fip|
         if fip.fixed_ip_address.nil?
-          networks[fip.floating_network_id] = services.networking.network(fip.floating_network_id) unless networks[fip.floating_network_id]
+          networks[fip.floating_network_id] = services_ng.networking.find_network(fip.floating_network_id) unless networks[fip.floating_network_id]
           net = networks[fip.floating_network_id]
           unless net.subnets.blank?
             net.subnets.each do |subid|
-              subnets[subid] = services.networking.subnet(subid) unless subnets[subid]
+              subnets[subid] = services_ng.networking.subnet(subid) unless subnets[subid]
               sub = subnets[subid]
               cidr = NetAddr::CIDR.create(sub.cidr)
               if cidr.contains?(fip.floating_ip_address)

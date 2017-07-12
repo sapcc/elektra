@@ -62,8 +62,8 @@ module Networking
           # FIXME: anti-pattern of doing two things in one action
           if @subnet.save
             flash[:keep_notice_htmlsafe] = "Network #{@subnet.name} successfully created.<br /> <strong>Please note:</strong> If you want to attach floating IPs to objects in this network you will need to #{view_context.link_to('create a router', plugin('networking').routers_path)} connecting this network to the floating IP network."
-            audit_logger.info(current_user, "has created", @network)
-            audit_logger.info(current_user, "has created", @subnet)
+            audit_logger.info(current_user, 'has created', @network)
+            audit_logger.info(current_user, 'has created', @subnet)
             redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
           else
             @network.destroy
@@ -71,7 +71,7 @@ module Networking
             render action: :new
           end
         else
-          audit_logger.info(current_user, "has created", @network)
+          audit_logger.info(current_user, 'has created', @network)
           redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
         end
 
@@ -82,15 +82,16 @@ module Networking
     end
 
     def edit
-      @network = services.networking.network(params[:id])
+      @network = services_ng.networking.find_network(params[:id])
     end
 
     def update
-      @network = services.networking.network(params[:id])
-      @network.attributes = params[@network.model_name.param_key]
+      @network = services_ng.networking.new_network(params[:network])
+      @network.id = params[:id]
+
       if @network.save
         flash[:notice] = 'Network successfully updated.'
-        audit_logger.info(current_user, "has updated", @network)
+        audit_logger.info(current_user, 'has updated', @network)
         redirect_to plugin('networking').send("networks_#{@network_type}_index_path")
       else
         render action: :edit
@@ -98,11 +99,12 @@ module Networking
     end
 
     def destroy
-      @network = services.networking.network(params[:id]) rescue nil
+      @network = services_ng.networking.new_network
+      @network.id = params[:id]
 
       if @network
         if @network.destroy
-          audit_logger.info(current_user, "has deleted", @network)
+          audit_logger.info(current_user, 'has deleted', @network)
           flash[:notice] = 'Network successfully deleted.'
         else
           flash[:error] = @network.errors.full_messages.to_sentence
@@ -117,8 +119,8 @@ module Networking
 
     def subnets
       availability = cloud_admin.networking.network_ip_availability(params[:network_id]) rescue nil
-      # subnets = services.networking.subnets(network_id: params[:network_id])
-      #render json: services.networking.subnets(network_id: params[:network_id])
+      # subnets = services_ng.networking.subnets(network_id: params[:network_id])
+      #render json: services_ng.networking.subnets(network_id: params[:network_id])
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 

@@ -16,7 +16,7 @@ module Networking
 
     def topology
       @router = services_ng.networking.find_router(params[:router_id])
-      @external_network = services_ng.networking.network(
+      @external_network = services_ng.networking.find_network(
         @router.external_gateway_info['network_id']
       )
       @router_interface_ports = services_ng.networking.ports(
@@ -34,7 +34,7 @@ module Networking
         }] + @router_interface_ports.collect do |port|
           node = { name: port.network_object.name, type: 'network',
                    id: port.network_object.id }
-          services.networking.ports(network_id: port.network_id).each do |np|
+          services_ng.networking.ports(network_id: port.network_id).each do |np|
             if np.device_owner.start_with?('compute:')
               node[:children] ||= []
               node[:children] << { name: '', type: 'server', id: np.device_id }
@@ -54,11 +54,11 @@ module Networking
                }
       when 'network'
         render partial: 'networking/routers/node_details/network',
-               locals: { network: services_ng.networking.network(params[:id]) }
+               locals: { network: services_ng.networking.find_network(params[:id]) }
       when 'gateway'
         render partial: 'networking/routers/node_details/gateway',
                locals: {
-                 external_network: services_ng.networking.network(params[:id])
+                 external_network: services_ng.networking.find_network(params[:id])
                }
       when 'server'
         server = services.compute.find_server(params[:id])
@@ -73,7 +73,7 @@ module Networking
 
     def show
       @router = services_ng.networking.find_router(params[:id])
-      @external_network = services_ng.networking.network(
+      @external_network = services_ng.networking.find_network(
         @router.external_gateway_info['network_id']
       )
       @router_interface_ports = services_ng.networking.ports(
@@ -118,7 +118,7 @@ module Networking
 
     def edit
       @router = services_ng.networking.find_router(params[:id])
-      @external_network = services_ng.networking.network(
+      @external_network = services_ng.networking.find_network(
         @router.external_gateway_info['network_id']
       )
       @router_interface_ports = services_ng.networking.ports(
@@ -173,7 +173,7 @@ module Networking
         flash.now[:notice] = 'Router successfully created.'
         redirect_to plugin('networking').routers_path
       else
-        @external_network = services_ng.networking.network(@router.external_gateway_info['network_id'])
+        @external_network = services_ng.networking.find_network(@router.external_gateway_info['network_id'])
 
         render action: :edit
       end

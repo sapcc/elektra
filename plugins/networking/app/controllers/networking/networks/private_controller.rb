@@ -1,9 +1,14 @@
-module Networking
-  class Networks::PrivateController < NetworksController
-    private
+# frozen_string_literal: true
 
-    def load_type
-      @network_type = 'private'.freeze
+module Networking
+  module Networks
+    # Private Networks
+    class PrivateController < NetworksController
+      private
+
+      def load_type
+        @network_type = 'private'
+      end
     end
   end
 end

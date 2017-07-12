@@ -72,7 +72,7 @@ module Networking
       #       @security_groups[rule.remote_group_id] = @security_group
       #     else
       #       @security_groups[rule.remote_group_id] =
-      #         services.networking.find_security_group(rule.remote_group_id)
+      #         services_ng.networking.find_security_group(rule.remote_group_id)
       #     end
       #   end
       #   if @security_groups[rule.remote_group_id]
