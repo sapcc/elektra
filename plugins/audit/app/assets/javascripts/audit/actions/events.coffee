@@ -79,6 +79,15 @@
       # TODO: Add else case with validation error display for user
 
 
+  updateFilterType = (filterType) ->
+    type: app.UPDATE_FILTER_TYPE
+    filterType: filterType
+
+  filterEventsFilterType = (filterType) ->
+    (dispatch) ->
+      dispatch(updateFilterType(filterType))
+
+
 
   # ----------- EVENT DETAILS -----------
 
@@ -135,6 +144,7 @@
   app.fetchEvents                 = fetchEvents
   app.filterEventsStartTime       = filterEventsStartTime
   app.filterEventsEndTime         = filterEventsEndTime
+  app.filterEventsFilterType      = filterEventsFilterType
   app.toggleEventDetails          = toggleEventDetails
 
 )(audit)

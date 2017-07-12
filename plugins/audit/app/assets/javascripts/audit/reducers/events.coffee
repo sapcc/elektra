@@ -5,12 +5,12 @@
     total: 0
     offset: 0
     limit: 20
-    filterType:null
-    filterTerm: null
     items: []
     isFetching: false
     filterStartTime: ''
     filterEndTime: ''
+    filterType: ''
+    filterTerm: ''
 
   updateFilterStartTime = (state,{filterStartTime}) ->
     ReactHelpers.mergeObjects({},state,{
@@ -20,6 +20,11 @@
   updateFilterEndTime = (state,{filterEndTime}) ->
     ReactHelpers.mergeObjects({},state,{
       filterEndTime: filterEndTime
+    })
+
+  updateFilterType = (state,{filterType}) ->
+    ReactHelpers.mergeObjects({},state,{
+      filterType: filterType
     })
 
   updateOffset = (state,{offset}) ->
@@ -80,6 +85,7 @@
       when app.REQUEST_EVENTS_FAILURE         then requestEventsFailure(state,action)
       when app.UPDATE_FILTER_START_TIME       then updateFilterStartTime(state,action)
       when app.UPDATE_FILTER_END_TIME         then updateFilterEndTime(state,action)
+      when app.UPDATE_FILTER_TYPE             then updateFilterType(state,action)
       when app.UPDATE_OFFSET                  then updateOffset(state,action)
       when app.TOGGLE_EVENT_DETAILS_VISIBLE   then toggleEventDetailsVisible(state,action)
       when app.REQUEST_EVENT_DETAILS          then requestEventDetails(state,action)
