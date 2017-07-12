@@ -29,7 +29,13 @@ module Core
               @service_classes[service_name] = Object.const_get(class_name)
             end
           end
-          @service_classes[service_name]
+
+          if Rails.env.development?
+            # reload class
+            Object.const_get(@service_classes[service_name].name)
+          else
+            @service_classes[service_name]
+          end
         rescue
           nil
         end
