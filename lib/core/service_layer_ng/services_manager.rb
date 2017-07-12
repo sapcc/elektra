@@ -7,6 +7,7 @@ module Core
     # This class manages services
     class ServicesManager
       @service_classes_mutex = Mutex.new
+      attr_accessor :current_user
 
       class << self
         def service_class(service_name)
@@ -77,6 +78,7 @@ module Core
 
           service = self.class.service(method_sym, @api_client)
           service.services = self
+          service.current_user = current_user
           instance_variable_set("@#{method_sym}", service)
         else
           super

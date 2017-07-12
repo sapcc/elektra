@@ -16,12 +16,15 @@ module ServicesNg
   end
 
   def services_ng
+    return @services_ng if @services_ng
     api_client = begin
                    Core::Api::ClientManager.user_api_client(current_user)
                  rescue
                    nil
                  end
-    @services_ng ||= Core::ServiceLayerNg::ServicesManager.new(api_client)
+    @services_ng = Core::ServiceLayerNg::ServicesManager.new(api_client)
+    @services_ng.current_user = current_user
+    @services_ng
   end
 
   def service_user

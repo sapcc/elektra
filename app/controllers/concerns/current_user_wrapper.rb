@@ -40,6 +40,10 @@ module CurrentUserWrapper
       end
     end
 
+    def inspect
+      @current_user.context.to_s
+    end
+
     # delegate all methods to wrapped current user
     def method_missing(method_name, *args, &block)
       if @current_user.respond_to?(method_name)

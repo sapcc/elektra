@@ -1,45 +1,62 @@
+# frozen_string_literal: true
+
 module Networking
+  # Implements Network actions
   class NetworksController < DashboardController
     before_filter :load_type, except: [:subnets]
+
     def index
       filter_options = {
         'router:external' => @network_type == 'external',
         sort_key: 'name'
       }
       @networks = paginatable(per_page: 15) do |pagination_options|
-        services.networking.networks(filter_options.merge(pagination_options))
+        services_ng.networking.networks(filter_options.merge(pagination_options))
       end
 
       # all owned networks + subnets without pagination + filtering
-      usage_networks = services.networking.networks.select { |n| n.tenant_id == @scoped_project_id }.length
-      usage_subnets = services.networking.subnets.select { |s| s.tenant_id == @scoped_project_id }.length
+      usage_networks = services_ng.networking.networks.select do |n|
+        n.tenant_id == @scoped_project_id
+      end.length
 
-      @quota_data = services.resource_management.quota_data([
-        {service_type: :network, resource_name: :networks, usage: usage_networks},
-        {service_type: :network, resource_name: :subnets, usage: usage_subnets}
-      ])
+      usage_subnets = services_ng.networking.subnets.select do |s|
+        s.tenant_id == @scoped_project_id
+      end.length
+
+      @quota_data = services.resource_management.quota_data(
+        [
+          { service_type: :network, resource_name: :networks,
+            usage: usage_networks },
+          { service_type: :network, resource_name: :subnets,
+            usage: usage_subnets }
+        ]
+      )
     end
 
     def show
-      @network = services.networking.network(params[:id])
-      @subnets = services.networking.subnets(network_id: @network.id)
-      @ports   = services.networking.ports(network_id: @network.id)
+      @network = services_ng.networking.find_network(params[:id])
+      @subnets = services_ng.networking.subnets(network_id: @network.id)
+      @ports   = services_ng.networking.ports(network_id: @network.id)
     end
 
     def new
-      @network = services.networking.new_network(name: "#{@scoped_project_name}_#{@network_type}")
-      @subnet = Networking::Subnet.new(nil,name: "#{@network.name}_sub", enable_dhcp: true)
+      @network = services_ng.networking.new_network(
+        name: "#{@scoped_project_name}_#{@network_type}"
+      )
+      @subnet = services_ng.networking.new_subnet(
+        name: "#{@network.name}_sub", enable_dhcp: true
+      )
     end
 
     def create
       network_params = params[:network]
       subnets_params = network_params.delete(:subnets)
-      @network = services.networking.new_network(network_params)
+      @network = services_ng.networking.new_network(network_params)
       @errors = Array.new
 
       if @network.save
         if subnets_params.present?
-          @subnet = services.networking.new_subnet(subnets_params)
+          @subnet = services_ng.networking.new_subnet(subnets_params)
           @subnet.network_id = @network.id
 
           # FIXME: anti-pattern of doing two things in one action

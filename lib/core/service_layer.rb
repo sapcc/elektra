@@ -114,6 +114,18 @@ module Core
         false
       end
 
+      def inspect
+        {
+          service: self.class.name,
+          region: @region,
+          auth_url: @auth_url,
+          token: @token,
+          domain_id: @domain_id,
+          project_id: @project_id,
+          service_catalog: @service_catalog
+        }.to_s
+      end
+
       def service_url(type, options={})
         region = options[:region] || @region
         interface = options[:interface] || 'public'

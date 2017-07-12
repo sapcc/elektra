@@ -6,7 +6,7 @@ module Core
     # each service in app/services/service_layer should inherit from this class.
     # It provides the context of current user
     class Service
-      attr_accessor :services
+      attr_accessor :services, :current_user
       attr_reader :api_client, :region
 
       def initialize(api_client)
@@ -24,6 +24,9 @@ module Core
         @api ||= ::Core::Api::ClientWrapper.new(@api_client, self)
       end
 
+      def inspect
+        { service: self.class.name, region: region }.to_s
+      end
 
       # This method is used to map raw data to a Object.
       def self.map_to(klazz, data, options = {}, &block)
