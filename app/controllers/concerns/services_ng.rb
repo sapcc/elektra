@@ -23,8 +23,6 @@ module ServicesNg
                    nil
                  end
     @services_ng = Core::ServiceLayerNg::ServicesManager.new(api_client)
-    @services_ng.current_user = current_user
-    @services_ng
   end
 
   def service_user
