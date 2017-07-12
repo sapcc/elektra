@@ -66,7 +66,6 @@ SimpleNavigation::Configuration.run do |navigation|
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
-
     primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "automation-icon" }, if: -> {services.available?(:automation,:nodes) } do |automation_nav|
       automation_nav.item :automation, 'Automation', -> {plugin('automation').nodes_path}, if: -> { services.available?(:automation,:nodes)}, highlights_on: Proc.new { params[:controller][/automation\/.*/] }
 
