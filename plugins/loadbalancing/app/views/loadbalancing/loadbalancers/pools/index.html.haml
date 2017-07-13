@@ -30,6 +30,6 @@
             = render partial: 'loadbalancing/loadbalancers/pools/item', locals: {loadbalancer: @loadbalancer, pool: pool}
         -else
           %tr
-            %td{colspan:5} No Pool defined
+            %td{colspan:7} No Pool defined
     .col-md-3
       = render :partial => 'loadbalancing/loadbalancers/info', locals: {loadbalancer: @loadbalancer}

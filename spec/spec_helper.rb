@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../config/environment", __FILE__)
+ENV['RAILS_ENV'] ||= 'test'
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 
-require File.join(Gem.loaded_specs['monsoon-openstack-auth'].full_gem_path,'spec/support/authentication_stub')
-require_relative 'shared/admin_services_stub'
+require File.join(Gem.loaded_specs['monsoon-openstack-auth'].full_gem_path,
+                  'spec/support/authentication_stub')
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -13,7 +15,7 @@ require_relative 'shared/admin_services_stub'
 # run twice. It is recommended that you do not name files matching this glob to
 # end with _spec.rb. You can configure this pattern with with the --pattern
 # option on the command line or in ~/.rspec, .rspec or `.rspec-local`.
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
@@ -45,7 +47,7 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = 'random'
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
@@ -69,16 +71,16 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation
   end
-  config.before(:all) do
 
+  config.before(:all) do
     DatabaseCleaner.start
 
     # set test config variables
-    Rails.configuration.keystone_endpoint = "http://localhost:8183/v3/auth/tokens"
-    Rails.configuration.default_region = "europe"
-    Rails.configuration.service_user_id = "test"
-    Rails.configuration.service_user_password = "test"
-    Rails.configuration.service_user_domain_name = "test"
+    Rails.configuration.keystone_endpoint = 'http://localhost:8183/v3/auth/tokens'
+    Rails.configuration.default_region = 'europe'
+    Rails.configuration.service_user_id = 'test'
+    Rails.configuration.service_user_password = 'test'
+    Rails.configuration.service_user_domain_name = 'test'
   end
   config.after(:all) do
     DatabaseCleaner.clean
@@ -87,7 +89,39 @@ RSpec.configure do |config|
   config.before(:each) do
     stub_authentication
 
-    allow(Core::ServiceUser::Base).to receive(:load).and_return(double('service_user').as_null_object)
-  end
+    # stub region detection
+    region = (AuthenticationStub.test_token['catalog']
+                                .first['endpoints']
+                                .first['region'] ||
+              AuthenticationStub.test_token['catalog']
+                                .first['endpoints']
+                                .first['region_id'])
+    allow(Core).to receive(:locate_region).and_return(region)
+    allow(Core).to receive(:region_from_auth_url).and_return(region)
 
+    # stub misty client
+    misty = double('misty').as_null_object
+    allow(::Misty::Cloud).to receive(:new).and_return(misty)
+
+    # stub service user and cloud admin
+    service_user = double('service_user').as_null_object
+    cloud_admin = double('cloud_admin').as_null_object
+
+    identity = double('identity').as_null_object
+    # service_user calls role_assignments for each request
+    # to check whether the user is allowed to enter the domain
+    # so, stub it
+    allow(identity)
+      .to receive(:role_assignments).and_return(['role_assignment'])
+    allow(service_user).to receive(:identity).and_return(identity)
+
+    allow_any_instance_of(::ApplicationController)
+      .to receive(:service_user).and_return(service_user)
+    allow_any_instance_of(::ApplicationController)
+      .to receive(:cloud_admin).and_return(cloud_admin)
+
+    # stub user_projects which is called in each request
+    allow_any_instance_of(::DashboardController)
+      .to receive(:load_user_projects).and_return([])
+  end
 end

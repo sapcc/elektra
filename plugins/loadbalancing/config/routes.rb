@@ -20,6 +20,9 @@ Loadbalancing::Engine.routes.draw do
         get 'update_item'
       end
       resources :l7policies, module: :listeners do
+        collection do
+          get :new_pre
+        end
         member do
           get 'update_item'
         end

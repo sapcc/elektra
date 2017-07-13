@@ -7,16 +7,19 @@
   %td
     - if l7policy.in_transition?
       %span{class: 'spinner'}
-    = link_to name_or_id(l7policy.name, l7policy.id), plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id)
+    - if l7policy.predefined?
+      = t("loadbalancing.policies.#{l7policy.name}", default: name_or_id(l7policy.name, l7policy.id))
+    - else
+      = link_to t("loadbalancing.policies.#{l7policy.name}", default: name_or_id(l7policy.name, l7policy.id)), plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id)
   %td= l7policy.description
   %td= l7policy.position
-  %td= l7policy.action
+  %td= l7policy.predefined? ? 'n.a.' : l7policy.action
   - if l7policy.redirect_pool_id
     %td= link_to l7policy.redirect_pool_id, plugin('loadbalancing').loadbalancer_pool_path(id: l7policy.redirect_pool_id, loadbalancer_id: loadbalancer.id), data: {modal: true}
   - else
     %td= l7policy.redirect_url
   - nrules = l7policy.rules ? l7policy.rules.count : 0
-  %td= link_to nrules, plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id) if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+  %td= l7policy.predefined? ? 'n.a.' : (link_to nrules, plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id) if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}))
   %td
     %label{class: 'spinner', data: {prov_status: "#{l7policy.id}"}}
 
@@ -28,9 +31,9 @@
       %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
         - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
           %li= link_to 'Show', plugin('loadbalancing').loadbalancer_listener_l7policy_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, id: l7policy.id), data: {modal: true}
-        - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        - if current_user.is_allowed?("loadbalancing:resource_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) && !l7policy.predefined?
           %li= link_to 'Edit', plugin('loadbalancing').edit_loadbalancer_listener_l7policy_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, id: l7policy.id), data: {modal: true}
-        - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) && !l7policy.predefined?
           %li.divider
           %li= link_to 'L7 Rules', plugin('loadbalancing').loadbalancer_listener_l7policy_l7rules_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id)
         - if nrules == 0 and current_user.is_allowed?("loadbalancing:resource_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})

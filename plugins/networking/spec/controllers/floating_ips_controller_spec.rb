@@ -13,14 +13,11 @@ describe Networking::FloatingIpsController, type: :controller do
 
   before :each do
     stub_authentication
-    stub_admin_services
 
-    identity_driver = double('identity_service_driver').as_null_object
-    network_driver = double('network_service_driver').as_null_object
-
-    allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
-    allow_any_instance_of(ServiceLayer::NetworkingService).to receive(:driver).and_return(network_driver)
-
+    allow_any_instance_of(ServiceLayerNg::NetworkingService)
+      .to receive(:api).and_return(
+        double('api', networking: double('networking').as_null_object)
+      )
   end
 
   describe "GET 'index'" do
@@ -29,5 +26,4 @@ describe Networking::FloatingIpsController, type: :controller do
       expect(response).to be_success
     end
   end
-
 end

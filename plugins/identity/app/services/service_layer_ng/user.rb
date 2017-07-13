@@ -50,7 +50,7 @@ module ServiceLayerNg
     private
 
     def role_assignments_to_users(ras)
-      ras.each_with_object do |r, array|
+      ras.each_with_object([]) do |r, array|
         next if r.user['id'] == Rails.application.config.service_user_id
         admin = find_user(r.user['id'])
         array << admin if admin
@@ -81,7 +81,7 @@ module ServiceLayerNg
 
           # load users (not very performant but there is no other option
           # to get users by ids)
-          role_assignments_to_users(ras)
+          admins.concat(role_assignments_to_users(ras))
 
           if admins.length.zero? # no admins for this project_id found
             # load project
@@ -98,7 +98,7 @@ module ServiceLayerNg
           ras = role_assignments('scope.domain.id' => domain_id,
                                  'role.id' => role.id, effective: true)
           # load users
-          role_assignments_to_users(ras)
+          admins.concat(role_assignments_to_users(ras))
         end
       rescue => e
         raise e if raise_error

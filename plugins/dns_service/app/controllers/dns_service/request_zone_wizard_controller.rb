@@ -13,10 +13,10 @@ module DnsService
       domain_type = params[:zone_request][:domain_type]
       @zone_request.attributes = params[:zone_request][domain_type]
       @zone_request.domain_type = domain_type
+      @zone_name = params[:zone_request][domain_type][:name]
       @zone_request.name.chomp!('.') if @zone_request.name.last=='.'
 
       inquiry = nil
-
       if @zone_request.valid?
         @zone_request.name += ".c.#{current_region}.cloud.sap." if domain_type=='subdomain'
         begin
@@ -61,27 +61,33 @@ module DnsService
     protected
 
     def list_ccadmin_master_dns_admins
-      cloud_dns_admin_role = cloud_admin.identity.find_role_by_name('cloud_dns_admin') rescue nil
+      cloud_dns_admin_role = cloud_admin.identity
+                                        .find_role_by_name('cloud_dns_admin')
 
-      @cloud_admin_domain = cloud_admin.identity.domains(name: Rails.configuration.cloud_admin_domain).first
+      @cloud_admin_domain = cloud_admin.identity.domains(
+        name: Rails.configuration.cloud_admin_domain
+      ).first
       return [] unless @cloud_admin_domain
-      @master_project = cloud_admin.identity.projects(name: 'master', domain_id: @cloud_admin_domain.id).first
+      @master_project = cloud_admin.identity.projects(
+        name: 'master', domain_id: @cloud_admin_domain.id
+      ).first
       return [] unless @master_project
 
-      role_assignments = cloud_admin.identity.role_assignments('scope.project.id' => @master_project.id, 'role.id' => cloud_dns_admin_role.id, effective: true, include_subtree: true)
-      admins = []
+      role_assignments = cloud_admin.identity.role_assignments(
+        'scope.project.id' => @master_project.id,
+        'role.id' => cloud_dns_admin_role.id,
+        effective: true,
+        include_subtree: true
+      )
 
       user_ids = role_assignments.collect { |ra| ra.user['id'] }.uniq
-
       # load users (not very performant but there is no other
       # option to get users by ids)
-      user_ids.each do |id|
-        unless id == service_user.id
-          admin = cloud_admin.identity.find_user(id)
-          admins << admin if admin
-        end
+      user_ids.each_with_object([]) do |id, admins|
+        next if id == Rails.application.config.service_user_id
+        admin = cloud_admin.identity.find_user(id)
+        admins << admin if admin
       end
-      admins
     end
 
     def load_pools

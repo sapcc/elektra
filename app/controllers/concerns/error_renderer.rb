@@ -27,14 +27,15 @@ module ErrorRenderer
         return v.call(exception, self).to_s if v.is_a?(Proc)
         return v.to_s
       end
-      # byebug
+
       status = if exception.respond_to?(:status)
                  exception.status
                elsif exception.respond_to?(:code)
                  exception.code
                else
                  503
-               end    
+               end
+
       begin
         @title = value.call(:title) || exception.class.name.split('::').last.humanize
         @description = value.call(:description) || (exception.message rescue exception.to_s)
@@ -52,7 +53,7 @@ module ErrorRenderer
       end
 
       unless @warning
-        logger.error(@exception_id+": "+@title+". "+@description)
+        logger.error("#{@exception_id}: #{@title}. #{@description}")
 
         unless map[:sentry]==false
           Raven::Rack.capture_exception(exception, env)

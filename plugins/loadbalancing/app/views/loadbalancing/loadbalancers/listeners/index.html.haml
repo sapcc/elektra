@@ -33,6 +33,6 @@
             = render partial: 'loadbalancing/loadbalancers/listeners/item', locals: {loadbalancer: @loadbalancer, listener: listener}
         -else
           %tr
-            %td{colspan:5} No Listeners defined
+            %td{colspan:7} No Listeners defined
     .col-md-3
       = render :partial => 'loadbalancing/loadbalancers/info', locals: {loadbalancer: @loadbalancer}

@@ -24,6 +24,9 @@ module Core
         @api ||= ::Core::Api::ClientWrapper.new(@api_client, self)
       end
 
+      def inspect
+        { service: self.class.name, region: region }.to_s
+      end
 
       # This method is used to map raw data to a Object.
       def self.map_to(klazz, data, options = {}, &block)

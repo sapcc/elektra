@@ -27,7 +27,6 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
     if options.service_layer?
       create_service_layer_service
-      create_service_layer_driver
     end
   end
 
@@ -57,19 +56,6 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     copy_file "app/assets/plugin.js", "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/plugin.js"
 
     gsub_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/plugin.js", '%{PLUGIN_NAME}', name
-  end
-
-  def create_service_layer_driver
-    copy_file "lib/driver.rb", "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver.rb"
-    copy_file "lib/driver/interface.rb", "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/interface.rb"
-    copy_file "lib/driver/my_driver.rb", "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/my_driver.rb"
-
-    gsub_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/interface.rb", '%{PLUGIN_NAME}', name.classify
-    gsub_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/driver/my_driver.rb", '%{PLUGIN_NAME}', name.classify
-
-    inject_into_file "#{PLUGINS_PATH}/#{name}/lib/#{name}.rb", after: "require \"#{name}/engine\"\n" do
-      "require_relative \"#{name}/driver\"\n"
-    end
   end
 
   def modify_application_controller

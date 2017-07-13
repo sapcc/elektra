@@ -1,9 +1,14 @@
-module Networking
-  class Networks::ExternalController < NetworksController
-    private
+# frozen_string_literal: true
 
-    def load_type
-      @network_type = 'external'.freeze
+module Networking
+  module Networks
+    # External Networks
+    class ExternalController < NetworksController
+      private
+
+      def load_type
+        @network_type = 'external'
+      end
     end
   end
 end

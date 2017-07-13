@@ -1,5 +1,5 @@
 module Networking
-  class Network < Core::ServiceLayer::Model
+  class Network < Core::ServiceLayerNg::Model
     validates :name, presence: true
 
     def external
@@ -27,11 +27,11 @@ module Networking
     end
 
     def subnet_objects
-     @subnet_objects ||=  @driver.map_to(::Networking::Subnet).subnets(network_id: self.id)
+      @subnet_objects ||= @service.subnets(network_id: id)
     end
 
     def port_objects
-      @port_objects ||= @driver.map_to(::Networking::Port).ports(network_id: self.id)
+      @port_objects ||= @service.ports(network_id: id)
     end
   end
 end

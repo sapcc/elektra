@@ -14,7 +14,7 @@ module ServiceLayerNg
       server_data = nil
       unless use_cache
         server_data = api.compute.list_servers_detailed(filter).data
-        Rails.cache.write("#{@scoped_project_id}_servers",server_data, expires_in: 2.hours)
+        Rails.cache.write("#{@scoped_project_id}_servers", server_data, expires_in: 2.hours)
       else
         server_data = Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
           api.compute.list_servers_detailed(filter).data
@@ -77,14 +77,14 @@ module ServiceLayerNg
         server_id,
         "os-getVNCConsole" => {'type' => console_type }
       ).map_to(Compute::VncConsole)
-      
+
       # TODO: since 2.5 remote-console should be available but for some reason it is not working
       #       got a 404 not available
       #api.compute.create_remote_console(
       #  id,
       #  "remote_console" => {
       #    'protocol'=>'vnc',
-      #    'type' => console_type 
+      #    'type' => console_type
       #}
     end
 
@@ -173,6 +173,6 @@ module ServiceLayerNg
       debug "[compute-service][Server] -> resume_server -> POST /servers/#{server_id}/action"
       api.compute.resume_suspended_server_resume_action(server_id, 'resume' => nil)
     end
-    
+
   end
 end

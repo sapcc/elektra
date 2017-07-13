@@ -34,14 +34,13 @@ module Identity
         end
         format.js
       end
-
     end
 
     def show; end
 
     def view
       @project = services_ng.identity.find_project(
-        @project_id, %i[subtree_as_ids parents_as_ids]
+        @project_id, subtree_as_ids: true, parents_as_ids: true
       )
     end
 
@@ -128,9 +127,11 @@ module Identity
 
     def check_wizard_status
       return if %w[ccadmin cloud_admin].include?(@scoped_domain_name)
-      service_names = %w[cost_control networking resource_management"].keep_if do |name|
+
+      service_names = %w[cost_control networking resource_management].keep_if do |name|
         services.available?(name.to_sym)
       end
+
       project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
       return if project_profile.wizard_finished?(service_names)
@@ -172,14 +173,16 @@ module Identity
 
         quota_inquiries = quota_inquiries.select{|quota_inquiry| quota_inquiry.aasm_state!='closed'}
 
-        if quota_inquiries.length>0
-          approved_inquiries = quota_inquiries.select{|quota_inquiry| quota_inquiry.aasm_state=='approved'}
-          status = approved_inquiries.length>0 ? ProjectProfile::STATUS_DONE : ProjectProfile::STATUS_PENDING
-          inquiry = if approved_inquiries.length>0
-            approved_inquiries.first
-          else
-            quota_inquiries.first
+        if quota_inquiries.length.positive?
+          approved_inquiries = quota_inquiries.select do |quota_inquiry|
+            quota_inquiry.aasm_state == 'approved'
           end
+          status = approved_inquiries.length.positive? ? ProjectProfile::STATUS_DONE : ProjectProfile::STATUS_PENDING
+          inquiry = if approved_inquiries.length.positive?
+                      approved_inquiries.first
+                    else
+                      quota_inquiries.first
+                    end
 
           @project_profile.update_wizard_status(
             'resource_management',
@@ -187,20 +190,20 @@ module Identity
             {inquiry_id: inquiry.id, aasm_state: inquiry.aasm_state, package: inquiry.payload["package"]}
           )
         else
-          @project_profile.update_wizard_status('resource_management',nil)
+          @project_profile.update_wizard_status('resource_management', nil)
         end
       end
-      @project_profile.wizard_finished?("resource_management")
+      @project_profile.wizard_finished?('resource_management')
     end
 
     def update_cost_control_wizard_status
-      billing_data = service_user.identity.cost_control
-                                 .find_project_masterdata(@scoped_project_id)
+      billing_data = services.cost_control.find_project_masterdata(
+        @scoped_project_id
+      )
 
       if billing_data && billing_data.cost_object_id
         @project_profile.update_wizard_status(
-          'cost_control',
-          ProjectProfile::STATUS_DONE,
+          'cost_control', ProjectProfile::STATUS_DONE,
           cost_object: billing_data.cost_object_id,
           type: billing_data.cost_object_type
         )
