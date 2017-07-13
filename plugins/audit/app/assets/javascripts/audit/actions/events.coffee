@@ -60,8 +60,8 @@
 
   filterEventsStartTime = (filterStartTime) ->
     (dispatch) ->
-      # trigger api call only if the given start time is a valid date or empty string
-      if moment(filterStartTime).isValid() || ReactHelpers.isEmptyString(filterStartTime)
+      # trigger api call only if the given start time is a valid date or an empty string
+      if moment.isMoment(filterStartTime) || ReactHelpers.isEmpty(filterStartTime)
         dispatch(updateFilterStartTime(filterStartTime))
         dispatch(loadEvents())
       # TODO: Add else case with validation error display for user
@@ -72,8 +72,8 @@
 
   filterEventsEndTime = (filterEndTime) ->
     (dispatch) ->
-      # trigger api call only if the given start time is a valid date or empty string
-      if moment(filterEndTime).isValid() || ReactHelpers.isEmptyString(filterEndTime)
+      # trigger api call only if the given start time is a valid date or an empty string
+      if moment.isMoment(filterEndTime) || ReactHelpers.isEmpty(filterEndTime)
         dispatch(updateFilterEndTime(filterEndTime))
         dispatch(loadEvents())
       # TODO: Add else case with validation error display for user
