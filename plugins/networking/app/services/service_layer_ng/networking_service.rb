@@ -8,6 +8,7 @@ module ServiceLayerNg
     include Port
     include FloatingIp
     include SecurityGroup
+    include SecurityGroupRule
     include Router
     include Rbac
 

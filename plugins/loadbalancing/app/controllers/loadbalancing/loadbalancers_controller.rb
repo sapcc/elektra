@@ -14,7 +14,7 @@ module Loadbalancing
       @private_networks.each do |pn|
         unless pn.subnets.blank?
           pn.subnets.each do |subid|
-            @subnets[subid] = services_ng.networking.subnet(subid) unless @subnets[subid]
+            @subnets[subid] = services_ng.networking.find_subnet(subid) unless @subnets[subid]
           end
         end
       end
@@ -239,7 +239,7 @@ module Loadbalancing
           net = networks[fip.floating_network_id]
           unless net.subnets.blank?
             net.subnets.each do |subid|
-              subnets[subid] = services_ng.networking.subnet(subid) unless subnets[subid]
+              subnets[subid] = services_ng.networking.find_subnet(subid) unless subnets[subid]
               sub = subnets[subid]
               cidr = NetAddr::CIDR.create(sub.cidr)
               if cidr.contains?(fip.floating_ip_address)

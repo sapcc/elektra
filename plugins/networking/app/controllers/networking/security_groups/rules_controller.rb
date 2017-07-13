@@ -34,9 +34,12 @@ module Networking
       def create
         rule_params = params[:security_group_rule]
         @rule_type = rule_params.delete(:type)
+        rule_params[:security_group_id] = params[:security_group_id]
+
         attributes = build_rule_attributes(rule_params)
         if attributes
           @rule = services_ng.networking.new_security_group_rule(attributes)
+        end
 
         if @rule && @rule.save
           redirect_to security_group_path(params[:security_group_id])

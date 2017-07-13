@@ -4,7 +4,7 @@ require 'ipaddr'
 
 module Networking
   # Represents the Openstack Floating IP
-  class FloatingIpNg < Core::ServiceLayerNg::Model
+  class FloatingIp < Core::ServiceLayerNg::Model
     def attributes_for_create
       {
         'floating_network_id' => read('floating_network_id'),

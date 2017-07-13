@@ -118,11 +118,14 @@ class DashboardController < ::ScopeController
 
   def rescope_token
     if @scoped_project_id.nil? &&
-       service_user.identity.role_assignments(
-         'user.id' => current_user.id,
-         'scope.domain.id' => @scoped_domain_id,
-         'effective' => true
-       ).empty?
+      Rails.cache.fetch("user_role_assignments/#{current_user.id}",
+                        expires_in: 1.hour) do
+         service_user.identity.role_assignments(
+           'user.id' => current_user.id,
+           'scope.domain.id' => @scoped_domain_id,
+           'effective' => true
+         ).empty?
+      end   
       authentication_rescope_token(domain: nil, project: nil)
     else
       authentication_rescope_token

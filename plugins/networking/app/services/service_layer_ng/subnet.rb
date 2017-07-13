@@ -26,7 +26,7 @@ module ServiceLayerNg
       subnets_data = Rails.cache.fetch(
         "network_#{network_id}_subnets", expires_in: 1.hours
       ) do
-        api.networking.subnets(network_id: network_id).data
+        api.networking.list_subnets(network_id: network_id).data
       end || []
       subnets_data.collect { |attrs| map_to(Networking::Subnet, attrs) }
     end

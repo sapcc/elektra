@@ -5,12 +5,18 @@ module ServiceLayerNg
   module RoleAssignment
     def role_assignments(filter = {})
       effective = filter.delete(:effective) || filter.delete('effective')
+      # if effective is true remove user_id from filter to find also groups.
+      user_id = filter.delete('user.id') if effective
+
       assignments = api.identity.list_role_assignments(filter)
                        .map_to(Identity::RoleAssignment)
       # return if no effective filter required
       return assignments unless effective
 
-      aggregate_group_role_assignments(assignments)
+      result = aggregate_group_role_assignments(assignments)
+      # select user role assignments unless user_id is nil
+      result = result.select { |a| a.user['id'] == user_id } if user_id
+      result
     end
 
     def aggregate_group_role_assignments(role_assignments)
@@ -33,36 +39,72 @@ module ServiceLayerNg
       grant_project_user_role(project_id, user_id, role.id)
     end
 
-    def grant_project_user_role(project_id, user_id, role_id)
+    def grant_project_user_role!(project_id, user_id, role_id)
       api.identity.assign_role_to_user_on_project(project_id, user_id, role_id)
     end
 
-    def revoke_project_user_role(project_id, user_id, role_id)
+    def grant_project_user_role(project_id, user_id, role_id)
+      grant_project_user_role!(project_id, user_id, role_id)
+    rescue
+      false
+    end
+
+    def revoke_project_user_role!(project_id, user_id, role_id)
       api.identity.unassign_role_from_user_on_project(
         project_id, user_id, role_id
       )
     end
 
-    def grant_project_group_role(project_id, group_id, role_id)
+    def revoke_project_user_role(project_id, user_id, role_id)
+      revoke_project_user_role!(project_id, user_id, role_id)
+    rescue
+      false
+    end
+
+    def grant_project_group_role!(project_id, group_id, role_id)
       api.identity.assign_role_to_group_on_project(
         project_id, group_id, role_id
       )
     end
 
-    def revoke_project_group_role(project_id, group_id, role_id)
+    def grant_project_group_role(project_id, group_id, role_id)
+      grant_project_group_role!(project_id, group_id, role_id)
+    rescue
+      false
+    end
+
+    def revoke_project_group_role!(project_id, group_id, role_id)
       api.identity.unassign_role_from_group_on_project(
         project_id, group_id, role_id
       )
     end
 
-    def grant_domain_user_role(domain_id, user_id, role_id)
+    def revoke_project_group_role(project_id, group_id, role_id)
+      revoke_project_group_role!(project_id, group_id, role_id)
+    rescue
+      false
+    end
+
+    def grant_domain_user_role!(domain_id, user_id, role_id)
       api.identity.assign_role_to_user_on_domain(domain_id, user_id, role_id)
     end
 
-    def revoke_domain_user_role(domain_id, user_id, role_id)
+    def grant_domain_user_role(domain_id, user_id, role_id)
+      grant_domain_user_role!(domain_id, user_id, role_id)
+    rescue
+      false
+    end
+
+    def revoke_domain_user_role!(domain_id, user_id, role_id)
       api.identity.unassigns_role_from_user_on_domain(
         domain_id, user_id, role_id
       )
+    end
+
+    def revoke_domain_user_role(domain_id, user_id, role_id)
+      revoke_domain_user_role!(domain_id, user_id, role_id)
+    rescue
+      false
     end
   end
 end

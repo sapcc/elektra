@@ -21,8 +21,8 @@ module ServiceLayerNg
       api.networking.list_networks(filter).map_to(Networking::Network)
     end
 
-    def project_networks(project_id, filter = nil)
-      api.networking.networks(filter).data.each_with_object([]) do |n, array|
+    def project_networks(project_id, filter = {})
+      api.networking.list_networks(filter).data.each_with_object([]) do |n, array|
         if n['shared'] == true || n['tenant_id'] == project_id
           array << map_to(Networking::Network, n)
         end

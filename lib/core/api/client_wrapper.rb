@@ -35,8 +35,8 @@ module Core
             @elektra_service = elektra_service
           end
 
-          def data
-            key = @origin_response.body.keys.reject do |k|
+          def data(key = nil)
+            key ||= @origin_response.body.keys.reject do |k|
               %w[links previous next].include?(k)
             end.first
             @origin_response.body[key]

@@ -1,5 +1,6 @@
-module Networking
-  class NetworkIpAvailabilityNg < Core::ServiceLayerNg::Model
+# frozen_string_literal: true
 
+module Networking
+  class NetworkIpAvailability < Core::ServiceLayerNg::Model
   end
 end

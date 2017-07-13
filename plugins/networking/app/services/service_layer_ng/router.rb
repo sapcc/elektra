@@ -13,7 +13,7 @@ module ServiceLayerNg
     end
 
     def find_router(id)
-      find_router!(id).map_to(Networking::Router)
+      find_router!(id)
     rescue
       nil
     end

@@ -6,9 +6,9 @@ module ServiceLayerNg
     def project_floating_ips(project_id, filter = {})
       api.networking
          .list_floating_ips(filter)
-         .data
-         .each_with_object([]) do |ip, array|
-           if ip['tenant_id'] == project_id
+         .data('floatingips')
+         .each_with_object([]) do |fip, array|
+           if fip['tenant_id'] == project_id
              array << map_to(Networking::FloatingIp, fip)
            end
          end
