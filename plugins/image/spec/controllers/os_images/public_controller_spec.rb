@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Image::OsImages::PublicController, type: :controller do
   routes { Image::Engine.routes }
 
-  
+
 
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 
@@ -15,14 +15,11 @@ describe Image::OsImages::PublicController, type: :controller do
 
   before :each do
     stub_authentication
-    stub_admin_services
 
-    identity_driver = double('identity_service_driver').as_null_object
     os_image_driver = double('image_service_driver').as_null_object
 
     allow(os_image_driver).to receive(:count).and_return(1)
 
-    allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::ImageService).to receive(:driver).and_return(os_image_driver)
   end
 

@@ -42,13 +42,14 @@ Rails.application.configure do
 
   # Mailer configuration
   config.action_mailer.perform_deliveries = false
-  
+  config.action_mailer.default_url_options = { :host => "localhost" }
+
   # Enable stdout logger
   config.logger = Logger.new(STDOUT)
 
   # Set log level
   config.log_level = :ERROR
-  
+
   config.debug_api_calls = false
 
 end

@@ -53,7 +53,7 @@ module ErrorRenderer
       end
 
       unless @warning
-        logger.error(@exception_id+": "+@title+". "+@description)
+        logger.error("#{@exception_id}: #{@title}. #{@description}")
 
         unless map[:sentry]==false
           Raven::Rack.capture_exception(exception, env)

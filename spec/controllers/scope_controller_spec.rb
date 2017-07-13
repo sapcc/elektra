@@ -6,8 +6,6 @@ describe ScopeController, type: :controller do
       head :ok
     end
   end
-  
-  
 
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 
@@ -18,9 +16,8 @@ describe ScopeController, type: :controller do
 
   before :each do
     stub_authentication
-    stub_admin_services
   end
-  
+
   context "domain_id is provided, project_id is not provided" do
 
     request_params = {domain_id: default_params[:domain_id]}
@@ -30,7 +27,7 @@ describe ScopeController, type: :controller do
         get :index, domain_id: @domain_friendly_id.slug
         expect(response).to be_success
       end
-    
+
       it "redirects to the same action with friendly ids for domain" do
         get :index, domain_id: AuthenticationStub.domain_id
         expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
