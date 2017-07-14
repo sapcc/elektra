@@ -14,7 +14,7 @@ module ServiceLayerNg
       server_data = nil
       unless use_cache
         server_data = api.compute.list_servers_detailed(filter).data
-        Rails.cache.write("#{@scoped_project_id}_servers", server_data, expires_in: 2.hours)
+        Rails.cache.write("#{@scoped_project_id}_servers",server_data, expires_in: 2.hours)
       else
         server_data = Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
           api.compute.list_servers_detailed(filter).data
@@ -65,10 +65,16 @@ module ServiceLayerNg
       api.compute.delete_server(id)
     end
 
-    def find_server(id)
+    def find_server!(id)
       debug "[compute-service][Server] -> find_server -> GET /servers/#{id}"
       return nil if id.empty?
       api.compute.show_server_details(id).map_to(Compute::Server)
+    end
+
+    def find_server(id)
+      find_server!(id)
+    rescue
+      nil
     end
 
     def vnc_console(server_id,console_type='novnc')
