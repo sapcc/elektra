@@ -38,20 +38,20 @@ module Compute
 
     def attributes_for_create
       {
-        "name"              => read("name"),
-        "imageRef"          => read("image_id"),
-        "flavorRef"         => read("flavor_id"),
-        "max_count"         => read("max_count"),
-        "min_count"         => read("min_count"),
+        'name'              => read('name'),
+        'imageRef'          => read('image_id'),
+        'flavorRef'         => read('flavor_id'),
+        'max_count'         => read('max_count'),
+        'min_count'         => read('min_count'),
         # Optional
-        "networks"          => read("network_ids"),
-        "security_groups"   => read("security_groups"),
-        "availability_zone" => read("availability_zone_id"),
-        "key_name"          => read("keypair_id"),
-        "user_data"         => Base64.encode64(read("user_data"))
-        }.delete_if { |k, v| v.blank? }
+        'networks'          => read('network_ids'),
+        'security_groups'   => read('security_groups'),
+        'availability_zone' => read('availability_zone_id'),
+        'key_name'          => read('keypair_id'),
+        'user_data'         => Base64.encode64(read('user_data'))
+      }.delete_if { |_k, v| v.blank? }
     end
-    
+
     def self.prepare_filter(query)
       return Excon::Utils.query_string(query: query).sub(/^\?/, '')
     end
@@ -61,7 +61,7 @@ module Compute
     end
 
     def security_groups_details
-      @service.security_groups_details self.id
+      @service.security_groups_details(id)
     end
 
     def availability_zone
@@ -271,4 +271,3 @@ module Compute
 
   end
 end
-

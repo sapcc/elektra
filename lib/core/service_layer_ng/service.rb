@@ -25,7 +25,7 @@ module Core
       end
 
       def inspect
-        { service: self.class.name, region: region }.to_s
+        { region: region }.to_s
       end
 
       # This method is used to map raw data to a Object.
@@ -56,7 +56,7 @@ module Core
       # def catalog
       #   api_client.instance_variable_get('@auth').catalog
       # end
-      
+
       def debug(message)
         puts message if ENV['DEBUG_SERVICE_LAYER']
       end

@@ -3,16 +3,16 @@
 module ServiceLayerNg
   # This class implements the Openstack compute api
   class ComputeService < Core::ServiceLayerNg::Service
-    include Flavor
-    include HostAggregate
-    include Hypervisor
-    include Image
-    include Keypair
-    include OsInterface
-    include SecurityGroup
-    include Server
-    include Service
-    include Volume
+    include ComputeServices::Flavor
+    include ComputeServices::HostAggregate
+    include ComputeServices::Hypervisor
+    include ComputeServices::Image
+    include ComputeServices::Keypair
+    include ComputeServices::OsInterface
+    include ComputeServices::SecurityGroup
+    include ComputeServices::Server
+    include ComputeServices::Service
+    include ComputeServices::Volume
 
     def available?(_action_name_sym = nil)
       api.catalog_include_service?('compute', region)

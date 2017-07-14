@@ -16,12 +16,10 @@ describe Automation::NodesController, type: :controller do
   before :each do
     stub_authentication
 
-    compute_driver = double('compute_service_driver').as_null_object
     client = double('arc_client').as_null_object
     automation_service = double('automation_service').as_null_object
     automation_run_service = double('automation_run_service').as_null_object
 
-    allow_any_instance_of(ServiceLayer::ComputeService).to receive(:driver).and_return(compute_driver)
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:client).and_return(client)
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_service).and_return(automation_service)
@@ -89,7 +87,8 @@ describe Automation::NodesController, type: :controller do
     end
 
     it "should rescue on error" do
-      allow_any_instance_of(ServiceLayer::ComputeService).to receive(:servers).and_raise("boom")
+      allow_any_instance_of(ServiceLayerNg::ComputeService)
+        .to receive(:servers).and_raise("boom")
       get :install, default_params
       expect(assigns(:compute_instances)).to be_empty
       expect(assigns(:errors)).to be_truthy

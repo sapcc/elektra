@@ -3,13 +3,13 @@
 module ServiceLayerNg
   # This class implements the identity api
   class IdentityService < Core::ServiceLayerNg::Service
-    include User
-    include Project
-    include Domain
-    include Group
-    include Role
-    include RoleAssignment
-    include OsCredential
+    include IdentityServices::User
+    include IdentityServices::Project
+    include IdentityServices::Domain
+    include IdentityServices::Group
+    include IdentityServices::Role
+    include IdentityServices::RoleAssignment
+    include IdentityServices::OsCredential
 
     def available?(_action_name_sym = nil)
       api.catalog_include_service?('identity', region)
