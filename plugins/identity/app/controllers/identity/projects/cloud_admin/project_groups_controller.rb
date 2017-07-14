@@ -6,8 +6,7 @@ module Identity
       # This class implements project groups actions
       # Adding and removing of project groups.
       class ProjectGroupsController < ::DashboardController
-        before_filter :load_project
-        before_filter :load_roles
+        before_filter :load_scope_and_roles
 
         def index
           enforce_permissions('identity:project_group_list', {})
@@ -47,6 +46,7 @@ module Identity
 
         def update
           enforce_permissions('identity:project_group_update', {})
+
           load_role_assignments(@project.id)
           available_role_ids = @roles.collect(&:id)
 
@@ -94,26 +94,11 @@ module Identity
 
         protected
 
-        def load_project
-          return unless params[:project]
-
-          @domain = if params[:domain]
-                      services_ng.identity.domains(name: params[:domain].strip)
-                                 .first ||
-                        services_ng.identity.find_domain(params[:domain].strip)
-                    end
-          @project = if @domain
-                       services_ng.identity.projects(
-                         domain_id: @domain.id, name: params[:project].strip
-                       ).first
-                     end
-          @project ||= services_ng.identity.find_project(params[:project].strip)
-          return unless @project
-          @domain ||= services_ng.identity.find_domain(@project.domain_id)
-        end
-
         # FIXME: duplicated in ProjectMembersController
-        def load_roles
+        def load_scope_and_roles
+          @domain, @project = services_ng.identity.find_domain_and_project(
+            params.permit(:domain, :project)
+          )
           @roles = services_ng.identity.roles.sort_by(&:name)
         end
 

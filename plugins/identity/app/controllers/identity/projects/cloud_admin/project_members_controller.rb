@@ -5,8 +5,7 @@ module Identity
     module CloudAdmin
       # This class implements methods add and remove for project members
       class ProjectMembersController < ::DashboardController
-        before_filter :load_project
-        before_filter :load_roles
+        before_filter :load_scope_and_roles
 
         def index
           enforce_permissions('identity:project_member_list', {})
@@ -115,7 +114,10 @@ module Identity
         end
 
         # FIXME: duplicated in ProjectGroupsController
-        def load_roles
+        def load_scope_and_roles
+          @domain, @project = services_ng.identity.find_domain_and_project(
+            params.permit(:domain, :project)
+          )
           @roles = services_ng.identity.roles.sort_by(&:name)
         end
 

@@ -13,7 +13,6 @@
           Domain name or ID
     .row
       %label.string.required.control-label.col-sm-2
-        %abbr{title: "required"}*
         Project
 
       .col-sm-5
@@ -24,10 +23,23 @@
           Project name or ID
 
       .col-sm-2
-        = submit_tag 'Choose Project', class: 'btn btn-primary'
+        = submit_tag 'Choose Scope', class: 'btn btn-primary'
 
       .col-sm-3
-        - if @project or @domain
-          = "Domain: #{@domain.name}" if @domain
-          %br
-          = "Project: #{@project.name}" if @project
+        - if @domain
+          %span.text-success
+            = "Domain: #{@domain.name}"
+            %i.fa.fa-fw.fa-check
+        - elsif params[:domain] && params[:domain].present?
+          %span.text-danger
+            = "Domain: #{params[:domain]}"
+            %i.fa.fa-fw.fa-exclamation-triangle
+        %br
+        -if @project
+          %span.text-success
+            = "Project: #{@project.name}"
+            %i.fa.fa-fw.fa-check
+        - elsif params[:project] && params[:project].present?
+          %span.text-danger
+            = "Project: #{params[:project]}"
+            %i.fa.fa-fw.fa-exclamation-triangle

@@ -11,6 +11,7 @@ module ServiceLayerNg
     include NetworkingServices::SecurityGroupRule
     include NetworkingServices::Router
     include NetworkingServices::Rbac
+    include NetworkingServices::Quota
 
     def available?(_action_name_sym = nil)
       api.catalog_include_service?('network', region)

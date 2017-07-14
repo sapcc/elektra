@@ -38,5 +38,7 @@
 
   "networking:rbac_policy_list": "rule:context_is_cloud_network_admin or (rule:context_is_network_viewer and project_id:%(network.tenant_id)s)",
   "networking:rbac_policy_create": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(network.tenant_id)s)",
-  "networking:rbac_policy_delete": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(network.tenant_id)s)"
+  "networking:rbac_policy_delete": "rule:context_is_cloud_network_admin or (rule:network_admin and project_id:%(network.tenant_id)s)",
+
+  "networking:network_usage_stat_list": "rule:context_is_cloud_network_admin"
 }

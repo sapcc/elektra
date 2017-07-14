@@ -65,6 +65,9 @@ SimpleNavigation::Configuration.run do |navigation|
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     ccadmin_nav.item :hypervisors, 'Show Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
     ccadmin_nav.item :lookup, 'OpenStack Object Lookup', -> { plugin('lookup').root_path }, highlights_on: -> { params[:controller][%r{lookup/?.*}] }
+    ccadmin_nav.item :network_stats, 'Network Usage Stats', lambda {
+      plugin('networking').cloud_admin_network_usage_stats_path
+    }, highlights_on: -> { params[:controller][%r{network_usage_stats/?.*}] }
   end
 
   primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,

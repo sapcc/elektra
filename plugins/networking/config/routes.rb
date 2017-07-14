@@ -13,6 +13,10 @@ Networking::Engine.routes.draw do
 
   resources :network_wizard, only: [:new,:create]
 
+  namespace :cloud_admin do
+    resources :network_usage_stats, only: [:index]
+  end
+
   namespace :networks do
     %i(external private).each do |type|
       resources type do
