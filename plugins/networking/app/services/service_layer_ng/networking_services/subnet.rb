@@ -36,7 +36,7 @@ module ServiceLayerNg
         subnet_data = Rails.cache.fetch("subnet_#{id}", expires_in: 2.hours) do
           api.networking.show_subnet_details(id).data
         end
-        map_to(Networking::Subnet, subnet_data)
+        map_to(Networking::Subnet, subnet_data || [])
       end
 
       #################### Model Interface #################
