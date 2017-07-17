@@ -47,7 +47,7 @@ module ServiceLayerNg
       def cached_user_projects(user_id, filter = {})
         # Rails.cache.delete("#{api.token}/user_domain_projects")
         user_domain_projects_data = Rails.cache.fetch(
-          "#{api.token}/user_domain_projects", expires_in: 1.minute
+          "user/#{user_id}/user_domain_projects", expires_in: 1.minute
         ) do
           api.identity.list_projects_for_user(user_id, filter).data
         end
