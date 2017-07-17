@@ -23,8 +23,18 @@ module ServiceLayerNg
         flavor_ref = params.delete("flavorRef")
         params["server"] = {
           'flavorRef' => flavor_ref,
-          'name'      => name
+          'name'      => name,
+          'security_groups' => params.delete('security_groups'),
+          'availability_zone' => params.delete('availability_zone'),
+          'key_name' => params.delete('key_name')
         }
+              # byebug
+
+        if params['server']['security_groups'] && params['server']['security_groups'].is_a?(Array)
+          params['server']['security_groups'] = params['server']['security_groups'].collect do |sg|
+            { 'name' => sg }
+          end
+        end
 
         image_ref = params.delete("imageRef")
         params['server']['imageRef'] = image_ref if image_ref
@@ -45,6 +55,8 @@ module ServiceLayerNg
             end
          end
         end
+
+
 
         api.compute.create_server(params).data
       end
