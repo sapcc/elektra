@@ -16,7 +16,7 @@ module Networking
                     elsif @domain
                       services_ng.identity.projects(domain_id: @domain.id)
                     end
-        return if @projects.empty?
+        return if @projects.blank?
 
         @projects_quotas = load_projects_quotas
         @projects_networks = load_projects_networks
