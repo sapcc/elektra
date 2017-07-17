@@ -8,23 +8,11 @@ module ServiceLayerNg
       def new_server(params={})
         # this is used for inital create server dialog
         debug "[compute-service][Server] -> new_server"
-        Compute::Server.new(self,params)
+        map_to(Compute::Server, params)
       end
 
-      def servers(filter={},use_cache = false)
-        debug "[compute-service][Server] -> servers -> GET servers/detail"
-
-        server_data = if use_cache
-          Rails.cache.fetch("#{@scoped_project_id}_servers", expires_in: 2.hours) do
-            api.compute.list_servers_detailed(filter).data
-          end
-        else
-          data = api.compute.list_servers_detailed(filter).data
-          Rails.cache.write("#{@scoped_project_id}_servers",data, expires_in: 2.hours)
-          data
-        end
-
-        map_to(Compute::Server, server_data || [])
+      def servers(filter={}, _use_cache = false)
+        api.compute.list_servers_detailed(filter).map_to(Compute::Server)
       end
 
       def create_server(params={})
@@ -59,7 +47,6 @@ module ServiceLayerNg
         end
 
         api.compute.create_server(params).data
-
       end
 
       def delete_server(id)
@@ -117,7 +104,7 @@ module ServiceLayerNg
           end
         end
 
-        api.compute.rebuild_server_rebuild_action(server_id,data)
+        api.compute.rebuild_server_rebuild_action(server_id, data)
       end
 
       def resize_server(server_id, flavor_ref)
