@@ -120,24 +120,26 @@ module ServiceLayer
       Loadbalancing::L7rule.new(driver, attributes)
     end
 
-    def loadbalancer_changeable?(id)
-      lb = find_loadbalancer(id)
-      return false unless lb
+    def loadbalancer_changeable?(id, block_source)
+      status = loadbalancer_statuses(id).find_state(id).provisioning_status rescue nil
+      return false unless status
       count = 0
-      until ['ACTIVE', 'ERROR'].include?(lb.provisioning_status)
-        if count >= 20
+      until ['ACTIVE', 'ERROR'].include?(status)
+        if count >= 6*2
           return false
         else
-          sleep 3
           count += 1
-          lb = find_loadbalancer(id)
+          Rails.logger.warn "Loadbalancer in state: #{status}. Waiting for action execution of #{block_source} for #{10*count} seconds in total."
+          sleep 10
+          status = loadbalancer_statuses(id).find_state(id).provisioning_status rescue nil
+          return false unless status
         end
       end
       return true
     end
 
     def execute(id, &block)
-      if loadbalancer_changeable?(id)
+      if loadbalancer_changeable?(id, block.source)
         return block.call
       else
         return false
