@@ -13,12 +13,9 @@ describe KeyManager::SecretsController, type: :controller do
 
   before :each do
     stub_authentication
-    stub_admin_services
 
-    identity_driver = double('identity_service_driver').as_null_object
     keymanager_service = double('keymanager_service').as_null_object
 
-    allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
     allow_any_instance_of(ServiceLayer::KeyManagerService).to receive(:service).and_return(keymanager_service)
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
   end

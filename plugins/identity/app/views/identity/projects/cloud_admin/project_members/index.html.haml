@@ -1,11 +1,10 @@
-= render partial: 'identity/projects/cloud_admin/shared/choose_project'
+= render partial: 'identity/projects/cloud_admin/shared/choose_scope'
 
 - if @user_roles
-  = render partial: 'identity/projects/cloud_admin/shared/project_tabs' 
-  = simple_form_for :cloud_admin_user_role_assignments, url: plugin('identity').projects_cloud_admin_project_members_path(pid:@project.id), method: :put, html: {class: 'role_assignments'} do |f|
+  = render partial: 'identity/projects/cloud_admin/shared/project_tabs'
+  = simple_form_for :cloud_admin_user_role_assignments, url: plugin('identity').projects_cloud_admin_project_members_path(project:@project.id), method: :put, html: {class: 'role_assignments'} do |f|
     - if current_user.is_allowed?('identity:project_member_create',{})
-      .toolbar= link_to 'Assign New Member', plugin('identity').new_projects_cloud_admin_project_member_path(pid: @project.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+      .toolbar= link_to 'Assign New Member', plugin('identity').new_projects_cloud_admin_project_member_path(project: @project.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
 
     = render partial: 'identity/projects/members/member_list', locals: {user_roles: @user_roles, roles: @roles}
     = f.submit 'Save', class: 'btn btn-primary hidden', data: { disable_with: "Please wait..." }
-  

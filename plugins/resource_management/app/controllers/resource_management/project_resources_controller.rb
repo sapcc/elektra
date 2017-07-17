@@ -121,7 +121,7 @@ module ResourceManagement
           resource: cfg.name,
           desired_quota: new_value,
         },
-        service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
+        service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
         {
           "approved": {
             "name": "Approve",
@@ -167,7 +167,7 @@ module ResourceManagement
         "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg}",
         current_user,
         { package: pkg },
-        service_user.list_scope_resource_admins(domain_id: @scoped_domain_id),
+        service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
         {
           "approved": {
             "name": "Approve",

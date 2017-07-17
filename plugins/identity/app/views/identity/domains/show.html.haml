@@ -39,7 +39,9 @@
 
         %ul.plain-list
           %li
-            = link_to "Manage Requests", plugin('inquiry').admin_inquiries_path
+            = link_to plugin('inquiry').admin_inquiries_path do
+              Manage Requests
+              = " (#{::Inquiry::Inquiry.processor_open_requests(@scoped_domain_id, current_user.id).length})"
 
       - if plugin_available?('identity')
         %h5
@@ -81,7 +83,10 @@
 
     %ul.plain-list
       %li
-        = link_to 'My Requests', plugin('inquiry').inquiries_path
+        = link_to plugin('inquiry').inquiries_path do
+          My Requests
+          = " (#{::Inquiry::Inquiry.requestor_open_requests(@scoped_domain_id, current_user.id).length})"
+
 
     - if current_user.is_allowed?('identity:project_request', domain_id: @scoped_domain_id)
       %h5

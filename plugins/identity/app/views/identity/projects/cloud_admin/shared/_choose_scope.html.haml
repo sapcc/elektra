@@ -1,0 +1,45 @@
+= form_tag url_for(params), method: :get, class: 'form-horizontal' do
+  .form-group.string.col-sm-12.well
+    .row
+
+      %label.string.required.control-label.col-sm-2
+        Domain
+
+      .col-sm-5
+        .input-wrapper
+          %input.string.required.form-control#pid{name:"domain", value:params[:domain]}
+        %p.help-block
+          %i.fa.fa-info-circle
+          Domain name or ID
+    .row
+      %label.string.required.control-label.col-sm-2
+        Project
+
+      .col-sm-5
+        .input-wrapper
+          %input.string.required.form-control#pid{name:"project", value:params[:project]}
+        %p.help-block
+          %i.fa.fa-info-circle
+          Project name or ID
+
+      .col-sm-2
+        = submit_tag 'Choose Scope', class: 'btn btn-primary'
+
+      .col-sm-3
+        - if @domain
+          %span.text-success
+            = "Domain: #{@domain.name}"
+            %i.fa.fa-fw.fa-check
+        - elsif params[:domain] && params[:domain].present?
+          %span.text-danger
+            = "Domain: #{params[:domain]}"
+            %i.fa.fa-fw.fa-exclamation-triangle
+        %br
+        -if @project
+          %span.text-success
+            = "Project: #{@project.name}"
+            %i.fa.fa-fw.fa-check
+        - elsif params[:project] && params[:project].present?
+          %span.text-danger
+            = "Project: #{params[:project]}"
+            %i.fa.fa-fw.fa-exclamation-triangle

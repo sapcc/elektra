@@ -1,5 +1,5 @@
 module Compute
-  class OsInterface < Core::ServiceLayer::Model
+  class OsInterface < Core::ServiceLayerNg::Model
     def attributes_for_create
       {
         "fixed_ips"   => read("fixed_ips"),

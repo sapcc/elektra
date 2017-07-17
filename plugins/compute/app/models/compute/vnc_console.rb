@@ -1,5 +1,5 @@
 module Compute
-  class VncConsole < Core::ServiceLayer::Model
+  class VncConsole < Core::ServiceLayerNg::Model
 
   end
 end

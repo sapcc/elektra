@@ -113,7 +113,7 @@ module Loadbalancing
         def load_members
           @members = services.loadbalancing.pool_members(@pool.id) if @pool
           @ips = []
-          @servers = services.compute.servers
+          @servers = services_ng.compute.servers
           @servers.each do |server|
             server.addresses.each do |network_name, ip_values|
               if ip_values and ip_values.length>0

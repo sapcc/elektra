@@ -1,36 +1,43 @@
+# frozen_string_literal: true
+
 module Identity
   module Projects
     module CloudAdmin
+      # This class implements methods add and remove for project members
       class ProjectMembersController < ::DashboardController
-        before_filter :load_project
-        before_filter :load_roles
+        before_filter :load_scope_and_roles
 
         def index
-          enforce_permissions("identity:project_member_list",{})
+          enforce_permissions('identity:project_member_list', {})
           load_role_assignments(@project.id) if @project
         end
 
         def new
-          enforce_permissions("identity:project_member_create",{})
+          enforce_permissions('identity:project_member_create', {})
         end
 
         def create
-          enforce_permissions("identity:project_member_create",{})
-          @user = params[:user_name].blank? ? nil : begin
-            services.identity.users(domain_id: @domain.id,name:params[:user_name]).first
-          rescue
-            services.identity.find_user(params[:user_name]) rescue nil
-          end
+          enforce_permissions('identity:project_member_create', {})
+          @user = if params[:user_name].blank?
+                    nil
+                  else
+                    begin
+                      services_ng.identity.users(domain_id: @domain.id,
+                                                 name: params[:user_name]).first
+                    rescue
+                      services_ng.identity.find_user(params[:user_name])
+                    end
+                  end
 
           load_role_assignments(@project.id)
-          if @user.nil? or @user.id.nil?
-            @error = "User not found."
+          if @user.nil? || @user.id.nil?
+            @error = 'User not found.'
             render action: :new
           elsif @user_roles[@user.id]
-            @error = "User is already a member of this project."
+            @error = 'User is already a member of this project.'
             render action: :new
-          elsif @user.domain_id!=@domain.id
-            @error = "User is not a member of this domain."
+          elsif @user.domain_id != @domain.id
+            @error = 'User is not a member of this domain.'
             render action: :new
           else
             render action: :create
@@ -38,81 +45,100 @@ module Identity
         end
 
         def update
-          enforce_permissions("identity:project_member_update",{})
+          enforce_permissions('identity:project_member_update', {})
           load_role_assignments(@project.id)
-
-          available_role_ids = @roles.collect{|r| r.id}
+          available_role_ids = @roles.collect(&:id)
 
           # update changed roles
           updated_roles_user_ids = []
-          if params[:role_assignments]
-            params[:role_assignments].each do |user_id,new_user_role_ids|
-              updated_roles_user_ids << user_id
-              old_user_role_ids = (@user_roles[user_id] || {roles: []})[:roles].collect{|role| role[:id]}
+          params[:role_assignments].try(:each) do |user_id, new_user_role_ids|
+            updated_roles_user_ids << user_id
+            old_user_role_ids = (@user_roles[user_id] || { roles: [] })[:roles]
+                                .collect { |role| role[:id] }
 
-              role_ids_to_add = new_user_role_ids-old_user_role_ids
-              role_ids_to_remove = old_user_role_ids-new_user_role_ids
+            role_ids_to_add = new_user_role_ids - old_user_role_ids
+            role_ids_to_remove = old_user_role_ids - new_user_role_ids
 
-              role_ids_to_add.each do |role_id|
-                if available_role_ids.include?(role_id)
-                  services.identity.grant_project_user_role(@project.id, user_id, role_id) #rescue nil
-                end
+            role_ids_to_add.each do |role_id|
+              if available_role_ids.include?(role_id)
+                services_ng.identity.grant_project_user_role(@project.id,
+                                                             user_id, role_id)
               end
+            end
 
-              role_ids_to_remove.each do |role_id|
-                if available_role_ids.include?(role_id)
-                  services.identity.revoke_project_user_role(@project.id, user_id, role_id) # rescue nil
-                end
+            role_ids_to_remove.each do |role_id|
+              if available_role_ids.include?(role_id)
+                services_ng.identity.revoke_project_user_role(@project.id,
+                                                              user_id, role_id)
               end
             end
           end
 
           # remove roles
-          (@user_roles.keys-updated_roles_user_ids).each do |user_id|
-            role_ids_to_remove = (@user_roles[user_id] || {})[:roles].collect{|role| role[:id]}
+          (@user_roles.keys - updated_roles_user_ids).each do |user_id|
+            role_ids_to_remove = (@user_roles[user_id] || {})[:roles]
+                                 .collect { |role| role[:id] }
             role_ids_to_remove.each do |role_id|
-              if available_role_ids.include?(role_id)
-                services.identity.revoke_project_user_role(@project.id, user_id, role_id) #rescue nil
-              end
+              next unless available_role_ids.include?(role_id)
+              services_ng.identity.revoke_project_user_role(@project.id,
+                                                            user_id, role_id)
             end
           end
 
-          audit_logger.info("Cloud Admin #{current_user.name} (#{current_user.id}) has updated user role assignments for project #{@project.name} (#{@project.id})")
-          redirect_to projects_cloud_admin_project_members_path(pid:@project.id)
+          audit_logger.info("Cloud Admin #{current_user.name} \
+          (#{current_user.id}) has updated user role assignments for \
+          project #{@project.name} (#{@project.id})")
+          redirect_to projects_cloud_admin_project_members_path(
+            project: @project.id
+          )
         end
 
         protected
 
         def load_project
-          project_id = params[:pid]
+          return unless params[:project]
 
-          @project = services.identity.find_project(project_id.strip) rescue nil if project_id
-          @domain = services.identity.find_domain(@project.domain_id) if @project
+          @domain = if params[:domain]
+                      services_ng.identity.domains(name: params[:domain].strip)
+                                 .first ||
+                        services_ng.identity.find_domain(params[:domain].strip)
+                    end
+          @project = if @domain
+                       services_ng.identity.projects(
+                         domain_id: @domain.id, name: params[:project].strip
+                       ).first
+                     end
+          @project ||= services_ng.identity.find_project(params[:project].strip)
+          return unless @project
+          @domain ||= services_ng.identity.find_domain(@project.domain_id)
         end
 
         # FIXME: duplicated in ProjectGroupsController
-        def load_roles
-          @roles = services.identity.roles.sort_by(&:name)
+        def load_scope_and_roles
+          @domain, @project = services_ng.identity.find_domain_and_project(
+            params.permit(:domain, :project)
+          )
+          @roles = services_ng.identity.roles.sort_by(&:name)
         end
 
         def load_role_assignments(project_id)
-          #@role_assignments ||= services.identity.role_assignments("scope.project.id"=>@scoped_project_id)
-          # we need to add include_subtree option to have permissions. But this causes that other projects then current are included in this list.
-          @role_assignments ||= services.identity.role_assignments("scope.project.id"=>project_id, include_names: true)
+          @role_assignments ||= services_ng.identity.role_assignments(
+            'scope.project.id' => project_id, include_names: true
+          )
 
-          @user_roles ||= @role_assignments.inject({}) do |hash,ra|
-            user_id = (ra.user || {}).fetch("id",nil)
-            role_project_id = (ra.scope || {}).fetch("project",{}).fetch("id",nil)
+          @user_roles ||= @role_assignments.each_with_object({}) do |ra, hash|
+            user_id = (ra.user || {}).fetch('id', nil)
+            role_project_id = (ra.scope || {}).fetch('project', {})
+                                              .fetch('id', nil)
             # ignore group role assignments and other projects
-            if user_id and role_project_id==project_id
-              hash[user_id] ||= {role_ids: [], roles:[], name: ra.user.fetch("name",'unknown')}
-              hash[user_id][:roles] << { id: ra.role["id"], name: ra.role["name"] }
-            end
-            hash
+            next unless user_id && role_project_id == project_id
+            hash[user_id] ||= { role_ids: [], roles: [],
+                                name: ra.user.fetch('name', 'unknown') }
+            hash[user_id][:roles] << { id: ra.role['id'],
+                                       name: ra.role['name'] }
           end
-          @user_roles.sort_by { |user_id, age| user_id }
+          @user_roles.sort_by { |user_id, _age| user_id }
         end
-
       end
     end
   end

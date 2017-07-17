@@ -1,20 +1,30 @@
+# frozen_string_literal: true
+
 module Networking
+  # Implements Network Rbac actions
   class Networks::AccessController < NetworksController
     def index
-      @rbacs = services.networking.rbacs(object_id: @network_id, object_type: 'network')
-      @network = services.networking.network(@network_id)
+      @rbacs = services_ng.networking.rbacs(
+        object_id: @network_id, object_type: 'network'
+      )
+      @network = services_ng.networking.find_network(@network_id)
 
-      rbac_target_tenant_ids = services.networking.rbacs(object_id: @network_id, object_type: 'network').collect{|rbac| rbac.target_tenant}
+      rbac_target_tenant_ids = services_ng.networking.rbacs(
+        object_id: @network_id, object_type: 'network'
+      ).collect(&:target_tenant)
 
       @rbac_auth_projects = []
       @user_domain_projects.each do |project|
-        next if project.id==@scoped_project_id or rbac_target_tenant_ids.include?(project.id)
+        if project.id == @scoped_project_id ||
+           rbac_target_tenant_ids.include?(project.id)
+          next
+        end
         @rbac_auth_projects << "#{project.id} (#{project.name})"
       end
     end
 
     def create
-      @rbac = services.networking.new_rbac(params[:rbac])
+      @rbac = services_ng.networking.new_rbac(params[:rbac])
       @rbac.object_id     = @network_id
       @rbac.object_type   = 'network'
       @rbac.action        = 'access_as_shared'
@@ -27,28 +37,29 @@ module Networking
     end
 
     def destroy
-      @rbac = services.networking.find_rbac(params[:id]) rescue nil
+      @rbac = services_ng.networking.new_rbac
+      @rbac.id = params[:id]
 
-      if @rbac
-        if @rbac.destroy
-          flash.now[:notice] = 'Access successfully removed.'
-        else
-          flash.now[:error] = @rbac.errors.full_messages.to_sentence
-        end
+      if @rbac.destroy
+        flash.now[:notice] = 'Access successfully removed.'
       else
-        flash.now[:error] = "Could not find this item."
+        flash.now[:error] = @rbac.errors.full_messages.to_sentence
       end
 
       respond_to do |format|
         format.js {}
-        format.html { redirect_to plugin('networking').send("networks_#{@network_type}_access_index_path") }
+        format.html do
+          redirect_to plugin('networking').send(
+            "networks_#{@network_type}_access_index_path"
+          )
+        end
       end
     end
 
     private
 
     def load_type
-      @network_type = params.key?('private_id') ? 'private'.freeze : 'external'.freeze
+      @network_type = params.key?('private_id') ? 'private' : 'external'
       @network_id   = params["#{@network_type}_id"]
     end
   end

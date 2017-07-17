@@ -52,9 +52,7 @@ module DnsService
     end
 
     def load_pool(pool_id)
-      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
-      cloud_admin_dns_service.find_pool(pool_id)
+      cloud_admin.dns_service.find_pool(pool_id)
     end
-
   end
 end

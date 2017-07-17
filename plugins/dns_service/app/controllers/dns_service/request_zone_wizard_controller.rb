@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module DnsService
+  # Implements Zone Requests
   class RequestZoneWizardController < ::DashboardController
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)
-
       load_pools
     end
 
@@ -11,10 +13,10 @@ module DnsService
       domain_type = params[:zone_request][:domain_type]
       @zone_request.attributes = params[:zone_request][domain_type]
       @zone_request.domain_type = domain_type
+      @zone_name = params[:zone_request][domain_type][:name]
       @zone_request.name.chomp!('.') if @zone_request.name.last=='.'
 
       inquiry = nil
-
       if @zone_request.valid?
         @zone_request.name += ".c.#{current_region}.cloud.sap." if domain_type=='subdomain'
         begin
@@ -31,7 +33,7 @@ module DnsService
                       "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol, domain_id: @cloud_admin_domain.name, project_id: nil)}?overlay=#{plugin('dns_service').create_zone_wizard_path(domain_id: @cloud_admin_domain.name,project_id: @master_project.name)}"
                   }
               },
-              @scoped_domain_id, #requester domain
+              @scoped_domain_id, # requester domain
               {
                   domain_name: @scoped_domain_name,
                   region: current_region
@@ -47,7 +49,7 @@ module DnsService
       end
 
       if @zone_request.errors.empty?
-        flash.now[:notice] = "Zone request successfully created"
+        flash.now[:notice] = 'Zone request successfully created'
         audit_logger.info(current_user, "has requested zone #{@zone_request.attributes}")
         render template: 'dns_service/request_zone_wizard/create.js'
       else
@@ -57,34 +59,39 @@ module DnsService
     end
 
     protected
-    def list_ccadmin_master_dns_admins
-      cloud_admin_identity = service_user.cloud_admin_service('identity')
-      cloud_dns_admin_role = cloud_admin_identity.find_role_by_name('cloud_dns_admin') rescue nil
 
-      @cloud_admin_domain = cloud_admin_identity.domains(name: Rails.configuration.cloud_admin_domain).first
+    def list_ccadmin_master_dns_admins
+      cloud_dns_admin_role = cloud_admin.identity
+                                        .find_role_by_name('cloud_dns_admin')
+
+      @cloud_admin_domain = cloud_admin.identity.domains(
+        name: Rails.configuration.cloud_admin_domain
+      ).first
       return [] unless @cloud_admin_domain
-      @master_project = cloud_admin_identity.projects(name: 'master', domain_id: @cloud_admin_domain.id).first
+      @master_project = cloud_admin.identity.projects(
+        name: 'master', domain_id: @cloud_admin_domain.id
+      ).first
       return [] unless @master_project
 
-      role_assignments = cloud_admin_identity.role_assignments("scope.project.id" => @master_project.id, "role.id" => cloud_dns_admin_role.id, effective: true, include_subtree: true)
-      admins = []
+      role_assignments = cloud_admin.identity.role_assignments(
+        'scope.project.id' => @master_project.id,
+        'role.id' => cloud_dns_admin_role.id,
+        effective: true,
+        include_subtree: true
+      )
 
-      user_ids = role_assignments.collect{|ra| ra.user["id"]}.uniq
-
-      # load users (not very performant but there is no other option to get users by ids)
-      user_ids.each do |id|
-        unless id == service_user.id
-          admin = cloud_admin_identity.find_user(id) rescue nil
-          admins << admin if admin
-        end
+      user_ids = role_assignments.collect { |ra| ra.user['id'] }.uniq
+      # load users (not very performant but there is no other
+      # option to get users by ids)
+      user_ids.each_with_object([]) do |id, admins|
+        next if id == Rails.application.config.service_user_id
+        admin = cloud_admin.identity.find_user(id)
+        admins << admin if admin
       end
-      admins
     end
 
     def load_pools
-      cloud_admin_dns_service = service_user.cloud_admin_service('dns_service')
-      @pools = cloud_admin_dns_service.pools
+      @pools = cloud_admin.dns_service.pools
     end
-
   end
 end

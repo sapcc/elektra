@@ -15,13 +15,11 @@ describe Compute::InstancesController, type: :controller do
 
   before :each do
     stub_authentication
-    stub_admin_services
+    allow_any_instance_of(ServiceLayerNg::ComputeService)
+      .to receive(:servers).and_return([])
 
-    identity_driver = double('identity_service_driver').as_null_object
-    compute_driver = double('compute_service_driver').as_null_object
-
-    allow_any_instance_of(ServiceLayer::IdentityService).to receive(:driver).and_return(identity_driver)
-    allow_any_instance_of(ServiceLayer::ComputeService).to receive(:driver).and_return(compute_driver)
+    allow_any_instance_of(ServiceLayerNg::ComputeService)
+      .to receive(:usage).and_return(double('usage', instances: 1, ram: 2, cores: 4))  
   end
 
   describe "GET 'index'" do

@@ -32,11 +32,11 @@ module SharedFilesystemStorage
     end
 
     def networks
-      render json: services.networking.networks('router:external' => false)
+      render json: services_ng.networking.networks('router:external' => false)
     end
 
     def subnets
-      render json: services.networking.subnets(network_id: params[:network_id])
+      render json: services_ng.networking.subnets(network_id: params[:network_id])
     end
 
     def create

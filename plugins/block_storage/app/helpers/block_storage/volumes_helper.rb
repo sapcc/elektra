@@ -5,7 +5,6 @@ module BlockStorage
       if volume.status == 'in-use'
 
         volume.attachments.each do |att|
-          #servers = services.compute.servers unless servers
           server_id = att['server_id'] || att['serverId']
           server = servers.find { |s| s.id == server_id } if servers
 

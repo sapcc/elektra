@@ -127,7 +127,7 @@ module ResourceManagement
       @desired_quota = @inquiry.payload['desired_quota']
       @maximum_quota = @domain_resource.quota - @domain_resource.projects_quota + @project_resource.quota
 
-      @project_name = services.identity.find_project(@inquiry.project_id).name
+      @project_name = services_ng.identity.find_project(@inquiry.project_id).name
 
       # calculate projected domain status after approval
       @domain_resource_projected = @domain_resource.clone
@@ -168,7 +168,7 @@ module ResourceManagement
       @project = services.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
       @domain  = services.resource_management.find_domain(@scoped_domain_id)
 
-      @target_project_name = services.identity.find_project(@inquiry.project_id).name
+      @target_project_name = services_ng.identity.find_project(@inquiry.project_id).name
 
       # check if request fits into domain quotas
       @can_approve = true
@@ -257,7 +257,7 @@ module ResourceManagement
           resource: cfg.name,
           desired_quota: new_value,
         },
-        service_user.list_ccadmins(),
+        service_user.identity.list_ccadmins,
         {
           "approved": {
             "name": "Approve",

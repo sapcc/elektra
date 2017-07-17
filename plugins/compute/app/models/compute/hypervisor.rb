@@ -1,5 +1,5 @@
 module Compute
-  class Hypervisor < Core::ServiceLayer::Model
+  class Hypervisor < Core::ServiceLayerNg::Model
     def name
       read('hypervisor_hostname')
     end

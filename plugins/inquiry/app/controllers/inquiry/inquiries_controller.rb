@@ -1,13 +1,15 @@
-module Inquiry
-  class InquiriesController < DashboardController
+# frozen_string_literal: true
 
+module Inquiry
+  # Implements Requests
+  class InquiriesController < DashboardController
     authorization_context 'inquiry'
     authorization_required
 
-    before_action :set_inquiry, only: [:show, :edit, :update, :destroy]
+    before_action :set_inquiry, only: %i[show edit update destroy]
 
     def index
-      @domain_id = current_user.is_allowed?("cloud_admin") ? nil : current_user.user_domain_id
+      @domain_id = current_user.is_allowed?('cloud_admin') ? nil : current_user.user_domain_id
 
       # This is true if an update is made via the PollingService
       if params[:partial]
@@ -24,7 +26,7 @@ module Inquiry
         # This case is the initial page load
 
         # get all different types of inquiries from the database
-        @kinds_of_inquiries = [["All",""]] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
+        @kinds_of_inquiries = [['All','']] + ::Inquiry::Inquiry.pluck(:kind).uniq.sort
 
         render action: :index
       end
@@ -41,7 +43,9 @@ module Inquiry
       # not really needed because inquiries are always created from somewhere else (projects, ....)
       # get the admins
       @inquiry = Inquiry.new
-      admins = service_user.list_scope_admins({domain_id: current_user.domain_id, project_id: current_user.project_id})
+      admins = service_user.identity.list_scope_admins(
+        domain_id: current_user.domain_id, project_id: current_user.project_id
+      )
 
       @inquiry.kind = inquiry_params[:kind]
       @inquiry.description = inquiry_params[:description]
@@ -53,7 +57,7 @@ module Inquiry
       @inquiry.callbacks = callbacks
 
       if @inquiry.save
-        flash.now[:notice] = "Request successfully created."
+        flash.now[:notice] = 'Request successfully created.'
         redirect_to inquiries_path
       else
         flash.now[:error] = "Error creating request: #{inquiry.errors.full_messages.to_sentence}."
