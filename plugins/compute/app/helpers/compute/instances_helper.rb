@@ -31,7 +31,7 @@ module Compute
       public_flavors = []
       private_flavors = []
       flavors.each do |flavor|
-        if flavor.is_public?
+        if flavor.public?
           public_flavors << flavor
         else
           private_flavors << flavor

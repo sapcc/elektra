@@ -1,25 +1,38 @@
 # frozen_string_literal: true
 
 module ServiceLayerNg
+  # This module implements Openstack Domain API
   module ComputeServices
-    # This module implements Openstack Domain API
+    # server snapshots
     module Image
-
-      def image(image_id, use_cache = false)
-        debug "[compute-service][Image] -> image -> GET /images/#{image_id}"
-
-        image_data = nil
-        unless use_cache
-          image_data = api.compute.show_image_details(image_id).data
-          Rails.cache.write("server_image_#{image_id}", image_data, expires_in: 24.hours)
-        else
-          image_data = Rails.cache.fetch("server_image_#{image_id}", expires_in: 24.hours) do
-            api.compute.show_image_details(image_id).data
-          end
-        end
+      def find_image!(image_id, use_cache = false)
+        image_data = if use_cache
+                       Rails.cache.fetch("server_image_#{image_id}",
+                                         expires_in: 24.hours) do
+                         api.compute.show_image_details(image_id).data
+                       end
+                     else
+                       data = api.compute.show_image_details(image_id).data
+                       Rails.cache.write("server_image_#{image_id}", data,
+                                         expires_in: 24.hours)
+                       data
+                     end
 
         return nil if image_data.nil?
-        map_to(Compute::Image image_data)
+        map_to(Compute::Image, image_data)
+      end
+
+      def find_image(image_id, use_cache = false)
+        find_image!(image_id, use_cache)
+      rescue
+        nil
+      end
+
+      # this is called from server model
+      def create_image(server_id, name, metadata = {})
+        api.compute.create_image_createimage_action(
+          server_id, 'createImage' => { 'name' => name, 'metadata' => metadata }
+        )
       end
     end
   end

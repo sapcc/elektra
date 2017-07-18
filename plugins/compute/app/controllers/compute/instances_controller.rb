@@ -1,17 +1,21 @@
+# frozen_string_literal: true
+
 module Compute
+  # Implements Server actions
   class InstancesController < Compute::ApplicationController
     before_filter :all_projects
-    before_action :automation_data, only: [:new, :create]
+    before_action :automation_data, only: %i[new create]
 
     authorization_context 'compute'
-    authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :new_snapshot]
+    authorization_required except: %i[new_floatingip attach_floatingip
+                                      detach_floatingip new_snapshot]
 
     def index
-      params[:per_page]= 20
+      per_page = params[:per_page] || 20
       @instances = []
 
       if @scoped_project_id
-        @instances = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
+        @instances = paginatable(per_page: per_page) do |pagination_options|
           services_ng.compute.servers(@admin_option.merge(pagination_options))
         end
 
@@ -19,19 +23,22 @@ module Compute
         unless @all_projects
           usage = services_ng.compute.usage
 
-          @quota_data = services.resource_management.quota_data([
-            {service_name: :compute, resource_name: :instances, usage: usage.instances},
-            {service_name: :compute, resource_name: :cores, usage: usage.cores},
-            {service_name: :compute, resource_name: :ram, usage: usage.ram}
-          ])
-
+          @quota_data = services.resource_management.quota_data(
+            [
+              { service_name: :compute, resource_name: :instances,
+                usage: usage.instances },
+              { service_name: :compute, resource_name: :cores,
+                usage: usage.cores },
+              { service_name: :compute, resource_name: :ram, usage: usage.ram }
+            ]
+          )
         end
       end
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        render partial: 'list', locals: {instances: @instances}
+        render partial: 'list', locals: { instances: @instances }
       else
         # comon case, render index page with layout
         render action: :index
@@ -211,19 +218,21 @@ module Compute
 
     def attach_interface
       @os_interface = services_ng.compute.new_os_interface(params[:id])
-      @networks = services_ng.networking.networks('router:external'=>false)
+      @networks = services_ng.networking.networks('router:external' => false)
     end
 
     def create_interface
-      @os_interface = services_ng.compute.new_os_interface(params[:id],params[:os_interface])
+      @os_interface = services_ng.compute.new_os_interface(
+        params[:id], params[:os_interface]
+      )
       if @os_interface.save
         @instance = services_ng.compute.find_server(params[:id])
         respond_to do |format|
-          format.html{redirect_to instances_url}
-          format.js{}
+          format.html { redirect_to instances_url }
+          format.js {}
         end
       else
-        @networks = services_ng.networking.networks("router:external"=>false)
+        @networks = services_ng.networking.networks('router:external' => false)
         render action: :attach_interface
       end
     end
@@ -235,23 +244,25 @@ module Compute
 
     def delete_interface
       # create a new os_interface model based on params
-      @os_interface = services_ng.compute.new_os_interface(params[:id],params[:os_interface])
+      @os_interface = services_ng.compute.new_os_interface(
+        params[:id], params[:os_interface]
+      )
 
       # load all attached server interfaces
       all_server_interfaces = services_ng.compute.server_os_interfaces(params[:id])
       # find the one which should be deleted
       interface = all_server_interfaces.find do |i|
-        i.fixed_ips.first['ip_address']==@os_interface.ip_address
+        i.fixed_ips.first['ip_address'] == @os_interface.ip_address
       end
 
       success = if interface
-        # destroy
-        @os_interface.id = @os_interface.port_id = interface.port_id
-        @os_interface.destroy
-      else
-        @os_interface.errors.add(:address,'Not found.')
-        false
-      end
+                  # destroy
+                  @os_interface.id = @os_interface.port_id = interface.port_id
+                  @os_interface.destroy
+                else
+                  @os_interface.errors.add(:address, 'Not found.')
+                  false
+                end
 
       if success
         # load instance after deleting os interface!!!
@@ -261,16 +272,16 @@ module Compute
         sleep_time = 3
         loop do
           @instance = services_ng.compute.find_server(params[:id])
-          if timeout<=0 or @instance.addresses.values.flatten.length==all_server_interfaces.length-1
-            break
-          else
-            timeout -= sleep_time
-            sleep(sleep_time)
+          interfaces = @instance.addresses.values.flatten.select do |ip|
+            ip['addr'] == @os_interface.ip_address
           end
+          break if timeout <= 0 || interfaces.length.zero?
+          timeout -= sleep_time
+          sleep(sleep_time)
         end
         respond_to do |format|
-          format.html{redirect_to instances_url}
-          format.js{}
+          format.html { redirect_to instances_url }
+          format.js {}
         end
       else
         @instance = services_ng.compute.find_server(params[:id])

@@ -4,28 +4,28 @@ module ServiceLayerNg
   module ComputeServices
     # This module implements Openstack Domain API
     module Volume
-
       def attach_volume(volume_id, server_id, device)
-        debug "[compute-service][Volume] -> attach_volume #{volume_id} -> POST /action"
         api.compute.attach_a_volume_to_an_instance(
           server_id,
           'volumeAttachment' => {
-          'volumeId' => volume_id.to_s,
-          'device'   => device
-        })
+            'volumeId' => volume_id.to_s, 'device' => device
+          }
+        )
       end
 
       def detach_volume(volume_id, server_id)
-        debug "[compute-service][Volume] -> detach_volume #{volume_id} -> DELETE /action"
-        api.compute.detach_a_volume_from_an_instance(server_id,volume_id)
+        api.compute.detach_a_volume_from_an_instance(server_id, volume_id)
       end
 
-      def volumes(server_id,filter={})
-        debug "[compute-service][Volume] -> volumes -> GET /os-volumes"
-        response = api.compute.list_volumes(filter)
-        response.body['volumes'].select{|vol|
-          vol["attachments"].find { |attachment| attachment["serverId"] == server_id or attachment["server_id"] == server_id}
-        }.collect{|v| map_to(Compute::OsVolume,v)}
+      def volumes(server_id, filter = {})
+        volumes = api.compute.list_volumes(filter).body['volumes']
+        server_volumes = volumes.select do |vol|
+          vol['attachments'].find do |attachment|
+            attachment['serverId'] == server_id ||
+              attachment['server_id'] == server_id
+          end
+        end
+        map_to(Compute::OsVolume, server_volumes)
       end
     end
   end

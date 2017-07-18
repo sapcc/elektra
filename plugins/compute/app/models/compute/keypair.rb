@@ -1,23 +1,28 @@
-module Compute
-  class Keypair < Core::ServiceLayerNg::Model
+# frozen_string_literal: true
 
+module Compute
+  # Represents the Key Value pair
+  class Keypair < Core::ServiceLayerNg::Model
     validate :public_key_valid?
     validates :name, :public_key, presence: true
 
     protected
 
     def id
-      return nil #name
+      nil # name
     end
 
     def public_key_valid?
-      begin
-        Net::SSH::KeyFactory.load_data_public_key(public_key)
-      rescue => e
-        puts e
-        errors.add :public_key, "#{name} is not a valid ssh public key"
-      end
+      Net::SSH::KeyFactory.load_data_public_key(public_key)
+    rescue => _e
+      errors.add :public_key, "#{name} is not a valid ssh public key"
     end
 
+    def attributes_for_create
+      {
+        'name' => read['name'],
+        'public_key' => params['public_key']
+      }.delete_if { |_k, v| v.blank? }
+    end
   end
 end

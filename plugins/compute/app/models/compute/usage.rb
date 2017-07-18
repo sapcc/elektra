@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module Compute
+  # Represents the Compute Usage
   class Usage < Core::ServiceLayerNg::Model
     def cores
       read('totalCoresUsed')

@@ -1,32 +1,23 @@
+# frozen_string_literal: true
+
 module Compute
+  # Represents the Openstack Flavor
   class FlavorAccess < Core::ServiceLayerNg::Model
     def save
       # execute before callback
       before_save
-
-      success = self.valid?
-      if success
-        begin
-          @service.add_flavor_access_to_tenant(self.flavor_id,self.tenant_id)
-        rescue => e
-          raise e unless defined?(@service.handle_api_errors?) and @service.handle_api_errors?
-          Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-          success = false
-        end
+      return false unless valid?
+      rescue_api_errors do
+        @service.add_flavor_access_to_tenant(flavor_id, tenant_id)
+        after_save
       end
-      return success & after_save
     end
-    
+
     def destroy
       before_destroy
-      begin
+      rescue_api_errors do
         @service.remove_flavor_access_from_tenant(flavor_id, tenant_id)
-        return true
-      rescue => e
-        raise e unless defined?(@service.handle_api_errors?) and @service.handle_api_errors?
-        Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-        return false
       end
-    end    
+    end
   end
 end

@@ -16,6 +16,10 @@ module Core
 
           attr_reader :origin_response
 
+          def self.ignore_key?(key)
+            %w[links previous next].include?(key) || key.end_with?('_links')
+          end
+
           # This method extracts the mapping key and class from params
           # and returns the class and data
           def self.extract_class_and_data(klazz_or_map, response_body)
@@ -23,9 +27,7 @@ module Core
               key = klazz_or_map.keys.first
               [klazz_or_map[key], response_body[key]]
             else
-              key = response_body.keys.reject do |k|
-                %w[links previous next].include?(k)
-              end.first
+              key = response_body.keys.reject { |k| ignore_key?(k) }.first
               [klazz_or_map, response_body[key]]
             end
           end
@@ -37,7 +39,7 @@ module Core
 
           def data(key = nil)
             key ||= @origin_response.body.keys.reject do |k|
-              %w[links previous next].include?(k)
+              self.class.ignore_key?(k)
             end.first
             @origin_response.body[key]
           end

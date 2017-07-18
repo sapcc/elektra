@@ -6,4 +6,4 @@
 = f.input :ephemeral, label: 'Ephemeral Disk (GB)', as: :integer
 = f.input :swap, label: 'Swap Disk (MB)', as: :integer
 = f.input :rxtx_factor, label: 'RX/TX Factor', as: :integer
-= f.input :is_public, as: :boolean, input_html: {checked: @flavor.is_public?},  wrapper: :horizontal_boolean_4x8 
+= f.input :is_public, as: :boolean, input_html: {checked: @flavor.public?},  wrapper: :horizontal_boolean_4x8 

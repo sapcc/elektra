@@ -1,7 +1,7 @@
 %tr{id: "flavor_#{flavor.id}"}
 
   %td
-    - unless flavor.is_public?
+    - unless flavor.public?
       %i.fa.fa-lock.text-danger
     = flavor.name
     %br
@@ -13,7 +13,7 @@
   %td= flavor.ephemeral
   %td= flavor.swap
   %td= flavor.rxtx_factor
-  %td= flavor.is_public?
+  %td= flavor.public?
   %td.snug
     - if current_user.is_allowed?("compute:flavor_delete", flavor: flavor) or current_user.is_allowed?("compute:flavor_update", flavor: flavor) or current_user.is_allowed?("compute:flavor_access_list", flavor: flavor)
       .btn-group
