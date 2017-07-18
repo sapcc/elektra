@@ -15,50 +15,8 @@ module ServiceLayerNg
         api.compute.list_servers_detailed(filter).map_to(Compute::Server)
       end
 
-      def create_server(params={})
-        debug "[compute-service][Server] -> create_server -> POST /servers"
-        debug "[compute-service][Server] -> create_server -> Parameter: #{params}"
-
-        name       = params.delete("name")
-        flavor_ref = params.delete("flavorRef")
-        params["server"] = {
-          'flavorRef' => flavor_ref,
-          'name'      => name,
-          'security_groups' => params.delete('security_groups'),
-          'availability_zone' => params.delete('availability_zone'),
-          'key_name' => params.delete('key_name')
-        }
-              # byebug
-
-        if params['server']['security_groups'] && params['server']['security_groups'].is_a?(Array)
-          params['server']['security_groups'] = params['server']['security_groups'].collect do |sg|
-            { 'name' => sg }
-          end
-        end
-
-        image_ref = params.delete("imageRef")
-        params['server']['imageRef'] = image_ref if image_ref
-
-        params["max_count"]=params["max_count"].to_i if params["max_count"]
-        params["min_count"]=params["min_count"].to_i if params["min_count"]
-        if networks=params.delete("networks")
-         nics=networks.collect { |n| {'net_id' => n["id"], 'v4_fixed_ip' => n['fixed_ip'], 'port_id' => n['port']} }
-
-         if nics
-          params['server']['networks'] =
-            Array(nics).map do |nic|
-              neti = {}
-              neti['uuid']     = (nic['net_id']      || nic[:net_id])      unless (nic['net_id']      || nic[:net_id]).nil?
-              neti['fixed_ip'] = (nic['v4_fixed_ip'] || nic[:v4_fixed_ip]) unless (nic['v4_fixed_ip'] || nic[:v4_fixed_ip]).nil?
-              neti['port']     = (nic['port_id']     || nic[:port_id])     unless (nic['port_id']     || nic[:port_id]).nil?
-              neti
-            end
-         end
-        end
-
-
-
-        api.compute.create_server(params).data
+      def create_server(params = {})
+        api.compute.create_server(server: params).data
       end
 
       def delete_server(id)

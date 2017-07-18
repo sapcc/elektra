@@ -37,20 +37,56 @@ module Compute
 
 
     def attributes_for_create
-      {
+      params = {
         'name'              => read('name'),
         'imageRef'          => read('image_id'),
         'flavorRef'         => read('flavor_id'),
         'max_count'         => read('max_count'),
         'min_count'         => read('min_count'),
         # Optional
-        'networks'          => read('network_ids'),
-        'security_groups'   => read('security_groups'),
+        #'networks'          => read('network_ids'),
+        #'security_groups'   => read('security_groups'),
         'availability_zone' => read('availability_zone_id'),
         'key_name'          => read('keypair_id'),
         'user_data'         => Base64.encode64(read('user_data'))
       }.delete_if { |_k, v| v.blank? }
+
+      security_group_names = read('security_groups')
+      if security_group_names && security_group_names.is_a?(Array)
+        params['security_groups'] = security_group_names.collect do |sg|
+          { 'name' => sg }
+        end
+      end
+
+      networks = read('network_ids')
+      if networks && networks.is_a?(Array)
+        params['networks'] = networks.collect do |n|
+          network = { 'uuid' => n['id'] }
+          network['fixed_ip'] = n['fixed_ip'] if n['fixed_ip']
+          network['port'] = n['port'] if n['port']
+          network['tag'] = n['tag'] if n['tag']
+          network
+        end
+      end
+      # byebug
+      params
     end
+
+    # def attributes_for_create
+    #   {
+    #     'name'              => read('name'),
+    #     'imageRef'          => read('image_id'),
+    #     'flavorRef'         => read('flavor_id'),
+    #     'max_count'         => read('max_count'),
+    #     'min_count'         => read('min_count'),
+    #     # Optional
+    #     'networks'          => read('network_ids'),
+    #     'security_groups'   => read('security_groups'),
+    #     'availability_zone' => read('availability_zone_id'),
+    #     'key_name'          => read('keypair_id'),
+    #     'user_data'         => Base64.encode64(read('user_data'))
+    #   }.delete_if { |_k, v| v.blank? }
+    # end
 
     def self.prepare_filter(query)
       return Excon::Utils.query_string(query: query).sub(/^\?/, '')
