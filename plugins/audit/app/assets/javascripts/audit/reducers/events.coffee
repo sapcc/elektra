@@ -27,6 +27,11 @@
       filterType: filterType
     })
 
+  updateFilterTerm = (state,{filterTerm}) ->
+    ReactHelpers.mergeObjects({},state,{
+      filterTerm: filterTerm
+    })
+
   updateOffset = (state,{offset}) ->
     ReactHelpers.mergeObjects({},state,{
       offset: offset
@@ -86,6 +91,7 @@
       when app.UPDATE_FILTER_START_TIME       then updateFilterStartTime(state,action)
       when app.UPDATE_FILTER_END_TIME         then updateFilterEndTime(state,action)
       when app.UPDATE_FILTER_TYPE             then updateFilterType(state,action)
+      when app.UPDATE_FILTER_TERM             then updateFilterTerm(state,action)
       when app.UPDATE_OFFSET                  then updateOffset(state,action)
       when app.TOGGLE_EVENT_DETAILS_VISIBLE   then toggleEventDetailsVisible(state,action)
       when app.REQUEST_EVENT_DETAILS          then requestEventDetails(state,action)
