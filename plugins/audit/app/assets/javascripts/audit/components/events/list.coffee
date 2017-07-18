@@ -5,9 +5,23 @@
 # import
 { div, span, label, select, option, input, i, table, thead, tbody, tr, th, td } = React.DOM
 { connect } = ReactRedux
-{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType } = audit
+{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType, filterEventsFilterTerm } = audit
 
-Events = ({events, isFetching, loadEvents, handleStartTimeChange, handleEndTimeChange, handleFilterTypeChange, filterStartTime, filterEndTime, filterType, filterTerm}) ->
+
+Events = ({
+  events,
+  isFetching,
+  loadEvents,
+  handleStartTimeChange,
+  handleEndTimeChange,
+  handleFilterTypeChange,
+  handleFilterTermChange,
+  filterStartTime,
+  filterEndTime,
+  filterType,
+  filterTerm
+}) ->
+
   div null,
     div className: 'toolbar toolbar-controlcenter',
       label null, 'Filter:'
@@ -20,7 +34,7 @@ Events = ({events, isFetching, loadEvents, handleStartTimeChange, handleEndTimeC
           option value: 'user_name', 'User ID'
 
       div className: 'inputwrapper',
-        input className: 'form-control', value: filterTerm, placeholder: 'Enter lookup value'
+        input name: 'filterTerm', className: 'form-control', value: filterTerm, placeholder: 'Enter lookup value', disabled: ReactHelpers.isEmpty(filterType), onChange: ((e) -> handleFilterTermChange(e.target.value))
       span className: 'toolbar-input-divider'
 
       label null, 'Time range:'
@@ -28,13 +42,6 @@ Events = ({events, isFetching, loadEvents, handleStartTimeChange, handleEndTimeC
       span className: 'toolbar-input-divider', '\u2013' # EN DASH: &ndash;
       React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> handleEndTimeChange(e))
 
-
-
-      # input onChange: ((e) -> filterEvents('test','test'))
-      # div className: 'input-append date', id: 'datetimepicker-start',
-      #   input className: 'span2', size: '16', type: 'text', value: ''
-      #   span className: 'add-on',
-      #     i className: 'fa fa-th'
 
     table className: 'table',
       thead null,
@@ -48,10 +55,10 @@ Events = ({events, isFetching, loadEvents, handleStartTimeChange, handleEndTimeC
 
       if events
         for event in events
-          tbody null,
-            React.createElement EventItem, key: event.event_id, event: event
+          tbody key: event.event_id,
+            React.createElement EventItem, event: event
             if event.detailsVisible
-              React.createElement EventItemDetails, key: "#{event.event_id}_details", event: event
+              React.createElement EventItemDetails, event: event
       else
         tbody null,
           tr null,
@@ -64,15 +71,20 @@ Events = ({events, isFetching, loadEvents, handleStartTimeChange, handleEndTimeC
             td colSpan: '6',
               span className: 'spinner'
 
+
+
 Events = connect(
   (state) ->
-    filterStartTime:  state.filterStartTime
-    filterEndTime:    state.filterEndTime
-    filterType:       state.filterType
+    filterStartTime:  state.events.filterStartTime
+    filterEndTime:    state.events.filterEndTime
+    filterType:       state.events.filterType
+    filterTerm:       state.events.filterTerm
   (dispatch) ->
     handleStartTimeChange:  (filterStartTime) -> dispatch(filterEventsStartTime(filterStartTime))
     handleEndTimeChange:    (filterEndTime)   -> dispatch(filterEventsEndTime(filterEndTime))
     handleFilterTypeChange: (filterType)      -> dispatch(filterEventsFilterType(filterType))
+    handleFilterTermChange: (filterTerm)      -> dispatch(filterEventsFilterTerm(filterTerm))
+
 
 
 )(Events)

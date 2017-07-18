@@ -86,7 +86,16 @@
   filterEventsFilterType = (filterType) ->
     (dispatch) ->
       dispatch(updateFilterType(filterType))
+      # if filterType empty, loadEvents with empty filter
+      # else
 
+  updateFilterTerm = (filterTerm) ->
+    type: app.UPDATE_FILTER_TERM
+    filterTerm: filterTerm
+
+  filterEventsFilterTerm = (filterTerm) ->
+    (dispatch) ->
+      dispatch(updateFilterTerm(filterTerm))
 
 
   # ----------- EVENT DETAILS -----------
@@ -145,6 +154,7 @@
   app.filterEventsStartTime       = filterEventsStartTime
   app.filterEventsEndTime         = filterEventsEndTime
   app.filterEventsFilterType      = filterEventsFilterType
+  app.filterEventsFilterTerm      = filterEventsFilterTerm
   app.toggleEventDetails          = toggleEventDetails
 
 )(audit)
