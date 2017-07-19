@@ -34,6 +34,7 @@
           limit: limit
           offset: offset
           time: AuditDataFormatter.buildTimeFilter(filterStartTime, filterEndTime)
+          "#{filterType}": filterTerm
         }
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveEvents(data["events"],data["total"]))
@@ -93,9 +94,16 @@
     type: app.UPDATE_FILTER_TERM
     filterTerm: filterTerm
 
+  # initialize timeout for term filter
+  filterTermTimeout = null
+
   filterEventsFilterTerm = (filterTerm) ->
+    clearTimeout(filterTermTimeout) # reset timeout
     (dispatch) ->
       dispatch(updateFilterTerm(filterTerm))
+      # load events only if no new user input has happened during the specified timout window
+      filterTermTimeout = setTimeout((() -> dispatch(loadEvents())), 500)
+
 
 
   # ----------- EVENT DETAILS -----------
