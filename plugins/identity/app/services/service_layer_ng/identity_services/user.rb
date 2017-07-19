@@ -23,8 +23,21 @@ module ServiceLayerNg
       end
 
       # A special case of list_scope_admins that returns a list of CC admins.
+      # Users who have the role admin in ccadmin
       def list_ccadmins
-        list_scope_admins(domain_name: Rails.configuration.cloud_admin_domain)
+        domain = domains(name: Rails.configuration.cloud_admin_domain).first
+        return [] unless domain
+        list_scope_admins(domain_id: domain.id)
+      end
+
+      # Users who have the role resource_admin in ccadmin/cloud_admin
+      def list_cloud_resource_admins
+        domain = domains(name: Rails.configuration.cloud_admin_domain).first
+        return [] unless domain
+        project = projects(domain_id: domain.id,
+                           name: Rails.configuration.cloud_admin_project).first
+        return [] unless project
+        list_scope_resource_admins(project_id: project.id)
       end
 
       def list_scope_resource_admins(scope = {})
@@ -89,9 +102,9 @@ module ServiceLayerNg
               project = find_project(project_id)
               if project
                 # try to get admins recursively by parent_id
-                admins = list_scope_assigned_users(project_id: project.parent_id,
-                                                   domain_id: project.domain_id,
-                                                   role: role)
+                admins = list_scope_assigned_users(
+                  project_id: project.parent_id, role: role
+                )
               end
             end
           elsif domain_id # project_id is nil but domain_id is presented
