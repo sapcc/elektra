@@ -11,15 +11,15 @@ App = React.createClass
   render: () ->
     React.createElement EventList,
       events: @props.events,
-      isFetching: @props.events.isFetching,
-      loadEvents: @props.events.loadEvents
+      isFetching: @props.isFetching,
+      loadEvents: @props.loadEvents
 
 
 
 audit.App = connect(
   (state) ->
     events: state.events.items
-    isFetching: state.events.isFetching
+    isFetching: state.isFetching
 
 
 
