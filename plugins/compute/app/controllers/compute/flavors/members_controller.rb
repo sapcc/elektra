@@ -3,7 +3,7 @@ module Compute
     class MembersController < Image::ApplicationController
 
       def index
-        @flavor = services_ng.compute.flavor(params[:flavor_id])
+        @flavor = services_ng.compute.find_flavor(params[:flavor_id])
         @members = services_ng.compute.flavor_members(params[:flavor_id])
       end
 
@@ -19,7 +19,6 @@ module Compute
             return
           end
         end
-
         @member.save
       end
 

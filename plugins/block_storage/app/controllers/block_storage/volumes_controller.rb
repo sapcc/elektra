@@ -232,7 +232,7 @@ module BlockStorage
     private
 
     def get_cached_servers
-      services_ng.compute.servers({},true)
+      services_ng.compute.cached_project_servers(@scoped_project_id)
     end
 
     # Use callbacks to share common setup or constraints between actions.

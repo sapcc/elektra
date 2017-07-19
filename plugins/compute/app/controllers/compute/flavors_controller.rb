@@ -25,35 +25,36 @@ module Compute
         render action: :new
       end
     end
-    
+
     def edit
-      @flavor = services_ng.compute.flavor(params[:id])
+      @flavor = services_ng.compute.find_flavor(params[:id])
     end
-    
+
     def update
-      @flavor = services_ng.compute.flavor(params[:id])
-      @flavor.attributes = params[:flavor]
+      @flavor = services_ng.compute.new_flavor(params[:flavor])
+      @flavor.id = params[:id]
       if @flavor.save
         respond_to do |format|
-          format.html{redirect_to plugin('compute').flavors_url}
-          format.js { render action: :update, format: :js}
+          format.html { redirect_to plugin('compute').flavors_url }
+          format.js { render action: :update, format: :js }
         end
       else
-        render action: :new        
+        render action: :new
       end
     end
 
     def destroy
-      @flavor = services_ng.compute.flavor(params[:id])
+      @flavor = services_ng.compute.new_flavor
+      @flavor.id = params[:id]
       @error = 'Could not delete Flavor' unless @flavor.destroy
-      
+
       respond_to do |format|
-        format.html { 
-          flash.now[:error] = @error if @error 
+        format.html {
+          flash.now[:error] = @error if @error
           redirect_to plugin('compute').flavors_url
         }
-        format.js {render action: :destroy, format: :js}
-      end  
+        format.js { render action: :destroy, format: :js }
+      end
     end
   end
 end

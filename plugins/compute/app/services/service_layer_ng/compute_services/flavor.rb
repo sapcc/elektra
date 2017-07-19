@@ -49,24 +49,21 @@ module ServiceLayerNg
         )
       end
 
-      def create_flavor_metadata(flavor_id, flavor_extras)
-        api.compute.create_extra_specs_for_a_flavor(
-          flavor_id, 'extra_specs' => flavor_extras
-        ).map_to(Compute::FlavorMetadata)
-      end
-
-      def delete_flavor_metadata(flavor_id, key)
-        api.compute.delete_an_extra_spec_for_a_flavor(flavor_id, key)
-      end
 
       def flavor_members(flavor_id)
         api.compute.list_flavor_access_information_for_given_flavor(flavor_id)
            .map_to(Compute::FlavorAccess)
       end
 
-      def flavor_metadata(flavor_id)
+      def find_flavor_metadata!(flavor_id)
         api.compute.list_extra_specs_for_a_flavor(flavor_id)
            .map_to(Compute::FlavorMetadata)
+      end
+
+      def find_flavor_metadata(flavor_id)
+        find_flavor_metadata!(flavor_id)
+      rescue
+        nil
       end
 
       def new_flavor_metadata(flavor_id)
@@ -84,6 +81,16 @@ module ServiceLayerNg
 
       def delete_flavor(id)
         api.compute.delete_flavor(id)
+      end
+
+      def create_flavor_metadata(flavor_id, flavor_extras)
+        api.compute.create_extra_specs_for_a_flavor(
+          flavor_id, 'extra_specs' => flavor_extras
+        ).data
+      end
+
+      def delete_flavor_metadata(flavor_id, key)
+        api.compute.delete_an_extra_spec_for_a_flavor(flavor_id, key)
       end
     end
   end

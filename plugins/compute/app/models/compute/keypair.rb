@@ -20,9 +20,9 @@ module Compute
 
     def attributes_for_create
       {
-        'name' => read['name'],
-        'public_key' => params['public_key']
-      }.delete_if { |_k, v| v.blank? }
+        'name' => read('name'),
+        'public_key' => read('public_key')
+      }.delete_if { |_k, v| v.nil? }
     end
   end
 end

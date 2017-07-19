@@ -171,13 +171,13 @@ module Core
         DateTime.parse(value) if value
       end
 
-      def pretty_created_at
-        Core::Formatter.format_modification_time(created_at) if created_at
-      end
-
       def updated_at
         value = read("updated") || read("updated_at")
         DateTime.parse(value) if value
+      end
+
+      def pretty_created_at
+        Core::Formatter.format_modification_time(created_at) if created_at
       end
 
       def pretty_updated_at

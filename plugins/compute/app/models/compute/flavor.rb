@@ -30,10 +30,13 @@ module Compute
       return false unless valid?
 
       rescue_api_errors do
-        @service.delete_flavor(attributes_for_create) unless id.blank?
+        @service.delete_flavor(id) unless id.blank?
         # create the new flavor. Caution: if this operation fails then it is
         # just a delete.
-        self.attributes = @service.create_flavor(attributes_for_create)
+        new_attributes = attributes_for_create
+        new_attributes['id'] = id unless id.blank?
+
+        self.attributes = @service.create_flavor(new_attributes)
         after_save
       end
     end
@@ -43,15 +46,15 @@ module Compute
     # converted to string.
     def attributes_for_create
       {
-        'name'         => read('name'),
-        'ram'          => read('ram'),
-        'vcpus'        => read('vcpus'),
-        'disk'         => read('disk'),
-        'rxtx_factor'  => read('rxtx_factor'),
-        'swap'         => read('swap'),
-        'ephemeral'    => ephemeral,
-        'is_public'    => public?.to_s
-      }.delete_if { |_k, v| v.blank? }
+        'name'                        => read('name'),
+        'ram'                         => read('ram'),
+        'vcpus'                       => read('vcpus'),
+        'disk'                        => read('disk'),
+        'rxtx_factor'                 => read('rxtx_factor'),
+        'swap'                        => read('swap'),
+        'OS-FLV-EXT-DATA:ephemeral'   => ephemeral,
+        'os-flavor-access:is_public'  => public?
+      }.delete_if { |_k, v| v.nil? }
     end
   end
 end

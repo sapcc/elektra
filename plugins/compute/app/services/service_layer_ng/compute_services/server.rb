@@ -14,6 +14,14 @@ module ServiceLayerNg
            .map_to('servers' => Compute::Server) || []
       end
 
+      def cached_project_servers(project_id)
+        data = Rails.cache.fetch("#{project_id}_servers",
+                                 expires_in: 2.hours) do
+          api.compute.list_servers_detailed.data
+        end
+        map_to(Compute::Server, data)
+      end
+
       def find_server!(id)
         return nil if id.empty?
         api.compute.show_server_details(id).map_to(Compute::Server)

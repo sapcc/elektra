@@ -14,6 +14,7 @@
   %td= byte_to_human(image.size)
   %td
     - project_id_and_name(image.owner)
+  %td= image.pretty_created_at  
   %td= image.status
   %td.snug
     .btn-group

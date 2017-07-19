@@ -125,7 +125,7 @@ class DashboardController < ::ScopeController
            'scope.domain.id' => @scoped_domain_id,
            'effective' => true
          ).empty?
-      end   
+      end
       authentication_rescope_token(domain: nil, project: nil)
     else
       authentication_rescope_token

@@ -15,6 +15,12 @@ module Compute
       raise 'Do not use update!'
     end
 
+    # overwrite super attributes method. The default method adds id to the
+    # attributes which is not set in metadata
+    def attributes
+      @attributes
+    end
+
     def add(params)
       rescue_api_errors do
         attrs = @service.create_flavor_metadata(flavor_id,
