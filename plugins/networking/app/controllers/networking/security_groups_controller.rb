@@ -8,7 +8,9 @@ module Networking
         tenant_id: @scoped_project_id
       )
 
-      @quota_data = services.resource_management.quota_data(
+      @quota_data = services_ng.resource_management.quota_data(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,
         [
           { service_type: :network, resource_name: :security_groups,
             usage: @security_groups.length },
@@ -94,7 +96,9 @@ module Networking
         end
       end
 
-      @quota_data = services.resource_management.quota_data(
+      @quota_data = services_ng.resource_management.quota_data(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,
         [
           { service_type: :network, resource_name: :security_groups,
             usage: @security_groups.length },

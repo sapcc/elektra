@@ -20,7 +20,6 @@ module ServiceLayerNg
         service: options.collect { |values| values[:service_type] },
         resource: options.collect { |values| values[:resource_name] },
       )
-
       result = []
       options.each do |values|
         service = project.services.find { |srv| srv.type == values[:service_type].to_sym }
