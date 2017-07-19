@@ -1,5 +1,5 @@
 module ResourceManagement
-  class Domain < Core::ServiceLayer::Model
+  class Domain < Core::ServiceLayerNg::Model
 
     def name
       read(:name)
@@ -11,7 +11,7 @@ module ResourceManagement
         domain_name: name,
       }
 
-      @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }
+      @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@service, data.merge(metadata)) }
     end
 
     def resources
@@ -35,7 +35,7 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
         }
       end
-      @driver.put_domain_data(id, data)
+      @service.put_domain_data(id, data)
     end
 
   end

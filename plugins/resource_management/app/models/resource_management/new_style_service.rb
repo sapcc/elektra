@@ -1,5 +1,5 @@
 module ResourceManagement
-  class NewStyleService < Core::ServiceLayer::Model
+  class NewStyleService < Core::ServiceLayerNg::Model
 
     def type
       read(:type).to_sym
@@ -35,7 +35,7 @@ module ResourceManagement
         cluster_id:        read(:cluster_id),
       }.reject { |k,v| v.nil? }
 
-      @resources ||= read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@driver, data.merge(metadata)) }
+      @resources ||= read(:resources).map { |data| ResourceManagement::NewStyleResource.new(@service, data.merge(metadata)) }
     end
 
     def updated_at

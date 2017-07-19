@@ -10,7 +10,7 @@ module ResourceManagement
     authorization_required
 
     def index
-      @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
 
@@ -37,7 +37,7 @@ module ResourceManagement
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
 
       # load all resources for these services
-      @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id, services: @area_services.map(&:catalog_type))
+      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id, service: @area_services.map(&:catalog_type))
       @resources = @project.resources
       @min_updated_at = @project.services.map(&:updated_at).min
       @max_updated_at = @project.services.map(&:updated_at).max
@@ -189,17 +189,17 @@ module ResourceManagement
     end
 
     def sync_now
-      services.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
+      services_ng.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
       @start_time = Time.now.to_i
     end
 
     private
 
     def load_project_resource
-      @resource = services.resource_management.find_project(
+      @resource = services_ng.resource_management.find_project(
         @scoped_domain_id, @scoped_project_id,
-        services: Array.wrap(params.require(:service)),
-        resources: Array.wrap(params.require(:resource)),
+        service: Array.wrap(params.require(:service)),
+        resource: Array.wrap(params.require(:resource)),
       ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
@@ -207,7 +207,7 @@ module ResourceManagement
       enforce_permissions(":resource_management:project_resource_list")
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
-      @show_package_request_banner = ! services.resource_management.has_project_quotas?
+      @show_package_request_banner = ! services_ng.resource_management.has_project_quotas?(current_user.domain_id,current_user.project_id,current_user.project_domain_id)
       @has_requested_package = Inquiry::Inquiry.
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package', aasm_state: 'open').
         count > 0

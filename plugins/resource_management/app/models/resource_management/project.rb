@@ -1,5 +1,5 @@
 module ResourceManagement
-  class Project < Core::ServiceLayer::Model
+  class Project < Core::ServiceLayerNg::Model
 
     validate :validate_resources
 
@@ -18,7 +18,7 @@ module ResourceManagement
         project_name:      name,
       }
 
-      @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }
+      @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@service, data.merge(metadata)) }
     end
 
     def resources
@@ -42,7 +42,7 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
         }
       end
-      @driver.put_project_data(domain_id, id, data)
+      @service.put_project_data(domain_id, id, data)
     end
 
     private

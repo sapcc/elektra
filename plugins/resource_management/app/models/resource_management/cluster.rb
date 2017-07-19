@@ -1,12 +1,12 @@
 module ResourceManagement
-  class Cluster < Core::ServiceLayer::Model
+  class Cluster < Core::ServiceLayerNg::Model
 
     def services
       metadata = {
         cluster_id: id,
       }
 
-      @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@driver, data.merge(metadata)) }
+      @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@service, data.merge(metadata)) }
     end
 
     def resources
@@ -30,7 +30,7 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, capacity: res.capacity, comment: res.comment || '' } },
         }
       end
-      @driver.put_cluster_data(id, data)
+      @service.put_cluster_data(id, data)
     end
 
   end

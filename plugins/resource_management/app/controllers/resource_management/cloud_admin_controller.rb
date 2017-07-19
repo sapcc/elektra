@@ -10,7 +10,7 @@ module ResourceManagement
     authorization_required
 
     def index
-      @cluster = services.resource_management.find_current_cluster
+      @cluster = services_ng.resource_management.find_current_cluster
       @resources = @cluster.resources
 
       @min_updated_at = @cluster.services.map(&:min_updated_at).min
@@ -24,7 +24,7 @@ module ResourceManagement
       @area_services = ResourceManagement::ServiceConfig.in_area(@area)
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
 
-      @cluster= services.resource_management.find_current_cluster(services: @area_services.map(&:catalog_type))
+      @cluster= services_ng.resource_management.find_current_cluster(service: @area_services.map(&:catalog_type))
       @resources = @cluster.resources
       @min_updated_at = @cluster.services.map(&:min_updated_at).min
       @max_updated_at = @cluster.services.map(&:max_updated_at).max
@@ -128,9 +128,9 @@ module ResourceManagement
         c.name == resource_name and c.service.catalog_type == service_type
       end or raise ActiveRecord::RecordNotFound, "no such resource"
 
-      cluster = services.resource_management.find_current_cluster(services: service_type, resources: resource_name.to_s)
+      cluster = services_ng.resource_management.find_current_cluster(service: service_type, resource: resource_name.to_s)
       @cluster_resource = cluster.resources.first or raise ActiveRecord::RecordNotFound, "no data for cluster"
-      domains = services.resource_management.list_domains(services: service_type, resources: resource_name.to_s)
+      domains = services_ng.resource_management.list_domains(service: service_type, resource: resource_name.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given
@@ -161,18 +161,18 @@ module ResourceManagement
 
     def load_domain_resource
       enforce_permissions(":resource_management:cloud_admin_list")
-      domain = services.resource_management.find_domain(
+      domain = services_ng.resource_management.find_domain(
         params.require(:id),
-        services:  [ params.require(:service) ],
-        resources: [ params.require(:resource) ],
+        service:  [ params.require(:service) ],
+        resource: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "domain #{params[:domain]} not found"
       @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
 
     def load_cluster_resource
-      cluster = services.resource_management.find_current_cluster(
-        services:  [ params.require(:service) ],
-        resources: [ params.require(:resource) ],
+      cluster = services_ng.resource_management.find_current_cluster(
+        service:  [ params.require(:service) ],
+        resource: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "cluster not found"
       @cluster_resource = cluster.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
@@ -190,15 +190,15 @@ module ResourceManagement
       data = @inquiry.payload.symbolize_keys
       raise ArgumentError, "inquiry #{@inquiry.id} has not been migrated to new format!" if data.include?(:resource_id)
 
-      @domain_resource = services.resource_management.find_domain(
+      @domain_resource = services_ng.resource_management.find_domain(
         @inquiry.domain_id,
-        services:  [ data[:service]  ],
-        resources: [ data[:resource] ],
+        service:  [ data[:service]  ],
+        resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
 
-      @cluster_resource = services.resource_management.find_current_cluster(
-        services:  [ data[:service]  ],
-        resources: [ data[:resource] ],
+      @cluster_resource = services_ng.resource_management.find_current_cluster(
+        service:  [ data[:service]  ],
+        resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
