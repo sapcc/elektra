@@ -11,7 +11,7 @@ module ServiceLayerNg
     end
 
     def quota_data(domain_id,project_id,options=[])
-      debug "[resource management-service] -> quota_data"
+      Rails.logger.debug  "[resource management-service] -> quota_data"
       return [] if options.empty?
 
       project = find_project( 

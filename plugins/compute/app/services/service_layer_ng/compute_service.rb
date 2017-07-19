@@ -19,13 +19,11 @@ module ServiceLayerNg
     end
 
     def usage(filter = {})
-      debug '[compute-service] -> usage -> GET /limits'
       response = api.compute.show_rate_and_absolute_limits(filter).body['limits']['absolute']
       map_to(Compute::Usage,response)
     end
 
     def availability_zones
-      debug '[compute-service] -> availability_zones -> GET /os-availability-zone'
       api.compute.get_availability_zone_information
          .map_to(Compute::AvailabilityZone)
     end
