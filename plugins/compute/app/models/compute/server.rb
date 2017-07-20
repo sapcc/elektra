@@ -65,6 +65,9 @@ module Compute
 
       networks = read('network_ids')
       if networks && networks.is_a?(Array)
+        params['networks'] = {
+
+        }
         params['networks'] = networks.collect do |n|
           network = { 'uuid' => n['id'] }
           network['fixed_ip'] = n['fixed_ip'] if n['fixed_ip']

@@ -14,7 +14,7 @@ module ServiceLayerNg
       end
 
       def find_flavor!(flavor_id, use_cache = false)
-        cache_key = 'server_flavor_#{flavor_id}'
+        cache_key = "server_flavor_#{flavor_id}"
 
         flavor_data = if use_cache
                         Rails.cache.fetch(cache_key, expires_in: 24.hours) do
