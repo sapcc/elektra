@@ -15,7 +15,7 @@ module Image
           @member = services.image.new_member(params[:member])
 
           @project = service_user.identity.find_project_by_name_or_id(
-            @member.member_id
+            @scoped_domain_id, @member.member_id
           )
 
           if @project.nil?
