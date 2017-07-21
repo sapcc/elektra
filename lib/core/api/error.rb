@@ -14,7 +14,13 @@ module Core
 
           @response = response
           data = @response.respond_to?(:body) ? @response.body : @response
-          data = JSON.parse(data) unless data.is_a?(Hash)
+          unless data.is_a?(Hash)
+            data = begin
+                     JSON.parse(data)
+                   rescue
+                     data
+                   end
+          end
 
           @messages = Error.read_error_messages(data)
           super(@messages.join(', '))
