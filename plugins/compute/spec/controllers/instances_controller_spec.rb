@@ -19,7 +19,10 @@ describe Compute::InstancesController, type: :controller do
       .to receive(:servers).and_return([])
 
     allow_any_instance_of(ServiceLayerNg::ComputeService)
-      .to receive(:usage).and_return(double('usage', instances: 1, ram: 2, cores: 4))  
+      .to receive(:usage).and_return(double('usage', instances: 1, ram: 2, cores: 4))
+
+    allow_any_instance_of(ServiceLayerNg::ResourceManagementService)
+      .to receive(:quota_data).and_return([])
   end
 
   describe "GET 'index'" do
