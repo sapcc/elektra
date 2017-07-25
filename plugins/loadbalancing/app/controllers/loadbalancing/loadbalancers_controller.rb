@@ -9,28 +9,16 @@ module Loadbalancing
       @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
       @fips = services_ng.networking.project_floating_ips(@scoped_project_id)
 
-      @private_networks = services_ng.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services_ng.networking.available?
       @subnets = {}
-      @private_networks.each do |pn|
-        unless pn.subnets.blank?
-          pn.subnets.each do |subid|
-            @subnets[subid] = services_ng.networking.find_subnet(subid) unless @subnets[subid]
-          end
-        end
-      end
-
       @loadbalancers.each do |lb|
         @fips.each do |fip|
           lb.floating_ip = lb.vip_port_id == fip.port_id ? fip : nil
           break if lb.floating_ip
         end
-        @subnets.each do |id, sub|
-          cidr = NetAddr::CIDR.create(sub.cidr)
-          if cidr.contains?(lb.vip_address)
-            lb.subnet = sub
-            break
-          end
+        unless @subnets[lb.vip_subnet_id]
+          @subnets[lb.vip_subnet_id] = services_ng.networking.subnets(id: lb.vip_subnet_id).first
         end
+        lb.subnet = @subnets[lb.vip_subnet_id]
       end
 
       @quota_data = services_ng.resource_management.quota_data(current_user.domain_id || current_user.project_domain_id,
