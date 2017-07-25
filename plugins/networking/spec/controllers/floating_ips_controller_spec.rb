@@ -18,6 +18,9 @@ describe Networking::FloatingIpsController, type: :controller do
       .to receive(:api).and_return(
         double('api', networking: double('networking').as_null_object)
       )
+
+    allow_any_instance_of(ServiceLayerNg::ResourceManagementService)
+      .to receive(:quota_data).and_return([])
   end
 
   describe "GET 'index'" do

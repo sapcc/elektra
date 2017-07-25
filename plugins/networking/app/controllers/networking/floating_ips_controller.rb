@@ -19,7 +19,9 @@ module Networking
           )
         )
       end
-      @quota_data = services.resource_management.quota_data(
+      @quota_data = services_ng.resource_management.quota_data(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,
         [
           { service_type: :network, resource_name: :floating_ips,
             usage: @floating_ips.length }

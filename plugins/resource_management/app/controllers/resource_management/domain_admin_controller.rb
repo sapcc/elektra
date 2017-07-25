@@ -11,7 +11,7 @@ module ResourceManagement
     authorization_required
 
     def index
-      @domain = services.resource_management.find_domain(@scoped_domain_id)
+      @domain = services_ng.resource_management.find_domain(@scoped_domain_id)
       @min_updated_at = @domain.services.map(&:min_updated_at).min
       @max_updated_at = @domain.services.map(&:max_updated_at).max
 
@@ -30,7 +30,7 @@ module ResourceManagement
       @area_services = ResourceManagement::ServiceConfig.in_area(@area)
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
 
-      @domain = services.resource_management.find_domain(@scoped_domain_id, services: @area_services.map(&:catalog_type))
+      @domain = services_ng.resource_management.find_domain(@scoped_domain_id, service: @area_services.map(&:catalog_type))
       @resources = @domain.resources
       @min_updated_at = @domain.services.map(&:min_updated_at).min
       @max_updated_at = @domain.services.map(&:max_updated_at).max
@@ -165,8 +165,8 @@ module ResourceManagement
     end
 
     def review_package_request
-      @project = services.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
-      @domain  = services.resource_management.find_domain(@scoped_domain_id)
+      @project = services_ng.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
+      @domain  = services_ng.resource_management.find_domain(@scoped_domain_id)
 
       @target_project_name = services_ng.identity.find_project(@inquiry.project_id).name
 
@@ -193,7 +193,7 @@ module ResourceManagement
 
     def approve_package_request
       # apply quotas from package to project, but take existing approved quotas into account
-      @project = services.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
+      @project = services_ng.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
       @project.resources.each do |res|
         new_quota = res.config.value_for_package(@package)
         res.quota = [ res.quota, new_quota ].max
@@ -257,7 +257,7 @@ module ResourceManagement
           resource: cfg.name,
           desired_quota: new_value,
         },
-        service_user.identity.list_ccadmins,
+        cloud_admin.identity.list_cloud_resource_admins,
         {
           "approved": {
             "name": "Approve",
@@ -294,9 +294,9 @@ module ResourceManagement
         c.name == resource_name and c.service.catalog_type == service_type
       end or raise ActiveRecord::RecordNotFound, "no such resource"
 
-      domain = services.resource_management.find_domain(@scoped_domain_id, services: service_type, resources: resource_name.to_s)
+      domain = services_ng.resource_management.find_domain(@scoped_domain_id, service: service_type, resource: resource_name.to_s)
       @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "no such domain"
-      projects = services.resource_management.list_projects(@scoped_domain_id, services: service_type, resources: resource_name.to_s)
+      projects = services_ng.resource_management.list_projects(@scoped_domain_id, service: service_type, resource: resource_name.to_s)
       @project_resources = projects.map { |p| p.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given
@@ -326,20 +326,20 @@ module ResourceManagement
     private
 
     def load_project_resource
-      project = services.resource_management.find_project(
+      project = services_ng.resource_management.find_project(
         @scoped_domain_id, params.require(:id),
-        services: [ params.require(:service) ],
-        resources: [ params.require(:resource) ],
+        service: [ params.require(:service) ],
+        resource: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "project #{params[:project]} not found"
       @project_resource = project.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
 
     def load_domain_resource
       enforce_permissions(":resource_management:domain_admin_list")
-      @resource = services.resource_management.find_domain(
+      @resource = services_ng.resource_management.find_domain(
         @scoped_domain_id,
-        services: Array.wrap(params.require(:service)),
-        resources: Array.wrap(params.require(:resource)),
+        service: Array.wrap(params.require(:service)),
+        resource: Array.wrap(params.require(:resource)),
       ).resources.first or raise ActiveRecord::RecordNotFound
     end
 
@@ -357,16 +357,16 @@ module ResourceManagement
       data = @inquiry.payload.symbolize_keys
       raise ArgumentError, "inquiry #{@inquiry.id} has not been migrated to new format!" if data.include?(:resource_id)
 
-      @project_resource = services.resource_management.find_project(
+      @project_resource = services_ng.resource_management.find_project(
         @scoped_domain_id, @inquiry.project_id,
-        services:  [ data[:service]  ],
-        resources: [ data[:resource] ],
+        service:  [ data[:service]  ],
+        resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
 
-      @domain_resource = services.resource_management.find_domain(
+      @domain_resource = services_ng.resource_management.find_domain(
         @scoped_domain_id,
-        services:  [ data[:service]  ],
-        resources: [ data[:resource] ],
+        service:  [ data[:service]  ],
+        resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
     end
 

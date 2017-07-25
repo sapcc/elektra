@@ -1,5 +1,5 @@
 module ResourceManagement
-  class NewStyleResource < Core::ServiceLayer::Model
+  class NewStyleResource < Core::ServiceLayerNg::Model
     include ManualValidation
 
     validates_presence_of :quota, unless: :cluster_id
@@ -101,19 +101,20 @@ module ResourceManagement
           comment:  read(:comment),
         }.reject { |_,v| v.nil? }],
       }]
+
       if project_id and project_domain_id
-        @driver.put_project_data(project_domain_id, project_id, services)
+        @service.put_project_data(project_domain_id, project_id, services)
       elsif domain_id
-        @driver.put_domain_data(domain_id, services)
+        @service.put_domain_data(domain_id, services)
       elsif cluster_id
-        @driver.put_cluster_data(services)
+        @service.put_cluster_data(services)
       else
         raise ArgumentError, "found nowhere to put quota: #{attributes.inspect}"
       end
     end
 
     def clone
-      return self.class.new(@driver, attributes.clone)
+      return self.class.new(@service, attributes.clone)
     end
 
     # for quota display in other services

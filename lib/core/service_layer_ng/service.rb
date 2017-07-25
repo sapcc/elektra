@@ -57,9 +57,6 @@ module Core
       #   api_client.instance_variable_get('@auth').catalog
       # end
 
-      def debug(message)
-        puts message if ENV['DEBUG_SERVICE_LAYER']
-      end
     end
   end
 end

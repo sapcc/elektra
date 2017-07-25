@@ -63,7 +63,6 @@ module Core
             },
           }.merge(default_client_params).merge(SERVICE_OPTIONS)
         )
-        
       end
 
       def self.create_service_user_api_client(scope_domain)

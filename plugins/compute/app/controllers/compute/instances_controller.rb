@@ -23,13 +23,13 @@ module Compute
         unless @all_projects
           usage = services_ng.compute.usage
 
-          @quota_data = services.resource_management.quota_data(
+          @quota_data = services_ng.resource_management.quota_data(
+            current_user.domain_id || current_user.project_domain_id,
+            current_user.project_id,
             [
-              { service_name: :compute, resource_name: :instances,
-                usage: usage.instances },
-              { service_name: :compute, resource_name: :cores,
-                usage: usage.cores },
-              { service_name: :compute, resource_name: :ram, usage: usage.ram }
+              { service_type: :compute, resource_name: :instances, usage: usage.instances },
+              { service_type: :compute, resource_name: :cores, usage: usage.cores },
+              { service_type: :compute, resource_name: :ram, usage: usage.ram }
             ]
           )
         end
@@ -63,7 +63,9 @@ module Compute
 
     def new
       # get usage from db
-      @quota_data = services.resource_management.quota_data([
+      @quota_data = services_ng.resource_management.quota_data(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,[
         {service_type: :compute, resource_name: :instances},
         {service_type: :compute, resource_name: :cores},
         {service_type: :compute, resource_name: :ram}

@@ -22,7 +22,6 @@ module ServiceLayerNg
         map_to(Identity::User, attributes)
       end
 
-      # A special case of list_scope_admins that returns a list of CC admins.
       # Users who have the role admin in ccadmin
       def list_ccadmins
         domain = domains(name: Rails.configuration.cloud_admin_domain).first
@@ -30,18 +29,18 @@ module ServiceLayerNg
         list_scope_admins(domain_id: domain.id)
       end
 
-      # Users who have the role resource_admin in ccadmin/cloud_admin
+      # Users who have the role cloud_resource_admin in ccadmin/cloud_admin
       def list_cloud_resource_admins
         domain = domains(name: Rails.configuration.cloud_admin_domain).first
         return [] unless domain
         project = projects(domain_id: domain.id,
                            name: Rails.configuration.cloud_admin_project).first
         return [] unless project
-        list_scope_resource_admins(project_id: project.id)
+        list_scope_resource_admins({project_id: project.id}, 'cloud_resource_admin')
       end
 
-      def list_scope_resource_admins(scope = {})
-        role = find_role_by_name('resource_admin')
+      def list_scope_resource_admins(scope = {},role_name = 'resource_admin')
+        role = find_role_by_name(role_name)
         list_scope_assigned_users(scope.merge(role: role))
       end
 

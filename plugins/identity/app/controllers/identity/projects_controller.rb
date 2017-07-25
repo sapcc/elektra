@@ -161,7 +161,7 @@ module Identity
 
     ################### HELPER METHODS #########################
     def update_resource_management_wizard_status
-      if services.resource_management.has_project_quotas?
+      if services_ng.resource_management.has_project_quotas?
         @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
       else
         # try to find a quota inquiry and get status of it
