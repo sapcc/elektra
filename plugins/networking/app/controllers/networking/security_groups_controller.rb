@@ -83,17 +83,16 @@ module Networking
       # end
 
       @security_groups = @rules.each_with_object({}) do |rule, hash|
-        if hash[rule.remote_group_id]
-          rule.remote_group_name = hash[rule.remote_group_id].name
-          next
+        next if rule.remote_group_id.blank?
+        unless hash[rule.remote_group_id]
+          if rule.remote_group_id == @security_group.id
+            hash[rule.remote_group_id] = @security_group
+          else
+            hash[rule.remote_group_id] =
+              services_ng.networking.find_security_group(rule.remote_group_id)
+          end
         end
-
-        if rule.remote_group_id == @security_group.id
-          hash[rule.remote_group_id] = @security_group
-        else
-          hash[rule.remote_group_id] =
-            services_ng.networking.find_security_group(rule.remote_group_id)
-        end
+        rule.remote_group_name = hash[rule.remote_group_id].name
       end
 
       @quota_data = services_ng.resource_management.quota_data(
