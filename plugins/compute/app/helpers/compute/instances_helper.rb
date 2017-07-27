@@ -45,7 +45,8 @@ module Compute
 
     def image_label_for_select(image)
       owner = image.private ? image.owner : nil
-      label = "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format})"
+      label = "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format}"
+      label += image.buildnumber ? ", Build: #{image.buildnumber})" : ")"
       label += ". Project: #{project_name(image.owner)}" if owner
       label
     end
