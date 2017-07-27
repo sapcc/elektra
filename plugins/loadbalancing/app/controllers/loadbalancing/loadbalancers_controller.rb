@@ -33,25 +33,12 @@ module Loadbalancing
       @statuses = statuses.state
     end
 
-=begin
-    def update_statuses
-      begin
-        @statuses = services.loadbalancing.loadbalancer_statuses(params[:id])
-        if @statuses
-          render json: @statuses
-        else
-          render json: {}
-        end
-      rescue => e
-        render json: {}
-      end
-    end
-=end
-
     # Get statuses object for one loadbalancer
     def update_status
       begin
         @states = services.loadbalancing.loadbalancer_statuses(params[:id])
+      rescue ::Core::ServiceLayer::Errors::ApiError
+
       end
     end
 
@@ -61,7 +48,10 @@ module Loadbalancing
         @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
         @states = []
         @loadbalancers.each do |lb|
-          @states << services.loadbalancing.loadbalancer_statuses(lb.id)
+          begin
+            @states << services.loadbalancing.loadbalancer_statuses(lb.id)
+          rescue ::Core::ServiceLayer::Errors::ApiError
+          end
         end
         @states
       end
