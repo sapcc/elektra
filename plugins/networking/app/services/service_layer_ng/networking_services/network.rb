@@ -53,8 +53,7 @@ module ServiceLayerNg
         domain_name = 'monsoon3' if %w[ccadmin cc3test].include?(domain_name)
 
         name_candidates = ["FloatingIP-external-#{domain_name}-02",
-                           "FloatingIP-external-#{domain_name}",
-                           "FloatingIP-internal-#{domain_name}",
+                           "FloatingIP-external-#{domain_name}-01",
                            'Converged Cloud External']
         name_candidates.each do |name|
           network = api.networking.list_networks(
