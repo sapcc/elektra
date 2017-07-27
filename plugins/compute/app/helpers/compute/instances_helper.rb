@@ -7,7 +7,7 @@ module Compute
       # before sorting delete images that don't have a name
       # if for whatever reason in the future we want to show images without names in the list
       # this needs to be adjusted
-      images.delete_if{|image| image.name.nil?}.sort_by!{|image| image.name}
+      images.delete_if{|image| image.name.nil?}.sort_by!{|image| [image.name, image.created_at]}
       images.each do |image|
         if image.visibility=='public'
           type = (image.hypervisor_type || 'no hypervisor type')
@@ -46,7 +46,7 @@ module Compute
     def image_label_for_select(image)
       owner = image.private ? image.owner : nil
       label = "#{image.name} (Size: #{byte_to_human(image.size)}, Format: #{image.disk_format}"
-      label += image.buildnumber ? ", Build: #{image.buildnumber})" : ")"
+      label += !image.buildnumber.blank? ? ", Build: #{image.buildnumber})" : ")"
       label += ". Project: #{project_name(image.owner)}" if owner
       label
     end

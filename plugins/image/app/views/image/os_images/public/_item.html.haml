@@ -1,7 +1,7 @@
 %tr{id: "image_#{image.id}", data: {search_name: image.name+'_'+image.id, marker_id: image.id}}
   %td
     - if current_user.is_allowed?('image:image_get', {})
-      = link_to "#{image.name} #{('(' + image.buildnumber + ')') if image.buildnumber}", plugin('image').send("os_images_public_path", image.id), data: { modal: true, cancel: 'Close' }
+      = link_to "#{image.name} #{('(' + image.buildnumber + ')') if !image.buildnumber.blank?}", plugin('image').send("os_images_public_path", image.id), data: { modal: true, cancel: 'Close' }
     - else
       = image.name
   %td= image.disk_format
