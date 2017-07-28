@@ -48,6 +48,9 @@ ReactHelpers.getItemAttribute = (items, itemId, itemIdKey, attributeKey) ->
 
 # Check if given value exists and has length 0
 ReactHelpers.isEmpty = (s) ->
+  console.log("s=#{s}")
+  console.log('s? -> ' + s?)
+  console.log('s.length -> ' + s.length)
   return true if s? && s.length == 0
 
 
