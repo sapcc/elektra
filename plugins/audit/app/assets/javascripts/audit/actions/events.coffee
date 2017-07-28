@@ -26,8 +26,8 @@
       filterEndTime   = events.filterEndTime
 
 
-      dispatch(requestEvents())
       return if isFetching # don't fetch if we're already fetching
+      dispatch(requestEvents())
 
       app.ajaxHelper.get '/events',
         data: {
@@ -87,6 +87,8 @@
   filterEventsFilterType = (filterType) ->
     (dispatch) ->
       dispatch(updateFilterType(filterType))
+      dispatch(filterEventsFilterTerm('', 0)) # reset filter term on filter type change
+      dispatch(fetchAttributeValues(filterType))
       # if filterType empty, loadEvents with empty filter
       # else
 
@@ -97,12 +99,57 @@
   # initialize timeout for term filter
   filterTermTimeout = null
 
-  filterEventsFilterTerm = (filterTerm) ->
+  filterEventsFilterTerm = (filterTerm, timeout) ->
     clearTimeout(filterTermTimeout) # reset timeout
+    console.log("timeout: #{timeout}")
     (dispatch) ->
       dispatch(updateFilterTerm(filterTerm))
       # load events only if no new user input has happened during the specified timout window
-      filterTermTimeout = setTimeout((() -> dispatch(loadEvents())), 500)
+      filterTermTimeout = setTimeout((() -> dispatch(loadEvents())), timeout)
+
+
+  # ----------- ATTRIBUTE VALUES -----------
+
+  requestAttributeValues = () ->
+    type: app.REQUEST_ATTRIBUTE_VALUES
+
+  requestAttributeValuesFailure = (error) ->
+    type: app.REQUEST_ATTRIBUTE_VALUES_FAILURE
+    error: error
+
+  requestAttributeValuesNotFound = (attribute) ->
+    type: app.REQUEST_ATTRIBUTE_VALUES_NOT_FOUND
+    attribute: attribute
+
+  receiveAttributeValues = (attribute, json) ->
+    type: app.RECEIVE_ATTRIBUTE_VALUES
+    values: json
+    attribute: attribute
+
+
+  fetchAttributeValues = (attribute) ->
+    (dispatch) ->
+      dispatch(loadAttributeValues(attribute))
+
+  loadAttributeValues = (attribute) ->
+    (dispatch, getState) ->
+      currentState    = getState()
+      events          = currentState.events
+      attributeValues = events.attributeValues
+
+      return if attributeValues[attribute] # don't fetch if we already have the values
+      dispatch(requestAttributeValues())
+
+      app.ajaxHelper.get "/attributes/#{attribute}",
+        data: {}
+        success: (data, textStatus, jqXHR) ->
+          console.log(data)
+          dispatch(receiveAttributeValues(attribute, data))
+        error: ( jqXHR, textStatus, errorThrown) ->
+          if jqXHR.status == 404
+            dispatch(requestAttributeValuesNotFound(attribute))
+          else
+            dispatch(requestAttributeValuesFailure(jqXHR.responseText))
 
 
 
