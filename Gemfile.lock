@@ -120,6 +120,11 @@ PATH
     key_manager (0.0.1)
 
 PATH
+  remote: plugins/kubernetes
+  specs:
+    kubernetes (0.0.1)
+
+PATH
   remote: plugins/loadbalancing
   specs:
     loadbalancing (0.0.1)
@@ -580,6 +585,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   key_manager!
+  kubernetes!
   loadbalancing!
   lookup!
   lyra-client!
