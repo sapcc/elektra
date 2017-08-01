@@ -22,6 +22,19 @@ module ServiceLayerNg
         map_to(Identity::User, attributes)
       end
 
+      # This method is used by model.
+      # It has to return the data hash.
+      def create_user(attributes = {})
+        api.identity.create_user(user: attributes).data
+      end
+
+      # This method is used by model.
+      # It has to return the data hash.
+      def update_user(id, attributes)
+        api.identity.update_user(id, user: attributes).data
+      end
+
+
       # Users who have the role admin in ccadmin
       def list_ccadmins
         domain = domains(name: Rails.configuration.cloud_admin_domain).first
