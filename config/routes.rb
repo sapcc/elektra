@@ -24,7 +24,7 @@ Rails.application.routes.draw do
 
       ###################### MOUNT PLUGINS #####################
       Core::PluginsManager.mountable_plugins.each do |plugin|
-        next if ['docs'].include?(plugin.name)
+        next if ['docs', 'kubernetes'].include?(plugin.name)
         Logger.new(STDOUT).debug("Mount plugin #{plugin.mount_point} as #{plugin.name}_plugin")
         mount plugin.engine_class => "/#{plugin.mount_point}", as: "#{plugin.name}_plugin"
       end
