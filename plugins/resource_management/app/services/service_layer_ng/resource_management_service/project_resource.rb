@@ -9,7 +9,7 @@ module ServiceLayerNg
       api.resources.get_project(domain_id, project_id, query).map_to(ResourceManagement::Project,domain_id: domain_id)
     end
 
-    def has_project_quotas?(domain_id,project_id,project_domain_id)
+    def has_project_quotas?(domain_id,project_id,project_domain_id=nil)
       Rails.logger.debug  "[resource management-service][ProjectResource] -> has_project_quotas?"
       project = find_project(
         domain_id || project_domain_id,
