@@ -24,7 +24,7 @@ Pagination = ({
         for page in [1..pages]
           console.log("page: #{page} -- currentPage: #{currentPage}")
           li className: ('active' if page == currentPage), key: "page-#{page}",
-            a href: "#", onClick: ((e) -> e.preventDefault(); handlePageChange(page))
+            a href: "#", onClick: ((e) -> e.preventDefault(); handlePageChange(page)),
               page
 
         li null,
