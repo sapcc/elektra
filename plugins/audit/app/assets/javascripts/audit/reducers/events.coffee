@@ -4,7 +4,7 @@
     error: null
     total: 0
     offset: 0
-    limit: 20
+    limit: 5
     items: []
     isFetching: false
     filterStartTime: ''
@@ -54,6 +54,7 @@
     ReactHelpers.mergeObjects({},state,{
       isFetching: false
       items: events
+      total: total
       error: null
     })
 

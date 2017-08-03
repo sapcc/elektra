@@ -1,11 +1,12 @@
 #= require audit/components/events/item
 #= require audit/components/events/item_details
+#= require audit/components/shared/pagination
 
 
 # import
 { div, span, label, select, option, input, i, table, thead, tbody, tr, th, td } = React.DOM
 { connect } = ReactRedux
-{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType, filterEventsFilterTerm } = audit
+{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType, filterEventsFilterTerm, Pagination } = audit
 
 
 Events = ({
@@ -21,7 +22,10 @@ Events = ({
   filterType,
   filterTerm,
   attributeValues,
-  isFetchingAttributeValues
+  isFetchingAttributeValues,
+  offset,
+  limit,
+  total
 }) ->
 
   div null,
@@ -36,14 +40,13 @@ Events = ({
           option value: 'user_name', 'User ID'
 
       div className: 'inputwrapper',
-        console.log("attributeValues of #{filterType}: " + attributeValues[filterType])
         if attributeValues[filterType] && attributeValues[filterType].length > 0
           select name: 'filterTerm', className: 'form-control filter-term', value: filterTerm, onChange: ((e) -> handleFilterTermChange(e.target.value, 0)),
             option value: '', 'Select'
             for attribute in attributeValues[filterType]
               option value: attribute, key: "filterTerm_#{attribute}", attribute
         else
-          input name: 'filterTerm', className: 'form-control filter-term', value: filterTerm, placeholder: 'Enter lookup value', disabled: ReactHelpers.isEmpty(filterType) && isFetchingAttributeValues, onChange: ((e) -> handleFilterTermChange(e.target.value, 500))
+          input name: 'filterTerm', className: 'form-control filter-term', value: filterTerm, placeholder: 'Enter lookup value', disabled: ReactHelpers.isEmpty(filterType) || isFetchingAttributeValues, onChange: ((e) -> handleFilterTermChange(e.target.value, 500))
       span className: 'toolbar-input-divider'
 
       label null, 'Time range:'
@@ -80,6 +83,8 @@ Events = ({
             td colSpan: '6',
               span className: 'spinner'
 
+    React.createElement Pagination, offset: offset, limit: limit, total: total
+
 
 
 Events = connect(
@@ -90,6 +95,9 @@ Events = connect(
     filterTerm:                 state.events.filterTerm
     attributeValues:            state.events.attributeValues
     isFetchingAttributeValues:  state.events.isFetchingAttributeValues
+    offset:                     state.events.offset
+    limit:                      state.events.limit
+    total:                      state.events.total
   (dispatch) ->
     handleStartTimeChange:          (filterStartTime)     -> dispatch(filterEventsStartTime(filterStartTime))
     handleEndTimeChange:            (filterEndTime)       -> dispatch(filterEventsEndTime(filterEndTime))
