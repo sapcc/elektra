@@ -32,7 +32,7 @@
       app.ajaxHelper.get '/events',
         data: {
           limit: limit
-          offset: offset
+          offset: 10
           time: AuditDataFormatter.buildTimeFilter(filterStartTime, filterEndTime)
           "#{filterType}": filterTerm
         }
@@ -101,7 +101,6 @@
 
   filterEventsFilterTerm = (filterTerm, timeout) ->
     clearTimeout(filterTermTimeout) # reset timeout
-    console.log("timeout: #{timeout}")
     (dispatch) ->
       dispatch(updateFilterTerm(filterTerm))
       # load events only if no new user input has happened during the specified timout window
@@ -143,7 +142,6 @@
       app.ajaxHelper.get "/attributes/#{attribute}",
         data: {}
         success: (data, textStatus, jqXHR) ->
-          console.log(data)
           dispatch(receiveAttributeValues(attribute, data))
         error: ( jqXHR, textStatus, errorThrown) ->
           if jqXHR.status == 404
