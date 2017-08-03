@@ -17,8 +17,6 @@
     (dispatch, getState) ->
       currentState    = getState()
       clusters        = currentState.clusters
-      limit           = clusters.limit
-      offset          = clusters.offset
       isFetching      = clusters.isFetching
 
 
@@ -34,25 +32,9 @@
 
 
 
-  fetchClusters = (offset) ->
+  fetchClusters = () ->
     (dispatch) ->
-      dispatch(updateOffset(offset))
       dispatch(loadClusters())
-
-  updateOffset = (offset)->
-    type: app.UPDATE_OFFSET
-    offset: offset
-
-
-
-
-
-
-
-
-
-
-
 
 
 

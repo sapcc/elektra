@@ -1,13 +1,11 @@
 ((app) ->
   ########################### EVENTS ##############################
-  initialEventState =
+  initialKubernikusState =
     error: null
     total: 0
-    offset: 0
-    limit: 20
     items: []
     isFetching: false
-    
+
 
 
   requestClusters = (state,{}) ->
@@ -34,9 +32,11 @@
 
 
   # clusters reducer
-  app.events = (state = initialEventState, action) ->
+  app.clusters = (state = initialKubernikusState, action) ->
     switch action.type
-      when app.REQUEST_CLUSTERS                     then requestClusters(state,action)
+      when app.REQUEST_CLUSTERS            then requestClusters(state,action)
+      when app.REQUEST_CLUSTERS_FAILURE    then requestClustersFailure(state,action)
+      when app.RECEIVE_CLUSTERS            then receiveClusters(state,action)
 
       else state
 

@@ -6,7 +6,7 @@
 
 App = React.createClass
   componentDidMount: ->
-    @props.loadClusters(0)
+    @props.loadClusters()
 
   render: () ->
 
@@ -22,7 +22,8 @@ App = React.createClass
         p null, "Convergence human-centered design hacker driven user story user centered design Steve Jobs actionable insight bootstrapping experiential engaging user centered design. Entrepreneur minimum viable product user centered design experiential experiential paradigm minimum viable product SpaceTeam latte. Intuitive unicorn actionable insight 360 campaign unicorn workflow hacker sticky note unicorn responsive fund. User story unicorn affordances pivot grok personas parallax pitch deck. Actionable insight engaging pair programming venture capital ship it latte big data innovate sticky note personas driven bootstrapping."
 
       div null,
-        a className: "btn btn-primary", "Create Cluster"
+        a className: "btn btn-primary", onClick: ((e) -> e.preventDefault(); handleClusterCreate()),
+          "Create Cluster"
 
 
     # React.createElement ClusterList,
@@ -40,5 +41,6 @@ kubernetes.App = connect(
 
 
   (dispatch) ->
-    loadClusters: (offset) -> dispatch(fetchClusters(offset))
+    loadClusters:         () -> dispatch(fetchClusters())
+    handleClusterCreate:  () -> dispatch(fetchClusters())
 )(App)
