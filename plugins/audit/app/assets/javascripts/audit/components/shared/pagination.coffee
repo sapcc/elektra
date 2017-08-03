@@ -12,20 +12,26 @@ Pagination = ({
 }) ->
 
   pages = Math.ceil(total / limit)
+  currentPage = if offset > 0 then (offset / limit) else 1
+  console.log("offset: #{offset} -- limit: #{limit} -- total: #{total} -- pages: #{pages} -- currentPage: #{currentPage}")
 
-  nav null,
-    ul className: "pagination",
-      li null,
-        a href: "#",
-          span null, "Previous"
-      for page in [1..pages]
-        li key: "page-#{page}",
+  if pages > 1
+    nav null,
+      ul className: "pagination",
+        li null,
           a href: "#",
-            page
+            span null, "Previous"
+        for page in [1..pages]
+          console.log("page: #{page} -- currentPage: #{currentPage}")
+          li className: ('active' if page == currentPage), key: "page-#{page}",
+            a href: "#", onClick: ((e) -> e.preventDefault(); handlePageChange(page))
+              page
 
-      li null,
-        a href: "#",
-          span null, "Next"
+        li null,
+          a href: "#",
+            span null, "Next"
+  else
+    null
 
 
 
@@ -34,7 +40,7 @@ Pagination = connect(
   (state) ->
 
   (dispatch) ->
-    handleStartTimeChange:          (filterStartTime)     -> dispatch(filterPaginationStartTime(filterStartTime))
+    handlePageChange: (page) -> dispatch(filterPaginationStartTime(filterStartTime))
 
 
 )(Pagination)
