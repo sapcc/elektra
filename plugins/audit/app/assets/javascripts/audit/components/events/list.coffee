@@ -83,6 +83,7 @@ Events = ({
             td colSpan: '6',
               span className: 'spinner'
 
+
     React.createElement Pagination, offset: offset, limit: limit, total: total
 
 
