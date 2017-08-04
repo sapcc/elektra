@@ -38,6 +38,9 @@ Pagination = ({
 
 Pagination = connect(
   (state) ->
+    offset: state.events.offset
+    limit:  state.events.limit
+    total:  state.events.total
 
   (dispatch) ->
     handlePageChange: (page) -> dispatch(filterPaginationStartTime(filterStartTime))
