@@ -32,7 +32,7 @@
       app.ajaxHelper.get '/events',
         data: {
           limit: limit
-          offset: 10
+          offset: offset
           time: AuditDataFormatter.buildTimeFilter(filterStartTime, filterEndTime)
           "#{filterType}": filterTerm
         }
