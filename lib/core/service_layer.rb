@@ -1,6 +1,5 @@
 require_relative 'service_layer/driver/base'
 require_relative 'service_layer/fog_driver/client_helper'
-require_relative 'service_layer/misty_driver/client_helper'
 require_relative 'service_layer/errors'
 require_relative 'service_layer/api_error_handler'
 require_relative 'service_layer/model'

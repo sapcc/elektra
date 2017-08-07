@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/flystack/misty.git
-  revision: 7ff193e534e9c65d938c0270a5e18cbdc0fc0736
+  revision: 414aedaaaa01d8b5e9c7225270d187d70de68282
   branch: master
   specs:
-    misty (0.7.0)
+    misty (0.7.2)
       json (>= 1.8.3, < 3)
 
 GIT
@@ -49,10 +49,11 @@ GIT
     lyra-client (0.1.1)
 
 GIT
-  remote: https://github.com/sapcc/misty-limes.git
-  revision: a99a86bf87c659cb4e5e968417623283ff70865a
+  remote: https://github.com/sapcc/misty-cc.git
+  revision: 2630b3ad172d6fa66861036200d111a800859870
   specs:
-    misty-limes (0.2.2)
+    misty-cc (0.0.1)
+      misty (>= 0.5.1)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
@@ -584,7 +585,7 @@ DEPENDENCIES
   lookup!
   lyra-client!
   misty!
-  misty-limes!
+  misty-cc!
   monsoon-openstack-auth!
   net-ssh
   netaddr
