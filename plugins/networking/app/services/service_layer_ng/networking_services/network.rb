@@ -54,6 +54,7 @@ module ServiceLayerNg
 
         name_candidates = ["FloatingIP-external-#{domain_name}-02",
                            "FloatingIP-external-#{domain_name}-01",
+                           "FloatingIP-external-#{domain_name}",
                            'Converged Cloud External']
         name_candidates.each do |name|
           network = api.networking.list_networks(
