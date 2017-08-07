@@ -2,6 +2,8 @@
 
 module Core
   module Api
+    class ResponseError < StandardError; end
+
     # Wrapper for API errors
     class Error < StandardError
       attr_reader :response, :messages, :code, :code_type, :error_type

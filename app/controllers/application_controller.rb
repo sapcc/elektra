@@ -28,6 +28,9 @@ class ApplicationController < ActionController::Base
   # catch all api errors and render exception page
   rescue_and_render_exception_page [
     {
+      'Core::Api::ResponseError' => { title: 'Backend Service Error' }
+    },
+    {
       'Excon::Error' => { title: 'Backend Service Error' }
     },
     {
