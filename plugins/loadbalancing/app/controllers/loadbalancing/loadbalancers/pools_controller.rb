@@ -14,7 +14,7 @@ module Loadbalancing
         @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
           @quota_data = []
           if current_user.is_allowed?("access_to_project")
-            @quota_data = services_ng.resource_management.quota_data(current_user.domain_id || current_user.project_domain_id,
+            @quota_data = services_ng.resource_management.project_quota_data(current_user.domain_id || current_user.project_domain_id,
                                                                      current_user.project_id,[
                                                                     {service_type: :network, resource_name: :pools, usage: @pools.length}])
           end
