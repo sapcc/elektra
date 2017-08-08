@@ -9,11 +9,14 @@ module Networking
       @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
 
       usage = @routers.length
-      @quota_data = services_ng.resource_management.quota_data(
-        current_user.domain_id || current_user.project_domain_id,
-        current_user.project_id,
-        [{ service_type: :network, resource_name: :routers, usage: usage }]
-      )
+      @quota_data = []
+      if current_user.is_allowed?("access_to_project")
+        @quota_data = services_ng.resource_management.quota_data(
+          current_user.domain_id || current_user.project_domain_id,
+          current_user.project_id,
+          [{ service_type: :network, resource_name: :routers, usage: usage }]
+        )
+      end
     end
 
     def topology
@@ -84,13 +87,16 @@ module Networking
     end
 
     def new
-      @quota_data = services_ng.resource_management.quota_data(
-        current_user.domain_id || current_user.project_domain_id,
-        current_user.project_id,
-        [
-          { service_type: :network, resource_name: :routers }
-        ]
-      )
+      @quota_data = []
+      if current_user.is_allowed?("access_to_project")
+        @quota_data = services_ng.resource_management.quota_data(
+          current_user.domain_id || current_user.project_domain_id,
+          current_user.project_id,
+          [
+            { service_type: :network, resource_name: :routers }
+          ]
+        )
+      end
 
       # build new router object (no api call done yet!)
       @router = services_ng.networking.new_router('admin_state_up' => true)

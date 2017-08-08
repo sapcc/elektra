@@ -29,7 +29,7 @@
   "resource_management:domain_admin_reduce_quota": "rule:context_is_domain_resource_admin",
   "resource_management:domain_admin_confirm_reduce_quota": "rule:context_is_domain_resource_admin",
 
-  "access_to_project": "not project_id:nil",
+  "access_to_project": "not project_id:nil and (role:admin or role:member or role:resource_viewer)",
   "resource_management:project_resource_list": "rule:access_to_project",
   "resource_management:project_resource_show_area": "rule:access_to_project",
   "resource_management:project_resource_sync_now": "rule:project_admin",
