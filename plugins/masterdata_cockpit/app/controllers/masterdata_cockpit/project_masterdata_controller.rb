@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module MasterdataCockpit
-  class MasterdataController < DashboardController
+  class ProjectMasterdataController < DashboardController
     def index
     end
   end
