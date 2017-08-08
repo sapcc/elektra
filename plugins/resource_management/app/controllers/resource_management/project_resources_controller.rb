@@ -204,7 +204,7 @@ module ResourceManagement
     end
 
     def check_first_visit
-      enforce_permissions(":resource_management:project_resource_list")
+      #enforce_permissions(":access_to_project")
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
       @show_package_request_banner = ! services_ng.resource_management.has_project_quotas?(current_user.domain_id,current_user.project_id,current_user.project_domain_id)
