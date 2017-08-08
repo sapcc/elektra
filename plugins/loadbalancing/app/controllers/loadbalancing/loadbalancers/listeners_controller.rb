@@ -13,7 +13,7 @@ module Loadbalancing
         @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
         @quota_data = []
         if current_user.is_allowed?("access_to_project")
-          @quota_data = services_ng.resource_management.project_quota_data(current_user.domain_id || current_user.project_domain_id,
+          @quota_data = services_ng.resource_management.quota_data(current_user.domain_id || current_user.project_domain_id,
                                                                 current_user.project_id,[
                                                                 {service_type: :network, resource_name: :listeners,
                                                                   usage: services.loadbalancing.listeners(tenant_id: @scoped_project_id).length}])

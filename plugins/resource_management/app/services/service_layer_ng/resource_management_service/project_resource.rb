@@ -41,8 +41,8 @@ module ServiceLayerNg
       api.resources.set_quota_for_project(domain_id,project_id, :project => {:services => services})
     end
 
-    def project_quota_data(domain_id,project_id,options=[])
-      Rails.logger.debug  "[resource management-service][ProjectResource] -> project_quota_data"
+    def quota_data(domain_id,project_id,options=[])
+      Rails.logger.debug  "[resource management-service][ProjectResource] -> quota_data"
       return [] if options.empty?
 
       project = find_project( 
