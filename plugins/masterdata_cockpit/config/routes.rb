@@ -1,3 +1,7 @@
 MasterdataCockpit::Engine.routes.draw do
-  get '/' => 'application#index'
+  
+  scope '/', as: 'masterdata' do
+    get  '/' => 'project_masterdata#index'
+  end
+
 end
