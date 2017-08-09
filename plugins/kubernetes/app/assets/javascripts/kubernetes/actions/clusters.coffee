@@ -24,7 +24,7 @@
       dispatch(requestClusters())
 
       app.ajaxHelper.get '/clusters',
-        data: {}
+        contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveClusters(data["clusters"],data["total"]))
         error: ( jqXHR, textStatus, errorThrown) ->
