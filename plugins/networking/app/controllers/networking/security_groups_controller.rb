@@ -8,15 +8,18 @@ module Networking
         tenant_id: @scoped_project_id
       )
 
-      @quota_data = services_ng.resource_management.quota_data(
-        current_user.domain_id || current_user.project_domain_id,
-        current_user.project_id,
-        [
-          { service_type: :network, resource_name: :security_groups,
-            usage: @security_groups.length },
-          { service_type: :network, resource_name: :security_group_rules }
-        ]
-      )
+      @quota_data = []
+      if current_user.is_allowed?("access_to_project")
+        @quota_data = services_ng.resource_management.quota_data(
+          current_user.domain_id || current_user.project_domain_id,
+          current_user.project_id,
+          [
+            { service_type: :network, resource_name: :security_groups,
+              usage: @security_groups.length },
+            { service_type: :network, resource_name: :security_group_rules }
+          ]
+        )
+      end
     end
 
     def new
@@ -95,16 +98,19 @@ module Networking
         rule.remote_group_name = hash[rule.remote_group_id].name
       end
 
-      @quota_data = services_ng.resource_management.quota_data(
-        current_user.domain_id || current_user.project_domain_id,
-        current_user.project_id,
-        [
-          { service_type: :network, resource_name: :security_groups,
-            usage: @security_groups.length },
-          { service_type: :network, resource_name: :security_group_rules,
-            usage: @rules.length }
-        ]
-      )
+      @quota_data = []
+      if current_user.is_allowed?("access_to_project")
+        @quota_data = services_ng.resource_management.quota_data(
+          current_user.domain_id || current_user.project_domain_id,
+          current_user.project_id,
+          [
+            { service_type: :network, resource_name: :security_groups,
+              usage: @security_groups.length },
+            { service_type: :network, resource_name: :security_group_rules,
+              usage: @rules.length }
+          ]
+        )
+      end
     end
 
     def destroy

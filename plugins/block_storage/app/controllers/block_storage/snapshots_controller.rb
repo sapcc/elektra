@@ -14,12 +14,15 @@ module BlockStorage
           services.block_storage.snapshots(pagination_options)
         end
 
-        @quota_data = services_ng.resource_management.quota_data(
-          current_user.domain_id || current_user.project_domain_id,
-          current_user.project_id,[
-          {service_type: :volumev2, resource_name: :snapshots, usage: @snapshots.length},
-          {service_type: :volumev2, resource_name: :capacity}
-        ])
+        @quota_data = []
+        if current_user.is_allowed?("access_to_project")
+          @quota_data = services_ng.resource_management.quota_data(
+            current_user.domain_id || current_user.project_domain_id,
+            current_user.project_id,[
+            {service_type: :volumev2, resource_name: :snapshots, usage: @snapshots.length},
+            {service_type: :volumev2, resource_name: :capacity}
+          ])
+        end
 
         # this is relevant in case an ajax paginate call is made.
         # in this case we don't render the layout, only the list!
