@@ -7,7 +7,7 @@
     %br
     %span.info-text= recordset.id
   %td= recordset.type
-  %td
+  %td.big-data-cell
     - if recordset.records.is_a?(Array)
       = raw recordset.records.join('<br/>')
     - else
