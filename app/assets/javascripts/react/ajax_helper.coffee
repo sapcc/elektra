@@ -9,13 +9,15 @@ class @ReactAjaxHelper
 
   @request: (url, method, options={}) ->
     url = url.replace(/([^:]\/)\/+/g, "$1")
+    formattedData = if options['contentType'] then JSON.stringify(options['data']) else options['data']
     $.ajax
       url: url
       method: method
       headers:
         "X-Auth-Token": options['authToken'] if options['authToken']
       dataType: options['dataType'] || 'json'
-      data: options['data']
+      contentType: options['contentType'] || 'application/x-www-form-urlencoded'
+      data: formattedData
       success: options['success']
       error: options['error']
       complete: ( jqXHR, textStatus) ->
