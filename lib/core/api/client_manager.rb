@@ -15,6 +15,7 @@ module Core
           ssl_verify_mode: Rails.configuration.ssl_verify_peer,
           interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'public',
           log_level:       Logger::INFO,
+          keep_alive_timeout: 0,
 
           # needed because of wrong urls in service catalog.
           # The identity url contains a /v3. This leads to a wrong url in misty!

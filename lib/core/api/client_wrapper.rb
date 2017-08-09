@@ -86,13 +86,10 @@ module Core
           service.requests.each do |meth|
             (class << self; self; end).class_eval do
               define_method meth do |*args|
-                tries = 0
                 handle_response do
                   begin
-                    tries += 1
                     service.send(meth, *args)
-                  rescue Net::HTTPBadResponse => e
-                    retry if tries < 2
+                  rescue => e
                     raise ::Core::Api::ResponseError, e
                   end
                 end
