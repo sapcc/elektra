@@ -49,7 +49,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty.git
-  revision: 4adb12778ff778746a9e57c0248ca48a892e45b0
+  revision: 6a208a952f08f5bf3122181c541a60b11787fb74
   branch: connection-options
   specs:
     misty (0.7.2)
