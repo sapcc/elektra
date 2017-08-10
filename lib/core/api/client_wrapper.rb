@@ -87,9 +87,12 @@ module Core
             (class << self; self; end).class_eval do
               define_method meth do |*args|
                 handle_response do
+                  tries = 0
                   begin
+                    tries += 1
                     service.send(meth, *args)
                   rescue => e
+                    retry if tries < 3 
                     raise ::Core::Api::ResponseError, e
                   end
                 end
