@@ -1,7 +1,7 @@
 = content_for :title do
   Review Request for Quota Package
 
-= form_tag plugin('resource_management').admin_approve_package_request_path, method: :post, remote: request.xhr?, html: { data: { modal: true } } do
+= form_tag plugin('resource_management').admin_approve_package_request_path, authenticity_token: true, method: :post, remote: request.xhr?, html: { data: { modal: true } } do
   =hidden_field_tag :inquiry_id, params[:inquiry_id]
 
   %div{class: modal? ? 'modal-body' : ''}

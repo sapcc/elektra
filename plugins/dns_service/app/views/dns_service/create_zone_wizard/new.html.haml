@@ -1,7 +1,13 @@
 = content_for :title do
   Create New Domain
 
-= simple_form_for @zone_request, url: plugin('dns_service').create_zone_wizard_path(project_id: 'master'), method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @zone_request,
+  url: plugin('dns_service').create_zone_wizard_path(project_id: 'master'),
+  authenticity_token: true,
+  method: :post,
+  remote: request.xhr?,
+  html: {data: {modal: true}, class: 'form-horizontal' },
+  wrapper: :horizontal_form do |f|
 
   %div{class: 'modal-body' }
     - if @zone_request.errors.present?

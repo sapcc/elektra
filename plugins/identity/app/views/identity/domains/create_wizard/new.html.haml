@@ -1,7 +1,14 @@
 = content_for :title do
   Create new project
 
-= simple_form_for @project, url: plugin('identity').domains_create_project_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+= simple_form_for @project,
+  url: plugin('identity').domains_create_project_path,
+  authenticity_token: true,
+  method: :post,
+  remote: request.xhr?,
+  html: {data: {modal: true}, class: 'form-horizontal' },
+  wrapper: :horizontal_form do |f|
+  =# hidden_field_tag :authenticity_token, form_authenticity_token
   %div{class: modal? ? 'modal-body' : ''}
     - if @project.errors.present?
       .alert.alert-error
