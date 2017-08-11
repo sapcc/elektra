@@ -4,6 +4,7 @@ ALLOWED_ROLES = %w(
   compute_viewer
   dns_viewer
   member
+  monitoring_viewer
   network_admin
   network_viewer
   sharedfilesystem_admin
