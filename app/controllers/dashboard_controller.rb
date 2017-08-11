@@ -91,8 +91,7 @@ class DashboardController < ::ScopeController
       )
     else
       render_exception_page(exception, title: exception.code_type,
-                                       description: :message,
-                                       sentry: false)
+                                       description: :message)
     end
   end
 
