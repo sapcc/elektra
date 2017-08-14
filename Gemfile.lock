@@ -49,7 +49,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty.git
-  revision: 4bff05cde0deee9e53bf94cafd64e0ad7ff7399e
+  revision: 7ccd535942c83eb2184388915c19b87e3a311fbb
   branch: thread-safe-requests
   specs:
     misty (0.7.2)
