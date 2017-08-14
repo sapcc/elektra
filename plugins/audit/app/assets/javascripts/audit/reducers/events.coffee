@@ -4,7 +4,8 @@
     error: null
     total: 0
     offset: 0
-    limit: 30
+    currentPage: 1
+    limit: 5
     items: []
     isFetching: false
     filterStartTime: ''
@@ -37,6 +38,11 @@
   updateOffset = (state,{offset}) ->
     ReactHelpers.mergeObjects({},state,{
       offset: offset
+    })
+
+  updateCurrentPage = (state,{page}) ->
+    ReactHelpers.mergeObjects({},state,{
+      currentPage: page
     })
 
   requestEvents = (state,{}) ->
@@ -124,6 +130,7 @@
       when app.UPDATE_FILTER_TYPE                 then updateFilterType(state,action)
       when app.UPDATE_FILTER_TERM                 then updateFilterTerm(state,action)
       when app.UPDATE_OFFSET                      then updateOffset(state,action)
+      when app.UPDATE_CURRENT_PAGE                then updateCurrentPage(state,action)
       when app.TOGGLE_EVENT_DETAILS_VISIBLE       then toggleEventDetailsVisible(state,action)
       when app.REQUEST_EVENT_DETAILS              then requestEventDetails(state,action)
       when app.REQUEST_EVENT_DETAILS_FAILURE      then requestEventDetailsFailure(state,action)
