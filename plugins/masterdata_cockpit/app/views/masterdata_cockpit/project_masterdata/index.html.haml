@@ -1,1 +1,10 @@
-%h1 MasterdataCockpit Index
+=content_for :main_toolbar do
+  Masterdata
+
+.row
+  .col-sm-9
+    - unless @masterdata_found
+      .alert.alert-danger
+        No masterdata is maintained for this project yet.
+  .col-md-3
+    = link_to 'Create Masterdata', plugin('masterdata_cockpit').project_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'

@@ -1,0 +1,47 @@
+=content_for :title do
+  Create masterdata for project: #{@scoped_project_name}
+
+=simple_modal_form_for @project_masterdata, submit_action: 'Save', url: plugin('masterdata_cockpit').project_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path do |f|
+  - if @project_masterdata.errors.present?
+    .alert.alert-error
+      = render_errors(@project_masterdata.errors)
+  .row
+    .col-sm-6
+      = f.input :project_id, label: "Project ID", readonly: true
+    .col-sm-6
+      = f.input :project_name, label: "Project Name", readonly: true
+  %hr
+  .row
+    .col-sm-6
+      = f.input :responsible_operator_id, label: "Resposible Operator", placeholder: "C/D/I User"
+    .col-sm-6
+      = f.input :responsible_operator_email, label: "Resposible Operator Email"
+    .col-sm-6
+      = f.input :responsible_security_expert_id, label: "Resposible Security Expert", placeholder: "C/D/I User"
+    .col-sm-6
+      = f.input :responsible_security_expert_email, label: "Resposible Security Expert Email"
+  .row
+    .col-sm-6
+      = f.input :responsible_product_owner_id, label: "Resposible Product Owner", placeholder: "C/D/I User"
+    .col-sm-6
+      = f.input :responsible_product_owner_email, label: "Resposible Product Owner Email"
+  %hr
+  .row
+    .col-sm-6
+      = f.input :revenue_relevance, label: "Revenue Relevance", as: :select, collection:['generating','enabling','other'],required:true
+    .col-sm-6
+      = f.input :business_criticality, label: "Business Criticality", as: :select, collection:['dev','test','prod']
+  .row
+    .col-sm-6
+      = f.input :solution, label: "Solution", as: :select, collection:['bla','blub','blib']
+    .col-sm-6
+      = f.input :number_of_endusers , label: "Number of Endusers"
+  %hr
+  .row
+    .col-sm-6
+      - types = MasterdataCockpit::Config.cost_object_types
+      = f.input :cost_object_type, label: "Cost Object Type", as: :select, collection: types.keys, label_method: -> (k) { types[k] }
+    .col-sm-6
+      = f.input :cost_object_name, label: "Cost Object Name"
+  = f.input :description, label: "Description"
+  

@@ -49,13 +49,7 @@ GIT
     lyra-client (0.1.1)
 
 GIT
-  remote: https://github.com/sapcc/misty-cc.git
-  revision: c0253bcfc0dd0f4c5ee829224e056c4751c38685
-  specs:
-    misty-cc (0.1.0)
-      misty (>= 0.5.1)
 
-GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
   revision: 8f1678d4f9b76de945a0d7f0105097d825133c2b
   specs:
@@ -69,6 +63,12 @@ PATH
   remote: plugins/audit
   specs:
     audit (0.0.1)
+
+PATH
+  remote: /root/workspace/monsoon/misty-cc
+  specs:
+    misty-cc (0.1.0)
+      misty (>= 0.5.1)
 
 PATH
   remote: plugins/automation

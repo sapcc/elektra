@@ -1,5 +1,5 @@
 {
-  "masterdata:cost_object_get": "role:admin",
-  "masterdata:cost_object_edit": "rule:project_admin or rule:domain_admin",
-  "masterdata:cost_object_update": "rule:project_admin or rule:domain_admin",
+  "masterdata_cockpit:cost_object_get": "role:admin",
+  "masterdata_cockpit:cost_object_edit": "rule:project_admin or rule:domain_admin",
+  "masterdata_cockpit:cost_object_update": "rule:project_admin or rule:domain_admin"
 }
