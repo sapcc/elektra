@@ -92,7 +92,7 @@ module Core
                     tries += 1
                     service.send(meth, *args)
                   rescue => e
-                    retry if tries < 3 
+                    retry if tries < 1 # deactivate retry  
                     raise ::Core::Api::ResponseError, e
                   end
                 end
