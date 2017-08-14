@@ -44,13 +44,38 @@
 
 
   fetchEvents = (offset) ->
-    (dispatch) ->
+    (dispatch, getState) ->
+      currentState    = getState()
+      events          = currentState.events
+      limit           = events.limit
+      currentPageCalc = if offset > 0 then (offset / limit)+1 else 1
+
       dispatch(updateOffset(offset))
+      dispatch(updateCurrentPage(currentPageCalc))
       dispatch(loadEvents())
 
   updateOffset = (offset)->
     type: app.UPDATE_OFFSET
     offset: offset
+
+  updateCurrentPage = (page)->
+    type: app.UPDATE_CURRENT_PAGE
+    page: page
+
+  # ----------- PAGINATE -----------
+
+
+  paginate = (page) ->
+    (dispatch, getState) ->
+      currentState    = getState()
+      events          = currentState.events
+      limit           = events.limit
+      offsetCalc      = (page - 1) * limit
+
+      dispatch(updateOffset(offsetCalc))
+      dispatch(updateCurrentPage(page))
+      dispatch(loadEvents())
+
 
 
   # ----------- FILTERS -----------
@@ -64,7 +89,7 @@
       # trigger api call only if the given start time is a valid date or an empty string
       if moment.isMoment(filterStartTime) || ReactHelpers.isEmpty(filterStartTime)
         dispatch(updateFilterStartTime(filterStartTime))
-        dispatch(loadEvents())
+        dispatch(fetchEvents(0))
       # TODO: Add else case with validation error display for user
 
   updateFilterEndTime = (filterEndTime) ->
@@ -76,7 +101,7 @@
       # trigger api call only if the given start time is a valid date or an empty string
       if moment.isMoment(filterEndTime) || ReactHelpers.isEmpty(filterEndTime)
         dispatch(updateFilterEndTime(filterEndTime))
-        dispatch(loadEvents())
+        dispatch(fetchEvents(0))
       # TODO: Add else case with validation error display for user
 
 
@@ -104,7 +129,7 @@
     (dispatch) ->
       dispatch(updateFilterTerm(filterTerm))
       # load events only if no new user input has happened during the specified timout window
-      filterTermTimeout = setTimeout((() -> dispatch(loadEvents())), timeout)
+      filterTermTimeout = setTimeout((() -> dispatch(fetchEvents(0))), timeout)
 
 
   # ----------- ATTRIBUTE VALUES -----------
@@ -204,6 +229,7 @@
 
   # export
   app.fetchEvents                 = fetchEvents
+  app.paginate                    = paginate
   app.filterEventsStartTime       = filterEventsStartTime
   app.filterEventsEndTime         = filterEventsEndTime
   app.filterEventsFilterType      = filterEventsFilterType

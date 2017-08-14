@@ -1,35 +1,29 @@
+#= require audit/components/shared/page
 
 # import
 { nav, ul, li, a, span } = React.DOM
 { connect } = ReactRedux
-{  } = audit
+{ Page, paginate } = audit
 
 
 Pagination = ({
   offset,
   limit,
-  total
+  total,
+  currentPage,
+  handlePageChange
 }) ->
 
   pages = Math.ceil(total / limit)
-  currentPage = if offset > 0 then (offset / limit) else 1
-  console.log("offset: #{offset} -- limit: #{limit} -- total: #{total} -- pages: #{pages} -- currentPage: #{currentPage}")
 
   if pages > 1
     nav null,
       ul className: "pagination",
-        li null,
-          a href: "#",
-            span null, "Previous"
+        React.createElement Page, page: (currentPage - 1), label: "Previous", markAsActive: false, disabled: (currentPage == 1)
         for page in [1..pages]
-          console.log("page: #{page} -- currentPage: #{currentPage}")
-          li className: ('active' if page == currentPage), key: "page-#{page}",
-            a href: "#", onClick: ((e) -> e.preventDefault(); handlePageChange(page)),
-              page
+          React.createElement Page, page: page, markAsActive: true, key: "page-#{page}"
 
-        li null,
-          a href: "#",
-            span null, "Next"
+        React.createElement Page, page: (currentPage + 1), label: "Next", markAsActive: false, disabled: (currentPage == pages)
   else
     null
 
@@ -38,12 +32,12 @@ Pagination = ({
 
 Pagination = connect(
   (state) ->
-    offset: state.events.offset
-    limit:  state.events.limit
-    total:  state.events.total
+    offset:       state.events.offset
+    limit:        state.events.limit
+    total:        state.events.total
+    currentPage:  state.events.currentPage
 
   (dispatch) ->
-    handlePageChange: (page) -> dispatch(filterPaginationStartTime(filterStartTime))
 
 
 )(Pagination)
