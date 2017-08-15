@@ -10,6 +10,7 @@
       = f.input :project_id, label: "Project ID", readonly: true
     .col-sm-6
       = f.input :project_name, label: "Project Name", readonly: true
+  = f.input :description, label: "Description"
   %hr
   .row
     .col-sm-6
@@ -37,11 +38,10 @@
     .col-sm-6
       = f.input :number_of_endusers , label: "Number of Endusers"
   %hr
+  = f.input :cost_object_inherited, label: "Inherit from domain", as: :radio_buttons
   .row
     .col-sm-6
       - types = MasterdataCockpit::Config.cost_object_types
       = f.input :cost_object_type, label: "Cost Object Type", as: :select, collection: types.keys, label_method: -> (k) { types[k] }
     .col-sm-6
       = f.input :cost_object_name, label: "Cost Object Name"
-  = f.input :description, label: "Description"
-  

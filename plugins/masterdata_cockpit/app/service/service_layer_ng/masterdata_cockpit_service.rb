@@ -12,8 +12,10 @@ module ServiceLayerNg
     end
 
     def get_project(project_id)
-       Rails.logger.debug  "[masterdata cockpit-service] -> get_project -> GET /projects/#{project_id}}"
-       api.masterdata.get_project(project_id).map_to(MasterdataCockpit::ProjectMasterdata)
+       Rails.logger.debug  "[masterdata cockpit-service] -> get_project -> GET /projects/#{project_id}"
+       response = api.masterdata.get_project(project_id)
+       map_to(MasterdataCockpit::ProjectMasterdata, response.body)
+       
     end
 
     def new_project_masterdata(params = {})
@@ -23,7 +25,8 @@ module ServiceLayerNg
     end
     
     def create_project_masterdata(masterdata)
-      Rails.logger.debug  "[masterdata cockpit-service] -> set_project_masterdata"
+      Rails.logger.debug  "[masterdata cockpit-service] -> create_project_masterdata"
+      Rails.logger.debug  "[masterdata cockpit-service] -> masterdata: #{masterdata}"
       api.masterdata.set_project(masterdata["project_id"],masterdata)
     end
 
