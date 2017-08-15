@@ -68,6 +68,11 @@
 
               %li= link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id), data: { modal: true}
 
+              -#%li.divider Needs Microversion 2.9 to show locked status in UI and to react appropriate to it
+                %li= link_to 'Lock', plugin('compute').lock_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to lock this instance?', ok: "Yes, lock it", confirmed: :loading_status }, remote: true
+                %li= link_to 'Unlock', plugin('compute').unlock_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to unlock this instance?', ok: "Yes, unlock it", confirmed: :loading_status }, remote: true
+
+
               %li.divider
               - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state
                 %li= link_to 'Start', start_instance_path(id: instance.id), method: :put, data: {loading_status: true}, remote: true

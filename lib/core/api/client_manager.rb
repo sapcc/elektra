@@ -18,6 +18,8 @@ module Core
           keep_alive_timeout: 5,
           #headers: { "Accept-Encoding" => "" },
 
+          # compute: {:version => '2.9'}, ...waiting for backend support
+
           # needed because of wrong urls in service catalog.
           # The identity url contains a /v3. This leads to a wrong url in misty!
           identity: { base_path: '/' }

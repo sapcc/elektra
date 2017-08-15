@@ -352,6 +352,14 @@ module Compute
       execute_instance_action('terminate')
     end
 
+    def lock
+      execute_instance_action
+    end
+
+    def unlock
+      execute_instance_action
+    end
+
     def automation_script
       accept_header = begin
         body = JSON.parse(request.body.read)

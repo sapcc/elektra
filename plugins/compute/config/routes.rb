@@ -24,6 +24,8 @@ Compute::Engine.routes.draw do
       delete 'detach_floatingip'
       get 'edit_securitygroups'
       put 'assign_securitygroups'
+      put 'lock'
+      put 'unlock'
     end
     post 'automation_script', on: :collection
   end

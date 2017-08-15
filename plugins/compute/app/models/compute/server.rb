@@ -250,6 +250,16 @@ module Compute
       end
     end
 
+    def lock
+      requires :id
+      @service.lock_server(id)
+    end
+
+    def unlock
+      requires :id
+      @service.unlock_server(id)
+    end
+
     def create_image(name, metadata = {})
       requires :id
       @service.create_image(id, name, metadata)

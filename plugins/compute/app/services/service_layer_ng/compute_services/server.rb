@@ -132,6 +132,14 @@ module ServiceLayerNg
         )
       end
 
+      def lock_server(server_id)
+        api.compute.lock_server_lock_action(server_id, 'lock' => nil)
+      end
+
+      def unlock_server(server_id)
+        api.compute.unlock_server_unlock_action(server_id, 'unlock' => nil)
+      end
+
       ################## MODEL INTERFACE ######################
       def create_server(params = {})
         api.compute.create_server(server: params).data
