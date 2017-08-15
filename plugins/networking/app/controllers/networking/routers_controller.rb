@@ -197,6 +197,7 @@ module Networking
       ) || []
 
       @success = false
+
       if @router
         attached_subnet_ids = ports.each_with_object([]) do |port, array|
           port.fixed_ips.each { |ip| array << ip['subnet_id'] }
