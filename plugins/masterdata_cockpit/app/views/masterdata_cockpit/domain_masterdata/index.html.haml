@@ -1,1 +1,16 @@
-%h1 MasterdataCockpit Index
+=content_for :main_toolbar do
+  Domain Masterdata
+
+.row
+  .col-sm-9
+    #domain_masterdata_details
+      - if !@domain_masterdata
+        .alert.alert-warning
+          = icon('exclamation-circle')
+          No masterdata maintained for this domain.
+      - elsif !flash.now[:error]
+        = render partial: 'masterdata_details'
+
+  .col-md-3
+    #domain_masterdata_buttons
+      = render partial: 'masterdata_buttons'

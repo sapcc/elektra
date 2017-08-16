@@ -1,0 +1,58 @@
+.row
+  .col-sm-4.details-label
+    %strong
+      Domain ID
+  .col-sm-8.details-value
+    = @domain_masterdata.domain_id
+.row
+  .col-sm-4.details-label
+    %strong
+      Domain Name
+  .col-sm-8.details-value
+    = @domain_masterdata.domain_name
+.row
+  .col-sm-4.details-label
+    %strong
+      Description
+  .col-sm-8.details-value
+    = @domain_masterdata.description
+%hr
+%h5 Cost Object
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-4.details-label
+        %strong
+          Type
+      .col-sm-8.details-value
+        = @domain_masterdata.cost_object['type']
+    .row
+      .col-sm-4.details-label
+        %strong
+          Name
+      .col-sm-8.details-value
+        = @domain_masterdata.cost_object['name']
+    .row
+      .col-sm-4.details-label
+        %strong
+          Projects can inherit
+      .col-sm-8.details-value
+        - if @domain_masterdata['projects_can_inherit']
+          = icon('check-square-o')
+        -else 
+          = icon('times')
+%h5 Responsibility
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-4.details-label
+        %strong
+          Operator
+      .col-sm-2.details-value
+        = @domain_masterdata.responsible_controller_id
+      - if @domain_masterdata.responsible_controller_email
+        .col-sm-1.details-label
+          Contact:
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = @domain_masterdata.responsible_controller_email

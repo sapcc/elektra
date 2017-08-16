@@ -15,7 +15,12 @@ module ServiceLayerNg
        Rails.logger.debug  "[masterdata cockpit-service] -> get_project -> GET /projects/#{project_id}"
        response = api.masterdata.get_project(project_id)
        map_to(MasterdataCockpit::ProjectMasterdata, response.body)
-       
+    end
+
+    def get_domain(domain_id)
+       Rails.logger.debug  "[masterdata cockpit-service] -> get_domain -> GET /projects/#{domain_id}"
+       response = api.masterdata.get_domain(domain_id)
+       map_to(MasterdataCockpit::DomainMasterdata, response.body)
     end
 
     def new_project_masterdata(params = {})
