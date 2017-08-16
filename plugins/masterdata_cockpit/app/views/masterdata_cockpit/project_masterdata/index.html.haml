@@ -3,15 +3,16 @@
 
 .row
   .col-sm-9
-    - unless @masterdata_found
+    - if !@masterdata_found
       .alert.alert-danger
         No masterdata is maintained for this project yet.
-    - else
+    - elsif !flash.now[:error]
       #project_masterdata_details
         = render partial: 'masterdata_details'
 
   .col-md-3
-    - unless @masterdata_found
+    - if @masterdata_found && !flash.now[:error]
+      = link_to 'Edit Masterdata', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
+    - elsif !flash.now[:error] && !@masterdata_found
       = link_to 'Create Masterdata', plugin('masterdata_cockpit').project_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
     - else
-      = link_to 'Edit Masterdata', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'

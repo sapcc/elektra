@@ -11,8 +11,13 @@ module MasterdataCockpit
         @masterdata_found = true
         @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
       rescue Exception => e
-        flash.now[:error] = "Could not load masterdata. #{e}"
-        @masterdata_found = false
+        # handle no master data found
+        if e.message == "Could not find masterdata for this project"
+          @masterdata_found = false
+        else
+          # all other errors
+          flash.now[:error] = "Could not load masterdata. #{e}"
+        end
       end
     end
     
