@@ -25,7 +25,8 @@ Events = ({
   isFetchingAttributeValues,
   offset,
   limit,
-  total
+  total,
+  error
 }) ->
 
   div null,
@@ -65,17 +66,23 @@ Events = ({
           th null, 'Resource'
           th className: 'user-cell', 'User'
 
-      if events
-        for event in events
-          tbody key: event.event_id,
-            React.createElement EventItem, event: event
-            if event.detailsVisible
-              React.createElement EventItemDetails, event: event
-      else
+      if error
         tbody null,
           tr null,
             td colSpan: '6',
-              'No events found'
+              error
+      else
+        if events
+          for event in events
+            tbody key: event.event_id,
+              React.createElement EventItem, event: event
+              if event.detailsVisible
+                React.createElement EventItemDetails, event: event
+        else
+          tbody null,
+            tr null,
+              td colSpan: '6',
+                'No events found'
 
       if isFetching
         tbody null,
@@ -99,6 +106,7 @@ Events = connect(
     offset:                     state.events.offset
     limit:                      state.events.limit
     total:                      state.events.total
+    error:                      state.events.error
   (dispatch) ->
     handleStartTimeChange:          (filterStartTime)     -> dispatch(filterEventsStartTime(filterStartTime))
     handleEndTimeChange:            (filterEndTime)       -> dispatch(filterEventsEndTime(filterEndTime))
