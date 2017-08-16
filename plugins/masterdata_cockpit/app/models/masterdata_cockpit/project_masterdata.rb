@@ -35,6 +35,8 @@ module MasterdataCockpit
     validates_presence_of :responsible_product_owner_email, unless: lambda { self.responsible_product_owner_id.blank? }, message: "can't be blank if product owner is defined"
     validates_presence_of :responsible_controller_email, unless: lambda { self.responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
 
+    validates :number_of_endusers, :numericality => { :greater_than_or_equal_to => 0 },allow_nil: true,allow_blank: true
+
     validates :responsible_operator_email,
       :responsible_security_expert_email,
       :responsible_product_owner_email,
@@ -54,32 +56,40 @@ module MasterdataCockpit
     def cost_object_name
       if read('cost_object_name')
         read('cost_object_name')
-      else
+      elsif cost_object
         cost_object['name']
+      else
+        nil
       end
     end
  
     def cost_object_type
       if read('cost_object_type')
         read('cost_object_type')
-      else
+      elsif cost_object
         cost_object['type']
+      else
+        nil
       end
     end
 
     def cost_object_co_inherited
       if read('cost_object_co_inherited')
         read('cost_object_co_inherited') == "true"
-      else
+      elsif cost_object
         cost_object['co_inherited'] == "true"
+      else
+        false
       end
     end
 
     def cost_object_inherited
       if read('cost_object_inherited')
         read('cost_object_inherited') == "true"
-      else cost_object.key?('inherited')
+      elsif cost_object
         cost_object['inherited'] == "true"
+      else
+        false
       end
     end
 

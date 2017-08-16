@@ -3,16 +3,15 @@
 
 .row
   .col-sm-9
-    - if !@masterdata_found
-      .alert.alert-danger
-        No masterdata is maintained for this project yet.
-    - elsif !flash.now[:error]
-      #project_masterdata_details
+    #project_masterdata_details
+      - if !@project_masterdata
+        .alert.alert-warning
+          = icon('exclamation-circle')
+          No masterdata maintained for this project.
+      - elsif !flash.now[:error]
         = render partial: 'masterdata_details'
 
   .col-md-3
-    - if @masterdata_found && !flash.now[:error]
-      = link_to 'Edit Masterdata', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
-    - elsif !flash.now[:error] && !@masterdata_found
-      = link_to 'Create Masterdata', plugin('masterdata_cockpit').project_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
-    - else
+    #project_masterdata_buttons
+      = render partial: 'masterdata_buttons'
+
