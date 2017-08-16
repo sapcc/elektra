@@ -39,7 +39,7 @@
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveEvents(data["events"],data["total"]))
         error: ( jqXHR, textStatus, errorThrown) ->
-          dispatch(requestEventsFailure(errorThrown))
+          dispatch(requestEventsFailure(jqXHR.responseText))
 
 
 
