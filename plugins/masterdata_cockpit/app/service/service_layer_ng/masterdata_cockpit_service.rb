@@ -28,6 +28,8 @@ module ServiceLayerNg
       Rails.logger.debug  "[masterdata cockpit-service] -> create_project_masterdata"
       Rails.logger.debug  "[masterdata cockpit-service] -> masterdata: #{masterdata}"
       api.masterdata.set_project(masterdata["project_id"],masterdata)
+      # TODO: api needs to return latest values
+      nil
     end
 
   end
