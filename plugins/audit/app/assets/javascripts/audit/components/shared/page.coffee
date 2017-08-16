@@ -8,7 +8,6 @@
 Page = ({
   page,
   label,
-  markAsActive,
   disabled,
   currentPage,
   handlePageChange
@@ -17,9 +16,8 @@ Page = ({
   className = ''
   if disabled
     className += 'disabled '
-  if page == currentPage && markAsActive
+  if page == currentPage
     className += 'active '
-
 
   li className: className,
     a href: "#", onClick: ((e) -> e.preventDefault(); handlePageChange(page)),
