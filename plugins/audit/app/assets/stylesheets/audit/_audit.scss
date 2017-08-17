@@ -20,7 +20,7 @@
 .toolbar.toolbar-controlcenter {
   display: flex;
 
-  label, span {
+  label, span, a {
     line-height: 34px; // to match input height
   }
 
@@ -35,4 +35,13 @@
 
 .filter-term {
   width: 250px;
+}
+
+.clear-all {
+  margin-left: auto;
+  color: #666;
+
+  i {
+    margin-right: 5px;
+  }
 }

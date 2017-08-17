@@ -132,6 +132,17 @@
       filterTermTimeout = setTimeout((() -> dispatch(fetchEvents(0))), timeout)
 
 
+  clearFilters = () ->
+    (dispatch) ->
+      dispatch(updateFilterType(''))
+      dispatch(updateFilterTerm(''))
+      dispatch(updateFilterStartTime(''))
+      dispatch(updateFilterEndTime(''))
+      dispatch(fetchEvents(0))
+
+
+
+
   # ----------- ATTRIBUTE VALUES -----------
 
   requestAttributeValues = () ->
@@ -234,6 +245,7 @@
   app.filterEventsEndTime         = filterEventsEndTime
   app.filterEventsFilterType      = filterEventsFilterType
   app.filterEventsFilterTerm      = filterEventsFilterTerm
+  app.clearFilters                = clearFilters
   app.toggleEventDetails          = toggleEventDetails
 
 )(audit)
