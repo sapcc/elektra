@@ -4,9 +4,9 @@
 
 
 # import
-{ div, span, label, select, option, input, i, table, thead, tbody, tr, th, td } = React.DOM
+{ div, span, label, select, option, input, i, table, thead, tbody, tr, th, td, a } = React.DOM
 { connect } = ReactRedux
-{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType, filterEventsFilterTerm, Pagination } = audit
+{ EventItem, EventItemDetails, filterEventsStartTime, filterEventsEndTime, filterEventsFilterType, filterEventsFilterTerm, clearFilters, Pagination } = audit
 
 
 Events = ({
@@ -17,6 +17,7 @@ Events = ({
   handleEndTimeChange,
   handleFilterTypeChange,
   handleFilterTermChange,
+  handleClearFilters,
   filterStartTime,
   filterEndTime,
   filterType,
@@ -54,6 +55,13 @@ Events = ({
       React.createElement Datetime, value: filterStartTime, inputProps: {placeholder: 'Select start time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> handleStartTimeChange(e))
       span className: 'toolbar-input-divider', '\u2013' # EN DASH: &ndash;
       React.createElement Datetime, value: filterEndTime, inputProps: {placeholder: 'Select end time'}, isValidDate: AuditHelpers.isValidDate, onChange: ((e) -> handleEndTimeChange(e))
+
+
+      if filterTerm or filterEndTime or filterStartTime
+        a className: 'clear-all', href: '#', onClick: ((e) -> e.preventDefault(); handleClearFilters()),
+          i className: 'fa fa-times-circle'
+          "Clear filters"
+
 
 
     table className: 'table',
@@ -108,10 +116,11 @@ Events = connect(
     total:                      state.events.total
     error:                      state.events.error
   (dispatch) ->
-    handleStartTimeChange:          (filterStartTime)     -> dispatch(filterEventsStartTime(filterStartTime))
-    handleEndTimeChange:            (filterEndTime)       -> dispatch(filterEventsEndTime(filterEndTime))
-    handleFilterTypeChange:         (filterType)          -> dispatch(filterEventsFilterType(filterType))
-    handleFilterTermChange:         (filterTerm, timeout) -> dispatch(filterEventsFilterTerm(filterTerm, timeout))
+    handleStartTimeChange:      (filterStartTime)     -> dispatch(filterEventsStartTime(filterStartTime))
+    handleEndTimeChange:        (filterEndTime)       -> dispatch(filterEventsEndTime(filterEndTime))
+    handleFilterTypeChange:     (filterType)          -> dispatch(filterEventsFilterType(filterType))
+    handleFilterTermChange:     (filterTerm, timeout) -> dispatch(filterEventsFilterTerm(filterTerm, timeout))
+    handleClearFilters:         ()                    -> dispatch(clearFilters())
 
 
 
