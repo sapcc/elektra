@@ -1,0 +1,47 @@
+// TABLE
+.icon-cell {
+  width: 24px;
+}
+
+.user-cell {
+  width: 22%;
+}
+
+
+
+.resource-id {
+  font-family: monospace;
+  font-size: $font-size-small;
+  color: #aaa;
+}
+
+// TOOLBAR
+
+.toolbar.toolbar-controlcenter {
+  display: flex;
+
+  label, span, a {
+    line-height: 34px; // to match input height
+  }
+
+  label, .inputwrapper{
+    margin: 0 8px 0 0;
+  }
+
+  .toolbar-input-divider {
+    padding: 0 8px;
+  }
+}
+
+.filter-term {
+  width: 250px;
+}
+
+.clear-all {
+  margin-left: auto;
+  color: #666;
+
+  i {
+    margin-right: 5px;
+  }
+}
