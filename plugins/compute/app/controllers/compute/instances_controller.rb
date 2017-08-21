@@ -467,6 +467,7 @@ module Compute
         if fip.fixed_ip_address.nil?
           networks[fip.floating_network_id] = services_ng.networking.find_network(fip.floating_network_id) unless networks[fip.floating_network_id]
           net = networks[fip.floating_network_id]
+          next unless net
           unless net.subnets.blank?
             net.subnets.each do |subid|
               subnets[subid] = services_ng.networking.find_subnet(subid) unless subnets[subid]

@@ -43,8 +43,13 @@ module ServiceLayerNg
 
       def cached_network(id)
         network_data = Rails.cache.fetch("network_#{id}", expires_in: 2.hours) do
-          api.networking.show_network_details(id).data
+          begin
+            api.networking.show_network_details(id).data
+          rescue => e
+            nil
+          end
         end
+        return nil unless network_data
         map_to(Networking::Network, network_data)
       end
 
