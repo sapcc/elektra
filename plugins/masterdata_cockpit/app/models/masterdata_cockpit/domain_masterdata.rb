@@ -59,11 +59,11 @@ module MasterdataCockpit
 
     def attributes_for_create
       params = {
-        'domain_id'                        => read('domain_id'),
-        'domain_name'                      => read('domain_name'),
-        'description'                       => read('description'),
-        'responsible_controller_id'         => read('responsible_controller_id'),
-        'responsible_controller_email'      => read('responsible_controller_email'),
+        'domain_id'                     => read('domain_id'),
+        'domain_name'                   => read('domain_name'),
+        'description'                   => read('description'),
+        'responsible_controller_id'     => read('responsible_controller_id'),
+        'responsible_controller_email'  => read('responsible_controller_email'),
       }.delete_if { |_k, v| v.blank? }
       
       if read('projects_can_inherit') == "true"
