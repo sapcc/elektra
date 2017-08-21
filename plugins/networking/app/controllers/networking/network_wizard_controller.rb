@@ -2,7 +2,7 @@
 
 module Networking
   class NetworkWizardController < DashboardController
-    before_filter :find_floatingip_network, :load_rbacs
+    before_action :find_floatingip_network, :load_rbacs
 
     def new
       @network_wizard = services_ng.networking.new_network_wizard(

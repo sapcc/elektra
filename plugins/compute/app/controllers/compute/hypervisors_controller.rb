@@ -1,6 +1,6 @@
 module Compute
   class HypervisorsController < Compute::ApplicationController
-    before_filter ->(id = params[:id] || params[:hypervisor_id]) { load_hv id }
+    before_action ->(id = params[:id] || params[:hypervisor_id]) { load_hv id }
 
     authorization_context 'compute'
     authorization_required

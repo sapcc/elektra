@@ -3,10 +3,10 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class DomainAdminController < ::ResourceManagement::ApplicationController
 
-    before_filter :load_project_resource, only: [:edit, :cancel, :update]
-    before_filter :load_domain_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota, :cancel, :update]
-    before_filter :load_inquiry, only: [:review_request, :approve_request]
-    before_filter :load_package_inquiry, only: [:review_package_request, :approve_package_request]
+    before_action :load_project_resource, only: [:edit, :cancel, :update]
+    before_action :load_domain_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota, :cancel, :update]
+    before_action :load_inquiry, only: [:review_request, :approve_request]
+    before_action :load_package_inquiry, only: [:review_package_request, :approve_package_request]
 
     authorization_required
 

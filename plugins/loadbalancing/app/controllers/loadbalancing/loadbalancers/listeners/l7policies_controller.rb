@@ -3,7 +3,7 @@ module Loadbalancing
     module Listeners
       class L7policiesController < ApplicationController
 
-        before_filter :load_objects
+        before_action :load_objects
 
         # set policy context
         authorization_context 'loadbalancing'

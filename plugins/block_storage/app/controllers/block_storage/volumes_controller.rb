@@ -57,7 +57,7 @@ module BlockStorage
     # POST /volumes
     def create
       @volume = services.block_storage.new_volume
-      @volume.attributes = params[@volume.model_name.param_key].delete_if{ |key,value| value.blank?} # delete blank attributes from hash. If they are passed as empty strings the API doesn't recognize them as blank and throws a fit ...
+      @volume.attributes = params[@volume.model_name.param_key].to_unsafe_hash.delete_if{ |*,value| value.blank?} # delete blank attributes from hash. If they are passed as empty strings the API doesn't recognize them as blank and throws a fit ...
 
       if @volume.save
         if @volume.snapshot_id.blank?
@@ -101,7 +101,7 @@ module BlockStorage
     # POST /volumes/1/snapshot
     def snapshot
       @snapshot = services.block_storage.new_snapshot({force: false})
-      @snapshot.attributes = @snapshot.attributes.merge(params[@snapshot.model_name.param_key])
+      @snapshot.attributes = @snapshot.attributes.merge(params[@snapshot.model_name.param_key].to_unsafe_hash)
       @snapshot.volume_id = params[:id]
 
       if @snapshot.save

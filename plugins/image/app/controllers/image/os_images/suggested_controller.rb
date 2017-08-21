@@ -1,6 +1,6 @@
 module Image
   class OsImages::SuggestedController < OsImagesController
-    before_filter :find_member, only: [:accept, :reject]
+    before_action :find_member, only: [:accept, :reject]
       
     def accept
       @success = services.image.accept_member(@member)

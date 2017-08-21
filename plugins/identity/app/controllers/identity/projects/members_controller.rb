@@ -5,7 +5,7 @@ module Identity
     # This class implements actions for project members.
     # It handles the adding and removing of role assignments on project.
     class MembersController < ::DashboardController
-      before_filter :load_roles, except: [:new]
+      before_action :load_roles, except: [:new]
 
       def new
         enforce_permissions('identity:project_member_create',

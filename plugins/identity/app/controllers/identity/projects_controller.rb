@@ -3,13 +3,13 @@
 module Identity
   # This class implements project actions
   class ProjectsController < ::DashboardController
-    before_filter :project_id_required, except: %i[index create new user_projects]
-    before_filter :get_project_id,  except: %i[index create new]
+    before_action :project_id_required, except: %i[index create new user_projects]
+    before_action :get_project_id,  except: %i[index create new]
 
     # check wizard state and redirect unless finished
-    before_filter :check_wizard_status, only: [:show]
+    before_action :check_wizard_status, only: [:show]
 
-    before_filter do
+    before_action do
       @scoped_project_fid = params[:project_id] || @project_id
     end
 
@@ -36,7 +36,8 @@ module Identity
       end
     end
 
-    def show; end
+    def show
+    end
 
     def view
       @project = services_ng.identity.find_project(

@@ -20,9 +20,9 @@ module Core
 
       def initialize(service, params = nil)
         @service = service
-        self.attributes = params
         # get just the name of class without namespaces
         @class_name = self.class.name.split('::').last.underscore
+        self.attributes = params
         # create errors object
         @errors = ActiveModel::Errors.new(self)
         # execute after callback
@@ -34,7 +34,7 @@ module Core
       end
 
       def attributes
-        @attributes.merge(id: @id).with_indifferent_access
+        @attributes.merge(id: @id)
       end
 
       def as_json(_options = nil)
@@ -106,7 +106,7 @@ module Core
       end
 
       def attributes=(new_attributes)
-        @attributes = (new_attributes || {}).clone
+        @attributes = (new_attributes.is_a?(ActionController::Parameters) ? new_attributes.to_unsafe_hash : (new_attributes.blank? ? {} : new_attributes.with_indifferent_access)).clone
         # delete id from attributes!
         new_id = (@attributes.delete('id') || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
@@ -205,7 +205,7 @@ module Core
         rescue_api_errors do
           # execute before callback
           before_create
-          create_attrs = attributes_for_create.with_indifferent_access
+          create_attrs = attributes_for_create
           create_attrs.delete(:id)
           created_attributes = perform_service_create(create_attrs)
           self.attributes = created_attributes
@@ -216,7 +216,7 @@ module Core
 
       def perform_update
         rescue_api_errors do
-          update_attrs = attributes_for_update.with_indifferent_access
+          update_attrs = attributes_for_update
           update_attrs.delete(:id)
           updated_attributes = perform_service_update(id, update_attrs)
           self.attributes = updated_attributes if updated_attributes

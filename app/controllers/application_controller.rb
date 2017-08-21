@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to(options = {}, response_status = {})
-    if request.format == Mime::JSON ||
+    if request.format == Mime[:json] ||
        modal? || params[:polling_service] || params[:do_not_redirect]
       head :ok, location: url_for(options)
     else

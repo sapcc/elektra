@@ -3,7 +3,7 @@ module Loadbalancing
     module Pools
       class MembersController < ApplicationController
 
-        before_filter :load_objects, only: [:new, :destroy, :update_item, :create]
+        before_action :load_objects, only: [:new, :destroy, :update_item, :create]
 
         # set policy context
         authorization_context 'loadbalancing'
@@ -20,9 +20,8 @@ module Loadbalancing
           ips = params['ips'] || []
           @new_members = []
           ips.each do |ip|
-            next unless ip.second == '1'
             member = services.loadbalancing.new_pool_member(id: SecureRandom.hex)
-            member.attributes = {pool_id: params[:pool_id], address: ip.first, weight: 1}
+            member.attributes = {pool_id: params[:pool_id], address: ip, weight: 1}
             @new_members << member
           end
           render 'loadbalancing/loadbalancers/pools/members/add_members.js'
@@ -101,7 +100,7 @@ module Loadbalancing
         private
 
         def member_params
-          p = params[:member].symbolize_keys if params[:member]
+          p = params[:member].to_unsafe_hash.symbolize_keys if params[:member]
           return p
         end
 

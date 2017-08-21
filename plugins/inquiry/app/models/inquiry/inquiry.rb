@@ -1,5 +1,5 @@
 module Inquiry
-  class Inquiry < ActiveRecord::Base
+  class Inquiry < ApplicationRecord
     include Filterable
     paginates_per 20
     default_scope { order(updated_at: :desc) } # default sort order

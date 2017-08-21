@@ -5,7 +5,7 @@
 class DashboardController < ::ScopeController
   include UrlHelper
 
-  prepend_before_filter do
+  prepend_before_action do
     requested_url = request.env['REQUEST_URI']
     referer_url = request.referer
     referer_url = begin
@@ -24,7 +24,7 @@ class DashboardController < ::ScopeController
     end
   end
 
-  before_filter :load_help_text
+  before_action :load_help_text
 
   # authenticate user -> current_user is available
   authentication_required domain: ->(c) { c.instance_variable_get("@scoped_domain_id") },
@@ -37,17 +37,17 @@ class DashboardController < ::ScopeController
   # after_login is used by monsoon_openstack_auth gem.
   # After the authentication process has finished the
   # after_login can be removed.
-  before_filter { params.delete(:after_login) }
+  before_action { params.delete(:after_login) }
 
   # check if user has accepted terms of use.
   # Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use, except: %i[accept_terms_of_use terms_of_use]
+  before_action :check_terms_of_use, except: %i[accept_terms_of_use terms_of_use]
   # rescope token
-  before_filter :rescope_token, except: [:terms_of_use]
-  before_filter :raven_context, except: [:terms_of_use]
-  before_filter :load_user_projects,
+  before_action :rescope_token, except: [:terms_of_use]
+  before_action :raven_context, except: [:terms_of_use]
+  before_action :load_user_projects,
                 :load_webcli_endpoint, except: %i[terms_of_use]
-  before_filter :set_mailer_host
+  before_action :set_mailer_host
 
   # even if token is not expired yet we get sometimes the error
   # "token not found"

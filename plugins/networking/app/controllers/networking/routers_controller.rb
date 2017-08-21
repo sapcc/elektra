@@ -3,7 +3,7 @@
 module Networking
   # Implements Router actions
   class RoutersController < DashboardController
-    before_filter :fill_available_networks, only: %i[new create edit update]
+    before_action :fill_available_networks, only: %i[new create edit update]
 
     def index
       @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)

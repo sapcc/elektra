@@ -3,7 +3,7 @@
 module Networking
   # Implements Network actions
   class NetworksController < DashboardController
-    before_filter :load_type, except: [:subnets]
+    before_action :load_type, except: [:subnets]
 
     def index
       filter_options = {

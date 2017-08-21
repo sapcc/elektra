@@ -1,4 +1,4 @@
-class FriendlyIdEntry < ActiveRecord::Base
+class FriendlyIdEntry < ApplicationRecord
   validates :name, presence: true
   validates :key, presence: true
   extend FriendlyId

@@ -6,7 +6,7 @@ module Identity
       # This class implements project groups actions
       # Adding and removing of project groups.
       class ProjectGroupsController < ::DashboardController
-        before_filter :load_scope_and_roles
+        before_action :load_scope_and_roles
 
         def index
           enforce_permissions('identity:project_group_list', {})

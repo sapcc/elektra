@@ -1,4 +1,4 @@
-class UserProfile < ActiveRecord::Base
+class UserProfile < ApplicationRecord
   has_many :domain_profiles
 
   scope :search_by_name, ->(name) {

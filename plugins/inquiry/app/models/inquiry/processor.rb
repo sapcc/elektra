@@ -1,6 +1,6 @@
 module Inquiry
 
-  class Processor < ActiveRecord::Base
+  class Processor < ApplicationRecord
 
     has_and_belongs_to_many :inquiries
 

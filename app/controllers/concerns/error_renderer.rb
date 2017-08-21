@@ -56,7 +56,7 @@ module ErrorRenderer
         logger.error("#{@exception_id}: #{@title}. #{@description}")
 
         unless map[:sentry]==false
-          Raven::Rack.capture_exception(exception, env)
+          Raven::Rack.capture_exception(exception, request.env)
           @exception_id = Raven.last_event_id if Raven.last_event_id
         end
         @sentry_event_id   = Raven.last_event_id

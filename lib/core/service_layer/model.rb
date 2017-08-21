@@ -16,9 +16,9 @@ module Core
 
       def initialize(driver, params=nil)
         @driver = driver
-        self.attributes=params
         # get just the name of class without namespaces
         @class_name = self.class.name.split('::').last.underscore
+        self.attributes = params
 
         # create errors object
         @errors = ActiveModel::Errors.new(self)
@@ -126,7 +126,7 @@ module Core
       end
 
       def attributes=(new_attributes)
-        @attributes = (new_attributes || {}).clone
+        @attributes = (new_attributes.is_a?(ActionController::Parameters) ? new_attributes.to_unsafe_hash : (new_attributes.blank? ? {} : new_attributes.with_indifferent_access)).clone
         # delete id from attributes!
         new_id = nil
         if @attributes["id"] or @attributes[:id]
@@ -234,7 +234,7 @@ module Core
         # execute before callback
         before_create
 
-        create_attrs = self.attributes_for_create.with_indifferent_access
+        create_attrs = self.attributes_for_create
         create_attrs.delete(:id)
 
         # begin
@@ -270,7 +270,7 @@ module Core
         #   return false
         # end
         rescue_errors do
-          update_attrs = attributes_for_update.with_indifferent_access
+          update_attrs = attributes_for_update
           update_attrs.delete(:id)
           updated_attributes = perform_driver_update(id,update_attrs) #@driver.send("update_#{@class_name}", id, update_attrs)
           self.attributes=updated_attributes if updated_attributes

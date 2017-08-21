@@ -6,3 +6,5 @@ port ENV['PORT'] || 80
 
 require 'puma/app/status'
 activate_control_app 'tcp://127.0.0.1:7353', { no_token: 'true' }
+
+plugin :tmp_restart

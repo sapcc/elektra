@@ -63,7 +63,7 @@
 
     $(document).ready(function(){
       try {
-        window.policy = new PolicyEngine(#{policy.try(:to_js) || {}});
+        window.policy = new PolicyEngine(#{policy.try(:to_js).try(:html_safe) || {}});
 
         // usage:
         //console.log(policy.isAllowed("identity:project_get"))

@@ -36,6 +36,8 @@ module Core
           end
         elsif data.is_a?(Hash)
           create_map_object(klazz, data.merge(options), &block)
+        elsif data.is_a?(ActionController::Parameters)
+          create_map_object(klazz, data.to_unsafe_hash.merge(options), &block)
         else
           data
         end
@@ -48,6 +50,8 @@ module Core
           end
         elsif data.is_a?(Hash)
           klass.send(:new, self, data.merge(options))
+        elsif data.is_a?(ActionController::Parameters)
+          klass.send(:new, self, data.to_unsafe_hash.merge(options))
         else
           data
         end

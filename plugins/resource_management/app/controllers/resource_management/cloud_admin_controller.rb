@@ -3,9 +3,9 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class CloudAdminController < ::ResourceManagement::ApplicationController
 
-    before_filter :load_domain_resource, only: [:edit, :cancel, :update]
-    before_filter :load_cluster_resource, only: [:edit_capacity, :update_capacity, :cancel, :update]
-    before_filter :load_inquiry, only: [:review_request, :approve_request]
+    before_action :load_domain_resource, only: [:edit, :cancel, :update]
+    before_action :load_cluster_resource, only: [:edit_capacity, :update_capacity, :cancel, :update]
+    before_action :load_inquiry, only: [:review_request, :approve_request]
 
     authorization_required
 

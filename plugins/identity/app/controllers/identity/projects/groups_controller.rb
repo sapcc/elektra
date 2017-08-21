@@ -1,7 +1,7 @@
 module Identity
   module Projects
     class GroupsController < ::DashboardController
-      before_filter :load_roles, except: [:new]
+      before_action :load_roles, except: [:new]
 
       def new
         enforce_permissions('identity:project_group_create',{domain_id: @scoped_domain_id})
