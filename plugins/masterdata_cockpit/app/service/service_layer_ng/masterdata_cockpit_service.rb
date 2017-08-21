@@ -28,7 +28,20 @@ module ServiceLayerNg
       # this is used for created masterdata dialog
       map_to(MasterdataCockpit::ProjectMasterdata, params)
     end
-    
+
+    def new_domain_masterdata(params = {})
+      Rails.logger.debug  "[masterdata cockpit-service] -> new_domain_masterdata"
+      # this is used for created masterdata dialog
+      map_to(MasterdataCockpit::DomainMasterdata, params)
+    end
+
+    def create_domain_masterdata(masterdata)
+      Rails.logger.debug  "[masterdata cockpit-service] -> create_domain_masterdata"
+      Rails.logger.debug  "[masterdata cockpit-service] -> masterdata: #{masterdata}"
+      response = api.masterdata.set_domain(masterdata["domain_id"],masterdata)
+      response.body
+    end
+
     def create_project_masterdata(masterdata)
       Rails.logger.debug  "[masterdata cockpit-service] -> create_project_masterdata"
       Rails.logger.debug  "[masterdata cockpit-service] -> masterdata: #{masterdata}"
