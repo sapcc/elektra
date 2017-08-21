@@ -20,8 +20,6 @@ module MasterdataCockpit
     
     def new
       @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
-      @project_masterdata.project_id = @scoped_project_id
-      @project_masterdata.project_name = @scoped_project_name
     end
 
     def edit
@@ -30,13 +28,9 @@ module MasterdataCockpit
 
     def update
       @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
-      
       @project_masterdata.attributes =params.fetch(:project_masterdata,{})
 
-      if @project_masterdata.update
-        # HOWTO: needs to change after the api sends a correct repsonse
-        @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
-      else
+      unless @project_masterdata.update
         render action: :edit
       end
     end
@@ -46,10 +40,7 @@ module MasterdataCockpit
       # to merge options into .merge(project_id: @scoped_project_id)
       @project_masterdata.attributes =params.fetch(:project_masterdata,{})
       
-      if @project_masterdata.save
-        # HOWTO: needs to change after the api sends a correct repsonse
-        @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
-      else
+      unless @project_masterdata.save
         render action: :new
       end
     end

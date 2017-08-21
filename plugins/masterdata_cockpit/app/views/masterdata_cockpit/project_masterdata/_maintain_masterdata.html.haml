@@ -2,8 +2,9 @@
   .alert.alert-error
     = render_errors(@project_masterdata.errors)
 
-= f.input :project_id, :as => :hidden
-= f.input :project_name, :as => :hidden
+= f.input :project_id, :as => :hidden, value: @scoped_project_id
+= f.input :project_name, :as => :hidden, value: @scoped_project_name
+= f.input :domain_id, :as => :hidden, value: @scoped_domain_id
 = f.input :description, label: "Description"
 %hr
 .row

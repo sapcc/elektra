@@ -77,7 +77,7 @@ module MasterdataCockpit
       if read('cost_object_inherited')
         read('cost_object_inherited') == "true"
       elsif cost_object
-        cost_object['inherited'] == "true"
+        cost_object['inherited']
       else
         false
       end
@@ -87,6 +87,8 @@ module MasterdataCockpit
       params = {
         'project_id'                        => read('project_id'),
         'project_name'                      => read('project_name'),
+        'parent_id'                         => read('domain_id'),
+        'domain_id'                         => read('domain_id'),
         'description'                       => read('description'),
         'responsible_operator_id'           => read('responsible_operator_id'),
         'responsible_operator_email'        => read('responsible_operator_email'),
@@ -103,7 +105,7 @@ module MasterdataCockpit
       }.delete_if { |_k, v| v.blank? }
       
       if read('cost_object_inherited') == "true"
-        params['cost_object'] = {'inherited ' => true}
+        params['cost_object'] = {'inherited' => true}
       else
         params['cost_object'] = {
           'name' => read('cost_object_name'),
@@ -113,6 +115,7 @@ module MasterdataCockpit
       end
       
       params
+    
     end
 
   end
