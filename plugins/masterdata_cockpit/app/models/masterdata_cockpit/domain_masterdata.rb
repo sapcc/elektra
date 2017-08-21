@@ -51,7 +51,7 @@ module MasterdataCockpit
       if read('cost_object_projects_can_inherit')
         read('cost_object_projects_can_inherit') == "true"
       elsif cost_object
-        cost_object['projects_can_inherit'] == "true"
+        cost_object['projects_can_inherit']
       else
         false
       end

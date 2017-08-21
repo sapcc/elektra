@@ -18,7 +18,7 @@ module ServiceLayerNg
     end
 
     def get_domain(domain_id)
-       Rails.logger.debug  "[masterdata cockpit-service] -> get_domain -> GET /projects/#{domain_id}"
+       Rails.logger.debug  "[masterdata cockpit-service] -> get_domain -> GET /domain/#{domain_id}"
        response = api.masterdata.get_domain(domain_id)
        map_to(MasterdataCockpit::DomainMasterdata, response.body)
     end

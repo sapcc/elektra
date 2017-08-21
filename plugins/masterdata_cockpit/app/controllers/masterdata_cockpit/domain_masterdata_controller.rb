@@ -33,5 +33,19 @@ module MasterdataCockpit
         render action: :new
       end
     end
+
+    def edit
+      @domain_masterdata = services_ng.masterdata_cockpit.get_domain(@scoped_domain_id)
+    end
+
+    def update
+      @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
+      @domain_masterdata.attributes =params.fetch(:domain_masterdata,{})
+
+      unless @domain_masterdata.update
+        render action: :edit
+      end
+    end
+
   end
 end
