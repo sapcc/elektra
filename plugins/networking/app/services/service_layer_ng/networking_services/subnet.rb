@@ -34,8 +34,13 @@ module ServiceLayerNg
 
       def cached_subnet(id)
         subnet_data = Rails.cache.fetch("subnet_#{id}", expires_in: 2.hours) do
-          api.networking.show_subnet_details(id).data
+          begin
+            api.networking.show_subnet_details(id).data
+          rescue => e
+            nil
+          end
         end
+        return nil unless subnet_data
         map_to(Networking::Subnet, subnet_data || [])
       end
 
