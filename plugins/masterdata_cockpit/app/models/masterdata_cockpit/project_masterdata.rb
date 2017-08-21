@@ -73,16 +73,6 @@ module MasterdataCockpit
       end
     end
 
-    def cost_object_co_inherited
-      if read('cost_object_co_inherited')
-        read('cost_object_co_inherited') == "true"
-      elsif cost_object
-        cost_object['co_inherited'] == "true"
-      else
-        false
-      end
-    end
-
     def cost_object_inherited
       if read('cost_object_inherited')
         read('cost_object_inherited') == "true"
@@ -118,7 +108,7 @@ module MasterdataCockpit
         params['cost_object'] = {
           'name' => read('cost_object_name'),
           'type' => read('cost_object_type'),
-          'co_inherited' => read('cost_object_co_inherited') == "true"
+          'inherited' => read('cost_object_inherited') == "true"
         }
       end
       
