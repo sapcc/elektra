@@ -1,4 +1,6 @@
-%tr{id: "floating_ip_#{floating_ip.id}", data: {search_name: "#{floating_ip.floating_ip_address} #{floating_ip.subnet_object.name}", marker_id: floating_ip.id}}
+- search_name = floating_ip.floating_ip_address
+- search_name += floating_ip.subnet_object.nil? ? floating_ip.floating_network_id : floating_ip.subnet_object.name
+%tr{id: "floating_ip_#{floating_ip.id}", data: {search_name: search_name, marker_id: floating_ip.id}}
   %td
     .pull-left
       %i.fa.fa-globe.fa-fw
