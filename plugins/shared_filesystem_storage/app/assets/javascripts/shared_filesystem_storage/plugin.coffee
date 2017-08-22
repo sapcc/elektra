@@ -1,4 +1,4 @@
-#= require react/modal
+#= require components/modal
 #= require shared_filesystem_storage/constants
 #= require shared_filesystem_storage/actions/index
 #= require shared_filesystem_storage/reducers/index

@@ -28,7 +28,7 @@ gem 'font-awesome-sass'
 gem 'responders'
 
 # make it fancy with react
-gem 'react-rails', "1.8.2"
+gem 'react-rails' #, "1.8.2"
 
 # Database
 gem 'pg'

@@ -1,5 +1,5 @@
 #= require shared_filesystem_storage/components/shares/item
-#= require react/transition_groups
+#= require components/transition_groups
 
 { connect } = ReactRedux
 { div, button, span, table, thead, tbody, tr, th, td, i, a } = React.DOM

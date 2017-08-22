@@ -1,4 +1,4 @@
-#= require react/helpers
+#= require ./helpers.coffee
 
 { connect } = ReactRedux
 { div, button, span, h4, ul, li } = React.DOM
