@@ -42,7 +42,5 @@
           Contact:
         .col-sm-4.details-value
           = icon('envelope-o')
-          = @domain_masterdata.responsible_controller_email
-          
-          
+          = mail_to @domain_masterdata.responsible_controller_email
 

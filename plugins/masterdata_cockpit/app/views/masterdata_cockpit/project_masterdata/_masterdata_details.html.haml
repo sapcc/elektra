@@ -50,7 +50,7 @@
           Contact:
         .col-sm-4.details-value
           = icon('envelope-o')
-          = @project_masterdata.responsible_operator_email
+          = mail_to @project_masterdata.responsible_operator_email
     .row
       .col-sm-4.details-label
         %strong
@@ -64,7 +64,7 @@
           Contact:
         .col-sm-4.details-value
           = icon('envelope-o')
-          = @project_masterdata.responsible_security_expert_email
+          = mail_to @project_masterdata.responsible_security_expert_email
     .row
       .col-sm-4.details-label
         %strong
@@ -78,7 +78,7 @@
           Contact:
         .col-sm-4.details-value
           = icon('envelope-o')
-          = @project_masterdata.responsible_product_owner_email
+          = mail_to @project_masterdata.responsible_product_owner_email
     .row
       .col-sm-4.details-label
         %strong
@@ -92,7 +92,7 @@
           Contact:
         .col-sm-4.details-value
           = icon('envelope-o')
-          = @project_masterdata.responsible_controller_email
+          = mail_to @project_masterdata.responsible_controller_email
 %label Customer Information
 %a.help-link{data:{content: "to be defined", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
