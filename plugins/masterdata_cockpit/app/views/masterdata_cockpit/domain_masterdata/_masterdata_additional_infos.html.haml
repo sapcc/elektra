@@ -1,31 +1,32 @@
 - can_edit = current_user.is_allowed?('masterdata_cockpit:cost_object_edit')
-.infobox
-  %h4.action-heading
-    Domain Info
-    - if can_edit
-      .dropdown.header-action
-        %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
-        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if can_edit
-            %li
-              = link_to  plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "Edit domain masterdata", data: {modal: true, toggle: "tooltip", placement: "left"} do
-                %i.fa.fa-edit.fa-fw
-                Edit Masterdata
-  %table.table
-    %tbody
-      %tr
-        %th.snug-nowrap
-          Domain Name:
-        %td
-          = @domain_masterdata.domain_name
-      %tr
-        %th
-          Description:
-        %td
-          - unless @domain_masterdata.description
-            \-
-          = @domain_masterdata.description
+- unless !@domain_masterdata
+  .infobox
+    %h4.action-heading
+      Domain Info
+      - if can_edit
+        .dropdown.header-action
+          %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
+          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+            - if can_edit
+              %li
+                = link_to  plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "Edit domain masterdata", data: {modal: true, toggle: "tooltip", placement: "left"} do
+                  %i.fa.fa-edit.fa-fw
+                  Edit Masterdata
+    %table.table
+      %tbody
+        %tr
+          %th.snug-nowrap
+            Domain Name:
+          %td
+            = @domain_masterdata.domain_name
+        %tr
+          %th
+            Description:
+          %td
+            - unless @domain_masterdata.description
+              \-
+            = @domain_masterdata.description
 
-  - if can_edit
-    - if !@domain_masterdata && !flash.now[:error]
-      = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').domain_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
+- if can_edit
+  - if !@domain_masterdata && !flash.now[:error]
+    = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').domain_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'

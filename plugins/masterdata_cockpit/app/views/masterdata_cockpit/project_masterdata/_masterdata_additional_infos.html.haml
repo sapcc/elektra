@@ -1,31 +1,32 @@
 - can_edit = current_user.is_allowed?('masterdata_cockpit:cost_object_edit')
-.infobox
-  %h4.action-heading
-    Project Info
-    - if can_edit
-      .dropdown.header-action
-        %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
-        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if can_edit
-            %li
-              = link_to  plugin('masterdata_cockpit').project_masterdata_edit_path(), title: "Edit project masterdata", data: {modal: true, toggle: "tooltip", placement: "left"} do
-                %i.fa.fa-edit.fa-fw
-                Edit Masterdata
-  %table.table
-    %tbody
-      %tr
-        %th.snug-nowrap
-          Project Name:
-        %td
-          = @project_masterdata.project_name
-      %tr
-        %th
-          Description:
-        %td
-          - unless @project_masterdata.description
-            \-
-          = @project_masterdata.description
+- unless !@project_masterdata
+  .infobox
+    %h4.action-heading
+      Project Info
+      - if can_edit
+        .dropdown.header-action
+          %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
+          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
+            - if can_edit
+              %li
+                = link_to  plugin('masterdata_cockpit').project_masterdata_edit_path(), title: "Edit project masterdata", data: {modal: true, toggle: "tooltip", placement: "left"} do
+                  %i.fa.fa-edit.fa-fw
+                  Edit Masterdata
+    %table.table
+      %tbody
+        %tr
+          %th.snug-nowrap
+            Project Name:
+          %td
+            = @project_masterdata.project_name
+        %tr
+          %th
+            Description:
+          %td
+            - unless @project_masterdata.description
+              \-
+            = @project_masterdata.description
 
-  - if can_edit
-    - if !@project_masterdata && !flash.now[:error]
-      = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').project_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
+- if can_edit
+  - if !@project_masterdata && !flash.now[:error]
+    = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').project_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
