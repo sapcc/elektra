@@ -1,4 +1,0 @@
-- if @domain_masterdata && !flash.now[:error]
-  = link_to 'Edit Masterdata', plugin('masterdata_cockpit').domain_masterdata_edit_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
-- elsif !@domain_masterdata && !flash.now[:error]
-  = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').domain_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'

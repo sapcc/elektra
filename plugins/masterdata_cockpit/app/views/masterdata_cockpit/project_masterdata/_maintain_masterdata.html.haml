@@ -6,49 +6,55 @@
 = f.input :project_name, :as => :hidden, value: @scoped_project_name
 = f.input :domain_id, :as => :hidden, value: @scoped_domain_id
 = f.input :description, label: "Description"
-%hr
-.row
-  .col-sm-3
-    = f.input :cost_object_inherited, label: "Inherited from domain", as: :select, include_blank: false, include_hidden: false, required:true
-  .col-sm-3
-    - types = MasterdataCockpit::Config.cost_object_types
-    = f.input :cost_object_type, 
-        label:        "Cost Object Type", 
-        as:           :select, 
-        collection:   types.keys, 
-        label_method: -> (k) { types[k] },
-        required:true
-  .col-sm-6
-    = f.input :cost_object_name, label: "Cost Object Name" , required:true
-%hr
-.row
-  .col-sm-6
-    = f.input :responsible_operator_id, label: "Resposible Operator", placeholder: "C/D/I User"
-  .col-sm-6
-    = f.input :responsible_operator_email, label: "Resposible Operator Email"
-.row
-  .col-sm-6
-    = f.input :responsible_security_expert_id, label: "Resposible Security Expert", placeholder: "C/D/I User"
-  .col-sm-6
-    = f.input :responsible_security_expert_email, label: "Resposible Security Expert Email"
-.row
-  .col-sm-6
-    = f.input :responsible_product_owner_id, label: "Resposible Product Owner", placeholder: "C/D/I User"
-  .col-sm-6
-    = f.input :responsible_product_owner_email, label: "Resposible Product Owner Email"
-.row
-  .col-sm-6
-    = f.input :responsible_controller_id, label: "Resposible Controller", placeholder: "C/D/I User"
-  .col-sm-6
-    = f.input :responsible_controller_email, label: "Resposible Controller Email"
-%hr
-.row
-  .col-sm-6
-    = f.input :revenue_relevance, label: "Revenue Relevance", as: :select, collection:['generating','enabling','other'], required:true
-  .col-sm-6
-    = f.input :business_criticality, label: "Business Criticality", as: :select, collection:['dev','test','prod'], required:true
-.row
-  .col-sm-6
-    = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions
-  .col-sm-6
-    = f.input :number_of_endusers , label: "Number of Endusers"
+
+%label.control-label Cost Object
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-2
+        = f.input :cost_object_inherited, label: "Inherited", as: :select, include_blank: false, include_hidden: false, required:true
+      .col-sm-3
+        = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions
+      .col-sm-3
+        - types = MasterdataCockpit::Config.cost_object_types
+        = f.input :cost_object_type, 
+            label:        "Type", 
+            as:           :select, 
+            collection:   types.keys, 
+            label_method: -> (k) { types[k] },
+            required:true
+      .col-sm-4
+        = f.input :cost_object_name, label: "Name" , required:true
+%label.control-label Responsibility
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-6
+        = f.input :responsible_operator_id, label: "Operator", placeholder: "C/D/I User"
+      .col-sm-6.operator-email
+        = f.input :responsible_operator_email, placeholder: "Email", label: false
+    .row
+      .col-sm-6
+        = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User"
+      .col-sm-6.operator-email
+        = f.input :responsible_security_expert_email, placeholder: "Email", label: false
+    .row
+      .col-sm-6
+        = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User"
+      .col-sm-6.operator-email
+        = f.input :responsible_product_owner_email, placeholder: "Email", label: false
+    .row
+      .col-sm-6
+        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User"
+      .col-sm-6.operator-email
+        = f.input :responsible_controller_email, placeholder: "Email", label: false
+%label.control-label Customer Information
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-4
+        = f.input :revenue_relevance, label: "Revenue Relevance", as: :select, collection:['generating','enabling','other'], required:true
+      .col-sm-4
+        = f.input :business_criticality, label: "Business Criticality", as: :select, collection:['dev','test','prod'], required:true
+      .col-sm-4
+        = f.input :number_of_endusers , label: "Number of Endusers"

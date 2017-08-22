@@ -2,7 +2,7 @@
   Domain Masterdata
 
 .row
-  .col-sm-9
+  .col-sm-8
     #domain_masterdata_details
       - if !@domain_masterdata
         .alert.alert-warning
@@ -10,7 +10,6 @@
           No masterdata maintained for this domain.
       - elsif !flash.now[:error]
         = render partial: 'masterdata_details'
-
-  .col-md-3
-    #domain_masterdata_buttons
-      = render partial: 'masterdata_buttons'
+  .col-md-4
+    #domain_masterdata_additional_infos
+      = render partial: 'masterdata_additional_infos'

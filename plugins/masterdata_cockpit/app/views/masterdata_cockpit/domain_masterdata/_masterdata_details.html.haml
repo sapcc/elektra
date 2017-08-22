@@ -1,22 +1,3 @@
-.row
-  .col-sm-4.details-label
-    %strong
-      Domain ID
-  .col-sm-8.details-value
-    = @domain_masterdata.domain_id
-.row
-  .col-sm-4.details-label
-    %strong
-      Domain Name
-  .col-sm-8.details-value
-    = @domain_masterdata.domain_name
-.row
-  .col-sm-4.details-label
-    %strong
-      Description
-  .col-sm-8.details-value
-    = @domain_masterdata.description
-%hr
 %h5 Cost Object
 .panel.panel-default
   .panel-body
@@ -49,6 +30,8 @@
         %strong
           Operator
       .col-sm-2.details-value
+        - unless @domain_masterdata.responsible_controller_id
+          \-
         = @domain_masterdata.responsible_controller_id
       - if @domain_masterdata.responsible_controller_email
         .col-sm-1.details-label

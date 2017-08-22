@@ -1,25 +1,14 @@
-.row
-  .col-sm-4.details-label
-    %strong
-      Project ID
-  .col-sm-8.details-value
-    = @project_masterdata.project_id
-.row
-  .col-sm-4.details-label
-    %strong
-      Project Name
-  .col-sm-8.details-value
-    = @project_masterdata.project_name
-.row
-  .col-sm-4.details-label
-    %strong
-      Description
-  .col-sm-8.details-value
-    = @project_masterdata.description
-%hr
-%h5 Cost Object
+%h4 Cost Object
 .panel.panel-default
   .panel-body
+    .row
+      .col-sm-4.details-label
+        %strong
+          Solution 
+      .col-sm-8.details-value
+        - unless @project_masterdata.solution
+          \-
+        = @project_masterdata.solution 
     .row
       .col-sm-4.details-label
         %strong
@@ -37,11 +26,11 @@
         %strong
           Inherited from domain
       .col-sm-8.details-value
-        - if @project_masterdata.cost_object['inherited']
+        - if @project_masterdata.cost_object_inherited
           = icon('check-square-o')
         -else 
           = icon('times')
-%h5 Responsibility
+%h4 Responsibility
 .panel.panel-default
   .panel-body
     .row
@@ -49,6 +38,8 @@
         %strong
           Operator
       .col-sm-2.details-value
+        - unless @project_masterdata.responsible_operator_id
+          \-
         = @project_masterdata.responsible_operator_id
       - if @project_masterdata.responsible_operator_email
         .col-sm-1.details-label
@@ -61,6 +52,8 @@
         %strong
           Security Expert
       .col-sm-2.details-value
+        - unless @project_masterdata.responsible_security_expert_id
+          \-
         = @project_masterdata.responsible_security_expert_id
       - if @project_masterdata.responsible_security_expert_email
         .col-sm-1.details-label
@@ -73,6 +66,8 @@
         %strong
           Product Owner
       .col-sm-2.details-value
+        - unless @project_masterdata.responsible_product_owner_id
+          \-
         = @project_masterdata.responsible_product_owner_id
       - if @project_masterdata.responsible_product_owner_email
         .col-sm-1.details-label
@@ -85,6 +80,8 @@
         %strong
           Controller
       .col-sm-2.details-value
+        - unless @project_masterdata.responsible_controller_id
+          \-
         = @project_masterdata.responsible_controller_id
       - if @project_masterdata.responsible_controller_email
         .col-sm-1.details-label
@@ -92,7 +89,7 @@
         .col-sm-4.details-value
           = icon('envelope-o')
           = @project_masterdata.responsible_controller_email
-%h5 Customer Information
+%h4 Customer Information
 .panel.panel-default
   .panel-body
     .row
@@ -110,12 +107,8 @@
     .row
       .col-sm-4.details-label
         %strong
-          Solution 
-      .col-sm-8.details-value
-        = @project_masterdata.solution 
-    .row
-      .col-sm-4.details-label
-        %strong
           Number of Endusers
       .col-sm-8.details-value
+        - unless @project_masterdata.number_of_endusers
+          \-
         = @project_masterdata.number_of_endusers

@@ -5,24 +5,29 @@
 = f.input :domain_id, :as => :hidden
 = f.input :domain_name, :as => :hidden
 = f.input :description, label: "Description"
-%hr
-.row
-  .col-sm-3
-    = f.input :cost_object_projects_can_inherit, label: "Projects can inherit", as: :select, include_blank: false, include_hidden: false, required:true
-  .col-sm-3
-    - types = MasterdataCockpit::Config.cost_object_types
-    = f.input :cost_object_type, 
-        label:        "Cost Object Type", 
-        as:           :select, 
-        collection:   types.keys, 
-        label_method: -> (k) { types[k] },
-        required:true
-  .col-sm-6
-    = f.input :cost_object_name, label: "Cost Object Name" , required:true
-%hr
-.row
-  .col-sm-6
-    = f.input :responsible_controller_id, label: "Resposible Controller", placeholder: "C/D/I User"
-  .col-sm-6
-    = f.input :responsible_controller_email, label: "Resposible Controller Email"
+
+%label.control-label Cost Object
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-3
+        = f.input :cost_object_projects_can_inherit, label: "Projects can inherit", as: :select, include_blank: false, include_hidden: false, required:true
+      .col-sm-3
+        - types = MasterdataCockpit::Config.cost_object_types
+        = f.input :cost_object_type, 
+            label:        "Cost Object Type", 
+            as:           :select, 
+            collection:   types.keys, 
+            label_method: -> (k) { types[k] },
+            required:true
+      .col-sm-6
+        = f.input :cost_object_name, label: "Cost Object Name" , required:true
+%label.control-label Responsibility
+.panel.panel-default
+  .panel-body
+    .row
+      .col-sm-6
+        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User"
+      .col-sm-6.operator-email
+        = f.input :responsible_controller_email, label: false, placeholder: "Email"
 
