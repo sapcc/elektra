@@ -31,8 +31,11 @@
           %th
             Last change:
           %td
-            - last_change = DateTime.parse(@domain_masterdata.changed_at)
-            = last_change.strftime('%I:%M:%S %p %d.%B %Y')
+            - if @domain_masterdata.changed_at
+              - last_change = DateTime.parse(@domain_masterdata.changed_at)
+              = last_change.strftime('%I:%M:%S %p %d.%B %Y')
+            - else
+              \-
 
 - if current_user.is_allowed?('masterdata_cockpit:masterdata_create')
   - if !@domain_masterdata && !flash.now[:error]
