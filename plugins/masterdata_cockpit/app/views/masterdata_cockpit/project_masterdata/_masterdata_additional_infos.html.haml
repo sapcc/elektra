@@ -1,5 +1,6 @@
-- can_edit = current_user.is_allowed?('masterdata_cockpit:cost_object_edit')
+
 - unless !@project_masterdata
+  - can_edit = current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
   .infobox
     %h4.action-heading
       Project Info
@@ -9,7 +10,7 @@
           %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
             - if can_edit
               %li
-                = link_to  plugin('masterdata_cockpit').project_masterdata_edit_path(), title: "Edit project masterdata", data: {modal: true, toggle: "tooltip", placement: "left"} do
+                = link_to  plugin('masterdata_cockpit').project_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"} do
                   %i.fa.fa-edit.fa-fw
                   Edit Masterdata
     %table.table
@@ -27,6 +28,6 @@
               \-
             = @project_masterdata.description
 
-- if can_edit
+- if current_user.is_allowed?('masterdata_cockpit:masterdata_create')
   - if !@project_masterdata && !flash.now[:error]
     = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').project_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'
