@@ -29,6 +29,16 @@
             = @project_masterdata.description
         %tr
           %th
+            Status:
+          %td
+            - if @project_masterdata.is_complete
+              = icon('thumbs-up')
+              Everything is fine
+            - else
+              = icon('thumbs-down')
+              = @project_masterdata.missing_attributes
+        %tr
+          %th
             Last change:
           %td
             - if @project_masterdata.changed_at
