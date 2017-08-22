@@ -14,6 +14,22 @@ module MasterdataCockpit
       }
     end
     
+    def self.revenue_relevances
+      {
+        'generating' => 'Generating',
+        'enabling'   => 'Enabling',
+        'other'      => 'Other',
+      }
+    end
+    
+    def self.business_criticalitys
+      {
+        'dev'  => 'Development',
+        'test' => 'Testing',
+        'prod' => 'Production',
+      }
+    end
+    
     def self.solutions
       # from /masterdata/solutions/
       [

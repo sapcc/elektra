@@ -16,7 +16,10 @@
         %strong
           Type
       .col-sm-8.details-value
-        = @project_masterdata.cost_object['type']
+        - if @project_masterdata.cost_object['type']
+          = MasterdataCockpit::Config.cost_object_types[@project_masterdata.cost_object['type']]
+        - else 
+          \-
     .row
       .col-sm-4.details-label
         %strong
@@ -103,13 +106,19 @@
         %strong
           Revenue Relevance
       .col-sm-8.details-value
-        = @project_masterdata.revenue_relevance
+        - if @project_masterdata.revenue_relevance
+          = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
+        - else
+          \-
     .row
       .col-sm-4.details-label
         %strong
           Business Criticality
       .col-sm-8.details-value
-        = @project_masterdata.business_criticality
+        - if @project_masterdata.business_criticality
+          = MasterdataCockpit::Config.business_criticalitys[@project_masterdata.business_criticality]
+        - else
+          \-
     .row
       .col-sm-4.details-label
         %strong

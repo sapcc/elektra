@@ -53,8 +53,20 @@
   .panel-body
     .row
       .col-sm-4
-        = f.input :revenue_relevance, label: "Revenue Relevance", as: :select, collection:['generating','enabling','other'], required:true
+        - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
+        = f.input :revenue_relevance, 
+          label: "Revenue Relevance", 
+          as: :select, 
+          collection: revenue_relevances.keys,
+          label_method: -> (k) { revenue_relevances[k] },
+          required:true
       .col-sm-4
-        = f.input :business_criticality, label: "Business Criticality", as: :select, collection:['dev','test','prod'], required:true
+        - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
+        = f.input :business_criticality, 
+          label: "Business Criticality",
+          as: :select, 
+          collection: business_criticalitys.keys,
+          label_method: -> (k) { business_criticalitys[k] },
+          required:true
       .col-sm-4
         = f.input :number_of_endusers , label: "Number of Endusers"
