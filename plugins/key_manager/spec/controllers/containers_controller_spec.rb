@@ -27,7 +27,7 @@ describe KeyManager::ContainersController, type: :controller do
     end
 
     it "returns http success and renders the right template" do
-      get :index, default_params
+      get :index, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:index)
     end
@@ -42,7 +42,7 @@ describe KeyManager::ContainersController, type: :controller do
     end
 
     it "returns http success and renders the right template" do
-      get :show, default_params.merge({id: @container.uuid})
+      get :show, params: default_params.merge({id: @container.uuid})
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
@@ -52,7 +52,7 @@ describe KeyManager::ContainersController, type: :controller do
   describe "GET 'new'" do
 
     it "returns http success and renders the right template" do
-      get :new, default_params
+      get :new, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:new)
     end
@@ -62,7 +62,7 @@ describe KeyManager::ContainersController, type: :controller do
   describe "GET 'create'" do
 
     it "returns http success and renders the new template if validation fails" do
-      post :create, default_params
+      post :create, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:new)
     end
@@ -73,7 +73,7 @@ describe KeyManager::ContainersController, type: :controller do
       allow(mock_container).to receive(:save).and_return(true)
       allow(mock_container).to receive(:valid?).and_return(true)
 
-      post :create, default_params.merge({container: ::KeyManager::FakeFactory.new.container.attributes})
+      post :create, params: default_params.merge({container: ::KeyManager::FakeFactory.new.container.attributes})
       expect(response).to redirect_to(containers_path(default_params))
     end
 
@@ -82,7 +82,7 @@ describe KeyManager::ContainersController, type: :controller do
   describe "GET 'destroy'" do
 
     it "returns http success and renders view" do
-      delete :destroy, default_params.merge({id: 'container_id'})
+      delete :destroy, params: default_params.merge({id: 'container_id'})
       expect(response).to be_success
       expect(response).to render_template(:index)
     end

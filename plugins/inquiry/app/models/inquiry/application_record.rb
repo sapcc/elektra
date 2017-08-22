@@ -1,3 +1,5 @@
-class ApplicationRecord < ActiveRecord::Base
-  self.abstract_class = true
+module Inquiry
+  class ApplicationRecord < ActiveRecord::Base
+    self.abstract_class = true
+  end
 end

@@ -13,7 +13,7 @@ describe Inquiry::InquiriesController, type: :controller do
   before :each do
     stub_authentication
 
-    get :index, domain_id: AuthenticationStub.domain_id
+    get :index, params: {domain_id: AuthenticationStub.domain_id}
     @payload = {:key1 => "value1", :key2 => "value2"}.to_json
     @processors = [controller.current_user]
     ActionMailer::Base.default_url_options[:host] = request.host_with_port

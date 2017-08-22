@@ -45,7 +45,7 @@ describe Core::ServiceLayer::Model do
 
     it 'sets attributes' do
       @base_object.attributes=({'test'=> 'test'})
-      expect(@base_object.attributes).to eq({'test'=>'test', id: nil})
+      expect(@base_object.attributes).to eq({'test'=>'test', 'id' => nil})
     end
 
     context 'params contain id attribute' do
@@ -55,7 +55,7 @@ describe Core::ServiceLayer::Model do
 
       it 'excludes id attribute' do
         @base_object.attributes=({'id'=>1,'test'=> 'test'})
-        expect(@base_object.attributes).to eq({'test'=>'test', id: 1})
+        expect(@base_object.attributes).to eq({'test'=>'test', 'id' => 1})
       end
 
       it 'sets id from params' do
@@ -103,14 +103,14 @@ describe Core::ServiceLayer::Model do
     context 'no params given' do
       it 'creates a new empty base object' do
         o = Core::ServiceLayer::Model.new(@driver)
-        expect(o.attributes).to eq({id: nil})
+        expect(o.attributes).to eq({'id' => nil})
       end
     end
 
     context 'params given' do
       it 'creates a new base object' do
         o = Core::ServiceLayer::Model.new(@driver, {'a' => 'test'})
-        expect(o.attributes).to eq({'a'=>'test', id: nil})
+        expect(o.attributes).to eq({'a'=>'test', 'id' => nil})
       end
 
       it 'sets id from params' do

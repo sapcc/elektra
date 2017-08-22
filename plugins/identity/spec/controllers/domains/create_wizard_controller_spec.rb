@@ -18,7 +18,7 @@ describe Identity::Domains::CreateWizardController, type: :controller do
 
   describe 'GET index' do
     it 'returns http success' do
-      get :new, default_params
+      get :new, params: default_params
       expect(response).to be_success
     end
   end

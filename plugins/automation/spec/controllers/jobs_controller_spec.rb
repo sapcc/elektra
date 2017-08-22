@@ -39,13 +39,13 @@ describe Automation::JobsController, type: :controller do
     end
 
     it "returns http success and renders the right template" do
-      get :show, default_params.merge({id: @job.id})
+      get :show, params: default_params.merge({id: @job.id})
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
 
     it "should assign the log and payload" do
-      get :show, default_params.merge({id: @job.id})
+      get :show, params: default_params.merge({id: @job.id})
       expect(@log).to include(assigns(:truncated_log).data_output)
       expect(@payload).to include(assigns(:truncated_payload).data_output)
     end
@@ -65,14 +65,14 @@ describe Automation::JobsController, type: :controller do
       end
 
       it "returns http success and render the template for payload" do
-        get :show_data, default_params.merge({id: @job.id, attr: 'payload'})
+        get :show_data, params: default_params.merge({id: @job.id, attr: 'payload'})
         expect(response).to be_success
         expect(response).to render_template(:show_data)
         expect(assigns(:data)).to eq(@payload)
       end
 
       it "returns http success and render the template for log" do
-        get :show_data, default_params.merge({id: @job.id, attr: 'log'})
+        get :show_data, params: default_params.merge({id: @job.id, attr: 'log'})
         expect(response).to be_success
         expect(response).to render_template(:show_data)
         expect(assigns(:data)).to eq(@log)
@@ -90,14 +90,14 @@ describe Automation::JobsController, type: :controller do
       end
 
       it "returns http success and render the template for payload" do
-        get :show_data, default_params.merge({id: @job.id, attr: 'payload'})
+        get :show_data, params: default_params.merge({id: @job.id, attr: 'payload'})
         expect(response).to be_success
         expect(response).to render_template(:show_data)
         expect(assigns(:data)).to eq(JSON.pretty_generate(JSON.parse(@payload)))
       end
 
       it "returns http success and render the template for log" do
-        get :show_data, default_params.merge({id: @job.id, attr: 'log'})
+        get :show_data, params: default_params.merge({id: @job.id, attr: 'log'})
         expect(response).to be_success
         expect(response).to render_template(:show_data)
         expect(assigns(:data)).to eq(JSON.pretty_generate(JSON.parse(@log)))
