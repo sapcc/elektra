@@ -1,4 +1,6 @@
-%h5 Cost Object
+%label Cost Object 
+%a.help-link{data:{content: "to be defined", popover: {type: "help-hint"}, toggle: "popover"}}
+  = icon('question-circle')
 .panel.panel-default
   .panel-body
     .row
@@ -22,7 +24,9 @@
           = icon('check-square-o')
         -else 
           = icon('times')
-%h5 Responsibility
+%label Responsibility
+%a.help-link{data:{content: "to be defined", popover: {type: "help-hint"}, toggle: "popover"}}
+  = icon('question-circle')
 .panel.panel-default
   .panel-body
     .row
@@ -39,3 +43,6 @@
         .col-sm-4.details-value
           = icon('envelope-o')
           = @domain_masterdata.responsible_controller_email
+          
+          
+
