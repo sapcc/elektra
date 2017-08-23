@@ -1,4 +1,4 @@
-#= require react/helpers
+#= require components/helpers
 #= require moment.min
 #= require react-datetime
 #= require audit/constants
