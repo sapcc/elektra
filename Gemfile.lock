@@ -57,8 +57,8 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 10e86a634a9dad10c0c0c454ebcae4ea1b38b81f
-  branch: master
+  revision: e577d872f5095c9a922c5faa56153f8babe38dd7
+  branch: rails5
   specs:
     monsoon-openstack-auth (1.0.0)
       excon
@@ -559,10 +559,6 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (2.0)
-      activesupport (>= 4.2)
-      multi_json (~> 1.2)
-      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -647,7 +643,6 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)
-  webpacker
 
 BUNDLED WITH
    1.15.3

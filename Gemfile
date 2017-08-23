@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '5.1.2'
+gem 'rails', '5.1.2' #Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
 
 # Views and Assets
 gem 'compass-rails'
@@ -41,8 +41,8 @@ gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: 
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
 gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git', branch: :master
-#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git', branch: :rails5
+#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth', branch: :master
 
 gem 'ruby-radius'
 
