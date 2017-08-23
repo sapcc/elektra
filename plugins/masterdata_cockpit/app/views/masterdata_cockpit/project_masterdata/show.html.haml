@@ -1,0 +1,11 @@
+=content_for :title do
+  Project Masterdata
+  
+.modal-body
+  - if !@project_masterdata
+    .alert.alert-warning
+      = icon('exclamation-circle')
+      No masterdata maintained for this project.
+  - elsif !flash.now[:error]
+    = render partial: 'masterdata_details'
+

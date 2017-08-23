@@ -12,6 +12,26 @@
         %th Description
         %td= @active_project.description
 
+-# MASTERDATA COCKPIT
+- if @masterdata_cockpit_service_available
+  - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
+  = wizard_step({ title: 'Masterdata', 
+    mandatory: true,
+    status: @project_profile.wizard_status('masterdata'),
+    action_button: ({label: 'Maintain Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
+    }) do 
+    - if @project_profile.wizard_finished?('masterdata')
+      %p 
+        The Masterdata was successful maintained. For more details take a look to the
+        = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
+    - else
+      %p Please maintain the masterdata for this project
+- else
+  = wizard_step({title: 'Masterdata',
+    mandatory: true,
+    status: 'pending'}) do
+    %p The Masterdata service is currently unavailable.
+
 -# COST CONTROL
 - if @cost_control_service_available
   - can_setup_cost_object = current_user.is_allowed?("cost_control:cost_object_get")

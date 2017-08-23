@@ -3,7 +3,7 @@
 module MasterdataCockpit
   class ProjectMasterdataController < DashboardController
 
-    before_filter :load_project_masterdata, only: [:index, :edit]
+    before_filter :load_project_masterdata, only: [:index, :edit, :show]
     before_filter :prepare_params, only: [:create, :update]
 
     authorization_context 'masterdata_cockpit'
@@ -30,7 +30,10 @@ module MasterdataCockpit
         render action: :new
       end
     end
-    
+
+    def show;
+    end
+
     private
     
     def load_project_masterdata

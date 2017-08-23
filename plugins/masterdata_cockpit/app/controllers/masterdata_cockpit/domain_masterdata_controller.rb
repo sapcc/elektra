@@ -30,7 +30,7 @@ module MasterdataCockpit
         render action: :edit
       end
     end
-    
+
     private
     
     def load_domain_masterdata

@@ -143,7 +143,7 @@ module Identity
       @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
       # for all services do
-      %w[resource_management cost_control networking].each do |service_name|
+      %w[resource_management cost_control networking masterdata_cockpit].each do |service_name|
         next unless services.available?(service_name.to_sym)
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
@@ -194,6 +194,25 @@ module Identity
         end
       end
       @project_profile.wizard_finished?('resource_management')
+    end
+
+    def update_masterdata_cockpit_wizard_status
+      project_masterdata = nil
+      begin
+        project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
+      rescue
+        # the api will return with 404 if no masterdata was found so we do nothing here
+      end
+      
+      if project_masterdata
+        @project_profile.update_wizard_status(
+          'masterdata', ProjectProfile::STATUS_DONE
+        )
+      else
+        @project_profile.update_wizard_status('masterdata', nil)
+      end
+      
+      @project_profile.wizard_finished?('masterdata')
     end
 
     def update_cost_control_wizard_status
