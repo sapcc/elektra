@@ -509,12 +509,20 @@ section {
       line-height: 34px; // to match input height
     }
 
+    a.btn {
+      line-height: inherit;
+    }
+
     label, .inputwrapper{
       margin: 0 8px 0 0;
     }
 
     .toolbar-input-divider {
       padding: 0 8px;
+    }
+
+    .main-control-buttons {
+      margin-left: auto;
     }
   }
 
