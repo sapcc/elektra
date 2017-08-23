@@ -85,14 +85,14 @@ class DashboardController < ::ScopeController
   end
 
   rescue_from 'Core::Api::Error' do |exception|
-    if exception.code.to_i == 401
-      redirect_to monsoon_openstack_auth.login_path(
-        domain_name: @scoped_domain_name, after_login: params[:after_login]
-      )
-    else
+    # if exception.code.to_i == 401
+    #   redirect_to monsoon_openstack_auth.login_path(
+    #     domain_name: @scoped_domain_name, after_login: params[:after_login]
+    #   )
+    # else
       render_exception_page(exception, title: exception.code_type,
                                        description: :message)
-    end
+    # end
   end
 
   # catch all mentioned errors and render error page
@@ -116,19 +116,52 @@ class DashboardController < ::ScopeController
     { 'Core::Error::ProjectNotFound' => { title: 'Project Not Found' } }
   ]
 
-  def rescope_token
-    if @scoped_project_id.nil? &&
-      Rails.cache.fetch("user_role_assignments/#{current_user.id}",
-                        expires_in: 1.hour) do
-         service_user.identity.role_assignments(
-           'user.id' => current_user.id,
-           'scope.domain.id' => @scoped_domain_id,
-           'effective' => true
-         ).empty?
+
+  def can_access_scope?
+    return true if !@scoped_project_id && !@scoped_domain_id
+
+    if @scoped_project_id
+      return service_user.identity.user_projects(
+        current_user.id, domain_id: @scoped_domain_id,
+                         name: @scoped_project_name
+      ).select { |project| project.id == @scoped_project_id }.length.positive?
+
+    elsif @scoped_domain_id
+      return Rails.cache.fetch(
+        "user_role_assignments/#{current_user.id}", expires_in: 1.hour
+      ) do
+        service_user.identity.role_assignments(
+          'user.id' => current_user.id,
+          'scope.domain.id' => @scoped_domain_id,
+          'effective' => true
+        ).length.positive?
       end
-      authentication_rescope_token(domain: nil, project: nil)
-    else
+    end
+    true
+  end
+
+  def rescope_token
+    byebug
+    if @scoped_project_id && FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
+      'Project', @scoped_domain_id, @scoped_project_id
+    ).nil?
+      authentication_rescope_token(
+        domain: current_user.project_domain_id || current_user.domain_id || current_user.user_domain_id,
+        project: current_user.project_id
+      )
+      @scoped_project_id = nil
+      render template: 'application/exceptions/project_not_found'
+      return
+    end
+
+    if can_access_scope?
       authentication_rescope_token
+    else
+      authentication_rescope_token(
+        domain: current_user.project_domain_id || current_user.domain_id || current_user.user_domain_id,
+        project: current_user.project_id
+      )
+      render template: 'application/excceptions/unauthorized'
     end
   end
 
