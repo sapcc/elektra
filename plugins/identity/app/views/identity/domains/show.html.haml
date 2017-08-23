@@ -20,11 +20,12 @@
           Resources & Masterdata
 
         %ul.plain-list
-          - if  plugin_available?('cost_control') && current_user.is_allowed?('cost_control:cost_object_get') && services.cost_control.available?
-            %li
-              = link_to "Cost Control", plugin('cost_control').cost_object_path
+          -# Disable cost_control and can be deleted after switch to new masterdata api
+          -#- if  plugin_available?('cost_control') && current_user.is_allowed?('cost_control:cost_object_get') && services.cost_control.available?
+          -#  %li
+          -#    = link_to "Cost Control", plugin('cost_control').cost_object_path
 
-          - if  plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata:cost_object_get') && services.cost_control.available?
+          - if  plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata:masterdata_get') && services_ng.masterdata_cockpit.available?
             %li
               = link_to "Masterdata Cockpit", plugin('masterdata_cockpit').domain_masterdata_path
 

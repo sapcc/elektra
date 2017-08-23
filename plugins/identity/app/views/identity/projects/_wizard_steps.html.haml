@@ -32,27 +32,28 @@
     status: 'pending'}) do
     %p The Masterdata service is currently unavailable.
 
+-# Disable cost_control and can be deleted after switch to new masterdata api
 -# COST CONTROL
-- if @cost_control_service_available
-  - can_setup_cost_object = current_user.is_allowed?("cost_control:cost_object_get")
-  = wizard_step({title: 'Cost Center',
-    mandatory: true,
-    action_button: ({label: 'Set Cost Object', url:plugin('cost_control').edit_cost_object_path} if can_setup_cost_object),
-    status: @project_profile.wizard_status('cost_control')}) do
-    - if @project_profile.wizard_finished?('cost_control')
-      - data = @project_profile.wizard_data('cost_control')
-      - if data and data['cost_object']
-        %table.table.no-borders
-          %tbody
-            - if  data['type']
-              %tr
-                %th{width: "30%"} Type
-                %td= data['type']
-            %tr
-              %th{width: "30%"} Cost Object
-              %td= data['cost_object']
-      - else
-        %p The Cost Object exists.
+-#- if @cost_control_service_available
+-#  - can_setup_cost_object = current_user.is_allowed?("cost_control:cost_object_get")
+-#  = wizard_step({title: 'Cost Center',
+-#    mandatory: true,
+-#    action_button: ({label: 'Set Cost Object', url:plugin('cost_control').edit_cost_object_path} if can_setup_cost_object),
+-#    status: @project_profile.wizard_status('cost_control')}) do
+-#    - if @project_profile.wizard_finished?('cost_control')
+-#      - data = @project_profile.wizard_data('cost_control')
+-#      - if data and data['cost_object']
+-#        %table.table.no-borders
+-#          %tbody
+-#            - if  data['type']
+-#              %tr
+-#                %th{width: "30%"} Type
+-#                %td= data['type']
+-#            %tr
+-#              %th{width: "30%"} Cost Object
+-#              %td= data['cost_object']
+-#      - else
+-#        %p The Cost Object exists.
 
     - else
       %p Please provide a cost object against which we can bill the services consumed by this project

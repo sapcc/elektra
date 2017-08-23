@@ -39,7 +39,9 @@ gem 'net-ssh'
 gem 'netaddr'
 gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
-gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
+
+# Disable cost_control and can be deleted after switch to new masterdata api
+#gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
@@ -66,8 +68,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # Limes
 gem 'misty', git: 'https://github.com/flystack/misty.git', branch: :master
 # gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'update-neutron'
-#gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git'
-gem 'misty-cc', path: '/root/workspace/monsoon/misty-cc'
+gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
@@ -78,7 +79,7 @@ gem 'puma', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = ['webconsole'] #e.g. ['compute', 'cost_control']
+black_list = ['webconsole','cost_control'] #e.g. ['compute', 'cost_control']
 if ENV.has_key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each{|plugin_name| black_list << plugin_name.strip}
 end

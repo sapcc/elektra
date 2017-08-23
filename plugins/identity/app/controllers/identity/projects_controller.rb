@@ -215,22 +215,23 @@ module Identity
       @project_profile.wizard_finished?('masterdata')
     end
 
-    def update_cost_control_wizard_status
-      billing_data = services.cost_control.find_project_masterdata(
-        @scoped_project_id
-      )
-
-      if billing_data && billing_data.cost_object_id
-        @project_profile.update_wizard_status(
-          'cost_control', ProjectProfile::STATUS_DONE,
-          cost_object: billing_data.cost_object_id,
-          type: billing_data.cost_object_type
-        )
-      else
-        @project_profile.update_wizard_status('cost_control', nil)
-      end
-      @project_profile.wizard_finished?('cost_control')
-    end
+# Disable cost_control and can be deleted after switch to new masterdata api
+#    def update_cost_control_wizard_status
+#      billing_data = services.cost_control.find_project_masterdata(
+#        @scoped_project_id
+#      )
+#
+#      if billing_data && billing_data.cost_object_id
+#        @project_profile.update_wizard_status(
+#          'cost_control', ProjectProfile::STATUS_DONE,
+#          cost_object: billing_data.cost_object_id,
+#          type: billing_data.cost_object_type
+#        )
+#      else
+#        @project_profile.update_wizard_status('cost_control', nil)
+#      end
+#      @project_profile.wizard_finished?('cost_control')
+#    end
 
     def update_networking_wizard_status
       if current_user.has_role?('admin') && !current_user.has_role?('network_admin')
