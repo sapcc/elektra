@@ -48,6 +48,12 @@ module ServiceLayerNg
       response = api.masterdata.set_project(masterdata["project_id"],masterdata)
       response.body
     end
+    
+    def get_solutions
+      Rails.logger.debug  "[masterdata cockpit-service] -> get_solutions"
+      response = api.masterdata.get_solutions
+      map_to(MasterdataCockpit::CostControlSolution, response.body)
+    end
 
   end
 end

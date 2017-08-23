@@ -39,7 +39,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty-cc.git
-  revision: 13a3fcdc0244efce8b6e6fc3fa61d132a807cb54
+  revision: 6b6f2300844671442d416bbdbabb84988079a421
   specs:
     misty-cc (0.1.0)
       misty (>= 0.5.1)

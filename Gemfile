@@ -67,8 +67,9 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 
 # Limes
 gem 'misty', git: 'https://github.com/flystack/misty.git', branch: :master
-# gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'update-neutron'
+#gem 'misty', path: '../misty', branch: :master
 gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git'
+#gem 'misty-cc', path: '../misty-cc', branch: :master
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
