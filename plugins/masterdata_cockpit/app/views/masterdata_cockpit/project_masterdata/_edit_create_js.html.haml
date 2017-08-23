@@ -1,0 +1,16 @@
+= content_for :javascripts do
+  :javascript
+    $(function() {
+        $('#project_masterdata_cost_object_inherited').change(function(){
+          if($('#project_masterdata_cost_object_inherited').val() == "false") {
+            $('#project_masterdata_solution').attr('disabled', false)
+            $('#project_masterdata_cost_object_type').attr('disabled', false)
+            $('#project_masterdata_cost_object_name').attr('disabled', false)
+          }
+          else {
+            $('#project_masterdata_solution').attr('disabled', true)
+            $('#project_masterdata_cost_object_type').attr('disabled', true)
+            $('#project_masterdata_cost_object_name').attr('disabled', true)
+          }
+        })
+    });

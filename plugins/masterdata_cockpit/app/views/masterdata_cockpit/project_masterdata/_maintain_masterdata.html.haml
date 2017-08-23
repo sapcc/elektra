@@ -10,11 +10,12 @@
 %label.control-label Cost Object
 .panel.panel-default
   .panel-body
+    - inherited_flag = @project_masterdata.cost_object_inherited
     .row
       .col-sm-2
         = f.input :cost_object_inherited, label: "Inherited", as: :select, include_blank: false, include_hidden: false, required:true
       .col-sm-3
-        = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions
+        = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions, disabled: inherited_flag
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 
@@ -22,9 +23,10 @@
             as:           :select, 
             collection:   types.keys, 
             label_method: -> (k) { types[k] },
+            disabled: inherited_flag,
             required:true
       .col-sm-4
-        = f.input :cost_object_name, label: "Name" , required:true
+        = f.input :cost_object_name, label: "Name" , required:true, disabled: inherited_flag
 %label.control-label Responsibility
 .panel.panel-default
   .panel-body
