@@ -22,7 +22,7 @@
     }) do 
     - if @project_profile.wizard_finished?('masterdata')
       %p 
-        The Masterdata was successful maintained. For more details take a look to the
+        The Masterdata was successfully maintained. For more details take a look to the
         = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
     - else
       %p Please maintain the masterdata for this project

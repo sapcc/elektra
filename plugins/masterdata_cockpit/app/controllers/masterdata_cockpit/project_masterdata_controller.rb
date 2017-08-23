@@ -56,7 +56,11 @@ module MasterdataCockpit
     end
     
     def solutions
-      @solutions = services_ng.masterdata_cockpit.get_solutions
+      begin
+        @solutions = services_ng.masterdata_cockpit.get_solutions
+      rescue
+        flash.now[:error] = "Could not load solutions."
+      end
     end
     
   end

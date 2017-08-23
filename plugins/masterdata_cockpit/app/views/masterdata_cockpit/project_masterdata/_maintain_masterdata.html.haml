@@ -15,7 +15,7 @@
       .col-sm-2
         = f.input :cost_object_inherited, label: "Inherited", as: :select, include_blank: false, include_hidden: false, required:true
       .col-sm-3
-        = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions, disabled: inherited_flag
+        = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions, disabled: inherited_flag, prompt: '-'
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 
@@ -31,25 +31,25 @@
 .panel.panel-default
   .panel-body
     .row
-      .col-sm-6
-        = f.input :responsible_operator_id, label: "Operator", placeholder: "C/D/I User"
+      .col-sm-6.operator-id
+        = f.input :responsible_operator_id, label: "Operator", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_operator_email, placeholder: "Email", label: false
+        = f.input :responsible_operator_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input' }
     .row
-      .col-sm-6
-        = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User"
+      .col-sm-6.operator-id
+        = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_security_expert_email, placeholder: "Email", label: false
+        = f.input :responsible_security_expert_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input', style: 'margin-top:1px' }
     .row
-      .col-sm-6
-        = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User"
+      .col-sm-6.operator-id
+        = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_product_owner_email, placeholder: "Email", label: false
+        = f.input :responsible_product_owner_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input', style: 'margin-top:1px' }
     .row
-      .col-sm-6
-        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User"
+      .col-sm-6.operator-id
+        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_controller_email, placeholder: "Email", label: false
+        = f.input :responsible_controller_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input', style: 'margin-top:1px' }
 %label.control-label Customer Information
 .panel.panel-default
   .panel-body

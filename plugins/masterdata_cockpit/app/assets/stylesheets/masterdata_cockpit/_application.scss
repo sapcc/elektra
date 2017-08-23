@@ -34,4 +34,19 @@
 
 .operator-email {
   margin-top:25px;
+  padding-left:0px;
+}
+
+.operator-id {
+  padding-right:0px;
+}
+
+.operator-id-input {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.operator-email-input {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
 }

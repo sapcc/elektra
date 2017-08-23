@@ -127,3 +127,6 @@
         - unless @project_masterdata.number_of_endusers
           \-
         = @project_masterdata.number_of_endusers
+        
+- if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
+  = link_to 'Edit Masterdata', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'

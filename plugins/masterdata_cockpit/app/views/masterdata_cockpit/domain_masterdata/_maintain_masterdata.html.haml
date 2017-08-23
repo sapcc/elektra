@@ -26,8 +26,7 @@
 .panel.panel-default
   .panel-body
     .row
-      .col-sm-6
-        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User"
+      .col-sm-6.operator-id
+        = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_controller_email, label: false, placeholder: "Email"
-
+        = f.input :responsible_controller_email, label: false, placeholder: "Email", :input_html => { class: 'operator-email-input' }
