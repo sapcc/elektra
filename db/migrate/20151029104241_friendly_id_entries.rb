@@ -1,4 +1,4 @@
-class FriendlyIdEntries < ActiveRecord::Migration
+class FriendlyIdEntries < ActiveRecord::Migration[4.2]
   def change
     create_table :friendly_id_entries do |t|
       t.string :class_name
