@@ -11,4 +11,5 @@ $ ->
   $wizardContainer = $('[data-wizard-update-url]')
   url = $wizardContainer.data('wizardUpdateUrl')
   $('body').on 'hidden.bs.modal', ':not(.modal)', () ->
-    updateWizardPage(url) if url
+    console.log('we have hidden a modal');
+    updateWizardPage(url)

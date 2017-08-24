@@ -47,10 +47,6 @@ Then(/^I see a selectbox with id "(.*?)"$/) do |id|
   expect(page).to have_select(id)
 end
 
-Then(/^I see the domain home page$/) do
-  expect(page).to have_selector('a', text: 'Home')
-end
-
 And(/^options of "(.*?)" contains names and ids$/) do |id|
   option = find_field(id).all('option').last
   expect(option.value).not_to eq("undefined")
@@ -76,12 +72,8 @@ Given(/I am on the root page$/) do
   visit "/"
 end
 
-When(/^I visit the test domain$/) do
+When(/^I visit domain$/) do
   visit "/" + ENV['CCTEST_DOMAIN']
-end
-
-When(/^I visit path "(.*?)"$/) do |path|
-  visit path
 end
 
 When(/^I visit domain path "(.*?)"$/) do |path|
@@ -100,8 +92,4 @@ end
 
 Then(/^I am redirected to project path "(.*?)"$/) do |path|
   expect(current_path).to eq( "/" + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/" + path)
-end
-
-Then(/^I see warning "(.*?)"$/) do |warning|
-  expect(page).to have_content warning
 end
