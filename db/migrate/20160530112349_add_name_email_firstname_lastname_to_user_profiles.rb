@@ -1,4 +1,4 @@
-class AddNameEmailFirstnameLastnameToUserProfiles < ActiveRecord::Migration
+class AddNameEmailFirstnameLastnameToUserProfiles < ActiveRecord::Migration[4.2]
   def change
     add_column :user_profiles, :name, :string
     add_column :user_profiles, :email, :string
