@@ -112,7 +112,7 @@ NewShareNetwork = React.createClass
                       option { value: subnet.id, key: subnet.id }, "#{subnet.name} #{subnet.cidr}"
 
       div className: 'modal-footer',
-        button role: 'close', type: 'button', className: 'btn btn-default', onClick: ((a,b,c) => console.log 'a,b,c', a,b,c; @props.close()), 'Close'
+        button role: 'close', type: 'button', className: 'btn btn-default', onClick: @props.close(), 'Close'
         React.createElement ReactFormHelpers.SubmitButton,
           label: 'Create',
           loading: shareNetworkForm.isSubmitting,

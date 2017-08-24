@@ -101,8 +101,6 @@ Events = ({
 
     React.createElement Pagination, offset: offset, limit: limit, total: total
 
-
-
 Events = connect(
   (state) ->
     filterStartTime:            state.events.filterStartTime
@@ -121,11 +119,7 @@ Events = connect(
     handleFilterTypeChange:     (filterType)          -> dispatch(filterEventsFilterType(filterType))
     handleFilterTermChange:     (filterTerm, timeout) -> dispatch(filterEventsFilterTerm(filterTerm, timeout))
     handleClearFilters:         ()                    -> dispatch(clearFilters())
-
-
-
 )(Events)
-
 
 # export
 audit.EventList = Events

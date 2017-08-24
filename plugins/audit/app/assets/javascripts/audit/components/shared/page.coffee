@@ -28,10 +28,8 @@ Page = ({
 Page = connect(
   (state) ->
       currentPage: state.events.currentPage
-
   (dispatch) ->
     handlePageChange: (page) -> dispatch(paginate(page))
-
 
 )(Page)
 
