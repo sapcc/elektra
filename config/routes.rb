@@ -42,4 +42,6 @@ Rails.application.routes.draw do
     "/#{domain_id || Rails.application.config.default_domain}"
   end)
 
+  get '*path', to: 'errors#error_404', via: :all
+
 end

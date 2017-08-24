@@ -18,7 +18,7 @@ class FriendlyIdEntry < ActiveRecord::Base
     self.where(sql)
   end
 
-  def self.find_by_class_scope_and_key_or_slug(class_name,scope,key_or_slug)
+  def self.find_by_class_scope_and_key_or_slug(class_name, scope, key_or_slug)
     sql = [
       "class_name=? and (lower(key)=? or lower(slug)=?) and endpoint=? #{'and lower(scope)=?' if scope}",
       class_name,
@@ -29,6 +29,14 @@ class FriendlyIdEntry < ActiveRecord::Base
     sql << scope.to_s.downcase if scope
 
     self.where(sql).first
+  end
+
+  def self.find_project(scope, key_or_slug)
+    find_by_class_scope_and_key_or_slug('Project', scope, key_or_slug)
+  end
+
+  def self.find_domain(key_or_slug)
+    find_by_class_scope_and_key_or_slug('Domain', nil, key_or_slug)
   end
 
   def self.find_or_create_entry(class_name,scope,key,name)
