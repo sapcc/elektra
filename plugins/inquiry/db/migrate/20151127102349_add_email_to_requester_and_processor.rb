@@ -1,4 +1,4 @@
-class AddEmailToRequesterAndProcessor < ActiveRecord::Migration
+class AddEmailToRequesterAndProcessor < ActiveRecord::Migration[4.2]
   def change
     remove_column :inquiry_process_steps, :processor_id
     add_column :inquiry_process_steps, :processor_id, :integer, index: true

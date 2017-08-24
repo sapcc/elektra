@@ -1,4 +1,4 @@
-class CreateInquiryProcessSteps < ActiveRecord::Migration
+class CreateInquiryProcessSteps < ActiveRecord::Migration[4.2]
   def change
     create_table :inquiry_process_steps do |t|
       t.string :from_state

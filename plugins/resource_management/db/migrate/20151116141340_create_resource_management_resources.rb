@@ -1,4 +1,4 @@
-class CreateResourceManagementResources < ActiveRecord::Migration
+class CreateResourceManagementResources < ActiveRecord::Migration[4.2]
   def change
     create_table :resource_management_resources do |t|
       t.string :cluster_id

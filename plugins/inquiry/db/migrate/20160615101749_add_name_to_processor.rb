@@ -1,4 +1,4 @@
-class AddNameToProcessor < ActiveRecord::Migration
+class AddNameToProcessor < ActiveRecord::Migration[4.2]
   def change
     add_column :inquiry_processors, :name, :string
   end
