@@ -116,65 +116,19 @@ class DashboardController < ::ScopeController
     { 'Core::Error::ProjectNotFound' => { title: 'Project Not Found' } }
   ]
 
-
-  def can_access_scope?
-    if @scoped_project_id
-      # @scoped_project_id exists -> check if projects user has access to
-      # includes the requested project.
-      return service_user.identity.user_projects(
-        current_user.id, domain_id: @scoped_domain_id,
-                         name: @scoped_project_name
-      ).select { |project| project.id == @scoped_project_id }.length.positive?
-    elsif @scoped_domain_id
-      # @scoped_project_id is nil but @scoped_domain_id exists -> check wether
-      # user has any role assignments to the 'new' domain.
-      return Rails.cache.fetch(
-        "user_role_assignments/#{current_user.id}", expires_in: 1.hour
-      ) do
-        service_user.identity.role_assignments(
-          'user.id' => current_user.id,
-          'scope.domain.id' => @scoped_domain_id,
-          'effective' => true
-        ).length.positive?
-      end
-    end
-    # both @scoped_project_id and @scoped_domain_id are nil. In this case we
-    # return true. User has access to nil scope! It means the token will
-    # be unscoped.
-    true
-  end
-
   def rescope_token
-    # @scoped_project_id is set by scope controller. Also the scope controller
-    # updates the friendlyId entry for this project if it exists. It means that
-    # if the entry for this project id is nil so the project does not exist!
-    # In this case we rescope current user back to her 'old' scope, reset
-    # the @can_access_project and render the project not found page
-    if @scoped_project_id && FriendlyIdEntry.find_by_class_scope_and_key_or_slug(
-      'Project', @scoped_domain_id, @scoped_project_id
-    ).nil?
-      authentication_rescope_token(
-        domain: current_user.project_domain_id || current_user.domain_id || current_user.user_domain_id,
-        project: current_user.project_id
-      )
-      @can_access_project = false
-      render template: 'application/exceptions/project_not_found'
-      return
-    end
-
-    # friendlyId entry exists! Now we check if user has access to the requested
-    # scope. If so we rescope the token to the new scope. In other case we
-    # rescope user to her 'old' scope, reset the @can_access_project and render
-    # the unauthorized page.
-    if can_access_scope?
-      authentication_rescope_token
+    if @scoped_project_id.nil? &&
+      Rails.cache.fetch("user_role_assignments/#{current_user.id}",
+                        expires_in: 1.hour) do
+         service_user.identity.role_assignments(
+           'user.id' => current_user.id,
+           'scope.domain.id' => @scoped_domain_id,
+           'effective' => true
+         ).empty?
+      end
+      authentication_rescope_token(domain: nil, project: nil)
     else
-      authentication_rescope_token(
-        domain: current_user.project_domain_id || current_user.domain_id || current_user.user_domain_id,
-        project: current_user.project_id
-      )
-      @can_access_project = false
-      render template: 'application/exceptions/unauthorized'
+      authentication_rescope_token
     end
   end
 

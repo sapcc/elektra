@@ -5,7 +5,7 @@ Feature: Authentication
 
   Scenario: User is not logged
     Given I am not logged in
-    When I visit the test domain
+    When I visit domain
     Then I see a "Log in" button
 
   Scenario: User is not logged in and tries to visit domain landing page
