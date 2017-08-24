@@ -65,18 +65,20 @@ class ScopeController < ::ApplicationController
     @policy_default_params = { target: {} }
     @policy_default_params[:target][:scoped_domain_name] = @scoped_domain_name
     @policy_default_params[:target][:scoped_project_name] = @scoped_project_name
+
+    @can_access_domain = !@scoped_domain_name.nil?
+    @can_access_project = !@scoped_project_name.nil?
   end
 
-  rescue_and_render_exception_page [
-    {
-      'Core::Error::ServiceUserNotAuthenticated' => {
-        title: 'Unsupported Domain',
-        description: 'Dashboard is not enabled for this domain.',
-        details: :message
-      }
-    },
-    {
-      'Core::Error::DomainNotFound' => { title: 'Bad Domain' }
-    }
-  ]
+  rescue_from(
+    'Core::Error::ServiceUserNotAuthenticated', 'Core::Error::DomainNotFound'
+  ) do |exception|
+    render_exception_page(
+      exception,
+      title: 'Unsupported Domain',
+      description: -> (exception, controller) { "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again" },
+      details: :message,
+      warning: true
+    )
+  end
 end

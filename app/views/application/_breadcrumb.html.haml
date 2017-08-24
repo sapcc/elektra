@@ -1,6 +1,6 @@
 .context-breadcrumb.context-breadcrumb-fancy
   .container.context-container
-    - if @scoped_domain_id
+    - if @can_access_domain
       %ol.context-list
         %li.dropdown
           = link_to plugin('identity').domain_path(project_id:nil) do
@@ -9,14 +9,13 @@
       - unless @domain_switch
         %ol.context-list
           %li.dropdown
-            = link_to plugin('identity').user_projects_path, data: {modal: true} do
+            = link_to plugin('identity').user_projects_path(project_id: @scoped_project_id), data: {modal: true} do
               %i.icon-link.fa.fa-th-list
 
 
-    - if @scoped_project_id and not @domain_switch
+    - if @can_access_project && !@domain_switch
       %ol.context-list
-        %li
-          = link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_id)
+        %li= link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_id)
 
       %ol.context-list
         %li.dropdown.dropdown-mega

@@ -1,0 +1,6 @@
+%h3 Project Not Found
+%p
+  A project with the name
+  %b= params[:project_id]
+  doesn't seem to exist. Please check the spelling or choose one of your
+  = link_to 'projects', plugin('identity').user_projects_path(project_id: nil), data: {modal: true}
