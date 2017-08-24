@@ -9,12 +9,16 @@
       = "#{@header_title} Warning"
 
   .modal-body
-    %h3= @title.html_safe
-    %p= h(@description)
+    %h3= sanitize(@title)
+    %p= sanitize(@description, tags: %w(b))
 
   .modal-footer
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
 - else
-  %h3= @title.html_safe
-  %p= h(@description)
+  %h3= sanitize(@title)
+  %p= sanitize(@description, tags: %w(b))#h(@description)
+  - if Rails.env.development?
+    .bs-callout.bs-callout-info
+      %h4 Details
+      %p= @details

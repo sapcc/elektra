@@ -15,14 +15,16 @@ module Identity
       def create
         enforce_permissions('identity:project_member_create',
                             domain_id: @scoped_domain_id)
+
         @user = if params[:user_name].blank?
                   nil
                 else
+                  user_name = params[:user_name].strip
                   begin
                     service_user.identity.users(domain_id: @scoped_domain_id,
-                                                name: params[:user_name]).first
+                                                name: user_name).first
                   rescue
-                    service_user.identity.find_user(params[:user_name])
+                    service_user.identity.find_user(user_name)
                   end
                 end
         load_role_assignments
@@ -53,6 +55,7 @@ module Identity
         load_role_assignments
         available_role_ids = @roles.collect(&:id)
 
+
         # update changed roles
         updated_roles_user_ids = []
         params[:role_assignments].try(:each) do |user_id, new_user_role_ids|
@@ -62,6 +65,7 @@ module Identity
 
           role_ids_to_add = new_user_role_ids - old_user_role_ids
           role_ids_to_remove = old_user_role_ids - new_user_role_ids
+
 
           role_ids_to_add.each do |role_id|
             next unless available_role_ids.include?(role_id)

@@ -36,12 +36,6 @@ class ApplicationController < ActionController::Base
     {
       'Fog::OpenStack::Errors::ServiceError' =>
         { title: 'Backend Service Error' }
-    },
-    {
-      'Core::Error::ServiceUserNotAuthenticated' => {
-        title: 'Service User Authentication Error',
-        description: :message
-      }
     }
   ]
 
