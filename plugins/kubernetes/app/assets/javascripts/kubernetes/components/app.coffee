@@ -1,8 +1,14 @@
 #= require kubernetes/components/clusters/list
+#= require kubernetes/components/clusters/new
+#= require react/dialogs
+
 
 { div, h4, p, a, ul, li } = React.DOM
 { connect } = ReactRedux
-{ ClusterList, fetchClusters } = kubernetes
+{ ClusterList, fetchClusters, NewClusterModal } = kubernetes
+
+modalComponents =
+  'NEW_CLUSTER': NewClusterModal
 
 App = React.createClass
   componentDidMount: ->
@@ -27,6 +33,10 @@ App = React.createClass
         isFetching: @props.isFetching,
         loadClusters: @props.loadClusters
 
+      
+      React.createElement ReactModal.Container('modals', modalComponents)
+
+
 
 
 kubernetes.App = connect(
@@ -34,8 +44,7 @@ kubernetes.App = connect(
     clusters:   state.clusters.items
     isFetching: state.isFetching
 
-
-
   (dispatch) ->
     loadClusters:         () -> dispatch(fetchClusters())
+
 )(App)

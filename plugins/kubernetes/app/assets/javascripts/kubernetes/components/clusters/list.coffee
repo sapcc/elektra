@@ -3,19 +3,20 @@
 # import
 { div, span, label, select, option, input, i, table, thead, tbody, tr, th, td, button } = React.DOM
 { connect } = ReactRedux
-{ ClusterItem, createCluster } = kubernetes
+{ ClusterItem, openNewClusterDialog } = kubernetes
 
 
 Clusters = ({
   clusters,
   isFetching,
-  error
+  error,
+  handleNewCluster
 }) ->
 
   div null,
     div className: 'toolbar toolbar-controlcenter',
       div className: 'main-control-buttons',
-        button className: "btn btn-primary", onClick: ((e) -> e.preventDefault(); handleClusterCreate()),
+        button className: "btn btn-primary", onClick: ((e) -> e.preventDefault(); handleNewCluster()),
           "Create Cluster"
 
       # div className: 'inputwrapper',
@@ -64,7 +65,8 @@ Clusters = connect(
     clusters: state.clusters.items
 
   (dispatch) ->
-    handleClusterCreate:  () -> dispatch(createCluster())
+    handleNewCluster: () -> dispatch(openNewClusterDialog())
+
 
 
 
