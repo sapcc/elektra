@@ -1,4 +1,4 @@
-class CreateInquiryInquiries < ActiveRecord::Migration
+class CreateInquiryInquiries < ActiveRecord::Migration[4.2]
   def change
     create_table :inquiry_inquiries do |t|
       t.string :kind
