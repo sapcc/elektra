@@ -103,6 +103,6 @@ Rails.application.configure do
   # error handling
   config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
   config.log_tags = [ :uuid ]
-  config.middleware.use "TaggedExceptionsMiddleware"
+  config.middleware.use TaggedExceptionsMiddleware
 
 end
