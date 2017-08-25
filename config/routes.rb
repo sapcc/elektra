@@ -32,6 +32,10 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: 'identity' do
+    get '/:domain_id/:project_id' => 'projects#show'
+  end
+
   # route for overwritten High Voltage Pages controller
   get "/pages/*id" => 'pages#show', as: :core_page, format: false
 
