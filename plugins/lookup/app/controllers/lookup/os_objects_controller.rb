@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lookup
   class OsObjectsController < Lookup::ApplicationController
     authorization_context 'lookup'

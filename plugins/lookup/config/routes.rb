@@ -8,4 +8,7 @@ Lookup::Engine.routes.draw do
   match '/projects/:query' => 'os_objects#show_project', as: :projects, via: [:get, :post]
   match '/networks/private/:query' => 'os_objects#show_network_private', as: :private_networks, via: [:get, :post]
   match '/networks/external/:query' => 'os_objects#show_network_external', as: :external_networks, via: [:get, :post]
+
+  get '/object/:object_type/:object_id' => 'services#find', as: :find_object
+  get '/object/types' => 'services#object_types'
 end
