@@ -14,10 +14,6 @@ module Compute
 
     private
 
-    def release_state
-      'experimental'
-    end
-
     def load_hv(id)
       @hypervisor = services_ng.compute.find_hypervisor(id)
     end

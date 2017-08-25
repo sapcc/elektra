@@ -78,7 +78,7 @@ class ScopeController < ::ApplicationController
     render_exception_page(
       exception,
       title: 'Unsupported Domain',
-      description: -> (exception, controller) { "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again" },
+      description: -> (_e, controller) { "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again" },
       details: :message,
       warning: true
     )

@@ -15,7 +15,7 @@
 
     - if @can_access_project && !@domain_switch
       %ol.context-list
-        %li= link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_fid)
+        %li= link_to @scoped_project_name, plugin('identity').project_path(project_id: @scoped_project_id)
 
       %ol.context-list
         %li.dropdown.dropdown-mega

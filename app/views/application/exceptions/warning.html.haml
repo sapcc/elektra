@@ -17,7 +17,7 @@
 
 - else
   %h3= sanitize(@title)
-  %p= sanitize(@description, tags: %w(b))#h(@description)
+  %p= sanitize(@description, tags: %w(b))
   - if Rails.env.development?
     .bs-callout.bs-callout-info
       %h4 Details

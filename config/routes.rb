@@ -32,6 +32,10 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: 'identity' do
+    get '/:domain_id/:project_id' => 'projects#show'
+  end
+
   # route for overwritten High Voltage Pages controller
   get "/pages/*id" => 'pages#show', as: :core_page, format: false
 
@@ -41,5 +45,7 @@ Rails.application.routes.draw do
     domain_id = request.query_parameters["domain_id"]
     "/#{domain_id || Rails.application.config.default_domain}"
   end)
+
+  get '*path', to: 'errors#error_404', via: :all
 
 end

@@ -1,4 +1,4 @@
-class DebugEnvMiddleware 
+class DebugEnvMiddleware
 
   def initialize(app, options = {})
     @app = app

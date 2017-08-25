@@ -1,7 +1,11 @@
-# This class is used by ShowException middleware. See config/environments/production.rb 
+# This class is used by ShowException middleware. See config/environments/production.rb
 class ErrorsController < ActionController::Base
   include CurrentUserWrapper
   layout 'errors'
+
+  def error_404
+    render action: :page_not_found
+  end
 
   def show
     @exception         = env['action_dispatch.exception']
