@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   end
 
   scope module: 'identity' do
-    get '/:domain_id/:project_id' => 'projects#show'
+    get '/:domain_id/:project_id' => 'projects#show', as: :project_home
   end
 
   # route for overwritten High Voltage Pages controller
