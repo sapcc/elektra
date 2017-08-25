@@ -116,20 +116,58 @@ class DashboardController < ::ScopeController
     { 'Core::Error::ProjectNotFound' => { title: 'Project Not Found' } }
   ]
 
+  # this method checks if user has permissions for the new scope and if so
+  # it rescopes the token.
   def rescope_token
-    if @scoped_project_id.nil? &&
-      Rails.cache.fetch("user_role_assignments/#{current_user.id}",
-                        expires_in: 1.hour) do
-         service_user.identity.role_assignments(
-           'user.id' => current_user.id,
-           'scope.domain.id' => @scoped_domain_id,
-           'effective' => true
-         ).empty?
+    if @scoped_project_id
+      # @scoped_project_id exists -> check if friendly id for this project
+      # also exists. The scope controller runs bevore this controller and
+      # updates the friendlyId entry if project exists.
+      unless FriendlyIdEntry.find_project(@scoped_domain_id, @scoped_project_id)
+        # friendly id entry is nil -> reset @can_access_project, render project
+        # not found page and return.
+        @can_access_project = false
+        return render(template: 'application/exceptions/project_not_found')
       end
-      authentication_rescope_token(domain: nil, project: nil)
+
+      # did not return -> check if user projects include the requested project.
+      has_project_access = service_user.identity.user_projects(
+        current_user.id, domain_id: @scoped_domain_id,
+                         name: @scoped_project_name
+      ).select { |project| project.id == @scoped_project_id }.length.positive?
+
+      unless has_project_access
+        # user has no permissions for requested project -> reset
+        # @can_access_project, render unauthorized page and return.
+        @can_access_project = false
+        return render(template: 'application/exceptions/unauthorized')
+      end
+    elsif @scoped_domain_id
+      # @scoped_project_id is nil and @scoped_domain_id exists -> check if
+      # user can access the requested domain.
+      has_domain_access = Rails.cache.fetch(
+        "user_domain_role_assignments/#{current_user.id}/#{@scoped_domain_id}",
+        expires_in: 1.hour
+      ) do
+        service_user.identity.role_assignments(
+          'user.id' => current_user.id, 'scope.domain.id' => @scoped_domain_id,
+          'effective' => true
+        ).length.positive?
+      end
+      unless has_domain_access
+        # user has no permissions for the new domain -> rescope to
+        # unscoped token and return
+        return authentication_rescope_token(domain: nil, project: nil)
+      end
     else
-      authentication_rescope_token
+      # both @scoped_project_id and @scoped_domain_id are nil
+      # -> render unauthorized page and return.
+      @can_access_project = false
+      return render(template: 'application/exceptions/unauthorized')
     end
+
+    # did not return yet -> rescope token to the 'new' scope.
+    authentication_rescope_token
   end
 
   def check_terms_of_use

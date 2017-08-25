@@ -1,6 +1,6 @@
 module ApplicationHelper
   def page_title
-    "CCloud #{@scoped_domain_name if @scoped_domain_name} #{current_region if current_region}"
+    "CCloud #{@scoped_domain_name if @scoped_domain_name} #{current_region if respond_to?(:current_region) and current_region}"
   end
 
   def render_paginatable(items)
