@@ -151,7 +151,8 @@ module ApplicationHelper
           if options[:active_project] and options[:active_project].id==project.id
             content_tag(:li, options[:active_project].name, class: 'current-project')
           else
-            content_tag(:li, link_to( subproject.name, plugin('identity').project_path(project_id: subproject.id)), id: subproject.id)
+            id = subproject.respond_to?(:friendly_id) ? subproject.friendly_id : subproject.id
+            content_tag(:li, link_to( subproject.name, main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: id)), id: subproject.id)
           end
         end.join("\n").html_safe
 
@@ -175,7 +176,8 @@ module ApplicationHelper
                 if is_active_project
                   concat project.name
                 else
-                  concat link_to project.name, plugin('identity').project_path(project_id: project.id)
+                  id = project.respond_to?(:friendly_id) ? project.friendly_id : project.id
+                  concat link_to project.name, main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: id)
                 end
                 if v.is_a?(Hash)
                   concat subprojects_tree(v,auth_projects,options)

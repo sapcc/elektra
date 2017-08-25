@@ -37,7 +37,8 @@ module Identity
                 {}
               end
 
-              concat link_to(name, plugin('identity').project_path(project_id: node.friendly_id), tooltip_options)
+              # concat link_to(name, plugin('identity').project_path(project_id: node.friendly_id), tooltip_options)
+              concat link_to(name, main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: node.friendly_id), tooltip_options)
             end
 
             if has_children
@@ -46,9 +47,6 @@ module Identity
           end)
         end
       end
-
     end
-
-
   end
 end

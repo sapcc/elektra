@@ -1,6 +1,6 @@
 - if modal?
   = content_for :title do
-    Jump to Project 
+    Jump to Project
 - else
   = content_for :main_toolbar do
     Your Projects
@@ -15,4 +15,5 @@
     %ul.content-list.searchable{data:{search_input: '#jump-to-search-input'}}
       - @projects.each do |project|
         %li{data: {search_name: project.name}}
-          = link_to project.name, plugin('identity').project_path(project_id:project.friendly_id)
+          =# link_to project.name, plugin('identity').project_path(project_id:project.friendly_id)
+          = link_to project.name, main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: project.friendly_id)
