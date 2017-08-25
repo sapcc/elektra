@@ -158,7 +158,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (4.5.0)
+    aasm (4.12.2)
+      concurrent-ruby (~> 1.0)
     actionmailer (4.2.4)
       actionpack (= 4.2.4)
       actionview (= 4.2.4)
@@ -261,6 +262,7 @@ GEM
       compass (~> 1.0.0)
       sass-rails (< 5.1)
       sprockets (< 4.0)
+    concurrent-ruby (1.0.5)
     config (1.0.0)
       activesupport (>= 3.0)
       deep_merge (~> 1.0.0)
@@ -369,9 +371,18 @@ GEM
     jquery-ui-rails (5.0.5)
       railties (>= 3.2.16)
     json (1.8.3)
-    kaminari (0.16.3)
-      actionpack (>= 3.0.0)
-      activesupport (>= 3.0.0)
+    kaminari (1.0.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.0.1)
+      kaminari-activerecord (= 1.0.1)
+      kaminari-core (= 1.0.1)
+    kaminari-actionview (1.0.1)
+      actionview
+      kaminari-core (= 1.0.1)
+    kaminari-activerecord (1.0.1)
+      activerecord
+      kaminari-core (= 1.0.1)
+    kaminari-core (1.0.1)
     launchy (2.4.3)
       addressable (~> 2.3)
     listen (3.0.4)
