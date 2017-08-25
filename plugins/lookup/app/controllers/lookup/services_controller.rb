@@ -35,7 +35,7 @@ module Lookup
       'automation_job' => %w[automation job],
       'automation' => %w[automation automation],
       'automation_run' => %w[automation automation_run],
-      'dns_zone' => %w[dns_service find_zone],
+      #'dns_zone' => %w[dns_service find_zone],
       'dns_pool' => %w[dns_service find_pool],
       'image' => %w[image find_image],
       'inquiry' => %w[inquiry get_inquiry],
@@ -53,43 +53,37 @@ module Lookup
     }.freeze
 
     def find
-      object_type = params[:object_type]
-      object_id = params[:object_id]
-
-      service_name, method_name = if @scoped_project_id
-                                    PROJECT_SERVICE_METHOD_MAP[object_type]
-                                  elsif @scoped_domain_id
-                                    DOMAIN_SERVICE_METHOD_MAP[object_type]
-                                  else
-                                    [nil, nil]
-                                  end
+      service_name, method_name = service_and_method_name(params[:object_type])
 
       unless service_name
-        return render(json: "#{object_type} is not supported.")
+        return render(json: { error: "#{object_type} is not supported." })
       end
 
-      object_service = if services_ng.respond_to?(service_name)
-                         services_ng.send(service_name)
-                       else
-                         services.send(service_name)
-                       end
-
       begin
-        object = object_service.send(method_name, object_id)
+        object = object_service.send(method_name, params[:object_id])
         render json: object
       rescue => e
         render json: e.respond_to?(:type) ? e.type : e.respond_to?(:code_type) ? e.code_type : e.message
       end
     end
 
+    protected
+
     def object_types
-      render json: if @scoped_project_id
-                     PROJECT_SERVICE_METHOD_MAP.keys
-                   elsif @scoped_domain_id
-                     DOMAIN_SERVICE_METHOD_MAP.keys
-                   else
-                     [nil, nil]
-                   end
+      return render(json: PROJECT_SERVICE_METHOD_MAP.keys) if @scoped_project_id
+      return render(json: DOMAIN_SERVICE_METHOD_MAP.keys) if @scoped_domain_id
+      render(json: [])
+    end
+
+    def object_service(name)
+      return services_ng.send(name) if services_ng.respond_to?(name)
+      services.send(name)
+    end
+
+    def service_and_method_name(object_type)
+      return PROJECT_SERVICE_METHOD_MAP[object_type] if @scoped_project_id
+      return DOMAIN_SERVICE_METHOD_MAP[object_type] if @scoped_domain_id
+      [nil, nil]
     end
   end
 end
