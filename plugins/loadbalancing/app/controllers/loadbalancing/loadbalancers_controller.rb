@@ -124,6 +124,7 @@ module Loadbalancing
       vip_port_id = @loadbalancer.vip_port_id
       @floating_ip = Networking::FloatingIp.new(nil, params[:floating_ip])
 
+
       success = begin
         @floating_ip = services_ng.networking.attach_floatingip(params[:floating_ip][:ip_id], vip_port_id)
         if @floating_ip.port_id
@@ -132,11 +133,7 @@ module Loadbalancing
           false
         end
       rescue => e
-        if e.type == 'NotFound'
-          @floating_ip.errors.add('Error:', 'Could not attach floating IP to load balancer. Please verify that a router between private and floating ip network exists.')
-        else
-          @floating_ip.errors.add('message', e.message)
-        end
+        @floating_ip.errors.add('message', e.message)
         false
       end
 
