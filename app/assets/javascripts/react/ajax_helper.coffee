@@ -20,6 +20,7 @@ class @ReactAjaxHelper
       data: formattedData
       success: options['success']
       error: options['error']
+      statusCode: options['statusCode']
       complete: ( jqXHR, textStatus) ->
         redirectToUrl = jqXHR.getResponseHeader('Location')
         if redirectToUrl # url is presented
