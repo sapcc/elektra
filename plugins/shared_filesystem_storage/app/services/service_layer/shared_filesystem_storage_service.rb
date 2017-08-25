@@ -12,7 +12,7 @@ module ServiceLayer
       })
     end
 
-    def available?(action_name_sym=nil)
+    def available?(action_name_sym = nil)
       true
     end
 
