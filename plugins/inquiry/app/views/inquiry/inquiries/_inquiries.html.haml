@@ -1,4 +1,4 @@
-.inquiries-container{data: {update_path: plugin('inquiry').inquiries_path(params.merge(partial:true)), update_interval: 600}}
+.inquiries-container{data: {update_path: plugin('inquiry').inquiries_path(params.to_unsafe_hash.merge(partial:true)), update_interval: 600}}
   %table.table
     %thead
       %tr
