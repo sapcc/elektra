@@ -74,5 +74,5 @@ Rails.application.configure do
 
   config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
   config.log_tags = [ :uuid ]
-  config.middleware.use "TaggedExceptionsMiddleware"
+  config.middleware.use TaggedExceptionsMiddleware
 end
