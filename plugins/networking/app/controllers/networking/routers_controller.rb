@@ -152,14 +152,14 @@ module Networking
       ).reject(&:empty?)
 
       # build new router object
-      @router = services_ng.networking.new_router(params[:router])
+      @router = services_ng.networking.new_router(params[:router].to_unsafe_hash)
       @router.id = params[:id]
 
       if params[:router][:external_gateway_info].blank? ||
          params[:router][:external_gateway_info][:network_id].blank?
         @router.external_gateway_info = {}
       else
-        @router.external_gateway_info = params[:router][:external_gateway_info]
+        @router.external_gateway_info = params[:router][:external_gateway_info].to_unsafe_hash
       end
 
       @router.internal_subnets = @selected_internal_subnet_ids
