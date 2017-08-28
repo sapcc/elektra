@@ -70,10 +70,6 @@ Pagination = connect(
     limit:        state.events.limit
     total:        state.events.total
     currentPage:  state.events.currentPage
-
-  (dispatch) ->
-
-
 )(Pagination)
 
 

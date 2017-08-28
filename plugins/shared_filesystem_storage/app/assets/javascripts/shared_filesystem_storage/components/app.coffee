@@ -16,7 +16,7 @@
 #= require shared_filesystem_storage/components/share_networks/edit
 #= require shared_filesystem_storage/components/share_networks/show
 #= require shared_filesystem_storage/components/share_networks/share_network_security_services
-#= require react/dialogs
+#= require components/dialogs
 
 { div } = React.DOM
 { connect } = ReactRedux

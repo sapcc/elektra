@@ -5,8 +5,7 @@ require 'spec_helper'
 describe Identity::ProjectsController, type: :controller do
   routes { Identity::Engine.routes }
 
-  default_params = { domain_id: AuthenticationStub.domain_id,
-                     project_id: AuthenticationStub.project_id }
+  default_params = { domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id }
 
   before(:all) do
     # DatabaseCleaner.clean
@@ -26,13 +25,13 @@ describe Identity::ProjectsController, type: :controller do
 
   describe 'GET index' do
     it 'returns http success' do
-      get :user_projects, default_params
+      get :user_projects, params: default_params
       expect(response).to be_success
     end
   end
 
   describe 'GET show' do
-    subject { get :show, default_params }
+    subject { get :show, params: default_params }
 
     before :each do
       @profile = ProjectProfile
@@ -76,15 +75,13 @@ describe Identity::ProjectsController, type: :controller do
   end
 
   describe 'GET show_wizard' do
-    subject { get :show_wizard, default_params }
-
+    subject { get :show_wizard, params: default_params, xhr: true}
     before :each do
       @profile = ProjectProfile
                  .find_or_create_by_project_id(default_params[:project_id])
       @profile.update_wizard_status('cost_control', nil)
       @profile.update_wizard_status('resource_management', nil)
       @profile.update_wizard_status('networking', nil)
-      allow(controller.request).to receive(:xhr?).and_return true
       allow(controller)
         .to receive(:update_resource_management_wizard_status).and_return(true)
       allow(controller)

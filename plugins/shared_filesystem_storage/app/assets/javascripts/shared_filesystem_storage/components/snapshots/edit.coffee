@@ -1,4 +1,4 @@
-#= require react/form_helpers
+#= require components/form_helpers
 
 { div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux

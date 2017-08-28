@@ -20,7 +20,7 @@ describe DashboardController, type: :controller do
 
   describe "GET 'index'" do
     it "returns http success" do
-      get :index, {domain_id: AuthenticationStub.domain_id}
+      get :index, params: {domain_id: AuthenticationStub.domain_id}
       expect(response).to be_success
     end
   end
@@ -35,7 +35,7 @@ describe DashboardController, type: :controller do
 
         it 'should rescope' do
           expect(controller).to receive(:authentication_rescope_token)
-          get :index, default_params
+          get :index, params: default_params
         end
       end
       context 'and user has no access to project' do
@@ -45,7 +45,7 @@ describe DashboardController, type: :controller do
         end
 
         it 'should render unauthorized page' do
-          get :index, default_params
+          get :index, params: default_params
           expect(response).to render_template('application/exceptions/unauthorized')
         end
       end
@@ -58,7 +58,7 @@ describe DashboardController, type: :controller do
           )
         end
         it 'should render project not found page' do
-          get :index, domain_id: default_params[:domain_id], project_id: 'BAD_PROJECT'
+          get :index, params: { domain_id: default_params[:domain_id], project_id: 'BAD_PROJECT' }
           expect(response).to render_template('application/exceptions/project_not_found')
         end
       end
@@ -71,12 +71,12 @@ describe DashboardController, type: :controller do
         end
 
         it 'should return with ok header' do
-          get :index, default_params
+          get :index, params: default_params
           expect(response).to have_http_status(200)
         end
 
         it 'should not render unauthorized template' do
-          get :index, default_params
+          get :index, params: default_params
           expect(response).not_to render_template('application/exceptions/unauthorized')
         end
       end
@@ -91,13 +91,13 @@ describe DashboardController, type: :controller do
         end
 
         it 'should return with ok header' do
-          get :index, domain_id: default_params[:domain_id]
+          get :index, params: { domain_id: default_params[:domain_id] }
           expect(response).to have_http_status(200)
         end
 
         it 'should render the domain page' do
           expect(controller).to receive(:authentication_rescope_token)
-          get :index, { domain_id: default_params[:domain_id] }
+          get :index, params: { domain_id: default_params[:domain_id] }
         end
       end
 
@@ -109,12 +109,12 @@ describe DashboardController, type: :controller do
         end
 
         it 'should return with ok header' do
-          get :index, domain_id: default_params[:domain_id]
+          get :index, params: { domain_id: default_params[:domain_id] }
           expect(response).to have_http_status(200)
         end
 
         it 'should not render unauthorized template' do
-          get :index, domain_id: default_params[:domain_id]
+          get :index, params: { domain_id: default_params[:domain_id] }
           expect(response).not_to render_template('application/exceptions/unauthorized')
         end
 
@@ -122,7 +122,7 @@ describe DashboardController, type: :controller do
           expect(controller).to receive(:authentication_rescope_token).with(
             domain: nil, project: nil
           )
-          get :index, domain_id: default_params[:domain_id]
+          get :index, params: { domain_id: default_params[:domain_id] }
         end
       end
     end

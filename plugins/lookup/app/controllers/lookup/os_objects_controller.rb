@@ -5,7 +5,7 @@ module Lookup
     authorization_context 'lookup'
     authorization_required
 
-    before_filter :query_param, except: [:index, :show_object]
+    before_action :query_param, except: [:index, :show_object]
 
     def index
       @types = {}

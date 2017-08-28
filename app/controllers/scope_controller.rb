@@ -4,7 +4,9 @@
 # All subclasses which require a scope (e.g. domain_id/projects or domain_id/project_id/instances)
 # should inherit from this class.
 class ScopeController < ::ApplicationController
-  prepend_before_filter do
+  prepend_before_action :load_scoped_objects
+
+  def load_scoped_objects
     # initialize scoped domain's and project's friendly id
     # use existing, user's or default domain
     domain_id = (params[:domain_id] ||

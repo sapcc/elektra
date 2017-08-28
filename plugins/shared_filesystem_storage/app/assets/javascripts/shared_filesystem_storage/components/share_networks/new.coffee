@@ -1,4 +1,4 @@
-#= require react/form_helpers
+#= require components/form_helpers
 
 { div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
@@ -112,7 +112,7 @@ NewShareNetwork = React.createClass
                       option { value: subnet.id, key: subnet.id }, "#{subnet.name} #{subnet.cidr}"
 
       div className: 'modal-footer',
-        button role: 'close', type: 'button', className: 'btn btn-default', onClick: @props.close, 'Close'
+        button role: 'close', type: 'button', className: 'btn btn-default', onClick: @props.close(), 'Close'
         React.createElement ReactFormHelpers.SubmitButton,
           label: 'Create',
           loading: shareNetworkForm.isSubmitting,

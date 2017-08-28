@@ -1,4 +1,4 @@
-#= require react/helpers
+#= require components/helpers.coffee
 #= require kubernetes/constants
 #= require kubernetes/reducers/index
 #= require kubernetes/actions/index

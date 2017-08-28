@@ -3,7 +3,7 @@
 module Compute
   # Implements Server actions
   class InstancesController < Compute::ApplicationController
-    before_filter :all_projects
+    before_action :all_projects
     before_action :automation_data, only: %i[new create]
 
     authorization_context 'compute'

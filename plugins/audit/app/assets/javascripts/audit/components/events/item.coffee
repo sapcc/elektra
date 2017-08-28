@@ -31,7 +31,7 @@ Event = ({event, toggleDetails}) ->
 
 
 Event = connect(
-  (state) ->
+  (state) -> {}
   (dispatch) ->
     toggleDetails: (event) -> dispatch(toggleEventDetails(event))
 )(Event)

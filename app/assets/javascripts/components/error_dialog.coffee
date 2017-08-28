@@ -1,4 +1,4 @@
-#= require react/modal
+#= require ./modal.coffee
 
 { div, h4, i, p, button } = React.DOM
 ReactErrorDialog = ({title,message,close}) ->

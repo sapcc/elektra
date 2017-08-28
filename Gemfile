@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '4.2.4'
+gem 'rails', '5.1.2' #Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
 
 # Views and Assets
 gem 'compass-rails'
@@ -19,7 +19,7 @@ gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
-gem 'sass_inline_svg'
+gem 'sass_inline_svg', git: 'https://github.com/tlesmann/sass-inline-svg.git', branch: :master
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
@@ -28,7 +28,7 @@ gem 'font-awesome-sass'
 gem 'responders'
 
 # make it fancy with react
-gem 'react-rails'
+gem 'react-rails' #, "1.8.2"
 
 # Database
 gem 'pg'
@@ -41,7 +41,7 @@ gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: 
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
 gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git', branch: :rails5
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'ruby-radius'
@@ -105,9 +105,9 @@ end
 group :development do
 
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  gem 'web-console', '~> 3.0'
 
-  gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
+  #gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
 end
 
 group :development, :test do
@@ -142,6 +142,7 @@ end
 
 group :test do
   gem 'guard-rspec'
+  gem 'rails-controller-testing'
 end
 
 # load dotenv to get ENV for extension retrieval if needed

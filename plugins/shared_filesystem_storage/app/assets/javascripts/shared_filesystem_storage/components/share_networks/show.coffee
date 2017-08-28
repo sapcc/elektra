@@ -1,4 +1,4 @@
-#= require react/tabs
+#= require components/tabs
 
 { div, span, br, button, a, table, tbody, thead, tr, th, td } = React.DOM
 { connect } = ReactRedux

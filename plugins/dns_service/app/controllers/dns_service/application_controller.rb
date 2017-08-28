@@ -1,6 +1,6 @@
 module DnsService
   class ApplicationController < ::DashboardController
-    before_filter :all_projects
+    before_action :all_projects
 
     private
 

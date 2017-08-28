@@ -1,7 +1,7 @@
 module DnsService
   module Zones
     class RecordsetsController < DnsService::ApplicationController
-      before_filter ->(id = params[:zone_id]) { load_zone id }
+      before_action ->(id = params[:zone_id]) { load_zone id }
       def show
         @recordset = services.dns_service.find_recordset(params[:zone_id], params[:id], @impersonate_option)
       end

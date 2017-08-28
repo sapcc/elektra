@@ -1,4 +1,4 @@
-class CreateDomainProfiles < ActiveRecord::Migration
+class CreateDomainProfiles < ActiveRecord::Migration[4.2]
   def change
     create_table :domain_profiles do |t|
       t.string :domain_id

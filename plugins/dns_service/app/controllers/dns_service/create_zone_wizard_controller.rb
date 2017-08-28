@@ -1,6 +1,6 @@
 module DnsService
   class CreateZoneWizardController < ::DashboardController
-    before_filter :load_inquiry
+    before_action :load_inquiry
 
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)

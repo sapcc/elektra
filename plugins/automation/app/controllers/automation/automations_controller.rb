@@ -166,14 +166,15 @@ module Automation
     end
 
     def automation_params
-      unless params['forms_automation'].blank?
-        return params.fetch('forms_automation', {})
+      p = params.to_unsafe_hash
+      unless p['forms_automation'].blank?
+        return p.fetch('forms_automation', {})
       end
-      unless params['forms_chef_automation'].blank?
-        return params.fetch('forms_chef_automation', {})
+      unless p['forms_chef_automation'].blank?
+        return p.fetch('forms_chef_automation', {})
       end
-      unless params['forms_script_automation'].blank?
-        return params.fetch('forms_script_automation', {})
+      unless p['forms_script_automation'].blank?
+        return p.fetch('forms_script_automation', {})
       end
       return {}
     end

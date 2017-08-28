@@ -1,4 +1,4 @@
-#= require react/helpers
+#= require ./helpers.coffee
 
 { div, ul, li, button} = React.DOM
 

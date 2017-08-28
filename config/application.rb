@@ -1,16 +1,20 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
 
 # Require core functionalities
-require File.expand_path('../../lib/core', __FILE__)
+require_relative File.expand_path('../lib/core', __dir__)
+# Require middlewares due to loading bug in Rails 5.1
+require_relative File.expand_path('../app/middleware/middlewares', __dir__)
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+
 module MonsoonDashboard
   class Application < Rails::Application
+    config.load_defaults 5.1
     config.react.addons = true
 
     # Settings in config/environments/* take precedence over those specified here.
@@ -32,18 +36,14 @@ module MonsoonDashboard
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
-
-    config.middleware.insert_before Rack::Sendfile, "DebugHeadersMiddleware"
-
-    require 'prometheus/client/rack/collector'
+    config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
+    require 'prometheus/middleware/collector'
 
     # build a map from the plugins
     plugin_mount_points = {}
     Core::PluginsManager.available_plugins.each{|plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point}
 
-    config.middleware.insert_after ActionDispatch::DebugExceptions, Prometheus::Client::Rack::Collector do |env|
+    config.middleware.insert_after ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector do |env|
       {
         method: env['REQUEST_METHOD'].downcase,
         host:   env['HTTP_HOST'].to_s,
@@ -61,10 +61,10 @@ module MonsoonDashboard
       }
     end
 
-    require 'prometheus/client/rack/exporter'
-    config.middleware.insert_after  Prometheus::Client::Rack::Collector, Prometheus::Client::Rack::Exporter
+    require 'prometheus/middleware/exporter'
+    config.middleware.insert_after  Prometheus::Middleware::Collector, Prometheus::Middleware::Exporter
 
-    config.middleware.use "RevisionMiddleware"
+    config.middleware.use RevisionMiddleware
 
     ############# ENSURE EDGE MODE FOR IE ###############
     config.action_dispatch.default_headers["X-UA-Compatible"]="IE=edge,chrome=1"
@@ -119,7 +119,8 @@ module MonsoonDashboard
     }
 
     # Add middleware healthcheck that to hit the db
-    config.middleware.insert_after "Rails::Rack::Logger", "MiddlewareHealthcheck"
+    config.middleware.insert_after Rails::Rack::Logger, MiddlewareHealthcheck
+
   end
 
 end

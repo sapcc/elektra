@@ -6,14 +6,16 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client
 # This avoids recompiling them everytime the Gemfile.lock changes.
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
-      && gem install byebug -v 8.2.4 \
-      && gem install ffi -v 1.9.10 \
-      && gem install nokogiri -v 1.6.8.1 \
-      && gem install pg -v 0.18.4 \
-      && gem install puma -v 3.6.0  \
-      && gem install redcarpet -v 3.3.4 \
+      && gem install byebug -v 9.0.6 \
+      && gem install ffi -v 1.9.18 \
+      && gem install json -v 1.8.6 \
+      && gem install nio4r -v 2.1.0 \
+      && gem install nokogiri -v 1.8.0 \
+      && gem install pg -v 0.21.0 \
+      && gem install puma -v 3.9.1  \
+      && gem install redcarpet -v 3.4.0 \
       && gem install unf -v 0.2.0.beta2 \
-      && gem install websocket-driver -v 0.6.3 \
+      && gem install websocket-driver -v 0.6.5 \
       && runDeps="$( \
 		      scanelf --needed --nobanner --recursive /usr/local \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -57,7 +59,7 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 ADD . /home/app/webapp
-RUN bin/rake assets:precompile && rm -rf tmp/cache/assets
+RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]

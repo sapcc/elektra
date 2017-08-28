@@ -1,4 +1,4 @@
-class ChangeInquiryRequester < ActiveRecord::Migration
+class ChangeInquiryRequester < ActiveRecord::Migration[4.2]
   def change
     remove_column :inquiry_inquiries, :requester_id
     remove_column :inquiry_inquiries, :requester_email

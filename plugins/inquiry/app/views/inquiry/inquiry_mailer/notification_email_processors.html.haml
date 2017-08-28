@@ -7,21 +7,21 @@
     %p A resource request needs your attention!
 
     %p
-      - if @inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['region']
+      - if @inquiry.tags && @inquiry.tags['region']
         %br
         %b CC Region:
-        = @inquiry_step.inquiry.tags['region']
+        = @inquiry.tags['region']
 
       %br
       %b CC Domain:
-      - if (@inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['domain_name'])
-        = "#{@inquiry_step.inquiry.tags['domain_name']} (#{@inquiry_step.inquiry.domain_id})"
+      - if (@inquiry.tags && @inquiry.tags['domain_name'])
+        = "#{@inquiry.tags['domain_name']} (#{@inquiry.domain_id})"
       - else
-        = @inquiry_step.inquiry.domain_id
+        = @inquiry.domain_id
 
       %br
       %b Request for:
-      = @inquiry_step.inquiry.kind
+      = @inquiry.kind
 
       %br
       %b Requestor:
@@ -29,10 +29,10 @@
 
       %br
       %b Request Status:
-      = @inquiry_step.inquiry.aasm.human_state
+      = @inquiry.aasm.human_state
 
     %p
-      - inquiries_url = @inquiry_step.inquiry.approver_domain_id.blank? ? admin_inquiries_url(domain_id: @inquiry_step.inquiry.domain_id) : admin_inquiries_url(domain_id: @inquiry_step.inquiry.approver_domain_id)
+      - inquiries_url = @inquiry.approver_domain_id.blank? ? admin_inquiries_url(domain_id: @inquiry.domain_id) : admin_inquiries_url(domain_id: @inquiry.approver_domain_id)
       %a(href="#{inquiries_url}") Click here to enter the request processing.
 
 
@@ -45,17 +45,17 @@
       = "---"
       %br
       %b Resource:
-      = @inquiry_step.inquiry.kind
+      = @inquiry.kind
       %br
       %b Request reason:
       %br
-      %pre= @inquiry_step.inquiry.description
+      %pre= @inquiry.description
       %br
       %b Request specific data:
-      %pre= JSON.pretty_generate(@inquiry_step.inquiry.payload) rescue "Error during rendering of JSON payload!"
+      %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
       = "---"
       %b Additional data:
-      %pre= JSON.pretty_generate(@inquiry_step.inquiry.tags) rescue "None"
+      %pre= JSON.pretty_generate(@inquiry.tags) rescue "None"
       = "---"
 
     %p

@@ -2,7 +2,7 @@ module Loadbalancing
   module Loadbalancers
     class ListenersController < ApplicationController
 
-      before_filter :load_objects, except: [:show]
+      before_action :load_objects, except: [:show]
 
       # set policy context
       authorization_context 'loadbalancing'

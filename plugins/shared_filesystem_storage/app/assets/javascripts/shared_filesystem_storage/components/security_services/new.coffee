@@ -1,5 +1,5 @@
-#= require react/form_helpers
-#= require react/transition_groups
+#= require components/form_helpers
+#= require components/transition_groups
 
 { div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux

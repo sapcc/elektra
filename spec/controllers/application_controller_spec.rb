@@ -27,7 +27,7 @@ describe ApplicationController, type: :controller do
 
     describe "GET 'index'" do
       it "returns http success" do
-        xhr :get, :index, modal: true
+        get :index, params: {modal: true}, xhr: true
         expect(controller.modal?).to eq(true)
       end
     end
