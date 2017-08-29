@@ -248,6 +248,10 @@ module ResourceManagement
         project_id: Rails.configuration.cloud_admin_project,
       )
 
+      cloud_admin_domain = cloud_admin.identity.domains(
+          name: Rails.configuration.cloud_admin_domain
+      ).first
+      cloud_admin_domain_id =  cloud_admin_domain.blank? ? Rails.configuration.cloud_admin_domain : cloud_admin_domain.id
       inquiry = services.inquiry.create_inquiry(
         'domain_quota',
         "domain #{@scoped_domain_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
@@ -264,11 +268,12 @@ module ResourceManagement
             "action": "#{base_url}?overlay=#{overlay_url}",
           },
         },
-        nil,
+        nil, #requester domain id
         {
             domain_name: @scoped_domain_name,
             region: current_region
-        }
+        },
+        cloud_admin_domain_id #approver domain id
       )
       if inquiry.errors?
         render action: :new_request
