@@ -67,7 +67,6 @@ module Lookup
       end
     end
 
-    protected
 
     def object_types
       return render(json: PROJECT_SERVICE_METHOD_MAP.keys) if @scoped_project_id
@@ -75,6 +74,7 @@ module Lookup
       render(json: [])
     end
 
+    protected
     def object_service(name)
       return services_ng.send(name) if services_ng.respond_to?(name)
       services.send(name)
