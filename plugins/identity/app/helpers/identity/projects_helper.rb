@@ -19,7 +19,7 @@ module Identity
     end
 
     def role_label_long(role_name)
-      t("roles.#{role_name}") + " (#{role_name})"
+      t("roles.#{role_name}", default: role_name.try(:titleize)) + " (#{role_name})"
     end
 
     def wizard_step(options={},&block)
