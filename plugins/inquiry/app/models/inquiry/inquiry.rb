@@ -247,5 +247,17 @@ module Inquiry
       return !self.errors.blank?
     end
 
+    # Fix of Rails 5 bug with deserialization of attributes of type json.
+    # Attributes aren't deserialized as hash as done in Rails 4.2
+    def payload
+      begin
+        data = read_attribute(:payload)
+        return data if data.is_a?(Hash)
+        return JSON.parse(data)
+      rescue => e
+      ensure
+        data
+      end
+    end
   end
 end
