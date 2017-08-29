@@ -56,23 +56,18 @@ module Identity
     def update
       params[:project][:enabled] = params[:project][:enabled] == true ||
                                    params[:project][:enabled] == 'true'
-      @project = services_ng.identity.new_project(params[:project])
+      @project = service_user.identity.new_project(params[:project])
       @project.id = @project_id
       @project.domain_id = @scoped_domain_id
 
-      if @project.valid? &&
-         service_user.identity.update_project(@project_id, @project.attributes)
-        # audit_logger.info("User #{current_user.name} (#{current_user.id})
+      if @project.save &&
         # has updated project #{@project.name} (#{@project.id})")
         # audit_logger.info(user: current_user, has: "updated",
         #                   project: @project)
         audit_logger.info(current_user, 'has updated', @project)
 
-        entry = FriendlyIdEntry.update_project_entry(@project)
         flash[:notice] = "Project #{@project.name} successfully updated."
-        redirect_to plugin('identity').project_path(
-          project_id: (entry.nil? ? @project.id : entry.slug)
-        )
+        redirect_to plugin('identity').project_path(project_id: @project.friendly_id)
       else
         flash.now[:error] = @project.errors.full_messages.to_sentence
         render action: :edit

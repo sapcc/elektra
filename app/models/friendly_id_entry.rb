@@ -59,50 +59,25 @@ class FriendlyIdEntry < ApplicationRecord
   end
 
   def self.update_project_entry(project)
-    return nil if project.nil? or !(project.id.is_a?(String) or project.id.is_a?(Fixnum))
-    if project and project.id
-      sql = [
-        "class_name=? and lower(key)=? and lower(scope)=?",
-        'Project',
-        project.id,
-        project.domain_id
-      ]
-
-      entry = self.where(sql).first
-
-      if entry and entry.name!=project.name
-        entry.name=project.name
-        entry.slug=nil
-        entry.save
-      end
-      entry
+    if project.nil? || project.id.nil? || !(project.id.is_a?(String) ||
+       project.id.is_a?(Integer))
+      return nil
     end
-  end
-  if @active_project
-    friendly_id_entry = FriendlyIdEntry.find_or_create_entry('Project', @active_project.domain_id, @project.id, @project.name)
-    if friendly_id_entry and @active_project.name!=friendly_id_entry.name
 
+    sql = [
+      'class_name=? and lower(key)=? and lower(scope)=?',
+      'Project',
+      project.id,
+      project.domain_id
+    ]
+
+    entry = where(sql).first
+
+    if entry && entry.name != project.name
+      entry.name = project.name
+      entry.slug = nil
+      entry.save
     end
+    entry
   end
-
-
-  # def self.find_or_create_entry(class_name,scope,key,name)
-  #   sql = [
-  #     "class_name=? and lower(key)=? and name=? #{'and lower(scope)=?' if scope}",
-  #     class_name,
-  #     key.to_s.downcase,
-  #     name
-  #   ]
-  #   sql << scope.to_s.downcase if scope
-  #
-  #   entries = self.where(sql)
-  #
-  #   if entries.length==1 and entries.first.endpoint==Rails.application.config.keystone_endpoint
-  #     return entries.first
-  #   else
-  #     entries.delete_all
-  #     self.create(class_name: class_name, scope: scope, name: name, key: key, endpoint: Rails.application.config.keystone_endpoint)
-  #   end
-  # end
-
 end

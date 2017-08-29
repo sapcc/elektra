@@ -57,6 +57,10 @@ module ServiceLayerNg
         end
       end
 
+      # def reset_projects_cach(project_id = nil)
+      #
+      # end
+
       def projects_by_user_id(user_id)
         api.identity.list_projects_for_user(user_id).map_to(Identity::Project)
       end

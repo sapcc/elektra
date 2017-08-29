@@ -130,6 +130,7 @@ class DashboardController < ::ScopeController
         return render(template: 'application/exceptions/project_not_found')
       end
 
+      #byebug
       # did not return -> check if user projects include the requested project.
       has_project_access = service_user.identity.user_projects(
         current_user.id, domain_id: @scoped_domain_id,
@@ -301,7 +302,11 @@ class DashboardController < ::ScopeController
 
     return unless @scoped_project_id
     # load active project
-    @active_project ||= services_ng.identity.cached_project(
+
+    @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id }
+    return if @active_project && @active_project.name == @scoped_project_name
+
+    @active_project = services_ng.identity.find_project(
       @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
     )
     FriendlyIdEntry.update_project_entry(@active_project)
