@@ -231,8 +231,6 @@ module Inquiry
       begin
         InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self, self.process_steps.last, self.requester).deliver_later
       rescue Net::SMTPFatalError => e
-        puts ">>>>>>>ERROR"
-        puts e
         self.processors.each do |p|
           begin
             InquiryMailer.notification_email_processors([p.email], self, self.process_steps.last, self.requester).deliver_later
