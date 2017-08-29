@@ -10,7 +10,7 @@ Feature: Rescoping
       And Test user has accepted terms of use
 
   Scenario: Domain is provided and project not and user has access to domain
-    Given I see the domain home page
+    Then I see the domain home page
 
   Scenario: Domain is provided and project not and domain exists
     When I visit path "/ccadmin/identity/home"
