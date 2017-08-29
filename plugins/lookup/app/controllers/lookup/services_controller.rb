@@ -56,11 +56,11 @@ module Lookup
       service_name, method_name = service_and_method_name(params[:object_type])
 
       unless service_name
-        return render(json: { error: "#{object_type} is not supported." })
+        return render(json: { error: "#{params[:object_type]} is not supported." })
       end
 
       begin
-        object = object_service.send(method_name, params[:object_id])
+        object = object_service(service_name).send(method_name, params[:object_id])
         render json: object
       rescue => e
         render json: e.respond_to?(:type) ? e.type : e.respond_to?(:code_type) ? e.code_type : e.message
@@ -75,6 +75,7 @@ module Lookup
     end
 
     protected
+
     def object_service(name)
       return services_ng.send(name) if services_ng.respond_to?(name)
       services.send(name)
