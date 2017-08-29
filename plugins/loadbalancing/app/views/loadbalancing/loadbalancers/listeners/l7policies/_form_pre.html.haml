@@ -1,5 +1,5 @@
 %fieldset
-  = f.input :name, { label: 'Policy Type' , required: true , include_blank: false, as: :select, collection: @pre_polices, label_method: -> (pre) {t("loadbalancing.policies.#{pre[:ids].last}")}, value_method: -> (pre) {pre[:ids].last}}
+  = f.input :name, { label: 'Policy Type' , include_blank: false, as: :select, collection: @pre_polices, label_method: -> (pre) {t("loadbalancing.policies.#{pre[:ids].last}")}, value_method: -> (pre) {pre[:ids].last}}
   = f.input :description
   =# f.input :position, as: :integer, input_html: {min: '1', value: @l7policy.position || 1}, hint: 'Starts with 1. A value > Sum(Policies) will append Policy to the end.'
 

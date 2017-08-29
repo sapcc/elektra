@@ -11,7 +11,6 @@
           as: :select,
           collection: @types,
           include_blank: false,
-          required: true,
           label: 'OpenStack Object'
         = f.input :query, required: true, label: 'Object Identifier'
         = f.hidden_field :lookup_method, value: 'show'
