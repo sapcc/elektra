@@ -1,4 +1,4 @@
-= form_tag url_for(params), method: :get, class: 'form-horizontal' do
+= form_tag url_for(params.to_unsafe_hash), method: :get, class: 'form-horizontal' do
   .form-group.string.col-sm-12.well
     .row
 
