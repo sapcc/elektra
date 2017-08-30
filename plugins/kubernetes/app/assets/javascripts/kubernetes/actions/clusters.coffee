@@ -106,16 +106,25 @@
         app.ajaxHelper[clusterForm.method] clusterForm.action,
           contentType: 'application/json'
           data: clusterForm.data
+          statusCode:
+            200: () ->
+              console.log("statuscode 200")
+
+              dispatch(resetClusterForm())
+              successCallback() if successCallback
+              # dispatch(fetchClusters())
+
           success: (data, textStatus, jqXHR) ->
+            console.log("success: #{successCallback}")
             if data.errors
               dispatch(clusterFormFailure(data.errors))
             else
-              dispatch(receiveCluster(data))
+              # dispatch(receiveCluster(data))
               dispatch(resetClusterForm())
               successCallback() if successCallback
           error: ( jqXHR, textStatus, errorThrown) ->
-            console.log("error!")
-            dispatch(app.showErrorDialog(title: 'Could not save cluster', message:jqXHR.responseText))
+            # dispatch(clusterFormFailure("Error": [JSON.parse(jqXHR.responseText).message]))
+            # dispatch(app.showErrorDialog(title: 'Could not save cluster', message:jqXHR.responseText))
 
 
   # export

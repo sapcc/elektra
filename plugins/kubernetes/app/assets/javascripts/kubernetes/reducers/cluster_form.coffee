@@ -14,7 +14,7 @@
   updateClusterForm = (state, {name, value})->
     data = ReactHelpers.mergeObjects({}, state.data, {"#{name}":value})
     ReactHelpers.mergeObjects({}, state, {
-      data:data
+      data: data
       errors: null
       isSubmitting: false
       isValid: (data.name?)

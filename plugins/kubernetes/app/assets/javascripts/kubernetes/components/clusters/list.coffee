@@ -44,7 +44,8 @@ Clusters = ({
             td colSpan: '3',
               error
         else
-          if clusters
+          if clusters && clusters.length
+            console.log("clusters: #{clusters}")
             for cluster in clusters
               React.createElement ClusterItem, cluster: cluster, key: cluster.name
 

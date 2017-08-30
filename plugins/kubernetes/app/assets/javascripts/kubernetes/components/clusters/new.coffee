@@ -17,7 +17,7 @@ NewCluster = ({
     handleChange(e.target.name,e.target.value)
 
   cluster = clusterForm.data
-  form className: 'form form-horizontal', onSubmit: ((e) -> e.preventDefault(); handleSubmit()),
+  form className: 'form form-horizontal', 
     div className: 'modal-body',
       if clusterForm.errors
         div className: 'alert alert-error', React.createElement ReactFormHelpers.Errors, errors: clusterForm.errors
@@ -35,6 +35,8 @@ NewCluster = ({
               name: "name",
               value: cluster.name || '',
               onChange: onChange
+
+
 
 
     div className: 'modal-footer',
