@@ -11,7 +11,6 @@
   .projects
     .form-group.has-feedback
       = text_field_tag 'jump-to-search-input', '', class: "form-control", placeholder: 'project name'
-      %i.glyphicon.glyphicon-search.form-control-feedback
     %ul.content-list.searchable{data:{search_input: '#jump-to-search-input'}}
       - @projects.each do |project|
         %li{data: {search_name: project.name}}

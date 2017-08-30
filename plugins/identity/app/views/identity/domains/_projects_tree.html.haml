@@ -8,7 +8,5 @@
   .toolbar-secondary.searchable-input
     .has-feedback
       = text_field_tag 'search-input', '', class: "form-control", placeholder: 'Search project name'
-      %i.glyphicon.glyphicon-search.form-control-feedback
 
-
-  = render_project_tree(@user_domain_projects_tree.root.children, truncate: 36, html: {class: 'searchable', data:{search_input: '#search-input'} })
+  = render_project_tree(@user_domain_projects_tree.root.children, truncate: 36, html: {class: 'searchable show-only-matches', data:{search_input: '#search-input'} })
