@@ -57,7 +57,8 @@ module ServiceLayerNg
         # ccadmin, cc3test -> FloatingIP-internal-monsoon3
         domain_name = 'monsoon3' if %w[ccadmin cc3test].include?(domain_name)
 
-        name_candidates = ["FloatingIP-external-#{domain_name}-02",
+        name_candidates = ["FloatingIP-external-#{domain_name}-03",
+                           "FloatingIP-external-#{domain_name}-02",
                            "FloatingIP-external-#{domain_name}-01",
                            "FloatingIP-external-#{domain_name}",
                            'Converged Cloud External']
