@@ -47,3 +47,6 @@ tags
 
 .byebug_history
 vendor_4.2.4/
+/public/packs
+/public/packs-test
+/node_modules
