@@ -16,6 +16,7 @@ default: &default
   extensions:
     - .coffee
     - .erb
+    - .js.erb
     - .js
     - .jsx
     - .ts
