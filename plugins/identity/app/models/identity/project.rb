@@ -10,6 +10,7 @@ module Identity
 
     def after_save
       FriendlyIdEntry.update_project_entry(self)
+      true
     end
 
     def subprojects_ids

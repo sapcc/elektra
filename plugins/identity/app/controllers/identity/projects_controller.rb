@@ -39,8 +39,8 @@ module Identity
     def show
       @subprojects = []
       if @user_domain_projects
-        @user_domain_projects.select { |pr| pr.parent_id == @scoped_project_id }
-      end                  
+        @subprojects = @user_domain_projects.select { |pr| pr.parent_id == @scoped_project_id }
+      end
     end
 
     def view
