@@ -140,15 +140,19 @@ module ApplicationHelper
 
   # render project tree
   def subprojects_tree(subprojects,auth_projects, options={})
-    auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash)
+    unless auth_projects.is_a?(Hash)
+      auth_projects = auth_projects.each_with_object({}) do |project, hash|
+        hash[project.id] = project
+      end
+    end
 
     content_tag(:ul, class: options.delete(:class) ) do
       if subprojects.is_a?(Array)
         subprojects = subprojects.compact
         subprojects.map do |subproject_id|
-          project = auth_projects[subproject_id]
-          next if project.nil? or project.id.nil?
-          if options[:active_project] and options[:active_project].id==project.id
+          subproject = auth_projects[subproject_id]
+          next if subproject.nil? or subproject.id.nil?
+          if options[:active_project] and options[:active_project].id==subproject.id
             content_tag(:li, options[:active_project].name, class: 'current-project')
           else
             id = subproject.respond_to?(:friendly_id) ? subproject.friendly_id : subproject.id
@@ -160,12 +164,11 @@ module ApplicationHelper
         result = []
 
         # remove unauthorized project keys. Empty
-        subprojects = subprojects.inject({}) do |hash,(k,v)|
-          auth_projects[k].nil? ? (v.each{|sub_k,sub_v| hash[sub_k]=sub_v} if v.is_a?(Hash)) : hash[k]=v
-          hash
+        subprojects = subprojects.each_with_object({}) do |(k, v), hash|
+          auth_projects[k].nil? ? (v.each { |sub_k, sub_v| hash[sub_k] = sub_v} if v.is_a?(Hash)) : hash[k]=v
         end
 
-        subprojects.each do |k,v|
+        subprojects.each do |k, v|
           project = auth_projects[k]
 
           if project or v.is_a?(Hash)
