@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '5.1.2' #Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
+gem 'webpacker'
 
 # Views and Assets
 gem 'compass-rails'

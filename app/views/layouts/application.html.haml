@@ -42,6 +42,7 @@
     = render "main_toolbar"
 
     = yield :page_lead
+    = javascript_pack_tag 'application'
 
     .container
       .content{class: "#{plugin_name if plugin_name}"}
