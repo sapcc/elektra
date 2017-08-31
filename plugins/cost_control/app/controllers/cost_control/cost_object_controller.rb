@@ -2,8 +2,9 @@ module CostControl
   class CostObjectController < CostControl::ApplicationController
     authorization_required
 
-    before_action :load_masterdata, :load_billing_objects
-    before_action :load_kb11n_billing_objects, only: [:show]
+    before_action :load_masterdata
+    #before_action :load_billing_objects, except: [:show]
+    #before_action :load_kb11n_billing_objects, only: [:show]
 
     def show
       if @scoped_project_id
