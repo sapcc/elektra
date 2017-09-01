@@ -11,13 +11,12 @@ module ResourceManagement
 
     def index
       @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
-      @min_updated_at = @project.services.map(&:updated_at).min
-      @max_updated_at = @project.services.map(&:updated_at).max
-
+      @view_services = @project.services
 
       # special case to poll elektra during sync now process
       if params.include?(:if_updated_since)
-        render :json => { :sync_running => params[:if_updated_since].to_i > @min_updated_at.to_time.to_i }
+        min_updated_at = @view_services.map(&:updated_at).min
+        render :json => { :sync_running => params[:if_updated_since].to_i > min_updated_at.to_time.to_i }
         return
       end
 
@@ -27,20 +26,18 @@ module ResourceManagement
       @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
 
       @index = true
+      @areas = @project.services.map(&:area).uniq
     end
 
     def show_area(area = nil)
       @area = area || params.require(:area).to_sym
 
-      # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
-
       # load all resources for these services
-      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id, service: @area_services.map(&:catalog_type))
-      @resources = @project.resources
-      @min_updated_at = @project.services.map(&:updated_at).min
-      @max_updated_at = @project.services.map(&:updated_at).max
+      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @view_services = @project.services.select { |srv| srv.area.to_sym == @area }
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
+
+      @areas = @project.services.map(&:area).uniq
     end
 
     def confirm_reduce_quota

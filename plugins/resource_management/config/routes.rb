@@ -1,10 +1,8 @@
 ResourceManagement::Engine.routes.draw do
 
-  area_regex = /(?:compute|networking|dns|storage)/
-
   scope '/', as: 'resources' do
     get  '/' => 'project_resources#index'
-    get  ':area',  to: 'project_resources#show_area', constraints: { area: area_regex }, as: 'area'
+    get  'area/:area',  to: 'project_resources#show_area', as: 'area'
     get  'request'  => 'project_resources#new_request', as: 'new_request'
     get  'confirm_reduce_quota' => 'project_resources#confirm_reduce_quota'
     post 'reduce_quota' => 'project_resources#reduce_quota'
@@ -16,7 +14,7 @@ ResourceManagement::Engine.routes.draw do
 
   scope 'admin', as: 'admin' do
     get  '/'        => 'domain_admin#index'
-    get  ':area',  to: 'domain_admin#show_area', constraints: { area: area_regex }, as: 'area'
+    get  'area/:area',  to: 'domain_admin#show_area', as: 'area'
     get  'details'  => 'domain_admin#details'
     get  'request'  => 'domain_admin#new_request',    as: 'new_request'
     post 'request'  => 'domain_admin#create_request', as: 'create_request'
@@ -33,7 +31,7 @@ ResourceManagement::Engine.routes.draw do
 
   scope 'cloud_admin', as: 'cloud_admin' do
     get  '/'               => 'cloud_admin#index'
-    get  ':area',         to: 'cloud_admin#show_area', constraints: { area: area_regex }, as: 'area'
+    get  'area/:area',         to: 'cloud_admin#show_area', as: 'area'
     get  'details'         => 'cloud_admin#details'
     get  'request'         => 'cloud_admin#resource_request'
     get  'edit'            => 'cloud_admin#edit'

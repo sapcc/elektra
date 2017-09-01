@@ -4,6 +4,9 @@ module ResourceManagement
     def type
       read(:type).to_sym
     end
+    def area
+      read(:area).to_sym
+    end
 
     def project_id
       read(:project_id)
@@ -44,11 +47,11 @@ module ResourceManagement
     end
 
     def min_updated_at
-      tst = read(:min_scraped_at)
+      tst = read(:min_scraped_at) || read(:scraped_at)
       tst ? Time.at(tst) : nil
     end
     def max_updated_at
-      tst = read(:max_scraped_at)
+      tst = read(:max_scraped_at) || read(:scraped_at)
       tst ? Time.at(tst) : nil
     end
 

@@ -9,12 +9,15 @@ module ResourceManagement
     def name
       read(:name).to_sym
     end
+    def category
+      (read(:category) || :"").to_sym
+    end
 
     def service_type
       read(:service_type)
     end
 
-    def config
+    def config # TODO remove
       return @config unless @config.nil?
       name = read(:name).to_sym
       type = read(:service_type).to_s

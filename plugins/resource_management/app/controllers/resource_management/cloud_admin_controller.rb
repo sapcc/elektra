@@ -11,23 +11,20 @@ module ResourceManagement
 
     def index
       @cluster = services_ng.resource_management.find_current_cluster
-      @resources = @cluster.resources
+      @view_services = @cluster.services
 
-      @min_updated_at = @cluster.services.map(&:min_updated_at).min
-      @max_updated_at = @cluster.services.map(&:max_updated_at).max
+      @areas = @cluster.services.map(&:area).uniq
     end
 
     def show_area(area = nil)
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
+      @cluster = services_ng.resource_management.find_current_cluster()
+      @view_services = @cluster.services.select { |srv| srv.area.to_sym == @area }
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
-      @cluster= services_ng.resource_management.find_current_cluster(service: @area_services.map(&:catalog_type))
-      @resources = @cluster.resources
-      @min_updated_at = @cluster.services.map(&:min_updated_at).min
-      @max_updated_at = @cluster.services.map(&:max_updated_at).max
+      @areas = @cluster.services.map(&:area).uniq
     end
 
     def edit_capacity

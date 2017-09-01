@@ -12,8 +12,7 @@ module ResourceManagement
 
     def index
       @domain = services_ng.resource_management.find_domain(@scoped_domain_id)
-      @min_updated_at = @domain.services.map(&:min_updated_at).min
-      @max_updated_at = @domain.services.map(&:max_updated_at).max
+      @view_services = @domain.services
 
       # find resources to show
       @critical_resources = @domain.resources.reject do |res|
@@ -21,19 +20,18 @@ module ResourceManagement
       end
 
       @index = true
+      @areas = @domain.services.map(&:area).uniq
     end
 
     def show_area(area = nil)
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
+      @domain = services_ng.resource_management.find_domain(@scoped_domain_id)
+      @view_services = @domain.services.select { |srv| srv.area.to_sym == @area }
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
-      @domain = services_ng.resource_management.find_domain(@scoped_domain_id, service: @area_services.map(&:catalog_type))
-      @resources = @domain.resources
-      @min_updated_at = @domain.services.map(&:min_updated_at).min
-      @max_updated_at = @domain.services.map(&:max_updated_at).max
+      @areas = @domain.services.map(&:area).uniq
     end
 
     def edit
