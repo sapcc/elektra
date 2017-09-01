@@ -1,0 +1,21 @@
+export const REQUEST_SHARES                  = 'REQUEST_SHARES';
+export const RECEIVE_SHARES                  = 'RECEIVE_SHARES';
+export const REQUEST_SHARE                   = 'REQUEST_SHARE';
+export const REQUEST_SHARE_FAILURE           = 'REQUEST_SHARE_FAILURE';
+export const REQUEST_SHARES_FAILURE          = 'REQUEST_SHARES_FAILURE';
+export const RECEIVE_SHARE                   = 'RECEIVE_SHARE';
+export const REQUEST_DELETE_SHARE            = 'REQUEST_DELETE_SHARE';
+export const DELETE_SHARE_FAILURE            = 'DELETE_SHARE_FAILURE';
+export const DELETE_SHARE_SUCCESS            = 'DELETE_SHARE_SUCCESS';
+export const REQUEST_SHARE_EXPORT_LOCATIONS  = 'REQUEST_SHARE_EXPORT_LOCATIONS';
+export const RECEIVE_SHARE_EXPORT_LOCATIONS  = 'RECEIVE_SHARE_EXPORT_LOCATIONS';
+export const REQUEST_AVAILABLE_ZONES         = 'REQUEST_AVAILABLE_ZONES';
+export const RECEIVE_AVAILABLE_ZONES         = 'RECEIVE_AVAILABLE_ZONES';
+export const REQUEST_AVAILABLE_ZONES_FAILURE = 'REQUEST_AVAILABLE_ZONES_FAILURE';
+
+// SHARE FORM
+export const RESET_SHARE_FORM                = 'RESET_SHARE_FORM';
+export const PREPARE_SHARE_FORM              = 'PREPARE_SHARE_FORM';
+export const UPDATE_SHARE_FORM               = 'UPDATE_SHARE_FORM';
+export const SUBMIT_SHARE_FORM               = 'SUBMIT_SHARE_FORM';
+export const SHARE_FORM_FAILURE              = 'SHARE_FORM_FAILURE';
