@@ -3,10 +3,19 @@
     "country":    "Germany",
     "regionkey":  "eu-de-1",
     "regionname": "EU-DE-1",
-    "lat":        49.26,
+    "lat":        48.66,
     "lon":        8.62,
     "available":  true,
     "date":       "Q2 2016"
+  },
+  {
+    "country":    "Germany",
+    "regionkey":  "eu-de-2",
+    "regionname": "EU-DE-2",
+    "lat":        50.91,
+    "lon":        9.08,
+    "available":  false,
+    "date":       "2017"
   },
   {
     "country":    "USA",
@@ -41,7 +50,7 @@
     "regionname": "NA-CA-1",
     "lat":        43.66,
     "lon":        -79.38,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
@@ -50,7 +59,7 @@
     "regionname": "LA-BR-1",
     "lat":        -23.56,
     "lon":        -46.63,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
@@ -86,6 +95,15 @@
     "regionname": "AP-AE-1",
     "lat":        25.09,
     "lon":        55.17,
+    "available":  false,
+    "date":       "2017"
+  },
+  {
+    "country":    "Saudi Arabia",
+    "regionkey":  "ap-sa-1",
+    "regionname": "AP-SA-1",
+    "lat":        24.70,
+    "lon":        46.68,
     "available":  false,
     "date":       "2017"
   },
