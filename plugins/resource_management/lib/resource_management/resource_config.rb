@@ -12,14 +12,13 @@ module ResourceManagement
   # - significant   (Boolean):       whether this resource is shown on the package comparison table
 
   class ResourceConfig
-    attr_reader :name, :service_name, :data_type, :auto_approved_quota, :package_config
+    attr_reader :name, :service_name, :data_type, :package_config
 
     def initialize(service_name, name, package_config, options={})
       @name           = name.to_sym
       @service_name   = service_name.to_sym
       @data_type      = Core::DataType.new(options.fetch(:data_type, :number), options[:data_sub_type])
       @package_config = package_config
-      @auto_approved_quota = options.fetch(:auto_approved_quota, 0)
     end
 
     def service
@@ -54,8 +53,8 @@ module ResourceManagement
         new(:networking,                :subnet_pools,                pkg(false, 0)),
         new(:networking,                :ports,                       pkg(false, 500)),
         new(:networking,                :routers,                     pkg(false, 1)),
-        new(:networking,                :security_groups,             pkg(false, 2),  auto_approved_quota: 1), # auto-approve initial "default" security group
-        new(:networking,                :security_group_rules,        pkg(false, 16), auto_approved_quota: 4), # auto-approve initial "default" security group
+        new(:networking,                :security_groups,             pkg(false, 2)),
+        new(:networking,                :security_group_rules,        pkg(false, 16)),
         new(:networking,                :rbac_policies,               pkg(false, 5)),
         new(:dns,                       :zones,                       pkg(false, 0)),
         new(:dns,                       :recordsets,                  pkg(false, 5)),
