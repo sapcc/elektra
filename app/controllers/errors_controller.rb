@@ -50,12 +50,12 @@ class ErrorsController < ActionController::Base
       name        = @exception.class.name
       message     = @exception.message
       token       = Raven.last_event_id || request.uuid || "n/a"
-      description = "There are no further details available. Good luck!"
+      description = "There are no further details available. Sorry!"
 
       I18n.with_options scope: [:exception, :show, @rescue_response], name: name, message: message, token: token do |i18n|
-        h[:title]       = i18n.t("#{key}.title",       default: i18n.t(:title,       name)).html_safe
-        h[:subtitle]    = i18n.t("#{key}.subtitle",    default: i18n.t(:subtitle,    message)).html_safe
-        h[:description] = i18n.t("#{key}.description", default: i18n.t(:description, description)).html_safe
+        h[:title]       = i18n.t("#{key}.title",       default: name).html_safe
+        h[:subtitle]    = i18n.t("#{key}.subtitle",    default: message).html_safe
+        h[:description] = i18n.t("#{key}.description", default: description).html_safe
       end
 
       h[:env]       = request.env
