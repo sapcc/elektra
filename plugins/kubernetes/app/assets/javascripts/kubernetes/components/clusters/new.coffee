@@ -1,4 +1,4 @@
-#= require react/form_helpers
+#= require components/form_helpers
 
 
 { div,form,input,textarea,h4,label,span,button,abbr,select,option,p,i,a } = React.DOM
@@ -17,7 +17,7 @@ NewCluster = ({
     handleChange(e.target.name,e.target.value)
 
   cluster = clusterForm.data
-  form className: 'form form-horizontal', 
+  form className: 'form form-horizontal',
     div className: 'modal-body',
       if clusterForm.errors
         div className: 'alert alert-error', React.createElement ReactFormHelpers.Errors, errors: clusterForm.errors

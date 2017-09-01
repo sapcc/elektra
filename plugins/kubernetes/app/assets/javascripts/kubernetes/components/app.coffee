@@ -1,6 +1,6 @@
 #= require kubernetes/components/clusters/list
 #= require kubernetes/components/clusters/new
-#= require react/dialogs
+#= require components/dialogs
 
 
 { div, h4, p, a, ul, li } = React.DOM
