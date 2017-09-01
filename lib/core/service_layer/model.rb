@@ -280,12 +280,12 @@ module Core
 
       # msp to driver create method
       def perform_driver_create(create_attributes)
-        @driver.send("create_#{@class_name}", create_attributes)
+        @driver.send("create_#{@class_name}", create_attributes.with_indifferent_access)
       end
 
       # map to driver update method
       def perform_driver_update(id,update_attributes)
-        @driver.send("update_#{@class_name}", id, update_attributes)
+        @driver.send("update_#{@class_name}", id, update_attributes.with_indifferent_access)
       end
 
       # map to driver delete method
