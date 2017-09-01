@@ -84,7 +84,12 @@ ShowShare = React.createClass
 
 ShowShare = connect(
   (state,ownProps) ->
-    share: state.shares.items.find((item) -> ownProps.shareId==item.id),
+    for item in state.shares.items
+      if ownProps.shareId==item.id
+        share = item
+        break
+
+    share: share,
   (dispatch) ->
     loadExportLocations: (shareId) -> dispatch(fetchShareExportLocations(shareId))
 )(ShowShare)

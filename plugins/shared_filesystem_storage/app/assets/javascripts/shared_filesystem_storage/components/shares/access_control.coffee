@@ -76,8 +76,12 @@ AccessControl = ({
 
 AccessControl = connect(
   (state,ownProps) ->
+    for n in state.shareNetworks.items
+      if n.id==ownProps.networkId
+        shareNetwork = n
+        break
     shareRules: (state.shareRules[ownProps.shareId] || {items: [], isFetching: false})
-    shareNetwork: state.shareNetworks.items.find((n) -> n.id==ownProps.networkId)
+    shareNetwork: shareNetwork
     ruleForm: state.shareRuleForm
   (dispatch,ownProps) ->
     handleChange: (name,value) -> dispatch(updateShareRuleForm(name,value))

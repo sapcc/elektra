@@ -102,9 +102,14 @@ ShareNetworkSecurityServices = React.createClass
 
 ShareNetworkSecurityServices = connect(
   (state,ownProps) ->
+    for n in state.shareNetworks.items
+      if n.id==ownProps.shareNetworkId
+        shareNetwork = n
+        break
+
     securityServices: state.securityServices.items
     shareNetworkSecurityServices: (state.shareNetworkSecurityServices[ownProps.shareNetworkId] || {items: [], isFetching: false})
-    shareNetwork: state.shareNetworks.items.find((n) -> n.id==ownProps.shareNetworkId)
+    shareNetwork: shareNetwork
     shareNetworkSecurityServiceForm: state.shareNetworkSecurityServiceForm
   (dispatch,ownProps) ->
     loadShareNetworkSecurityServicesOnce: (shareNetworkId) -> dispatch(fetchShareNetworkSecurityServicesIfNeeded(shareNetworkId))
