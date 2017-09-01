@@ -8,5 +8,6 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import './hello_react';
+import reducers from './shares/reducers'
 
-export default { reducers: 'identityReducer' };
+export default { reducers: reducers };

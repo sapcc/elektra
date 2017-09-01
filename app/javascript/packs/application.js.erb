@@ -7,15 +7,24 @@
 // To reference this file, add <%#= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-var plugins = [];
+import { configureStore } from './store';
+
+// var plugins = [];
+var reducers = {}
 <% Core::PluginsManager.mountable_plugins.each do |plugin| %>
   <% if File.exists?(File.expand_path("plugins/#{plugin.name}/app/javascript/packs", __dir__)) %>
     import <%=plugin.name%> from '../../../plugins/<%=plugin.name%>/app/javascript/packs/application';
-    plugins.push(<%=plugin.name%>);
+    // plugins.push(<%=plugin.name%>);
+    if (<%=plugin.name%>.reducers) {
+      reducers['<%=plugin.name%>'] = <%=plugin.name%>.reducers
+    }
   <% end %>
 <% end %>
 
-console.log('>>>>>>>>>>>>>>>>>>>>>>>>',plugins)
-for (let plugin of plugins) {
-  console.log('plugin.reducers',plugin.reducers);
+console.log('>>>>>>>>>>>>>>>>>>>>>>>>',reducers)
+for (let key of Object.keys(reducers)) {
+  console.log('reducers',reducers[key]);
 }
+
+console.log(configureStore);
+configureStore(reducers);
