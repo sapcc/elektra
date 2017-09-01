@@ -9,12 +9,13 @@
 
 var plugins = [];
 <% Core::PluginsManager.mountable_plugins.each do |plugin| %>
-  <% if File.exists?(File.expand_path("plugins/#{plugin.name}/javascript/packs", __dir__)) %>
-    import <%=plugin.name%> from '../../../plugins/<%=plugin.name%>/javascript/packs/application';
+  <% if File.exists?(File.expand_path("plugins/#{plugin.name}/app/javascript/packs", __dir__)) %>
+    import <%=plugin.name%> from '../../../plugins/<%=plugin.name%>/app/javascript/packs/application';
     plugins.push(<%=plugin.name%>);
   <% end %>
 <% end %>
 
+console.log('>>>>>>>>>>>>>>>>>>>>>>>>',plugins)
 for (let plugin of plugins) {
-  console.log(plugin.reducers);
+  console.log('plugin.reducers',plugin.reducers);
 }
