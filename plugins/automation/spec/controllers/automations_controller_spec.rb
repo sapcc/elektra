@@ -35,7 +35,7 @@ describe Automation::AutomationsController, type: :controller do
   describe "GET 'index'" do
 
     it "returns http success" do
-      get :index, default_params
+      get :index, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:index)
     end
@@ -43,22 +43,22 @@ describe Automation::AutomationsController, type: :controller do
     describe "@pag_params" do
 
       it "should set up pagination object" do
-        get :index, default_params
+        get :index, params: default_params
         expect(assigns(:pag_params)).to eq({:automation=>{:page=>0}, :run=>{:page=>0}})
       end
 
       it "should set the righ params when loading the page" do
-        get :index, default_params.merge(:pag_params => {:automation=>{:page=>"2"}, :run=>{:page=>"3"}})
+        get :index, params: default_params.merge(:pag_params => {:automation=>{:page=>"2"}, :run=>{:page=>"3"}})
         expect(assigns(:pag_params)).to eq({:automation=>{:page=>"2"}, :run=>{:page=>"3"}})
       end
 
       it "should updated just the run param when ajax" do
-        xhr :get, :index, default_params.merge({:page => "5", :model => "run"})
+        get :index, params: default_params.merge({:page => "5", :model => "run"}), xhr: true
         expect(assigns(:pag_params)).to eq({:automation=>{:page=>0}, :run=>{:page=>"5"}})
       end
 
       it "should updated just the automation param when ajax" do
-        xhr :get, :index, default_params.merge({:page => "5", :model => "automation"})
+        get :index, params: default_params.merge({:page => "5", :model => "automation"}), xhr: true
         expect(assigns(:pag_params)).to eq({:automation=>{:page=>"5"}, :run=>{:page=>0}})
       end
 
@@ -69,7 +69,7 @@ describe Automation::AutomationsController, type: :controller do
   describe "GET 'new'" do
 
     it "returns http success" do
-      get :new, default_params
+      get :new, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:new)
     end
@@ -80,11 +80,11 @@ describe Automation::AutomationsController, type: :controller do
 
     it "redirect when automation valid" do
       automation = ::Automation::FakeFactory.new.automation_form_chef
-      expect(post :create, default_params.merge({forms_chef_automation: automation.attributes})).to redirect_to(automations_path(default_params))
+      expect(post :create, params: default_params.merge({forms_chef_automation: automation.attributes})).to redirect_to(automations_path(default_params))
     end
 
     it "return success and render new when automation invalid" do
-      post :create, default_params
+      post :create, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:new)
       expect(flash.now[:error]).to_not be_nil
@@ -97,7 +97,7 @@ describe Automation::AutomationsController, type: :controller do
     it "returns http success" do
       allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
-      get :show, default_params.merge({id: 'automation_id'})
+      get :show, params: default_params.merge({id: 'automation_id'})
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
@@ -109,7 +109,7 @@ describe Automation::AutomationsController, type: :controller do
     it "returns http success" do
       allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
-      get :edit, default_params.merge({id: 'automation_id'})
+      get :edit, params: default_params.merge({id: 'automation_id'})
       expect(response).to be_success
       expect(response).to render_template(:edit)
     end
@@ -122,7 +122,7 @@ describe Automation::AutomationsController, type: :controller do
       automation = ::Automation::FakeFactory.new.automation_form_chef
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_return(automation)
 
-      get :update, default_params.merge({id: 'automation_id', forms_chef_automation: automation.attributes.merge(type: 'other_type')})
+      get :update, params: default_params.merge({id: 'automation_id', forms_chef_automation: automation.attributes.merge(type: 'other_type')})
       expect(response).to be_success
       expect(response).to render_template(:edit)
       expect(flash.now[:error]).to_not be_nil
@@ -131,7 +131,7 @@ describe Automation::AutomationsController, type: :controller do
     it "returns http success and shows edit view when automation is invalid" do
       allow(@automation_service).to receive(:attributes_to_form).and_return({})
 
-      get :update, default_params.merge({id: 'automation_id'})
+      get :update, params: default_params.merge({id: 'automation_id'})
       expect(response).to be_success
       expect(response).to render_template(:edit)
     end
@@ -140,12 +140,12 @@ describe Automation::AutomationsController, type: :controller do
       automation = ::Automation::FakeFactory.new.automation_form_chef
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_return(automation)
 
-      expect(get :update, default_params.merge({id: 'automation_id', forms_chef_automation: automation.attributes})).to redirect_to(automations_path(default_params))
+      expect(get :update, params: default_params.merge({id: 'automation_id', forms_chef_automation: automation.attributes})).to redirect_to(automations_path(default_params))
     end
 
     it "something wrong happens show a flash error" do
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_raise("boom")
-      get :update, default_params.merge({id: 'automation_id'})
+      get :update, params: default_params.merge({id: 'automation_id'})
       expect(response).to be_success
       expect(response).to render_template(:edit)
       expect(flash.now[:error]).to_not be_nil
@@ -156,14 +156,14 @@ describe Automation::AutomationsController, type: :controller do
   describe "GET 'destroy'" do
 
     it "returns http success and renders view" do
-      delete :destroy, default_params.merge({id: 'automation_id'})
+      delete :destroy, params: default_params.merge({id: 'automation_id'})
       expect(response).to be_success
       expect(response).to render_template("automation/automations/update_item.js")
     end
 
     it "something wrong happens show a flash error" do
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation).and_raise("boom")
-      delete :destroy, default_params.merge({id: 'automation_id'})
+      delete :destroy, params: default_params.merge({id: 'automation_id'})
       expect(response).to be_success
       expect(response).to render_template("automation/automations/update_item.js")
       expect(flash.now[:error]).to_not be_nil

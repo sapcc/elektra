@@ -1,5 +1,5 @@
 module Inquiry
-  class ProcessStep < ActiveRecord::Base
+  class ProcessStep < ApplicationRecord
     belongs_to :inquiry
     belongs_to :processor
 

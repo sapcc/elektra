@@ -2,7 +2,7 @@ module Identity
   module Domains
     # This controller implemnts the workflow to create a project
     class CreateWizardController < DashboardController
-      before_filter :load_and_authorize_inquiry
+      before_action :load_and_authorize_inquiry
 
       def new
         @project = services_ng.identity.new_project

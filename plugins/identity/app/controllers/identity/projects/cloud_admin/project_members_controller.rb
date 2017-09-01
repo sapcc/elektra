@@ -5,7 +5,7 @@ module Identity
     module CloudAdmin
       # This class implements methods add and remove for project members
       class ProjectMembersController < ::DashboardController
-        before_filter :load_scope_and_roles
+        before_action :load_scope_and_roles
 
         def index
           enforce_permissions('identity:project_member_list', {})

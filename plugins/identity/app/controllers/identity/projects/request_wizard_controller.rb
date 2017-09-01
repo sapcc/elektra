@@ -4,7 +4,7 @@ module Identity
   module Projects
     # This controller implemnts the workflow to create a project request
     class RequestWizardController < ::DashboardController
-      before_filter do
+      before_action do
         enforce_permissions('identity:project_request',
                             domain_id: @scoped_domain_id)
       end

@@ -24,9 +24,12 @@
             %td= link_to router.name, plugin('networking').router_path(router.id), data: {modal: true}
             %td= router.status
             %td
-              = router.network_object.try(:name)
-              %br
-              %span.info-text= router.network_object.try(:id)
+              - if router.network_object
+                = router.network_object.name
+                %br
+                %span.info-text= router.try(:external_gateway_info).fetch('network_id',nil)
+              - else
+                = router.try(:external_gateway_info).fetch('network_id',nil)
             %td
               - if router.ip_subnet_objects
                 - router.ip_subnet_objects.each do |ip,subnet|

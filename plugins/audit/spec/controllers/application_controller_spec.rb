@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Audit::ApplicationController, type: :controller do
   routes { Audit::Engine.routes }
 
-
-
   default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
 
   before(:all) do
@@ -18,7 +16,7 @@ describe Audit::ApplicationController, type: :controller do
 
   describe "GET 'index'" do
     it "returns http success" do
-      get :index, default_params
+      get :index, params: default_params
       expect(response).to be_success
     end
   end

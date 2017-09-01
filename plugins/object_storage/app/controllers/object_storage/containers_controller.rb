@@ -1,8 +1,8 @@
 module ObjectStorage
   class ContainersController < ObjectStorage::ApplicationController
     authorization_required
-    before_filter :load_container, except: [ :index, :new, :create ]
-    before_filter :load_quota_data, only: [ :index, :show ]
+    before_action :load_container, except: [ :index, :new, :create ]
+    before_action :load_quota_data, only: [ :index, :show ]
 
     def index
       @capabilities = services.object_storage.capabilities

@@ -1,4 +1,4 @@
-#= require react/ajax_helper
+#= require components/ajax_helper
 #= require_tree .
 
 ((app)->

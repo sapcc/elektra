@@ -9,8 +9,6 @@
 
     = f.simple_fields_for :external_gateway_info do |info|
       = info.input :network_id, {label: "Floating IP Network",
-        input_html: {disabled: @external_network.present?},
-        input_html:         {},
         as:                 :select,
         include_blank:      'Clear Gateway',
         collection:         @external_networks,

@@ -1,4 +1,4 @@
-class ProjectProfile < ActiveRecord::Base
+class ProjectProfile < ApplicationRecord
   serialize :wizard_payload
   before_save :write_wizard_status
 

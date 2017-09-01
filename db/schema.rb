@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -16,107 +15,101 @@ ActiveRecord::Schema.define(version: 20170427103721) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "domain_profiles", force: :cascade do |t|
-    t.string   "domain_id"
-    t.integer  "user_profile_id"
-    t.string   "tou_version"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "domain_profiles", ["user_profile_id"], name: "index_domain_profiles_on_user_profile_id", using: :btree
-
-  create_table "friendly_id_entries", force: :cascade do |t|
-    t.string   "class_name"
-    t.string   "scope"
-    t.string   "name"
-    t.string   "slug"
-    t.string   "key"
+  create_table "domain_profiles", id: :serial, force: :cascade do |t|
+    t.string "domain_id"
+    t.integer "user_profile_id"
+    t.string "tou_version"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "endpoint"
+    t.index ["user_profile_id"], name: "index_domain_profiles_on_user_profile_id"
   end
 
-  add_index "friendly_id_entries", ["class_name", "key"], name: "index_friendly_id_entries_on_class_name_and_key", using: :btree
-  add_index "friendly_id_entries", ["class_name", "scope", "key"], name: "index_friendly_id_entries_on_class_name_and_scope_and_key", using: :btree
-  add_index "friendly_id_entries", ["class_name"], name: "index_friendly_id_entries_on_class_name", using: :btree
-  add_index "friendly_id_entries", ["key"], name: "index_friendly_id_entries_on_key", using: :btree
-  add_index "friendly_id_entries", ["scope"], name: "index_friendly_id_entries_on_scope", using: :btree
-  add_index "friendly_id_entries", ["slug"], name: "index_friendly_id_entries_on_slug", using: :btree
+  create_table "friendly_id_entries", id: :serial, force: :cascade do |t|
+    t.string "class_name"
+    t.string "scope"
+    t.string "name"
+    t.string "slug"
+    t.string "key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "endpoint"
+    t.index ["class_name", "key"], name: "index_friendly_id_entries_on_class_name_and_key"
+    t.index ["class_name", "scope", "key"], name: "index_friendly_id_entries_on_class_name_and_scope_and_key"
+    t.index ["class_name"], name: "index_friendly_id_entries_on_class_name"
+    t.index ["key"], name: "index_friendly_id_entries_on_key"
+    t.index ["scope"], name: "index_friendly_id_entries_on_scope"
+    t.index ["slug"], name: "index_friendly_id_entries_on_slug"
+  end
 
-  create_table "inquiry_inquiries", force: :cascade do |t|
-    t.string   "kind"
-    t.text     "description"
-    t.json     "payload"
-    t.string   "aasm_state"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-    t.string   "project_id"
-    t.string   "domain_id"
-    t.json     "callbacks"
-    t.integer  "requester_id"
-    t.json     "tags"
-    t.string   "approver_domain_id"
+  create_table "inquiry_inquiries", id: :serial, force: :cascade do |t|
+    t.string "kind"
+    t.text "description"
+    t.json "payload"
+    t.string "aasm_state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "project_id"
+    t.string "domain_id"
+    t.json "callbacks"
+    t.integer "requester_id"
+    t.json "tags"
+    t.string "approver_domain_id"
   end
 
   create_table "inquiry_inquiries_processors", id: false, force: :cascade do |t|
-    t.integer "inquiry_id",   null: false
+    t.integer "inquiry_id", null: false
     t.integer "processor_id", null: false
+    t.index ["inquiry_id", "processor_id"], name: "index_inquiry_processor"
+    t.index ["processor_id", "inquiry_id"], name: "index_processor_inquiry"
   end
 
-  add_index "inquiry_inquiries_processors", ["inquiry_id", "processor_id"], name: "index_inquiry_processor", using: :btree
-  add_index "inquiry_inquiries_processors", ["processor_id", "inquiry_id"], name: "index_processor_inquiry", using: :btree
-
-  create_table "inquiry_process_steps", force: :cascade do |t|
-    t.string   "from_state"
-    t.string   "to_state"
-    t.string   "event"
-    t.text     "description"
-    t.integer  "inquiry_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.integer  "processor_id"
-  end
-
-  add_index "inquiry_process_steps", ["inquiry_id"], name: "index_inquiry_process_steps_on_inquiry_id", using: :btree
-
-  create_table "inquiry_processors", force: :cascade do |t|
-    t.string   "uid"
+  create_table "inquiry_process_steps", id: :serial, force: :cascade do |t|
+    t.string "from_state"
+    t.string "to_state"
+    t.string "event"
+    t.text "description"
+    t.integer "inquiry_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "email"
-    t.string   "full_name"
-    t.string   "name"
+    t.integer "processor_id"
+    t.index ["inquiry_id"], name: "index_inquiry_process_steps_on_inquiry_id"
   end
 
-  create_table "project_profiles", force: :cascade do |t|
-    t.string   "project_id"
-    t.text     "wizard_payload"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+  create_table "inquiry_processors", id: :serial, force: :cascade do |t|
+    t.string "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "email"
+    t.string "full_name"
+    t.string "name"
   end
 
-  create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", null: false
-    t.text     "data"
+  create_table "project_profiles", id: :serial, force: :cascade do |t|
+    t.string "project_id"
+    t.text "wizard_payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sessions", id: :serial, force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
-  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
-
-  create_table "user_profiles", force: :cascade do |t|
-    t.string   "uid"
+  create_table "user_profiles", id: :serial, force: :cascade do |t|
+    t.string "uid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "name"
-    t.string   "email"
-    t.string   "full_name"
+    t.string "name"
+    t.string "email"
+    t.string "full_name"
+    t.index ["name"], name: "index_user_profiles_on_name"
+    t.index ["uid"], name: "index_user_profiles_on_uid"
   end
-
-  add_index "user_profiles", ["name"], name: "index_user_profiles_on_name", using: :btree
-  add_index "user_profiles", ["uid"], name: "index_user_profiles_on_uid", using: :btree
 
   add_foreign_key "domain_profiles", "user_profiles"
 end

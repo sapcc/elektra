@@ -1,6 +1,6 @@
 #= require shared_filesystem_storage/components/share_networks/share_network_security_service_form
 #= require shared_filesystem_storage/components/share_networks/share_network_security_service
-#= require react/transition_groups
+#= require components/transition_groups
 
 { div,table,thead,tbody,tr,th,td,form,select,h4,label,span,input,button,abbr,select,option,a,i,small } = React.DOM
 { connect } = ReactRedux

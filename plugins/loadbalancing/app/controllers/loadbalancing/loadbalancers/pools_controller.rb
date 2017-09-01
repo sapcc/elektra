@@ -2,7 +2,7 @@ module Loadbalancing
   module Loadbalancers
     class PoolsController < ApplicationController
 
-      before_filter :load_objects
+      before_action :load_objects
 
       # set policy context
       authorization_context 'loadbalancing'

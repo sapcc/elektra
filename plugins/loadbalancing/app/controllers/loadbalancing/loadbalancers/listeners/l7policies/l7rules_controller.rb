@@ -4,7 +4,7 @@ module Loadbalancing
       module L7policies
         class L7rulesController < ApplicationController
 
-          before_filter :load_objects, except: [:create]
+          before_action :load_objects, except: [:create]
 
           # set policy context
           authorization_context 'loadbalancing'

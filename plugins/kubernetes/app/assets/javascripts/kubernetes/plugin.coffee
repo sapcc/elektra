@@ -1,5 +1,6 @@
-#= require react/helpers
-#= require react/modal
+
+#= require components/modal
+#= require components/helpers
 #= require kubernetes/constants
 #= require kubernetes/reducers/index
 #= require kubernetes/actions/index

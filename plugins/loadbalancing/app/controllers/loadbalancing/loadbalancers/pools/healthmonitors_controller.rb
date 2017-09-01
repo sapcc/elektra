@@ -3,7 +3,7 @@ module Loadbalancing
     module Pools
       class HealthmonitorsController < ApplicationController
 
-        before_filter :load_objects
+        before_action :load_objects
 
         # set policy context
         authorization_context 'loadbalancing'
@@ -60,7 +60,7 @@ module Loadbalancing
         end
 
         def healthmonitor_params
-          p = params[:healthmonitor].symbolize_keys if params[:healthmonitor]
+          p = params[:healthmonitor].to_unsafe_hash.symbolize_keys if params[:healthmonitor]
           unless (p[:type] == 'HTTP' || p[:type] == 'HTTPS')
             p.delete(:url_path)
             p.delete(:http_method)

@@ -29,7 +29,7 @@ describe Automation::RunsController, type: :controller do
   describe "GET 'show'" do
 
     it "returns http success" do
-      get :show, default_params.merge(id: 'run_id')
+      get :show, params: default_params.merge(id: 'run_id')
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
@@ -39,7 +39,7 @@ describe Automation::RunsController, type: :controller do
   describe "GET 'show_log'" do
 
     it "returns http success" do
-      get :show_log, default_params.merge(id: 'run_id')
+      get :show_log, params: default_params.merge(id: 'run_id')
       expect(response).to be_success
       expect(response).to render_template(:show_log)
     end

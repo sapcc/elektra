@@ -19,8 +19,9 @@ module Networking
       ip_infos = [ip_infos] unless ip_infos.is_a?(Array)
 
       @ip_subnet_objects = ip_infos.each_with_object({}) do |ip_info, hash|
-        hash[ip_info['ip_address']] = @service
-                                      .cached_subnet(ip_info['subnet_id'])
+        subnet = @service.cached_subnet(ip_info['subnet_id'])
+        next unless subnet
+        hash[ip_info['ip_address']] = subnet
       end
     end
 

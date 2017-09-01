@@ -5,7 +5,7 @@
 class DashboardController < ::ScopeController
   include UrlHelper
 
-  prepend_before_filter do
+  prepend_before_action do
     requested_url = request.env['REQUEST_URI']
     referer_url = request.referer
     referer_url = begin
@@ -24,7 +24,7 @@ class DashboardController < ::ScopeController
     end
   end
 
-  before_filter :load_help_text
+  before_action :load_help_text
 
   # authenticate user -> current_user is available
   authentication_required domain: ->(c) { c.instance_variable_get("@scoped_domain_id") },
@@ -37,17 +37,17 @@ class DashboardController < ::ScopeController
   # after_login is used by monsoon_openstack_auth gem.
   # After the authentication process has finished the
   # after_login can be removed.
-  before_filter { params.delete(:after_login) }
+  before_action { params.delete(:after_login) }
 
   # check if user has accepted terms of use.
   # Otherwise it is a new, unboarded user.
-  before_filter :check_terms_of_use, except: %i[accept_terms_of_use terms_of_use]
+  before_action :check_terms_of_use, except: %i[accept_terms_of_use terms_of_use]
   # rescope token
-  before_filter :rescope_token, except: [:terms_of_use]
-  before_filter :raven_context, except: [:terms_of_use]
-  before_filter :load_user_projects,
+  before_action :rescope_token, except: [:terms_of_use]
+  before_action :raven_context, except: [:terms_of_use]
+  before_action :load_user_projects,
                 :load_webcli_endpoint, except: %i[terms_of_use]
-  before_filter :set_mailer_host
+  before_action :set_mailer_host
 
   # even if token is not expired yet we get sometimes the error
   # "token not found"
@@ -85,14 +85,14 @@ class DashboardController < ::ScopeController
   end
 
   rescue_from 'Core::Api::Error' do |exception|
-    if exception.code.to_i == 401
-      redirect_to monsoon_openstack_auth.login_path(
-        domain_name: @scoped_domain_name, after_login: params[:after_login]
-      )
-    else
+    # if exception.code.to_i == 401
+    #   redirect_to monsoon_openstack_auth.login_path(
+    #     domain_name: @scoped_domain_name, after_login: params[:after_login]
+    #   )
+    # else
       render_exception_page(exception, title: exception.code_type,
                                        description: :message)
-    end
+    # end
   end
 
   # catch all mentioned errors and render error page
@@ -116,20 +116,59 @@ class DashboardController < ::ScopeController
     { 'Core::Error::ProjectNotFound' => { title: 'Project Not Found' } }
   ]
 
+  # this method checks if user has permissions for the new scope and if so
+  # it rescopes the token.
   def rescope_token
-    if @scoped_project_id.nil? &&
-      Rails.cache.fetch("user_role_assignments/#{current_user.id}",
-                        expires_in: 1.hour) do
-         service_user.identity.role_assignments(
-           'user.id' => current_user.id,
-           'scope.domain.id' => @scoped_domain_id,
-           'effective' => true
-         ).empty?
+    if @scoped_project_id
+      # @scoped_project_id exists -> check if friendly id for this project
+      # also exists. The scope controller runs bevore this controller and
+      # updates the friendlyId entry if project exists.
+      unless FriendlyIdEntry.find_project(@scoped_domain_id, @scoped_project_id)
+        # friendly id entry is nil -> reset @can_access_project, render project
+        # not found page and return.
+        @can_access_project = false
+        return render(template: 'application/exceptions/project_not_found')
       end
-      authentication_rescope_token(domain: nil, project: nil)
+
+      #byebug
+      # did not return -> check if user projects include the requested project.
+      has_project_access = service_user.identity.user_projects(
+        current_user.id, domain_id: @scoped_domain_id,
+                         name: @scoped_project_name
+      ).select { |project| project.id == @scoped_project_id }.length.positive?
+
+      unless has_project_access
+        # user has no permissions for requested project -> reset
+        # @can_access_project, render unauthorized page and return.
+        @can_access_project = false
+        return render(template: 'application/exceptions/unauthorized')
+      end
+    elsif @scoped_domain_id
+      # @scoped_project_id is nil and @scoped_domain_id exists -> check if
+      # user can access the requested domain.
+      has_domain_access = Rails.cache.fetch(
+        "user_domain_role_assignments/#{current_user.id}/#{@scoped_domain_id}",
+        expires_in: 1.hour
+      ) do
+        service_user.identity.role_assignments(
+          'user.id' => current_user.id, 'scope.domain.id' => @scoped_domain_id,
+          'effective' => true
+        ).length.positive?
+      end
+      unless has_domain_access
+        # user has no permissions for the new domain -> rescope to
+        # unscoped token and return
+        return authentication_rescope_token(domain: nil, project: nil)
+      end
     else
-      authentication_rescope_token
+      # both @scoped_project_id and @scoped_domain_id are nil
+      # -> render unauthorized page and return.
+      @can_access_project = false
+      return render(template: 'application/exceptions/unauthorized')
     end
+
+    # did not return yet -> rescope token to the 'new' scope.
+    authentication_rescope_token
   end
 
   def check_terms_of_use
@@ -263,7 +302,11 @@ class DashboardController < ::ScopeController
 
     return unless @scoped_project_id
     # load active project
-    @active_project ||= services_ng.identity.cached_project(
+
+    @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id }
+    return if @active_project && @active_project.name == @scoped_project_name
+
+    @active_project = services_ng.identity.find_project(
       @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
     )
     FriendlyIdEntry.update_project_entry(@active_project)

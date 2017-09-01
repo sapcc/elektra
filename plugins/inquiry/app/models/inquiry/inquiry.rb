@@ -1,5 +1,5 @@
 module Inquiry
-  class Inquiry < ActiveRecord::Base
+  class Inquiry < ApplicationRecord
     include Filterable
     paginates_per 20
     default_scope { order(updated_at: :desc) } # default sort order
@@ -221,7 +221,7 @@ module Inquiry
 
     def notify_requester
       begin
-        InquiryMailer.notification_email_requester(self.requester.email, self.requester.full_name, self.process_steps.last).deliver_later
+        InquiryMailer.notification_email_requester(self.requester.email, self.requester.full_name, self, self.process_steps.last).deliver_later
       rescue Net::SMTPFatalError => e
         Rails.logger.error "InquiryMailer: Could not send email to requester #{@user_email}. Exception: #{e.message}"
       end
@@ -229,11 +229,11 @@ module Inquiry
 
     def notify_processors
       begin
-        InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self.process_steps.last, self.requester).deliver_later
+        InquiryMailer.notification_email_processors((self.processors.map { |p| p.email }).compact, self, self.process_steps.last, self.requester).deliver_later
       rescue Net::SMTPFatalError => e
         self.processors.each do |p|
           begin
-            InquiryMailer.notification_email_processors([p.email], self.process_steps.last).deliver_later
+            InquiryMailer.notification_email_processors([p.email], self, self.process_steps.last, self.requester).deliver_later
           rescue Net::SMTPFatalError => ex
             Rails.logger.error "InquiryMailer: Could not send email to requester #{p.email}. Exception: #{ex.message}"
           end
@@ -245,5 +245,17 @@ module Inquiry
       return !self.errors.blank?
     end
 
+    # Fix of Rails 5 bug with deserialization of attributes of type json.
+    # Attributes aren't deserialized as hash as done in Rails 4.2
+    def payload
+      begin
+        data = read_attribute(:payload)
+        return data if data.is_a?(Hash)
+        return JSON.parse(data)
+      rescue => e
+      ensure
+        data
+      end
+    end
   end
 end

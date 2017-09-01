@@ -75,7 +75,7 @@ module ViewHelper
 
   def render_available_regions
     # read regions config, select only available regions
-    regs = Core::StaticConfig.regions
+    regs = ::Core::StaticConfig.regions
     available_regions = regs.blank? ? Array.new : regs.select{ |dc| dc['available']}
     base_url = request.base_url
     domain_path = request.path.split('/')[1] # get domain from path

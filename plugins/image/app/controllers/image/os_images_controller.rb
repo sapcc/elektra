@@ -1,6 +1,6 @@
 module Image
   class OsImagesController < Image::ApplicationController
-    # before_filter :load_visibility, only: [:index, :show]
+    # before_action :load_visibility, only: [:index, :show]
 
     def index
       @images = paginatable(per_page: 15) do |pagination_options|

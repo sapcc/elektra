@@ -1,6 +1,6 @@
 module Compute
   class HypervisorsController < Compute::ApplicationController
-    before_filter ->(id = params[:id] || params[:hypervisor_id]) { load_hv id }
+    before_action ->(id = params[:id] || params[:hypervisor_id]) { load_hv id }
 
     authorization_context 'compute'
     authorization_required
@@ -13,10 +13,6 @@ module Compute
     end
 
     private
-
-    def release_state
-      'experimental'
-    end
 
     def load_hv(id)
       @hypervisor = services_ng.compute.find_hypervisor(id)

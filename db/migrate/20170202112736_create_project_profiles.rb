@@ -1,4 +1,4 @@
-class CreateProjectProfiles < ActiveRecord::Migration
+class CreateProjectProfiles < ActiveRecord::Migration[4.2]
   def change
     create_table :project_profiles do |t|
       t.string :project_id

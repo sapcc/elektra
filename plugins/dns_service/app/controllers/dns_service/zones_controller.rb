@@ -1,7 +1,7 @@
 module DnsService
   class ZonesController < DnsService::ApplicationController
-    before_filter ->(id = params[:id]) { load_zone id }, except: [:index]
-    before_filter :load_pools, only: [:index, :show, :update, :create]
+    before_action ->(id = params[:id]) { load_zone id }, except: [:index]
+    before_action :load_pools, only: [:index, :show, :update, :create]
 
     authorization_context 'dns_service'
     authorization_required 

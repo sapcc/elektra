@@ -4,7 +4,9 @@
 # All subclasses which require a scope (e.g. domain_id/projects or domain_id/project_id/instances)
 # should inherit from this class.
 class ScopeController < ::ApplicationController
-  prepend_before_filter do
+  prepend_before_action :load_scoped_objects
+
+  def load_scoped_objects
     # initialize scoped domain's and project's friendly id
     # use existing, user's or default domain
     domain_id = (params[:domain_id] ||
@@ -65,18 +67,20 @@ class ScopeController < ::ApplicationController
     @policy_default_params = { target: {} }
     @policy_default_params[:target][:scoped_domain_name] = @scoped_domain_name
     @policy_default_params[:target][:scoped_project_name] = @scoped_project_name
+
+    @can_access_domain = !@scoped_domain_name.nil?
+    @can_access_project = !@scoped_project_name.nil?
   end
 
-  rescue_and_render_exception_page [
-    {
-      'Core::Error::ServiceUserNotAuthenticated' => {
-        title: 'Unsupported Domain',
-        description: 'Dashboard is not enabled for this domain.',
-        details: :message
-      }
-    },
-    {
-      'Core::Error::DomainNotFound' => { title: 'Bad Domain' }
-    }
-  ]
+  rescue_from(
+    'Core::Error::ServiceUserNotAuthenticated', 'Core::Error::DomainNotFound'
+  ) do |exception|
+    render_exception_page(
+      exception,
+      title: 'Unsupported Domain',
+      description: -> (_e, controller) { "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again" },
+      details: :message,
+      warning: true
+    )
+  end
 end

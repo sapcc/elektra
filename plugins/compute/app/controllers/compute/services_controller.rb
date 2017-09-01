@@ -33,11 +33,5 @@ module Compute
         render :edit
       end
     end
-
-    private
-
-    def release_state
-      'experimental'
-    end
   end
 end

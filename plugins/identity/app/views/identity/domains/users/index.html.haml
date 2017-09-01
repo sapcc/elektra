@@ -6,7 +6,6 @@
     .col-sm-5
       .has-feedback
         = text_field_tag 'filter_users', '', class: "form-control", placeholder: 'User name, description or ID'
-        %i.glyphicon.glyphicon-search.form-control-feedback
 
 %table.table#users.searchable{data: {search_input: '#filter_users'}}
   %thead

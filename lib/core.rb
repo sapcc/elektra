@@ -10,6 +10,7 @@ require_relative 'core/audit_logger'
 require_relative 'core/errors'
 require_relative 'core/paginatable'
 require_relative 'core/strip_attributes'
+require_relative 'core/static_config'
 
 # Core module contains all essential functionalities
 module Core

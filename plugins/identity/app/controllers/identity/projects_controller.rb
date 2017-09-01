@@ -3,13 +3,13 @@
 module Identity
   # This class implements project actions
   class ProjectsController < ::DashboardController
-    before_filter :project_id_required, except: %i[index create new user_projects]
-    before_filter :get_project_id,  except: %i[index create new]
+    before_action :project_id_required, except: %i[index create new user_projects]
+    before_action :get_project_id,  except: %i[index create new]
 
     # check wizard state and redirect unless finished
-    before_filter :check_wizard_status, only: [:show]
+    before_action :check_wizard_status, only: [:show]
 
-    before_filter do
+    before_action do
       @scoped_project_fid = params[:project_id] || @project_id
     end
 
@@ -36,7 +36,8 @@ module Identity
       end
     end
 
-    def show; end
+    def show
+    end
 
     def view
       @project = services_ng.identity.find_project(
@@ -55,23 +56,18 @@ module Identity
     def update
       params[:project][:enabled] = params[:project][:enabled] == true ||
                                    params[:project][:enabled] == 'true'
-      @project = services_ng.identity.new_project(params[:project])
+      @project = service_user.identity.new_project(params[:project])
       @project.id = @project_id
       @project.domain_id = @scoped_domain_id
 
-      if @project.valid? &&
-         service_user.identity.update_project(@project_id, @project.attributes)
-        # audit_logger.info("User #{current_user.name} (#{current_user.id})
+      if @project.save &&
         # has updated project #{@project.name} (#{@project.id})")
         # audit_logger.info(user: current_user, has: "updated",
         #                   project: @project)
         audit_logger.info(current_user, 'has updated', @project)
 
-        entry = FriendlyIdEntry.update_project_entry(@project)
         flash[:notice] = "Project #{@project.name} successfully updated."
-        redirect_to plugin('identity').project_path(
-          project_id: (entry.nil? ? @project.id : entry.slug)
-        )
+        redirect_to plugin('identity').project_path(project_id: @project.friendly_id)
       else
         flash.now[:error] = @project.errors.full_messages.to_sentence
         render action: :edit

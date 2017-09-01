@@ -51,11 +51,15 @@ module ServiceLayerNg
           "user/#{user_id}/user_domain_projects", expires_in: 1.minute
         ) do
           api.identity.list_projects_for_user(user_id, filter).data
-        end
+        end || []
         user_domain_projects_data.collect do |project_attrs|
           map_to(Identity::Project, project_attrs)
         end
       end
+
+      # def reset_projects_cach(project_id = nil)
+      #
+      # end
 
       def projects_by_user_id(user_id)
         api.identity.list_projects_for_user(user_id).map_to(Identity::Project)

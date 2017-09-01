@@ -38,13 +38,13 @@ describe Automation::NodesController, type: :controller do
     end
 
     it "returns http success" do
-      get :index, default_params
+      get :index, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:index)
     end
 
     it "should assign variables" do
-      get :index, default_params
+      get :index, params: default_params
       expect(@nodes[:elements]).to eq(assigns(:nodes))
       expect(@nodes[:jobs]).to include(assigns(:jobs))
     end
@@ -54,7 +54,7 @@ describe Automation::NodesController, type: :controller do
   describe "GET 'show'" do
 
     it "returns http success" do
-      get :show, default_params.merge({id: "node_id"})
+      get :show, params: default_params.merge({id: "node_id"})
       expect(response).to be_success
       expect(response).to render_template(:show)
     end
@@ -63,7 +63,7 @@ describe Automation::NodesController, type: :controller do
       node = ::Automation::FakeFactory.new.node
       allow_any_instance_of(ServiceLayer::AutomationService).to receive(:node).and_return(node)
 
-      get :show, default_params.merge({id: "node_id"})
+      get :show, params: default_params.merge({id: "node_id"})
       expect(node).to eq(assigns(:node))
       expect(assigns(:node_form)).to be_truthy
       expect(assigns(:node_form_read)).to be_truthy
@@ -74,22 +74,24 @@ describe Automation::NodesController, type: :controller do
   end
 
   describe "GET 'install'" do
+    before :each do
+      allow_any_instance_of(ServiceLayerNg::ComputeService).to receive(:servers).and_raise("boom")
+    end
 
     it "returns http success" do
-      get :install, default_params
+      get :install, params: default_params
       expect(response).to be_success
       expect(response).to render_template(:install)
     end
 
     it "should assign variables" do
-      get :install, default_params
+      get :install, params: default_params
       expect(assigns(:compute_instances)).to be_truthy
     end
 
+
     it "should rescue on error" do
-      allow_any_instance_of(ServiceLayerNg::ComputeService)
-        .to receive(:servers).and_raise("boom")
-      get :install, default_params
+      get :install, params: default_params
       expect(assigns(:compute_instances)).to be_empty
       expect(assigns(:errors)).to be_truthy
     end
@@ -99,7 +101,7 @@ describe Automation::NodesController, type: :controller do
   describe "GET xhr 'show_instructions'" do
 
     it "returns http success" do
-      xhr :get, :show_instructions, default_params.merge({id: "instance_id", type: "external"})
+      get :show_instructions, params: default_params.merge({id: "instance_id", type: "external"}), xhr: true
       expect(response).to be_success
       expect(response).to render_template(:show_instructions)
     end
@@ -109,14 +111,14 @@ describe Automation::NodesController, type: :controller do
   describe "GET xhr 'update'" do
 
     it "returns http success" do
-      xhr :put, :update, default_params.merge({id: "node_id"})
+      put :update, params: default_params.merge({id: "node_id"}), xhr: true
       expect(response).to be_success
       expect(response).to render_template(:update)
     end
 
     it "renders the page correcty when an exception happens" do
       allow_any_instance_of(Automation::Forms::NodeTags).to receive(:update).and_raise("boom update")
-      xhr :put, :update, default_params.merge({id: "node_id"})
+      put :update, params: default_params.merge({id: "node_id"}), xhr: true
       expect(assigns(:node)).to be_truthy
       expect(assigns(:node_form_read)).to be_truthy
       expect(assigns(:node_form)).to be_truthy
@@ -128,7 +130,7 @@ describe Automation::NodesController, type: :controller do
   describe "GET xhr run_automation" do
 
     it "returns http success" do
-      xhr :get, :run_automation, default_params.merge({id: "node_id", })
+      get :run_automation, params: default_params.merge({id: "node_id", }), xhr: true
       expect(response).to be_success
       expect(response).to render_template(:run_automation)
     end
@@ -138,7 +140,7 @@ describe Automation::NodesController, type: :controller do
   describe "DELETE destroy" do
 
     it "returns http success" do
-      expect(delete :destroy, default_params.merge({id: "node_id"})).to redirect_to(nodes_path(default_params))
+      expect(delete :destroy, params: default_params.merge({id: "node_id"})).to redirect_to(nodes_path(default_params))
     end
 
   end

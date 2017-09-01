@@ -18,4 +18,4 @@
 
 =content_for :javascripts do
   :javascript
-    protodata = #{protos.to_json};
+    protodata = #{protos.to_json.html_safe};

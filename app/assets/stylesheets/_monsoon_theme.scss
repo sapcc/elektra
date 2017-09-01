@@ -554,11 +554,6 @@ section {
   .has-feedback.has-feedback-searchable {
     float: left;
     width: 250px;
-
-    .form-control-feedback.not-empty {
-      cursor: pointer;
-      pointer-events: all;
-    }
   }
 
   .has-feedback-help {
@@ -1654,8 +1649,19 @@ tr.task-state {
 // Searchable
 // ------------------------------------
 .searchable.search-mode {
+
   a {
     color: #ccc;
+  }
+
+  &.show-only-matches {
+    li {
+      display: none;
+
+      &.search-result {
+        display: block;
+      }
+    }
   }
 
   .search-result {
@@ -1669,6 +1675,11 @@ tr.task-state {
   li.has-search-result ul  {
     display: block;
   }
+}
+
+.form-control-feedback.not-empty {
+  cursor: pointer;
+  pointer-events: all;
 }
 
 [data-trigger="show-searchable-search"] {

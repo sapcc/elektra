@@ -9,13 +9,13 @@
 
     %p
       We received your request regarding a
-      = "#{@inquiry_step.inquiry.kind}."
+      = "#{@inquiry.kind}."
 
     %p
-      %a(href="#{inquiries_url(domain_id: "#{@inquiry_step.inquiry.domain_id}")}") Click here to look at the request.
+      %a(href="#{inquiries_url(domain_id: "#{@inquiry.domain_id}")}") Click here to look at the request.
 
     %p
-      %strong= "The status of your request has been changed to #{@inquiry_step.inquiry.aasm.human_state}."
+      %strong= "The status of your request has been changed to #{@inquiry.aasm.human_state}."
 
     - unless @inquiry_step.description.blank?
       %p
@@ -27,26 +27,26 @@
       Your request details:
       %br
       = "---"
-      - if @inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['region']
+      - if @inquiry.tags && @inquiry.tags['region']
         %br
         %string CC Region:
-        = @inquiry_step.inquiry.tags['region']
+        = @inquiry.tags['region']
       %br
       %strong CC Domain:
-      - if (@inquiry_step.inquiry.tags && @inquiry_step.inquiry.tags['domain_name'])
-        = "#{@inquiry_step.inquiry.tags['domain_name']} (#{@inquiry_step.inquiry.domain_id})"
+      - if (@inquiry.tags && @inquiry.tags['domain_name'])
+        = "#{@inquiry.tags['domain_name']} (#{@inquiry.domain_id})"
       - else
-        = @inquiry_step.inquiry.domain_id
+        = @inquiry.domain_id
       %br
       %strong Resource:
-      = @inquiry_step.inquiry.kind
+      = @inquiry.kind
       %br
       %strong Request reason:
       %br
-      %pre= @inquiry_step.inquiry.description
+      %pre= @inquiry.description
       %br
       %strong Request specific data:
-      %pre= JSON.pretty_generate(@inquiry_step.inquiry.payload) rescue "Error during rendering of JSON payload!"
+      %pre= JSON.pretty_generate(@inquiry.payload) rescue "Error during rendering of JSON payload!"
       = "---"
 
     %p

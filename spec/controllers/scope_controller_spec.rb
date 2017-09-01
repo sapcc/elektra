@@ -24,12 +24,12 @@ describe ScopeController, type: :controller do
 
     describe "GET 'index'" do
       it "returns http success" do
-        get :index, domain_id: @domain_friendly_id.slug
+        get :index, params: {domain_id: @domain_friendly_id.slug}
         expect(response).to be_success
       end
 
       it "redirects to the same action with friendly ids for domain" do
-        get :index, domain_id: AuthenticationStub.domain_id
+        get :index, params: {domain_id: AuthenticationStub.domain_id}
         expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
       end
     end
@@ -39,12 +39,12 @@ describe ScopeController, type: :controller do
 
     describe "GET 'index'" do
       it "returns http success" do
-        get :index, domain_id: @domain_friendly_id.slug, project_id: @project_friendly_id.slug
+        get :index, params: {domain_id: @domain_friendly_id.slug, project_id: @project_friendly_id.slug}
         expect(response).to be_success
       end
 
       it "redirects to the same action with friendly ids for domain and project" do
-        get :index, default_params
+        get :index, params: default_params
         expect(response).to redirect_to("/#{@domain_friendly_id.slug}/scope")
       end
     end

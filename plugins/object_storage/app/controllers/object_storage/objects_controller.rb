@@ -2,9 +2,9 @@ module ObjectStorage
   class ObjectsController < ObjectStorage::ApplicationController
 
     authorization_required
-    before_filter :load_params
-    before_filter :load_object, except: [ :index ]
-    before_filter :load_quota_data, only: [ :index, :show ]
+    before_action :load_params
+    before_action :load_object, except: [ :index ]
+    before_action :load_quota_data, only: [ :index, :show ]
 
     def index
       @objects = services.object_storage.list_objects_at_path(@container_name, params[:path])
