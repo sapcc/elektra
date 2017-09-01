@@ -8,9 +8,6 @@
     .js-table-container
       = render partial: 'table_kb11n_show', locals: {kb11n_billing_objects: @kb11n_billing_objects}
 
-    - if @kb11n_billing_objects.blank?
-      .alert-error
-        No expenses have been arisen or maintained for this project yet.
 
   .col-md-3
     .infobox
@@ -44,28 +41,28 @@
       // temp. disabled barchart
       //=render partial: 'chart'
 
-:javascript
-
-  function capitalizeFirstLetter(string) {
-    return string[0].toUpperCase() + string.slice(1).toLowerCase();
-  };
-
-  // TODO: mult. entries
-
-  var billing_objects = #{@billing_objects.to_json},
-      billing_objects_values = [];
-
-  billing_objects.forEach(function(entry) {
-    billing_objects_values.push(entry.PRICE_LOC);
-  });
-
-  var data = function() {
-    return cost_control.stream_layers(billing_objects.length, billing_objects_values).map(function(d, i) {
-      return {
-        key: capitalizeFirstLetter(billing_objects[i].SERVICE),
-        values: d
-      };
-    });
-  }
-
-  cost_control.render_cost_bar('#chart',data);
+// :javascript
+//
+//   function capitalizeFirstLetter(string) {
+//     return string[0].toUpperCase() + string.slice(1).toLowerCase();
+//   };
+//
+//   // TODO: mult. entries
+//
+//   var billing_objects = #{@billing_objects.to_json},
+//       billing_objects_values = [];
+//
+//   billing_objects.forEach(function(entry) {
+//     billing_objects_values.push(entry.PRICE_LOC);
+//   });
+//
+//   var data = function() {
+//     return cost_control.stream_layers(billing_objects.length, billing_objects_values).map(function(d, i) {
+//       return {
+//         key: capitalizeFirstLetter(billing_objects[i].SERVICE),
+//         values: d
+//       };
+//     });
+//   }
+//
+//   cost_control.render_cost_bar('#chart',data);

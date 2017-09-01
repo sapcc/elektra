@@ -125,7 +125,7 @@ module Compute
 
     def create
       @instance = services_ng.compute.new_server
-      params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
+      params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?} unless params[:server][:security_groups].blank?
       @instance.attributes=params[@instance.model_name.param_key]
 
       if @instance.save

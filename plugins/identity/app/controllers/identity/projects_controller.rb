@@ -37,6 +37,10 @@ module Identity
     end
 
     def show
+      @subprojects = []
+      if @user_domain_projects
+        @subprojects = @user_domain_projects.select { |pr| pr.parent_id == @scoped_project_id }
+      end
     end
 
     def view
