@@ -21,3 +21,7 @@ en:
         title: "Authentication Failed"
         subtitle: "Something went wrong while processing your authentication"
         description: "Please check if you supplied to correct credentials."
+      unprocessable_entity:
+        title: "Unprocessable Entity"
+        subtitle: "The form data couldn't be processed"
+        description: "This can happen if the application is redeployed while you are filling in the form. The authenticity token our application uses to protect from forgery won't be valid anymore in this case. Please reload the page and try again."
