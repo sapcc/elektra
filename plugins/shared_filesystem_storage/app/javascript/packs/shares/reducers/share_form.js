@@ -1,4 +1,4 @@
-import '../constants';
+import * as constants from '../constants';
 
 //######################### SHARE FORM ###########################
 const initialShareFormState = {
@@ -54,11 +54,11 @@ const shareFormFailure=(state,{errors})=>
 const shareForm = function(state, action) {
   if (state == null) { state = initialShareFormState; }
   switch (action.type) {
-    case RESET_SHARE_FORM: return resetShareForm(state,action);
-    case UPDATE_SHARE_FORM: return updateShareForm(state,action);
-    case SUBMIT_SHARE_FORM: return submitShareForm(state,action);
-    case PREPARE_SHARE_FORM: return prepareShareForm(state,action);
-    case SHARE_FORM_FAILURE: return shareFormFailure(state,action);
+    case constants.RESET_SHARE_FORM: return resetShareForm(state,action);
+    case constants.UPDATE_SHARE_FORM: return updateShareForm(state,action);
+    case constants.SUBMIT_SHARE_FORM: return submitShareForm(state,action);
+    case constants.PREPARE_SHARE_FORM: return prepareShareForm(state,action);
+    case constants.SHARE_FORM_FAILURE: return shareFormFailure(state,action);
     default: return state;
   }
 };
