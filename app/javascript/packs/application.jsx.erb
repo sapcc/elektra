@@ -1,0 +1,45 @@
+/* eslint no-console:0 */
+
+import { configureStore } from './store';
+import React from 'react';
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux';
+
+var pluginReducers = {};
+var pluginContainers = {};
+
+<% Core::PluginsManager.mountable_plugins.each do |plugin| %>
+  <% if File.exists?(File.expand_path("plugins/#{plugin.name}/app/javascript/packs", __dir__)) %>
+    import <%=plugin.name%> from '../../../plugins/<%=plugin.name%>/app/javascript/packs/application';
+    if (<%=plugin.name%>.Reducers) {
+      pluginReducers['<%=plugin.name%>'] = <%=plugin.name%>.Reducers;
+    }
+    if (<%=plugin.name%>.Container) {
+      pluginContainers['<%=plugin.name%>'] = <%=plugin.name%>.Container;
+    }
+  <% end %>
+<% end %>
+
+document.addEventListener('DOMContentLoaded', () => {
+  const elements = document.getElementsByClassName('content');
+  const content = elements.length > 0 ? elements[0] : document.body;
+  const classes = content.className.split(' ');
+  const containers = []
+  
+  for(let className of classes) {
+    if (pluginContainers[className]) {
+      containers.push(React.createElement(pluginContainers[className], Object.assign({}, {key: className})))
+    }
+  }
+
+  ReactDOM.render(
+    <Provider store = { configureStore(pluginReducers) }>
+      <div className = "react-container">
+        { containers.map((container, index) => (
+          container
+        ))}
+      </div>
+    </Provider>,
+    content.appendChild(document.createElement('div')),
+  )
+})

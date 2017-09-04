@@ -3,23 +3,28 @@ import ReduxThunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+// combines all reducers and also nested reducers
 const combineNestedReducers = (reducers) => {
-   if (typeof reducers === 'Object'){
-     var nestedReducers = {};
-     for(let key of Object.keys(reducers) ) {
-       nestedReducers[key] = combineNestedReducers(reducers[key]);
-     }
-     return combineReducers(nestedReducers);
-   } else if (typeof reducers === 'function') {
-     return combineReducers(reducers)
-   }
+  var nestedReducers = {};
+
+  for(let key of Object.keys(reducers) ) {
+    const values = reducers[key];
+
+    if (typeof values === 'object'){
+      // recursion
+      nestedReducers[key] = combineNestedReducers(values);
+    } else if (typeof values === 'function') {
+      nestedReducers[key] = values
+    }
+  }
+  return combineReducers(nestedReducers);
 };
 
+// creates an redux store with all combined reducers
 const configureStore = (reducers) => (
-  console.log('::::::::::::::.',combineNestedReducers(reducers))
-  // createStore(combineNestedReducers(reducers), composeEnhancers(
-  //   applyMiddleware(ReduxThunk)
-  // ))
+  createStore(combineNestedReducers(reducers), composeEnhancers(
+    applyMiddleware(ReduxThunk)
+  ))
 );
 
-export default configureStore;
+export { configureStore };

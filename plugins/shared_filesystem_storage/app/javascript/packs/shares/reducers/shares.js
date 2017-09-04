@@ -1,4 +1,4 @@
-import '../constants';
+import * as constants from '../constants';
 
 //########################## SHARES ##############################
 const initialSharesState = {
@@ -89,17 +89,17 @@ const receiveShareExportLocations= function(state,{shareId,export_locations}){
 const shares = function(state, action) {
   if (state == null) { state = initialSharesState; }
   switch (action.type) {
-    case RECEIVE_SHARES: return receiveShares(state,action);
-    case REQUEST_SHARES: return requestShares(state,action);
-    case REQUEST_SHARES_FAILURE: return requestSharesFailure(state,action);
-    case REQUEST_SHARE: return requestShare(state,action);
-    case REQUEST_SHARE_FAILURE: return requestShareFailure(state,action);
-    case RECEIVE_SHARE: return receiveShare(state,action);
-    case REQUEST_DELETE_SHARE: return requestDeleteShare(state,action);
-    case DELETE_SHARE_FAILURE: return deleteShareFailure(state,action);
-    case DELETE_SHARE_SUCCESS: return deleteShareSuccess(state,action);
-    case REQUEST_SHARE_EXPORT_LOCATIONS: return state;
-    case RECEIVE_SHARE_EXPORT_LOCATIONS: return receiveShareExportLocations(state,action);
+    case constants.RECEIVE_SHARES: return receiveShares(state,action);
+    case constants.REQUEST_SHARES: return requestShares(state,action);
+    case constants.REQUEST_SHARES_FAILURE: return requestSharesFailure(state,action);
+    case constants.REQUEST_SHARE: return requestShare(state,action);
+    case constants.REQUEST_SHARE_FAILURE: return requestShareFailure(state,action);
+    case constants.RECEIVE_SHARE: return receiveShare(state,action);
+    case constants.REQUEST_DELETE_SHARE: return requestDeleteShare(state,action);
+    case constants.DELETE_SHARE_FAILURE: return deleteShareFailure(state,action);
+    case constants.DELETE_SHARE_SUCCESS: return deleteShareSuccess(state,action);
+    case constants.REQUEST_SHARE_EXPORT_LOCATIONS: return state;
+    case constants.RECEIVE_SHARE_EXPORT_LOCATIONS: return receiveShareExportLocations(state,action);
 
     default: return state;
   }
