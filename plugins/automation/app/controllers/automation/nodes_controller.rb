@@ -80,7 +80,7 @@ module Automation
     end
 
     def update
-      @node_form = ::Automation::Forms::NodeTags.new(params['forms_node_tags'])
+      @node_form = ::Automation::Forms::NodeTags.new(params.to_unsafe_hash['forms_node_tags'])
       @error = false
 
       # validate and update
