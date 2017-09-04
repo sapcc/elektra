@@ -16,6 +16,9 @@ module ResourceManagement
     def service_type
       read(:service_type)
     end
+    def service_area
+      read(:service_area)
+    end
 
     def config # TODO remove
       return @config unless @config.nil?

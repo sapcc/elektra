@@ -30,6 +30,7 @@ module ResourceManagement
     def resources
       metadata = {
         service_type:      read(:type).to_sym,
+        service_area:      read(:area).to_sym,
         project_id:        read(:project_id),
         project_name:      read(:project_name),
         project_domain_id: read(:project_domain_id),

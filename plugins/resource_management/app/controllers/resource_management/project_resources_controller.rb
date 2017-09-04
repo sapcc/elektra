@@ -66,7 +66,7 @@ module ResourceManagement
       # save the new quota to the database
       if @resource.save
         # load data to reload the bars in the main view
-        show_area(@resource.config.service.area.to_s)
+        show_area(@resource.service_area)
       else
         # reload the reduce quota window with error
         respond_to do |format|
@@ -105,17 +105,16 @@ module ResourceManagement
       end
 
       # now we can create the inquiry
-      cfg         = @resource.config
-      base_url    = plugin('resource_management').admin_area_path(area: cfg.service.area.to_s, domain_id: @scoped_domain_id, project_id: nil)
+      base_url    = plugin('resource_management').admin_area_path(area: @resource.service_area.to_s, domain_id: @scoped_domain_id, project_id: nil)
       overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota',
-        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
         current_user,
         {
-          service: cfg.service.catalog_type,
-          resource: cfg.name,
+          service: @resource.service_type,
+          resource: @resource.name,
           desired_quota: new_value,
         },
         service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),

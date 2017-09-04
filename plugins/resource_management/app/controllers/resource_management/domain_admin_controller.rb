@@ -109,7 +109,7 @@ module ResourceManagement
 
       # save the new quota to database
       if @resource.save
-        show_area(@resource.config.service.area)
+        show_area(@resource.service_area)
       else
         # reload the reduce quota window with error
         @resource.quota = old_quota
@@ -235,9 +235,8 @@ module ResourceManagement
       end
 
       # create inquiry
-      cfg      = @resource.config
       base_url = plugin('resource_management').cloud_admin_area_path(
-        area: cfg.service.area.to_s,
+        area:       @resource.service_area.to_s,
         domain_id:  Rails.configuration.cloud_admin_domain,
         project_id: Rails.configuration.cloud_admin_project,
       )
@@ -252,11 +251,11 @@ module ResourceManagement
       cloud_admin_domain_id =  cloud_admin_domain.blank? ? Rails.configuration.cloud_admin_domain : cloud_admin_domain.id
       inquiry = services.inquiry.create_inquiry(
         'domain_quota',
-        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
+        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
         current_user,
         {
-          service: cfg.service.catalog_type,
-          resource: cfg.name,
+          service: @resource.service_type,
+          resource: @resource.name,
           desired_quota: new_value,
         },
         cloud_admin.identity.list_cloud_resource_admins,
