@@ -24,4 +24,4 @@ en:
       unprocessable_entity:
         title: "Unprocessable Entity"
         subtitle: "The form data couldn't be processed"
-        description: "This can happen if the application is redeployed while you are filling in the form. The authenticity token our application uses to protect from forgery won't be valid anymore in this case. Please reload the page and try again."
+        description: "This can happen due to various reasons. One reason could be that you have had the page open for a longer time and something changed in the backend in the meantime. In this case a reload of the page will help."
