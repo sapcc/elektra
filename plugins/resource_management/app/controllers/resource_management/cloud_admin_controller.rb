@@ -113,21 +113,16 @@ module ResourceManagement
     end
 
     def details
-      @show_all_button = true if params[:overview] == 'true'
-
       @sort_order  = params[:sort_order] || 'asc'
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
 
-      service_type  = params.require(:service).to_s
-      resource_name = params.require(:resource).to_sym
-      @config       = ResourceManagement::ResourceConfig.all.find do |c|
-        c.name == resource_name and c.service.catalog_type == service_type
-      end or raise ActiveRecord::RecordNotFound, "no such resource"
+      @service_type  = params.require(:service).to_sym
+      @resource_name = params.require(:resource).to_sym
 
-      cluster = services_ng.resource_management.find_current_cluster(service: service_type, resource: resource_name.to_s)
+      cluster = services_ng.resource_management.find_current_cluster(service: @service_type.to_s, resource: @resource_name.to_s)
       @cluster_resource = cluster.resources.first or raise ActiveRecord::RecordNotFound, "no data for cluster"
-      domains = services_ng.resource_management.list_domains(service: service_type, resource: resource_name.to_s)
+      domains = services_ng.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given
