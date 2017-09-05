@@ -94,22 +94,16 @@ class DashboardController < ::ScopeController
   end
 
   rescue_from 'Core::Api::Error' do |exception|
-    # if exception.code.to_i == 401
-    #   redirect_to monsoon_openstack_auth.login_path(
-    #     domain_name: @scoped_domain_name, after_login: params[:after_login]
-    #   )
-    # else
-    if exception.code.to_i == 404
-      render_exception_page(
-          error, title: 'Object not Found',
-          sentry: false,
-          warning: true,
-          description: "The object you're looking for doesn't exist. Please verify your input."
-      )
-    else
-      render_exception_page(exception, title: exception.code_type,
-                            description: :message)
+    options = { title: exception.code_type, description: :message, warning: true, sentry: false }
+
+    case exception.code.to_i
+    when 404
+      options.merge!(title: 'Object not Found', description: "The object you're looking for doesn't exist. Please verify your input.")
+    when 403
+      options.merge!(title: 'Forbidden')
     end
+    render_exception_page(exception, options)
+
   end
 
   # catch all mentioned errors and render error page
