@@ -1,6 +1,6 @@
-FROM ruby:2.3.1-alpine
+FROM ruby:2.4.1-alpine3.6
 
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client
+RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
