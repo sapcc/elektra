@@ -146,8 +146,8 @@ module ResourceManagement
 
     def create_package_request
       # validate input
-      pkg = params[:package]
-      unless ResourceManagement::PackageConfig::PACKAGES.include?(pkg)
+      pkg = ResourceManagement::Package.find(params[:package])
+      unless pkg
         respond_to do |format|
           format.js { render inline: 'alert("Error: Invalid quota package name specified.")' }
         end
@@ -160,9 +160,9 @@ module ResourceManagement
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota_package',
-        "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg}",
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg.key}",
         current_user,
-        { package: pkg },
+        { package: pkg.key },
         service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
         {
           "approved": {

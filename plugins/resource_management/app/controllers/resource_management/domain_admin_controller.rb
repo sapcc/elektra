@@ -178,12 +178,12 @@ module ResourceManagement
         project_resource = @project.find_resource(cfg)
         next if domain_resource.nil? or project_resource.nil?
 
-        new_projects_quota = domain_resource.projects_quota - project_resource.quota + cfg.value_for_package(@package)
+        new_projects_quota = domain_resource.projects_quota - project_resource.quota + @package.quota(cfg.service.catalog_type, cfg.name)
         if new_projects_quota > domain_resource.projects_quota and new_projects_quota > domain_resource.quota
           @can_approve = false
         end
 
-        if cfg.value_for_package(@package) > project_resource.quota
+        if @package.quota(cfg.service.catalog_type, cfg.name) > project_resource.quota
           @relevant_resources.append(cfg)
         end
       end
@@ -193,7 +193,7 @@ module ResourceManagement
       # apply quotas from package to project, but take existing approved quotas into account
       @project = services_ng.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
       @project.resources.each do |res|
-        new_quota = res.config.value_for_package(@package)
+        new_quota = @package.quota(res.service_type, res.name)
         res.quota = [ res.quota, new_quota ].max
       end
 
@@ -377,7 +377,7 @@ module ResourceManagement
       enforce_permissions("resource_management:admin_approve_package_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
 
       # load additional data
-      @package = @inquiry.payload.symbolize_keys[:package]
+      @package = ResourceManagement::Package.find(@inquiry.payload.symbolize_keys[:package])
     end
 
   end
