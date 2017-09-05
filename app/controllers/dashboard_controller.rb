@@ -9,14 +9,14 @@ class DashboardController < ::ScopeController
     requested_url = request.env['REQUEST_URI']
     referer_url = request.referer
     referer_url = begin
-                    "#{URI(referer_url).path}?#{URI(referer_url).query}"
-                  rescue
-                    nil
-                  end
+      "#{URI(referer_url).path}?#{URI(referer_url).query}"
+    rescue
+      nil
+    end
 
     unless params[:after_login]
       params[:after_login] = if requested_url =~ /(\?|\&)modal=true/ &&
-                                referer_url =~ /(\?|\&)overlay=.+/
+          referer_url =~ /(\?|\&)overlay=.+/
                                referer_url
                              else
                                requested_url
@@ -27,9 +27,9 @@ class DashboardController < ::ScopeController
   before_action :load_help_text
 
   # authenticate user -> current_user is available
-  authentication_required domain: ->(c) { c.instance_variable_get("@scoped_domain_id") },
-                          domain_name: ->(c) { c.instance_variable_get("@scoped_domain_name") },
-                          project: ->(c) { c.instance_variable_get('@scoped_project_id') },
+  authentication_required domain: ->(c) {c.instance_variable_get("@scoped_domain_id")},
+                          domain_name: ->(c) {c.instance_variable_get("@scoped_domain_name")},
+                          project: ->(c) {c.instance_variable_get('@scoped_project_id')},
                           rescope: false,
                           two_factor: :two_factor_required?,
                           except: :terms_of_use
@@ -37,7 +37,7 @@ class DashboardController < ::ScopeController
   # after_login is used by monsoon_openstack_auth gem.
   # After the authentication process has finished the
   # after_login can be removed.
-  before_action { params.delete(:after_login) }
+  before_action {params.delete(:after_login)}
 
   # check if user has accepted terms of use.
   # Otherwise it is a new, unboarded user.
@@ -54,9 +54,9 @@ class DashboardController < ::ScopeController
   # so we try to catch this error here and redirect user to login screen
   rescue_from 'Excon::Error::NotFound' do |error|
     if error.message.match(/Could not find token/i) ||
-       error.message.match(/Failed to validate token/i)
+        error.message.match(/Failed to validate token/i)
       redirect_to monsoon_openstack_auth.login_path(
-        domain_name: @scoped_domain_name, after_login: params[:after_login]
+          domain_name: @scoped_domain_name, after_login: params[:after_login]
       )
     else
       render_exception_page(error, title: 'Backend Service Error')
@@ -65,12 +65,21 @@ class DashboardController < ::ScopeController
 
   rescue_from 'Core::ServiceLayer::Errors::ApiError' do |error|
     if error.response_data &&
-       error.response_data['error'] &&
-       error.response_data['error']['code'] == 403
+        error.response_data['error'] &&
+        error.response_data['error']['code'] == 403
       render_exception_page(
-        error, title: 'Permission Denied',
-               description: error.response_data['error']['message'] ||
-                            'You are not authorized to request this page.'
+          error, title: 'Permission Denied',
+          description: error.response_data['error']['message'] ||
+              'You are not authorized to request this page.'
+      )
+    elsif (error.response_data &&
+        error.response_data['error'] &&
+        error.response_data['error']['code'] == 404) || error.type == 'NotFound'
+      render_exception_page(
+          error, title: 'Object not Found',
+          sentry: false,
+          warning: true,
+          description: "The object you're looking for doesn't exist. Please verify your input."
       )
     else
       render_exception_page(error, title: 'Backend Service Error')
@@ -80,7 +89,7 @@ class DashboardController < ::ScopeController
   rescue_from 'Excon::Error::Unauthorized',
               'MonsoonOpenstackAuth::Authentication::NotAuthorized' do
     redirect_to monsoon_openstack_auth.login_path(
-      domain_name: @scoped_domain_name, after_login: params[:after_login]
+        domain_name: @scoped_domain_name, after_login: params[:after_login]
     )
   end
 
@@ -90,31 +99,39 @@ class DashboardController < ::ScopeController
     #     domain_name: @scoped_domain_name, after_login: params[:after_login]
     #   )
     # else
+    if exception.code.to_i == 404
+      render_exception_page(
+          error, title: 'Object not Found',
+          sentry: false,
+          warning: true,
+          description: "The object you're looking for doesn't exist. Please verify your input."
+      )
+    else
       render_exception_page(exception, title: exception.code_type,
-                                       description: :message)
-    # end
+                            description: :message)
+    end
   end
 
   # catch all mentioned errors and render error page
   rescue_and_render_exception_page [
-    {
-      'MonsoonOpenstackAuth::Authorization::SecurityViolation' => {
-        title: 'Unauthorized',
-        sentry: false,
-        warning: true,
-        status: 401,
-        description: lambda do |e, _c|
-          m = 'You are not authorized to view this page.'
-          if e.involved_roles && e.involved_roles.length.positive?
-            m += " Please check (role assignments) if you have one of the \
+                                       {
+                                           'MonsoonOpenstackAuth::Authorization::SecurityViolation' => {
+                                               title: 'Unauthorized',
+                                               sentry: false,
+                                               warning: true,
+                                               status: 401,
+                                               description: lambda do |e, _c|
+                                                 m = 'You are not authorized to view this page.'
+                                                 if e.involved_roles && e.involved_roles.length.positive?
+                                                   m += " Please check (role assignments) if you have one of the \
             following roles: #{e.involved_roles.flatten.join(', ')}."
-          end
-          m
-        end
-      }
-    },
-    { 'Core::Error::ProjectNotFound' => { title: 'Project Not Found' } }
-  ]
+                                                 end
+                                                 m
+                                               end
+                                           }
+                                       },
+                                       {'Core::Error::ProjectNotFound' => {title: 'Project Not Found'}}
+                                   ]
 
   # this method checks if user has permissions for the new scope and if so
   # it rescopes the token.
@@ -133,9 +150,9 @@ class DashboardController < ::ScopeController
       #byebug
       # did not return -> check if user projects include the requested project.
       has_project_access = service_user.identity.user_projects(
-        current_user.id, domain_id: @scoped_domain_id,
-                         name: @scoped_project_name
-      ).select { |project| project.id == @scoped_project_id }.length.positive?
+          current_user.id, domain_id: @scoped_domain_id,
+          name: @scoped_project_name
+      ).select {|project| project.id == @scoped_project_id}.length.positive?
 
       unless has_project_access
         # user has no permissions for requested project -> reset
@@ -147,12 +164,12 @@ class DashboardController < ::ScopeController
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
       has_domain_access = Rails.cache.fetch(
-        "user_domain_role_assignments/#{current_user.id}/#{@scoped_domain_id}",
-        expires_in: 1.hour
+          "user_domain_role_assignments/#{current_user.id}/#{@scoped_domain_id}",
+          expires_in: 1.hour
       ) do
         service_user.identity.role_assignments(
-          'user.id' => current_user.id, 'scope.domain.id' => @scoped_domain_id,
-          'effective' => true
+            'user.id' => current_user.id, 'scope.domain.id' => @scoped_domain_id,
+            'effective' => true
         ).length.positive?
       end
       unless has_domain_access
@@ -182,11 +199,11 @@ class DashboardController < ::ScopeController
       UserProfile.create_with(name: current_user.name,
                               email: current_user.email,
                               full_name: current_user.full_name)
-                 .find_or_create_by(uid: current_user.id)
-                 .domain_profiles.create(
-                   domain_id: current_user.user_domain_id,
-                   tou_version: Settings.actual_terms.version
-                 )
+          .find_or_create_by(uid: current_user.id)
+          .domain_profiles.create(
+          domain_id: current_user.user_domain_id,
+          tou_version: Settings.actual_terms.version
+      )
       reset_last_request_cache
       # redirect to domain path
       if plugin_available?('identity')
@@ -211,30 +228,30 @@ class DashboardController < ::ScopeController
   def find_users_by_name
     name = params[:name] || params[:term] || ''
     users = UserProfile.search_by_name(name).to_a.uniq(&:name)
-    render json: users.collect { |u|
-      { id: u.full_name, name: u.name, full_name: u.full_name, email: u.email }
+    render json: users.collect {|u|
+      {id: u.full_name, name: u.name, full_name: u.full_name, email: u.email}
     }
   end
 
   def find_cached_domains
     name = params[:name] || params[:term] || ''
     domains = FriendlyIdEntry.search('Domain', nil, name)
-    render json: domains.collect { |d| { id: d.key, name: d.name } }.to_json
+    render json: domains.collect {|d| {id: d.key, name: d.name}}.to_json
   end
 
   def find_cached_projects
     name = params[:name] || params[:term] || ''
     projects = FriendlyIdEntry.search('Project', @scoped_domain_id, name)
     render json: projects.collect do |project|
-      { id: project.key, name: project.name }
+      {id: project.key, name: project.name}
     end.to_json
   end
 
   def two_factor_required?
     if ENV['TWO_FACTOR_AUTH_DOMAINS']
       return ENV['TWO_FACTOR_AUTH_DOMAINS'].gsub(/\s+/, '')
-                                           .split(',')
-                                           .include?(@scoped_domain_name)
+                 .split(',')
+                 .include?(@scoped_domain_name)
     end
     false
   end
@@ -261,20 +278,21 @@ class DashboardController < ::ScopeController
   def show_beta?
     params[:betafeatures] == 'showme'
   end
+
   helper_method :show_beta?
 
   def raven_context
     @sentry_user_context = {
-      ip_address: request.ip,
-      id: current_user.id,
-      email: current_user.email,
-      username: current_user.name,
-      domain: current_user.user_domain_name,
-      name: current_user.full_name
-    }.reject { |_, v| v.nil? }
+        ip_address: request.ip,
+        id: current_user.id,
+        email: current_user.email,
+        username: current_user.name,
+        domain: current_user.user_domain_name,
+        name: current_user.full_name
+    }.reject {|_, v| v.nil?}
 
     Raven.user_context(
-      @sentry_user_context
+        @sentry_user_context
     )
 
     tags = {}
@@ -297,17 +315,17 @@ class DashboardController < ::ScopeController
     # get all projects for user (this might be expensive, might need caching,
     # ajaxifying, ...)
     @user_domain_projects ||= service_user.identity.cached_user_projects(
-      current_user.id, domain_id: @scoped_domain_id
+        current_user.id, domain_id: @scoped_domain_id
     ).sort_by(&:name)
 
     return unless @scoped_project_id
     # load active project
 
-    @active_project = @user_domain_projects.find { |project| project.id == @scoped_project_id }
+    @active_project = @user_domain_projects.find {|project| project.id == @scoped_project_id}
     return if @active_project && @active_project.name == @scoped_project_name
 
     @active_project = services_ng.identity.find_project(
-      @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
+        @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
     )
     FriendlyIdEntry.update_project_entry(@active_project)
   end
@@ -322,17 +340,17 @@ class DashboardController < ::ScopeController
     # In order to reduce api calls we cache the result of new_user?
     # in the session for 5 minutes.
     is_cache_expired = current_user.id != session[:last_user_id] ||
-                       session[:last_request_timestamp].nil? ||
-                       (session[:last_request_timestamp] < Time.now - 5.minute)
+        session[:last_request_timestamp].nil? ||
+        (session[:last_request_timestamp] < Time.now - 5.minute)
     if is_cache_expired
       session[:last_request_timestamp] = Time.now
       session[:last_user_id] = current_user.id
       session[:tou_accepted] = UserProfile
-                               .tou_accepted?(
-                                 current_user.id,
-                                 current_user.user_domain_id,
-                                 Settings.actual_terms.version
-                               )
+                                   .tou_accepted?(
+                                       current_user.id,
+                                       current_user.user_domain_id,
+                                       Settings.actual_terms.version
+                                   )
     end
     session[:tou_accepted]
   end
@@ -374,7 +392,7 @@ class DashboardController < ::ScopeController
 
     # try to find the help file, check first for service specific help file,
     # next for general plugin help file
-    help_file =  File.join(plugin.path, "plugin_#{service_name}_help.md")
+    help_file = File.join(plugin.path, "plugin_#{service_name}_help.md")
     unless File.exist?(help_file)
       help_file = File.join(plugin.path, 'plugin_help.md')
     end
