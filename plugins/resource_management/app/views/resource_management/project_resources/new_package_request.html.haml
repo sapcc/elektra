@@ -16,11 +16,11 @@
           %th= t("resource_management.packages.#{pkg.key}")
     %tbody
       - prev_service = ''
-      - ResourceManagement::ResourceConfig.all.each do |res|
-        %tr{ class: ResourceManagement::Package.significant?(res.service.catalog_type, res.name) ? 'significant' : 'insignificant' }
-          %td.resource-name= t("resource_management.#{res.service.name}") + " > " + t("resource_management.#{res.name}")
+      - @project.resources.each do |res|
+        %tr{ class: ResourceManagement::Package.significant?(res.service_type, res.name) ? 'significant' : 'insignificant' }
+          %td.resource-name= t("resource_management.#{res.service_type}") + " > " + t("resource_management.#{res.name}")
           - ResourceManagement::Package.all.each do |pkg|
-            %td= res.data_type.format(pkg.quota(res.service.catalog_type, res.name))
+            %td= res.data_type.format(pkg.quota(res.service_type, res.name))
       %tr
         %td
           %a{ href: "javascript:void(0)", onclick: "$('.package-comparison').toggleClass('with-insignificant without-insignificant')" }

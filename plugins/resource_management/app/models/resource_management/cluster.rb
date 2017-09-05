@@ -13,10 +13,11 @@ module ResourceManagement
       services.map(&:resources).flatten
     end
 
-    def find_resource(config)
-      service_type = config.service.catalog_type.to_sym
+    def find_resource(service_type, resource_name)
+      service_type  = service_type .to_sym
+      resource_name = resource_name.to_sym
       srv = services.find { |s| s.type == service_type } or return nil
-      return srv.resources.find { |r| r.name == config.name }
+      return srv.resources.find { |r| r.name == resource_name }
     end
 
     def save

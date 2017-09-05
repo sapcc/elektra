@@ -173,18 +173,18 @@ module ResourceManagement
       # show only those resources in the review screen where the approval of
       # the request would increase the current_quota allocated to the project
       @relevant_resources = []
-      ResourceManagement::ResourceConfig.all.each do |cfg|
-        domain_resource  =  @domain.find_resource(cfg)
-        project_resource = @project.find_resource(cfg)
-        next if domain_resource.nil? or project_resource.nil?
+      @domain.resources.each do |domain_resource|
+        project_resource = @project.find_resource(domain_resource.service_type, domain_resource.name)
+        next if project_resource.nil?
 
-        new_projects_quota = domain_resource.projects_quota - project_resource.quota + @package.quota(cfg.service.catalog_type, cfg.name)
+        package_quota = @package.quota(domain_resource.service_type, domain_resource.name)
+        new_projects_quota = domain_resource.projects_quota - project_resource.quota + package_quota
         if new_projects_quota > domain_resource.projects_quota and new_projects_quota > domain_resource.quota
           @can_approve = false
         end
 
-        if @package.quota(cfg.service.catalog_type, cfg.name) > project_resource.quota
-          @relevant_resources.append(cfg)
+        if package_quota > project_resource.quota
+          @relevant_resources.append(domain_resource)
         end
       end
     end
