@@ -6,7 +6,7 @@
   - resources = service.resources
   - if resources.empty?
     .bs-callout
-      No #{t("resource_management.#{service.name}")} quotas found!
+      No #{t("resource_management.#{service.type}")} quotas found!
   - else
     - resources.map(&:category).uniq.each do |category|
       - if category != :""
