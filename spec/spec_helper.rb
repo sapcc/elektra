@@ -97,7 +97,6 @@ RSpec.configure do |config|
                                 .first['endpoints']
                                 .first['region_id'])
     allow(Core).to receive(:locate_region).and_return(region)
-    allow(Core).to receive(:region_from_auth_url).and_return(region)
 
     # stub misty client
     misty = double('misty').as_null_object

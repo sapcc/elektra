@@ -11,9 +11,7 @@ module Core
 
       def initialize(api_client)
         @api_client = api_client
-        @region = ::Core.region_from_auth_url ||
-                  ::Core.locate_region(service_user,
-                                       Rails.configuration.default_region)
+        @region = Rails.configuration.default_region
       end
 
       def available?(_action_name_sym = nil)

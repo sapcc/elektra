@@ -14,11 +14,6 @@ require_relative 'core/static_config'
 
 # Core module contains all essential functionalities
 module Core
-  def self.region_from_auth_url(auth_url = ::Core.keystone_auth_endpoint)
-    data = /.+\.(?<region>[^\.]+)\.cloud\.sap/.match(auth_url)
-    data[:region]
-  end
-
   def self.locate_region(auth_user, default_region =
     Rails.configuration.default_region)
 

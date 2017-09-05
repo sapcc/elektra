@@ -11,7 +11,6 @@ require_relative File.expand_path('../app/middleware/middlewares', __dir__)
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-
 module MonsoonDashboard
   class Application < Rails::Application
     config.load_defaults 5.1
