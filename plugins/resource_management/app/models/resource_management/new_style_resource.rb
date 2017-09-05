@@ -20,15 +20,6 @@ module ResourceManagement
       read(:service_area)
     end
 
-    def config # TODO remove
-      return @config unless @config.nil?
-      name = read(:name).to_sym
-      type = read(:service_type).to_s
-      return @config = ResourceManagement::ResourceConfig.all.find do |res|
-        res.name == name && res.service.catalog_type == type
-      end
-    end
-
     def data_type
       Core::DataType.from_unit_name(read(:unit) || '')
     end
