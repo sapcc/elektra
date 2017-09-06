@@ -3,9 +3,9 @@
 module MasterdataCockpit
   class ProjectMasterdataController < DashboardController
 
-    before_filter :load_project_masterdata, only: [:index, :edit, :show]
-    before_filter :prepare_params, only: [:create, :update]
-    before_filter :solutions, only: [:new, :edit]
+    before_action :load_project_masterdata, only: [:index, :edit, :show]
+    before_action :prepare_params, only: [:create, :update]
+    before_action :solutions, only: [:new, :edit]
 
     authorization_context 'masterdata_cockpit'
     authorization_required

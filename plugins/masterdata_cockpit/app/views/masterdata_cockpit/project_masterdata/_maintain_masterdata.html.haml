@@ -13,7 +13,7 @@
     - inherited_flag = @project_masterdata.cost_object_inherited
     .row
       .col-sm-2
-        = f.input :cost_object_inherited, label: "Inherited", as: :select, include_blank: false, include_hidden: false, required:true
+        = f.input :cost_object_inherited, label: "Inherited", as: :select, include_hidden: false, required:true
       .col-sm-3
         = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions, disabled: inherited_flag, prompt: '-'
       .col-sm-3

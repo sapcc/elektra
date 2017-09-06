@@ -11,7 +11,7 @@
   .panel-body
     .row
       .col-sm-3
-        = f.input :cost_object_projects_can_inherit, label: "Projects can inherit", as: :select, include_blank: false, include_hidden: false, required:true
+        = f.input :cost_object_projects_can_inherit, label: "Projects can inherit", as: :select, include_hidden:false, required:true
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 

@@ -3,8 +3,8 @@
 module MasterdataCockpit
   class DomainMasterdataController < DashboardController
 
-    before_filter :load_domain_masterdata, only: [:index, :edit]
-    before_filter :prepare_params, only: [:create, :update]
+    before_action :load_domain_masterdata, only: [:index, :edit]
+    before_action :prepare_params, only: [:create, :update]
 
     authorization_context 'masterdata_cockpit'
     authorization_required
