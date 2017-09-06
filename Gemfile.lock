@@ -6,14 +6,6 @@ GIT
     elektra-extension (0.0.1)
 
 GIT
-  remote: https://github.com/flystack/misty.git
-  revision: 3e901a96839cba9c2704be5ee6e8fe6cff7adbd2
-  branch: master
-  specs:
-    misty (0.7.2)
-      json (>= 1.8.3, < 3)
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5d9b922d3c19d02f0cd87c7cc93f80802a960b50
   specs:
@@ -21,7 +13,6 @@ GIT
       rest-client (~> 2.0.0.rc3)
 
 GIT
-
   remote: https://github.com/sapcc/fog-openstack.git
   revision: 875b3c1b9f85c1f7a4ff3c0891acbff2ea3fa36a
   branch: master
@@ -43,6 +34,14 @@ GIT
   specs:
     misty-cc (0.1.0)
       misty (>= 0.5.1)
+
+GIT
+  remote: https://github.com/sapcc/misty.git
+  revision: 4898b33a3d3150af0bbd15aaa78115170ecb20c8
+  branch: fix-proxy
+  specs:
+    misty (0.8.0)
+      json (>= 1.8.3, < 3)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
@@ -309,7 +308,6 @@ GEM
     fog-json (1.0.2)
       fog-core (~> 1.0)
       multi_json (~> 1.10)
-
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.84.0)
