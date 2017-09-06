@@ -2,7 +2,7 @@
 
 module Kubernetes
   class ApplicationController < DashboardController
-    authorization_context 'audit'
+    authorization_context 'kubernetes'
     authorization_required
 
     def index
