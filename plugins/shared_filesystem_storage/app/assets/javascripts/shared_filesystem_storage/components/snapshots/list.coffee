@@ -20,7 +20,9 @@ SnapshotList = React.createClass
 
   share: (snapshot)->
     return 'loading' if @props.shares.isFetching
-    @props.shares.items.find((share)-> share.id==snapshot.share_id)
+    for share in @props.shares.items
+      return share if share.id==snapshot.share_id
+    return null
 
   render: ->
     if @props.isFetching

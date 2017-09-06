@@ -15,9 +15,4 @@ module Services
     @services.services_ng = services_ng
     @services
   end
-
-  # # try to find a region based on catalog and default region
-  # def current_region
-  #   @services_current_region ||= ::Core.locate_region(service_user, Rails.configuration.default_region)
-  # end
 end

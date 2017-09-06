@@ -7,6 +7,8 @@
 - pl = plugin('object_storage')
 
 = simple_modal_form_for @form, submit_action: 'Upload', url: pl.create_object_path(@container_name, @object.path), method: :post, authenticity_token: true, cancel_url: pl.list_objects_path(@container_name, @object.path) do |f|
+  = hidden_field_tag :authenticity_token, form_authenticity_token
+
   %p.alert.alert-warning
     -# this limit is enforced by nginx, see http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
     This dialog only accepts files

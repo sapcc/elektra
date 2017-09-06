@@ -14,7 +14,7 @@
         %td= @floating_ip.floating_ip_address
       %tr
         %th Fixed IP Address
-        %td= @floating_ip.fixed_ip_address   
+        %td= @floating_ip.fixed_ip_address
       %tr
         %th Owner
         %td
@@ -24,7 +24,11 @@
             = @port.owner_type.capitalize
       %tr
         %th Network
-        %td= link_to @network.name, plugin('networking').networks_external_path(id:@network.id), data: { modal_transition: true  } 
+        - unless @network.blank?
+          %td= link_to @network.name, plugin('networking').networks_external_path(id:@network.id), data: { modal_transition: true  }
+        - else
+          %td= @floating_ip.floating_network_id
+
 
 %div.buttons{class: modal? ? 'modal-footer' : ''}
   - if modal?

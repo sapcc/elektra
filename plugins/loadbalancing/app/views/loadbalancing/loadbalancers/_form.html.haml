@@ -2,7 +2,7 @@
   = f.input :name, required: false
   = f.input :description
   = f.input :vip_subnet_id, { label: "Private Network",
-                              wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
+                              wrapper_html:       { class: ('has-error' if @private_networks.blank?) },
                               as:                 :select,
                               collection:         @private_networks,
                               selected:           @loadbalancer.vip_subnet_id,

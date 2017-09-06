@@ -103,12 +103,18 @@ ShowShareNetwork = connect(
   (state,ownProps) ->
     network: (() ->
       return null if state.networks.isFetching
-      state.networks.items.find (i) -> i.id==ownProps.shareNetwork.neutron_net_id
+      for i in state.networks.items
+        if i.id==ownProps.shareNetwork.neutron_net_id
+          return i
+          break
     )()
     subnet: (()->
       subnets = state.subnets[ownProps.shareNetwork.neutron_net_id]
       return null if !subnets or subnets.isFetching or !subnets.items
-      subnets.items.find (i) -> i.id==ownProps.shareNetwork.neutron_subnet_id
+      for i in subnets.items
+        if i.id==ownProps.shareNetwork.neutron_subnet_id
+          return i
+          break
     )()
 )(ShowShareNetwork)
 

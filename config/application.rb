@@ -11,7 +11,6 @@ require_relative File.expand_path('../app/middleware/middlewares', __dir__)
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-
 module MonsoonDashboard
   class Application < Rails::Application
     config.load_defaults 5.1
@@ -43,23 +42,28 @@ module MonsoonDashboard
     plugin_mount_points = {}
     Core::PluginsManager.available_plugins.each{|plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point}
 
-    config.middleware.insert_after ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector do |env|
-      {
-        method: env['REQUEST_METHOD'].downcase,
-        host:   env['HTTP_HOST'].to_s,
-        # just take the first component of the path as a label
-        path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/',1) || 20 ],
-        controller: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:controller,''),
-        action: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:action,''),
-        plugin: if env.fetch("action_dispatch.request.path_parameters",{}).fetch(:project_id,false)
-          plugin_mount_points[env['REQUEST_PATH'].split("/")[3]] || ""
-        elsif env.fetch("action_dispatch.request.path_parameters",{}).fetch(:domain_id, false)
-          plugin_mount_points[env['REQUEST_PATH'].split("/")[2]] || ""
-        else
-          ''
-        end
-      }
-    end
+    config.middleware.insert_after(ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector, {
+      counter_label_builder: proc do |env, code|
+        controller_name = env.fetch("action_dispatch.request.path_parameters",{}).fetch(:controller, '')
+        {
+          code: code,
+          method: env['REQUEST_METHOD'].downcase,
+          host:   env['HTTP_HOST'].to_s,
+          # just take the first component of the path as a label
+          path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/',1) || 20 ],
+          controller: controller_name,
+          action: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:action,''),
+          plugin: controller_name[%r{^([^/]+)/},1]
+        }
+      end,
+      duration_label_builder: proc do |env, code|
+        controller_name = env.fetch("action_dispatch.request.path_parameters",{}).fetch(:controller, '')
+        {
+          method: env['REQUEST_METHOD'].downcase,
+          plugin: controller_name[%r{^([^/]+)/},1],
+        }
+      end
+    })
 
     require 'prometheus/middleware/exporter'
     config.middleware.insert_after  Prometheus::Middleware::Collector, Prometheus::Middleware::Exporter

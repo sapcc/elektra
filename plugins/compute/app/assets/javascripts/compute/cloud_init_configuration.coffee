@@ -21,7 +21,7 @@
     error: (xhr, bleep, error) ->
       attachPopover(button, 'Error', 'Something went wrong while processing your request. Please try again later.')
     complete: () ->
-      console.log("complete")
+      # console.log("complete")
       icon.removeClass('hide')
       spinner.addClass('hide')
 
@@ -58,7 +58,7 @@
     html: true
   )
   element.popover('show')
-  element.on 'blur', ->
+  element.off('blur').on 'blur', ->
     element.popover('destroy')
 
 $ ->

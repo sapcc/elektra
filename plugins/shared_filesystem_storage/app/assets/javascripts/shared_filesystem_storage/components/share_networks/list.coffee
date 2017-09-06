@@ -31,14 +31,20 @@ ShareNetworkList = React.createClass
 
   network: (shareNetwork)->
     return 'loading' if @props.networks.isFetching
-    @props.networks.items.find((network)=> network.id==shareNetwork.neutron_net_id)
+    # find network
+    for network in @props.networks.items
+      return network if network.id == shareNetwork.neutron_net_id
+    return null  
+
 
   subnet: (shareNetwork)->
     networkSubnets = @props.subnets[shareNetwork.neutron_net_id]
     return null unless networkSubnets
     return 'loading' if networkSubnets.isFetching
     return null unless networkSubnets.items
-    networkSubnets.items.find((subnet)-> subnet.id==shareNetwork.neutron_subnet_id)
+    for subnet in networkSubnets.items
+      return subnet if subnet.id == shareNetwork.neutron_subnet_id
+    return null
 
   render: ->
     div null,

@@ -99,7 +99,11 @@
 
   openNewSnapshotDialog=(shareId)->
     (dispatch,getState) ->
-      share = getState().shares.items.find (i) -> i.id==shareId
+      # find share
+      for s in getState().shares.items
+        if s.id == shareId
+          share = s
+          break
       dispatch(snapshotFormForCreate(share))
       dispatch(newSnapshotModal())
 

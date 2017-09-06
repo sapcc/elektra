@@ -3,6 +3,7 @@
 
 = simple_form_for @project, url: plugin('identity').projects_request_project_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
+    = hidden_field_tag :authenticity_token, form_authenticity_token
     - unless @project.errors["message"].blank?
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
 
