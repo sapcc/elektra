@@ -63,6 +63,7 @@ SimpleNavigation::Configuration.run do |navigation|
       compute_nav.item :block_storage, 'Volumes & Snapshots', -> {plugin('block_storage').volumes_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage/] }
       compute_nav.item :images, 'Server Images & Snapshots', -> {plugin('image').os_images_public_index_path}, if: -> { services.available?(:image,:os_images) }, highlights_on: Proc.new { params[:controller][/image\/.*/] }
       compute_nav.item :flavors, 'Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+      compute_nav.item :kubernetes, 'Kubernetes', -> { plugin('kubernetes').root_path }, if: -> { plugin_available?(:kubernetes) && current_user.is_allowed?('kubernetes:application_get') }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
@@ -143,6 +144,8 @@ SimpleNavigation::Configuration.run do |navigation|
       # monitoring_nav.item :monitoring, 'Monitoring', '#'
       monitoring_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').resources_path}, if: -> { services_ng.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
       monitoring_nav.item :cost_control,        'Cost Control',        -> {plugin('cost_control').cost_object_path}, if: -> { services.available?(:cost_control) }, highlights_on: Proc.new { params[:controller][/cost_control\/.*/] }
+      monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit) && current_user.is_allowed?('audit:application_get') }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+
 
       # monitoring_nav.dom_attributes = {class: 'content-list'}
     end
