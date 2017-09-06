@@ -17,22 +17,6 @@
 
 // TOOLBAR
 
-.toolbar.toolbar-controlcenter {
-  display: flex;
-
-  label, span, a {
-    line-height: 34px; // to match input height
-  }
-
-  label, .inputwrapper{
-    margin: 0 8px 0 0;
-  }
-
-  .toolbar-input-divider {
-    padding: 0 8px;
-  }
-}
-
 .filter-term {
   width: 250px;
 }

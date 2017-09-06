@@ -17,8 +17,6 @@
     (dispatch, getState) ->
       currentState    = getState()
       clusters        = currentState.clusters
-      limit           = clusters.limit
-      offset          = clusters.offset
       isFetching      = clusters.isFetching
 
 
@@ -26,39 +24,120 @@
       dispatch(requestClusters())
 
       app.ajaxHelper.get '/clusters',
-        data: {}
+        contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
-          dispatch(receiveClusters(data["clusters"],data["total"]))
+          dispatch(receiveClusters(data))
         error: ( jqXHR, textStatus, errorThrown) ->
           dispatch(requestClustersFailure(errorThrown))
 
 
 
-  fetchClusters = (offset) ->
+  fetchClusters = () ->
     (dispatch) ->
-      dispatch(updateOffset(offset))
       dispatch(loadClusters())
 
-  updateOffset = (offset)->
-    type: app.UPDATE_OFFSET
-    offset: offset
+
+  # -------------- CREATE ---------------
+
+  newClusterModal= () ->
+    type: ReactModal.SHOW_MODAL,
+    modalType: 'NEW_CLUSTER'
+
+  openNewClusterDialog = () ->
+    console.log("openNewClusterDialog")
+    (dispatch) ->
+      dispatch(clusterFormForCreate())
+      dispatch(newClusterModal())
 
 
+  # -------------- DELETE ---------------
+
+  requestDeleteCluster = (clusterName) ->
+    (dispatch) ->
+      # TODO: show confirm dialog
+      dispatch(deleteCluster(clusterName))
+
+      app.ajaxHelper.delete "/clusters/#{clusterName}",
+        contentType: 'application/json'
+        success: (data, textStatus, jqXHR) ->
+          dispatch(fetchClusters())
+        error: ( jqXHR, textStatus, errorThrown) ->
+          dispatch(deleteClusterFailure(clusterName, errorThrown))
 
 
+  deleteCluster = () ->
+    type: app.DELETE_CLUSTER
+
+  deleteClusterFailure = (error) ->
+    type: app.DELETE_CLUSTER_FAILURE
+    error: error
 
 
+  ################# CLUSTER FORM ######################
 
+  clusterFormForCreate = () ->
+    type: app.PREPARE_CLUSTER_FORM
+    method: 'post'
+    action: "/clusters"
 
+  resetClusterForm = () ->
+    type: app.RESET_CLUSTER_FORM
 
+  clusterFormForUpdate = (cluster) ->
+    type: app.PREPARE_CLUSTER_FORM
+    data: cluster
+    method: 'put'
+    action: "/clusters/#{cluster.name}"
 
+  clusterFormFailure = (errors) ->
+    type: app.CLUSTER_FORM_FAILURE
+    errors: errors
 
+  updateClusterForm = (name,value) ->
+    type: app.UPDATE_CLUSTER_FORM
+    name: name
+    value: value
 
+  submitClusterForm = (successCallback=null) ->
+    (dispatch, getState) ->
+      clusterForm = getState().clusterForm
+      if clusterForm.isValid
+        dispatch(type: app.SUBMIT_CLUSTER_FORM)
+        app.ajaxHelper[clusterForm.method] clusterForm.action,
+          contentType: 'application/json'
+          data: clusterForm.data
+          statusCode:
+            200: () ->
+              console.log("statuscode 200")
 
+              dispatch(resetClusterForm())
+              successCallback() if successCallback
+              # dispatch(fetchClusters())
+
+          success: (data, textStatus, jqXHR) ->
+            console.log("success: #{successCallback}")
+            if data.errors
+              dispatch(clusterFormFailure(data.errors))
+            else
+              # dispatch(receiveCluster(data))
+              dispatch(resetClusterForm())
+              successCallback() if successCallback
+          error: ( jqXHR, textStatus, errorThrown) ->
+            # dispatch(clusterFormFailure("Error": [JSON.parse(jqXHR.responseText).message]))
+            # dispatch(app.showErrorDialog(title: 'Could not save cluster', message:jqXHR.responseText))
 
 
   # export
-  app.fetchClusters                 = fetchClusters
+  app.fetchClusters              = fetchClusters
+  app.requestDeleteCluster       = requestDeleteCluster
+  app.openNewClusterDialog       = openNewClusterDialog
+
+  app.clusterFormForCreate       = clusterFormForCreate
+  app.clusterFormForUpdate       = clusterFormForUpdate
+  app.submitClusterForm          = submitClusterForm
+  app.updateClusterForm          = updateClusterForm
+
+
 
 
 )(kubernetes)

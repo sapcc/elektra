@@ -4,6 +4,8 @@
 
 ((app) ->
   app.AppReducers = combineReducers({
-    clusters:             app.clusters
+    modals:        ReactModal.Reducer,
+    clusters:      app.clusters,
+    clusterForm:   app.clusterForm
   })
 )(kubernetes)

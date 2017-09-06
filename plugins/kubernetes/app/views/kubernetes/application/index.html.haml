@@ -1,4 +1,4 @@
 = content_for :main_toolbar do
   Kubernetes as a Service
 
-= react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusApi: @events_endpoint
+= react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusApi: @kubernikus_endpoint
