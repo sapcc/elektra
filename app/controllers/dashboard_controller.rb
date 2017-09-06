@@ -98,7 +98,7 @@ class DashboardController < ::ScopeController
 
     case exception.code.to_i
     when 404
-      options.merge!(title: 'Object not Found', description: "The object you're looking for doesn't exist. Please verify your input.")
+      options.merge!(title: 'Object not Found', description: "The object you're looking for doesn't exist. Please verify your input. (#{exception.message})")
     when 403
       options.merge!(title: 'Forbidden')
     end
