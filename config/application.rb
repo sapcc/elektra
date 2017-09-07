@@ -125,6 +125,6 @@ module MonsoonDashboard
     # Add middleware healthcheck that to hit the db
     config.middleware.insert_after Rails::Rack::Logger, MiddlewareHealthcheck
 
+    config.middleware.use SessionCookiePathMiddleware
   end
-
 end

@@ -19,7 +19,7 @@
 
         - unless logged_in?
           %li
-            = link_to "Log in", monsoon_openstack_auth.login_path(domain_name:@scoped_domain_name, after_login: plugin('identity').domain_path), id: "navbar-login-btn"
+            = link_to "Log in", monsoon_openstack_auth.login_path(auth_domain: @scoped_domain_name, domain_name:@scoped_domain_name, after_login: plugin('identity').domain_path), id: "navbar-login-btn"
         - else
           %li.dropdown
             %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
@@ -35,7 +35,7 @@
 
               %li.divider
               %li
-                = link_to 'Log out', monsoon_openstack_auth.logout_path(redirect_to: main_app.landing_page_url, auth_domain: @scoped_domain_name)
+                = link_to 'Log out', monsoon_openstack_auth.logout_path(auth_domain: @scoped_domain_name, redirect_to: main_app.landing_page_url, auth_domain: @scoped_domain_name)
 
 
         %li.dropdown
