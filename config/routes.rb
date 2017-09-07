@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # mount MonsoonOpenstackAuth::Engine => '/auth'
-  mount MonsoonOpenstackAuth::Engine => '/:auth_domain/auth'
+  mount MonsoonOpenstackAuth::Engine => '/auth'
+  # mount MonsoonOpenstackAuth::Engine => '/:auth_domain/auth'
 
   # lifeliness
   # check without db connection. It only checks that a request reaches
