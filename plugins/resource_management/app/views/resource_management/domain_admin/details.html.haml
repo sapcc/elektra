@@ -1,4 +1,4 @@
-= content_for(:title, "Details for resource: #{t("resource_management.#{@config.service.name}")} > #{t("resource_management.#{@config.name}")}")
+= content_for(:title, "Details for resource: #{t("resource_management.#{@service_type}")} > #{t("resource_management.#{@resource_name}")}")
 .modal-body.clearfix
   %p.alert.alert-danger{style: "display:none"}
   #usage_bars= render partial: "details_usage_bar"
@@ -12,8 +12,6 @@
 
 - if modal?
   .modal-footer
-    - if @config and @show_all_button
-      = link_to "Show all #{t("resource_management.#{@config.service.name}")} quotas", plugin('resource_management').admin_area_path(area: @config.service.area), class: 'btn btn-primary btn-sm'
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
 
 = content_for :javascripts do

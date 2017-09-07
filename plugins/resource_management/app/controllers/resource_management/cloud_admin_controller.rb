@@ -11,23 +11,20 @@ module ResourceManagement
 
     def index
       @cluster = services_ng.resource_management.find_current_cluster
-      @resources = @cluster.resources
+      @view_services = @cluster.services
 
-      @min_updated_at = @cluster.services.map(&:min_updated_at).min
-      @max_updated_at = @cluster.services.map(&:max_updated_at).max
+      @areas = @cluster.services.map(&:area).uniq
     end
 
     def show_area(area = nil)
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
+      @cluster = services_ng.resource_management.find_current_cluster()
+      @view_services = @cluster.services.select { |srv| srv.area.to_sym == @area }
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
-      @cluster= services_ng.resource_management.find_current_cluster(service: @area_services.map(&:catalog_type))
-      @resources = @cluster.resources
-      @min_updated_at = @cluster.services.map(&:min_updated_at).min
-      @max_updated_at = @cluster.services.map(&:max_updated_at).max
+      @areas = @cluster.services.map(&:area).uniq
     end
 
     def edit_capacity
@@ -116,21 +113,16 @@ module ResourceManagement
     end
 
     def details
-      @show_all_button = true if params[:overview] == 'true'
-
       @sort_order  = params[:sort_order] || 'asc'
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
 
-      service_type  = params.require(:service).to_s
-      resource_name = params.require(:resource).to_sym
-      @config       = ResourceManagement::ResourceConfig.all.find do |c|
-        c.name == resource_name and c.service.catalog_type == service_type
-      end or raise ActiveRecord::RecordNotFound, "no such resource"
+      @service_type  = params.require(:service).to_sym
+      @resource_name = params.require(:resource).to_sym
 
-      cluster = services_ng.resource_management.find_current_cluster(service: service_type, resource: resource_name.to_s)
+      cluster = services_ng.resource_management.find_current_cluster(service: @service_type.to_s, resource: @resource_name.to_s)
       @cluster_resource = cluster.resources.first or raise ActiveRecord::RecordNotFound, "no data for cluster"
-      domains = services_ng.resource_management.list_domains(service: service_type, resource: resource_name.to_s)
+      domains = services_ng.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given

@@ -3,10 +3,6 @@ module ResourceManagement
 
     include ResourceBarHelper
 
-    def list_areas_with_enabled_services
-      ResourceManagement::ServiceConfig.all.map(&:area).uniq
-    end
-
     # Given a number of timestamps from ResourceManagement::Resource#updated_at,
     # calculates a string representation of the data age, such as
     #     "between 3 days and 1 hour ago"

@@ -7,7 +7,7 @@
       %li{role: 'presentation'}
         = link_to 'Overview', plugin('resource_management').send("#{scope}_path")
 
-    - list_areas_with_enabled_services.each do |area|
+    - @areas.sort.each do |area|
       - area_str = area.to_s
       - if tab == area_str
         %li.active{role: 'presentation'}

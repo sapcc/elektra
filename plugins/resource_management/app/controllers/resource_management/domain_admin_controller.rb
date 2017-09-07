@@ -12,8 +12,7 @@ module ResourceManagement
 
     def index
       @domain = services_ng.resource_management.find_domain(@scoped_domain_id)
-      @min_updated_at = @domain.services.map(&:min_updated_at).min
-      @max_updated_at = @domain.services.map(&:max_updated_at).max
+      @view_services = @domain.services
 
       # find resources to show
       @critical_resources = @domain.resources.reject do |res|
@@ -21,19 +20,18 @@ module ResourceManagement
       end
 
       @index = true
+      @areas = @domain.services.map(&:area).uniq
     end
 
     def show_area(area = nil)
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
+      @domain = services_ng.resource_management.find_domain(@scoped_domain_id)
+      @view_services = @domain.services.select { |srv| srv.area.to_sym == @area }
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
-      @domain = services_ng.resource_management.find_domain(@scoped_domain_id, service: @area_services.map(&:catalog_type))
-      @resources = @domain.resources
-      @min_updated_at = @domain.services.map(&:min_updated_at).min
-      @max_updated_at = @domain.services.map(&:max_updated_at).max
+      @areas = @domain.services.map(&:area).uniq
     end
 
     def edit
@@ -111,7 +109,7 @@ module ResourceManagement
 
       # save the new quota to database
       if @resource.save
-        show_area(@resource.config.service.area)
+        show_area(@resource.service_area)
       else
         # reload the reduce quota window with error
         @resource.quota = old_quota
@@ -175,18 +173,18 @@ module ResourceManagement
       # show only those resources in the review screen where the approval of
       # the request would increase the current_quota allocated to the project
       @relevant_resources = []
-      ResourceManagement::ResourceConfig.all.each do |cfg|
-        domain_resource  =  @domain.find_resource(cfg)
-        project_resource = @project.find_resource(cfg)
-        next if domain_resource.nil? or project_resource.nil?
+      @domain.resources.each do |domain_resource|
+        project_resource = @project.find_resource(domain_resource.service_type, domain_resource.name)
+        next if project_resource.nil?
 
-        new_projects_quota = domain_resource.projects_quota - project_resource.quota + cfg.value_for_package(@package)
+        package_quota = @package.quota(domain_resource.service_type, domain_resource.name)
+        new_projects_quota = domain_resource.projects_quota - project_resource.quota + package_quota
         if new_projects_quota > domain_resource.projects_quota and new_projects_quota > domain_resource.quota
           @can_approve = false
         end
 
-        if cfg.value_for_package(@package) > project_resource.quota
-          @relevant_resources.append(cfg)
+        if package_quota > project_resource.quota
+          @relevant_resources.append(domain_resource)
         end
       end
     end
@@ -195,7 +193,7 @@ module ResourceManagement
       # apply quotas from package to project, but take existing approved quotas into account
       @project = services_ng.resource_management.find_project(@scoped_domain_id, @inquiry.project_id)
       @project.resources.each do |res|
-        new_quota = res.config.value_for_package(@package)
+        new_quota = @package.quota(res.service_type, res.name)
         res.quota = [ res.quota, new_quota ].max
       end
 
@@ -237,9 +235,8 @@ module ResourceManagement
       end
 
       # create inquiry
-      cfg      = @resource.config
       base_url = plugin('resource_management').cloud_admin_area_path(
-        area: cfg.service.area.to_s,
+        area:       @resource.service_area.to_s,
         domain_id:  Rails.configuration.cloud_admin_domain,
         project_id: Rails.configuration.cloud_admin_project,
       )
@@ -254,11 +251,11 @@ module ResourceManagement
       cloud_admin_domain_id =  cloud_admin_domain.blank? ? Rails.configuration.cloud_admin_domain : cloud_admin_domain.id
       inquiry = services.inquiry.create_inquiry(
         'domain_quota',
-        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
+        "domain #{@scoped_domain_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
         current_user,
         {
-          service: cfg.service.catalog_type,
-          resource: cfg.name,
+          service: @resource.service_type,
+          resource: @resource.name,
           desired_quota: new_value,
         },
         cloud_admin.identity.list_cloud_resource_admins,
@@ -286,22 +283,16 @@ module ResourceManagement
     end
 
     def details
-      @show_all_button = true if params[:overview] == 'true'
-
-      # sort
       @sort_order  = params[:sort_order] || 'asc'
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
 
-      service_type  = params.require(:service).to_s
-      resource_name = params.require(:resource).to_sym
-      @config       = ResourceManagement::ResourceConfig.all.find do |c|
-        c.name == resource_name and c.service.catalog_type == service_type
-      end or raise ActiveRecord::RecordNotFound, "no such resource"
+      @service_type  = params.require(:service).to_sym
+      @resource_name = params.require(:resource).to_sym
 
-      domain = services_ng.resource_management.find_domain(@scoped_domain_id, service: service_type, resource: resource_name.to_s)
+      domain = services_ng.resource_management.find_domain(@scoped_domain_id, service: @service_type.to_s, resource: @resource_name.to_s)
       @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "no such domain"
-      projects = services_ng.resource_management.list_projects(@scoped_domain_id, service: service_type, resource: resource_name.to_s)
+      projects = services_ng.resource_management.list_projects(@scoped_domain_id, service: @service_type.to_s, resource: @resource_name.to_s)
       @project_resources = projects.map { |p| p.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given
@@ -386,7 +377,7 @@ module ResourceManagement
       enforce_permissions("resource_management:admin_approve_package_request", {inquiry: {requester_uid: @inquiry.requester.uid}})
 
       # load additional data
-      @package = @inquiry.payload.symbolize_keys[:package]
+      @package = ResourceManagement::Package.find(@inquiry.payload.symbolize_keys[:package])
     end
 
   end
