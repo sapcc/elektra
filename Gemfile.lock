@@ -56,22 +56,20 @@ GIT
       misty (>= 0.5.1)
 
 GIT
-  remote: https://github.com/sapcc/monsoon-openstack-auth.git
-  revision: 0fbd32070febd875afc2694e8ccea57af611b624
-  branch: rails5
+  remote: https://github.com/tlesmann/sass-inline-svg.git
+  revision: feee267993505bebd4c2b0e3f8f34cd8db7bff30
+  branch: master
+  specs:
+    sass_inline_svg (0.0.7)
+
+PATH
+  remote: ../monsoon-openstack-auth
   specs:
     monsoon-openstack-auth (1.0.0)
       excon
       hashie
       rails
       uglifier (>= 1.3.0)
-
-GIT
-  remote: https://github.com/tlesmann/sass-inline-svg.git
-  revision: feee267993505bebd4c2b0e3f8f34cd8db7bff30
-  branch: master
-  specs:
-    sass_inline_svg (0.0.7)
 
 PATH
   remote: plugins/audit

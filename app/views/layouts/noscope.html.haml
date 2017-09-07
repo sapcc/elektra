@@ -36,7 +36,7 @@
           %ul.nav.navbar-nav.navbar-right
             - unless logged_in?
               %li
-                = link_to "Log in", monsoon_openstack_auth.login_path(auth_domain: (params[:domain_id] || Rails.configuration.default_domain), domain_name:params[:domain_id], after_login: plugin('identity').domain_path(domain_id:params[:domain_id])), id: "navbar-login-btn"
+                = link_to "Log in", monsoon_openstack_auth.login_path(domain_name: (params[:domain_id] || Rails.configuration.default_domain), after_login: plugin('identity').domain_path(domain_id:params[:domain_id])), id: "navbar-login-btn"
 
     = yield :page_lead
 
