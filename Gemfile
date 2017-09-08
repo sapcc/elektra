@@ -19,7 +19,7 @@ gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
-gem 'sass_inline_svg', git: 'https://github.com/tlesmann/sass-inline-svg.git', branch: :master
+gem 'sass_inline_svg'
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
