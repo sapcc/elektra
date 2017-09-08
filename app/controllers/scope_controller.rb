@@ -49,10 +49,11 @@ class ScopeController < ::ApplicationController
     #    project_id != @scoped_project_fid
     if domain_id != @scoped_domain_fid || project_id != @scoped_project_fid
       # url_for does not work for plugins. Use path instead!
+
       if @scoped_domain_id
-        # new_path = request.path.gsub(domain_id, @scoped_domain_fid)
+        # replace domain_id with domain friendly id
         new_path = request.path.gsub(
-          %r{^\/#{domain_id}\/(?<rest>.*)/},
+          %r{^\/#{domain_id}\/(?<rest>.*)},
           '/' + @scoped_domain_fid + '/\k<rest>'
         )
 
@@ -61,14 +62,11 @@ class ScopeController < ::ApplicationController
         end
         # replace project_id with freindly id if given
         if @scoped_project_id
-          new_path.gsub!(
-            %r{^\/(?<domain>.+)\/#{project_id}\/(?<rest>.*)/},
+          new_path = new_path.gsub(
+            %r{^\/(?<domain>.+)\/#{project_id}\/(?<rest>.*)},
             '/\k<domain>/' + @scoped_project_fid + '/\k<rest>'
           )
         end
-
-        params[:domain_id] = @scoped_domain_fid
-        params[:project_id] = @scoped_project_fid
         redirect_to new_path
       end
     end

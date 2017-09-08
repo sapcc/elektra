@@ -11,16 +11,16 @@ Feature: Authentication
   Scenario: User is not logged in and tries to visit domain landing page
     Given I am on the root page
      And I am not logged in
-    When I visit domain path "identity/home"
+    When I visit domain path "home"
     Then I am redirected to login page
      And I see login form
 
   Scenario: User is not logged in but already accepted terms of use
     Given Test user has accepted terms of use
     Given I am not logged in
-    When I visit domain path "identity/home"
+    When I visit domain path "home"
      And I log in as test_user
-    Then I am redirected to domain path "identity/home"
+    Then I am redirected to domain path "home"
      And I click on user navigation
      And I see a "Log out" button
 
@@ -34,7 +34,7 @@ Feature: Authentication
   @wip
   Scenario: User is not logged in has not accepted terms of use
     Given I am not logged in
-    When I visit domain path "identity/home"
+    When I visit domain path "home"
     And I log in as test_user
-    Then I am redirected to domain path "identity/home"
+    Then I am redirected to domain path "home"
     And I see "Terms"

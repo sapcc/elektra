@@ -3,11 +3,11 @@ When(/^I fill in "(.*?)" as "(.*?)"/) do |value,field|
 end
 
 Then(/^I am redirected to login page$/) do
-  expect(current_path.start_with?("/auth/login")).to eq(true)
+  expect(current_path.match(/\/.+\/auth\/login/)).not_to be(nil)
 end
 
 Then(/^I see login form$/) do
-  expect(page).to have_selector("form[action^='/auth/sessions']")
+  expect(page).to have_selector("form[action*='/auth/sessions']")
 end
 
 And(/^I click on user navigation$/) do

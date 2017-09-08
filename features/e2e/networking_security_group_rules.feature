@@ -2,7 +2,7 @@
 Feature: Security Group Rules
   Background:
     Given Test user has accepted terms of use
-    Given I visit domain path "identity/home"
+    Given I visit domain path "home"
      And I log in as test_user
     
 
