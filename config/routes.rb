@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   # mount MonsoonOpenstackAuth::Engine => '/auth'
-  mount MonsoonOpenstackAuth::Engine => '/:session_path/auth'
+  mount MonsoonOpenstackAuth::Engine => '/:domain_fid/auth'
 
   # lifeliness
   # check without db connection. It only checks that a request reaches
