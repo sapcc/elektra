@@ -54,5 +54,11 @@ module Compute
     def flavor_label_for_select(flavor)
       "#{flavor.name}  (RAM: #{Core::DataType.new(:bytes, :mega).format(flavor.ram)}, VCPUs: #{flavor.vcpus}, Disk: #{Core::DataType.new(:bytes, :giga).format(flavor.disk)} )"
     end
+
+    def render_image_name(image)
+      return '-' if image.blank?
+      build_number = image.metadata["buildnumber"].blank? ? '' : "(#{image.metadata["buildnumber"]})"
+      "#{image.name} #{build_number}"
+    end
   end
 end

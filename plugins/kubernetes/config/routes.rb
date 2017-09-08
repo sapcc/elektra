@@ -1,3 +1,3 @@
 Kubernetes::Engine.routes.draw do
-  get '/' => 'application#index'
+  get '/' => 'application#index', as: :root
 end

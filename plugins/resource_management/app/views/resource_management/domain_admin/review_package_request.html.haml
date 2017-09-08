@@ -13,7 +13,7 @@
       %strong= @target_project_name
       requests the quota package
       = succeed '.' do
-        %strong= t("resource_management.packages.#{@package}")
+        %strong= t("resource_management.packages.#{@package.key}")
       - if @relevant_resources.empty?
         This will not increase quota usage since the requested project quotas are lower than the project's current quotas.
       - else
@@ -28,16 +28,16 @@
             %th Quota for projects
             %th Resource usage by projects
         %tbody
-          - @relevant_resources.each do |cfg|
-            - dt = cfg.data_type
-            - domain_resource = @domain.find_resource(cfg)
-            - project_resource = @project.find_resource(cfg)
-            - new_projects_quota = domain_resource.projects_quota - project_resource.quota + cfg.value_for_package(@package)
+          - @relevant_resources.each do |domain_resource|
+            - dt = domain_resource.data_type
+            - project_resource = @project.find_resource(domain_resource.service_type, domain_resource.name)
+            - package_quota = @package.quota(domain_resource.service_type, domain_resource.name)
+            - new_projects_quota = domain_resource.projects_quota - project_resource.quota + package_quota
             %tr{ class: new_projects_quota > domain_resource.quota ? 'bg-danger' : (new_projects_quota > 0.8 * domain_resource.quota ? 'bg-warning' : '') }
               %td
-                = t("resource_management.#{cfg.service.name}")
+                = t("resource_management.#{domain_resource.service_type}")
                 &gt;
-                = t("resource_management.#{cfg.name}")
+                = t("resource_management.#{domain_resource.name}")
               %td= dt.format(domain_resource.quota)
               %td
                 = dt.format(domain_resource.projects_quota)

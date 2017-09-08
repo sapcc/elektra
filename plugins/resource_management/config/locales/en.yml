@@ -8,10 +8,14 @@ en:
     unlimited: Unlimited
     compute: Compute
     storage: Storage
+    network: Network
     networking: Network
     block_storage: Block Storage
+    volumev2: Block Storage
     object_storage: Object Storage
+    object-store: Object Storage
     shared_filesystem_storage: Shared Filesystem Storage
+    sharev2: Shared Filesystem Storage
     loadbalancing: Loadbalancing
     floating_ips: Floating IPs
     ram: RAM

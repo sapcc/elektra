@@ -13,15 +13,15 @@
     .collapse.navbar-collapse#main-nav-collapse
       %ul.nav.navbar-nav
         %li
-          = link_to (@scoped_domain_name || params[:domain_id]), plugin('identity').domain_path(project_id:nil) if @scoped_domain_id
+          = link_to (@scoped_domain_name || params[:domain_id]), main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil) if @scoped_domain_id
 
       %ul.nav.navbar-nav.navbar-right
 
         - unless logged_in?
           %li
-            = link_to "Log in", monsoon_openstack_auth.login_path(session_path: @scoped_domain_fid || params[:domain_id],
+            = link_to "Log in", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id],
               domain_name: @scoped_domain_name,
-              after_login: plugin('identity').domain_path), id: "navbar-login-btn"
+              after_login: main_app.domain_home_path(domain_id: @scoped_domain_fid)), id: "navbar-login-btn"
         - else
           %li.dropdown
             %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
@@ -37,7 +37,8 @@
 
               %li.divider
               %li
-                = link_to 'Log out', monsoon_openstack_auth.logout_path(session_path: @scoped_domain_fid || params[:domain_id], domain_name: @scoped_domain_name, redirect_to: main_app.landing_page_url)
+                = link_to 'Log out', monsoon_openstack_auth.logout_path(domain_fid: @scoped_domain_fid || params[:domain_id],
+                  domain_name: @scoped_domain_name, redirect_to: main_app.landing_page_url)
 
 
         %li.dropdown

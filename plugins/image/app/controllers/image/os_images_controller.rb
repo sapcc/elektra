@@ -35,13 +35,13 @@ module Image
     def new; end
 
     def create
-      render text: 'create'
+      render plain: 'create'
     end
 
     def edit; end
 
     def update
-      render text: 'update'
+      render plain: 'update'
     end
 
     def destroy

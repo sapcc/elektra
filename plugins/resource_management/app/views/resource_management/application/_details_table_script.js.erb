@@ -7,8 +7,8 @@ function set_approved_quota(button) {
     dataType: 'script',
     data: {
       id:       row.data('id'),
-      service:  "<%= escape_javascript(@config.service.catalog_type) %>",
-      resource: "<%= escape_javascript(@config.name.to_s) %>",
+      service:  "<%= escape_javascript(@service_type.to_s) %>",
+      resource: "<%= escape_javascript(@resource_name.to_s) %>",
       value: row.find('.resource-approved-quota-edit').val(),
     },
     error: function(xhr) {
@@ -28,8 +28,8 @@ function reset_approved_quota(button) {
     dataType: 'script',
     data: {
       id:       row.data('id'),
-      service:  "<%= escape_javascript(@config.service.catalog_type) %>",
-      resource: "<%= escape_javascript(@config.name.to_s) %>",
+      service:  "<%= escape_javascript(@service_type.to_s) %>",
+      resource: "<%= escape_javascript(@resource_name.to_s) %>",
     }
   });
 };

@@ -3,7 +3,7 @@
     - if @can_access_domain
       %ol.context-list
         %li.dropdown
-          = link_to plugin('identity').domain_path(project_id:nil) do
+          = link_to main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil) do
             %i.icon-link.fa.fa-home
 
       - unless @domain_switch

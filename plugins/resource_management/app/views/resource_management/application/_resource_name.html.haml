@@ -5,20 +5,18 @@
 
 .col-md-2.quota-label
   .text-muted
-    - conf = resource.config
-    - name = conf.name
-    - service = conf.service.name
-    - area = conf.service.area
+    - name = resource.name
+    - service = resource.service_type
     - if overview
-      = link_to t("resource_management.#{conf.name}"), plugin('resource_management').send("#{scope}_area_path", area: area)
+      = link_to t("resource_management.#{resource.name}"), plugin('resource_management').send("#{scope}_area_path", area: resource.service_area)
       .small
-        .small= t("resource_management.#{conf.service_name}")
+        .small= t("resource_management.#{resource.service_type}")
     - else
-      - translated_name = t("resource_management.#{conf.name}")
+      - translated_name = t("resource_management.#{resource.name}")
       - linktitle = "Open #{service} service"
       - if scope == 'resources'
         - case service
-          - when :block_storage
+          - when :volumev2
             - case name
               - when :volumes, :capacity
                 = link_to translated_name, plugin('block_storage').volumes_path, title: linktitle
@@ -26,13 +24,13 @@
                 = link_to translated_name, plugin('block_storage').snapshots_path, title: linktitle
               - else
                 = translated_name
-          - when :object_storage
+          - when :'object-store'
             - case name
               - when :capacity
                 = link_to translated_name, plugin('object_storage').entry_path, title: linktitle
               - else
                 = translated_name
-          - when :shared_filesystem_storage
+          - when :sharev2
             - case name
               - when :share_capacity, :shares
                 = link_to translated_name, plugin('shared_filesystem_storage').start_path('shares'), title: linktitle
@@ -44,7 +42,7 @@
                 = translated_name
           - when :compute
             = link_to translated_name, plugin('compute').instances_path(), title: linktitle
-          - when :networking
+          - when :network
             - case name
               - when :networks, :subnets, :ports, :rbac_policies
                 = link_to translated_name, plugin('networking').networks_private_index_path, title: linktitle
@@ -54,10 +52,6 @@
                 = link_to translated_name, plugin('networking').routers_path, title:linktitle
               - when :security_groups, :security_group_rules
                 = link_to translated_name, plugin('networking').security_groups_path, title: linktitle
-              - else
-                = translated_name
-          - when :loadbalancing
-            -case name
               - when :loadbalancers, :listeners, :pools, :healthmonitors, :l7policies
                 = link_to translated_name, plugin('loadbalancing').loadbalancers_path, title: linktitle
               - else
