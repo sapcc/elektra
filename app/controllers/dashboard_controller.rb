@@ -56,6 +56,7 @@ class DashboardController < ::ScopeController
     if error.message.match(/Could not find token/i) ||
        error.message.match(/Failed to validate token/i)
       redirect_to monsoon_openstack_auth.login_path(
+        session_path: @scoped_domain_fid,
         domain_name: @scoped_domain_name, after_login: params[:after_login]
       )
     else
@@ -92,6 +93,7 @@ class DashboardController < ::ScopeController
   rescue_from 'Excon::Error::Unauthorized',
               'MonsoonOpenstackAuth::Authentication::NotAuthorized' do
     redirect_to monsoon_openstack_auth.login_path(
+      session_path: @scoped_domain_fid,
       domain_name: @scoped_domain_name, after_login: params[:after_login]
     )
   end

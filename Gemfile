@@ -38,17 +38,13 @@ gem 'activerecord-session_store'
 gem 'pg'
 
 # Openstack
-gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git',
-                     branch: :master
+gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
 gem 'net-ssh'
 gem 'netaddr'
 # gem 'fog-openstack', path: '../fog-openstack', branch: :master
-gem 'fog-openstack-sap-billing',
-    git: 'https://github.com/sapcc/fog-openstack-sap-billing.git',
-    branch: :master
+gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 
-# gem 'monsoon-openstack-auth',
-#     git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
+# gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'ruby-radius'

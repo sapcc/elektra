@@ -13,10 +13,12 @@ class SessionCookiePathMiddleware
     status, headers, response = @app.call(env)
     params = env['action_dispatch.request.path_parameters']
     # get current domain from params or use the default domain
-    domain = params[:auth_domain] ||
-             params[:domain_name] ||
+
+    domain = params[:domain_name] ||
              params[:domain_id] ||
              Rails.configuration.default_domain
+
+            #  byebug
 
     # change the path of session cookie to current domain
     env['rack.session.options'][:path] = "/#{domain}" if domain
