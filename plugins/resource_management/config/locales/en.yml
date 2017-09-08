@@ -8,6 +8,7 @@ en:
     unlimited: Unlimited
     compute: Compute
     storage: Storage
+    network: Network
     networking: Network
     block_storage: Block Storage
     volumev2: Block Storage
