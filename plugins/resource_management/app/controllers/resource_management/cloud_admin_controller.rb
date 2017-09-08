@@ -66,12 +66,12 @@ module ResourceManagement
       begin
         @domain_resource.quota = @domain_resource.data_type.parse(params.require(:value))
       rescue ArgumentError => e
-        render text: e.message, status: :bad_request
+        render plain: e.message, status: :bad_request
         return
       end
 
       unless @domain_resource.save
-        render text: @domain_resource.errors.full_messages.to_sentence, status: :bad_request
+        render plain: @domain_resource.errors.full_messages.to_sentence, status: :bad_request
         return
       end
 

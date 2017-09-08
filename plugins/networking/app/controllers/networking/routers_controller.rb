@@ -72,7 +72,7 @@ module Networking
                locals: { server: server, port: port },
                status: server.nil? ? 404 : 200
       else
-        render text: 'No details available'
+        render plain: 'No details available'
       end
     end
 

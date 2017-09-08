@@ -51,7 +51,7 @@ module ResourceManagement
       begin
         new_quota = @project_resource.data_type.parse(params.require(:value))
       rescue ArgumentError => e
-        render text: e.message, status: :bad_request
+        render plain: e.message, status: :bad_request
         return
       end
 
@@ -62,14 +62,14 @@ module ResourceManagement
       if new_quota < 0 or new_projects_quota > @domain_resource.quota
         max_value = @domain_resource.quota - old_projects_quota + old_quota
         msg = "Domain quota for #{@project_resource.service}/#{@project_resource.name} exceeded (maximum acceptable project quota is #{@project_resource.data_type.format(max_value)})"
-        render text: msg, status: :bad_request
+        render plain: msg, status: :bad_request
         return
       end
 
       # set quota
       @project_resource.quota = new_quota
       unless @project_resource.save
-        render text: @project_resource.errors.full_messages.to_sentence, status: :bad_request
+        render plain: @project_resource.errors.full_messages.to_sentence, status: :bad_request
         return
       end
 
