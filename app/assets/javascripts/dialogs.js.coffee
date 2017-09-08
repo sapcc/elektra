@@ -138,7 +138,7 @@ class @InfoDialog
     $dialog.find('h3').text(title)
 
     if $(message).find('.modal-body').length > 0
-      $dialog.find('.modal-body').html($(message).find('.modal-body'))
+      $dialog.find('.modal-body').html($(message).find('.modal-body').html())
     else
       $dialog.find('.modal-body').html(message)
 

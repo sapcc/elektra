@@ -12,13 +12,16 @@ class SessionCookiePathMiddleware
     # It also calls rails app and sets the path params which we need here.
     status, headers, response = @app.call(env)
     params = env['action_dispatch.request.path_parameters']
-    # get current domain from params or use the default domain
 
-    domain = params[:domain_name] ||
+    # get current domain from params or use the default domain.
+    # We use friendly id helper to make domain and project names url safe.
+    # That can lead to differences between domain name and its friendly id. So
+    # the order we check the current domain is session_path (the friendly id),
+    # domain name or domain id.
+    domain = params[:session_path] ||
+             params[:domain_name] ||
              params[:domain_id] ||
              Rails.configuration.default_domain
-
-            #  byebug
 
     # change the path of session cookie to current domain
     env['rack.session.options'][:path] = "/#{domain}" if domain

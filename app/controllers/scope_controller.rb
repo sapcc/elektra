@@ -6,10 +6,6 @@
 class ScopeController < ::ApplicationController
   prepend_before_action :load_scoped_objects
 
-  before_action do
-    byebug
-  end
-  
   def load_scoped_objects
     # initialize scoped domain's and project's friendly id
     # use existing, user's or default domain
