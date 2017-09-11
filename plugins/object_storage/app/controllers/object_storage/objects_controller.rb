@@ -8,6 +8,7 @@ module ObjectStorage
 
     def index
       @objects = services.object_storage.list_objects_at_path(@container_name, params[:path])
+      render formats: [:html]
     end
 
     def show
