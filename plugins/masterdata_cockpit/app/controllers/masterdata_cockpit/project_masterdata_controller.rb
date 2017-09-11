@@ -42,7 +42,8 @@ module MasterdataCockpit
         @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
       rescue Exception => e
         # do nothing if no masterdata was found
-        unless e.message.downcase == "could not find masterdata for this project"
+        # the api will only return 404 if no masterdata for the project was found
+        unless e.code == 404
           # all other errors
           flash.now[:error] = "Could not load masterdata. #{e}"
         end

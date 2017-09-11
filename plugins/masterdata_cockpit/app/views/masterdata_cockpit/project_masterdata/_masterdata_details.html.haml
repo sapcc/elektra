@@ -1,5 +1,5 @@
 %label Cost Object
-%a.help-link{data:{content: "to be defined", popover: {type: "help-hint"}, toggle: "popover"}}
+%a.help-link{data:{content: "where all occuring costs should be billed to", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
 .panel.panel-default
   .panel-body
@@ -36,7 +36,7 @@
         -else 
           = icon('times')
 %label Responsibility
-%a.help-link{data:{content: "to be defined", popover: {type: "help-hint"}, toggle: "popover"}}
+%a.help-link{data:{content: "here you can find the person in charge", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
 .panel.panel-default
   .panel-body
@@ -97,8 +97,6 @@
           = icon('envelope-o')
           = mail_to @project_masterdata.responsible_controller_email
 %label Customer Information
-%a.help-link{data:{content: "to be defined", popover: {type: "help-hint"}, toggle: "popover"}}
-  = icon('question-circle')
 .panel.panel-default
   .panel-body
     .row

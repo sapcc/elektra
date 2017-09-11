@@ -38,7 +38,8 @@ module MasterdataCockpit
         @domain_masterdata = services_ng.masterdata_cockpit.get_domain(@scoped_domain_id)
       rescue Exception => e
         # do nothing if no masterdata was found
-        unless e.message.downcase == "could not find masterdata for this domain."
+        # the api will only return 404 if no masterdata for the domains was found
+        unless e.code == 404
           # all other errors
           flash.now[:error] = "Could not load masterdata. #{e}"
         end
