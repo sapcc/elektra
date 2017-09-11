@@ -20,9 +20,10 @@ gem 'high_voltage'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'redcarpet'
-gem 'sass-rails'
-gem 'sass_inline_svg', git: 'https://github.com/tlesmann/sass-inline-svg.git',
-                       branch: :master
+gem 'spinners'
+gem 'sass_inline_svg'
+gem 'friendly_id'
+gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
 gem 'simple_form'
 gem 'spinners'

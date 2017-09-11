@@ -9,7 +9,7 @@
       - unless @domain_switch
         %ol.context-list
           %li.dropdown
-            = link_to plugin('identity').user_projects_path(project_id: @scoped_project_fid), data: {modal: true} do
+            = link_to plugin('identity').user_projects_path(project_id: nil), data: {modal: true} do
               %i.icon-link.fa.fa-th-list
 
 
