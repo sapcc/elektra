@@ -128,7 +128,9 @@ module Identity
     def check_wizard_status
       return if %w[ccadmin cloud_admin].include?(@scoped_domain_name)
 
-      service_names = %w[cost_control networking resource_management].keep_if do |name|
+      # for all services that implements a wizard integration do
+      # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
+      service_names = %w[masterdata_cockpit networking resource_management].keep_if do |name|
         services.available?(name.to_sym)
       end
 
@@ -142,8 +144,9 @@ module Identity
       @wizard_finished = true
       @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
-      # for all services do
-      %w[resource_management cost_control networking masterdata_cockpit].each do |service_name|
+      # for all services that implements a wizard integration do
+      # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
+      %w[resource_management masterdata_cockpit networking].each do |service_name|
         next unless services.available?(service_name.to_sym)
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
