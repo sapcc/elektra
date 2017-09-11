@@ -18,5 +18,11 @@ module ServiceLayerNg
       Rails.logger.debug  "[resource management-service][DomainResource] -> put_domain_data -> PUT /v1/domains/#{domain_id}"
       api_client.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
     end
+
+    def discover_projects(domain_id)
+      Rails.logger.debug  "[resource management-service][DomainResource] -> discover_projects -> POST /v1/domains/#{domain_id}/projects/discover"
+      api_client.resources.discover_projects(domain_id)
+    end
+
   end
 end

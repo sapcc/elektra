@@ -67,6 +67,6 @@ module ServiceLayerNg
       
       result
     end
-    
+
   end
 end
