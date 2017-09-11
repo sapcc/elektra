@@ -1,14 +1,10 @@
 require 'spec_helper'
 
-describe 'auth mount point', type: :routing do
-  #routes { MonsoonOpenstackAuth::Engine.routes }
-
-  it "should route '/:domain_fid/auth', :to => 'MonsoonOpenstackAuth'" do
-    byebug
-    expect(get: '/login',use_route: 'monsoon_openstack_auth').to route_to(
-      controller: 'monsoon_openstack_auth/sessions',
-      action: 'new',
-      domain_fid: 'test_domain'
-    )
+describe 'auth mount point' do
+  it 'MonsoonOpenstackAuth::Engine mount point should start with domain_fid' do
+    entry = Rails.application.routes.routes.entries.find do |e|
+      e.app.try(:app) == MonsoonOpenstackAuth::Engine
+    end
+    expect(entry.required_parts.first).to eq(:domain_fid)
   end
 end
