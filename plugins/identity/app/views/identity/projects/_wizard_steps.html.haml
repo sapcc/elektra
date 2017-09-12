@@ -15,17 +15,31 @@
 -# MASTERDATA COCKPIT
 - if @masterdata_cockpit_service_available
   - can_setup_masterdata = current_user.is_allowed?("masterdata:create_masterdata")
-  = wizard_step({ title: 'Masterdata', 
-    mandatory: true,
-    status: @project_profile.wizard_status('masterdata'),
-    action_button: ({label: 'Maintain Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
-    }) do 
-    - if @project_profile.wizard_finished?('masterdata')
+
+  -# this is a special case if some data is missing after the user maintained the masterdata in the first time
+  - if @project_masterdata_missing_attributes
+    = wizard_step({ title: 'Masterdata', 
+      mandatory: true,
+      status: @project_profile.wizard_status('masterdata'),
+      action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
+      }) do 
       %p 
-        The Masterdata was successfully maintained. For more details take a look to the
-        = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
-    - else
-      %p Please maintain the masterdata for this project
+        The Masterdata was maintained but there are some data missing. 
+        %br
+        Missing attributes: #{@project_masterdata_missing_attributes}
+  - else
+    -# regular case to create new masterdata for the project
+    = wizard_step({ title: 'Masterdata', 
+      mandatory: true,
+      status: @project_profile.wizard_status('masterdata'),
+      action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
+      }) do 
+      - if @project_profile.wizard_finished?('masterdata')
+        %p 
+          The Masterdata was successfully maintained. For more details take a look to the
+          = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
+      - else
+        %p Please maintain the masterdata for this project
 - else
   = wizard_step({title: 'Masterdata',
     mandatory: true,

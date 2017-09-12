@@ -201,16 +201,23 @@ module Identity
 
     def update_masterdata_cockpit_wizard_status
       project_masterdata = nil
+      @project_masterda_is_complete = false
       begin
         project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
+        # @project_masterda_is_complete is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
+        @project_masterda_is_complete =  project_masterdata.is_complete
       rescue
         # the api will return with 404 if no masterdata was found so we do nothing here
       end
       
-      if project_masterdata
+      if project_masterdata && @project_masterda_is_complete
         @project_profile.update_wizard_status(
           'masterdata', ProjectProfile::STATUS_DONE
         )
+      elsif project_masterdata && !@project_masterda_is_complete
+        # @project_masterdata_missing_attributes is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
+        @project_masterdata_missing_attributes = project_masterdata.missing_attributes
+        @project_profile.update_wizard_status('masterdata', nil)
       else
         @project_profile.update_wizard_status('masterdata', nil)
       end
