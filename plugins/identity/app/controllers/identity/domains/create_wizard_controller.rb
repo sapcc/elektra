@@ -27,7 +27,7 @@ module Identity
 
         if @project.save
           audit_logger.info(current_user, 'has created', @project)
-          
+
           flash.now[:notice] = "Project #{@project.name} successfully created."
           if @inquiry
             if @inquiry.requester && @inquiry.requester.uid
