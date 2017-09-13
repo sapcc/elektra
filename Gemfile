@@ -133,7 +133,7 @@ group :development, :test do
 end
 
 group :integration_tests do
-  gem "capybara"
+  gem "capybara", "2.7"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false
   gem 'phantomjs', require: false
