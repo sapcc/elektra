@@ -13,7 +13,6 @@
 = f.input :description, label: "Description"
 
 - co_readonly    = @project_masterdata.solution.nil? == false 
-- inherited_flag = @project_masterdata.cost_object_inherited
 
 %label.control-label Cost Object
 %a.help-link{data:{content: "If you don't know what specific cost object object you should use, talk to the controller repsonsible for it", popover: {type: "help-hint"}, toggle: "popover"}}
@@ -51,11 +50,10 @@
               as:           :select, 
               collection:   types.keys, 
               label_method: -> (k) { types[k] },
-              disabled: inherited_flag,
               required: true,
               disabled: co_readonly
         .col-md-3
-          = f.input :cost_object_name, label: "Name" , required:true, disabled: inherited_flag, readonly: co_readonly
+          = f.input :cost_object_name, label: "Name" , required:true, readonly: co_readonly
 %label.control-label Responsibility
 .panel.panel-default
   .panel-body
