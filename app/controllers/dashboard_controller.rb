@@ -107,7 +107,7 @@ class DashboardController < ::ScopeController
     case exception.code.to_i
     when 404
       options[:title] = 'Object not Found'
-      options[:description] = "The object you're looking for doesn't exist. \
+      options[:description] = "The object you are looking for doesn't exist. \
       Please verify your input. (#{exception.message})"
     when 403
       options[:title] = 'Forbidden'

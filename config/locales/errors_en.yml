@@ -3,7 +3,7 @@ en:
     show:
       not_found:
         title: "Not Found"
-        subtitle: "The page you were looking for does not exists"
+        subtitle: "The page you were looking for does not exist"
         description: ""
       internal_server_error:
         title: "Internal Server Error"
@@ -12,7 +12,7 @@ en:
       bad_request:
         title: "Bad Request"
         subtitle: "The server did not understand your request. It may have been malformed."
-        description: ""
+        description: "Please check your input."
       forbidden:
         title: "Forbidden"
         subtitle: "You are not authorized to access this page"
@@ -20,8 +20,8 @@ en:
       authentication_error:
         title: "Authentication Failed"
         subtitle: "Something went wrong while processing your authentication"
-        description: "Please check if you supplied to correct credentials."
+        description: "Please check if you supplied the correct credentials."
       unprocessable_entity:
         title: "Unprocessable Entity"
         subtitle: "The form data couldn't be processed"
-        description: "This can happen due to various reasons. One reason could be that you have had the page open for a longer time and something changed in the backend in the meantime. In this case a reload of the page will help."
+        description: "This can happen due to various reasons. One reason could be that you have had the page open for a longer time and your session was invalidated in the meantime. In this case a reload of the page will help."

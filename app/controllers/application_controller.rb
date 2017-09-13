@@ -28,14 +28,14 @@ class ApplicationController < ActionController::Base
   # catch all api errors and render exception page
   rescue_and_render_exception_page [
     {
-      'Core::Api::ResponseError' => { title: 'Backend Service Error' }
+      'Core::Api::ResponseError' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
     },
     {
-      'Excon::Error' => { title: 'Backend Service Error' }
+      'Excon::Error' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
     },
     {
       'Fog::OpenStack::Errors::ServiceError' =>
-        { title: 'Backend Service Error' }
+        { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
     }
   ]
 
