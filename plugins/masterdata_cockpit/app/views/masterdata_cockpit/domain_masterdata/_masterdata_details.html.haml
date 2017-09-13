@@ -8,7 +8,7 @@
         %strong
           Type
       .col-sm-8.details-value
-        - if @domain_masterdata.cost_object['type']
+        - if @domain_masterdata.cost_object_type
           = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
         - else 
           \-e']
@@ -17,13 +17,13 @@
         %strong
           Name
       .col-sm-8.details-value
-        = @domain_masterdata.cost_object['name']
+        = @domain_masterdata.cost_object_name
     .row
       .col-sm-4.details-label
         %strong
           Projects can inherit
       .col-sm-8.details-value
-        - if @domain_masterdata['projects_can_inherit']
+        - if @domain_masterdata.cost_object_projects_can_inherit
           = icon('check-square-o')
         -else 
           = icon('times')

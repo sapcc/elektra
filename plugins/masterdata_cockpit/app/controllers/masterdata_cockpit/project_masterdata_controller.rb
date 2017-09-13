@@ -24,6 +24,7 @@ module MasterdataCockpit
       unless @project_masterdata.update
         render action: :edit
       end
+      params['modal'] = false
     end
 
     def create
@@ -61,7 +62,7 @@ module MasterdataCockpit
 
     private
     
-    def load_project_masterdata
+     def load_project_masterdata
       begin
         @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
       rescue Exception => e

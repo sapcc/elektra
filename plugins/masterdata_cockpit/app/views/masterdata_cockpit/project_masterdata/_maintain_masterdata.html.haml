@@ -5,20 +5,33 @@
 = f.input :project_id,    :as => :hidden, :input_html => { :value => @scoped_project_id }
 = f.input :project_name,  :as => :hidden, :input_html => { :value => @scoped_project_name }
 = f.input :domain_id,     :as => :hidden, :input_html => { :value => @scoped_domain_id }
+
+-# because of disabling the select boxes we need to send the hidden input fields instead
+= f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance}
+= f.input :cost_object_type, :as => :hidden, :input_html => { :value => @project_masterdata.cost_object_type}
+
 = f.input :description, label: "Description"
+
+- co_readonly    = @project_masterdata.solution.nil? == false 
+- inherited_flag = @project_masterdata.cost_object_inherited
 
 %label.control-label Cost Object
 %a.help-link{data:{content: "If you don't know what specific cost object object you should use, talk to the controller repsonsible for it", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
 .panel.panel-default
   .panel-body
-    - inherited_flag = @project_masterdata.cost_object_inherited
+    
     .row
       .col-md-2
         = f.input :cost_object_inherited, label: "Inherited", as: :select, include_hidden: false, required:true
       .col-md-2
         - unless @solutions.nil?
-          = f.input :solution, label: "Solution", as: :select, collection: @solutions.map {|solution| solution.name}, disabled: inherited_flag, include_blank: "Other"
+          = f.input :solution, 
+            label: "Solution",
+            as: :select, 
+            collection: @solutions.map {|solution| solution.name}, 
+            include_blank: "Other",
+            required: true
       #solution
         .col-md-3
           - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
@@ -27,7 +40,8 @@
             as: :select, 
             collection: revenue_relevances.keys,
             label_method: -> (k) { revenue_relevances[k] },
-            required:true
+            required: true,
+            disabled: co_readonly
         .col-md-2
           - types = MasterdataCockpit::Config.cost_object_types
           = f.input :cost_object_type, 
@@ -36,9 +50,10 @@
               collection:   types.keys, 
               label_method: -> (k) { types[k] },
               disabled: inherited_flag,
-              required:true
+              required: true,
+              disabled: co_readonly
         .col-md-3
-          = f.input :cost_object_name, label: "Name" , required:true, disabled: inherited_flag
+          = f.input :cost_object_name, label: "Name" , required:true, disabled: inherited_flag, readonly: co_readonly
 %label.control-label Responsibility
 .panel.panel-default
   .panel-body

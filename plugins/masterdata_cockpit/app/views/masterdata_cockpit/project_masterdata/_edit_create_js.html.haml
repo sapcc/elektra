@@ -1,18 +1,22 @@
 = content_for :javascripts do
   :javascript
     var solutions = #{@solutions.to_json.html_safe};
+    var cost_object_inherited = #{@project_masterdata.cost_object_inherited};
+    
     $(function() {
+
+        if (cost_object_inherited) {
+          $('.project_masterdata_solution').hide();
+          $('.project_masterdata_cost_object_type').hide();
+          $('.project_masterdata_cost_object_name').hide();
+          $('.project_masterdata_revenue_relevance').hide();
+        }
+        
         $('#project_masterdata_cost_object_inherited').change(function(){
-          if($('#project_masterdata_cost_object_inherited').val() == "false") {
-            $('#project_masterdata_solution').attr('disabled', false)
-            $('#project_masterdata_cost_object_type').attr('disabled', false)
-            $('#project_masterdata_cost_object_name').attr('disabled', false)
-          }
-          else {
-            $('#project_masterdata_solution').attr('disabled', true)
-            $('#project_masterdata_cost_object_type').attr('disabled', true)
-            $('#project_masterdata_cost_object_name').attr('disabled', true)
-          }
+          $('.project_masterdata_solution').fadeToggle();
+          $('.project_masterdata_cost_object_type').fadeToggle();
+          $('.project_masterdata_cost_object_name').fadeToggle();
+          $('.project_masterdata_revenue_relevance').fadeToggle();
         })
         
         $('#project_masterdata_solution').change(function(){
