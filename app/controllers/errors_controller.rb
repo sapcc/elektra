@@ -17,7 +17,6 @@ class ErrorsController < ActionController::Base
     @status_code       = @exception_wrapper.status_code
     @rescue_response   = ActionDispatch::ExceptionWrapper.rescue_responses[@exception.class.name]
     @sentry_event_id   = Raven.last_event_id
-
     @sentry_user_context = if current_user
       {
         ip_address: request.ip,

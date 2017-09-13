@@ -5,7 +5,7 @@ Feature: Rescoping
 
   Background:
     Given I am not logged in
-      And I visit domain path "identity/home"
+      And I visit domain path "home"
       And I log in as test_user
       And Test user has accepted terms of use
 

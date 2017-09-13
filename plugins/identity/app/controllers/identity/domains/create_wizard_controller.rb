@@ -27,11 +27,6 @@ module Identity
 
         if @project.save
           audit_logger.info(current_user, 'has created', @project)
-          
-          if services_ng.available?(:resource_management)
-            # discover newly created projects
-            services_ng.resource_management.discover_projects(@scoped_domain_id)
-          end
 
           flash.now[:notice] = "Project #{@project.name} successfully created."
           if @inquiry

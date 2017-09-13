@@ -36,12 +36,12 @@ module MonsoonDashboard
     # config.i18n.default_locale = :de
 
     config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
-    require 'prometheus/middleware/collector'
 
     # build a map from the plugins
     plugin_mount_points = {}
     Core::PluginsManager.available_plugins.each{|plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point}
 
+    require 'prometheus/middleware/collector'
     config.middleware.insert_after(ActionDispatch::DebugExceptions, Prometheus::Middleware::Collector, {
       counter_label_builder: proc do |env, code|
         controller_name = env.fetch("action_dispatch.request.path_parameters",{}).fetch(:controller, '')
@@ -125,6 +125,6 @@ module MonsoonDashboard
     # Add middleware healthcheck that to hit the db
     config.middleware.insert_after Rails::Rack::Logger, MiddlewareHealthcheck
 
+    config.middleware.use SessionCookiePathMiddleware
   end
-
 end

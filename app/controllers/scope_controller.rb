@@ -45,21 +45,28 @@ class ScopeController < ::ApplicationController
       @scoped_project_name = project_friendly_id.name
     end
 
-    if (domain_id != @scoped_domain_fid && domain_id != @scoped_domain_name) ||
-       project_id != @scoped_project_fid
-
+    # if (domain_id != @scoped_domain_fid && domain_id != @scoped_domain_name) ||
+    #    project_id != @scoped_project_fid
+    if domain_id != @scoped_domain_fid || project_id != @scoped_project_fid
       # url_for does not work for plugins. Use path instead!
+
       if @scoped_domain_id
-        new_path = request.path.gsub(@scoped_domain_id, @scoped_domain_fid)
+        # replace domain_id with domain friendly id
+        new_path = request.path.gsub(
+          %r{^\/#{domain_id}\/(?<rest>.*)},
+          '/' + @scoped_domain_fid + '/\k<rest>'
+        )
+
         unless new_path.include?(@scoped_domain_fid)
           new_path = "/#{@scoped_domain_fid}#{new_path}"
         end
         # replace project_id with freindly id if given
         if @scoped_project_id
-          new_path = new_path.gsub(@scoped_project_id, @scoped_project_fid)
+          new_path = new_path.gsub(
+            %r{^\/(?<domain>.+)\/#{project_id}\/(?<rest>.*)},
+            '/\k<domain>/' + @scoped_project_fid + '/\k<rest>'
+          )
         end
-
-        new_path = new_path.gsub(project_id, @scoped_project_fid) if project_id
         redirect_to new_path
       end
     end

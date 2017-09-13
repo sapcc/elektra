@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount MonsoonOpenstackAuth::Engine => '/auth'
-  # mount MonsoonOpenstackAuth::Engine => '/:auth_domain/auth'
+  mount MonsoonOpenstackAuth::Engine => '/:domain_fid/auth'
 
   # lifeliness
   # check without db connection. It only checks that a request reaches
@@ -43,7 +42,8 @@ Rails.application.routes.draw do
   end
 
   scope module: 'identity' do
-    get '/:domain_id/:project_id' => 'projects#show', as: :project_home
+    get '/:domain_id/home' => 'domains#show', as: :domain_home
+    get '/:domain_id/:project_id/home' => 'projects#show', as: :project_home
   end
 
   # route for overwritten High Voltage Pages controller
