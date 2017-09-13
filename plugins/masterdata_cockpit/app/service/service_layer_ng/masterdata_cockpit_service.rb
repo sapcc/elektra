@@ -55,5 +55,10 @@ module ServiceLayerNg
       map_to(MasterdataCockpit::CostControlSolution, response.body)
     end
 
+    def check_inheritance(domain_id,parent_id = "") 
+      Rails.logger.debug  "[masterdata cockpit-service] -> check_inheritance"
+      response = api.masterdata.inheritance(domain_id:domain_id, parent_id:parent_id)
+      map_to(MasterdataCockpit::ProjectInheritance, response.body)
+    end
   end
 end

@@ -6,6 +6,7 @@ module MasterdataCockpit
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
     before_action :solutions, only: [:create, :update, :new, :edit, :solution_revenue_relevances, :solution_data]
+    before_action :inheritance, only: [:index,:edit, :show, :create, :update, :solution_revenue_relevances]
 
     authorization_context 'masterdata_cockpit'
     authorization_required
@@ -62,7 +63,7 @@ module MasterdataCockpit
 
     private
     
-     def load_project_masterdata
+    def load_project_masterdata
       begin
         @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
       rescue Exception => e
@@ -88,6 +89,14 @@ module MasterdataCockpit
         flash.now[:error] = "Could not load solutions."
       end
     end
-    
+
+    def inheritance
+      begin
+        @inheritance = services_ng.masterdata_cockpit.check_inheritance(@scoped_domain_id)
+      rescue
+        flash.now[:error] = "Could not check inheritance."
+      end
+    end
+
   end
 end

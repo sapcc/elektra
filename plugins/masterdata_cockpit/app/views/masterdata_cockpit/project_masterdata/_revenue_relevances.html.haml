@@ -11,7 +11,7 @@
 - if only_single_co_found
   - co_type = @solution_revenue_relevances.values[0]["type"]
   - co_name = @solution_revenue_relevances.values[0]["name"]
-  .col-md-2
+  %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
     .form-group.select.required.project_masterdata_cost_object_type
       %label.control-label.select.required{ for:"project_masterdata_cost_object_type" }
         %abbr{title:"", "data-original-title":"required"} *

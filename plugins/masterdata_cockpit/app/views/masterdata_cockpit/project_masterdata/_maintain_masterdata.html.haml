@@ -22,9 +22,11 @@
   .panel-body
     
     .row
-      .col-md-2
-        = f.input :cost_object_inherited, label: "Inherited", as: :select, include_hidden: false, required:true
-      .col-md-2
+      - if @inheritance.co_inheritable
+        .col-md-2
+          = f.input :cost_object_inherited, label: "Inherited", as: :select, include_hidden: false, required:true
+          
+      %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
         - unless @solutions.nil?
           = f.input :solution, 
             label: "Solution",
@@ -42,7 +44,7 @@
             label_method: -> (k) { revenue_relevances[k] },
             required: true,
             disabled: co_readonly
-        .col-md-2
+        %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
           - types = MasterdataCockpit::Config.cost_object_types
           = f.input :cost_object_type, 
               label:        "Type", 

@@ -3,15 +3,16 @@
   = icon('question-circle')
 .panel.panel-default
   .panel-body
-    .row
-      .col-sm-4.details-label
-        %strong
-          Inherited from domain
-      .col-sm-8.details-value
-        - if @project_masterdata.cost_object_inherited
-          = icon('check-square-o')
-        -else 
-          = icon('times')
+    - if @inheritance.co_inheritable
+      .row
+        .col-sm-4.details-label
+          %strong
+            Inherited from domain
+        .col-sm-8.details-value
+          - if @project_masterdata.cost_object_inherited
+            = icon('check-square-o')
+          -else 
+            = icon('times')
     .row
       .col-sm-4.details-label
         %strong
