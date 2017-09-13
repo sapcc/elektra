@@ -5,7 +5,7 @@ module MasterdataCockpit
 
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
-    before_action :solutions, only: [:new, :edit]
+    before_action :solutions, only: [:create, :update, :new, :edit, :solution_revenue_relevances, :solution_data]
 
     authorization_context 'masterdata_cockpit'
     authorization_required
@@ -34,6 +34,30 @@ module MasterdataCockpit
 
     def show;
     end
+    
+    def solution_revenue_relevances
+      @solution_name = params[:solution]
+      @solutions.each do |solution_data|
+        if solution_data.name == @solution_name
+          # in any case revenue_relevance is uniqe so we can order the date related to revenue_relevance
+          @solution_revenue_relevances = solution_data.cost_objects.map {
+            |cost_object| 
+            [cost_object['revenue_relevance'],{ "name" => cost_object['name'], "type" => cost_object['type']  }]}.to_h
+        end
+      end
+    end
+    
+    def solution_data
+      solution = params.require('solution')
+      revenue_relevance = params.require('revenue_relevance')
+      
+      @solutions.each do |solution_data|
+        if solution_data.name == solution && solution_data.revenue_relevance == revenue_relevance
+          # in any case revenue_relevance is uniqe
+          @solution_data = solution_data
+        end
+      end
+    end
 
     private
     
@@ -45,7 +69,7 @@ module MasterdataCockpit
         # the api will only return 404 if no masterdata for the project was found
         unless e.code == 404
           # all other errors
-          flash.now[:error] = "Could not load masterdata. #{e}"
+          flash.now[:error] = "Could not load masterdata. #{e.message}"
         end
       end
     end

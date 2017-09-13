@@ -6,11 +6,29 @@
     .row
       .col-sm-4.details-label
         %strong
+          Inherited from domain
+      .col-sm-8.details-value
+        - if @project_masterdata.cost_object_inherited
+          = icon('check-square-o')
+        -else 
+          = icon('times')
+    .row
+      .col-sm-4.details-label
+        %strong
           Solution 
       .col-sm-8.details-value
         - unless @project_masterdata.solution
           \-
         = @project_masterdata.solution 
+    .row
+      .col-sm-4.details-label
+        %strong
+          Revenue Relevance
+      .col-sm-8.details-value
+        - if @project_masterdata.revenue_relevance
+          = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
+        - else
+          \-
     .row
       .col-sm-4.details-label
         %strong
@@ -26,15 +44,6 @@
           Name
       .col-sm-8.details-value
         = @project_masterdata.cost_object['name']
-    .row
-      .col-sm-4.details-label
-        %strong
-          Inherited from domain
-      .col-sm-8.details-value
-        - if @project_masterdata.cost_object_inherited
-          = icon('check-square-o')
-        -else 
-          = icon('times')
 %label Responsibility
 %a.help-link{data:{content: "here you can find the person in charge", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
@@ -99,15 +108,6 @@
 %label Customer Information
 .panel.panel-default
   .panel-body
-    .row
-      .col-sm-4.details-label
-        %strong
-          Revenue Relevance
-      .col-sm-8.details-value
-        - if @project_masterdata.revenue_relevance
-          = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
-        - else
-          \-
     .row
       .col-sm-4.details-label
         %strong

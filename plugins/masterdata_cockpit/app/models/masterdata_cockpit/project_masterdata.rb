@@ -83,6 +83,14 @@ module MasterdataCockpit
       end
     end
 
+    def solution
+      if cost_object
+        cost_object['solution']
+      else
+        nil
+      end
+    end
+
     def attributes_for_create
       params = {
         'project_id'                        => read('project_id'),
@@ -100,7 +108,6 @@ module MasterdataCockpit
         'responsible_controller_email'      => read('responsible_controller_email'),
         'revenue_relevance'                 => read('revenue_relevance'),
         'business_criticality'              => read('business_criticality'),
-        'solution'                          => read('solution'),
         'number_of_endusers'                => read('number_of_endusers'),
       }.delete_if { |_k, v| v.blank? }
       

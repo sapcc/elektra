@@ -1,5 +1,6 @@
 = content_for :javascripts do
   :javascript
+    var solutions = #{@solutions.to_json.html_safe};
     $(function() {
         $('#project_masterdata_cost_object_inherited').change(function(){
           if($('#project_masterdata_cost_object_inherited').val() == "false") {
@@ -12,5 +13,9 @@
             $('#project_masterdata_cost_object_type').attr('disabled', true)
             $('#project_masterdata_cost_object_name').attr('disabled', true)
           }
+        })
+        
+        $('#project_masterdata_solution').change(function(){
+          $.get("#{plugin('masterdata_cockpit').project_masterdata_revenue_relevances_path()}", { solution: $(this).val() } , function(data){});
         })
     });

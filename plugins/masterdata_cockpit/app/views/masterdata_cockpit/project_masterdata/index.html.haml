@@ -4,7 +4,7 @@
 .row
   .col-sm-8
     #project_masterdata_details
-      - if !@project_masterdata
+      - if !@project_masterdata && !flash.now[:error]
         .alert.alert-warning
           = icon('exclamation-circle')
           No masterdata maintained for this project.

@@ -14,5 +14,9 @@ module MasterdataCockpit
     #        "revenue_relevance":"enabling"
     #    }
     #]
+    
+    def name
+      read('solution_name')
+    end
   end
 end

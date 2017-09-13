@@ -14,21 +14,31 @@
   .panel-body
     - inherited_flag = @project_masterdata.cost_object_inherited
     .row
-      .col-sm-2
+      .col-md-2
         = f.input :cost_object_inherited, label: "Inherited", as: :select, include_hidden: false, required:true
-      .col-sm-3
-        = f.input :solution, label: "Solution", as: :select, collection: MasterdataCockpit::Config.solutions, disabled: inherited_flag, prompt: '-'
-      .col-sm-3
-        - types = MasterdataCockpit::Config.cost_object_types
-        = f.input :cost_object_type, 
-            label:        "Type", 
-            as:           :select, 
-            collection:   types.keys, 
-            label_method: -> (k) { types[k] },
-            disabled: inherited_flag,
+      .col-md-2
+        - unless @solutions.nil?
+          = f.input :solution, label: "Solution", as: :select, collection: @solutions.map {|solution| solution.name}, disabled: inherited_flag, include_blank: "Other"
+      #solution
+        .col-md-3
+          - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
+          = f.input :revenue_relevance, 
+            label: "Revenue Relevance", 
+            as: :select, 
+            collection: revenue_relevances.keys,
+            label_method: -> (k) { revenue_relevances[k] },
             required:true
-      .col-sm-4
-        = f.input :cost_object_name, label: "Name" , required:true, disabled: inherited_flag
+        .col-md-2
+          - types = MasterdataCockpit::Config.cost_object_types
+          = f.input :cost_object_type, 
+              label:        "Type", 
+              as:           :select, 
+              collection:   types.keys, 
+              label_method: -> (k) { types[k] },
+              disabled: inherited_flag,
+              required:true
+        .col-md-3
+          = f.input :cost_object_name, label: "Name" , required:true, disabled: inherited_flag
 %label.control-label Responsibility
 .panel.panel-default
   .panel-body
@@ -56,15 +66,7 @@
 .panel.panel-default
   .panel-body
     .row
-      .col-sm-4
-        - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
-        = f.input :revenue_relevance, 
-          label: "Revenue Relevance", 
-          as: :select, 
-          collection: revenue_relevances.keys,
-          label_method: -> (k) { revenue_relevances[k] },
-          required:true
-      .col-sm-4
+      .col-sm-6
         - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
         = f.input :business_criticality, 
           label: "Business Criticality",
@@ -72,5 +74,5 @@
           collection: business_criticalitys.keys,
           label_method: -> (k) { business_criticalitys[k] },
           required:true
-      .col-sm-4
+      .col-sm-6
         = f.input :number_of_endusers , label: "Number of Endusers"

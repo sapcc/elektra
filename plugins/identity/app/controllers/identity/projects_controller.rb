@@ -207,7 +207,12 @@ module Identity
         # @project_masterda_is_complete is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
         @project_masterda_is_complete =  project_masterdata.is_complete
       rescue
-        # the api will return with 404 if no masterdata was found so we do nothing here
+        # the api will return with 404 if no masterdata was found all other cases will return false -> service not available
+        #if e.code == 404
+        #  return true
+        #else
+        #  return false
+        #end
       end
       
       if project_masterdata && @project_masterda_is_complete

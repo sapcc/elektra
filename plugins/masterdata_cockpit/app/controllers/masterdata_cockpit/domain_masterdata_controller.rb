@@ -41,7 +41,7 @@ module MasterdataCockpit
         # the api will only return 404 if no masterdata for the domains was found
         unless e.code == 404
           # all other errors
-          flash.now[:error] = "Could not load masterdata. #{e}"
+          flash.now[:error] = "Could not load masterdata. #{e.message}"
         end
       end
     end
