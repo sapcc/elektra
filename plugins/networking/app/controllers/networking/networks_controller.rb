@@ -123,10 +123,14 @@ module Networking
       end
     end
 
-    def subnets
-      availability = cloud_admin.networking.network_ip_availability(params[:network_id]) rescue nil
-      # subnets = services_ng.networking.subnets(network_id: params[:network_id])
-      #render json: services_ng.networking.subnets(network_id: params[:network_id])
+    def ip_availability
+      availability = begin
+                       cloud_admin.networking.network_ip_availability(
+                         params[:network_id]
+                       )
+                     rescue
+                       nil
+                     end
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 

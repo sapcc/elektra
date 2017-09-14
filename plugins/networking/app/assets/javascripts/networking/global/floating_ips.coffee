@@ -26,8 +26,8 @@ loadSubnets= (networkId) ->
     $('fieldset#subnets .form-group').hide()
     $('fieldset#subnets').append($loader)
     $.ajax(
-      #url: "networks/#{networkId}/subnets"
-      url: "#{window.location.protocol}//#{window.location.host}/#{scopedDomainFid}/#{scopedProjectFid}/networking/networks/#{networkId}/subnets"
+      #url: "networks/#{networkId}/ip_availability"
+      url: "#{window.location.protocol}//#{window.location.host}/#{scopedDomainFid}/#{scopedProjectFid}/networking/networks/#{networkId}/ip_availability"
       success: (data, textStatus, jqXHR ) ->
         subnets[networkId] = data
         $loader.remove()

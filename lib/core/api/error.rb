@@ -11,8 +11,8 @@ module Core
       def initialize(response)
         if response
           @code = response.code.try(:to_i)
-          @code_type = code_type
-          @error_type = error_type
+          @code_type = response.code_type if response.respond_to?(:code_type)
+          @error_type = response.error_type if response.respond_to?(:error_type)
 
           @response = response
           data = @response.respond_to?(:body) ? @response.body : @response
