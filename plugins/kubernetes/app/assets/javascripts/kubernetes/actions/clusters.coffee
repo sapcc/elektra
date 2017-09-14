@@ -13,6 +13,10 @@
     clusters: json
     total: total
 
+  addCluster = (cluster) ->
+    type: app.ADD_CLUSTER
+    cluster: cluster
+
   loadClusters = () ->
     (dispatch, getState) ->
       currentState    = getState()
@@ -103,27 +107,27 @@
       clusterForm = getState().clusterForm
       if clusterForm.isValid
         dispatch(type: app.SUBMIT_CLUSTER_FORM)
+        console.log('dispatch submit')
         app.ajaxHelper[clusterForm.method] clusterForm.action,
           contentType: 'application/json'
           data: clusterForm.data
-          statusCode:
-            200: () ->
-              console.log("statuscode 200")
-
-              dispatch(resetClusterForm())
-              successCallback() if successCallback
-              # dispatch(fetchClusters())
 
           success: (data, textStatus, jqXHR) ->
-            console.log("success: #{successCallback}")
-            if data.errors
-              dispatch(clusterFormFailure(data.errors))
-            else
-              # dispatch(receiveCluster(data))
-              dispatch(resetClusterForm())
-              successCallback() if successCallback
+            console.log('success!')
+            dispatch(resetClusterForm())
+            console.log('resetClusterForm')
+            dispatch(addCluster(data))
+            console.log('addCluster')
+            successCallback() if successCallback
+            console.log('successCallback')
           error: ( jqXHR, textStatus, errorThrown) ->
-            # dispatch(clusterFormFailure("Error": [JSON.parse(jqXHR.responseText).message]))
+            console.log('error', jqXHR, jqXHR.status, typeof jqXHR.responseText == 'object')
+            errorMessage =  if typeof jqXHR.responseText == 'object'
+                              JSON.parse(jqXHR.responseText).message
+                            else 'The connection to the backend service is currently slow. Please try again.'
+
+            dispatch(clusterFormFailure("Please Note": [errorMessage]))
+
             # dispatch(app.showErrorDialog(title: 'Could not save cluster', message:jqXHR.responseText))
 
 

@@ -24,10 +24,15 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
   connect((state) -> state)(
     React.createClass
       componentDidMount: ->
+        console.log('modal mounted')
         $(@refs.modal).modal 'show'
         $(@refs.modal).on 'hidden.bs.modal', @handleClose
 
+      componentWillUnmount: ->
+        console.log('modal unmount')
+
       close: (e, callback) ->
+        console.log('modal close', e, callback)
         e.preventDefault() if e
         # bug in react. Instead of one parameter the onClick callback provides
         # two paraeters. The first is a Proxy object (don't know what it is).
@@ -36,10 +41,12 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
         $(@refs.modal).modal 'hide'
 
       handleClose: () ->
+        console.log('modal handle close')
         if @props.dispatch
           @props.dispatch(type: ReactModal.HIDE_MODAL, modalType: @props.modalType)
 
       render: ->
+        console.log('modal render')
         options = ReactHelpers.mergeObjects({closeButton: true},options)
         modalProps = (@props.modalProps || {})
         childProps = ReactHelpers.mergeObjects(@props,{close: @close})

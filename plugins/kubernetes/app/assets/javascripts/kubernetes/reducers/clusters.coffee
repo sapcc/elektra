@@ -26,6 +26,12 @@
       error: null
     })
 
+  addCluster = (state, {cluster}) ->
+    clusters = ReactHelpers.mergeObjects({},state.items,cluster)
+    ReactHelpers.mergeObjects({},state,{
+      items: clusters
+    })
+
 
   deleteCluster = (state,{clusterName}) ->
     ReactHelpers.mergeObjects({},state,{
@@ -43,10 +49,12 @@
 
   # clusters reducer
   app.clusters = (state = initialKubernikusState, action) ->
+    console.log(action.type)
     switch action.type
       when app.REQUEST_CLUSTERS             then requestClusters(state,action)
       when app.REQUEST_CLUSTERS_FAILURE     then requestClustersFailure(state,action)
       when app.RECEIVE_CLUSTERS             then receiveClusters(state,action)
+      when app.ADD_CLUSTER                  then addCluster(state,action)
       when app.DELETE_CLUSTER               then deleteCluster(state,action)
       when app.DELETE_CLUSTER_FAILURE       then deleteClusterFailure(state,action)
 
