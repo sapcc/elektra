@@ -2,7 +2,7 @@ require 'capybara-screenshot'
 require 'capybara-screenshot/cucumber'
 require 'mime-types'
 
-Capybara.save_and_open_page_path = "features/screenshots"
+Capybara.save_and_open_page_path = 'features/screenshots'
 
 module Screenshots
   def self.upload(path)
