@@ -15,7 +15,7 @@ class @ReactAjaxHelper
       method: method
       headers:
         "X-Auth-Token": options['authToken'] if options['authToken']
-      dataType: options['dataType'] || 'json'
+      dataType: options['dataType'] if options['dataType']
       contentType: options['contentType'] || 'application/x-www-form-urlencoded'
       data: formattedData
       success: options['success']

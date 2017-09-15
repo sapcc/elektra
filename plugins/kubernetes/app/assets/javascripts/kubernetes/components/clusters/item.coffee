@@ -1,5 +1,3 @@
-# import
-
 { div, button, span, a, tr, td, ul, li} = React.DOM
 { connect } = ReactRedux
 { requestDeleteCluster } = kubernetes
@@ -10,7 +8,7 @@ Cluster = ({cluster, handleClusterDelete}) ->
     td null,
       cluster.name
     td null,
-      cluster.status
+      cluster.status.kluster
     td className: "snug",
       div className: "btn-group",
         button className: "btn btn-default btn-sm dropdown-toggle", "data-toggle": "dropdown", type: "button",
@@ -24,6 +22,7 @@ Cluster = ({cluster, handleClusterDelete}) ->
 
 Cluster = connect(
   (state) ->
+    {}
   (dispatch) ->
     handleClusterDelete: (clusterName) -> dispatch(requestDeleteCluster(clusterName))
 

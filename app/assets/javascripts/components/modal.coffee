@@ -27,10 +27,12 @@ ReactModal.Wrapper = (title, WrappedComponent, options = {}) ->
         $(@refs.modal).modal 'show'
         $(@refs.modal).on 'hidden.bs.modal', @handleClose
 
+      componentWillUnmount: ->
+
       close: (e, callback) ->
         e.preventDefault() if e
         # bug in react. Instead of one parameter the onClick callback provides
-        # two paraeters. The first is a Proxy object (don't know what it is).
+        # two parameters. The first is a Proxy object (don't know what it is).
         # Deactivate the callback feature until fixed.
         # $(@refs.modal).on('hidden.bs.modal', callback) if callback
         $(@refs.modal).modal 'hide'
