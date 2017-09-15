@@ -133,6 +133,7 @@ group :development, :test do
 end
 
 group :integration_tests do
+  gem "rspec"
   gem "capybara"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false
