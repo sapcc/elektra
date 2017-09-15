@@ -26,11 +26,17 @@
       error: null
     })
 
-  addCluster = (state, {cluster}) ->
-    clusters = ReactHelpers.mergeObjects({},state.items,cluster)
-    ReactHelpers.mergeObjects({},state,{
-      items: clusters
-    })
+  receiveCluster = (state, {cluster}) ->
+    index = ReactHelpers.findIndexInArray(state.items,cluster.name, 'name')
+    items = state.items.slice()
+    # update or add
+    if index>=0 then items[index]=cluster else items.push cluster
+    ReactHelpers.mergeObjects({},state,{items})
+
+    # clusters = ReactHelpers.mergeObjects({},state.items,cluster)
+    # ReactHelpers.mergeObjects({},state,{
+    #   items: clusters
+    # })
 
 
   deleteCluster = (state,{clusterName}) ->
@@ -54,7 +60,7 @@
       when app.REQUEST_CLUSTERS             then requestClusters(state,action)
       when app.REQUEST_CLUSTERS_FAILURE     then requestClustersFailure(state,action)
       when app.RECEIVE_CLUSTERS             then receiveClusters(state,action)
-      when app.ADD_CLUSTER                  then addCluster(state,action)
+      when app.RECEIVE_CLUSTER                  then receiveCluster(state,action)
       when app.DELETE_CLUSTER               then deleteCluster(state,action)
       when app.DELETE_CLUSTER_FAILURE       then deleteClusterFailure(state,action)
 

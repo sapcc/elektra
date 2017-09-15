@@ -13,8 +13,8 @@
     clusters: json
     total: total
 
-  addCluster = (cluster) ->
-    type: app.ADD_CLUSTER
+  receiveCluster = (cluster) ->
+    type: app.RECEIVE_CLUSTER
     cluster: cluster
 
   loadClusters = () ->
@@ -107,19 +107,15 @@
       clusterForm = getState().clusterForm
       if clusterForm.isValid
         dispatch(type: app.SUBMIT_CLUSTER_FORM)
-        console.log('dispatch submit')
         app.ajaxHelper[clusterForm.method] clusterForm.action,
           contentType: 'application/json'
           data: clusterForm.data
 
           success: (data, textStatus, jqXHR) ->
-            console.log('success!')
+            console.log("data: ", data)
             dispatch(resetClusterForm())
-            console.log('resetClusterForm')
-            dispatch(addCluster(data))
-            console.log('addCluster')
+            dispatch(receiveCluster(data))
             successCallback() if successCallback
-            console.log('successCallback')
           error: ( jqXHR, textStatus, errorThrown) ->
             console.log('error', jqXHR, jqXHR.status, typeof jqXHR.responseText == 'object')
             errorMessage =  if typeof jqXHR.responseText == 'object'

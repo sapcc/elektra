@@ -8,7 +8,7 @@ Cluster = ({cluster, handleClusterDelete}) ->
     td null,
       cluster.name
     td null,
-      cluster.status
+      cluster.status.kluster
     td className: "snug",
       div className: "btn-group",
         button className: "btn btn-default btn-sm dropdown-toggle", "data-toggle": "dropdown", type: "button",
