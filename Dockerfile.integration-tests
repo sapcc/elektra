@@ -21,6 +21,15 @@ RUN cd /usr/local/share \
   && ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/phantomjs \
   && phantomjs --version
 
+
+# Install gems with native extensions before running bundle install
+# This avoids recompiling them everytime the Gemfile.lock changes.
+# The versions need to be kept in sync with the Gemfile.lock
+RUN  gem install nokogiri -v 1.8.0 \
+  && gem install websocket-driver -v 0.6.5 \
+  && gem sources -c \
+  && rm -f /usr/local/bundle/cache/*
+
 RUN mkdir -p /app
 
 WORKDIR /app
