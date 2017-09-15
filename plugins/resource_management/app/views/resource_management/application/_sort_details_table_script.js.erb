@@ -42,8 +42,8 @@ $(function() {
       data: { 
         sort_order: sort_order,
         sort_column: $(this).attr('id'),
-        service: "<%= @config.service.catalog_type %>",
-        resource: "<%= @config.name %>",
+        service: "<%= @service_type %>",
+        resource: "<%= @resource_name %>",
       },
       dataType: 'script',
     });

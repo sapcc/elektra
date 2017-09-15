@@ -19,7 +19,7 @@ gem 'haml-rails'
 gem 'simple_form'
 gem 'redcarpet'
 gem 'spinners'
-gem 'sass_inline_svg', git: 'https://github.com/tlesmann/sass-inline-svg.git', branch: :master
+gem 'sass_inline_svg'
 gem 'friendly_id'
 gem 'high_voltage'
 gem 'simple-navigation' # Navigation menu builder
@@ -41,7 +41,7 @@ gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: 
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
 gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
 
-gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git', branch: :rails5
+gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'ruby-radius'
@@ -133,7 +133,7 @@ group :development, :test do
 end
 
 group :integration_tests do
-  gem "capybara"
+  gem "capybara", "2.7"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false
   gem 'phantomjs', require: false

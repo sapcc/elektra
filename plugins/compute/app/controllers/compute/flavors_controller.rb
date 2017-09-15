@@ -5,9 +5,7 @@ module Compute
     authorization_required
 
     def index
-      @flavors = paginatable(per_page: 15) do |pagination_options|
-        services_ng.compute.flavors({is_public: 'None'}.merge(pagination_options))
-      end
+      @flavors = services_ng.compute.flavors({is_public: 'None'}).sort_by{|a| [a.ram, a.vcpus]}
     end
 
     def new

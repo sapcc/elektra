@@ -3,6 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
+    before_action :load_project,          only: [:new_package_request]
     before_action :load_project_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_action :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
@@ -11,13 +12,12 @@ module ResourceManagement
 
     def index
       @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
-      @min_updated_at = @project.services.map(&:updated_at).min
-      @max_updated_at = @project.services.map(&:updated_at).max
-
+      @view_services = @project.services
 
       # special case to poll elektra during sync now process
       if params.include?(:if_updated_since)
-        render :json => { :sync_running => params[:if_updated_since].to_i > @min_updated_at.to_time.to_i }
+        min_updated_at = @view_services.map(&:updated_at).min
+        render :json => { :sync_running => params[:if_updated_since].to_i > min_updated_at.to_time.to_i }
         return
       end
 
@@ -27,20 +27,18 @@ module ResourceManagement
       @nearly_full_resources = resources.select { |res| res.backend_quota.nil? && res.usage > 0 && res.usage > 0.8 * res.quota }
 
       @index = true
+      @areas = @project.services.map(&:area).uniq
     end
 
     def show_area(area = nil)
       @area = area || params.require(:area).to_sym
 
-      # which services belong to this area?
-      @area_services = ResourceManagement::ServiceConfig.in_area(@area)
-      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @area_services.empty?
-
       # load all resources for these services
-      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id, service: @area_services.map(&:catalog_type))
-      @resources = @project.resources
-      @min_updated_at = @project.services.map(&:updated_at).min
-      @max_updated_at = @project.services.map(&:updated_at).max
+      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @view_services = @project.services.select { |srv| srv.area.to_sym == @area }
+      raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
+
+      @areas = @project.services.map(&:area).uniq
     end
 
     def confirm_reduce_quota
@@ -69,7 +67,7 @@ module ResourceManagement
       # save the new quota to the database
       if @resource.save
         # load data to reload the bars in the main view
-        show_area(@resource.config.service.area.to_s)
+        show_area(@resource.service_area)
       else
         # reload the reduce quota window with error
         respond_to do |format|
@@ -108,17 +106,16 @@ module ResourceManagement
       end
 
       # now we can create the inquiry
-      cfg         = @resource.config
-      base_url    = plugin('resource_management').admin_area_path(area: cfg.service.area.to_s, domain_id: @scoped_domain_id, project_id: nil)
+      base_url    = plugin('resource_management').admin_area_path(area: @resource.service_area.to_s, domain_id: @scoped_domain_id, project_id: nil)
       overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota',
-        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{cfg.service.name}/#{cfg.name}",
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
         current_user,
         {
-          service: cfg.service.catalog_type,
-          resource: cfg.name,
+          service: @resource.service_type,
+          resource: @resource.name,
           desired_quota: new_value,
         },
         service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
@@ -150,8 +147,8 @@ module ResourceManagement
 
     def create_package_request
       # validate input
-      pkg = params[:package]
-      unless ResourceManagement::PackageConfig::PACKAGES.include?(pkg)
+      pkg = ResourceManagement::Package.find(params[:package])
+      unless pkg
         respond_to do |format|
           format.js { render inline: 'alert("Error: Invalid quota package name specified.")' }
         end
@@ -164,9 +161,9 @@ module ResourceManagement
 
       inquiry = services.inquiry.create_inquiry(
         'project_quota_package',
-        "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg}",
+        "project #{@scoped_domain_name}/#{@scoped_project_name}: apply quota package #{pkg.key}",
         current_user,
-        { package: pkg },
+        { package: pkg.key },
         service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
         {
           "approved": {
@@ -194,6 +191,12 @@ module ResourceManagement
     end
 
     private
+
+    def load_project
+      @project = services_ng.resource_management.find_project(
+        @scoped_domain_id, @scoped_project_id,
+      ) or raise ActiveRecord::RecordNotFound
+    end
 
     def load_project_resource
       @resource = services_ng.resource_management.find_project(

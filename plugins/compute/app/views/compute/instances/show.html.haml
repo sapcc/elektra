@@ -2,139 +2,145 @@
 /   Show
 
 .modal-body
-  %ul.nav.nav-tabs
-    %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
-    %li{role: "presentation"}= link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
-    - if current_user.is_allowed?("compute:all_projects")
-      %li{ role: 'presentation' }= link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
+  - if @instance.blank?
+    .alert.alert-info
+      = "Couldn't find instance #{params[:id]}. This can happen if the instance was just created. In this case please wait a bit and try again"
 
-  .tab-content
-    .tab-pane.active{role:"tabpanel", id:"information"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Name
-            %td= @instance.name
-          %tr
-            %th ID
-            %td= @instance.id
-          %tr
-            %th Status
-            %td= @instance.status
-          %tr
-            %th Availability Zone
-            %td= @instance.availability_zone
-          %tr
-            %th Created
-            %td= @instance.pretty_created_at
-          %tr
-            %th Updated
-            %td= @instance.pretty_updated_at
-          - if @instance.attr_host
-            %tr
-              %th Host
-              %td= @instance.attr_host
-          %tr
-            %th Project
-            %td
-              -if @instance.tenant_id != @scoped_project_id
-                - project_id_and_name(@instance.tenant_id)
-              - else
-                = project_name(@instance.tenant_id)
 
-    .tab-pane{role:"tabpanel", id:"specs"}
-      - if @instance.flavor_object
+  - else
+    %ul.nav.nav-tabs
+      %li.active{role: "presentation"}= link_to 'Information', '#information', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Specs', '#specs', aria: {controls:"specs"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'IP Addresses', '#ip_addresses', aria: {controls:"ip_addresses"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Security Groups', '#sec_groups', aria: {controls:"security_groups"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Key Pairs', '#keypairs', aria: {controls:"keypairs"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Metadata', '#metadata', aria: {controls:"metadata"}, role: "tab", data: {toggle:"tab"}
+      %li{role: "presentation"}= link_to 'Volumes Attached', '#volumes', aria: {controls:"volumes"}, role: "tab", data: {toggle:"tab"}
+      - if current_user.is_allowed?("compute:all_projects")
+        %li{ role: 'presentation' }= link_to 'Actions', '#actions', aria: { controls: 'actions' }, role: 'tab', data: { toggle: 'tab' }
+
+    .tab-content
+      .tab-pane.active{role:"tabpanel", id:"information"}
         %table.table.datatable
           %tbody
             %tr
-              %th Flavor
-              %td= @instance.flavor_object.name
+              %th Name
+              %td= @instance.name
             %tr
-              %th Flavor ID
-              %td= @instance.flavor_object.id
+              %th ID
+              %td= @instance.id
             %tr
-              %th RAM
-              %td= "#{@instance.flavor_object.ram}MB"
+              %th Status
+              %td= @instance.status
             %tr
-              %th VCPUs
-              %td= "#{@instance.flavor_object.vcpus} VCPU"
+              %th Availability Zone
+              %td= @instance.availability_zone
             %tr
-              %th Disk
-              %td= "#{@instance.flavor_object.disk}GB"
-      - else
-        No instance specifications
-
-    .tab-pane{role:"tabpanel", id:"ip_addresses"}
-      %table.table.datatable
-        %tbody
-          - @instance.addresses.each do |name,values|
+              %th Created
+              %td= @instance.pretty_created_at
             %tr
-              %th= name
-              %td
-                %ul
-                  - values.each do |address|
-                    %li= address["addr"]
-
-    .tab-pane{role:"tabpanel", id:"sec_groups"}
-      %table.table.datatable
-        %tbody
-          - security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
-          - (@instance_security_groups.compact || []).each do |sg|
-            %tr
-              %th= sg.name
-              %td
-                - if sg.security_group_rules.empty?
-                  No rules defined.
-                - else
-                  %ul
-                    - sg.rule_objects.each do |rule|
-                      %li= rule.to_s(security_groups)
-
-    .tab-pane{role:"tabpanel", id:"keypairs"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Keypair
-            %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
-
-    .tab-pane{role:"tabpanel", id:"metadata"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Image Name
-            %td= @instance.image_object.name rescue '-'
-          - @instance.metadata.attributes.each do |k,v|
-            %tr
-              %th= k
-              %td= v.blank? ? "N/A" : v
-
-    .tab-pane{role:"tabpanel", id:"volumes"}
-      %table.table.datatable
-        %thead
-          %tr
-            %th Volume Name
-            %th Device Name
-            %th.snug
-        %tbody
-          - attached_volumes = @instance.attached_volumes
-          - if attached_volumes.empty?
-            %tr
-              %td No volumes attached.
-          - else
-            - attached_volumes.each do |vol|
+              %th Updated
+              %td= @instance.pretty_updated_at
+            - if @instance.attr_host
               %tr
-                %td= vol.displayName || vol.name
-                %td= vol.attachments.first['device']
+                %th Host
+                %td= @instance.attr_host
+            %tr
+              %th Project
+              %td
+                -if @instance.tenant_id != @scoped_project_id
+                  - project_id_and_name(@instance.tenant_id)
+                - else
+                  = project_name(@instance.tenant_id)
 
-    - if current_user.is_allowed?("compute:all_projects")
-      .tab-pane{role: 'tabpanel', id: 'actions'}
-        %ul.plain-list.plain-list-widespaced
-          %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
+      .tab-pane{role:"tabpanel", id:"specs"}
+        - if @instance.flavor_object
+          %table.table.datatable
+            %tbody
+              %tr
+                %th Flavor
+                %td= @instance.flavor_object.name
+              %tr
+                %th Flavor ID
+                %td= @instance.flavor_object.id
+              %tr
+                %th RAM
+                %td= "#{@instance.flavor_object.ram}MB"
+              %tr
+                %th VCPUs
+                %td= "#{@instance.flavor_object.vcpus} VCPU"
+              %tr
+                %th Disk
+                %td= "#{@instance.flavor_object.disk}GB"
+        - else
+          No instance specifications
+
+      .tab-pane{role:"tabpanel", id:"ip_addresses"}
+        %table.table.datatable
+          %tbody
+            - @instance.addresses.each do |name,values|
+              %tr
+                %th= name
+                %td
+                  %ul
+                    - values.each do |address|
+                      %li= address["addr"]
+
+      .tab-pane{role:"tabpanel", id:"sec_groups"}
+        %table.table.datatable
+          %tbody
+            - security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
+            - (@instance_security_groups.compact || []).each do |sg|
+              %tr
+                %th= sg.name
+                %td
+                  - if sg.security_group_rules.empty?
+                    No rules defined.
+                  - else
+                    %ul
+                      - sg.rule_objects.each do |rule|
+                        %li= rule.to_s(security_groups)
+
+      .tab-pane{role:"tabpanel", id:"keypairs"}
+        %table.table.datatable
+          %tbody
+            %tr
+              %th Keypair
+              %td= @instance.key_name.blank? ? "No keypair" : @instance.key_name
+
+      .tab-pane{role:"tabpanel", id:"metadata"}
+        %table.table.datatable
+          %tbody
+            %tr
+              %th Image Name
+              %td= render_image_name(@instance.image_object)
+            - @instance.metadata.attributes.each do |k,v|
+              %tr
+                %th= k
+                %td= v.blank? ? "N/A" : v
+
+      .tab-pane{role:"tabpanel", id:"volumes"}
+        %table.table.datatable
+          %thead
+            %tr
+              %th Volume Name
+              %th Device Name
+              %th.snug
+          %tbody
+            - attached_volumes = @instance.attached_volumes
+            - if attached_volumes.empty?
+              %tr
+                %td No volumes attached.
+            - else
+              - attached_volumes.each do |vol|
+                %tr
+                  %td= vol.displayName || vol.name
+                  %td= vol.attachments.first['device']
+
+      - if current_user.is_allowed?("compute:all_projects")
+        .tab-pane{role: 'tabpanel', id: 'actions'}
+          %ul.plain-list.plain-list-widespaced
+            %li= link_to 'Terminate', plugin('compute').instance_path(id: @instance.id), class: 'btn btn-danger', method: :delete, data: { confirm: 'Are you sure you want to terminate this instance?', ok: 'Yes, terminate it', confirmed: :loading_status}
 
 
 - if modal?

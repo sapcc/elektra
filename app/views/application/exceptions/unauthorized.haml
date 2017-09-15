@@ -1,2 +1,7 @@
-%h3 Unauthorized
-%p You don't have the permissions required to see this content.
+- if modal?
+  = content_for :title do
+    Error
+
+%div{class: modal? ? 'modal-body' : ''}
+  %h3 Unauthorized
+  %p You don't have the permissions required to see this content.

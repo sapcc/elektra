@@ -9,7 +9,7 @@ And(/^I log in as test_user/) do
 end
 
 Given(/^I am not logged in$/) do
-  visit "/auth/logout"
+  visit "#{ENV['CCTEST_DOMAIN']}/auth/logout"
 end
 
 Given /^Test user has accepted terms of use$/ do
@@ -100,6 +100,13 @@ end
 
 Then(/^I am redirected to project path "(.*?)"$/) do |path|
   expect(current_path).to eq( "/" + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/" + path)
+end
+
+Then(/^I see the project home page or project wizard$/) do
+  project_home =  "/" + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/home"
+  wizard_page =  "/" + ENV['CCTEST_DOMAIN'] + "/" + ENV['CCTEST_PROJECT'] + "/identity/project/wizard"
+
+  expect(current_path == project_home || current_path == wizard_page).to eq(true)
 end
 
 Then(/^I see warning "(.*?)"$/) do |warning|

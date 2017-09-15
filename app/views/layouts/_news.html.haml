@@ -190,7 +190,7 @@
       Please use plugin url helper instead of generated url helpers.
       Instead of using <code>identity_plugin.projects_path</code> use <code>plugin('identity').projects_path</code>.
       The plugin helper retains the scope. It is possible to override the scope parameters by providing domain_id or project_id parameters.
-      For example, to call domain path without including project_id in the scope you should call plugin('identity').domain_path(project_id: nil).
+      For example, to call domain path without including project_id in the scope you should call main_app.domain_home_path(domain_id: @scoped_domain_id, project_id: nil).
 
   - date = Time.new(2015,12,04)
   .new{data:{date: date}}

@@ -15,6 +15,16 @@ module ResourceManagement
       region = [Rails.application.config.default_region].flatten.first
       result = []
 
+      legacy_names = {
+        :compute        => 'compute',
+        :dns            => 'dns',
+        :loadbalancing  => 'loadbalancing',
+        :networking     => 'networking',
+        :'object-store' => 'object_storage',
+        :sharev2        => 'shared_filesystem_storage',
+        :volumev2       => 'block_storage',
+      }
+
       services_ng.resource_management.list_domains(service: ['none']).each do |domain|
         services_ng.resource_management.list_projects(domain.id).each do |project|
           project.services.each do |srv|
@@ -25,7 +35,7 @@ module ResourceManagement
                 domain_name: domain.name,
                 project_id: res.project_id,
                 project_name: project.name,
-                resource_class: res.config.service.name,
+                resource_class: legacy_names[res.category == :'' ? res.service_type : res.category],
                 resource_type: res.name,
                 quota: dt.normalize(res.backend_quota || res.quota),
                 usage: dt.normalize(res.usage),

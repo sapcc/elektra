@@ -5,7 +5,7 @@
         .col-sm-8
           %h1 SAP Converged Cloud
           %p From Playground to Production on one Infrastructure-as-a-Service (IaaS), powered by Kubernetes, OpenStack, SAP HANA and Monsoon Automation
-          = link_to "Enter the cloud", plugin('identity').domain_path(domain_id: params[:domain_id], project_id:nil), id: 'enter_the_cloud_button', class: "btn btn-outline-negative btn-lg"
+          = link_to "Enter the cloud", main_app.domain_home_path(domain_id: params[:domain_id], project_id:nil), id: 'enter_the_cloud_button', class: "btn btn-outline-negative btn-lg"
         .col-sm-4
           %span.moo-cloud-white
           -# .row
@@ -94,7 +94,7 @@
     %h5.fancy-header API Access & Tested Tool Belt
     %ul.content-list
       %li Download the tested SDKs for your preferred language
-      %li Consume the industry standard Openstack API 
+      %li Consume the industry standard Openstack API
 
 
   %li
@@ -117,7 +117,7 @@
       %span.fa.fa-globe.fa-fw
     %h5.fancy-header Global distribution
     %ul.content-list
-      %li Choose the region where you want to run your solution. 
+      %li Choose the region where you want to run your solution.
 
   %li
     .fancy-icon

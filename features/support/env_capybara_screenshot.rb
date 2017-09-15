@@ -2,19 +2,19 @@ require 'capybara-screenshot'
 require 'capybara-screenshot/cucumber'
 require 'mime-types'
 
-Capybara.save_and_open_page_path = "features/screenshots"
+Capybara.save_and_open_page_path = 'features/screenshots'
 
 module Screenshots
-  def self.upload(path) 
+  def self.upload(path)
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
     type         = MIME::Types.type_for(extension)
     endpoint_url = URI.parse("#{endpoint}/debug/#{basename}")
     content      = File.read(path)
 
-    Net::HTTP.start(endpoint_url.host, 
-                    endpoint_url.port, 
-                    use_ssl: endpoint_url.scheme == "https", 
+    Net::HTTP.start(endpoint_url.host,
+                    endpoint_url.port,
+                    use_ssl: endpoint_url.scheme == "https",
                     verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
       put = Net::HTTP::Put.new(endpoint_url.request_uri)
       put['X-Auth-Token']        = token
@@ -29,32 +29,32 @@ module Screenshots
 
   def self.request_token
     endpoint_url = URI.parse(ENV.fetch('SCREEN_SHOT_UPLOAD_URL'))
-    user         = ENV['SCREEN_SHOT_UPLOAD_USER'] 
-    password     = ENV['SCREEN_SHOT_UPLOAD_PASSWORD'] 
-    project      = ENV['SCREEN_SHOT_UPLOAD_PROJECT'] 
+    user         = ENV['SCREEN_SHOT_UPLOAD_USER']
+    password     = ENV['SCREEN_SHOT_UPLOAD_PASSWORD']
+    project      = ENV['SCREEN_SHOT_UPLOAD_PROJECT']
     domain       = ENV['SCREEN_SHOT_UPLOAD_DOMAIN']
 
-    Net::HTTP.start(endpoint_url.host, 
-                    endpoint_url.port, 
-                    use_ssl: endpoint_url.scheme == "https", 
+    Net::HTTP.start(endpoint_url.host,
+                    endpoint_url.port,
+                    use_ssl: endpoint_url.scheme == "https",
                     verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
       post  = Net::HTTP::Post.new(endpoint_url.request_uri)
       post['Content-type'] = "application/json"
-      post.body = { 
+      post.body = {
         "auth": {
           "identity": {
-            "methods": [ 
-              "password" 
+            "methods": [
+              "password"
             ],
             "password": {
               "user": {
-                "name": user, 
+                "name": user,
                 "password": password,
-                "project": { 
+                "project": {
                   "name": project
-                }, 
+                },
                 "domain": {
-                  "name": domain 
+                  "name": domain
                 }
               }
             }
@@ -73,10 +73,12 @@ module Screenshots
 
   def self.token
     @token ||= request_token
-    @token["X-Subject-Token"] 
+    @token["X-Subject-Token"]
   end
 end
 
+# empty screenshot dir
+FileUtils.rm_rf(Dir.glob('features/screenshots/*'))
 at_exit do
   # do the work in a separate thread, to avoid stomping on $!,
   # since other libraries depend on it directly.
@@ -85,7 +87,7 @@ at_exit do
       puts ""
       puts ""
       puts "         '"
-      puts "    '    )" 
+      puts "    '    )"
       puts "     ) ("
       puts "    ( .')  __/\\"
       puts "      (.  /o/\` \\"

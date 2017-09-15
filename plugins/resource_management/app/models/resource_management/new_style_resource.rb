@@ -9,18 +9,15 @@ module ResourceManagement
     def name
       read(:name).to_sym
     end
+    def category
+      (read(:category) || :"").to_sym
+    end
 
     def service_type
       read(:service_type)
     end
-
-    def config
-      return @config unless @config.nil?
-      name = read(:name).to_sym
-      type = read(:service_type).to_s
-      return @config = ResourceManagement::ResourceConfig.all.find do |res|
-        res.name == name && res.service.catalog_type == type
-      end
+    def service_area
+      read(:service_area)
     end
 
     def data_type
