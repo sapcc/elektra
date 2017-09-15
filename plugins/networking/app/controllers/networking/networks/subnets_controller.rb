@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Networking
   module Networks
+    # list, create and delete subnets
     class SubnetsController < DashboardController
       def index
         render json: services_ng.networking.subnets(
@@ -19,7 +22,13 @@ module Networking
       end
 
       def destroy
-        head 204
+        subnet = services_ng.networking.new_subnet
+        subnet.id = params[:id]
+        if subnet.destroy
+          head 204
+        else
+          render json: { errors: subnet.errors }, status: 400
+        end
       end
     end
   end

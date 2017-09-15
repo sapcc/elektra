@@ -162,12 +162,56 @@ describe Networking::Networks::SubnetsController, type: :controller do
         )
       end
     end
+
+    context 'api returns an error' do
+      before :each do
+        response = OpenStruct.new(code: 404)
+        allow_any_instance_of(ServiceLayerNg::NetworkingService)
+          .to receive(:delete_subnet).and_raise(Core::Api::Error, response)
+      end
+
+      it 'returns 400' do
+        post :create, params: default_params.merge(
+          network_id: '123', subnet: { name: 'test' }
+        )
+        expect(response.status).to eq(400)
+      end
+    end
   end
 
   describe "DELETE 'destroy'" do
-    it 'calls api for destroy a subnet' do
-      delete :destroy, params: default_params.merge(network_id: '123', id: '456')
-      expect(response.status).to eq(204)
+    context 'api returns a success' do
+      it 'returns 204' do
+        delete :destroy, params: default_params.merge(network_id: '123', id: '456')
+        expect(response.status).to eq(204)
+      end
+
+      it 'calls api for destroy a subnet' do
+        expect_any_instance_of(ServiceLayerNg::NetworkingService)
+          .to receive(:delete_subnet).with('456')
+        delete :destroy, params: default_params.merge(network_id: '123', id: '456')
+      end
+    end
+
+    context 'api returns an error' do
+      before :each do
+        response = OpenStruct.new(code: 404)
+        allow_any_instance_of(ServiceLayerNg::NetworkingService)
+          .to receive(:delete_subnet).and_raise(Core::Api::Error, response)
+      end
+
+      it 'renders an json with error' do
+        delete :destroy, params: default_params.merge(network_id: '123', id: '456')
+        expect do
+          body = JSON.parse(response.body)
+          expect(body['errors']).not_to be_nil
+        end.not_to raise_error
+      end
+
+      it 'returns 400' do
+        delete :destroy, params: default_params.merge(network_id: '123', id: '456')
+        expect(response.status).to eq(400)
+      end
     end
   end
 end

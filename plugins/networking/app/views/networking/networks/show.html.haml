@@ -69,21 +69,7 @@
                 %td= segment['provider:segmentation_id']
 
     .tab-pane{role:"tabpanel", id:"subnets"}
-      %table.table.datatable
-        %tbody
-          %tr
-            %th Name
-            %th ID
-            %th CIDR
-            %th Gateway IP
-            %th 
-          - @subnets.each do |subnet|
-            %tr
-              %td= subnet.name
-              %td= subnet.id
-              %td= subnet.cidr
-              %td= subnet.gateway_ip
-              %td
+      .subnets{data: { network_subnets: true, url: networks_subnets_path(@network.id), items: @subnets.to_json } }
 
     .tab-pane{role:"tabpanel", id:"ports"}
       %table.table.datatable

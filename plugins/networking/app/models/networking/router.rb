@@ -39,6 +39,11 @@ module Networking
       nil
     end
 
+    def external_subnet_ids
+      external_fixed_ips = external_gateway_info.fetch('external_fixed_ips', [])
+      external_fixed_ips.collect { |external_fixed_ip| external_fixed_ip['subnet_id']}
+    end
+
     def external_gateway_info
       read('external_gateway_info') || {}
     end

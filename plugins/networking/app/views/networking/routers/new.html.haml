@@ -23,14 +23,14 @@
         = info.simple_fields_for :external_fixed_ips do |fixed_ips|
           = fixed_ips.input :subnet_id,
             as: :select,
-            input_html: {name: "router[external_gateway_info][external_fixed_ips][][subnet_id]"},
+            input_html: { name: "router[external_gateway_info][external_fixed_ips][][subnet_id]", data: { selected: @router.external_subnet_ids } },
             collection: @subnets
 
     = f.input :internal_subnets, {label: "Private Network Subnets",
       input_html:         {multiple: true},
       as:                 :select,
       collection:         @internal_subnets.sort{|a,b| a.network_name<=>b.network_name},
-      selected:           nil,
+      selected:           @selected_internal_subnets,
       label_method:       -> s {"#{s.name} (#{s.network_name})"},
       required:           true}
 

@@ -26,7 +26,8 @@ Networking::Engine.routes.draw do
 
     scope ':network_id' do
       get 'ip_availability'
-      resources :subnets, only: %i[index create destroy], as: :collection
+      get 'manage_subnets'
+      resources :subnets, only: %i[index create destroy]
     end
   end
 end
