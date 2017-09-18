@@ -1,15 +1,14 @@
 =content_for :main_toolbar do
   Domain Masterdata
 
+- if @domain_masterdata.errors.present?
+  .alert.alert-error
+    = render_errors(@domain_masterdata.errors)
+
 .row
   .col-sm-8
     #domain_masterdata_details
-      - if !@domain_masterdata && !flash.now[:error]
-        .alert.alert-warning
-          = icon('exclamation-circle')
-          No masterdata maintained for this domain.
-      - elsif !flash.now[:error]
-        = render partial: 'masterdata_details'
+      = render partial: 'masterdata_details'
   .col-md-4
     #domain_masterdata_additional_infos
       = render partial: 'masterdata_additional_infos'

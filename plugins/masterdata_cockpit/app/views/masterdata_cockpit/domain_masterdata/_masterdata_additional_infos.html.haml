@@ -1,6 +1,5 @@
 
-- unless !@domain_masterdata
-  - can_edit = current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
+- if @domain_masterdata
   .infobox
     %h4.action-heading
       Masterdata Info
@@ -27,7 +26,3 @@
               = last_change.strftime('%I:%M:%S %p %d.%B %Y')
             - else
               \-
-
-- if current_user.is_allowed?('masterdata_cockpit:masterdata_create')
-  - if !@domain_masterdata && !flash.now[:error]
-    = link_to 'Maintain Masterdata', plugin('masterdata_cockpit').domain_masterdata_new_path(), data: { modal: true }, class: 'btn btn-primary btn-sm'

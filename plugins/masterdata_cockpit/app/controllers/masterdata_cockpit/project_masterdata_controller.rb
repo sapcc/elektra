@@ -12,6 +12,12 @@ module MasterdataCockpit
     authorization_required
 
     def index
+      if !@project_masterdata && @masterdata_api_error_code == 404
+        # no masterdata was found please define it
+        solutions
+        @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
+        render action: :new
+      end
     end
     
     def new
@@ -25,12 +31,18 @@ module MasterdataCockpit
       unless @project_masterdata.update
         render action: :edit
       end
+      # needed in view
       params['modal'] = false
     end
 
     def create
       unless @project_masterdata.save
         render action: :new
+      end
+
+      # this is the case if no masterdata is created and we do not use the modal window
+      unless params['modal']
+        render action: :index
       end
     end
 
@@ -69,7 +81,8 @@ module MasterdataCockpit
       rescue Exception => e
         # do nothing if no masterdata was found
         # the api will only return 404 if no masterdata for the project was found
-        unless e.code == 404
+        @masterdata_api_error_code = e.code
+        unless @masterdata_api_error_code == 404
           # all other errors
           flash.now[:error] = "Could not load masterdata. #{e.message}"
         end

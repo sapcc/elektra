@@ -1,15 +1,14 @@
 =content_for :main_toolbar do
   Project Masterdata
 
+- if @project_masterdata.errors.present?
+  .alert.alert-error
+    = render_errors(@project_masterdata.errors)
+
 .row
   .col-sm-8
     #project_masterdata_details
-      - if !@project_masterdata && !flash.now[:error]
-        .alert.alert-warning
-          = icon('exclamation-circle')
-          No masterdata maintained for this project.
-      - elsif !flash.now[:error]
-        = render partial: 'masterdata_details'
+      = render partial: 'masterdata_details'
   .col-md-4
     #project_masterdata_additional_infos
       = render partial: 'masterdata_additional_infos'

@@ -8,7 +8,7 @@ solution -> sortieren DONE
 Status -> Complete/Incomplete DONE
 Inherith from Domain nur anzeigen wenn es auch erlaubt ist DONE
 Erklähr Feld oben mit links zu UI
-Kästen weg und größere Überschriften
+Kästen weg und größere Überschriften DONE
 Input Feld wenn man reinkommt und keine masterdaten da sind
 
 
