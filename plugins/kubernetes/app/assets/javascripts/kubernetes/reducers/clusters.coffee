@@ -7,7 +7,7 @@
     isFetching: false
 
 
-
+  # ----- list ------
   requestClusters = (state,{}) ->
     ReactHelpers.mergeObjects({},state,{
       isFetching: true
@@ -25,6 +25,19 @@
       items: clusters
       error: null
     })
+
+  # ----- item ------
+  requestCluster = (state,{}) ->
+    # ReactHelpers.mergeObjects({},state,{
+    #   isFetching: true
+    # })
+
+  requestClusterFailure = (state,{error})->
+    # ReactHelpers.mergeObjects({},state,{
+    #   isFetching: false
+    #   error: error
+    # })
+
 
   receiveCluster = (state, {cluster}) ->
     index = ReactHelpers.findIndexInArray(state.items,cluster.name, 'name')

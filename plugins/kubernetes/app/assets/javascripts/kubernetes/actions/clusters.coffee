@@ -1,6 +1,7 @@
 ((app) ->
   #################### CLUSTERS #########################
 
+  # ---- list ----
   requestClusters = () ->
     type: app.REQUEST_CLUSTERS
 
@@ -12,10 +13,6 @@
     type: app.RECEIVE_CLUSTERS
     clusters: json
     total: total
-
-  receiveCluster = (cluster) ->
-    type: app.RECEIVE_CLUSTER
-    cluster: cluster
 
   loadClusters = () ->
     (dispatch, getState) ->
@@ -39,6 +36,38 @@
   fetchClusters = () ->
     (dispatch) ->
       dispatch(loadClusters())
+
+
+  # ---- item ----
+  requestCluster = (clusterName) ->
+    type: app.REQUEST_CLUSTER
+    clusterName: clusterName
+
+  requestClusterFailure = (error) ->
+    type: app.REQUEST_CLUSTER_FAILURE
+    error: error
+
+  receiveCluster = (cluster) ->
+    type: app.RECEIVE_CLUSTER
+    cluster: cluster
+
+  loadCluster = (clusterName) ->
+    (dispatch, getState) ->
+      # currentState    = getState()
+      # cluster         = currentState.clusters
+      # isFetching      = clusters.isFetching
+
+
+      # return if isFetching # don't fetch if we're already fetching
+      dispatch(requestCluster(clusterName))
+
+      app.ajaxHelper.get "/clusters/#{clusterName}",
+        contentType: 'application/json'
+        success: (data, textStatus, jqXHR) ->
+          dispatch(receiveCluster(data))
+        error: ( jqXHR, textStatus, errorThrown) ->
+          dispatch(requestClusterFailure(jqXHR.responseText))
+
 
 
   # -------------- CREATE ---------------
@@ -131,7 +160,7 @@
   app.fetchClusters              = fetchClusters
   app.requestDeleteCluster       = requestDeleteCluster
   app.openNewClusterDialog       = openNewClusterDialog
-
+  app.loadCluster                = loadCluster
   app.clusterFormForCreate       = clusterFormForCreate
   app.clusterFormForUpdate       = clusterFormForUpdate
   app.submitClusterForm          = submitClusterForm
