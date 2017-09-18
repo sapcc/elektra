@@ -26,6 +26,10 @@ ReactHelpers.findInArray = (items,itemId) ->
       break
   item
 
+# check if two arrays are equal
+ReactHelpers.arrayEqual = (a, b) ->
+  a.length is b.length and a.every (elem, i) -> elem is b[i]
+
 # Updates attributes of items in an item list in state. Updates are passed as a hash map (attribute-key: attribute-value)
 ReactHelpers.updateItemInList = (state, itemId, itemIdKey, updates = {}) ->
   index = ReactHelpers.findIndexInArray(state.items, itemId, itemIdKey)
