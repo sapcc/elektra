@@ -7,7 +7,7 @@ module Networking
       def index
         render json: services_ng.networking.subnets(
           network_id: params[:network_id]
-        )
+        ), status: 200
       end
 
       def create
