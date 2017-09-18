@@ -1,3 +1,35 @@
 = MasterdataCockpit
 
 This project rocks and uses MIT-LICENSE.
+
+TODO:
+solution -> other DONE
+solution -> sortieren DONE
+Status -> Complete/Incomplete DONE
+Inherith from Domain nur anzeigen wenn es auch erlaubt ist DONE
+Erklähr Feld oben mit links zu UI
+Kästen weg und größere Überschriften
+Input Feld wenn man reinkommt und keine masterdaten da sind
+
+
+Hier die Screenshots 
+ 
+Cost Object: ivonne to input
+ 
+Solution: ivonne to input
+ 
+Revenue Relevance:
+Ivone, we should given an example per value in the drop down. 
+ 
+Operator:
+The person responsible for uptime of the systems and who can make decisions on e.g. Instance restarts etc. used as emergency engineering contact, if Ccloud operations needs a name.
+ 
+Security Expert:
+The person responsible to request and validate firewall and other security settings. The person who will be contacted by security e.g. If a vulnerability is found by a scan etc.
+ 
+Product Owner:
+The person owning the applications features.
+ 
+Controller: ivonne to input
+
+Business Criticality:

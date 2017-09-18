@@ -1,51 +1,51 @@
-%label Cost Object 
+%label.masterdata-heading.masterdata-top Cost Object 
 %a.help-link{data:{content: "where all occuring costs should be billed to", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
-.panel.panel-default
-  .panel-body
-    .row
-      .col-sm-4.details-label
-        %strong
-          Type
-      .col-sm-8.details-value
-        - if @domain_masterdata.cost_object_type
-          = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
-        - else 
-          \-e']
-    .row
-      .col-sm-4.details-label
-        %strong
-          Name
-      .col-sm-8.details-value
-        = @domain_masterdata.cost_object_name
-    .row
-      .col-sm-4.details-label
-        %strong
-          Projects can inherit
-      .col-sm-8.details-value
-        - if @domain_masterdata.cost_object_projects_can_inherit
-          = icon('check-square-o')
-        -else 
-          = icon('times')
-%label Responsibility
+.masterdata-action
+  - unless modal?
+    - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
+      = link_to 'Edit Masterdata', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
+%hr.masterdata-hr-label
+.row
+  .col-sm-4.details-label
+    %strong
+      Type
+  .col-sm-8.details-value
+    - if @domain_masterdata.cost_object_type
+      = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
+    - else 
+      \-e']
+.row
+  .col-sm-4.details-label
+    %strong
+      Name
+  .col-sm-8.details-value
+    = @domain_masterdata.cost_object_name
+.row
+  .col-sm-4.details-label
+    %strong
+      Projects can inherit
+  .col-sm-8.details-value
+    - if @domain_masterdata.cost_object_projects_can_inherit
+      = icon('check-square-o')
+    -else 
+      = icon('times')
+%label.masterdata-heading Responsibility
 %a.help-link{data:{content: "here you can find the person in charge", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
-.panel.panel-default
-  .panel-body
-    .row
-      .col-sm-4.details-label
-        %strong
-          Operator
-      .col-sm-2.details-value
-        - unless @domain_masterdata.responsible_controller_id
-          \-
-        = @domain_masterdata.responsible_controller_id
-      - if @domain_masterdata.responsible_controller_email
-        .col-sm-1.details-label
-          Contact:
-        .col-sm-4.details-value
-          = icon('envelope-o')
-          = mail_to @domain_masterdata.responsible_controller_email
+%hr.masterdata-hr-label
+.row
+  .col-sm-4.details-label
+    %strong
+      Operator
+  .col-sm-2.details-value
+    - unless @domain_masterdata.responsible_controller_id
+      \-
+    = @domain_masterdata.responsible_controller_id
+  - if @domain_masterdata.responsible_controller_email
+    .col-sm-1.details-label
+      Contact:
+    .col-sm-4.details-value
+      = icon('envelope-o')
+      = mail_to @domain_masterdata.responsible_controller_email
 
-- if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
-  = link_to 'Edit Masterdata', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'

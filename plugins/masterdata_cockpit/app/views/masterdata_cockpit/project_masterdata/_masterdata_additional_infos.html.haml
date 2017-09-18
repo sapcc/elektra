@@ -1,18 +1,8 @@
 
 - unless !@project_masterdata
-  - can_edit = current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
   .infobox
     %h4.action-heading
       Masterdata Info
-      - if can_edit
-        .dropdown.header-action
-          %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
-          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-            - if can_edit
-              %li
-                = link_to  plugin('masterdata_cockpit').project_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"} do
-                  %i.fa.fa-edit.fa-fw
-                  Edit Masterdata
     %table.table
       %tbody
         %tr
@@ -33,9 +23,10 @@
           %td
             - if @project_masterdata.is_complete
               = icon('thumbs-up')
-              Everything is fine
+              Complete
             - else
               = icon('thumbs-down')
+              Incomplete:
               = @project_masterdata.missing_attributes
         %tr
           %th

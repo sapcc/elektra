@@ -4,15 +4,6 @@
   .infobox
     %h4.action-heading
       Masterdata Info
-      - if can_edit
-        .dropdown.header-action
-          %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
-          %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-            - if can_edit
-              %li
-                = link_to  plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"} do
-                  %i.fa.fa-edit.fa-fw
-                  Edit Masterdata
     %table.table
       %tbody
         %tr
