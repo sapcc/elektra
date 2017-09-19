@@ -66,7 +66,9 @@
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveCluster(data))
         error: ( jqXHR, textStatus, errorThrown) ->
-          dispatch(requestClusterFailure(jqXHR.responseText))
+          switch jqXHR.status
+            when 404 then dispatch(loadClusters()) # if requested cluster not found reload the whole list to see what we have
+            else dispatch(requestClusterFailure(jqXHR.responseText))
 
 
 

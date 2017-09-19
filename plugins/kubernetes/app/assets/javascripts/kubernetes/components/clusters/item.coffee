@@ -42,8 +42,13 @@ Cluster = React.createClass
 
 
 Cluster = connect(
-  (state) ->
-    {}
+  (state, ownProps) ->
+    for item in state.clusters.items
+      if ownProps.cluster.name == item.name
+        cluster = item
+        break
+
+    cluster: cluster
   (dispatch) ->
     handleClusterDelete:  (clusterName) -> dispatch(requestDeleteCluster(clusterName))
     reloadCluster:        (clusterName) -> dispatch(loadCluster(clusterName))
