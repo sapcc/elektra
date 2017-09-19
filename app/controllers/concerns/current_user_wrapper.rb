@@ -31,6 +31,8 @@ module CurrentUserWrapper
       user = service_user.identity.find_user(current_user.id)
       # save user_details in session
       @session[:current_user_details] = user.try(:attributes) || {}
+
+      UserProfile.find_by_name_or_create_or_update(user.name) { user }
     end
 
     def try(method_name)

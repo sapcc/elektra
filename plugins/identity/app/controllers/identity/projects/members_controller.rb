@@ -121,8 +121,12 @@ module Identity
           next unless user_id && project_id == @scoped_project_id
           user_name = ra.user.fetch('name', 'unknown')
           # try to get full name from user profile stored in Elektra db
-          user_profile = UserProfile.search_by_name(user_name).first
+          user_profile = UserProfile.find_by_name_or_create_or_update(user_name) do
+            service_user.identity.find_user(user_id)
+          end
+
           user_description = user_profile.blank? ? '' : user_profile.full_name
+
           hash[user_id] ||= {
             role_ids: [],
             roles: [],
