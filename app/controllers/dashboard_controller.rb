@@ -112,7 +112,7 @@ class DashboardController < ::ScopeController
     when 403
       options[:title] = 'Forbidden'
     end
-    render_exception_page(exception, options)
+    render_exception_page(exception, options.merge(sentry: true))
   end
 
   # catch all mentioned errors and render error page

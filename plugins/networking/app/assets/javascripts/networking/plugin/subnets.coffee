@@ -67,9 +67,7 @@ class SubnetForm
         @submit()
 
       @$nameInput = $('<input class="form-control string required" placeholder="Name" type="text">')
-        .css('width',350)
       @$cidrInput = $('<input class="form-control string required" placeholder="CIDR ('+cidrHelpText+')" type="text">')
-        .css('width',350)
 
       self = this
       @$nameInput.keyup () -> self.data['name'] = this.value
