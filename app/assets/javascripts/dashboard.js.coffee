@@ -105,6 +105,10 @@ $ ->
 $(document).on 'modal:contentUpdated', (e) ->
   $( "[data-autocomplete-url]" ).each () ->
     $input = $(this)
+    valueAttr = $input.data('autocompleteValue') || 'id'
+    labelAttr = $input.data('autocompleteLabel') || 'name'
+    detailsAttr = $input.data('autocompleteDetails') || 'id'
+
     $input.autocomplete({
       appendTo: $input.parent(),
       source: $input.data('autocompleteUrl'),
@@ -113,9 +117,9 @@ $(document).on 'modal:contentUpdated', (e) ->
         return false;
     }).data('ui-autocomplete')._renderItem = ( ul, item ) ->
         return $( "<li>" )
-          .attr( "data-value", item.name )
-          .text(item.name)
-          .append( "<br/><span class='info-text'>#{item.id}</span>" )
+          .attr( "data-value", item[valueAttr] )
+          .text(item[labelAttr])
+          .append( "<br/><span class='info-text'>#{item[detailsAttr]}</span>" )
           .appendTo( ul );
 
   try
