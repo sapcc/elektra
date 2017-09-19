@@ -32,7 +32,7 @@ module CurrentUserWrapper
       # save user_details in session
       @session[:current_user_details] = user.try(:attributes) || {}
 
-      UserProfile.find_by_name_or_create_or_update(user.name) { user }
+      UserProfile.find_by_name_or_create_or_update(user.name) { user } if user
     end
 
     def try(method_name)
