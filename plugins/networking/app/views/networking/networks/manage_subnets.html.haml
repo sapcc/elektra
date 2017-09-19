@@ -1,0 +1,6 @@
+= content_for :title do
+  Manage Subnets
+.modal-body
+  .subnets{data: { network_subnets: true, url: networks_subnets_path(params[:network_id]) } }
+.buttons.modal-footer
+  %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Close' } } Close

@@ -25,7 +25,7 @@ showSubnets= (subnets) ->
 loadSubnets= (networkId) ->
   if !networkId || networkId.trim().length==0
     $('fieldset#subnets .form-group').hide()
-    $('form[data-router-form=true] button[type="submit"]').prop('disabled',true)
+    $('form[data-router-form=true] button[type="submit"]').prop('disabled',false)
     return
 
   if subnets[networkId]
@@ -35,8 +35,8 @@ loadSubnets= (networkId) ->
     $('fieldset#subnets .form-group').hide()
     $('fieldset#subnets').append($loader)
     $.ajax(
-      #url: "networks/#{networkId}/subnets"
-      url: "#{window.location.protocol}//#{window.location.host}/#{scopedDomainFid}/#{scopedProjectFid}/networking/networks/#{networkId}/subnets"
+      #url: "networks/#{networkId}/ip_availability"
+      url: "#{window.location.protocol}//#{window.location.host}/#{scopedDomainFid}/#{scopedProjectFid}/networking/networks/#{networkId}/ip_availability"
       success: (data, textStatus, jqXHR ) ->
         subnets[networkId] = data
         $loader.remove()
@@ -48,7 +48,9 @@ init= () ->
     $('fieldset#subnets .form-group').hide()
     $('form[data-router-form=true] button[type="submit"]').prop('disabled',true)
 
-  $('#router_external_gateway_info_network_id').change () -> loadSubnets(this.value)
+  $('#router_external_gateway_info_network_id').change () ->
+    loadSubnets(this.value)
+
   if $('#router_external_gateway_info_network_id').val()
     loadSubnets($('#router_external_gateway_info_network_id').val())
 

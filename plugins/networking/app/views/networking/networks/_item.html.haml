@@ -27,6 +27,7 @@
           - added = false
           - if current_user.is_allowed?("networking:network_#{@network_type}_update", network: network)
             %li= link_to 'Edit', plugin('networking').send("edit_networks_#{@network_type}_path", network.id), data: {modal: true}
+            %li= link_to 'Manage Subnets', plugin('networking').networks_manage_subnets_path(network.id), data: {modal: true}
             - added = true
           - if current_user.is_allowed?("networking:rbac_policy_list", network: network)
             %li= link_to 'Access Control', plugin('networking').send("networks_#{@network_type}_access_index_path", network.id), data: {modal: true}

@@ -50,10 +50,10 @@ module MonsoonDashboard
           method: env['REQUEST_METHOD'].downcase,
           host:   env['HTTP_HOST'].to_s,
           # just take the first component of the path as a label
-          path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/',1) || 20 ],
+          path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
           controller: controller_name,
-          action: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:action,''),
-          plugin: controller_name[%r{^([^/]+)/},1]
+          action: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:action, ''),
+          plugin: controller_name[%r{^([^/]+)/}, 1]
         }
       end,
       duration_label_builder: proc do |env, code|
@@ -66,7 +66,7 @@ module MonsoonDashboard
     })
 
     require 'prometheus/middleware/exporter'
-    config.middleware.insert_after  Prometheus::Middleware::Collector, Prometheus::Middleware::Exporter
+    config.middleware.insert_after Prometheus::Middleware::Collector, Prometheus::Middleware::Exporter
 
     config.middleware.use RevisionMiddleware
 
@@ -124,6 +124,7 @@ module MonsoonDashboard
 
     # Add middleware healthcheck that to hit the db
     config.middleware.insert_after Rails::Rack::Logger, MiddlewareHealthcheck
+    config.middleware.use SessionCookiePathMiddleware
 
     config.middleware.use SessionCookiePathMiddleware
   end

@@ -3,7 +3,7 @@
 module Networking
   # Implements Network actions
   class NetworksController < DashboardController
-    before_action :load_type, except: [:subnets]
+    before_action :load_type, except: [:ip_availability, :manage_subnets]
 
     def index
       filter_options = {
@@ -37,6 +37,10 @@ module Networking
           ]
         )
       end
+    end
+
+    def manage_subnets
+
     end
 
     def show
@@ -123,10 +127,14 @@ module Networking
       end
     end
 
-    def subnets
-      availability = cloud_admin.networking.network_ip_availability(params[:network_id]) rescue nil
-      # subnets = services_ng.networking.subnets(network_id: params[:network_id])
-      #render json: services_ng.networking.subnets(network_id: params[:network_id])
+    def ip_availability
+      availability = begin
+                       cloud_admin.networking.network_ip_availability(
+                         params[:network_id]
+                       )
+                     rescue
+                       nil
+                     end
       render json: availability.nil? ? [] : availability.subnet_ip_availability
     end
 
