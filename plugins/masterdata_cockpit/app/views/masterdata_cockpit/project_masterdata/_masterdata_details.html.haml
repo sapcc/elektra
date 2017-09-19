@@ -127,4 +127,8 @@
     .col-sm-8.details-value
       - unless @project_masterdata.number_of_endusers
         \-
-      = @project_masterdata.number_of_endusers
+      - else
+        - if @project_masterdata.number_of_endusers == -1
+          Unlimited
+        - else
+          = @project_masterdata.number_of_endusers

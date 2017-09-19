@@ -35,7 +35,7 @@ module MasterdataCockpit
     validates_presence_of :responsible_product_owner_email, unless: lambda { self.responsible_product_owner_id.blank? }, message: "can't be blank if product owner is defined"
     validates_presence_of :responsible_controller_email, unless: lambda { self.responsible_controller_id.blank? }, message: "can't be blank if controller is defined"
 
-    validates :number_of_endusers, :numericality => { :greater_than_or_equal_to => 0 },allow_nil: true,allow_blank: true
+    validates :number_of_endusers, :numericality => { :greater_than_or_equal_to => -1 },allow_nil: true,allow_blank: true
 
     validates :responsible_operator_email,
       :responsible_security_expert_email,
