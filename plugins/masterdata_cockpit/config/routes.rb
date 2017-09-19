@@ -7,7 +7,7 @@ MasterdataCockpit::Engine.routes.draw do
     post '/create' => 'project_masterdata#create'
     post '/update' => 'project_masterdata#update'
     get  '/revenue_relevances' => 'project_masterdata#solution_revenue_relevances'
-    get  '/solution' => 'project_masterdata#solution_data'
+    get  '/cost_object' => 'project_masterdata#revenue_relevance_cost_object'
   end
 
   scope '/domain', as: 'domain_masterdata' do

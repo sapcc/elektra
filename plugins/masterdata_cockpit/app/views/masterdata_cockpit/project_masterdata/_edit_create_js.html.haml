@@ -6,18 +6,18 @@
     $(function() {
 
         if (cost_object_inherited) {
-          $('.project_masterdata_solution').hide();
-          $('.project_masterdata_cost_object_type').hide();
-          $('.project_masterdata_cost_object_name').hide();
+          $('select#project_masterdata_solution').prop('disabled', function(i, v) { return !v; });
+          $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
+          $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
         }
         
         $('#project_masterdata_cost_object_inherited').change(function(){
-          $('.project_masterdata_solution').fadeToggle();
-          $('.project_masterdata_cost_object_type').fadeToggle();
-          $('.project_masterdata_cost_object_name').fadeToggle();
+          $('select#project_masterdata_solution').prop('disabled', function(i, v) { return !v; });
+          $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
+          $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
         })
         
-        $('#project_masterdata_solution').change(function(){
+        $('select#project_masterdata_solution').change(function(){
           $.get("#{plugin('masterdata_cockpit').project_masterdata_revenue_relevances_path()}", { solution: $(this).val() } , function(data){});
         })
         

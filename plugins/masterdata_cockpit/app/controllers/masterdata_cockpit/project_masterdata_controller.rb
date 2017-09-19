@@ -5,8 +5,8 @@ module MasterdataCockpit
 
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
-    before_action :solutions, only: [:create, :update, :new, :edit, :solution_revenue_relevances, :solution_data]
-    before_action :inheritance, only: [:index,:edit, :show, :create, :update, :solution_revenue_relevances]
+    before_action :solutions, only: [:create, :update, :new, :edit, :solution_revenue_relevances, :revenue_relevance_cost_object]
+    before_action :inheritance, only: [:index,:edit, :show, :create, :update, :solution_revenue_relevances, :revenue_relevance_cost_object]
 
     authorization_context 'masterdata_cockpit'
     authorization_required
@@ -51,6 +51,7 @@ module MasterdataCockpit
     
     def solution_revenue_relevances
       @solution_name = params[:solution]
+      
       @solutions.each do |solution_data|
         if solution_data.name == @solution_name
           # in any case revenue_relevance is uniqe so we can order the date related to revenue_relevance
@@ -61,18 +62,21 @@ module MasterdataCockpit
       end
     end
     
-    def solution_data
-      solution = params.require('solution')
-      revenue_relevance = params.require('revenue_relevance')
-      
+    def revenue_relevance_cost_object
+      solution_name     = params[:solution]
+      revenue_relevance = params[:revenue_relevance]
+
       @solutions.each do |solution_data|
-        if solution_data.name == solution && solution_data.revenue_relevance == revenue_relevance
-          # in any case revenue_relevance is uniqe
-          @solution_data = solution_data
+        if solution_data.name == solution_name
+          solution_data.cost_objects.each do |cost_object|
+            if cost_object['revenue_relevance'] == revenue_relevance
+              @cost_object = { "name" => cost_object['name'], "type" => cost_object['type']  }
+            end
+          end
         end
       end
     end
-
+    
     private
     
     def load_project_masterdata
