@@ -62,22 +62,22 @@
         .col-sm-6.operator-id
           = f.input :responsible_operator_id, label: "Operator", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
-          = f.input :responsible_operator_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input' }
+          = f.input :responsible_operator_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
       .row
         .col-sm-6.operator-id
           = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
-          = f.input :responsible_security_expert_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input', style: 'margin-top:1px' }
+          = f.input :responsible_security_expert_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
       .row
         .col-sm-6.operator-id
           = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
-          = f.input :responsible_product_owner_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input', style: 'margin-top:1px' }
+          = f.input :responsible_product_owner_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
       .row
         .col-sm-6.operator-id
           = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
-          = f.input :responsible_controller_email, placeholder: "Email", label: false, :input_html => { class: 'operator-email-input', style: 'margin-top:1px' }
+          = f.input :responsible_controller_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
   %label.control-label Customer Information
   .panel.panel-default
     .panel-body
@@ -92,3 +92,9 @@
             required:true
         .col-sm-6
           = f.input :number_of_endusers , label: "Number of Endusers"
+
+:javascript
+  // to hide the label of the email input field
+  $(function(){
+    $('label.control-label.email.optional').html("&nbsp")
+  });

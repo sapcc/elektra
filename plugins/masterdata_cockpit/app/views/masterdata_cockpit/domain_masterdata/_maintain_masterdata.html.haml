@@ -31,4 +31,10 @@
       .col-sm-6.operator-id
         = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
       .col-sm-6.operator-email
-        = f.input :responsible_controller_email, label: false, placeholder: "Email", :input_html => { class: 'operator-email-input' }
+        = f.input :responsible_controller_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
+
+:javascript
+  // to hide the label of the email input field
+  $(function(){
+    $('label.control-label.email.optional').html("&nbsp")
+  });

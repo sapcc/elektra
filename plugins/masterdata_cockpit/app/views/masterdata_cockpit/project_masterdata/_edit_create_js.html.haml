@@ -20,4 +20,5 @@
         $('#project_masterdata_solution').change(function(){
           $.get("#{plugin('masterdata_cockpit').project_masterdata_revenue_relevances_path()}", { solution: $(this).val() } , function(data){});
         })
+        
     });
