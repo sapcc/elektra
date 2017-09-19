@@ -138,10 +138,17 @@ module Core
               # The api_client is globaly available. The service
               # only defines the proxy methods. Inside this methods
               # the global api_client is called.
-              instance_variable_get("@service_#{name}") ||
+              if instance_variable_get("@service_#{name}")
+                return instance_variable_get("@service_#{name}")
+              end
+
+              begin
                 instance_variable_set("@service_#{name}",
                                       Service.new(api_client.send(name),
                                                   elektra_service))
+              rescue  JSON::ParserError => e
+                raise ::Core::Api::ResponseError, e
+              end
             end
           end
         end
