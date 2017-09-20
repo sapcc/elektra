@@ -1,7 +1,7 @@
 module ServiceLayerNg
   # This module implements Openstack Group API
   module ResourceManagementService::ProjectResource
-    
+
     def find_project(domain_id, project_id, query={})
       Rails.logger.debug  "[resource management-service][ProjectResource] -> find_project -> GET /v1/domains/#{domain_id}/projects/#{project_id}"
       Rails.logger.debug  "[resource management-service][ProjectResource] -> find_project -> Query: #{query}"
@@ -45,7 +45,7 @@ module ServiceLayerNg
       Rails.logger.debug  "[resource management-service][ProjectResource] -> quota_data"
       return [] if options.empty?
 
-      project = find_project( 
+      project = find_project(
         domain_id,
         project_id,
         service: options.collect { |values| values[:service_type] },
@@ -64,8 +64,12 @@ module ServiceLayerNg
 
         result << resource
       end
-      
+
       result
+
+    rescue => e
+      Rails.logger.error "Error trying to get quota data for project: #{project_id}. Error: #{e}"
+      []
     end
 
   end
