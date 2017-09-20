@@ -17,7 +17,7 @@
   - co_readonly = @project_masterdata.solution.nil? == false 
   
   %label.control-label Cost Object
-  %a.help-link{data:{content: "If you don't know what specific cost object object you should use, talk to the controller repsonsible for it", popover: {type: "help-hint"}, toggle: "popover"}}
+  %a.help-link{data:{content: "Where the costs should be charged to. If unclear, please ask the responsible controller of the given costobject for permission", popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .loading-place.loading-right
   .panel.panel-default
@@ -25,8 +25,11 @@
       .row
         - if @inheritance.co_inheritable
           .col-md-2
-            = f.input :cost_object_inherited, label: "Inherited", as: :select, include_hidden: false, required:true
-            
+            = f.input :cost_object_inherited, 
+               label: "Inherited", 
+               as: :select, 
+               include_hidden: false, 
+               required:true
         %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
           - unless @solutions.nil?
             = f.input :solution, 
@@ -55,8 +58,29 @@
                 required: true,
                 disabled: co_readonly
           .col-md-3
-            = f.input :cost_object_name, label: "Name" , required:true, readonly: co_readonly
+            = f.input :cost_object_name, 
+                label: "Name" , 
+                required:true, 
+                readonly: co_readonly
+      .row
+        .col-md-12.co-help-block
+          = icon ('chevron-right')
+          Inherited: Inherit the costobject from domain masterdata
+          %br
+          = icon ('chevron-right')
+          Solution: Choose a solution, if the project is used for one of the strategic Solutions of SAP.
+          %br
+          = icon ('chevron-right')
+          Revenue Relevance: to be defined
+          %br
+          = icon ('chevron-right')
+          Type: If unclear, please ask the responsible controller of the given cost object for permission.
+          %br
+          = icon ('chevron-right')
+          Name: Name or Id of the used cost object where the costs should be charged to.
   %label.control-label Responsibility
+  %a.help-link{data:{content: "Please define the person in charge for the topics below", popover: {type: "help-hint"}, toggle: "popover"}}
+    = icon('question-circle')
   .panel.panel-default
     .panel-body
       .row
@@ -65,21 +89,39 @@
         .col-sm-6.operator-email
           = f.input :responsible_operator_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
       .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          The person responsible for uptime of the systems and who can make decisions on e.g. Instance restarts etc. Used as emergency engineering contact, if CCloud operations needs a name.
+      .row
         .col-sm-6.operator-id
           = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
           = f.input :responsible_security_expert_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          The person responsible to request and validate firewall and other security settings. The person who will be contacted by security e.g. If a vulnerability is found by a scan etc.
       .row
         .col-sm-6.operator-id
           = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
           = f.input :responsible_product_owner_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
       .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          The person owning the applications features.
+      .row
         .col-sm-6.operator-id
           = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
         .col-sm-6.operator-email
           = f.input :responsible_controller_email, placeholder: "Email", :input_html => { class: 'operator-email-input' }
-  %label.control-label Customer Information
+      .row
+        .col-md-12.op-help-block
+          = icon ('info-circle')
+          The person responsible for the given cost object and empowered to decide, which costs are billed on this cost object.
+  %label.control-label Importance
+  %a.help-link{data:{content: "To define the importance of this project set the fields below", popover: {type: "help-hint"}, toggle: "popover"}}
+    = icon('question-circle')
   .panel.panel-default
     .panel-body
       .row
@@ -93,6 +135,13 @@
             required:true
         .col-sm-6
           = f.input :number_of_endusers , label: "Number of Endusers"
+      .row
+        .col-md-12.co-help-block
+          = icon ('chevron-right')
+          Business Criticality: Indicates, how critical the system is for your ability to provide your service to your customer
+          %br
+          = icon ('chevron-right')
+          Number of Endusers: Roughly estimated number of users the service you provide. Always provide the lower end (-1 indicates that it is infinite)
 
 :javascript
   // to hide the label of the email input field

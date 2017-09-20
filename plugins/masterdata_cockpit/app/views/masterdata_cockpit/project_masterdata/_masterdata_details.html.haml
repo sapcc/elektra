@@ -109,7 +109,9 @@
       .col-sm-4.details-value
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_controller_email
-  %label.masterdata-heading Customer Information
+  %label.masterdata-heading Importance
+  %a.help-link{data:{content: "indicates how important the project are", popover: {type: "help-hint"}, toggle: "popover"}}
+    = icon('question-circle')
   %hr.masterdata-hr-label
   .row
     .col-sm-4.details-label
