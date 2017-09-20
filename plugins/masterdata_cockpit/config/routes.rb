@@ -2,6 +2,7 @@ MasterdataCockpit::Engine.routes.draw do
   
   scope '/project', as: 'project_masterdata' do
     get  '/'       => 'project_masterdata#index'
+    get  '/new'    => 'project_masterdata#new'
     get  '/show'   => 'project_masterdata#show'
     get  '/edit'   => 'project_masterdata#edit'
     post '/create' => 'project_masterdata#create'

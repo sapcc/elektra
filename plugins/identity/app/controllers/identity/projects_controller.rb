@@ -202,6 +202,7 @@ module Identity
     def update_masterdata_cockpit_wizard_status
       project_masterdata = nil
       @project_masterda_is_complete = false
+      @project_masterdata_missing_attributes = nil
       begin
         project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
         # @project_masterda_is_complete is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml

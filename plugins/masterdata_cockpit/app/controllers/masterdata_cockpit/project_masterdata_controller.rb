@@ -6,7 +6,7 @@ module MasterdataCockpit
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
     before_action :solutions, only: [:create, :update, :new, :edit, :solution_revenue_relevances, :revenue_relevance_cost_object]
-    before_action :inheritance, only: [:index,:edit, :show, :create, :update, :solution_revenue_relevances, :revenue_relevance_cost_object]
+    before_action :inheritance
 
     authorization_context 'masterdata_cockpit'
     authorization_required

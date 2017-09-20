@@ -1,15 +1,15 @@
 =content_for :title do
   Maintain new masterdata for project: #{@scoped_project_name}
 
-- unless current_user.is_allowed?('masterdata_cockpit:masterdata_create')
-  .alert.alert-warning
-    = icon('exclamation-circle')
-    No masterdata maintained for this project.
-- else
-  .alert.alert-warning
-    = icon('exclamation-circle')
-    No masterdata maintained for this project. Please define it
-  =simple_modal_form_for @project_masterdata, submit_action: 'Create', url: plugin('masterdata_cockpit').project_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path do |f|
+= simple_modal_form_for @project_masterdata, submit_action: 'Create', url: plugin('masterdata_cockpit').project_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').project_masterdata_path do |f|
+  - unless current_user.is_allowed?('masterdata_cockpit:masterdata_create')
+    .alert.alert-warning
+      = icon('exclamation-circle')
+      No masterdata maintained for this project.
+  - else
+    .alert.alert-warning
+      = icon('exclamation-circle')
+      No masterdata maintained for this project. Please define it
     = render partial: 'maintain_masterdata',  locals: {f:f}
   
   = render partial: 'edit_create_js'
