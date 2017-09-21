@@ -5,6 +5,7 @@
 #= require kubernetes/reducers/index
 #= require kubernetes/actions/index
 #= require kubernetes/components/app
+#= require kubernetes/helpers/js_helpers
 
 
 

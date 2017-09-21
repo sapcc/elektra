@@ -79,7 +79,6 @@
     modalType: 'NEW_CLUSTER'
 
   openNewClusterDialog = () ->
-    console.log("openNewClusterDialog")
     (dispatch) ->
       dispatch(clusterFormForCreate())
       dispatch(newClusterModal())
@@ -106,6 +105,33 @@
   deleteClusterFailure = (error) ->
     type: app.DELETE_CLUSTER_FAILURE
     error: error
+
+
+  # -------------- CREDENTIALS ---------------
+
+  getCredentials = (clusterName) ->
+    (dispatch) ->
+      dispatch(requestCredentials(clusterName))
+
+      app.ajaxHelper.get "/clusters/#{clusterName}/credentials",
+        contentType: 'application/json'
+        success: (data, textStatus, jqXHR) ->
+          dispatch(receiveCredentials(clusterName, data))
+        error: ( jqXHR, textStatus, errorThrown) ->
+          dispatch(requestCredentialsFailure(clusterName, jqXHR.responseText))
+
+
+  requestCredentials = () ->
+    type: app.REQUEST_CREDENTIALS
+
+  requestCredentialsFailure = (clusterName, error) ->
+    type: app.REQUEST_CREDENTIALS_FAILURE
+    flashError: "We couldn't retrieve the credentials for cluster #{clusterName} at this time. This might be because the cluster is not ready yet or is in an error state. Please try again."
+
+  receiveCredentials = (clusterName, credentials) ->
+    (dispatch) ->
+      JsHelpers.fileDownload(credentials.kubeconfig, 'config')
+
 
 
   ################# CLUSTER FORM ######################
@@ -163,6 +189,7 @@
   app.requestDeleteCluster       = requestDeleteCluster
   app.openNewClusterDialog       = openNewClusterDialog
   app.loadCluster                = loadCluster
+  app.getCredentials             = getCredentials
   app.clusterFormForCreate       = clusterFormForCreate
   app.clusterFormForUpdate       = clusterFormForUpdate
   app.submitClusterForm          = submitClusterForm

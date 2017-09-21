@@ -2,6 +2,7 @@
   ########################### CLUSTERS ##############################
   initialKubernikusState =
     error: null
+    flashError: null
     total: 0
     items: []
     isFetching: false
@@ -28,15 +29,10 @@
 
   # ----- item ------
   requestCluster = (state,{}) ->
-    # ReactHelpers.mergeObjects({},state,{
-    #   isFetching: true
-    # })
+    state # TODO: set isFetching on item
 
   requestClusterFailure = (state,{error})->
-    # ReactHelpers.mergeObjects({},state,{
-    #   isFetching: false
-    #   error: error
-    # })
+    state # TODO: set isFetching on item
 
 
   receiveCluster = (state, {cluster}) ->
@@ -45,11 +41,6 @@
     # update or add
     if index>=0 then items[index]=cluster else items.push cluster
     ReactHelpers.mergeObjects({},state,{items})
-
-    # clusters = ReactHelpers.mergeObjects({},state.items,cluster)
-    # ReactHelpers.mergeObjects({},state,{
-    #   items: clusters
-    # })
 
 
   deleteCluster = (state,{clusterName}) ->
@@ -63,6 +54,14 @@
       error: error
     })
 
+  requestCredentials = (state,{}) ->
+    state
+
+  requestCredentialsFailure = (state,{clusterName, flashError})->
+    ReactHelpers.mergeObjects({},state,{
+      flashError: flashError
+    })
+
 
 
 
@@ -73,9 +72,14 @@
       when app.REQUEST_CLUSTERS             then requestClusters(state,action)
       when app.REQUEST_CLUSTERS_FAILURE     then requestClustersFailure(state,action)
       when app.RECEIVE_CLUSTERS             then receiveClusters(state,action)
-      when app.RECEIVE_CLUSTER                  then receiveCluster(state,action)
+      when app.REQUEST_CLUSTER              then requestCluster(state,action)
+      when app.REQUEST_CLUSTER_FAILURE      then requestClusterFailure(state,action)
+      when app.RECEIVE_CLUSTER              then receiveCluster(state,action)
       when app.DELETE_CLUSTER               then deleteCluster(state,action)
       when app.DELETE_CLUSTER_FAILURE       then deleteClusterFailure(state,action)
+      when app.REQUEST_CREDENTIALS          then requestCredentials(state,action)
+      when app.REQUEST_CREDENTIALS_FAILURE  then requestCredentialsFailure(state,action)
+
 
       else state
 

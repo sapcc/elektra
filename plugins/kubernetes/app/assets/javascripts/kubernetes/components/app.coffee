@@ -1,5 +1,6 @@
 #= require kubernetes/components/clusters/new
 #= require kubernetes/components/clusters/list
+#= require kubernetes/components/clusters/credentials
 #= require components/dialogs
 
 
@@ -8,12 +9,16 @@
 { ClusterList, NewClusterModal } = kubernetes
 
 modalComponents =
-  'NEW_CLUSTER': NewClusterModal
+  'NEW_CLUSTER':      NewClusterModal
+  # 'GET_CREDENTIALS':  CredentialsModal
+  'CONFIRM':          ReactConfirmDialog
+  'INFO':             ReactInfoDialog
+  'ERROR':            ReactErrorDialog
 
 App = ({permissions: permissions}) ->
 
   div null,
-    div className: "bs-callout bs-callout-info bs-callout-emphasize",
+    div className: 'bs-callout bs-callout-info bs-callout-emphasize',
       h4 null, "Welcome to our Kubernetes-as-a-Service offering"
       p null, "Within minutes you will be able to setup a VM based Kubernetes cluster. Your cluster is fully-managed and allows auto-updating masters and auto-repairing nodes. Identity management and access control is integrated with Converged Cloud."
 

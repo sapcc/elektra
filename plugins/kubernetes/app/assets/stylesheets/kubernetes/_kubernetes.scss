@@ -1,0 +1,15 @@
+.dropdown-menu.dropdown-menu-with-icons {
+  > li {
+    position: relative;
+
+    > a {
+      padding-left: 34px;
+
+      i {
+        position: absolute;
+        left: 10px;
+        top: 6px;
+      }
+    }
+  }
+}

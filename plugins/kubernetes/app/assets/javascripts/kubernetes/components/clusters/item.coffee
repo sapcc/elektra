@@ -1,6 +1,6 @@
-{ div, button, span, a, tr, td, ul, li} = React.DOM
+{ div, button, span, a, tr, td, ul, li, i} = React.DOM
 { connect } = ReactRedux
-{ requestDeleteCluster,loadCluster } = kubernetes
+{ requestDeleteCluster,loadCluster, getCredentials } = kubernetes
 
 
 Cluster = React.createClass
@@ -23,7 +23,7 @@ Cluster = React.createClass
     clearInterval(@polling)
 
   render: ->
-    {cluster, handleClusterDelete} = @props
+    {cluster, handleClusterDelete, handleGetCredentials} = @props
 
     tr null,
       td null,
@@ -34,9 +34,16 @@ Cluster = React.createClass
         div className: "btn-group",
           button className: "btn btn-default btn-sm dropdown-toggle", "data-toggle": "dropdown", type: "button",
             span className: "fa fa-cog"
-          ul className: "dropdown-menu dropdown-menu-right", role: "menu",
+          ul className: "dropdown-menu dropdown-menu-right dropdown-menu-with-icons", role: "menu",
+            li null,
+              a href: "#", onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
+                i className: 'fa fa-download'
+                'Download Credentials'
+
+            li className: 'divider'
             li null,
               a href: "#", onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+                i className: 'fa fa-trash-o'
                 'Delete Cluster'
 
 
@@ -50,8 +57,9 @@ Cluster = connect(
 
     cluster: cluster
   (dispatch) ->
-    handleClusterDelete:  (clusterName) -> dispatch(requestDeleteCluster(clusterName))
-    reloadCluster:        (clusterName) -> dispatch(loadCluster(clusterName))
+    handleClusterDelete:    (clusterName) -> dispatch(requestDeleteCluster(clusterName))
+    handleGetCredentials:   (clusterName) -> dispatch(getCredentials(clusterName))
+    reloadCluster:          (clusterName) -> dispatch(loadCluster(clusterName))
 
 )(Cluster)
 
