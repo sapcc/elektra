@@ -159,9 +159,16 @@
     name: name
     value: value
 
+  updateNodePoolForm = (index, name, value) ->
+    type: app.UPDATE_NODE_POOL_FORM
+    index: index
+    name: name
+    value: value
+
   submitClusterForm = (successCallback=null) ->
     (dispatch, getState) ->
       clusterForm = getState().clusterForm
+      console.log(clusterForm)
       if clusterForm.isValid
         dispatch(type: app.SUBMIT_CLUSTER_FORM)
         app.ajaxHelper[clusterForm.method] clusterForm.action,
@@ -194,6 +201,8 @@
   app.clusterFormForUpdate       = clusterFormForUpdate
   app.submitClusterForm          = submitClusterForm
   app.updateClusterForm          = updateClusterForm
+  app.updateNodePoolForm         = updateNodePoolForm
+
 
 
 

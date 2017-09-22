@@ -37,7 +37,7 @@
 
   receiveCluster = (state, {cluster}) ->
     index = ReactHelpers.findIndexInArray(state.items,cluster.name, 'name')
-    items = state.items.slice()
+    items = state.items.slice() # clone array
     # update or add
     if index>=0 then items[index]=cluster else items.push cluster
     ReactHelpers.mergeObjects({},state,{items})

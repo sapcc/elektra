@@ -13,3 +13,16 @@
     }
   }
 }
+
+.nodepool-form {
+  margin-top: $line-height-computed;
+
+  .form-control {
+    width: 100%;
+  }
+
+  .title {
+    align-self: flex-end;
+    padding-left: 10px;
+  }
+}

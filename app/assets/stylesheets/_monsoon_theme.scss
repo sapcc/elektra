@@ -98,6 +98,10 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
   }
 
+  &.form-heading {
+    border-bottom: 1px solid #ccc;
+  }
+
   .header-action {
     font-family: $font-family-sans-serif;
     position: absolute;
@@ -1733,6 +1737,20 @@ table.searchable.search-mode {
 .form-inline {
   .form-group {
     margin-right: 3px;
+  }
+
+  &.form-inline-flex {
+    display: flex;
+    justify-content: space-between;
+
+    label {
+      margin-right: 8px;
+    }
+
+    .form-group {
+      flex: 1 1 auto;
+      margin-left: 15px;
+    }
   }
 }
 
