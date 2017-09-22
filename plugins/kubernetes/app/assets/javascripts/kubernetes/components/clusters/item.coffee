@@ -1,4 +1,4 @@
-{ div, button, span, a, tr, td, ul, li, i} = React.DOM
+{ div, button, span, a, tbody, tr, td, ul, li, i, br, p, strong} = React.DOM
 { connect } = ReactRedux
 { requestDeleteCluster,loadCluster, getCredentials } = kubernetes
 
@@ -30,21 +30,42 @@ Cluster = React.createClass
         cluster.name
       td null,
         cluster.status.kluster
-      td className: "snug",
-        div className: "btn-group",
-          button className: "btn btn-default btn-sm dropdown-toggle", "data-toggle": "dropdown", type: "button",
-            span className: "fa fa-cog"
-          ul className: "dropdown-menu dropdown-menu-right dropdown-menu-with-icons", role: "menu",
-            li null,
-              a href: "#", onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
-                i className: 'fa fa-download'
-                'Download Credentials'
+      td null,
+        for nodePool in cluster.spec.nodePools
+          p key: nodePool.name,
+            strong null, nodePool.name
+            br null
+            span className: 'info-text', nodePool.flavor
+            br null
+            'Ready: '
+            cluster.status.nodePools[ReactHelpers.findIndexInArray(cluster.status.nodePools, nodePool.name, 'name')].ready
+            '/'
+            nodePool.size
 
-            li className: 'divider'
-            li null,
-              a href: "#", onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
-                i className: 'fa fa-trash-o'
-                'Delete Cluster'
+      td className: 'vertical-buttons',
+        button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
+          i className: 'fa fa-fw fa-download'
+          'Download Credentials'
+
+        button className: 'btn btn-sm btn-default hover-danger', onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+          i className: 'fa fa-fw fa-trash-o'
+          'Delete Cluster'
+
+
+        # div className: "btn-group",
+        #   button className: "btn btn-default btn-sm dropdown-toggle", "data-toggle": "dropdown", type: "button",
+        #     span className: "fa fa-cog"
+        #   ul className: "dropdown-menu dropdown-menu-right dropdown-menu-with-icons", role: "menu",
+        #     li null,
+        #       a href: "#", onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
+        #         i className: 'fa fa-download'
+        #         'Download Credentials'
+        #
+        #     li className: 'divider'
+        #     li null,
+        #       a href: "#", onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+        #         i className: 'fa fa-trash-o'
+        #         'Delete Cluster'
 
 
 

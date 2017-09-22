@@ -453,6 +453,12 @@ section {
   @include button-size($padding-medium-vertical, $padding-medium-horizontal, $font-size-large, $line-height-large, $border-radius-base);
 }
 
+.btn {
+  i {
+    margin-right: 5px;
+  }
+}
+
 // ---------------------------------------------------------------------------------
 // Toolbar
 // ---------------------------------------------------------------------------------

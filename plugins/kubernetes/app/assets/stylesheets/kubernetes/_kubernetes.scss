@@ -26,3 +26,14 @@
     padding-left: 10px;
   }
 }
+
+.vertical-buttons {
+  .btn {
+    width: 100%;
+    margin-bottom: $line-height-computed / 2;
+
+    &.hover-danger:hover {
+      @extend .btn-danger;
+    }
+  }
+}
