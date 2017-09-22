@@ -3,7 +3,7 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, updateNodePoolForm, submitClusterForm } = kubernetes
+{ updateClusterForm, addNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
 
 
 EditCluster = ({
@@ -11,7 +11,8 @@ EditCluster = ({
   clusterForm,
   handleSubmit,
   handleChange,
-  handleNodePoolChange
+  handleNodePoolChange,
+  handleNodePoolAdd
 }) ->
 
   cluster = clusterForm.data
@@ -35,48 +36,61 @@ EditCluster = ({
                 value: cluster.name || ''
 
 
-      div className: 'toolbar',
+      div className: 'toolbar toolbar-controlcenter',
         h4 null, "Nodepools"
+        div className: 'main-control-buttons',
+          button className: 'btn btn-primary', onClick: ((e) => e.preventDefault(); handleNodePoolAdd()),
+            'Add Pool'
 
-      div className: 'nodepool-form',
-        form className: 'form form-inline form-inline-flex',
-          h5 className: 'title', 'Pool 1:'
-          # Nodepool name
-          div className: "form-group required string" ,
-            label className: "string required control-label", htmlFor: "name",
-              'Name '
+      for nodePool, i in cluster.spec.nodePools
 
-            input
-              className: "string form-control disabled",
-              disabled: 'disabled',
-              type: "text",
-              name: "name",
-              value: cluster.spec.nodePools[0].name || ''
+        div className: 'nodepool-form', key: "nodepool-#{i}",
+          form className: 'form form-inline form-inline-flex',
+            h5 className: 'title', "Pool #{i+1}:"
+            # Nodepool name
+            div className: "form-group required string" ,
+              label className: "string required control-label", htmlFor: "name",
+                'Name '
 
-          # Nodepool size
-          div className: "form-group string" ,
-            label className: "string control-label", htmlFor: "size",
-              'Size '
-              abbr title: "required", '*'
+              input
+                className: "string form-control",
+                disabled: 'disabled' if nodePool.name,
+                type: "text",
+                name: "name",
+                value: nodePool.name || ''
 
-            input
-              className: "string form-control",
-              type: "text",
-              name: "size",
-              placeholder: "Number of nodes"
-              value: cluster.spec.nodePools[0].size || '',
-              onChange: ((e) -> e.preventDefault; handleNodePoolChange(0, e.target.name, parseInt(e.target.value, 10)))
+            # Nodepool size
+            div className: "form-group string" ,
+              label className: "string control-label", htmlFor: "size",
+                'Size '
+                abbr title: "required", '*'
 
-          # Nodepool flavor
-          div className: "form-group string" ,
-            label className: "string control-label", htmlFor: "flavor",
-              'Flavor '
+              input
+                className: "string form-control",
+                "data-index": i,
+                type: "text",
+                name: "size",
+                placeholder: "Number of nodes"
+                value: nodePool.size || '',
+                onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
-            input
-              name: "flavor",
-              className: "string form-control disabled",
-              disabled: 'disabled',
-              value: (cluster.spec.nodePools[0].flavor || '')
+            # Nodepool flavor
+            div className: "form-group string" ,
+              label className: "string control-label", htmlFor: "flavor",
+                'Flavor '
+
+              select
+                name: "flavor",
+                className: "string form-control",
+                disabled: 'disabled' if nodePool.flavor,
+                value: (nodePool.flavor || ''),
+                  option value: '', 'Choose flavor'
+                  option value: 'm1.small', 'm1.small'
+                  option value: 'm1.xsmall', 'm1.xsmall'
+                  option value: 'm1.medium', 'm1.medium'
+                  option value: 'm1.xmedium', 'm1.xmedium'
+                  option value: 'm1.large', 'm1.large'
+                  option value: 'm1.xlarge', 'm1.xlarge'
 
 
 
@@ -97,6 +111,7 @@ EditCluster = connect(
   (dispatch) ->
     handleChange:         (name, value)         -> dispatch(updateClusterForm(name, value))
     handleNodePoolChange: (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
+    handleNodePoolAdd:    ()                    -> dispatch(addNodePool())
     handleSubmit:         (callback)            -> dispatch(submitClusterForm(callback))
 
 )(EditCluster)

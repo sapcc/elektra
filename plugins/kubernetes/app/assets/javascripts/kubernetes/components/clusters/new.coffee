@@ -96,6 +96,7 @@ NewCluster = ({
                 value: (nodePool.flavor || ''),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value)),
 
+                  option value: '', 'Choose flavor'
                   option value: 'm1.small', 'm1.small'
                   option value: 'm1.xsmall', 'm1.xsmall'
                   option value: 'm1.medium', 'm1.medium'

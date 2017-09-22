@@ -8,7 +8,7 @@
       spec: {
         nodePools: [
           {
-            flavor: 'm1.small'
+            flavor: ''
             image: ''
             name: ''
             size: null
@@ -51,7 +51,7 @@
 
   addNodePool = (state, {}) ->
     newPool = {
-                flavor: 'm1.small'
+                flavor: ''
                 image: ''
                 name: ''
                 size: null
