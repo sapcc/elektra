@@ -59,13 +59,13 @@ module Compute
 
     def show
       @instance = services_ng.compute.find_server(params[:id])
+      return if @instance.blank?
 
-      unless @instance.blank?
-        @instance_security_groups = @instance.security_groups_details.collect do |sg|
-                                      services_ng.networking.security_groups(tenant_id: @scoped_project_id, id: sg.id).first
-                                    end
+      @instance_security_groups = @instance.security_groups_details.collect do |sg|
+        services_ng.networking.security_groups(
+          tenant_id: @scoped_project_id, id: sg.id
+        ).first
       end
-
     end
 
     def new
@@ -133,7 +133,7 @@ module Compute
       @instance.attributes=params[@instance.model_name.param_key]
 
       if @instance.save
-        flash.now[:notice] = "Instance successfully created."
+        flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
         @instance = services_ng.compute.find_server(@instance.id)
         render template: 'compute/instances/create.js'
@@ -155,45 +155,42 @@ module Compute
     end
 
     def new_floatingip
-      enforce_permissions("::networking:floating_ip_associate")
+      enforce_permissions('::networking:floating_ip_associate')
       @instance = services_ng.compute.find_server(params[:id])
       collect_available_ips
-
-      @floating_ip = Networking::FloatingIp.new(nil)
+      @floating_ip = services_ng.networking.new_floating_ip
     end
 
+    # attach existing floating ip to a server interface.
     def attach_floatingip
-      enforce_permissions("::networking:floating_ip_associate")
-      @instance_port = services_ng.networking.ports(device_id: params[:id]).first
-      @floating_ip = Networking::FloatingIp.new(nil,params[:floating_ip])
+      enforce_permissions('::networking:floating_ip_associate')
+      # get instance
+      @instance = services_ng.compute.find_server(params[:id])
 
-      success = begin
-        @floating_ip = services_ng.networking.attach_floatingip(params[:floating_ip][:ip_id], @instance_port.id)
-        if @floating_ip.port_id
-          true
-        else
-          false
-        end
-      rescue => e
-        @floating_ip.errors.add('message',e.message)
-        false
-      end
+      # get project ports
+      ports = services_ng.networking.ports(device_id: params[:id])
+      # find port which contains the fixed ip or take the first one.
+      port = ports.find do |prt|
+        prt.fixed_ips.collect { |ip| ip['ip_address'] }.include?(
+          params[:floating_ip][:fixed_ip_address]
+        )
+      end || ports.first
 
-      if success
-        audit_logger.info(current_user, "has attached", @floating_ip, "to instance", params[:id])
+      # update floating ip with the new assigned interface ip
+      @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
+      @floating_ip.id = params[:floating_ip][:id]
+      @floating_ip.port_id = port.id
+
+      if @floating_ip.save
+        # floating ip successfuly assigned -> update instance addresses.
+        # Needed for rendering
+        @instance.add_floating_ip_to_addresses(
+          port.mac_address, @floating_ip.floating_ip_address
+        )
 
         respond_to do |format|
-          format.html{redirect_to instances_url}
-          format.js{
-            @instance = services_ng.compute.find_server(params[:id])
-            addresses = @instance.addresses[@instance.addresses.keys.first]
-            addresses ||= []
-            addresses << {
-              "addr" => @floating_ip.floating_ip_address,
-              "OS-EXT-IPS:type" => "floating"
-            }
-            @instance.addresses[@instance.addresses.keys.first] = addresses
-          }
+          format.html { redirect_to instances_url }
+          format.js {}
         end
       else
         collect_available_ips
@@ -201,42 +198,64 @@ module Compute
       end
     end
 
+    def remove_floatingip
+      enforce_permissions('::networking:floating_ip_disassociate')
+      @instance = services_ng.compute.find_server(params[:id])
+      @floating_ip = services_ng.networking.new_floating_ip
+    end
+
     def detach_floatingip
-      enforce_permissions("::networking:floating_ip_disassociate")
-      begin
-        floating_ips = services_ng.networking.project_floating_ips(@scoped_project_id, floating_ip_address: params[:floating_ip]) rescue []
-        @floating_ip = services_ng.networking.detach_floatingip(floating_ips.first.id)
-      rescue => e
-        flash.now[:error] = "Could not detach Floating IP. Error: #{e.message}"
+      enforce_permissions('::networking:floating_ip_disassociate')
+      @instance = services_ng.compute.find_server(params[:id])
+      @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
+
+      ips = @instance.find_ips_map_by_ip(@floating_ip.floating_ip_address)
+
+      # find floating ip based on fixed ip, floating ip and port id
+      if ips && ips['fixed'] && ips['floating']
+        floating_ips = services_ng.networking.project_floating_ips(
+          @scoped_project_id, floating_ip_address: ips['floating']['addr'],
+          fixed_ip_address: ips['fixed']['addr']
+        )
+        if floating_ips.length == 1
+          @floating_ip = floating_ips.first
+        else
+          port = services_ng.networking.ports(
+            mac_address: ips['fixed']['OS-EXT-IPS-MAC:mac_addr'], device_id: @instance.id
+          ).first
+          temp_ip = floating_ips.find { |ip| ip.port_id == port.id }
+          @floating_ip = temp_ip if temp_ip
+        end
       end
 
-      respond_to do |format|
-        format.html{
-          sleep(3)
-          redirect_to instances_url
-        }
-        format.js{
-          if @floating_ip and @floating_ip.port_id.nil?
-            @instance = services_ng.compute.find_server(params[:id])
-            addresses = @instance.addresses[@instance.addresses.keys.first]
-            if addresses and addresses.is_a?(Array)
-              addresses.delete_if{|values| values["OS-EXT-IPS:type"]=="floating"}
-            end
-            @instance.addresses[@instance.addresses.keys.first] = addresses
-          end
-        }
+      if @floating_ip.detach
+        respond_to do |format|
+          format.html { redirect_to instances_url }
+          format.js {
+            @instance.remove_floating_ip_from_addresses(ips['floating']['OS-EXT-IPS-MAC:mac_addr'],ips['floating']['addr'])
+          }
+        end
+      else
+        render action: :remove_floatingip
       end
     end
 
     def attach_interface
+      @instance = services_ng.compute.find_server(params[:id])
       @os_interface = services_ng.compute.new_os_interface(params[:id])
       @networks = services_ng.networking.networks('router:external' => false)
     end
 
     def create_interface
+      ip_address = params[:os_interface].delete(:ip_address)
+
       @os_interface = services_ng.compute.new_os_interface(
         params[:id], params[:os_interface]
       )
+      unless ip_address.blank?
+        @os_interface.fixed_ips = [{ 'ip_address' => ip_address}]
+      end
+
       if @os_interface.save
         @instance = services_ng.compute.find_server(params[:id])
         respond_to do |format|
@@ -249,12 +268,16 @@ module Compute
       end
     end
 
-    def detach_interface
+    def remove_interface
       @instance = services_ng.compute.find_server(params[:id])
       @os_interface = services_ng.compute.new_os_interface(params[:id])
+      # keep only fixed ip
+      @instance.addresses.each do |_network_name, ips|
+        ips.keep_if { |ip| ip['OS-EXT-IPS:type'] == 'fixed'}
+      end
     end
 
-    def delete_interface
+    def detach_interface
       # create a new os_interface model based on params
       @os_interface = services_ng.compute.new_os_interface(
         params[:id], params[:os_interface]
@@ -297,7 +320,7 @@ module Compute
         end
       else
         @instance = services_ng.compute.find_server(params[:id])
-        @os_interface.ip_address=params[:os_interface][:ip_address]
+        @os_interface.ip_address = params[:os_interface][:ip_address]
         render action: :detach_interface
       end
     end

@@ -78,13 +78,10 @@
       .tab-pane{role:"tabpanel", id:"ip_addresses"}
         %table.table.datatable
           %tbody
-            - @instance.addresses.each do |name,values|
+            - @instance.ips.each do |network_name, ips|
               %tr
-                %th= name
-                %td
-                  %ul
-                    - values.each do |address|
-                      %li= address["addr"]
+                %th= network_name
+                %td= render_fixed_floating_ips(ips)
 
       .tab-pane{role:"tabpanel", id:"sec_groups"}
         %table.table.datatable

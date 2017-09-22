@@ -18,15 +18,18 @@
   %table.table.instances.searchable{data:{search_input: '#search_instances_input'}}
     %thead
       %tr
-        %th Name
+        %th
+          Name / AZ
+          %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
         - if @all_projects
           %th Owning Project
-        %th
-          AZ
-          %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
+        -# %th
+        -#   AZ
+        -#   %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
         %th IPs
-        %th OS
-        %th Size
+        %th
+          OS / Size
+        -# %th Size
         %th Power state
         %th Status
         %th Created at

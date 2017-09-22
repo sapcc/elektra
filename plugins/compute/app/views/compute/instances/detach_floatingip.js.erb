@@ -1,2 +1,3 @@
 $("#instance_<%=@instance.id%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance })) %>");
+$('#instance_<%=@instance.id%> [data-collapsable]').collapsable({collapsed: false});
 MoModal.close();

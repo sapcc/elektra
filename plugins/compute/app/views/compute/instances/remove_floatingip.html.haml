@@ -1,0 +1,28 @@
+= content_for :title do
+  Detach Floating IP
+
+- if @instance.blank?
+  %div{class: modal? ? 'modal-body' : ''}
+
+- else
+  = simple_form_for @floating_ip, url: plugin('compute').detach_floatingip_instance_path(id: @instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal', id: 'fixed_ip' }, wrapper: :horizontal_form do |f|
+    %div{class: modal? ? 'modal-body' : ''}
+      - if @floating_ip.errors.present?
+        .alert.alert-error
+          = render_errors(@floating_ip.errors)
+
+      = f.input :floating_ip_address, {label: "Address",
+        input_html:         {},
+        as:                 :grouped_select,
+        collection:         @instance.ips.each {|_n, ips| ips.keep_if {|ip| ip['floating'].present? } },
+        group_method:       :last,
+        label_method:       -> a {"#{a['floating']['addr']} (#{a['fixed']['addr']} fixed)"},
+        value_method:       -> a {a['floating']['addr']},
+        required:           true}
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      - else
+        = link_to "Cancel", instances_url(), class: 'btn btn-default'
+      = button_tag "Detach", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

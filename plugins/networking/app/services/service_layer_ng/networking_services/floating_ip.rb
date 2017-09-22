@@ -15,11 +15,13 @@ module ServiceLayerNg
            end
       end
 
-      def attach_floatingip(floating_ip_id, port_id)
-        api.networking.update_floating_ip(
-          floating_ip_id, floatingip: { port_id: port_id }
-        ).map_to(Networking::FloatingIp)
-      end
+      # def attach_floatingip(floating_ip_id, port_id, fixed_ip_address = nil)
+      #   params = { port_id: port_id }
+      #   params[:fixed_ip_address] = fixed_ip_address if fixed_ip_address
+      #
+      #   api.networking.update_floating_ip(floating_ip_id, floatingip: params)
+      #      .map_to(Networking::FloatingIp)
+      # end
 
       def detach_floatingip(floating_ip_id)
         api.networking.update_floating_ip(

@@ -14,6 +14,10 @@
       collection:         @networks,
       required:           true}
 
+    = f.input :ip_address, { label: "Fixed IP",
+      required: false,
+      icon_hint: 'You can request a specific fixed IP address. Leave blank if you are unsure.'}
+
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel

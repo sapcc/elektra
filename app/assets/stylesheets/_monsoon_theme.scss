@@ -44,6 +44,62 @@ $brand-danger:  #e22;
     font-weight:  400;
 }
 
+// ---------------------------------------------------------------------------
+// Collapsable
+// ---------------------------------------------------------------------------
+.collapsable {
+  .collapsable-content {
+    overflow: hidden;
+    margin-left: 20px;
+    height: 100%;
+    max-height: 1000px;
+    transition: max-height 0.5s ease-in;
+  }
+
+  .collapsable-toggle-button {
+    position: absolute;
+    // margin-top: $line-height-computed;
+    i {
+      @include fa-icon;
+      @extend .fa;
+      @extend .fa-chevron-circle-down;
+
+      /* Firefox */
+      -moz-transform: rotate(0deg);
+      /* WebKit */
+      -webkit-transform: rotate(0deg);
+      /* Opera */
+      -o-transform: rotate(0deg);
+      /* MS IE */
+      -ms-transform: rotate(0deg);
+      /* Standard */
+      transform: rotate(0deg);
+      transition: 250ms linear all;
+    }
+  }
+
+  &.collapsed {
+    .collapsable-content {
+      max-height: $line-height-computed*2;
+      transition: max-height 0.15s ease-out;
+    }
+
+    .collapsable-toggle-button i {
+      /* Firefox */
+      -moz-transform: rotate(-90deg);
+      /* WebKit */
+      -webkit-transform: rotate(-90deg);
+      /* Opera */
+      -o-transform: rotate(-90deg);
+      /* MS IE */
+      -ms-transform: rotate(-90deg);
+      /* Standard */
+      transform: rotate(-90deg);
+    }
+  }
+}
+// ---------------------------------------------------------------------------
+
 .icon-monsoon {
   font-family: 'MonsoonIcons';
   display: inline-block;
