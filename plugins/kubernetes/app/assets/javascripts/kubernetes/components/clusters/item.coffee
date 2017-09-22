@@ -7,10 +7,10 @@ Cluster = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     # stop polling if status has changed from creating to something else
-    @stopPolling() if nextProps.cluster.status.kluster.state == 'Ready'
+    @stopPolling() if nextProps.cluster.status.kluster.state == 'Ready' && @nodePoolsReady(nextProps.cluster.status.nodePools)
 
   componentDidMount:()->
-    @startPolling() if @props.cluster.status.kluster.state != 'Ready'
+    @startPolling() if @props.cluster.status.kluster.state != 'Ready' || !@nodePoolsReady(@props.cluster.status.nodePools)
 
   componentWillUnmount: () ->
     # stop polling on unmounting
@@ -21,6 +21,17 @@ Cluster = React.createClass
 
   stopPolling: () ->
     clearInterval(@polling)
+
+  nodePoolsReady: (nodePoolState) ->
+    # return ready only if all state values of all nodepools match the configured size
+    ready = true
+    for nodePool in nodePoolState
+      for k,v of nodePool
+        unless k == 'name' || k == 'size'
+          if v != nodePool.size
+            ready = false
+            break
+    ready
 
   render: ->
     {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials} = @props
