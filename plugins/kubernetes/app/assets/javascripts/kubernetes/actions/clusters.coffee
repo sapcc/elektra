@@ -153,12 +153,6 @@
     method: 'post'
     action: "/clusters"
 
-  clusterFormForUpdate=(cluster) ->
-    type: app.PREPARE_CLUSTER_FORM
-    data: cluster
-    method: 'put'
-    action: "/clusters/#{cluster.name}"
-
   resetClusterForm = () ->
     type: app.RESET_CLUSTER_FORM
 
@@ -182,6 +176,9 @@
     index: index
     name: name
     value: value
+
+  addNodePool = () ->
+    type: app.ADD_NODE_POOL
 
   submitClusterForm = (successCallback=null) ->
     (dispatch, getState) ->
@@ -221,8 +218,7 @@
   app.submitClusterForm          = submitClusterForm
   app.updateClusterForm          = updateClusterForm
   app.updateNodePoolForm         = updateNodePoolForm
-
-
+  app.addNodePool                = addNodePool
 
 
 
