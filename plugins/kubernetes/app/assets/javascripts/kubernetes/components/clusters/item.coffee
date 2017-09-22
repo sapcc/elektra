@@ -1,16 +1,16 @@
 { div, button, span, a, tbody, tr, td, ul, li, i, br, p, strong} = React.DOM
 { connect } = ReactRedux
-{ requestDeleteCluster,loadCluster, getCredentials } = kubernetes
+{ openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials } = kubernetes
 
 
 Cluster = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     # stop polling if status has changed from creating to something else
-    @stopPolling() if nextProps.cluster.status.kluster == 'Ready'
+    @stopPolling() if nextProps.cluster.status.kluster.state == 'Ready'
 
   componentDidMount:()->
-    @startPolling() if @props.cluster.status.kluster != 'Ready'
+    @startPolling() if @props.cluster.status.kluster.state != 'Ready'
 
   componentWillUnmount: () ->
     # stop polling on unmounting
@@ -23,26 +23,42 @@ Cluster = React.createClass
     clearInterval(@polling)
 
   render: ->
-    {cluster, handleClusterDelete, handleGetCredentials} = @props
+    {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials} = @props
 
     tr null,
       td null,
         cluster.name
       td null,
-        cluster.status.kluster
-      td null,
+        strong null, cluster.status.kluster.state
+        br null
+        span className: 'info-text', cluster.status.kluster.message
+      td className: 'nodepool-info',
         for nodePool in cluster.spec.nodePools
-          p key: nodePool.name,
-            strong null, nodePool.name
-            br null
-            span className: 'info-text', nodePool.flavor
-            br null
-            'Ready: '
-            cluster.status.nodePools[ReactHelpers.findIndexInArray(cluster.status.nodePools, nodePool.name, 'name')].ready
-            '/'
-            nodePool.size
+          div key: nodePool.name,
+            div null,
+              strong null, nodePool.name
+            div null,
+              span className: 'info-text', nodePool.flavor
+            div null,
+              "size: #{nodePool.size}"
+      td className: 'nodepool-info',
+        for nodePoolStatus in cluster.status.nodePools
+          div key: nodePool.name,
+            for k,v of nodePoolStatus
+              unless k == 'name' || k == 'size'
+                div key: k,
+                  strong null, "#{k}: "
+                  "#{v}/#{nodePoolStatus.size}"
+
+
+
 
       td className: 'vertical-buttons',
+        console.log("cluster: ", cluster)
+        button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
+          i className: 'fa fa-fw fa-pencil'
+          'Edit Cluster'
+
         button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
           i className: 'fa fa-fw fa-download'
           'Download Credentials'
@@ -52,20 +68,6 @@ Cluster = React.createClass
           'Delete Cluster'
 
 
-        # div className: "btn-group",
-        #   button className: "btn btn-default btn-sm dropdown-toggle", "data-toggle": "dropdown", type: "button",
-        #     span className: "fa fa-cog"
-        #   ul className: "dropdown-menu dropdown-menu-right dropdown-menu-with-icons", role: "menu",
-        #     li null,
-        #       a href: "#", onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
-        #         i className: 'fa fa-download'
-        #         'Download Credentials'
-        #
-        #     li className: 'divider'
-        #     li null,
-        #       a href: "#", onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
-        #         i className: 'fa fa-trash-o'
-        #         'Delete Cluster'
 
 
 
@@ -78,6 +80,7 @@ Cluster = connect(
 
     cluster: cluster
   (dispatch) ->
+    handleEditCluster:      (cluster)     -> dispatch(openEditClusterDialog(cluster))
     handleClusterDelete:    (clusterName) -> dispatch(requestDeleteCluster(clusterName))
     handleGetCredentials:   (clusterName) -> dispatch(getCredentials(clusterName))
     reloadCluster:          (clusterName) -> dispatch(loadCluster(clusterName))

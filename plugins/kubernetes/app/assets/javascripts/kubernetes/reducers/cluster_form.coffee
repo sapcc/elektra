@@ -6,9 +6,9 @@
     data: {
       name: ''
       spec: {
-        nodepools: [
+        nodePools: [
           {
-            flavor: ''
+            flavor: 'm1.small'
             image: ''
             name: ''
             size: null
@@ -34,12 +34,12 @@
 
   updateNodePoolForm = (state, {index, name, value})->
     console.log("Index: #{index} -- Name: #{name} -- Value: #{value}")
-    nodePool = ReactHelpers.mergeObjects({}, state.data.spec.nodepools[index], {"#{name}":value})
-    console.log("Nodepool old vs new: ", state.data.spec.nodepools[index], nodePool)
-    nodePoolsClone = state.data.spec.nodepools.slice(0)
+    nodePool = ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {"#{name}":value})
+    console.log("Nodepool old vs new: ", state.data.spec.nodePools[index], nodePool)
+    nodePoolsClone = state.data.spec.nodePools.slice(0)
     if index>=0 then nodePoolsClone[index] = nodePool else nodePoolsClone.push nodePool
     console.log("Nodepools: ", nodePoolsClone)
-    data = ReactHelpers.mergeObjects({}, state.data, {spec: {nodepools: nodePoolsClone}})
+    data = ReactHelpers.mergeObjects({}, state.data, {spec: {nodePools: nodePoolsClone}})
     console.log("Data: ", data)
 
     ReactHelpers.mergeObjects({}, state, {

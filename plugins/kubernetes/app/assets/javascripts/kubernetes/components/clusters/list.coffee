@@ -35,19 +35,20 @@ Clusters = React.createClass
             th null, 'Cluster'
             th null, 'Status'
             th null, 'Nodepools'
+            th null, 'Nodepool Status'
             th className: 'snug'
 
 
         tbody null,
           if isFetching
             tr null,
-              td colSpan: '4',
+              td colSpan: '5',
                 span className: 'spinner'
           else
 
             if error
               tr null,
-                td colSpan: '4',
+                td colSpan: '5',
                   error.message
 
             if clusters && clusters.length
@@ -56,7 +57,7 @@ Clusters = React.createClass
 
             else
               tr null,
-                td colSpan: '4',
+                td colSpan: '5',
                   'No clusters found'
 
 

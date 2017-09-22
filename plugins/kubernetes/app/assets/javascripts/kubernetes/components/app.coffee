@@ -1,4 +1,5 @@
 #= require kubernetes/components/clusters/new
+#= require kubernetes/components/clusters/edit
 #= require kubernetes/components/clusters/list
 #= require kubernetes/components/clusters/credentials
 #= require components/dialogs
@@ -6,10 +7,11 @@
 
 { div, h4, p, a, ul, li } = React.DOM
 { connect } = ReactRedux
-{ ClusterList, NewClusterModal } = kubernetes
+{ ClusterList, NewClusterModal, EditClusterModal } = kubernetes
 
 modalComponents =
   'NEW_CLUSTER':      NewClusterModal
+  'EDIT_CLUSTER':     EditClusterModal
   # 'GET_CREDENTIALS':  CredentialsModal
   'CONFIRM':          ReactConfirmDialog
   'INFO':             ReactInfoDialog

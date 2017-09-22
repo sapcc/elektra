@@ -29,7 +29,7 @@
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveClusters(data))
         error: ( jqXHR, textStatus, errorThrown) ->
-          dispatch(requestClustersFailure(errorThrown))
+          dispatch(requestClustersFailure(jqXHR.responseText))
 
 
 
@@ -82,6 +82,18 @@
     (dispatch) ->
       dispatch(clusterFormForCreate())
       dispatch(newClusterModal())
+
+
+  # -------------- EDIT ---------------
+
+  editClusterModal= () ->
+    type: ReactModal.SHOW_MODAL,
+    modalType: 'EDIT_CLUSTER'
+
+  openEditClusterDialog = (cluster) ->
+    (dispatch) ->
+      dispatch(clusterFormForUpdate(cluster))
+      dispatch(editClusterModal())
 
 
   # -------------- DELETE ---------------
@@ -141,6 +153,12 @@
     method: 'post'
     action: "/clusters"
 
+  clusterFormForUpdate=(cluster) ->
+    type: app.PREPARE_CLUSTER_FORM
+    data: cluster
+    method: 'put'
+    action: "/clusters/#{cluster.name}"
+
   resetClusterForm = () ->
     type: app.RESET_CLUSTER_FORM
 
@@ -195,6 +213,7 @@
   app.fetchClusters              = fetchClusters
   app.requestDeleteCluster       = requestDeleteCluster
   app.openNewClusterDialog       = openNewClusterDialog
+  app.openEditClusterDialog      = openEditClusterDialog
   app.loadCluster                = loadCluster
   app.getCredentials             = getCredentials
   app.clusterFormForCreate       = clusterFormForCreate

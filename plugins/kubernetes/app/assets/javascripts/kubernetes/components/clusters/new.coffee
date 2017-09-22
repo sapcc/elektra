@@ -56,22 +56,22 @@ NewCluster = ({
               className: "string form-control",
               type: "text",
               name: "name",
-              value: cluster.spec.nodepools[0].name || '',
+              value: cluster.spec.nodePools[0].name || '',
               onChange: ((e) -> e.preventDefault; handleNodePoolChange(0, e.target.name, e.target.value))
 
           # Nodepool size
-          div className: "form-group string" ,
+          div className: "form-group" ,
             label className: "string control-label", htmlFor: "size",
               'Size '
               abbr title: "required", '*'
 
             input
-              className: "string form-control",
+              className: "form-control",
               type: "text",
               name: "size",
               placeholder: "Number of nodes"
-              value: cluster.spec.nodepools[0].size || '',
-              onChange: ((e) -> e.preventDefault; handleNodePoolChange(0, e.target.name, e.target.value))
+              value: cluster.spec.nodePools[0].size || '',
+              onChange: ((e) -> e.preventDefault; handleNodePoolChange(0, e.target.name, parseInt(e.target.value, 10)))
 
           # Nodepool flavor
           div className: "form-group string" ,
@@ -82,7 +82,7 @@ NewCluster = ({
             select
               name: "flavor",
               className: "select required form-control",
-              value: (cluster.spec.nodepools[0].flavor || ''),
+              value: (cluster.spec.nodePools[0].flavor || ''),
               onChange: ((e) -> e.preventDefault; handleNodePoolChange(0, e.target.name, e.target.value)),
 
                 option value: 'm1.small', 'm1.small'
@@ -94,12 +94,6 @@ NewCluster = ({
 
 
 
-            # input
-            #   className: "string form-control",
-            #   type: "text",
-            #   name: "flavor",
-            #   value: cluster.spec.nodepools[0].flavor || '',
-            #   onChange: ((e) -> e.preventDefault; handleNodePoolChange(0, e.target.name, e.target.value))
 
 #       <option value="88813ab0-8f42-4d36-add1-9322187f2f56">baremetal  (RAM: 16 MiB, VCPUs: 1, Disk: 100 GiB )</option>
 # <option value="10">m1.tiny  (RAM: 512 MiB, VCPUs: 1, Disk: 1 GiB )</option>
