@@ -3,7 +3,7 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
+{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
 
 
 EditCluster = ({
@@ -12,7 +12,8 @@ EditCluster = ({
   handleSubmit,
   handleChange,
   handleNodePoolChange,
-  handleNodePoolAdd
+  handleNodePoolAdd,
+  handleNodePoolRemove
 }) ->
 
   cluster = clusterForm.data
@@ -51,13 +52,18 @@ EditCluster = ({
             div className: "form-group required string" ,
               label className: "string required control-label", htmlFor: "name",
                 'Name '
+                abbr title: "required", '*'
+
 
               input
                 className: "string form-control",
-                disabled: 'disabled' if nodePool.name,
+                "data-index": i,
+                disabled: 'disabled' if nodePool.name && !nodePool.new,
                 type: "text",
                 name: "name",
-                value: nodePool.name || ''
+                value: nodePool.name || '',
+                onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
+
 
             # Nodepool size
             div className: "form-group string" ,
@@ -78,12 +84,17 @@ EditCluster = ({
             div className: "form-group string" ,
               label className: "string control-label", htmlFor: "flavor",
                 'Flavor '
+                abbr title: "required", '*'
+
 
               select
                 name: "flavor",
+                "data-index": i,
                 className: "string form-control",
-                disabled: 'disabled' if nodePool.flavor,
+                disabled: 'disabled' if nodePool.flavor && !nodePool.new,
                 value: (nodePool.flavor || ''),
+                onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value)),
+
                   option value: '', 'Choose flavor'
                   option value: 'm1.small', 'm1.small'
                   option value: 'm1.xsmall', 'm1.xsmall'
@@ -91,6 +102,14 @@ EditCluster = ({
                   option value: 'm1.xmedium', 'm1.xmedium'
                   option value: 'm1.large', 'm1.large'
                   option value: 'm1.xlarge', 'm1.xlarge'
+
+
+            button
+              className: 'btn btn-default',
+              "data-index": i,
+              disabled: 'disabled' unless nodePool.new,
+              onClick: ((e) -> e.preventDefault(); console.log("dataset: ", e.currentTarget.dataset.index); handleNodePoolRemove(e.target.dataset.index)),
+                span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
 
 
 
@@ -112,6 +131,7 @@ EditCluster = connect(
     handleChange:         (name, value)         -> dispatch(updateClusterForm(name, value))
     handleNodePoolChange: (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
     handleNodePoolAdd:    ()                    -> dispatch(addNodePool())
+    handleNodePoolRemove: (index)               -> dispatch(deleteNodePool(index))
     handleSubmit:         (callback)            -> dispatch(submitClusterForm(callback))
 
 )(EditCluster)

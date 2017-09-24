@@ -25,6 +25,18 @@
     align-self: flex-end;
     padding-left: 10px;
   }
+
+  .btn {
+    align-self: flex-end;
+  }
+}
+
+.pool-info-column {
+  white-space: nowrap;
+}
+
+.nodepool-info {
+  padding-bottom: $line-height-computed;
 }
 
 .vertical-buttons {

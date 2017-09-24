@@ -51,6 +51,15 @@
     type: app.RECEIVE_CLUSTER
     cluster: cluster
 
+  startPollingCluster = (clusterName) ->
+    type: app.START_POLLING_CLUSTER
+    clusterName: clusterName
+
+  stopPollingCluster = (clusterName) ->
+    type: app.STOP_POLLING_CLUSTER
+    clusterName: clusterName
+
+
   loadCluster = (clusterName) ->
     (dispatch, getState) ->
       # currentState    = getState()
@@ -180,6 +189,11 @@
   addNodePool = () ->
     type: app.ADD_NODE_POOL
 
+  deleteNodePool = (index) ->
+    type: app.DELETE_NODE_POOL
+    index: index
+
+
   submitClusterForm = (successCallback=null) ->
     (dispatch, getState) ->
       clusterForm = getState().clusterForm
@@ -219,6 +233,10 @@
   app.updateClusterForm          = updateClusterForm
   app.updateNodePoolForm         = updateNodePoolForm
   app.addNodePool                = addNodePool
+  app.deleteNodePool             = deleteNodePool
+  app.startPollingCluster        = startPollingCluster
+  app.stopPollingCluster         = stopPollingCluster
+
 
 
 

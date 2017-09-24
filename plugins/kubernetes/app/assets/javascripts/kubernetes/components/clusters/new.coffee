@@ -3,7 +3,7 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
+{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
 
 
 NewCluster = ({
@@ -12,7 +12,9 @@ NewCluster = ({
   handleSubmit,
   handleChange,
   handleNodePoolChange,
-  handleNodePoolAdd
+  handleNodePoolAdd,
+  handleNodePoolRemove
+
 
 }) ->
   onChange=(e) ->
@@ -105,6 +107,13 @@ NewCluster = ({
                   option value: 'm1.xlarge', 'm1.xlarge'
 
 
+            button
+              className: 'btn btn-default',
+              "data-index": i,
+              disabled: 'disabled' unless nodePool.new,
+              onClick: ((e) => e.preventDefault(); handleNodePoolRemove(e.currentTarget.dataset.index)),
+                span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
+
 
 
 #       <option value="88813ab0-8f42-4d36-add1-9322187f2f56">baremetal  (RAM: 16 MiB, VCPUs: 1, Disk: 100 GiB )</option>
@@ -145,6 +154,7 @@ NewCluster = connect(
     handleChange:         (name, value)         -> dispatch(updateClusterForm(name, value))
     handleNodePoolChange: (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
     handleNodePoolAdd:    ()                    -> dispatch(addNodePool())
+    handleNodePoolRemove: (index)               -> dispatch(deleteNodePool(index))
     handleSubmit:         (callback)            -> dispatch(submitClusterForm(callback))
 
 )(NewCluster)

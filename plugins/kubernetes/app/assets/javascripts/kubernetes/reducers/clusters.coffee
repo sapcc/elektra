@@ -62,6 +62,19 @@
       flashError: flashError
     })
 
+  startPollingCluster = (state, {clusterName}) ->
+    index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
+    return state if index < 0
+    items = state.items.slice() # clone array
+    items[index].isPolling = true
+    ReactHelpers.mergeObjects({},state,{items})
+
+  stopPollingCluster = (state, {clusterName}) ->
+    index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
+    return state if index < 0
+    items = state.items.slice() # clone array
+    items[index].isPolling = false
+    ReactHelpers.mergeObjects({},state,{items})
 
 
 
@@ -76,6 +89,8 @@
       when app.REQUEST_CLUSTER_FAILURE      then requestClusterFailure(state,action)
       when app.RECEIVE_CLUSTER              then receiveCluster(state,action)
       when app.DELETE_CLUSTER               then deleteCluster(state,action)
+      when app.START_POLLING_CLUSTER        then startPollingCluster(state,action)
+      when app.STOP_POLLING_CLUSTER         then stopPollingCluster(state,action)
       when app.DELETE_CLUSTER_FAILURE       then deleteClusterFailure(state,action)
       when app.REQUEST_CREDENTIALS          then requestCredentials(state,action)
       when app.REQUEST_CREDENTIALS_FAILURE  then requestCredentialsFailure(state,action)

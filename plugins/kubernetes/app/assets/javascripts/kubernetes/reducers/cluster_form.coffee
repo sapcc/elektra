@@ -55,6 +55,7 @@
                 image: ''
                 name: ''
                 size: null
+                new: true
               }
 
     nodePoolsClone = state.data.spec.nodePools.slice(0)
@@ -66,6 +67,19 @@
       isSubmitting: false
       isValid: true #TODO: more fancy validity check
     })
+
+  deleteNodePool = (state, {index}) ->
+    # remove pool with given index
+    nodePoolsFiltered = state.data.spec.nodePools.filter((pool, i) -> parseInt(i,10) != parseInt(index, 10) )
+    data = ReactHelpers.mergeObjects({}, state.data, {spec: {nodePools: nodePoolsFiltered}})
+
+    ReactHelpers.mergeObjects({}, state, {
+      data: data
+      errors: null
+      isSubmitting: false
+      isValid: true #TODO: more fancy validity check
+    })
+
 
   submitClusterForm = (state, {})->
     ReactHelpers.mergeObjects({}, state, {
@@ -94,6 +108,7 @@
       when app.UPDATE_CLUSTER_FORM    then updateClusterForm(state,action)
       when app.UPDATE_NODE_POOL_FORM  then updateNodePoolForm(state,action)
       when app.ADD_NODE_POOL          then addNodePool(state,action)
+      when app.DELETE_NODE_POOL       then deleteNodePool(state,action)
       when app.SUBMIT_CLUSTER_FORM    then submitClusterForm(state,action)
       when app.PREPARE_CLUSTER_FORM   then prepareClusterForm(state,action)
       when app.CLUSTER_FORM_FAILURE   then clusterFormFailure(state,action)

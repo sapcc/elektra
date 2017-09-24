@@ -1,13 +1,19 @@
 { div, button, span, a, tbody, tr, td, ul, li, i, br, p, strong} = React.DOM
 { connect } = ReactRedux
-{ openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials } = kubernetes
+{ openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials, startPollingCluster, stopPollingCluster } = kubernetes
 
 
 Cluster = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
-    # stop polling if status has changed from creating to something else
-    @stopPolling() if nextProps.cluster.status.kluster.state == 'Ready' && @nodePoolsReady(nextProps.cluster.status.nodePools)
+    # stop polling if both cluster and nodepool states are "ready"
+    if nextProps.cluster.status.kluster.state == 'Ready' && @nodePoolsReady(nextProps.cluster.status.nodePools)
+      console.log("will receive props: stop polling")
+      @stopPolling()
+    else if !nextProps.cluster.isPolling
+      console.log("is polling: ", nextProps.cluster.isPolling)
+      console.log("will receive props: start polling")
+      @startPolling()
 
   componentDidMount:()->
     @startPolling() if @props.cluster.status.kluster.state != 'Ready' || !@nodePoolsReady(@props.cluster.status.nodePools)
@@ -17,9 +23,12 @@ Cluster = React.createClass
     @stopPolling()
 
   startPolling: ()->
+    @props.handlePollingStart(@props.cluster.name)
+    clearInterval(@polling)
     @polling = setInterval((() => @props.reloadCluster(@props.cluster.name)), 10000)
 
   stopPolling: () ->
+    @props.handlePollingStop(@props.cluster.name)
     clearInterval(@polling)
 
   nodePoolsReady: (nodePoolState) ->
@@ -34,7 +43,7 @@ Cluster = React.createClass
     ready
 
   render: ->
-    {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials} = @props
+    {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials, handlePollingStart, handlePollingStop} = @props
 
     tr null,
       td null,
@@ -43,18 +52,18 @@ Cluster = React.createClass
         strong null, cluster.status.kluster.state
         br null
         span className: 'info-text', cluster.status.kluster.message
-      td className: 'nodepool-info',
+      td null,
         for nodePool in cluster.spec.nodePools
-          div key: nodePool.name,
+          div className: 'nodepool-info', key: nodePool.name,
             div null,
               strong null, nodePool.name
             div null,
               span className: 'info-text', nodePool.flavor
             div null,
               "size: #{nodePool.size}"
-      td className: 'nodepool-info',
+      td null,
         for nodePoolStatus in cluster.status.nodePools
-          div key: nodePool.name,
+          div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
             for k,v of nodePoolStatus
               unless k == 'name' || k == 'size'
                 div key: k,
@@ -95,6 +104,9 @@ Cluster = connect(
     handleClusterDelete:    (clusterName) -> dispatch(requestDeleteCluster(clusterName))
     handleGetCredentials:   (clusterName) -> dispatch(getCredentials(clusterName))
     reloadCluster:          (clusterName) -> dispatch(loadCluster(clusterName))
+    handlePollingStart:     (clusterName) -> dispatch(startPollingCluster(clusterName))
+    handlePollingStop:      (clusterName) -> dispatch(stopPollingCluster(clusterName))
+
 
 )(Cluster)
 

@@ -34,8 +34,8 @@ Clusters = React.createClass
           tr null,
             th null, 'Cluster'
             th null, 'Status'
-            th null, 'Nodepools'
-            th null, 'Nodepool Status'
+            th className: 'pool-info-column', 'Nodepools'
+            th className: 'pool-info-column', 'Nodepool Status'
             th className: 'snug'
 
 
