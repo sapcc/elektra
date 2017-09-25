@@ -122,7 +122,7 @@ module Identity
           user_name = ra.user.fetch('name', 'unknown')
           # try to get full name from user profile stored in Elektra db
           user_profile = UserProfile.find_by_name_or_create_or_update(user_name) do
-            service_user.identity.find_user(user_id)
+            service_user.identity.find_user(user_id) || cloud_admin.identity.find_user(user_id)
           end
 
           user_description = user_profile.blank? ? '' : user_profile.full_name
