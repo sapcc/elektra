@@ -248,12 +248,9 @@ module Compute
     end
 
     def create_interface
-      ip_address = params[:os_interface].delete(:ip_address)
-
       @os_interface = services_ng.compute.new_os_interface(
         params[:id], params[:os_interface]
       )
-      @os_interface.fixed_ips = ip_address unless ip_address.blank?
 
       if @os_interface.save
         @instance = services_ng.compute.find_server(params[:id])

@@ -7,7 +7,6 @@ class Collapsable
 
 
   buildCollapseContainer: () ->
-    console.log @options
     collapsed = if @options.hasOwnProperty('collapsed')
       @options.collapsed
     else
