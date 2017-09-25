@@ -243,6 +243,7 @@ module Compute
     def attach_interface
       @instance = services_ng.compute.find_server(params[:id])
       @os_interface = services_ng.compute.new_os_interface(params[:id])
+      @os_interface.fixed_ips = []
       @networks = services_ng.networking.networks('router:external' => false)
     end
 

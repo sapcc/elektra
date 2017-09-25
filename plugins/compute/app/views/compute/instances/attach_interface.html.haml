@@ -14,9 +14,11 @@
       collection:         @networks,
       required:           true}
 
-    = f.input :ip_address, { label: "Fixed IP",
-      required: false,
-      icon_hint: 'You can request a specific fixed IP address. Leave blank if you are unsure.'}
+    = f.simple_fields_for :fixed_ips do |fixed_ips|
+      = fixed_ips.input :ip_address, { label: "Fixed IP",
+        required: false,
+        input_html: { name: 'os_interface[fixed_ips][][ip_address]', value: @os_interface.fixed_ips.try(:first).try(:fetch, 'ip_address') },
+        icon_hint: 'You can request a specific fixed IP address. Leave blank if you are unsure.'}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
