@@ -25,6 +25,7 @@ class UserProfile < ApplicationRecord
 
     if user_profile.nil?
       user = yield
+      return nil unless user
 
       return UserProfile.create_with(
         name: user.name, email: user.email, full_name: user.full_name
