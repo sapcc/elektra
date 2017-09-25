@@ -6,6 +6,10 @@
 = f.input :domain_name, :as => :hidden, :input_html => { :value => @scoped_domain_name }
 = f.input :description, label: "Description"
 
+- projects_can_inherit_help = 'If yes projects can use the cost object from domain'
+- co_type_help = 'If unclear, please ask the responsible controller of the given cost object for permission'
+- co_name_help = 'Name or Id of the used cost object where the costs should be charged to'
+
 %label.control-label Cost Object
 %a.help-link{data:{content: "If you don't know what specific cost object object you should use, talk to the controller repsonsible for it", popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
@@ -13,27 +17,24 @@
   .panel-body
     .row
       .col-sm-3
-        = f.input :cost_object_projects_can_inherit, label: "Projects can inherit", as: :select, include_hidden:false, required:true
+        = f.input :cost_object_projects_can_inherit, 
+          label: raw("Projects can inherit #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: projects_can_inherit_help }}"),
+          as: :select, 
+          include_hidden:false, 
+          required:true
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 
-            label:        "Type", 
+            label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }}"),
             as:           :select, 
             collection:   types.keys, 
             label_method: -> (k) { types[k] },
             required:true
       .col-sm-6
-        = f.input :cost_object_name, label: "Name" , required:true
-    .row
-      .col-md-12.co-help-block
-        = icon ('chevron-right')
-        Projects can inherit: If yes projects can use the cost object from domain
-        %br
-        = icon ('chevron-right')
-        Type: If unclear, please ask the responsible controller of the given cost object for permission.
-        %br
-        = icon ('chevron-right')
-        Name: Name or Id of the used cost object where the costs should be charged to.
+        = f.input :cost_object_name,
+          label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }}"),
+          required:true
+
 %label.control-label Responsibility
 .panel.panel-default
   .panel-body

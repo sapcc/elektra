@@ -24,11 +24,13 @@ module MasterdataCockpit
     def create
       unless @domain_masterdata.save
         render action: :new
-      end
-      
-      # this is the case if no masterdata is created and we do not use the modal window
-      unless params['modal']
-        render action: :index
+      else
+        # this is the case if no masterdata was found
+        # than we load the new dialog without modal window and need to reload 
+        # the index page after successful created masterdata
+        unless params['modal']
+          render action: :index
+        end
       end
     end
 

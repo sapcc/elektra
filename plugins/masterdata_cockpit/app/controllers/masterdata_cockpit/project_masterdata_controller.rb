@@ -30,19 +30,22 @@ module MasterdataCockpit
     def update
       unless @project_masterdata.update
         render action: :edit
+      else
+        # needed in view
+        params['modal'] = false
       end
-      # needed in view
-      params['modal'] = false
     end
 
     def create
       unless @project_masterdata.save
         render action: :new
-      end
-
-      # this is the case if no masterdata is created and we do not use the modal window
-      unless params['modal']
-        render action: :index
+      else
+        # this is the case if no masterdata was found
+        # than we load the new dialog without modal window and need to reload 
+        # the index page after successful created masterdata
+        unless params['modal']
+          render action: :index
+        end
       end
     end
 
@@ -104,6 +107,7 @@ module MasterdataCockpit
         @solutions = services_ng.masterdata_cockpit.get_solutions
       rescue
         flash.now[:error] = "Could not load solutions."
+        @solutions = []
       end
     end
 

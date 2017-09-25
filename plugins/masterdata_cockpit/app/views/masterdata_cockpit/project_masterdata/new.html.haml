@@ -5,7 +5,7 @@
   - unless current_user.is_allowed?('masterdata_cockpit:masterdata_create')
     .alert.alert-warning
       = icon('exclamation-circle')
-      No masterdata maintained for this project.
+      You are not allowed to maintain masterdata for this project.
   - else
     .alert.alert-warning
       = icon('exclamation-circle')
