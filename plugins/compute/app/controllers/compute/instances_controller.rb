@@ -252,9 +252,7 @@ module Compute
       @os_interface = services_ng.compute.new_os_interface(
         params[:id], params[:os_interface]
       )
-      unless ip_address.blank?
-        @os_interface.fixed_ips = [{ 'ip_address' => ip_address}]
-      end
+      @os_interface.fixed_ips = ip_address unless ip_address.blank?
 
       if @os_interface.save
         @instance = services_ng.compute.find_server(params[:id])

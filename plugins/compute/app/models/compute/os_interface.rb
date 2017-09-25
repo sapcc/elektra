@@ -10,7 +10,11 @@ module Compute
       }.delete_if { |_k, v| v.blank? }
 
       if read('fixed_ips')
-        attrs['fixed_ips'] = { 'ip_address' => read('fixed_ips') }
+        ips = read('fixed_ips')
+        ips = [ips] unless ips.is_a?(Array)
+        attrs['fixed_ips'] = {
+          'ip_address' => ips.collect { |ip| { 'ip_address' => ip } }
+        }
       end
       attrs
     end
