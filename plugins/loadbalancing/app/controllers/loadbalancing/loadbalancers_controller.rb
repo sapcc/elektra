@@ -97,6 +97,12 @@ module Loadbalancing
       end
     end
 
+    def refresh_state
+      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer.save
+      render template: 'loadbalancing/loadbalancers/update_item.js'
+    end
+
     def destroy
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       if @loadbalancer.destroy

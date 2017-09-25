@@ -9,6 +9,7 @@ Loadbalancing::Engine.routes.draw do
       get 'update_status'
       get 'new_floatingip'
       put 'attach_floatingip'
+      put 'refresh_state'
       delete 'detach_floatingip'
       get 'update_item'
       get 'get_item'

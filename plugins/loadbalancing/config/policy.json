@@ -15,6 +15,7 @@
   "loadbalancing:loadbalancer_assign_ip": "rule:context_is_network_editor",
   "loadbalancing:loadbalancer_update_status": "rule:context_is_network_viewer",
   "loadbalancing:loadbalancer_update_all_status": "rule:context_is_network_viewer",
+  "loadbalancing:loadbalancer_refresh_state": "rule:context_is_network_viewer",
 
   "loadbalancing:pool_get": "rule:context_is_network_viewer",
   "loadbalancing:pool_list": "rule:context_is_network_viewer",
