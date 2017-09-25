@@ -7,9 +7,11 @@ if (window.location.href.indexOf('<%=plugin("compute").instances_url%>')>-1) {
     $("table.instances tbody").prepend(html);
   }
   $("#instance_<%=@instance.id%>").update()
+
+  $('#instance_<%=@instance.id%> [data-collapsable]').collapsable({collapsed: true});
 }
 else {
-  window.location.href='<%= plugin("compute").instances_path%>';  
+  window.location.href='<%= plugin("compute").instances_path%>';
 }
 
 MoModal.close();

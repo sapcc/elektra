@@ -11,28 +11,23 @@
       = link_to instance.name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
     - else
       = instance.name
+    %br
+    = instance.availability_zone
   - if @all_projects
     %td
       - project_id_and_name(instance.tenant_id)
-  %td= instance.availability_zone
+  -# %td= instance.availability_zone
   %td.snug-nowrap
-    - instance.addresses.each do |network_name, ip_values|
-      -if ip_values and ip_values.length>0
+    .instance-ips{ data: { collapsable: true, collapsed: true } }
+      - instance.ips.each do |network_name, ips|
         .list-group.borderless
           = network_name
-          - ip_values.each do |values|
-            %p.list-group-item-text
-              - if values["OS-EXT-IPS:type"]=='floating'
-                %i.fa.fa-globe.fa-fw
-              - elsif values["OS-EXT-IPS:type"]=='fixed'
-                %i.fa.fa-desktop.fa-fw
-              = values["addr"]
-              %span.info-text= values["OS-EXT-IPS:type"]
-
-
-
-  %td= instance.image_object.name if instance.image_object
-  %td= instance.flavor_object.name if instance.flavor_object
+          = render_fixed_floating_ips(ips)
+  %td
+    = instance.image_object.try(:name) || '-'
+    %br
+    = instance.flavor_object.try(:name) || '-'
+  -# %td= instance.flavor_object.name if instance.flavor_object
 
   %td= instance.power_state_string
   %td
@@ -57,21 +52,16 @@
           - unless instance.os_ext_sts_task_state
 
             - if current_user.is_allowed?("compute:instance_update", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-              - if instance.floating_ips.length>0
-                %li= link_to 'Detach Floating IP', plugin('compute').detach_floatingip_instance_path(id: instance.id, floating_ip: instance.floating_ips.first["addr"]), method: :delete, data: { confirm: 'Are you sure you want to detach floating?', ok: "Yes, detach it", confirmed: :loading_status}, remote: true
-              - else
-                %li= link_to 'Attach Floating IP', new_floatingip_instance_path(id: instance.id), data: {modal: true }
-
-
+              %li= link_to 'Attach Floating IP', new_floatingip_instance_path(id: instance.id), data: {modal: true }
+              %li= link_to 'Detach Floating IP', plugin('compute').remove_floatingip_instance_path(id: instance.id), data: { modal: true }
+              %li.divider
               %li= link_to 'Attach Interface', plugin('compute').attach_interface_instance_path(id: instance.id), data: { modal: true}
-              %li= link_to 'Detach Interface', plugin('compute').detach_interface_instance_path(id: instance.id), data: { modal: true}
-
+              %li= link_to 'Detach Interface', plugin('compute').remove_interface_instance_path(id: instance.id), data: { modal: true}
+              %li.divider
               %li= link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id), data: { modal: true}
-
               -#%li.divider Needs Microversion 2.9 to show locked status in UI and to react appropriate to it
                 %li= link_to 'Lock', plugin('compute').lock_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to lock this instance?', ok: "Yes, lock it", confirmed: :loading_status }, remote: true
                 %li= link_to 'Unlock', plugin('compute').unlock_instance_path(id: instance.id), method: :put, data: { confirm: 'Are you sure you want to unlock this instance?', ok: "Yes, unlock it", confirmed: :loading_status }, remote: true
-
 
               %li.divider
               - if [Compute::Server::SUSPENDED,Compute::Server::PAUSED,Compute::Server::SHUT_DOWN,Compute::Server::SHUT_OFF].include? instance.power_state

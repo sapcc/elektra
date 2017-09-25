@@ -1,6 +1,7 @@
 <%if @instance%>
   $("#instance_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'compute/instances/item', locals: {instance: @instance, target_state: @target_state })) %>");
   $("#instance_<%=params[:id]%>").update()
+  $('#instance_<%=params[:id]%> [data-collapsable]').collapsable({collapsed: false});
 <%else%>
   $("#instance_<%=params[:id]%>").remove();
 

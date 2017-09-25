@@ -100,28 +100,10 @@ $ ->
     $('.searchable-input').toggleClass('expanded').find('#search-input').focus()
 
 
+  $('[data-collapsable]').collapsable()
 # -------------------------------------------------------------------------------------------------------------
 # Initialize Modal Windows
 $(document).on 'modal:contentUpdated', (e) ->
-  $( "[data-autocomplete-url]" ).each () ->
-    $input = $(this)
-    valueAttr = $input.data('autocompleteValue') || 'id'
-    labelAttr = $input.data('autocompleteLabel') || 'name'
-    detailsAttr = $input.data('autocompleteDetails') || 'id'
-
-    $input.autocomplete({
-      appendTo: $input.parent(),
-      source: $input.data('autocompleteUrl'),
-      select: ( event, ui ) ->
-        $input.val(ui.item.name);
-        return false;
-    }).data('ui-autocomplete')._renderItem = ( ul, item ) ->
-        return $( "<li>" )
-          .attr( "data-value", item[valueAttr] )
-          .text(item[labelAttr])
-          .append( "<br/><span class='info-text'>#{item[detailsAttr]}</span>" )
-          .appendTo( ul );
-
   try
     # define target selector dependent on id or class
     selector = "##{e.target.id}" if e.target.id
@@ -131,8 +113,31 @@ $(document).on 'modal:contentUpdated', (e) ->
     # find triger elements
     $form.find("select[data-trigger=change]").change Dashboard.showFormDetails
 
+    $(selector).find('[data-collapsable]').collapsable()
+
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
+
+
+    $(selector).find("[data-autocomplete-url]" ).each () ->
+      $input = $(this)
+      valueAttr = $input.data('autocompleteValue') || 'id'
+      labelAttr = $input.data('autocompleteLabel') || 'name'
+      detailsAttr = $input.data('autocompleteDetails') || 'id'
+
+      $input.autocomplete({
+        appendTo: $input.parent(),
+        source: $input.data('autocompleteUrl'),
+        select: ( event, ui ) ->
+          $input.val(ui.item.name);
+          return false;
+      }).data('ui-autocomplete')._renderItem = ( ul, item ) ->
+          return $( "<li>" )
+            .attr( "data-value", item[valueAttr] )
+            .text(item[labelAttr])
+            .append( "<br/><span class='info-text'>#{item[detailsAttr]}</span>" )
+            .appendTo( ul );
+
   catch error
 
   # init all DOM elements found by css class '.searchable' as searchable

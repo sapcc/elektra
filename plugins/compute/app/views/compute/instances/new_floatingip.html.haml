@@ -9,7 +9,18 @@
         %p.alert.alert-error
           = @floating_ip.errors.full_messages.to_sentence + '.'
 
-      = f.input :ip_id,
+
+      = f.input :fixed_ip_address,
+        prompt: "Select an Interface IP",
+        as: :grouped_select,
+        collection: @instance.ips.each{|_n,ips| ips.keep_if {|ip| ip['floating'].nil?} },
+        group_method: :last,
+        required: false,
+        label_method:       -> a {a['fixed']['addr']},
+        value_method:       -> a {a['fixed']['addr']},
+        label: 'Interface IP'
+
+      = f.input :id,
         prompt: "Select a Floating IP",
         as: :grouped_select,
         collection: @grouped_fips,

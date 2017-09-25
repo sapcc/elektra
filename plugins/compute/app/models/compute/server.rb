@@ -125,20 +125,91 @@ module Compute
       end
     end
 
-    # borrowed from fog
+    # This methods converts addresses to a map between fixed and floating ips.
+    # return:
+    # { NETWORK_NAME => [{ 'fixed' => IP_DATA, 'floating' => IP_DATA}, ...] }
+    def ips
+      # for each entry in addresses
+      addresses.each_with_object({}) do |(network_name, ips), ips_hash|
+        # network_name => [{'fixed' => ip_data, 'floating' => ip_data}, ..]
+        ips_hash[network_name] = ips.each_with_object({}) do |ip_data, mac_address_ips|
+          mac_addr = ip_data['OS-EXT-IPS-MAC:mac_addr']
+          ip_type = ip_data['OS-EXT-IPS:type']
+          mac_address_ips[mac_addr] ||= {}
+          mac_address_ips[mac_addr][ip_type] = ip_data
+        end.values
+      end
+    end
+
+    def find_ips_map_by_ip(ip_addr)
+      ips.each do |_n, ips|
+        ips.each do |ip|
+          if (ip['floating'] && ip['floating']['addr'] == ip_addr) ||
+             (ip['fixed'] && ip['fixed']['addr'] == ip_addr)
+            return ip
+          end
+        end
+      end
+      nil
+    end
+
+    def add_floating_ip_to_addresses(mac_address, floating_ip_address)
+      addresses.each do |_n, ips|
+        ips.each do |ip_data|
+          if ip_data['OS-EXT-IPS-MAC:mac_addr'] == mac_address
+            ips << {
+              'OS-EXT-IPS-MAC:mac_addr' => mac_address,
+              'addr' => floating_ip_address,
+              'OS-EXT-IPS:type' => 'floating'
+            }
+            return addresses
+          end
+        end
+      end
+    end
+
+    def remove_floating_ip_from_addresses(mac_address, floating_ip_address)
+      addresses.each do |_n, ips|
+        ips.delete_if do |ip_data|
+          ip_data['OS-EXT-IPS-MAC:mac_addr'] == mac_address &&
+            ip_data['addr'] == floating_ip_address &&
+            ip_data['OS-EXT-IPS:type'] == 'floating'
+        end
+      end
+    end
+    #
+    # def remove_floating_ip_from_addresses(floating_ip)
+    #
+    # end
+    #
+    # def add_fixed_ip_to_addresses(interface)
+    # end
+    #
+    # def remove_fixed_ip_from_addresses(interface)
+    # end
+
+    def fixed_ips
+      ip_addresses_by_type('fixed')
+    end
+
     def floating_ip_addresses
-      all_floating= if addresses
+      ip_addresses_by_type('floating')
+    end
+
+    # borrowed from fog
+    def ip_addresses_by_type(type)
+      ips = if addresses
                       addresses.values.flatten.select do |data|
                         data['OS-EXT-IPS:type'] == 'floating'
                       end.map { |addr| addr['addr'] }
                     else
                       []
                     end
-      return [] if all_floating.empty?
+      return [] if ips.empty?
       # Return them all, leading with manually assigned addresses
-      manual = all_floating.map { |addr| addr['ip'] }
+      manual = ips.map { |addr| addr['ip'] }
 
-      all_floating.sort do |a, b|
+      ips.sort do |a, b|
         a_manual = manual.include? a
         b_manual = manual.include? b
 
@@ -150,7 +221,7 @@ module Compute
           0
         end
       end
-      all_floating.empty? ? manual : all_floating
+      ips.empty? ? manual : ips
     end
 
     def flavor_object

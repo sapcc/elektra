@@ -60,5 +60,32 @@ module Compute
       build_number = image.metadata["buildnumber"].blank? ? '' : "(#{image.metadata["buildnumber"]})"
       "#{image.name} #{build_number}"
     end
+
+
+    ########################################################################
+    # Floating IPs
+    ########################################################################
+    def render_fixed_floating_ips(ips)
+      capture_haml do
+        ips.each do |ip|
+          haml_tag :p, class: 'list-group-item-text' do
+            haml_tag :span, data: { toggle: 'tooltip' }, title: 'Fixed IP' do
+              haml_tag :i, '', class: 'fa fa-desktop fa-fw'
+              haml_concat ip['fixed']['addr']
+            end
+            if ip['floating']
+              haml_tag :span, data: { toggle: 'tooltip' }, title: 'Floating IP' do
+                haml_tag(:i, '', class: 'fa fa-arrows-h')
+                haml_tag(:i, '', class: 'fa fa-globe fa-fw')
+                haml_concat ip['floating']['addr']
+              end
+            end
+          end
+        end
+      end
+    end
+    #########################################################################
+    # End op Floating IPs
+    #########################################################################
   end
 end

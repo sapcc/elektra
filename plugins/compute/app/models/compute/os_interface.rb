@@ -6,12 +6,9 @@ module Compute
     def attributes_for_create
       attrs = {
         'net_id'      => read('net_id'),
-        'port_id'     => read('port_id')
+        'port_id'     => read('port_id'),
+        'fixed_ips'   => read('fixed_ips')
       }.delete_if { |_k, v| v.blank? }
-
-      if read('fixed_ips')
-        attrs['fixed_ips'] = { 'ip_address' => read('fixed_ips') }
-      end
       attrs
     end
 
