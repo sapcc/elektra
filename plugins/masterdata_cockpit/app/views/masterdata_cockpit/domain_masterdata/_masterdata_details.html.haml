@@ -1,6 +1,6 @@
 - if @domain_masterdata
   %label.masterdata-heading.masterdata-top Cost Object 
-  %a.help-link{data:{content: "where all occuring costs should be billed to", popover: {type: "help-hint"}, toggle: "popover"}}
+  %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .masterdata-action
     - unless modal?
@@ -32,7 +32,7 @@
       -else 
         = icon('times')
   %label.masterdata-heading Responsibility
-  %a.help-link{data:{content: "here you can find the person in charge", popover: {type: "help-hint"}, toggle: "popover"}}
+  %a.help-link{data:{content: t('masterdata_cockpit.responsibility_info'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   %hr.masterdata-hr-label
   .row

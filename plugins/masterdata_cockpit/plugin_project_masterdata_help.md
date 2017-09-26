@@ -14,7 +14,7 @@ Costcenter, internal order, WBS or sales order where the costs should be charged
 * **Name:** Name of the costobject (can be a ID or Name)
 
 #### Responsibility
-Who is responsible in case of fire.
+Who is who to contact in case of fire
 
 * **Operator:** The person responsible for uptime of the systems and who can make decisions on e.g. Instance restarts etc. Used as emergency engineering contact, if CCloud operations needs a name.
 * **Security Expert:** The person responsible to request and validate firewall and other security settings. The person who will be contacted by security e.g. If a vulnerability is found by a scan etc.
@@ -22,7 +22,7 @@ Who is responsible in case of fire.
 * **Controller:** The person responsible for the given Costobject and empowered to decide, which costs are billed on this costobject.
 
 #### Importance
-How important is the project
+Indicates how important is the project
 
 * **Business Criticality:** Indicates, how critical the system is for your ability to provide your service to your customer. You can choose between tree types
  * ***Development***
