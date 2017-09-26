@@ -3,8 +3,22 @@ class Collapsable
   constructor: (elem, options) ->
     @options = options || {}
     @$content = $(elem)
-    @buildCollapseContainer()
 
+    lineHeight = try
+      parseInt(@$content.css('lineHeight'))
+    catch error
+      20
+
+    height = try
+      @$content.height()
+    catch error
+      30
+
+    # console.log 'lineHeight', lineHeight
+    # console.log 'height', height
+
+
+    @buildCollapseContainer() if height > lineHeight*2
 
   buildCollapseContainer: () ->
     collapsed = if @options.hasOwnProperty('collapsed')
