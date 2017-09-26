@@ -8,6 +8,34 @@
       .alert.alert-error
         = render_errors(@zone_request.errors)
 
+    = @pools.collect{ |pool| pool.attributes.fetch('attributes') }
+    = f.input :domain_pool, as: :select, label: 'Domain Pool' do
+      = f.select :domain_pool, @pools.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize),pool.id]},
+        { include_blank: true, selected: @zone_request.domain_pool },
+        class: "select required form-control",
+        style: "width: 70%"
+
+    .tab-content
+      .tab-pane{ role: "tabpanel", id: "domain_form", class: ('active' if @zone_request.domain_type=='subdomain') }
+        = f.input :domain_type, required: true, label: 'Type' do
+          %p
+            You can request a subdomain at c.#{current_region}.cloud.sap or transfer
+            a custom domain which is hosted at SAP or a public name server.
+          %span.radio
+            %label
+              = f.radio_button :domain_type, "subdomain", data: {target: '#subdomain_panel'}
+              Subdomain (&lt;SUBDOMAIN&gt;.c.#{current_region}.cloud.sap.)
+              -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "c.#{current_region}.cloud.sap"}}
+          %span.radio
+            %label
+              = f.radio_button :domain_type, "rootdomain", data: {target: '#rootdomain_panel'}
+              Custom Domain
+              -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
+
+
+
+
+
     = f.input :domain_type, required: true, label: 'Type' do
       %p
         You can request a subdomain at c.#{current_region}.cloud.sap or transfer
@@ -94,6 +122,15 @@
 :javascript
   $('input[name="zone_request[domain_type]"]').click(function () {
     $(this).tab('show');
+  });
+
+  $('select[name="zone_request[domain_pool]"]').change(function(){
+    if (this.value.trim().length == 0 ) {
+      $('#domain_form').fadeOut('slow');
+    } else {
+      $('#domain_form').fadeIn('slow');
+    }
+
   });
 
   $('[name="zone_request[rootdomain][domain_pool]"]').change(function(){
