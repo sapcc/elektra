@@ -50,8 +50,6 @@
     .col-sm-8.details-value
       = @project_masterdata.cost_object['name']
   %label.masterdata-heading Responsibility
-  %a.help-link{data:{content: t('masterdata_cockpit.responsibility_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-    = icon('question-circle')
   %hr.masterdata-hr-label
   .row
     .col-sm-4.details-label
@@ -110,8 +108,6 @@
         = icon('envelope-o')
         = mail_to @project_masterdata.responsible_controller_email
   %label.masterdata-heading Importance
-  %a.help-link{data:{content: t('masterdata_cockpit.importance_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-    = icon('question-circle')
   %hr.masterdata-hr-label
   .row
     .col-sm-4.details-label
