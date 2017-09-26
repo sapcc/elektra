@@ -27,13 +27,12 @@ module DnsService
     }
 
     validates :type, presence: {message: 'Please select a type'}
-    validates :name, presence: {message: 'Please provide a name'}
     validates :records, presence: {message: 'Please provide a content'}
 
     def attributes_for_create
       {
         "type"        => (read("type").upcase rescue nil),
-        "name"        => "#{read('name')}.#{read('zone_name')}",
+        "name"        => (read('name').present? ? "#{read('name')}.#{read('zone_name')}" : read('zone_name')),
         "records"     => (read("records").is_a?(Array) ? read("records") : [read("records")]),
         "ttl"         => (read("ttl").present? ? read("ttl").to_i : nil),
         "description" => read("description"),
