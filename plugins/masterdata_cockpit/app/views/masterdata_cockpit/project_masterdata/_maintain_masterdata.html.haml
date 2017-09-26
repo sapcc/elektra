@@ -15,16 +15,9 @@
   = f.input :description, label: "Description"
   
   - co_readonly               = @project_masterdata.solution.nil? == false 
-  - inherited_help            = 'Inherit the costobject from domain masterdata'
-  - solution_help             = 'Choose a solution, if the project is used for one of the strategic Solutions of SAP'
-  - revenue_relevances_help   = 'to be defined'
-  - co_type_help              = 'If unclear, please ask the responsible controller of the given cost object for permission'
-  - co_name_help              = 'Name or Id of the used cost object where the costs should be charged to'
-  - business_criticality_help = 'Indicates, how critical the system is for your ability to provide your service to your customer'
-  - number_of_endusers_help   = 'Roughly estimated number of users the service you provide. Always provide the lower end (-1 indicates that it is infinite)'
 
   %label.control-label Cost Object
-  %a.help-link{data:{content: "Where the costs should be charged to. If unclear, please ask the responsible controller of the given costobject for permission", popover: {type: "help-hint"}, toggle: "popover"}}
+  %a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .loading-place.loading-right
   .panel.panel-default
@@ -33,7 +26,7 @@
         - if @inheritance.co_inheritable
           .col-md-2
             = f.input :cost_object_inherited, 
-               label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: inherited_help }}"),
+               label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.inherited_help') }}"),
                as: :select, 
                include_hidden: false, 
                required:true
@@ -41,7 +34,7 @@
         %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
           - unless @solutions.nil?
             = f.input :solution, 
-              label: raw("Solution #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: solution_help }}"),
+              label: raw("Solution #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.solution_help') }}"),
               as: :select, 
               collection: @solutions.map {|solution| solution.name}, 
               include_blank: "Other",
@@ -50,7 +43,7 @@
           .col-md-3
             - revenue_relevances = MasterdataCockpit::Config.revenue_relevances
             = f.input :revenue_relevance, 
-              label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: revenue_relevances_help }}"),
+              label: raw("Revenue Relevances #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.revenue_relevances_help') }}"),
               as: :select, 
               collection: revenue_relevances.keys,
               label_method: -> (k) { revenue_relevances[k] },
@@ -59,7 +52,7 @@
           %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
             - types = MasterdataCockpit::Config.cost_object_types
             = f.input :cost_object_type, 
-                label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_type_help }}"),
+                label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
                 as:           :select, 
                 collection:   types.keys, 
                 label_method: -> (k) { types[k] },
@@ -67,11 +60,11 @@
                 disabled: co_readonly
           .col-md-3
             = f.input :cost_object_name, 
-                label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }}"),
+                label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
                 required:true, 
                 readonly: co_readonly
   %label.control-label Responsibility
-  %a.help-link{data:{content: "Please define the person in charge for the topics below", popover: {type: "help-hint"}, toggle: "popover"}}
+  %a.help-link{data:{content: t('masterdata_cockpit.responsibility_help'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .panel.panel-default
     .panel-body
@@ -83,7 +76,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          The person responsible for uptime of the systems and who can make decisions on e.g. Instance restarts etc. Used as emergency engineering contact, if CCloud operations needs a name.
+          = t('masterdata_cockpit.responsible_operator_help') 
       .row
         .col-sm-6.operator-id
           = f.input :responsible_security_expert_id, label: "Security Expert", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
@@ -92,7 +85,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          The person responsible to request and validate firewall and other security settings. The person who will be contacted by security e.g. If a vulnerability is found by a scan etc.
+          = t('masterdata_cockpit.responsible_security_expert_help') 
       .row
         .col-sm-6.operator-id
           = f.input :responsible_product_owner_id, label: "Product Owner", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
@@ -101,7 +94,7 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          The person owning the applications features.
+          = t('masterdata_cockpit.responsible_product_owner_help') 
       .row
         .col-sm-6.operator-id
           = f.input :responsible_controller_id, label: "Controller", placeholder: "C/D/I User", :input_html => { class: 'operator-id-input' }
@@ -110,9 +103,9 @@
       .row
         .col-md-12.op-help-block
           = icon ('info-circle')
-          The person responsible for the given cost object and empowered to decide, which costs are billed on this cost object.
+          = t('masterdata_cockpit.responsible_controller_help')
   %label.control-label Importance
-  %a.help-link{data:{content: "To define the importance of this project set the fields below", popover: {type: "help-hint"}, toggle: "popover"}}
+  %a.help-link{data:{content: t('masterdata_cockpit.importance_help') , popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .panel.panel-default
     .panel-body
@@ -120,14 +113,14 @@
         .col-sm-6
           - business_criticalitys = MasterdataCockpit::Config.business_criticalitys
           = f.input :business_criticality, 
-            label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: business_criticality_help }}"),
+            label: raw("Business Criticality #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.business_criticality_help') }}"),
             as: :select, 
             collection: business_criticalitys.keys,
             label_method: -> (k) { business_criticalitys[k] },
             required:true
         .col-sm-6
           = f.input :number_of_endusers ,
-            label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: number_of_endusers_help }}")
+            label: raw("Number of Endusers #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.number_of_endusers_help') }}")
 
 
 :javascript
@@ -137,8 +130,6 @@
     // for attribute: when labels have the for attribute and you add an ID to the input it will wire that up
     // remove label -> input autofocus because the help in the label and disabled and readonly fields
     $('[for]').removeAttr('for')
-    // renew popover 
-    $('[data-toggle="popover"]').popover('destroy');
-    $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0");
-    $('[data-toggle="popover"]').popover( {placement: 'top', trigger: 'focus'});
   });
+
+= render partial: '/masterdata_cockpit/application/renew_popover'

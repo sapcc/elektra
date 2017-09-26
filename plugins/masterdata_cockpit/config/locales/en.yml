@@ -1,0 +1,16 @@
+en:
+  masterdata_cockpit:
+    co_help: 'If you dont know what specific cost object object you should use, talk to the controller repsonsible for it'
+    inherited_help: 'Inherit the cost object from domain masterdata'
+    solution_help:  'Choose a solution, if the project is used for one of the strategic Solutions of SAP'
+    revenue_relevances_help: 'Indicating if the project is directly or indirectly creating revenue'
+    co_type_help: 'If unclear, please ask the responsible controller of the given cost object for permission'
+    co_name_help: 'Name or Id of the used cost object where the costs should be charged to'
+    responsibility_help: 'Please define the person in charge'
+    responsible_controller_help: 'The person responsible for the given cost object and empowered to decide, which costs are billed on this cost object'
+    responsible_operator_help: 'The person responsible for uptime of the systems and who can make decisions on e.g. Instance restarts etc. Used as emergency engineering contact, if CCloud operations needs a name'
+    responsible_security_expert_help: 'The person responsible to request and validate firewall and other security settings. The person who will be contacted by security e.g. If a vulnerability is found by a scan etc.'
+    responsible_product_owner_help: 'The person owning the applications features'
+    importance_help: 'To define the importance of this project set the fields below'
+    business_criticality_help: 'Indicates, how critical the system is for your ability to provide your service to your customer'
+    number_of_endusers_help: 'Roughly estimated number of users the service you provide. Always provide the lower end (-1 indicates that it is infinite)'

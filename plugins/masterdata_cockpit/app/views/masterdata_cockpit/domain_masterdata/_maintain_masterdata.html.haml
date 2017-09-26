@@ -6,36 +6,32 @@
 = f.input :domain_name, :as => :hidden, :input_html => { :value => @scoped_domain_name }
 = f.input :description, label: "Description"
 
-- projects_can_inherit_help = 'If yes projects can use the cost object from domain'
-- co_type_help = 'If unclear, please ask the responsible controller of the given cost object for permission'
-- co_name_help = 'Name or Id of the used cost object where the costs should be charged to'
-
 %label.control-label Cost Object
-%a.help-link{data:{content: "If you don't know what specific cost object object you should use, talk to the controller repsonsible for it", popover: {type: "help-hint"}, toggle: "popover"}}
+%a.help-link{data:{content: t('masterdata_cockpit.co_help'), popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
 .panel.panel-default
   .panel-body
     .row
       .col-sm-3
         = f.input :cost_object_projects_can_inherit, 
-          label: raw("Projects can inherit #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: projects_can_inherit_help }}"),
+          label: raw("Projects can inherit #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.projects_can_inherit_help') }}"),
           as: :select, 
           include_hidden:false, 
           required:true
       .col-sm-3
         - types = MasterdataCockpit::Config.cost_object_types
         = f.input :cost_object_type, 
-            label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }}"),
+            label: raw("Type #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }}"),
             as:           :select, 
             collection:   types.keys, 
             label_method: -> (k) { types[k] },
             required:true
       .col-sm-6
         = f.input :cost_object_name,
-          label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }}"),
+          label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }}"),
           required:true
 %label.control-label Responsibility
-%a.help-link{data:{content: "Please define the person in charge for the topics below", popover: {type: "help-hint"}, toggle: "popover"}}
+%a.help-link{data:{content: t('masterdata_cockpit.responsibility_help'), popover: {type: "help-hint"}, toggle: "popover"}}
   = icon('question-circle')
 .panel.panel-default
   .panel-body
@@ -47,7 +43,7 @@
     .row
       .col-md-12.op-help-block
         = icon ('info-circle')
-        The person responsible for the given cost object and empowered to decide, which costs are billed on this cost object.
+        = t('masterdata_cockpit.responsible_controller_help')
 
 :javascript
   $(function(){
