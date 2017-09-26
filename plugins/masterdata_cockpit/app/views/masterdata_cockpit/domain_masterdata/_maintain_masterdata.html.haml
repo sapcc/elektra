@@ -34,8 +34,9 @@
         = f.input :cost_object_name,
           label: raw("Name #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }}"),
           required:true
-
 %label.control-label Responsibility
+%a.help-link{data:{content: "Please define the person in charge for the topics below", popover: {type: "help-hint"}, toggle: "popover"}}
+  = icon('question-circle')
 .panel.panel-default
   .panel-body
     .row
@@ -47,8 +48,17 @@
       .col-md-12.op-help-block
         = icon ('info-circle')
         The person responsible for the given cost object and empowered to decide, which costs are billed on this cost object.
+
 :javascript
-  // to hide the label of the email input field
   $(function(){
-    $('label.control-label.email.optional').html("&nbsp")
+    // to hide the label of the email input field
+    $('label.control-label.email.optional').html("&nbsp");
+    // for attribute: when labels have the for attribute and you add an ID to the input it will wire that up
+    // remove label -> input autofocus because the help in the label and disabled and readonly fields
+    $('[for]').removeAttr('for')
+    // renew popover 
+    $('[data-toggle="popover"]').popover('destroy');
+    $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0");
+    $('[data-toggle="popover"]').popover( {placement: 'top', trigger: 'focus'});
   });
+

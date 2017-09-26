@@ -131,7 +131,14 @@
 
 
 :javascript
-  // to hide the label of the email input field
   $(function(){
-    $('label.control-label.email.optional').html("&nbsp")
+    // to hide the label of the email input field
+    $('label.control-label.email.optional').html("&nbsp");
+    // for attribute: when labels have the for attribute and you add an ID to the input it will wire that up
+    // remove label -> input autofocus because the help in the label and disabled and readonly fields
+    $('[for]').removeAttr('for')
+    // renew popover 
+    $('[data-toggle="popover"]').popover('destroy');
+    $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0");
+    $('[data-toggle="popover"]').popover( {placement: 'top', trigger: 'focus'});
   });

@@ -1,8 +1,13 @@
+- co_type_help              = 'If unclear, please ask the responsible controller of the given cost object for permission'
+- co_name_help              = 'Name or Id of the used cost object where the costs should be charged to'
+- revenue_relevances_help   = 'to be defined'
+
 .col-md-3
   .form-group.select.required.project_masterdata_revenue_relevance
-    %label.control-label.select.required{ for:"project_masterdata_revenue_relevance" }
+    %label.control-label.select.required
       %abbr{title:"", "data-original-title":"required"} *
       Revenue Relevance
+      = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: revenue_relevances_help }
     %select.form-control.select.required{required:"required", "aria-required":"true", name:"project_masterdata[revenue_relevance]", id:"project_masterdata_revenue_relevance"}
       - @solution_revenue_relevances.keys.sort.each do |rr| 
         %option{value: rr}
@@ -13,21 +18,30 @@
   - co_name = @solution_revenue_relevances[@solution_revenue_relevances.keys.sort[0]]["name"]
   %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
     .form-group.select.required.project_masterdata_cost_object_type
-      %label.control-label.select.required{ for:"project_masterdata_cost_object_type" }
+      %label.control-label.select.required
         %abbr{title:"", "data-original-title":"required"} *
         Type
+        = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }
       %select.form-control.select.required{required:"required", "aria-required":"true", name:"project_masterdata[cost_object_type]", id:"project_masterdata_cost_object_type"}
         %option{value: co_type}
           #{MasterdataCockpit::Config.cost_object_types[co_type]}
   .col-md-3
     .form-group.string.required.project_masterdata_cost_object_name
-      %label.control-label.string.required{ for:"project_masterdata_cost_object_name" }
+      %label.control-label.string.required
         %abbr{title:"", "data-original-title": "required"} *
         Name
+        = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: co_name_help }
       %input.form-control.string.required{readonly: true, required:"required", "aria-required":"true",value: co_name, name:"project_masterdata[cost_object_name]", id:"project_masterdata_cost_object_name", type:"text"}
 
 :javascript
   $('select#project_masterdata_revenue_relevance').change(function(){
     var solution = $("select#project_masterdata_solution").val();
     $.get("#{plugin('masterdata_cockpit').project_masterdata_cost_object_path()}", { revenue_relevance: $(this).val(), solution: solution } , function(data){});
-  })
+  });
+  // renew popover 
+  $(function(){
+    // renew popover 
+    $('[data-toggle="popover"]').popover('destroy');
+    $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0");
+    $('[data-toggle="popover"]').popover( {placement: 'top', trigger: 'focus'});
+  });
