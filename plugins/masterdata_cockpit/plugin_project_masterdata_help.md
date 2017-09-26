@@ -1,7 +1,7 @@
 #### Cost Object
 Costcenter, internal order, WBS or sales order where the costs should be charged to. If unclear, please ask the responsible controller of the given costobject for permission
 
-* **Inherited from domain:** Is only vissible if the Cost Object is inherited from domain. 
+* **Inherited from domain:** Is only vissible if the Cost Object is inheritable from domain. 
 * **Solution:** Choose a solution, if the project is used for one of the strategic Solutions of SAP.
 * **Revenue Relevance:** Indicating if the project is directly or indirectly creating revenue. You can choose between two types
   * ***enabling:*** Project that is used to enable other (generating) products to provide their service (p.e. Service provided to internal customers, like converged cloud or development system)  
