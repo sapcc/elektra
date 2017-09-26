@@ -123,27 +123,17 @@ module Loadbalancing
     end
 
     def attach_floatingip
-
       enforce_permissions("loadbalancing:loadbalancer_assign_ip")
-
+      # get loadbalancer
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       vip_port_id = @loadbalancer.vip_port_id
-      @floating_ip = Networking::FloatingIp.new(nil, params[:floating_ip])
 
+      # update floating ip with the new assigned interface ip
+      @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
+      @floating_ip.id = params[:floating_ip][:ip_id]
+      @floating_ip.port_id = vip_port_id
 
-      success = begin
-        @floating_ip = services_ng.networking.attach_floatingip(params[:floating_ip][:ip_id], vip_port_id)
-        if @floating_ip.port_id
-          true
-        else
-          false
-        end
-      rescue => e
-        @floating_ip.errors.add('message', e.message)
-        false
-      end
-
-      if success
+      if @floating_ip.save
         audit_logger.info(current_user, "has attached", @floating_ip, "to loadbalancer", params[:id])
 
         respond_to do |format|
