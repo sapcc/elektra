@@ -1,31 +1,26 @@
 #### Cost Object
-Costcenter, internal order, WBS or sales order where the costs should be charged to. If unclear, please ask the responsible controller of the given costobject for permission
 
-* **Inherited from domain:** Is only vissible if the Cost Object is inheritable from domain. 
-* **Solution:** Choose a solution, if the project is used for one of the strategic solutions of SAP.
-* **Revenue Relevance:** Indicating if the project is directly or indirectly creating revenue. You can choose between two types
-  * ***enabling:*** Project that is used to enable other (generating) products to provide their service (p.e. Service provided to internal customers, like converged cloud or development system)  
-  * ***generating:*** Project that is used to provide dircetly a service for an external customer (usually productive systems)
-* **Type:** Type of the cost object, you can choose the following types
-  * Cost Center
-  * Internal Order
-  * Sales Order
-  * WBS Element
-* **Name:** Name of the costobject (can be a ID or Name)
+The *cost object* is the cost center, internal order, WBS element or sales order to which the costs for this project will be charged. If in doubt, ask the responsible controller of the cost object for permission.
+
+* **Inherited from domain:** You can use the cost object defined by the domain if the domain administrator allows this.
+* Choose a **Solution** if the project is used for one of the strategic solutions of SAP.
+* The **revenue relevance** indicates if the project is directly or indirectly creating revenue:
+  * **Enabling** projects enable other (generating) products to provide their service (for example, services provided to SAP-internal customers).
+  * **Generating** projects provide services directly to an external customer (usually productive systems).
+* The **type** and **name** fields specify the cost object. Some types of cost object have IDs instead of names. Enter these in the **name** field as well.
 
 #### Responsibility
-Who is who to contact in case of fire
 
-* **Operator:** The person responsible for uptime of the systems and who can make decisions on e.g. Instance restarts etc. Used as emergency engineering contact, if CCloud operations needs a name.
-* **Security Expert:** The person responsible to request and validate firewall and other security settings. The person who will be contacted by security e.g. If a vulnerability is found by a scan etc.
-* **Product Owner:** The person owning the applications features.
-* **Controller:** The person responsible for the given Costobject and empowered to decide, which costs are billed on this costobject.
+These persons may be contacted by Converged Cloud operations or other parties in case of questions.
+
+* The **operator** is responsible for the uptime of the systems in this project, and who can decide, for example, when an instance may be restarted. Used as emergency engineering contact by CCloud operations.
+* The **security expert** is responsible for requesting and validating firewall and other security settings. This person will be contacted by security, for example, if a vulnerability is found.
+* The **product owner** holds the vision for the product and is responsible for maintaining, prioritizing and updating the backlog.
+* The **controller** is responsible for the given cost object and may decide which costs are billed on this cost object.
 
 #### Importance
-Indicates how important is the project
 
-* **Business Criticality:** Indicates, how critical the system is for your ability to provide your service to your customer. You can choose between tree types
-  * Development
-  * Testing
-  * Productive
-* **Number of Endusers:** Roughly estimated number of users the service you provide. Always provide the lower end (-1 indicates that it is infinite).
+The importance of a project is measured in two ways:
+
+* The **business criticality** indicates how critical the system is for your ability to provide your service to your customer. You can choose between *Development*, *Testing* and *Productive*.
+* The **number of endusers** is a rough estimate of the number of users this project provides services to. Always enter the lower end, or -1 to indicate an infinite number of users.
