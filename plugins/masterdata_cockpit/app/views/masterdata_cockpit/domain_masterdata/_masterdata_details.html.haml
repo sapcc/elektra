@@ -3,9 +3,8 @@
   %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
   .masterdata-action
-    - unless modal?
-      - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
-        = link_to 'Edit Masterdata', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
+    - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
+      = link_to 'Edit Masterdata', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
   %hr.masterdata-hr-label
   .row
     .col-sm-4.details-label
