@@ -9,36 +9,29 @@ module DnsService
     end
 
     def create
-      @zone_request = ::DnsService::ZoneRequest.new(nil)
-      domain_type = params[:zone_request][:domain_type]
-      @zone_request.attributes = params[:zone_request][domain_type]
-      @zone_request.domain_type = domain_type
-      @zone_name = params[:zone_request][domain_type][:name]
-      @zone_request.name.chomp!('.') if @zone_request.name.last=='.'
-
+      @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
       inquiry = nil
       if @zone_request.valid?
-        @zone_request.name += ".c.#{current_region}.cloud.sap." if domain_type=='subdomain'
         begin
           dns_admins = list_ccadmin_master_dns_admins
           inquiry = services.inquiry.create_inquiry(
-              'zone',
-              "#{@zone_request.name} - #{@zone_request.description}",
-              current_user,
-              @zone_request.attributes.delete_if{|k,v| k=='id'}.to_json,
-              dns_admins,
-              {
-                  "approved": {
-                      "name": "Approve",
-                      "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol, domain_id: @cloud_admin_domain.name, project_id: nil)}?overlay=#{plugin('dns_service').create_zone_wizard_path(domain_id: @cloud_admin_domain.name,project_id: @master_project.name)}"
-                  }
-              },
-              @scoped_domain_id, # requester domain
-              {
-                  domain_name: @scoped_domain_name,
-                  region: current_region
-              },
-              @cloud_admin_domain.id # approver domain
+            'zone',
+            "#{@zone_request.zone_name} - #{@zone_request.description}",
+            current_user,
+            @zone_request.attributes.delete_if{|k,v| k=='id'}.to_json,
+            dns_admins,
+            {
+                "approved": {
+                    "name": "Approve",
+                    "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol, domain_id: @cloud_admin_domain.name, project_id: nil)}?overlay=#{plugin('dns_service').create_zone_wizard_path(domain_id: @cloud_admin_domain.name,project_id: @master_project.name)}"
+                }
+            },
+            @scoped_domain_id, # requester domain
+            {
+                domain_name: @scoped_domain_name,
+                region: current_region
+            },
+            @cloud_admin_domain.id # approver domain
           )
           unless inquiry.errors.empty?
             inquiry.errors.each{|k,m| @zone_request.errors.add(k,m)}

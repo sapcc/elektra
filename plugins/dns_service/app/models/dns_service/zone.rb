@@ -1,34 +1,41 @@
-module DnsService
-  class Zone < Core::ServiceLayer::Model
+# frozen_string_literal: true
 
-    validates :name, presence: {message: 'Please provide the domain name'}, on: :create
-    validates :email, presence: {message: 'Please provide an email'}
+module DnsService
+  # Presents the zone model
+  class Zone < Core::ServiceLayer::Model
+    validates :name, presence: { message: 'Please provide the domain name' },
+                     on: :create
+    validates :email, presence: { message: 'Please provide an email' }
 
     def attributes_for_create
-      zone_attributes = attributes
-      zone_attributes[:ttl] = zone_attributes[:ttl].to_i if zone_attributes[:ttl]
-      zone_attributes[:name] = zone_attributes[:name].strip if zone_attributes[:name]
-      zone_attributes[:email] = zone_attributes[:email].strip if zone_attributes[:email]
-      zone_attributes[:attributes] = zone_attributes[:attributes] if zone_attributes[:attributes]
+      zone_attributes = {}
+      zone_attributes[:ttl] = read('ttl').to_i if read('ttl')
+      zone_attributes[:name] = read('name').strip if read('name')
+      zone_attributes[:email] = read('email').strip if read('email')
+      zone_attributes[:description] = read('description')
+      zone_attributes[:attributes] = (read('attributes') || {}).keep_if do |k,_v|
+        %w[external label].include?(k)
+      end
 
-      zone_attributes.delete(:id)
-      zone_attributes.delete_if { |k, v| v.blank? }
+      zone_attributes.delete_if { |_k, v| v.blank? }
     end
 
     def attributes_for_update
-      zone_attributes = attributes
-      zone_attributes[:ttl] = zone_attributes[:ttl].to_i if zone_attributes[:ttl]
-      zone_attributes[:email] = zone_attributes[:email].strip if zone_attributes[:email]
-      zone_attributes[:project_id] = zone_attributes[:project_id].strip if zone_attributes[:project_id]
+      zone_attributes = attributes_for_create
+      if read('project_id')
+        zone_attributes[:project_id] = read('project_id').strip
+      end
       zone_attributes.delete(:name)
-      zone_attributes.delete_if { |k, v| v.blank? }
+      zone_attributes.delete_if { |_k, v| v.blank? }
     end
 
     # msp to driver create method
     def perform_driver_create(create_attributes)
-      name  = create_attributes.delete("name")
-      email = create_attributes.delete("email")
-      @driver.create_zone(name, email, create_attributes)
+      attrs = create_attributes.with_indifferent_access
+      name  = attrs.delete('name')
+      email = attrs.delete('email')
+
+      @driver.create_zone(name, email, attrs)
     end
   end
 end
