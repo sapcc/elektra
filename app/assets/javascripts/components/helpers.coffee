@@ -30,6 +30,10 @@ ReactHelpers.findInArray = (items,itemId) ->
 ReactHelpers.arrayEqual = (a, b) ->
   a.length is b.length and a.every (elem, i) -> elem is b[i]
 
+# Returns an array with only unique values (doesn't work for arrays of objects)
+ReactHelpers.arrayOnlyUnique = (arr) ->
+  arr.filter((value, index, self) -> self.indexOf(value) == index )
+
 # Updates attributes of items in an item list in state. Updates are passed as a hash map (attribute-key: attribute-value)
 ReactHelpers.updateItemInList = (state, itemId, itemIdKey, updates = {}) ->
   index = ReactHelpers.findIndexInArray(state.items, itemId, itemIdKey)
