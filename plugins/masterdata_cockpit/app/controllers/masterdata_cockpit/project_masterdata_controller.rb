@@ -16,12 +16,14 @@ module MasterdataCockpit
         # no masterdata was found please define it
         solutions
         @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
+        @project_masterdata.description = @active_project.description
         render action: :new
       end
     end
     
     def new
       @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
+      @project_masterdata.description = @active_project.description
     end
 
     def edit
