@@ -34,6 +34,7 @@ if (typeof(window.console) == "undefined" || typeof(window.console.log) == "unde
 
 # init help hint popovers
 @initHelpHint= () ->
+  # https://stackoverflow.com/questions/32911355/whats-the-tabindex-1-in-bootstrap-for
   $('[data-toggle="popover"][data-popover-type="help-hint"]').attr("tabindex","0")
   $('[data-toggle="popover"][data-popover-type="help-hint"]').popover
     placement: 'top'

@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/flystack/misty.git
-  revision: 3e901a96839cba9c2704be5ee6e8fe6cff7adbd2
+  revision: 4898b33a3d3150af0bbd15aaa78115170ecb20c8
   branch: master
   specs:
-    misty (0.7.2)
+    misty (0.8.0)
       json (>= 1.8.3, < 3)
 
 GIT
@@ -19,18 +19,6 @@ GIT
   specs:
     arc-client (0.7.1)
       rest-client (~> 2.0.0.rc3)
-
-GIT
-  remote: https://github.com/sapcc/fog-openstack-sap-billing.git
-  revision: 1cfeb7e5064c2b6cdbf27c1a683fae3feb63b64f
-  branch: master
-  specs:
-    fog-openstack-sap-billing (0.1.1)
-      fog-core (>= 1.40)
-      fog-json (>= 1.0)
-      fog-openstack (>= 0.1.11)
-      fog-xml (>= 0.1)
-      ipaddress (>= 0.8)
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
@@ -50,7 +38,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty-cc.git
-  revision: c0253bcfc0dd0f4c5ee829224e056c4751c38685
+  revision: 6b6f2300844671442d416bbdbabb84988079a421
   specs:
     misty-cc (0.1.0)
       misty (>= 0.5.1)
@@ -90,12 +78,6 @@ PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
-
-PATH
-  remote: plugins/cost_control
-  specs:
-    cost_control (0.0.1)
-      fog-openstack-sap-billing (~> 0.1.0)
 
 PATH
   remote: plugins/dns_service
@@ -321,9 +303,6 @@ GEM
     fog-json (1.0.2)
       fog-core (~> 1.0)
       multi_json (~> 1.10)
-    fog-xml (0.1.3)
-      fog-core
-      nokogiri (>= 1.5.11, < 2.0.0)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.84.0)
@@ -587,7 +566,6 @@ DEPENDENCIES
   compass-rails
   compute!
   config
-  cost_control!
   cucumber-rails
   database_cleaner
   dns_service!
@@ -595,7 +573,6 @@ DEPENDENCIES
   elektra-extension!
   factory_girl_rails (~> 4.0)
   fog-openstack!
-  fog-openstack-sap-billing!
   font-awesome-sass
   foreman
   friendly_id

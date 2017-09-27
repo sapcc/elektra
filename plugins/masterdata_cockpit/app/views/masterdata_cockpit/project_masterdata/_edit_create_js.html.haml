@@ -1,0 +1,24 @@
+= content_for :javascripts do
+  :javascript
+    var solutions = #{@solutions.to_json.html_safe};
+    var cost_object_inherited = #{@project_masterdata.cost_object_inherited};
+    
+    $(function() {
+
+        if (cost_object_inherited) {
+          $('select#project_masterdata_solution').prop('disabled', function(i, v) { return !v; });
+          $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
+          $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
+        }
+        
+        $('#project_masterdata_cost_object_inherited').change(function(){
+          $('select#project_masterdata_solution').prop('disabled', function(i, v) { return !v; });
+          $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
+          $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
+        })
+        
+        $('select#project_masterdata_solution').change(function(){
+          $.get("#{plugin('masterdata_cockpit').project_masterdata_revenue_relevances_path()}", { solution: $(this).val() } , function(data){});
+        })
+        
+    });

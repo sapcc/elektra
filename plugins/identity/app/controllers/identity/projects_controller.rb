@@ -128,7 +128,9 @@ module Identity
     def check_wizard_status
       return if %w[ccadmin cloud_admin].include?(@scoped_domain_name)
 
-      service_names = %w[cost_control networking resource_management].keep_if do |name|
+      # for all services that implements a wizard integration do
+      # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
+      service_names = %w[masterdata_cockpit networking resource_management].keep_if do |name|
         services.available?(name.to_sym)
       end
 
@@ -142,8 +144,9 @@ module Identity
       @wizard_finished = true
       @project_profile = ProjectProfile.find_or_create_by_project_id(@scoped_project_id)
 
-      # for all services do
-      %w[resource_management cost_control networking].each do |service_name|
+      # for all services that implements a wizard integration do
+      # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
+      %w[resource_management masterdata_cockpit networking].each do |service_name|
         next unless services.available?(service_name.to_sym)
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
@@ -196,22 +199,55 @@ module Identity
       @project_profile.wizard_finished?('resource_management')
     end
 
-    def update_cost_control_wizard_status
-      billing_data = services.cost_control.find_project_masterdata(
-        @scoped_project_id
-      )
-
-      if billing_data && billing_data.cost_object_id
-        @project_profile.update_wizard_status(
-          'cost_control', ProjectProfile::STATUS_DONE,
-          cost_object: billing_data.cost_object_id,
-          type: billing_data.cost_object_type
-        )
-      else
-        @project_profile.update_wizard_status('cost_control', nil)
+    def update_masterdata_cockpit_wizard_status
+      project_masterdata = nil
+      @project_masterda_is_complete = false
+      @project_masterdata_missing_attributes = nil
+      begin
+        project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
+        # @project_masterda_is_complete is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
+        @project_masterda_is_complete =  project_masterdata.is_complete
+      rescue
+        # the api will return with 404 if no masterdata was found all other cases will return false -> service not available
+        #if e.code == 404
+        #  return true
+        #else
+        #  return false
+        #end
       end
-      @project_profile.wizard_finished?('cost_control')
+      
+      if project_masterdata && @project_masterda_is_complete
+        @project_profile.update_wizard_status(
+          'masterdata', ProjectProfile::STATUS_DONE
+        )
+      elsif project_masterdata && !@project_masterda_is_complete
+        # @project_masterdata_missing_attributes is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
+        @project_masterdata_missing_attributes = project_masterdata.missing_attributes
+        @project_profile.update_wizard_status('masterdata', nil)
+      else
+        @project_profile.update_wizard_status('masterdata', nil)
+      end
+      
+      @project_profile.wizard_finished?('masterdata')
     end
+
+# Disable cost_control and can be deleted after switch to new masterdata api
+#    def update_cost_control_wizard_status
+#      billing_data = services.cost_control.find_project_masterdata(
+#        @scoped_project_id
+#      )
+#
+#      if billing_data && billing_data.cost_object_id
+#        @project_profile.update_wizard_status(
+#          'cost_control', ProjectProfile::STATUS_DONE,
+#          cost_object: billing_data.cost_object_id,
+#          type: billing_data.cost_object_type
+#        )
+#      else
+#        @project_profile.update_wizard_status('cost_control', nil)
+#      end
+#      @project_profile.wizard_finished?('cost_control')
+#    end
 
     def update_networking_wizard_status
       if current_user.has_role?('admin') && !current_user.has_role?('network_admin')

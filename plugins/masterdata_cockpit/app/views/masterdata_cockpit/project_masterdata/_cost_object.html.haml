@@ -1,0 +1,21 @@
+- co_type = @cost_object["type"]
+- co_name = @cost_object["name"]
+
+%div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
+  .form-group.select.required.project_masterdata_cost_object_type
+    %label.control-label.select.required
+      %abbr{title:"", "data-original-title":"required"} *
+      Type
+      = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_type_help') }
+    %select.form-control.select.required{required:"required", "aria-required":"true", name:"project_masterdata[cost_object_type]", id:"project_masterdata_cost_object_type"}
+      %option{value: co_type}
+        #{MasterdataCockpit::Config.cost_object_types[co_type]}
+.col-md-3
+  .form-group.string.required.project_masterdata_cost_object_name
+    %label.control-label.string.required
+      %abbr{title:"", "data-original-title": "required"} *
+      Name
+      = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.co_name_help') }
+    %input.form-control.string.required{readonly: true, required:"required", "aria-required":"true",value: co_name, name:"project_masterdata[cost_object_name]", id:"project_masterdata_cost_object_name", type:"text"}
+
+= render partial: '/masterdata_cockpit/application/renew_popover'

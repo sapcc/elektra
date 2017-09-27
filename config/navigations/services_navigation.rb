@@ -136,18 +136,14 @@ SimpleNavigation::Configuration.run do |navigation|
     #   storage_nav.dom_attributes = {class: 'content-list'}
     end
 
-    primary.item :resource_management, 'Capacity & Cost Control', nil,
+    primary.item :resource_management, 'Capacity & Masterdata', nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
       if: -> {services_ng.available?(:resource_management,:resources) or services.available?(:cost_control)} do |monitoring_nav|
-      # monitoring_nav.item :metrics, 'Metrics', '#'
-      # monitoring_nav.item :logs, 'Logs', '#'
-      # monitoring_nav.item :monitoring, 'Monitoring', '#'
-      monitoring_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').resources_path}, if: -> { services_ng.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
-      monitoring_nav.item :cost_control,        'Cost Control',        -> {plugin('cost_control').cost_object_path}, if: -> { services.available?(:cost_control) }, highlights_on: Proc.new { params[:controller][/cost_control\/.*/] }
       monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit) && current_user && current_user.is_allowed?('audit:application_get') }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-
-
-      # monitoring_nav.dom_attributes = {class: 'content-list'}
+      # Disable cost_control and can be deleted after switch to new masterdata api
+      #monitoring_nav.item :cost_control,        'Cost Control',        -> {plugin('cost_control').cost_object_path}, if: -> { services.available?(:cost_control) }, highlights_on: Proc.new { params[:controller][/cost_control\/.*/] }
+      monitoring_nav.item :masterdata_cockpit,  'Masterdata Cockpit',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services_ng.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
+      monitoring_nav.item :resource_management, 'Resource Management ', -> {plugin('resource_management').resources_path}, if: -> { services_ng.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
     end
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
