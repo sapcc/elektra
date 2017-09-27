@@ -35,7 +35,7 @@
 
           - if plugin_available?('resource_management') && current_user.is_allowed?('resource_management:domain_admin_list')
             %li
-              = link_to "Resource Management", plugin('resource_management').admin_path
+              = link_to "Domain Resources Administration", plugin('resource_management').admin_path
 
 
       - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
