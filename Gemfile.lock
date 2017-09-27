@@ -38,9 +38,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty-cc.git
-  revision: 6b6f2300844671442d416bbdbabb84988079a421
+  revision: 311ec271346f9b9fc394f4f9edfcc8165a51aea6
   specs:
-    misty-cc (0.1.0)
+    misty-cc (0.1.1)
       misty (>= 0.5.1)
 
 GIT
@@ -121,6 +121,11 @@ PATH
   remote: plugins/lookup
   specs:
     lookup (0.0.1)
+
+PATH
+  remote: plugins/masterdata_cockpit
+  specs:
+    masterdata_cockpit (0.0.1)
 
 PATH
   remote: plugins/networking
@@ -590,6 +595,7 @@ DEPENDENCIES
   loadbalancing!
   lookup!
   lyra-client!
+  masterdata_cockpit!
   misty!
   misty-cc!
   monsoon-openstack-auth!
