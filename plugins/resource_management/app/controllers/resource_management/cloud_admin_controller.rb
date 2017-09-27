@@ -10,6 +10,9 @@ module ResourceManagement
     authorization_required
 
     def index
+      # NOTE: do not need to get data for all clusters here; the totals for
+      # quota and usage for the cluster already include the quotas and usages
+      # of other clusters for shared resources
       @cluster = services_ng.resource_management.find_current_cluster
       @view_services = @cluster.services
 
@@ -20,7 +23,7 @@ module ResourceManagement
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @cluster = services_ng.resource_management.find_current_cluster()
+      @cluster = services_ng.resource_management.find_current_cluster
       @view_services = @cluster.services.select { |srv| srv.area.to_sym == @area }
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
@@ -120,8 +123,24 @@ module ResourceManagement
       @service_type  = params.require(:service).to_sym
       @resource_name = params.require(:resource).to_sym
 
-      cluster = services_ng.resource_management.find_current_cluster(service: @service_type.to_s, resource: @resource_name.to_s)
-      @cluster_resource = cluster.resources.first or raise ActiveRecord::RecordNotFound, "no data for cluster"
+      # get the cluster resource for the current cluster
+      clusters, current_cluster_id = services_ng.resource_management.list_clusters(service: @service_type.to_s, resource: @resource_name.to_s, local: true)
+      cluster_resources = clusters.reject { |c| c.resources.empty? }.map { |c| c.resources.first }
+      @cluster_resource = cluster_resources.find { |r| r.cluster_id == current_cluster_id } or raise ActiveRecord::RecordNotFound, "no data for cluster"
+
+      # if this is a shared resource, we need to show quota/usage consumption in foreign clusters as well
+      if @cluster_resource.shared_service?
+        @other_cluster_resources = cluster_resources.select { |r| r.cluster_id != current_cluster_id && r.shared_service? }
+        # the bars at the top are aggregated across all clusters for shared resources
+        @combined_resource = ResourceManagement::NewStyleResource.new(nil, @cluster_resource.attributes)
+        all_cluster_resources = [@cluster_resource, @other_cluster_resources].flatten
+        @combined_resource.domains_quota = all_cluster_resources.map(&:domains_quota).sum
+        @combined_resource.usage = all_cluster_resources.map(&:usage).sum
+      else
+        @other_cluster_resources = []
+        @combined_resource = @cluster_resource
+      end
+
       domains = services_ng.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 

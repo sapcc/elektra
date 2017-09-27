@@ -1,0 +1,14 @@
+- unless @other_cluster_resources.empty?
+  %table.table
+    %thead
+      %tr
+        %th Foreign Cluster
+        %th Total domain quota
+        %th Usage
+    %tbody
+      - @other_cluster_resources.sort_by(&:cluster_id).each do |resource|
+        - data_type = resource.data_type
+        %tr
+          %td.col-md-4= resource.cluster_id
+          %td.col-md-4= data_type.format(resource.domains_quota)
+          %td.col-md-4= data_type.format(resource.usage)

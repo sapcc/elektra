@@ -19,6 +19,9 @@ module ResourceManagement
     def service_area
       read(:service_area)
     end
+    def shared_service?
+      read(:service_shared)
+    end
 
     def data_type
       Core::DataType.from_unit_name(read(:unit) || '')

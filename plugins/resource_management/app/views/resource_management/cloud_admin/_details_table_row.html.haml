@@ -2,10 +2,10 @@
 - critical  = resource.quota < [resource.projects_quota, resource.usage].max
 
 %tr{ class: critical ? 'danger' : '', data: { id: resource.domain_id } }
-  %td.col-md-3
+  %td.col-md-4
     = resource.domain_name
     .small.text-muted= resource.domain_id
-  %td.col-md-3
+  %td.col-md-2
     .resource-approved-quota.input-group.input-group-sm
       = data_type.format(resource.quota)
   %td.col-md-2

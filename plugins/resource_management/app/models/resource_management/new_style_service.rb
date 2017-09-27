@@ -8,6 +8,11 @@ module ResourceManagement
       read(:area).to_sym
     end
 
+    def shared?
+      val = read(:shared)
+      val.nil? ? false : val
+    end
+
     def project_id
       read(:project_id)
     end
@@ -31,6 +36,7 @@ module ResourceManagement
       metadata = {
         service_type:      read(:type).to_sym,
         service_area:      read(:area).to_sym,
+        service_shared:    shared?,
         project_id:        read(:project_id),
         project_name:      read(:project_name),
         project_domain_id: read(:project_domain_id),

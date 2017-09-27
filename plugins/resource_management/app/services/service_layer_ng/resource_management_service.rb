@@ -12,6 +12,17 @@ module ServiceLayerNg
       api.resources.get_current_cluster(query).map_to(ResourceManagement::Cluster)
     end
 
+    def list_clusters(query={})
+      # Returns a pair of cluster list and ID of current cluster.
+      # .map_to() does not work here because the toplevel JSON object contains
+      # multiple keys ("clusters" and "current_cluster"), so instantiate the
+      # models manually.
+      resp = api_client.resources.get_clusters(query)
+      raise ::Core::Api::Error, resp if resp.code.to_i >= 400
+      clusters = resp.body['clusters'].map { |data| ResourceManagement::Cluster.new(self, data) }
+      return clusters, resp.body['current_cluster']
+    end
+
     def put_cluster_data(services)
       api_client.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
     end
