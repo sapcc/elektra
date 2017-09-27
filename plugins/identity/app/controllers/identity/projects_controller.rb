@@ -200,7 +200,6 @@ module Identity
     end
 
     def update_masterdata_cockpit_wizard_status
-      puts "##########"
       project_masterdata = nil
       @project_masterda_is_complete = false
       @project_masterdata_missing_attributes = nil
