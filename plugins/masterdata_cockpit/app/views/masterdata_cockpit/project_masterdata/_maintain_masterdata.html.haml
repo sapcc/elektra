@@ -12,7 +12,9 @@
   = f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance }
   = f.input :cost_object_type, :as  => :hidden, :input_html => { :value => @project_masterdata.cost_object_type }
   
-  = f.input :description, label: "Description"
+  = f.input :description, 
+    label: "Description",
+    readonly: true
   
   - co_readonly               = @project_masterdata.solution.nil? == false 
 
