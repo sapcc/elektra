@@ -20,7 +20,7 @@
   - if @project_masterdata_missing_attributes
     = wizard_step({ title: 'Masterdata', 
       mandatory: true,
-      status: @project_profile.wizard_status('masterdata'),
+      status: @project_profile.wizard_status('masterdata_cockpit'),
       action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
       }) do 
       %p 
@@ -31,10 +31,10 @@
     -# regular case to create new masterdata for the project
     = wizard_step({ title: 'Masterdata', 
       mandatory: true,
-      status: @project_profile.wizard_status('masterdata'),
+      status: @project_profile.wizard_status('masterdata_cockpit'),
       action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
       }) do 
-      - if @project_profile.wizard_finished?('masterdata')
+      - if @project_profile.wizard_finished?('masterdata_cockpit')
         %p 
           The Masterdata was successfully maintained. For more details take a look to the
           = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
