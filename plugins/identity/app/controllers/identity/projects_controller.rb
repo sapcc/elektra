@@ -218,17 +218,17 @@ module Identity
       
       if project_masterdata && @project_masterda_is_complete
         @project_profile.update_wizard_status(
-          'masterdata', ProjectProfile::STATUS_DONE
+          'masterdata_cockpit', ProjectProfile::STATUS_DONE
         )
       elsif project_masterdata && !@project_masterda_is_complete
         # @project_masterdata_missing_attributes is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
         @project_masterdata_missing_attributes = project_masterdata.missing_attributes
-        @project_profile.update_wizard_status('masterdata', nil)
+        @project_profile.update_wizard_status('masterdata_cockpit', nil)
       else
-        @project_profile.update_wizard_status('masterdata', nil)
+        @project_profile.update_wizard_status('masterdata_cockpit', nil)
       end
       
-      @project_profile.wizard_finished?('masterdata')
+      @project_profile.wizard_finished?('masterdata_cockpit')
     end
 
 # Disable cost_control and can be deleted after switch to new masterdata api
