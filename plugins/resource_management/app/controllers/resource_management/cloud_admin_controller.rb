@@ -81,6 +81,9 @@ module ResourceManagement
       # make sure that usage bars are rendered with correct quota sum
       @cluster_resource.domains_quota += @domain_resource.quota - old_quota
 
+      # this alias is necessary for rendering view partials from the "details" screen
+      @combined_resource = @cluster_resource
+
       respond_to do |format|
         format.js
       end
