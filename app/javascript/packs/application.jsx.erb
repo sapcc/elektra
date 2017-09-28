@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const content = elements.length > 0 ? elements[0] : document.body;
   const classes = content.className.split(' ');
   const containers = []
-  
+
   for(let className of classes) {
     if (pluginContainers[className]) {
       containers.push(React.createElement(pluginContainers[className], Object.assign({}, {key: className})))
