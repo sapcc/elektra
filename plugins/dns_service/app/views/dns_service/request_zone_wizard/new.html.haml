@@ -19,7 +19,7 @@
         style: "width: 70%"
       %p.help-block
         %i.fa.fa-info-circle
-        Please choose your DNS Backend.
+        Please choose your DNS Provider.
         #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/dns/'}
 
 
@@ -58,7 +58,6 @@
                 Before the Domain Name System can start to route queries for this domain to the correct name servers,
                 you must update the name server records either with the current DNS service or with the registrar for the
                 domain, as applicable. The new name server records are listed below.
-                #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/dns/'}.
               %ul
                 - if pools[@zone_request.domain_pool] && pools[@zone_request.domain_pool].ns_records
                   - pools[@zone_request.domain_pool].ns_records.sort { |a, b| a["priority"]<=>b["priority"]}.each do |record|
