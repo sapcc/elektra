@@ -151,7 +151,8 @@
 
   receiveCredentials = (clusterName, credentials) ->
     (dispatch) ->
-      JsHelpers.fileDownload(credentials.kubeconfig, 'config')
+      blob = new Blob([credentials.kubeconfig], {type: "application/x-yaml;charset=utf-8"})
+      saveAs(blob, "#{clusterName}-config")
 
 
 
