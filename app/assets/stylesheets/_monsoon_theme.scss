@@ -100,6 +100,13 @@ $brand-danger:  #e22;
 }
 // ---------------------------------------------------------------------------
 
+.input-group-addon {
+  &.select-addon {
+    padding-top: 4px;
+    padding-bottom: 3px;
+  }
+}
+
 .icon-monsoon {
   font-family: 'MonsoonIcons';
   display: inline-block;

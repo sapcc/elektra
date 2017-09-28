@@ -1,6 +1,10 @@
 = content_for :title do
   Request New Domain
 
+- pools = @pools.each_with_object({}){ |pool, hash| hash[pool.id] = pool }
+- pool_attributes = pools[@zone_request.domain_pool].read(:attributes).fetch('attributes') if pools[@zone_request.domain_pool]
+- subdomains = (pool_attributes.try(:fetch, 'subdomains') || '').split(',')
+
 = simple_form_for @zone_request, url: plugin('dns_service').create_zone_request_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   %div{class: 'modal-body'}
@@ -8,103 +12,179 @@
       .alert.alert-error
         = render_errors(@zone_request.errors)
 
-    = f.input :domain_type, required: true, label: 'Type' do
-      %p
-        You can request a subdomain at c.#{current_region}.cloud.sap or transfer
-        a custom domain which is hosted at SAP or a public name server.
-      %span.radio
-        %label
-          = f.radio_button :domain_type, "subdomain", data: {target: '#subdomain_panel'}
-          Subdomain (&lt;SUBDOMAIN&gt;.c.#{current_region}.cloud.sap.)
-          -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "c.#{current_region}.cloud.sap"}}
-      %span.radio
-        %label
-          = f.radio_button :domain_type, "rootdomain", data: {target: '#rootdomain_panel'}
-          Custom Domain
-          -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
+    = f.input :domain_pool, as: :select, label: 'DNS Provider' do
+      = f.select :domain_pool, @pools.uniq.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize), pool.id]},
+        { include_blank: true, selected: @zone_request.domain_pool },
+        class: "select required form-control",
+        style: "width: 70%"
+      %p.help-block
+        %i.fa.fa-info-circle
+        Please choose your DNS Backend.
+        #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/dns/'}
 
-    .tab-content
-      .tab-pane{ role: "tabpanel", id: "subdomain_panel", class: ('active' if @zone_request.domain_type=='subdomain') }
-        = f.simple_fields_for :subdomain do |subdomain|
-          = subdomain.input :name, label: 'Domain Name', required: true, input_wrapper_html: { style: "width: 70%" } do
+
+    %div{ data: {container: 'form_data'}, class: ('hidden' if @zone_request.domain_pool.blank?) }
+      %div{ data: {container: 'domain_type' }, class: ('hidden' if subdomains.empty?) }
+        = f.input :domain_type, required: true, label: 'Type' do
+          %p.description
+          %span.radio
+            %label
+              = f.radio_button :domain_type, "subdomain"
+              Subdomain
+              %p.help-block
+                %i.fa.fa-info-circle
+                %span{ data: {container: 'subdomains'} }= pool_attributes.try(:fetch, 'subdomains')
+          %span.radio
+            %label
+              = f.radio_button :domain_type, "rootdomain"
+              Custom Domain
+              -# %i.fa.fa-info-circle{data: {toggle: "tooltip", placement: "right", title: "Root Domain"}}
+
+      %div{ data: {container: 'domain_data'}, class: ('hidden' if @zone_request.domain_type.blank?) }
+        %div{data: {container: 'subdomain'}, class: ('hidden' if @zone_request.domain_type != 'subdomain') }
+          = f.input :name, label: 'Domain Name', required: true, input_wrapper_html: { style: "width: 70%" } do
             .input-group
-              = subdomain.text_field :name, value: @zone_name, class: "form-control text-right"
-              %span.input-group-addon .c.#{current_region}.cloud.sap.
+              = f.text_field :name, value: @zone_name, class: "form-control text-right"
+              %span.input-group-addon.select-addon
+                \.
+                = f.select :dns_domain, subdomains.collect { |subdomain| [subdomain, subdomain] }
 
-          = subdomain.input :email, required: true,
-            input_html: {value: @zone_request.email},
-            input_wrapper_html: { style: "width: 70%" }
+        %div{data: {container: 'rootdomain'}, class: ('hidden' if @zone_request.domain_type != 'rootdomain') }
+          %div.form-group{ data: {container: 'rootdomain_info'}, class: ('hidden' unless pools[@zone_request.domain_pool]) }
+            .col-sm-4
+            .col-sm-8
+              %p
+                %br
+                Before the Domain Name System can start to route queries for this domain to the correct name servers,
+                you must update the name server records either with the current DNS service or with the registrar for the
+                domain, as applicable. The new name server records are listed below.
+                #{link_to 'See the documentation for more information','https://documentation.global.cloud.sap/docs/dns/'}.
+              %ul
+                - if pools[@zone_request.domain_pool] && pools[@zone_request.domain_pool].ns_records
+                  - pools[@zone_request.domain_pool].ns_records.sort { |a, b| a["priority"]<=>b["priority"]}.each do |record|
+                    %li= record["hostname"]
 
-          = subdomain.input :ttl, required: false,
-            as: :integer,
-            input_html: {value: (@zone_request.ttl || 7200)},
-            input_wrapper_html: { style: "width: 20%" },
-            icon_hint: 'Time to live in seconds'
+          = f.input :name, label: 'Domain Name', required: true,
+            input_html: {value: @zone_request.name},
+            input_wrapper_html: { style: "width: 70%" },
+            icon_hint: "A fully qualified domain name, e.g. example.com."
 
-          = subdomain.input :description, required: false,
-            input_html: {value: @zone_request.description},
-            as: :text
+        = f.input :email, required: true, input_wrapper_html: { style: "width: 70%" } do
+          = f.text_field :email, value: @zone_request.email, class: "form-control"
+          %p.help-block{ data: {container: 'email_description'}, class: ('hidden' if pool_attributes.blank? || pool_attributes['mail_description'].blank?) }
+            %i.fa.fa-info-circle
+            %span= pool_attributes['mail_description'] if pool_attributes
 
-      .tab-pane{ role: "tabpanel", id: "rootdomain_panel", class: ('active' if @zone_request.domain_type=='rootdomain') }
-        = f.simple_fields_for :rootdomain do |rootdomain|
-          = rootdomain.input :domain_pool, as: :select, label: 'Domain Pool' do
+        = f.input :ttl, required: false,
+          as: :integer,
+          input_html: {value: (@zone_request.ttl || 7200)},
+          input_wrapper_html: { style: "width: 20%" },
+          icon_hint: 'Time to live in seconds'
 
-            = rootdomain.select :domain_pool, @pools.collect{|pool| [(pool.attributes.fetch("attributes", {}).fetch("label",nil) || pool.name.humanize),pool.id]},
-              {include_blank: true, selected: @zone_request.domain_pool},
-              class: "select required form-control",
-              style: "width: 70%"
+        = f.input :description, required: false,
+          input_html: {value: @zone_request.description},
+          as: :text
 
-            - if @pools.length>0
-              .ns-records{class: ('hidden' if @zone_request.domain_pool.blank?)}
-                %p
-                  %br
-                  Before the Domain Name System can start to route queries for this domain to the correct name servers,
-                  you must update the name server records either with the current DNS service or with the registrar for the
-                  domain, as applicable. The new name server records are listed below.
-                  -#{link_to 'See the documentation for more information','#'}.
-                - @pools.each do |pool|
-                  %ul{id: pool.id, class: ('hidden' unless @zone_request.domain_pool==pool.id)}
-                    - pool.ns_records.sort{|a,b| a["priority"]<=>b["priority"]}.each do |record|
-                      %li= record["hostname"]
-
-          .rootdomain_fields{class: ('hidden' if @zone_request.domain_pool.blank?)}
-            = rootdomain.input :name, label: 'Domain Name', required: true,
-              input_html: {value: @zone_request.name},
-              input_wrapper_html: { style: "width: 70%" },
-              icon_hint: "A fully qualified domain name, e.g. example.com."
-
-            = rootdomain.input :email, required: true,
-              input_html: {value: @zone_request.email},
-              input_wrapper_html: { style: "width: 70%" }
-
-            = rootdomain.input :ttl, required: false,
-              as: :integer,
-              input_html: {value: @zone_request.ttl || 7200},
-              input_wrapper_html: { style: "width: 20%" },
-              icon_hint: 'Time to live in seconds'
-
-            = rootdomain.input :description, required: false,
-              input_html: {value: @zone_request.description},
-              as: :text
 
   %div.buttons{class: 'modal-footer' }
     %button.btn.btn-default{type: 'button', data: {dismiss: 'modal'}, aria: {label: 'Cancel'}} Cancel
     = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
 
 :javascript
-  $('input[name="zone_request[domain_type]"]').click(function () {
-    $(this).tab('show');
-  });
+  var pools = #{pools.to_json.html_safe};
 
-  $('[name="zone_request[rootdomain][domain_pool]"]').change(function(){
-    $('.ns-records ul').addClass('hidden');
-    $('')
-    if (this.value) {
-      $('.ns-records').removeClass('hidden');
-      $('.ns-records ul#'+this.value).removeClass('hidden');
-      $('.rootdomain_fields').removeClass('hidden');
+  var toggleNameInput = function(name, options){
+    options = options || {};
+
+    if(options.show){
+      $('[data-container="'+name+'"]').removeClass('hidden');
+      $('[data-container="'+name+'"] [name="zone_request[name]"]').prop('disabled', false);
     } else {
-      $('.ns-records').addClass('hidden');
-      $('.rootdomain_fields').addClass('hidden');
+      $('[data-container="'+name+'"]').addClass('hidden');
+      $('[data-container="'+name+'"] [name="zone_request[name]"]').prop('disabled', true);
     }
+  }
+
+  $(document).ready(function(){
+    // select domain poll
+    $('select[name="zone_request[domain_pool]"]').change(function(){
+      // empty subnets
+      $('[name="zone_request[dns_domain]"]').empty();
+      // hide domain data formular
+      $('[data-container="domain_data"]').addClass('hidden');
+      // uncheck domain type buttons
+      $('input[name="zone_request[domain_type]"]').prop('checked', false);
+      // reset name field visibility
+      toggleNameInput('subdomain', { show: false });
+      toggleNameInput('rootdomain', { show: false });
+
+      if (this.value.trim().length == 0 ) {
+        // no pool selected -> hide formular
+        $('[data-container="form_data"]').addClass('hidden');
+      } else {
+        // domain_type is selected
+        var attributes = pools[this.value].attributes;
+        var ns_records = pools[this.value].ns_records;
+        var subdomains;
+        if (attributes && attributes['subdomains']) {
+          subdomains = attributes['subdomains'].split(',');
+        }
+
+        if (attributes) {
+          if (attributes['mail']) {
+            $('input[name="zone_request[email]"]').val(attributes['mail']);
+          } else {
+            $('input[name="zone_request[email]"]').val('');
+          }
+          if (attributes['mail_description']) {
+            $('[data-container="email_description"]').removeClass('hidden');
+            $('[data-container="email_description"] span').text(attributes['mail_description']);
+          } else {
+            $('[data-container="email_description"] span').text('');
+            $('[data-container="email_description"]').addClass('hidden');
+          }
+        }
+
+        if (ns_records && ns_records.length > 0) {
+          $('[data-container="rootdomain_info"]').removeClass('hidden');
+          $('[data-container="rootdomain_info"] ul').empty();
+
+          for(var i=0; i<ns_records.length; i++) {
+            $('[data-container="rootdomain_info"] ul').append('<li>'+ns_records[i].hostname+'</li>');
+          }
+        } else {
+          $('[data-container="rootdomain_info"]').addClass('hidden')
+        }
+
+        if (subdomains && subdomains.length > 0) {
+          $('[data-container="domain_type"]').removeClass('hidden');
+          $('[data-container="subdomains"]').text(attributes['subdomains']);
+          for(var i=0; i<subdomains.length; i++){
+            $('[name="zone_request[dns_domain]"]').append('<option vlaue="'+subdomains[i]+'">'+subdomains[i]+'</option>');
+          }
+        } else {
+          $('[data-container="domain_type"]').addClass('hidden');
+          $('[data-container="domain_data"]').removeClass('hidden');
+
+          toggleNameInput('rootdomain', { show: true });
+        }
+        $('[data-container="form_data"]').removeClass('hidden');
+      }
+    });
+
+    $('input[name="zone_request[domain_type]"]').click(function () {
+      if ($(this).is(':checked')) {
+        $('[data-container="domain_data"]').removeClass('hidden');
+
+        if ($(this).val() == 'subdomain') {
+          toggleNameInput('subdomain', { show: true });
+          toggleNameInput('rootdomain', { show: false });
+        } else {
+          toggleNameInput('subdomain', { show: false });
+          toggleNameInput('rootdomain', { show: true });
+        }
+      } else {
+        $('[data-container="domain_data"]').addClass('hidden');
+      }
+    });
   });

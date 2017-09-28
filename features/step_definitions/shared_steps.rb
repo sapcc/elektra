@@ -57,6 +57,14 @@ And(/^options of "(.*?)" contains names and ids$/) do |id|
   expect(option.text).not_to eq("undefined")
 end
 
+When(/^I select "([^"]*)" from "([^"]*)"$/) do |option, selectbox|
+  find(:select, selectbox, {}).find(:option, option, {}).select_option
+end
+
+Then(/^I see select "([^"]*)"$/) do |selectbox|
+  expect(page).to have_select(selectbox)
+end
+
 When(/^I wait for (\d+) seconds?$/) do |n|
   sleep(n.to_i)
 end
