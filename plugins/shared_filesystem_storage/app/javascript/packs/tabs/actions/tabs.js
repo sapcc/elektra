@@ -1,10 +1,11 @@
 import * as constants from '../constants';
 
-const selectTab = uid =>
-  ({
+const selectTab = uid => {
+  console.log('tab uid', uid)
+  return {
     type: constants.SELECT_TAB,
     uid
-  })
-;
+  }
+};
 
-export default { selectTab };
+export { selectTab };

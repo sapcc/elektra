@@ -1,21 +1,48 @@
 import { connect } from  'react-redux';
 import { Tabs, Tab } from 'react-bootstrap';
-import { getCurrentTabFromUrl } from '../urlHelper'
+import { getCurrentTabFromUrl, setCurrentTabToUrl } from '../urlHelper'
+import { selectTab } from '../actions'
+import {
+  BrowserRouter,
+  Route,
+  NavLink,
+  HashRouter
+} from 'react-router-dom'
 
-console.log(getCurrentTabFromUrl);
+const Shares = (props) =>
+  <div>Shares</div>
 
-const TabsContainer = (props) =>
-  <Tabs activeKey={props.activeTabUid || "1"} onSelect={props.handleSelect} id="controlled-tab-example">
-    <Tab eventKey="shares" title="Shares">Shares Content</Tab>
-    <Tab eventKey="snapshots" title="Snapshots">Snapshots content</Tab>
-    <Tab eventKey="share-networks" title="Share Networks">Share Networks content</Tab>
-  </Tabs>
+const Snapshots = (props) =>
+  <div>Snapshots</div>
 
-export default connect(
-  state => ({
-    activeTabUid: getCurrentTabFromUrl()
-  }),
-  despatch => ({
-    handleSelect: () => console.log('select')
-  })
-)(TabsContainer);
+const ShareNetworks = (props) =>
+  <div>Share Networks</div>
+
+const TabsContainer = (props) => {
+  console.log(props)
+  return <HashRouter>
+    <div>
+      <ul className="nav nav-tabs" id="myTab" role="tablist">
+        <li className="">
+          <NavLink className="active" to="shares" replace={true}>Shares</NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink to="snapshots" replace={true}>Snapshots</NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink to="/share-networks" replace={true}>Share Networks</NavLink>
+        </li>
+      </ul>
+
+      <div className="tab-content">
+        <div className="tab-pane active" role="tabpanel">
+          <Route path="/shares" component={Shares}/>
+          <Route path="/snapshots" component={Snapshots}/>
+          <Route path="/share-networks" component={ShareNetworks}/>
+        </div>
+      </div>
+    </div>
+  </HashRouter>
+}
+
+export default TabsContainer
