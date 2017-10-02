@@ -45,11 +45,12 @@ module MasterdataCockpit
         # this is the case if no masterdata was found
         # than we load the new dialog without modal window and need to reload 
         # the index page after successful created masterdata
-        # if modal the masterdata was filled within the wizard
         unless params['modal']
           flash[:notice] = "Masterdata successfully created."
           redirect_to plugin('masterdata_cockpit').project_masterdata_path
         end
+        # Note: if modal, then the masterdata was filled within the project wizard 
+        #       and create.js.haml is loaded to close the modal window
       end
     end
 
