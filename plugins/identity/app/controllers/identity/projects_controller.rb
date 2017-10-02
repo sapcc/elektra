@@ -71,7 +71,7 @@ module Identity
         audit_logger.info(current_user, 'has updated', @project)
 
         flash[:notice] = "Project #{@project.name} successfully updated."
-        redirect_to plugin('identity').project_path(project_id: @project.friendly_id)
+        redirect_to plugin('masterdata_cockpit').project_masterdata_path
       else
         flash.now[:error] = @project.errors.full_messages.to_sentence
         render action: :edit

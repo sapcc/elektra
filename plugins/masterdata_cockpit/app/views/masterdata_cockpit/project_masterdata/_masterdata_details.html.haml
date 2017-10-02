@@ -1,11 +1,8 @@
 - if @project_masterdata
+
   %label.masterdata-heading.masterdata-top Cost Object
   %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
-  .masterdata-action
-    - unless modal?
-      - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
-        = link_to 'Edit Masterdata', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
   %hr.masterdata-hr-label
   - if @inheritance.co_inheritable
     .row

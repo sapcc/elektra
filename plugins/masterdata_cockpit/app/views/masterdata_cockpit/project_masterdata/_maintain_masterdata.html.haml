@@ -4,17 +4,16 @@
 
 - if @project_masterdata
 
+  -# default data that is feeded to the masterdata api
   = f.input :project_id,    :as => :hidden, :input_html => { :value => @scoped_project_id }
   = f.input :project_name,  :as => :hidden, :input_html => { :value => @scoped_project_name }
   = f.input :domain_id,     :as => :hidden, :input_html => { :value => @scoped_domain_id }
+  = f.input :description, :as  => :hidden, :input_html => { :value => @project_masterdata.description }
   
   -# because of disabling the select boxes  on start we need to send the hidden input fields instead
   = f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance }
   = f.input :cost_object_type, :as  => :hidden, :input_html => { :value => @project_masterdata.cost_object_type }
-  
-  = f.input :description, 
-    label: "Description",
-    readonly: true
+
   
   - co_readonly               = @project_masterdata.solution.nil? == false 
 
