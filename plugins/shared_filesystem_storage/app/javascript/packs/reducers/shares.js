@@ -86,7 +86,7 @@ const receiveShareExportLocations= function(state,{shareId,export_locations}){
 };
 
 // shares reducer
-const shares = function(state, action) {
+export const shares = function(state, action) {
   if (state == null) { state = initialSharesState; }
   switch (action.type) {
     case constants.RECEIVE_SHARES: return receiveShares(state,action);
@@ -104,5 +104,3 @@ const shares = function(state, action) {
     default: return state;
   }
 };
-
-export default shares;

@@ -51,7 +51,7 @@ const shareFormFailure=(state,{errors})=>
   })
 ;
 
-const shareForm = function(state, action) {
+export const shareForm = function(state, action) {
   if (state == null) { state = initialShareFormState; }
   switch (action.type) {
     case constants.RESET_SHARE_FORM: return resetShareForm(state,action);
@@ -62,5 +62,3 @@ const shareForm = function(state, action) {
     default: return state;
   }
 };
-
-export default shareForm;
