@@ -1,5 +1,4 @@
 - if @project_masterdata
-
   %label.masterdata-heading.masterdata-top Cost Object
   %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
     = icon('question-circle')
@@ -20,7 +19,7 @@
         Solution 
     .col-sm-8.details-value
       - unless @project_masterdata.solution
-        \Other
+        Other
       = @project_masterdata.solution 
   .row
     .col-sm-4.details-label
@@ -36,7 +35,7 @@
       %strong
         Type
     .col-sm-8.details-value
-      - if @project_masterdata.cost_object['type']
+      - if @project_masterdata.cost_object_type
         = MasterdataCockpit::Config.cost_object_types[@project_masterdata.cost_object['type']]
       - else 
         \-
@@ -45,7 +44,10 @@
       %strong
         Name
     .col-sm-8.details-value
-      = @project_masterdata.cost_object['name']
+      - if @project_masterdata.cost_object_name
+        = @project_masterdata.cost_object_name
+      - else
+        \-
   %label.masterdata-heading Responsibility
   %hr.masterdata-hr-label
   .row
