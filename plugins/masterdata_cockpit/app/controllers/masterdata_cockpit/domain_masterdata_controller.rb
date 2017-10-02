@@ -10,11 +10,11 @@ module MasterdataCockpit
     authorization_required
     
     def index
-      if !@domain_masterdata && @masterdata_api_error_code == 404
+      #if !@domain_masterdata && @masterdata_api_error_code == 404
         # no masterdata was found please define it
         @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
         render action: :new
-      end
+      #end
     end
 
     def new

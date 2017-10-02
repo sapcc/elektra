@@ -7,9 +7,8 @@
       = icon('exclamation-circle')
       You are not allowed to maintain masterdata for this project.
   - else
-    .alert.alert-warning
-      = icon('exclamation-circle')
-      No masterdata maintained for this project. Please define it
+    = render partial: "what_is_masterdata"
+    %hr
     = render partial: 'maintain_masterdata',  locals: {f:f}
   
   = render partial: 'edit_create_js'
