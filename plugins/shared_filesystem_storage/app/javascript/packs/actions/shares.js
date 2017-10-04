@@ -46,11 +46,10 @@ const fetchShares= () =>
     dispatch(requestShares());
     axios.get('shares')
       .then( (response) => {
-        console.log('response',response)
         return dispatch(receiveShares(response.data));
       })
       .catch( (error) => {
-        console.log('error', error)
+        console.log('fetchShares', error)
         dispatch(requestSharesFailure());
         //return dispatch(app.showErrorDialog({title: 'Could not load shares', message:jqXHR.responseText}));
       });
@@ -90,16 +89,13 @@ const reloadShare= shareId =>
     if (!canReloadShare(getState(),shareId)) { return; }
 
     dispatch(requestShare(shareId));
-    return app.ajaxHelper.get(`/shares/${shareId}`, {
-      success(data, textStatus, jqXHR) {
-        return dispatch(receiveShare(data));
-      },
-      error( jqXHR, textStatus, errorThrown) {
+    axios.get(`shares/${shareId}`)
+      .then((response) => dispatch(receiveShare(response.data)))
+      .catch((error) => {
         dispatch(requestShareFailure());
-        return dispatch(app.showErrorDialog({title: 'Could not reload share', message:jqXHR.responseText}));
+        // return dispatch(app.showErrorDialog({title: 'Could not reload share', message:jqXHR.responseText}));
       }
-    }
-    );
+    )
   }
 ;
 
@@ -175,20 +171,6 @@ const openDeleteShareDialog=function(shareId, options) {
   };
 };
 
-const openNewShareDialog=()=>
-  function(dispatch) {
-    dispatch(shareFormForCreate());
-    return dispatch(newShareModal());
-  }
-;
-
-const openEditShareDialog=share=>
-  function(dispatch) {
-    dispatch(shareFormForUpdate(share));
-    return dispatch(editShareModal());
-  }
-;
-
 //############### SHARE EXPORT LOCATIONS ################
 const requestShareExportLocations= shareId =>
   ({
@@ -209,14 +191,12 @@ const receiveShareExportLocations= (shareId, json) =>
 const fetchShareExportLocations= shareId =>
   function(dispatch) {
     dispatch(requestShareExportLocations(shareId));
-    return app.ajaxHelper.get(`/shares/${shareId}/export_locations`, {
-      success(data, textStatus, jqXHR) {
-        return dispatch(receiveShareExportLocations(shareId,data));
-      },
-      error( jqXHR, textStatus, errorThrown) {
-        return dispatch(app.showErrorDialog({title: 'Could not load share export locations', message:jqXHR.responseText}));
+    axios.get(`shares/${shareId}/export_locations`)
+      .then((response) => dispatch(receiveShareExportLocations(shareId,response.data)))
+      .catch((error) => {
+        console.log('fetchShareExportLocations',error)
+        // dispatch(app.showErrorDialog({title: 'Could not load share export locations', message:jqXHR.responseText}));
       }
-    }
     );
   }
 ;

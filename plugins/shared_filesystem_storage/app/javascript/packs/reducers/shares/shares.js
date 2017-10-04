@@ -1,4 +1,4 @@
-import * as constants from '../constants';
+import * as constants from '../../constants';
 
 //########################## SHARES ##############################
 const initialSharesState = {
@@ -25,7 +25,7 @@ const receiveShares=(state,{shares,receivedAt})=>
 ;
 
 const requestShare= function(state,{shareId,requestedAt}) {
-  const index = state.items.findIndex(shareId);
+  const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
   const newState = ReactHelpers.cloneHashMap(state);
@@ -35,7 +35,7 @@ const requestShare= function(state,{shareId,requestedAt}) {
 };
 
 const requestShareFailure=function(state,{shareId}){
-  const index = state.items.findIndex(shareId);
+  const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
   const newState = ReactHelpers.cloneHashMap(state);
@@ -52,7 +52,7 @@ const receiveShare= function(state,{share}) {
 };
 
 const requestDeleteShare= function(state,{shareId}) {
-  const index = state.items.findIndex(shareId);
+  const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
   const newState = ReactHelpers.cloneHashMap(state);
@@ -61,7 +61,7 @@ const requestDeleteShare= function(state,{shareId}) {
 };
 
 const deleteShareFailure= function(state,{shareId}) {
-  const index = state.items.findIndex(shareId);
+  const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
   const newState = ReactHelpers.cloneHashMap(state);
@@ -70,7 +70,7 @@ const deleteShareFailure= function(state,{shareId}) {
 };
 
 const deleteShareSuccess= function(state,{shareId}) {
-  const index = state.items.findIndex(shareId);
+  const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
   const items = state.items.slice();
   items.splice(index,1);
@@ -78,7 +78,8 @@ const deleteShareSuccess= function(state,{shareId}) {
 };
 
 const receiveShareExportLocations= function(state,{shareId,export_locations}){
-  const index = state.items.findIndex(shareId);
+  console.log(shareId,export_locations)
+  const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
   const items = state.items.slice();
   items[index].export_locations = export_locations;
