@@ -28,16 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   for(let className of classes) {
     if (pluginContainers[className]) {
-      containers.push(React.createElement(pluginContainers[className], Object.assign({}, {key: className})))
+      containers.push(React.createElement(pluginContainers[className], Object.assign({}, {
+        key: className,
+        policy: window.policy
+      })))
     }
   }
 
   ReactDOM.render(
     <Provider store = { configureStore(pluginReducers) }>
       <div className = "react-container">
-        { containers.map((container, index) => (
-          container
-        ))}
+        { containers.map((container, index) => container) }
       </div>
     </Provider>,
     content.appendChild(document.createElement('div')),

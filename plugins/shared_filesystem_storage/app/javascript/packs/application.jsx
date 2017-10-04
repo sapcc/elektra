@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import * as Reducers from './reducers';
 import Tabs from './containers/tabs';
 
-const Container = () =>
+const Container = (props) =>
   <HashRouter /*hashType="noslash"*/ >
-    <Tabs/>
+    <Tabs {...props}/>
   </HashRouter>
 
 export default { Reducers, Container };
