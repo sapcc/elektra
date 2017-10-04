@@ -17,7 +17,8 @@
   .panel.panel-default
     .panel-body
       .row
-        - if @inheritance.co_inheritable
+        -# inheritance only vissible if it is allowed from domain and we are on a toplevel project
+        - if @inheritance.co_inheritable && @active_project.parent_id == @active_project.domain_id
           .col-md-2
             = f.input :cost_object_inherited, 
                label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.inherited_help') }}"),

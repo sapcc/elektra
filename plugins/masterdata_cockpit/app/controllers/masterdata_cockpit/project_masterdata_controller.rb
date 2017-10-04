@@ -133,6 +133,7 @@ module MasterdataCockpit
       @project_masterdata.domain_id    = @scoped_domain_id 
       @project_masterdata.project_name = @scoped_project_name
       @project_masterdata.description  = @active_project.description
+      @project_masterdata.parent_id    = @active_project.parent_id
     end
 
   end

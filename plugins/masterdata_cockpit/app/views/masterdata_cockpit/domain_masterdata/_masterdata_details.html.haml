@@ -4,7 +4,7 @@
       %label Masterdata
     - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
       .pull-right
-        = link_to 'Edit Masterdata', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-small pull-right'
+        = link_to 'Edit', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-small pull-right'
   %label.masterdata-heading
     Cost Object 
   %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}

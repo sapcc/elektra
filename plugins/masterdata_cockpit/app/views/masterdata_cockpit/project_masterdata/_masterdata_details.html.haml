@@ -35,7 +35,8 @@
     %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
       = icon('question-circle')
   %hr.masterdata-hr-label
-  - if @inheritance.co_inheritable
+  -# inheritance only vissible if it is allowed from domain and we are on a toplevel project
+  - if @inheritance.co_inheritable && @active_project.parent_id == @active_project.domain_id
     .row
       .col-sm-4.details-label
         %strong
