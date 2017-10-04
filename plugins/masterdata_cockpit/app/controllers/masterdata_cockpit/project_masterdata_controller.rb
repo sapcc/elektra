@@ -5,7 +5,7 @@ module MasterdataCockpit
 
     before_action :load_project_masterdata, only: [:index, :edit, :show]
     before_action :prepare_params, only: [:create, :update]
-    before_action :solutions, only: [:create, :update, :new, :edit, :solution_revenue_relevances, :revenue_relevance_cost_object]
+    before_action :solutions, only: [:create, :update, :edit, :solution_revenue_relevances, :revenue_relevance_cost_object]
     before_action :inheritance
 
     authorization_context 'masterdata_cockpit'
@@ -14,16 +14,15 @@ module MasterdataCockpit
     def index
       if !@project_masterdata && @masterdata_api_error_code == 404
         # no masterdata was found please define it
-        solutions
-        @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
-        @project_masterdata.description = @active_project.description
+        new
         render action: :new
       end
     end
     
     def new
+      solutions
       @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
-      @project_masterdata.description = @active_project.description
+      inject_projectdata
     end
 
     def edit
@@ -39,6 +38,8 @@ module MasterdataCockpit
     end
 
     def create
+      @project_masterdata.description = @active_project.description
+
       unless @project_masterdata.save
         render action: :new
       else
@@ -90,6 +91,8 @@ module MasterdataCockpit
     def load_project_masterdata
       begin
         @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
+        inject_projectdata
+        # overide projectdata with current data from identity
       rescue Exception => e
         # do nothing if no masterdata was found
         # the api will only return 404 if no masterdata for the project was found
@@ -105,6 +108,7 @@ module MasterdataCockpit
       @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
       # to merge options into .merge(project_id: @scoped_project_id)
       @project_masterdata.attributes =params.fetch(:project_masterdata,{})
+      inject_projectdata
     end
     
     def solutions
@@ -122,6 +126,13 @@ module MasterdataCockpit
       rescue
         flash.now[:error] = "Could not check inheritance."
       end
+    end
+    
+    def inject_projectdata
+      @project_masterdata.project_id   = @scoped_project_id
+      @project_masterdata.domain_id    = @scoped_domain_id 
+      @project_masterdata.project_name = @scoped_project_name
+      @project_masterdata.description  = @active_project.description
     end
 
   end

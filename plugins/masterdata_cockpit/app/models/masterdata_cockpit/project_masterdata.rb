@@ -95,7 +95,8 @@ module MasterdataCockpit
       params = {
         'project_id'                        => read('project_id'),
         'project_name'                      => read('project_name'),
-        'parent_id'                         => read('domain_id'),
+        # ingored from api
+        # 'parent_id'                       => read('domain_id'),
         'domain_id'                         => read('domain_id'),
         'description'                       => read('description'),
         'responsible_operator_id'           => read('responsible_operator_id'),

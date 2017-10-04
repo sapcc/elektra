@@ -1,7 +1,39 @@
 - if @project_masterdata
-  %label.masterdata-heading.masterdata-top Cost Object
-  %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-    = icon('question-circle')
+
+  -# projectdata, only vissible in masterdata view
+  - unless modal?
+    .toolbar.margin-top-zero
+      .pull-left.masterdata-toolbar
+        %label Project
+      - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
+        .pull-right
+          = link_to 'Edit', plugin('identity').edit_project_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
+  - unless modal?
+    .row
+      .col-sm-4.details-label
+        %strong
+          Name
+      .col-sm-8.details-value
+        = @project_masterdata.project_name
+    .row
+      .col-sm-4.details-label
+        %strong
+          Description
+      .col-sm-8.details-value
+        = @project_masterdata.description
+        
+    .toolbar
+      .pull-left.masterdata-toolbar
+        %label Masterdata
+      - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
+        .pull-right
+          = link_to 'Edit', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
+  
+  -# masterdata details
+  %label.masterdata-heading
+    Cost Object
+    %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+      = icon('question-circle')
   %hr.masterdata-hr-label
   - if @inheritance.co_inheritable
     .row
@@ -54,7 +86,7 @@
     .col-sm-4.details-label
       %strong
         Operator
-    .col-sm-2.details-value
+    .col-sm-3.details-value
       - unless @project_masterdata.responsible_operator_id
         \Not defined yet
       = @project_masterdata.responsible_operator_id
@@ -68,7 +100,7 @@
     .col-sm-4.details-label
       %strong
         Security Expert
-    .col-sm-2.details-value
+    .col-sm-3.details-value
       - unless @project_masterdata.responsible_security_expert_id
         \Not defined yet
       = @project_masterdata.responsible_security_expert_id
@@ -82,7 +114,7 @@
     .col-sm-4.details-label
       %strong
         Product Owner
-    .col-sm-2.details-value
+    .col-sm-3.details-value
       - unless @project_masterdata.responsible_product_owner_id
         \Not defined yet
       = @project_masterdata.responsible_product_owner_id
@@ -101,7 +133,7 @@
         \Not defined yet
       = @project_masterdata.responsible_controller_id
     - if @project_masterdata.responsible_controller_email
-      .col-sm-1.details-label
+      .col-sm-3.details-label
         Contact:
       .col-sm-4.details-value
         = icon('envelope-o')

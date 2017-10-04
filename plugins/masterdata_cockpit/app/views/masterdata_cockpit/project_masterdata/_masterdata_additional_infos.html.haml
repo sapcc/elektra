@@ -1,27 +1,7 @@
 - if @project_masterdata
   .infobox
     %h4.action-heading
-      Project Info
-      - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-        .masterdata-action
-          = link_to 'Edit Project', plugin('identity').edit_project_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-xs pull-right'
-    %table.table
-      %tbody
-        %tr
-          %th.snug-nowrap
-            Project Name:
-          %td
-            = @active_project.name
-        %tr
-          %th
-            Description:
-          %td
-            = @active_project.description
-    %h4.action-heading
       Masterdata Status
-      - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
-        .masterdata-action
-          = link_to 'Edit Masterdata', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-xs pull-right'
     %table.table
       %tbody
         %tr
