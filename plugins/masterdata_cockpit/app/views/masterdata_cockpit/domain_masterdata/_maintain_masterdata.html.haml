@@ -2,8 +2,6 @@
   .alert.alert-error
     = render_errors(@domain_masterdata.errors)
 
-= f.input :domain_id,   :as => :hidden, :input_html => { :value => @scoped_domain_id }
-= f.input :domain_name, :as => :hidden, :input_html => { :value => @scoped_domain_name }
 = f.input :description, label: "Description"
 
 %label.control-label Cost Object

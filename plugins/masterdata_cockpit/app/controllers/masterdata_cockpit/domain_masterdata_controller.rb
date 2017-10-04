@@ -10,11 +10,11 @@ module MasterdataCockpit
     authorization_required
     
     def index
-      #if !@domain_masterdata && @masterdata_api_error_code == 404
+      if !@domain_masterdata && @masterdata_api_error_code == 404
         # no masterdata was found please define it
         @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
         render action: :new
-      #end
+      end
     end
 
     def new
@@ -62,7 +62,13 @@ module MasterdataCockpit
       @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
       # to merge options into .merge(domain_id: @scoped_domain_id)
       @domain_masterdata.attributes =params.fetch(:domain_masterdata,{})
+      inject_domaindata
     end
+
+   def inject_domaindata
+     @domain_masterdata.domain_id = @scoped_domain_id
+     @domain_masterdata.domain_name = @scoped_domain_name
+   end
 
   end
 end
