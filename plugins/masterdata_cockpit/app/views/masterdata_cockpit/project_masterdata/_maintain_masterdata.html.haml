@@ -17,15 +17,13 @@
   .panel.panel-default
     .panel-body
       .row
-        -# inheritance only vissible if it is allowed from domain and we are on a toplevel project
-        - if @inheritance.co_inheritable && @active_project.parent_id == @active_project.domain_id
+        - if @inheritance.co_inheritable
           .col-md-2
             = f.input :cost_object_inherited, 
                label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.inherited_help') }}"),
                as: :select, 
                include_hidden: false, 
                required:true
-               
         %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
           - unless @solutions.nil?
             = f.input :solution, 

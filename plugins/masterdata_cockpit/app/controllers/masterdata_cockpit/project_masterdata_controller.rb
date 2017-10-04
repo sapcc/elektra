@@ -122,7 +122,11 @@ module MasterdataCockpit
 
     def inheritance
       begin
-        @inheritance = services_ng.masterdata_cockpit.check_inheritance(@scoped_domain_id)
+        if @active_project.parent_id != @scoped_domain_id
+          @inheritance = services_ng.masterdata_cockpit.check_inheritance(@scoped_domain_id, @active_project.parent_id)
+        else
+          @inheritance = services_ng.masterdata_cockpit.check_inheritance(@scoped_domain_id)
+        end
       rescue
         flash.now[:error] = "Could not check inheritance."
       end
