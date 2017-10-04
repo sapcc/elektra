@@ -82,9 +82,9 @@ module ServiceLayer
     ################## Pools #####################
     def pools(filter = {})
       #return [] unless current_user.is_allowed?('dns_service:pool_list')
-      Rails.cache.fetch("#{project_id}_zone_pools", expires_in: 24.hours) do
-        driver.map_to(DnsService::Pool).list_pools(filter) rescue []
-      end
+      #Rails.cache.fetch("#{project_id}_zone_pools", expires_in: 24.hours) do
+      driver.map_to(DnsService::Pool).list_pools(filter) rescue []
+      #end
 
     end
 

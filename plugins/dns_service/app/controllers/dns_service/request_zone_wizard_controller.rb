@@ -5,7 +5,7 @@ module DnsService
   class RequestZoneWizardController < ::DashboardController
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)
-      load_pools
+      @pools = cloud_admin.dns_service.pools
     end
 
     def create
@@ -46,7 +46,7 @@ module DnsService
         audit_logger.info(current_user, "has requested zone #{@zone_request.attributes}")
         render template: 'dns_service/request_zone_wizard/create.js'
       else
-        load_pools
+        @pools = cloud_admin.dns_service.pools
         render action: :new
       end
     end
@@ -81,10 +81,6 @@ module DnsService
         admin = cloud_admin.identity.find_user(id)
         admins << admin if admin
       end
-    end
-
-    def load_pools
-      @pools = cloud_admin.dns_service.pools
     end
   end
 end
