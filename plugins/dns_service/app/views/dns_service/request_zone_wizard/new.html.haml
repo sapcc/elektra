@@ -2,8 +2,9 @@
   Request New Domain
 
 - pools = @pools.each_with_object({}){ |pool, hash| hash[pool.id] = pool }
-- pool_attributes = pools[@zone_request.domain_pool].read(:attributes).fetch('attributes') if pools[@zone_request.domain_pool]
-- subdomains = (pool_attributes.try(:fetch, 'subdomains') || '').split(',')
+- pool_attributes = pools[@zone_request.domain_pool].read(:attributes) if pools[@zone_request.domain_pool]
+- pool_attributes ||= {}
+- subdomains = pool_attributes.fetch('subdomains', '').split(',')
 
 = simple_form_for @zone_request, url: plugin('dns_service').create_zone_request_path, method: :post, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
@@ -26,6 +27,7 @@
     %div{ data: {container: 'form_data'}, class: ('hidden' if @zone_request.domain_pool.blank?) }
       %div{ data: {container: 'domain_type' }, class: ('hidden' if subdomains.empty?) }
         = f.input :domain_type, required: true, label: 'Type' do
+          = f.input :domain_type, as: :hidden, input_html: {value: "rootdomain"}
           %p.description
           %span.radio
             %label
@@ -33,7 +35,7 @@
               Subdomain
               %p.help-block
                 %i.fa.fa-info-circle
-                %span{ data: {container: 'subdomains'} }= pool_attributes.try(:fetch, 'subdomains')
+                %span{ data: {container: 'subdomains'} }= pool_attributes.fetch('subdomains', nil)
           %span.radio
             %label
               = f.radio_button :domain_type, "rootdomain"
