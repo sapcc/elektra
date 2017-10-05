@@ -2,14 +2,14 @@ import { connect } from  'react-redux';
 import ShareList from '../../components/shares/list';
 import {
   fetchSharesIfNeeded,
-  fetchShareExportLocations
+  fetchShareExportLocations,
+  fetchAvailabilityZonesIfNeeded
 } from '../../actions/shares'
 import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
 import { fetchShareRulesIfNeeded } from '../../actions/share_rules'
 
 export default connect(
   state => ((pluginState) => ({
-    /*activeTabUid: pluginState.activeTab.uid || getCurrentTabFromUrl() || 'shares'*/
     items: pluginState.shares.items,
     isFetching: pluginState.shares.isFetching,
     shareNetworks: pluginState.shareNetworks,
@@ -21,6 +21,6 @@ export default connect(
     loadShareNetworksOnce: () => dispatch(fetchShareNetworksIfNeeded()),
     loadShareRulesOnce: (shareId) => dispatch(fetchShareRulesIfNeeded(shareId)),
     loadExportLocations: (shareId) => dispatch(fetchShareExportLocations(shareId)),
-    loadAvailabilityZonesOnce: () => null,
+    loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded())
   })
 )(ShareList);

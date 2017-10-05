@@ -204,20 +204,20 @@ const fetchShareExportLocations= shareId =>
 //################ SHARE FORM ###################
 const resetShareForm=()=> ({type: constants.RESET_SHARE_FORM});
 
-var shareFormForCreate=()=>
+const shareFormForCreate=()=>
   ({
     type: constants.PREPARE_SHARE_FORM,
     method: 'post',
-    action: "/shares"
+    action: "shares"
   })
 ;
 
-var shareFormForUpdate=share =>
+const shareFormForUpdate=share =>
   ({
     type: constants.PREPARE_SHARE_FORM,
     data: share,
     method: 'put',
-    action: `/shares/${share.id}`
+    action: `shares/${share.id}`
   })
 ;
 
@@ -238,26 +238,26 @@ const updateShareForm= (name,value) =>
 
 const submitShareForm= (successCallback=null) =>
   function(dispatch, getState) {
-    const { shareForm } = getState();
+    const { shared_filesystem_storage: {shareForm} } = getState();
     if (shareForm.isValid) {
-      dispatch({type: app.SUBMIT_SHARE_FORM});
-      return app.ajaxHelper[shareForm.method](shareForm.action, {
-        data: { share: shareForm.data },
-        success(data, textStatus, jqXHR) {
-          if (data.errors) {
-            return dispatch(shareFormFailure(data.errors));
-          } else {
-            dispatch(receiveShare(data));
-            dispatch(resetShareForm());
-            dispatch(app.toggleShareNetworkIsNewStatus(data.share_network_id,false));
-            if (successCallback) { return successCallback(); }
-          }
-        },
-        error( jqXHR, textStatus, errorThrown) {
-          return dispatch(app.showErrorDialog({title: 'Could not save share', message:jqXHR.responseText}));
+      dispatch({type: constants.SUBMIT_SHARE_FORM});
+      console.log(shareForm.method,shareForm.action)
+      axios[shareForm.method](shareForm.action, { share: shareForm.data })
+
+      .then((response) => {
+        if (response.data.errors) {
+          return dispatch(shareFormFailure(response.data.errors));
+        } else {
+          dispatch(receiveShare(response.data));
+          dispatch(resetShareForm());
+          //dispatch(app.toggleShareNetworkIsNewStatus(data.share_network_id,false));
+          if (successCallback) { return successCallback(); }
         }
-      }
-      );
+      })
+      .catch((error) => {
+        console.log(error)
+        //dispatch(app.showErrorDialog({title: 'Could not save share', message:jqXHR.responseText}));
+      })
     }
   }
 ;
@@ -265,7 +265,7 @@ const submitShareForm= (successCallback=null) =>
 //####################### AVAILABILITY ZONES ###########################
 // Manila availability zones, not nova!!!
 const shouldFetchAvailabilityZones= function(state) {
-  const azs = state.availabilityZones;
+  const azs = state.shared_filesystem_storage.availabilityZones;
   if (azs.isFetching) {
     return false;
   } else if (azs.receivedAt) {
@@ -289,15 +289,12 @@ const receiveAvailableZones= json =>
 const fetchAvailabilityZones=() =>
   function(dispatch) {
     dispatch(requestAvailableZones());
-    return app.ajaxHelper.get('/shares/availability_zones', {
-      success(data, textStatus, jqXHR) {
-        return dispatch(receiveAvailableZones(data));
-      },
-      error( jqXHR, textStatus, errorThrown) {
-        return dispatch(requestAvailableZonesFailure());
-      }
-    }
-    );
+    axios.get('shares/availability_zones')
+      .then((response) => dispatch(receiveAvailableZones(response.data)))
+      .catch((error) => {
+        console.log(error)
+        dispatch(requestAvailableZonesFailure());
+      })
   }
 ;
 
@@ -313,5 +310,9 @@ export {
   reloadShare,
   deleteShare,
   fetchShareExportLocations,
-  fetchAvailabilityZonesIfNeeded
+  fetchAvailabilityZonesIfNeeded,
+  updateShareForm,
+  submitShareForm,
+  shareFormForCreate,
+  shareFormForUpdate
 }
