@@ -10,6 +10,7 @@
     "redux-thunk": "^2.2.0",
     "react-bootstrap": "*",
     "react-router-dom": "*",
+    "react-transition-group": "*",
     "axios": "*"
   },
   "devDependencies": {

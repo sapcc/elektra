@@ -1,8 +1,29 @@
-import { withRouter, Route } from 'react-router-dom'
+import { withRouter, Route, Link } from 'react-router-dom';
+import { Popover, OverlayTrigger } from 'react-bootstrap';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import NewShare from './new'
-import ShowShare from './show'
-import ShareItem from './item'
+import ShareNew from '../../containers/shares/new';
+import ShowShare from './show';
+import ShareItem from './item';
+
+
+const FadeTransition = ({ children, ...props }) => (
+  <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
+    {children}
+  </CSSTransition>
+);
+
+const noShareNetworksInfo = (
+  <Popover id="popover-no-share-networks" title="No Share Network found">
+    Please <Link to="/share-networks">create a Share Network</Link> first.
+  </Popover>
+);
+
+const loadingShareNetworksInfo = (
+  <Popover id="popover-loading-share-networks" title="Loading Share Networks ...">
+    Please wait.
+  </Popover>
+);
 
 const List = React.createClass({
   getInitialState() {
@@ -70,6 +91,7 @@ const List = React.createClass({
     if (!shareId) return
     this.setState({ showShareId: shareId })
     this.props.history.replace(`/shares/${shareId}`)
+    this.props.loadExportLocations(shareId)
   },
 
   closeShow() {
@@ -90,23 +112,60 @@ const List = React.createClass({
     return rules
   },
 
+  toolbar() {
+    if (!this.props.policy.isAllowed('shared_filesystem_storage:share_create')) return null;
+
+    let { shareNetworks: {items: shareNetworkItems, isFetching: fetchingShareNetworks} } = this.props
+    let hasShareNetworks = shareNetworkItems && shareNetworkItems.length>0
+
+    return (
+      <div className='toolbar'>
+        <TransitionGroup>
+          { fetchingShareNetworks ? (
+            <FadeTransition>
+              <OverlayTrigger trigger="click" placement="top" rootClose overlay={loadingShareNetworksInfo}>
+                <span className="pull-right"><a href="#"><span className="spinner"></span></a></span>
+              </OverlayTrigger>
+            </FadeTransition>
+          ) : ( !hasShareNetworks &&
+            <FadeTransition>
+              <span className="pull-right">
+                <OverlayTrigger trigger="click" placement="top" rootClose overlay={noShareNetworksInfo}>
+                  <a className='text-warning' href='#'>
+                    <i className='fa fa-fw fa-exclamation-triangle fa-2'></i>
+                  </a>
+                </OverlayTrigger>
+              </span>
+            </FadeTransition>
+          )}
+        </TransitionGroup>
+
+        <button type="button"
+          className="btn btn-primary"
+          disabled={!hasShareNetworks}
+          onClick={ (e) => {e.preventDefault(); this.openNew()} }>
+          Create new
+        </button>
+
+        { hasShareNetworks &&
+          <ShareNew show={this.state.showNew} onHide={this.closeNew}/>
+        }
+      </div>
+    )
+  },
+
   render() {
     let share = this.findShareById(this.state.showShareId)
+    let { items } = this.props
+
     return (
       <div>
-
-        { this.props.policy.isAllowed('shared_filesystem_storage:share_create') &&
-          <div className='toolbar'>
-            <button type="button" className="btn btn-primary" onClick={ (e) => {e.preventDefault(); this.openNew()} }>
-              Create new
-            </button>
-            <NewShare show={this.state.showNew} onHide={this.closeNew}/>
-          </div>
-        }
-
+        { this.toolbar() }
         <ShowShare show={share!=null} onHide={this.closeShow} share={share}/>
 
-        { this.props.policy.isAllowed('shared_filesystem_storage:share_list') ? (
+        { !this.props.policy.isAllowed('shared_filesystem_storage:share_list') ? (
+          <span>You are not allowed to see this page</span>) : (
+
           this.props.isFetching ? (
             <span className='spinner'></span>
           ) : (
@@ -129,24 +188,22 @@ const List = React.createClass({
                 </tr>
               </thead>
               <tbody>
-                { this.props.items.length>0 ? (
-                  this.props.items.map( (share, index) =>
+                { items && items.length>0 ? (
+                  items.map( (share, index) =>
                     <ShareItem key={index}
                       share={share}
                       shareNetwork={this.shareNetwork(share)}
                       shareRules={this.shareRules(share)}
-                      handleShow={this.showShare}/>
+                      handleShow={this.showShare}/>)
+                  ) : (
+                    <tr>
+                      <td colSpan="6">No Shares found.</td>
+                    </tr>
                   )
-                ) : (
-                  <tr>
-                    <td colSpan="6">No Shares found.</td>
-                  </tr>
-                )}
+                }
               </tbody>
             </table>
           )
-        ) : (
-          <span>You are not allowed to see this page</span>
         )}
       </div>
     )
