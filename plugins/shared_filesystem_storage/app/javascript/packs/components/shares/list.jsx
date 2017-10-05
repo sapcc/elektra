@@ -6,10 +6,29 @@ import ShareItem from './item'
 
 const List = React.createClass({
   getInitialState() {
+    let shareId = this.extractShareIdFromLocation(this.props.location)
+
     return {
-      showNew: false, //boolean, indicates whether the new dialog is visible or not
-      showShare: null //object, if set a modal show window is visible
+      //boolean, indicates whether the new dialog is visible or not
+      showNew: (this.props.location.pathname=='/shares/new'),
+      //object, if set a modal show window is visible
+      showShareId: shareId
     };
+  },
+
+  extractShareIdFromLocation(location) {
+    if (location.pathname.match(/\/shares\/.+/)){
+      // try to get th share id from path
+      let match = location.pathname.match(/\/shares\/(.+)/)
+      if (match && match.length>1 && match[1] != 'new') {
+        return match[1]
+      }
+    }
+    return null
+  },
+
+  findShareById(shareId) {
+    return this.props.items.find((item) => item.id === shareId)
   },
 
   componentWillReceiveProps(nextProps) {
@@ -17,35 +36,13 @@ const List = React.createClass({
     this.loadDependencies(nextProps)
   },
 
-  componentWillUpdate() {
-    // component did receive new props or state has changed ->
-    // check url path and render corresponding overlays if needed
-    //this.checkRoutes()
-  },
-
   componentDidMount() {
-    console.log('Shares list did mount')
-    // check url path and render corresponding overlays if needed
-    //this.checkRoutes()
     // load dependencies unless already loaded
     this.loadDependencies(this.props)
   },
 
-  checkRoutes() {
-    if (this.props.location.pathname=='/shares/new'){
-      this.setState({showNew: true})
-    } else if (this.props.location.pathname.match(/\/shares\/.+/)){
-      // try to get th share id from path
-      let match = this.props.location.pathname.match(/\/shares\/(.+)/)
-      if (match && match.length>0) {
-        // show share dialog if found
-        let share = this.props.items.find((item) => { return item.id == match[1] })
-        this.setState({showShare: share})
-      }
-    }
-  },
-
   loadDependencies(props) {
+    if(!props.active) return;
     this.props.loadSharesOnce()
     this.props.loadShareNetworksOnce()
     this.props.loadAvailabilityZonesOnce()
@@ -55,32 +52,29 @@ const List = React.createClass({
   },
 
   closeNew() {
+    if(!this.state.showNew) return;
     this.setState({ showNew: false })
-    this.props.history.push('/shares')
+    this.props.history.replace('/shares')
   },
 
   openNew() {
     // return if already visible
-    console.log(this.state.showNew)
-    if (this.state.showNew) return;
+    if(this.state.showNew) return;
+    //if (this.state.showNew) return;
     this.setState({ showNew: true })
-    //this.props.history.replace('/shares/new')
+    // update url
+    this.props.history.replace('/shares/new')
   },
 
-  showShare(share) {
-    // return if already visible
-    if (this.state.showShare) return;
-    if (!share) return
-    // this line of code may lead to concurrency problem
-    // if so move it to show in componentDidMount Callback!
-    //this.props.loadExportLocations(share.id)
-    this.setState({ showShare: share })
-    //this.props.history.replace(`/shares/${share.id}`)
+  showShare(shareId) {
+    if (!shareId) return
+    this.setState({ showShareId: shareId })
+    this.props.history.replace(`/shares/${shareId}`)
   },
 
   closeShow() {
-    this.setState({ showShare: null })
-    //this.props.history.replace('/shares')
+    this.props.history.replace('/shares')
+    this.setState({ showShareId: null })
   },
 
   shareNetwork(share) {
@@ -97,6 +91,7 @@ const List = React.createClass({
   },
 
   render() {
+    let share = this.findShareById(this.state.showShareId)
     return (
       <div>
 
@@ -105,13 +100,11 @@ const List = React.createClass({
             <button type="button" className="btn btn-primary" onClick={ (e) => {e.preventDefault(); this.openNew()} }>
               Create new
             </button>
-            <Route path="/shares/new" render={ () => <NewShare show={true} onHide={this.closeNew}/>} />
+            <NewShare show={this.state.showNew} onHide={this.closeNew}/>
           </div>
         }
 
-        <ShowShare show={this.state.showShare!=null}
-          onHide={this.closeShow}
-          share={this.state.showShare}/>
+        <ShowShare show={share!=null} onHide={this.closeShow} share={share}/>
 
         { this.props.policy.isAllowed('shared_filesystem_storage:share_list') ? (
           this.props.isFetching ? (
@@ -160,4 +153,5 @@ const List = React.createClass({
   }
 });
 
-export default withRouter(List);
+//export default withRouter(List);
+export default List
