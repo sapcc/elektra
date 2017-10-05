@@ -1,34 +1,32 @@
-import { withRouter, Link, Route, Redirect } from 'react-router-dom'
-import ShareList from './shares/list'
+import { Link } from 'react-router-dom'
 
-const Snapshots = () => <div>Snapshots</div>
-const ShareNetworks = () => <div>Share Networks</div>
+/***********************************
+ * This component renders a tabed content
+ **********************************/
+export default ({match, location, history, tabsConfig, ... otherProps}) => {
+  let tabItems = [];
+  let tabPanels = [];
+  for(let index in tabsConfig) {
+    let tab = tabsConfig[index];
+    let active = (location.pathname.indexOf(tab.to)>-1);
 
-const tabs = [
-  { to: '/shares', label: 'Shares' },
-  { to: '/snapshots', label: 'Snapshots' },
-  { to: '/share-networks', label: 'Share Networks' }
-]
-
-const TabMenu = withRouter(({ match, location, history }) => {
-  const tabItems =  tabs.map((tab) =>
-    <li className={location.pathname.indexOf(tab.to)>-1 ? 'active' : ''} key={tab.to}>
-      <Link to={tab.to} replace={true}>{tab.label}</Link>
-    </li>
-  )
-  return <ul className="nav nav-tabs" role="tablist">{tabItems}</ul>
-});
-
-export default (props) => (
-  <div>
-    <TabMenu/>
-    <div className="tab-content">
-      <Route exact path="/" render={ () =>
-        <Redirect to="/shares"/>
-      }/>
-    <Route path="/shares" component={() => <ShareList {...props}/>}/>
-      <Route path="/snapshots" component={Snapshots}/>
-      <Route path="/share-networks" component={ShareNetworks}/>
+    // collect tab items
+    tabItems.push(
+      <li className={active ? 'active' : ''} key={`tab_${index}`}>
+        <Link to={tab.to} replace={true}>{tab.label}</Link>
+      </li>
+    )
+    // collect tab panels
+    tabPanels.push(
+      <div className={ 'tab-pane ' + (active ? 'active' : '')} key={`panel_${index}`}>
+        {React.createElement(tab.component, Object.assign({},{active,match,location,history}, otherProps))}
+      </div>
+    )
+  }
+  return (
+    <div>
+      <ul className="nav nav-tabs" role="tablist">{tabItems}</ul>
+      <div className="tab-content">{tabPanels}</div>
     </div>
-  </div>
-)
+  )
+}

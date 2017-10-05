@@ -1,7 +1,7 @@
 export default ({share, shareNetwork, shareRules, handleShow}) =>
   <tr className={ share.isDeleting ? 'updating' : ''}>
     <td>
-      <a href='#' onClick={(e) => { e.preventDefault(); handleShow(share)}} >
+      <a href='#' onClick={(e) => { e.preventDefault(); handleShow(share.id)}} >
         {share.name || share.id}
       </a>
     </td>
