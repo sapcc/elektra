@@ -43,13 +43,15 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     $container.data('completed',false)
 
     # show loading indicator (hide buttons)
-    showLoading=() -> $buttons.fadeOut 'slow', () -> $spinner.show()
+    showLoading=() -> $buttons.stop().fadeOut 'fast', () -> $spinner.stop().show()
     # hide loading indicator and show buttons
-    hideLoading=() -> $spinner.hide(); unless $container.data('completed') then $buttons.fadeIn('slow')
+    hideLoading=() -> $spinner.stop().hide(); unless $container.data('completed') then $buttons.stop().fadeIn('fast')
 
     loadNext=(callback) ->
       # return if there is an ajax load running
-      return if loading
+      if loading
+        callback() if callback
+        return
       # if completed call callback and return
       if $container.data('completed')
         callback() if callback
