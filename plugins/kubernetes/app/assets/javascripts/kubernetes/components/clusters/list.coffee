@@ -23,10 +23,11 @@ Clusters = React.createClass
               '\u00D7' # &times;
           flashError
 
-      div className: 'toolbar toolbar-controlcenter',
-        div className: 'main-control-buttons',
-          button className: "btn btn-primary", onClick: ((e) => e.preventDefault(); handleNewCluster()),
-            "Create Cluster"
+      unless clusters && clusters.length
+        div className: 'toolbar toolbar-controlcenter',
+          div className: 'main-control-buttons',
+            button className: "btn btn-primary", onClick: ((e) => e.preventDefault(); handleNewCluster()),
+              "Create Cluster"
 
 
       table className: 'table',
