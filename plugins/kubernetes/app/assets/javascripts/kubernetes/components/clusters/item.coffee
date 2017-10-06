@@ -7,7 +7,7 @@ Cluster = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     # stop polling if both cluster and nodepool states are "ready"
-    if nextProps.cluster.status.kluster.state == 'Ready' && @nodePoolsReady(nextProps.cluster.status.nodePools)
+    if nextProps.cluster.status.kluster.state == 'Ready' && @nodePoolsReady(nextProps.cluster)
       console.log("will receive props: stop polling")
       @stopPolling()
     else if !nextProps.cluster.isPolling
@@ -16,7 +16,7 @@ Cluster = React.createClass
       @startPolling()
 
   componentDidMount:()->
-    @startPolling() if @props.cluster.status.kluster.state != 'Ready' || !@nodePoolsReady(@props.cluster.status.nodePools)
+    @startPolling() if @props.cluster.status.kluster.state != 'Ready' || !@nodePoolsReady(@props.cluster)
 
   componentWillUnmount: () ->
     # stop polling on unmounting
@@ -31,16 +31,24 @@ Cluster = React.createClass
     @props.handlePollingStop(@props.cluster.name)
     clearInterval(@polling)
 
-  nodePoolsReady: (nodePoolState) ->
+  nodePoolsReady: (cluster) ->
     # return ready only if all state values of all nodepools match the configured size
     ready = true
-    for nodePool in nodePoolState
+    for nodePool in cluster.status.nodePools
+      specPool = (cluster.spec.nodePools.filter (i) -> i.name is nodePool.name)[0]
       for k,v of nodePool
         unless k == 'name' || k == 'size'
-          if v != nodePool.size
+          if v != specPool.size
             ready = false
             break
     ready
+
+  # find spec size for pool with given name
+  nodePoolSpecSize: (cluster, poolName) ->
+    pool = (cluster.spec.nodePools.filter (i) -> i.name is poolName)[0]
+    pool.size
+
+
 
   render: ->
     {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials, handlePollingStart, handlePollingStop} = @props
@@ -63,12 +71,13 @@ Cluster = React.createClass
               "size: #{nodePool.size}"
       td null,
         for nodePoolStatus in cluster.status.nodePools
+          specSize = @nodePoolSpecSize(cluster, nodePoolStatus.name)
           div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
             for k,v of nodePoolStatus
               unless k == 'name' || k == 'size'
                 div key: k,
                   strong null, "#{k}: "
-                  "#{v}/#{nodePoolStatus.size}"
+                  "#{v}/#{specSize}"
 
 
 
