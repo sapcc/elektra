@@ -92,6 +92,8 @@ module ResourceManagement
     def review_request
       @desired_quota = @inquiry.payload['desired_quota']
 
+      # this alias is necessary for rendering view partials from the "details" screen
+      @combined_resource = @cluster_resource
       # calculate projected cluster status after approval
       @cluster_resource_projected = @cluster_resource.clone
       @cluster_resource_projected.domains_quota += @desired_quota - @domain_resource.quota
