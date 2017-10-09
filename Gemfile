@@ -40,9 +40,6 @@ gem 'netaddr'
 gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
 
-# Disable cost_control and can be deleted after switch to new masterdata api
-#gem 'fog-openstack-sap-billing', git: 'https://github.com/sapcc/fog-openstack-sap-billing.git', branch: :master
-
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
@@ -80,7 +77,7 @@ gem 'puma', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = ['webconsole','cost_control'] #e.g. ['compute', 'cost_control']
+black_list = ['webconsole'] #e.g. ['compute']
 if ENV.has_key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each{|plugin_name| black_list << plugin_name.strip}
 end
