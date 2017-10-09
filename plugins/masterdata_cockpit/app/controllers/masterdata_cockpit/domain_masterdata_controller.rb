@@ -25,12 +25,8 @@ module MasterdataCockpit
       unless @domain_masterdata.save
         render action: :new
       else
-        # this is the case if no masterdata was found
-        # than we load the new dialog without modal window and need to reload 
-        # the index page after successful created masterdata
-        unless params['modal']
-          render action: :index
-        end
+        flash[:notice] = "Masterdata successfully created."
+        redirect_to plugin('masterdata_cockpit').domain_masterdata_path
       end
     end
 
@@ -40,6 +36,9 @@ module MasterdataCockpit
     def update
       unless @domain_masterdata.update
         render action: :edit
+      else
+          flash[:notice] = "Masterdata successfully updated."
+          redirect_to plugin('masterdata_cockpit').domain_masterdata_path
       end
     end
 
@@ -63,7 +62,13 @@ module MasterdataCockpit
       @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
       # to merge options into .merge(domain_id: @scoped_domain_id)
       @domain_masterdata.attributes =params.fetch(:domain_masterdata,{})
+      inject_domaindata
     end
+
+   def inject_domaindata
+     @domain_masterdata.domain_id = @scoped_domain_id
+     @domain_masterdata.domain_name = @scoped_domain_name
+   end
 
   end
 end

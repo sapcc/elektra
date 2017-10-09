@@ -1,27 +1,7 @@
 .infobox
   %h4.action-heading
     Project Info
-    - can_edit = current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-    -# - can_delete = current_user.is_allowed?('identity:project_delete',{target: {project: @active_project }})
-    - can_delete = false # never allow project delete (until we figure out a way to do this without creating orphans everywhere)
-    - if can_delete or can_edit
-      .dropdown.header-action
-        %i.fa.fa-cog.dropdown-toggle{ data: { toggle: "dropdown"}, aria: { expanded: true} }
-        %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if can_edit
-            %li
-              = link_to plugin('identity').edit_project_path, title: "Edit project info", data: {modal: true, toggle: "tooltip", placement: "left"} do
-                %i.fa.fa-edit.fa-fw
-                Edit Project
-          - if can_delete and @active_project.subprojects_ids.blank?
-            %li.divider{role: "separator"}
-            %li
-              = link_to delete_project_path(@active_project.id), method: :delete, data: {confirm:'This will also delete all assigned roles. Are you sure?', ok: 'Yes, delete it!', confirm_term: @active_project.name, confirm_term_label: "Type project name to confirm (#{@active_project.name})" } do
-                %i.fa.fa-trash.fa-fw
-                Delete Project
-                / %i.fa.fa-exclamation-triangle
-
-
+    = render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: "If you need to edit name or description go to Capacity & Masterdata -> Masterdata" }
   %table.table
     %tbody
       %tr

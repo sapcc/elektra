@@ -4,18 +4,10 @@
 
 - if @project_masterdata
 
-  = f.input :project_id,    :as => :hidden, :input_html => { :value => @scoped_project_id }
-  = f.input :project_name,  :as => :hidden, :input_html => { :value => @scoped_project_name }
-  = f.input :domain_id,     :as => :hidden, :input_html => { :value => @scoped_domain_id }
-  
   -# because of disabling the select boxes  on start we need to send the hidden input fields instead
   = f.input :revenue_relevance, :as => :hidden, :input_html => { :value => @project_masterdata.revenue_relevance }
   = f.input :cost_object_type, :as  => :hidden, :input_html => { :value => @project_masterdata.cost_object_type }
-  
-  = f.input :description, 
-    label: "Description",
-    readonly: true
-  
+
   - co_readonly               = @project_masterdata.solution.nil? == false 
 
   %label.control-label Cost Object
@@ -32,7 +24,6 @@
                as: :select, 
                include_hidden: false, 
                required:true
-               
         %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
           - unless @solutions.nil?
             = f.input :solution, 

@@ -1,15 +1,13 @@
 =content_for :title do
   Maintain new masterdata for domain: #{@scoped_domain_name}
 
-- unless current_user.is_allowed?('masterdata_cockpit:masterdata_create')
-  .alert.alert-warning
-    = icon('exclamation-circle')
-    You are not allowed to maintain masterdata for this domain.
-- else
-  .alert.alert-warning
-    = icon('exclamation-circle')
-    No masterdata maintained for this domain. Please define it
-
-  =simple_modal_form_for @domain_masterdata, submit_action: 'create', url: plugin('masterdata_cockpit').domain_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').domain_masterdata_path do |f|
+= simple_modal_form_for @domain_masterdata, submit_action: 'Create', url: plugin('masterdata_cockpit').domain_masterdata_create_path(),method: :post, cancel_url: plugin('masterdata_cockpit').domain_masterdata_path do |f|
+  .alert.alert-info
+    = render partial: "what_is_masterdata"
+  - unless current_user.is_allowed?('masterdata_cockpit:masterdata_create')
+    .alert.alert-warning
+      = icon('exclamation-circle')
+      You are not allowed to maintain masterdata for this domain.
+  - else
     = render partial: 'maintain_masterdata',  locals: {f:f}
   

@@ -96,7 +96,7 @@ module MasterdataCockpit
         'project_id'                        => read('project_id'),
         'project_name'                      => read('project_name'),
         'parent_id'                         => read('domain_id'),
-        'domain_id'                         => read('domain_id'),
+        'domain_id'                         => read('parent_id'),
         'description'                       => read('description'),
         'responsible_operator_id'           => read('responsible_operator_id'),
         'responsible_operator_email'        => read('responsible_operator_email'),
