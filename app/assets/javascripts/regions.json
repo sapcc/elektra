@@ -77,7 +77,7 @@
     "regionname": "EU-RU-1",
     "lat":        55.75,
     "lon":        37.62,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
