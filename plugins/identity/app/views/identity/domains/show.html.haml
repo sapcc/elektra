@@ -20,7 +20,7 @@
           Resources & Masterdata
 
         %ul.plain-list
-          - if  plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata_cockpit:masterdata_get') && services_ng.masterdata_cockpit.available?
+          - if  plugin_available?('masterdata_cockpit') && current_user.is_allowed?('masterdata_cockpit:masterdata_get')
             %li
               = link_to "Masterdata", plugin('masterdata_cockpit').domain_masterdata_path
 
