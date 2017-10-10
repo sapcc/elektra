@@ -98,8 +98,7 @@ module Core
       
       # engine_class looks like Compute::Engine
       def engine_class
-        class_name = @name.classify
-        class_name += "s" if @name.last=="s"
+        class_name = @name.camelize
         class_name.constantize.const_get(:Engine) rescue nil
       end
     
