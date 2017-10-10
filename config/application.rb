@@ -65,8 +65,10 @@ module MonsoonDashboard
       end
     })
 
+    config.middleware.insert_after Prometheus::Middleware::Collector, InquiryMetricsMiddleware
+
     require 'prometheus/middleware/exporter'
-    config.middleware.insert_after Prometheus::Middleware::Collector, Prometheus::Middleware::Exporter
+    config.middleware.insert_after InquiryMetricsMiddleware, Prometheus::Middleware::Exporter
 
     config.middleware.use RevisionMiddleware
 
