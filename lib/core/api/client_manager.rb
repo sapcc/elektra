@@ -27,7 +27,7 @@ module Core
           cfm: { interface: 'public' },
           hermes: { interface: 'public' },
           maia: { interface: 'public' },
-          'sapcc-analytics' => { interface: 'public' }
+          'sapcc-billing': { interface: 'public' }
         }
       end
 
