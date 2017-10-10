@@ -13,7 +13,7 @@ module Core
         {
           region_id:       Rails.configuration.default_region,
           ssl_verify_mode: Rails.configuration.ssl_verify_peer,
-          interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'public',
+          interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
           log_level:       Logger::INFO,
           keep_alive_timeout: 5,
           #headers: { "Accept-Encoding" => "" },
