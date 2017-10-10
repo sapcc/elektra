@@ -144,6 +144,8 @@ SimpleNavigation::Configuration.run do |navigation|
       monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services_ng.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
       monitoring_nav.item :resource_management, 'Resource Management ', -> {plugin('resource_management').resources_path}, if: -> { services_ng.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
       monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit) && current_user && current_user.is_allowed?('audit:application_get') }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+      monitoring_nav.item :audit, 'Maia', -> { plugin('maia').index_path }, if: -> { plugin_available?(:maia) && current_user && current_user.is_allowed?('maia:show') }, highlights_on: Proc.new { params[:controller][/maia\/.*/] }
+
     end
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|

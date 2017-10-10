@@ -1,0 +1,5 @@
+{
+  
+  "access_to_project": "not project_id:nil and (role:admin or role:member)",
+  "maia:show": "rule:access_to_project",
+}
