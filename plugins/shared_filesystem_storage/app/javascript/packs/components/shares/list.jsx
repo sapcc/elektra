@@ -27,6 +27,7 @@ const loadingShareNetworksInfo = (
 
 const List = React.createClass({
   getInitialState() {
+    console.log('getInitialState')
     let shareId = this.extractShareIdFromLocation(this.props.location)
 
     return {
@@ -49,6 +50,7 @@ const List = React.createClass({
   },
 
   findShareById(shareId) {
+    if (!this.props.items) return null;
     return this.props.items.find((item) => item.id === shareId)
   },
 

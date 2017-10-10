@@ -1,0 +1,4 @@
+constants.RESET_FORM = 'RESET_FORM';
+constants.UPDATE_VALUE = 'UPDATE_VALUE';
+constants.SUBMIT_FORM = 'SUBMIT_FORM';
+constants.FORM_FAILURE = 'FORM_FAILURE';
