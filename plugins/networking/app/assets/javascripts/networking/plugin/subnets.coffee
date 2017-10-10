@@ -208,7 +208,9 @@ class Subnets
 
         $deleteButton = $('<a class="btn btn-danger btn-sm" href="#"><i class="fa fa-trash"></i></a>')
                           .appendTo($('<td class="snug"></td>').appendTo($tr))
-        $deleteButton.click () -> self.removeSubnet(this,subnet.id)
+        $deleteButton.click () ->
+          subnet_id = $(this).closest('tr').prop('id')
+          self.removeSubnet(this,subnet_id)
 
     if @state.showForm
       @form.show()
