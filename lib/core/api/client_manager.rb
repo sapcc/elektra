@@ -22,7 +22,12 @@ module Core
 
           # needed because of wrong urls in service catalog.
           # The identity url contains a /v3. This leads to a wrong url in misty!
-          identity: { base_path: '/' }
+          identity: { base_path: '/' },
+          limes: { interface: 'public' },
+          cfm: { interface: 'public' },
+          hermes: { interface: 'public' },
+          maia: { interface: 'public' },
+          'sapcc-analytics' => { interface: 'public' }
         }
       end
 
