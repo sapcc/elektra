@@ -29,7 +29,11 @@
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveClusters(data))
         error: ( jqXHR, textStatus, errorThrown) ->
-          dispatch(requestClustersFailure(jqXHR.responseText))
+          errorMessage =  if typeof jqXHR.responseJSON == 'object'
+                            JSON.parse(jqXHR.responseText).message
+                          else jqXHR.responseText
+
+          dispatch(requestClustersFailure(errorMessage))
 
 
 
@@ -77,7 +81,11 @@
         error: ( jqXHR, textStatus, errorThrown) ->
           switch jqXHR.status
             when 404 then dispatch(loadClusters()) # if requested cluster not found reload the whole list to see what we have
-            else dispatch(requestClusterFailure(jqXHR.responseText))
+            else
+              errorMessage =  if typeof jqXHR.responseJSON == 'object'
+                                JSON.parse(jqXHR.responseText).message
+                              else jqXHR.responseText
+              dispatch(requestClusterFailure(errorMessage))
 
 
 
@@ -117,7 +125,10 @@
         success: (data, textStatus, jqXHR) ->
           dispatch(fetchClusters())
         error: ( jqXHR, textStatus, errorThrown) ->
-          dispatch(deleteClusterFailure(clusterName, errorThrown))
+          errorMessage =  if typeof jqXHR.responseJSON == 'object'
+                            JSON.parse(jqXHR.responseText).message
+                          else jqXHR.responseText
+          dispatch(deleteClusterFailure(clusterName, errorMessage))
 
 
   deleteCluster = () ->
@@ -211,10 +222,9 @@
             dispatch(receiveCluster(data))
             successCallback() if successCallback
           error: ( jqXHR, textStatus, errorThrown) ->
-            console.log('error', jqXHR, jqXHR.status, typeof jqXHR.responseText == 'object')
-            errorMessage =  if typeof jqXHR.responseText == 'object'
+            errorMessage =  if typeof jqXHR.responseJSON == 'object'
                               JSON.parse(jqXHR.responseText).message
-                            else 'The connection to the backend service is currently slow. Please try again.'
+                            else jqXHR.responseText
 
             dispatch(clusterFormFailure("Please Note": [errorMessage]))
 
