@@ -7,60 +7,45 @@ class InquiryMetricsMiddleware
     @registry = options[:registry] || Prometheus::Client.registry
     @path = options[:path] || '/metrics'
     @open_inquiry_metrics = @registry.gauge(
-      :open_inquiry_metrics, 'A gauge of elektra requests'
+      :elektra_open_inquiry_metrics, 'A gauge of open elektra requests'
     )
   end
 
   def call(env)
+    # if current path is /metrics
     if env['PATH_INFO'] == @path
-
+      # collect all metrics
       metrics.each do |data|
+        count = data.delete(:count)
         @open_inquiry_metrics.set(
-          { region: Rails.configuration.default_region }.merge(data[:values]),
-          data[:count]
+          { region: Rails.configuration.default_region }.merge(data), count
         )
       end
     end
 
-    # and return the status, headers and response
+    # and call rest of middleware stack
     @app.call(env)
   end
 
+  # calculate request metrics
   def metrics
     inquiry_data = ::Inquiry::Inquiry.where(aasm_state: 'open').pluck(
-      :domain_id, :approver_domain_id, :project_id, :kind, :callbacks
+      :domain_id, :kind
     )
 
-    # collect ids
-    ids = inquiry_data.each_with_object(
-      { domain_ids: [], approver_domain_ids: [], project_ids: [] }
-    ) do |i,memo|
-      memo[:domain_ids] << i[0]
-      memo[:approver_domain_ids] << i[1]
-      memo[:project_ids] << i[2]
-    end
+    # collect domain ids
+    domain_ids = inquiry_data.collect { |i| i[0] }
 
-    # closure
-    id_names = lambda { |kind_ids|
-      FriendlyIdEntry.where(key: kind_ids.uniq)
-                     .pluck(:key, :name)
-                     .each_with_object({}) { |d, memo| memo[d[0]] = d[1] }
-    }
-    # id => name
-    domain_names = id_names.call(ids[:domain_ids])
-    project_names = id_names.call(ids[:project_ids])
-    approver_domain_names = id_names.call(ids[:approver_domain_ids])
+    # domain id => domain name
+    domain_id_names = FriendlyIdEntry.where(
+      key: domain_ids.uniq
+    ).pluck(:key, :name).each_with_object({}) { |d, memo| memo[d[0]] = d[1] }
 
     inquiry_data.each_with_object({}) do |i, hash|
-      key = "#{i[0]}-#{i[1]}-#{i[2]}-#{i[3]}"
+      key = "#{i[0]}-#{i[1]}"
       hash[key] ||= {
-        values: {
-          domain: domain_names[i[0]] || i[0],
-          approver_domain: approver_domain_names[i[1]] || i[1],
-          project: project_names[i[2]] || i[2],
-          kind: i[3],
-          url: (i[4] || {}).fetch('approved',{}).fetch('action')
-        },
+        domain: domain_id_names[i[0]] || i[0],
+        kind: i[1],
         count: 0
       }
       hash[key][:count] += 1
