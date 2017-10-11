@@ -1,7 +1,7 @@
 .bs-callout.bs-callout-primary
   %p
     %h3 
-      = link_to 'What is maia?', 'https://github.com/sapcc/maia/blob/master/README.md', target:'_blank'
+      = link_to 'What is Maia?', 'https://github.com/sapcc/maia/blob/master/README.md', target:'_blank'
     %p
       Maia is a multi-tenant OpenStack-service for accessing metrics and alarms collected 
       through Prometheus. It offers a Prometheus-compatible API and supports federation.
@@ -29,7 +29,9 @@
           this is a Prometheus expression browser adapted to Maia. You can use it to discover metrics,
           series and perform ad-hoc queries leveraging all of PromQL's rich query syntax.
         %p
-          If you like give it a try and click the button below.
-        %p
-          = icon("arrow-right", class: "fa-2x", style:"padding-left:5px")
-          = link_to 'Go to Maia UI', "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}" , class: 'btn btn-primary btn-sm', style:'margin-bottom:10px', target:'_blank'
+          If you like give it a try and click the link below.
+%p
+  = link_to "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}", target:'_blank' do
+    = icon("external-link", class: "fa-1x", style:"padding-left:5px;")
+    %span
+      go to Maia
