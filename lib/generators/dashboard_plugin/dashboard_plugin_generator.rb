@@ -34,7 +34,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
   def update_dependencies_to_gemspec
     remove_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/version.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "#{name.classify}::VERSION", '"0.0.1"'
+    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "#{name.camelize}::VERSION", '"0.0.1"'
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "# Maintain your gem's version:\n", ''
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "require \"#{name}/version\"", ''
     gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /TODO:?/, ''
@@ -45,7 +45,7 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
   def create_service_layer_service
     copy_file "app/services/service_layer/service.rb", "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb", '%{PLUGIN_NAME}', name.classify
+    gsub_file "#{PLUGINS_PATH}/#{name}/app/services/service_layer/#{name}_service.rb", '%{PLUGIN_NAME}', name.camelize
   end
 
   def update_assets
@@ -63,8 +63,8 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
     copy_file "app/controllers/application_controller.rb", "#{PLUGINS_PATH}/#{name}/app/controllers/#{name}/application_controller.rb"
     copy_file "app/views/application/index.html.haml", "#{PLUGINS_PATH}/#{name}/app/views/#{name}/application/index.html.haml"
 
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/controllers/#{name}/application_controller.rb", '%{PLUGIN_NAME}', name.classify
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/views/#{name}/application/index.html.haml", '%{PLUGIN_NAME}', name.classify
+    gsub_file "#{PLUGINS_PATH}/#{name}/app/controllers/#{name}/application_controller.rb", '%{PLUGIN_NAME}', name.camelize
+    gsub_file "#{PLUGINS_PATH}/#{name}/app/views/#{name}/application/index.html.haml", '%{PLUGIN_NAME}', name.camelize
   end
 
   def replace_test_with_spec
@@ -73,15 +73,15 @@ class DashboardPluginGenerator < Rails::Generators::NamedBase
 
   def add_controller_spec
     copy_file "spec/controllers/application_controller_spec.rb", "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb", '%{PLUGIN_NAME}', name.classify
+    gsub_file "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb", '%{PLUGIN_NAME}', name.camelize
 
-    gsub_file "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb", '%{PLUGIN_NAME}', name.classify
+    gsub_file "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb", '%{PLUGIN_NAME}', name.camelize
   end
 
   def add_routes
     remove_file "#{PLUGINS_PATH}/#{name}/config/routes.rb"
     copy_file "config/routes.rb", "#{PLUGINS_PATH}/#{name}/config/routes.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/config/routes.rb", '%{PLUGIN_NAME}', name.classify
+    gsub_file "#{PLUGINS_PATH}/#{name}/config/routes.rb", '%{PLUGIN_NAME}', name.camelize
   end
 
 end
