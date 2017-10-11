@@ -123,14 +123,14 @@ PATH
     lookup (0.0.1)
 
 PATH
-  remote: plugins/maia
-  specs:
-    maia (0.0.1)
-
-PATH
   remote: plugins/masterdata_cockpit
   specs:
     masterdata_cockpit (0.0.1)
+
+PATH
+  remote: plugins/metrics
+  specs:
+    metrics (0.0.1)
 
 PATH
   remote: plugins/networking
@@ -600,8 +600,8 @@ DEPENDENCIES
   loadbalancing!
   lookup!
   lyra-client!
-  maia!
   masterdata_cockpit!
+  metrics!
   misty!
   misty-cc!
   monsoon-openstack-auth!
