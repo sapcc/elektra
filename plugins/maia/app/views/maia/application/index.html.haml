@@ -1,2 +1,35 @@
-= icon("arrow-right", class: "fa-2x")
-= link_to 'Go to maia', "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}" , class: 'btn btn-primary btn-sm', style:"margin-bottom:10px", target:"_blank"
+.bs-callout.bs-callout-primary
+  %p
+    %h3 
+      = link_to 'What is maia?', 'https://github.com/sapcc/maia/blob/master/README.md', target:'_blank'
+    %p
+      Maia is a multi-tenant OpenStack-service for accessing metrics and alarms collected 
+      through Prometheus. It offers a Prometheus-compatible API and supports federation.
+    %p It contains the following components:
+    %ul
+      %li
+        %h4 
+          = link_to 'Maia Service', 'https://github.com/sapcc/maia/blob/master/docs/operators-guide.md', target:'_blank'
+        %p
+          The service is depending on an existing* Prometheus installation that is responsible 
+          for collecting metrics. These metrics are exposed by Maia using the same, familiar
+          Prometheus API. The only difference is that all API requests have to be authenticated and
+          scoped using either OpenStack identity tokens or basic authentication.
+      %li 
+        %h4
+          = link_to 'Maia CLI', 'https://github.com/sapcc/maia/blob/master/docs/users-guide.md#using-the-maia-client', target:'_blank'
+        %p 
+          The maia command can also be used to retrieve metrics from the Maia service. 
+          It behaves like any other OpenStack CLI, supporting the same command line options and
+          environment variables for authentication
+      %li
+        %h4 
+          = link_to 'Maia User Interface', 'https://github.com/sapcc/maia/blob/master/docs/users-guide.md#using-the-maia-ui', target:'_blank'
+        %p 
+          this is a Prometheus expression browser adapted to Maia. You can use it to discover metrics,
+          series and perform ad-hoc queries leveraging all of PromQL's rich query syntax.
+        %p
+          If you like give it a try and click the button below.
+        %p
+          = icon("arrow-right", class: "fa-2x", style:"padding-left:5px")
+          = link_to 'Go to Maia UI', "https://maia.#{current_region}.cloud.sap/#{@scoped_domain_name}" , class: 'btn btn-primary btn-sm', style:'margin-bottom:10px', target:'_blank'
