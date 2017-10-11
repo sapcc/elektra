@@ -25,9 +25,8 @@ module Core
           identity: { base_path: '/' },
           resources: { interface: 'public' },
           database: { interface: 'public' },
-          'audit-data' => { interface: 'public' },
           metrics: { interface: 'public' },
-          'sapcc-billing' => { interface: 'public' }
+          masterdata:  { interface: 'public' }
         }
       end
 
