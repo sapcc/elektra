@@ -16,12 +16,13 @@ Clusters = React.createClass
     {flashError, isFetching, clusters, handleNewCluster, error} = @props
 
     div null,
-      if flashError
+      if flashError or error
         div className: 'alert alert-error alert-dismissible',
           button className: 'close', type: 'button', 'data-dismiss': 'alert',
             span null,
               '\u00D7' # &times;
           flashError
+          error
 
       unless clusters && clusters.length
         div className: 'toolbar toolbar-controlcenter',
@@ -46,12 +47,6 @@ Clusters = React.createClass
               td colSpan: '5',
                 span className: 'spinner'
           else
-
-            if error
-              tr null,
-                td colSpan: '5',
-                  error.message
-
             if clusters && clusters.length
               for cluster in clusters
                 React.createElement ClusterItem, cluster: cluster, key: cluster.name

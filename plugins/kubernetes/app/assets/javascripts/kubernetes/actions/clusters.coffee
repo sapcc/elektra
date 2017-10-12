@@ -31,7 +31,12 @@
         error: ( jqXHR, textStatus, errorThrown) ->
           errorMessage =  if typeof jqXHR.responseJSON == 'object'
                             JSON.parse(jqXHR.responseText).message
-                          else jqXHR.responseText
+                          else
+                            if jqXHR.responseText.length > 0
+                              jqXHR.responseText
+                            else
+                              "The backend is currently slow to respond. Please try again later. We are on it."
+
 
           dispatch(requestClustersFailure(errorMessage))
 
