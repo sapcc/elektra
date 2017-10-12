@@ -37,6 +37,16 @@ module Networking
           ]
         )
       end
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        render partial: 'list', locals: { networks: @networks }
+      else
+        # comon case, render index page with layout
+        render action: :index
+      end
+
     end
 
     def manage_subnets
