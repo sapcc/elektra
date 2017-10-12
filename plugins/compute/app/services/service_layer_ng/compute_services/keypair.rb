@@ -25,7 +25,7 @@ module ServiceLayerNg
 
       def find_keypair!(keypair_name)
         return nil if keypair_name.blank?
-        api.compute.show_keypair_details(keypair_name).map_to(Compute::Keypair)
+        api.compute.show_keypair_details(escape(keypair_name)).map_to(Compute::Keypair)
       end
 
       def find_keypair(keypair_name)
@@ -36,7 +36,7 @@ module ServiceLayerNg
 
       def delete_keypair(keypair_name)
         return nil if keypair_name.blank?
-        api.compute.delete_keypair(keypair_name)
+        api.compute.delete_keypair(escape(keypair_name))
       end
     end
   end
