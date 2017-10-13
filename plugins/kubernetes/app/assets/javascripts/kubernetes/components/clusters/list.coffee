@@ -54,7 +54,10 @@ Clusters = React.createClass
             else
               tr null,
                 td colSpan: '5',
-                  'No clusters found'
+                  if error
+                    'Could not retrieve clusters'
+                  else
+                    'No clusters found'
 
 
 
