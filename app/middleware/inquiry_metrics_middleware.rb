@@ -6,14 +6,22 @@ class InquiryMetricsMiddleware
     @app = app
     @registry = options[:registry] || Prometheus::Client.registry
     @path = options[:path] || '/metrics'
-    @open_inquiry_metrics = @registry.gauge(
-      :elektra_open_inquiry_metrics, 'A gauge of open elektra requests'
-    )
+
+    @open_inquiry_metrics = @registry.get(:elektra_open_inquiry_metrics) ||
+                            @registry.gauge(
+                              :elektra_open_inquiry_metrics,
+                              'A gauge of open elektra requests'
+                            )
   end
 
   def call(env)
     # if current path is /metrics
     if env['PATH_INFO'] == @path
+      # reset all values to zero
+      @open_inquiry_metrics.values.each do |labels, _value|
+        @open_inquiry_metrics.set(labels, 0)
+      end
+
       # collect all metrics
       metrics.each do |data|
         count = data.delete(:count)
