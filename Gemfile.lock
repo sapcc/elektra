@@ -128,6 +128,11 @@ PATH
     masterdata_cockpit (0.0.1)
 
 PATH
+  remote: plugins/metrics
+  specs:
+    metrics (0.0.1)
+
+PATH
   remote: plugins/networking
   specs:
     networking (0.0.1)
@@ -596,6 +601,7 @@ DEPENDENCIES
   lookup!
   lyra-client!
   masterdata_cockpit!
+  metrics!
   misty!
   misty-cc!
   monsoon-openstack-auth!
