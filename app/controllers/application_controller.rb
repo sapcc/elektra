@@ -28,6 +28,9 @@ class ApplicationController < ActionController::Base
   # catch all api errors and render exception page
   rescue_and_render_exception_page [
     {
+      'Core::Api::Error' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
+    },
+    {
       'Core::Api::ResponseError' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
     },
     {
