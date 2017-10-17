@@ -35,7 +35,7 @@ module ServiceLayerNg
       api.catalog_include_service?('object-store', region)
     end
     
-    def capabilities
+    def list_capabilities
       Rails.logger.debug  "[object_storage-service] -> capabilities -> GET /info"
       response = api.object_storage.list_activated_capabilities
        map_to(ObjectStorage::Capabilities, response.body)
@@ -63,6 +63,122 @@ module ServiceLayerNg
       response = api.object_storage.show_container_metadata(container_name)
       data = build_header_data(response,container_name)
       map_to(ObjectStorage::ContainerNg, data)
+    end
+
+    def new_container(attributes={})
+      Rails.logger.debug  "[object_storage-service] -> new_container"
+      map_to(ObjectStorage::ContainerNg, attributes)
+    end
+
+
+    def empty(container_name)
+      Rails.logger.debug  "[object_storage-service] -> empty -> #{container_name}"
+      targets = objects(container_name).map do |obj|
+        { container: container_name, object: obj['path'] }
+      end
+      bulk_delete(targets)
+    end
+    
+    def empty?(container_name)
+      Rails.logger.debug  "[object_storage-service] -> empty? -> #{container_name}"
+      objects(container_name, limit: 1).count == 0
+    end 
+
+
+    # Objects
+
+    OBJECTS_ATTRMAP = {
+      # name in API response => name in our model (that is part of this class's interface)
+      'bytes'         => 'size_bytes',
+      'content_type'  => 'content_type',
+      'hash'          => 'md5_hash',
+      'last_modified' => 'last_modified_at',
+      'name'          => 'path',
+      'subdir'        => 'path', # for subdirectories, only this single attribute is given
+    }
+    OBJECT_ATTRMAP = {
+      'content-length' => 'size_bytes',
+      'content-type'   => 'content_type',
+      'etag'           => 'md5_hash',
+      'last-modified'  => 'last_modified_at',
+      'x-timestamp'    => 'created_at',
+      'x-delete-at'    => 'expires_at',
+    }
+    OBJECT_WRITE_ATTRMAP = {
+      # name in our model => name in create/update API request
+      'content_type'   => 'Content-Type',
+      # 'expires_at'     => 'X-Delete-At', # this is special-cased in update_object()
+    }
+
+    def objects(container_name, options={})
+      Rails.logger.debug  "[object_storage-service] -> objects -> #{container_name}"
+      list = api.object_storage.show_container_details_and_list_objects(container_name, options).body
+      list.map! do |o|
+        object = map_attribute_names(o, OBJECTS_ATTRMAP)
+        object['id'] = object['path'] # path also serves as id() for Core::ServiceLayer::Model
+        object['container_name'] = container_name
+        if object.has_key?('last_modified_at')
+          object['last_modified_at'] = DateTime.iso8601(object['last_modified_at']) # parse date
+        end
+        object
+      end
+    end
+
+    def bulk_delete(targets)
+      Rails.logger.debug  "[object_storage-service] -> bulk_delete"
+      Rails.logger.debug  "[object_storage-service] -> targets: #{targets}"
+
+#      TODO: Ask Stefan
+#      capabilities = list_capabilities
+#      if capabilities.attributes.has_key?('bulk_delete')
+#        # assemble the request body containing the paths to all targets
+#        body = ""
+#        targets.each do |target|
+#          unless target.has_key?(:container)
+#            raise ArgumentError, "malformed target #{target.inspect}"
+#          end
+#          body += target[:container]
+#          if target.has_key?(:object)
+#            body += "/" + target[:object]
+#          end
+#          body += "\n"
+#        end
+#
+#        # TODO: the bulk delete request is missing in Fog
+#        @fog.send(:request, {
+#          expects: 200,
+#          method:  'DELETE',
+#          path:    '',
+#          query:   { 'bulk-delete' => 1 },
+#          headers: { 'Content-Type' => 'text/plain' },
+#          body:    body,
+#        })
+#      else
+        targets.each do |target|
+          unless target.has_key?(:container)
+            raise ArgumentError, "malformed target #{target.inspect}"
+          end
+
+          if target.has_key?(:object)
+            delete_object_ng(target[:container],target[:object])
+          else
+            delete_container_ng(target[:container])
+          end
+        end
+#      end
+    end
+
+    ################## MODEL INTERFACE ######################
+    def create_container_ng(params = {})
+      Rails.logger.debug  "[object_storage-service] -> create_container_ng"
+      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+      name = params.delete(:name)
+      api.object_storage.create_container(name, Misty.to_json(params)).body
+    end
+    
+    def delete_container_ng(container_name)
+      Rails.logger.debug  "[object_storage-service] -> delete_container_ng -> #{container_name}"
+      api.object_storage.delete_container(container_name).body
     end
 
    private
@@ -98,5 +214,6 @@ module ServiceLayerNg
       
       header_hash
     end
+
   end
 end

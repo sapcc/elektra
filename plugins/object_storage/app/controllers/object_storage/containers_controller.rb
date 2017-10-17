@@ -5,7 +5,7 @@ module ObjectStorage
     before_action :load_quota_data, only: [ :index, :show ]
 
     def index
-      @capabilities = services_ng.object_storage.capabilities
+      @capabilities = services_ng.object_storage.list_capabilities
       @containers   = services_ng.object_storage.containers
     end
 
@@ -17,12 +17,12 @@ module ObjectStorage
 
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
-      @empty = @container.empty?
+      @empty = services_ng.object_storage.empty?(@container.name)
     end
 
     def confirm_emptying
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
-      @empty = @container.empty?
+      @empty = services_ng.object_storage.empty?(@container.name)
     end
 
     def show_access_control
@@ -38,7 +38,7 @@ module ObjectStorage
     end
 
     def new
-      @container = services.object_storage.new_container(name: "")
+      @container = services_ng.object_storage.new_container(name: "")
     end
 
     def pre_empty
@@ -50,11 +50,11 @@ module ObjectStorage
     end
 
     def empty
-      @container.empty!
+      services_ng.object_storage.empty(@container.name)
     end
 
     def create
-      @container = services.object_storage.new_container(params.require(:container))
+      @container = services_ng.object_storage.new_container(params.require(:container_ng))
       unless @container.save
         render action: 'new'
         return
@@ -80,7 +80,7 @@ module ObjectStorage
 
 
       unless @container.update_attributes(attrs)
-        @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
+        @other_container_names = services_ng.object_storage.containers.map(&:name).reject { |n| n == @container.name }
         render action: 'show' # "edit" view is covered by "show"
         return
       end
@@ -109,7 +109,7 @@ module ObjectStorage
     def back_to_container_list
       respond_to do |format|
         format.js do
-          @containers = services.object_storage.containers
+          @containers = services_ng.object_storage.containers
           render action: 'reload_container_list'
         end
         format.html { redirect_to plugin('object_storage').containers_path }
