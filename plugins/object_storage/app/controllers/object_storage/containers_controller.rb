@@ -12,7 +12,7 @@ module ObjectStorage
     def show
       # for the "Object versioning" feature, we need to offer a selection of container names,
       # but to avoid confusion, the archive container should be different from the current one
-      @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
+      @other_container_names = services_ng.object_storage.containers.map(&:name).reject { |n| n == @container.name }
     end
 
     def confirm_deletion
@@ -102,7 +102,7 @@ module ObjectStorage
     private
 
     def load_container
-      @container = services.object_storage.find_container(params[:id])
+      @container = services_ng.object_storage.container_metadata(params[:id])
       raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found" unless @container
     end
 
