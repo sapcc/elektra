@@ -67,7 +67,6 @@ class Worldmap
     # d.properties contains the attributes (e.g. d.properties.name, d.properties.population)
 
     clickedCity = (d, i) ->
-      console.log("clicked city")
       if d.available & !isActiveCity(d) # only active and available cities do something on click
         d3.event.stopPropagation() # to prevent clickedWorldMap from triggering
         link = window.location.href.replace(options.current_region, d.regionkey)
@@ -77,7 +76,6 @@ class Worldmap
 
     clickedWorldMap = (d, i) ->
       # hide all tooltips if world map clicked
-      console.log("worldmap clicked")
       d3.selectAll('.d3-tip').style
         opacity: 0
         'pointer-events': 'none'
