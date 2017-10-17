@@ -5,7 +5,7 @@ module ObjectStorage
     before_action :load_quota_data, only: [ :index, :show ]
 
     def index
-      @capabilities = services.object_storage.capabilities
+      @capabilities = services_ng.object_storage.capabilities
       @containers   = services.object_storage.containers
     end
 
