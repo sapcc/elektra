@@ -52,27 +52,17 @@ module ServiceLayerNg
       map_to(ObjectStorage::ContainerNg, list)
     end
     
-    def find_container(container)
+    def find_container(container_name)
       Rails.logger.debug  "[object_storage-service] -> find_container -> GET /"
-      response = api.object_storage.show_container_details_and_list_objects(container)
+      response = api.object_storage.show_container_details_and_list_objects(container_name)
       map_to(ObjectStorage::ContainerNg, response.body)
     end
     
-    def container_metadata(container)
+    def container_metadata(container_name)
       Rails.logger.debug  "[object_storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
-      response = api.object_storage.show_container_metadata(container)
-      headers = {}
-      response.header.each_header{|key,value| headers[key] = value}
-      header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
-      header_hash['id'] = header_hash['name'] = container
-      #header_hash['public_url'] = fog_public_url(name)
-      header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
-      header_hash['metadata']   = extract_metadata_tags(headers, 'x-container-meta-').reject do |key, value|
-        # skip metadata fields that are recognized by us
-        CONTAINER_ATTRMAP.has_key?('x-container-meta-' + key)
-      end
-
-      map_to(ObjectStorage::ContainerNg, header_hash)
+      response = api.object_storage.show_container_metadata(container_name)
+      data = build_header_data(response,container_name)
+      map_to(ObjectStorage::ContainerNg, data)
     end
 
    private
@@ -90,6 +80,23 @@ module ServiceLayerNg
         end
       end
       return result
+    end
+    
+    def build_header_data(response,container_name = nil)
+      headers = {}
+      response.header.each_header{|key,value| headers[key] = value}
+      header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
+      
+      # enrich data with additional information
+      header_hash['id'] = header_hash['name'] = container_name
+      #header_hash['public_url'] = fog_public_url(container_name)
+      header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
+      header_hash['metadata']   = extract_metadata_tags(headers, 'x-container-meta-').reject do |key, value|
+        # skip metadata fields that are recognized by us
+        CONTAINER_ATTRMAP.has_key?('x-container-meta-' + key)
+      end
+      
+      header_hash
     end
   end
 end
