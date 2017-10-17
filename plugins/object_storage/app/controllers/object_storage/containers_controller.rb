@@ -6,7 +6,7 @@ module ObjectStorage
 
     def index
       @capabilities = services_ng.object_storage.capabilities
-      @containers   = services.object_storage.containers
+      @containers   = services_ng.object_storage.containers
     end
 
     def show
