@@ -54,7 +54,7 @@ module ObjectStorage
     end
 
     def create
-      @container = services_ng.object_storage.new_container(params.require(:container_ng))
+      @container = services_ng.object_storage.new_container(params.require(:container))
       unless @container.save
         render action: 'new'
         return

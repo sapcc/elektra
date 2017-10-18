@@ -1,6 +1,7 @@
 module ServiceLayerNg
   class ObjectStorageService < Core::ServiceLayerNg::Service
 
+   # CONTAINER #
 
     CONTAINERS_ATTRMAP = {
       # name in API response => name in our model (that is part of this class's interface)
@@ -49,31 +50,30 @@ module ServiceLayerNg
         container['id'] = container['name'] # name also serves as id() for Core::ServiceLayer::Model
         container
       end
-      map_to(ObjectStorage::ContainerNg, list)
+      map_to(ObjectStorage::Container, list)
     end
     
     def find_container(container_name)
       Rails.logger.debug  "[object_storage-service] -> find_container -> GET /"
       response = api.object_storage.show_container_details_and_list_objects(container_name)
-      map_to(ObjectStorage::ContainerNg, response.body)
+      map_to(ObjectStorage::Container, response.body)
     end
     
     def container_metadata(container_name)
       Rails.logger.debug  "[object_storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
       response = api.object_storage.show_container_metadata(container_name)
       data = build_header_data(response,container_name)
-      map_to(ObjectStorage::ContainerNg, data)
+      map_to(ObjectStorage::Container, data)
     end
 
     def new_container(attributes={})
       Rails.logger.debug  "[object_storage-service] -> new_container"
-      map_to(ObjectStorage::ContainerNg, attributes)
+      map_to(ObjectStorage::Container, attributes)
     end
-
 
     def empty(container_name)
       Rails.logger.debug  "[object_storage-service] -> empty -> #{container_name}"
-      targets = objects(container_name).map do |obj|
+      targets = list_objects(container_name).map do |obj|
         { container: container_name, object: obj['path'] }
       end
       bulk_delete(targets)
@@ -81,11 +81,22 @@ module ServiceLayerNg
     
     def empty?(container_name)
       Rails.logger.debug  "[object_storage-service] -> empty? -> #{container_name}"
-      objects(container_name, limit: 1).count == 0
+      list_objects(container_name, limit: 1).count == 0
     end 
 
+    def create_container(params = {})
+      Rails.logger.debug  "[object_storage-service] -> create_container"
+      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+      name = params.delete(:name)
+      api.object_storage.create_container(name, Misty.to_json(params)).body
+    end
+    
+    def delete_container(container_name)
+      Rails.logger.debug  "[object_storage-service] -> delete_container -> #{container_name}"
+      api.object_storage.delete_container(container_name).body
+    end
 
-    # Objects
+    # OBJECTS # 
 
     OBJECTS_ATTRMAP = {
       # name in API response => name in our model (that is part of this class's interface)
@@ -110,8 +121,8 @@ module ServiceLayerNg
       # 'expires_at'     => 'X-Delete-At', # this is special-cased in update_object()
     }
 
-    def objects(container_name, options={})
-      Rails.logger.debug  "[object_storage-service] -> objects -> #{container_name}"
+    def list_objects(container_name, options={})
+      Rails.logger.debug  "[object_storage-service] -> list_objects -> #{container_name}"
       list = api.object_storage.show_container_details_and_list_objects(container_name, options).body
       list.map! do |o|
         object = map_attribute_names(o, OBJECTS_ATTRMAP)
@@ -162,23 +173,10 @@ module ServiceLayerNg
           if target.has_key?(:object)
             delete_object_ng(target[:container],target[:object])
           else
-            delete_container_ng(target[:container])
+            delete_container(target[:container])
           end
         end
 #      end
-    end
-
-    ################## MODEL INTERFACE ######################
-    def create_container_ng(params = {})
-      Rails.logger.debug  "[object_storage-service] -> create_container_ng"
-      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
-      name = params.delete(:name)
-      api.object_storage.create_container(name, Misty.to_json(params)).body
-    end
-    
-    def delete_container_ng(container_name)
-      Rails.logger.debug  "[object_storage-service] -> delete_container_ng -> #{container_name}"
-      api.object_storage.delete_container(container_name).body
     end
 
    private
@@ -204,10 +202,10 @@ module ServiceLayerNg
       header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
       
       # enrich data with additional information
-      header_hash['id'] = header_hash['name'] = container_name
-      #header_hash['public_url'] = fog_public_url(container_name)
+      header_hash['id']               = header_hash['name'] = container_name
+      #header_hash['public_url']      = fog_public_url(container_name)
       header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
-      header_hash['metadata']   = extract_metadata_tags(headers, 'x-container-meta-').reject do |key, value|
+      header_hash['metadata']         = extract_metadata_tags(headers, 'x-container-meta-').reject do |key, value|
         # skip metadata fields that are recognized by us
         CONTAINER_ATTRMAP.has_key?('x-container-meta-' + key)
       end
