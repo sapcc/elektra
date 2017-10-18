@@ -44,6 +44,30 @@ $brand-danger:  #e22;
     font-weight:  400;
 }
 
+
+//
+// icons
+//
+i.dialog-title-icon {
+  @include fa-icon;
+  @extend .fa;
+  @extend .fa-fw;
+  margin-right: 5px;
+
+  &.confirm {
+    @extend .fa-exclamation-triangle;
+  }
+  &.info {
+    @extend .fa-info-circle;
+    color: $help-info-blue;
+  }
+  &.error {
+    @extend .fa-exclamation-triangle;
+    color: $alarm-red;
+  }
+
+}
+
 // ---------------------------------------------------------------------------
 // Collapsable
 // ---------------------------------------------------------------------------

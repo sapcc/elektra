@@ -4,6 +4,7 @@ import { configureStore, addReducer } from 'store';
 import React from 'react';
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux';
+import { configureAjaxHelper } from 'ajax_helper';
 
 var pluginReducers = {};
 var pluginContainers = {};
@@ -24,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const elements = document.getElementsByClassName('content');
   const content = elements.length > 0 ? elements[0] : document.body;
   const classes = content.className.split(' ');
-  const containers = []
+  const containers = [];
+  configureAjaxHelper();
 
   for(let className of classes) {
     if (pluginContainers[className]) {

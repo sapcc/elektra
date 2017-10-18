@@ -10,10 +10,17 @@ export const FormInput = ({
   ...otherProps
 },context) => {
   let values = context.formValues || {}
+  let isValid = true;
+  if (context.formErrors &&
+    (typeof context.formErrors === 'object') &&
+    context.formErrors[name]) {
+      isValid = false;
+  }
+
   let inputProps = {
-    className: `form-control ${required ? 'required' : 'optional'} ${className}`,
+    className: `form-control ${required ? 'required' : 'optional'} ${isValid ? '' : 'is-invalid'} ${className}`,
     name,
-    id: id || context.formName + '_' +name,
+    id: id || (context.formName ? context.formName + '_' + name : name),
     value: values[name] || '',
     onChange: (e) => { e.preventDefault(); context.onChange(e.target.name,e.target.value)},
     ...otherProps
@@ -27,5 +34,6 @@ export const FormInput = ({
 FormInput.contextTypes = {
   formName: PropTypes.string,
   formValues: PropTypes.object,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
 };

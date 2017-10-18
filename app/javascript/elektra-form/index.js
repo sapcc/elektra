@@ -5,13 +5,14 @@
 
 import { Form } from './components/form';
 import { FormInput } from './components/form_input';
-import { FormElement } from './components/form_element';
+import { FormElement, FormElementHorizontal } from './components/form_element';
 import { FormErrors } from './components/form_errors';
 import { SubmitButton } from './components/submit_button';
 
-Form.FormElement = FormElement;
-Form.FormInput = FormInput;
-Form.FormErrors = FormErrors;
+Form.Element = FormElement;
+Form.ElementHorizontal = FormElementHorizontal;
+Form.Input = FormInput;
+Form.Errors = FormErrors;
 Form.SubmitButton = SubmitButton;
 
 export { Form };

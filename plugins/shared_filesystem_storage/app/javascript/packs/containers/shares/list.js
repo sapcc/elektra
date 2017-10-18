@@ -3,7 +3,8 @@ import ShareList from '../../components/shares/list';
 import {
   fetchSharesIfNeeded,
   fetchShareExportLocations,
-  fetchAvailabilityZonesIfNeeded
+  fetchAvailabilityZonesIfNeeded,
+  deleteShare
 } from '../../actions/shares'
 import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
 import { fetchShareRulesIfNeeded } from '../../actions/share_rules'
@@ -21,6 +22,7 @@ export default connect(
     loadShareNetworksOnce: () => dispatch(fetchShareNetworksIfNeeded()),
     loadShareRulesOnce: (shareId) => dispatch(fetchShareRulesIfNeeded(shareId)),
     loadExportLocations: (shareId) => dispatch(fetchShareExportLocations(shareId)),
-    loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded())
+    loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded()),
+    handleDelete: (shareId) => dispatch(deleteShare(shareId))
   })
 )(ShareList);

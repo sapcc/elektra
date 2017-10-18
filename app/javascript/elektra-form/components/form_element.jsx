@@ -9,7 +9,13 @@ export const FormElement = ({
   labelClass='control-label',
   children
 },context) => {
-  let id = context.formName + '_' + name;
+  let id = context.formName ? context.formName + '_' + name : name;
+  let isValid = true;
+  if (context.formErrors &&
+    (typeof context.formErrors === 'object') &&
+    context.formErrors[name]) {
+      isValid = false;
+  }
 
   let renderLabel = () => {
     let className = required ? 'required' : 'optional'
@@ -25,7 +31,7 @@ export const FormElement = ({
   );
 
   return (
-    <div className="form-group row">
+    <div className={`form-group row ${isValid ? '' : 'has-error'}`}>
       { renderLabel() }
       { horizontal ?
         <div className={`col-sm-${12-labelWidth}`}>{renderInputWrapper()}</div>
@@ -36,7 +42,8 @@ export const FormElement = ({
 };
 
 FormElement.contextTypes = {
-  formName: PropTypes.string
+  formName: PropTypes.string,
+  formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
 };
 export const FormElementHorizontal = (props) =>
   <FormElement horizontal={true} {...props}/>

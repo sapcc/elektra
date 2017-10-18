@@ -1,5 +1,8 @@
-import * as constants from '../constants'
-import axios from 'axios'
+import * as constants from '../constants';
+import { ajaxHelper } from 'ajax_helper';
+import { confirm, showInfoModal, showErrorModal } from 'dialogs';
+import { ErrorsList } from 'elektra-form/components/errors_list';
+import { removeShareRules } from './share_rules';
 
 //################### SHARES #########################
 const requestShares= () =>
@@ -44,7 +47,7 @@ const receiveShare= json =>
 const fetchShares= () =>
   function(dispatch) {
     dispatch(requestShares());
-    axios.get('shares')
+    ajaxHelper.get('shares')
       .then( (response) => {
         return dispatch(receiveShares(response.data));
       })
@@ -89,7 +92,7 @@ const reloadShare= shareId =>
     if (!canReloadShare(getState(),shareId)) { return; }
 
     dispatch(requestShare(shareId));
-    axios.get(`shares/${shareId}`)
+    ajaxHelper.get(`shares/${shareId}`)
       .then((response) => dispatch(receiveShare(response.data)))
       .catch((error) => {
         dispatch(requestShareFailure());
@@ -120,30 +123,23 @@ const removeShare=shareId =>
   })
 ;
 
-const showDeleteShareDialog=(shareId,message)=>
-  function(dispatch){
-    dispatch(deleteShareFailure(shareId));
-    return dispatch(app.showErrorDialog({title: 'Could not delete share', message}));
-  }
-;
-
 const deleteShare= shareId =>
   function(dispatch, getState) {
-    dispatch(requestDelete(shareId));
-    return app.ajaxHelper.delete(`/shares/${shareId}`, {
-      success(data, textStatus, jqXHR) {
-        if (data && data.errors) {
-          return dispatch(showDeleteShareDialog(shareId, ReactFormHelpers.Errors(data)));
-        } else {
-          dispatch(removeShare(shareId));
-          return dispatch(app.removeShareRules(shareId));
-        }
-      },
-      error( jqXHR, textStatus, errorThrown) {
-        return dispatch(showDeleteShareDialog(shareId,jqXHR.responseText));
-      }
-    }
-    );
+
+    confirm(`Do you really want to delete the share ${shareId}?`).then(() => {
+      dispatch(requestDelete(shareId));
+      ajaxHelper.delete(`/shares/${shareId}`)
+        .then((response) => {
+          if (response.data && response.data.errors) {
+            showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
+          } else {
+            dispatch(removeShare(shareId));
+            dispatch(removeShareRules(shareId));
+          }
+        }).catch((error) => {
+          showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+        })
+    });
   }
 ;
 
@@ -191,7 +187,7 @@ const receiveShareExportLocations= (shareId, json) =>
 const fetchShareExportLocations= shareId =>
   function(dispatch) {
     dispatch(requestShareExportLocations(shareId));
-    axios.get(`shares/${shareId}/export_locations`)
+    ajaxHelper.get(`shares/${shareId}/export_locations`)
       .then((response) => dispatch(receiveShareExportLocations(shareId,response.data)))
       .catch((error) => {
         console.log('fetchShareExportLocations',error)
@@ -202,33 +198,7 @@ const fetchShareExportLocations= shareId =>
 ;
 
 //################ SHARE FORM ###################
-const resetShareForm=()=> ({type: constants.RESET_SHARE_FORM});
-
-const shareFormForCreate=()=>
-  ({
-    type: constants.PREPARE_SHARE_FORM,
-    method: 'post',
-    action: "shares"
-  })
-;
-
-const shareFormForUpdate=share =>
-  ({
-    type: constants.PREPARE_SHARE_FORM,
-    data: share,
-    method: 'put',
-    action: `shares/${share.id}`
-  })
-;
-
-const shareFormFailure=errors =>
-  ({
-    type: constants.SHARE_FORM_FAILURE,
-    errors
-  })
-;
-
-const updateShareForm= (name,value) =>
+const submitEditShareForm= (name,value) =>
   ({
     type: constants.UPDATE_SHARE_FORM,
     name,
@@ -236,29 +206,22 @@ const updateShareForm= (name,value) =>
   })
 ;
 
-const submitShareForm= (successCallback=null) =>
-  function(dispatch, getState) {
-    const { shared_filesystem_storage: {shareForm} } = getState();
-    if (shareForm.isValid) {
-      dispatch({type: constants.SUBMIT_SHARE_FORM});
-      console.log(shareForm.method,shareForm.action)
-      axios[shareForm.method](shareForm.action, { share: shareForm.data })
+const submitNewShareForm= (values,{handleSuccess,handleErrors}) =>
+  function(dispatch) {
 
-      .then((response) => {
-        if (response.data.errors) {
-          return dispatch(shareFormFailure(response.data.errors));
-        } else {
-          dispatch(receiveShare(response.data));
-          dispatch(resetShareForm());
-          //dispatch(app.toggleShareNetworkIsNewStatus(data.share_network_id,false));
-          if (successCallback) { return successCallback(); }
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-        //dispatch(app.showErrorDialog({title: 'Could not save share', message:jqXHR.responseText}));
-      })
-    }
+    ajaxHelper.post('/shares', { share: values })
+    .then((response) => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors);
+      } else {
+        dispatch(receiveShare(response.data))
+        handleSuccess()
+      }
+    })
+    .catch((error) => {
+      handleErrors(error.message)
+      //dispatch(app.showErrorDialog({title: 'Could not save share', message:jqXHR.responseText}));
+    })
   }
 ;
 
@@ -289,7 +252,7 @@ const receiveAvailableZones= json =>
 const fetchAvailabilityZones=() =>
   function(dispatch) {
     dispatch(requestAvailableZones());
-    axios.get('shares/availability_zones')
+    ajaxHelper.get('shares/availability_zones')
       .then((response) => dispatch(receiveAvailableZones(response.data)))
       .catch((error) => {
         console.log(error)
@@ -311,8 +274,6 @@ export {
   deleteShare,
   fetchShareExportLocations,
   fetchAvailabilityZonesIfNeeded,
-  updateShareForm,
-  submitShareForm,
-  shareFormForCreate,
-  shareFormForUpdate
+  submitNewShareForm,
+  submitEditShareForm
 }

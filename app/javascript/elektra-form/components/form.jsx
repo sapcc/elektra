@@ -1,21 +1,23 @@
 import PropTypes from 'prop-types';
 
-export const Form = (WrappedComponent) =>
+export const Form = ({validate,handleSubmit}) => (WrappedComponent) =>
   class FormWrapper extends React.Component {
     static initialState = {
       values: {},
       isValid: false,
+      isSubmitting: false,
       errors: null
     }
 
     constructor(props, context) {
       super(props, context);
       this.state = Object.assign({},FormWrapper.initialState)
-      this.updateValue = this.updateValue.bind(this);
       this.onChange = this.onChange.bind(this);
+      this.resetForm = this.resetForm.bind(this);
+      this.updateValue = this.updateValue.bind(this);
       this.setIsSubmitting = this.setIsSubmitting.bind(this);
       this.setIsValid = this.setIsValid.bind(this);
-      this.resetForm = this.resetForm.bind(this);
+      this.onSubmit = this.onSubmit.bind(this);
     }
 
     static childContextTypes = {
@@ -23,7 +25,7 @@ export const Form = (WrappedComponent) =>
       onChange: PropTypes.func,
       isFormSubmitting: PropTypes.bool,
       isFormValid: PropTypes.bool,
-      formErrors: PropTypes.object
+      formErrors: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array])
     };
 
     getChildContext() {
@@ -36,10 +38,6 @@ export const Form = (WrappedComponent) =>
       };
     }
 
-    validate(values) {
-      return values.test ? true : false
-    }
-
     resetForm(){
       this.setState(Object.assign({},FormWrapper.initialState))
     }
@@ -47,7 +45,7 @@ export const Form = (WrappedComponent) =>
     updateValue(name,value) {
       let values = Object.assign({},this.state.values)
       values[name] = value
-      let isValid = this.validate(values)
+      let isValid = validate(values) ? true : false
       this.setState({ values, isValid })
     }
 
@@ -58,23 +56,38 @@ export const Form = (WrappedComponent) =>
       this.updateValue(name,value)
     }
 
+    setIsValid(isValid) {
+      this.setState({isValid})
+    }
+
     setIsSubmitting(isSubmitting) {
       this.setState({isSubmitting})
     }
 
-    setIsValid(isValid) {
-      this.setState({isValid})
+    onSubmit(e, {onSuccess,onErrors}) {
+      e.preventDefault()
+      this.setIsSubmitting(true)
+      this.props.handleSubmit(this.state.values, {
+        handleSuccess: () => {
+          this.setIsSubmitting(false)
+          this.resetForm()
+          if(this.props.onHide) this.props.onHide()
+        },
+        handleErrors: (errors) => {
+          this.setIsSubmitting(false)
+          this.setState({errors})
+        }
+      })
     }
 
     render() {
       let elementProps = {
         values: this.state.values,
-        setIsSubmitting: this.setIsSubmitting,
-        setIsValid: this.setIsValid,
         onChange: this.onChange,
         isValid: this.state.isValid,
         isSubmitting: this.state.isSubmitting,
         resetForm: this.resetForm,
+        onSubmit: this.onSubmit,
         ...this.props
       }
       return (
