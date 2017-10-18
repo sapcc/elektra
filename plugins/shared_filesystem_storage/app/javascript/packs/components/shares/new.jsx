@@ -1,121 +1,272 @@
+import PropTypes from 'prop-types';
 import { Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FormElement} from 'elektra-form';
+import { Form } from 'elektra-form';
+
+import axios from 'axios';
 
 const protocols = ['NFS','CIFS']
 
-export default ({
-  show,
-  onHide,
-  shareForm,
-  shareNetworks,
-  availabilityZones,
-  handleSubmit,
-  handleChange,
-  handleNewShareNetwork
-}) => {
-  let share = shareForm.data || {}
 
-  let onChange = (e) => {
-    e.preventDefault()
-    handleChange(e.target.name,e.target.value)
-  };
 
-  return <Modal show={show} onHide={onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
-    <Modal.Header closeButton>
-      <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
-    </Modal.Header>
+// class FormProvider extends React.Component {
+//   static initialState = {
+//     values: {},
+//     isValid: false,
+//     errors: null
+//   }
+//
+//   constructor(props, context) {
+//     super(props, context);
+//     this.state = Object.assign({},FormProvider.initialState)
+//     this.onChange = this.onChange.bind(this);
+//     this.resetForm = this.resetForm.bind(this);
+//     this.updateValue = this.updateValue.bind(this);
+//     this.validate = this.validate.bind(this);
+//     this.onSubmit = this.onSubmit.bind(this);
+//   }
+//
+//   static childContextTypes = {
+//     formValues: PropTypes.object,
+//     onChange: PropTypes.func,
+//     isFormSubmitting: PropTypes.bool,
+//     isFormValid: PropTypes.bool,
+//     formErrors: PropTypes.object
+//   };
+//
+//   getChildContext() {
+//     return {
+//       formValues: this.state.values,
+//       onChange: this.updateValue,
+//       isFormSubmitting: this.state.isSubmitting,
+//       isFormValid: this.state.isValid,
+//       formErrors: this.state.errors
+//     };
+//   }
+//
+//   resetForm(){
+//     this.setState(Object.assign({},FormProvider.initialState))
+//   }
+//
+//   validate(values) {
+//     if (!this.props.validate) return true;
+//     return this.props.validate(values) ? true : false
+//   }
+//
+//   updateValue(name,value) {
+//     let values = Object.assign({},this.state.values)
+//     let isValid = this.validate(values)
+//     values[name] = value
+//     this.setState({ values, isValid })
+//   }
+//
+//   onChange(e) {
+//     e.preventDefault();
+//     let name = e.target.name
+//     let value = e.target.value
+//     this.updateValue(name,value)
+//   }
+//
+//   onSubmit(e) {
+//     e.preventDefault()
+//     this.setState({isSubmitting: true})
+//     axios({
+//       method:this.props.method,
+//       url: this.props.action,
+//       responseType:'json'
+//     }).then( (response) => {
+//       this.props.onSubmitSuccess(response.data)
+//       this.setState({isSubmitting: false})
+//     }).catch( (error) => {
+//       this.setState({errors: error})
+//       this.setState({isSubmitting: false})
+//     })
+//   }
+//
+//   render() {
+//     return (
+//       <form onSubmit={this.onSubmit}>{this.props.children}</form>
+//     )
+//   }
+// }
+//
+// export default ({onHide,show}) => {
+//   let validate = (values) => {
+//     return values.name && true
+//   }
+//
+//   let onSubmitSuccess = (values) => {
+//     console.log('onSubmitSuccess',values)
+//   }
+//
+//   return (
+//     <Modal show={show} onHide={onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
+//       <Modal.Header closeButton>
+//         <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
+//       </Modal.Header>
+//
+//       <FormProvider onSubmitSuccess={onSubmitSuccess} validate={validate} action='shares' method='post'>
+//         <Modal.Body>
+//           <Form.FormErrors/>
+//           <Form.FormInput elementType='input' name='name'/>
+//         </Modal.Body>
+//         <Modal.Footer>
+//           <Button onClick={onHide}>Cancel</Button>
+//           <Form.SubmitButton label='Save'/>
+//         </Modal.Footer>
+//       </FormProvider>
+//     </Modal>
+//   )
+// }
 
-    <form className='form form-horizontal' onSubmit={(e) => { e.preventDefault(); handleSubmit()}}>
-      <Modal.Body>
-        { shareForm.errors &&
-          <div className='alert alert-error'>
-            Errors
-          </div>
+
+// export default ({show,onHide,onChange,values={},isValid}) => {
+//
+//   return (
+//     <Modal show={show} onHide={onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
+//       <Modal.Header closeButton>
+//         <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
+//       </Modal.Header>
+//
+//       <FormProvider>
+//         <Modal.Body>
+//           <Form.FormErrors/>
+//           <input name="test" value={values.test || ''} onChange={onChange}/>
+//           <br/>
+//           <Form.FormInput elementType='input' name='check'/>
+//           <br/>
+//           { Object.keys(values).map((key) => <span key={key}>{key} => {values[key]}</span>)}
+//           <br/>
+//           <span>is valid {`${isValid}`}</span>
+//         </Modal.Body>
+//         <Modal.Footer>
+//           <Button onClick={onHide}>Cancel</Button>
+//           <Form.SubmitButton label='Save'/>
+//         </Modal.Footer>
+//       </FormProvider>
+//     </Modal>
+//   )
+// }
+
+const FormX = ({validate,handleSubmit}) => (WrappedComponent) =>
+  class FormProvider extends React.Component {
+    static initialState = {
+      isValid: false,
+      errors: null
+    }
+
+    constructor(props, context) {
+      super(props, context);
+      this.state = Object.assign({},FormProvider.initialState)
+      this.onChange = this.onChange.bind(this);
+      this.resetForm = this.resetForm.bind(this);
+      this.updateValue = this.updateValue.bind(this);
+      this.setIsSubmitting = this.setIsSubmitting.bind(this);
+      this.setIsValid = this.setIsValid.bind(this);
+      this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    static childContextTypes = {
+      formValues: PropTypes.object,
+      onChange: PropTypes.func,
+      isFormSubmitting: PropTypes.bool,
+      isFormValid: PropTypes.bool,
+      formErrors: PropTypes.object
+    };
+
+    getChildContext() {
+      return {
+        formValues: this.state.values,
+        onChange: this.updateValue,
+        isFormSubmitting: this.state.isSubmitting,
+        isFormValid: this.state.isValid,
+        formErrors: this.state.errors
+      };
+    }
+
+    resetForm(){
+      this.setState(Object.assign({},FormProvider.initialState))
+    }
+
+    updateValue(name,value) {
+      let values = Object.assign({},this.state.values)
+      values[name] = value
+      let isValid = validate(values) ? true : false
+      this.setState({ values, isValid })
+    }
+
+    onChange(e) {
+      e.preventDefault();
+      let name = e.target.name
+      let value = e.target.value
+      this.updateValue(name,value)
+    }
+
+    setIsValid(isValid) {
+      this.setState({isValid})
+    }
+
+    setIsSubmitting(isSubmitting) {
+      this.setState({isSubmitting})
+    }
+
+    onSubmit(e, {onSuccess,onErrors}) {
+      e.preventDefault()
+      this.setIsSubmitting(true)
+      this.props.handleSubmit(this.state.values, {
+        handleSuccess: () => {
+          this.setIsSubmitting(false)
+          this.resetForm()
+          if(this.props.onHide) this.props.onHide()
+        },
+        handleErrors: (errors) => {
+          this.setIsSubmitting(false)
         }
+      })
+    }
 
-        <FormElement label='Name' htmlFor="share_name">
-          <input className="string required form-control" type="text"
-            name="name" id="share_name" value={share.name || ''}
-            onChange={onChange}/>
-        </FormElement>
+    render() {
+      let elementProps = {
+        values: this.state.values,
+        onChange: this.onChange,
+        isValid: this.state.isValid,
+        isSubmitting: this.state.isSubmitting,
+        resetForm: this.resetForm,
+        onSubmit: this.onSubmit,
+        ...this.props
+      }
+      return (
+        <WrappedComponent {...elementProps} />
+      )
+    }
+  }
 
-        <FormElement label='Description'>
-          <textarea className="text optional form-control" name="description"
-            value={share.description || ''} onChange={onChange}/>
-        </FormElement>
+let NewShareForm = ({onHide,show, values, onSubmit}) => {
+  return (
+    <Modal show={show} onHide={onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
+      </Modal.Header>
 
-        <FormElement label='Protocol' required={true} htmlFor="share_proto">
-          <select className="select required form-control" name='share_proto'
-            id="share_proto" value={share.share_proto || ''} onChange={onChange}>
-            <option></option>
-            {protocols.map((protocol,index) =>
-              <option value={protocol} key={index}>{protocol}</option>
-            )}
-          </select>
-        </FormElement>
+      <form onSubmit={(e) => onSubmit(e, {onSuccess: onHide}) }>
+        <Modal.Body>
+          <Form.FormErrors/>
 
-        <FormElement label='Size (GiB)' htmlFor="share_size" required={true}>
-          <input className="integer required optional form-control" type="number"
-            name="size" id="share_size" value={share.size || ''} onChange={onChange}/>
-        </FormElement>
-
-        <FormElement label='Availability Zone' htmlFor="share_az">
-          { availabilityZones.isFetching ? (
-            <span><span className='spinner'></span>Loading...</span>
-          ) : (
-            <div>
-              <select name="availability_zone"
-                className="required select form-control"
-                value={share.availability_zone || ''} onChange={onChange}>
-                <option></option>
-                { availabilityZones.items.map((az,index) =>
-                  <option value={az.id} key={index}>{az.name}</option>
-                )}
-              </select>
-
-              { availabilityZones.items.length==0 &&
-                <p className='help-block'>
-                  <i className="fa fa-info-circle"></i>
-                  No availability zones available.
-                </p>
-              }
-            </div>
-          )}
-        </FormElement>
-
-
-        <FormElement label='Share Network' htmlFor="share_network" required={true}>
-          { shareNetworks.isFetching ? (
-            <span><span className='spinner'></span>Loading...</span>
-          ) : (
-            <div>
-              <select name="share_network_id"
-                className="required select form-control"
-                value={share.share_network_id || ''} onChange={onChange}>
-                <option></option>
-                {shareNetworks.items.map((sn,index) =>
-                  <option value={sn.id} key={sn.id}>{sn.name}</option>
-                )}
-              </select>
-              { shareNetworks.items.length==0 &&
-                <p className='help-block'>
-                  <i className="fa fa-info-circle"></i>
-                  There are no share networks defined yet.
-                  <Link to="/share-networks/new">Create a new share network.</Link>
-                </p>
-              }
-            </div>
-          )}
-      </FormElement>
-
-      </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={onHide}>Cancel</Button>
-        <Button bsStyle="primary" type="submit" disabled={!shareForm.isValid || shareForm.isSubmitting}>
-          { shareForm.isSubmitting ? 'Please Wait ...' : 'Save' }
-        </Button>
-      </Modal.Footer>
-    </form>
-  </Modal>
+        <Form.FormElement label='Name' name='name'>
+          <Form.FormInput elementType='input' name='name'/>
+        </Form.FormElement>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={onHide}>Cancel</Button>
+          <Form.SubmitButton label='Save'/>
+        </Modal.Footer>
+      </form>
+    </Modal>
+  )
 }
+
+export default FormX({
+  intialValues: {},
+  validate: (values) => (values.name && true),
+  handleSubmit: (values, {handleSuccess,handleErrors}) => this.props.handleSuccess
+})(NewShareForm)

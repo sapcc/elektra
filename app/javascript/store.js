@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import ReduxThunk from 'redux-thunk';
-
+import { mergeDeep } from 'tools/deep_merge';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 // combines all reducers and also nested reducers
@@ -20,11 +20,24 @@ const combineNestedReducers = (reducers) => {
   return combineReducers(nestedReducers);
 };
 
-// creates an redux store with all combined reducers
-const configureStore = (reducers) => (
-  createStore(combineNestedReducers(reducers), composeEnhancers(
-    applyMiddleware(ReduxThunk)
-  ))
-);
+let storeReducers = {};
+let store;
 
-export { configureStore };
+// creates an redux store with all combined reducers
+export function configureStore(reducers) {
+  // remember initial reducers
+  storeReducers = mergeDeep(storeReducers,reducers);
+
+  if(store) {
+    store.replaceReducer(combineNestedReducers(storeReducers));
+  } else {
+    store = createStore(combineNestedReducers(reducers), composeEnhancers(
+      applyMiddleware(ReduxThunk)
+    ));
+  }
+  return store;
+};
+
+export function replaceOrAddReducers(reducers) {
+  configureStore(reducers)
+}

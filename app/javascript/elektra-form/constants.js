@@ -1,4 +1,4 @@
-constants.RESET_FORM = 'RESET_FORM';
-constants.UPDATE_VALUE = 'UPDATE_VALUE';
-constants.SUBMIT_FORM = 'SUBMIT_FORM';
-constants.FORM_FAILURE = 'FORM_FAILURE';
+export const RESET = 'RESET_FORM';
+export const UPDATE_VALUE = 'UPDATE_VALUE';
+export const SUBMIT = 'SUBMIT_FORM';
+export const FAILURE = 'FORM_FAILURE';

@@ -27,7 +27,6 @@ const loadingShareNetworksInfo = (
 
 const List = React.createClass({
   getInitialState() {
-    console.log('getInitialState')
     let shareId = this.extractShareIdFromLocation(this.props.location)
 
     return {
