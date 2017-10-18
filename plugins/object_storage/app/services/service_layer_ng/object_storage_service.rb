@@ -53,7 +53,7 @@ module ServiceLayerNg
       map_to(ObjectStorage::Container, list)
     end
     
-    def find_container(container_name)
+    def container_details_and_list_objects(container_name)
       Rails.logger.debug  "[object_storage-service] -> find_container -> GET /"
       response = api.object_storage.show_container_details_and_list_objects(container_name)
       map_to(ObjectStorage::Container, response.body)
@@ -62,7 +62,7 @@ module ServiceLayerNg
     def container_metadata(container_name)
       Rails.logger.debug  "[object_storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
       response = api.object_storage.show_container_metadata(container_name)
-      data = build_header_data(response,container_name)
+      data = build_container_header_data(response,container_name)
       map_to(ObjectStorage::Container, data)
     end
 
@@ -121,6 +121,15 @@ module ServiceLayerNg
       # 'expires_at'     => 'X-Delete-At', # this is special-cased in update_object()
     }
 
+    def object_metadata(container_name,path)
+      Rails.logger.debug  "[object_storage-service] -> find_object -> #{container_name}, #{path}"
+      return nil if container_name.blank? or path.blank?
+
+      response = api.object_storage.show_object_metadata(container_name, path)
+      data = build_object_header_data(response,container_name,path)
+      map_to(ObjectStorage::ObjectNg, data)
+    end
+
     def list_objects(container_name, options={})
       Rails.logger.debug  "[object_storage-service] -> list_objects -> #{container_name}"
       list = api.object_storage.show_container_details_and_list_objects(container_name, options).body
@@ -144,6 +153,14 @@ module ServiceLayerNg
       objects = result.reject { |obj| obj['id'] == path }
       map_to(ObjectStorage::Object, objects)
     end
+
+    def list_objects_below_path(container_name, path, filter={})
+      Rails.logger.debug  "[object_storage-service] -> list_objects_below_path -> #{container_name}, #{path}, #{filter}"
+      path += '/' if !path.end_with?('/') && !path.empty?
+      objects =  list_objects(container_name, filter.merge(prefix: path))
+      map_to(ObjectStorage::Object, objects)
+    end
+
 
     def bulk_delete(targets)
       Rails.logger.debug  "[object_storage-service] -> bulk_delete"
@@ -181,12 +198,37 @@ module ServiceLayerNg
           end
 
           if target.has_key?(:object)
-            delete_object_ng(target[:container],target[:object])
+            delete_object(target[:container],target[:object])
           else
             delete_container(target[:container])
           end
         end
 #      end
+    end
+    
+    def create_object(params)
+      Rails.logger.debug  "[object_storage-service] -> create_object"
+      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+    end
+    
+    def delete_object(container_name, object)
+      Rails.logger.debug  "[object_storage-service] -> delete_object -> #{container_name}, #{object}"
+      api.object_storage.delete_object(container_name,object)
+    end
+
+    def create_folder(container_name, path)
+      Rails.logger.debug  "[object_storage-service] -> create_folder -> #{container_name}, #{path}"
+      # a pseudo-folder is created by writing an empty object at its path, with
+      # a "/" suffix to indicate the folder-ness
+      api.object_storage.create_or_replace_object(container_name, sanitize_path(path) + '/')
+    end
+    
+    def delete_folder(container_name, path)
+      Rails.logger.debug  "[object_storage-service] -> delete_folder -> #{container_name}, #{path}"
+      targets = list_objects_below_path(container_name, sanitize_path(path) + '/').map do |obj|
+        { container: container_name, object: obj['path'] }
+      end
+      bulk_delete(targets)
     end
 
    private
@@ -206,7 +248,7 @@ module ServiceLayerNg
       return result
     end
     
-    def build_header_data(response,container_name = nil)
+    def build_container_header_data(response,container_name = nil)
       headers = {}
       response.header.each_header{|key,value| headers[key] = value}
       header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
@@ -221,6 +263,30 @@ module ServiceLayerNg
       end
       
       header_hash
+    end
+    
+    def build_object_header_data(response,container_name = nil, path = nil)
+      headers = {}
+      response.header.each_header{|key,value| headers[key] = value}
+      header_hash = map_attribute_names(headers, OBJECT_ATTRMAP)
+      header_hash['id']               = header_hash['path'] = path
+      header_hash['container_name']   = container_name
+      #header_hash['public_url']       = fog_public_url(container_name, path)
+      header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
+      header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
+      header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.has_key?('expires_at') # optional!
+      header_hash['metadata']         = extract_metadata_tags(headers, 'X-Object-Meta-')
+      
+      header_hash
+    end
+
+    def sanitize_path(path)
+      # remove duplicate slashes that might have been created by naive path
+      # joining (e.g. `foo + "/" + bar`)
+      path = path.gsub(/^\/+/, '/')
+
+      # remove leading and trailing slash
+      return path.sub(/^\//, '').sub(/\/$/, '')
     end
 
   end

@@ -32,12 +32,12 @@ module ObjectStorage
         return
       end
 
-      services.object_storage.create_folder(@container_name, @object.path + @form.name)
+      services_ng.object_storage.create_folder(@container_name, @object.path + @form.name)
       back_to_object_list(@container_name, @object.path)
     end
 
     def destroy
-      services.object_storage.delete_folder(@container_name, @object.path)
+      services_ng.object_storage.delete_folder(@container_name, @object.path)
       back_to_object_list(@container_name, @object.dirname)
     end
 

@@ -13,7 +13,7 @@ module ObjectStorage
 
     def show
       # load the container (some UI elements are enabled based on the current ACL)
-      @container = services.object_storage.find_container(@container_name)
+      @container = services_ng.object_storage.container_metadata(@container_name)
     end
 
     def download
@@ -101,7 +101,7 @@ module ObjectStorage
     end
 
     def load_object
-      @object = services.object_storage.find_object(@container_name, params[:path])
+      @object = services_ng.object_storage.object_metadata(@container_name, params[:path])
       if (not @object) or @object.is_directory?
         raise ActiveRecord::RecordNotFound, "object #{params[:path]} not found in container #{@container_name}"
       end
