@@ -6,7 +6,6 @@ import ShareNew from '../../containers/shares/new';
 import ShowShare from './show';
 import ShareItem from './item';
 
-
 const FadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
     {children}
@@ -98,6 +97,14 @@ const List = React.createClass({
   closeShow() {
     this.props.history.replace('/shares')
     this.setState({ showShareId: null })
+  },
+
+  showDeleteDialog() {
+    this.setState({ showDeleteDialog: true })
+  },
+
+  closeDeleteDialog() {
+    this.setState({ showDeleteDialog: false})
   },
 
   shareNetwork(share) {
@@ -195,7 +202,8 @@ const List = React.createClass({
                       share={share}
                       shareNetwork={this.shareNetwork(share)}
                       shareRules={this.shareRules(share)}
-                      handleShow={this.showShare}/>)
+                      handleShow={this.showShare}
+                      handleDelete={this.props.handleDelete}/>)
                   ) : (
                     <tr>
                       <td colSpan="6">No Shares found.</td>
