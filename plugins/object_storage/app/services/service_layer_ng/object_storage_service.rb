@@ -96,6 +96,34 @@ module ServiceLayerNg
       api.object_storage.delete_container(container_name).body
     end
 
+    def update_container(container_name, params={})
+      Rails.logger.debug  "[object_storage-service] -> update_container -> #{container_name}"
+      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+
+      request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
+
+      # convert difference between old and new metadata into a set of changes
+      old_metadata = params['original_metadata']
+      new_metadata = params['metadata']
+      if old_metadata.nil? && !new_metadata.nil?
+        raise InputError, 'cannot update metadata without knowing the current metadata'
+      end
+      (old_metadata || {}).each do |key, value|
+        unless new_metadata.has_key?(key)
+          request_params["X-Remove-Container-Meta-#{key}"] = "1"
+        end
+      end
+      (new_metadata || {}).each do |key, value|
+        if old_metadata[key] != value
+          request_params["X-Container-Meta-#{key}"] = value
+        end
+      end
+
+      # TODO: set metadata is not working right now, we need support for misty to set the request header
+      #       bevore the request is send to the server
+      #api.object_storage.create_update_or_delete_container_metadata(container_name,request_params)
+    end
+
     # OBJECTS # 
 
     OBJECTS_ATTRMAP = {
@@ -161,7 +189,6 @@ module ServiceLayerNg
       map_to(ObjectStorage::Object, objects)
     end
 
-
     def bulk_delete(targets)
       Rails.logger.debug  "[object_storage-service] -> bulk_delete"
       Rails.logger.debug  "[object_storage-service] -> targets: #{targets}"
@@ -226,7 +253,7 @@ module ServiceLayerNg
     def delete_folder(container_name, path)
       Rails.logger.debug  "[object_storage-service] -> delete_folder -> #{container_name}, #{path}"
       targets = list_objects_below_path(container_name, sanitize_path(path) + '/').map do |obj|
-        { container: container_name, object: obj['path'] }
+        { container: container_name, object: obj.path }
       end
       bulk_delete(targets)
     end
