@@ -210,10 +210,10 @@ module ServiceLayerNg
       Rails.logger.debug  "[object_storage-service] -> create_object"
       Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
     end
-    
-    def delete_object(container_name, object)
-      Rails.logger.debug  "[object_storage-service] -> delete_object -> #{container_name}, #{object}"
-      api.object_storage.delete_object(container_name,object)
+
+    def delete_object(container_name,path)
+      Rails.logger.debug  "[object_storage-service] -> delete_object -> #{container_name}, #{path}"
+      api.object_storage.delete_object(container_name,path)
     end
 
     def create_folder(container_name, path)
