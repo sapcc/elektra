@@ -7,7 +7,7 @@ module ObjectStorage
     before_action :load_quota_data, only: [ :index, :show ]
 
     def index
-      @objects = services.object_storage.list_objects_at_path(@container_name, params[:path])
+      @objects = services_ng.object_storage.list_objects_at_path(@container_name, params[:path])
       render formats: [:html]
     end
 

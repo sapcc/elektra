@@ -134,6 +134,16 @@ module ServiceLayerNg
         object
       end
     end
+    
+    def list_objects_at_path(container_name, path, filter={})
+      Rails.logger.debug  "[object_storage-service] -> list_objects_at_path -> #{container_name}, #{path}, #{filter}"
+      path += '/' if !path.end_with?('/') && !path.empty?
+      result = list_objects(container_name, filter.merge(prefix: path, delimiter: '/'))
+      # if there is a pseudo-folder at `path`, it will be in the result, too;
+      # filter this out since we only want stuff below `path`
+      objects = result.reject { |obj| obj['id'] == path }
+      map_to(ObjectStorage::Object, objects)
+    end
 
     def bulk_delete(targets)
       Rails.logger.debug  "[object_storage-service] -> bulk_delete"
