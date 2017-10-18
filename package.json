@@ -11,6 +11,7 @@
     "react-bootstrap": "*",
     "react-router-dom": "*",
     "react-transition-group": "*",
+    "prop-types": "^15.5.7",
     "axios": "*"
   },
   "devDependencies": {

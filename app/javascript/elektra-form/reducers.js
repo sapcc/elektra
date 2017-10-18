@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const reset=function(action,...rest){
-  return initialShareFormState;
+  return initialState;
 };
 
 const updateValue=function(state,{name,value}){
@@ -24,13 +24,13 @@ const handleFailure=(state,{errors})=>
   Object.assign({},state,{isSubmitting: false, errors})
 ;
 
-export default function(state, action) {
-  if (state == null) { state = initialShareFormState; }
+export const FormReducers = (name) => function(state, action) {
+  if (state == null) { state = initialState; }
   switch (action.type) {
-    case constants.RESET: return reset(state,action);
-    case constants.UPDATE_VALUE: return updateValue(state,action);
-    case constants.SUBMIT: return submit(state,action);
-    case constants.FAILURE: return failure(state,action);
+    case name+'/'+constants.RESET: return reset(state,action);
+    case name+'/'+constants.UPDATE_VALUE: return updateValue(state,action);
+    case name+'/'+constants.SUBMIT: return submit(state,action);
+    case name+'/'+constants.FAILURE: return failure(state,action);
     default: return state;
   }
 };
