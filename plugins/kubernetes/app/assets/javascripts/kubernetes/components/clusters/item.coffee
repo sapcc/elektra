@@ -7,16 +7,13 @@ Cluster = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     # stop polling if both cluster and nodepool states are "ready"
-    if nextProps.cluster.status.kluster.state == 'Ready' && @nodePoolsReady(nextProps.cluster)
-      console.log("will receive props: stop polling")
+    if @clusterReady(nextProps.cluster) && @nodePoolsReady(nextProps.cluster)
       @stopPolling()
     else if !nextProps.cluster.isPolling
-      console.log("is polling: ", nextProps.cluster.isPolling)
-      console.log("will receive props: start polling")
       @startPolling()
 
   componentDidMount:()->
-    @startPolling() if @props.cluster.status.kluster.state != 'Ready' || !@nodePoolsReady(@props.cluster)
+    @startPolling() if !@clusterReady(@props.cluster) || !@nodePoolsReady(@props.cluster)
 
   componentWillUnmount: () ->
     # stop polling on unmounting
@@ -31,16 +28,25 @@ Cluster = React.createClass
     @props.handlePollingStop(@props.cluster.name)
     clearInterval(@polling)
 
+  clusterReady: (cluster) ->
+    cluster.status.kluster.state == 'Ready'
+
   nodePoolsReady: (cluster) ->
     # return ready only if all state values of all nodepools match the configured size
     ready = true
     for nodePool in cluster.status.nodePools
-      specPool = (cluster.spec.nodePools.filter (i) -> i.name is nodePool.name)[0]
-      for k,v of nodePool
-        unless k == 'name' || k == 'size'
-          if v != specPool.size
-            ready = false
-            break
+      ready = @nodePoolReady(nodePool, cluster)
+    ready
+
+
+  nodePoolReady: (nodePool, cluster) ->
+    ready = true
+    specSize = @nodePoolSpecSize(cluster, nodePool.name)
+    for k,v of nodePool
+      unless k == 'name' || k == 'size'
+        if v != specSize
+          ready = false
+          break
     ready
 
   # find spec size for pool with given name
@@ -58,6 +64,8 @@ Cluster = React.createClass
         cluster.name
       td null,
         strong null, cluster.status.kluster.state
+        unless @clusterReady(cluster)
+          span className: 'spinner'
         br null
         span className: 'info-text', cluster.status.kluster.message
       td null,
@@ -78,6 +86,8 @@ Cluster = React.createClass
                 div key: k,
                   strong null, "#{k}: "
                   "#{v}/#{specSize}"
+                  if v != specSize
+                    span className: 'spinner'
 
 
 
