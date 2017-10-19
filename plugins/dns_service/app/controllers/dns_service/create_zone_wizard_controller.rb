@@ -1,5 +1,9 @@
 module DnsService
   class CreateZoneWizardController < ::DashboardController
+    before_action do
+      #byebug
+    end
+
     before_action :load_inquiry
 
     def new

@@ -11,9 +11,14 @@ module DnsService
     def create
       @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
       inquiry = nil
+
       if @zone_request.valid?
         begin
           dns_admins = list_ccadmin_master_dns_admins
+
+          cloud_admin_domain_friendly_id = @cloud_admin_domain.friendly_id || @cloud_admin_domain.name
+          master_project_friendly_id = @master_project.friendly_id || @master_project.name
+
           inquiry = services.inquiry.create_inquiry(
             'zone',
             "#{@zone_request.zone_name} - #{@zone_request.description}",
@@ -23,7 +28,7 @@ module DnsService
             {
                 "approved": {
                     "name": "Approve",
-                    "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol, domain_id: @cloud_admin_domain.name, project_id: nil)}?overlay=#{plugin('dns_service').create_zone_wizard_path(domain_id: @cloud_admin_domain.name,project_id: @master_project.name)}"
+                    "action": "#{plugin('identity').domain_url(host: request.host_with_port, protocol: request.protocol, domain_id: cloud_admin_domain_friendly_id, project_id: nil)}?overlay=#{plugin('dns_service').create_zone_wizard_path(domain_id: cloud_admin_domain_friendly_id,project_id: master_project_friendly_id)}"
                 }
             },
             @scoped_domain_id, # requester domain

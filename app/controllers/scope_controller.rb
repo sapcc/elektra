@@ -52,11 +52,10 @@ class ScopeController < ::ApplicationController
 
       if @scoped_domain_id
         # replace domain_id with domain friendly id
-        new_path = request.path.gsub(
+        new_path = request.original_fullpath.gsub(
           %r{^\/#{domain_id}\/(?<rest>.*)},
           '/' + @scoped_domain_fid + '/\k<rest>'
         )
-
         unless new_path.include?(@scoped_domain_fid)
           new_path = "/#{@scoped_domain_fid}#{new_path}"
         end
@@ -67,7 +66,8 @@ class ScopeController < ::ApplicationController
             '/\k<domain>/' + @scoped_project_fid + '/\k<rest>'
           )
         end
-        redirect_to new_path
+
+        redirect_to new_path unless params[:modal]
       end
     end
 
