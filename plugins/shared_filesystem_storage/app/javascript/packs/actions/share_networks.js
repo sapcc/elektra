@@ -1,5 +1,5 @@
 import * as constants from '../constants';
-import axios from 'axios'
+import { ajaxHelper } from 'ajax_helper';
 
 //################### SHARE_NETWORKS #########################
 const requestShareNetworks= () => (
@@ -54,7 +54,7 @@ const toggleShareNetworkIsNewStatus=(shareNetworkId,isNew) =>
 const fetchShareNetworks= () =>
   function(dispatch) {
     dispatch(requestShareNetworks());
-    axios.get('share-networks')
+    ajaxHelper.get('/share-networks')
       .then( (response) =>
         dispatch(receiveShareNetworks(response.data))
       )
@@ -115,7 +115,7 @@ const showDeleteShareNetworkError=(shareNetworkId,message)=>
 const deleteShareNetwork= shareNetworkId =>
   function(dispatch, getState) {
     dispatch(requestDelete(shareNetworkId));
-    return app.ajaxHelper.delete(`/share-networks/${shareNetworkId}`, {
+    return ajaxHelper.delete(`/share-networks/${shareNetworkId}`, {
       success(data, textStatus, jqXHR) {
         if (data && data.errors) {
           return dispatch(showDeleteShareNetworkError(shareNetworkId,ReactFormHelpers.Errors(data)));
@@ -256,15 +256,11 @@ const receiveNetworks= json =>
 const fetchNetworks=() =>
   function(dispatch) {
     dispatch(requestNetworks());
-    return app.ajaxHelper.get('/share-networks/networks', {
-      success(data, textStatus, jqXHR) {
-        return dispatch(receiveNetworks(data));
-      },
-      error( jqXHR, textStatus, errorThrown) {
-        return dispatch(requestNetworksFailure());
-      }
-    }
-    );
+    return ajaxHelper.get('/share-networks/networks').then(({data}) => {
+      return dispatch(receiveNetworks(data));
+    }).catch( (error) => {
+      return dispatch(requestNetworksFailure());
+    })
   }
 ;
 

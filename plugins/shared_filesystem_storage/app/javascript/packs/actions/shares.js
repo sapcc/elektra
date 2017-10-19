@@ -47,7 +47,7 @@ const receiveShare= json =>
 const fetchShares= () =>
   function(dispatch) {
     dispatch(requestShares());
-    ajaxHelper.get('shares')
+    ajaxHelper.get('/shares')
       .then( (response) => {
         return dispatch(receiveShares(response.data));
       })
@@ -92,7 +92,7 @@ const reloadShare= shareId =>
     if (!canReloadShare(getState(),shareId)) { return; }
 
     dispatch(requestShare(shareId));
-    ajaxHelper.get(`shares/${shareId}`)
+    ajaxHelper.get(`/shares/${shareId}`)
       .then((response) => dispatch(receiveShare(response.data)))
       .catch((error) => {
         dispatch(requestShareFailure());
@@ -143,29 +143,29 @@ const deleteShare= shareId =>
   }
 ;
 
-const openDeleteShareDialog=function(shareId, options) {
-  if (options == null) { options = {}; }
-  return function(dispatch, getState) {
-    const shareSnapshots = [];
-    // check if there are dependent snapshots.
-    // Problem: the snapshots may not be loaded yet
-    const { snapshots } = getState();
-    if (snapshots && snapshots.items) {
-      for (let snapshot of Array.from(snapshots.items)) {
-        if (snapshot.share_id===shareId) { shareSnapshots.push(snapshot); }
-      }
-    }
-
-    if (shareSnapshots.length===0) {
-      return dispatch(app.showConfirmDialog({
-        message: options.message || 'Do you really want to delete this share?' ,
-        confirmCallback() { return dispatch(deleteShare(shareId)); }
-      }));
-    } else {
-      return dispatch(app.showInfoDialog({title: 'Existing Dependencies', message: `Please delete dependent snapshots(${shareSnapshots.length}) first!`}));
-    }
-  };
-};
+// const openDeleteShareDialog=function(shareId, options) {
+//   if (options == null) { options = {}; }
+//   return function(dispatch, getState) {
+//     const shareSnapshots = [];
+//     // check if there are dependent snapshots.
+//     // Problem: the snapshots may not be loaded yet
+//     const { snapshots } = getState();
+//     if (snapshots && snapshots.items) {
+//       for (let snapshot of Array.from(snapshots.items)) {
+//         if (snapshot.share_id===shareId) { shareSnapshots.push(snapshot); }
+//       }
+//     }
+//
+//     if (shareSnapshots.length===0) {
+//       return dispatch(app.showConfirmDialog({
+//         message: options.message || 'Do you really want to delete this share?' ,
+//         confirmCallback() { return dispatch(deleteShare(shareId)); }
+//       }));
+//     } else {
+//       return dispatch(app.showInfoDialog({title: 'Existing Dependencies', message: `Please delete dependent snapshots(${shareSnapshots.length}) first!`}));
+//     }
+//   };
+// };
 
 //############### SHARE EXPORT LOCATIONS ################
 const requestShareExportLocations= shareId =>
@@ -187,7 +187,7 @@ const receiveShareExportLocations= (shareId, json) =>
 const fetchShareExportLocations= shareId =>
   function(dispatch) {
     dispatch(requestShareExportLocations(shareId));
-    ajaxHelper.get(`shares/${shareId}/export_locations`)
+    ajaxHelper.get(`/shares/${shareId}/export_locations`)
       .then((response) => dispatch(receiveShareExportLocations(shareId,response.data)))
       .catch((error) => {
         console.log('fetchShareExportLocations',error)
@@ -252,7 +252,7 @@ const receiveAvailableZones= json =>
 const fetchAvailabilityZones=() =>
   function(dispatch) {
     dispatch(requestAvailableZones());
-    ajaxHelper.get('shares/availability_zones')
+    ajaxHelper.get('/shares/availability_zones')
       .then((response) => dispatch(receiveAvailableZones(response.data)))
       .catch((error) => {
         console.log(error)

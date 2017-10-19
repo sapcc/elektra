@@ -25,7 +25,7 @@ export const configureAjaxHelper = () => {
   // setup ajaxHelper
   ajaxHelper = axios.create({
     baseURL,
-    timeout: 10000,
+    timeout: 60000,
     headers
   })
 };

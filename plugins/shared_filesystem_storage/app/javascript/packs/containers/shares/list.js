@@ -4,7 +4,8 @@ import {
   fetchSharesIfNeeded,
   fetchShareExportLocations,
   fetchAvailabilityZonesIfNeeded,
-  deleteShare
+  deleteShare,
+  editShare
 } from '../../actions/shares'
 import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
 import { fetchShareRulesIfNeeded } from '../../actions/share_rules'
