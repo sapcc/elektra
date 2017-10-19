@@ -110,8 +110,12 @@ let NewShareForm = ({
   )
 }
 
-export default Form({
-  intialValues: {},
-  validate: (values) => (values.share_proto && values.size && values.share_network_id && true),
-  handleSubmit: (values, {handleSuccess,handleErrors}) => this.props.handleSuccess
-})(NewShareForm)
+export default ({show, ...otherProps}) => {
+  let validate = (values) => values.share_proto && values.size && values.share_network_id && true
+
+  return (
+    <Form.Provider validate={validate} show={show} {...otherProps} >
+      <NewShareForm/>
+    </Form.Provider>
+  );
+}

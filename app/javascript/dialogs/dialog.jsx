@@ -1,14 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
-
-const Deferred = function() {
-  this.promise = new Promise((function(resolve, reject) {
-    this.resolve = resolve;
-    this.reject = reject;
-  }).bind(this));
-
-  this.then = this.promise.then.bind(this.promise);
-  this.catch = this.promise.catch.bind(this.promise);
-};
+import { Deferred } from 'tools/deferred';
 
 export class Dialog extends React.Component {
   constructor(props, context) {
@@ -26,15 +17,14 @@ export class Dialog extends React.Component {
   }
 
   abort() {
-    this.setState({show: false}, () => this.promise.reject())
+    this.setState({show: false}, () => this.promise.reject(true))
   }
 
   confirm() {
-    this.setState({show: false}, () => this.promise.resolve())
+    this.setState({show: false}, () => this.promise.resolve(true))
   }
 
   componentDidMount() {
-    // this.promise = new $.Deferred();
     this.promise = new Deferred()
     this.setState({show: true}, () =>
       ReactDOM.findDOMNode(this.refs.confirm).focus()
