@@ -52,7 +52,8 @@ class ScopeController < ::ApplicationController
 
       if @scoped_domain_id
         # replace domain_id with domain friendly id
-        new_path = request.original_fullpath.gsub(
+
+        new_path = request.path.gsub(
           %r{^\/#{domain_id}\/(?<rest>.*)},
           '/' + @scoped_domain_fid + '/\k<rest>'
         )
@@ -66,6 +67,11 @@ class ScopeController < ::ApplicationController
             '/\k<domain>/' + @scoped_project_fid + '/\k<rest>'
           )
         end
+
+        url_params = request.query_parameters
+        url_params.delete(:domain_id)
+        url_params.delete(:project_id)
+        new_path += "?#{url_params.to_query}" unless url_params.empty?
 
         redirect_to new_path unless params[:modal]
       end
