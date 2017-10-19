@@ -11,7 +11,7 @@
             flavor: ''
             image: ''
             name: ''
-            size: null
+            size: ''
           }
         ]
       }
@@ -19,6 +19,7 @@
     isSubmitting: false
     errors: null
     isValid: false
+    nodePoolsValid: false
 
   resetClusterForm = (action, {})->
     initialClusterFormState
@@ -29,24 +30,23 @@
       data: data
       errors: null
       isSubmitting: false
-      isValid: (data.name?)
+      isValid: (data.name.length > 0 && state.nodePoolsValid)
     })
 
   updateNodePoolForm = (state, {index, name, value})->
-    console.log("Index: #{index} -- Name: #{name} -- Value: #{value}")
     nodePool = ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {"#{name}":value})
-    console.log("Nodepool old vs new: ", state.data.spec.nodePools[index], nodePool)
     nodePoolsClone = state.data.spec.nodePools.slice(0)
     if index>=0 then nodePoolsClone[index] = nodePool else nodePoolsClone.push nodePool
-    console.log("Nodepools: ", nodePoolsClone)
     data = ReactHelpers.mergeObjects({}, state.data, {spec: {nodePools: nodePoolsClone}})
-    console.log("Data: ", data)
+    poolValidity = nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0
+
 
     ReactHelpers.mergeObjects({}, state, {
       data: data
       errors: null
       isSubmitting: false
-      isValid: true #TODO: more fancy validity check
+      nodePoolsValid: poolValidity
+      isValid: (state.data.name.length > 0 && poolValidity)
     })
 
   addNodePool = (state, {}) ->
@@ -54,7 +54,7 @@
                 flavor: ''
                 image: ''
                 name: ''
-                size: null
+                size: ''
                 new: true
               }
 
@@ -65,7 +65,7 @@
       data: data
       errors: null
       isSubmitting: false
-      isValid: true #TODO: more fancy validity check
+      isValid: true
     })
 
   deleteNodePool = (state, {index}) ->
@@ -77,7 +77,7 @@
       data: data
       errors: null
       isSubmitting: false
-      isValid: true #TODO: more fancy validity check
+      isValid: true
     })
 
 

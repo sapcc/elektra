@@ -17,6 +17,7 @@ EditCluster = ({
 }) ->
 
   cluster = clusterForm.data
+
   div null,
     div className: 'modal-body',
       if clusterForm.errors
@@ -61,6 +62,7 @@ EditCluster = ({
                 disabled: 'disabled' if nodePool.name && !nodePool.new,
                 type: "text",
                 name: "name",
+                placeholder: "lower case letters and numbers",
                 value: nodePool.name || '',
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
 
@@ -74,10 +76,10 @@ EditCluster = ({
               input
                 className: "string form-control",
                 "data-index": i,
-                type: "text",
+                type: "number",
                 name: "size",
-                placeholder: "Number of nodes"
-                value: nodePool.size || '',
+                placeholder: "Number of nodes",
+                value: (if isNaN(nodePool.size) then '' else nodePool.size),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
             # Nodepool flavor

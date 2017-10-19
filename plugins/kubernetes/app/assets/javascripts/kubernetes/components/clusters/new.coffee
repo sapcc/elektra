@@ -40,6 +40,7 @@ NewCluster = ({
                 className: "string required form-control",
                 type: "text",
                 name: "name",
+                placeholder: "lower case letters and numbers",
                 value: cluster.name || '',
                 onChange: onChange
 
@@ -67,6 +68,7 @@ NewCluster = ({
                 "data-index": i,
                 type: "text",
                 name: "name",
+                placeholder: "lower case letters and numbers",
                 value: nodePool.name || '',
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value))
 
@@ -79,10 +81,10 @@ NewCluster = ({
               input
                 className: "form-control",
                 "data-index": i,
-                type: "text",
+                type: "number",
                 name: "size",
-                placeholder: "Number of nodes"
-                value: nodePool.size || '',
+                placeholder: "Number of nodes",
+                value: (if isNaN(nodePool.size) then '' else nodePool.size),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, parseInt(e.target.value, 10)))
 
             # Nodepool flavor
