@@ -1,5 +1,5 @@
 import * as constants from '../constants';
-import axios from 'axios'
+import { ajaxHelper } from 'ajax_helper';
 
 //################ SHARE RULES (ACCESS CONTROL) ################
 const receiveShareRule=(shareId,rule)=>
@@ -60,7 +60,7 @@ const receiveShareRules= (shareId, json) =>
 const fetchShareRules= shareId =>
   function(dispatch) {
     dispatch(requestShareRules(shareId));
-    axios.get(`shares/${shareId}/rules`)
+    ajaxHelper.get(`/shares/${shareId}/rules`)
       .then( (response) => dispatch(receiveShareRules(shareId,response.data)))
       .catch((error) => {
         console.log(error)
@@ -89,7 +89,7 @@ const fetchShareRulesIfNeeded= shareId =>
 const deleteShareRule= (shareId,ruleId) =>
   function(dispatch) {
     dispatch(requestDeleteShareRule(shareId,ruleId));
-    return app.ajaxHelper.delete(`/shares/${shareId}/rules/${ruleId}`, {
+    return ajaxHelper.delete(`/shares/${shareId}/rules/${ruleId}`, {
       success(data, textStatus, jqXHR) {
         if (data && data.errors) {
           dispatch(deleteShareRuleFailure(shareId,ruleId));

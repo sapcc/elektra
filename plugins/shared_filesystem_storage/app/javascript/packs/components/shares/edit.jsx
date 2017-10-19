@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const protocols = ['NFS','CIFS']
 
-let NewShareForm = ({
+let EditShareForm = ({
   onHide,
   show,
   values,
@@ -26,7 +26,7 @@ let NewShareForm = ({
   return (
     <Modal show={show} onHide={hide} bsSize="large" aria-labelledby="contained-modal-title-lg">
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
+        <Modal.Title id="contained-modal-title-lg">Edit Share</Modal.Title>
       </Modal.Header>
 
       <form onSubmit={submit} className='form form-horizontal'>
@@ -114,4 +114,4 @@ export default Form({
   intialValues: {},
   validate: (values) => (values.share_proto && values.size && values.share_network_id && true),
   handleSubmit: (values, {handleSuccess,handleErrors}) => this.props.handleSuccess
-})(NewShareForm)
+})(EditShareForm)

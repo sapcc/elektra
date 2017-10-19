@@ -3,6 +3,7 @@ import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import ShareNew from '../../containers/shares/new';
+import ShareEdit from '../../containers/shares/edit';
 import ShowShare from './show';
 import ShareItem from './item';
 
@@ -99,13 +100,25 @@ const List = React.createClass({
     this.setState({ showShareId: null })
   },
 
-  showDeleteDialog() {
-    this.setState({ showDeleteDialog: true })
+  showEditShare(shareId) {
+    if (!shareId) return
+    this.setState({ editShareId: shareId })
+    this.props.history.replace(`/shares/${shareId}/edit`)
+    this.props.loadExportLocations(shareId)
   },
 
-  closeDeleteDialog() {
-    this.setState({ showDeleteDialog: false})
+  closeEdit() {
+    this.props.history.replace('/shares')
+    this.setState({ editShareId: null })
   },
+
+  // showDeleteDialog() {
+  //   this.setState({ showDeleteDialog: true })
+  // },
+  //
+  // closeDeleteDialog() {
+  //   this.setState({ showDeleteDialog: false})
+  // },
 
   shareNetwork(share) {
     for (let network of this.props.shareNetworks.items) {
@@ -163,13 +176,15 @@ const List = React.createClass({
   },
 
   render() {
-    let share = this.findShareById(this.state.showShareId)
+    let showShare = this.findShareById(this.state.showShareId)
+    let editShare = this.findShareById(this.state.editShareId)
     let { items } = this.props
 
     return (
       <div>
         { this.toolbar() }
-        <ShowShare show={share!=null} onHide={this.closeShow} share={share}/>
+        <ShowShare show={showShare!=null} onHide={this.closeShow} share={showShare}/>
+        <ShareEdit show={editShare!=null} onHide={this.closeEdit} share={editShare}/>
 
         { !this.props.policy.isAllowed('shared_filesystem_storage:share_list') ? (
           <span>You are not allowed to see this page</span>) : (
@@ -203,7 +218,8 @@ const List = React.createClass({
                       shareNetwork={this.shareNetwork(share)}
                       shareRules={this.shareRules(share)}
                       handleShow={this.showShare}
-                      handleDelete={this.props.handleDelete}/>)
+                      handleDelete={this.props.handleDelete}
+                      handleEdit={this.props.handleEdit}/>)
                   ) : (
                     <tr>
                       <td colSpan="6">No Shares found.</td>
