@@ -32,6 +32,7 @@
   "shared_filesystem_storage:share_network_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:share_network_get": "rule:context_is_share_viewer",
   "shared_filesystem_storage:share_network_networks": "rule:context_is_share_viewer",
+  "shared_filesystem_storage:share_network_subnets": "rule:context_is_share_viewer",
 
   "shared_filesystem_storage:security_service_create": "rule:context_is_sharedfilesystem_admin",
   "shared_filesystem_storage:security_service_delete": "rule:context_is_sharedfilesystem_admin",
