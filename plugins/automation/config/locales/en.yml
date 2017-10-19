@@ -1,8 +1,8 @@
 en:
   automation:
     help_hint:
-      key_value_pairs: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key or ','. You can also copy and paste a string containing tags following this pattern: 'key1:value1,key2=value2...'"
-      string_array: "Array of strings are separated by ','. Start a new entry by hitting the Enter key or ','. You can also copy and paste a string containing strings following this pattern: 'value1,value2...'"
+      key_value_pairs: "Key-value pairs are separated by ':' or '='. Start a new pair by hitting the Enter key. You can also copy and paste a string containing tags following this pattern: 'key1:value1¡key2=value2...'"
+      string_array: "Array of strings are separated by ','. Start a new entry by hitting the Enter key. You can also copy and paste a string containing strings following this pattern: 'value1¡value2...'"
       json: "JSON Schema defines seven primitive types for JSON values: array, boolean, integer, number, null, object and string. Example: {'title':'root'}"
       max_time_out: "Max timeout is 86.400 seconds (24 hours)."
       debug: "Debug mode will not delete the temporary working directory on the instance when the automation job exists. This allows you to inspect the bundled automation artifacts, modify them and run the automation manually. Enabling debug mode for an extended period of time can exhaust  your instances disk space as each automation run will leave a directory behind. Also be aware that the payload may contain secrets which are persisted to disk indefinitely when debug mode is enabled."

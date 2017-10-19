@@ -2,17 +2,12 @@ module Automation
 
   module Helpers
 
-    def json_to_string(attr)
-      result_string = []
-      attr.each do |key, value|
-        result_string << "#{key}:#{value}"
-      end
-    end
+    TAG_SEPERATOR = "¡"
 
     def string_to_json(attr)
       unless attr.blank?
         result_hash = {}
-        attr.split(',').each do |tag|
+        attr.split(TAG_SEPERATOR).each do |tag|
           tags_array = tag.split(/\:|\=/)
           if tags_array.count == 2
             result_hash[tags_array[0]] = tags_array[1]
@@ -30,25 +25,22 @@ module Automation
       result_string = ""
       unless attr.blank?
         attr.each do |key, value|
-          result_string << "#{key}:#{value},"
+          result_string << "#{key}:#{value}#{TAG_SEPERATOR}"
         end
-      end
-      if result_string.length > 0
-        # remove the last coma
-        result_string = result_string[0..-2]
+        result_string.chomp! TAG_SEPERATOR
       end
       result_string
     end
 
     def string_to_array(attr)
       unless attr.blank?
-        return attr.split(',')
+        return attr.split TAG_SEPERATOR
       end
     end
 
     def array_to_string(attr)
       unless attr.blank?
-        return attr.join(',')
+        return attr.join TAG_SEPERATOR
       end
     end
 

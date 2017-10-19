@@ -1,12 +1,12 @@
 @init_tag_editor_inputs= () ->
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="environment"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs', keyValueEntries: true, forceLowercase: false, maxLength: 255 })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs', keyValueEntries: true, forceLowercase: false, maxLength: 255, delimiter: '¡' })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="arguments"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false, maxLength: 255 })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false, maxLength: 255, delimiter: '¡' })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="runlist"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false, maxLength: 255 })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: false, forceLowercase: false, maxLength: 255, delimiter: '¡' })
   $('textarea[data-toggle="tagEditor"][data-tageditor-name="tags"]').each ->
-    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: true, forceLowercase: true, maxLength: 255 })
+    $(this).tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter tags', keyValueEntries: true, forceLowercase: true, maxLength: 255, delimiter: '¡' })
 
 @switch_automation_type=(event) ->
   value = event.target.value
