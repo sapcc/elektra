@@ -1,4 +1,12 @@
-export default ({policy, share, shareNetwork, shareRules, handleShow, handleDelete}) => {
+export default ({
+  policy,
+  share,
+  shareNetwork,
+  shareRules,
+  handleShow,
+  handleEdit,
+  handleDelete
+}) => {
   return (
     <tr className={ share.isDeleting ? 'updating' : ''}>
       <td>
@@ -57,7 +65,7 @@ export default ({policy, share, shareNetwork, shareRules, handleShow, handleDele
                 <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(share.id) } }>Delete</a></li>
               }
               { share.permissions.update &&
-                <li><a href='#' onClick={(e) => { e.preventDefault(); handleEdit(share)}}>Edit</a></li>
+                <li><a href='#' onClick={(e) => { e.preventDefault(); handleEdit(share.id)}}>Edit</a></li>
               }
               { share.permissions.update && share.status=='available' &&
                 <li><a href='#' onClick={(e) => {e.preventDefault(); handleSnapshot(share.id)}}>Create Snapshot</a></li>

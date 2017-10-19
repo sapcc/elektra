@@ -128,18 +128,17 @@ const deleteShare= shareId =>
 
     confirm(`Do you really want to delete the share ${shareId}?`).then(() => {
       dispatch(requestDelete(shareId));
-      ajaxHelper.delete(`/shares/${shareId}`)
-        .then((response) => {
-          if (response.data && response.data.errors) {
-            showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
-          } else {
-            dispatch(removeShare(shareId));
-            dispatch(removeShareRules(shareId));
-          }
-        }).catch((error) => {
-          showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
-        })
-    });
+      ajaxHelper.delete(`/shares/${shareId}`).then((response) => {
+        if (response.data && response.data.errors) {
+          showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
+        } else {
+          dispatch(removeShare(shareId));
+          dispatch(removeShareRules(shareId));
+        }
+      }).catch((error) => {
+        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+      })
+    }).catch((aborted) => null)
   }
 ;
 
@@ -187,30 +186,19 @@ const receiveShareExportLocations= (shareId, json) =>
 const fetchShareExportLocations= shareId =>
   function(dispatch) {
     dispatch(requestShareExportLocations(shareId));
-    ajaxHelper.get(`/shares/${shareId}/export_locations`)
-      .then((response) => dispatch(receiveShareExportLocations(shareId,response.data)))
-      .catch((error) => {
-        console.log('fetchShareExportLocations',error)
-        // dispatch(app.showErrorDialog({title: 'Could not load share export locations', message:jqXHR.responseText}));
-      }
-    );
+    ajaxHelper.get(`/shares/${shareId}/export_locations`).then(response =>
+      dispatch(receiveShareExportLocations(shareId,response.data))
+    ).catch((error) => {
+      console.log('fetchShareExportLocations',error)
+      // dispatch(app.showErrorDialog({title: 'Could not load share export locations', message:jqXHR.responseText}));
+    });
   }
 ;
 
 //################ SHARE FORM ###################
-const submitEditShareForm= (name,value) =>
-  ({
-    type: constants.UPDATE_SHARE_FORM,
-    name,
-    value
-  })
-;
-
-const submitNewShareForm= (values,{handleSuccess,handleErrors}) =>
+const submitShareForm = (method, path, values) => (
   function(dispatch) {
-
-    ajaxHelper.post('/shares', { share: values })
-    .then((response) => {
+    ajaxHelper.method(path, { share: values }).then((response) => {
       if (response.data.errors) {
         handleErrors(response.data.errors);
       } else {
@@ -218,12 +206,43 @@ const submitNewShareForm= (values,{handleSuccess,handleErrors}) =>
         handleSuccess()
       }
     })
-    .catch((error) => {
+    .catch(error => {
       handleErrors(error.message)
-      //dispatch(app.showErrorDialog({title: 'Could not save share', message:jqXHR.responseText}));
     })
   }
-;
+);
+
+const submitEditShareForm= (values,{handleSuccess,handleErrors}) => (
+  function(dispatch) {
+    ajaxHelper.put(`/shares/${values.id}`, { share: values }).then((response) => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors);
+      } else {
+        dispatch(receiveShare(response.data))
+        handleSuccess()
+      }
+    })
+    .catch(error => {
+      handleErrors(error.message)
+    })
+  }
+);
+
+const submitNewShareForm= (values,{handleSuccess,handleErrors}) => (
+  function(dispatch) {
+    ajaxHelper.post(`/shares`, { share: values }).then((response) => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors);
+      } else {
+        dispatch(receiveShare(response.data))
+        handleSuccess()
+      }
+    })
+    .catch(error => {
+      handleErrors(error.message)
+    })
+  }
+);
 
 //####################### AVAILABILITY ZONES ###########################
 // Manila availability zones, not nova!!!
