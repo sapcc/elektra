@@ -5,29 +5,14 @@ import { Link } from 'react-router-dom';
 
 const protocols = ['NFS','CIFS']
 
-const EditShareForm = ({
-  onHide,
-  show,
-  values,
-  onSubmit,
-  resetForm
-}) => {
-  let hide = () => {
-    resetForm()
-    onHide()
-  }
-
-  let submit = (e) => {
-    onSubmit(e, {onSuccess: hide})
-  }
-
+const EditShareForm = ({onHide, show, onSubmit}) => {
   return (
-    <Modal show={show} onHide={hide} bsSize="large" aria-labelledby="contained-modal-title-lg">
+    <Modal show={show} onHide={onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">Edit Share</Modal.Title>
       </Modal.Header>
 
-      <form onSubmit={submit} className='form form-horizontal'>
+      <form onSubmit={onSubmit} className='form form-horizontal'>
         <Modal.Body>
           <Form.Errors/>
 
@@ -41,7 +26,7 @@ const EditShareForm = ({
 
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={hide}>Cancel</Button>
+          <Button onClick={onHide}>Cancel</Button>
           <Form.SubmitButton label='Save'/>
         </Modal.Footer>
       </form>
@@ -49,14 +34,35 @@ const EditShareForm = ({
   )
 }
 
-export default ({share, ...otherProps}) => {
-  return (
-    <Form.Provider
-      validate={values => true}
-      initialValues={share}
-      show={share!=null}
-      {...otherProps}>
-      <EditShareForm/>
-    </Form.Provider>
-  );
+export default class EditShareFormWrapper extends React.Component {
+  constructor(props){
+  	super(props);
+  	this.state = {show: this.props.share!=null};
+    this.close = this.close.bind(this)
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({show: nextProps.share!=null})
+  }
+
+  close(e){
+    if(e) e.preventDefault()
+    this.setState({show: false})
+    setTimeout(() => this.props.history.replace('/shares'), 300)
+  }
+
+  render(){
+    return (
+      <Form.Provider
+        resetAfterSubmit={true}
+        resetForm={!this.props.share}
+        afterSubmitSuccess={this.close}
+        validate={values => true}
+        initialValues={this.props.share}
+        show={this.state.show}
+        onHide={this.close}
+        {...this.props}>
+        <EditShareForm/>
+      </Form.Provider>
+    )
+  }
 }

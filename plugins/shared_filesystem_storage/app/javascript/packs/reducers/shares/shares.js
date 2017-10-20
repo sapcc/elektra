@@ -78,11 +78,12 @@ const deleteShareSuccess= function(state,{shareId}) {
 };
 
 const receiveShareExportLocations= function(state,{shareId,export_locations}){
-  console.log(shareId,export_locations)
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
   const items = state.items.slice();
-  items[index].export_locations = export_locations;
+  let item = Object.assign({},items[index])
+  item.export_locations = export_locations;
+  items[index] = item
   return Object.assign({},state,{items});
 };
 

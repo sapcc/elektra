@@ -186,12 +186,28 @@ const receiveShareExportLocations= (shareId, json) =>
 const fetchShareExportLocations= shareId =>
   function(dispatch) {
     dispatch(requestShareExportLocations(shareId));
-    ajaxHelper.get(`/shares/${shareId}/export_locations`).then(response =>
+    ajaxHelper.get(`/shares/${shareId}/export_locations`).then(response => {
       dispatch(receiveShareExportLocations(shareId,response.data))
-    ).catch((error) => {
-      console.log('fetchShareExportLocations',error)
+    }).catch((error) => {
       // dispatch(app.showErrorDialog({title: 'Could not load share export locations', message:jqXHR.responseText}));
     });
+  }
+;
+
+const shouldFetchShareExportLocations= function(state, shareId) {
+  const { shares } = state.shared_filesystem_storage;
+  if(!(shares && shares.items && shareId)) return false
+
+  let share = shares.items.find(share => share.id==shareId)
+  if(share && share.export_locations) return false
+  return true
+};
+
+const fetchShareExportLocationsIfNeeded = shareId =>
+  function(dispatch, getState) {
+    if (shouldFetchShareExportLocations(getState(), shareId)) {
+      return dispatch(fetchShareExportLocations(shareId));
+    }
   }
 ;
 
@@ -291,7 +307,7 @@ export {
   fetchSharesIfNeeded,
   reloadShare,
   deleteShare,
-  fetchShareExportLocations,
+  fetchShareExportLocationsIfNeeded,
   fetchAvailabilityZonesIfNeeded,
   submitNewShareForm,
   submitEditShareForm

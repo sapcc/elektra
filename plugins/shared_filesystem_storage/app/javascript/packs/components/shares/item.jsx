@@ -1,18 +1,20 @@
+import { Link } from 'react-router-dom';
+
 export default ({
   policy,
   share,
   shareNetwork,
   shareRules,
-  handleShow,
-  handleEdit,
   handleDelete
 }) => {
+  // <a href='#' onClick={(e) => { e.preventDefault(); handleShow(share.id)}} >
+  //   {share.name || share.id}
+  // </a>
+
   return (
     <tr className={ share.isDeleting ? 'updating' : ''}>
       <td>
-        <a href='#' onClick={(e) => { e.preventDefault(); handleShow(share.id)}} >
-          {share.name || share.id}
-        </a>
+        <Link to={`/shares/${share.id}`}>{share.name || share.id}</Link>
       </td>
       <td>{share.availability_zone}</td>
       <td>{share.share_proto}</td>
@@ -65,13 +67,18 @@ export default ({
                 <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(share.id) } }>Delete</a></li>
               }
               { share.permissions.update &&
-                <li><a href='#' onClick={(e) => { e.preventDefault(); handleEdit(share.id)}}>Edit</a></li>
+                <li><Link to={`/shares/${share.id}/edit`}>Edit</Link></li>
               }
               { share.permissions.update && share.status=='available' &&
                 <li><a href='#' onClick={(e) => {e.preventDefault(); handleSnapshot(share.id)}}>Create Snapshot</a></li>
               }
               { share.permissions.update && share.status=='available' &&
-                <li><a href='#' onClick={(e) => {e.preventDefault(); handleAccessControl(share.id,share.share_network_id)}}>Access Control</a></li>
+                <li>
+                  {/*
+                    <a href='#' onClick={(e) => {e.preventDefault(); handleAccessControl(share.id,share.share_network_id)}}>Access Control</a>
+                  */}
+                  <Link to={`/shares/${share.id}/access-control`}>Access Control</Link>
+                </li>
               }
             </ul>
           </div>

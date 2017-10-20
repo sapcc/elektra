@@ -13,7 +13,8 @@ export class Dialog extends React.Component {
   static defaultProps = {
     confirmLabel: 'Yes',
     abortLabel: 'No',
-    showAbortButton: true
+    showAbortButton: true,
+    size: 'large'
   }
 
   abort() {
@@ -33,7 +34,7 @@ export class Dialog extends React.Component {
 
   render(){
     return (
-      <Modal show={this.state.show} onExited={this.props.onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal show={this.state.show} bsSize={this.props.size} onExited={this.props.onHide} aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton={false}>
           <Modal.Title id="contained-modal-title-lg">
             <i className={`dialog-title-icon ${this.props.type}`}></i>
