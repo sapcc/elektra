@@ -35,8 +35,22 @@
   white-space: nowrap;
 }
 
+.nodepool-spec {
+  width: 15%;
+  padding: 0;
+}
+
+.nodepool-status {
+  width: 20%;
+  padding: 0 8px 0 0;
+}
+
 .nodepool-info {
-  padding-bottom: $line-height-computed;
+  padding: $line-height-computed/2 8px;
+
+  &:nth-child(even) {
+    background: #f9f9f9;
+  }
 }
 
 .vertical-buttons {

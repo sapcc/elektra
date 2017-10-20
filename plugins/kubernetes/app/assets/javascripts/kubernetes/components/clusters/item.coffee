@@ -68,7 +68,7 @@ Cluster = React.createClass
           span className: 'spinner'
         br null
         span className: 'info-text', cluster.status.kluster.message
-      td null,
+      td className: 'nodepool-spec',
         for nodePool in cluster.spec.nodePools
           div className: 'nodepool-info', key: nodePool.name,
             div null,
@@ -77,7 +77,7 @@ Cluster = React.createClass
               span className: 'info-text', nodePool.flavor
             div null,
               "size: #{nodePool.size}"
-      td null,
+      td className: 'nodepool-status',
         for nodePoolStatus in cluster.status.nodePools
           specSize = @nodePoolSpecSize(cluster, nodePoolStatus.name)
           div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
