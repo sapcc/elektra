@@ -33,6 +33,6 @@
             %i= "\"CC #{@domain_name.upcase} Openstack Domain Access\""
             in Cloud Access Manager (CAM)
           %p
-            = link_to "#{url_for_cam(@domain_name)}", target: '_blank' do
+            = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
               %i.fa.fa-external-link.fa-fw
               Request access in CAM
