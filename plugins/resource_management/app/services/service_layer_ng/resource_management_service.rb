@@ -17,14 +17,13 @@ module ServiceLayerNg
       # .map_to() does not work here because the toplevel JSON object contains
       # multiple keys ("clusters" and "current_cluster"), so instantiate the
       # models manually.
-      resp = api_client.resources.get_clusters(query)
-      raise ::Core::Api::Error, resp if resp.code.to_i >= 400
+      resp = api.resources.get_clusters(query)
       clusters = resp.body['clusters'].map { |data| ResourceManagement::Cluster.new(self, data) }
       return clusters, resp.body['current_cluster']
     end
 
     def put_cluster_data(services)
-      api_client.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
+      api.resources.set_capacity_for_current_cluster(:cluster => {:services => services})
     end
 
     ############################################################################
@@ -39,11 +38,11 @@ module ServiceLayerNg
     end
 
     def put_domain_data(domain_id, services)
-      api_client.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
+      api.resources.set_quota_for_domain(domain_id, :domain => {:services => services})
     end
 
     def discover_projects(domain_id)
-      api_client.resources.discover_projects(domain_id)
+      api.resources.discover_projects(domain_id)
     end
 
     ############################################################################
@@ -74,7 +73,7 @@ module ServiceLayerNg
     end
 
     def sync_project_asynchronously(domain_id, project_id)
-      api_client.resources.sync_project(domain_id, project_id)
+      api.resources.sync_project(domain_id, project_id)
     end
 
     def put_project_data(domain_id, project_id, services)

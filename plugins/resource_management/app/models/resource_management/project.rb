@@ -43,7 +43,9 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
         }
       end
-      @service.put_project_data(domain_id, id, data)
+      rescue_api_errors do
+        @service.put_project_data(domain_id, id, data)
+      end
     end
 
     private

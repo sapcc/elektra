@@ -31,7 +31,9 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, capacity: res.capacity, comment: res.comment || '' } },
         }
       end
-      @service.put_cluster_data(id, data)
+      rescue_api_errors do
+        @service.put_cluster_data(id, data)
+      end
     end
 
   end

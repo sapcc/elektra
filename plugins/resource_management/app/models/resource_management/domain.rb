@@ -36,7 +36,9 @@ module ResourceManagement
           resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
         }
       end
-      @service.put_domain_data(id, data)
+      rescue_api_errors do
+        @service.put_domain_data(id, data)
+      end
     end
 
   end
