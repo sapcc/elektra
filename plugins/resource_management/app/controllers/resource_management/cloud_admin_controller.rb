@@ -43,6 +43,7 @@ module ResourceManagement
           new_value = @cluster_resource.data_type.parse(new_value)
         rescue => e
           @cluster_resource.add_validation_error(:capacity, 'is invalid: ' + e.message)
+          new_value = -1
         end
       end
 
