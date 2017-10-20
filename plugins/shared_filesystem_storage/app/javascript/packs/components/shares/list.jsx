@@ -2,9 +2,6 @@ import { withRouter, Route, Link } from 'react-router-dom';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import NewShareModal from '../../containers/shares/new';
-import EditShareModal from '../../containers/shares/edit';
-import ShowShareModal from './show';
 import ShareItem from './item';
 
 const FadeTransition = ({ children, ...props }) => (
@@ -26,27 +23,6 @@ const loadingShareNetworksInfo = (
 );
 
 const List = React.createClass({
-  getInitialState() {
-    let state = {
-      showNew: false,
-      showShareId: null,
-      editShareId: null
-    }
-    let path = this.props.location.pathname;
-
-    if (path=='/shares/new') {
-      state['showNew'] = true
-    } else if (/^\/shares\/[^\/]+\/edit$/.test(path)) {
-      let match = path.match(/^\/shares\/([^\/]+)\/edit$/)
-      if(match && match.length>1) state['editShareId'] = match[1]
-    } else if (/^\/shares\/[^\/]+$/.test(path)) {
-      let match = path.match(/^\/shares\/([^\/]+)/)
-      if (match && match.length>1) state['showShareId'] = match[1]
-    }
-
-    return state;
-  },
-
   findShareById(shareId) {
     if (!this.props.items) return null;
     return this.props.items.find((item) => item.id === shareId)
@@ -60,9 +36,6 @@ const List = React.createClass({
   componentDidMount() {
     // load dependencies unless already loaded
     this.loadDependencies(this.props)
-    if(this.state.showShareId) this.props.loadExportLocations(
-      this.state.showShareId
-    )
   },
 
   loadDependencies(props) {
@@ -73,44 +46,6 @@ const List = React.createClass({
     for(let share of props.items){
       this.props.loadShareRulesOnce(share.id)
     }
-  },
-
-  closeNew() {
-    if(!this.state.showNew) return;
-    this.setState({ showNew: false })
-    this.props.history.replace('/shares')
-  },
-
-  openNew() {
-    // return if already visible
-    if(this.state.showNew) return;
-    //if (this.state.showNew) return;
-    this.setState({ showNew: true })
-    // update url
-    this.props.history.replace('/shares/new')
-  },
-
-  showShare(shareId) {
-    if (!shareId) return
-    this.setState({ showShareId: shareId })
-    this.props.history.replace(`/shares/${shareId}`)
-    this.props.loadExportLocations(shareId)
-  },
-
-  closeShow() {
-    this.props.history.replace('/shares')
-    this.setState({ showShareId: null })
-  },
-
-  editShare(shareId) {
-    if (!shareId) return
-    this.setState({ editShareId: shareId })
-    this.props.history.replace(`/shares/${shareId}/edit`)
-  },
-
-  closeEdit() {
-    this.props.history.replace('/shares')
-    this.setState({ editShareId: null })
   },
 
   shareNetwork(share) {
@@ -154,16 +89,7 @@ const List = React.createClass({
           )}
         </TransitionGroup>
 
-        <button type="button"
-          className="btn btn-primary"
-          disabled={!hasShareNetworks}
-          onClick={ (e) => {e.preventDefault(); this.openNew()} }>
-          Create new
-        </button>
-
-        { hasShareNetworks &&
-          <NewShareModal show={this.state.showNew} onHide={this.closeNew}/>
-        }
+        <Link to='/shares/new' className='btn btn-primary'>Create new</Link>
       </div>
     )
   },
@@ -211,25 +137,11 @@ const List = React.createClass({
   },
 
   render() {
-    let editShare = this.findShareById(this.state.editShareId)
-    let showShare = this.findShareById(this.state.showShareId)
-
     return (
       <div>
         { this.toolbar() }
-        <ShowShareModal
-          onHide={this.closeShow}
-          share={showShare}
-          loadExportLocations={() => this.props.loadExportLocations(nextState.editShareId)}/>
-
-        <EditShareModal
-          onHide={this.closeEdit}
-          share={editShare}
-          shareNetworks={this.props.shareNetworks}/>
-
         { !this.props.policy.isAllowed('shared_filesystem_storage:share_list') ? (
           <span>You are not allowed to see this page</span>) : (
-
           this.props.isFetching ? <span className='spinner'></span> : this.renderTable()
         )}
       </div>

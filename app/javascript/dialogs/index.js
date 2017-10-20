@@ -7,7 +7,7 @@ const showDialog = function(type, message, options) {
   let wrapper;
 
   if (options == null) {
-    options = {};
+    options = {size: 'large'};
   }
   switch(type) {
     case 'confirm':

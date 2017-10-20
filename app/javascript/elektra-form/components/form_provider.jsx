@@ -121,7 +121,16 @@ export class FormProvider extends React.Component {
     errors: null
   }
 
+  static defaultProps = {
+    resetForm: null,
+    resetAfterSubmit: true,
+    afterSubmitSuccess: null
+  }
+
   static propTypes = {
+    resetForm: PropTypes.bool,
+    afterSubmitSuccess: PropTypes.func,
+    resetAfterSubmit: PropTypes.bool,
     initialValues: PropTypes.object,
     validate: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired
@@ -129,19 +138,21 @@ export class FormProvider extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = Object.assign({},FormProvider.initialState)
+    this.state = Object.assign({},FormProvider.initialState,{
+      values: props.initialValues || {}
+    })
+
     this.onChange = this.onChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
     this.updateValue = this.updateValue.bind(this);
-    this.setIsSubmitting = this.setIsSubmitting.bind(this);
-    this.setIsValid = this.setIsValid.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    if( nextProps.initialValues &&
-      (!this.state.values || Object.keys(this.state.values).length === 0)) {
-      this.setState({values: nextProps.initialValues}, () => console.log(this.state))
+    // set initialValues unless already set.
+    if(nextProps.resetForm) this.resetForm()
+    if( nextProps.initialValues && Object.keys(this.state.values).length==0) {
+      this.setState({values: nextProps.initialValues})
     }
   }
 
@@ -164,9 +175,7 @@ export class FormProvider extends React.Component {
   }
 
   resetForm(){
-    this.setState(Object.assign({},FormProvider.initialState,{
-      values: this.props.initialValues || {}
-    }))
+    this.setState(Object.assign({},FormProvider.initialState))
   }
 
   updateValue(name,value) {
@@ -187,21 +196,17 @@ export class FormProvider extends React.Component {
     this.setState({isValid})
   }
 
-  setIsSubmitting(isSubmitting) {
-    this.setState({isSubmitting})
-  }
-
-  onSubmit(e, {onSuccess,onErrors}) {
+  onSubmit(e) {
     e.preventDefault()
-    this.setIsSubmitting(true)
+    this.setState({isSubmitting: true})
     this.props.handleSubmit(this.state.values, {
       handleSuccess: () => {
-        this.setIsSubmitting(false)
-        this.resetForm()
-        if(this.props.onHide) this.props.onHide()
+        this.setState({isSubmitting: false})
+        if(this.props.resetAfterSubmit) this.resetForm()
+        if(this.props.afterSubmitSuccess) this.props.afterSubmitSuccess()
       },
       handleErrors: (errors) => {
-        this.setIsSubmitting(false)
+        this.setState({isSubmitting: false})
         this.setState({errors})
       }
     })

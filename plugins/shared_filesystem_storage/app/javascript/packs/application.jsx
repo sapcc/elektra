@@ -5,8 +5,14 @@ import * as Reducers from './reducers';
 
 import Tabs from './containers/tabs';
 import ShareList from './containers/shares/list'
+import EditShareModal from './containers/shares/edit';
+import ShowShareModal from './containers/shares/show';
+import NewShareModal from './containers/shares/new';
+import AccessControlModal from './containers/shares/access_control';
+
 import Snapshots from './components/snapshots/list'
 import ShareNetworks from './components/share_networks/list'
+
 
 const tabsConfig = [
   { to: '/shares', label: 'Shares', component: ShareList },
@@ -23,6 +29,11 @@ const Container = (props) =>
       <Route path="/:activeTab" children={ ({match, location, history}) =>
         React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
       }/>
+
+      <Route exact path="/shares/new" component={NewShareModal}/>
+      <Route exact path="/shares/:id" component={ShowShareModal}/>
+      <Route exact path="/shares/:id/edit" component={EditShareModal}/>
+      <Route exact path="/shares/:id/access-control" component={AccessControlModal}/>
     </div>
   </HashRouter>
 

@@ -5,31 +5,14 @@ import { Link } from 'react-router-dom';
 
 const protocols = ['NFS','CIFS']
 
-let NewShareForm = ({
-  onHide,
-  show,
-  values,
-  onSubmit,
-  resetForm,
-  availabilityZones,
-  shareNetworks
-}) => {
-  let hide = () => {
-    resetForm()
-    onHide()
-  }
-
-  let submit = (e) => {
-    onSubmit(e, {onSuccess: hide})
-  }
-
+let NewShareForm = ({onHide, show, onSubmit, availabilityZones, shareNetworks}) => {
   return (
-    <Modal show={show} onHide={hide} bsSize="large" aria-labelledby="contained-modal-title-lg">
+    <Modal show={show} onHide={onHide} bsSize="large" aria-labelledby="contained-modal-title-lg">
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
       </Modal.Header>
 
-      <form onSubmit={submit} className='form form-horizontal'>
+      <form onSubmit={onSubmit} className='form form-horizontal'>
         <Modal.Body>
           <Form.Errors/>
 
@@ -102,7 +85,7 @@ let NewShareForm = ({
           </Form.ElementHorizontal>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={hide}>Cancel</Button>
+          <Button onClick={onHide}>Cancel</Button>
           <Form.SubmitButton label='Save'/>
         </Modal.Footer>
       </form>
@@ -110,12 +93,33 @@ let NewShareForm = ({
   )
 }
 
-export default ({show, ...otherProps}) => {
-  let validate = (values) => values.share_proto && values.size && values.share_network_id && true
+export default class NewShareFormWrapper extends React.Component {
+  constructor(props){
+  	super(props);
+  	this.state = {show: true};
+    this.close = this.close.bind(this)
+  }
 
-  return (
-    <Form.Provider validate={validate} show={show} {...otherProps} >
-      <NewShareForm/>
-    </Form.Provider>
-  );
+  validate(values) {
+    return values.share_proto && values.size && values.share_network_id && true
+  }
+
+  close(e){
+    if(e) e.stopPropagation()
+    this.setState({show: false})
+    setTimeout(() => this.props.history.replace('/shares'),300)
+  }
+  render(){
+    return (
+      <Form.Provider
+        resetAfterSubmit
+        afterSubmitSuccess={this.close}
+        validate={this.validate}
+        show={this.state.show}
+        onHide={this.close}
+        {...this.props}>
+        <NewShareForm/>
+      </Form.Provider>
+    );
+  }
 }
