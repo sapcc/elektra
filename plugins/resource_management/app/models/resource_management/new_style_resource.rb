@@ -4,7 +4,7 @@ module ResourceManagement
 
     validates_presence_of :quota, unless: :cluster_id
     validate :validate_quota
-    validates_presence_of :comment, if: Proc.new { |res| res.capacity.try(:>, 0) }
+    validates_presence_of :comment, if: Proc.new { |res| res.capacity.try(:>=, 0) }
 
     def name
       read(:name).to_sym
