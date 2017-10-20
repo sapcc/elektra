@@ -77,10 +77,12 @@ module Networking
 
     def update
       @floating_ip = services_ng.networking.find_floating_ip(params[:id])
-      # save existing port_id, blame neutron API for needing that on no-op
+      # save existing port_id and fixed_ip_address, blame neutron API for needing that on no-op
       port_id = @floating_ip.attributes['port_id']
+      fixed_ip_address = @floating_ip.attributes['fixed_ip_address']
       @floating_ip.attributes = params[:floating_ip]
       @floating_ip.port_id = port_id
+      @floating_ip.fixed_ip_address = fixed_ip_address
 
       if @floating_ip.save
         respond_to do |format|

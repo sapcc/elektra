@@ -96,7 +96,7 @@ module Core
           raise ::Core::Error::ServiceUserNotAuthenticated,
                 <<~ERROR
                   Could not authenticate service user.
-                  domain: #{scope_domain}"
+                  domain: #{scope_domain}
                 ERROR
         end
       end

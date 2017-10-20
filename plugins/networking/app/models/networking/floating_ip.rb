@@ -26,7 +26,7 @@ module Networking
         'description'       => read('description'),
         'port_id'           => read('port_id'),
         'fixed_ip_address'  => read('fixed_ip_address')
-      }.delete_if { |_k, v| v.blank? }
+      }
     end
 
     def subnet_object
