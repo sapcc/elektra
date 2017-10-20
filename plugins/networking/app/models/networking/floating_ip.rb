@@ -23,7 +23,7 @@ module Networking
 
     def attributes_for_update
       {
-        'description'       => read('description'),
+        'description'       => read('description').to_s,
         'port_id'           => read('port_id'),
         'fixed_ip_address'  => read('fixed_ip_address')
       }
