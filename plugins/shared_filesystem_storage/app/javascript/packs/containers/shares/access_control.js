@@ -1,31 +1,28 @@
 import { connect } from  'react-redux';
 import AccessControlModal from '../../components/shares/access_control';
-import {
-  updateShareRuleForm,
-  submitShareRuleForm,
-  deleteShareRule,
-  hideShareRuleForm,
-  shareRuleFormForCreate,
-  showShareRuleForm
-} from '../../actions/shares'
+import { submitNewShareRule, deleteShareRule} from '../../actions/share_rules';
 
 export default connect(
   ({shared_filesystem_storage: state},ownProps ) => {
-    let shareNetwork = state.shareNetworks.items.find(sn => sn.id==ownProps.networkId)
-    return {
-      shareRules: (state.shareRules[ownProps.shareId] || {items: [], isFetching: false}),
-      shareNetwork,
-      ruleForm: state.shareRuleForm
+    let share;
+    if (ownProps.match && ownProps.match.params && ownProps.match.params.id) {
+      let shares = state.shares.items
+      if (shares) share = shares.find(item => item.id==ownProps.match.params.id)
     }
+    let shareNetwork;
+    if (state.shareNetworks.items && share) {
+      shareNetwork = state.shareNetworks.items.find(sn => sn.id==share.share_network_id)
+    }
+    let shareRules;
+    if (state.shareRules && share) {
+      shareRules = (state.shareRules[share.id] || {items: [], isFetching: false})
+    }
+
+    return { shareRules, shareNetwork, share }
   },
   (dispatch,ownProps) => ({
-    handleChange: (name,value) => dispatch(updateShareRuleForm(name,value)),
-    handleSubmit: () => dispatch(submitShareRuleForm(ownProps.shareId)),
-    handleDelete: (ruleId) => dispatch(deleteShareRule(ownProps.shareId,ruleId)),
-    hideForm: () => dispatch(hideShareRuleForm()),
-    showForm: (shareId) => {
-      dispatch(shareRuleFormForCreate(shareId))
-      dispatch(showShareRuleForm())
-    }
+    handleSubmit: (values, {handleSuccess,handleErrors}) =>
+      dispatch(submitNewShareRule(values,{handleSuccess,handleErrors})),
+    handleDelete: (shareId,ruleId) => dispatch(deleteShareRule(shareId,ruleId))
   })
 )(AccessControlModal);

@@ -12,8 +12,9 @@ const FadeTransition = ({ children, ...props }) => (
 export default class AccessControlModal extends React.Component{
   constructor(props){
   	super(props);
-  	this.state = {show: true};
+  	this.state = {show: true, showForm: false};
     this.close = this.close.bind(this)
+    this.toggleForm = this.toggleForm.bind(this)
   }
 
   close(e) {
@@ -23,16 +24,20 @@ export default class AccessControlModal extends React.Component{
     setTimeout(() => this.props.history.replace('/shares'),300)
   }
 
+  toggleForm() {
+    this.setState({showForm: !this.state.showForm})
+  }
+
   render(){
-    let { share, shareRules } = this.props
-    let { handleChange, handleSubmit, ruleForm } = this.props
+    let { share, shareRules, shareNetwork, handleSubmit, handleDelete } = this.props
+
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Share {share ? share.name : ''}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { shareRules.isFetching ? (
+          { shareRules && shareRules.isFetching ? (
             <div>
               <span className='spinner'/>
               Loading...
@@ -49,39 +54,39 @@ export default class AccessControlModal extends React.Component{
                 </tr>
               </thead>
               <tbody>
-                { shareRules.items.length==0 ? (
+                { !shareRules || shareRules.items.length==0 ? (
                   <tr><td colSpan='5'>No Rules found.</td></tr>
                 ) : (
                   shareRules.items.map(rule =>
-                    <AccessControlItem key={rule.id} rule={rule} shareNetwork={shareNetwork} handleDelete={handleDelete}/>
+                    <AccessControlItem
+                      key={rule.id}
+                      rule={rule}
+                      shareNetwork={shareNetwork}
+                      handleDelete={() => handleDelete(share.id,rule.id)}/>
                   )
                 )}
 
                 <tr>
                   <td colSpan='4'>
                     <TransitionGroup>
-                      { !ruleForm.isHidden &&
+                      { this.state.showForm &&
                         <FadeTransition>
-                          <AccessControlForm handleChange={handleChange} handleSubmit={handleSubmit} ruleForm={ruleForm}/>
+                          <AccessControlForm
+                            share={share}
+                            shareNetwork={shareNetwork}
+                            handleSubmit={handleSubmit}
+                            afterSubmitSuccess={() => this.setState({showForm:false})}/>
                         </FadeTransition>
                       }
                     </TransitionGroup>
                   </td>
                   <td>
-                    {/*
-                      unless ruleForm.isHidden
-                        a
-                          className: 'btn btn-default btn-sm',
-                          href: '#',
-                          onClick: ((e) -> e.preventDefault(); hideForm()),
-                          i className: 'fa fa-close'
-                      else
-                        a
-                          className: 'btn btn-primary btn-sm',
-                          href: '#',
-                          onClick: ((e) -> e.preventDefault(); showForm(shareId)),
-                          i className: 'fa fa-plus'
-                    */}
+                    <a
+                      className={`btn btn-${this.state.showForm ? 'default' : 'primary'} btn-sm`}
+                      href='#'
+                      onClick={(e) => { e.preventDefault(); this.toggleForm()}}>
+                      <i className={`fa ${this.state.showForm ? 'fa-close' : 'fa-plus'}`}/>
+                    </a>
                   </td>
                 </tr>
               </tbody>
