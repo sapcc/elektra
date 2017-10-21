@@ -1,5 +1,6 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
+import { confirm, showInfoModal, showErrorModal } from 'dialogs';
 
 //################ SHARE RULES (ACCESS CONTROL) ################
 const receiveShareRule=(shareId,rule)=>
@@ -89,89 +90,42 @@ const fetchShareRulesIfNeeded= shareId =>
 const deleteShareRule= (shareId,ruleId) =>
   function(dispatch) {
     dispatch(requestDeleteShareRule(shareId,ruleId));
-    return ajaxHelper.delete(`/shares/${shareId}/rules/${ruleId}`, {
-      success(data, textStatus, jqXHR) {
-        if (data && data.errors) {
-          dispatch(deleteShareRuleFailure(shareId,ruleId));
-          return dispatch(app.showErrorDialog({title: 'Could not load share rules', message:jqXHR.responseText}));
-        } else {
-          return dispatch(removeShareRule(shareId,ruleId));
-        }
-      },
-      error( jqXHR, textStatus, errorThrown) {
+    ajaxHelper.delete(`/shares/${shareId}/rules/${ruleId}`).then(response => {
+      if (response.data && response.data.errors) {
         dispatch(deleteShareRuleFailure(shareId,ruleId));
-        return dispatch(app.showErrorDialog({title: 'Could not load share rules', message:jqXHR.responseText}));
+        showErrorModal(React.createElement(ErrorsList, {errors}));
+      } else {
+        dispatch(removeShareRule(shareId,ruleId));
       }
-    }
-    );
+    }).catch(error => showErrorModal(
+      React.createElement(ErrorsList, {errors: error.message})
+    ))
   }
 ;
 
 //########################## SHARE RULE FORM #########################
-const shareRuleFormForCreate=shareId=>
-  ({
-    type: constants.PREPARE_SHARE_RULE_FORM,
-    method: 'post',
-    action: `/shares/${shareId}/rules`
-  })
-;
-
-const updateShareRuleForm= (name,value) =>
-  ({
-    type: constants.UPDATE_SHARE_RULE_FORM,
-    name,
-    value
-  })
-;
-
-const resetShareRuleForm= () => ({type: constants.RESET_SHARE_RULE_FORM});
-
-const shareRuleFormFailure=errors =>
-  ({
-    type: constants.SHARE_RULE_FORM_FAILURE,
-    errors
-  })
-;
-
-const showShareRuleForm=shareId => ({type: constants.SHOW_SHARE_RULE_FORM});
-
-const hideShareRuleForm=()=> ({type: constants.HIDE_SHARE_RULE_FORM});
-
-const submitShareRuleForm= (shareId, successCallback=null) =>
-  function(dispatch, getState) {
-    const { shareRuleForm } = getState();
-    if (shareRuleForm.isValid) {
-      dispatch({type: app.SUBMIT_SHARE_RULE_FORM});
-      return app.ajaxHelper[shareRuleForm.method](shareRuleForm.action, {
-        data: { rule: shareRuleForm.data },
-        success(data, textStatus, jqXHR) {
-          if (data.errors) {
-            return dispatch(shareRuleFormFailure(data.errors));
-          } else {
-            dispatch(receiveShareRule(shareId, data));
-            dispatch(resetShareRuleForm());
-            if (successCallback) { return successCallback(); }
-          }
-        },
-        error( jqXHR, textStatus, errorThrown) {
-          return dispatch(app.showErrorDialog({title: 'Could not save share rule', message:jqXHR.responseText}));
-        }
+const submitNewShareRule= (values, {handleSuccess,handleErrors}) =>
+  function(dispatch) {
+    let shareId = values.shareId
+    delete values['shareId']
+    ajaxHelper.post(`/shares/${shareId}/rules`, { rule: values }).then(response => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors)
+      } else {
+        dispatch(receiveShareRule(shareId, response.data));
+        if(handleSuccess) handleSuccess()
       }
-      );
-    }
+    }).catch(error => showErrorModal(
+      React.createElement(ErrorsList, {errors: error.message})
+    ))
   }
 ;
 
 // export
 export {
-  submitShareRuleForm,
-  updateShareRuleForm,
-  hideShareRuleForm,
-  showShareRuleForm,
-  shareRuleFormForCreate,
+  submitNewShareRule,
   fetchShareRules,
   fetchShareRulesIfNeeded,
   deleteShareRule,
-  removeShareRules,
-  openShareAccessControlDialog
+  removeShareRules
 }

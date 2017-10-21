@@ -19,7 +19,7 @@ export const AccessControlItem = ({handleDelete, rule}) => {
       </td>
       <td>{rule.state}</td>
       <td className='snug'>
-        <button className='btn btn-danger btn-sm' onClick={(e) => { e.preventDefault(); handleDelete(rule.id)}}>
+        <button className='btn btn-danger btn-sm' onClick={(e) => { e.preventDefault(); handleDelete()}}>
           <i className='fa fa-minus'/>
         </button>
       </td>

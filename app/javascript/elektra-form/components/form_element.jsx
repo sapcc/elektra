@@ -5,6 +5,7 @@ export const FormElement = ({
   required = false,
   name,
   horizontal=false,
+  inline=false,
   labelWidth=4, //columns, maximum 12
   labelClass='control-label',
   children
@@ -18,8 +19,8 @@ export const FormElement = ({
   }
 
   let renderLabel = () => {
-    let className = required ? 'required' : 'optional'
-    if (horizontal) className = className + ` col-sm-${labelWidth} ${labelClass}`
+    let className = labelClass + ' ' +(required ? 'required' : 'optional')
+    if (horizontal) className = className + ` col-sm-${labelWidth}`
     return <label className={className} htmlFor={id}>
       { required && <abbr title="required">*</abbr>}
       {label}
@@ -27,11 +28,11 @@ export const FormElement = ({
   };
 
   let renderInputWrapper = () => (
-    <div className="input-wrapper">{children}</div>
+    inline ? children : <div className="input-wrapper">{children}</div>
   );
 
   return (
-    <div className={`form-group row ${isValid ? '' : 'has-error'}`}>
+    <div className={`form-group ${inline ? '' : 'row'} ${isValid ? '' : 'has-error'}`}>
       { renderLabel() }
       { horizontal ?
         <div className={`col-sm-${12-labelWidth}`}>{renderInputWrapper()}</div>
@@ -47,4 +48,8 @@ FormElement.contextTypes = {
 };
 export const FormElementHorizontal = (props) =>
   <FormElement horizontal={true} {...props}/>
+;
+
+export const FormElementInline = (props) =>
+  <FormElement inline={true} {...props}/>
 ;

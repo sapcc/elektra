@@ -43,9 +43,9 @@ export default ({
                       <small key={rule.id}
                         data-toggle="tooltip" data-placement="right"
                         title="Access Level: {if rule.access_level=='ro' then 'read only' else if 'rw' then 'read/write' else rule.access_level}"
-                        className="#{if rule.access_level == 'rw' then 'text-success' else 'text-info'}"
+                        className={`${rule.access_level == 'rw' ? 'text-success' : 'text-info'}`}
                         ref={(el) => $(el).tooltip()}>
-                        <i className="fa fa-fw fa-#{if rule.access_level == 'rw' then 'pencil-square' else 'eye'}"></i>
+                        <i className={`fa fa-fw fa-${rule.access_level == 'rw' ? 'pencil-square' : 'eye'}`}/>
                         {rule.access_to}
                       </small>
                     )}

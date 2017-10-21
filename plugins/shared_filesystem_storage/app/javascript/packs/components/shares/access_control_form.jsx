@@ -1,25 +1,11 @@
 import { Form } from 'elektra-form';
 
-export const AccessControlForm = ({ruleForm, shareNetwork, handleSubmit, handleChange}) => {
-  let rule = ruleForm.data
-
-  const onChange=(e) => {
-    if(e) e.preventDefault()
-    handleChange(e.target.name,e.target.value)
-  }
-  const accessTypes = {
-    ip: 'ip',
-    user: 'user'
-    // cert: 'cert'
-  }
-
-  const accessLevels = {
-    ro: 'read-only',
-    rw: 'read-write'
-  }
+let NewShareRuleForm = ({shareNetwork, onSubmit, values}) => {
+  const accessTypes = { ip: 'ip', user: 'user'}
+  const accessLevels = { ro: 'read-only', rw: 'read-write'}
 
   const accessToPlaceholder = () => {
-    switch (rule.access_type) {
+    switch (values.access_type) {
       case "ip":
         return 'IP address'
       case "user":
@@ -32,7 +18,7 @@ export const AccessControlForm = ({ruleForm, shareNetwork, handleSubmit, handleC
   }
 
   const accessToInfo = () => {
-    switch (rule.access_type) {
+    switch (values.access_type) {
       case "ip":
         return 'A valid format is XX.XX.XX.XX or XX.XX.XX.XX/XX. For example 0.0.0.0/0.'
       case "user":
@@ -45,57 +31,63 @@ export const AccessControlForm = ({ruleForm, shareNetwork, handleSubmit, handleC
   }
 
   return (
-    <form className="form-inline" onSubmit={ e => { e.preventDefault(); handleSubmit() }}>
+    <form className="form-inline" onSubmit={onSubmit}>
       { shareNetwork &&
         <div>{ `Network: ${shareNetwork.cidr}`}</div>
       }
-      { ruleForm.errors &&
-        <div className='alert alert-error'>
-          <Form.Errors errors={ruleForm.errors}/>
-        </div>
-      }
-      <div className="form-group">
-        <label className='sr-only' htmlFor="access_type">Access Type</label>
-        <select name="access_type" className="select required form-control" onChange={onChange}>
-          <option value='Select Access Type'/>
+      <Form.Errors/>
+
+      <Form.ElementInline label='Access Type' name="access_type" labelClass='sr-only'>
+        <Form.Input elementType='select' name='access_type'>
+          <option value=''>Select Access Type</option>
           {
             Object.keys(accessTypes).map((accessType,index) =>
             <option value={accessType} key={accessType}>{accessTypes[accessType]}</option>
           )}
-        </select>
+        </Form.Input>
+      </Form.ElementInline>
 
-      </div>
-      <div className='form-group'>
-        <label className='sr-only' htmlFor="access_to">Access To</label>
-        <input
-          type='text'
-          className='form-control'
-          placeholder={accessToPlaceholder()}
+      <Form.ElementInline label='Access To' name="access_to" labelClass='sr-only'>
+        <Form.Input
+          elementType='input'
+          type='test'
           name='access_to'
-          value={rule.access_to || ''}
-          onChange={onChange}/>
-      </div>
-      <div className='form-group'>
-        <label className='sr-only' htmlFor="access_level">Access Level</label>
-        <select name="access_level" className="select required form-control" onChange={onChange}>
-          <option value='Select Access Level'/>
+          placeholder={accessToPlaceholder()}/>
+      </Form.ElementInline>
+
+      <Form.ElementInline label='Access Level' name="access_level" labelClass='sr-only'>
+        <Form.Input elementType='select' name='access_level'>
+          <option value=''>Select Access Level</option>
           {
             Object.keys(accessLevels).map((accessLevel,index) =>
             <option value={accessLevel} key={accessLevel}>{accessLevels[accessLevel]}</option>
           )}
-        </select>
-      </div>
+        </Form.Input>
+      </Form.ElementInline>
+
       <div className='form-group'>
-        <button
-          type='submit'
-          className='btn btn-primary'
-          disabled={!ruleForm.isValid || ruleForm.isSubmitting}>
-            { ruleForm.isSubmitting ? 'Please wait...' : 'Add' }
-        </button>
+        <Form.SubmitButton label='Save'/>
       </div>
-      { accessToInfo &&
+      { accessToInfo() &&
         <p className='help-block'><i className="fa fa-info-circle"/>{accessToInfo()}</p>
       }
     </form>
   )
+}
+
+export const AccessControlForm = (props) => {
+  const validate = (values) => {
+    return values.access_type && values.access_level && values.access_to && true
+  }
+
+  return (
+    <Form.Provider
+      resetAfterSubmit
+      afterSubmitSuccess={props.afterSubmitSuccess}
+      validate={validate}
+      initialValues={{shareId: props.share.id}}
+      {...props}>
+      <NewShareRuleForm/>
+    </Form.Provider>
+  );
 }
