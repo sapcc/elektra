@@ -2,7 +2,7 @@ Networking::Engine.routes.draw do
   root to: 'networks#index'
   resources :floating_ips
 
-  resources :security_groups, except:[:edit,:update] do
+  resources :security_groups, except: %i[edit update] do
     resources :rules, module: :security_groups
   end
 
@@ -11,7 +11,8 @@ Networking::Engine.routes.draw do
     get 'node_details'
   end
 
-  resources :network_wizard, only: [:new,:create]
+  resources :backup_networks, only: %i[index new create]
+  resources :network_wizard, only: %i[new create]
 
   namespace :cloud_admin do
     resources :network_usage_stats, only: [:index]

@@ -1,0 +1,23 @@
+- content_for :main_toolbar do
+  Backup Network
+
+- has_access = false
+.row
+  .col-md-9
+    %h1.heading-top Get Access to Backup Network
+    %p.lead CCloud offers the standard/classic File system (FS) and DB Backup / Restore from the Global Backup Team for all instances located in the different Availability Zones.
+
+    .bs-callout.bs-callout-emphasize.bs-callout-info
+      .row
+        .col-md-10
+          %h4 Test
+          - if has_access
+            You have already access to the backup network
+          - else
+            You don't have access yet.
+
+        .col-md-2
+          - if has_access
+            %i.fa.fa-check.fa-3x.pull-right
+          - else
+            = link_to 'Get Access', plugin('networking').new_backup_network_path , class: 'btn btn-primary', data: { modal: true }
