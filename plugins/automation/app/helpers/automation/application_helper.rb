@@ -91,7 +91,7 @@ module Automation
     def form_static_hash_value(data)
       unless data.blank?
         haml_tag :div, {class: "static-tags clearfix"} do
-          data.split(',').each do |element|
+          data.split(Helpers::TAG_SEPERATOR).each do |element|
             elements_array = element.split(/\:|\=/)
             if elements_array.count == 2
               haml_tag :div, {class: "tag"} do
@@ -119,7 +119,7 @@ module Automation
             haml_tag :div, {class: "form-control-static"} do
               haml_tag :div, {class: "static-tags clearfix"} do
 
-                data.split(',').each do |value|
+                data.split(Helpers::TAG_SEPERATOR).each do |value|
                   haml_tag :div, {class: "tag"} do
                     haml_tag :div, {class: "value"} do
                       haml_concat html_escape(value)
