@@ -23,8 +23,12 @@ module ServiceLayerNg
       #end
     end
 
-    def find_pool(id)
+    def find_pool!(id)
       driver.map_to(DnsService::Pool).get_pool(id)
+    end
+
+    def find_pool(id)
+      find_pool!(id)
     rescue
       nil
     end
