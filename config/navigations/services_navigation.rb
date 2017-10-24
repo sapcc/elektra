@@ -102,6 +102,11 @@ SimpleNavigation::Configuration.run do |navigation|
                                         -> { plugin('networking').networks_external_index_path },
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/(networks|routers)/?.*}
+                    networking_nav.item :backup_networks,
+                                        'Backup Networks',
+                                        -> { plugin('networking').backup_networks_path },
+                                        if: -> { plugin_available?(:networking) },
+                                        highlights_on: %r{networking/(backup_networks)/?.*}
                     networking_nav.item :floating_ips,
                                         'Floating IPs',
                                         -> { plugin('networking').floating_ips_path },
