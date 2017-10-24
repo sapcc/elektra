@@ -124,7 +124,8 @@ const List = React.createClass({
                 shareRules={this.shareRules(share)}
                 handleShow={this.showShare}
                 handleEdit={this.editShare}
-                handleDelete={this.props.handleDelete}/>)
+                handleDelete={this.props.handleDelete}
+                policy={this.props.policy}/>)
             ) : (
               <tr>
                 <td colSpan="6">No Shares found.</td>

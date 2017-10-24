@@ -212,22 +212,6 @@ const fetchShareExportLocationsIfNeeded = shareId =>
 ;
 
 //################ SHARE FORM ###################
-const submitShareForm = (method, path, values) => (
-  function(dispatch) {
-    ajaxHelper.method(path, { share: values }).then((response) => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveShare(response.data))
-        handleSuccess()
-      }
-    })
-    .catch(error => {
-      handleErrors(error.message)
-    })
-  }
-);
-
 const submitEditShareForm= (values,{handleSuccess,handleErrors}) => (
   function(dispatch) {
     ajaxHelper.put(`/shares/${values.id}`, { share: values }).then((response) => {
