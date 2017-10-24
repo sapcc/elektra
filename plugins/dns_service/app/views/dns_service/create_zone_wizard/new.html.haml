@@ -46,7 +46,7 @@
 
   %div.buttons{class: 'modal-footer'}
     %button.btn.btn-default{type: 'button', data: {dismiss: 'modal'}, aria: {label: 'Cancel'}} Cancel
-    - unless @inqury.nil?
+    - unless @inquiry.nil?
       = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
 
 :javascript
