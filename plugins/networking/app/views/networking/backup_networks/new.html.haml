@@ -1,10 +1,15 @@
 = content_for :title do
-  Create RBAC to Backup Network
+  Create RBAC on Backup Network
 
-= simple_form_for :backup_network, url: plugin('networking').backup_networks_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @rbac, url: plugin('networking').backup_networks_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
+    - unless @rbac.errors.blank?
+      %p.alert.alert-error= @rbac.errors.full_messages.to_sentence
+
+    %p
+      Assign the Backup-Network <b>#{@backup_network.name}</b> to my project <b>#{@scoped_project_name}</b>.
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
-    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Create
+    %button{ type: 'submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...'} } Go
