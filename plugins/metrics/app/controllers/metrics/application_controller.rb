@@ -2,7 +2,11 @@
 
 module Metrics
   class ApplicationController < DashboardController
+    authorization_context 'metrics'
+    authorization_required
+
     def index
+      enforce_permissions('metrics:index')
     end
 
     def maia

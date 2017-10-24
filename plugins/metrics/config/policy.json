@@ -1,4 +1,4 @@
 {
-  "access_to_project": "not project_id:nil and (role:admin or role:member)",
-  "metrics:show": "rule:access_to_project"
+  "monitoring_viewer": "role:monitoring_viewer",
+  "metrics:index": "rule:monitoring_viewer"
 }
