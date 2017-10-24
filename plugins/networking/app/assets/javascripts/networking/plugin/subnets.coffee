@@ -108,6 +108,7 @@ class Subnets
     @element = element
     @url = $(element).data('url')
     @subnets = $(element).data('items')
+    @network = $(element).data('network')
 
     @state = {
       lastItemsCount: 0
@@ -174,13 +175,18 @@ class Subnets
     @$loading ||= $('<tr><td colspan="5"><span class="spinner"></span></td></tr>')
 
   render:  ->
+    networkType = if @network['router:external'] then 'external' else 'private'
+
     unless @created
       @created = true
-      toolbar = $('<div class="toolbar toolbar-controlcenter"></div>').appendTo(@element)
-      @form.render().appendTo(toolbar).hide()
-      buttons = $('<div class="main-control-buttons"></div>').appendTo(toolbar)
-      @$addButton = $('<a href="#" class="btn btn-primary">+</a>').appendTo(buttons)
-      @$addButton.click () => @toggleForm(this)
+
+      if policy.isAllowed("networking:network_#{networkType}_update", {network: @network})
+        toolbar = $('<div class="toolbar toolbar-controlcenter"></div>').appendTo(@element)
+        buttons = $('<div class="main-control-buttons"></div>').appendTo(toolbar)
+
+        @form.render().appendTo(toolbar).hide()
+        @$addButton = $('<a href="#" class="btn btn-primary">+</a>').appendTo(buttons)
+        @$addButton.click () => @toggleForm(this)
 
       @$error = $('<div></div>').appendTo(@element)
 
@@ -206,18 +212,22 @@ class Subnets
         <td>'+subnet.cidr+'</td>
         <td>'+subnet.gateway_ip+'</td></tr>').appendTo(@$tbody)
 
-        $deleteButton = $('<a class="btn btn-danger btn-sm" href="#"><i class="fa fa-trash"></i></a>')
-                          .appendTo($('<td class="snug"></td>').appendTo($tr))
-        $deleteButton.click () ->
-          subnet_id = $(this).closest('tr').prop('id')
-          self.removeSubnet(this,subnet_id)
 
-    if @state.showForm
-      @form.show()
-      @$addButton.addClass('btn-default').removeClass('btn-primary').text('x')
-    else
-      @form.hide()
-      @$addButton.addClass('btn-primary').removeClass('btn-default').text('+')
+
+        if policy.isAllowed("networking:network_#{networkType}_update", {network: @network})
+          $deleteButton = $('<a class="btn btn-danger btn-sm" href="#"><i class="fa fa-trash"></i></a>')
+                            .appendTo($('<td class="snug"></td>').appendTo($tr))
+          $deleteButton.click () ->
+            subnet_id = $(this).closest('tr').prop('id')
+            self.removeSubnet(this,subnet_id)
+
+    if policy.isAllowed("networking:network_#{networkType}_update", {network: @network})
+      if @state.showForm
+        @form.show()
+        @$addButton.addClass('btn-default').removeClass('btn-primary').text('x')
+      else
+        @form.hide()
+        @$addButton.addClass('btn-primary').removeClass('btn-default').text('+')
 
     if @state.loading
       @loading().appendTo(@$tbody)

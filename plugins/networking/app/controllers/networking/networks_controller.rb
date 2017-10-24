@@ -50,7 +50,7 @@ module Networking
     end
 
     def manage_subnets
-
+      @network = services_ng.networking.find_network(params[:id])
     end
 
     def show

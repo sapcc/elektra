@@ -69,7 +69,10 @@
                 %td= segment['provider:segmentation_id']
 
     .tab-pane{role:"tabpanel", id:"subnets"}
-      .subnets{data: { network_subnets: true, url: networks_subnets_path(@network.id), items: @subnets.to_json } }
+      .subnets{ data: {network_subnets: true,
+        network: @network.attributes.to_json,
+        url: networks_subnets_path(@network.id),
+        items: @subnets.to_json } }
 
     .tab-pane{role:"tabpanel", id:"ports"}
       %table.table.datatable
