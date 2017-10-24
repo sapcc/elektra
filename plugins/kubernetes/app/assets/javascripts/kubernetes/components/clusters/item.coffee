@@ -1,6 +1,6 @@
 { div, button, span, a, tbody, tr, td, ul, li, i, br, p, strong} = React.DOM
 { connect } = ReactRedux
-{ openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials, startPollingCluster, stopPollingCluster } = kubernetes
+{ openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials, getSetupInfo, startPollingCluster, stopPollingCluster } = kubernetes
 
 
 Cluster = React.createClass
@@ -57,7 +57,7 @@ Cluster = React.createClass
 
 
   render: ->
-    {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials, handlePollingStart, handlePollingStop} = @props
+    {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials, handleGetSetupInfo, handlePollingStart, handlePollingStop} = @props
 
     tr null,
       td null,
@@ -102,6 +102,10 @@ Cluster = React.createClass
           i className: 'fa fa-fw fa-download'
           'Download Credentials'
 
+        # button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name)),
+        #   i className: 'fa fa-fw fa-wrench'
+        #   'Setup'
+
         button className: 'btn btn-sm btn-default hover-danger', onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
           i className: 'fa fa-fw fa-trash-o'
           'Delete Cluster'
@@ -122,6 +126,7 @@ Cluster = connect(
     handleEditCluster:      (cluster)     -> dispatch(openEditClusterDialog(cluster))
     handleClusterDelete:    (clusterName) -> dispatch(requestDeleteCluster(clusterName))
     handleGetCredentials:   (clusterName) -> dispatch(getCredentials(clusterName))
+    handleGetSetupInfo:     (clusterName) -> dispatch(getSetupInfo(clusterName))
     reloadCluster:          (clusterName) -> dispatch(loadCluster(clusterName))
     handlePollingStart:     (clusterName) -> dispatch(startPollingCluster(clusterName))
     handlePollingStop:      (clusterName) -> dispatch(stopPollingCluster(clusterName))

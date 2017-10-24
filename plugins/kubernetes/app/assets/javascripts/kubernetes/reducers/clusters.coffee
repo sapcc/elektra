@@ -62,6 +62,19 @@
       flashError: flashError
     })
 
+  requestSetupInfo = (state,{}) ->
+    state
+
+  requestSetupInfoFailure = (state,{clusterName, flashError})->
+    ReactHelpers.mergeObjects({},state,{
+      flashError: flashError
+    })
+
+  dataForSetupInfo = (state, {setupData}) ->
+    ReactHelpers.mergeObjects({}, state, {
+      setupData: setupData
+    })
+
   startPollingCluster = (state, {clusterName}) ->
     index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
     return state if index < 0
@@ -94,6 +107,10 @@
       when app.DELETE_CLUSTER_FAILURE       then deleteClusterFailure(state,action)
       when app.REQUEST_CREDENTIALS          then requestCredentials(state,action)
       when app.REQUEST_CREDENTIALS_FAILURE  then requestCredentialsFailure(state,action)
+      when app.REQUEST_SETUP_INFO           then requestSetupInfo(state,action)
+      when app.REQUEST_SETUP_INFO_FAILURE   then requestSetupInfoFailure(state,action)
+      when app.SETUP_INFO_DATA              then dataForSetupInfo(state,action)
+
 
 
       else state

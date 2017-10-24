@@ -172,6 +172,45 @@
 
 
 
+  # -------------- SETUP ---------------
+
+  getSetupInfo = (clusterName) ->
+    (dispatch) ->
+      dispatch(requestSetupInfo(clusterName))
+
+      app.ajaxHelper.get "/clusters/#{clusterName}/credentials",
+        contentType: 'application/json'
+        success: (data, textStatus, jqXHR) ->
+          dispatch(receiveSetupInfo(clusterName, data))
+        error: ( jqXHR, textStatus, errorThrown) ->
+          dispatch(requestSetupInfoFailure(clusterName, jqXHR.responseText))
+          dispatch(receiveSetupInfo(clusterName, "thisisdata"))
+
+
+
+  requestSetupInfo = () ->
+    type: app.REQUEST_SETUP_INFO
+
+  requestSetupInfoFailure = (clusterName, error) ->
+    type: app.REQUEST_SETUP_INFO_FAILURE
+    flashError: "We couldn't retrieve the setup information for cluster #{clusterName} at this time. This might be because the cluster is not ready yet or is in an error state. Please try again."
+
+  receiveSetupInfo = (clusterName, setupInfo) ->
+    (dispatch) ->
+      dispatch(dataForSetupInfo(setupInfo))
+      dispatch(setupInfoModal())
+
+
+  setupInfoModal= () ->
+    type: ReactModal.SHOW_MODAL,
+    modalType: 'SETUP_INFO'
+
+  dataForSetupInfo = (data) ->
+    type: app.SETUP_INFO_DATA
+    setupData: data
+
+
+
   ################# CLUSTER FORM ######################
 
   clusterFormForCreate = () ->
@@ -222,7 +261,6 @@
           data: clusterForm.data
 
           success: (data, textStatus, jqXHR) ->
-            console.log("data: ", data)
             dispatch(resetClusterForm())
             dispatch(receiveCluster(data))
             successCallback() if successCallback
@@ -243,6 +281,7 @@
   app.openEditClusterDialog      = openEditClusterDialog
   app.loadCluster                = loadCluster
   app.getCredentials             = getCredentials
+  app.getSetupInfo               = getSetupInfo
   app.clusterFormForCreate       = clusterFormForCreate
   app.clusterFormForUpdate       = clusterFormForUpdate
   app.submitClusterForm          = submitClusterForm
