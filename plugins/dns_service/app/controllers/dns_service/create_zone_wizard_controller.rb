@@ -5,11 +5,10 @@ module DnsService
     def new
       @zone_request = ::DnsService::ZoneRequest.new(nil)
 
-      if @inquiry
-        payload = @inquiry.payload
-        @zone_request.attributes = payload
-        @pool = load_pool(@zone_request.domain_pool)
-      end
+      return if @inquiry.nil?
+      payload = @inquiry.payload
+      @zone_request.attributes = payload
+      @pool = load_pool(@zone_request.domain_pool)
     end
 
     def create

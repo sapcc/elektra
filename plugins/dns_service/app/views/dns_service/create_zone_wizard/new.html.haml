@@ -10,40 +10,44 @@
   wrapper: :horizontal_form do |f|
 
   %div{class: 'modal-body' }
-    - if @zone_request.errors.present?
-      .alert.alert-error
-        = render_errors(@zone_request.errors)
-
-    = hidden_field_tag :inquiry_id, params[:inquiry_id]
-    = f.input :domain_type, label: 'DNS Provider', required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
-    = f.input :domain_type, as: :hidden
-
-    = f.input :domain_pool, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
-    = f.input :domain_pool, as: :hidden
-
-    = f.input :pool_name, required: true, input_html: { disabled: true, value: @pool.name}, input_wrapper_html: { style: "width: 70%" }
-    = f.input :attributes, as: :text, required: true, input_html: { disabled: true, value: @pool.read("attributes")}, input_wrapper_html: { style: "width: 70%" }
-
-    - if @zone_request.subdomain? && @zone_request.dns_domain
-      = f.input :dns_domain, label: 'DNS Domain', input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
-      = f.input :dns_domain, as: :hidden
-      = f.input :name, required: true, input_wrapper_html: { style: "width: 70%" } do
-        .input-group
-          = f.text_field :name, value: @zone_request.name, class: "form-control text-right"
-          %span.input-group-addon
-            = ".#{@zone_request.dns_domain}"
-            = '.' unless @zone_request.dns_domain.last == '.'
+    - if @inquiry.nil?
+      Could not find request with the ID #{params[:inquiry_id]}
     - else
-      = f.input :name, required: true, input_wrapper_html: { style: "width: 70%" }
+      - if @zone_request.errors.present?
+        .alert.alert-error
+          = render_errors(@zone_request.errors)
+
+      = hidden_field_tag :inquiry_id, params[:inquiry_id]
+      = f.input :domain_type, label: 'DNS Provider', required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
+      = f.input :domain_type, as: :hidden
+
+      = f.input :domain_pool, required: true, input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
+      = f.input :domain_pool, as: :hidden
+
+      = f.input :pool_name, required: true, input_html: { disabled: true, value: @pool.name}, input_wrapper_html: { style: "width: 70%" }
+      = f.input :attributes, as: :text, required: true, input_html: { disabled: true, value: @pool.read("attributes")}, input_wrapper_html: { style: "width: 70%" }
+
+      - if @zone_request.subdomain? && @zone_request.dns_domain
+        = f.input :dns_domain, label: 'DNS Domain', input_html: { disabled: true}, input_wrapper_html: { style: "width: 70%" }
+        = f.input :dns_domain, as: :hidden
+        = f.input :name, required: true, input_wrapper_html: { style: "width: 70%" } do
+          .input-group
+            = f.text_field :name, value: @zone_request.name, class: "form-control text-right"
+            %span.input-group-addon
+              = ".#{@zone_request.dns_domain}"
+              = '.' unless @zone_request.dns_domain.last == '.'
+      - else
+        = f.input :name, required: true, input_wrapper_html: { style: "width: 70%" }
 
 
-    = f.input :email, required: true, input_wrapper_html: { style: "width: 70%" }
-    = f.input :ttl,   required: false, as: :integer, input_html: {value: @zone_request.ttl || 7200}, input_wrapper_html: { style: "width: 30%" }
-    = f.input :description, required: false, as: :text
+      = f.input :email, required: true, input_wrapper_html: { style: "width: 70%" }
+      = f.input :ttl,   required: false, as: :integer, input_html: {value: @zone_request.ttl || 7200}, input_wrapper_html: { style: "width: 30%" }
+      = f.input :description, required: false, as: :text
 
   %div.buttons{class: 'modal-footer'}
     %button.btn.btn-default{type: 'button', data: {dismiss: 'modal'}, aria: {label: 'Cancel'}} Cancel
-    = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
+    - unless @inqury.nil?
+      = button_tag 'Create', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait... '} }
 
 :javascript
   $('input[name="zone_request[domain_type]"]').click(function () {
