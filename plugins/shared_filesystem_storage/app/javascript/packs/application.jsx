@@ -3,16 +3,16 @@ import { HashRouter, Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
 import * as Reducers from './reducers';
 
-import Tabs from './containers/tabs';
+import Tabs from './components/tabs';
 import ShareList from './containers/shares/list'
 import EditShareModal from './containers/shares/edit';
 import ShowShareModal from './containers/shares/show';
 import NewShareModal from './containers/shares/new';
 import AccessControlModal from './containers/shares/access_control';
 
-import Snapshots from './components/snapshots/list'
-import ShareNetworks from './components/share_networks/list'
+import ShareNetworks from './containers/share_networks/list'
 
+import Snapshots from './components/snapshots/list'
 
 const tabsConfig = [
   { to: '/shares', label: 'Shares', component: ShareList },

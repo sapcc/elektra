@@ -66,7 +66,6 @@ const fetchShareNetworks= () =>
   }
 ;
 
-const count = 0;
 const shouldFetchShareNetworks= function(getState) {
   const shareNetworks = getState().shared_filesystem_storage.shareNetworks;
   if (shareNetworks.isFetching || shareNetworks.receivedAt) {
@@ -105,134 +104,67 @@ const removeShareNetwork=shareNetworkId =>
   })
 ;
 
-const showDeleteShareNetworkError=(shareNetworkId,message)=>
-  function(dispatch) {
-    dispatch(deleteShareNetworkFailure(shareNetworkId));
-    return dispatch(app.showErrorDialog({title: 'Could not delete share network', message}));
-  }
-;
 
 const deleteShareNetwork= shareNetworkId =>
   function(dispatch, getState) {
     dispatch(requestDelete(shareNetworkId));
-    return ajaxHelper.delete(`/share-networks/${shareNetworkId}`, {
-      success(data, textStatus, jqXHR) {
-        if (data && data.errors) {
-          return dispatch(showDeleteShareNetworkError(shareNetworkId,ReactFormHelpers.Errors(data)));
-        } else {
-          return dispatch(removeShareNetwork(shareNetworkId));
-        }
-      },
-      error( jqXHR, textStatus, errorThrown) {
-        return dispatch(showDeleteShareNetworkError(shareNetworkId,jqXHR.responseText));
+    ajaxHelper.delete(`/share-networks/${shareNetworkId}`).then(response => {
+      if (response.data && response.data.errors) {
+        React.createElement(ErrorsList, {errors: response.data.errors})
+      } else {
+        return dispatch(removeShareNetwork(shareNetworkId));
       }
-    }
-    );
+    }).catch(error => {
+      showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+    })
   }
 ;
-
-
-const openDeleteShareNetworkDialog=function(shareNetworkId, options) {
-  if (options == null) { options = {}; }
-  return function(dispatch, getState) {
-    const networkShares = [];
-    const { shares } = getState();
-    if (shares && shares.items) {
-      for (let s of Array.from(shares.items)) {
-        if (s.share_network_id===shareNetworkId) { networkShares.push(s); }
-      }
-    }
-
-    if (networkShares.length===0) {
-      return dispatch(app.showConfirmDialog({
-        message: options.message || 'Do you really want to delete this share network?' ,
-        confirmCallback() { return dispatch(deleteShareNetwork(shareNetworkId)); }
-      }));
-    } else {
-      return dispatch(app.showInfoDialog({title: 'Existing Dependencies', message: `Please delete dependent shares(${networkShares.length}) first!`}));
-    }
-  };
-};
-
-const openNewShareNetworkDialog=()=>
-  function(dispatch) {
-    dispatch(shareNetworkFormForCreate());
-    return dispatch(newShareNetworkModal());
-  }
-;
-
-const openEditShareNetworkDialog=shareNetwork=>
-  function(dispatch) {
-    dispatch(shareNetworkFormForUpdate(shareNetwork));
-    return dispatch(editShareNetworkModal());
-  }
-;
+//
+//
+// const openDeleteShareNetworkDialog=function(shareNetworkId, options) {
+//   if (options == null) { options = {}; }
+//   return function(dispatch, getState) {
+//     const networkShares = [];
+//     const { shares } = getState();
+//     if (shares && shares.items) {
+//       for (let s of Array.from(shares.items)) {
+//         if (s.share_network_id===shareNetworkId) { networkShares.push(s); }
+//       }
+//     }
+//
+//     if (networkShares.length===0) {
+//       return dispatch(app.showConfirmDialog({
+//         message: options.message || 'Do you really want to delete this share network?' ,
+//         confirmCallback() { return dispatch(deleteShareNetwork(shareNetworkId)); }
+//       }));
+//     } else {
+//       return dispatch(app.showInfoDialog({title: 'Existing Dependencies', message: `Please delete dependent shares(${networkShares.length}) first!`}));
+//     }
+//   };
+// };
 
 //################ SHARSHARE_NETWORKE FORM ###################
-const resetShareNetworkForm=()=> ({type: constants.RESET_SHARE_NETWORK_FORM});
 
-var shareNetworkFormForCreate=()=>
-  ({
-    type: constants.PREPARE_SHARE_NETWORK_FORM,
-    method: 'post',
-    action: "/share-networks"
-  })
-;
-
-var shareNetworkFormForUpdate=shareNetwork =>
-  ({
-    type: constants.PREPARE_SHARE_NETWORK_FORM,
-    data: shareNetwork,
-    method: 'put',
-    action: `/share-networks/${shareNetwork.id}`
-  })
-;
-
-const shareNetworkFormFailure=errors =>
-  ({
-    type: constants.SHARE_NETWORK_FORM_FAILURE,
-    errors
-  })
-;
-
-const updateShareNetworkForm= (name,value) =>
-  ({
-    type: constants.UPDATE_SHARE_NETWORK_FORM,
-    name,
-    value
-  })
-;
-
-const submitShareNetworkForm= (successCallback=null) =>
+const submitNewShareNetworkForm= (values, {handleSuccess,handleErrors}) =>
   function(dispatch, getState) {
-    const { shareNetworkForm } = getState();
-    if (shareNetworkForm.isValid) {
-      dispatch({type: app.SUBMIT_SHARE_NETWORK_FORM});
-      return app.ajaxHelper[shareNetworkForm.method](shareNetworkForm.action, {
-        data: { share_network: shareNetworkForm.data },
-        success(data, textStatus, jqXHR) {
-          if (data.errors) {
-            return dispatch(shareNetworkFormFailure(data.errors));
-          } else {
-            dispatch(receiveShareNetwork(data));
-            if (shareNetworkForm.method==='post') { dispatch(toggleShareNetworkIsNewStatus(data.id,true)); }
-            dispatch(resetShareNetworkForm());
-            if (successCallback) { return successCallback(); }
-          }
-        },
-        error( jqXHR, textStatus, errorThrown) {
-          return dispatch(app.showErrorDialog({title: 'Could not save share network', message:jqXHR.responseText}));
-        }
+    ajaxHelper.post(`/share-networks`, { share_network: values }).then(response => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors);
+      } else {
+        dispatch(receiveShareNetwork(response.data));
+        dispatch(toggleShareNetworkIsNewStatus(response.data.id,true))
+        handleSuccess()
       }
-      );
-    }
+    }).catch(error => {
+      handleErrors(error.message)
+    })
   }
 ;
 
 //####################### NETWORKS ###########################
 // Neutron Networks, Not Share Networks!!!
 const shouldFetchNetworks= function(state) {
-  const { networks } = state;
+  const { networks } = state.shared_filesystem_storage;
   if (networks.isFetching || networks.receivedAt) {
     return false;
   } else if (!networks.items || !networks.items.length) {
@@ -290,21 +222,16 @@ const receiveNetworkSubnets= (networkId, json) =>
 const fetchNetworkSubnets= networkId =>
   function(dispatch) {
     dispatch(requestNetworkSubnets(networkId));
-    return app.ajaxHelper.get("/share-networks/subnets", {
-      data: {network_id: networkId},
-      success(data, textStatus, jqXHR) {
-        return dispatch(receiveNetworkSubnets(networkId,data));
-      },
-      error( jqXHR, textStatus, errorThrown) {
-        return dispatch(requestNetworkSubnetsFailure(networkId));
-      }
-    }
-    );
+    ajaxHelper.get("/share-networks/subnets").then(response=>{
+      dispatch(receiveNetworkSubnets(networkId,response.data))
+    }).catch(error=>{
+      dispatch(requestNetworkSubnetsFailure(networkId))
+    })
   }
 ;
 
 const shouldFetchNetworkSubnets= function(state, networkId) {
-  const subnets = state.subnets[networkId];
+  const subnets = state.shared_filesystem_storage.subnets[networkId];
   if (!subnets) {
     return true;
   } else if (subnets.isFetching || subnets.receivedAt) {
@@ -327,10 +254,6 @@ export {
   fetchShareNetworks,
   fetchShareNetworksIfNeeded,
   deleteShareNetwork,
-
-  shareNetworkFormForCreate,
-  shareNetworkFormForUpdate,
-  submitShareNetworkForm,
-  updateShareNetworkForm,
   toggleShareNetworkIsNewStatus,
+  submitNewShareNetworkForm
 }

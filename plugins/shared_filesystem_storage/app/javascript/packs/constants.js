@@ -45,3 +45,14 @@ export const PREPARE_SHARE_NETWORK_FORM      = 'shared_filesystem_storage/share_
 export const UPDATE_SHARE_NETWORK_FORM       = 'shared_filesystem_storage/share_networks/UPDATE_SHARE_NETWORK_FORM';
 export const SUBMIT_SHARE_NETWORK_FORM       = 'shared_filesystem_storage/share_networks/SUBMIT_SHARE_NETWORK_FORM';
 export const SHARE_NETWORK_FORM_FAILURE      = 'shared_filesystem_storage/share_networks/SHARE_NETWORK_FORM_FAILURE';
+
+// NETWORKS
+export const REQUEST_NETWORKS                  = 'shared_filesystem_storage/networks/REQUEST_NETWORKS'
+export const RECEIVE_NETWORKS                  = 'shared_filesystem_storage/networks/RECEIVE_NETWORKS'
+export const REQUEST_NETWORKS_FAILURE          = 'shared_filesystem_storage/networks/REQUEST_NETWORKS_FAILURE'
+export const TOGGLE_SHARE_NETWORK_IS_NEW_STATUS = 'shared_filesystem_storage/networks/TOGGLE_SHARE_NETWORK_IS_NEW_STATUS'
+
+// SUBNETS
+export const RECEIVE_SUBNETS                   = 'shared_filesystem_storage/subnets/RECEIVE_SUBNETS'
+export const REQUEST_SUBNETS                   = 'shared_filesystem_storage/subnets/REQUEST_SUBNETS'
+export const REQUEST_SUBNETS_FAILURE           = 'shared_filesystem_storage/subnets/REQUEST_SUBNETS_FAILURE'
