@@ -8,7 +8,10 @@
       %p.alert.alert-error= @rbac.errors.full_messages.to_sentence
 
     %p
-      Assign the backup network <b>#{@backup_network.name}</b> to my project <b>#{@scoped_project_name}</b>.
+      - if @backup_network
+        Assign the backup network <b>#{@backup_network.name}</b> to my project <b>#{@scoped_project_name}</b>.
+      - else
+        No backup network found for this domain.  
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{ type: 'button', data: { dismiss:'modal' }, aria: { label: 'Cancel' } } Cancel
