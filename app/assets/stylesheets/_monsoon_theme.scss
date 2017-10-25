@@ -428,6 +428,12 @@ section {
   @extend .fa-fw;
 }
 
+.containers-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-cube;
+}
+
 .automation-icon {
   @extend .fa;
   @extend .fa-fw;

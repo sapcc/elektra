@@ -57,15 +57,21 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-  primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "compute-icon"},
+    primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "compute-icon"},
     if: -> {services.available?(:compute,:instances) or services.available?(:image,:os_images) or plugin_available?(:block_storage)} do |compute_nav|
       compute_nav.item :instances, 'Servers', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }, highlights_on: Proc.new { params[:controller][/compute\/instances/] }
       compute_nav.item :block_storage, 'Volumes & Snapshots', -> {plugin('block_storage').volumes_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage/] }
       compute_nav.item :images, 'Server Images & Snapshots', -> {plugin('image').os_images_public_index_path}, if: -> { services.available?(:image,:os_images) }, highlights_on: Proc.new { params[:controller][/image\/.*/] }
       compute_nav.item :flavors, 'Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-      compute_nav.item :kubernetes, 'Kubernetes', -> { plugin('kubernetes').root_path }, if: -> { plugin_available?(:kubernetes)&& current_user && current_user.is_allowed?('kubernetes:application_get') }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
+
+    primary.item :containers, 'Containers', nil, html: {class: "fancy-nav-header", 'data-icon': "containers-icon"},
+    if: -> {plugin_available?(:kubernetes) && current_user && current_user.is_allowed?('kubernetes:application_get') } do |containers_nav|
+      containers_nav.item :kubernetes, 'Kubernetes', -> { plugin('kubernetes').root_path }, if: -> { plugin_available?(:kubernetes) && current_user && current_user.is_allowed?('kubernetes:application_get') }, highlights_on: Proc.new { params[:controller][/kubernetes\/.*/] }
+      # compute_nav.dom_attributes = {class: 'content-list'}
+    end
+
 
     primary.item :automation, 'Monsoon Automation', nil, html: {class: "fancy-nav-header", 'data-icon': "automation-icon" }, if: -> {services.available?(:automation,:nodes) } do |automation_nav|
       automation_nav.item :automation, 'Automation', -> {plugin('automation').nodes_path}, if: -> { services.available?(:automation,:nodes)}, highlights_on: Proc.new { params[:controller][/automation\/.*/] }
