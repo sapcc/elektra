@@ -99,7 +99,6 @@ EditCluster = ({
 
                   option value: '', 'Choose flavor'
                   option value: 'm1.small', 'm1.small'
-                  option value: 'm1.xsmall', 'm1.xsmall'
                   option value: 'm1.medium', 'm1.medium'
                   option value: 'm1.xmedium', 'm1.xmedium'
                   option value: 'm1.large', 'm1.large'
