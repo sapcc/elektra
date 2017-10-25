@@ -47,7 +47,7 @@ module ObjectStorage
 
     # Returns the actual file contents, using a separate API call.
     def file_contents
-      @driver.get_object_contents(container_name, path)
+      @service.get_object_content(container_name, path)
     end
 
     def ui_sort_order

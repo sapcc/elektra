@@ -194,6 +194,11 @@ module ServiceLayerNg
       map_to(ObjectStorage::Object, objects)
     end
 
+    def get_object_content(container_name, path)
+      Rails.logger.debug  "[object_storage-service] -> object_content_and_metadata -> #{container_name}, #{path}"
+      api.object_storage.get_object_content_and_metadata(container_name,path).body
+    end
+
     def bulk_delete(targets)
       Rails.logger.debug  "[object_storage-service] -> bulk_delete"
       Rails.logger.debug  "[object_storage-service] -> targets: #{targets}"
