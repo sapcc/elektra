@@ -78,7 +78,6 @@ module ObjectStorage
 
       attrs[:web_file_listing] = attrs[:web_file_listing] == '1'
 
-
       unless @container.update_attributes(attrs)
         @other_container_names = services_ng.object_storage.containers.map(&:name).reject { |n| n == @container.name }
         render action: 'show' # "edit" view is covered by "show"

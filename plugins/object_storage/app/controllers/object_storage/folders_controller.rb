@@ -17,7 +17,7 @@ module ObjectStorage
         return
       end
 
-      services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
+      services_ng.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
       back_to_object_list(@container_name, @object.path)
     end
 

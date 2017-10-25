@@ -97,6 +97,7 @@ module ServiceLayerNg
     end
 
     def update_container(container_name, params={})
+      # update container properties and access control
       Rails.logger.debug  "[object_storage-service] -> update_container -> #{container_name}"
       Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
 
@@ -118,10 +119,14 @@ module ServiceLayerNg
           request_params["X-Container-Meta-#{key}"] = value
         end
       end
+      
+      Rails.logger.debug  "[object_storage-service] -> headers:#{request_params}"
 
       # TODO: set metadata is not working right now, we need support for misty to set the request header
       #       bevore the request is send to the server
-      #api.object_storage.create_update_or_delete_container_metadata(container_name,request_params)
+      #api.object_storage.set_custom_request_headers(request_params)
+      #api.object_storage.create_update_or_delete_container_metadata(container_name)
+      get_client(request_params).create_update_or_delete_container_metadata(container_name)
     end
 
     # OBJECTS # 
@@ -193,7 +198,10 @@ module ServiceLayerNg
       Rails.logger.debug  "[object_storage-service] -> bulk_delete"
       Rails.logger.debug  "[object_storage-service] -> targets: #{targets}"
 
-#      TODO: Ask Stefan
+#      TODO:
+#      https://github.com/fog/fog-openstack/blob/master/lib/fog/storage/openstack/requests/delete_multiple_objects.rb
+#      DELETE with body, that is sadly not possible yet in misty
+#      https://github.com/flystack/misty/blob/master/lib/misty/http/method_builder.rb#L25
 #      capabilities = list_capabilities
 #      if capabilities.attributes.has_key?('bulk_delete')
 #        # assemble the request body containing the paths to all targets
@@ -233,14 +241,32 @@ module ServiceLayerNg
 #      end
     end
     
-    def create_object(params)
-      Rails.logger.debug  "[object_storage-service] -> create_object"
-      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+    def create_object(container_name, path, contents)
+      path = sanitize_path(path)
+      Rails.logger.debug  "[object_storage-service] -> create_object -> #{container_name}, #{path}"
+
+      # content type "application/directory" is needed on pseudo-dirs for
+      # staticweb container listing to work correctly
+      options = {}
+      options['Content-Type'] = 'application/directory' if path.end_with?('/')
+      options['Content-Type'] = ''
+      # `contents` is an IO object to allow for easy future expansion to
+      # more clever upload strategies (e.g. SLO); for now, we just send
+      # everything at once
+      
+      # TODO: set Content-Type correctly otherwise everything is "application/x-www-form-urlencoded"
+      get_client(options).create_or_replace_object(container_name, path, contents.read)
+
     end
 
     def delete_object(container_name,path)
       Rails.logger.debug  "[object_storage-service] -> delete_object -> #{container_name}, #{path}"
       api.object_storage.delete_object(container_name,path)
+    end
+    
+    def update_object(container_name,path)
+      Rails.logger.debug  "[object_storage-service] -> update_object -> #{container_name}, #{path}"
+      # TODO
     end
 
     def create_folder(container_name, path)
@@ -314,6 +340,27 @@ module ServiceLayerNg
 
       # remove leading and trailing slash
       return path.sub(/^\//, '').sub(/\/$/, '')
+    end
+
+    # hack to overwrite the header for the next request
+    def get_client(override_headers)
+      service = api.object_storage 
+      client = service.instance_variable_get(:@origin_service)
+      opts = client.instance_variable_get(:@options)
+      new_client = Misty::Openstack::Swift::V1.new(
+        client.instance_variable_get(:@auth),
+        client.instance_variable_get(:@config),
+        base_path: opts.base_path,
+        base_url: opts.base_url,
+        interface: opts.interface,
+        region_id: opts.region_id,
+        ssl_verify_mode: opts.ssl_verify_mode,
+        headers: opts.headers.merge(override_headers),
+        version: opts.version,
+      )
+      return Core::Api::ClientWrapper::Service.new(
+        new_client, service.instance_variable_get(:@elektra_service),
+      )
     end
 
   end
