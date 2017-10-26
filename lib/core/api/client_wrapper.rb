@@ -88,6 +88,7 @@ module Core
               define_method meth do |*args|
                 handle_response do
                   begin
+                    Rails.logger.debug  "[client-wrapper] -> initialize -> service #{service.class} -> #{meth}(#{args})"
                     service.send(meth, *args)
                   rescue => e
                     raise ::Core::Api::ResponseError, e
@@ -101,6 +102,11 @@ module Core
         def requests
           @origin_service.requests
         end
+      
+        def uri
+          # this is used in object storage to build the url for public access
+          @origin_service.instance_variable_get(:@uri).to_s
+        end
 
         # Check for response errors
         def handle_response
@@ -109,6 +115,7 @@ module Core
           Response.new(response, @elektra_service)
         end
       end
+
 
       def catalog
         @api_client.auth.catalog

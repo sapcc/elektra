@@ -60,7 +60,7 @@ module ServiceLayerNg
     end
     
     def container_metadata(container_name)
-      Rails.logger.debug  "[object-storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
+      Rails.logger.debug  "[object-storage-service] -> container_metadata -> HEAD #{container_name}"
       response = api.object_storage.show_container_metadata(container_name)
       data = extract_container_header_data(response,container_name)
       map_to(ObjectStorage::Container, data)
@@ -120,8 +120,9 @@ module ServiceLayerNg
         end
       end
       
+      # update metadata
       api.object_storage.create_update_or_delete_container_metadata(container_name,build_custom_request_header(header_attrs))
-      
+      # return nothing
       nil
     end
 
@@ -334,10 +335,9 @@ module ServiceLayerNg
       headers = {}
       response.header.each_header{|key,value| headers[key] = value}
       header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
-      
       # enrich data with additional information
       header_hash['id']               = header_hash['name'] = container_name
-      #header_hash['public_url']      = fog_public_url(container_name)
+      header_hash['public_url']       = public_url(container_name)
       header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
       header_hash['metadata']         = extract_metadata_data(headers, 'x-container-meta-').reject do |key, value|
         # skip metadata fields that are recognized by us
@@ -354,7 +354,7 @@ module ServiceLayerNg
       puts header_hash
       header_hash['id']               = header_hash['path'] = object_path
       header_hash['container_name']   = container_name
-      #header_hash['public_url']       = fog_public_url(container_name, object_path)
+      header_hash['public_url']       = public_url(container_name, object_path)
       header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
       header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
       header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.has_key?('expires_at') # optional!
@@ -378,6 +378,20 @@ module ServiceLayerNg
 
       # remove leading and trailing slash
       return path.sub(/^\//, '').sub(/\/$/, '')
+    end
+
+    def public_url(container_name, object_path = nil)
+      # similar to https://github.com/fog/fog-openstack/blob/master/lib/fog/storage/openstack/requests/public_url.rb
+      return nil if container_name.nil?
+      url = "#{api.object_storage.uri}/#{CGI.escape(container_name)}"
+      url << "/#{CGI.escape(object_path)}" unless object_path.nil?
+      if object_path.nil?
+        # path to container listing needs a trailing slash to work in a browser
+        url << '/'
+      else
+        url << "/#{CGI.escape(object_path)}"
+      end
+      return url
     end
 
   end
