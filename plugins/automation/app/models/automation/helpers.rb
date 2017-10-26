@@ -4,7 +4,7 @@ module Automation
 
     TAG_SEPERATOR = "¡"
 
-    def string_to_json(attr)
+    def string_to_hash(attr)
       unless attr.blank?
         result_hash = {}
         attr.split(TAG_SEPERATOR).each do |tag|

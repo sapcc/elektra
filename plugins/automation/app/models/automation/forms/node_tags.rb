@@ -43,7 +43,7 @@ module Automation
       old_tags = node.tags || {}
 
       # transform the given tags
-      new_tags = JSON.parse(string_to_json(self.tags))
+      new_tags = string_to_hash(self.tags)
 
       # return if nothing todo
       if tags.blank? && old_tags.blank?

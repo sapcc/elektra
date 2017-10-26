@@ -19,7 +19,7 @@ module Automation
     def form_to_attributes(attrs)
       attrs.keys.each do |key|
         if json_attr.include? key
-          attrs[key] = string_to_json(attrs[key])
+          attrs[key] = string_to_hash(attrs[key])
         elsif array_attr.include? key
           attrs[key] = string_to_array(attrs[key])
         elsif key == :type
