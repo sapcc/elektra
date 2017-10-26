@@ -1,4 +1,4 @@
-FROM ruby:2.4.1-alpine3.6
+FROM ruby:2.4.1-alpine3.6 AS elektra
 
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 
@@ -63,3 +63,13 @@ RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
 CMD ["script/start.sh"]
+
+FROM elektra AS tests
+RUN apk add --no-cache postgresql bash
+ENV RAILS_ENV=test
+RUN su postgres -c 'script/pg_tmp.sh -p 5432 -l 127.0.0.1 -w 300 -d /tmp/pg start' \
+      && rake db:create db:migrate \
+      && bundle exec rspec \
+      && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
+
+FROM elektra
