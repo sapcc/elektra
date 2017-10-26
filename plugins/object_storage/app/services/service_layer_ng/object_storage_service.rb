@@ -126,6 +126,8 @@ module ServiceLayerNg
       #       bevore the request is send to the server
       #api.object_storage.set_custom_request_headers(request_params)
       #api.object_storage.create_update_or_delete_container_metadata(container_name)
+      
+      # workarround - overwrite client with headers
       get_client(request_params).create_update_or_delete_container_metadata(container_name)
     end
 
@@ -163,6 +165,11 @@ module ServiceLayerNg
       map_to(ObjectStorage::ObjectNg, data)
     end
 
+    def object_content(container_name, path)
+      Rails.logger.debug  "[object_storage-service] -> object_content_and_metadata -> #{container_name}, #{path}"
+      api.object_storage.get_object_content_and_metadata(container_name,path).body
+    end
+
     def list_objects(container_name, options={})
       Rails.logger.debug  "[object_storage-service] -> list_objects -> #{container_name}"
       list = api.object_storage.show_container_details_and_list_objects(container_name, options).body
@@ -194,9 +201,17 @@ module ServiceLayerNg
       map_to(ObjectStorage::Object, objects)
     end
 
-    def get_object_content(container_name, path)
-      Rails.logger.debug  "[object_storage-service] -> object_content_and_metadata -> #{container_name}, #{path}"
-      api.object_storage.get_object_content_and_metadata(container_name,path).body
+    def copy_object(source_container_name, source_object_name, target_container_name, target_object_name, options={})
+      Rails.logger.debug  "[object_storage-service] -> copy_object -> #{source_container_name}, #{source_object_name} to #{target_container_name}, #{target_object_name}"
+      Rails.logger.debug  "[object_storage-service] -> copy_object -> Options: #{options}"
+      headers = {
+          'Destination' => "/#{target_container_name}/#{target_object_name}"
+      }.merge(options)
+      api.object_storage.copy_object(source_container_name,source_object_name,custom_header(headers))
+    end
+    
+    def move_object()
+      Rails.logger.debug  "[object_storage-service] -> move_object ->"
     end
 
     def bulk_delete(targets)
@@ -252,16 +267,17 @@ module ServiceLayerNg
 
       # content type "application/directory" is needed on pseudo-dirs for
       # staticweb container listing to work correctly
-      options = {}
-      options['Content-Type'] = 'application/directory' if path.end_with?('/')
-      options['Content-Type'] = ''
+      headers = {}
+      headers['Content-Type'] = 'application/directory' if path.end_with?('/')
+      headers['Content-Type'] = ''
       # `contents` is an IO object to allow for easy future expansion to
       # more clever upload strategies (e.g. SLO); for now, we just send
       # everything at once
       
-      # TODO: set Content-Type correctly otherwise everything is "application/x-www-form-urlencoded"
-      get_client(options).create_or_replace_object(container_name, path, contents.read)
-
+      header = Misty::HTTP::Header.new(
+        'Content-Type' => ''
+      )
+      api.object_storage.create_or_replace_object(container_name, path, contents.read, header)
     end
 
     def delete_object(container_name,path)
@@ -338,34 +354,22 @@ module ServiceLayerNg
       header_hash
     end
 
+    def custom_header(headers)
+      # stringify keys and values
+      # https://stackoverflow.com/questions/34595141/process-nested-hash-to-convert-all-values-to-strings
+      headers.deep_merge!(headers) {|_,_,v| v.to_s}
+      headers.stringify_keys!
+      # create custom header
+      Misty::HTTP::Header.new(headers)
+    end
+
+    # remove duplicate slashes that might have been created by naive path
     def sanitize_path(path)
-      # remove duplicate slashes that might have been created by naive path
       # joining (e.g. `foo + "/" + bar`)
       path = path.gsub(/^\/+/, '/')
 
       # remove leading and trailing slash
       return path.sub(/^\//, '').sub(/\/$/, '')
-    end
-
-    # hack to overwrite the header for the next request
-    def get_client(override_headers)
-      service = api.object_storage 
-      client = service.instance_variable_get(:@origin_service)
-      opts = client.instance_variable_get(:@options)
-      new_client = Misty::Openstack::Swift::V1.new(
-        client.instance_variable_get(:@auth),
-        client.instance_variable_get(:@config),
-        base_path: opts.base_path,
-        base_url: opts.base_url,
-        interface: opts.interface,
-        region_id: opts.region_id,
-        ssl_verify_mode: opts.ssl_verify_mode,
-        headers: opts.headers.merge(override_headers),
-        version: opts.version,
-      )
-      return Core::Api::ClientWrapper::Service.new(
-        new_client, service.instance_variable_get(:@elektra_service),
-      )
     end
 
   end

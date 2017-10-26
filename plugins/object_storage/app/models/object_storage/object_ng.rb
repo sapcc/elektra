@@ -47,7 +47,7 @@ module ObjectStorage
 
     # Returns the actual file contents, using a separate API call.
     def file_contents
-      @service.get_object_content(container_name, path)
+      @service.object_content(container_name, path)
     end
 
     def ui_sort_order
@@ -85,7 +85,7 @@ module ObjectStorage
     # actions
 
     def copy_to(target_container_name, target_path, options={})
-      @driver.copy_object(
+      @service.copy_object(
         container_name, path, target_container_name, target_path,
         with_metadata: options[:with_metadata],
         # need to reuse Content-Type from original file, or else Fog inserts
@@ -97,7 +97,7 @@ module ObjectStorage
     end
 
     def move_to!(target_container_name, target_path)
-      @driver.move_object(
+      @service.move_object(
         container_name, path, target_container_name, target_path,
         content_type: content_type, # see above for why this is needed
       )

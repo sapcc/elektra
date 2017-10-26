@@ -73,7 +73,7 @@ module ObjectStorage
         path:           @object.path,
         with_metadata:  true,
       )
-      @all_container_names = services.object_storage.containers.map(&:name).sort
+      @all_container_names = services_ng.object_storage.containers.map(&:name).sort
     end
 
     def create_copy
