@@ -41,7 +41,7 @@ module ObjectStorage
         ))
 
         unless @form.validate
-          @all_container_names = services.object_storage.containers.map(&:name).sort
+          @all_container_names = services_ng.object_storage.containers.map(&:name).sort
           render action: 'move'
           return
         end

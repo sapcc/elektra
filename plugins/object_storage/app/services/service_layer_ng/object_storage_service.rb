@@ -37,13 +37,13 @@ module ServiceLayerNg
     end
     
     def list_capabilities
-      Rails.logger.debug  "[object_storage-service] -> capabilities -> GET /info"
+      Rails.logger.debug  "[object-storage-service] -> capabilities -> GET /info"
       response = api.object_storage.list_activated_capabilities
        map_to(ObjectStorage::Capabilities, response.body)
     end
     
     def containers
-      Rails.logger.debug  "[object_storage-service] -> containers -> GET /"
+      Rails.logger.debug  "[object-storage-service] -> containers -> GET /"
       list = api.object_storage.show_account_details_and_list_containers.body
       list.map! do |c|
         container = map_attribute_names(c, CONTAINERS_ATTRMAP)
@@ -54,25 +54,25 @@ module ServiceLayerNg
     end
     
     def container_details_and_list_objects(container_name)
-      Rails.logger.debug  "[object_storage-service] -> find_container -> GET /"
+      Rails.logger.debug  "[object-storage-service] -> find_container -> GET /"
       response = api.object_storage.show_container_details_and_list_objects(container_name)
       map_to(ObjectStorage::Container, response.body)
     end
     
     def container_metadata(container_name)
-      Rails.logger.debug  "[object_storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
+      Rails.logger.debug  "[object-storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
       response = api.object_storage.show_container_metadata(container_name)
       data = extract_container_header_data(response,container_name)
       map_to(ObjectStorage::Container, data)
     end
 
     def new_container(attributes={})
-      Rails.logger.debug  "[object_storage-service] -> new_container"
+      Rails.logger.debug  "[object-storage-service] -> new_container"
       map_to(ObjectStorage::Container, attributes)
     end
 
     def empty(container_name)
-      Rails.logger.debug  "[object_storage-service] -> empty -> #{container_name}"
+      Rails.logger.debug  "[object-storage-service] -> empty -> #{container_name}"
       targets = list_objects(container_name).map do |obj|
         { container: container_name, object: obj['path'] }
       end
@@ -80,26 +80,26 @@ module ServiceLayerNg
     end
     
     def empty?(container_name)
-      Rails.logger.debug  "[object_storage-service] -> empty? -> #{container_name}"
+      Rails.logger.debug  "[object-storage-service] -> empty? -> #{container_name}"
       list_objects(container_name, limit: 1).count == 0
     end 
 
     def create_container(params = {})
-      Rails.logger.debug  "[object_storage-service] -> create_container"
-      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+      Rails.logger.debug  "[object-storage-service] -> create_container"
+      Rails.logger.debug  "[object-storage-service] -> parameter:#{params}"
       name = params.delete(:name)
       api.object_storage.create_container(name, Misty.to_json(params)).body
     end
     
     def delete_container(container_name)
-      Rails.logger.debug  "[object_storage-service] -> delete_container -> #{container_name}"
+      Rails.logger.debug  "[object-storage-service] -> delete_container -> #{container_name}"
       api.object_storage.delete_container(container_name).body
     end
 
     def update_container(container_name, params={})
       # update container properties and access control
-      Rails.logger.debug  "[object_storage-service] -> update_container -> #{container_name}"
-      Rails.logger.debug  "[object_storage-service] -> parameter:#{params}"
+      Rails.logger.debug  "[object-storage-service] -> update_container -> #{container_name}"
+      Rails.logger.debug  "[object-storage-service] -> parameter:#{params}"
 
       request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
 
@@ -120,7 +120,7 @@ module ServiceLayerNg
         end
       end
       
-      Rails.logger.debug  "[object_storage-service] -> headers:#{request_params}"
+      Rails.logger.debug  "[object-storage-service] -> headers:#{request_params}"
 
       # TODO: set metadata is not working right now, we need support for misty to set the request header
       #       bevore the request is send to the server
@@ -154,21 +154,21 @@ module ServiceLayerNg
       # 'expires_at'     => 'X-Delete-At', # this is special-cased in update_object()
     }
 
-    def object_metadata(container_name,path)
-      Rails.logger.debug  "[object_storage-service] -> find_object -> #{container_name}, #{path}"
-      return nil if container_name.blank? or path.blank?
-      response = api.object_storage.show_object_metadata(container_name, path)
-      data = extract_object_header_data(response,container_name,path)
+    def object_metadata(container_name,object_path)
+      Rails.logger.debug  "[object-storage-service] -> find_object -> #{container_name}, #{object_path}"
+      return nil if container_name.blank? or object_path.blank?
+      response = api.object_storage.show_object_metadata(container_name, object_path)
+      data = extract_object_header_data(response,container_name,object_path)
       map_to(ObjectStorage::ObjectNg, data)
     end
 
-    def object_content(container_name, path)
-      Rails.logger.debug  "[object_storage-service] -> object_content_and_metadata -> #{container_name}, #{path}"
-      api.object_storage.get_object_content_and_metadata(container_name,path).body
+    def object_content(container_name, object_path)
+      Rails.logger.debug  "[object-storage-service] -> object_content_and_metadata -> #{container_name}, #{object_path}"
+      api.object_storage.get_object_content_and_metadata(container_name,object_path).body
     end
 
     def list_objects(container_name, options={})
-      Rails.logger.debug  "[object_storage-service] -> list_objects -> #{container_name}"
+      Rails.logger.debug  "[object-storage-service] -> list_objects -> #{container_name}"
       list = api.object_storage.show_container_details_and_list_objects(container_name, options).body
       list.map! do |o|
         object = map_attribute_names(o, OBJECTS_ATTRMAP)
@@ -181,26 +181,26 @@ module ServiceLayerNg
       end
     end
     
-    def list_objects_at_path(container_name, path, filter={})
-      Rails.logger.debug  "[object_storage-service] -> list_objects_at_path -> #{container_name}, #{path}, #{filter}"
-      path += '/' if !path.end_with?('/') && !path.empty?
-      result = list_objects(container_name, filter.merge(prefix: path, delimiter: '/'))
-      # if there is a pseudo-folder at `path`, it will be in the result, too;
-      # filter this out since we only want stuff below `path`
-      objects = result.reject { |obj| obj['id'] == path }
+    def list_objects_at_path(container_name, object_path, filter={})
+      Rails.logger.debug  "[object-storage-service] -> list_objects_at_path -> #{container_name}, #{object_path}, #{filter}"
+      object_path += '/' if !object_path.end_with?('/') && !object_path.empty?
+      result = list_objects(container_name, filter.merge(prefix: object_path, delimiter: '/'))
+      # if there is a pseudo-folder at `object_path`, it will be in the result, too;
+      # filter this out since we only want stuff below `object_path`
+      objects = result.reject { |obj| obj['id'] == object_path }
       map_to(ObjectStorage::Object, objects)
     end
 
-    def list_objects_below_path(container_name, path, filter={})
-      Rails.logger.debug  "[object_storage-service] -> list_objects_below_path -> #{container_name}, #{path}, #{filter}"
-      path += '/' if !path.end_with?('/') && !path.empty?
-      objects =  list_objects(container_name, filter.merge(prefix: path))
+    def list_objects_below_path(container_name, object_path, filter={})
+      Rails.logger.debug  "[object-storage-service] -> list_objects_below_path -> #{container_name}, #{object_path}, #{filter}"
+      path += '/' if !object_path.end_with?('/') && !object_path.empty?
+      objects =  list_objects(container_name, filter.merge(prefix: object_path))
       map_to(ObjectStorage::Object, objects)
     end
 
     def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
-      Rails.logger.debug  "[object_storage-service] -> copy_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
-      Rails.logger.debug  "[object_storage-service] -> copy_object -> Options: #{options}"
+      Rails.logger.debug  "[object-storage-service] -> copy_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
+      Rails.logger.debug  "[object-storage-service] -> copy_object -> Options: #{options}"
       header_attrs = {
           'Destination' => "/#{target_container_name}/#{target_path}"
       }.merge(options)
@@ -208,15 +208,15 @@ module ServiceLayerNg
     end
     
     def move_object(source_container_name, source_path, target_container_name, target_path, options={})
-      Rails.logger.debug  "[object_storage-service] -> move_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
-      Rails.logger.debug  "[object_storage-service] -> move_object -> Options: #{options}"
+      Rails.logger.debug  "[object-storage-service] -> move_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
+      Rails.logger.debug  "[object-storage-service] -> move_object -> Options: #{options}"
       copy_object(source_container_name, source_path, target_container_name, target_path, options.merge(with_metadata: true))
       delete_object(source_container_name, source_path)
     end
 
     def bulk_delete(targets)
-      Rails.logger.debug  "[object_storage-service] -> bulk_delete"
-      Rails.logger.debug  "[object_storage-service] -> targets: #{targets}"
+      Rails.logger.debug  "[object-storage-service] -> bulk_delete"
+      Rails.logger.debug  "[object-storage-service] -> targets: #{targets}"
 
 #      TODO:
 #      https://github.com/fog/fog-openstack/blob/master/lib/fog/storage/openstack/requests/delete_multiple_objects.rb
@@ -261,31 +261,31 @@ module ServiceLayerNg
 #      end
     end
     
-    def create_object(container_name, path, contents)
-      path = sanitize_path(path)
-      Rails.logger.debug  "[object_storage-service] -> create_object -> #{container_name}, #{path}"
+    def create_object(container_name, object_path, contents)
+      object_path = sanitize_path(object_path)
+      Rails.logger.debug  "[object-storage-service] -> create_object -> #{container_name}, #{object_path}"
 
       # content type "application/directory" is needed on pseudo-dirs for
       # staticweb container listing to work correctly
       header_attrs = {}
-      header_attrs['Content-Type'] = 'application/directory' if path.end_with?('/')
+      header_attrs['Content-Type'] = 'application/directory' if object_path.end_with?('/')
       header_attrs['Content-Type'] = ''
       # Note: `contents` is an IO object to allow for easy future expansion to
       # more clever upload strategies (e.g. SLO); for now, we just send
       # everything at once
 
-      api.object_storage.create_or_replace_object(container_name, path, contents.read, build_custom_request_header(header_attrs))
+      api.object_storage.create_or_replace_object(container_name, object_path, contents.read, build_custom_request_header(header_attrs))
     end
 
-    def delete_object(container_name,path)
-      Rails.logger.debug  "[object_storage-service] -> delete_object -> #{container_name}, #{path}"
-      api.object_storage.delete_object(container_name,path)
+    def delete_object(container_name,object_path)
+      Rails.logger.debug  "[object-storage-service] -> delete_object -> #{container_name}, #{object_path}"
+      api.object_storage.delete_object(container_name,object_path)
     end
     
     def update_object_ng(object_path, params)
       container_name = params[:container_name]
-      Rails.logger.debug  "[object_storage-service] -> update_object -> #{container_name}/#{object_path}"
-      Rails.logger.debug  "[object_storage-service] -> update_object -> Params: #{params}"
+      Rails.logger.debug  "[object-storage-service] -> update_object -> #{container_name}/#{object_path}"
+      Rails.logger.debug  "[object-storage-service] -> update_object -> Params: #{params}"
 
       header_attrs = map_attribute_names(params, OBJECT_WRITE_ATTRMAP)
 
@@ -302,16 +302,16 @@ module ServiceLayerNg
       nil
     end
 
-    def create_folder(container_name, path)
-      Rails.logger.debug  "[object_storage-service] -> create_folder -> #{container_name}, #{path}"
+    def create_folder(container_name, object_path)
+      Rails.logger.debug  "[object-storage-service] -> create_folder -> #{container_name}, #{object_path}"
       # a pseudo-folder is created by writing an empty object at its path, with
       # a "/" suffix to indicate the folder-ness
-      api.object_storage.create_or_replace_object(container_name, sanitize_path(path) + '/')
+      api.object_storage.create_or_replace_object(container_name, sanitize_path(object_path) + '/')
     end
     
-    def delete_folder(container_name, path)
-      Rails.logger.debug  "[object_storage-service] -> delete_folder -> #{container_name}, #{path}"
-      targets = list_objects_below_path(container_name, sanitize_path(path) + '/').map do |obj|
+    def delete_folder(container_name, object_path)
+      Rails.logger.debug  "[object-storage-service] -> delete_folder -> #{container_name}, #{object_path}"
+      targets = list_objects_below_path(container_name, sanitize_path(object_path) + '/').map do |obj|
         { container: container_name, object: obj.path }
       end
       bulk_delete(targets)
@@ -351,14 +351,14 @@ module ServiceLayerNg
       header_hash
     end
     
-    def extract_object_header_data(response,container_name = nil, path = nil)
+    def extract_object_header_data(response,container_name = nil, object_path = nil)
       headers = {}
       response.header.each_header{|key,value| headers[key] = value}
       header_hash = map_attribute_names(headers, OBJECT_ATTRMAP)
       puts header_hash
-      header_hash['id']               = header_hash['path'] = path
+      header_hash['id']               = header_hash['path'] = object_path
       header_hash['container_name']   = container_name
-      #header_hash['public_url']       = fog_public_url(container_name, path)
+      #header_hash['public_url']       = fog_public_url(container_name, object_path)
       header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
       header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
       header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.has_key?('expires_at') # optional!
