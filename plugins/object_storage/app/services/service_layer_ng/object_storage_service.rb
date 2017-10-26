@@ -101,7 +101,7 @@ module ServiceLayerNg
       Rails.logger.debug  "[object-storage-service] -> update_container -> #{container_name}"
       Rails.logger.debug  "[object-storage-service] -> parameter:#{params}"
 
-      request_params = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
+      header_attrs = map_attribute_names(params, CONTAINER_WRITE_ATTRMAP)
 
       # convert difference between old and new metadata into a set of changes
       old_metadata = params['original_metadata']
@@ -111,22 +111,18 @@ module ServiceLayerNg
       end
       (old_metadata || {}).each do |key, value|
         unless new_metadata.has_key?(key)
-          request_params["X-Remove-Container-Meta-#{key}"] = "1"
+          header_attrs["x-remove-container-meta-#{key}"] = "1"
         end
       end
       (new_metadata || {}).each do |key, value|
         if old_metadata[key] != value
-          request_params["X-Container-Meta-#{key}"] = value
+          header_attrs["x-container-meta-#{key}"] = value
         end
       end
       
-      Rails.logger.debug  "[object-storage-service] -> headers:#{request_params}"
-
-      # TODO: set metadata is not working right now, we need support for misty to set the request header
-      #       bevore the request is send to the server
-      #api.object_storage.set_custom_request_headers(request_params)
-      #api.object_storage.create_update_or_delete_container_metadata(container_name)
+      api.object_storage.create_update_or_delete_container_metadata(container_name,build_custom_request_header(header_attrs))
       
+      nil
     end
 
     # OBJECTS # 
@@ -290,11 +286,11 @@ module ServiceLayerNg
       header_attrs = map_attribute_names(params, OBJECT_WRITE_ATTRMAP)
 
       unless params['expires_at'].nil?
-        header_attrs['X-Delete-At'] = params['expires_at'].getutc.strftime('%s')
+        header_attrs['x-delete-at'] = params['expires_at'].getutc.strftime('%s')
       end
 
       (params['metadata'] || {}).each do |key, value|
-        header_attrs["X-Object-Meta-#{key}"] = value
+        header_attrs["x-object-meta-#{key}"] = value
       end
       
       api.object_storage.create_or_update_object_metadata(container_name,object_path,build_custom_request_header(header_attrs))

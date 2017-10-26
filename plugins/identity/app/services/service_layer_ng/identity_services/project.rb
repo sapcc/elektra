@@ -98,7 +98,7 @@ module ServiceLayerNg
       # This method is used by model.
       # It has to return the data hash.
       def update_project(id, params)
-        api.identity.update_project(id, project: params).data
+        api.identity.update_project(id, Misty::to_json({project: params})).data
       end
 
       # This method is used by model.
