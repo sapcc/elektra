@@ -62,7 +62,7 @@ module ServiceLayerNg
     def container_metadata(container_name)
       Rails.logger.debug  "[object_storage-service] -> container_metadata -> HEAD /v1/{account}/{container}"
       response = api.object_storage.show_container_metadata(container_name)
-      data = build_container_header_data(response,container_name)
+      data = extract_container_header_data(response,container_name)
       map_to(ObjectStorage::Container, data)
     end
 
@@ -127,8 +127,6 @@ module ServiceLayerNg
       #api.object_storage.set_custom_request_headers(request_params)
       #api.object_storage.create_update_or_delete_container_metadata(container_name)
       
-      # workarround - overwrite client with headers
-      get_client(request_params).create_update_or_delete_container_metadata(container_name)
     end
 
     # OBJECTS # 
@@ -159,9 +157,8 @@ module ServiceLayerNg
     def object_metadata(container_name,path)
       Rails.logger.debug  "[object_storage-service] -> find_object -> #{container_name}, #{path}"
       return nil if container_name.blank? or path.blank?
-
       response = api.object_storage.show_object_metadata(container_name, path)
-      data = build_object_header_data(response,container_name,path)
+      data = extract_object_header_data(response,container_name,path)
       map_to(ObjectStorage::ObjectNg, data)
     end
 
@@ -204,10 +201,10 @@ module ServiceLayerNg
     def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
       Rails.logger.debug  "[object_storage-service] -> copy_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
       Rails.logger.debug  "[object_storage-service] -> copy_object -> Options: #{options}"
-      headers = {
+      header_attrs = {
           'Destination' => "/#{target_container_name}/#{target_path}"
       }.merge(options)
-      api.object_storage.copy_object(source_container_name,source_path,custom_header(headers))
+      api.object_storage.copy_object(source_container_name,source_path,build_custom_request_header(header_attrs))
     end
     
     def move_object(source_container_name, source_path, target_container_name, target_path, options={})
@@ -270,17 +267,14 @@ module ServiceLayerNg
 
       # content type "application/directory" is needed on pseudo-dirs for
       # staticweb container listing to work correctly
-      headers = {}
-      headers['Content-Type'] = 'application/directory' if path.end_with?('/')
-      headers['Content-Type'] = ''
-      # `contents` is an IO object to allow for easy future expansion to
+      header_attrs = {}
+      header_attrs['Content-Type'] = 'application/directory' if path.end_with?('/')
+      header_attrs['Content-Type'] = ''
+      # Note: `contents` is an IO object to allow for easy future expansion to
       # more clever upload strategies (e.g. SLO); for now, we just send
       # everything at once
-      
-      header = Misty::HTTP::Header.new(
-        'Content-Type' => ''
-      )
-      api.object_storage.create_or_replace_object(container_name, path, contents.read, header)
+
+      api.object_storage.create_or_replace_object(container_name, path, contents.read, build_custom_request_header(header_attrs))
     end
 
     def delete_object(container_name,path)
@@ -288,9 +282,24 @@ module ServiceLayerNg
       api.object_storage.delete_object(container_name,path)
     end
     
-    def update_object(container_name,path)
-      Rails.logger.debug  "[object_storage-service] -> update_object -> #{container_name}, #{path}"
-      # TODO
+    def update_object_ng(object_path, params)
+      container_name = params[:container_name]
+      Rails.logger.debug  "[object_storage-service] -> update_object -> #{container_name}/#{object_path}"
+      Rails.logger.debug  "[object_storage-service] -> update_object -> Params: #{params}"
+
+      header_attrs = map_attribute_names(params, OBJECT_WRITE_ATTRMAP)
+
+      unless params['expires_at'].nil?
+        header_attrs['X-Delete-At'] = params['expires_at'].getutc.strftime('%s')
+      end
+
+      (params['metadata'] || {}).each do |key, value|
+        header_attrs["X-Object-Meta-#{key}"] = value
+      end
+      
+      api.object_storage.create_or_update_object_metadata(container_name,object_path,build_custom_request_header(header_attrs))
+      
+      nil
     end
 
     def create_folder(container_name, path)
@@ -315,7 +324,7 @@ module ServiceLayerNg
       data.transform_keys { |k| attribute_map.fetch(k, nil) }.reject { |key,_| key.nil? }
     end
 
-    def extract_metadata_tags(headers, prefix)
+    def extract_metadata_data(headers, prefix)
       result = {}
       headers.each do |key,value|
         if key.start_with?(prefix)
@@ -325,7 +334,7 @@ module ServiceLayerNg
       return result
     end
     
-    def build_container_header_data(response,container_name = nil)
+    def extract_container_header_data(response,container_name = nil)
       headers = {}
       response.header.each_header{|key,value| headers[key] = value}
       header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
@@ -334,7 +343,7 @@ module ServiceLayerNg
       header_hash['id']               = header_hash['name'] = container_name
       #header_hash['public_url']      = fog_public_url(container_name)
       header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
-      header_hash['metadata']         = extract_metadata_tags(headers, 'x-container-meta-').reject do |key, value|
+      header_hash['metadata']         = extract_metadata_data(headers, 'x-container-meta-').reject do |key, value|
         # skip metadata fields that are recognized by us
         CONTAINER_ATTRMAP.has_key?('x-container-meta-' + key)
       end
@@ -342,28 +351,28 @@ module ServiceLayerNg
       header_hash
     end
     
-    def build_object_header_data(response,container_name = nil, path = nil)
+    def extract_object_header_data(response,container_name = nil, path = nil)
       headers = {}
       response.header.each_header{|key,value| headers[key] = value}
       header_hash = map_attribute_names(headers, OBJECT_ATTRMAP)
+      puts header_hash
       header_hash['id']               = header_hash['path'] = path
       header_hash['container_name']   = container_name
       #header_hash['public_url']       = fog_public_url(container_name, path)
       header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
       header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
       header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.has_key?('expires_at') # optional!
-      header_hash['metadata']         = extract_metadata_tags(headers, 'X-Object-Meta-')
-      
+      header_hash['metadata']         = extract_metadata_data(headers, 'x-object-meta-')
       header_hash
     end
 
-    def custom_header(headers)
+    def build_custom_request_header(header_attrs)
       # stringify keys and values
       # https://stackoverflow.com/questions/34595141/process-nested-hash-to-convert-all-values-to-strings
-      headers.deep_merge!(headers) {|_,_,v| v.to_s}
-      headers.stringify_keys!
+      header_attrs.deep_merge!(header_attrs) {|_,_,v| v.to_s}
+      header_attrs.stringify_keys!
       # create custom header
-      Misty::HTTP::Header.new(headers)
+      Misty::HTTP::Header.new(header_attrs)
     end
 
     # remove duplicate slashes that might have been created by naive path

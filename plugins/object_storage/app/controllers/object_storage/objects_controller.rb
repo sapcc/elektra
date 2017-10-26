@@ -50,7 +50,7 @@ module ObjectStorage
       else
         # option 2: coming from show() -> update properties
         @object.metadata = self.metadata_params
-        attrs = params.require(:object).permit(:expires_at, :content_type)
+        attrs = params.require(:object_ng).permit(:expires_at, :content_type)
         unless @object.update_attributes(attrs)
           render action: 'show' # "edit" view is covered by "show"
           return
