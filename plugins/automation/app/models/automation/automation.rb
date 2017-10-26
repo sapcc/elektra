@@ -26,6 +26,12 @@ module Automation
           unless attrs[key].blank?
             attrs[key] = attrs[key].capitalize
           end
+        elsif key == :chef_attributes
+          if attrs[key].blank?
+            attrs[key] = {}
+          else
+            attrs[key] = JSON.parse(attrs[key])
+          end
         end
       end
 

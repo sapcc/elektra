@@ -14,10 +14,10 @@ module Automation
           end
         end
         unless result_hash.empty?
-          return result_hash.to_json
+          return result_hash
         end
       else
-        '{}'
+        {}
       end
     end
 
@@ -36,12 +36,14 @@ module Automation
       unless attr.blank?
         return attr.split TAG_SEPERATOR
       end
+      return []
     end
 
     def array_to_string(attr)
       unless attr.blank?
         return attr.join TAG_SEPERATOR
       end
+      return ""
     end
 
   end

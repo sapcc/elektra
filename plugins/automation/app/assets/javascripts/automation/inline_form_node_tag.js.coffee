@@ -34,7 +34,7 @@ class InlineFormNodeTag
 
   edit_mode: () ->
     # init the tag editor tool
-    @el.find('.js-node-input-tags').tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs' })
+    @el.find('.js-node-input-tags').tagEditor({ placeholder: $(this).attr('placeholder') || 'Enter key value pairs', maxLength: 255, delimiter: '¡' })
     # show and hide stuff
     @el.find('.js-node-tags-link-edit').addClass('hide')
     @el.find('.js-node-tags-icon-read').removeClass('hide')
