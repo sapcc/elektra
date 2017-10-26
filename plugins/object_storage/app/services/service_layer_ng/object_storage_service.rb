@@ -201,17 +201,20 @@ module ServiceLayerNg
       map_to(ObjectStorage::Object, objects)
     end
 
-    def copy_object(source_container_name, source_object_name, target_container_name, target_object_name, options={})
-      Rails.logger.debug  "[object_storage-service] -> copy_object -> #{source_container_name}, #{source_object_name} to #{target_container_name}, #{target_object_name}"
+    def copy_object(source_container_name, source_path, target_container_name, target_path, options={})
+      Rails.logger.debug  "[object_storage-service] -> copy_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
       Rails.logger.debug  "[object_storage-service] -> copy_object -> Options: #{options}"
       headers = {
-          'Destination' => "/#{target_container_name}/#{target_object_name}"
+          'Destination' => "/#{target_container_name}/#{target_path}"
       }.merge(options)
-      api.object_storage.copy_object(source_container_name,source_object_name,custom_header(headers))
+      api.object_storage.copy_object(source_container_name,source_path,custom_header(headers))
     end
     
-    def move_object()
-      Rails.logger.debug  "[object_storage-service] -> move_object ->"
+    def move_object(source_container_name, source_path, target_container_name, target_path, options={})
+      Rails.logger.debug  "[object_storage-service] -> move_object -> #{source_container_name}/#{source_path} to #{target_container_name}/#{target_path}"
+      Rails.logger.debug  "[object_storage-service] -> move_object -> Options: #{options}"
+      copy_object(source_container_name, source_path, target_container_name, target_path, options.merge(with_metadata: true))
+      delete_object(source_container_name, source_path)
     end
 
     def bulk_delete(targets)

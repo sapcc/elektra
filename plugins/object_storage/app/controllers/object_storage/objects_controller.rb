@@ -29,7 +29,7 @@ module ObjectStorage
         container_name: @container_name,
         path:           @object.path,
       )
-      @all_container_names = services.object_storage.containers.map(&:name).sort
+      @all_container_names = services_ng.object_storage.containers.map(&:name).sort
     end
 
     def update
