@@ -17,9 +17,7 @@ const tooltipSharedNetwork = (
 
 export default ({
   shareNetwork,
-  handleShow,
   handleDelete,
-  handleEdit,
   handleShareNetworkSecurityServices,
   network,
   subnet,
@@ -37,15 +35,13 @@ export default ({
       <td>
         { shareNetwork.isNew &&
           <OverlayTrigger trigger="click" placement="top" rootClose overlay={emptyNetwork}>
-            <a href='#'><i className='fa fa-fw fa-info-circle'/></a>
+            <a href='javascript:void(0)'><i className='fa fa-fw fa-info-circle'/></a>
           </OverlayTrigger>
         }
       </td>
       <td>
         { shareNetwork.permissions.get ? (
-          <a href="#" onClick={e => { e.preventDefault(); handleShow(shareNetwork)}}>
-            {shareNetwork.name}
-          </a>
+          <Link to={`/share-networks/${shareNetwork.id}`}>{shareNetwork.name}</Link>
         ) : (
           shareNetwork.name
         )}
@@ -84,8 +80,6 @@ export default ({
       </td>
       <td className="snug">
         { (shareNetwork.permissions.delete || shareNetwork.permissions.update) &&
-
-
           <div className='btn-group'>
             <button className='btn btn-default btn-sm dropdown-toggle'
               type='button'
@@ -102,7 +96,7 @@ export default ({
               }
               { policy.isAllowed('shared_filesystem_storage:share_network_update') &&
                 <li>
-                  <a href='#' onClick={ e => {e.preventDefault(); handleEdit(shareNetwork)} }>Edit</a>
+                  <Link to={`/share-networks/${shareNetwork.id}/edit`}>Edit</Link>
                 </li>
               }
               { policy.isAllowed('shared_filesystem_storage:share_network_update') &&
