@@ -70,9 +70,10 @@
       flashError: flashError
     })
 
-  dataForSetupInfo = (state, {setupData}) ->
+  dataForSetupInfo = (state, {setupData, kubernikusBaseUrl}) ->
     ReactHelpers.mergeObjects({}, state, {
       setupData: setupData
+      kubernikusBaseUrl: kubernikusBaseUrl
     })
 
   startPollingCluster = (state, {clusterName}) ->

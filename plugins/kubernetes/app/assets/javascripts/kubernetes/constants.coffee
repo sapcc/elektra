@@ -1,4 +1,5 @@
 ((app) ->
+  # -------- CLUSTERS --------------
   app.REQUEST_CLUSTERS              = 'REQUEST_CLUSTERS'
   app.REQUEST_CLUSTERS_FAILURE      = 'REQUEST_CLUSTERS_FAILURE'
   app.RECEIVE_CLUSTERS              = 'RECEIVE_CLUSTERS'

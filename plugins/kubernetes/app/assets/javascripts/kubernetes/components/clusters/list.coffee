@@ -13,7 +13,7 @@ Clusters = React.createClass
     @props.loadClusters()
 
   render: ->
-    {flashError, isFetching, clusters, handleNewCluster, error} = @props
+    {flashError, isFetching, clusters, handleNewCluster, error, kubernikusBaseUrl} = @props
 
     div null,
       if flashError or error
@@ -49,7 +49,7 @@ Clusters = React.createClass
           else
             if clusters && clusters.length
               for cluster in clusters
-                React.createElement ClusterItem, cluster: cluster, key: cluster.name
+                React.createElement ClusterItem, cluster: cluster, key: cluster.name, kubernikusBaseUrl: kubernikusBaseUrl
 
             else
               tr null,

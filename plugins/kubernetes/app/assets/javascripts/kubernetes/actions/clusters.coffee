@@ -24,7 +24,7 @@
       return if isFetching # don't fetch if we're already fetching
       dispatch(requestClusters())
 
-      app.ajaxHelper.get '/clusters',
+      app.ajaxHelper.get '/api/v1/clusters',
         contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveClusters(data))
@@ -79,7 +79,7 @@
       # return if isFetching # don't fetch if we're already fetching
       dispatch(requestCluster(clusterName))
 
-      app.ajaxHelper.get "/clusters/#{clusterName}",
+      app.ajaxHelper.get "/api/v1/clusters/#{clusterName}",
         contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveCluster(data))
@@ -125,7 +125,7 @@
       # TODO: show confirm dialog
       dispatch(deleteCluster(clusterName))
 
-      app.ajaxHelper.delete "/clusters/#{clusterName}",
+      app.ajaxHelper.delete "/api/v1/clusters/#{clusterName}",
         contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
           dispatch(fetchClusters())
@@ -150,7 +150,7 @@
     (dispatch) ->
       dispatch(requestCredentials(clusterName))
 
-      app.ajaxHelper.get "/clusters/#{clusterName}/credentials",
+      app.ajaxHelper.get "/api/v1/clusters/#{clusterName}/credentials",
         contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveCredentials(clusterName, data))
@@ -174,18 +174,16 @@
 
   # -------------- SETUP ---------------
 
-  getSetupInfo = (clusterName) ->
+  getSetupInfo = (clusterName, kubernikusBaseUrl) ->
     (dispatch) ->
       dispatch(requestSetupInfo(clusterName))
 
-      app.ajaxHelper.get "/clusters/#{clusterName}/credentials",
+      app.ajaxHelper.get "/api/v1/clusters/#{clusterName}/info",
         contentType: 'application/json'
         success: (data, textStatus, jqXHR) ->
-          dispatch(receiveSetupInfo(clusterName, data))
+          dispatch(receiveSetupInfo(clusterName,kubernikusBaseUrl, data))
         error: ( jqXHR, textStatus, errorThrown) ->
           dispatch(requestSetupInfoFailure(clusterName, jqXHR.responseText))
-          dispatch(receiveSetupInfo(clusterName, "thisisdata"))
-
 
 
   requestSetupInfo = () ->
@@ -195,9 +193,9 @@
     type: app.REQUEST_SETUP_INFO_FAILURE
     flashError: "We couldn't retrieve the setup information for cluster #{clusterName} at this time. This might be because the cluster is not ready yet or is in an error state. Please try again."
 
-  receiveSetupInfo = (clusterName, setupInfo) ->
+  receiveSetupInfo = (clusterName, kubernikusBaseUrl, setupInfo) ->
     (dispatch) ->
-      dispatch(dataForSetupInfo(setupInfo))
+      dispatch(dataForSetupInfo(setupInfo, kubernikusBaseUrl))
       dispatch(setupInfoModal())
 
 
@@ -205,9 +203,10 @@
     type: ReactModal.SHOW_MODAL,
     modalType: 'SETUP_INFO'
 
-  dataForSetupInfo = (data) ->
+  dataForSetupInfo = (data, kubernikusBaseUrl) ->
     type: app.SETUP_INFO_DATA
     setupData: data
+    kubernikusBaseUrl: kubernikusBaseUrl
 
 
 
@@ -216,7 +215,7 @@
   clusterFormForCreate = () ->
     type: app.PREPARE_CLUSTER_FORM
     method: 'post'
-    action: "/clusters"
+    action: "/api/v1/clusters"
 
   resetClusterForm = () ->
     type: app.RESET_CLUSTER_FORM
@@ -225,7 +224,7 @@
     type: app.PREPARE_CLUSTER_FORM
     data: cluster
     method: 'put'
-    action: "/clusters/#{cluster.name}"
+    action: "/api/v1/clusters/#{cluster.name}"
 
   clusterFormFailure = (errors) ->
     type: app.CLUSTER_FORM_FAILURE
@@ -253,7 +252,6 @@
   submitClusterForm = (successCallback=null) ->
     (dispatch, getState) ->
       clusterForm = getState().clusterForm
-      console.log(clusterForm)
       if clusterForm.isValid
         dispatch(type: app.SUBMIT_CLUSTER_FORM)
         app.ajaxHelper[clusterForm.method] clusterForm.action,
@@ -271,7 +269,6 @@
 
             dispatch(clusterFormFailure("Please Note": [errorMessage]))
 
-            # dispatch(app.showErrorDialog(title: 'Could not save cluster', message:jqXHR.responseText))
 
 
   # export

@@ -57,7 +57,7 @@ Cluster = React.createClass
 
 
   render: ->
-    {cluster, handleEditCluster, handleClusterDelete, handleGetCredentials, handleGetSetupInfo, handlePollingStart, handlePollingStop} = @props
+    {cluster, kubernikusBaseUrl, handleEditCluster, handleClusterDelete, handleGetCredentials, handleGetSetupInfo, handlePollingStart, handlePollingStop} = @props
 
     tr null,
       td null,
@@ -101,10 +101,10 @@ Cluster = React.createClass
         button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
           i className: 'fa fa-fw fa-download'
           'Download Credentials'
-
-        # button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name)),
-        #   i className: 'fa fa-fw fa-wrench'
-        #   'Setup'
+        console.log("baseurl: #{kubernikusBaseUrl}")
+        button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
+          i className: 'fa fa-fw fa-wrench'
+          'Setup'
 
         button className: 'btn btn-sm btn-default hover-danger', onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
           i className: 'fa fa-fw fa-trash-o'
@@ -122,14 +122,15 @@ Cluster = connect(
         break
 
     cluster: cluster
+
   (dispatch) ->
-    handleEditCluster:      (cluster)     -> dispatch(openEditClusterDialog(cluster))
-    handleClusterDelete:    (clusterName) -> dispatch(requestDeleteCluster(clusterName))
-    handleGetCredentials:   (clusterName) -> dispatch(getCredentials(clusterName))
-    handleGetSetupInfo:     (clusterName) -> dispatch(getSetupInfo(clusterName))
-    reloadCluster:          (clusterName) -> dispatch(loadCluster(clusterName))
-    handlePollingStart:     (clusterName) -> dispatch(startPollingCluster(clusterName))
-    handlePollingStop:      (clusterName) -> dispatch(stopPollingCluster(clusterName))
+    handleEditCluster:      (cluster)                         -> dispatch(openEditClusterDialog(cluster))
+    handleClusterDelete:    (clusterName)                     -> dispatch(requestDeleteCluster(clusterName))
+    handleGetCredentials:   (clusterName)                     -> dispatch(getCredentials(clusterName))
+    handleGetSetupInfo:     (clusterName, kubernikusBaseUrl)  -> dispatch(getSetupInfo(clusterName, kubernikusBaseUrl))
+    reloadCluster:          (clusterName)                     -> dispatch(loadCluster(clusterName))
+    handlePollingStart:     (clusterName)                     -> dispatch(startPollingCluster(clusterName))
+    handlePollingStop:      (clusterName)                     -> dispatch(stopPollingCluster(clusterName))
 
 
 )(Cluster)
