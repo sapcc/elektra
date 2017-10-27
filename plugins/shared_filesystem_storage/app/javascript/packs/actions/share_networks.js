@@ -1,5 +1,7 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
+import { confirm, showInfoModal, showErrorModal } from 'dialogs';
+import { ErrorsList } from 'elektra-form/components/errors_list';
 
 //################### SHARE_NETWORKS #########################
 const requestShareNetworks= () => (
@@ -59,16 +61,15 @@ const fetchShareNetworks= () =>
         dispatch(receiveShareNetworks(response.data))
       )
       .catch( (error) => {
-        console.log('error', error)
         dispatch(requestShareNetworksFailure());
-        // dispatch(app.showErrorDialog({title: 'Could not load share networks', message:jqXHR.responseText}));
+        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
       })
   }
 ;
 
 const shouldFetchShareNetworks= function(getState) {
   const shareNetworks = getState().shared_filesystem_storage.shareNetworks;
-  if (shareNetworks.isFetching || shareNetworks.receivedAt) {
+  if (shareNetworks.isFetching || shareNetworks.requestedAt) {
     return false;
   } else if (!shareNetworks.receivedAt) {
     return true;
@@ -107,41 +108,33 @@ const removeShareNetwork=shareNetworkId =>
 
 const deleteShareNetwork= shareNetworkId =>
   function(dispatch, getState) {
-    dispatch(requestDelete(shareNetworkId));
-    ajaxHelper.delete(`/share-networks/${shareNetworkId}`).then(response => {
-      if (response.data && response.data.errors) {
-        React.createElement(ErrorsList, {errors: response.data.errors})
-      } else {
-        return dispatch(removeShareNetwork(shareNetworkId));
+    const networkShares = [];
+    const { shared_filesystem_storage: state } = getState();
+    if (state.shares && state.shares.items) {
+      for (let s of state.shares.items) {
+        if (s.share_network_id===shareNetworkId) { networkShares.push(s); }
       }
-    }).catch(error => {
-      showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
-    })
+    }
+
+    if (networkShares.length>0) {
+      showInfoModal(`Please delete dependent shares(${networkShares.length}) first!`)
+      return
+    }
+    confirm('Do you really want to delete this share network?').then(() => {
+      dispatch(requestDelete(shareNetworkId));
+      ajaxHelper.delete(`/share-networks/${shareNetworkId}`).then(response => {
+        if (response.data && response.data.errors) {
+          React.createElement(ErrorsList, {errors: response.data.errors})
+        } else {
+          return dispatch(removeShareNetwork(shareNetworkId));
+        }
+      }).catch(error => {
+        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+      })
+    }).catch((aborted) => null)
   }
 ;
-//
-//
-// const openDeleteShareNetworkDialog=function(shareNetworkId, options) {
-//   if (options == null) { options = {}; }
-//   return function(dispatch, getState) {
-//     const networkShares = [];
-//     const { shares } = getState();
-//     if (shares && shares.items) {
-//       for (let s of Array.from(shares.items)) {
-//         if (s.share_network_id===shareNetworkId) { networkShares.push(s); }
-//       }
-//     }
-//
-//     if (networkShares.length===0) {
-//       return dispatch(app.showConfirmDialog({
-//         message: options.message || 'Do you really want to delete this share network?' ,
-//         confirmCallback() { return dispatch(deleteShareNetwork(shareNetworkId)); }
-//       }));
-//     } else {
-//       return dispatch(app.showInfoDialog({title: 'Existing Dependencies', message: `Please delete dependent shares(${networkShares.length}) first!`}));
-//     }
-//   };
-// };
+
 
 //################ SHARSHARE_NETWORKE FORM ###################
 
@@ -161,17 +154,27 @@ const submitNewShareNetworkForm= (values, {handleSuccess,handleErrors}) =>
   }
 ;
 
+const submitEditShareNetworkForm= (values, {handleSuccess,handleErrors}) =>
+  function(dispatch, getState) {
+    ajaxHelper.put(`/share-networks/${values.id}`, { share_network: values }).then(response => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors);
+      } else {
+        dispatch(receiveShareNetwork(response.data));
+        handleSuccess()
+      }
+    }).catch(error => {
+      handleErrors(error.message)
+    })
+  }
+;
+
 //####################### NETWORKS ###########################
 // Neutron Networks, Not Share Networks!!!
 const shouldFetchNetworks= function(state) {
   const { networks } = state.shared_filesystem_storage;
-  if (networks.isFetching || networks.receivedAt) {
-    return false;
-  } else if (!networks.items || !networks.items.length) {
-    return true;
-  } else {
-    return false;
-  }
+  if (networks.isFetching || networks.requestedAt) return false
+  return true
 };
 const requestNetworks= () => ({type: constants.REQUEST_NETWORKS});
 
@@ -188,8 +191,9 @@ const receiveNetworks= json =>
 const fetchNetworks=() =>
   function(dispatch) {
     dispatch(requestNetworks());
-    return ajaxHelper.get('/share-networks/networks').then(({data}) => {
-      return dispatch(receiveNetworks(data));
+    return ajaxHelper.get('/share-networks/networks').then(response => {
+      console.log(response)
+      return dispatch(receiveNetworks(response.data));
     }).catch( (error) => {
       return dispatch(requestNetworksFailure());
     })
@@ -206,6 +210,7 @@ const fetchNetworksIfNeeded= () =>
 const requestNetworkSubnets= networkId =>
   ({
     type: constants.REQUEST_SUBNETS,
+    requestedAt: Date.now(),
     networkId
   })
 ;
@@ -219,10 +224,17 @@ const receiveNetworkSubnets= (networkId, json) =>
   })
 ;
 
+const requestNetworkSubnetsFailure= (networkId) => ({
+  type: constants.REQUEST_SUBNETS_FAILURE,
+  networkId
+});
+
 const fetchNetworkSubnets= networkId =>
   function(dispatch) {
     dispatch(requestNetworkSubnets(networkId));
-    ajaxHelper.get("/share-networks/subnets").then(response=>{
+    ajaxHelper.get("/share-networks/subnets", {
+      params: {network_id: networkId}
+    }).then(response=>{
       dispatch(receiveNetworkSubnets(networkId,response.data))
     }).catch(error=>{
       dispatch(requestNetworkSubnetsFailure(networkId))
@@ -231,14 +243,10 @@ const fetchNetworkSubnets= networkId =>
 ;
 
 const shouldFetchNetworkSubnets= function(state, networkId) {
-  const subnets = state.shared_filesystem_storage.subnets[networkId];
-  if (!subnets) {
-    return true;
-  } else if (subnets.isFetching || subnets.receivedAt) {
-    return false;
-  } else {
-    return false;
-  }
+  if (!networkId) return false
+  const subnets = state.shared_filesystem_storage.subnets;
+
+  return (!subnets[networkId] || (!subnets[networkId].isFetching && !subnets[networkId].requestedAt))
 };
 
 const fetchNetworkSubnetsIfNeeded= networkId =>
@@ -255,5 +263,6 @@ export {
   fetchShareNetworksIfNeeded,
   deleteShareNetwork,
   toggleShareNetworkIsNewStatus,
-  submitNewShareNetworkForm
+  submitNewShareNetworkForm,
+  submitEditShareNetworkForm
 }

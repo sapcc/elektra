@@ -56,3 +56,14 @@ export const TOGGLE_SHARE_NETWORK_IS_NEW_STATUS = 'shared_filesystem_storage/net
 export const RECEIVE_SUBNETS                   = 'shared_filesystem_storage/subnets/RECEIVE_SUBNETS'
 export const REQUEST_SUBNETS                   = 'shared_filesystem_storage/subnets/REQUEST_SUBNETS'
 export const REQUEST_SUBNETS_FAILURE           = 'shared_filesystem_storage/subnets/REQUEST_SUBNETS_FAILURE'
+
+// SECURITY SERVICES
+export const REQUEST_SECURITY_SERVICES          = 'shared_filesystem_storage/security_services/REQUEST_SECURITY_SERVICES'
+export const RECEIVE_SECURITY_SERVICES          = 'shared_filesystem_storage/security_services/RECEIVE_SECURITY_SERVICES'
+export const REQUEST_SECURITY_SERVICE           = 'shared_filesystem_storage/security_services/REQUEST_SECURITY_SERVICE'
+export const REQUEST_SECURITY_SERVICE_FAILURE   = 'shared_filesystem_storage/security_services/REQUEST_SECURITY_SERVICE_FAILURE'
+export const REQUEST_SECURITY_SERVICES_FAILURE  = 'shared_filesystem_storage/security_services/REQUEST_SECURITY_SERVICES_FAILURE'
+export const RECEIVE_SECURITY_SERVICE           = 'shared_filesystem_storage/security_services/RECEIVE_SECURITY_SERVICE'
+export const REQUEST_DELETE_SECURITY_SERVICE    = 'shared_filesystem_storage/security_services/REQUEST_DELETE_SECURITY_SERVICE'
+export const DELETE_SECURITY_SERVICE_FAILURE    = 'shared_filesystem_storage/security_services/DELETE_SECURITY_SERVICE_FAILURE'
+export const DELETE_SECURITY_SERVICE_SUCCESS    = 'shared_filesystem_storage/security_services/DELETE_SECURITY_SERVICE_SUCCESS'

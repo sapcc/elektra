@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import ShareNetworkItem from './item';
 
 export default class ShareNetworkList extends React.Component {
@@ -46,12 +47,7 @@ export default class ShareNetworkList extends React.Component {
       <div>
         { this.props.policy.isAllowed('shared_filesystem_storage:share_network_create') &&
           <div className='toolbar'>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={(e) => { e.preventDefault(); this.props.handleNewShareNetwork()}}>
-              Create new
-            </button>
+            <Link to='/share-networks/new' className='btn btn-primary'>Create New</Link>
           </div>
         }
         { this.props.isFetching ? (
@@ -75,6 +71,7 @@ export default class ShareNetworkList extends React.Component {
                 <ShareNetworkItem
                   key={shareNetwork.id}
                   shareNetwork={shareNetwork}
+                  handleDelete={this.props.handleDelete}
                   network={ this.network(shareNetwork)}
                   subnet={this.subnet(shareNetwork)}
                   policy={this.props.policy}/>
