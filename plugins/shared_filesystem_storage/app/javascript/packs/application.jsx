@@ -14,14 +14,14 @@ import ShareNetworks from './containers/share_networks/list';
 import NewShareNetworkModal from './containers/share_networks/new';
 import ShowShareNetworkModal from './containers/share_networks/show';
 import EditShareNetworkModal from './containers/share_networks/edit';
-import ShareNetworkSecurityServicesModal from './containers/share_networks/new';
+import ShareNetworkSecurityServicesModal from './containers/share_networks/security_services';
 
 import Snapshots from './components/snapshots/list';
 
 import SecurityServices from './containers/security_services/list';
-let NewSecurityServiceModal = () => null
-let EditSecurityServiceModal = () => null
-let ShowSecurityServiceModal = () => null
+import ShowSecurityServiceModal from './containers/security_services/show';
+import NewSecurityServiceModal from './containers/security_services/new';
+import EditSecurityServiceModal from './containers/security_services/edit';
 
 const tabsConfig = [
   { to: '/shares', label: 'Shares', component: ShareList },
@@ -41,17 +41,17 @@ const Container = (props) =>
       }/>
 
       <Route exact path="/shares/new" component={NewShareModal}/>
-      <Route exact path="/shares/:id" component={ShowShareModal}/>
+      <Route exact path="/shares/:id/show" component={ShowShareModal}/>
       <Route exact path="/shares/:id/edit" component={EditShareModal}/>
       <Route exact path="/shares/:id/access-control" component={AccessControlModal}/>
 
       <Route exact path="/share-networks/new" component={NewShareNetworkModal}/>
-      <Route exact path="/share-networks/:id" component={ShowShareNetworkModal}/>
+      <Route exact path="/share-networks/:id/show" component={ShowShareNetworkModal}/>
       <Route exact path="/share-networks/:id/edit" component={EditShareNetworkModal}/>
       <Route exact path="/share-networks/:id/security-services" component={ShareNetworkSecurityServicesModal}/>
 
       <Route exact path="/security-services/new" component={NewSecurityServiceModal}/>
-      <Route exact path="/security-services/:id" component={ShowSecurityServiceModal}/>
+      <Route exact path="/security-services/:id/show" component={ShowSecurityServiceModal}/>
       <Route exact path="/security-services/:id/edit" component={EditSecurityServiceModal}/>
     </div>
   </HashRouter>

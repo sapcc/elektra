@@ -46,16 +46,16 @@ const fetchSecurityServices= () =>
   function(dispatch) {
     dispatch(requestSecurityServices());
     ajaxHelper.get('/security-services').then(response => {
-      dispatch(receiveSecurityServices(data));
+      dispatch(receiveSecurityServices(response.data));
     }).catch(error => {
       dispatch(requestSecurityServicesFailure());
-      showErrorModal(`Could not load security services (%{error.message})`);
+      showErrorModal(`Could not load security services (${error.message})`);
     })
   }
 ;
 
 const shouldFetchSecurityServices= function(state) {
-  const { securityServices } = state;
+  const { securityServices } = state.shared_filesystem_storage;
   if (securityServices.isFetching || securityServices.requestedAt) {
     return false;
   } else {
@@ -70,7 +70,7 @@ const fetchSecurityServicesIfNeeded= () =>
 ;
 
 const canReloadSecurityService= function(state,securityServiceId) {
-  const { items } = state.securityServices;
+  const { items } = state.shared_filesystem_storage.securityServices;
   let index = -1;
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -92,7 +92,7 @@ const reloadSecurityService= securityServiceId =>
       dispatch(receiveSecurityService(data));
     }).catch(error => {
       dispatch(requestSecurityServiceFailure());
-      showErrorModal(`Could not reload security service (%{error.message})`);
+      showErrorModal(`Could not reload security service (${error.message})`);
     })
   }
 ;
@@ -120,6 +120,22 @@ const removeSecurityService=securityServiceId =>
 
 const deleteSecurityService= securityServiceId =>
   function(dispatch, getState) {
+    const dependentSecurityServiceNetworks = [];
+    // check if there are dependent securityService networks.
+    // Problem: the securityService networks may not be loaded yet
+    let { shared_filesystem_storage: state} = getState();
+    const { securityServiceNetworks } = state;
+    if (securityServiceNetworks && securityServiceNetworks.items) {
+      for (let securityServiceNetwork of securityServiceNetworks.items) {
+        if (false) { dependentSecurityServiceNetworks.push(securityServiceNetwork); }
+      }
+    }
+
+    if (dependentSecurityServiceNetworks.length>0) {
+      showInfoModal(`Please remove thi security service from securityService networks (${dependentSecurityServiceNetworks.length}) first!`);
+      return;
+    }
+
     confirm('Do you really want to delete this security service?').then(() => {
       dispatch(requestDelete(securityServiceId));
       ajaxHelper.delete(`/security-services/${securityServiceId}`).then(response => {
@@ -135,42 +151,35 @@ const deleteSecurityService= securityServiceId =>
   }
 ;
 
-// const openDeleteSecurityServiceDialog=function(securityServiceId, options) {
-//   if (options == null) { options = {}; }
-//   return function(dispatch, getState) {
-//     const dependentSecurityServiceNetworks = [];
-//     // check if there are dependent securityService networks.
-//     // Problem: the securityService networks may not be loaded yet
-//     const { securityServiceNetworks } = getState();
-//     if (securityServiceNetworks && securityServiceNetworks.items) {
-//       for (let securityServiceNetwork of Array.from(securityServiceNetworks.items)) {
-//         if (false) { dependentSecurityServiceNetworks.push(securityServiceNetwork); }
-//       }
-//     }
-//
-//     if (dependentSecurityServiceNetworks.length===0) {
-//       return dispatch(constants.showConfirmDialog({
-//         message: options.message || 'Do you really want to delete this security service?' ,
-//         confirmCallback() { return dispatch(deleteSecurityService(securityServiceId)); }
-//       }));
-//     } else {
-//       return dispatch(constants.showInfoDialog({title: 'Existing Dependencies', message: `Please remove thi security service from securityService networks (${dependentSecurityServiceNetworks.length}) first!`}));
-//     }
-//   };
-// };
-
-
 //################ SECURITY_SERVICE FORM ###################
 
 const submitNewSecurityServiceForm= (values, {handleSuccess,handleErrors}) =>
   function(dispatch, getState) {
     const { securityServiceForm } = getState();
 
-    ajaxHelper.post('/security-services', { data: { security_service: values } }).then(response => {
+    ajaxHelper.post('/security-services', { security_service: values }).then(response => {
       if (response.data.errors) {
-        hanldeErrors(response.data.errors);
+        handleErrors(response.data.errors);
       } else {
-        dispatch(receiveSecurityService(data));
+        dispatch(receiveSecurityService(response.data));
+        handleSuccess()
+      }
+    }).catch(error => {
+      handleErrors(error.message)
+    })
+  }
+;
+
+const submitEditSecurityServiceForm= (values, {handleSuccess,handleErrors}) =>
+  function(dispatch, getState) {
+    const { securityServiceForm } = getState();
+    let id = values.id
+    delete values['id'];
+    ajaxHelper.put(`/security-services/${id}`, { security_service: values } ).then(response => {
+      if (response.data.errors) {
+        handleErrors(response.data.errors);
+      } else {
+        dispatch(receiveSecurityService(response.data));
         handleSuccess()
       }
     }).catch(error => {
@@ -185,5 +194,6 @@ export {
   fetchSecurityServicesIfNeeded,
   reloadSecurityService,
   deleteSecurityService,
-  submitNewSecurityServiceForm
+  submitNewSecurityServiceForm,
+  submitEditSecurityServiceForm
 }

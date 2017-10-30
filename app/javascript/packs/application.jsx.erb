@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux';
 import { configureAjaxHelper } from 'ajax_helper';
+import { setPolicy } from 'policy';
 
 var pluginReducers = {};
 var pluginContainers = {};
@@ -27,12 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const classes = content.className.split(' ');
   const containers = [];
   configureAjaxHelper();
+  setPolicy(window.policy);
 
   for(let className of classes) {
     if (pluginContainers[className]) {
       containers.push(React.createElement(pluginContainers[className], Object.assign({}, {
-        key: className,
-        policy: window.policy
+        key: className
       })))
     }
   }

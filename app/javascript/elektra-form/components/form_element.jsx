@@ -27,8 +27,16 @@ export const FormElement = ({
     </label>
   };
 
+  let renderChildren = () =>
+    React.Children.map(children,
+     (child) => React.cloneElement(child, {name: child.props.name || name})
+    );
+  ;
+
   let renderInputWrapper = () => (
-    inline ? children : <div className="input-wrapper">{children}</div>
+    inline ? renderChildren() : (
+      <div className="input-wrapper">{renderChildren()}</div>
+    )
   );
 
   return (

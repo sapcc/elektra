@@ -54,9 +54,9 @@ const requestDeleteSecurityService= function(state,{securityServiceId}) {
   const index = state.items.findIndex((item) => item.id==securityServiceId );
   if (index<0) { return state; }
 
-  const newState = Object.assign({},state);
-  newState.items[index].isDeleting = true;
-  return newState;
+  const items = state.items.slice();
+  items[index].isDeleting = true;
+  return Object.assign({},state,{items});
 };
 
 const deleteSecurityServiceFailure= function(state,{securityServiceId}) {

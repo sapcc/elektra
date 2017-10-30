@@ -1,5 +1,6 @@
 import SecurityServiceItem from './item';
 import { Link } from 'react-router-dom';
+import { policy } from 'policy';
 
 export default class SecurityServiceList extends React.Component {
   componentDidMount() {
@@ -13,7 +14,7 @@ export default class SecurityServiceList extends React.Component {
   render() {
     return (
       <div>
-        { true && //this.props.permissions.create ?
+        { policy.isAllowed("shared_filesystem_storage:security_service_create") &&
           <div className='toolbar'>
             <Link to='/security-services/new' className='btn btn-primary'>Create New</Link>
           </div>
@@ -35,7 +36,7 @@ export default class SecurityServiceList extends React.Component {
             <tbody>
               { this.props.securityServices.length===0 ? (
                 <tr>
-                  <td> colSpan='5'>No Security Service found.</td>
+                  <td colSpan='5'>No Security Service found.</td>
                 </tr>
               ) : ( this.props.securityServices.map((securityService) =>
                   <SecurityServiceItem

@@ -47,15 +47,13 @@ const receiveShare= json =>
 const fetchShares= () =>
   function(dispatch) {
     dispatch(requestShares());
-    ajaxHelper.get('/shares')
-      .then( (response) => {
-        return dispatch(receiveShares(response.data));
-      })
-      .catch( (error) => {
-        console.log('fetchShares', error)
-        dispatch(requestSharesFailure());
-        //return dispatch(app.showErrorDialog({title: 'Could not load shares', message:jqXHR.responseText}));
-      });
+    ajaxHelper.get('/shares').then( (response) => {
+      return dispatch(receiveShares(response.data));
+    })
+    .catch( (error) => {
+      dispatch(requestSharesFailure());
+      showInfoModal(`Could not load shares (${error.message})`)
+    });
   }
 
 const shouldFetchShares= function(state) {
@@ -96,7 +94,6 @@ const reloadShare= shareId =>
       .then((response) => dispatch(receiveShare(response.data)))
       .catch((error) => {
         dispatch(requestShareFailure());
-        // return dispatch(app.showErrorDialog({title: 'Could not reload share', message:jqXHR.responseText}));
       }
     )
   }

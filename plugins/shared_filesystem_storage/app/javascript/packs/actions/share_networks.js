@@ -6,7 +6,8 @@ import { ErrorsList } from 'elektra-form/components/errors_list';
 //################### SHARE_NETWORKS #########################
 const requestShareNetworks= () => (
   {
-    type: constants.REQUEST_SHARE_NETWORKS
+    type: constants.REQUEST_SHARE_NETWORKS,
+    requestedAt: Date.now(),
   }
 );
 
@@ -69,13 +70,10 @@ const fetchShareNetworks= () =>
 
 const shouldFetchShareNetworks= function(getState) {
   const shareNetworks = getState().shared_filesystem_storage.shareNetworks;
-  if (shareNetworks.isFetching || shareNetworks.requestedAt) {
-    return false;
-  } else if (!shareNetworks.receivedAt) {
+  if (!shareNetworks.isFetching && !shareNetworks.requestedAt) {
     return true;
-  } else {
-    return false;
   }
+  return false
 };
 
 const fetchShareNetworksIfNeeded= () =>
@@ -124,7 +122,7 @@ const deleteShareNetwork= shareNetworkId =>
       dispatch(requestDelete(shareNetworkId));
       ajaxHelper.delete(`/share-networks/${shareNetworkId}`).then(response => {
         if (response.data && response.data.errors) {
-          React.createElement(ErrorsList, {errors: response.data.errors})
+          showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}))
         } else {
           return dispatch(removeShareNetwork(shareNetworkId));
         }
@@ -173,10 +171,13 @@ const submitEditShareNetworkForm= (values, {handleSuccess,handleErrors}) =>
 // Neutron Networks, Not Share Networks!!!
 const shouldFetchNetworks= function(state) {
   const { networks } = state.shared_filesystem_storage;
-  if (networks.isFetching || networks.requestedAt) return false
-  return true
+  if (!networks.isFetching && !networks.requestedAt) return true
+  return false
 };
-const requestNetworks= () => ({type: constants.REQUEST_NETWORKS});
+const requestNetworks= () => ({
+  type: constants.REQUEST_NETWORKS,
+  requestedAt: Date.now()
+});
 
 const requestNetworksFailure= () => ({type: constants.REQUEST_NETWORKS_FAILURE});
 
