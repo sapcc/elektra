@@ -14,7 +14,7 @@ export default ({
   return (
     <tr className={ share.isDeleting ? 'updating' : ''}>
       <td>
-        <Link to={`/shares/${share.id}`}>{share.name || share.id}</Link>
+        <Link to={`/shares/${share.id}/show`}>{share.name || share.id}</Link>
       </td>
       <td>{share.availability_zone}</td>
       <td>{share.share_proto}</td>

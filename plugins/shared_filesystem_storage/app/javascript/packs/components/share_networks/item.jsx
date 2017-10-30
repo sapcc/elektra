@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Popover, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { policy } from 'policy';
 
 const emptyNetwork = (
   <Popover id="popover-empty-share-network" title="Empty Network">
@@ -20,8 +21,7 @@ export default ({
   handleDelete,
   handleShareNetworkSecurityServices,
   network,
-  subnet,
-  policy
+  subnet
 }) => {
   let className = ''
   if(shareNetwork.isDeleting) {
@@ -40,8 +40,8 @@ export default ({
         }
       </td>
       <td>
-        { shareNetwork.permissions.get ? (
-          <Link to={`/share-networks/${shareNetwork.id}`}>{shareNetwork.name}</Link>
+        { policy.isAllowed("shared_filesystem_storage:share_network_get") ? (
+          <Link to={`/share-networks/${shareNetwork.id}/show`}>{shareNetwork.name}</Link>
         ) : (
           shareNetwork.name
         )}
@@ -79,7 +79,8 @@ export default ({
         ) : ('Not found')}
       </td>
       <td className="snug">
-        { (shareNetwork.permissions.delete || shareNetwork.permissions.update) &&
+        { (policy.isAllowed("shared_filesystem_storage:share_network_delete") ||
+           policy.isAllowed("shared_filesystem_storage:share_network_update")) &&
           <div className='btn-group'>
             <button className='btn btn-default btn-sm dropdown-toggle'
               type='button'
@@ -101,9 +102,7 @@ export default ({
               }
               { policy.isAllowed('shared_filesystem_storage:share_network_update') &&
                 <li>
-                  <a href='#' onClick={e => {e.preventDefault(); console.log(shareNetwork); handleShareNetworkSecurityServices(shareNetwork.id)} }>
-                    Security Services
-                  </a>
+                  <Link to={`/share-networks/${shareNetwork.id}/security-services`}>Security Services</Link>
                 </li>
               }
             </ul>

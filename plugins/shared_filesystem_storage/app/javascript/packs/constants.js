@@ -39,12 +39,15 @@ export const RECEIVE_SHARE_NETWORK           = 'shared_filesystem_storage/share_
 export const REQUEST_DELETE_SHARE_NETWORK    = 'shared_filesystem_storage/share_networks/REQUEST_DELETE_SHARE_NETWORK';
 export const DELETE_SHARE_NETWORK_FAILURE    = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_FAILURE';
 export const DELETE_SHARE_NETWORK_SUCCESS    = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_SUCCESS';
-// SHARE_NETWORK FORM
-export const RESET_SHARE_NETWORK_FORM        = 'shared_filesystem_storage/share_networks/RESET_SHARE_NETWORK_FORM';
-export const PREPARE_SHARE_NETWORK_FORM      = 'shared_filesystem_storage/share_networks/REPARE_SHARE_NETWORK_FORM';
-export const UPDATE_SHARE_NETWORK_FORM       = 'shared_filesystem_storage/share_networks/UPDATE_SHARE_NETWORK_FORM';
-export const SUBMIT_SHARE_NETWORK_FORM       = 'shared_filesystem_storage/share_networks/SUBMIT_SHARE_NETWORK_FORM';
-export const SHARE_NETWORK_FORM_FAILURE      = 'shared_filesystem_storage/share_networks/SHARE_NETWORK_FORM_FAILURE';
+
+// SHARE NETWORK SECURITY SERVICES
+export const REQUEST_SHARE_NETWORK_SECURITY_SERVICES             = 'shared_filesystem_storage/share_networks/REQUEST_SHARE_NETWORK_SECURITY_SERVICES'
+export const RECEIVE_SHARE_NETWORK_SECURITY_SERVICES             = 'shared_filesystem_storage/share_networks/RECEIVE_SHARE_NETWORK_SECURITY_SERVICES'
+export const RECEIVE_SHARE_NETWORK_SECURITY_SERVICE              = 'shared_filesystem_storage/share_networks/RECEIVE_SHARE_NETWORK_SECURITY_SERVICE'
+export const REQUEST_DELETE_SHARE_NETWORK_SECURITY_SERVICE       = 'shared_filesystem_storage/share_networks/REQUEST_DELETE_SHARE_NETWORK_SECURITY_SERVICE'
+export const DELETE_SHARE_NETWORK_SECURITY_SERVICE_FAILURE       = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_SECURITY_SERVICE_FAILURE'
+export const DELETE_SHARE_NETWORK_SECURITY_SERVICE_SUCCESS       = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_SECURITY_SERVICE_SUCCESS'
+export const DELETE_SHARE_NETWORK_SECURITY_SERVICES_SUCCESS      = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_SECURITY_SERVICES_SUCCESS'
 
 // NETWORKS
 export const REQUEST_NETWORKS                  = 'shared_filesystem_storage/networks/REQUEST_NETWORKS'

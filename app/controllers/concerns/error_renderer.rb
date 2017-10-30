@@ -75,6 +75,7 @@ module ErrorRenderer
         if request.xhr? && params[:polling_service]
           render "/application/exceptions/error_polling.js", format: "JS"
         else
+          byebug
           respond_to do |format|
             format.html { render '/application/exceptions/warning.html' }
             format.js { render "/application/exceptions/warning.js" }

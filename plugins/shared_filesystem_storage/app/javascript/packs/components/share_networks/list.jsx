@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { policy } from 'policy';
 import ShareNetworkItem from './item';
 
 export default class ShareNetworkList extends React.Component {
@@ -45,7 +46,7 @@ export default class ShareNetworkList extends React.Component {
   render() {
     return (
       <div>
-        { this.props.policy.isAllowed('shared_filesystem_storage:share_network_create') &&
+        { policy.isAllowed('shared_filesystem_storage:share_network_create') &&
           <div className='toolbar'>
             <Link to='/share-networks/new' className='btn btn-primary'>Create New</Link>
           </div>

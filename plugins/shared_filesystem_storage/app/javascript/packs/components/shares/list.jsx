@@ -1,6 +1,7 @@
 import { withRouter, Route, Link } from 'react-router-dom';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { policy } from 'policy';
 
 import ShareItem from './item';
 
@@ -62,7 +63,7 @@ const List = React.createClass({
   },
 
   toolbar() {
-    if (!this.props.policy.isAllowed('shared_filesystem_storage:share_create')) return null;
+    if (!policy.isAllowed('shared_filesystem_storage:share_create')) return null;
 
     let { shareNetworks: {items: shareNetworkItems, isFetching: fetchingShareNetworks} } = this.props
     let hasShareNetworks = shareNetworkItems && shareNetworkItems.length>0
@@ -141,7 +142,7 @@ const List = React.createClass({
     return (
       <div>
         { this.toolbar() }
-        { !this.props.policy.isAllowed('shared_filesystem_storage:share_list') ? (
+        { !policy.isAllowed('shared_filesystem_storage:share_list') ? (
           <span>You are not allowed to see this page</span>) : (
           this.props.isFetching ? <span className='spinner'></span> : this.renderTable()
         )}

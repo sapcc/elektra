@@ -17,13 +17,11 @@ const toggleShareNetworkIsNewStatus=function(state,{id,isNew}) {
   return Object.assign({},state,{items});
 };
 
-const requestShareNetworks=function(state,...rest){
-  const obj = rest[0];
-  return Object.assign({},state,{isFetching: true});
+const requestShareNetworks=function(state,{requestedAt}){
+  return Object.assign({},state,{isFetching: true, requestedAt});
 };
 
-const requestShareNetworksFailure=function(state,...rest){
-  const obj = rest[0];
+const requestShareNetworksFailure=function(state){
   return Object.assign({},state,{isFetching: false});
 };
 

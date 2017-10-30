@@ -11,7 +11,7 @@ const initialState = {
 const requestNetworks=(state,{requestedAt}) =>
   Object.assign({},state,{isFetching: true, requestedAt});
 
-const requestNetworksFailure=function(state,...rest){
+const requestNetworksFailure=function(state){
   return Object.assign({},state,{isFetching: false});
 };
 

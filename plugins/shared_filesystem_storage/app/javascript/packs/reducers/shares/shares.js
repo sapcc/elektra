@@ -28,7 +28,7 @@ const requestShare= function(state,{shareId,requestedAt}) {
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
-  const newState = ReactHelpers.cloneHashMap(state);
+  const newState = Object.assign(state);
   newState.items[index].isFetching = true;
   newState.items[index].requestedAt = requestedAt;
   return newState;
@@ -38,13 +38,13 @@ const requestShareFailure=function(state,{shareId}){
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
-  const newState = ReactHelpers.cloneHashMap(state);
+  const newState = Object.assign(state);
   newState.items[index].isFetching = false;
   return newState;
 };
 
 const receiveShare= function(state,{share}) {
-  const index = ReactHelpers.findIndexInArray(state.items,share.id);
+  const index = state.items.findIndex((item) => item.id==share.id);
   const items = state.items.slice();
   // update or add
   if (index>=0) { items[index]=share; } else { items.push(share); }
@@ -55,16 +55,16 @@ const requestDeleteShare= function(state,{shareId}) {
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
-  const newState = ReactHelpers.cloneHashMap(state);
-  newState.items[index].isDeleting = true;
-  return newState;
+  const items = state.items.slice();
+  items[index].isDeleting = true;
+  return Object.assign({},state,{items});
 };
 
 const deleteShareFailure= function(state,{shareId}) {
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
-  const newState = ReactHelpers.cloneHashMap(state);
+  const newState = Object.assign(state);
   newState.items[index].isDeleting = false;
   return newState;
 };
