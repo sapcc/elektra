@@ -1,6 +1,12 @@
 module ServiceLayerNg
   class ObjectStorageService < Core::ServiceLayerNg::Service
 
+   # TODO:
+   # 1. search services.object_storage
+   # 2. move object_ng to object
+   # 3. bulk delete
+   # 4- check old @driver calls in container and object and maybe port it back from controller to model
+
    # CONTAINER #
 
     CONTAINERS_ATTRMAP = {
@@ -166,6 +172,11 @@ module ServiceLayerNg
 
     def list_objects(container_name, options={})
       Rails.logger.debug  "[object-storage-service] -> list_objects -> #{container_name}"
+      Rails.logger.debug  "[object-storage-service] -> list_objects -> Options: #{options}"
+      
+      # prevent prefix and delimiter with slash, if this happens an empty list is returned
+      options[:prefix] = "" if options[:prefix] == "/" and options[:delimiter] == "/" 
+      
       list = api.object_storage.show_container_details_and_list_objects(container_name, options).body
       list.map! do |o|
         object = map_attribute_names(o, OBJECTS_ATTRMAP)

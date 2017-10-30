@@ -61,7 +61,7 @@ module ObjectStorage
     def back_to_object_list(container_name, path)
       respond_to do |format|
         format.js do
-          @objects = services.object_storage.list_objects_at_path(container_name, path)
+          @objects = services_ng.object_storage.list_objects_at_path(container_name, path)
           render template: '/object_storage/objects/reload_index'
         end
         format.html { redirect_to plugin('object_storage').list_objects_path(container_name, path) }
