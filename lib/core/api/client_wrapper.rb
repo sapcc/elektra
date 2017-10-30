@@ -25,7 +25,11 @@ module Core
           def self.extract_class_and_data(klazz_or_map, response_body)
             if klazz_or_map.is_a?(Hash) && klazz_or_map.keys.length.positive?
               key = klazz_or_map.keys.first
-              [klazz_or_map[key], response_body[key]]
+              if key=='response_body' || key==:response_body
+                [klazz_or_map[key], response_body]
+              else
+                [klazz_or_map[key], response_body[key.to_s]]
+              end
             else
               key = response_body.keys.reject { |k| ignore_key?(k) }.first
               [klazz_or_map, response_body[key]]
