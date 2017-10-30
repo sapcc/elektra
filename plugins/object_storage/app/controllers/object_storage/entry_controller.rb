@@ -36,7 +36,7 @@ module ObjectStorage
     end
 
     def create_account
-      services.object_storage.create_account
+      services_ng.object_storage.create_account
       redirect_to plugin('object_storage').containers_path
     end
 

@@ -17,6 +17,7 @@ module ServiceLayerNg
    end
  
    # ACCOUNT #
+   
    ACCOUNT_ATTRMAP = {
      'x-account-container-count'    => 'container_count',
      'x-account-object-count'       => 'object_count',
@@ -40,6 +41,11 @@ module ServiceLayerNg
      end
      account_data = map_attribute_names(extract_header_data(response), ACCOUNT_ATTRMAP)
      map_to(ObjectStorage::Account,account_data)
+   end
+   
+   def create_account
+     Rails.logger.debug  "[object-storage-service] -> create_account -> POST /"
+     api.object_storage.create_update_or_delete_account_metadata
    end
 
    # CONTAINER #
