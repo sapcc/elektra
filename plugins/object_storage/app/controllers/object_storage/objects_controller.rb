@@ -83,7 +83,7 @@ module ObjectStorage
       ))
 
       unless @form.validate
-        @all_container_names = services.object_storage.containers.map(&:name).sort
+        @all_container_names = services_ng.object_storage.containers.map(&:name).sort
         render action: 'new_copy'
         return
       end
@@ -116,7 +116,7 @@ module ObjectStorage
       # could result in an object listing for a different location.
       respond_to do |format|
         format.js do
-          @objects = services.object_storage.list_objects_at_path(@container_name, @original_dirname)
+          @objects = services_ng.object_storage.list_objects_at_path(@container_name, @original_dirname)
           render template: '/object_storage/objects/reload_index'
         end
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @original_dirname) }

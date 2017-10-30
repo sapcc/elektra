@@ -2,7 +2,7 @@ module ObjectStorage
   module ApplicationHelper
 
     def has_capability?(capability)
-      services.object_storage.capabilities.has_key?(capability.to_s)
+      services_ng.object_storage.capabilities.has_key?(capability.to_s)
     end
 
     def make_breadcrumb(container_name, path='')

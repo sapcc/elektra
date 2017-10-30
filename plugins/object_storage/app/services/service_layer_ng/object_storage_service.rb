@@ -2,10 +2,45 @@ module ServiceLayerNg
   class ObjectStorageService < Core::ServiceLayerNg::Service
 
    # TODO:
-   # 1. search services.object_storage
    # 2. move object_ng to object
    # 3. bulk delete
    # 4- check old @driver calls in container and object and maybe port it back from controller to model
+   
+   def available?(_action_name_sym = nil)
+     api.catalog_include_service?('object-store', region)
+   end
+    
+   def list_capabilities
+     Rails.logger.debug  "[object-storage-service] -> capabilities -> GET /info"
+     response = api.object_storage.list_activated_capabilities
+      map_to(ObjectStorage::Capabilities, response.body)
+   end
+ 
+   # ACCOUNT #
+   ACCOUNT_ATTRMAP = {
+     'x-account-container-count'    => 'container_count',
+     'x-account-object-count'       => 'object_count',
+     'x-account-meta-quota-bytes'   => 'bytes_quota',
+     'x-container-meta-quota-count' => 'object_count_quota',
+     'x-account-bytes-used'         => 'bytes_used'
+   }
+   
+   def account
+     Rails.logger.debug  "[object-storage-service] -> account -> HEAD /"
+     response = nil
+     begin
+       response = api.object_storage.show_account_metadata()
+     rescue Exception => e
+       # 200 success list containers
+       # 202 success but no content found
+       # 404 account is not existing
+       if e.code == 404
+         return nil
+       end
+     end
+     account_data = map_attribute_names(extract_header_data(response), ACCOUNT_ATTRMAP)
+     map_to(ObjectStorage::Account,account_data)
+   end
 
    # CONTAINER #
 
@@ -38,16 +73,7 @@ module ServiceLayerNg
       'web_file_listing'   => 'x-container-meta-web-listings',
     }
 
-    def available?(_action_name_sym = nil)
-      api.catalog_include_service?('object-store', region)
-    end
-    
-    def list_capabilities
-      Rails.logger.debug  "[object-storage-service] -> capabilities -> GET /info"
-      response = api.object_storage.list_activated_capabilities
-       map_to(ObjectStorage::Capabilities, response.body)
-    end
-    
+   
     def containers
       Rails.logger.debug  "[object-storage-service] -> containers -> GET /"
       list = api.object_storage.show_account_details_and_list_containers.body
@@ -342,10 +368,14 @@ module ServiceLayerNg
       return result
     end
     
+    def extract_header_data(response)
+      header_data = {}
+      response.header.each_header{|key,value| header_data[key] = value}
+      header_data
+    end
+    
     def extract_container_header_data(response,container_name = nil)
-      headers = {}
-      response.header.each_header{|key,value| headers[key] = value}
-      header_hash = map_attribute_names(headers, CONTAINER_ATTRMAP)
+      header_hash = map_attribute_names(extract_header_data(response), CONTAINER_ATTRMAP)
       # enrich data with additional information
       header_hash['id']               = header_hash['name'] = container_name
       header_hash['public_url']       = public_url(container_name)
@@ -359,9 +389,7 @@ module ServiceLayerNg
     end
     
     def extract_object_header_data(response,container_name = nil, object_path = nil)
-      headers = {}
-      response.header.each_header{|key,value| headers[key] = value}
-      header_hash = map_attribute_names(headers, OBJECT_ATTRMAP)
+      header_hash = map_attribute_names(extract_header_data(response), OBJECT_ATTRMAP)
       puts header_hash
       header_hash['id']               = header_hash['path'] = object_path
       header_hash['container_name']   = container_name
