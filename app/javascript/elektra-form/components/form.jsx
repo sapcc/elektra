@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import makeCancelable from 'tools/cancelable_promise';
+import Deferred from 'tools/deferred';
 
 export default class Form extends React.Component {
   static initialState = {
@@ -41,6 +43,10 @@ export default class Form extends React.Component {
     if( nextProps.initialValues && Object.keys(this.state.values).length==0) {
       this.setState({values: nextProps.initialValues})
     }
+  }
+
+  componentWillUnmount() {
+    if(this.submitPromise) this.submitPromise.cancel();
   }
 
   static childContextTypes = {
@@ -91,22 +97,33 @@ export default class Form extends React.Component {
   }
 
   onSubmit(e){
-    e.preventDefault()
-    this.setState({isSubmitting: true})
-    if(this.props.onSubmit)
-      this.props.onSubmit(this.state.values, {
-        handleSuccess: this.handleSuccess,
-        handleErrors: this.handleErrors
-      })
+
+    this.submitPromise = makeCancelable(
+      new Promise(resolve =>
+        this.handleSuccess())
+    );
+
+
+    // e.preventDefault()
+    // this.setState({isSubmitting: true})
+    //
+    // if(this.props.onSubmit)
+    //   this.props.onSubmit(this.state.values, {
+    //     handleSuccess: this.handleSuccess,
+    //     handleErrors: this.handleErrors
+    //   })
   }
 
   render() {
     let elementProps = {values: this.state.values}
     return (
       <form className={this.props.className} onSubmit={this.onSubmit}>
-        { React.Children.map(this.props.children, (formElement) =>
-          React.cloneElement(formElement,elementProps) // should be ok
-        )}
+        {
+          React.Children.map(this.props.children, (formElement) => {
+            if (!formElement) return null
+            return React.cloneElement(formElement,elementProps) // should be ok
+          })
+        }
       </form>
     )
   }

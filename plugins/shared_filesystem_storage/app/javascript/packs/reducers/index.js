@@ -5,3 +5,4 @@ export { subnets } from './share_networks/subnets';
 export { shareRules } from './share_rules/share_rules';
 export { availabilityZones } from './shares/availability_zones';
 export { securityServices } from './security_services/security_services';
+export { shareNetworkSecurityServices } from './share_networks/security_services';
