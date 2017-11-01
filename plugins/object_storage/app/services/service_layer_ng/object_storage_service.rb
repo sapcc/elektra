@@ -313,7 +313,7 @@ module ServiceLayerNg
       api.object_storage.delete_object(container_name,object_path)
     end
     
-    def update_object_ng(object_path, params)
+    def update_object(object_path, params)
       container_name = params[:container_name]
       Rails.logger.debug  "[object-storage-service] -> update_object -> #{container_name}/#{object_path}"
       Rails.logger.debug  "[object-storage-service] -> update_object -> Params: #{params}"
@@ -377,7 +377,7 @@ module ServiceLayerNg
       header_hash['id']               = header_hash['name'] = container_name
       header_hash['public_url']       = public_url(container_name)
       header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
-      header_hash['metadata']         = extract_metadata_data(header_hash, 'x-container-meta-').reject do |key, value|
+      header_hash['metadata']         = extract_metadata_data(extract_header_data(response), 'x-container-meta-').reject do |key, value|
         # skip metadata fields that are recognized by us
         CONTAINER_ATTRMAP.has_key?('x-container-meta-' + key)
       end
@@ -393,7 +393,7 @@ module ServiceLayerNg
       header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
       header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
       header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.has_key?('expires_at') # optional!
-      header_hash['metadata']         = extract_metadata_data(header_hash, 'x-object-meta-')
+      header_hash['metadata']         = extract_metadata_data(extract_header_data(response), 'x-object-meta-')
       header_hash
     end
 
