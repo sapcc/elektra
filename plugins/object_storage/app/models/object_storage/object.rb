@@ -29,6 +29,7 @@ module ObjectStorage
     def is_directory?
       path.end_with?('/')
     end
+
     def is_file?
       !is_directory?
     end

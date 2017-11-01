@@ -1,11 +1,6 @@
 module ServiceLayerNg
   class ObjectStorageService < Core::ServiceLayerNg::Service
 
-   # TODO:
-   # 2. move object_ng to object
-   # 3. bulk delete
-   # 4- check old @driver calls in container and object and maybe port it back from controller to model
-   
    def available?(_action_name_sym = nil)
      api.catalog_include_service?('object-store', region)
    end
@@ -258,35 +253,31 @@ module ServiceLayerNg
       Rails.logger.debug  "[object-storage-service] -> bulk_delete"
       Rails.logger.debug  "[object-storage-service] -> targets: #{targets}"
 
-#      TODO:
-#      https://github.com/fog/fog-openstack/blob/master/lib/fog/storage/openstack/requests/delete_multiple_objects.rb
-#      DELETE with body, that is sadly not possible yet in misty
-#      https://github.com/flystack/misty/blob/master/lib/misty/http/method_builder.rb#L25
-#      capabilities = list_capabilities
-#      if capabilities.attributes.has_key?('bulk_delete')
-#        # assemble the request body containing the paths to all targets
-#        body = ""
-#        targets.each do |target|
-#          unless target.has_key?(:container)
-#            raise ArgumentError, "malformed target #{target.inspect}"
-#          end
-#          body += target[:container]
-#          if target.has_key?(:object)
-#            body += "/" + target[:object]
-#          end
-#          body += "\n"
-#        end
-#
-#        # TODO: the bulk delete request is missing in Fog
-#        @fog.send(:request, {
-#          expects: 200,
-#          method:  'DELETE',
-#          path:    '',
-#          query:   { 'bulk-delete' => 1 },
-#          headers: { 'Content-Type' => 'text/plain' },
-#          body:    body,
-#        })
-#      else
+      capabilities = list_capabilities
+      if capabilities.attributes.has_key?('bulk_delete')
+        Rails.logger.debug  "[object-storage-service] -> bulk_delete -> running bulk-delete operation"
+        # https://docs.openstack.org/swift/latest/middleware.html#bulk-delete
+        # assemble the request body containing the paths to all targets
+        body = ""
+        targets.each do |target|
+          unless target.has_key?(:container)
+            raise ArgumentError, "malformed target #{target.inspect}"
+          end
+          body += target[:container]
+          if target.has_key?(:object)
+            body += "/" + target[:object]
+          end
+          body += "\n"
+        end
+        
+        header = {
+          'Content-Type' => 'text/plain',
+          'Accept' => 'application/json'
+        }
+        api.object_storage.bulk_delete(body,build_custom_request_header(header))
+      
+      else
+        Rails.logger.debug  "[object-storage-service] -> bulk_delete -> no bulk-delete capabilitie available, useing fallback"
         targets.each do |target|
           unless target.has_key?(:container)
             raise ArgumentError, "malformed target #{target.inspect}"
@@ -298,7 +289,7 @@ module ServiceLayerNg
             delete_container(target[:container])
           end
         end
-#      end
+      end
     end
     
     def create_object(container_name, object_path, contents)
