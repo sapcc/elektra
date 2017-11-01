@@ -9,8 +9,8 @@ import {
 export default connect(
   ({shared_filesystem_storage: state},ownProps) => {
     let shareNetwork = state.shareNetworks.items.find(item => item.id==ownProps.match.params.id)
-    let shareNetworkSecurityServices = {items: [], isFetching: false}
-    if (shareNetwork && state.shareNetworkSecurityServices[shareNetwork.id]) {
+    let shareNetworkSecurityServices = null;
+    if(shareNetwork) {
       shareNetworkSecurityServices = state.shareNetworkSecurityServices[shareNetwork.id]
     }
 
@@ -23,9 +23,13 @@ export default connect(
 
   (dispatch,ownProps) => ({
     loadShareNetworkSecurityServicesOnce: (shareNetworkId) => dispatch(fetchShareNetworkSecurityServicesIfNeeded(shareNetworkId)),
-    handleSubmit: (values,{handleSuccess,handleErrors}) =>
-      dispatch(submitShareNetworkSecurityServiceForm(values),{handleSuccess,handleErrors}),
-    handleDelete: (shareNetworkId,securityServiceId) =>
-      dispatch(deleteShareNetworkSecurityService(shareNetworkId,securityServiceId))
+    handleSubmit: (values,{handleSuccess,handleErrors}) => {
+      dispatch(submitShareNetworkSecurityServiceForm(
+        Object.assign(values,{shareNetworkId: ownProps.match.params.id}),{handleSuccess,handleErrors})
+      )
+    },
+    handleDelete: (securityServiceId) => {
+      dispatch(deleteShareNetworkSecurityService(ownProps.match.params.id,securityServiceId))
+    }
   })
 )(SecurityServices);

@@ -8,7 +8,7 @@ export default ({match, location, history, tabsConfig, ... otherProps}) => {
   let tabPanels = [];
   for(let index in tabsConfig) {
     let tab = tabsConfig[index];
-    let active = (location.pathname.indexOf(tab.to)>-1);
+    let active = (location.pathname.indexOf(tab.to)==0);
 
     // collect tab items
     tabItems.push(

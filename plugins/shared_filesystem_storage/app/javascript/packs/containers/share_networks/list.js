@@ -1,8 +1,8 @@
 import { connect } from  'react-redux';
 import ShareList from '../../components/share_networks/list';
+import { fetchSecurityServicesIfNeeded } from '../../actions/security_services';
 import {
   fetchShareNetworksIfNeeded,
-  //fetchSecurityServicesIfNeeded,
   fetchNetworksIfNeeded,
   fetchNetworkSubnetsIfNeeded,
   deleteShareNetwork,
@@ -19,7 +19,7 @@ export default connect(
 
   dispatch => ({
     loadShareNetworksOnce: () => dispatch(fetchShareNetworksIfNeeded()),
-    loadSecurityServicesOnce: () => null,//dispatch(fetchSecurityServicesIfNeeded()),
+    loadSecurityServicesOnce: () => dispatch(fetchSecurityServicesIfNeeded()),
     loadNetworksOnce: () => dispatch(fetchNetworksIfNeeded()),
     loadSubnetsOnce: (neutronNetworkId) => dispatch(fetchNetworkSubnetsIfNeeded(neutronNetworkId)),
     handleDelete: (shareNetworkId) => dispatch(deleteShareNetwork(shareNetworkId)),

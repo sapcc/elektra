@@ -122,7 +122,7 @@ const submitShareNetworkSecurityServiceForm= (values,{handleSuccess,handleErrors
       if (response.data.errors) {
         handleErrors(response.data.errors);
       } else {
-        dispatch(receiveShareNetworkSecurityService(shareNetworkId, data));
+        dispatch(receiveShareNetworkSecurityService(shareNetworkId, response.data));
         dispatch(toggleShareNetworkIsNewStatus(shareNetworkId,false));
         handleSuccess()
       }

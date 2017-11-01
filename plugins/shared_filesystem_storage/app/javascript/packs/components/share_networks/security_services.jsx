@@ -1,6 +1,13 @@
 import { Modal, Button } from 'react-bootstrap';
 import ShareNetworkSecurityServiceItem from './security_service_item';
 import ShareNetworkSecurityServiceForm from './security_service_form';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+
+const FadeTransition = ({ children, ...props }) => (
+  <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
+    {children}
+  </CSSTransition>
+);
 
 export default class ShareNetworkSecurityServicesModal extends React.Component {
   constructor(props){
@@ -8,13 +15,14 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
   	this.state = {show: true, showForm: false};
     this.close = this.close.bind(this)
     this.toggleForm = this.toggleForm.bind(this)
+    this.availableSecurityServices = this.availableSecurityServices.bind(this)
   }
 
   close(e) {
     if(e) e.stopPropagation()
     //this.props.history.goBack()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'),300)
+    setTimeout(() => this.props.history.replace('/share-networks'),300)
   }
 
   toggleForm() {
@@ -22,13 +30,16 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
   }
 
   componentDidMount() {
-    return this.props.loadShareNetworkSecurityServicesOnce(this.props.shareNetwork.id);
+    return this.props.loadShareNetworkSecurityServicesOnce(this.props.match.params.id);
   }
 
   availableSecurityServices() {
-    let securityServices;
+    let securityServices
+    let assignedSecurityServices = []
     if (!this.props.securityServices) { securityServices = []; }
-    const assignedSecurityServices = this.props.shareNetworkSecurityServices.items || [];
+    if (this.props.shareNetworkSecurityServices) {
+      assignedSecurityServices = this.props.shareNetworkSecurityServices.items
+    }
     const assignedSecurityServicesIds = [];
     const assignedSecurityServicesTypes = [];
     for (let securityService of assignedSecurityServices) {
@@ -49,15 +60,18 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
 
   render() {
     const availableSecurityServices = this.availableSecurityServices();
+    const { shareNetworkSecurityServices } = this.props
 
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Sahre Network Security Services</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            Security Services for Share Network {this.props.shareNetwork && this.props.shareNetwork.name}
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          { shareNetworkSecurityServices.isFetching ? (
+          { !shareNetworkSecurityServices || shareNetworkSecurityServices.isFetching ? (
             <div><span className='spinner'/>{'Loading...'}</div>
           ) : (
             <table className='table share-network-security-services'>
@@ -77,7 +91,7 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
                   shareNetworkSecurityServices.items.map((securityService) =>
                     <ShareNetworkSecurityServiceItem
                       key={securityService.id}
-                      securityService={this.props.securityService}
+                      securityService={securityService}
                       handleDelete={this.props.handleDelete}/>
                   )
                 )}
