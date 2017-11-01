@@ -1,7 +1,6 @@
 ObjectStorage::Engine.routes.draw do
 
   get '/' => 'entry#index', as: 'entry'
-  post 'create_account/' => 'entry#create_account'
 
   resources 'containers', except: :edit do
     member do

@@ -11,11 +11,9 @@ module ObjectStorage
         unless services_ng.object_storage.account
           # check that account management is allowed otherwise we are in trouble
           capabilities = services_ng.object_storage.list_capabilities
-          if capabilities['swift']['allow_account_management']
+          if capabilities.swift['allow_account_management']
             if services_ng.resource_management.available?
               render action: 'no_swift_account_because_no_quota'
-            else
-              render action: 'no_swift_account'
             end
           else
             render action: 'no_swift_account_and_account_management'
@@ -33,11 +31,6 @@ module ObjectStorage
       else
         render action: 'howtoenable'
       end
-    end
-
-    def create_account
-      services_ng.object_storage.create_account
-      redirect_to plugin('object_storage').containers_path
     end
 
   end

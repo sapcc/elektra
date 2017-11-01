@@ -38,11 +38,6 @@ module ServiceLayerNg
      map_to(ObjectStorage::Account,account_data)
    end
    
-   def create_account
-     Rails.logger.debug  "[object-storage-service] -> create_account -> POST /"
-     api.object_storage.create_update_or_delete_account_metadata
-   end
-
    # CONTAINER #
 
     CONTAINERS_ATTRMAP = {
