@@ -198,7 +198,7 @@
 
   toggleEventDetailsVisible = (event) ->
     type: app.TOGGLE_EVENT_DETAILS_VISIBLE
-    eventId: event.event_id
+    eventId: event.id
     detailsVisible: !event.detailsVisible
 
 
@@ -208,7 +208,7 @@
       return if event.isFetchingDetails # don't fetch if we're already fetching
       dispatch(requestEventDetails(event))
 
-      app.ajaxHelper.get "/events/#{event.event_id}",
+      app.ajaxHelper.get "/events/#{event.id}",
         data: {}
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveEventDetails(event, data))
@@ -218,17 +218,17 @@
 
   requestEventDetails = (event) ->
     type: app.REQUEST_EVENT_DETAILS
-    eventId: event.event_id
+    eventId: event.id
 
   requestEventDetailsFailure = (event, error) ->
     type: app.REQUEST_EVENT_DETAILS_FAILURE
     error: error
-    eventId: event.event_id
+    eventId: event.id
 
   receiveEventDetails = (event, json) ->
     type: app.RECEIVE_EVENT_DETAILS
     eventDetails: json
-    eventId: event.event_id
+    eventId: event.id
 
 
 
