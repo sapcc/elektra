@@ -20,14 +20,8 @@ export default class SecurityServiceForm extends React.Component {
     setTimeout(() => this.props.history.replace('/security-services'),300)
   }
 
-  onSubmit(values, {handleSuccess,handleErrors}){
-    this.props.handleSubmit(values,{
-      handleSuccess: () => {
-        handleSuccess()
-        this.close()
-      },
-      handleErrors: handleErrors
-    })
+  onSubmit(values){
+    return this.props.handleSubmit(values).then(() => this.close());
   }
 
   renderForm({values}) {

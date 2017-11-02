@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { AccessControlItem } from './access_control_item';
-import { AccessControlForm } from './access_control_form';
+import AccessControlItem from './access_control_item';
+import AccessControlForm from './access_control_form';
 
 const FadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
@@ -34,7 +34,9 @@ export default class AccessControlModal extends React.Component{
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Share {share ? share.name : ''}</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            Access Control for Share {share ? share.name : ''}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           { shareRules && shareRules.isFetching ? (

@@ -23,11 +23,11 @@ export default connect(
 
   (dispatch,ownProps) => ({
     loadShareNetworkSecurityServicesOnce: (shareNetworkId) => dispatch(fetchShareNetworkSecurityServicesIfNeeded(shareNetworkId)),
-    handleSubmit: (values,{handleSuccess,handleErrors}) => {
+    handleSubmit: (values) =>
       dispatch(submitShareNetworkSecurityServiceForm(
-        Object.assign(values,{shareNetworkId: ownProps.match.params.id}),{handleSuccess,handleErrors})
+        Object.assign(values,{shareNetworkId: ownProps.match.params.id}))
       )
-    },
+    ,
     handleDelete: (securityServiceId) => {
       dispatch(deleteShareNetworkSecurityService(ownProps.match.params.id,securityServiceId))
     }

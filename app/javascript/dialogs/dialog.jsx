@@ -1,5 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
-import { Deferred } from 'tools/deferred';
+import Deferred from 'tools/deferred';
 
 export class Dialog extends React.Component {
   constructor(props, context) {
@@ -48,7 +48,7 @@ export class Dialog extends React.Component {
               { this.props.title }
             </h4>
           }
-          { this.props.message && <p>{ this.props.message }</p> }
+          { this.props.message }
         </Modal.Body>
         <Modal.Footer>
           { this.props.showAbortButton && <Button onClick={this.abort}>{this.props.abortLabel}</Button>}

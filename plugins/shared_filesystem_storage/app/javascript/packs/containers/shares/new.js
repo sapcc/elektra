@@ -8,8 +8,6 @@ export default connect(
     availabilityZones: state.availabilityZones
   }),
   dispatch => ({
-    handleSubmit: (values,{handleSuccess,handleErrors}) => (
-      dispatch(submitNewShareForm(values,{handleSuccess,handleErrors}))
-    )
+    handleSubmit: (values) => dispatch(submitNewShareForm(values))
   })
 )(NewShareModal);

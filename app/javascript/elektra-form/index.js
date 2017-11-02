@@ -6,6 +6,7 @@ import {
 } from './components/form_element';
 import { FormErrors } from './components/form_errors';
 import { SubmitButton } from './components/submit_button';
+import { ErrorsList } from './components/errors_list';
 import Form from './components/form';
 
 Form.Element = FormElement;
@@ -15,4 +16,4 @@ Form.Input = FormInput;
 Form.Errors = FormErrors;
 Form.SubmitButton = SubmitButton;
 
-export { Form };
+export { Form, ErrorsList };

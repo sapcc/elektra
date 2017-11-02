@@ -24,14 +24,8 @@ export default class EditShareNetworkForm extends React.Component {
     setTimeout(() => this.props.history.replace('/share-networks'),300)
   }
 
-  onSubmit(values, {handleSuccess,handleErrors}){
-    this.props.handleSubmit(values,{
-      handleSuccess: () => {
-        handleSuccess()
-        this.close()
-      },
-      handleErrors: handleErrors
-    })
+  onSubmit(values){
+    return this.props.handleSubmit(values).then(() => this.close())
   }
 
   render(){

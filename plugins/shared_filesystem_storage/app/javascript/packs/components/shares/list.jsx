@@ -123,9 +123,8 @@ const List = React.createClass({
                 share={share}
                 shareNetwork={this.shareNetwork(share)}
                 shareRules={this.shareRules(share)}
-                handleShow={this.showShare}
-                handleEdit={this.editShare}
                 handleDelete={this.props.handleDelete}
+                reloadShare={this.props.reloadShare}
                 policy={this.props.policy}/>)
             ) : (
               <tr>

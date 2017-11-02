@@ -5,7 +5,6 @@ import { submitNewSecurityServiceForm } from '../../actions/security_services';
 export default connect(
   ({shared_filesystem_storage:state} ) => ({}),
   dispatch => ({
-    handleSubmit: (values,{handleSuccess,handleErrors}) =>
-      dispatch(submitNewSecurityServiceForm(values,{handleSuccess,handleErrors}))
+    handleSubmit: (values) => dispatch(submitNewSecurityServiceForm(values))
   })
 )(NewSecurityServiceModal);

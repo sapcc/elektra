@@ -12,8 +12,6 @@ export default connect(
     return { shareNetwork }
   },
   dispatch => ({
-    handleSubmit: (values,{handleSuccess,handleErrors}) => (
-      dispatch(submitEditShareNetworkForm(values,{handleSuccess,handleErrors}))
-    )
+    handleSubmit: (values) => dispatch(submitEditShareNetworkForm(values))
   })
 )(EditShareNetworkModal);

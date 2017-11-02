@@ -15,8 +15,6 @@ export default connect(
   dispatch => ({
     loadNetworksOnce: () => dispatch(fetchNetworksIfNeeded()),
     loadSubnetsOnce: (neutronNetworkId) => dispatch(fetchNetworkSubnetsIfNeeded(neutronNetworkId)),
-    handleSubmit: (values,{handleSuccess,handleErrors}) => (
-      dispatch(submitNewShareNetworkForm(values,{handleSuccess,handleErrors}))
-    )
+    handleSubmit: (values) => dispatch(submitNewShareNetworkForm(values))
   })
 )(NewShareNetworForm);

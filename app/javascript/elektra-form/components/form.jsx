@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import makeCancelable from 'tools/cancelable_promise';
 import Deferred from 'tools/deferred';
+import { FormSubmitError } from 'elektra-form';
 
 export default class Form extends React.Component {
   static initialState = {
@@ -24,18 +25,17 @@ export default class Form extends React.Component {
 
   constructor(props, context) {
     super(props, context);
+    let initialValues = props.initialValues || {}
+
     this.state = Object.assign({},Form.initialState,{
-      values: props.initialValues || {}
+      values: initialValues,
+      isValid: props.validate ? props.validate(initialValues) : true
     })
 
     this.onChange = this.onChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
     this.updateValue = this.updateValue.bind(this);
-
-
     this.onSubmit = this.onSubmit.bind(this);
-    this.handleSuccess = this.handleSuccess.bind(this);
-    this.handleErrors = this.handleErrors.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -46,6 +46,7 @@ export default class Form extends React.Component {
   }
 
   componentWillUnmount() {
+    // cancel submit promis if already created
     if(this.submitPromise) this.submitPromise.cancel();
   }
 
@@ -86,38 +87,32 @@ export default class Form extends React.Component {
     this.updateValue(name,value)
   }
 
-  handleSuccess() {
-    this.setState({isSubmitting: false})
-    if(this.props.resetForm) this.resetForm()
-  }
-
-  handleErrors(errors) {
-    this.setState({isSubmitting: false})
-    this.setState({errors})
-  }
-
   onSubmit(e){
+    if(e) e.preventDefault();
 
-    this.submitPromise = makeCancelable(
-      new Promise(resolve =>
-        this.handleSuccess())
-    );
+    this.setState({isSubmitting: true})
 
-
-    // e.preventDefault()
-    // this.setState({isSubmitting: true})
-    //
-    // if(this.props.onSubmit)
-    //   this.props.onSubmit(this.state.values, {
-    //     handleSuccess: this.handleSuccess,
-    //     handleErrors: this.handleErrors
-    //   })
+    this.submitPromise = makeCancelable(this.props.onSubmit(this.state.values))
+    this.submitPromise
+      .promise
+      .then(() => {
+        // handle success
+        this.setState({isSubmitting: false})
+        if(this.props.resetForm) this.resetForm()
+      })
+      .catch(reason => {
+        if (!reason.isCanceled) { // promise is not canceled
+          // handle errors
+          this.setState({isSubmitting: false, errors: reason.errors})
+        }
+      })
   }
 
   render() {
     let elementProps = {values: this.state.values}
     return (
       <form className={this.props.className} onSubmit={this.onSubmit}>
+        {this.state.isSubmitting}
         {
           React.Children.map(this.props.children, (formElement) => {
             if (!formElement) return null

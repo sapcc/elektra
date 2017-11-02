@@ -33,18 +33,12 @@ export default class NewShareNetworkForm extends React.Component {
     }
   }
 
-  onSubmit(values, {handleSuccess,handleErrors}){
+  onSubmit(values){
     let subnet = this.props.subnets[values.neutron_net_id].items.find(i =>
       i.id==values.neutron_subnet_id
     )
-
-    this.props.handleSubmit(Object.assign({},values,{cidr: subnet.cidr}),{
-      handleSuccess: () => {
-        handleSuccess()
-        this.close()
-      },
-      handleErrors: handleErrors
-    })
+    let newValues = Object.assign({},values,{cidr: subnet.cidr})
+    return this.props.handleSubmit(newValues).then(() => this.close())
   }
 
   networkSubnets(neutron_net_id){
@@ -60,7 +54,7 @@ export default class NewShareNetworkForm extends React.Component {
         <Modal.Body>
           <Form.Errors/>
 
-          <Form.ElementHorizontal label='Name' name="name">
+          <Form.ElementHorizontal label='Name' name="name" required>
             <Form.Input elementType='input' type='text' name='name'/>
           </Form.ElementHorizontal>
 

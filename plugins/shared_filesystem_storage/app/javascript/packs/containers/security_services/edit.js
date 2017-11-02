@@ -15,7 +15,6 @@ export default connect(
     return { isFetching, securityService }
   },
   dispatch => ({
-    handleSubmit: (values,{handleSuccess,handleErrors}) =>
-      dispatch(submitEditSecurityServiceForm(values,{handleSuccess,handleErrors}))
+    handleSubmit: (values) => dispatch(submitEditSecurityServiceForm(values))
   })
 )(EditSecurityServiceModal);
