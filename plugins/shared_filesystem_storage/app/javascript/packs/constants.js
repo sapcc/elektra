@@ -12,6 +12,7 @@ export const RECEIVE_SHARE_EXPORT_LOCATIONS  = 'shared_filesystem_storage/shares
 export const REQUEST_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares/REQUEST_AVAILABLE_ZONES';
 export const RECEIVE_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares/RECEIVE_AVAILABLE_ZONES';
 export const REQUEST_AVAILABLE_ZONES_FAILURE = 'shared_filesystem_storage/shares/REQUEST_AVAILABLE_ZONES_FAILURE';
+export const FILTER_SHARES                   = 'shared_filesystem_storage/shares/FILTER_SHARES'; 
 
 // SHARE RULES
 export const REQUEST_SHARE_RULES             = 'shared_filesystem_storage/shares/REQUEST_SHARE_RULES'

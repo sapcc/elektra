@@ -21,7 +21,7 @@ export default class SecurityServiceList extends React.Component {
         }
 
         { this.props.isFetching ? (
-          <div><span className='spinner'/>{'Loading...'}</div>
+          <div className='loadig'><span className='spinner'/>{'Loading...'}</div>
         ) : (
           <table className='table security-services'>
             <thead>
