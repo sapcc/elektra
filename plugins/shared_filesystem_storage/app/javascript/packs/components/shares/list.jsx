@@ -2,6 +2,7 @@ import { withRouter, Route, Link } from 'react-router-dom';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { policy } from 'policy';
+import SearchField from 'components/search_field';
 
 import ShareItem from './item';
 
@@ -70,6 +71,18 @@ const List = React.createClass({
 
     return (
       <div className='toolbar'>
+        { this.props.items.length>=10 &&
+          <SearchField
+            onChange={(term) => this.props.filterShares(term)}
+            placeholder='name, ID, protocol or status'
+            text='Searches by name, ID, protocol or status in visible server list only.
+                  Entering a search term will automatically start loading the next pages
+                  and filter the loaded items using the search term. Emptying the search
+                  input field will show all currently loaded items.'/>
+        }
+
+        <Link to='/shares/new' className='btn btn-primary' disabled={!hasShareNetworks}>Create new</Link>
+
         <TransitionGroup>
           { fetchingShareNetworks ? (
             <FadeTransition>
@@ -90,7 +103,6 @@ const List = React.createClass({
           )}
         </TransitionGroup>
 
-        <Link to='/shares/new' className='btn btn-primary'>Create new</Link>
       </div>
     )
   },
@@ -119,7 +131,7 @@ const List = React.createClass({
         <tbody>
           { items && items.length>0 ? (
             items.map( (share, index) =>
-              <ShareItem key={index}
+              !share.isHidden && <ShareItem key={index}
                 share={share}
                 shareNetwork={this.shareNetwork(share)}
                 shareRules={this.shareRules(share)}

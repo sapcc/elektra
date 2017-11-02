@@ -115,6 +115,19 @@ const removeShare=shareId =>
 
 const deleteShare= shareId =>
   function(dispatch, getState) {
+    const shareSnapshots = [];
+    // check if there are dependent snapshots.
+    // Problem: the snapshots may not be loaded yet
+    const { snapshots } = getState().shared_filesystem_storage;
+    if (snapshots && snapshots.items) {
+      for (let snapshot of snapshots.items) {
+        if (snapshot.share_id===shareId) { shareSnapshots.push(snapshot); }
+      }
+    }
+
+    if (shareSnapshots.length > 0) {
+      return showInfoModal(`Share still has ${shareSnapshots.length} dependent snapshots. Please remove dependent snapshots first.`)
+    }
 
     confirm(`Do you really want to delete the share ${shareId}?`).then(() => {
       dispatch(requestDelete(shareId));
@@ -133,30 +146,6 @@ const deleteShare= shareId =>
     }).catch((aborted) => null)
   }
 ;
-
-// const openDeleteShareDialog=function(shareId, options) {
-//   if (options == null) { options = {}; }
-//   return function(dispatch, getState) {
-//     const shareSnapshots = [];
-//     // check if there are dependent snapshots.
-//     // Problem: the snapshots may not be loaded yet
-//     const { snapshots } = getState();
-//     if (snapshots && snapshots.items) {
-//       for (let snapshot of Array.from(snapshots.items)) {
-//         if (snapshot.share_id===shareId) { shareSnapshots.push(snapshot); }
-//       }
-//     }
-//
-//     if (shareSnapshots.length===0) {
-//       return dispatch(app.showConfirmDialog({
-//         message: options.message || 'Do you really want to delete this share?' ,
-//         confirmCallback() { return dispatch(deleteShare(shareId)); }
-//       }));
-//     } else {
-//       return dispatch(app.showInfoDialog({title: 'Existing Dependencies', message: `Please delete dependent snapshots(${shareSnapshots.length}) first!`}));
-//     }
-//   };
-// };
 
 //############### SHARE EXPORT LOCATIONS ################
 const requestShareExportLocations= shareId =>
@@ -266,7 +255,6 @@ const fetchAvailabilityZones=() =>
     ajaxHelper.get('/shares/availability_zones')
       .then((response) => dispatch(receiveAvailableZones(response.data)))
       .catch((error) => {
-        console.log(error)
         dispatch(requestAvailableZonesFailure());
       })
   }
@@ -278,6 +266,12 @@ const fetchAvailabilityZonesIfNeeded= () =>
   }
 ;
 
+const filterShares= (term) =>
+  ({
+    type: constants.FILTER_SHARES,
+    term
+  })
+
 export {
   fetchShares,
   fetchSharesIfNeeded,
@@ -286,5 +280,6 @@ export {
   fetchShareExportLocationsIfNeeded,
   fetchAvailabilityZonesIfNeeded,
   submitNewShareForm,
-  submitEditShareForm
+  submitEditShareForm,
+  filterShares
 }

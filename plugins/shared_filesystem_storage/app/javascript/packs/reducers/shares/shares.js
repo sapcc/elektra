@@ -77,6 +77,18 @@ const deleteShareSuccess= function(state,{shareId}) {
   return Object.assign({},state,{items});
 };
 
+const filterShares= (state,{term}) => {
+  const items = state.items.slice();
+  const regex = new RegExp(term.trim(), "i")
+
+  for(let i of items) {
+    if (`${i.name} ${i.id} ${i.share_proto} ${i.status}`.search(regex)>=0)
+      i.isHidden=false
+    else i.isHidden=true
+  }
+  return Object.assign({},state,{items});
+}
+
 const receiveShareExportLocations= function(state,{shareId,export_locations}){
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
@@ -91,6 +103,7 @@ const receiveShareExportLocations= function(state,{shareId,export_locations}){
 export const shares = function(state, action) {
   if (state == null) { state = initialSharesState; }
   switch (action.type) {
+    case constants.FILTER_SHARES: return filterShares(state,action);
     case constants.RECEIVE_SHARES: return receiveShares(state,action);
     case constants.REQUEST_SHARES: return requestShares(state,action);
     case constants.REQUEST_SHARES_FAILURE: return requestSharesFailure(state,action);
