@@ -1,11 +1,11 @@
 import { Form } from 'elektra-form';
 
-let NewShareRuleForm = ({shareNetwork, onSubmit, values}) => {
+const AccessControlForm = (props) => {
   const accessTypes = { ip: 'ip', user: 'user'}
   const accessLevels = { ro: 'read-only', rw: 'read-write'}
 
   const accessToPlaceholder = () => {
-    switch (values.access_type) {
+    switch (props.values.access_type) {
       case "ip":
         return 'IP address'
       case "user":
@@ -18,7 +18,7 @@ let NewShareRuleForm = ({shareNetwork, onSubmit, values}) => {
   }
 
   const accessToInfo = () => {
-    switch (values.access_type) {
+    switch (props.values.access_type) {
       case "ip":
         return 'A valid format is XX.XX.XX.XX or XX.XX.XX.XX/XX. For example 0.0.0.0/0.'
       case "user":
@@ -30,10 +30,10 @@ let NewShareRuleForm = ({shareNetwork, onSubmit, values}) => {
     }
   }
 
-  return (
-    <form className="form-inline" onSubmit={onSubmit}>
-      { shareNetwork &&
-        <div>{ `Network: ${shareNetwork.cidr}`}</div>
+  return(
+    <div>
+      { props.shareNetwork &&
+        <div>{ `Network: ${props.shareNetwork.cidr}`}</div>
       }
       <Form.Errors/>
 
@@ -71,23 +71,18 @@ let NewShareRuleForm = ({shareNetwork, onSubmit, values}) => {
       { accessToInfo() &&
         <p className='help-block'><i className="fa fa-info-circle"/>{accessToInfo()}</p>
       }
-    </form>
+    </div>
   )
 }
 
-export const AccessControlForm = (props) => {
+export default ({shareNetwork, handleSubmit}) => {
   const validate = (values) => {
     return values.access_type && values.access_level && values.access_to && true
   }
 
   return (
-    <Form.Provider
-      resetAfterSubmit
-      afterSubmitSuccess={props.afterSubmitSuccess}
-      validate={validate}
-      initialValues={{shareId: props.share.id}}
-      {...props}>
-      <NewShareRuleForm/>
-    </Form.Provider>
+    <Form validate={validate} className='form form-inline' onSubmit={handleSubmit}>
+      <AccessControlForm shareNetwork={shareNetwork}/>
+    </Form>
   );
 }

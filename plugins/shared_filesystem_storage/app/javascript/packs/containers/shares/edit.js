@@ -12,8 +12,6 @@ export default connect(
     return { share }
   },
   dispatch => ({
-    handleSubmit: (values,{handleSuccess,handleErrors}) => (
-      dispatch(submitEditShareForm(values,{handleSuccess,handleErrors}))
-    )
+    handleSubmit: (values) => dispatch(submitEditShareForm(values))
   })
 )(EditShareModal);

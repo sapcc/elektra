@@ -1,4 +1,5 @@
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const Row = ({label,value,children}) => {
   return (
@@ -53,7 +54,9 @@ export default class ShowShareModal extends React.Component{
           <Row label='Size' value={share.size+' GiB'}/>
           <Row label='Protocol' value={share.share_proto}/>
           <Row label='Share Type' value={share.share_type}/>
-          <Row label='Share network' value={share.share_network_id}/>
+          <Row label='Share network'>
+            <Link to={`/share-networks/${share.share_network_id}/show`}>{share.share_network_id}</Link>
+          </Row>
           <Row label='Created At' value={share.created_at}/>
           <Row label='Host' value={share.host}/>
         </tbody>

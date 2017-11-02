@@ -13,13 +13,6 @@ export const REQUEST_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares
 export const RECEIVE_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares/RECEIVE_AVAILABLE_ZONES';
 export const REQUEST_AVAILABLE_ZONES_FAILURE = 'shared_filesystem_storage/shares/REQUEST_AVAILABLE_ZONES_FAILURE';
 
-// SHARE FORM
-export const RESET_SHARE_FORM                = 'shared_filesystem_storage/shares/RESET_SHARE_FORM';
-export const PREPARE_SHARE_FORM              = 'shared_filesystem_storage/shares/PREPARE_SHARE_FORM';
-export const UPDATE_SHARE_FORM               = 'shared_filesystem_storage/shares/UPDATE_SHARE_FORM';
-export const SUBMIT_SHARE_FORM               = 'shared_filesystem_storage/shares/SUBMIT_SHARE_FORM';
-export const SHARE_FORM_FAILURE              = 'shared_filesystem_storage/shares/SHARE_FORM_FAILURE';
-
 // SHARE RULES
 export const REQUEST_SHARE_RULES             = 'shared_filesystem_storage/shares/REQUEST_SHARE_RULES'
 export const RECEIVE_SHARE_RULES             = 'shared_filesystem_storage/shares/RECEIVE_SHARE_RULES'
@@ -70,3 +63,14 @@ export const RECEIVE_SECURITY_SERVICE           = 'shared_filesystem_storage/sec
 export const REQUEST_DELETE_SECURITY_SERVICE    = 'shared_filesystem_storage/security_services/REQUEST_DELETE_SECURITY_SERVICE'
 export const DELETE_SECURITY_SERVICE_FAILURE    = 'shared_filesystem_storage/security_services/DELETE_SECURITY_SERVICE_FAILURE'
 export const DELETE_SECURITY_SERVICE_SUCCESS    = 'shared_filesystem_storage/security_services/DELETE_SECURITY_SERVICE_SUCCESS'
+
+// SNAPSHOTS
+export const REQUEST_SNAPSHOTS                  = 'shared_filesystem_storage/snapshots/REQUEST_SNAPSHOTS'
+export const RECEIVE_SNAPSHOTS                  = 'shared_filesystem_storage/snapshots/RECEIVE_SNAPSHOTS'
+export const REQUEST_SNAPSHOT                   = 'shared_filesystem_storage/snapshots/REQUEST_SNAPSHOT'
+export const REQUEST_SNAPSHOT_FAILURE           = 'shared_filesystem_storage/snapshots/REQUEST_SNAPSHOT_FAILURE'
+export const REQUEST_SNAPSHOTS_FAILURE          = 'shared_filesystem_storage/snapshots/REQUEST_SNAPSHOTS_FAILURE'
+export const RECEIVE_SNAPSHOT                   = 'shared_filesystem_storage/snapshots/RECEIVE_SNAPSHOT'
+export const REQUEST_DELETE_SNAPSHOT            = 'shared_filesystem_storage/snapshots/REQUEST_DELETE_SNAPSHOT'
+export const DELETE_SNAPSHOT_FAILURE            = 'shared_filesystem_storage/snapshots/DELETE_SNAPSHOT_FAILURE'
+export const DELETE_SNAPSHOT_SUCCESS            = 'shared_filesystem_storage/snapshots/DELETE_SNAPSHOT_SUCCESS'

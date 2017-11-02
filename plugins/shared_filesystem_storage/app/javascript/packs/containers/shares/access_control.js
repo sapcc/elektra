@@ -21,8 +21,9 @@ export default connect(
     return { shareRules, shareNetwork, share }
   },
   (dispatch,ownProps) => ({
-    handleSubmit: (values, {handleSuccess,handleErrors}) =>
-      dispatch(submitNewShareRule(values,{handleSuccess,handleErrors})),
+    handleSubmit: (values) => dispatch(submitNewShareRule(
+      Object.assign(values,{shareId: ownProps.match.params.id})
+    )),
     handleDelete: (shareId,ruleId) => dispatch(deleteShareRule(shareId,ruleId))
   })
 )(AccessControlModal);

@@ -72,15 +72,8 @@ const fetchSharesIfNeeded= () =>
 ;
 
 const canReloadShare= function(state,shareId) {
-  const { items } = state.shares;
-  let index = -1;
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (item.id===shareId) {
-      index = i;
-      break;
-    }
-  }
+  const { items } = state.shared_filesystem_storage.shares;
+  let index = items.findIndex(i=>i.id==shareId)
   if (index<0) { return true; }
   return !items[index].isFetching;
 };
@@ -128,11 +121,13 @@ const deleteShare= shareId =>
       ajaxHelper.delete(`/shares/${shareId}`).then((response) => {
         if (response.data && response.data.errors) {
           showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
+          dispatch(deleteShareFailure(shareId))
         } else {
           dispatch(removeShare(shareId));
           dispatch(removeShareRules(shareId));
         }
       }).catch((error) => {
+        dispatch(deleteShareFailure(shareId))
         showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
       })
     }).catch((aborted) => null)
@@ -209,36 +204,36 @@ const fetchShareExportLocationsIfNeeded = shareId =>
 ;
 
 //################ SHARE FORM ###################
-const submitEditShareForm= (values,{handleSuccess,handleErrors}) => (
-  function(dispatch) {
-    ajaxHelper.put(`/shares/${values.id}`, { share: values }).then((response) => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveShare(response.data))
-        handleSuccess()
-      }
-    })
-    .catch(error => {
-      handleErrors(error.message)
-    })
-  }
+const submitEditShareForm= (values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(
+        `/shares/${values.id}`,
+        { share: values }
+      ).then((response) => {
+        if (response.data.errors) handleErrors({errors: response.data.errors});
+        else {
+          dispatch(receiveShare(response.data))
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors:error.message}))
+    )
 );
 
-const submitNewShareForm= (values,{handleSuccess,handleErrors}) => (
-  function(dispatch) {
-    ajaxHelper.post(`/shares`, { share: values }).then((response) => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveShare(response.data))
-        handleSuccess()
-      }
-    })
-    .catch(error => {
-      handleErrors(error.message)
-    })
-  }
+const submitNewShareForm= (values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.post(
+        `/shares`,
+        { share: values }
+      ).then((response) => {
+        if (response.data.errors) handleErrors({errors: response.data.errors});
+        else {
+          dispatch(receiveShare(response.data))
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
+    )
 );
 
 //####################### AVAILABILITY ZONES ###########################

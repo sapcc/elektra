@@ -110,27 +110,47 @@ const deleteShareNetworkSecurityService= (shareNetworkId,securityServiceId) =>
   }
 ;
 
-const submitShareNetworkSecurityServiceForm= (values,{handleSuccess,handleErrors}) =>
+// const submitShareNetworkSecurityServiceForm= (values,{handleSuccess,handleErrors}) =>
+//   function(dispatch, getState) {
+//
+//     let shareNetworkId = values.shareNetworkId
+//     delete values['shareNetworkId']
+//
+//     return ajaxHelper.post(`/share-networks/${shareNetworkId}/security-services`,
+//       { security_service: values }
+//     ).then(response => {
+//       if (response.data.errors) {
+//         handleErrors(response.data.errors);
+//       } else {
+//         dispatch(receiveShareNetworkSecurityService(shareNetworkId, response.data));
+//         dispatch(toggleShareNetworkIsNewStatus(shareNetworkId,false));
+//         handleSuccess()
+//       }
+//     }).catch(error => {
+//       handleErrors(error.message);
+//     })
+//   }
+// ;
+
+const submitShareNetworkSecurityServiceForm= (values) =>
   function(dispatch, getState) {
 
     let shareNetworkId = values.shareNetworkId
     delete values['shareNetworkId']
 
-    ajaxHelper.post(`/share-networks/${shareNetworkId}/security-services`,
+    return ajaxHelper.post(`/share-networks/${shareNetworkId}/security-services`,
       { security_service: values }
     ).then(response => {
       if (response.data.errors) {
-        handleErrors(response.data.errors);
+        throw new Error(response.data.errors)
       } else {
         dispatch(receiveShareNetworkSecurityService(shareNetworkId, response.data));
         dispatch(toggleShareNetworkIsNewStatus(shareNetworkId,false));
-        handleSuccess()
       }
-    }).catch(error => {
-      handleErrors(error.message);
     })
   }
 ;
+
 
 // export
 export {

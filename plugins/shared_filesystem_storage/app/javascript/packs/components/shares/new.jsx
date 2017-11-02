@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const protocols = ['NFS','CIFS']
 
-export default class NewShareFormWrapper extends React.Component {
+export default class NewShareForm extends React.Component {
   constructor(props){
   	super(props);
   	this.state = {show: true};
@@ -23,14 +23,8 @@ export default class NewShareFormWrapper extends React.Component {
     setTimeout(() => this.props.history.replace('/shares'),300)
   }
 
-  onSubmit(values, {handleSuccess,handleErrors}){
-    this.props.handleSubmit(values,{
-      handleSuccess: () => {
-        handleSuccess()
-        this.close()
-      },
-      handleErrors: handleErrors
-    })
+  onSubmit(values){
+    return this.props.handleSubmit(values).then(() => this.close());
   }
 
   render(){

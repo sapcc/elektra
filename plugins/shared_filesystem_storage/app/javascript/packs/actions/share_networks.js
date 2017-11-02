@@ -1,7 +1,7 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
 import { confirm, showInfoModal, showErrorModal } from 'dialogs';
-import { ErrorsList } from 'elektra-form/components/errors_list';
+import { ErrorsList } from 'elektra-form';
 
 //################### SHARE_NETWORKS #########################
 const requestShareNetworks= () => (
@@ -136,35 +136,34 @@ const deleteShareNetwork= shareNetworkId =>
 
 //################ SHARSHARE_NETWORKE FORM ###################
 
-const submitNewShareNetworkForm= (values, {handleSuccess,handleErrors}) =>
-  function(dispatch, getState) {
-    ajaxHelper.post(`/share-networks`, { share_network: values }).then(response => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveShareNetwork(response.data));
-        dispatch(toggleShareNetworkIsNewStatus(response.data.id,true))
-        handleSuccess()
-      }
-    }).catch(error => {
-      handleErrors(error.message)
+const submitNewShareNetworkForm= (values) =>
+  (dispatch, getState) =>
+    new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post(`/share-networks`, { share_network: values }).then(response => {
+        if (response.data.errors) handleErrors({errors: response.data.errors})
+        else {
+          dispatch(receiveShareNetwork(response.data));
+          dispatch(toggleShareNetworkIsNewStatus(response.data.id,true))
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
     })
-  }
 ;
 
-const submitEditShareNetworkForm= (values, {handleSuccess,handleErrors}) =>
-  function(dispatch, getState) {
-    ajaxHelper.put(`/share-networks/${values.id}`, { share_network: values }).then(response => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveShareNetwork(response.data));
-        handleSuccess()
-      }
-    }).catch(error => {
-      handleErrors(error.message)
+const submitEditShareNetworkForm= (values) =>
+  (dispatch, getState) =>
+    new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.put(
+        `/share-networks/${values.id}`,
+        { share_network: values }
+      ).then(response => {
+        if (response.data.errors) handleErrors({errors: response.data.errors})
+        else {
+          dispatch(receiveShareNetwork(response.data));
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
     })
-  }
 ;
 
 //####################### NETWORKS ###########################
@@ -193,7 +192,6 @@ const fetchNetworks=() =>
   function(dispatch) {
     dispatch(requestNetworks());
     return ajaxHelper.get('/share-networks/networks').then(response => {
-      console.log(response)
       return dispatch(receiveNetworks(response.data));
     }).catch( (error) => {
       return dispatch(requestNetworksFailure());

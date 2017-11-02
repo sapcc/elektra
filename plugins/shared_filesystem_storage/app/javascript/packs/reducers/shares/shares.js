@@ -64,9 +64,9 @@ const deleteShareFailure= function(state,{shareId}) {
   const index = state.items.findIndex((item) => item.id==shareId);
   if (index<0) { return state; }
 
-  const newState = Object.assign(state);
-  newState.items[index].isDeleting = false;
-  return newState;
+  const items = state.items.slice();
+  items[index].isDeleting = false;
+  return Object.assign({},state,{items});
 };
 
 const deleteShareSuccess= function(state,{shareId}) {

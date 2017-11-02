@@ -153,39 +153,42 @@ const deleteSecurityService= securityServiceId =>
 
 //################ SECURITY_SERVICE FORM ###################
 
-const submitNewSecurityServiceForm= (values, {handleSuccess,handleErrors}) =>
-  function(dispatch, getState) {
-    const { securityServiceForm } = getState();
+const submitNewSecurityServiceForm= (values) =>
+  (dispatch, getState) =>
+    new Promise((handleSuccess,handleErrors) => {
+      const { securityServiceForm } = getState();
 
-    ajaxHelper.post('/security-services', { security_service: values }).then(response => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveSecurityService(response.data));
-        handleSuccess()
-      }
-    }).catch(error => {
-      handleErrors(error.message)
+      ajaxHelper.post(
+        '/security-services',
+        { security_service: values }
+      ).then(response => {
+        if (response.data.errors) handleErrors({errors: response.data.errors});
+        else {
+          dispatch(receiveSecurityService(response.data));
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
     })
-  }
 ;
 
-const submitEditSecurityServiceForm= (values, {handleSuccess,handleErrors}) =>
-  function(dispatch, getState) {
-    const { securityServiceForm } = getState();
-    let id = values.id
-    delete values['id'];
-    ajaxHelper.put(`/security-services/${id}`, { security_service: values } ).then(response => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors);
-      } else {
-        dispatch(receiveSecurityService(response.data));
-        handleSuccess()
-      }
-    }).catch(error => {
-      handleErrors(error.message)
+const submitEditSecurityServiceForm= (values) =>
+  (dispatch, getState) =>
+    new Promise((handleSuccess,handleErrors) => {
+      const { securityServiceForm } = getState();
+      let id = values.id
+      delete values['id'];
+
+      ajaxHelper.put(
+        `/security-services/${id}`,
+        { security_service: values }
+      ).then(response => {
+        if (response.data.errors) handleErrors({errors: response.data.errors});
+        else {
+          dispatch(receiveSecurityService(response.data));
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
     })
-  }
 ;
 
 // export

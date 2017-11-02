@@ -104,21 +104,22 @@ const deleteShareRule= (shareId,ruleId) =>
 ;
 
 //########################## SHARE RULE FORM #########################
-const submitNewShareRule= (values, {handleSuccess,handleErrors}) =>
-  function(dispatch) {
-    let shareId = values.shareId
-    delete values['shareId']
-    ajaxHelper.post(`/shares/${shareId}/rules`, { rule: values }).then(response => {
-      if (response.data.errors) {
-        handleErrors(response.data.errors)
-      } else {
-        dispatch(receiveShareRule(shareId, response.data));
-        if(handleSuccess) handleSuccess()
-      }
-    }).catch(error => showErrorModal(
-      React.createElement(ErrorsList, {errors: error.message})
-    ))
-  }
+const submitNewShareRule= (values) =>
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) => {
+      let shareId = values.shareId
+      delete values['shareId']
+      ajaxHelper.post(
+        `/shares/${shareId}/rules`,
+        { rule: values }
+      ).then(response => {
+        if (response.data.errors) handleErrors({errors: response.data.errors})
+        else {
+          dispatch(receiveShareRule(shareId, response.data));
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
+    })
 ;
 
 // export

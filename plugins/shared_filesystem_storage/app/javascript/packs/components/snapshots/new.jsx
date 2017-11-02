@@ -1,39 +1,43 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'elektra-form';
+import { Link } from 'react-router-dom';
 
-export default class EditShareForm extends React.Component {
+const protocols = ['NFS','CIFS']
+
+export default class NewSnapshotForm extends React.Component {
   constructor(props){
   	super(props);
-  	this.state = {show: this.props.share!=null};
+  	this.state = {show: true};
     this.close = this.close.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
-  componentWillReceiveProps(nextProps) {
-    this.setState({show: nextProps.share!=null})
-  }
 
   close(e){
-    if(e) e.preventDefault()
+    if(e) e.stopPropagation()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'), 300)
+    setTimeout(() => this.props.history.replace('/shares'),300)
   }
 
-  onSubmit(values) {
+  onSubmit(values){
     return this.props.handleSubmit(values).then(() => this.close());
   }
 
   render(){
+    let {share} = this.props
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Edit Share</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            New Snapshot for Share {share && (share.name || share.id)}
+          </Modal.Title>
         </Modal.Header>
 
         <Form
-          onSubmit={this.onSubmit}
           className='form form-horizontal'
-          validate={values => true}
-          initialValues={this.props.share}>
+          validate={()=>true}
+          initialValues={ { name: (share ? `${(share.name || share.id)}_snapshot` : '')} }
+          onSubmit={this.onSubmit}>
+
           <Modal.Body>
             <Form.Errors/>
 
@@ -52,6 +56,6 @@ export default class EditShareForm extends React.Component {
           </Modal.Footer>
         </Form>
       </Modal>
-    )
+    );
   }
 }

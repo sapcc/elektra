@@ -6,7 +6,8 @@ import {
   fetchAvailabilityZonesIfNeeded,
   deleteShare,
   editShare,
-  submitNewShareForm
+  submitNewShareForm,
+  reloadShare
 } from '../../actions/shares'
 import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
 import { fetchShareRulesIfNeeded } from '../../actions/share_rules'
@@ -25,6 +26,7 @@ export default connect(
     loadShareNetworksOnce: () => dispatch(fetchShareNetworksIfNeeded()),
     loadShareRulesOnce: (shareId) => dispatch(fetchShareRulesIfNeeded(shareId)),
     loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded()),
+    reloadShare: (shareId) => dispatch(reloadShare(shareId)),
     handleDelete: (shareId) => dispatch(deleteShare(shareId)),
     handleSubmitNew: (values,{handleSuccess,handleErrors}) => (
       dispatch(submitNewShareForm(values,{handleSuccess,handleErrors}))

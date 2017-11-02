@@ -1,4 +1,4 @@
-export const AccessControlItem = ({handleDelete, rule}) => {
+export default ({handleDelete, rule}) => {
   const humanizeAccessLevel = () => {
     switch (rule.access_level) {
       case 'ro':
