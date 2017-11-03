@@ -2,9 +2,16 @@ module Loadbalancing
   class L7policy < Core::ServiceLayer::Model
     include ActiveModel::Conversion
 
-    PREDEFINED_POLICIES = [ { protocols: ['TCP'], ids: ['proxy_protocol_2edF_v1_0']}
-                            #{ protocols: ['HTTP', 'HTTPS', 'TERMINATED_HTTPS'], ids: ['x_forwarded_for_2edF_v1_0']}
-                          ]
+    if ENV['MONSOON_DASHBOARD_REGION'] != 'staging'
+      PREDEFINED_POLICIES = [ { protocols: ['TCP'], ids: ['proxy_protocol_2edF_v1_0', 'standard_tcp_a3de_v1_0', ]}
+                            ]
+    else
+      PREDEFINED_POLICIES = [ { protocols: ['TCP'], ids: ['proxy_protocol_2edF_v1_0', 'standard_tcp_a3de_v1_0', ]},
+                              { protocols: ['HTTP', 'HTTPS', 'TERMINATED_HTTPS'], ids: ['x_forward_5b6e_v1_0', 'no_one_connect_3caB_v1_0', 'http_compression_e4a2_v1_0', 'cookie_encryption_b82a_v1_0']},
+                              { protocols: ['HTTPS', 'TERMINATED_HTTPS'], ids: ['sso_22b0_v1_0']}
+                            ]
+    end
+
     ACTIONS= ['REDIRECT_TO_URL', 'REDIRECT_TO_POOL', 'REJECT']
 
     validates :action, presence: true

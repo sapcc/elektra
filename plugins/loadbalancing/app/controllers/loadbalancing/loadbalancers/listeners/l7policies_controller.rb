@@ -99,14 +99,16 @@ module Loadbalancing
           used = services.loadbalancing.l7policies({loadbalancer_id: @loadbalancer.id, listener_id: @listener.id})
           pre_polices = []
           @policies.each do |p|
-            found = false
-            used.each do |u|
-              if p[:ids].include? u.name
-                found = true
-                break
+            p[:ids].each do |id|
+              found = false
+              used.each do |u|
+                if u.name == id
+                  found = true
+                  break
+                end
               end
+              pre_polices << id unless found
             end
-            pre_polices << p if !found
           end
           return pre_polices
         end

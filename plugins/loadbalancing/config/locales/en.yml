@@ -1,5 +1,11 @@
 en:
   loadbalancing:
     policies:
-      proxy_protocol_2edF_v1_0: 'Proxy Protocol'
-      x_forwarded_for_2edF_v1_0: 'X Forwarded For'
+      proxy_protocol_2edF_v1_0: 'Set Proxy Protocol'
+      standard_tcp_a3de_v1_0: 'Use Network Layer 7'
+      x_forward_5b6e_v1_0: 'Set X-Forwarded Headers'
+      one_connect_dd5c_v1_0: 'Enable OneConnect'
+      no_one_connect_3caB_v1_0: 'Disable OneConnect'
+      http_compression_e4a2_v1_0: 'Enable HTTP compression'
+      cookie_encryption_b82a_v1_0: 'Enable Cookie Encryption'
+      sso_22b0_v1_0: 'Enable Client Authentication (SSO)'
