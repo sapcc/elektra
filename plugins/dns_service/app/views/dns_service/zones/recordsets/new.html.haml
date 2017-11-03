@@ -24,7 +24,8 @@
       label: label_values[:label] || 'Content',
       required: true,
       as: (label_values[:type]=='text' ? :text : :string),
-      input_html: { value: (@recordset.records.is_a?(Array) ? @recordset.records.join(', ') : @recordset.records)}
+      input_html: { value: (@recordset.records.is_a?(Array) ? @recordset.records.join(', ') : @recordset.records)},
+      icon_hint: 'Enter multiple entries separated by commas.'
 
     = f.input :description, as: :text
     = f.input :ttl, input_html: {value: 1800}, as: :integer, icon_hint: 'TTL is the time-to-live for the record, in seconds.'
