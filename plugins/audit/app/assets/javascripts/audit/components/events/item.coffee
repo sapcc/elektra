@@ -22,10 +22,11 @@ Event = ({event, toggleDetails}) ->
       br null
       span className: 'resource-id', event.target.id
     td className: 'big-data-cell',
-      if event.initiator.id && event.initiator.id.length > 0
-        event.initiator.id
-      else
-        span className: 'resource-id', event.initiator.id
+      # in case we decide enrich the events with names in the hermes backend (not implemented)
+      #if event.initiator.name && event.initiator.name.length > 0
+      #  event.initiator.name
+      #else
+      span className: 'resource-id', event.initiator.id
 
 
 Event = connect(
