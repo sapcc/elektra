@@ -1,7 +1,8 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { confirm, showInfoModal, showErrorModal } from 'dialogs';
-import { ErrorsList } from 'elektra-form/components/errors_list';
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError  } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 //################### SNAPSHOTS #########################
 const requestSnapshots= () =>
@@ -69,7 +70,7 @@ const fetchSnapshots= () =>
       dispatch(receiveSnapshots(response.data));
     }).catch(error => {
       dispatch(requestSnapshotsFailure());
-      showErrorModal(`Could not load snapshots (${error.message})`)
+      addError(`Could not load snapshots (${error.message})`)
     })
   }
 ;
@@ -110,7 +111,7 @@ const removeSnapshot=snapshotId =>
 const showDeleteSnapshotError=(snapshotId,message)=>
   function(dispatch){
     dispatch(deleteSnapshotFailure(snapshotId));
-    showErrorModal(`Could not delete snapshot (${message})`);
+    addError(`Could not delete snapshot (${message})`);
   }
 ;
 
@@ -120,10 +121,10 @@ const deleteSnapshot= snapshotId =>
       dispatch(requestDelete(snapshotId));
       ajaxHelper.delete(`/snapshots/${snapshotId}`).then((response) => {
         if (response.data && response.data.errors) {
-          showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
         }
         else dispatch(removeSnapshot(snapshotId));
-      }).catch(error => showErrorModal(`Could not delete snapshot (${error.message})`))
+      }).catch(error => addError(`Could not delete snapshot (${error.message})`))
     }).catch(error => null)
   }
 ;

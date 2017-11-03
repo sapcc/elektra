@@ -1,4 +1,4 @@
-import { Form } from 'elektra-form';
+import { Form } from 'lib/elektra-form';
 
 const AccessControlForm = (props) => {
   const accessTypes = { ip: 'ip', user: 'user'}

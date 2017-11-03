@@ -1,20 +1,20 @@
 import * as constants from '../../constants'
 
-const requestShareRules=function(state,{shareId}){
+const requestShareRules=function(state,{shareId,requestedAt}){
   const newState = Object.assign({},state);
   const rules = newState[shareId] || {};
 
-  newState[shareId] = Object.assign({},rules,{isFetching:true});
+  newState[shareId] = Object.assign({},rules,{isFetching:true,requestedAt});
   return newState;
 };
 
 const receiveShareRules=function(state,{shareId,receivedAt,rules}){
   const newState = Object.assign({},state);
-  newState[shareId] = {
+  newState[shareId] = Object.assign({},newState[shareId],{
     isFetching: false,
     receivedAt,
     items: rules
-  };
+  });
   return newState;
 };
 

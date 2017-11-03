@@ -1,5 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
-import { Form } from 'elektra-form';
+import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
 
 const protocols = ['NFS','CIFS']

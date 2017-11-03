@@ -1,7 +1,9 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { confirm, showInfoModal, showErrorModal } from 'dialogs';
-import { ErrorsList } from 'elektra-form/components/errors_list';
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError } from 'lib/flashes';
+
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import { removeShareRules } from './share_rules';
 
 //################### SHARES #########################
@@ -52,7 +54,7 @@ const fetchShares= () =>
     })
     .catch( (error) => {
       dispatch(requestSharesFailure());
-      showInfoModal(`Could not load shares (${error.message})`)
+      addError(`Could not load shares (${error.message})`)
     });
   }
 
@@ -126,14 +128,14 @@ const deleteShare= shareId =>
     }
 
     if (shareSnapshots.length > 0) {
-      return showInfoModal(`Share still has ${shareSnapshots.length} dependent snapshots. Please remove dependent snapshots first.`)
+      return addNotice(`Share still has ${shareSnapshots.length} dependent snapshots. Please remove dependent snapshots first.`)
     }
 
     confirm(`Do you really want to delete the share ${shareId}?`).then(() => {
       dispatch(requestDelete(shareId));
       ajaxHelper.delete(`/shares/${shareId}`).then((response) => {
         if (response.data && response.data.errors) {
-          showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
           dispatch(deleteShareFailure(shareId))
         } else {
           dispatch(removeShare(shareId));
@@ -141,7 +143,7 @@ const deleteShare= shareId =>
         }
       }).catch((error) => {
         dispatch(deleteShareFailure(shareId))
-        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+        addError(React.createElement(ErrorsList, {errors: error.message}));
       })
     }).catch((aborted) => null)
   }
@@ -229,15 +231,18 @@ const submitNewShareForm= (values) => (
 // Manila availability zones, not nova!!!
 const shouldFetchAvailabilityZones= function(state) {
   const azs = state.shared_filesystem_storage.availabilityZones;
-  if (azs.isFetching) {
-    return false;
-  } else if (azs.receivedAt) {
-    return false;
-  } else {
+
+  if (!azs.isFetching && !azs.requestedAt) {
     return true;
+  } else {
+    return false;
   }
+
 };
-const requestAvailableZones= () => ({type: constants.REQUEST_AVAILABLE_ZONES});
+const requestAvailableZones= () => ({
+  type: constants.REQUEST_AVAILABLE_ZONES,
+  requestedAt: Date.now()
+});
 
 const requestAvailableZonesFailure= () => ({type: constants.REQUEST_AVAILABLE_ZONES_FAILURE});
 

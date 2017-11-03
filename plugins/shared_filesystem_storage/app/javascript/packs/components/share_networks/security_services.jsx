@@ -1,13 +1,8 @@
 import { Modal, Button } from 'react-bootstrap';
 import ShareNetworkSecurityServiceItem from './security_service_item';
 import ShareNetworkSecurityServiceForm from './security_service_form';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-
-const FadeTransition = ({ children, ...props }) => (
-  <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
-    {children}
-  </CSSTransition>
-);
+import { TransitionGroup } from 'react-transition-group';
+import { FadeTransition } from 'lib/components/transitions';
 
 export default class ShareNetworkSecurityServicesModal extends React.Component {
   constructor(props){

@@ -1,6 +1,7 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { confirm, showInfoModal, showErrorModal } from 'dialogs';
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError  } from 'lib/flashes';
 
 //################### SECURITY_SERVICES #########################
 const requestSecurityServices= () =>
@@ -49,7 +50,7 @@ const fetchSecurityServices= () =>
       dispatch(receiveSecurityServices(response.data));
     }).catch(error => {
       dispatch(requestSecurityServicesFailure());
-      showErrorModal(`Could not load security services (${error.message})`);
+      addError(`Could not load security services (${error.message})`);
     })
   }
 ;
@@ -92,7 +93,7 @@ const reloadSecurityService= securityServiceId =>
       dispatch(receiveSecurityService(data));
     }).catch(error => {
       dispatch(requestSecurityServiceFailure());
-      showErrorModal(`Could not reload security service (${error.message})`);
+      addError(`Could not reload security service (${error.message})`);
     })
   }
 ;
@@ -132,7 +133,7 @@ const deleteSecurityService= securityServiceId =>
     }
 
     if (dependentSecurityServiceNetworks.length>0) {
-      showInfoModal(`Please remove thi security service from securityService networks (${dependentSecurityServiceNetworks.length}) first!`);
+      addNotice(`Please remove thi security service from securityService networks (${dependentSecurityServiceNetworks.length}) first!`);
       return;
     }
 
@@ -140,12 +141,12 @@ const deleteSecurityService= securityServiceId =>
       dispatch(requestDelete(securityServiceId));
       ajaxHelper.delete(`/security-services/${securityServiceId}`).then(response => {
         if (response.data && response.data.errors) {
-          showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}));
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
         } else {
           dispatch(removeSecurityService(securityServiceId));
         }
       }).catch(error => {
-        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+        addError(React.createElement(ErrorsList, {errors: error.message}));
       })
     }).catch(error => null)
   }
