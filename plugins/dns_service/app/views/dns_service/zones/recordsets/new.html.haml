@@ -20,7 +20,11 @@
 
     - record_type = @recordset.type ? @recordset.type.to_sym : nil
     - label_values = DnsService::Recordset::CONTENT_LABELS.fetch(record_type,{})
-    = f.input :records, label: label_values[:label] || 'Content', required: true, as: (label_values[:type]=='text' ? :text : :string)
+    = f.input :records,
+      label: label_values[:label] || 'Content',
+      required: true,
+      as: (label_values[:type]=='text' ? :text : :string),
+      input_html: { value: (@recordset.records.is_a?(Array) ? @recordset.records.join(', ') : @recordset.records)}
 
     = f.input :description, as: :text
     = f.input :ttl, input_html: {value: 1800}, as: :integer, icon_hint: 'TTL is the time-to-live for the record, in seconds.'

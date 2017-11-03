@@ -4,7 +4,7 @@ module DnsService
     before_action :load_pools, only: [:index, :show, :update, :create]
 
     authorization_context 'dns_service'
-    authorization_required 
+    authorization_required
 
     def index
       @zones = paginatable(per_page: 20) do |pagination_options|
@@ -48,6 +48,16 @@ module DnsService
           type: 'NS'
         }.merge(@impersonate_option)
       )
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        zone = services.dns_service.find_zone(params[:id])
+        render partial: 'dns_service/zones/recordsets/recordsets', locals: { recordsets: @recordsets, zone: zone }
+      else
+        # comon case, render index page with layout
+        render action: :show
+      end
     end
 
     def new

@@ -23,7 +23,7 @@
         %td= @recordset.description
       %tr
         %th Record Data
-        %td= @recordset.records.join(', ')
+        %td= sanitize(@recordset.records.join(', '))
       %tr
         %th TTL
         %td= @recordset.ttl

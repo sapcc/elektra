@@ -1,8 +1,16 @@
 - if current_user.is_allowed?("dns_service:recordset_create", zone: zone) && @scoped_project_id == zone.project_id
   .toolbar.toolbar-aligntop
+    - if recordsets.length >= 5
+      .pull-left
+        .has-feedback.has-feedback-searchable
+          = text_field_tag 'search_records_input', '', class: "form-control", placeholder: 'Record name, ID, or type'
+        .has-feedback-help
+          %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by record name, ID or type in visible record list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+            %i.fa.fa-question-circle
+
     = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary btn-lg'
 
-%table.table#recordsets
+%table.table#recordsets.searchable{data:{search_input: '#search_records_input'}}
   %thead
     %tr
       %th Name
@@ -15,8 +23,10 @@
       %tr{data: {empty: true}}
         %td{colspa: 6} No records available
     - else
-      - recordsets.each do | recordset |
+      = render partial: 'dns_service/zones/recordsets/recordsets', locals: { recordsets: recordsets, zone: zone }
 
-        = render partial: 'dns_service/zones/recordsets/recordset_item', locals: {zone: zone, recordset: recordset}
+- if @pagination_has_next
+  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table#recordsets tbody', search_input_selector: '#search_records_input'} }
 
-= render_paginatable(recordsets)
+
+=# render_paginatable(recordsets)

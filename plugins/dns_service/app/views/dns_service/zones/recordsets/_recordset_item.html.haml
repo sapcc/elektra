@@ -1,4 +1,6 @@
-%tr{id: "recordset_#{recordset.id}"}
+- data = {search_name: recordset.name+'_'+recordset.id+'_'+recordset.type, marker_id: recordset.id}
+
+%tr{id: "recordset_#{recordset.id}", data: data}
   %td.big-data-cell
     - if current_user.is_allowed?("dns_service:recordset_get", recordset: recordset.attributes, zone: zone)
       = link_to recordset.name, zone_recordset_path(zone_id:zone.id,id:recordset.id), data: {modal: true}
@@ -9,9 +11,9 @@
   %td= recordset.type
   %td.big-data-cell
     - if recordset.records.is_a?(Array)
-      = raw recordset.records.join('<br/>')
+      = sanitize(recordset.records.join(', '))
     - else
-      = recordset.records
+      = sanitize(recordset.records)
 
   %td= recordset.ttl
   %td.snug
