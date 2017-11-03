@@ -1,7 +1,8 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { confirm, showInfoModal, showErrorModal } from 'dialogs';
-import { ErrorsList } from 'elektra-form/components/errors_list';
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError  } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import { toggleShareNetworkIsNewStatus } from './share_networks';
 
 //################ SHARE NETWORK SECURITY SERVICES
@@ -68,7 +69,7 @@ const fetchShareNetworkSecurityServices= shareNetworkId =>
     ajaxHelper.get(`/share-networks/${shareNetworkId}/security-services`).then(response => {
       dispatch(receiveShareNetworkSecurityServices(shareNetworkId,response.data));
     }).catch(error => {
-      showErrorModal(`Could not load share network security services (${error.message})`)
+      addError(`Could not load share network security services (${error.message})`)
     })
   }
 ;
@@ -99,13 +100,13 @@ const deleteShareNetworkSecurityService= (shareNetworkId,securityServiceId) =>
     ajaxHelper.delete(`/share-networks/${shareNetworkId}/security-services/${securityServiceId}`).then(response=>{
       if (response.data && response.data.errors) {
         dispatch(deleteShareNetworkSecurityServiceFailure(shareNetworkId,securityServiceId));
-        showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}))
+        addError(React.createElement(ErrorsList, {errors: response.data.errors}))
       } else {
         dispatch(removeShareNetworkSecurityService(shareNetworkId,securityServiceId));
       }
     }).catch(error => {
       dispatch(deleteShareNetworkSecurityServiceFailure(shareNetworkId,securityServiceId));
-      showErrorModal(`Could not remove security service from share network ${error.message}`)
+      addError(`Could not remove security service from share network ${error.message}`)
     })
   }
 ;

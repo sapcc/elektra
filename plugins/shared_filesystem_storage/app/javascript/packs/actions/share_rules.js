@@ -1,6 +1,7 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { confirm, showInfoModal, showErrorModal } from 'dialogs';
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError  } from 'lib/flashes';
 
 //################ SHARE RULES (ACCESS CONTROL) ################
 const receiveShareRule=(shareId,rule)=>
@@ -45,6 +46,7 @@ const removeShareRules=shareId =>
 const requestShareRules= shareId =>
   ({
     type: constants.REQUEST_SHARE_RULES,
+    requestedAt: Date.now(),
     shareId
   })
 ;
@@ -72,13 +74,10 @@ const fetchShareRules= shareId =>
 
 const shouldFetchShareRules= function(state, shareId) {
   const shareRules = state.shared_filesystem_storage.shareRules[shareId];
-  if (!shareRules) {
-    return true;
-  } else if (shareRules.isFetching || shareRules.receivedAt) {
-    return false;
-  } else {
-    return false;
-  }
+  if (!shareRules) return true;
+  if (!shareRules.isFetching && !shareRules.requestedAt) return true;
+
+  return false;
 };
 
 const fetchShareRulesIfNeeded= shareId =>
@@ -93,11 +92,11 @@ const deleteShareRule= (shareId,ruleId) =>
     ajaxHelper.delete(`/shares/${shareId}/rules/${ruleId}`).then(response => {
       if (response.data && response.data.errors) {
         dispatch(deleteShareRuleFailure(shareId,ruleId));
-        showErrorModal(React.createElement(ErrorsList, {errors}));
+        addError(React.createElement(ErrorsList, {errors}));
       } else {
         dispatch(removeShareRule(shareId,ruleId));
       }
-    }).catch(error => showErrorModal(
+    }).catch(error => addError(
       React.createElement(ErrorsList, {errors: error.message})
     ))
   }

@@ -1,16 +1,10 @@
 import { withRouter, Route, Link } from 'react-router-dom';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { TransitionGroup } from 'react-transition-group';
+import { FadeTransition } from 'lib/components/transitions';
 import { policy } from 'policy';
-import SearchField from 'components/search_field';
-
+import SearchField from 'lib/components/search_field';
 import ShareItem from './item';
-
-const FadeTransition = ({ children, ...props }) => (
-  <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
-    {children}
-  </CSSTransition>
-);
 
 const noShareNetworksInfo = (
   <Popover id="popover-no-share-networks" title="No Share Network found">

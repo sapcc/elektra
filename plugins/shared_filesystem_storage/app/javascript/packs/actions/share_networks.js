@@ -1,7 +1,8 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { confirm, showInfoModal, showErrorModal } from 'dialogs';
-import { ErrorsList } from 'elektra-form';
+import { confirm } from 'lib/dialogs';
+import { addNotice, addError  } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form';
 
 //################### SHARE_NETWORKS #########################
 const requestShareNetworks= () => (
@@ -63,7 +64,7 @@ const fetchShareNetworks= () =>
       )
       .catch( (error) => {
         dispatch(requestShareNetworksFailure());
-        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+        addError(React.createElement(ErrorsList, {errors: error.message}));
       })
   }
 ;
@@ -115,19 +116,19 @@ const deleteShareNetwork= shareNetworkId =>
     }
 
     if (networkShares.length>0) {
-      showInfoModal(`Please delete dependent shares(${networkShares.length}) first!`)
+      addNotice(`Please delete dependent shares(${networkShares.length}) first!`)
       return
     }
     confirm('Do you really want to delete this share network?').then(() => {
       dispatch(requestDelete(shareNetworkId));
       ajaxHelper.delete(`/share-networks/${shareNetworkId}`).then(response => {
         if (response.data && response.data.errors) {
-          showErrorModal(React.createElement(ErrorsList, {errors: response.data.errors}))
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}))
         } else {
           return dispatch(removeShareNetwork(shareNetworkId));
         }
       }).catch(error => {
-        showErrorModal(React.createElement(ErrorsList, {errors: error.message}));
+        addError(React.createElement(ErrorsList, {errors: error.message}));
       })
     }).catch((aborted) => null)
   }

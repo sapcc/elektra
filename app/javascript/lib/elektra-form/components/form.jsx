@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
-import makeCancelable from 'tools/cancelable_promise';
-import Deferred from 'tools/deferred';
-import { FormSubmitError } from 'elektra-form';
+import makeCancelable from 'lib/tools/cancelable_promise';
+import Deferred from 'lib/tools/deferred';
 
 export default class Form extends React.Component {
   static initialState = {

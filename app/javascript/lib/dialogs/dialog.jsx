@@ -1,5 +1,5 @@
 import { Modal, Button } from 'react-bootstrap';
-import Deferred from 'tools/deferred';
+import Deferred from 'lib/tools/deferred';
 
 export class Dialog extends React.Component {
   constructor(props, context) {

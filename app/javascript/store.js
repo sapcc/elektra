@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { mergeDeep } from 'tools/deep_merge';
+import { mergeDeep } from 'lib/tools/deep_merge';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 // combines all reducers and also nested reducers
