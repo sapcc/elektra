@@ -12,22 +12,21 @@ Event = ({event, toggleDetails}) ->
       a href: '#', onClick: ((e) -> e.preventDefault(); toggleDetails(event)),
         i className: showDetailsClassName, null
     td null,
-      moment(event.event_time).format("YYYY-MM-DD, HH:mm:ssZZ")
+      moment(event.eventTime).format("YYYY-MM-DD, HH:mm:ssZZ")
     td null,
-      event.source
+      event.observer.typeURI
     td null,
-      event.event_type
+      event.action
     td className: 'big-data-cell',
-      event.resource_type
+      event.target.typeURI
       br null
-      span className: 'resource-id', event.resource_id
-      br null
-      event.resource_name
+      span className: 'resource-id', event.target.id
     td className: 'big-data-cell',
-      if event.initiator.user_name && event.initiator.user_name.length > 0
-        event.initiator. user_name
-      else
-        span className: 'resource-id', event.initiator.user_id
+      # in case we decide enrich the events with names in the hermes backend (not implemented)
+      #if event.initiator.name && event.initiator.name.length > 0
+      #  event.initiator.name
+      #else
+      span className: 'resource-id', event.initiator.id
 
 
 Event = connect(

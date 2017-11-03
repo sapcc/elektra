@@ -36,11 +36,14 @@ Events = ({
       div className: 'inputwrapper',
         select name: 'filterType', className: 'form-control', value: filterType, onChange: ((e) -> handleFilterTypeChange(e.target.value)),
           option value: '', 'Select attribute '
-          option value: 'source',  'Source'
-          option value: 'event_type', 'Event Type'
-          option value: 'resource_type', 'Resource Type'
-          option value: 'user_name', 'User ID'
-
+          option value: 'observer_type',  'Source'
+          option value: 'action', 'Action'
+          option value: 'target_type', 'Resource Type'
+          option value: 'target_id', 'Resource ID'
+          option value: 'initiator_id', 'Initiator/User ID'
+          option value: 'initiator_type', 'Initiator Type'
+          option value: 'outcome', 'Result'
+ 
       div className: 'inputwrapper',
         if attributeValues[filterType] && attributeValues[filterType].length > 0
           select name: 'filterTerm', className: 'form-control filter-term', value: filterTerm, onChange: ((e) -> handleFilterTermChange(e.target.value, 0)),
@@ -70,9 +73,9 @@ Events = ({
           th className: 'icon-cell', ''
           th null, 'Time'
           th null, 'Source'
-          th null, 'Event Type'
-          th null, 'Resource'
-          th className: 'user-cell', 'User'
+          th null, 'Action'
+          th null, 'Target Resource'
+          th className: 'user-cell', 'Initiator/User'
 
       if error
         tbody null,
@@ -82,7 +85,7 @@ Events = ({
       else
         if events
           for event in events
-            tbody key: event.event_id,
+            tbody key: event.id,
               React.createElement EventItem, event: event
               if event.detailsVisible
                 React.createElement EventItemDetails, event: event

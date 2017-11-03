@@ -92,23 +92,23 @@
   # Event Details
 
   toggleEventDetailsVisible = (state,{eventId, detailsVisible}) ->
-    newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
+    newState = ReactHelpers.updateItemInList(state, eventId, 'id', {
       detailsVisible: detailsVisible
     })
 
   requestEventDetails = (state,{eventId}) ->
-    newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
+    newState = ReactHelpers.updateItemInList(state, eventId, 'id', {
       isFetchingDetails: true
     })
 
   requestEventDetailsFailure = (state,{eventId, error}) ->
-    newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
+    newState = ReactHelpers.updateItemInList(state, eventId, 'id', {
       isFetchingDetails: false
       error: error
     })
 
   receiveEventDetails = (state,{eventId, eventDetails}) ->
-    newState = ReactHelpers.updateItemInList(state, eventId, 'event_id', {
+    newState = ReactHelpers.updateItemInList(state, eventId, 'id', {
       details: eventDetails
       isFetchingDetails: false
       error: null
