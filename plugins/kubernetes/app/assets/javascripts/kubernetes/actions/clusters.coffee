@@ -30,7 +30,7 @@
           dispatch(receiveClusters(data))
         error: ( jqXHR, textStatus, errorThrown) ->
           errorMessage =  if typeof jqXHR.responseJSON == 'object'
-                            JSON.parse(jqXHR.responseText).message
+                            jqXHR.responseJSON.message
                           else
                             if jqXHR.responseText.length > 0
                               jqXHR.responseText
@@ -88,7 +88,7 @@
             when 404 then dispatch(loadClusters()) # if requested cluster not found reload the whole list to see what we have
             else
               errorMessage =  if typeof jqXHR.responseJSON == 'object'
-                                JSON.parse(jqXHR.responseText).message
+                                jqXHR.responseJSON.message
                               else jqXHR.responseText
               dispatch(requestClusterFailure(errorMessage))
 
@@ -122,8 +122,16 @@
 
   requestDeleteCluster = (clusterName) ->
     (dispatch) ->
-      # TODO: show confirm dialog
-      dispatch(deleteCluster(clusterName))
+      dispatch(app.showConfirmDialog({
+        title: 'Delete Cluster'
+        message: "Do you really want to delete cluster #{clusterName}?",
+        confirmCallback: (() -> dispatch(deleteCluster(clusterName)))
+      }))
+
+
+  deleteCluster = (clusterName) ->
+    (dispatch) ->
+      dispatch(deleteClusterConfirmed(clusterName))
 
       app.ajaxHelper.delete "/api/v1/clusters/#{clusterName}",
         contentType: 'application/json'
@@ -131,17 +139,17 @@
           dispatch(fetchClusters())
         error: ( jqXHR, textStatus, errorThrown) ->
           errorMessage =  if typeof jqXHR.responseJSON == 'object'
-                            JSON.parse(jqXHR.responseText).message
+                            jqXHR.responseJSON.message
                           else jqXHR.responseText
           dispatch(deleteClusterFailure(clusterName, errorMessage))
 
 
-  deleteCluster = () ->
+  deleteClusterConfirmed = () ->
     type: app.DELETE_CLUSTER
 
-  deleteClusterFailure = (error) ->
+  deleteClusterFailure = (clusterName, error) ->
     type: app.DELETE_CLUSTER_FAILURE
-    error: error
+    error: "Couldn't delete cluster #{clusterName}: #{error}"
 
 
   # -------------- CREDENTIALS ---------------
@@ -264,7 +272,7 @@
             successCallback() if successCallback
           error: ( jqXHR, textStatus, errorThrown) ->
             errorMessage =  if typeof jqXHR.responseJSON == 'object'
-                              JSON.parse(jqXHR.responseText).message
+                              jqXHR.responseJSON.message
                             else jqXHR.responseText
 
             dispatch(clusterFormFailure("Please Note": [errorMessage]))

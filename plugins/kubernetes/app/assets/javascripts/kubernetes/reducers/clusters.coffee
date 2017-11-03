@@ -44,9 +44,14 @@
 
 
   deleteCluster = (state,{clusterName}) ->
-    ReactHelpers.mergeObjects({},state,{
-      deleteTarget: clusterName
-    })
+    # ReactHelpers.mergeObjects({},state,{
+    #   deleteTarget: clusterName
+    # })
+    index = ReactHelpers.findIndexInArray(state.items,clusterName, 'name')
+    return state if index < 0
+    items = state.items.slice() # clone array
+    items[index].isTerminating = true
+    ReactHelpers.mergeObjects({},state,{items})
 
   deleteClusterFailure = (state,{clusterName, error})->
     ReactHelpers.mergeObjects({},state,{

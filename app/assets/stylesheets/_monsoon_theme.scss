@@ -339,6 +339,22 @@ section {
   }
 }
 
+
+// Utilities
+
+.u-margin-top-small {
+  margin-top: 8px;
+}
+
+.u-margin-top-normal {
+  margin-top: $line-height-computed;
+}
+
+.u-margin-top-large {
+  margin-top: $line-height-computed*2;
+}
+
+
 // ---------------------------------------------------------------------------------
 // Scaffolding
 // ---------------------------------------------------------------------------------
@@ -515,6 +531,11 @@ section {
   @extend .btn-outline;
 
   @include button-variant-outline-negative;
+}
+
+.btn-plain {
+  background-color: #dfdfdf;
+  border: 1px solid #ccc;
 }
 
 .btn-md {

@@ -26,7 +26,7 @@ ReactConfirmDialog = ({title,message,confirmCallback,cancelCallback,close}) ->
         onClick: (() -> close(); if confirmCallback then confirmCallback()),
         'Yes'
 
-@ReactConfirmDialog = ReactModal.Wrapper('Confirm', ReactConfirmDialog,
+@ReactConfirmDialog = ReactModal.Wrapper('Please Confirm', ReactConfirmDialog,
   closeButton: false,
   static: true
 )

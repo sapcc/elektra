@@ -58,8 +58,9 @@ Cluster = React.createClass
 
   render: ->
     {cluster, kubernikusBaseUrl, handleEditCluster, handleClusterDelete, handleGetCredentials, handleGetSetupInfo, handlePollingStart, handlePollingStop} = @props
+    disabled = cluster.isTerminating or cluster.status.kluster.state == 'Terminating'
 
-    tr null,
+    tr className: ('item-disabled' if disabled),
       td null,
         cluster.name
       td null,
@@ -93,20 +94,19 @@ Cluster = React.createClass
 
 
       td className: 'vertical-buttons',
-        console.log("cluster: ", cluster)
-        button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
+        button className: 'btn btn-sm btn-primary', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
           i className: 'fa fa-fw fa-pencil'
           'Edit Cluster'
 
-        button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
+        button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
           i className: 'fa fa-fw fa-download'
           'Download Credentials'
-        console.log("baseurl: #{kubernikusBaseUrl}")
-        button className: 'btn btn-sm btn-primary', onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
+
+        button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
           i className: 'fa fa-fw fa-wrench'
           'Setup'
 
-        button className: 'btn btn-sm btn-default hover-danger', onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+        button className: 'btn btn-sm btn-plain hover-danger u-margin-top-small', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
           i className: 'fa fa-fw fa-trash-o'
           'Delete Cluster'
 
