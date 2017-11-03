@@ -38,12 +38,12 @@ Events = ({
           option value: '', 'Select attribute '
           option value: 'observer_type',  'Source'
           option value: 'action', 'Action'
-          option value: 'outcome', 'Result'
           option value: 'target_type', 'Resource Type'
           option value: 'target_id', 'Resource ID'
           option value: 'initiator_id', 'Initiator/User ID'
           option value: 'initiator_type', 'Initiator Type'
-
+          option value: 'outcome', 'Result'
+ 
       div className: 'inputwrapper',
         if attributeValues[filterType] && attributeValues[filterType].length > 0
           select name: 'filterTerm', className: 'form-control filter-term', value: filterTerm, onChange: ((e) -> handleFilterTermChange(e.target.value, 0)),
