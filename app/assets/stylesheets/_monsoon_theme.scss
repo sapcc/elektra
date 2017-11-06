@@ -328,14 +328,10 @@ section {
     color: $dark-sapgold;
   }
 
-  &.release-state-tech_preview {
-    display: inline;
-    color: $bright-blue;
-  }
-
+  &.release-state-tech_preview,
   &.release-state-beta {
     display: inline;
-    color: $medium-green;
+    color: $bright-blue;
   }
 }
 
