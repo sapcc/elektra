@@ -11,10 +11,37 @@
           $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
         }
         
+        // empty fields if inherited is true
+        if ($('#project_masterdata_cost_object_inherited').val() == "true") {
+          $('select#project_masterdata_solution').val("");
+          $('select#project_masterdata_cost_object_type').val("");
+          $('input#project_masterdata_cost_object_name').val("");
+        }
+        
+        // handle inherited true or false
         $('#project_masterdata_cost_object_inherited').change(function(){
-          $('select#project_masterdata_solution').prop('disabled', function(i, v) { return !v; });
-          $('select#project_masterdata_cost_object_type').prop('disabled', function(i, v) { return !v; });
-          $('input#project_masterdata_cost_object_name').prop('disabled', function(i, v) { return !v; });
+          if ($('#project_masterdata_cost_object_inherited').val() == "true") {
+            $('select#project_masterdata_solution').data('old_value', $('select#project_masterdata_solution').val());
+            $('select#project_masterdata_cost_object_type').data('old_value',$('select#project_masterdata_cost_object_type').val());
+            $('input#project_masterdata_cost_object_name').data('old_value',$('input#project_masterdata_cost_object_name').val());
+            
+            $('select#project_masterdata_solution').val("");
+            $('select#project_masterdata_cost_object_type').val("");
+            $('input#project_masterdata_cost_object_name').val("");
+
+            $('select#project_masterdata_solution').prop('disabled', true);
+            $('select#project_masterdata_cost_object_type').prop('disabled', true);
+            $('input#project_masterdata_cost_object_name').prop('disabled', true);
+          }
+          else {
+            $('select#project_masterdata_solution').val($('select#project_masterdata_solution').data('old_value'));
+            $('select#project_masterdata_cost_object_type').val($('select#project_masterdata_cost_object_type').data('old_value'));
+            $('input#project_masterdata_cost_object_name').val($('input#project_masterdata_cost_object_name').data('old_value'));
+
+            $('select#project_masterdata_solution').prop('disabled', false);
+            $('select#project_masterdata_cost_object_type').prop('disabled', false);
+            $('input#project_masterdata_cost_object_name').prop('disabled',false);
+          }
         })
         
         $('select#project_masterdata_solution').change(function(){
