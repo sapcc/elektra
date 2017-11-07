@@ -23,7 +23,8 @@
                label: raw("Inherited #{render partial: '/masterdata_cockpit/application/help_icon', locals: { help_text: t('masterdata_cockpit.inherited_help') }}"),
                as: :select, 
                include_hidden: false, 
-               required:true
+               include_blank: false, 
+               required:false
         %div{ class: @inheritance.co_inheritable ? 'col-md-2' : 'col-md-3' }
           - unless @solutions.nil?
             = f.input :solution, 
