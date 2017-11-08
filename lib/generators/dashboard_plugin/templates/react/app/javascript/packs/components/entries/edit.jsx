@@ -1,24 +1,25 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 
-export default class EditShareForm extends React.Component {
+export default class EditEntryForm extends React.Component {
   constructor(props){
   	super(props);
-  	this.state = {show: this.props.share!=null};
+  	this.state = {show: this.props.entry!=null};
     this.close = this.close.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
   componentWillReceiveProps(nextProps) {
-    this.setState({show: nextProps.share!=null})
+    this.setState({show: nextProps.entry!=null})
   }
 
   close(e){
     if(e) e.preventDefault()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'), 300)
+    setTimeout(() => this.props.history.replace('/entries'), 300)
   }
 
   onSubmit(values) {
+    // handleSubmit is a promise object.
     return this.props.handleSubmit(values).then(() => this.close());
   }
 
@@ -26,14 +27,14 @@ export default class EditShareForm extends React.Component {
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Edit Share</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">Edit Entry</Modal.Title>
         </Modal.Header>
 
         <Form
           onSubmit={this.onSubmit}
           className='form form-horizontal'
           validate={values => true}
-          initialValues={this.props.share}>
+          initialValues={this.props.entry}>
           <Modal.Body>
             <Form.Errors/>
 

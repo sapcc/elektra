@@ -1,5 +1,4 @@
-import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 
 const Row = ({label,value,children}) => {
   return (
@@ -10,10 +9,10 @@ const Row = ({label,value,children}) => {
   )
 };
 
-export default class ShowShareModal extends React.Component{
+export default class ShowEntryModal extends React.Component{
   constructor(props){
   	super(props);
-  	this.state = {show: props.share!=null};
+  	this.state = {show: props.entry!=null};
     this.close = this.close.bind(this)
   }
 
@@ -21,81 +20,26 @@ export default class ShowShareModal extends React.Component{
     if(e) e.stopPropagation()
     //this.props.history.goBack()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'),300)
-  }
-
-  componentDidMount() {
-    if(this.props.share) this.props.loadExportLocationsOnce(this.props.share.id)
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({show: nextProps.share!=null})
-    if(nextProps.share && !nextProps.share.export_locations) {
-      this.props.loadExportLocationsOnce(nextProps.share.id)
-    }
-  }
-
-  overview(share) {
-    return (
-      <table className='table no-borders'>
-        <tbody>
-          <Row label='Name' value={share.name}/>
-          <Row label='Description' value={share.description}/>
-          <Row label='ID' value={share.id}/>
-          <Row label='Status' value={share.status}/>
-          <Row label='Export Locations'>
-            {share.export_locations ? (
-              share.export_locations.map((location) =>
-                <div key={location.id}>{location.path}</div>)
-              ) : (<span className='spinner'></span>)
-            }
-          </Row>
-          <Row label='Availability zone' value={share.availability_zone}/>
-          <Row label='Size' value={share.size+' GiB'}/>
-          <Row label='Protocol' value={share.share_proto}/>
-          <Row label='Share Type' value={share.share_type}/>
-          <Row label='Share network'>
-            <Link to={`/share-networks/${share.share_network_id}/show`}>{share.share_network_id}</Link>
-          </Row>
-          <Row label='Created At' value={share.created_at}/>
-          <Row label='Host' value={share.host}/>
-        </tbody>
-      </table>
-    );
-  }
-
-  metadata(share) {
-    if (share.metadata && Object.keys(share.metadata).length>0) {
-      return (
-        <table className="table no-borders">
-          <tbody>
-            Object.keys(share.metadata).map((key) =>
-              <Row label={key} value={share.metadata[key]}/>
-            )
-          </tbody>
-        </table>
-      )
-    } else return null
+    setTimeout(() => this.props.history.replace('/entries'),300)
   }
 
   render(){
-    let { share, onHide } = this.props
+    let { entry, onHide } = this.props
 
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Share {share ? share.name : ''}</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">Entry {entry ? entry.name : ''}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { share &&
-            ( share.metadata && Object.keys(share.metadata).length>0 ? (
-              <Tabs defaultActiveKey={1} id="share">
-                <Tab eventKey={1} title="Overview">{this.overview(share)}</Tab>
-                <Tab eventKey={2} title="Metadata">{this.metadata(share)}</Tab>
-              </Tabs>
-            ) : (
-              this.overview(share)
-            ))
+          { entry &&
+            <table className='table no-borders'>
+              <tbody>
+                <Row label='Name' value={entry.name}/>
+                <Row label='Description' value={entry.description}/>
+                <Row label='ID' value={entry.id}/>
+              </tbody>
+            </table>
           }
         </Modal.Body>
         <Modal.Footer>

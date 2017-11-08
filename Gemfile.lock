@@ -144,6 +144,11 @@ PATH
     object_storage (0.0.1)
 
 PATH
+  remote: plugins/react_entries
+  specs:
+    react_entries (0.0.1)
+
+PATH
   remote: plugins/resource_management
   specs:
     resource_management (0.0.1)
@@ -626,6 +631,7 @@ DEPENDENCIES
   rails-controller-testing
   rails_stdout_logging
   react-rails
+  react_entries!
   redcarpet
   resource_management!
   responders

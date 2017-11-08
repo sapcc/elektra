@@ -152,6 +152,14 @@ For ease-of-use we have provided a generator which generates a skeleton plugin f
 
 ```bin/rails g dashboard_plugin NAME --mountable --service_layer```
 
+#### Create React Plugin
+``` cd [Elektra root]```
+
+```bin/rails generate dashboard_plugin NAME --react```
+
+For more information use:
+```bin/rails generate dashboard_plugin --help```
+
 ### Creating Migrations
 
 If your plugin needs to save things in the Elektra database, you'll need to create a migration. Migrations and the models they belong to live within the plugin. One additional step is necessary to register your migration with the host app so that it is applied when ``rake db:migrate`` is called in the host app. To create a new migration in your plugin do the following:

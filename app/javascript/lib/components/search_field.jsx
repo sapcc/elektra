@@ -17,7 +17,7 @@ export default ({id,text,onChange,placeholder}) => {
         </div>
         <div className="has-feedback-help">
           <OverlayTrigger trigger="click" placement="top" rootClose overlay={infoText}>
-            <a className='help-link' href='#'>
+            <a className='help-link' href='javascript:void(0)'>
               <i className="fa fa-question-circle"></i>
             </a>
           </OverlayTrigger>
