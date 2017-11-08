@@ -1,5 +1,27 @@
 import { Link } from 'react-router-dom';
 import { policy } from 'policy';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
+class RuleTooltip extends React.Component {
+  render() {
+    let al = this.props.rule.access_level
+    let tooltip = <Tooltip id='ruleTooltip'>
+      Access Level: {al=='ro' ? 'read only' : (al=='rw' ? 'read/write' : al)}
+    </Tooltip>;
+
+    return (
+      <OverlayTrigger
+        overlay={tooltip}
+        placement="top"
+        delayShow={300}
+        delayHide={150}
+      >
+        {this.props.children}
+      </OverlayTrigger>
+    );
+  }
+}
+
 
 export default class ShareItem extends React.Component {
   constructor(props){
@@ -64,14 +86,14 @@ export default class ShareItem extends React.Component {
                     <span>
                       <br/>
                       { shareRules.items.map( (rule) =>
-                        <small key={rule.id}
-                          data-toggle="tooltip" data-placement="right"
-                          title="Access Level: {if rule.access_level=='ro' then 'read only' else if 'rw' then 'read/write' else rule.access_level}"
-                          className={`${rule.access_level == 'rw' ? 'text-success' : 'text-info'}`}
-                          ref={(el) => $(el).tooltip()}>
-                          <i className={`fa fa-fw fa-${rule.access_level == 'rw' ? 'pencil-square' : 'eye'}`}/>
-                          {rule.access_to}
-                        </small>
+                        <RuleTooltip key={rule.id} rule={rule}>
+                          <small
+                            className={`${rule.access_level == 'rw' ? 'text-success' : 'text-info'}`}>
+                            <i className={`fa fa-fw fa-${rule.access_level == 'rw' ? 'pencil-square' : 'eye'}`}/>
+                            {rule.access_to}
+                          </small>
+                        </RuleTooltip>
+
                       )}
                     </span>
                   )
@@ -113,5 +135,5 @@ export default class ShareItem extends React.Component {
         </td>
       </tr>
     )
-  }  
+  }
 }
