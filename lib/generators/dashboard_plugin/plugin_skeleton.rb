@@ -1,53 +1,57 @@
 # frozen_string_literal: true
 
-module PluginSkeletonGenerator
-  def generate_plugin_skeleton
-    plugin_options = '--skip-gemfile --skip-bundle --skip-git --skip-test'
+# This class generates the skeleton of a dashboard plugin.
+class PluginSkeletonGenerator
+  extend Forwardable
+  def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
+                 :create_file, :generate, :name
+  attr_reader :plugin_path
+
+  def initialize(context, plugin_path)
+    @context = context
+    @plugin_path = plugin_path
+  end
+
+  def run
+    plugin_options = '--skip-gemfile --skip-bundle --skip-git --skip-test \
+      --skip-puma --skip-javascript --skip-gemfile-entry'
     plugin_options += ' --mountable' if options.mountable?
     plugin_options += ' --full' if options.service_layer? && !options.mountable?
 
-    generate(:plugin, "#{self.class::PLUGINS_PATH}/#{name}", plugin_options)
+    generate(:plugin, "#{plugin_path}/#{name}", plugin_options)
 
     replace_test_with_spec
     update_dependencies_to_gemspec
-    update_assets
+    add_controller_spec
+    add_policy
 
-    if options.mountable?
-      modify_application_controller
-      add_routes
-      add_controller_spec
-    end
+    create_service_layer_service if options.service_layer?
+  end
 
-    if options.service_layer?
-      create_service_layer_service
-    end
+  def add_policy
+    copy_file 'shared/config/policy.json', "#{plugin_path}/#{name}/config/policy.json"
   end
 
   def create_service_layer_service
-    copy_file 'app/services/service_layer_ng/service.rb', "#{PLUGINS_PATH}/#{name}/app/services/service_layer_ng/#{name}_service.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/services/service_layer_ng/#{name}_service.rb", '%{PLUGIN_NAME}', name.camelize
+    copy_file 'shared/app/services/service_layer_ng/service.rb', "#{plugin_path}/#{name}/app/services/service_layer_ng/#{name}_service.rb"
   end
 
   def update_dependencies_to_gemspec
-    remove_file "#{PLUGINS_PATH}/#{name}/lib/#{name}/version.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "#{name.camelize}::VERSION", '"0.0.1"'
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "# Maintain your gem's version:\n", ''
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", "require \"#{name}/version\"", ''
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /TODO:?/, ''
+    remove_file "#{plugin_path}/#{name}/lib/#{name}/version.rb"
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", "#{name.camelize}::VERSION", '"0.0.1"'
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", "# Maintain your gem's version:\n", ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", "require \"#{name}/version\"", ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /TODO:?/, ''
 
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /s.add_dependency "rails"[^\n]*\n/, ''
-    gsub_file "#{PLUGINS_PATH}/#{name}/#{name}.gemspec", /s.add_development_dependency "sqlite3"/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /s.add_dependency "rails"[^\n]*\n/, ''
+    gsub_file "#{plugin_path}/#{name}/#{name}.gemspec", /s.add_development_dependency "sqlite3"/, ''
   end
 
   def replace_test_with_spec
-    remove_dir "#{PLUGINS_PATH}/#{name}/test"
-    create_file "#{PLUGINS_PATH}/#{name}/spec/.keep"
+    create_file "#{plugin_path}/#{name}/spec/.keep"
   end
 
   def add_controller_spec
-    copy_file 'spec/controllers/application_controller_spec.rb', "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb", '%{PLUGIN_NAME}', name.camelize
-
-    gsub_file "#{PLUGINS_PATH}/#{name}/spec/controllers/application_controller_spec.rb", '%{PLUGIN_NAME}', name.camelize
+    copy_file 'shared/spec/controllers/application_controller_spec.rb', "#{plugin_path}/#{name}/spec/controllers/application_controller_spec.rb"
   end
 end

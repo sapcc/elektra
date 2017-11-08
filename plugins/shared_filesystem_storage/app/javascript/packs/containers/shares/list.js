@@ -5,8 +5,6 @@ import {
   fetchShareExportLocations,
   fetchAvailabilityZonesIfNeeded,
   deleteShare,
-  editShare,
-  submitNewShareForm,
   reloadShare,
   filterShares
 } from '../../actions/shares'
@@ -29,9 +27,6 @@ export default connect(
     loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded()),
     filterShares: (term) => dispatch(filterShares(term)),
     reloadShare: (shareId) => dispatch(reloadShare(shareId)),
-    handleDelete: (shareId) => dispatch(deleteShare(shareId)),
-    handleSubmitNew: (values,{handleSuccess,handleErrors}) => (
-      dispatch(submitNewShareForm(values,{handleSuccess,handleErrors}))
-    )
+    handleDelete: (shareId) => dispatch(deleteShare(shareId))
   })
 )(ShareList);

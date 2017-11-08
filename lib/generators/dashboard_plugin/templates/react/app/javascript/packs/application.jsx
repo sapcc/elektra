@@ -27,9 +27,9 @@ const Container = (props) =>
         React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
       }/>
 
-    <Route exact path="/entries/new" component={NewShareModal}/>
-      <Route exact path="/entries/:id/show" component={ShowShareModal}/>
-      <Route exact path="/entries/:id/edit" component={EditShareModal}/>
+    <Route exact path="/entries/new" component={NewEntryModal}/>
+      <Route exact path="/entries/:id/show" component={ShowEntryModal}/>
+      <Route exact path="/entries/:id/edit" component={EditEntryModal}/>
     </div>
   </HashRouter>
 

@@ -1,31 +1,41 @@
 # frozen_string_literal: true
 
-module DefaultPluginGenerator
+# This class contains methods for adaption of default plugin.
+class DefaultPluginGenerator
+  extend Forwardable
+  def_delegators :@context, :options, :copy_file, :remove_file, :gsub_file,
+                 :create_file, :name
+  attr_reader :plugin_path
 
-  def generate_default_plugin
-    create_service_layer_service
+  def initialize(context, plugin_path)
+    @context = context
+    @plugin_path = plugin_path
   end
 
+  def run
+    return unless options.mountable?
+    modify_application_controller
+    add_routes
+    update_assets
+  end
+
+  private
+
   def update_assets
-    remove_file "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/application.css"
-    remove_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/application.js"
-    copy_file 'app/assets/_application.scss', "#{PLUGINS_PATH}/#{name}/app/assets/stylesheets/#{name}/_application.scss"
-    copy_file 'app/assets/plugin.js', "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/plugin.js"
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/assets/javascripts/#{name}/plugin.js", '%{PLUGIN_NAME}', name
+    remove_file "#{plugin_path}/#{name}/app/assets/stylesheets/#{name}/application.css"
+    remove_file "#{plugin_path}/#{name}/app/assets/javascripts/#{name}/application.js"
+    copy_file 'default/app/assets/stylesheets/_application.scss', "#{plugin_path}/#{name}/app/assets/stylesheets/#{name}/_application.scss"
+    copy_file 'default/app/assets/javascripts/plugin.js', "#{plugin_path}/#{name}/app/assets/javascripts/#{name}/plugin.js"
   end
 
   def modify_application_controller
-    remove_file "#{PLUGINS_PATH}/#{name}/app/controllers/#{name}/application_controller.rb"
-    copy_file 'app/controllers/application_controller.rb', "#{PLUGINS_PATH}/#{name}/app/controllers/#{name}/application_controller.rb"
-    copy_file 'app/views/application/index.html.haml', "#{PLUGINS_PATH}/#{name}/app/views/#{name}/application/index.html.haml"
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/views/#{name}/application/index.html.haml", '%{PLUGIN_NAME}', name.camelize
-    gsub_file "#{PLUGINS_PATH}/#{name}/app/controllers/#{name}/application_controller.rb", '%{PLUGIN_NAME}', name.camelize
+    remove_file "#{plugin_path}/#{name}/app/controllers/#{name}/application_controller.rb"
+    copy_file 'default/app/controllers/application_controller.rb', "#{plugin_path}/#{name}/app/controllers/#{name}/application_controller.rb"
+    copy_file 'default/app/views/application/index.html.haml', "#{plugin_path}/#{name}/app/views/#{name}/application/index.html.haml"
   end
 
   def add_routes
-    remove_file "#{PLUGINS_PATH}/#{name}/config/routes.rb"
-    copy_file 'default/config/routes.rb', "#{PLUGINS_PATH}/#{name}/config/routes.rb"
-    gsub_file "#{PLUGINS_PATH}/#{name}/config/routes.rb", '%{PLUGIN_NAME}', name.camelize
+    remove_file "#{plugin_path}/#{name}/config/routes.rb"
+    copy_file 'default/config/routes.rb', "#{plugin_path}/#{name}/config/routes.rb"
   end
-
 end

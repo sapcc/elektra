@@ -69,7 +69,7 @@ const List = React.createClass({
           <SearchField
             onChange={(term) => this.props.filterShares(term)}
             placeholder='name, ID, protocol or status'
-            text='Searches by name, ID, protocol or status in visible server list only.
+            text='Searches by name, ID, protocol or status in visible shares list only.
                   Entering a search term will automatically start loading the next pages
                   and filter the loaded items using the search term. Emptying the search
                   input field will show all currently loaded items.'/>
