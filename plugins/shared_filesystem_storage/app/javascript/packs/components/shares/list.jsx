@@ -1,5 +1,5 @@
-import { withRouter, Route, Link } from 'react-router-dom';
-import { Popover, OverlayTrigger } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { Popover, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { TransitionGroup } from 'react-transition-group';
 import { FadeTransition } from 'lib/components/transitions';
 import { policy } from 'policy';
@@ -16,6 +16,10 @@ const loadingShareNetworksInfo = (
   <Popover id="popover-loading-share-networks" title="Loading Share Networks ...">
     Please wait.
   </Popover>
+);
+
+const azTooltip = (
+  <Tooltip id="azTooltip">Availability Zone</Tooltip>
 );
 
 const List = React.createClass({
@@ -110,10 +114,9 @@ const List = React.createClass({
             <th>Name</th>
             <th>
               AZ
-              <i className='fa fa-fw fa-info-circle'
-                data-toggle="tooltip"
-                data-placement="top"
-                title="Availability Zone"></i>
+              <OverlayTrigger placement="top" overlay={azTooltip}>
+                <i className='fa fa-fw fa-info-circle'/>
+              </OverlayTrigger>
             </th>
             <th>Protocol</th>
             <th>Size</th>
@@ -156,5 +159,4 @@ const List = React.createClass({
   }
 });
 
-//export default withRouter(List);
 export default List
