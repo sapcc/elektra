@@ -12,8 +12,10 @@
               Complete
             - else
               = icon('thumbs-down')
-              Incomplete:
-              = @project_masterdata.missing_attributes
+              Incomplete
+              %br
+              %span.label.label-warning 
+                = @project_masterdata.missing_attributes
         %tr
           %th.snug-nowrap
             Last change:

@@ -136,7 +136,8 @@ module MasterdataCockpit
       @project_masterdata.project_id   = @scoped_project_id
       @project_masterdata.domain_id    = @scoped_domain_id 
       @project_masterdata.project_name = @scoped_project_name
-      @project_masterdata.description  = @active_project.description
+      # need to cut the length because the masterdata api suports at the moment max 255 chars
+      @project_masterdata.description  = @active_project.description.truncate(255)
       @project_masterdata.parent_id    = @active_project.parent_id
     end
 

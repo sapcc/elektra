@@ -99,3 +99,9 @@
 .masterdata-help-icon {
   color: #737373 !important;
 }
+
+// break long strings without space
+// https://stackoverflow.com/questions/12195469/bootstrap-tables-overflowing-with-long-unspaced-text
+span.description {
+  word-wrap:break-word;
+}
