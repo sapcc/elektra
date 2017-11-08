@@ -157,3 +157,4 @@ end
 if ENV['ELEKTRA_EXTENSION'].to_s == 'true'
   gem 'elektra-extension', git: "git://github.wdf.sap.corp/monsoon/elektra-extension.git", branch: :master
 end
+gem 'entries', path: 'plugins/entries'
