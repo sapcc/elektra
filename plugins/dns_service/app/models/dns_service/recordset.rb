@@ -3,10 +3,7 @@
 module DnsService
   # represents the openstack dns recordset
   class Recordset < Core::ServiceLayer::Model
-    validates :records, format: {
-      with: /\A.+\.\z/,
-      message: 'The Canonical Name should end with a dot.'
-    }, if: proc { |recordset| recordset.type == 'cname' }
+    validate :is_cname
 
     TYPE_LABELS = {
       'A - Address record' => 'a',
@@ -56,6 +53,16 @@ module DnsService
         'zone_id'     => read('zone_id'),
         'project_id'  => read('project_id')
       }.delete_if { |_k, v| v.blank? }
+    end
+
+    def is_cname
+      if type == 'cname'
+        records.each do |value|
+          unless /\A.+\.\z/.match?(value)
+            errors.add('records', 'The Canonical Name should end with a dot.')
+          end
+        end
+      end
     end
   end
 end
