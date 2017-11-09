@@ -1,4 +1,3 @@
 {
-  "monitoring_viewer": "role:monitoring_viewer",
-  "metrics:index": "rule:monitoring_viewer"
+  "metrics:index": "not(project_id:nil)"
 }
