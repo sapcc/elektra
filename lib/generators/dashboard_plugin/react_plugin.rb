@@ -47,12 +47,13 @@ class ReactPluginGenerator
 
   def update_application_version
     found = false
-    gsub_file "app/javascript/packs/application.jsx.erb", /\/\/ version\s+.+/ do |match|
+    gsub_file "app/javascript/packs/application.jsx.erb", /^\/\/ version\s+\d+/ do |match|
       found = true
-      version = /\/\/ version\s+(.+)/.match(match)[1]
+      version = /^\/\/ version\s+(\d+)\s*/.match(match)[1]
       new_version = version.to_i+1
       match.gsub!(version, new_version.to_s)
     end
-    append_to_file "app/javascript/packs/application.jsx.erb", '// version 1' unless found
+    return if found
+    append_to_file "app/javascript/packs/application.jsx.erb", '// version 1 '
   end
 end
