@@ -30,7 +30,7 @@ ShareList = React.createClass
       props.loadSharesOnce()
       props.loadShareNetworksOnce()
       props.loadAvailabilityZonesOnce()
-      props.loadShareRulesOnce(share.id) for share in @props.shares
+      props.loadShareRulesOnce(share.id) for share in props.shares
 
   shareNetwork: (share) ->
     for network in @props.shareNetworks.items
