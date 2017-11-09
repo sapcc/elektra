@@ -7,8 +7,8 @@ Rails.application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
-  # Do not eager load code on boot.
-  config.eager_load = false
+  # Do not eager load code on boot. If true then all files are loaded on boot.
+  config.eager_load = true
 
   # Show full error reports.
   config.consider_all_requests_local = true
