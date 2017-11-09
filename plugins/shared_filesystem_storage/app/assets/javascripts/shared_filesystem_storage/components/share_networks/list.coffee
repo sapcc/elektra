@@ -34,7 +34,7 @@ ShareNetworkList = React.createClass
     # find network
     for network in @props.networks.items
       return network if network.id == shareNetwork.neutron_net_id
-    return null  
+    return null
 
 
   subnet: (shareNetwork)->

@@ -4,9 +4,11 @@ ShareItem = React.createClass
   componentWillReceiveProps: (nextProps) ->
     # stop polling if status has changed from creating to something else
     @stopPolling() unless nextProps.share.status=='creating'
+    @props.loadShareRulesOnce(nextProps.share.id)
 
   componentDidMount:()->
     @startPolling() if @props.share.status=='creating'
+    @props.loadShareRulesOnce(@props.share.id)
 
   componentWillUnmount: () ->
     # stop polling on unmounting
