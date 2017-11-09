@@ -43,9 +43,6 @@ const List = React.createClass({
     this.props.loadSharesOnce()
     this.props.loadShareNetworksOnce()
     this.props.loadAvailabilityZonesOnce()
-    for(let share of props.items){
-      this.props.loadShareRulesOnce(share.id)
-    }
   },
 
   shareNetwork(share) {
@@ -134,6 +131,7 @@ const List = React.createClass({
                 shareRules={this.shareRules(share)}
                 handleDelete={this.props.handleDelete}
                 reloadShare={this.props.reloadShare}
+                loadShareRulesOnce={this.props.loadShareRulesOnce}
                 policy={this.props.policy}/>)
             ) : (
               <tr>

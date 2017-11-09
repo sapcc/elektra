@@ -33,10 +33,12 @@ export default class ShareItem extends React.Component {
   componentWillReceiveProps(nextProps) {
     // stop polling if status has changed from creating to something else
     if (nextProps.share.status!='creating') this.stopPolling()
+    nextProps.loadShareRulesOnce(nextProps.share.id)
   }
 
   componentDidMount() {
     if (this.props.share.status=='creating') this.startPolling()
+    this.props.loadShareRulesOnce(this.props.share.id)
   }
 
   componentWillUnmount() {
