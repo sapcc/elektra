@@ -67,8 +67,8 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :containers, 'Containers', nil, html: {class: "fancy-nav-header", 'data-icon': "containers-icon"},
-    if: -> {plugin_available?(:kubernetes) && current_user && current_user.is_allowed?('kubernetes:application_get') } do |containers_nav|
-      containers_nav.item :kubernetes, 'Kubernetes', -> { plugin('kubernetes').root_path }, if: -> { plugin_available?(:kubernetes) && current_user && current_user.is_allowed?('kubernetes:application_get') }, highlights_on: Proc.new { params[:controller][/kubernetes\/.*/] }
+    if: -> {plugin_available?(:kubernetes) && current_user && current_user.has_service?('kubernikus')} do |containers_nav|
+      containers_nav.item :kubernetes, 'Kubernetes', -> { plugin('kubernetes').root_path }, if: -> { plugin_available?(:kubernetes) && current_user && current_user.has_service?('kubernikus') }, highlights_on: Proc.new { params[:controller][/kubernetes\/.*/] }
       # compute_nav.dom_attributes = {class: 'content-list'}
     end
 
