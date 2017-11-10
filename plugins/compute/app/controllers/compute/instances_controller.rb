@@ -105,7 +105,7 @@ module Compute
       # @instance.flavor_id             = @flavors.first.try(:id)
       # @instance.image_id              = params[:image_id] || @images.first.try(:id)
       @instance.availability_zone_id  = @availability_zones.first.try(:id)
-      @instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
+      #@instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
       @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
       @instance.keypair_id = @keypairs.first['name'] unless @keypairs.blank?
 
@@ -132,6 +132,17 @@ module Compute
       params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?} unless params[:server][:security_groups].blank?
       @instance.attributes=params[@instance.model_name.param_key]
 
+      if @instance.image_id
+        @images = services.image.images
+        image = @images.find { |i| i.id == @instance.image_id }
+        if image
+          @instance.metadata = {
+            image_name: image.name.truncate(255),
+            image_buildnumber:  image.buildnumber.truncate(255)
+          }
+        end
+      end
+
       if @instance.save
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
@@ -139,7 +150,7 @@ module Compute
         render template: 'compute/instances/create.js'
       else
         @flavors = services_ng.compute.flavors
-        @images = services.image.images
+        # @images = services.image.images
         @availability_zones = services_ng.compute.availability_zones
         @security_groups = services_ng.networking.security_groups(
           tenant_id: @scoped_project_id

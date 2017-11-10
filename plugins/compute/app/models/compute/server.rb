@@ -53,6 +53,7 @@ module Compute
         # Optional
         'availability_zone' => read('availability_zone_id'),
         'key_name'          => read('keypair_id'),
+        'metadata'          => read('metadata'),
         'user_data'         => Base64.encode64(read('user_data'))
       }.delete_if { |_k, v| v.blank? }
 

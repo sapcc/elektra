@@ -108,12 +108,14 @@
       .tab-pane{role:"tabpanel", id:"metadata"}
         %table.table.datatable
           %tbody
-            %tr
-              %th Image Name
-              %td= render_image_name(@instance.image_object)
-            - @instance.metadata.attributes.each do |k,v|
+            - unless @instance.metadata.image_name
               %tr
-                %th= k
+                %th Image name
+                %td= render_image_name(@instance.image_object)
+            - @instance.metadata.attributes.each do |k,v|
+              - next if k.to_s == 'id'
+              %tr
+                %th= k.to_s.humanize
                 %td= v.blank? ? "N/A" : v
 
       .tab-pane{role:"tabpanel", id:"volumes"}
