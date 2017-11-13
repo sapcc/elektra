@@ -32,14 +32,9 @@ module Core
             openstack_region: @region
           }
 
-          # result[:openstack_endpoint_type] = if Rails.env.development? || Rails.env.test?
-          #                                      'publicURL'
-          #                                    else
-          #                                      'internalURL'
-          #                                    end
-
           result[:openstack_endpoint_type] = ENV['DEFAULT_SERVICE_INTERFACE'] ||
-                                             (Rails.env.development? || Rails.env.test?) ? 'publicURL' : 'internalURL'
+            (Rails.env.development? || Rails.env.test?) ? 'publicURL' : 'internalURL'
+
 
           result[:connection_options] = {
             debug_request: Rails.configuration.debug_api_calls,
