@@ -78,10 +78,11 @@ module Core
           end
         end
 
+        # SERVICE
         def initialize(service, elektra_service)
           @origin_service = service
           @elektra_service = elektra_service
-          # define missing methods fosr requests and
+          # define missing methods for requests and
           # delegate them to api_service
           service.requests.each do |meth|
             (class << self; self; end).class_eval do
@@ -116,7 +117,7 @@ module Core
         end
       end
 
-
+      # CLIENT WRAPPER
       def catalog
         @api_client.auth.catalog
       end
