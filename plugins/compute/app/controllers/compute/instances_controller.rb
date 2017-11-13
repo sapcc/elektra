@@ -137,8 +137,8 @@ module Compute
         image = @images.find { |i| i.id == @instance.image_id }
         if image
           @instance.metadata = {
-            image_name: image.name.truncate(255),
-            image_buildnumber:  image.buildnumber.truncate(255)
+            image_name: (image.name || '').truncate(255),
+            image_buildnumber:  (image.buildnumber || '').truncate(255)
           }
         end
       end
