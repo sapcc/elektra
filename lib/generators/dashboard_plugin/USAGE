@@ -1,15 +1,8 @@
 Description:
-  This generator creates a dashboard plugin.
-  For example, to create a react plugin use the option --react. Should it be
-  a pure javascript project without the controller component then use the option
-  --no-mountable.
+    Explain the generator
 
 Example:
-    rails generate dashboard_plugin NAME
+    rails generate dashboard_plugin Thing
 
     This will create:
-        * a new folder under plugins/
-        * a properly configured plugin
-        * a mounted and runnable plugin (if mountable)
-        * a service_layer (if the option --service_layer is used)
-        * specs for controllers
+        what/will/it/create

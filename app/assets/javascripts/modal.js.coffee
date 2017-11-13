@@ -81,7 +81,8 @@ class @MoModal
         if $footer.length>0
           # add back button to footer
           $back = $('<a href="javascript:void(0)" class="btn btn-primary">Back</a>')
-          $back.click () -> window.location.href=lastUrl
+          # History.replaceState(null, null, anker)
+          $back.click () -> window.location.href=lastUrl#History.back()
           $footer.prepend($back)
 
         $('.modal-backdrop').remove()
