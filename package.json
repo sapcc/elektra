@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@rails/webpacker": "^3.0.2",
+    "@rails/webpacker": "^3.0.1",
     "axios": "*",
     "babel-preset-react": "^6.24.1",
     "prop-types": "^15.5.7",
@@ -14,6 +14,6 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
-    "webpack-dev-server": "^2.9.4"
+    "webpack-dev-server": "^2.8.2"
   }
 }
