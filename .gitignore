@@ -22,10 +22,9 @@ pickle-email-*.html
 *.log
 .env*
 .idea
-/bin
-!/bin/rails
-!/bin/rake
-!/bin/bundle
+#/bin
+/bin/webpack-dev-server
+/bin/foreman
 /spec/reports
 /features/reports
 features/screenshots
