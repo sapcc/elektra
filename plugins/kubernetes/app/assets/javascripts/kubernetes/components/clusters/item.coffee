@@ -29,7 +29,7 @@ Cluster = React.createClass
     clearInterval(@polling)
 
   clusterReady: (cluster) ->
-    cluster.status.kluster.state == 'Ready'
+    cluster.status.phase == 'Running'
 
   nodePoolsReady: (cluster) ->
     # return ready only if all state values of all nodepools match the configured size
@@ -58,17 +58,17 @@ Cluster = React.createClass
 
   render: ->
     {cluster, kubernikusBaseUrl, handleEditCluster, handleClusterDelete, handleGetCredentials, handleGetSetupInfo, handlePollingStart, handlePollingStop} = @props
-    disabled = cluster.isTerminating or cluster.status.kluster.state == 'Terminating'
+    disabled = cluster.isTerminating or cluster.status.phase == 'Terminating'
 
     tr className: ('item-disabled' if disabled),
       td null,
         cluster.name
       td null,
-        strong null, cluster.status.kluster.state
+        strong null, cluster.status.phase
         unless @clusterReady(cluster)
           span className: 'spinner'
         br null
-        span className: 'info-text', cluster.status.kluster.message
+        span className: 'info-text', cluster.status.message
       td className: 'nodepool-spec',
         for nodePool in cluster.spec.nodePools
           div className: 'nodepool-info', key: nodePool.name,
