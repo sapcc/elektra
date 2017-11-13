@@ -1,6 +1,10 @@
 FROM ruby:2.4.1-alpine3.6 AS elektra
 
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
+
+RUN echo '@edge http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+RUN apk update
+
+RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn@edge
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
@@ -59,6 +63,7 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 ADD . /home/app/webapp
+RUN yarn
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]
