@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
-  revision: 18365dfb583f57acc2dcf26e69f537d331f35549
-  branch: master
-  specs:
-    elektra-extension (0.0.1)
-      config
-
-GIT
   remote: https://github.com/flystack/misty.git
   revision: 4898b33a3d3150af0bbd15aaa78115170ecb20c8
   branch: master
@@ -587,7 +579,6 @@ DEPENDENCIES
   database_cleaner
   dns_service!
   dotenv-rails
-  elektra-extension!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   font-awesome-sass
