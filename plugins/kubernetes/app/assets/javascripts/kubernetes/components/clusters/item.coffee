@@ -82,13 +82,18 @@ Cluster = React.createClass
         for nodePoolStatus in cluster.status.nodePools
           specSize = @nodePoolSpecSize(cluster, nodePoolStatus.name)
           div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
+            statusAvailable = false
             for k,v of nodePoolStatus
               unless k == 'name' || k == 'size'
+                statusAvailable = true
                 div key: k,
                   strong null, "#{k}: "
                   "#{v}/#{specSize}"
                   if v != specSize
                     span className: 'spinner'
+
+            unless statusAvailable
+              span className: 'spinner'
 
 
 
