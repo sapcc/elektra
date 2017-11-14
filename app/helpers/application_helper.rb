@@ -322,7 +322,7 @@ module ApplicationHelper
                     when "tech_preview"
                       "Tech Preview: Functional preview. Not feature complete."
                     when "beta"
-                      "Beta: Almost reade for release"
+                      "Beta: Working towards the public release"
                     end
     end
 

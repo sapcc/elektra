@@ -117,6 +117,10 @@ EditCluster = ({
 
 
     div className: 'modal-footer',
+      # button className: 'btn btn-default hover-danger pull-left', onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+      #   i className: 'fa fa-fw fa-trash-o',
+      #   'Delete Cluster'
+
       button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
       React.createElement ReactFormHelpers.SubmitButton,
         label: 'Update',
@@ -134,6 +138,8 @@ EditCluster = connect(
     handleNodePoolAdd:    ()                    -> dispatch(addNodePool())
     handleNodePoolRemove: (index)               -> dispatch(deleteNodePool(index))
     handleSubmit:         (callback)            -> dispatch(submitClusterForm(callback))
+    handleClusterDelete:  (clusterName)         -> dispatch(requestDeleteCluster(clusterName))
+
 
 )(EditCluster)
 

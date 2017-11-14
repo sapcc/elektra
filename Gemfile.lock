@@ -1,9 +1,10 @@
 GIT
   remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
-  revision: a18a49a5dee437e1f3d4e616ed87924326fd26cb
+  revision: 18365dfb583f57acc2dcf26e69f537d331f35549
   branch: master
   specs:
     elektra-extension (0.0.1)
+      config
 
 GIT
   remote: https://github.com/flystack/misty.git
