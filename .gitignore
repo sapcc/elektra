@@ -22,10 +22,7 @@ pickle-email-*.html
 *.log
 .env*
 .idea
-/bin
-!/bin/rails
-!/bin/rake
-!/bin/bundle
+/bin/*
 /spec/reports
 /features/reports
 features/screenshots
@@ -47,3 +44,6 @@ tags
 
 .byebug_history
 vendor_4.2.4/
+/public/packs
+/public/packs-test
+/node_modules
