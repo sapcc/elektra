@@ -66,10 +66,9 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 # install js packages
-
-RUN if [[ -z "${http_proxy}" ]]; then \
-  yarn --proxy $http_proxy --https-proxy $https_proxy \
-  else; yarn; fi
+RUN if [ -z ${http_proxy} ]; then \
+      echo do not use proxy && yarn; \
+      else echo use proxy && yarn --proxy $http_proxy --https-proxy $https_proxy; fi
 
 ADD . /home/app/webapp
 
