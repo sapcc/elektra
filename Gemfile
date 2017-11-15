@@ -124,7 +124,7 @@ group :development, :test do
   gem "foreman"
 
   # Testing
-  gem "rspec"
+
   gem "rspec-rails"
   gem "factory_girl_rails", "~> 4.0"
   gem "database_cleaner"
@@ -132,8 +132,11 @@ group :development, :test do
   gem 'pry-rails'
 end
 
-group :integration_tests do
+group :development, :test, :integration_tests do
   gem "rspec"
+end
+
+group :integration_tests do
   gem "capybara"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false

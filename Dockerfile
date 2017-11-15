@@ -39,7 +39,7 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
 
-#RUN gem install bundler -v 1.13.6
+# RUN gem install bundler 1.16.0
 
 # copy Gemfile and Gemfile.lock to /home/app/webapp/
 ADD Gemfile Gemfile.lock ./
@@ -63,7 +63,11 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 ADD . /home/app/webapp
-RUN yarn
+# install js packages
+RUN yarn install
+# create webpacker binstubs
+RUN bundle binstubs webpacker --force --path ./bin
+# precompile assets including webpacker packs
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]

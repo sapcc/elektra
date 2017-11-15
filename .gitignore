@@ -23,9 +23,6 @@ pickle-email-*.html
 .env*
 .idea
 /bin/*
-!/bin/webpack-dev-server
-!/bin/webpack
-
 /spec/reports
 /features/reports
 features/screenshots
