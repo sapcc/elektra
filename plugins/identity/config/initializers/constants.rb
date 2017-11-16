@@ -14,3 +14,7 @@ ALLOWED_ROLES = %w(
   volume_viewer
   audit_viewer
 ).freeze
+
+BETA_ROLES = %w(
+  kubernetes_admin
+).freeze
