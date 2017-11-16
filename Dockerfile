@@ -63,9 +63,8 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
 ADD . /home/app/webapp
-
 # install js packages
-RUN yarn --proxy $http_proxy --https-proxy $https_proxy
+RUN yarn install
 # create webpacker binstubs
 RUN bundle binstubs webpacker --force --path ./bin
 # precompile assets including webpacker packs
