@@ -6,7 +6,6 @@ source 'https://rubygems.org'
 gem 'unf', '>= 0.2.0beta2'
 
 gem 'rails', '5.1.2' #Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
-gem 'webpacker', '~> 3.0'
 
 # Views and Assets
 gem 'compass-rails'
@@ -124,7 +123,7 @@ group :development, :test do
   gem "foreman"
 
   # Testing
-
+  gem "rspec"
   gem "rspec-rails"
   gem "factory_girl_rails", "~> 4.0"
   gem "database_cleaner"
@@ -132,11 +131,8 @@ group :development, :test do
   gem 'pry-rails'
 end
 
-group :development, :test, :integration_tests do
-  gem "rspec"
-end
-
 group :integration_tests do
+  gem "rspec"
   gem "capybara"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false

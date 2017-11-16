@@ -53,7 +53,7 @@ Prerequisites
 
    a. **Important:** Ensure Keystone V3 is activated. By default DevStack uses V2 (which has no domain support). Adding ```IDENTITY_API_VERSION=3``` to local.conf enables V3 support in DevStack
 
-   b. **Important:** Ensure the service user you configured in your **.env** file (see below) has the admin role in the Default domain and all other domains you want to use.
+   b. **Important:** Ensure the service user you configured in your **.env** file (see below) has the admin role in the Default domain and all other domains you want to use
 2. installed postgres database
 3. ruby installation, version >= 2.2.0, bundler installation  
 
@@ -70,8 +70,8 @@ Application Installation with bundler
 
 Start the Elektra Dashboard Application
 ---------------------------------------
-1. run: ```foreman start```. **Important:** Ensure the **PORT** parameter is set in **.env**! This will start the rails server and also the webpack-dev-server.
-2. Browser access for Elektra: http://localhost:5000/Default
+1. run: ```foreman start```
+2. Browser access for Elektra: http://localhost:8180/Default
 3. DevStack: Login with user demo/devstack
 
 
@@ -151,14 +151,6 @@ For ease-of-use we have provided a generator which generates a skeleton plugin f
 ``` cd [Elektra root]```
 
 ```bin/rails g dashboard_plugin NAME --mountable --service_layer```
-
-#### Create React Plugin
-``` cd [Elektra root]```
-
-```bin/rails generate dashboard_plugin NAME --react```
-
-For more information use:
-```bin/rails generate dashboard_plugin --help```
 
 ### Creating Migrations
 

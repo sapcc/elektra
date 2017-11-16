@@ -1,0 +1,104 @@
+#= require shared_filesystem_storage/components/share_networks/item
+
+{ connect } = ReactRedux
+{ div, table, thead, tbody, tr, th, td, span, button } = React.DOM
+{
+  ShareNetworkItem,
+  fetchShareNetworksIfNeeded,
+  fetchNetworksIfNeeded,
+  fetchNetworkSubnetsIfNeeded,
+  fetchSecurityServicesIfNeeded,
+  openNewShareNetworkDialog,
+  openDeleteShareNetworkDialog,
+  openShowShareNetworkDialog,
+  openEditShareNetworkDialog,
+  openShareNetworkSecurityServicesDialog
+} = shared_filesystem_storage
+
+ShareNetworkList = React.createClass
+  componentDidMount: ->
+    @loadDependencies(@props)
+
+  componentWillReceiveProps: (nextProps) ->
+    @loadDependencies(nextProps)
+
+  loadDependencies: (props) ->
+    if props.active
+      props.loadShareNetworksOnce()
+      props.loadSecurityServicesOnce()
+      props.loadNetworksOnce()
+      props.loadSubnetsOnce(shareNetwork.neutron_net_id) for shareNetwork in props.shareNetworks
+
+  network: (shareNetwork)->
+    return 'loading' if @props.networks.isFetching
+    # find network
+    for network in @props.networks.items
+      return network if network.id == shareNetwork.neutron_net_id
+    return null
+
+
+  subnet: (shareNetwork)->
+    networkSubnets = @props.subnets[shareNetwork.neutron_net_id]
+    return null unless networkSubnets
+    return 'loading' if networkSubnets.isFetching
+    return null unless networkSubnets.items
+    for subnet in networkSubnets.items
+      return subnet if subnet.id == shareNetwork.neutron_subnet_id
+    return null
+
+  render: ->
+    div null,
+      if @props.permissions.create
+        div className: 'toolbar',
+          button
+            type: "button",
+            className: "btn btn-primary",
+            onClick: ((e) => e.preventDefault(); @props.handleNewShareNetwork()),
+            'Create new'
+      if @props.isFetching
+        div null,
+          span className: 'spinner', null
+          'Loading...'
+      else
+        table { className: 'table share-networks' },
+          thead null,
+            tr null,
+              th null
+              th null, 'Name'
+              th null, 'Neutron Net'
+              th null, 'Neutron Subnet'
+              th null, ''
+          tbody null,
+            if @props.shareNetworks.length==0
+              tr null,
+                td {colSpan: 5},'No Share Networks found.'
+            for shareNetwork in @props.shareNetworks
+              React.createElement ShareNetworkItem,
+                key: shareNetwork.id,
+                shareNetwork: shareNetwork,
+                handleShow: @props.handleShow,
+                handleEdit: @props.handleEdit,
+                handleDelete: @props.handleDelete,
+                handleShareNetworkSecurityServices: @props.handleShareNetworkSecurityServices
+                network: @network(shareNetwork),
+                subnet: @subnet(shareNetwork)
+
+ShareNetworkList = connect(
+  (state) ->
+    shareNetworks: state.shareNetworks.items
+    isFetching: state.shareNetworks.isFetching
+    networks: state.networks
+    subnets: state.subnets
+  (dispatch) ->
+    loadShareNetworksOnce: () -> dispatch(fetchShareNetworksIfNeeded())
+    loadSecurityServicesOnce: () -> dispatch(fetchSecurityServicesIfNeeded())
+    loadNetworksOnce: () -> dispatch(fetchNetworksIfNeeded())
+    handleNewShareNetwork: () -> dispatch(openNewShareNetworkDialog())
+    loadSubnetsOnce: (neutronNetworkId) -> dispatch(fetchNetworkSubnetsIfNeeded(neutronNetworkId))
+    handleShow: (shareNetwork) -> dispatch(openShowShareNetworkDialog(shareNetwork))
+    handleDelete: (shareNetworkId) -> dispatch(openDeleteShareNetworkDialog(shareNetworkId))
+    handleEdit: (shareNetwork) -> dispatch(openEditShareNetworkDialog(shareNetwork))
+    handleShareNetworkSecurityServices: (shareNetworkId) -> dispatch(openShareNetworkSecurityServicesDialog(shareNetworkId))
+)(ShareNetworkList)
+
+shared_filesystem_storage.ShareNetworkList = ShareNetworkList

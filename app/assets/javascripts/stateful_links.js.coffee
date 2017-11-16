@@ -1,10 +1,32 @@
+######################### VERSION 1 ##############################
+# This version does not open overlay dynamically. It renders a static version of the overlay.
+
+# # apply non-idempotent transformations to the body
+# $(document).on 'ready', ->
+#   # get current window location
+#   current_location = window.location.href
+#
+#   # replace history state with current location
+#   History.replaceState(current_location)
+#
+#   $('#modal-holder').on 'hidden.bs.modal', '.modal', ->
+#     History.replaceState(null, null, current_location)
+#
+# # apply non-idempotent transformations to the document
+# # initialize modal links. Push the url of the modal link to the history.
+# $(document).on 'click', 'a[data-modal=true]', ->
+#   History.replaceState(null, null, this.href)
+
+
+#################### VERSION 2 ########################
+# In this version overlay are opened automatically if overlay parameter is presented in the url.
+
 # store current location
 current_location = window.location
 # store host
 hostUrl = "#{window.location.protocol}//#{window.location.host}"
 # store path
 current_path = window.location.pathname
-supportHistory = window.history.pushState && true
 
 # This method returns a parameter value for a given parameter name.
 getParameterByName= (url,name) ->
@@ -32,6 +54,15 @@ handleUrl= (url) ->
     MoModal.load(href)
     hidden=false
 
+
+    # $anker = $("[href$='#{href}']")
+    # # if found then open the overlay. Otherwise hide current overlay
+    # if $anker.length>0
+    #   unless ($("#modal-holder .modal").data('bs.modal') || {}).isShown
+    #     #console.log 'handleUrl->trigger click on ', href
+    #     MoModal.load($anker)
+    #     hidden=false
+
   if hidden
     $('#modal-holder .modal').modal('hide')
 
@@ -54,7 +85,7 @@ buildNewStateUrl= (href) ->
   href = href.replace(hostUrl,'').replace(current_path,'').replace(/^\/+/,'').trim()
   href = "/#{href}" if isAbsolutePath
 
-  if !supportHistory
+  if History.options.html4Mode
     return "?overlay=#{href}"
   else
     current_url = current_location.href
@@ -69,7 +100,7 @@ buildNewStateUrl= (href) ->
 
 # remove overlay parameters from the current url
 restoreOriginStateUrl= () ->
-  if !supportHistory
+  if History.options.html4Mode
     return current_path
   else
     current_url = current_location.href
@@ -79,20 +110,33 @@ restoreOriginStateUrl= () ->
 
     return current_url
 
-@restoreOriginStateUrl = () ->
-  if supportHistory
-    window.history.pushState(null, null, restoreOriginStateUrl())
+click_drivern=false
+
+@restoreOriginStateUrl = () -> History.pushState(null, null, restoreOriginStateUrl())
+
+# Bind to StateChange Event
+History.Adapter.bind window,'statechange', -> # Note: We are using statechange instead of popstate
+  State = History.getState() # Note: We are using History.getState() instead of event.state
+  #console.log "click: ", click_drivern
+  # do not handle the url if a link has been clicked (to avoid double opening).
+  # handle url only if history buttons of browser (back,next) were clicked.
+  handleUrl(State.url) unless click_drivern
+  click_drivern=false
 
 # initialize modal links to change the window.location url
 $(document).on 'click', 'a[data-modal=true]', ->
-  if supportHistory
-    window.history.replaceState(null, null, buildNewStateUrl(this.href))
+  click_drivern = true
+  # push current href to the history (this chnages the url in address bar)
+  #History.pushState(null, null, buildNewStateUrl(this.href))
+  History.replaceState(null, null, buildNewStateUrl(this.href))
+
 
 $(document).ready ->
   # try to find the overlay parameter in the url and handle it if found.
-  handleUrl(current_location.href) if supportHistory
+  unless History.options.html4Mode
+    handleUrl(current_location.href)
 
   # reset history (url in address bar) after an overlay has been closed.
   $('#modal-holder').on 'hidden.bs.modal', '.modal', () ->
-    if supportHistory
-      window.history.replaceState(null, null, restoreOriginStateUrl())
+    #History.pushState(null, null, restoreOriginStateUrl())
+    History.replaceState(null, null, restoreOriginStateUrl())

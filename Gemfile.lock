@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.wdf.sap.corp/monsoon/elektra-extension.git
+  revision: 18365dfb583f57acc2dcf26e69f537d331f35549
+  branch: master
+  specs:
+    elektra-extension (0.0.1)
+      config
+
+GIT
   remote: https://github.com/flystack/misty.git
   revision: 4898b33a3d3150af0bbd15aaa78115170ecb20c8
   branch: master
@@ -420,8 +428,6 @@ GEM
     puma (3.9.1)
     quantile (0.2.0)
     rack (2.0.3)
-    rack-proxy (0.6.2)
-      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.1.2)
@@ -547,10 +553,6 @@ GEM
       activemodel (>= 5.0)
       bindex (>= 0.4.0)
       railties (>= 5.0)
-    webpacker (3.0.2)
-      activesupport (>= 4.2)
-      rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -579,6 +581,7 @@ DEPENDENCIES
   database_cleaner
   dns_service!
   dotenv-rails
+  elektra-extension!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   font-awesome-sass
@@ -635,7 +638,6 @@ DEPENDENCIES
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)
-  webpacker (~> 3.0)
 
 BUNDLED WITH
-   1.16.0
+   1.16.0.pre.2
