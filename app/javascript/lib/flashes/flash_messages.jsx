@@ -20,12 +20,12 @@ export class FlashMessages extends React.Component {
     super(props);
     this.state = { messages: props.messages || [] };
     flashMessages = this;
-  };
+  }
 
   addMessage(message) {
     const messages = React.addons.update(this.state.messages, { $push: [message] });
     this.setState({ messages: messages });
-  };
+  }
 
   removeMessage(message) {
     const index = this.state.messages.indexOf(message);
@@ -34,7 +34,6 @@ export class FlashMessages extends React.Component {
   }
 
   render () {
-    return 'Hello'
     const alerts = this.state.messages.map( (message, index) =>
       <FadeTransition key={ index } >
         <Alert message={ message } timeout={message.timeout} onClose={ () => this.removeMessage(message) } />
