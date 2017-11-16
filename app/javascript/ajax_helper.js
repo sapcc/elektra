@@ -8,6 +8,7 @@ export const configureAjaxHelper = (window) => {
   // extend baseURL with a slash unless last char is a slash
   if(baseURL.substr(-1) != '/') baseURL = baseURL+'/';
 
+
   // search for csrf token in meta tags.
   const metaTags = document.getElementsByTagName('meta');
   let csrfToken;
@@ -17,6 +18,7 @@ export const configureAjaxHelper = (window) => {
       break;
     }
   }
+
 
   // build headers
   let headers = {}
@@ -28,6 +30,7 @@ export const configureAjaxHelper = (window) => {
     timeout: 60000,
     headers
   })
+
   // overwrite default Accept Header to use json only
   ajaxHelper.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
 

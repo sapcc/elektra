@@ -5,6 +5,7 @@ import { FadeTransition } from 'lib/components/transitions';
 import { policy } from 'policy';
 import SearchField from 'lib/components/search_field';
 import ShareItem from './item';
+import AjaxPaginate from 'lib/components/ajax_paginate';
 
 const noShareNetworksInfo = (
   <Popover id="popover-no-share-networks" title="No Share Network found">
@@ -105,42 +106,44 @@ const List = React.createClass({
   renderTable() {
     let { items } = this.props
     return (
-      <table className='table shares'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>
-              AZ
-              <OverlayTrigger placement="top" overlay={azTooltip}>
-                <i className='fa fa-fw fa-info-circle'/>
-              </OverlayTrigger>
-            </th>
-            <th>Protocol</th>
-            <th>Size</th>
-            <th>Status</th>
-            <th>Network</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          { items && items.length>0 ? (
-            items.map( (share, index) =>
-              !share.isHidden && <ShareItem key={index}
-                share={share}
-                shareNetwork={this.shareNetwork(share)}
-                shareRules={this.shareRules(share)}
-                handleDelete={this.props.handleDelete}
-                reloadShare={this.props.reloadShare}
-                loadShareRulesOnce={this.props.loadShareRulesOnce}
-                policy={this.props.policy}/>)
-            ) : (
-              <tr>
-                <td colSpan="6">No Shares found.</td>
-              </tr>
-            )
-          }
-        </tbody>
-      </table>
+      <div>
+        <table className='table shares'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>
+                AZ
+                <OverlayTrigger placement="top" overlay={azTooltip}>
+                  <i className='fa fa-fw fa-info-circle'/>
+                </OverlayTrigger>
+              </th>
+              <th>Protocol</th>
+              <th>Size</th>
+              <th>Status</th>
+              <th>Network</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            { items && items.length>0 ? (
+              items.map( (share, index) =>
+                !share.isHidden && <ShareItem key={index}
+                  share={share}
+                  shareNetwork={this.shareNetwork(share)}
+                  shareRules={this.shareRules(share)}
+                  handleDelete={this.props.handleDelete}
+                  reloadShare={this.props.reloadShare}
+                  loadShareRulesOnce={this.props.loadShareRulesOnce}
+                  policy={this.props.policy}/>)
+              ) : (
+                <tr>
+                  <td colSpan="6">No Shares found.</td>
+                </tr>
+              )
+            }
+          </tbody>
+        </table>
+      </div>
     )
   },
 
@@ -150,7 +153,9 @@ const List = React.createClass({
         { this.toolbar() }
         { !policy.isAllowed('shared_filesystem_storage:share_list') ? (
           <span>You are not allowed to see this page</span>) : (
-          this.props.isFetching ? <span className='spinner'></span> : this.renderTable()
+          this.props.isFetching ?
+            <span className='spinner'></span>
+            : this.renderTable()
         )}
       </div>
     )

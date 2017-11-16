@@ -1,5 +1,7 @@
 /* eslint no-console:0 */
 
+import "babel-polyfill";
+
 import { configureStore, addReducer } from 'store';
 import React from 'react';
 import ReactDOM from 'react-dom'
@@ -39,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  console.log(FlashMessages)
+  console.log(FlashMessages.addMessage)
   ReactDOM.render(
     <Provider store = { configureStore(pluginReducers) }>
       <div className = "react-container">
