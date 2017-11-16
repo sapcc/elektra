@@ -3,6 +3,7 @@
     "@rails/webpacker": "^3.0.2",
     "axios": "*",
     "babel-preset-react": "^6.24.1",
+    "coffeescript": "^2",
     "prop-types": "^15.5.7",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.5",
