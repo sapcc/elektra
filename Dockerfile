@@ -41,11 +41,8 @@ ENV RAILS_ENV=production
 
 # RUN gem install bundler 1.16.0
 
-# add Gemfile and Gemfile.lock to /home/app/webapp/
+# copy Gemfile and Gemfile.lock to /home/app/webapp/
 ADD Gemfile Gemfile.lock ./
-
-# add package.json yarn.lock to /home/app/webapp
-ADD package.json yarn.lock ./
 
 # copy all gemspec files from plugins folder into /home/app/webapp/tmp/plugins/
 ADD plugins/*/*.gemspec tmp/plugins/
@@ -65,14 +62,10 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
-# install js packages
-
-RUN if [[ -z "${http_proxy}" ]]; then \
-  yarn --proxy $http_proxy --https-proxy $https_proxy \
-  else; yarn; fi
-
 ADD . /home/app/webapp
 
+# install js packages
+RUN yarn --proxy $http_proxy --https-proxy $https_proxy
 # create webpacker binstubs
 RUN bundle binstubs webpacker --force --path ./bin
 # precompile assets including webpacker packs
