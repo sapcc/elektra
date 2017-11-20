@@ -1,6 +1,10 @@
 FROM ruby:2.4.1-alpine3.6 AS elektra
 
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
+
+RUN echo '@edge http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+RUN apk update
+
+RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn@edge
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
@@ -35,10 +39,13 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
 
-#RUN gem install bundler -v 1.13.6
+# RUN gem install bundler 1.16.0
 
-# copy Gemfile and Gemfile.lock to /home/app/webapp/
+# add Gemfile and Gemfile.lock to /home/app/webapp/
 ADD Gemfile Gemfile.lock ./
+
+# add package.json yarn.lock to /home/app/webapp
+ADD package.json yarn.lock ./
 
 # copy all gemspec files from plugins folder into /home/app/webapp/tmp/plugins/
 ADD plugins/*/*.gemspec tmp/plugins/
@@ -50,7 +57,7 @@ RUN script/organize_plugins_gemspecs
 ARG ELEKTRA_EXTENSION=false
 ENV ELEKTRA_EXTENSION=$ELEKTRA_EXTENSION
 # Install the SAP Global Root CA if ELEKTRA_EXTENSION is set
-RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \ 
+RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
       curl -fL http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt | tr -d '\r' > /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt \
       && update-ca-certificates \
       && ruby -ropen-uri -e 'open("https://github.wdf.sap.corp").read' \
@@ -58,7 +65,16 @@ RUN if [ "$ELEKTRA_EXTENSION" = "true" ]; then \
 
 # install gems, copy app and run rake tasks
 RUN bundle install --without "development integration_tests"
+# install js packages
+RUN if [ -z ${http_proxy} ]; then \
+      echo do not use proxy && yarn; \
+      else echo use proxy && yarn --proxy $http_proxy --https-proxy $https_proxy; fi
+
 ADD . /home/app/webapp
+
+# create webpacker binstubs
+RUN bundle binstubs webpacker --force --path ./bin
+# precompile assets including webpacker packs
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
 ENTRYPOINT ["dumb-init", "-c", "--" ]

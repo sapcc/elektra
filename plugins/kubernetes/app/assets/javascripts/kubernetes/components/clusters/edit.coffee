@@ -3,7 +3,7 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster } = kubernetes
+{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
 
 
 EditCluster = ({
@@ -13,8 +13,7 @@ EditCluster = ({
   handleChange,
   handleNodePoolChange,
   handleNodePoolAdd,
-  handleNodePoolRemove,
-  handleClusterDelete
+  handleNodePoolRemove
 }) ->
 
   cluster = clusterForm.data
@@ -45,11 +44,11 @@ EditCluster = ({
           button className: 'btn btn-primary', onClick: ((e) => e.preventDefault(); handleNodePoolAdd()),
             'Add Pool'
 
-      for nodePool, index in cluster.spec.nodePools
+      for nodePool, i in cluster.spec.nodePools
 
-        div className: 'nodepool-form', key: "nodepool-#{index}",
+        div className: 'nodepool-form', key: "nodepool-#{i}",
           form className: 'form form-inline form-inline-flex',
-            h5 className: 'title', "Pool #{index+1}:"
+            h5 className: 'title', "Pool #{i+1}:"
             # Nodepool name
             div className: "form-group required string" ,
               label className: "string required control-label", htmlFor: "name",
@@ -59,7 +58,7 @@ EditCluster = ({
 
               input
                 className: "string form-control",
-                "data-index": index,
+                "data-index": i,
                 disabled: 'disabled' if nodePool.name && !nodePool.new,
                 type: "text",
                 name: "name",
@@ -76,7 +75,7 @@ EditCluster = ({
 
               input
                 className: "string form-control",
-                "data-index": index,
+                "data-index": i,
                 type: "number",
                 name: "size",
                 placeholder: "Number of nodes",
@@ -92,7 +91,7 @@ EditCluster = ({
 
               select
                 name: "flavor",
-                "data-index": index,
+                "data-index": i,
                 className: "string form-control",
                 disabled: 'disabled' if nodePool.flavor && !nodePool.new,
                 value: (nodePool.flavor || ''),
@@ -108,7 +107,7 @@ EditCluster = ({
 
             button
               className: 'btn btn-default',
-              "data-index": index,
+              "data-index": i,
               disabled: 'disabled' unless nodePool.new,
               onClick: ((e) -> e.preventDefault(); console.log("dataset: ", e.currentTarget.dataset.index); handleNodePoolRemove(e.target.dataset.index)),
                 span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
@@ -118,9 +117,9 @@ EditCluster = ({
 
 
     div className: 'modal-footer',
-      button className: 'btn btn-default hover-danger pull-left', onClick: ((e) -> e.preventDefault(); close(); handleClusterDelete(cluster.name)),
-        i className: 'fa fa-fw fa-trash-o'
-        'Delete Cluster'
+      # button className: 'btn btn-default hover-danger pull-left', onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+      #   i className: 'fa fa-fw fa-trash-o',
+      #   'Delete Cluster'
 
       button role: 'close', type: 'button', className: 'btn btn-default', onClick: close, 'Close'
       React.createElement ReactFormHelpers.SubmitButton,

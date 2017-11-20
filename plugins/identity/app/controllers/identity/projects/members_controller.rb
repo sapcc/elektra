@@ -102,12 +102,8 @@ module Identity
       # FIXME: duplicated in GroupsController
       def load_roles
         @roles = service_user.identity.roles.keep_if do |role|
-          ALLOWED_ROLES.include?(role.name) || user_has_beta_role?(role.name)
+          ALLOWED_ROLES.include?(role.name)
         end.sort_by(&:name)
-      end
-
-      def user_has_beta_role?(role_name)
-        BETA_ROLES.include?(role_name) && current_user.has_role?(role_name)
       end
 
       def load_role_assignments
