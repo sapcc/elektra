@@ -1,3 +1,7 @@
+.css-transition-fade {
+  opacity: 0;
+}
+
 .css-transition-fade-enter {
   opacity: 0.01;
 }
@@ -7,11 +11,11 @@
   transition: opacity 500ms ease-in;
 }
 
-.css-transition-fade-leave {
+.css-transition-fade-exit {
   opacity: 1;
 }
 
-.css-transition-fade-leave.css-transition-fade-leave-active {
+.css-transition-fade-exit.css-transition-fade-exit-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
 }
