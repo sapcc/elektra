@@ -15,6 +15,7 @@ export default class AccessControlModal extends React.Component{
   	this.state = {show: true, showForm: false};
     this.close = this.close.bind(this)
     this.toggleForm = this.toggleForm.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   close(e) {
@@ -26,6 +27,12 @@ export default class AccessControlModal extends React.Component{
 
   toggleForm() {
     this.setState({showForm: !this.state.showForm})
+  }
+
+  handleSubmit(values){
+    return this.props.handleSubmit(values).then(() =>
+      this.setState({showForm:false})
+    );
   }
 
   render(){
@@ -76,8 +83,7 @@ export default class AccessControlModal extends React.Component{
                           <AccessControlForm
                             share={share}
                             shareNetwork={shareNetwork}
-                            handleSubmit={handleSubmit}
-                            afterSubmitSuccess={() => this.setState({showForm:false})}/>
+                            handleSubmit={this.handleSubmit}/>
                         </FadeTransition>
                       }
                     </TransitionGroup>

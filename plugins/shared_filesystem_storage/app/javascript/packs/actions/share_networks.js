@@ -124,6 +124,7 @@ const deleteShareNetwork= shareNetworkId =>
       ajaxHelper.delete(`/share-networks/${shareNetworkId}`).then(response => {
         if (response.data && response.data.errors) {
           addError(React.createElement(ErrorsList, {errors: response.data.errors}))
+          dispatch(deleteShareNetworkFailure(shareNetworkId))
         } else {
           return dispatch(removeShareNetwork(shareNetworkId));
         }

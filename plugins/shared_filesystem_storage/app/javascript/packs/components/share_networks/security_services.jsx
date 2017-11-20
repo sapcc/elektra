@@ -10,6 +10,7 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
   	this.state = {show: true, showForm: false};
     this.close = this.close.bind(this)
     this.toggleForm = this.toggleForm.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
     this.availableSecurityServices = this.availableSecurityServices.bind(this)
   }
 
@@ -51,6 +52,12 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
       }
     }
     return available;
+  }
+
+  handleSubmit(values){
+    return this.props.handleSubmit(values).then(() =>
+      this.setState({showForm:false})
+    );
   }
 
   render() {
@@ -100,7 +107,7 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
                             <ShareNetworkSecurityServiceForm
                               securityServices={this.props.securityServices}
                               shareNetworkSecurityServices={this.props.shareNetworkSecurityServices}
-                              handleSubmit={this.props.handleSubmit}
+                              handleSubmit={this.handleSubmit}
                               availableSecurityServices={availableSecurityServices}/>
                           </FadeTransition>
                         }

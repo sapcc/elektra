@@ -21,10 +21,12 @@ export const FormElement = ({
   let renderLabel = () => {
     let className = labelClass + ' ' +(required ? 'required' : 'optional')
     if (horizontal) className = className + ` col-sm-${labelWidth}`
-    return <label className={className} htmlFor={id}>
-      { required && <abbr title="required">*</abbr>}
-      {label}
-    </label>
+    return (
+      <label className={className} htmlFor={id}>
+        { required && <abbr title="required">*</abbr>}
+        {label}
+      </label>
+    )
   };
 
   let renderChildren = () =>

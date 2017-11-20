@@ -4,7 +4,8 @@
       "modules": false,
       "targets": {
         "browsers": "> 1%",
-        "uglify": true
+        "uglify": true,
+        "ie": "11"
       },
       "useBuiltIns": true
     }],
@@ -12,7 +13,7 @@
   ],
 
   "plugins": [
-    "syntax-dynamic-import",
+    "react-require",
     "transform-object-rest-spread",
     ["transform-class-properties", { "spec": true }]
   ]

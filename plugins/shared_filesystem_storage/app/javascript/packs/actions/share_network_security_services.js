@@ -133,21 +133,25 @@ const deleteShareNetworkSecurityService= (shareNetworkId,securityServiceId) =>
 //   }
 // ;
 
+
 const submitShareNetworkSecurityServiceForm= (values) =>
-  function(dispatch, getState) {
+  function(dispatch) {
 
     let shareNetworkId = values.shareNetworkId
     delete values['shareNetworkId']
 
-    return ajaxHelper.post(`/share-networks/${shareNetworkId}/security-services`,
-      { security_service: values }
-    ).then(response => {
-      if (response.data.errors) {
-        throw new Error(response.data.errors)
-      } else {
-        dispatch(receiveShareNetworkSecurityService(shareNetworkId, response.data));
-        dispatch(toggleShareNetworkIsNewStatus(shareNetworkId,false));
-      }
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.post(`/share-networks/${shareNetworkId}/security-services`,
+        { security_service: values }
+      ).then(response => {
+        if (response.data.errors) {
+          handleErrors({errors: response.data.errors})
+        } else {
+          dispatch(receiveShareNetworkSecurityService(shareNetworkId, response.data));
+          dispatch(toggleShareNetworkIsNewStatus(shareNetworkId,false));
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
     })
   }
 ;

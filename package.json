@@ -3,6 +3,7 @@
     "@rails/webpacker": "^3.0.2",
     "axios": "*",
     "babel-preset-react": "^6.24.1",
+    "babel-plugin-react-require": "*",
     "prop-types": "^15.5.7",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.5",
@@ -14,9 +15,10 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "react-autocomplete-cli": "0.0.3",
     "webpack-dev-server": "^2.9.4"
   },
-  "name": "Elektra",
+  "name": "elektra-cc-dashboard",
   "license": "SEE LICENSE IN apache2-license.txt",
   "version": "1.0.0",
   "main": "app/javascript/packs/application.jsx.erb",

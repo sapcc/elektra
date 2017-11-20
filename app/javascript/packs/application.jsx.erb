@@ -4,11 +4,12 @@ import "babel-polyfill";
 
 import { configureStore, addReducer } from 'store';
 import React from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { configureAjaxHelper } from 'ajax_helper';
 import { setPolicy } from 'policy';
 import { FlashMessages } from 'lib/flashes';
+import dialogs from 'lib/dialogs';
 
 var pluginReducers = {};
 var pluginContainers = {};

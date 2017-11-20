@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Alert } from './alert';
 import { TransitionGroup } from 'react-transition-group';
 import { FadeTransition } from 'lib/components/transitions';
@@ -23,14 +24,18 @@ export class FlashMessages extends React.Component {
   }
 
   addMessage(message) {
-    const messages = React.addons.update(this.state.messages, { $push: [message] });
+    let messages = this.state.messages.slice()
+    messages.push(message)
     this.setState({ messages: messages });
   }
 
   removeMessage(message) {
     const index = this.state.messages.indexOf(message);
-    const messages = React.addons.update(this.state.messages, { $splice: [[index, 1]] });
-    this.setState({ messages: messages });
+    if (index > -1) {
+      const messages = this.state.messages.slice()
+      messages.splice(index,1)
+      this.setState({ messages: messages });
+    }
   }
 
   render () {
@@ -49,5 +54,5 @@ export class FlashMessages extends React.Component {
 }
 
 FlashMessages.propTypes = {
-  messages: React.PropTypes.array
+  messages: PropTypes.array
 };

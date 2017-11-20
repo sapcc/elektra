@@ -23,41 +23,44 @@ const azTooltip = (
   <Tooltip id="azTooltip">Availability Zone</Tooltip>
 );
 
-const List = React.createClass({
-  findShareById(shareId) {
-    if (!this.props.items) return null;
-    return this.props.items.find((item) => item.id === shareId)
-  },
+export default class List extends React.Component {
+  constructor(props) {
+    super(props);
+    this.shareNetwork = this.shareNetwork.bind(this)
+    this.shareRules = this.shareRules.bind(this)
+    this.toolbar = this.toolbar.bind(this)
+    this.renderTable = this.renderTable.bind(this)
+  }
 
   componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
-  },
+  }
 
   componentDidMount() {
     // load dependencies unless already loaded
     this.loadDependencies(this.props)
-  },
+  }
 
   loadDependencies(props) {
     if(!props.active) return;
-    this.props.loadSharesOnce()
-    this.props.loadShareNetworksOnce()
-    this.props.loadAvailabilityZonesOnce()
-  },
+    props.loadSharesOnce()
+    props.loadShareNetworksOnce()
+    props.loadAvailabilityZonesOnce()
+  }
 
   shareNetwork(share) {
     for (let network of this.props.shareNetworks.items) {
       if (network.id==share.share_network_id) return network
     }
     return null
-  },
+  }
 
   shareRules(share) {
     let rules = this.props.shareRules[share.id]
     if (!rules) return null;
     return rules
-  },
+  }
 
   toolbar() {
     if (!policy.isAllowed('shared_filesystem_storage:share_create')) return null;
@@ -101,7 +104,7 @@ const List = React.createClass({
 
       </div>
     )
-  },
+  }
 
   renderTable() {
     let { items } = this.props
@@ -145,7 +148,7 @@ const List = React.createClass({
         </table>
       </div>
     )
-  },
+  }
 
   render() {
     return (
@@ -160,6 +163,4 @@ const List = React.createClass({
       </div>
     )
   }
-});
-
-export default List
+}

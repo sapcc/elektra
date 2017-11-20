@@ -1,4 +1,6 @@
-import { Dialog } from './dialog';
+import { ModalDialog } from './dialog';
+import ReactDOM from 'react-dom';
+import React from 'react';
 
 const showDialog = function(type, message, options) {
   let cleanup;
@@ -26,15 +28,16 @@ const showDialog = function(type, message, options) {
   }
 
   wrapper = document.body.appendChild(document.createElement('div'));
-  cleanup = function() {
-    ReactDOM.unmountComponentAtNode(wrapper)
-    return setTimeout(function() {
-      return wrapper.remove();
-    });
-  };
+  // cleanup = function() {
+  //   ReactDOM.unmountComponentAtNode(wrapper)
+  //   return setTimeout(function() {
+  //     return wrapper.remove();
+  //   });
+  // };
 
-  props = Object.assign({ message, type, onHide: cleanup}, options);
-  component = ReactDOM.render(React.createElement(Dialog,props), wrapper);
+  // props = Object.assign({ message, type, onHide: cleanup}, options);
+  props = Object.assign({ message, type}, options);
+  component = ReactDOM.render(React.createElement(ModalDialog,props), wrapper);
   return component.promise
 };
 

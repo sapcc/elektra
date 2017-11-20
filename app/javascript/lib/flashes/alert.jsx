@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export class Alert extends React.Component {
 
   componentDidMount() {
@@ -21,6 +23,19 @@ export class Alert extends React.Component {
     return classes[type] || classes.success;
   }
 
+  renderMessageBody(message) {
+    if (message.text instanceof Array) {
+      return React.Children.map(message.text, (child) => {
+        if (!child) return null
+        return React.cloneElement(child)
+      })
+    } else if (typeof message.text == 'object') {
+      return React.cloneElement(message.text)
+    } else {
+      return <div>{message.text}</div>
+    }
+  }
+
   render() {
     const message = this.props.message;
     const alertClassName = `alert ${ this.alertClass(message.type) }`;
@@ -31,16 +46,16 @@ export class Alert extends React.Component {
           onClick={ this.props.onClose }>
           &times;
         </button>
-        { message.text }
+        { this.renderMessageBody(message) }
       </div>
     );
   }
 }
 
 Alert.propTypes = {
-  onClose: React.PropTypes.func,
-  timeout: React.PropTypes.number,
-  message: React.PropTypes.object.isRequired
+  onClose: PropTypes.func,
+  timeout: PropTypes.number,
+  message: PropTypes.object.isRequired
 };
 
 Alert.defaultProps = {

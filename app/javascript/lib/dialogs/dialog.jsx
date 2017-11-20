@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import Deferred from 'lib/tools/deferred';
 
-export class Dialog extends React.Component {
+export class ModalDialog extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -14,7 +14,8 @@ export class Dialog extends React.Component {
     confirmLabel: 'Yes',
     abortLabel: 'No',
     showAbortButton: true,
-    size: 'large'
+    size: 'large',
+    type: 'info'
   }
 
   abort() {

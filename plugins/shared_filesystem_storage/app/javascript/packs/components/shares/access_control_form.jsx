@@ -81,7 +81,10 @@ export default ({shareNetwork, handleSubmit}) => {
   }
 
   return (
-    <Form validate={validate} className='form form-inline' onSubmit={handleSubmit}>
+    <Form
+      validate={validate}
+      className='form form-inline'
+      onSubmit={handleSubmit}>
       <AccessControlForm shareNetwork={shareNetwork}/>
     </Form>
   );
