@@ -1,5 +1,8 @@
 export default ({
+  hasNext,
   isFetching,
+  onLoadNext,
+  onLoadAll,
   loadNextButton=true,
   loadAllButton=false,
   loadNextLabel='Load Next',
@@ -7,28 +10,29 @@ export default ({
   loadNextItemsCssClass='btn btn-primary btn-sm',
   loadAllItemsCssClass='btn btn-default btn-sm'
 }) => {
-
   return (
     <div className='ajax-paginate'>
       { isFetching ?
         <div><span className="spinner"></span> Loading...</div>
         :
-        <div>
-          { loadNextButton &&
-            <button
-              className={loadNextItemsCssClass}
-              onClick={(e) => alert('load Next')}>
-              {loadNextLabel}
-            </button>
-          }
-          { loadAllButton &&
-            <button
-              className={loadAllItemsCssClass}
-              onClick={(e) => alert('load All')}>
-              {loadAllLabel}
-            </button>
-          }
-        </div>
+        ( hasNext &&
+          <div>
+            { loadNextButton &&
+              <button
+                className={loadNextItemsCssClass}
+                onClick={(e) => onLoadNext()}>
+                {loadNextLabel}
+              </button>
+            }
+            { loadAllButton &&
+              <button
+                className={loadAllItemsCssClass}
+                onClick={(e) => onLoadAll()}>
+                {loadAllLabel}
+              </button>
+            }
+          </div>
+        )
       }
     </div>
   )

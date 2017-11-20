@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Popover, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { TransitionGroup } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { FadeTransition } from 'lib/components/transitions';
 import { policy } from 'policy';
 import SearchField from 'lib/components/search_field';
@@ -21,6 +21,12 @@ const loadingShareNetworksInfo = (
 
 const azTooltip = (
   <Tooltip id="azTooltip">Availability Zone</Tooltip>
+);
+
+const TableRowFadeTransition = ({ children, ...props }) => (
+  <CSSTransition {...props} timeout={200} classNames="css-transition-fade">
+    {children}
+  </CSSTransition>
 );
 
 export default class List extends React.Component {
@@ -70,7 +76,7 @@ export default class List extends React.Component {
 
     return (
       <div className='toolbar'>
-        { this.props.items.length>=10 &&
+        { this.props.items.length>0 &&
           <SearchField
             onChange={(term) => this.props.filterShares(term)}
             placeholder='name, ID, protocol or status'
@@ -108,44 +114,58 @@ export default class List extends React.Component {
 
   renderTable() {
     let { items } = this.props
+
     return (
       <div>
-        <table className='table shares'>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>
-                AZ
-                <OverlayTrigger placement="top" overlay={azTooltip}>
-                  <i className='fa fa-fw fa-info-circle'/>
-                </OverlayTrigger>
-              </th>
-              <th>Protocol</th>
-              <th>Size</th>
-              <th>Status</th>
-              <th>Network</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            { items && items.length>0 ? (
-              items.map( (share, index) =>
-                !share.isHidden && <ShareItem key={index}
-                  share={share}
-                  shareNetwork={this.shareNetwork(share)}
-                  shareRules={this.shareRules(share)}
-                  handleDelete={this.props.handleDelete}
-                  reloadShare={this.props.reloadShare}
-                  loadShareRulesOnce={this.props.loadShareRulesOnce}
-                  policy={this.props.policy}/>)
-              ) : (
-                <tr>
-                  <td colSpan="6">No Shares found.</td>
-                </tr>
-              )
-            }
-          </tbody>
-        </table>
+        { items && items.length > 0 &&
+          <table className='table shares'>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>
+                  AZ
+                  <OverlayTrigger placement="top" overlay={azTooltip}>
+                    <i className='fa fa-fw fa-info-circle'/>
+                  </OverlayTrigger>
+                </th>
+                <th>Protocol</th>
+                <th>Size</th>
+                <th>Status</th>
+                <th>Network</th>
+                <th></th>
+              </tr>
+            </thead>
+            <TransitionGroup component="tbody">
+
+                { items && items.length>0 ? (
+                    items.map( (share, index) =>
+                      !share.isHidden && <TableRowFadeTransition key={index}>
+                          <ShareItem
+                            share={share}
+                            shareNetwork={this.shareNetwork(share)}
+                            shareRules={this.shareRules(share)}
+                            handleDelete={this.props.handleDelete}
+                            reloadShare={this.props.reloadShare}
+                            loadShareRulesOnce={this.props.loadShareRulesOnce}
+                            policy={this.props.policy}/>
+                        </TableRowFadeTransition>
+                    )
+                  ) : (
+                    <TableRowFadeTransition>
+                      <tr>
+                        <td colSpan="6">No Shares found.</td>
+                      </tr>
+                    </TableRowFadeTransition>
+                  )
+                }
+
+            </TransitionGroup>
+          </table>
+        }
+        <AjaxPaginate
+          hasNext={this.props.hasNext}
+          isFetching={this.props.isFetching}
+          onLoadNext={this.props.loadNext}/>
       </div>
     )
   }
@@ -155,11 +175,11 @@ export default class List extends React.Component {
       <div>
         { this.toolbar() }
         { !policy.isAllowed('shared_filesystem_storage:share_list') ? (
-          <span>You are not allowed to see this page</span>) : (
-          this.props.isFetching ?
-            <span className='spinner'></span>
-            : this.renderTable()
-        )}
+            <span>You are not allowed to see this page</span>
+          ) : (
+            this.renderTable()
+          )
+        }
       </div>
     )
   }

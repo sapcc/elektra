@@ -4,7 +4,15 @@ module SharedFilesystemStorage
   # shares
   class SharesController < ApplicationController
     def index
-      render json: services.shared_filesystem_storage.shares_detail
+      per_page = params[:per_page] || 3
+      current_page = (params[:page] || 1).to_i
+
+      shares = services.shared_filesystem_storage.shares_detail(
+        limit: per_page,
+        offset: (current_page -1 ) * per_page
+      )
+
+      render json: shares
     end
 
     def export_locations

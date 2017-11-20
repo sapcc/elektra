@@ -5,7 +5,9 @@ const initialSharesState = {
   items: [],
   receivedAt: null,
   updatedAt: null,
-  isFetching: false
+  isFetching: false,
+  hasNext: true,
+  currentPage: 0
 };
 
 const requestShares=(state,{requestedAt})=>
@@ -19,7 +21,9 @@ const requestSharesFailure=function(state,...rest){
 const receiveShares=(state,{shares,receivedAt})=>
   Object.assign({},state,{
     isFetching: false,
-    items: shares,
+    items: (state.items.slice() || []).concat(shares),
+    hasNext: shares.length>0,
+    currentPage: (state.currentPage + 1),
     receivedAt
   })
 ;
@@ -47,7 +51,7 @@ const receiveShare= function(state,{share}) {
   const index = state.items.findIndex((item) => item.id==share.id);
   const items = state.items.slice();
   // update or add
-  if (index>=0) { items[index]=share; } else { items.push(share); }
+  if (index>=0) { items[index]=share; } else { items.unshift(share); }
   return Object.assign({},state,{items});
 };
 

@@ -46,10 +46,13 @@ const receiveShare= json =>
   })
 ;
 
-const fetchShares= () =>
+const fetchShares= (page=null) =>
   function(dispatch) {
     dispatch(requestShares());
-    ajaxHelper.get('/shares').then( (response) => {
+    let params = {}
+    if(page) params.page = page;
+
+    ajaxHelper.get('/shares', {params: params}).then( (response) => {
       return dispatch(receiveShares(response.data));
     })
     .catch( (error) => {
@@ -57,6 +60,18 @@ const fetchShares= () =>
       addError(`Could not load shares (${error.message})`)
     });
   }
+;
+
+const loadNext= () =>
+  function(dispatch, getState) {
+    let state = getState()['shared_filesystem_storage'];
+    if(state.shares.hasNext) {
+      let marker = state.shares.items.slice(-1)[0]
+      let markerId = marker ? marker.id : null
+      dispatch(fetchShares(state.shares.currentPage+1,markerId))
+    }
+  }
+;
 
 const shouldFetchShares= function(state) {
   const { shares } = state.shared_filesystem_storage;
@@ -286,5 +301,6 @@ export {
   fetchAvailabilityZonesIfNeeded,
   submitNewShareForm,
   submitEditShareForm,
-  filterShares
+  filterShares,
+  loadNext
 }
