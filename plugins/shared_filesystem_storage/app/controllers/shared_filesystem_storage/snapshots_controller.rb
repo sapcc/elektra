@@ -1,27 +1,21 @@
+# frozen_string_literal: true
+
 module SharedFilesystemStorage
+  # snapshots
   class SnapshotsController < ApplicationController
     def index
-      snapshots = services.shared_filesystem_storage.snapshots_detail
-      snapshots.each do |snapshot|
-        snapshot.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:snapshot_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:snapshot_update")
-        }
-      end
-      render json: snapshots
+      render json: services.shared_filesystem_storage.snapshots_detail
     end
 
     def show
+      render json: services.shared_filesystem_storage.find_snapshot(params[:id])
     end
 
     def update
-      snapshot = services.shared_filesystem_storage.new_snapshot(snapshot_params)
+      snapshot = services.shared_filesystem_storage
+                         .new_snapshot(snapshot_params)
       snapshot.id = params[:id]
       if snapshot.save
-        snapshot.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:snapshot_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:snapshot_update")
-        }
         render json: snapshot
       else
         render json: { errors: snapshot.errors }
@@ -29,13 +23,10 @@ module SharedFilesystemStorage
     end
 
     def create
-      snapshot = services.shared_filesystem_storage.new_snapshot(snapshot_params)
+      snapshot = services.shared_filesystem_storage
+                         .new_snapshot(snapshot_params)
 
       if snapshot.save
-        snapshot.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:snapshot_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:snapshot_update")
-        }
         render json: snapshot
       else
         render json: { errors: snapshot.errors }
@@ -44,7 +35,7 @@ module SharedFilesystemStorage
 
     def destroy
       snapshot = services.shared_filesystem_storage.new_snapshot
-      snapshot.id=params[:id]
+      snapshot.id = params[:id]
 
       if snapshot.destroy
         head :no_content
@@ -56,7 +47,7 @@ module SharedFilesystemStorage
     protected
 
     def snapshot_params
-      params.require(:snapshot).permit(:share_id,:name,:description)
+      params.require(:snapshot).permit(:share_id, :name, :description)
     end
   end
 end

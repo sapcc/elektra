@@ -111,6 +111,9 @@ Cluster = React.createClass
           i className: 'fa fa-fw fa-wrench'
           'Setup'
 
+        button className: 'btn btn-sm btn-plain hover-danger u-margin-top-small', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleClusterDelete(cluster.name)),
+          i className: 'fa fa-fw fa-trash-o'
+          'Delete Cluster'
 
 
 

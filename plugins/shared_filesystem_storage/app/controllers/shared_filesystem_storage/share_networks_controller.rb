@@ -1,18 +1,10 @@
+# frozen_String_literal: true
+
 module SharedFilesystemStorage
+  # share networks
   class ShareNetworksController < ApplicationController
-
     def index
-      share_networks = services.shared_filesystem_storage.share_networks_detail
-      # extend attributes with permissions
-      share_networks.each do |sn|
-        sn.permissions = {
-          get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"),
-          delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
-        }
-      end
-
-      render json: share_networks
+      render json: services.shared_filesystem_storage.share_networks_detail
     end
 
     def update
@@ -20,11 +12,6 @@ module SharedFilesystemStorage
       share_network.id = params[:id]
 
       if share_network.save
-        share_network.permissions = {
-          get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"),
-          delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
-        }
         render json: share_network
       else
         render json: { errors: share_network.errors }
@@ -36,19 +23,18 @@ module SharedFilesystemStorage
     end
 
     def subnets
-      render json: services_ng.networking.subnets(network_id: params[:network_id])
+      render json: services_ng.networking.subnets(
+        network_id: params[:network_id]
+      )
     end
 
     def create
       share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
 
       if share_network.save
-        share_network.cidr=params[:share_network][:cidr] if params[:share_network][:cidr]
-        share_network.permissions = {
-          get: current_user.is_allowed?("shared_filesystem_storage:share_network_get"),
-          delete: current_user.is_allowed?("shared_filesystem_storage:share_network_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:share_network_update")
-        }
+        if params[:share_network][:cidr]
+          share_network.cidr = params[:share_network][:cidr]
+        end
         render json: share_network
       else
         render json: { errors: share_network.errors }

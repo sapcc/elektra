@@ -23,7 +23,7 @@ SetupInfo = ({
           for link in bin.links
             ul className: 'content-list', key: link.platform,
               li null,
-                a target: '_blank', href: link.link, "Download for #{link.platform}"
+                a target: '_blank', href: "#{kubernikusBaseUrl}/#{link.link}", "Download for #{link.platform}"
 
       br null
 
