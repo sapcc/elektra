@@ -116,7 +116,7 @@ module ServiceLayerNg
       Rails.logger.debug  "[object-storage-service] -> create_container"
       Rails.logger.debug  "[object-storage-service] -> parameter:#{params}"
       name = params.delete(:name)
-      api.object_storage.create_container(name, Misty.to_json(params)).body
+      api.object_storage.create_container(name, params).body
     end
     
     def delete_container(container_name)
@@ -252,24 +252,20 @@ module ServiceLayerNg
       if capabilities.attributes.has_key?('bulk_delete')
         Rails.logger.debug  "[object-storage-service] -> bulk_delete -> running bulk-delete operation"
         # https://docs.openstack.org/swift/latest/middleware.html#bulk-delete
-        # assemble the request body containing the paths to all targets
-        body = ""
+        # assemble the request object_list containing the paths to all targets
+        object_list = ""
         targets.each do |target|
           unless target.has_key?(:container)
             raise ArgumentError, "malformed target #{target.inspect}"
           end
-          body += target[:container]
+          object_list += target[:container]
           if target.has_key?(:object)
-            body += "/" + target[:object]
+            object_list += "/" + target[:object]
           end
-          body += "\n"
+          object_list += "\n"
         end
-        
-        header = {
-          'Content-Type' => 'text/plain',
-          'Accept' => 'application/json'
-        }
-        api.object_storage.bulk_delete(body,build_custom_request_header(header))
+
+        api.object_storage.bulk_delete(object_list)
       
       else
         Rails.logger.debug  "[object-storage-service] -> bulk_delete -> no bulk-delete capabilitie available, useing fallback"
