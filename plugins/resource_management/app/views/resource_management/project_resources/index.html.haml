@@ -1,11 +1,4 @@
 =render partial: 'header'
-
-- if !current_user.is_allowed?('resource_management:project_resource_new_request')
-  .bs-callout.bs-callout-info.bs-callout-emphasize
-    We have recently implemented a more fine-grained permission system for resource management. From now on you need the
-    %code resource_admin
-    role to request more quota.
-
 =render partial: 'tabs', locals: { scope: 'resources', tab: 'overview' }
 =render partial: 'offer_package_request'
 

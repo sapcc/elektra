@@ -2,8 +2,6 @@
   "context_is_cloud_resource_admin": "role:cloud_resource_admin",
   "context_is_domain_resource_admin": "(role:resource_admin or role:cloud_resource_admin) and not domain_id:nil",
   "context_is_domain_resource_viewer": "(role:resource_admin or role:resource_viewer or role:cloud_resource_admin) and not domain_id:nil",
-  "context_is_project_resource_admin": "role:resource_admin and not project_id:nil",
-  "context_is_project_resource_viewer": "(role:resource_admin or role:resource_viewer or role:member) and not project_id:nil",
 
   "resource_management:cloud_admin_list": "rule:context_is_cloud_resource_admin",
   "resource_management:cloud_admin_show_area": "rule:context_is_cloud_resource_admin",
@@ -31,15 +29,16 @@
   "resource_management:domain_admin_reduce_quota": "rule:context_is_domain_resource_admin",
   "resource_management:domain_admin_confirm_reduce_quota": "rule:context_is_domain_resource_admin",
 
-  "resource_management:project_resource_list": "rule:context_is_project_resource_viewer",
-  "resource_management:project_resource_show_area": "rule:context_is_project_resource_viewer",
-  "resource_management:project_resource_sync_now": "rule:context_is_project_resource_admin",
-  "resource_management:project_resource_new_request": "rule:context_is_project_resource_admin",
-  "resource_management:project_resource_create_request": "rule:context_is_project_resource_admin",
-  "resource_management:project_resource_new_package_request": "rule:context_is_project_resource_admin",
-  "resource_management:project_resource_create_package_request": "rule:context_is_project_resource_admin",
-  "resource_management:project_resource_reduce_quota": "rule:context_is_project_resource_admin",
-  "resource_management:project_resource_confirm_reduce_quota": "rule:context_is_project_resource_admin",
+  "access_to_project": "not project_id:nil and (role:admin or role:member or role:resource_viewer)",
+  "resource_management:project_resource_list": "rule:access_to_project",
+  "resource_management:project_resource_show_area": "rule:access_to_project",
+  "resource_management:project_resource_sync_now": "rule:project_admin",
+  "resource_management:project_resource_new_request": "rule:project_admin",
+  "resource_management:project_resource_create_request": "rule:project_admin",
+  "resource_management:project_resource_new_package_request": "rule:project_admin",
+  "resource_management:project_resource_create_package_request": "rule:project_admin",
+  "resource_management:project_resource_reduce_quota": "rule:project_admin",
+  "resource_management:project_resource_confirm_reduce_quota": "rule:project_admin",
 
   "resource_management:automation_dump_data": "rule:context_is_cloud_resource_admin"
 }

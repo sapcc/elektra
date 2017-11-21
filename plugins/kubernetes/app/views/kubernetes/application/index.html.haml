@@ -1,25 +1,18 @@
 = content_for :main_toolbar do
   Kubernetes as a Service
 
--# - if current_user.is_allowed?('kubernetes:application_get')
--#   = react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
--# - else
-
-.bs-callout.bs-callout-info.bs-callout-emphasize
-  %h4 Welcome to our Kubernetes-as-a-Service offering
-  %p Within minutes you will be able to setup a VM based Kubernetes cluster. Your cluster is fully-managed and allows auto-updating masters and auto-repairing nodes. Identity management and access control is integrated with Converged Cloud.
-  - unless current_user.is_allowed?('kubernetes:application_get')
+- if current_user.is_allowed?('kubernetes:application_get')
+  = react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
+- else
+  .bs-callout.bs-callout-info.bs-callout-emphasize
+    %h4 Welcome to our Kubernetes-as-a-Service offering
+    %p Within minutes you will be able to setup a VM based Kubernetes cluster. Your cluster is fully-managed and allows auto-updating masters and auto-repairing nodes. Identity management and access control is integrated with Converged Cloud.
     %p
       %strong
         This service is currently in closed beta with a limited amount of beta testers. If you are interested in trying it out please contact
         = render_contact_for_beta_access(@beta_contact)
         with a short description of your use case.
-  %p
-    = link_to 'Read more about Kubernetes as a Service in our documentation', "#{sap_url_for('documentation')}docs/containers/kubernetes/", target: '_blank'
 
-- if current_user.is_allowed?('kubernetes:application_get')
-  = react_component 'kubernetes.AppProvider', permissions: {}, token: current_user.token, kubernikusBaseUrl: @kubernikus_endpoint
-- else
   %section
     .row
       .col-sm-5.col-sm-offset-3

@@ -75,7 +75,7 @@ module Identity
       protected
 
       def assign_needed_roles(project_id, user_id)
-        %w[admin member network_admin resource_admin].each do |role_name|
+        %w[admin member network_admin].each do |role_name|
           services_ng.identity.grant_project_user_role_by_role_name(
             project_id, user_id, role_name
           )

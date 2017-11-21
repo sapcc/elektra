@@ -1,28 +1,27 @@
-module SharedFilesystemStorage
-  class SharesController < ApplicationController
+# frozen_string_literal: true
 
+module SharedFilesystemStorage
+  # shares
+  class SharesController < ApplicationController
     def index
-      @shares = services.shared_filesystem_storage.shares_detail
-      @shares.each do |share|
-        share.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:share_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:share_update")
-        }
-      end
-      render json: @shares
+      per_page = params[:per_page] || 10
+      current_page = (params[:page] || 1).to_i
+
+      shares = services.shared_filesystem_storage.shares_detail(
+        limit: per_page,
+        offset: (current_page -1 ) * per_page
+      )
+
+      render json: shares
     end
 
     def export_locations
-      render json: services.shared_filesystem_storage.share_export_locations(params[:id])
+      render json: services.shared_filesystem_storage
+                           .share_export_locations(params[:id])
     end
 
     def show
-      share = services.shared_filesystem_storage.find_share(params[:id])
-      share.permissions = {
-        delete: current_user.is_allowed?("shared_filesystem_storage:share_delete"),
-        update: current_user.is_allowed?("shared_filesystem_storage:share_update")
-      }
-      render json: share
+      render json: services.shared_filesystem_storage.find_share(params[:id])
     end
 
     def availability_zones
@@ -34,10 +33,6 @@ module SharedFilesystemStorage
       share.id = params[:id]
 
       if share.save
-        share.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:share_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:share_update")
-        }
         render json: share
       else
         render json: { errors: share.errors }
@@ -46,27 +41,23 @@ module SharedFilesystemStorage
 
     def create
       share = services.shared_filesystem_storage.new_share(share_params)
-      share.share_type ||= "default"
+      share.share_type ||= 'default'
 
       if share.save
-        share.permissions = {
-          delete: current_user.is_allowed?("shared_filesystem_storage:share_delete"),
-          update: current_user.is_allowed?("shared_filesystem_storage:share_update")
-        }
         render json: share
       else
-        render json: { errors: share.errors}
+        render json: { errors: share.errors }
       end
     end
 
     def destroy
       share = services.shared_filesystem_storage.new_share
-      share.id=params[:id]
+      share.id = params[:id]
 
       if share.destroy
         head :no_content
       else
-        render json: { errors: share.errors}
+        render json: { errors: share.errors }
       end
     end
 
