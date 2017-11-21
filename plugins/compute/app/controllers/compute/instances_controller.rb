@@ -8,7 +8,8 @@ module Compute
 
     authorization_context 'compute'
     authorization_required except: %i[new_floatingip attach_floatingip
-                                      detach_floatingip new_snapshot]
+                                      detach_floatingip new_snapshot update_item new_size
+                                      automation_script]
 
     def index
       per_page = params[:per_page] || 20
