@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { DefeatableLink } from 'lib/components/defeatable_link';
 import { Popover, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { FadeTransition } from 'lib/components/transitions';
@@ -6,12 +7,7 @@ import { policy } from 'policy';
 import SearchField from 'lib/components/search_field';
 import ShareItem from './item';
 import AjaxPaginate from 'lib/components/ajax_paginate';
-
-const noShareNetworksInfo = (
-  <Popover id="popover-no-share-networks" title="No Share Network found">
-    Please <Link to="/share-networks">create a Share Network</Link> first.
-  </Popover>
-);
+import { NoShareNetworksPopover } from './no_share_networks_popover';
 
 const loadingShareNetworksInfo = (
   <Popover id="popover-loading-share-networks" title="Loading Share Networks ...">
@@ -86,7 +82,12 @@ export default class List extends React.Component {
                   input field will show all currently loaded items.'/>
         }
 
-        <Link to='/shares/new' className='btn btn-primary' disabled={!hasShareNetworks}>Create new</Link>
+        <DefeatableLink
+          to='/shares/new'
+          className='btn btn-primary'
+          disabled={!hasShareNetworks}>
+          Create new
+        </DefeatableLink>
 
         <TransitionGroup>
           { fetchingShareNetworks ? (
@@ -97,13 +98,7 @@ export default class List extends React.Component {
             </FadeTransition>
           ) : ( !hasShareNetworks &&
             <FadeTransition>
-              <span className="pull-right">
-                <OverlayTrigger trigger="click" placement="top" rootClose overlay={noShareNetworksInfo}>
-                  <a className='text-warning' href='#'>
-                    <i className='fa fa-fw fa-exclamation-triangle fa-2'></i>
-                  </a>
-                </OverlayTrigger>
-              </span>
+              <NoShareNetworksPopover className="pull-right"/>
             </FadeTransition>
           )}
         </TransitionGroup>
@@ -117,51 +112,50 @@ export default class List extends React.Component {
 
     return (
       <div>
-        { items && items.length > 0 &&
-          <table className='table shares'>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>
-                  AZ
-                  <OverlayTrigger placement="top" overlay={azTooltip}>
-                    <i className='fa fa-fw fa-info-circle'/>
-                  </OverlayTrigger>
-                </th>
-                <th>Protocol</th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>Network</th>
-                <th></th>
-              </tr>
-            </thead>
-            <TransitionGroup component="tbody">
+        <table className='table shares'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>
+                AZ
+                <OverlayTrigger placement="top" overlay={azTooltip}>
+                  <i className='fa fa-fw fa-info-circle'/>
+                </OverlayTrigger>
+              </th>
+              <th>Protocol</th>
+              <th>Size</th>
+              <th>Status</th>
+              <th>Network</th>
+              <th></th>
+            </tr>
+          </thead>
+          <TransitionGroup component="tbody">
 
-                { items && items.length>0 ? (
-                    items.map( (share, index) =>
-                      !share.isHidden && <TableRowFadeTransition key={index}>
-                          <ShareItem
-                            share={share}
-                            shareNetwork={this.shareNetwork(share)}
-                            shareRules={this.shareRules(share)}
-                            handleDelete={this.props.handleDelete}
-                            reloadShare={this.props.reloadShare}
-                            loadShareRulesOnce={this.props.loadShareRulesOnce}
-                            policy={this.props.policy}/>
-                        </TableRowFadeTransition>
-                    )
-                  ) : (
-                    <TableRowFadeTransition>
-                      <tr>
-                        <td colSpan="6">No Shares found.</td>
-                      </tr>
-                    </TableRowFadeTransition>
+              { items && items.length>0 ? (
+                  items.map( (share, index) =>
+                    !share.isHidden && <TableRowFadeTransition key={index}>
+                        <ShareItem
+                          share={share}
+                          shareNetwork={this.shareNetwork(share)}
+                          shareRules={this.shareRules(share)}
+                          handleDelete={this.props.handleDelete}
+                          reloadShare={this.props.reloadShare}
+                          loadShareRulesOnce={this.props.loadShareRulesOnce}
+                          policy={this.props.policy}/>
+                      </TableRowFadeTransition>
                   )
-                }
+                ) : (
+                  <TableRowFadeTransition>
+                    <tr>
+                      <td colSpan="6">No Shares found.</td>
+                    </tr>
+                  </TableRowFadeTransition>
+                )
+              }
 
-            </TransitionGroup>
-          </table>
-        }
+          </TransitionGroup>
+        </table>
+
         <AjaxPaginate
           hasNext={this.props.hasNext}
           isFetching={this.props.isFetching}

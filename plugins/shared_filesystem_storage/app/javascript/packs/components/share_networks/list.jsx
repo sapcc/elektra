@@ -1,6 +1,14 @@
-import { Link } from 'react-router-dom';
+import { DefeatableLink } from 'lib/components/defeatable_link';
 import { policy } from 'policy';
+import { Popover, OverlayTrigger } from 'react-bootstrap';
 import ShareNetworkItem from './item';
+
+const noCreatePermissionPopover = (
+  <Popover id="popover-no-create-permission" title="Missing Create Permission">
+    You don't have permission to create a share network.
+    Please check if you have the role sharedfilesystem_admin.
+  </Popover>
+);
 
 export default class ShareNetworkList extends React.Component {
   constructor(props){
@@ -46,11 +54,25 @@ export default class ShareNetworkList extends React.Component {
   render() {
     return (
       <div>
-        { policy.isAllowed('shared_filesystem_storage:share_network_create') &&
-          <div className='toolbar'>
-            <Link to='/share-networks/new' className='btn btn-primary'>Create New</Link>
-          </div>
-        }
+        <div className='toolbar'>
+          <DefeatableLink
+            to='/share-networks/new'
+            className='btn btn-primary'
+            disabled={!policy.isAllowed('shared_filesystem_storage:share_network_create')}>
+            Create New
+          </DefeatableLink>
+
+          { !policy.isAllowed('shared_filesystem_storage:share_network_create') &&
+            <span className="pull-right">
+              <OverlayTrigger trigger="click" placement="top" rootClose overlay={noCreatePermissionPopover}>
+                <a className='text-warning' href='#' onClick={(e) => e.preventDefault()}>
+                  <i className='fa fa-fw fa-exclamation-triangle fa-2'></i>
+                </a>
+              </OverlayTrigger>
+            </span>
+          }
+        </div>
+
         { this.props.isFetching ? (
           <div><span className='spinner'/>Loading...</div>
         ) : (

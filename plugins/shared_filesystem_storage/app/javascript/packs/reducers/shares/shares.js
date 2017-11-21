@@ -18,11 +18,11 @@ const requestSharesFailure=function(state,...rest){
   return Object.assign({},state,{isFetching: false});
 };
 
-const receiveShares=(state,{shares,receivedAt})=>
+const receiveShares=(state,{shares,hasNext,receivedAt})=>
   Object.assign({},state,{
     isFetching: false,
     items: (state.items.slice() || []).concat(shares),
-    hasNext: shares.length>0,
+    hasNext: hasNext,
     currentPage: (state.currentPage + 1),
     receivedAt
   })
@@ -78,7 +78,8 @@ const deleteShareSuccess= function(state,{shareId}) {
   if (index<0) { return state; }
   const items = state.items.slice();
   items.splice(index,1);
-  return Object.assign({},state,{items});
+  let currentPage = items.length==0 ? 0 : state.currentPage;
+  return Object.assign({},state,{items, currentPage});
 };
 
 const filterShares= (state,{term}) => {

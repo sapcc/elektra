@@ -44,23 +44,51 @@ const Container = (props) =>
         React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
       }/>
 
-      <Route exact path="/shares/new" component={NewShareModal}/>
-      <Route exact path="/shares/:id/show" component={ShowShareModal}/>
-      <Route exact path="/shares/:id/edit" component={EditShareModal}/>
-      <Route exact path="/shares/:id/access-control" component={AccessControlModal}/>
-      <Route exact path="/shares/:id/snapshots/new" component={NewSnapshotModal}/>
+      { policy.isAllowed("shared_filesystem_storage:share_create") &&
+        <Route exact path="/shares/new" component={NewShareModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:share_get") &&
+        <Route exact path="/shares/:id/show" component={ShowShareModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:share_update") &&
+        <Route exact path="/shares/:id/edit" component={EditShareModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:share_update") &&
+        <Route exact path="/shares/:id/access-control" component={AccessControlModal}/>
+      }
 
-      <Route exact path="/snapshots/:id/show" component={ShowSnapshotModal}/>
-      <Route exact path="/snapshots/:id/edit" component={EditSnapshotModal}/>
+      { policy.isAllowed("shared_filesystem_storage:snapshot_create") &&
+        <Route exact path="/shares/:id/snapshots/new" component={NewSnapshotModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:snapshot_get") &&
+        <Route exact path="/snapshots/:id/show" component={ShowSnapshotModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:snapshot_update") &&
+        <Route exact path="/snapshots/:id/edit" component={EditSnapshotModal}/>
+      }
 
-      <Route exact path="/share-networks/new" component={NewShareNetworkModal}/>
-      <Route exact path="/share-networks/:id/show" component={ShowShareNetworkModal}/>
-      <Route exact path="/share-networks/:id/edit" component={EditShareNetworkModal}/>
-      <Route exact path="/share-networks/:id/security-services" component={ShareNetworkSecurityServicesModal}/>
-
-      <Route exact path="/security-services/new" component={NewSecurityServiceModal}/>
-      <Route exact path="/security-services/:id/show" component={ShowSecurityServiceModal}/>
-      <Route exact path="/security-services/:id/edit" component={EditSecurityServiceModal}/>
+      { policy.isAllowed("shared_filesystem_storage:share_network_create") &&
+        <Route exact path="/share-networks/new" component={NewShareNetworkModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:share_network_get") &&
+        <Route exact path="/share-networks/:id/show" component={ShowShareNetworkModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:share_network_update") &&
+        <Route exact path="/share-networks/:id/edit" component={EditShareNetworkModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:share_network_update") &&
+        <Route exact path="/share-networks/:id/security-services" component={ShareNetworkSecurityServicesModal}/>
+      }
+      
+      { policy.isAllowed("shared_filesystem_storage:security_service_create") &&
+        <Route exact path="/security-services/new" component={NewSecurityServiceModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:security_service_get") &&
+        <Route exact path="/security-services/:id/show" component={ShowSecurityServiceModal}/>
+      }
+      { policy.isAllowed("shared_filesystem_storage:security_service_update") &&
+        <Route exact path="/security-services/:id/edit" component={EditSecurityServiceModal}/>
+      }
     </div>
   </HashRouter>
 

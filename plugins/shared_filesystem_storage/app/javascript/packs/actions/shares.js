@@ -16,10 +16,11 @@ const requestShares= () =>
 
 const requestSharesFailure= () => ({type: constants.REQUEST_SHARES_FAILURE});
 
-const receiveShares= json =>
+const receiveShares= (json, hasNext) =>
   ({
     type: constants.RECEIVE_SHARES,
     shares: json,
+    hasNext,
     receivedAt: Date.now()
   })
 ;
@@ -49,11 +50,13 @@ const receiveShare= json =>
 const fetchShares= (page=null) =>
   function(dispatch) {
     dispatch(requestShares());
-    let params = {}
-    if(page) params.page = page;
 
-    ajaxHelper.get('/shares', {params: params}).then( (response) => {
-      return dispatch(receiveShares(response.data));
+    ajaxHelper.get('/shares', {params: { page } }).then( (response) => {
+      if (response.data.errors) {
+        addError(React.createElement(ErrorsList, {errors: response.data.errors}))
+      } else {
+        dispatch(receiveShares(response.data.shares, response.data.has_next));
+      }
     })
     .catch( (error) => {
       dispatch(requestSharesFailure());
@@ -66,9 +69,7 @@ const loadNext= () =>
   function(dispatch, getState) {
     let state = getState()['shared_filesystem_storage'];
     if(state.shares.hasNext) {
-      let marker = state.shares.items.slice(-1)[0]
-      let markerId = marker ? marker.id : null
-      dispatch(fetchShares(state.shares.currentPage+1,markerId))
+      dispatch(fetchShares(state.shares.currentPage+1))
     }
   }
 ;
