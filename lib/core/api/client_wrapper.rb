@@ -99,6 +99,23 @@ module Core
             end
           end
         end
+        
+        # alternative implementation if "service.requests" is not working properly
+        # def method_missing(meth, *args, &block)
+        #   (class << self; self; end).class_eval do
+        #     define_method meth do |*meth_args| 
+        #       handle_response do
+        #         begin
+        #           Rails.logger.debug  "[client-wrapper] -> initialize -> service #{@origin_service.class} -> #{meth}(#{meth_args})"
+        #           @origin_service.send(meth, *meth_args)
+        #         rescue => e
+        #            raise ::Core::Api::ResponseError, e
+        #         end
+        #       end
+        #     end
+        #    end
+        #   self.send(meth,*args)
+        # end
 
         def requests
           @origin_service.requests
