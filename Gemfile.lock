@@ -37,8 +37,8 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty.git
-  revision: 512b2f204dd21e1d45e9f086f1b5d24376e1458a
-  branch: swift_bulk_delete
+  revision: c7c26ceb5479ef78481923154d06792bd0466e9b
+  branch: bugfixes
   specs:
     misty (1.1.0)
       json (>= 1.8.3, < 3)
