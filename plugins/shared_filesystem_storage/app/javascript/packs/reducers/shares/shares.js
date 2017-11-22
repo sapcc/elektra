@@ -7,7 +7,8 @@ const initialSharesState = {
   updatedAt: null,
   isFetching: false,
   hasNext: true,
-  currentPage: 0
+  currentPage: 0,
+  searchTerm: null
 };
 
 const requestShares=(state,{requestedAt})=>
@@ -18,15 +19,18 @@ const requestSharesFailure=function(state,...rest){
   return Object.assign({},state,{isFetching: false});
 };
 
-const receiveShares=(state,{shares,hasNext,receivedAt})=>
-  Object.assign({},state,{
+const receiveShares=(state,{shares,hasNext,receivedAt}) => {
+  let newItems = (state.items.slice() || []).concat(shares);
+  var items = newItems.filter( (share, pos, arr) => arr.indexOf(share)==pos);
+
+  return Object.assign({},state,{
     isFetching: false,
-    items: (state.items.slice() || []).concat(shares),
+    items: items,
     hasNext: hasNext,
     currentPage: (state.currentPage + 1),
     receivedAt
   })
-;
+};
 
 const requestShare= function(state,{shareId,requestedAt}) {
   const index = state.items.findIndex((item) => item.id==shareId);
@@ -82,16 +86,8 @@ const deleteShareSuccess= function(state,{shareId}) {
   return Object.assign({},state,{items, currentPage});
 };
 
-const filterShares= (state,{term}) => {
-  const items = state.items.slice();
-  const regex = new RegExp(term.trim(), "i")
-
-  for(let i of items) {
-    if (`${i.name} ${i.id} ${i.share_proto} ${i.status}`.search(regex)>=0)
-      i.isHidden=false
-    else i.isHidden=true
-  }
-  return Object.assign({},state,{items});
+const setSearchTerm= (state,{searchTerm}) => {
+  return Object.assign({},state,{searchTerm});
 }
 
 const receiveShareExportLocations= function(state,{shareId,export_locations}){
@@ -108,7 +104,7 @@ const receiveShareExportLocations= function(state,{shareId,export_locations}){
 export const shares = function(state, action) {
   if (state == null) { state = initialSharesState; }
   switch (action.type) {
-    case constants.FILTER_SHARES: return filterShares(state,action);
+    case constants.SET_SEARCH_TERM: return setSearchTerm(state,action);
     case constants.RECEIVE_SHARES: return receiveShares(state,action);
     case constants.REQUEST_SHARES: return requestShares(state,action);
     case constants.REQUEST_SHARES_FAILURE: return requestSharesFailure(state,action);

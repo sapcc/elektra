@@ -32,6 +32,7 @@ export default class List extends React.Component {
     this.shareRules = this.shareRules.bind(this)
     this.toolbar = this.toolbar.bind(this)
     this.renderTable = this.renderTable.bind(this)
+    this.filterShares = this.filterShares.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,6 +65,16 @@ export default class List extends React.Component {
     return rules
   }
 
+  filterShares() {
+    if(!this.props.searchTerm) return this.props.items;
+
+    // filter items
+    const regex = new RegExp(this.props.searchTerm.trim(), "i");
+    return this.props.items.filter((i) =>
+      `${i.name} ${i.id} ${i.share_proto} ${i.status}`.search(regex) >= 0
+    )
+  }
+
   toolbar() {
     if (!policy.isAllowed('shared_filesystem_storage:share_create')) return null;
 
@@ -74,10 +85,7 @@ export default class List extends React.Component {
       <div className='toolbar'>
         { this.props.items.length>0 &&
           <SearchField
-            loadNext={this.props.loadNext}
-            hasNext={this.props.hasNext}
-            isFetching={this.props.isFetching}
-            onChange={(term) => this.props.filterShares(term)}
+            onChange={(term) => this.props.searchShares(term)}
             placeholder='name, ID, protocol or status'
             text='Searches by name, ID, protocol or status in visible shares list only.
                   Entering a search term will automatically start loading the next pages
@@ -111,7 +119,7 @@ export default class List extends React.Component {
   }
 
   renderTable() {
-    let { items } = this.props
+    let items = this.filterShares()
 
     return (
       <div>
@@ -150,7 +158,7 @@ export default class List extends React.Component {
                 ) : (
                   <TableRowFadeTransition>
                     <tr>
-                      <td colSpan="6">No Shares found.</td>
+                      <td colSpan="6">{ this.props.isFetching ? <span className='spinner'/> : 'No Shares found.' }</td>
                     </tr>
                   </TableRowFadeTransition>
                 )

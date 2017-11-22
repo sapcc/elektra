@@ -48,10 +48,10 @@ const receiveShare= json =>
 ;
 
 const fetchShares= (page=null) =>
-  function(dispatch) {
+  function(dispatch,getState) {
     dispatch(requestShares());
 
-    ajaxHelper.get('/shares', {params: { page } }).then( (response) => {
+    return ajaxHelper.get('/shares', {params: { page } }).then( (response) => {
       if (response.data.errors) {
         addError(React.createElement(ErrorsList, {errors: response.data.errors}))
       } else {
@@ -70,8 +70,32 @@ const loadNext= () =>
     let state = getState()['shared_filesystem_storage'];
 
     if(!state.shares.isFetching && state.shares.hasNext) {
-      return dispatch(fetchShares(state.shares.currentPage+1))
+      dispatch(fetchShares(state.shares.currentPage+1)).then(() => {
+        // load next if search modus (searchTerm is presented)
+        dispatch(loadNextOnSearch(state.shares.searchTerm))
+      })
     }
+  }
+;
+
+const loadNextOnSearch=(searchTerm) =>
+  function(dispatch) {
+    if(searchTerm && searchTerm.trim().length>0) {
+      dispatch(loadNext());
+    }
+  }
+;
+
+const setSearchTerm= (searchTerm) =>
+  ({
+    type: constants.SET_SEARCH_TERM,
+    searchTerm
+  })
+
+const searchShares= (searchTerm) =>
+  function(dispatch) {
+    dispatch(setSearchTerm(searchTerm))
+    dispatch(loadNextOnSearch(searchTerm))
   }
 ;
 
@@ -288,12 +312,6 @@ const fetchAvailabilityZonesIfNeeded= () =>
   }
 ;
 
-const filterShares= (term) =>
-  ({
-    type: constants.FILTER_SHARES,
-    term
-  })
-
 export {
   fetchShares,
   fetchSharesIfNeeded,
@@ -303,6 +321,6 @@ export {
   fetchAvailabilityZonesIfNeeded,
   submitNewShareForm,
   submitEditShareForm,
-  filterShares,
+  searchShares,
   loadNext
 }

@@ -6,7 +6,7 @@ import {
   fetchAvailabilityZonesIfNeeded,
   deleteShare,
   reloadShare,
-  filterShares,
+  searchShares,
   loadNext
 } from '../../actions/shares'
 import { fetchShareNetworksIfNeeded } from '../../actions/share_networks'
@@ -17,6 +17,7 @@ export default connect(
     items: state.shares.items,
     isFetching: state.shares.isFetching,
     hasNext: state.shares.hasNext,
+    searchTerm: state.shares.searchTerm,
     shareNetworks: state.shareNetworks,
     shareRules: state.shareRules,
     availabilityZones: state.availabilityZones
@@ -28,7 +29,7 @@ export default connect(
     loadShareRulesOnce: (shareId) => dispatch(fetchShareRulesIfNeeded(shareId)),
     loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded()),
     loadNext: () => dispatch(loadNext()),
-    filterShares: (term) => dispatch(filterShares(term)),
+    searchShares: (term) => dispatch(searchShares(term)),
     reloadShare: (shareId) => dispatch(reloadShare(shareId)),
     handleDelete: (shareId) => dispatch(deleteShare(shareId))
   })
