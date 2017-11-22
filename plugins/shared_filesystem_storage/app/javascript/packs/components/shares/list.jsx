@@ -74,6 +74,9 @@ export default class List extends React.Component {
       <div className='toolbar'>
         { this.props.items.length>0 &&
           <SearchField
+            loadNext={this.props.loadNext}
+            hasNext={this.props.hasNext}
+            isFetching={this.props.isFetching}
             onChange={(term) => this.props.filterShares(term)}
             placeholder='name, ID, protocol or status'
             text='Searches by name, ID, protocol or status in visible shares list only.
