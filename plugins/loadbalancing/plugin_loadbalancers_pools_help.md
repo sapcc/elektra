@@ -1,4 +1,4 @@
-#### Load Balancing as a Service (LBaaS)
+#### Load Balancer as a Service (LBaaS)
 
 <b> 
     <href data-toggle="collapse" data-target="#pools"> A. Pools</href>

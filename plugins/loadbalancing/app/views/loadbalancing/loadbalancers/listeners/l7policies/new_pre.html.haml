@@ -20,21 +20,9 @@
           %h3= "Extended Policy"
           %p= "Policies predefined by CCloud for special purpose"
           %p= "The policy will apply specific settings on the load balancer objects. L7Rules are not applicable and the Policy will be applied always."
-          -#
-            %h4
-              X Forwarded For (All HTTP Listeners)
-            %p
-              Adds X-FORWARDED-FOR HTTP Header variable containing client IP address to the request.
-          %h4
-            Proxy Protocol (TCP Listeners only)
-          %p
-            Adds client information to the TCP request.
-            %br
-            Format:  PROXY TCP[VERSION] [REMOTE ADDR] [LOCAL ADDR] [REMOTE PORT] [LOCAL PORT]
-            %br
-            All member nodes which are address by the listener have to have Proxy Protocol support enabled.
-
-
+          - Loadbalancing::L7policy.predefined(@listener.protocol).each do |p|
+            - p[:ids].each do |pre|
+              = render partial: "loadbalancing/loadbalancers/listeners/l7policies/esds/#{pre}", locals: {pre: pre}
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

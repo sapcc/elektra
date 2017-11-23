@@ -1,0 +1,6 @@
+%b
+  ="#{t("loadbalancing.policies.#{pre}")} (#{pre})"
+%p
+  Prompts clients for certificates.
+  Validates Client Ceritificates and adds various X-SSL-Client-Cert-* attributes to HTTP header.
+  Expects listener (TERMINATED_HTTPS) certificate name used for SSL offloading starts with CATrust*
