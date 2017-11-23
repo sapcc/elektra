@@ -12,7 +12,7 @@ export const RECEIVE_SHARE_EXPORT_LOCATIONS  = 'shared_filesystem_storage/shares
 export const REQUEST_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares/REQUEST_AVAILABLE_ZONES';
 export const RECEIVE_AVAILABLE_ZONES         = 'shared_filesystem_storage/shares/RECEIVE_AVAILABLE_ZONES';
 export const REQUEST_AVAILABLE_ZONES_FAILURE = 'shared_filesystem_storage/shares/REQUEST_AVAILABLE_ZONES_FAILURE';
-export const SET_SEARCH_TERM                     = 'shared_filesystem_storage/shares/SET_SEARCH_TERM'; 
+export const SET_SEARCH_TERM                     = 'shared_filesystem_storage/shares/SET_SEARCH_TERM';
 
 // SHARE RULES
 export const REQUEST_SHARE_RULES             = 'shared_filesystem_storage/shares/REQUEST_SHARE_RULES'
@@ -22,6 +22,11 @@ export const REQUEST_DELETE_SHARE_RULE       = 'shared_filesystem_storage/shares
 export const DELETE_SHARE_RULE_FAILURE       = 'shared_filesystem_storage/shares/DELETE_SHARE_RULE_FAILURE'
 export const DELETE_SHARE_RULE_SUCCESS       = 'shared_filesystem_storage/shares/DELETE_SHARE_RULE_SUCCESS'
 export const DELETE_SHARE_RULES_SUCCESS      = 'shared_filesystem_storage/shares/DELETE_SHARE_RULES_SUCCESS'
+
+// SHARE TYPES
+export const RECEIVE_SHARE_TYPES              = 'shared_filesystem_storage/shares/RECEIVE_SHARE_TYPES'
+export const REQUEST_SHARE_TYPES              = 'shared_filesystem_storage/shares/REQUEST_SHARE_TYPES'
+export const REQUEST_SHARE_TYPES_FAILURE      = 'shared_filesystem_storage/shares/REQUEST_SHARE_TYPES_FAILURE'
 
 // SHARE_NETWORKS
 export const REQUEST_SHARE_NETWORKS          = 'shared_filesystem_storage/share_networks/REQUEST_SHARE_NETWORKS';

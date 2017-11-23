@@ -8,6 +8,11 @@ export default class EditShareForm extends React.Component {
     this.close = this.close.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
+
+  componentDidMount() {
+    this.props.loadShareTypesOnce()
+  }
+  
   componentWillReceiveProps(nextProps) {
     this.setState({show: nextProps.share!=null})
   }

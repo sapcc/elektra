@@ -26,6 +26,7 @@ export default class ShowShareModal extends React.Component{
 
   componentDidMount() {
     if(this.props.share) this.props.loadExportLocationsOnce(this.props.share.id)
+    this.props.loadShareTypesOnce()
   }
 
   componentWillReceiveProps(nextProps) {

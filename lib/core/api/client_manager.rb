@@ -26,7 +26,8 @@ module Core
           resources: { interface: 'public' },
           database: { interface: 'public' },
           metrics: { interface: 'public' },
-          masterdata:  { interface: 'public' }
+          masterdata:  { interface: 'public' },
+          shared_file_systems: { service_name: 'sharev2' }
         }
       end
 

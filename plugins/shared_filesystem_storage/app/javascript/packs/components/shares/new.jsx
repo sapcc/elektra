@@ -13,6 +13,10 @@ export default class NewShareForm extends React.Component {
     this.onSubmit = this.onSubmit.bind(this)
   }
 
+  componentDidMount() {
+    this.props.loadShareTypesOnce()
+  }
+
   validate(values) {
     return values.share_proto && values.size && values.share_network_id && true
   }
