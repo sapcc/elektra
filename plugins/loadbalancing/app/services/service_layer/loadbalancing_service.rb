@@ -28,6 +28,10 @@ module ServiceLayer
       driver.map_to(Loadbalancing::Loadbalancer).get_loadbalancer(id)
     end
 
+    def get_loadbalancer_hosting_agent(id)
+      driver.map_to(Loadbalancing::Loadbalancer).get_loadbalancer_hosting_agent(id)
+    end
+
     def new_loadbalancer(attributes={})
       Loadbalancing::Loadbalancer.new(driver, attributes)
     end

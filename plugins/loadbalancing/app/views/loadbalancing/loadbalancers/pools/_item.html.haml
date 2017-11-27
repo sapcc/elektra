@@ -1,7 +1,7 @@
 %tr{id: "loadbalancer_pool_#{pool.id}"}
   %td
-    = link_to name_or_id(pool.name, pool.id), plugin('loadbalancing').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
-  %td= pool.description
+    = link_to name_or_id(pool.name, pool.id,15), plugin('loadbalancing').show_details_loadbalancer_pool_path(id: pool.id, loadbalancer_id: loadbalancer.id)
+  %td= description(pool.description,25)
   %td= pool.protocol
   %td= pool.lb_algorithm
   %td= pool.members ? pool.members.count : 0

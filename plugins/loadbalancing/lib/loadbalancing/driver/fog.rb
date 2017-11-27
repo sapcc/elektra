@@ -24,6 +24,10 @@ module Loadbalancing
         handle_response { @fog.get_lbaas_loadbalancer(id).body['loadbalancer'] }
       end
 
+      def get_loadbalancer_hosting_agent(id)
+        handle_response { @fog.get_lbaas_loadbalancer_hosting_agent(id).body['agent'] }
+      end
+
       def create_loadbalancer(attributes={})
         vip_subnet_id = attributes.delete("vip_subnet_id")
         handle_response { @fog.create_lbaas_loadbalancer(vip_subnet_id, attributes).body['loadbalancer'] }

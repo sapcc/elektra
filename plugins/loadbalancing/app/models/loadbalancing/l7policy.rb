@@ -10,7 +10,7 @@ module Loadbalancing
     ACTIONS= ['REDIRECT_TO_URL', 'REDIRECT_TO_POOL', 'REJECT']
 
     validates :action, presence: true
-    validates :name, presence: true
+    validates :name, presence: false
     validates :redirect_pool_id, presence: { message: "Please choose a Pool for redirection" }, if: "action == 'REDIRECT_TO_POOL'"
     validates :redirect_url, presence: { message: "Please choose a Url for redirection" }, if: "action == 'REDIRECT_TO_URL'"
 

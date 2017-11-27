@@ -1,9 +1,13 @@
 module Loadbalancing
   module ApplicationHelper
 
-    def name_or_id(name, id)
-      return name unless name.blank?
-      return truncate(id, length: 10)
+    def name_or_id(name, id, length=36)
+      return truncate(name, length: length) unless name.blank?
+      return truncate(id, length: length)
+    end
+
+    def description(desc, length=40)
+      return truncate(desc, length: length)
     end
 
   end

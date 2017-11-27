@@ -11,7 +11,7 @@
     = link_to l7rule.type, plugin('loadbalancing').loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id, l7policy_id: l7policy.id, id: l7rule.id), data: {modal: true}
   %td= l7rule.compare_type
   %td= l7rule.key
-  %td= l7rule.value
+  %td= description(l7rule.value,40)
   %td
     - if l7rule.invert
       = icon('check')

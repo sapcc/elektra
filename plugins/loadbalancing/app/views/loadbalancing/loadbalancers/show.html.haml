@@ -27,7 +27,10 @@
             %td= @loadbalancer.vip_address
           %tr
             %th Provider
-            %td= @loadbalancer.provider
+            - if @hosting_agent_name
+              %td= "#{@loadbalancer.provider} (#{@hosting_agent_name})"
+            - else
+              %td= @loadbalancer.provider
           %tr
             %th Operating Status
             %td= @loadbalancer.operating_status

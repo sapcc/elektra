@@ -7,8 +7,9 @@
   %td
     - if listener.in_transition?
       %span{class: 'spinner'}
-    = link_to name_or_id(listener.name, listener.id), plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id)
-  %td= listener.description
+    = link_to name_or_id(listener.name, listener.id, 15), plugin('loadbalancing').loadbalancer_listener_l7policies_path(loadbalancer_id: loadbalancer.id, listener_id: listener.id)
+  %td
+    = description(listener.description,25)
   %td= listener.protocol
   %td= listener.protocol_port
   %td

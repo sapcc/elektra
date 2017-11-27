@@ -21,7 +21,7 @@
           %td= name_or_id(pool.name, pool.id)
         %tr
           %th Description
-          %td= pool.description
+          %td= description(pool.description)
         %tr
           %th Load Balancing Algorithm
           %td= pool.lb_algorithm
@@ -35,7 +35,7 @@
           - unless pool.session_persistence_cookie_name.blank?
             %tr
               %th Session Persistence Cookie Name
-              %td= pool.session_persistence_cookie_name
+              %td= description(pool.session_persistence_cookie_name)
         %tr
           - if listener
             %th Assigned to Listener

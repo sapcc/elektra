@@ -34,6 +34,12 @@ module Loadbalancing
       @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
       statuses = services.loadbalancing.loadbalancer_statuses(params[:id])
       @statuses = statuses.state
+      @hosting_agent_name = nil
+      begin
+        hosting_agent = services.loadbalancing.get_loadbalancer_hosting_agent(params[:id])
+        @hosting_agent_name = hosting_agent.host if hosting_agent
+      rescue Exception
+      end
     end
 
     # Get statuses object for one loadbalancer

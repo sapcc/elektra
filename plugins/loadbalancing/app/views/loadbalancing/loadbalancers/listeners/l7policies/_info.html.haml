@@ -12,12 +12,12 @@
         %th.snug-nowrap
           Name:
         %td
-          = l7policy.name
+          = name_or_id(l7policy.name, l7policy.id, 18)
       %tr
         %th.snug-nowrap
           Description:
         %td
-          = l7policy.description
+          = description(l7policy.description,18)
       %tr
         %th.snug-nowrap
           ID:
@@ -33,4 +33,4 @@
           %th.snug-nowrap
             Redirect To:
           %td
-            = l7policy.redirect_pool_id.blank? ? l7policy.redirect_url : l7policy.redirect_pool_id
+            = l7policy.redirect_pool_id.blank? ? description(l7policy.redirect_url, 20) : l7policy.redirect_pool_id

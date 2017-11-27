@@ -12,12 +12,12 @@
         %th.snug-nowrap
           Name:
         %td
-          = listener.name
+          = name_or_id(listener.name,listener.id,18)
       %tr
         %th.snug-nowrap
           Description:
         %td
-          = listener.description
+          = description(listener.description,18)
       %tr
         %th.snug-nowrap
           ID:

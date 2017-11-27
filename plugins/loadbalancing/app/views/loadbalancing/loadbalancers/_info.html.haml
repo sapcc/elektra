@@ -10,14 +10,14 @@
           %label{class: 'spinner', data: {prov_status: "#{loadbalancer.id}"}}
       %tr
         %th.snug-nowrap
-          Name:
+          Name/ID:
         %td
-          = loadbalancer.name
+          = name_or_id(loadbalancer.name,loadbalancer.id,18)
       %tr
         %th.snug-nowrap
           Description:
         %td
-          = loadbalancer.description
+          = description(loadbalancer.description,18)
       %tr
         %th.snug-nowrap
           ID:

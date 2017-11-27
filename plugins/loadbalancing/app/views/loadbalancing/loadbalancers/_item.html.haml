@@ -1,4 +1,4 @@
-- data = {search_name: "#{loadbalancer.name} #{loadbalancer.description} #{loadbalancer.floating_ip.floating_ip_address if loadbalancer.floating_ip}", marker_id: loadbalancer.id}
+- data = {search_name: "#{loadbalancer.id} #{loadbalancer.name} #{loadbalancer.description} #{loadbalancer.floating_ip.floating_ip_address if loadbalancer.floating_ip}", marker_id: loadbalancer.id}
 - if loadbalancer.in_transition?
   - data[:update_path]=plugin('loadbalancing').update_item_loadbalancer_path(id:loadbalancer.id)
   - data[:update_interval]=60
@@ -10,10 +10,10 @@
     - if loadbalancer.in_transition?
       %span{class: 'spinner'}
     - if current_user.is_allowed?("loadbalancing:resource_get", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      = link_to name_or_id(loadbalancer.name, loadbalancer.id), plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
+      = link_to name_or_id(loadbalancer.name, loadbalancer.id, 36), plugin('loadbalancing').loadbalancer_listeners_path(loadbalancer_id: loadbalancer.id)
     - else
-      %td= name_or_id(loadbalancer.name, loadbalancer.id)
-  %td= loadbalancer.description
+      %td= name_or_id(loadbalancer.name, loadbalancer.id, 36)
+  %td= description(loadbalancer.description)
   %td
     %label{class: 'spinner', data: {op_status: "#{loadbalancer.id}"}}
   %td

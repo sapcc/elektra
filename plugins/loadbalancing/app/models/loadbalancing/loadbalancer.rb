@@ -1,6 +1,6 @@
 module Loadbalancing
   class Loadbalancer < Core::ServiceLayer::Model
-    validates :name, :vip_subnet_id, presence: true
+    validates :vip_subnet_id, presence: true
 
     def in_transition?
       return false
