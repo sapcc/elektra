@@ -133,11 +133,21 @@ module Compute
       # for each entry in addresses
       addresses.each_with_object({}) do |(network_name, ips), ips_hash|
         # network_name => [{'fixed' => ip_data, 'floating' => ip_data}, ..]
+        # ips_hash[network_name] = ips.each_with_object({}) do |ip_data, mac_address_ips|
+        #   mac_addr = ip_data['OS-EXT-IPS-MAC:mac_addr']
+        #   ip_type = ip_data['OS-EXT-IPS:type']
+        #   mac_address_ips[mac_addr] ||= {}
+        #   mac_address_ips[mac_addr][ip_type] = ip_data
+        # end.values
         ips_hash[network_name] = ips.each_with_object({}) do |ip_data, mac_address_ips|
           mac_addr = ip_data['OS-EXT-IPS-MAC:mac_addr']
           ip_type = ip_data['OS-EXT-IPS:type']
-          mac_address_ips[mac_addr] ||= {}
-          mac_address_ips[mac_addr][ip_type] = ip_data
+          if mac_address_ips.key?(mac_addr) && mac_address_ips[mac_addr].key?(ip_type)
+            mac_address_ips["#{mac_addr}-#{ip_data['addr']}"] = { ip_type => ip_data }
+          else
+            mac_address_ips[mac_addr] ||= {}
+            mac_address_ips[mac_addr][ip_type] = ip_data
+          end
         end.values
       end
     end
