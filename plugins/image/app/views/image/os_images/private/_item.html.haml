@@ -1,4 +1,4 @@
-%tr{id: "image_#{image.id}", data: {search_name: image.name+'_'+image.id, marker_id: image.id}}
+%tr{id: "image_#{image.id}", data: {search_name: "#{image.name}_#{image.id}", marker_id: image.id}}
   %td
     - if current_user.is_allowed?('image:image_suggested') and image.owner!=@scoped_project_id
       %i.fa.fa-share.fa-fw
@@ -14,7 +14,7 @@
   %td= byte_to_human(image.size)
   %td
     - project_id_and_name(image.owner)
-  %td= image.pretty_created_at  
+  %td= image.pretty_created_at
   %td= image.status
   %td.snug
     .btn-group
