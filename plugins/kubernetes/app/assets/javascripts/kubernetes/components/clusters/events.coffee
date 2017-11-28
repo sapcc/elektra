@@ -23,7 +23,7 @@ Events = React.createClass
       tr className: 'cluster-events',
         td colSpan: '5',
           h5 null, "Events within the last hour:"
-          for event in events
+          for event in events.reverse()
             div key: event.firstTimestamp,
               i className: "event-type #{event.type.toLowerCase()}"
               strong null,
