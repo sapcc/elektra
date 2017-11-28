@@ -7,6 +7,8 @@
 #= require kubernetes/components/app
 #= require kubernetes/helpers/js_helpers
 #= require filesaver
+#= require moment.min
+
 
 
 

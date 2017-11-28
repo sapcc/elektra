@@ -1,6 +1,9 @@
-{ div, button, span, a, tbody, tr, td, ul, li, i, br, p, strong} = React.DOM
+#= require kubernetes/components/clusters/events
+
+
+{ div, button, span, a, tbody, tr, td, ul, li, i, br, p, strong, h5} = React.DOM
 { connect } = ReactRedux
-{ openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials, getSetupInfo, startPollingCluster, stopPollingCluster } = kubernetes
+{ ClusterEvents, openEditClusterDialog, requestDeleteCluster,loadCluster, getCredentials, getSetupInfo, startPollingCluster, stopPollingCluster, loadClusterEvents } = kubernetes
 
 
 Cluster = React.createClass
@@ -27,6 +30,7 @@ Cluster = React.createClass
   stopPolling: () ->
     @props.handlePollingStop(@props.cluster.name)
     clearInterval(@polling)
+
 
   clusterReady: (cluster) ->
     cluster.status.phase == 'Running'
@@ -60,57 +64,60 @@ Cluster = React.createClass
     {cluster, kubernikusBaseUrl, handleEditCluster, handleClusterDelete, handleGetCredentials, handleGetSetupInfo, handlePollingStart, handlePollingStop} = @props
     disabled = cluster.isTerminating or cluster.status.phase == 'Terminating'
 
-    tr className: ('item-disabled' if disabled),
-      td null,
-        cluster.name
-      td null,
-        strong null, cluster.status.phase
-        unless @clusterReady(cluster)
-          span className: 'spinner'
-        br null
-        span className: 'info-text', cluster.status.message
-      td className: 'nodepool-spec',
-        for nodePool in cluster.spec.nodePools
-          div className: 'nodepool-info', key: nodePool.name,
-            div null,
-              strong null, nodePool.name
-            div null,
-              span className: 'info-text', nodePool.flavor
-            div null,
-              "size: #{nodePool.size}"
-      td className: 'nodepool-status',
-        for nodePoolStatus in cluster.status.nodePools
-          specSize = @nodePoolSpecSize(cluster, nodePoolStatus.name)
-          div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
-            statusAvailable = false
-            for k,v of nodePoolStatus
-              unless k == 'name' || k == 'size'
-                statusAvailable = true
-                div key: k,
-                  strong null, "#{k}: "
-                  "#{v}/#{specSize}"
-                  if v != specSize
-                    span className: 'spinner'
+    tbody className: ('item-disabled' if disabled),
+      tr null,
+        td null,
+          cluster.name
+        td null,
+          strong null, cluster.status.phase
+          unless @clusterReady(cluster)
+            span className: 'spinner'
+          br null
+          span className: 'info-text', cluster.status.message
+        td className: 'nodepool-spec',
+          for nodePool in cluster.spec.nodePools
+            div className: 'nodepool-info', key: nodePool.name,
+              div null,
+                strong null, nodePool.name
+              div null,
+                span className: 'info-text', nodePool.flavor
+              div null,
+                "size: #{nodePool.size}"
+        td className: 'nodepool-status',
+          for nodePoolStatus in cluster.status.nodePools
+            specSize = @nodePoolSpecSize(cluster, nodePoolStatus.name)
+            div className: 'nodepool-info', key: "status-#{nodePoolStatus.name}",
+              statusAvailable = false
+              for k,v of nodePoolStatus
+                unless k == 'name' || k == 'size'
+                  statusAvailable = true
+                  div key: k,
+                    strong null, "#{k}: "
+                    "#{v}/#{specSize}"
+                    if v != specSize
+                      span className: 'spinner'
 
-            unless statusAvailable
-              span className: 'spinner'
+              unless statusAvailable
+                span className: 'spinner'
 
 
 
 
-      td className: 'vertical-buttons',
-        button className: 'btn btn-sm btn-primary', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
-          i className: 'fa fa-fw fa-pencil'
-          'Edit Cluster'
+        td className: 'vertical-buttons',
+          button className: 'btn btn-sm btn-primary', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
+            i className: 'fa fa-fw fa-pencil'
+            'Edit Cluster'
 
-        button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
-          i className: 'fa fa-fw fa-download'
-          'Download Credentials'
+          button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
+            i className: 'fa fa-fw fa-download'
+            'Download Credentials'
 
-        button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
-          i className: 'fa fa-fw fa-wrench'
-          'Setup'
+          button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
+            i className: 'fa fa-fw fa-wrench'
+            'Setup'
 
+
+      React.createElement ClusterEvents, cluster: cluster
 
 
 
@@ -126,13 +133,14 @@ Cluster = connect(
     cluster: cluster
 
   (dispatch) ->
-    handleEditCluster:      (cluster)                         -> dispatch(openEditClusterDialog(cluster))
-    handleClusterDelete:    (clusterName)                     -> dispatch(requestDeleteCluster(clusterName))
-    handleGetCredentials:   (clusterName)                     -> dispatch(getCredentials(clusterName))
-    handleGetSetupInfo:     (clusterName, kubernikusBaseUrl)  -> dispatch(getSetupInfo(clusterName, kubernikusBaseUrl))
-    reloadCluster:          (clusterName)                     -> dispatch(loadCluster(clusterName))
-    handlePollingStart:     (clusterName)                     -> dispatch(startPollingCluster(clusterName))
-    handlePollingStop:      (clusterName)                     -> dispatch(stopPollingCluster(clusterName))
+    handleEditCluster:        (cluster)                         -> dispatch(openEditClusterDialog(cluster))
+    handleClusterDelete:      (clusterName)                     -> dispatch(requestDeleteCluster(clusterName))
+    handleGetCredentials:     (clusterName)                     -> dispatch(getCredentials(clusterName))
+    handleGetSetupInfo:       (clusterName, kubernikusBaseUrl)  -> dispatch(getSetupInfo(clusterName, kubernikusBaseUrl))
+    reloadCluster:            (clusterName)                     -> dispatch(loadCluster(clusterName))
+    handlePollingStart:       (clusterName)                     -> dispatch(startPollingCluster(clusterName))
+    handlePollingStop:        (clusterName)                     -> dispatch(stopPollingCluster(clusterName))
+
 
 
 )(Cluster)

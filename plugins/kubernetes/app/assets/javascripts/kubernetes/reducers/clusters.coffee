@@ -6,6 +6,7 @@
     total: 0
     items: []
     isFetching: false
+    events: {}
 
 
   # ----- list ------
@@ -96,26 +97,47 @@
     ReactHelpers.mergeObjects({},state,{items})
 
 
+  # --------- cluster events -------------------
+  requestClusterEvents = (state,{}) ->
+    state # TODO: set isFetching on item
+
+  requestClusterEventsFailure = (state,{error})->
+    state # TODO: set isFetching on item
+
+  receiveClusterEvents = (state, {clusterName, events}) ->
+    # index = ReactHelpers.findIndexInArray(state.events, clusterName, 'name')
+    # items = state.items.slice() # clone array
+    # # update or add
+    # if index>=0 then items[index]["events"] = events
+    # ReactHelpers.mergeObjects({},state,{items})
+    allEvents = state.events
+    allEvents[clusterName] = events
+    ReactHelpers.mergeObjects({},state,{events: allEvents})
+
+
 
   # clusters reducer
   app.clusters = (state = initialKubernikusState, action) ->
     console.log(action.type)
     switch action.type
-      when app.REQUEST_CLUSTERS             then requestClusters(state,action)
-      when app.REQUEST_CLUSTERS_FAILURE     then requestClustersFailure(state,action)
-      when app.RECEIVE_CLUSTERS             then receiveClusters(state,action)
-      when app.REQUEST_CLUSTER              then requestCluster(state,action)
-      when app.REQUEST_CLUSTER_FAILURE      then requestClusterFailure(state,action)
-      when app.RECEIVE_CLUSTER              then receiveCluster(state,action)
-      when app.DELETE_CLUSTER               then deleteCluster(state,action)
-      when app.START_POLLING_CLUSTER        then startPollingCluster(state,action)
-      when app.STOP_POLLING_CLUSTER         then stopPollingCluster(state,action)
-      when app.DELETE_CLUSTER_FAILURE       then deleteClusterFailure(state,action)
-      when app.REQUEST_CREDENTIALS          then requestCredentials(state,action)
-      when app.REQUEST_CREDENTIALS_FAILURE  then requestCredentialsFailure(state,action)
-      when app.REQUEST_SETUP_INFO           then requestSetupInfo(state,action)
-      when app.REQUEST_SETUP_INFO_FAILURE   then requestSetupInfoFailure(state,action)
-      when app.SETUP_INFO_DATA              then dataForSetupInfo(state,action)
+      when app.REQUEST_CLUSTERS                 then requestClusters(state,action)
+      when app.REQUEST_CLUSTERS_FAILURE         then requestClustersFailure(state,action)
+      when app.RECEIVE_CLUSTERS                 then receiveClusters(state,action)
+      when app.REQUEST_CLUSTER                  then requestCluster(state,action)
+      when app.REQUEST_CLUSTER_FAILURE          then requestClusterFailure(state,action)
+      when app.RECEIVE_CLUSTER                  then receiveCluster(state,action)
+      when app.DELETE_CLUSTER                   then deleteCluster(state,action)
+      when app.START_POLLING_CLUSTER            then startPollingCluster(state,action)
+      when app.STOP_POLLING_CLUSTER             then stopPollingCluster(state,action)
+      when app.DELETE_CLUSTER_FAILURE           then deleteClusterFailure(state,action)
+      when app.REQUEST_CLUSTER_EVENTS           then requestClusterEvents(state,action)
+      when app.REQUEST_CLUSTER_EVENTS_FAILURE   then requestClusterEventsFailure(state,action)
+      when app.RECEIVE_CLUSTER_EVENTS           then receiveClusterEvents(state,action)
+      when app.REQUEST_CREDENTIALS              then requestCredentials(state,action)
+      when app.REQUEST_CREDENTIALS_FAILURE      then requestCredentialsFailure(state,action)
+      when app.REQUEST_SETUP_INFO               then requestSetupInfo(state,action)
+      when app.REQUEST_SETUP_INFO_FAILURE       then requestSetupInfoFailure(state,action)
+      when app.SETUP_INFO_DATA                  then dataForSetupInfo(state,action)
 
 
 

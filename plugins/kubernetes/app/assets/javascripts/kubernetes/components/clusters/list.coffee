@@ -41,17 +41,19 @@ Clusters = React.createClass
             th className: 'snug'
 
 
-        tbody null,
-          if isFetching
+
+        if isFetching
+          tbody null,
             tr null,
               td colSpan: '5',
                 span className: 'spinner'
-          else
-            if clusters && clusters.length
-              for cluster in clusters
-                React.createElement ClusterItem, cluster: cluster, key: cluster.name, kubernikusBaseUrl: kubernikusBaseUrl
+        else
+          if clusters && clusters.length
+            for cluster in clusters
+              React.createElement ClusterItem, cluster: cluster, key: cluster.name, kubernikusBaseUrl: kubernikusBaseUrl
 
-            else
+          else
+            tbody null,
               tr null,
                 td colSpan: '5',
                   if error

@@ -85,13 +85,44 @@
           dispatch(receiveCluster(data))
         error: ( jqXHR, textStatus, errorThrown) ->
           switch jqXHR.status
-            when 404 then dispatch(loadClusters()) # if requested cluster not found reload the whole list to see what we have
+            when 404 then dispatch(loadClusters()) # if requested cluster not found reload the whole list to see what we have (the cluster was probably deleted)
             else
               errorMessage =  if typeof jqXHR.responseJSON == 'object'
                                 jqXHR.responseJSON.message
                               else jqXHR.responseText
               dispatch(requestClusterFailure(errorMessage))
 
+
+  # -------------- CLUSTER EVENTS ---------------
+
+  requestClusterEvents = (clusterName) ->
+    type: app.REQUEST_CLUSTER_EVENTS
+    clusterName: clusterName
+
+  requestClusterEventsFailure = (error) ->
+    type: app.REQUEST_CLUSTER_EVENTS_FAILURE
+    error: error
+
+  receiveClusterEvents = (clusterName, events) ->
+    type: app.RECEIVE_CLUSTER_EVENTS
+    clusterName: clusterName
+    events: events
+
+  loadClusterEvents = (clusterName) ->
+    (dispatch, getState) ->
+
+      # return if isFetching # don't fetch if we're already fetching
+      dispatch(requestClusterEvents(clusterName))
+
+      app.ajaxHelper.get "/api/v1/clusters/#{clusterName}/events",
+        contentType: 'application/json'
+        success: (data, textStatus, jqXHR) ->
+          dispatch(receiveClusterEvents(clusterName, data))
+        error: ( jqXHR, textStatus, errorThrown) ->
+          errorMessage =  if typeof jqXHR.responseJSON == 'object'
+                            jqXHR.responseJSON.message
+                          else jqXHR.responseText
+          dispatch(requestClusterEventsFailure(errorMessage))
 
 
   # -------------- CREATE ---------------
@@ -285,6 +316,7 @@
   app.openNewClusterDialog       = openNewClusterDialog
   app.openEditClusterDialog      = openEditClusterDialog
   app.loadCluster                = loadCluster
+  app.loadClusterEvents          = loadClusterEvents
   app.getCredentials             = getCredentials
   app.getSetupInfo               = getSetupInfo
   app.clusterFormForCreate       = clusterFormForCreate

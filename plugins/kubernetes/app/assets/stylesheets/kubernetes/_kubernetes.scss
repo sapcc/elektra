@@ -1,3 +1,18 @@
+// icons
+i.event-type, i.event-type.normal {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-clock-o;
+  text-align: left;
+  margin-right: 5px;
+}
+
+i.warning {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-warning;
+}
+
 .dropdown-menu.dropdown-menu-with-icons {
   > li {
     position: relative;
@@ -61,5 +76,12 @@
   .btn {
     width: 100%;
     margin-bottom: $line-height-computed / 2;
+  }
+}
+
+.cluster-events {
+
+  h5 {
+    margin-bottom: $line-height-computed;
   }
 }
