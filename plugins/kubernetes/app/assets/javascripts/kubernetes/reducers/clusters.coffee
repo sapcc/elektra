@@ -111,7 +111,7 @@
     # if index>=0 then items[index]["events"] = events
     # ReactHelpers.mergeObjects({},state,{items})
     allEvents = state.events
-    allEvents[clusterName] = events
+    allEvents[clusterName] = events.reverse()
     ReactHelpers.mergeObjects({},state,{events: allEvents})
 
 
