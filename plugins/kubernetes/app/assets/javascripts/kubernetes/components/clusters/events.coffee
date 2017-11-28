@@ -1,5 +1,5 @@
 # import
-{ tr, td, h5, p, strong, div, i } = React.DOM
+{ tr, td, h5, p, strong, div, i, span } = React.DOM
 { connect } = ReactRedux
 { loadClusterEvents } = kubernetes
 
@@ -27,11 +27,12 @@ Events = React.createClass
             div key: event.firstTimestamp,
               i className: "event-type #{event.type.toLowerCase()}"
               strong null,
-                moment(event.firstTimestamp).format("HH:mm:ssZZ")
+                moment(event.firstTimestamp).format("HH:mm:ss")
                 if (event.count > 1)
-                  " - "
-                  moment(event.lastTimestamp).format("HH:mm:ssZZ")
-                  " (#{event.count} times)"
+                  span null,
+                    " - "
+                    moment(event.lastTimestamp).format("HH:mm:ss")
+                    " (#{event.count} times)"
 
               p null,
                 event.message
@@ -45,7 +46,6 @@ Events = React.createClass
 
 Events = connect(
   (state, ownProps) ->
-    console.log(state.clusters.events)
     clusterEvents = state.clusters.events[ownProps.cluster.name]
     events: (if clusterEvents? then clusterEvents else [] )
 
