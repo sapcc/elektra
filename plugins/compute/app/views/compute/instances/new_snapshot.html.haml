@@ -6,7 +6,7 @@
   %div{class: modal? ? 'modal-body' : ''}
     .alert.alert-info
       %strong Please note:
-      Creating snapshots from windows vms is not yet working. We are working on it!
+      Snapshots of Windows VMs are not working yet. Linux VMs with more data in root filesystem may also not work.
 
     = f.input :name, icon_hint: 'A snapshot is an image which preserves the disk state of a running instance.'
 
