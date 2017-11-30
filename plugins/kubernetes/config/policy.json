@@ -1,5 +1,4 @@
 {
   "kubernetes_admin": "role:kubernetes_admin",
-
-  "kubernetes:application_get": "rule:kubernetes_admin"
+  "kubernetes:application_list": "rule:kubernetes_admin"
 }
