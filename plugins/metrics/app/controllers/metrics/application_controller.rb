@@ -6,7 +6,7 @@ module Metrics
     authorization_required
 
     def index
-      enforce_permissions('metrics:index')
+      enforce_permissions('metrics:application_list')
     end
 
     def maia

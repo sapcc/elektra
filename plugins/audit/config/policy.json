@@ -1,5 +1,5 @@
 {
   "audit_viewer": "role:audit_viewer",
 
-  "audit:application_get": "rule:audit_viewer"
+  "audit:application_list": "rule:audit_viewer"
 }
