@@ -8,14 +8,12 @@ module ObjectStorage
       if current_user.is_allowed?('object_storage:container_list')
         # check existing account
         # if "account_autocreate" on swift proxy is active and no accout is exsiting it will create a new account here
-        unless services.object_storage.account_exists?
+        unless services_ng.object_storage.account
           # check that account management is allowed otherwise we are in trouble
-          capabilities = services.object_storage.capabilities
-          if capabilities['swift']['allow_account_management']
+          capabilities = services_ng.object_storage.list_capabilities
+          if capabilities.swift['allow_account_management']
             if services_ng.resource_management.available?
               render action: 'no_swift_account_because_no_quota'
-            else
-              render action: 'no_swift_account'
             end
           else
             render action: 'no_swift_account_and_account_management'
@@ -33,11 +31,6 @@ module ObjectStorage
       else
         render action: 'howtoenable'
       end
-    end
-
-    def create_account
-      services.object_storage.create_account
-      redirect_to plugin('object_storage').containers_path
     end
 
   end

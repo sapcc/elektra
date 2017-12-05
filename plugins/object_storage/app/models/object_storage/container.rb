@@ -1,5 +1,5 @@
 module ObjectStorage
-  class Container < Core::ServiceLayer::Model
+  class Container < Core::ServiceLayerNg::Model
 
     # The following properties are known:
     #   - name
@@ -21,15 +21,15 @@ module ObjectStorage
       errors[:bytes_quota] << "is invalid: #{@bytes_quota_validation_error}" if @bytes_quota_validation_error
       errors[:read_acl] << 'may not be disabled because static website serving is enabled' if !public_read_access? && (web_index.present? || web_file_listing?)
 
+      # check all containers
       if versions_location.present? or has_versions_location.present?
         errors[:versions_location] << 'is missing' if versions_location.blank?
         errors[:versions_location] << 'may not be the same container' if versions_location == name
-        unless @driver.map_to(self.class).containers.any? { |c| c.name == versions_location }
+        unless @service.containers.any? { |c| c.name == versions_location }
           errors[:versions_location] << 'is not a container name'
         end
       end
     end
-
 
     def web_file_listing?
       read(:web_file_listing)
@@ -97,15 +97,6 @@ module ObjectStorage
 
     def empty?
       @driver.objects(name, limit: 1).count == 0
-    end
-
-    def empty!
-      # bulk-delete all objects in the container
-      container_name = self.name
-      targets = @driver.objects(container_name).map do |obj|
-        { container: container_name, object: obj['path'] }
-      end
-      @driver.bulk_delete(targets)
     end
 
   end

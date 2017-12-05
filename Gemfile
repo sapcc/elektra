@@ -64,9 +64,9 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # gem 'therubyracer', platforms: :ruby
 
 gem 'misty', git: 'https://github.com/flystack/misty.git', branch: :master
-#gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'master'
-#gem 'misty', path: '../misty'
-gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git'
+#gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'bugfixes'
+#gem 'misty', path: '../misty-fork'
+gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git', branch: :master
 #gem 'misty-cc', path: '../misty-cc'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

@@ -137,7 +137,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
-      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
+      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services_ng.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
       storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')},
         if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
         highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }

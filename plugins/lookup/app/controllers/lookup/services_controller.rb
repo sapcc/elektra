@@ -45,7 +45,7 @@ module Lookup
       'lb_listener' => %w[loadbalancing find_listener],
       'lb_pool' => %w[loadbalancing find_pool],
       'lb_healthmonitor' => %w[loadbalancing find_healthmonitor],
-      'storage_container' => %w[object_storage find_container],
+      'storage_container' => %w[object_storage container_metadata],
       'share' => %w[shared_filesystem_storage find_share],
       'share_network' => %w[shared_filesystem_storage find_share_network],
       'share_snapshot' => %w[shared_filesystem_storage snapshots_detail],

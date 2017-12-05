@@ -7,13 +7,13 @@ module ObjectStorage
     before_action :load_quota_data, only: [ :index, :show ]
 
     def index
-      @objects = services.object_storage.list_objects_at_path(@container_name, params[:path])
+      @objects = services_ng.object_storage.list_objects_at_path(@container_name, params[:path])
       render formats: [:html]
     end
 
     def show
       # load the container (some UI elements are enabled based on the current ACL)
-      @container = services.object_storage.find_container(@container_name)
+      @container = services_ng.object_storage.container_metadata(@container_name)
     end
 
     def download
@@ -29,7 +29,7 @@ module ObjectStorage
         container_name: @container_name,
         path:           @object.path,
       )
-      @all_container_names = services.object_storage.containers.map(&:name).sort
+      @all_container_names = services_ng.object_storage.containers.map(&:name).sort
     end
 
     def update
@@ -41,7 +41,7 @@ module ObjectStorage
         ))
 
         unless @form.validate
-          @all_container_names = services.object_storage.containers.map(&:name).sort
+          @all_container_names = services_ng.object_storage.containers.map(&:name).sort
           render action: 'move'
           return
         end
@@ -61,7 +61,9 @@ module ObjectStorage
     end
 
     def destroy
-      @object.destroy
+      # instead of @object.destroy we need to call the delete function directly 
+      # because we need to give more than one parameter
+      services_ng.object_storage.delete_object(@container_name,@object.path)
       back_to_object_list
     end
 
@@ -71,7 +73,7 @@ module ObjectStorage
         path:           @object.path,
         with_metadata:  true,
       )
-      @all_container_names = services.object_storage.containers.map(&:name).sort
+      @all_container_names = services_ng.object_storage.containers.map(&:name).sort
     end
 
     def create_copy
@@ -81,7 +83,7 @@ module ObjectStorage
       ))
 
       unless @form.validate
-        @all_container_names = services.object_storage.containers.map(&:name).sort
+        @all_container_names = services_ng.object_storage.containers.map(&:name).sort
         render action: 'new_copy'
         return
       end
@@ -101,7 +103,7 @@ module ObjectStorage
     end
 
     def load_object
-      @object = services.object_storage.find_object(@container_name, params[:path])
+      @object = services_ng.object_storage.object_metadata(@container_name, params[:path])
       if (not @object) or @object.is_directory?
         raise ActiveRecord::RecordNotFound, "object #{params[:path]} not found in container #{@container_name}"
       end
@@ -114,7 +116,7 @@ module ObjectStorage
       # could result in an object listing for a different location.
       respond_to do |format|
         format.js do
-          @objects = services.object_storage.list_objects_at_path(@container_name, @original_dirname)
+          @objects = services_ng.object_storage.list_objects_at_path(@container_name, @original_dirname)
           render template: '/object_storage/objects/reload_index'
         end
         format.html { redirect_to plugin('object_storage').list_objects_path(@container_name, @original_dirname) }

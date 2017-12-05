@@ -82,16 +82,18 @@ module Core
           end
         end
 
+        # SERVICE
         def initialize(service, elektra_service)
           @origin_service = service
           @elektra_service = elektra_service
-          # define missing methods fosr requests and
+          # define missing methods for requests and
           # delegate them to api_service
           service.requests.each do |meth|
             (class << self; self; end).class_eval do
               define_method meth do |*args|
                 handle_response do
                   begin
+                    Rails.logger.debug  "[client-wrapper] -> initialize -> service #{service.class} -> #{meth}(#{args})"
                     service.send(meth, *args)
                   rescue => e
                     raise ::Core::Api::ResponseError, e
@@ -101,9 +103,31 @@ module Core
             end
           end
         end
+        
+        # alternative implementation if "service.requests" is not working properly
+        # def method_missing(meth, *args, &block)
+        #   (class << self; self; end).class_eval do
+        #     define_method meth do |*meth_args| 
+        #       handle_response do
+        #         begin
+        #           Rails.logger.debug  "[client-wrapper] -> initialize -> service #{@origin_service.class} -> #{meth}(#{meth_args})"
+        #           @origin_service.send(meth, *meth_args)
+        #         rescue => e
+        #            raise ::Core::Api::ResponseError, e
+        #         end
+        #       end
+        #     end
+        #    end
+        #   self.send(meth,*args)
+        # end
 
         def requests
           @origin_service.requests
+        end
+      
+        def uri
+          # this is used in object storage to build the url for public access
+          @origin_service.instance_variable_get(:@uri).to_s
         end
 
         # Check for response errors
@@ -114,6 +138,7 @@ module Core
         end
       end
 
+      # CLIENT WRAPPER
       def catalog
         @api_client.auth.catalog
       end

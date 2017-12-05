@@ -8,10 +8,10 @@ GIT
 
 GIT
   remote: https://github.com/flystack/misty.git
-  revision: 4898b33a3d3150af0bbd15aaa78115170ecb20c8
+  revision: 83caa30550b8c55488ca624ab0129033accec819
   branch: master
   specs:
-    misty (0.8.0)
+    misty (1.2.0)
       json (>= 1.8.3, < 3)
 
 GIT
@@ -39,10 +39,11 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty-cc.git
-  revision: 311ec271346f9b9fc394f4f9edfcc8165a51aea6
+  revision: ee0b9a490300b8d0198d028582f2a424b04aa042
+  branch: master
   specs:
-    misty-cc (0.1.1)
-      misty (>= 0.5.1)
+    misty-cc (0.1.3)
+      misty (>= 1.2.0)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
