@@ -6,7 +6,8 @@
       = hidden_field_tag :domain_name, @domain_name
       = hidden_field_tag :two_factor, @two_factor
 
-      %h2.form-signin-heading Please sign in
+      %h2.form-signin-heading
+        = params[:password_sync] ? 'Sync Password' : 'Please sign in'
 
       .flashes
         - flash.each do |name, msg|
@@ -26,13 +27,17 @@
 
 
       %section
-        .bs-callout.bs-callout-info.bs-callout-emphasize
-          %h4 Don't have access yet?
-          %p
-            Request the profile
-            %i= "\"CC #{@domain_name.upcase} Openstack Domain Access\""
-            in Cloud Access Manager (CAM)
-          %p
-            = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
-              %i.fa.fa-external-link.fa-fw
-              Request access in CAM
+        - if params[:password_sync]
+          .bs-callout.bs-callout-info.bs-callout-emphasize
+            Log in with your new global SAP Password
+        - else
+          .bs-callout.bs-callout-info.bs-callout-emphasize
+            %h4 Don't have access yet?
+            %p
+              Request the profile
+              %i= "\"CC #{@domain_name.upcase} Openstack Domain Access\""
+              in Cloud Access Manager (CAM)
+            %p
+              = link_to "#{ENV['MONSOON_DASHBOARD_CAM_URL']}?item=request&profile=CC%20#{@domain_name.upcase}%20Openstack%20Domain%20Access", target: '_blank' do
+                %i.fa.fa-external-link.fa-fw
+                Request access in CAM
