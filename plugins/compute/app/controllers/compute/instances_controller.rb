@@ -15,6 +15,7 @@ module Compute
       per_page = params[:per_page] || 20
       @instances = []
 
+
       if @scoped_project_id
         @instances = paginatable(per_page: per_page) do |pagination_options|
           services_ng.compute.servers(@admin_option.merge(pagination_options))
@@ -221,6 +222,7 @@ module Compute
       @instance = services_ng.compute.find_server(params[:id])
       @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
 
+      ########################## TODO
       ips = @instance.find_ips_map_by_ip(@floating_ip.floating_ip_address)
 
       # find floating ip based on fixed ip, floating ip and port id

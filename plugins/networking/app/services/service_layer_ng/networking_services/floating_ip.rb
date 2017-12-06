@@ -15,6 +15,11 @@ module ServiceLayerNg
            end
       end
 
+      def floating_ips(filter = {})
+        api.networking.list_floating_ips(filter)
+           .map_to('floatingips' => Networking::FloatingIp)
+      end
+
       # def attach_floatingip(floating_ip_id, port_id, fixed_ip_address = nil)
       #   params = { port_id: port_id }
       #   params[:fixed_ip_address] = fixed_ip_address if fixed_ip_address

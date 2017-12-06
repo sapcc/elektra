@@ -78,7 +78,8 @@
       .tab-pane{role:"tabpanel", id:"ip_addresses"}
         %table.table.datatable
           %tbody
-            - @instance.ips.each do |network_name, ips|
+            - network_ips = network_ips_map(instance_ips(@instance))
+            - network_ips.each do |network_name, ips|
               %tr
                 %th= network_name
                 %td= render_fixed_floating_ips(ips)

@@ -14,7 +14,7 @@
       = f.input :floating_ip_address, {label: "Address",
         input_html:         {},
         as:                 :grouped_select,
-        collection:         @instance.ips.each {|_n, ips| ips.keep_if {|ip| ip['floating'].present? } },
+        collection:         network_ips_map(instance_ips(@instance).select {|ip_data| ip_data['floating'].present? }),
         group_method:       :last,
         label_method:       -> a {"#{a['floating']['addr']} (#{a['fixed']['addr']} fixed)"},
         value_method:       -> a {a['floating']['addr']},

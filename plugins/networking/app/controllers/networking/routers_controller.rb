@@ -6,7 +6,33 @@ module Networking
     before_action :fill_available_networks, only: %i[new create edit update]
 
     def index
+      ################# NEW
+      private_shared_networks = services_ng.networking.networks(
+        'router:external' => false, 'shared' => true
+      )
+
+      shared_routers = private_shared_networks.each_with_object([]) do |n, arr|
+        ports = cloud_admin.networking.ports(
+          device_owner: 'network:router_interface', network_id: n.id
+        )
+        ports.each do |port|
+          router = cloud_admin.networking.find_router(port.device_id)
+          arr << router if router
+        end
+      end.flatten.uniq
+      byebug
+
+      # shared_routers = private_shared_networks.each_with_object([]) do |n, arr|
+      #   arr << services_ng.networking.routers(gateway_id: n.id)
+      # end.flatten
+
+      ################## END
+
       @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
+
+      # NEW
+      @routers.concat(shared_routers)
+
 
       usage = @routers.length
       @quota_data = []
@@ -77,11 +103,11 @@ module Networking
     end
 
     def show
-      @router = services_ng.networking.find_router(params[:id])
-      @external_network = services_ng.networking.find_network(
+      @router = cloud_admin.networking.find_router(params[:id])
+      @external_network = cloud_admin.networking.find_network(
         @router.external_gateway_info['network_id']
       )
-      @router_interface_ports = services_ng.networking.ports(
+      @router_interface_ports = cloud_admin.networking.ports(
         device_id: @router.id, device_owner: 'network:router_interface'
       )
     end
