@@ -7,14 +7,6 @@ GIT
       config
 
 GIT
-  remote: https://github.com/flystack/misty.git
-  revision: 83caa30550b8c55488ca624ab0129033accec819
-  branch: master
-  specs:
-    misty (1.2.0)
-      json (>= 1.8.3, < 3)
-
-GIT
   remote: https://github.com/sapcc/arc-client.git
   revision: 5d9b922d3c19d02f0cd87c7cc93f80802a960b50
   specs:
@@ -44,6 +36,14 @@ GIT
   specs:
     misty-cc (0.1.3)
       misty (>= 1.2.0)
+
+GIT
+  remote: https://github.com/sapcc/misty.git
+  revision: dd9e7f2b5b957cffd60c273668a53a3f6177557b
+  branch: master
+  specs:
+    misty (1.2.0)
+      json (>= 1.8.3, < 3)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
