@@ -171,16 +171,6 @@ module Compute
       end
     end
 
-    def find_ips_map_by_ip(ip_addr)
-      ip_maps.each do |ip|
-        if (ip['floating'] && ip['floating']['addr'] == ip_addr) ||
-           (ip['fixed'] && ip['fixed']['addr'] == ip_addr)
-          return ip
-        end
-      end
-      nil
-    end
-
     def fixed_ips
       ip_addresses_by_type('fixed')
     end
