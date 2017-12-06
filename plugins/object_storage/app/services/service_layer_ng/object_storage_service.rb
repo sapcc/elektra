@@ -117,15 +117,11 @@ module ServiceLayerNg
       Rails.logger.debug  "[object-storage-service] -> parameter:#{params}"
       name = params.delete(:name)
       api.object_storage.create_container(name, params).body
-      # return nil because nothing usable is returned from the api
-      return nil
     end
     
     def delete_container(container_name)
       Rails.logger.debug  "[object-storage-service] -> delete_container -> #{container_name}"
       api.object_storage.delete_container(container_name).body
-      # return nil because nothing usable is returned from the api
-      return nil
     end
 
     def update_container(container_name, params={})
@@ -154,9 +150,8 @@ module ServiceLayerNg
       
       # update metadata
       api.object_storage.create_update_or_delete_container_metadata(container_name,build_custom_request_header(header_attrs))
-
-      # return nil because nothing usable is returned from the api
-      return nil
+      # return nothing
+      nil
     end
 
     # OBJECTS # 
@@ -307,8 +302,6 @@ module ServiceLayerNg
     def delete_object(container_name,object_path)
       Rails.logger.debug  "[object-storage-service] -> delete_object -> #{container_name}, #{object_path}"
       api.object_storage.delete_object(container_name,object_path)
-      # return nil because nothing usable is returned from the api
-      return nil
     end
     
     def update_object(object_path, params)
@@ -327,9 +320,8 @@ module ServiceLayerNg
       end
       
       api.object_storage.create_or_update_object_metadata(container_name,object_path,build_custom_request_header(header_attrs))
-
-      # return nil because nothing usable is returned from the api
-      return nil
+      
+      nil
     end
 
     def create_folder(container_name, object_path)
