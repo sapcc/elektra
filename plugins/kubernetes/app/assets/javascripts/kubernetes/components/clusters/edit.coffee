@@ -118,7 +118,7 @@ EditCluster = ({
 
 
     div className: 'modal-footer',
-      button className: 'btn btn-default hover-danger pull-left', onClick: ((e) -> e.preventDefault(); close(); handleClusterDelete(cluster.name)),
+      button className: 'btn btn-default hover-danger pull-left btn-icon-text', onClick: ((e) -> e.preventDefault(); close(); handleClusterDelete(cluster.name)),
         i className: 'fa fa-fw fa-trash-o'
         'Delete Cluster'
 

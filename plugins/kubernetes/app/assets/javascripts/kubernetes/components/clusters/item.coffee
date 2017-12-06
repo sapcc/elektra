@@ -104,15 +104,15 @@ Cluster = React.createClass
 
 
         td className: 'vertical-buttons',
-          button className: 'btn btn-sm btn-primary', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
+          button className: 'btn btn-sm btn-primary btn-icon-text', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleEditCluster(cluster)),
             i className: 'fa fa-fw fa-pencil'
             'Edit Cluster'
 
-          button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
+          button className: 'btn btn-sm btn-default btn-icon-text', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetCredentials(cluster.name)),
             i className: 'fa fa-fw fa-download'
             'Download Credentials'
 
-          button className: 'btn btn-sm btn-default', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
+          button className: 'btn btn-sm btn-default btn-icon-text', disabled: disabled, onClick: ((e) -> e.preventDefault(); handleGetSetupInfo(cluster.name, kubernikusBaseUrl)),
             i className: 'fa fa-fw fa-wrench'
             'Setup'
 
