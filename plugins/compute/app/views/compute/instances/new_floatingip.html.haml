@@ -13,7 +13,7 @@
       = f.input :fixed_ip_address,
         prompt: "Select an Interface IP",
         as: :grouped_select,
-        collection: @instance.ips.each{|_n,ips| ips.keep_if {|ip| ip['floating'].nil?} },
+        collection: network_ips_map(instance_ips(@instance).select {|ip_data| ip_data['floating'].nil? }),
         group_method: :last,
         required: false,
         label_method:       -> a {a['fixed']['addr']},

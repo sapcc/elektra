@@ -23,7 +23,7 @@
             %td= @router.id
           %tr
             %th Project ID
-            %td= @router.tenant_id
+            %td= @router.tenant_id || @router.project_id
           %tr
             %th Status
             %td= @router.status

@@ -30,9 +30,9 @@
   "networking:network_get:segments": "rule:context_is_network_viewer",
 
   "networking:router_create": "rule:context_is_network_admin",
-  "networking:router_update": "rule:context_is_network_admin",
+  "networking:router_update": "rule:context_is_network_admin and project_id:%(router.tenant_id)s",
   "networking:router_get":    "rule:context_is_network_viewer",
-  "networking:router_delete": "rule:context_is_network_admin",
+  "networking:router_delete": "rule:context_is_network_admin and project_id:%(router.tenant_id)s",
 
   "networking:network_wizard_get": "rule:cloud_network_admin or rule:network_admin",
   "networking:network_wizard_create": "rule:cloud_network_admin or rule:network_admin",

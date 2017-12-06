@@ -146,24 +146,25 @@ module Compute
       end
 
       fixed_floating_map = project_floating_ips.each_with_object({}) do |fip, map|
-        map[fip.fixed_ip_address] = fip.floating_ip_address
+        map[fip.fixed_ip_address] = fip
       end
 
       @ip_maps = addresses.values.flatten.each_with_object([]) do |ip, array|
         next if ip['OS-EXT-IPS:type'] == 'floating'
 
         fixed_address = ip['addr']
-        floating_address = fixed_floating_map[fixed_address]
+        floating_ip = fixed_floating_map[fixed_address]
         data = {
           'fixed' => {
             'addr' => fixed_address,
             'network_name' => ip_network_names[fixed_address]
           }
         }
-        if floating_address
+        if floating_ip
           data['floating'] = {
-            'addr' => floating_address,
-            'network_name' => ip_network_names[floating_address]
+            'addr' => floating_ip.floating_ip_address,
+            'id' => floating_ip.id,
+            'network_name' => ip_network_names[floating_ip.floating_ip_address]
           }
         end
         array << data
@@ -179,41 +180,6 @@ module Compute
       end
       nil
     end
-
-    def add_floating_ip_to_addresses(mac_address, floating_ip_address)
-      addresses.each do |_n, ips|
-        ips.each do |ip_data|
-          if ip_data['OS-EXT-IPS-MAC:mac_addr'] == mac_address
-            ips << {
-              'OS-EXT-IPS-MAC:mac_addr' => mac_address,
-              'addr' => floating_ip_address,
-              'OS-EXT-IPS:type' => 'floating'
-            }
-            return addresses
-          end
-        end
-      end
-    end
-
-    def remove_floating_ip_from_addresses(mac_address, floating_ip_address)
-      addresses.each do |_n, ips|
-        ips.delete_if do |ip_data|
-          ip_data['OS-EXT-IPS-MAC:mac_addr'] == mac_address &&
-            ip_data['addr'] == floating_ip_address &&
-            ip_data['OS-EXT-IPS:type'] == 'floating'
-        end
-      end
-    end
-    #
-    # def remove_floating_ip_from_addresses(floating_ip)
-    #
-    # end
-    #
-    # def add_fixed_ip_to_addresses(interface)
-    # end
-    #
-    # def remove_fixed_ip_from_addresses(interface)
-    # end
 
     def fixed_ips
       ip_addresses_by_type('fixed')

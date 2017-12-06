@@ -195,12 +195,6 @@ module Compute
       @floating_ip.port_id = port.id
 
       if @floating_ip.save
-        # floating ip successfuly assigned -> update instance addresses.
-        # Needed for rendering
-        @instance.add_floating_ip_to_addresses(
-          port.mac_address, @floating_ip.floating_ip_address
-        )
-
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {}
@@ -219,34 +213,16 @@ module Compute
 
     def detach_floatingip
       enforce_permissions('::networking:floating_ip_disassociate')
-      @instance = services_ng.compute.find_server(params[:id])
-      @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
 
-      ########################## TODO
-      ips = @instance.find_ips_map_by_ip(@floating_ip.floating_ip_address)
+      @floating_ip = services_ng.networking.find_floating_ip(
+        params[:floating_ip][:floating_ip_id]
+      )
 
-      # find floating ip based on fixed ip, floating ip and port id
-      if ips && ips['fixed'] && ips['floating']
-        floating_ips = services_ng.networking.project_floating_ips(
-          @scoped_project_id, floating_ip_address: ips['floating']['addr'],
-          fixed_ip_address: ips['fixed']['addr']
-        )
-        if floating_ips.length == 1
-          @floating_ip = floating_ips.first
-        else
-          port = services_ng.networking.ports(
-            mac_address: ips['fixed']['OS-EXT-IPS-MAC:mac_addr'], device_id: @instance.id
-          ).first
-          temp_ip = floating_ips.find { |ip| ip.port_id == port.id }
-          @floating_ip = temp_ip if temp_ip
-        end
-      end
-
-      if @floating_ip.detach
+      if @floating_ip && @floating_ip.detach
         respond_to do |format|
           format.html { redirect_to instances_url }
           format.js {
-            @instance.remove_floating_ip_from_addresses(ips['floating']['OS-EXT-IPS-MAC:mac_addr'],ips['floating']['addr'])
+            @instance = services_ng.compute.find_server(params[:id])
           }
         end
       else
