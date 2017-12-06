@@ -1,6 +1,7 @@
 Networking::Engine.routes.draw do
   root to: 'networks#index'
   resources :floating_ips
+  resources :ports
 
   resources :security_groups, except: %i[edit update] do
     resources :rules, module: :security_groups
