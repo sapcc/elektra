@@ -36,127 +36,63 @@ describe Compute::Server do
       })
   }
 
-  describe '#add_floating_ip_to_addresses' do
-    it 'responds to add_floating_ip_to_addresses' do
-      expect(server).to respond_to(:add_floating_ip_to_addresses)
+  project_floating_ips = [
+    Networking::FloatingIp.new(nil, { id: '1', floating_ip_address: '10.44.32.21', fixed_ip_address: '10.180.0.33'})
+  ]
+
+  describe '#ip_maps' do
+    let(:ips) {
+      server.ip_maps(project_floating_ips)
+    }
+
+    it 'responds to ip_maps' do
+      expect(server).to respond_to(:ip_maps)
     end
 
-    it 'extends addresses with a floating ip' do
-      server.add_floating_ip_to_addresses('fa:16:3e:df:c0:83', '156.23.45.67')
-      expect(server.addresses['Network 2']).to eq([
-        {
-          'OS-EXT-IPS-MAC:mac_addr' => 'fa:16:3e:df:c0:83',
-          'version' => 4,
-          'addr' => '10.180.0.17',
-          'OS-EXT-IPS:type' => 'fixed'
-        },
-        {
-          'OS-EXT-IPS-MAC:mac_addr' => 'fa:16:3e:df:c0:83',
-          'addr' => '156.23.45.67',
-          'OS-EXT-IPS:type' => 'floating'
-        }
-      ])
+    it 'returns an array' do
+      expect(ips.is_a?(Array)).to eq(true)
     end
 
-    it 'should not add floating ip address' do
-      server.add_floating_ip_to_addresses('BAD_MAC_ADDRESS', '156.23.45.67')
-      expect(server.addresses['Network 2'].length).to eq(1)
-    end
-  end
-
-  describe '#remove_floating_ip_from_addresses' do
-    it 'responds to remove_floating_ip_from_addresses' do
-      expect(server).to respond_to(:remove_floating_ip_from_addresses)
+    it 'returns an array with 3 entries' do
+      expect(ips.length).to eq(3)
     end
 
-    it 'removes floating ip from addresses' do
-      server.remove_floating_ip_from_addresses('fa:16:3e:c0:7a:2b', '10.44.32.21')
-      expect(server.addresses['Network 1']).to eq([
-        {
-          'OS-EXT-IPS-MAC:mac_addr' => 'fa:16:3e:c0:7a:2b',
-          'version' => 4,
-          'addr' => '10.180.0.33',
-          'OS-EXT-IPS:type' => 'fixed'
-        },
-        {
-          'OS-EXT-IPS-MAC:mac_addr' => 'fa:16:3e:a5:e4:b4',
-          'version' => 4,
-          'addr' => '10.180.0.60',
-          'OS-EXT-IPS:type' => 'fixed'
-        }
-      ])
+    it 'should contains two different networks' do
+      networks = ips.collect {|ip| ip['fixed']['network_name']}.uniq.sort
+      expect(networks).to eq(['Network 1', 'Network 2'])
     end
 
-    it 'should not remove floating ip address' do
-      server.remove_floating_ip_from_addresses('BAD_MAC_ADDRESS', '10.44.32.21')
-      expect(server.addresses['Network 1'].length).to eq(3)
-    end
-  end
-
-  describe '#find_ips_map_by_ip' do
-    it 'returns a hash with fixed ip' do
-      expect(server.find_ips_map_by_ip('10.180.0.60').keys).to eq(%w[fixed])
+    it 'should contain two entries with network Network 1' do
+      network1_ips = ips.select {|ip| ip['fixed']['network_name'] == 'Network 1'}
+      expect(network1_ips.length).to eq(2)
     end
 
-    it 'returns a hash with fixed and floating ips' do
-      expect(server.find_ips_map_by_ip('10.180.0.33').keys).to eq(%w[fixed floating])
-    end
-
-    it 'returns a hash with fixed and floating ips by floating ip' do
-      expect(server.find_ips_map_by_ip('10.44.32.21').keys).to eq(%w[fixed floating])
-    end
-  end
-
-  describe '#ips' do
-    it 'responds to ips' do
-      expect(server).to respond_to(:ips)
-    end
-
-    it 'returns a hash map' do
-      expect(server.ips.is_a?(Hash)).to eq(true)
-    end
-
-    it 'returns a map with two keys' do
-      expect(server.ips.keys.length).to eq(2)
-    end
-
-    it 'returns a map where keys are network names' do
-      expect(server.ips.keys.sort).to eq(['Network 1', 'Network 2'])
-    end
-
-    it 'map of Network 1 contains two entries' do
-      expect(server.ips['Network 1'].length).to eq(2)
-    end
-
-    it 'map of Network 2 contains one entry' do
-      expect(server.ips['Network 2'].length).to eq(1)
+    it 'should contain two entries with network Network 2' do
+      network2_ips = ips.select {|ip| ip['fixed']['network_name'] == 'Network 2'}
+      expect(network2_ips.length).to eq(1)
     end
 
     context 'Floating IP is assigned' do
-      let(:ips) do
-        server.ips['Network 1'].find do |ip|
-          ip['fixed']['addr'] == '10.180.0.33'
-        end
+      let(:assigned_ip) do
+        ips.find { |ip| ip['fixed']['addr'] == '10.180.0.33' }
       end
 
       it 'contains fixed and floating keys' do
-        expect(ips.keys.sort).to eq(%w[fixed floating])
+        expect(assigned_ip.keys.sort).to eq(%w[fixed floating])
       end
 
-      it 'contains fixed and floating ips with the same MAC address' do
-        expect(ips['fixed']['OS-EXT-IPS-MAC:mac_addr']).to eq(ips['floating']['OS-EXT-IPS-MAC:mac_addr'])
+      it 'should map fixed to floating ips' do
+        expect(assigned_ip['floating']['addr']).to eq('10.44.32.21')
       end
     end
 
     context 'Floating IP is not assigned' do
-      let(:ips) do
-        server.ips['Network 1'].find do |ip|
-          ip['fixed']['addr'] == '10.180.0.60'
-        end
+      let(:unassigned_ip) do
+        ips.find { |ip| ip['fixed']['addr'] == '10.180.0.60' }
       end
 
-      it 'contains only fixed IP' do
-        expect(ips.keys).to eq(%w[fixed])
+      it 'should contain only fixed IP' do
+        expect(unassigned_ip.keys).to eq(%w[fixed])
       end
     end
   end

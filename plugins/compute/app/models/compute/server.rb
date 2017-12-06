@@ -128,76 +128,48 @@ module Compute
 
     # This methods converts addresses to a map between fixed and floating ips.
     # return:
-    # { NETWORK_NAME => [{ 'fixed' => IP_DATA, 'floating' => IP_DATA}, ...] }
-    def ips
-      # for each entry in addresses
-      addresses.each_with_object({}) do |(network_name, ips), ips_hash|
-        # network_name => [{'fixed' => ip_data, 'floating' => ip_data}, ..]
-        # ips_hash[network_name] = ips.each_with_object({}) do |ip_data, mac_address_ips|
-        #   mac_addr = ip_data['OS-EXT-IPS-MAC:mac_addr']
-        #   ip_type = ip_data['OS-EXT-IPS:type']
-        #   mac_address_ips[mac_addr] ||= {}
-        #   mac_address_ips[mac_addr][ip_type] = ip_data
-        # end.values
-        ips_hash[network_name] = ips.each_with_object({}) do |ip_data, mac_address_ips|
-          mac_addr = ip_data['OS-EXT-IPS-MAC:mac_addr']
-          ip_type = ip_data['OS-EXT-IPS:type']
-          if mac_address_ips.key?(mac_addr) && mac_address_ips[mac_addr].key?(ip_type)
-            mac_address_ips["#{mac_addr}-#{ip_data['addr']}"] = { ip_type => ip_data }
-          else
-            mac_address_ips[mac_addr] ||= {}
-            mac_address_ips[mac_addr][ip_type] = ip_data
-          end
-        end.values
-      end
-    end
+    # [
+    #   {
+    #     'fixed' => { 'addr' => ADDRESS, 'network_name' => NETWORK_NAME},
+    #     'floating' => { 'addr' => ADDRESS, 'network_name' => NETWORK_NAME}
+    #   },
+    #   ...
+    # ]
+    def ip_maps(project_floating_ips)
+      return @ip_maps if @ip_maps
+      return {} unless addresses
 
-    def find_ips_map_by_ip(ip_addr)
-      ips.each do |_n, ips|
+      ip_network_names = addresses.each_with_object({}) do |(network_name, ips), map|
         ips.each do |ip|
-          if (ip['floating'] && ip['floating']['addr'] == ip_addr) ||
-             (ip['fixed'] && ip['fixed']['addr'] == ip_addr)
-            return ip
-          end
+          map[ip['addr']] = network_name
         end
       end
-      nil
-    end
 
-    def add_floating_ip_to_addresses(mac_address, floating_ip_address)
-      addresses.each do |_n, ips|
-        ips.each do |ip_data|
-          if ip_data['OS-EXT-IPS-MAC:mac_addr'] == mac_address
-            ips << {
-              'OS-EXT-IPS-MAC:mac_addr' => mac_address,
-              'addr' => floating_ip_address,
-              'OS-EXT-IPS:type' => 'floating'
-            }
-            return addresses
-          end
-        end
+      fixed_floating_map = project_floating_ips.each_with_object({}) do |fip, map|
+        map[fip.fixed_ip_address] = fip
       end
-    end
 
-    def remove_floating_ip_from_addresses(mac_address, floating_ip_address)
-      addresses.each do |_n, ips|
-        ips.delete_if do |ip_data|
-          ip_data['OS-EXT-IPS-MAC:mac_addr'] == mac_address &&
-            ip_data['addr'] == floating_ip_address &&
-            ip_data['OS-EXT-IPS:type'] == 'floating'
+      @ip_maps = addresses.values.flatten.each_with_object([]) do |ip, array|
+        next if ip['OS-EXT-IPS:type'] == 'floating'
+
+        fixed_address = ip['addr']
+        floating_ip = fixed_floating_map[fixed_address]
+        data = {
+          'fixed' => {
+            'addr' => fixed_address,
+            'network_name' => ip_network_names[fixed_address]
+          }
+        }
+        if floating_ip
+          data['floating'] = {
+            'addr' => floating_ip.floating_ip_address,
+            'id' => floating_ip.id,
+            'network_name' => ip_network_names[floating_ip.floating_ip_address]
+          }
         end
+        array << data
       end
     end
-    #
-    # def remove_floating_ip_from_addresses(floating_ip)
-    #
-    # end
-    #
-    # def add_fixed_ip_to_addresses(interface)
-    # end
-    #
-    # def remove_fixed_ip_from_addresses(interface)
-    # end
 
     def fixed_ips
       ip_addresses_by_type('fixed')

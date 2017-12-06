@@ -6,7 +6,27 @@ module Networking
     before_action :fill_available_networks, only: %i[new create edit update]
 
     def index
+      ################# NEW
+      # find routers of shared networks
+      private_shared_networks = services_ng.networking.networks(
+        'router:external' => false, 'shared' => true
+      )
+
+      shared_routers = private_shared_networks.each_with_object([]) do |n, arr|
+        ports = cloud_admin.networking.ports(
+          device_owner: 'network:router_interface', network_id: n.id, tenant_id: n.tenant_id
+        )
+        ports.each do |port|
+          router = cloud_admin.networking.find_router(port.device_id)
+          arr << router if router
+        end
+      end.flatten.uniq
+      ################## END
       @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
+
+      # NEW
+      @routers.concat(shared_routers)
+
 
       usage = @routers.length
       @quota_data = []
@@ -20,11 +40,11 @@ module Networking
     end
 
     def topology
-      @router = services_ng.networking.find_router(params[:router_id])
-      @external_network = services_ng.networking.find_network(
+      @router = cloud_admin.networking.find_router(params[:router_id])
+      @external_network = cloud_admin.networking.find_network(
         @router.external_gateway_info['network_id']
       )
-      @router_interface_ports = services_ng.networking.ports(
+      @router_interface_ports = cloud_admin.networking.ports(
         device_id: @router.id, device_owner: 'network:router_interface'
       )
 
@@ -39,7 +59,7 @@ module Networking
         }] + @router_interface_ports.collect do |port|
           node = { name: port.network_object.name, type: 'network',
                    id: port.network_object.id }
-          services_ng.networking.ports(network_id: port.network_id).each do |np|
+          cloud_admin.networking.ports(network_id: port.network_id).each do |np|
             if np.device_owner.start_with?('compute:')
               node[:children] ||= []
               node[:children] << { name: '', type: 'server', id: np.device_id }
@@ -77,11 +97,11 @@ module Networking
     end
 
     def show
-      @router = services_ng.networking.find_router(params[:id])
-      @external_network = services_ng.networking.find_network(
+      @router = cloud_admin.networking.find_router(params[:id])
+      @external_network = cloud_admin.networking.find_network(
         @router.external_gateway_info['network_id']
       )
-      @router_interface_ports = services_ng.networking.ports(
+      @router_interface_ports = cloud_admin.networking.ports(
         device_id: @router.id, device_owner: 'network:router_interface'
       )
     end

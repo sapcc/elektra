@@ -19,7 +19,8 @@
   -# %td= instance.availability_zone
   %td.snug-nowrap
     .instance-ips{ data: { collapsable: true, collapsed: true } }
-      - instance.ips.each do |network_name, ips|
+      - network_ips = network_ips_map(instance_ips(instance))
+      - network_ips.each do |network_name, ips|
         .list-group.borderless
           = network_name
           = render_fixed_floating_ips(ips)

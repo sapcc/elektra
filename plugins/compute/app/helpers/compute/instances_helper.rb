@@ -65,19 +65,36 @@ module Compute
     ########################################################################
     # Floating IPs
     ########################################################################
-    def render_fixed_floating_ips(ips)
+    def network_ips_map(ips)
+      network_ips = ips.each_with_object({}) do |ip_data, map|
+        map[ip_data['fixed']['network_name']] ||= []
+        map[ip_data['fixed']['network_name']] << ip_data
+      end
+    end
+
+    def instance_ips(instance)
+      @project_floating_ips ||= services_ng.networking.floating_ips(
+        project_id: @scoped_project_id
+      )
+      instance.ip_maps(@project_floating_ips)
+    end
+
+    def render_fixed_floating_ips(ips, options = {})
       capture_haml do
-        ips.each do |ip|
+        ips.each do |ip_data|
+          fixed = ip_data['fixed']
+          floating = ip_data['floating']
+
           haml_tag :p, class: 'list-group-item-text' do
-            haml_tag :span, data: { toggle: 'tooltip' }, title: 'Fixed IP' do
+            haml_tag :span, data: { toggle: 'tooltip' }, title: "Fixed IP (#{fixed['network_name']})" do
               haml_tag :i, '', class: 'fa fa-desktop fa-fw'
-              haml_concat ip['fixed']['addr'] if ip.key?('fixed')
+              haml_concat fixed['addr']
             end
-            if ip['floating']
-              haml_tag :span, data: { toggle: 'tooltip' }, title: 'Floating IP' do
+            if floating
+              haml_tag :span, data: { toggle: 'tooltip' }, title: "Floating IP (#{floating['network_name']})" do
                 haml_tag(:i, '', class: 'fa fa-arrows-h')
                 haml_tag(:i, '', class: 'fa fa-globe fa-fw')
-                haml_concat ip['floating']['addr'] if ip.key?('floating')
+                haml_concat floating['addr']
               end
             end
           end
