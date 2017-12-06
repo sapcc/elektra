@@ -305,6 +305,10 @@ module ApplicationHelper
     css_class
   end
 
+  def domain_class
+    "#{@scoped_domain_fid.split('-').first}" if @scoped_domain_fid
+  end
+
   def external_link_to(name, url)
     haml_tag :a, href: url do
       # haml_tag :span, class: "glyphicon glyphicon-share-alt"

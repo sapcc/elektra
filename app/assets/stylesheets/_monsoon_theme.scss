@@ -1087,7 +1087,6 @@ footer, .footer {
         }
       }
     }
-
   }
 }
 
@@ -2174,5 +2173,17 @@ input[type='checkbox'], input[type='radio'] {
     transition: all 0.5s;
     transform: rotate(0deg);
     color: #888888;
+  }
+}
+
+
+
+// --------------------------------------------------------------------------------------
+// Domain specific styling (only for danger domains)
+// --------------------------------------------------------------------------------------
+
+.ccadmin {
+  .context-breadcrumb.context-breadcrumb-fancy {
+    background: $context-breadcrumb-fancy-bg-danger;
   }
 }

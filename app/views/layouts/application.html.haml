@@ -37,7 +37,7 @@
 
     = csrf_meta_tags
 
-  %body{class: "#{body_class}"}
+  %body{class: "#{body_class} #{domain_class}"}
     = render "nav"
     = render "breadcrumb"
     = render "main_toolbar"
