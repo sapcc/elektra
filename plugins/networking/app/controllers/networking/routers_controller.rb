@@ -59,7 +59,7 @@ module Networking
         }] + @router_interface_ports.collect do |port|
           node = { name: port.network_object.name, type: 'network',
                    id: port.network_object.id }
-          cloud_admin.networking.ports(network_id: port.network_id).each do |np|
+          cloud_admin.networking.ports(network_id: port.network_id, status: 'ACTIVE').each do |np|
             if np.device_owner.start_with?('compute:')
               node[:children] ||= []
               node[:children] << { name: '', type: 'server', id: np.device_id }
@@ -86,7 +86,7 @@ module Networking
                  external_network: services_ng.networking.find_network(params[:id])
                }
       when 'server'
-        server = services_ng.compute.find_server(params[:id]) rescue nil
+        server = services_ng.compute.find_server(params[:id])
         port = services_ng.networking.ports(device_id: server.id).first if server
         render partial: 'networking/routers/node_details/server',
                locals: { server: server, port: port },
