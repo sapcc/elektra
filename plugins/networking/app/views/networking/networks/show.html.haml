@@ -16,7 +16,7 @@
         %span.badge= @subnets.length
 
     %li{role: "presentation"}
-      = link_to '#ports', aria: {controls:"ports"}, role: "tab", data: {toggle:"tab"} do
+      = link_to '#network_ports', aria: {controls:"network_ports"}, role: "tab", data: {toggle:"tab"} do
         Ports
         %span.badge= @ports.length
 
@@ -74,7 +74,7 @@
         url: networks_subnets_path(@network.id),
         items: @subnets.to_json } }
 
-    .tab-pane{role:"tabpanel", id:"ports"}
+    .tab-pane{role:"tabpanel", id:"network_ports"}
       %table.table.datatable
         %tbody
           %tr
