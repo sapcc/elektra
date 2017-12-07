@@ -25,8 +25,7 @@ module Networking
       @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
 
       # NEW
-      @routers.concat(shared_routers)
-
+      @routers.concat(shared_routers).uniq! { |r| r.id }
 
       usage = @routers.length
       @quota_data = []
