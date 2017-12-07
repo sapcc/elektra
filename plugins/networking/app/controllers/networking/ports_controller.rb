@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Networking
-  # Implements Router actions
+  # Implements Port actions
   class PortsController < DashboardController
     # set policy context
     authorization_context 'networking'
@@ -20,7 +20,7 @@ module Networking
       if request.xhr?
         render partial: 'list', locals: { ports: @ports }
       else
-        # comon case, render index page with layout
+        # common case, render index page with layout
         render action: :index
       end
     end
