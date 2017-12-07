@@ -13,6 +13,7 @@ module ServiceLayerNg
     include ComputeServices::Server
     include ComputeServices::Service
     include ComputeServices::Volume
+    include ComputeServices::OsServerGroup
 
     def available?(_action_name_sym = nil)
       api.catalog_include_service?('compute', region)
