@@ -78,7 +78,7 @@ i.dialog-title-icon {
 }
 
 // ---------------------------------------------------------------------------
-// Collapsable
+// Collapsible
 // ---------------------------------------------------------------------------
 .collapsable {
   .collapsable-content {
@@ -366,6 +366,12 @@ section {
     display: inline;
     color: $bright-blue;
   }
+}
+
+// style for shared/foreign object in a list
+.foreign-object {
+  background: #f5f5f5;
+  color: #777;
 }
 
 
