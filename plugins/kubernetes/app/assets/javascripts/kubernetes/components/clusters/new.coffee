@@ -106,7 +106,9 @@ NewCluster = ({
                   option value: 'm1.xmedium', 'm1.xmedium'
                   option value: 'm1.large', 'm1.large'
                   option value: 'm1.xlarge', 'm1.xlarge'
-
+                  option value: 'm1.10xlarge', 'm1.10xlarge'
+                  option value: 'x1.2xmemory', 'x1.2xmemory'
+                  
 
             button
               className: 'btn btn-default',
