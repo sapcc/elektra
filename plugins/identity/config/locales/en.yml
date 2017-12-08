@@ -8,8 +8,11 @@ en:
       public_key: Public Key
   roles:
       admin: Keystone Administrator
+      baremetal_admin: Ironic Administrator
+      baremetal_viewer: Ironic Read-Only
       cfm_admin: Cloud Frame Administrator
       cfm_user: Cloud Frame User
+      cloud_baremetal_admin: Ironic Cloud Administrator
       cloud_compute_admin: Nova Cloud Administrator
       cloud_dns_admin: Designate Cloud Administrator
       cloud_image_admin: Glance Cloud Administrator
