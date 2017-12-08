@@ -80,7 +80,7 @@ Start the Elektra Dashboard Application
 2. Browser access for Elektra: http://localhost:5000/Default
 3. DevStack: Login with user demo/devstack
 
-Known issues
+### Known issues
 
 * On Debian: error from UglifyJs
   * Solution: downgrade webpack-dev-server
