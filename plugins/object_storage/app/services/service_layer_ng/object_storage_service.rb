@@ -336,7 +336,12 @@ module ServiceLayerNg
       Rails.logger.debug  "[object-storage-service] -> create_folder -> #{container_name}, #{object_path}"
       # a pseudo-folder is created by writing an empty object at its path, with
       # a "/" suffix to indicate the folder-ness
-      api.object_storage.create_or_replace_object(container_name, sanitize_path(object_path) + '/')
+
+      api.object_storage.create_or_replace_object(
+        container_name, 
+        sanitize_path(object_path) + '/', 
+        build_custom_request_header({'Content-Type':'application/directory'})
+      )
     end
     
     def delete_folder(container_name, object_path)
