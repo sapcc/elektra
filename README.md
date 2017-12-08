@@ -67,12 +67,24 @@ Application Installation with bundler
 2. run: ```rake db:create```
 3. run: ```rake db:seed```
 
+Install nodejs modules
+-------------------------------------
+1. install **nodejs** if not installed
+2. install **yarn** if not installed
+3. run: ```bundle binstubs webpacker```
+4. run: ```yarn```
 
 Start the Elektra Dashboard Application
 ---------------------------------------
 1. run: ```foreman start```. **Important:** Ensure the **PORT** parameter is set in **.env**! This will start the rails server and also the webpack-dev-server.
 2. Browser access for Elektra: http://localhost:5000/Default
 3. DevStack: Login with user demo/devstack
+
+Known issues
+
+* On Debian: error from UglifyJs
+  * Solution: downgrade webpack-dev-server
+  * run ```npm install -D webpack-dev-server@2.7.1```
 
 
 Use Elektra Request Management

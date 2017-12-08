@@ -70,37 +70,38 @@ SimpleNavigation::Configuration.run do |navigation|
     }, highlights_on: -> { params[:controller][%r{network_usage_stats/?.*}] }
   end
 
-  primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
-    html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
-    if: -> {services_ng.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
-      access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
-      access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
-    end
+
+  # primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
+  #   html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
+  #   if: -> {services_ng.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
+  #     access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
+  #     access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
+  # end
 
 
 
-    # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
-    #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
-    #
-    #   account_nav.dom_attributes = {class: 'content-list'}
-    # end
+  # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
+  #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
+  #
+  #   account_nav.dom_attributes = {class: 'content-list'}
+  # end
 
 
-    # Add an item which has a sub navigation (same params, but with block)
-    # primary.item :key_2, 'name', url, options do |sub_nav|
-    #   # Add an item to the sub navigation (same params again)
-    #   sub_nav.item :key_2_1, 'name', url, options
-    # end
+  # Add an item which has a sub navigation (same params, but with block)
+  # primary.item :key_2, 'name', url, options do |sub_nav|
+  #   # Add an item to the sub navigation (same params again)
+  #   sub_nav.item :key_2_1, 'name', url, options
+  # end
 
-    # You can also specify a condition-proc that needs to be fullfilled to display an item.
-    # Conditions are part of the options. They are evaluated in the context of the views,
-    # thus you can use all the methods and vars you have available in the views.
-    # primary.item :key_3, 'Admin', url, class: 'special', if: -> { current_user.admin? }
-    # primary.item :key_4, 'Account', url, unless: -> { logged_in? }
+  # You can also specify a condition-proc that needs to be fullfilled to display an item.
+  # Conditions are part of the options. They are evaluated in the context of the views,
+  # thus you can use all the methods and vars you have available in the views.
+  # primary.item :key_3, 'Admin', url, class: 'special', if: -> { current_user.admin? }
+  # primary.item :key_4, 'Account', url, unless: -> { logged_in? }
 
-    # you can also specify html attributes to attach to this particular level
-    # works for all levels of the menu
-    primary.dom_attributes = {class: 'fancy-nav', role: 'menu'}
+  # you can also specify html attributes to attach to this particular level
+  # works for all levels of the menu
+  primary.dom_attributes = {class: 'fancy-nav', role: 'menu'}
 
     # You can turn off auto highlighting for a specific level
     #primary.auto_highlight = false
