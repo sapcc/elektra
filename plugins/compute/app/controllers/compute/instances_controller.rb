@@ -63,11 +63,13 @@ module Compute
       @instance = services_ng.compute.find_server(params[:id])
       return if @instance.blank?
 
-      @instance_security_groups = @instance.security_groups_details.collect do |sg|
-        services_ng.networking.security_groups(
+      @instance_security_groups = @instance.security_groups_details
+                                           .each_with_object({}) do |sg, map|
+        next if map[sg.id]
+        map[sg.id] = services_ng.networking.security_groups(
           tenant_id: @scoped_project_id, id: sg.id
         ).first
-      end
+      end.values
     end
 
     def new
