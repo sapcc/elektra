@@ -71,12 +71,12 @@ SimpleNavigation::Configuration.run do |navigation|
   end
 
 
-  # primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
-  #   html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
-  #   if: -> {services_ng.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
-  #     access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
-  #     access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
-  # end
+  primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
+    html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
+    if: -> {services_ng.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
+      access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
+      access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
+  end
 
 
 
