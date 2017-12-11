@@ -194,7 +194,14 @@ module ServiceLayerNg
 
     def object_content(container_name, object_path)
       Rails.logger.debug  "[object-storage-service] -> object_content_and_metadata -> #{container_name}, #{object_path}"
-      api.object_storage.get_object_content_and_metadata(container_name,object_path).body
+      body = api.object_storage.get_object_content_and_metadata(container_name,object_path).body
+      # default behavior from misty -> converts returned json to an object
+      # normaly thats fine but in some cases we want to download a json file from the object storage
+      # if thats the case convert it back to json
+      unless body.is_a?(String)
+        body = body.to_json
+      end
+      body
     end
 
     def list_objects(container_name, options={})
