@@ -420,16 +420,22 @@ module ServiceLayerNg
     end
 
     def public_url(container_name, object_path = nil)
-      # similar to https://github.com/fog/fog-openstack/blob/master/lib/fog/storage/openstack/requests/public_url.rb
       return nil if container_name.nil?
-      url = "#{api.object_storage.uri}/#{CGI.escape(container_name)}"
+      url = "#{api.object_storage.uri}/#{escape(container_name)}"
       if object_path.nil?
         # path to container listing needs a trailing slash to work in a browser
         url << '/'
       else
-        url << "/#{CGI.escape(object_path)}"
+        url << "/#{escape(object_path)}"
       end
       url
+    end
+
+    # https://github.com/fog/fog-openstack/blob/bd69c6f3a80bb4a984d6fc67971a496cc923ac98/lib/fog/openstack.rb#L588
+    def escape(str, extra_exclude_chars = '')
+      str.gsub(/([^a-zA-Z0-9_.-#{extra_exclude_chars}]+)/) do
+        '%' + $1.unpack('H2' * $1.bytesize).join('%').upcase
+      end
     end
 
   end
