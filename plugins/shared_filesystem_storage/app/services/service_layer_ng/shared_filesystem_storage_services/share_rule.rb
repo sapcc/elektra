@@ -4,29 +4,31 @@ module ServiceLayerNg
   module SharedFilesystemStorageServices
     # This module implements Openstack Designate Pool API
     module ShareRule
-      def share_rules(share_id)
-        elektron_service.post("shares/#{share_id}/action") do
-          { access_list: nil }
-        end.map_to('body.access_list') do |params|
-          SharedFilesystemStorage::ShareRuleNg.new(self, params)
-        end
+      def share_rule_map
+        @share_rule_map ||= class_map_proc(SharedFilesystemStorage::ShareRuleNg)
       end
 
-      def new_share_rule(params = {})
-        SharedFilesystemStorage::ShareRuleNg.new(self, params)
+      def share_rules(share_id)
+        elektron_shares.post("shares/#{share_id}/action") do
+          { access_list: nil }
+        end.map_to('body.access_list', &share_rule_map)
+      end
+
+      def new_share_rule(share_id, params = {})
+        share_rule_map.call(params.merge(share_id: share_id))
       end
 
       ################# INTERFACE METHODS ######################
       def create_share_rule(share_id, params)
-        elektron_service.post("shares/#{share_id}/action") do
+        elektron_shares.post("shares/#{share_id}/action") do
           { allow_access: params }
-        end.body
+        end.body['access']
       end
 
-      def delete_share(share_id, rule_id)
-        elektron_service.post("shares/#{share_id}/action") do
+      def delete_share_rule(share_id, rule_id)
+        elektron_shares.post("shares/#{share_id}/action") do
           { deny_access: { access_id: rule_id } }
-        end.body
+        end
       end
     end
   end

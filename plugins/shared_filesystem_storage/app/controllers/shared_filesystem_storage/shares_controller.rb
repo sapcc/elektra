@@ -9,10 +9,10 @@ module SharedFilesystemStorage
 
       shares = services_ng.shared_filesystem_storage.shares_detail(
         limit: per_page + 1,
-        offset: (current_page - 1 ) * per_page
+        offset: (current_page - 1) * per_page
       )
 
-      render json: { shares: shares[0..per_page-1], has_next: shares.length>per_page }
+      render json: { shares: shares[0..per_page - 1], has_next: shares.length > per_page }
     end
 
     def export_locations
@@ -25,11 +25,11 @@ module SharedFilesystemStorage
     end
 
     def availability_zones
-      render json: services.shared_filesystem_storage.availability_zones
+      render json: services_ng.shared_filesystem_storage.availability_zones
     end
 
     def update
-      share = services.shared_filesystem_storage.new_share(share_params)
+      share = services_ng.shared_filesystem_storage.new_share(share_params)
       share.id = params[:id]
 
       if share.save
@@ -40,7 +40,7 @@ module SharedFilesystemStorage
     end
 
     def create
-      share = services.shared_filesystem_storage.new_share(share_params)
+      share = services_ng.shared_filesystem_storage.new_share(share_params)
       share.share_type ||= 'default'
 
       if share.save
@@ -51,7 +51,7 @@ module SharedFilesystemStorage
     end
 
     def destroy
-      share = services.shared_filesystem_storage.new_share
+      share = services_ng.shared_filesystem_storage.new_share
       share.id = params[:id]
 
       if share.destroy

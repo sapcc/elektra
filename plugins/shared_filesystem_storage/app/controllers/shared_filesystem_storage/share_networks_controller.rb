@@ -4,11 +4,12 @@ module SharedFilesystemStorage
   # share networks
   class ShareNetworksController < ApplicationController
     def index
-      render json: services.shared_filesystem_storage.share_networks_detail
+      render json: services_ng.shared_filesystem_storage.share_networks_detail
     end
 
     def update
-      share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
+      share_network = services_ng.shared_filesystem_storage
+                                 .new_share_network(share_network_params)
       share_network.id = params[:id]
 
       if share_network.save
@@ -29,7 +30,8 @@ module SharedFilesystemStorage
     end
 
     def create
-      share_network = services.shared_filesystem_storage.new_share_network(share_network_params)
+      share_network = services_ng.shared_filesystem_storage
+                                 .new_share_network(share_network_params)
 
       if share_network.save
         if params[:share_network][:cidr]
@@ -42,8 +44,8 @@ module SharedFilesystemStorage
     end
 
     def destroy
-      share_network = services.shared_filesystem_storage.new_share_network
-      share_network.id=params[:id]
+      share_network = services_ng.shared_filesystem_storage.new_share_network
+      share_network.id = params[:id]
 
       if share_network.destroy
         head :no_content
@@ -55,8 +57,8 @@ module SharedFilesystemStorage
     protected
 
     def share_network_params
-      params.require(:share_network).permit(:name, :description, :neutron_net_id, :neutron_subnet_id)
+      params.require(:share_network)
+            .permit(:name, :description, :neutron_net_id, :neutron_subnet_id)
     end
-
   end
 end

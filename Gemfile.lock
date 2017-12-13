@@ -14,6 +14,12 @@ GIT
       rest-client (~> 2.0.0.rc3)
 
 GIT
+  remote: https://github.com/sapcc/elektron
+  revision: e2141586a4e125e32a44a235d1c5322106574641
+  specs:
+    elektron (0.1.0)
+
+GIT
   remote: https://github.com/sapcc/fog-openstack.git
   revision: a7c71721f3b250a8dac69e5fc9150818339d38c2
   branch: master
@@ -32,7 +38,6 @@ GIT
 GIT
   remote: https://github.com/sapcc/misty-cc.git
   revision: ee0b9a490300b8d0198d028582f2a424b04aa042
-  branch: master
   specs:
     misty-cc (0.1.3)
       misty (>= 1.2.0)
@@ -54,11 +59,6 @@ GIT
       hashie
       rails
       uglifier (>= 1.3.0)
-
-PATH
-  remote: ../playland/elektron
-  specs:
-    elektron (0.1.0)
 
 PATH
   remote: plugins/audit

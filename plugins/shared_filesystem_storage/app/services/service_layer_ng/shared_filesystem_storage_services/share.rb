@@ -4,32 +4,32 @@ module ServiceLayerNg
   module SharedFilesystemStorageServices
     # This module implements Openstack Designate Pool API
     module Share
+      def share_map
+        @share_map ||= class_map_proc(SharedFilesystemStorage::ShareNg)
+      end
+
       def shares(filter = {})
-        elektron_service.get('shares', filter).map_to('body.shares') do |params|
-          SharedFilesystemStorage::ShareNg.new(self, params)
-        end
+        elektron_shares.get('shares', filter).map_to('body.shares', &share_map)
       end
 
       def shares_detail(filter = {})
-        elektron_service.get('shares/detail', filter).map_to('body.shares') do |params|
-          SharedFilesystemStorage::ShareNg.new(self, params)
-        end
+        elektron_shares.get('shares/detail', filter)
+                       .map_to('body.shares', &share_map)
       end
 
-      def find!(share_id)
-        elektron_service.get("shares/#{share_id}", filter).map_to('body.shares') do |params|
-          SharedFilesystemStorage::ShareNg.new(self, params)
-        end
+      def find_share!(id)
+        elektron_shares.get("shares/#{id}", filter)
+                       .map_to('body.share', &share_map)
       end
 
-      def find(share_id)
-        find!(share_id)
+      def find_share(id)
+        find!(id)
       rescue Elektron::Errors::ApiResponse => _e
         nil
       end
 
       def new_share(params = {})
-        SharedFilesystemStorage::ShareNg.new(self, params)
+        share_map.call(params)
       end
 
       def share_types
@@ -39,9 +39,21 @@ module ServiceLayerNg
       end
 
       def share_export_locations(share_id)
-        elektron_service.get("shares/#{share_id}/export_locations").map_to(
-          'body.export_locations') do |params|
+        elektron_shares.get("shares/#{share_id}/export_locations").map_to(
+          'body.export_locations'
+        ) do |params|
           SharedFilesystemStorage::ShareExportLocationNg.new(self, params)
+        end
+      end
+
+      def availability_zones
+        path = if microversion_newer_than?(2.6)
+                 'availability-zones'
+               else
+                 'os-availability-zone'
+               end
+        elektron_shares.get(path).map_to('body.availability_zones') do |params|
+          SharedFilesystemStorage::AvailabilityZoneNg.new(self, params)
         end
       end
 
@@ -52,32 +64,30 @@ module ServiceLayerNg
       end
 
       def list_all_major_versions
-        elektron_service.get('/').map_to('body.versions' => OpenStruct)
+        elektron_shares.get('/').map_to('body.versions' => OpenStruct)
       end
 
       ################# INTERFACE METHODS ######################
-      def create_share(params)
-        elektron_service.post('shares') do
-          { share: params }
-        end.body
-      end
-
-      def update_share(share_id, params)
-        elektron_service.put("shares/#{share_id}") do
+      def create_share_ng(params)
+        elektron_shares.post('shares') do
           { share: params }
         end.body['share']
       end
 
-      def delete_share(share_id)
-        elektron_service.delete("shares/#{share_id}") do
+      def update_share_ng(share_id, params)
+        elektron_shares.put("shares/#{share_id}") do
           { share: params }
-        end
+        end.body['share']
+      end
+
+      def delete_share_ng(share_id)
+        elektron_shares.delete("shares/#{share_id}")
       end
 
       protected
 
       def types
-        @types ||= elektron_service.get('types')
+        @types ||= elektron_shares.get('types')
       end
     end
   end

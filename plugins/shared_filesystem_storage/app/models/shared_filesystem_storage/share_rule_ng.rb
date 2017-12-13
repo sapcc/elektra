@@ -1,6 +1,8 @@
-module SharedFilesystemStorage
-  class ShareRuleNg < Core::ServiceLayerNg::Model
+# frozen_string_literal: true
 
+module SharedFilesystemStorage
+  # represents access rule
+  class ShareRuleNg < Core::ServiceLayerNg::Model
     # msp to driver create method
     def perform_service_create(create_attributes)
       share_id = create_attributes.delete('share_id')

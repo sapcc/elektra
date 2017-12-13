@@ -2,7 +2,7 @@
 
 module SharedFilesystemStorage
   # This class implements the sevice security
-  class SecurityService < Core::ServiceLayer::Model
+  class SecurityServiceNg < Core::ServiceLayerNg::Model
     def attributes_for_update
       if status == 'active'
         {
@@ -22,14 +22,6 @@ module SharedFilesystemStorage
           'ou'          => read('ou')
         }
       end.delete_if { |_, v| v.blank? }
-    end
-
-    # msp to driver create method
-    def perform_driver_create(create_attributes)
-      type  = create_attributes.delete('type')
-      name  = create_attributes.delete('name')
-
-      @driver.create_security_service(type, name, create_attributes)
     end
   end
 end
