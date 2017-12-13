@@ -6,7 +6,7 @@ module ServiceLayerNg
     module SecurityService
       def security_service_map
         @share_rule_map ||= class_map_proc(
-          SharedFilesystemStorage::SecurityServiceNg
+          SharedFilesystemStorage::SecurityService
         )
       end
 
@@ -36,19 +36,19 @@ module ServiceLayerNg
       end
 
       ################# INTERFACE METHODS ######################
-      def create_security_service_ng(params)
+      def create_security_service(params)
         elektron_shares.post('security-services') do
           { security_service: params }
         end.body['security_service']
       end
 
-      def update_security_service_ng(id, params)
+      def update_security_service(id, params)
         elektron_shares.put("security-services/#{id}") do
           { security_service: params }
         end.body['security_service']
       end
 
-      def delete_security_service_ng(id)
+      def delete_security_service(id)
         elektron_shares.delete("security-services/#{id}")
       end
     end

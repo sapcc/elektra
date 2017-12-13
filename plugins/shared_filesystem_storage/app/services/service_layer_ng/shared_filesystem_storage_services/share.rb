@@ -5,7 +5,7 @@ module ServiceLayerNg
     # This module implements Openstack Designate Pool API
     module Share
       def share_map
-        @share_map ||= class_map_proc(SharedFilesystemStorage::ShareNg)
+        @share_map ||= class_map_proc(SharedFilesystemStorage::Share)
       end
 
       def shares(filter = {})
@@ -18,12 +18,12 @@ module ServiceLayerNg
       end
 
       def find_share!(id)
-        elektron_shares.get("shares/#{id}", filter)
+        elektron_shares.get("shares/#{id}")
                        .map_to('body.share', &share_map)
       end
 
       def find_share(id)
-        find!(id)
+        find_share!(id)
       rescue Elektron::Errors::ApiResponse => _e
         nil
       end
@@ -34,7 +34,7 @@ module ServiceLayerNg
 
       def share_types
         types.map_to('body.share_types') do |params|
-          SharedFilesystemStorage::ShareTypeNg.new(self, params)
+          SharedFilesystemStorage::ShareType.new(self, params)
         end
       end
 
@@ -42,7 +42,7 @@ module ServiceLayerNg
         elektron_shares.get("shares/#{share_id}/export_locations").map_to(
           'body.export_locations'
         ) do |params|
-          SharedFilesystemStorage::ShareExportLocationNg.new(self, params)
+          SharedFilesystemStorage::ShareExportLocation.new(self, params)
         end
       end
 
@@ -53,13 +53,13 @@ module ServiceLayerNg
                  'os-availability-zone'
                end
         elektron_shares.get(path).map_to('body.availability_zones') do |params|
-          SharedFilesystemStorage::AvailabilityZoneNg.new(self, params)
+          SharedFilesystemStorage::AvailabilityZone.new(self, params)
         end
       end
 
       def share_volumes
         types.map_to('body.share_volumes') do |params|
-          SharedFilesystemStorage::ShareVolumeNg.new(self, params)
+          SharedFilesystemStorage::ShareVolume.new(self, params)
         end
       end
 
@@ -68,19 +68,19 @@ module ServiceLayerNg
       end
 
       ################# INTERFACE METHODS ######################
-      def create_share_ng(params)
+      def create_share(params)
         elektron_shares.post('shares') do
           { share: params }
         end.body['share']
       end
 
-      def update_share_ng(share_id, params)
+      def update_share(share_id, params)
         elektron_shares.put("shares/#{share_id}") do
           { share: params }
         end.body['share']
       end
 
-      def delete_share_ng(share_id)
+      def delete_share(share_id)
         elektron_shares.delete("shares/#{share_id}")
       end
 

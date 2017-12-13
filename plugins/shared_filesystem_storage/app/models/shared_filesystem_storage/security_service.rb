@@ -2,7 +2,7 @@
 
 module SharedFilesystemStorage
   # This class implements the sevice security
-  class SecurityServiceNg < Core::ServiceLayerNg::Model
+  class SecurityService < Core::ServiceLayerNg::Model
     def attributes_for_update
       if status == 'active'
         {

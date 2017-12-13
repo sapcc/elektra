@@ -5,7 +5,7 @@ module ServiceLayerNg
     # This module implements Openstack Designate Pool API
     module ShareRule
       def share_rule_map
-        @share_rule_map ||= class_map_proc(SharedFilesystemStorage::ShareRuleNg)
+        @share_rule_map ||= class_map_proc(SharedFilesystemStorage::ShareRule)
       end
 
       def share_rules(share_id)

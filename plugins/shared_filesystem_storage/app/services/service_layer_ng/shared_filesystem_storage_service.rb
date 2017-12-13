@@ -12,11 +12,11 @@ module ServiceLayerNg
     MICROVERSION = 2.15
 
     def available?(_action_name_sym = nil)
-      !current_user.service_url('sharev2', region: region).nil?
+      elektron.service?('sharev2')
     end
 
     def elektron_shares
-      @elektron_shares ||= elektron.service(
+      @elektron_shares ||= elektron(debug: Rails.env.development?).service(
         'sharev2',
         headers: { 'X-OpenStack-Manila-API-Version' => MICROVERSION.to_s }
       )

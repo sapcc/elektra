@@ -6,7 +6,7 @@ module ServiceLayerNg
     module ShareNetwork
       def share_network_map
         @share_network_map ||= class_map_proc(
-          SharedFilesystemStorage::ShareNetworkNg
+          SharedFilesystemStorage::ShareNetwork
         )
       end
 
@@ -56,19 +56,19 @@ module ServiceLayerNg
       end
 
       # ################# INTERFACE METHODS ######################
-      def create_share_network_ng(params)
+      def create_share_network(params)
         elektron_shares.post('share-networks') do
           { share_network: params }
         end.body['share_network']
       end
 
-      def update_share_network_ng(id, params)
+      def update_share_network(id, params)
         elektron_shares.put("share-networks/#{id}") do
           { share_network: params }
         end.body['share_network']
       end
 
-      def delete_share_network_ng(id)
+      def delete_share_network(id)
         elektron_shares.delete("share-networks/#{id}")
       end
     end

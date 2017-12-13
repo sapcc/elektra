@@ -2,7 +2,7 @@
 
 module SharedFilesystemStorage
   # represents share network
-  class ShareNetworkNg < Core::ServiceLayerNg::Model
+  class ShareNetwork < Core::ServiceLayerNg::Model
     def attributes_for_update
       {
         'name'              => read('name'),

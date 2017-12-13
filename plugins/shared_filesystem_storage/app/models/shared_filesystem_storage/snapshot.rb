@@ -2,7 +2,7 @@
 
 module SharedFilesystemStorage
   # represents snapshot
-  class SnapshotNg < Core::ServiceLayerNg::Model
+  class Snapshot < Core::ServiceLayerNg::Model
     def attributes_for_update
       {
         'display_name'              => read('name'),
