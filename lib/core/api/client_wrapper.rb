@@ -88,7 +88,10 @@ module Core
           @elektra_service = elektra_service
           # define missing methods for requests and
           # delegate them to api_service
+
           service.requests.each do |meth|
+            next if !meth.is_a?(Symbol) && !meth.is_a?(String)
+
             (class << self; self; end).class_eval do
               define_method meth do |*args|
                 handle_response do

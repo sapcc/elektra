@@ -2,6 +2,7 @@ import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice, addError  } from 'lib/flashes';
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 //################### SECURITY_SERVICES #########################
 const requestSecurityServices= () =>
@@ -141,6 +142,7 @@ const deleteSecurityService= securityServiceId =>
       dispatch(requestDelete(securityServiceId));
       ajaxHelper.delete(`/security-services/${securityServiceId}`).then(response => {
         if (response.data && response.data.errors) {
+          dispatch(deleteSecurityServiceFailure(securityServiceId))
           addError(React.createElement(ErrorsList, {errors: response.data.errors}));
         } else {
           dispatch(removeSecurityService(securityServiceId));

@@ -11,6 +11,11 @@ export default class NewShareForm extends React.Component {
   	this.state = {show: true};
     this.close = this.close.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
+    this.shareTypes = this.shareTypes.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.loadShareTypesOnce()
   }
 
   validate(values) {
@@ -25,6 +30,18 @@ export default class NewShareForm extends React.Component {
 
   onSubmit(values){
     return this.props.handleSubmit(values).then(() => this.close());
+  }
+
+  // remove default share type and add it at the begining of the array.
+  shareTypes() {
+    if (this.props.shareTypes.items) {
+      let i = this.props.shareTypes.items.findIndex((i) => i.name=='default')
+      if (i >= 0 ) {
+        let defaultType = this.props.shareTypes.items.splice(i,1)
+        this.props.shareTypes.items.unshift(defaultType[0])
+      }
+    }
+    return this.props.shareTypes.items
   }
 
   render(){
@@ -57,6 +74,23 @@ export default class NewShareForm extends React.Component {
                   <option value={protocol} key={index}>{protocol}</option>
                 )}
               </Form.Input>
+            </Form.ElementHorizontal>
+
+            <Form.ElementHorizontal label='Type' name="share_type">
+              { this.props.shareTypes.isFetching ?
+                <span className='spinner'/>
+                :
+                <Form.Input
+                  elementType='select'
+                  className="select required form-control"
+                  name='share_type'>
+                  {this.shareTypes().map((shareType,index) =>
+                    <option value={shareType.name} key={index}>
+                      {shareType.name}
+                    </option>
+                  )}
+                </Form.Input>
+              }
             </Form.ElementHorizontal>
 
             <Form.ElementHorizontal label='Size (GiB)' name="size" required={true}>

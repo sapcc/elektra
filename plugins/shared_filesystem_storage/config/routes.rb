@@ -9,6 +9,9 @@ SharedFilesystemStorage::Engine.routes.draw do
     get :export_locations, constraints: { format: :json }, on: :member
   end
   resources :snapshots, except: %i[new edit], constraints: { format: :json }
+
+  resources :share_types, only: %i[index], constraints: { format: :json }
+
   resources :security_services, except: %i[show new edit],
                                 constraints: { format: :json },
                                 path: 'security-services'

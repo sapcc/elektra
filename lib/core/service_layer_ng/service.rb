@@ -22,9 +22,28 @@ module Core
         @api ||= ::Core::Api::ClientWrapper.new(@api_client, self)
       end
 
-      def inspect
-        { region: region }.to_s
+      def elektron(options = {})
+        key = options.to_s
+        @elektron_clients ||= {}
+        @elektron_clients[key] ||= Elektron.client(
+          {
+            token_context: {
+              'catalog' => @api_client.auth.catalog,
+              'expires_at' => @api_client.auth.instance_variable_get(:@expires)
+            },
+            token: @api_client.auth.token
+          },
+          {
+            debug: options[:debug],
+            interface: (options[:interface] || ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal'),
+            region: (options[:region] || @region)
+          }
+        )
       end
+
+      # def inspect
+      #   {}.to_s
+      # end
 
       # This method is used to map raw data to a Object.
       def self.map_to(klazz, data, options = {}, &block)

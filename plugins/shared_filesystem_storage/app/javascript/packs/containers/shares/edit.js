@@ -1,6 +1,7 @@
 import { connect } from  'react-redux';
 import EditShareModal from '../../components/shares/edit';
-import { submitEditShareForm } from '../../actions/shares'
+import { submitEditShareForm } from '../../actions/shares';
+import { fetchShareTypesIfNeeded } from '../../actions/share_types';
 
 export default connect(
   (state,ownProps ) => {
@@ -9,9 +10,10 @@ export default connect(
       let shares = state.shared_filesystem_storage.shares.items
       if (shares) share = shares.find(item => item.id==ownProps.match.params.id)
     }
-    return { share }
+    return { share, shareTypes: state.shared_filesystem_storage.shareTypes }
   },
   dispatch => ({
-    handleSubmit: (values) => dispatch(submitEditShareForm(values))
+    handleSubmit: (values) => dispatch(submitEditShareForm(values)),
+    loadShareTypesOnce: () => dispatch(fetchShareTypesIfNeeded())
   })
 )(EditShareModal);

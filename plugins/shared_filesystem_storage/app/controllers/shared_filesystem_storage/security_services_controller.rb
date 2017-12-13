@@ -8,23 +8,25 @@ module SharedFilesystemStorage
         if current_user.is_allowed?(
           'shared_filesystem_storage:security_service_get'
         )
-          services.shared_filesystem_storage.security_services_detail
+          services_ng.shared_filesystem_storage.security_services_detail
         else
-          services.shared_filesystem_storage.security_services
+          services_ng.shared_filesystem_storage.security_services
         end
 
       render json: security_services
     end
 
     def show
-      security_service = services.shared_filesystem_storage
-                                 .find_security_service(params[:id])
+      security_service = services_ng.shared_filesystem_storage
+                                    .find_security_service(params[:id])
       render json: security_service
     end
 
     def update
-      security_service = services.shared_filesystem_storage
-                                 .new_security_service(security_service_params)
+      security_service = services_ng.shared_filesystem_storage
+                                    .new_security_service(
+                                      security_service_params
+                                    )
       security_service.id = params[:id]
 
       if security_service.save
@@ -35,8 +37,10 @@ module SharedFilesystemStorage
     end
 
     def create
-      security_service = services.shared_filesystem_storage
-                                 .new_security_service(security_service_params)
+      security_service = services_ng.shared_filesystem_storage
+                                    .new_security_service(
+                                      security_service_params
+                                    )
 
       if security_service.save
         render json: security_service
@@ -46,7 +50,8 @@ module SharedFilesystemStorage
     end
 
     def destroy
-      security_service = services.shared_filesystem_storage.new_security_service
+      security_service = services_ng.shared_filesystem_storage
+                                    .new_security_service
       security_service.id = params[:id]
 
       if security_service.destroy

@@ -20,6 +20,8 @@
   "shared_filesystem_storage:rule_delete": "rule:context_is_share_editor",
   "shared_filesystem_storage:rule_update": "rule:context_is_share_editor",
 
+  "shared_filesystem_storage:types_list": "rule:context_is_share_viewer",
+
   "shared_filesystem_storage:snapshot_create": "rule:context_is_share_editor",
   "shared_filesystem_storage:snapshot_delete": "rule:context_is_share_editor",
   "shared_filesystem_storage:snapshot_get": "rule:context_is_share_viewer",
