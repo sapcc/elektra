@@ -56,6 +56,11 @@ GIT
       uglifier (>= 1.3.0)
 
 PATH
+  remote: ../playland/elektron
+  specs:
+    elektron (0.1.0)
+
+PATH
   remote: plugins/audit
   specs:
     audit (0.0.1)
@@ -589,6 +594,7 @@ DEPENDENCIES
   dns_service!
   dotenv-rails
   elektra-extension!
+  elektron!
   factory_girl_rails (~> 4.0)
   fog-openstack!
   font-awesome-sass

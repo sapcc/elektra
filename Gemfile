@@ -63,11 +63,13 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
-# gem 'misty', git: 'https://github.com/flystack/misty.git', branch: :master
-# gem 'misty', path: '../misty'
 gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: :master
 
-gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git', branch: :master
+gem 'elektron', path: '../playland/elektron'
+
+#gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'master'
+#gem 'misty', path: '../misty'
+gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git'
 #gem 'misty-cc', path: '../misty-cc'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
