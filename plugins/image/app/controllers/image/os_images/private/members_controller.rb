@@ -4,7 +4,7 @@ module Image
   module OsImages
     module Private
       # Implements Image members
-      class MembersController < Image::ApplicationController
+      class MembersController < ::Image::ApplicationController
         def index
           @image = services_ng.image.find_image(params[:private_id])
           @members = services_ng.image.members(params[:private_id])

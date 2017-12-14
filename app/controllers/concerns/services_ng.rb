@@ -17,7 +17,7 @@ module ServicesNg
     return @services_ng if @services_ng
     api_client = begin
                    Core::Api::ClientManager.user_api_client(current_user)
-                 rescue
+                 rescue => _e
                    nil
                  end
     @services_ng = Core::ServiceLayerNg::ServicesManager.new(api_client)

@@ -1,5 +1,5 @@
 module Image
-  class OsImagesController < Image::ApplicationController
+  class OsImagesController < ::Image::ApplicationController
     # before_action :load_visibility, only: [:index, :show]
 
     def index
