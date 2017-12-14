@@ -91,8 +91,6 @@ module Identity
           end)
         end
       end
-
     end
-
   end
 end
