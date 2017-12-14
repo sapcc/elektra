@@ -18,24 +18,24 @@
 
   -# this is a special case if some data is missing after the user maintained the masterdata in the first time
   - if @project_masterdata_missing_attributes
-    = wizard_step({ title: 'Masterdata', 
+    = wizard_step({ title: 'Masterdata',
       mandatory: true,
       status: @project_profile.wizard_status('masterdata_cockpit'),
       action_button: ({label: 'Edit Masterdata', url:plugin('masterdata_cockpit').project_masterdata_edit_path()} if can_setup_masterdata),
-      }) do 
-      %p 
-        The Masterdata was maintained but there are some data missing. 
+      }) do
+      %p
+        The Masterdata was maintained but there are some data missing.
         %br
         Missing attributes: #{@project_masterdata_missing_attributes}
   - else
     -# regular case to create new masterdata for the project
-    = wizard_step({ title: 'Masterdata', 
+    = wizard_step({ title: 'Masterdata',
       mandatory: true,
       status: @project_profile.wizard_status('masterdata_cockpit'),
       action_button: ({label: 'Create Masterdata', url:plugin('masterdata_cockpit').project_masterdata_new_path} if can_setup_masterdata),
-      }) do 
+      }) do
       - if @project_profile.wizard_finished?('masterdata_cockpit')
-        %p 
+        %p
           The Masterdata was successfully maintained. For more details take a look to the
           = link_to 'Masterdata details', plugin('masterdata_cockpit').project_masterdata_show_path(), data: { modal: true }
       - else
@@ -50,6 +50,8 @@
 - if @resource_management_service_available
   - can_setup_quota = current_user.is_allowed?("resource_management:project_resource_new_package_request")
   - quota_data = @project_profile.wizard_data('resource_management')
+  - required_roles = current_user.required_roles('resource_management:project_resource_new_package_request')
+  - required_roles = required_roles && required_roles.join(', ')
 
   - if @project_profile.wizard_finished?('resource_management')
     = wizard_step({title: 'Request Resource Quotas',
@@ -81,9 +83,13 @@
           %p Your request has been rejected. Please check the reason and reopen the request.
 
     - else
+      - action_button = { label: 'Request Quotas',
+        url: can_setup_quota ? plugin('resource_management').resources_new_package_request_path : nil,
+        tooltip: can_setup_quota ? nil : "You don't have permissions to request quotas. Please check if you have one of the following roles: <b>#{required_roles}</b>"}
+
       = wizard_step({title: 'Request Resource Quotas',
         mandatory: true,
-        action_button: ({label: 'Request Quotas', url: plugin('resource_management').resources_new_package_request_path} if can_setup_quota),
+        action_button: action_button,
         status: nil}) do
         %p Here you can decide on the computing resources you want us to reserve for you. This is just an initial setting to get you started. If you realize at a later stage that you need more of something you can request more then.
 
@@ -117,3 +123,8 @@
 - if @wizard_finished
   %p
     = link_to 'Continue', project_path, class: 'btn btn-info pull-right'
+
+:javascript
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });

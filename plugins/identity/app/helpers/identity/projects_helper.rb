@@ -30,14 +30,26 @@ module Identity
       action_button_options = options[:action_button]
       skip_button_options = options[:skip_button]
 
+      tooltip = action_button_options && action_button_options[:tooltip]
+      tooltip_data = tooltip ? { toggle: 'tooltip', title: sanitize(tooltip), html: true } : {}
+
       if action_button_options
         label = action_button_options[:label] || 'Activate'
         url = action_button_options[:url]
         css_class = 'btn btn-info pull-right'
+
         if url
-          action_button = link_to(label,url, data: {modal: true, wizard_action_button: true}, class: css_class)
+          action_button = link_to(
+            label, url,
+            data: { modal: true, wizard_action_button: true }.merge(tooltip_data),
+            class: css_class,
+          )
         else
-          action_button = link_to(label,'javascript:void(0)', class: css_class, disabled: true)
+          action_button = link_to(
+            label, 'javascript:void(0)', class: css_class,
+            disabled: true,
+            data: tooltip_data
+          )
         end
       end
 
@@ -60,7 +72,7 @@ module Identity
       end
 
       #byebug
-      content_tag :div, class: "bs-callout bs-callout-emphasize bs-callout-#{css_class}" do
+      content_tag :div, class: "wizard-step bs-callout bs-callout-emphasize bs-callout-#{css_class}" do
         content_tag :div, class: 'row' do
           concat(content_tag(:div, class: 'col-md-10') do
             concat content_tag(:h4, title)
