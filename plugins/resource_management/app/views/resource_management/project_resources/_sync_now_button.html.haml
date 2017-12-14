@@ -33,7 +33,8 @@
         },
         success: function(response){
           if(response.sync_running) {
-            if(retryCounter <= 3) {
+            // poll every 5 seconds 12 times
+            if(retryCounter <= 10) {
               window.setTimeout(function(){ sync_now_polling(startTime, retryCounter + 1); }, 5000);
             }
             else {
