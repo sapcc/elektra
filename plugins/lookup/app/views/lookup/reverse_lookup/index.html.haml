@@ -1,0 +1,50 @@
+- if modal?
+  = content_for :title do
+    Find Project
+- else
+  = content_for :main_toolbar do
+    Find Project
+
+= form_tag plugin('lookup').reverselookup_path, :class => 'form-inline', remote: true, html: {data: {modal: true}} do
+  %div{class: modal? ? 'modal-body' : ''}
+    .form-group
+      = label_tag 'source', 'Find by'
+      %select.form-control{name: 'source', id: 'source', autofocus: 'autofocus'}
+        - @sources.each do |key, value|
+          %option{value: key}
+            = value
+
+    .form-group
+      %input.string.required.form-control{name:"value", value: params[:value]}
+
+    = submit_tag 'Find Project', class: 'btn btn-primary', data: { disable_with: "Please wait..." }
+
+
+    - if @project
+      %section
+        %h4
+          Parent Project for
+          = params[:value]
+
+        %table.table
+          %tbody
+            %tr
+              %th Project
+              %td= render_project_hierarchy(@project)
+
+            %tr
+              %th
+                Network Admins
+              %td
+                %p
+                  = @users.join(', ')
+
+                - @groups_users.each do |group|
+                  %p
+                    = "#{group[:name]}"
+                    %br
+                    = group[:users].join(', ')
+
+
+  %div{class: modal? ? 'modal-footer' : ''}
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
