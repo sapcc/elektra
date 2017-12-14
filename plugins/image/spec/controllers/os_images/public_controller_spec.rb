@@ -16,11 +16,8 @@ describe Image::OsImages::PublicController, type: :controller do
   before :each do
     stub_authentication
 
-    os_image_driver = double('image_service_driver').as_null_object
-
-    allow(os_image_driver).to receive(:count).and_return(1)
-
-    allow_any_instance_of(ServiceLayer::ImageService).to receive(:driver).and_return(os_image_driver)
+    os_image_service = double('image service').as_null_object
+    allow_any_instance_of(ServiceLayerNg::ImageService).to receive(:elektron_images).and_return(os_image_service)  
   end
 
   describe "GET 'index'" do
