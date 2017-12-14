@@ -1,5 +1,5 @@
 module Image
-  class Image < Core::ServiceLayer::Model
+  class Image < Core::ServiceLayerNg::Model
 
   end
 end

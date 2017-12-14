@@ -22,10 +22,6 @@ module ServiceLayerNg
       )
     end
 
-    def class_map_proc(klass)
-      proc { |params| klass.new(self, params) }
-    end
-
     def microversion_newer_than?(version)
       version > MICROVERSION
     end
