@@ -46,7 +46,6 @@ In Greek mythology Elektra, the bright or brilliant one, is the Goddess of Cloud
 Installing and Running Elektra
 ==============================
 
-
 Prerequisites
 -------------
 1. DevStack or Openstack installation, Mitaka Release
@@ -55,37 +54,28 @@ Prerequisites
 
    b. **Important:** Ensure the service user you configured in your **.env** file (see below) has the admin role in the Default domain and all other domains you want to use.
 2. installed postgres database
-3. ruby installation, version >= 2.2.0, bundler installation  
+3. ruby installation, version >= 2.4.0, bundler installation  
 
-
-Application Installation with bundler
+First: Application Installation with bundler
 -------------------------------------
+1. run: ```gem install bundler```
 1. run: ```bundle install```
 2. copy the **env.sample** file to a **.env** file and adjust the values
     - Set the MONSOON_OPENSTACK_AUTH_API_* values to your devstack/openstack configuration settings
     - Enter the database configuration parameters
-2. run: ```rake db:create```
-3. run: ```rake db:seed```
+2. run: ```bundle exec rake db:create db:migrate db:seed```
 
-Install nodejs modules
+Second: Install nodejs modules
 -------------------------------------
-1. install **nodejs** if not installed
-2. install **yarn** if not installed
-3. run: ```bundle binstubs webpacker```
-4. run: ```yarn```
+1. [install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed (tested so far 8X and 9X)
+2. [install](https://yarnpkg.com/en/docs/install) **yarn** if not installed
+3. cd into elektra/ directory and run: ```yarn```
 
-Start the Elektra Dashboard Application
+Third: Start the Elektra Dashboard Application
 ---------------------------------------
 1. run: ```foreman start```. **Important:** Ensure the **PORT** parameter is set in **.env**! This will start the rails server and also the webpack-dev-server.
-2. Browser access for Elektra: http://localhost:5000/Default
+2. Browser access for Elektra: http://localhost:<PORT>/Default
 3. DevStack: Login with user demo/devstack
-
-### Known issues
-
-* On Debian: error from UglifyJs
-  * Solution: downgrade webpack-dev-server
-  * run ```npm install -D webpack-dev-server@2.7.1```
-
 
 Use Elektra Request Management
 ------------------------------
@@ -93,12 +83,10 @@ Use Elektra Request Management
 2. Configure MONSOON_DASHBOARD_MAIL_SERVER accordingly
 3. Restart Elektra Application
 
-
 Available Services in Elektra
 -----------------------------
 If elektra is configured against a standard DevStack installation, only the core services like identity, nova, neutron and cinder are (sometimes partly) available and
 shown in Elektra. Additional services like swift, LBaaS, manila, ... will only be shown when available from the DevStack backend side.  
-
 
 Running the cucumber tests
 --------------------------
@@ -122,7 +110,6 @@ Profiles e2e and admin are relevant:
 The ENV parameters can also be passed in command line like:
 
 ```bin/cucumber CCTEST_PROJECT=admin CCTEST_USER=cctest_cluster_3_admin CCTEST_PASSWORD=XXX -p admin```
-
 
 Create a new Plugin
 -------------------
@@ -203,7 +190,6 @@ If your plugin needs to save things in the Elektra database, you'll need to crea
     ```rake db:migrate```
 
 
-
 Plugin Assets
 --------------
 
@@ -212,7 +198,6 @@ The Elektra UI design is a theme for [Twitter Bootstrap (v3.~)](http://getbootst
 **Important:** When building views for your plugin please check existing plugins for established best practices and patterns and also check with the core team so that the user experience stays the same or similar across plugins.
 
 In many cases the provided styles will be enough to build your views. If you need extra styles or scripts please coordinate with the core team to see whether we should include them in the core styles so they become accessible for everybody or whether they should remain specific to your plugin. **Assets that are specific to your plugin must be located in the assets folder in your plugin.**
-
 
 
 What are Plugins?
@@ -258,7 +243,6 @@ The following diagram illustrates how plugins are structured and which core clas
 Adding gem dependencies with native extensions
 ----------------------------------------------
 The Elektra Docker image does not contain the build chain for compiling ruby extensions. Gems which contain native extensions need to be pre-built and packaged as alpine packages (apk).
-
 
 
 Audit Log
