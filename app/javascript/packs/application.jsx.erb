@@ -29,28 +29,39 @@ var pluginContainers = {};
 document.addEventListener('DOMContentLoaded', () => {
   const elements = document.getElementsByClassName('content');
   const content = elements.length > 0 ? elements[0] : document.body;
-  const classes = content.className.split(' ');
   const containers = [];
 
-  configureAjaxHelper(window);
-  setPolicy(window.policy);
+  // loop over available react containers
+  for(let pluginName of Object.keys(pluginContainers)) {
+    // try to find the plugin specific react container
+    let domElement = document.getElementById(pluginName+'_react_container');
 
-  for(let className of classes) {
-    if (pluginContainers[className]) {
-      containers.push(React.createElement(pluginContainers[className], Object.assign({}, {
-        key: className
+    if (domElement) { // plugin react container exists!
+      // remove domElement, cause we are going to create a new one.
+      domElement.parentNode.removeChild(domElement);
+      // create react component and add it to containers
+      containers.push(React.createElement(pluginContainers[pluginName], Object.assign({}, {
+        key: pluginName
       })))
     }
   }
 
-  ReactDOM.render(
-    <Provider store = { configureStore(pluginReducers) }>
-      <div className = "react-container">
-        <FlashMessages/>
-        { containers.map((container, index) => container) }
-      </div>
-    </Provider>,
-    content.appendChild(document.createElement('div')),
-  )
+  // render containers if available
+  if (containers.length > 0) {
+    configureAjaxHelper(window);
+    setPolicy(window.policy);
+    // this is the container for all react containers
+    const reactContainer = content.appendChild(document.createElement('div'));
+    reactContainer.className = 'react-container';
+    // render!
+    ReactDOM.render(
+      <Provider store = { configureStore(pluginReducers) }>
+        <div>
+          <FlashMessages/>
+          { containers.map((container) => container) }
+        </div>
+      </Provider>, reactContainer
+    )
+  }
 })
 // version 1

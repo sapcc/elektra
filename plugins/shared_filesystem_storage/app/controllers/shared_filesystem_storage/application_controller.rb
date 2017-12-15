@@ -10,7 +10,9 @@ module SharedFilesystemStorage
     authorization_required
 
     def show
-      render inline: '', layout: true, content_type: 'text/html'
+      render inline: '<div id="shared_filesystem_storage_react_container"/>',
+             layout: true,
+             content_type: 'text/html'
     end
   end
 end

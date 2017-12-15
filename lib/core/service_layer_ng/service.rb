@@ -85,6 +85,10 @@ module Core
         self.class.escape(str, extra_exclude_chars)
       end
 
+      def class_map_proc(klass)
+        proc { |params| klass.new(self, params) }
+      end
+
       # def catalog
       #   api_client.instance_variable_get('@auth').catalog
       # end

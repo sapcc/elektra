@@ -4,8 +4,8 @@
   "share_viewer": "role:sharedfilesystem_viewer",
   "share_admin": "role:sharedfilesystem_admin",
   "context_is_sharedfilesystem_admin": "rule:context_is_cloud_sharedfilesystem_admin or rule:share_admin",
-  "context_is_share_editor": "rule:context_is_sharedfilesystem_admin or rule:member",
-  "context_is_share_viewer":  "rule:context_is_share_editor or rule:share_viewer",
+  "context_is_share_editor": "(rule:context_is_sharedfilesystem_admin or rule:member) and not project_id:nil",
+  "context_is_share_viewer":  "(rule:context_is_share_editor or rule:share_viewer) and not project_id:nil",
 
   "shared_filesystem_storage:share_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:share_get": "rule:context_is_share_viewer",
