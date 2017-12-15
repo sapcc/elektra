@@ -39,7 +39,9 @@ const Container = (props) =>
   <HashRouter /*hashType="noslash"*/ >
     <div>
       {/* redirect root to shares tab */}
-      <Route exact path="/" render={ () => <Redirect to="/shares"/>}/>
+      { policy.isAllowed("shared_filesystem_storage:share_get") &&
+        <Route exact path="/" render={ () => <Redirect to="/shares"/>}/>
+      }
       <Route path="/:activeTab" children={ ({match, location, history}) =>
         React.createElement(Tabs, Object.assign({}, {match, location, history, tabsConfig}, props))
       }/>
@@ -79,7 +81,7 @@ const Container = (props) =>
       { policy.isAllowed("shared_filesystem_storage:share_network_update") &&
         <Route exact path="/share-networks/:id/security-services" component={ShareNetworkSecurityServicesModal}/>
       }
-      
+
       { policy.isAllowed("shared_filesystem_storage:security_service_create") &&
         <Route exact path="/security-services/new" component={NewSecurityServiceModal}/>
       }
