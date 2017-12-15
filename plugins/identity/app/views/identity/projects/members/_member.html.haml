@@ -5,7 +5,7 @@
 
 %tr.table{class: class_name, data: {search_name: "#{user_id}_#{user_name}_#{user_description}", marker_id: user_id}}
   %td.user-name-cell
-    = render_user_name(user_name, user_description)
+    = user_description.blank? ? user_name : "#{user_description} (#{user_name})"
     %br
     .info-text=user_id
 
