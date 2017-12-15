@@ -85,6 +85,7 @@ module Core
       end
 
       def update(attributes = {})
+        return false unless attributes
         attributes.each do |key, value|
           send("#{key}=", value)
         end

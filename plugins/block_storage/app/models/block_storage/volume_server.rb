@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BlockStorage
   class VolumeServer
     include ActiveModel::Validations
@@ -11,10 +13,8 @@ module BlockStorage
     validates_presence_of :server
 
     def initialize(attributes = {})
-      attributes.each do |name, value|
-        send("#{name}=", value)
-      end unless attributes.blank?
+      return if attributes.blank?
+      attributes.each { |name, value| send("#{name}=", value) }
     end
-
   end
 end

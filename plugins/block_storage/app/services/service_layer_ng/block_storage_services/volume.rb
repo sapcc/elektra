@@ -5,7 +5,7 @@ module ServiceLayerNg
     module Volume
 
       def volume_map
-        @volume_map ||= class_map_proc(BlockStorage::VolumeNg)
+        @volume_map ||= class_map_proc(BlockStorage::Volume)
       end
 
       def volumes(filter = {})
@@ -36,20 +36,39 @@ module ServiceLayerNg
       end
 
       ################## MODEL INTERFACE METHODS ####################
-      def create_volume_ng(params = {})
+      def create_volume(params = {})
         elektron_volumes.post('volumes') do
           { volume: params }
         end.body['volume']
       end
 
-      def update_volume_ng(id, params = {})
+      def update_volume(id, params = {})
         elektron_volumes.put("volumes/#{id}") do
           { volume: params }
         end.body['volume']
       end
 
-      def delete_volume_ng(id)
+      def delete_volume(id)
         elektron_volumes.delete("volumes/#{id}")
+      end
+
+      def reset_volume_status(id, status = {})
+        status = status.with_indifferent_access if status.is_a?(Hash)
+        elektron_volumes.post("volumes/#{id}/action") do
+          {
+            'os-reset_status' => {
+              'status': status['status'],
+              'attach_status': status['attach_status'],
+              'migration_status': status['migration_status']
+            }
+          }
+        end
+      end
+
+      def force_delete_volume(id)
+        elektron_volumes.post("volumes/#{id}/action") do
+          { 'os-force_delete' => {} }
+        end
       end
     end
   end

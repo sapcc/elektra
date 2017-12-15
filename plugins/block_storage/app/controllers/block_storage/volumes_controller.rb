@@ -1,45 +1,53 @@
-require_dependency "block_storage/application_controller"
+# frozen_string_literal: true
+
+require_dependency 'block_storage/application_controller'
 
 module BlockStorage
+  # volumes controller
   class VolumesController < ApplicationController
-    before_action :set_volume, only: [:show, :edit, :update, :destroy, :new_snapshot, :attach, :edit_attach, :detach, :edit_detach, :new_status, :reset_status,:force_delete]
+    before_action :set_volume, only: %i[
+      show edit update destroy new_snapshot attach edit_attach detach
+      edit_detach new_status reset_status force_delete
+    ]
 
-    protect_from_forgery except: [:attach, :detach]
+    protect_from_forgery except: %i[attach detach]
 
     authorization_context 'block_storage'
     authorization_required
 
-    SERVER_STATES_NEEDED_FOR_ATTACH = ['ACTIVE', 'PAUSED', 'SHUTOFF', 'VERIFY_RESIZE', 'SOFT_DELETED']
+    SERVER_STATES_NEEDED_FOR_ATTACH = %w[ACTIVE PAUSED SHUTOFF
+                                         VERIFY_RESIZE SOFT_DELETED'].freeze
     SLEEP = 1
 
     # GET /volumes
     def index
       @servers = get_cached_servers
       @action_id = params[:id]
-      if @scoped_project_id
+      return unless  @scoped_project_id
 
-        @volumes = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
-          services.block_storage.volumes(pagination_options)
-        end
+      per_page = (params[:per_page] || 20)
+      @volumes = paginatable(per_page: per_page) do |pagination_options|
+        services_ng.block_storage.volumes_detail(pagination_options)
+      end
 
-        @quota_data = []
-        if current_user.is_allowed?("access_to_project")
-          @quota_data = services_ng.resource_management.quota_data(
-            current_user.domain_id || current_user.project_domain_id,
-            current_user.project_id,[
-            {service_type: :volumev2, resource_name: :volumes, usage: @volumes.length},
-            {service_type: :volumev2, resource_name: :capacity}
-          ])
-        end
+      @quota_data = []
 
-        # this is relevant in case an ajax paginate call is made.
-        # in this case we don't render the layout, only the list!
-        if request.xhr?
-          render partial: 'list', locals: {volumes: @volumes, servers: @servers}
-        else
-          # comon case, render index page with layout
-          render action: :index
-        end
+      if current_user.is_allowed?('access_to_project')
+        @quota_data = services_ng.resource_management.quota_data(
+          current_user.domain_id || current_user.project_domain_id,
+          current_user.project_id, [
+          { service_type: :volumev2, resource_name: :volumes, usage: @volumes.length },
+          { service_type: :volumev2, resource_name: :capacity }
+        ])
+      end
+
+      # this is relevant in case an ajax paginate call is made.
+      # in this case we don't render the layout, only the list!
+      if request.xhr?
+        render partial: 'list', locals: { volumes: @volumes, servers: @servers }
+      else
+        # comon case, render index page with layout
+        render action: :index
       end
     end
 
@@ -50,18 +58,18 @@ module BlockStorage
 
     # GET /volumes/new
     def new
-      @volume = services.block_storage_.new_volume
+      @volume = services_ng.block_storage_.new_volume
       @availability_zones = services_ng.compute.availability_zones
     end
 
     # POST /volumes
     def create
-      @volume = services.block_storage.new_volume
+      @volume = services_ng.block_storage.new_volume
       @volume.attributes = params[@volume.model_name.param_key].to_unsafe_hash.delete_if{ |*,value| value.blank?} # delete blank attributes from hash. If they are passed as empty strings the API doesn't recognize them as blank and throws a fit ...
 
       if @volume.save
         if @volume.snapshot_id.blank?
-          @volume = services.block_storage.get_volume(@volume.id)
+          @volume = services_ng.block_storage.find_volume(@volume.id)
           @volume.status = 'creating'
           @target_state = target_state_for_action 'create'
           sleep(SLEEP)
@@ -93,14 +101,14 @@ module BlockStorage
 
     # GET /volumes/1/snapshot
     def new_snapshot
-      @snapshot = services.block_storage.new_snapshot
+      @snapshot = services_ng.block_storage.new_snapshot
       @snapshot.name = "snap-#{@volume.name}"
       @snapshot.description = "snap-#{@volume.description}"
     end
 
     # POST /volumes/1/snapshot
     def snapshot
-      @snapshot = services.block_storage.new_snapshot({force: false})
+      @snapshot = services_ng.block_storage.new_snapshot({force: false})
       @snapshot.attributes = @snapshot.attributes.merge(params[@snapshot.model_name.param_key].to_unsafe_hash)
       @snapshot.volume_id = params[:id]
 
@@ -186,7 +194,7 @@ module BlockStorage
     def reset_status
       @volume.reset_status(params[:volume])
       # reload volume
-      @volume = services.block_storage.get_volume(params[:id])
+      @volume = services_ng.block_storage.find_volume(params[:id])
       if @volume.status==params[:volume][:status]
         @servers = get_cached_servers if @volume.status == 'in-use'
         audit_logger.info(current_user, "has reset", @volume)
@@ -220,7 +228,7 @@ module BlockStorage
     # update instance table row (ajax call)
     def update_item
       begin
-        @volume = services.block_storage.get_volume(params[:id])
+        @volume = services_ng.block_storage.find_volume(params[:id])
         @target_state = params[:target_state]
         respond_to do |format|
           format.js do
@@ -242,7 +250,7 @@ module BlockStorage
 
     # Use callbacks to share common setup or constraints between actions.
     def set_volume
-      @volume = services.block_storage.get_volume(params[:id])
+      @volume = services_ng.block_storage.find_volume(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
