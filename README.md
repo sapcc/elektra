@@ -339,7 +339,7 @@ Pagination
 
 ```ruby
 @images = paginatable(per_page: 15) do |pagination_options|
-  services.image.images({sort_key: 'name', visibility: @visibility}.merge(pagination_options))
+  services_ng.image.images({sort_key: 'name', visibility: @visibility}.merge(pagination_options))
 end
 ```
 
