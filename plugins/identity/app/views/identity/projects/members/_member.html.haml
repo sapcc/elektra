@@ -3,11 +3,11 @@
 - class_name += 'warning' if local_assigns.has_key?(:highlight)
 - class_name += 'danger' if local_assigns.has_key?(:new_member)
 
-%tr.table{class: class_name}
+%tr.table{class: class_name, data: {search_name: "#{user_id}_#{user_name}_#{user_description}", marker_id: user_id}}
   %td.user-name-cell
-    = user_name
+    = render_user_name(user_name, user_description)
     %br
-    = user_description
+    .info-text=user_id
 
   %td{data: {roles_display: true, roles_current: user_roles.collect{|r| role_label_long(r[:name])}.sort }}
   %td.snug

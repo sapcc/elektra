@@ -1444,7 +1444,13 @@ div, td, th {
   }
 
   &.user-name-cell {
-    width: 200px
+    @extend .big-data-cell;
+    width: 252px;
+
+    .info-text {
+      font-family: monospace;
+      font-size: $font-size-small;
+    }
   }
 }
 
