@@ -1,5 +1,4 @@
-require "block_storage/engine"
-require_relative "block_storage/driver"
+require 'block_storage/engine'
 
 module BlockStorage
 end

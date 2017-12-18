@@ -11,7 +11,7 @@ module BlockStorage
     def index
       if @scoped_project_id
         @snapshots = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
-          services.block_storage.snapshots(pagination_options)
+          services_ng.block_storage.snapshots(pagination_options)
         end
 
         @quota_data = []
@@ -46,7 +46,7 @@ module BlockStorage
     # PATCH/PUT /snapshots/1
     def update
       if @snapshot.update(snapshot_params)
-        audit_logger.info(current_user, "has updated", @snapshot)
+        audit_logger.info(current_user, 'has updated', @snapshot)
         redirect_to @snapshot, notice: 'Snapshot was successfully updated.'
       else
         @snapshot.errors[:base]
@@ -57,16 +57,16 @@ module BlockStorage
     # DELETE /snapshots/1
     def destroy
       if @snapshot.destroy
-        audit_logger.info(current_user, "has deleted", @snapshot)
+        audit_logger.info(current_user, 'has deleted', @snapshot)
       else
-        flash.now[:error] = "Error during Snapshot deletion!"
+        flash.now[:error] = 'Error during Snapshot deletion!'
       end
       redirect_to snapshots_url, notice: 'Snapshot was successfully deleted.'
     end
 
     def create_volume
-      @volume = services.block_storage_.new_volume
-      @volume.name = "vol-" + @snapshot.name
+      @volume = services_ng.block_storage_.new_volume
+      @volume.name = 'vol-' + @snapshot.name
       @volume.description = @snapshot.description
       @volume.size = @snapshot.size
       @volume.snapshot_id = @snapshot.id
@@ -80,9 +80,9 @@ module BlockStorage
     def reset_status
       @snapshot.reset_status(params[:snapshot][:status])
       # reload snapshot
-      @snapshot = services.block_storage.get_snapshot(params[:id])
-      if @snapshot.status==params[:snapshot][:status]
-        audit_logger.info(current_user, "has reset", @snapshot)
+      @snapshot = services_ng.block_storage.find_snapshot(params[:id])
+      if @snapshot.status == params[:snapshot][:status]
+        audit_logger.info(current_user, 'has reset', @snapshot)
         render template: 'block_storage/snapshots/reset_status.js'
       else
         render action: :new_status
@@ -92,7 +92,7 @@ module BlockStorage
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_snapshot
-      @snapshot = services.block_storage.get_snapshot(params[:id])
+      @snapshot = services_ng.block_storage.find_snapshot(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
