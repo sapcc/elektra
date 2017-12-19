@@ -8,10 +8,10 @@ module DnsService
 
     def index
       @zones = paginatable(per_page: 20) do |pagination_options|
-        services.dns_service.zones(@admin_option.merge(pagination_options))
+        services_ng.dns_service.zones(@admin_option.merge(pagination_options))
       end
 
-      active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
+      active_requests = services_ng.dns_service.zone_transfer_requests(status: 'ACTIVE')
 
       @zone_transfer_requests = active_requests.select do |r|
         r.project_id.nil? or r.project_id != @scoped_project_id

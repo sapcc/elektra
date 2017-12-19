@@ -2,7 +2,10 @@
 
 module ServiceLayerNg
   class DnsServiceService < Core::ServiceLayerNg::Service
+    include DnsServiceServices::Zone
     include DnsServiceServices::Pool
+    include DnsServiceServices::Recordset
+    include DnsServiceServices::ZoneTransfer
 
     def available?(_action_name_sym = nil)
       elektron.service?('dns')

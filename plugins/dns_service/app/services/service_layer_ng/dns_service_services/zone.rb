@@ -32,13 +32,19 @@ module ServiceLayerNg
 
       ################### MODEL INTERFACE ####################
       def create_zone(attributes = {})
+        elektron_dns.post('zones') do
+          attributes
+        end.body
       end
 
       def update_zone(id, attributes = {})
+        elektron_dns.patch("zones/#{id}") do
+          attributes
+        end.body
       end
 
-      def delete_zone(zone_id, options={})
-        driver.map_to(DnsService::Zone).delete_zone(zone_id,options)
+      def delete_zone(id)
+        elektron_dns.delete("zones/#{id}")
       end
     end
   end
