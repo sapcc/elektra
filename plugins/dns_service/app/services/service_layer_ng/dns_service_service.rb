@@ -5,7 +5,13 @@ module ServiceLayerNg
     include DnsServiceServices::Pool
 
     def available?(_action_name_sym = nil)
-      !current_user.service_url('dns', region: region).nil?
+      elektron.service?('dns')
+    end
+
+    def elektron_dns
+      @elektron_dns ||= elektron(debug: Rails.env.development?).service(
+        'dns', path_prefix: '/v2'
+      )
     end
   end
 end

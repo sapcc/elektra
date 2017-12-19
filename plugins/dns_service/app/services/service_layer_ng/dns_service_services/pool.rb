@@ -4,17 +4,25 @@ module ServiceLayerNg
   module DnsServiceServices
     # This module implements Openstack Designate Pool API
     module Pool
+      def pool_map
+        @pool_map ||= class_map_proc(DnsService::PoolNg)
+      end
+
       def pools(filter = {})
-        api.domain_name_server.list_all_pools(filter).map_to(pools: DnsService::PoolNg)
+        response = elektron_dns.get('pools', filter)
+        {
+          items: response.map_to('body.pools', &pool_map),
+          total: response.body.fetch('metadata', {}).fetch('total_count', nil)
+        }
       end
 
       def find_pool!(id)
-        api.domain_name_server.show_a_pool(id).map_to(response_body: DnsService::PoolNg)
+        elektron_dns.get("pools/#{id}").map_to('body', &pool_map)
       end
 
       def find_pool(id)
         find_pool!(id)
-      rescue => e
+      rescue Elektron::Errors::ApiResponse => e
         nil
       end
     end

@@ -1,7 +1,7 @@
 module DnsService
   class ZonesController < DnsService::ApplicationController
-    before_action ->(id = params[:id]) { load_zone id }, except: [:index]
-    before_action :load_pools, only: [:index, :show, :update, :create]
+    before_action ->(id = params[:id]) { load_zone id }, except: %i[index]
+    before_action :load_pools, only: %i[index show update create]
 
     authorization_context 'dns_service'
     authorization_required
@@ -14,18 +14,18 @@ module DnsService
       active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
 
       @zone_transfer_requests = active_requests.select do |r|
-        r.project_id.nil? or r.project_id!=@scoped_project_id
+        r.project_id.nil? or r.project_id != @scoped_project_id
       end
 
       @active_zone_transfer_requests = active_requests.inject({}) do |hash,r|
-        hash[r.zone_id] = r if r.project_id==@scoped_project_id
+        hash[r.zone_id] = r if r.project_id == @scoped_project_id
         hash
       end
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        render partial: 'list', locals: {zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
+        render partial: 'list', locals: { zones: @zones, active_zone_transfer_requests: @active_zone_transfer_requests, pools: @pools}
       else
         # comon case, render index page with layout
         render action: :index
