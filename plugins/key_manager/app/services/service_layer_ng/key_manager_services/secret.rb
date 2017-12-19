@@ -66,6 +66,15 @@ module ServiceLayerNg
         secret.payload = payload if payload
         secret
       end
+
+      #################### MODEL INTERFACE #######################
+      def create_secret(attributes = {})
+        elektron_key_manager.post('secrets') { attributes }.body
+      end
+
+      def delete_secret(id)
+        elektron_key_manager.delete("secrets/#{id}")
+      end
     end
   end
 end

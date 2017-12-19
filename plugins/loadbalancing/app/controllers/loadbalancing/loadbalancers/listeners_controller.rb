@@ -30,7 +30,7 @@ module Loadbalancing
       def new
         @listener = services.loadbalancing.new_listener
         @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
-        containers = services.key_manager.containers()
+        containers = services_ng.key_manager.containers()
         @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
       end
 
@@ -41,7 +41,7 @@ module Loadbalancing
           audit_logger.info(current_user, "has created", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: params[:loadbalancer_id]), notice: 'Listener successfully created.'
         else
-          containers = services.key_manager.containers()
+          containers = services_ng.key_manager.containers()
           @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
           @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
           render :new
@@ -50,7 +50,7 @@ module Loadbalancing
 
       def edit
         @listener = services.loadbalancing.find_listener(params[:id])
-        containers = services.key_manager.containers()
+        containers = services_ng.key_manager.containers()
         @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
         @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
       end
@@ -63,7 +63,7 @@ module Loadbalancing
           audit_logger.info(current_user, "has updated", @listener)
           redirect_to loadbalancer_listeners_path(loadbalancer_id: @listener.loadbalancers.first['id']), notice: 'Listener was successfully updated.'
         else
-          containers = services.key_manager.containers()
+          containers = services_ng.key_manager.containers()
           @containers = containers[:elements].map { |c| [c.name, c.container_ref] } if containers
           @pools = services.loadbalancing.pools(loadbalancer_id: @loadbalancer.id)
           render :edit

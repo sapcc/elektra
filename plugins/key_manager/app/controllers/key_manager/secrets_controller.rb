@@ -1,7 +1,9 @@
-module KeyManager
+# frozen_string_literal: true
 
+module KeyManager
+  # secrets controller
   class SecretsController < ::KeyManager::ApplicationController
-    before_action :secret_form_attr, only: [:new, :type_update, :create]
+    before_action :secret_form_attr, only: %i[new type_update create]
 
     helper :all
 
@@ -10,12 +12,10 @@ module KeyManager
     end
 
     def show
-      @secret = services_ng.key_manager.secret_with_metadata_payload(params[:id])
+      @secret = services_ng.key_manager
+                           .secret_with_metadata_payload(params[:id])
       # get the user name from the openstack id
-      begin
-        @user = service_user.identity.find_user(@secret.creator_id).name
-      rescue
-      end
+      @user = service_user.identity.find_user(@secret.creator_id).name
     end
 
     def new
@@ -27,41 +27,33 @@ module KeyManager
     end
 
     def payload
-      @secret = services_ng.key_manager.find_secret(params[:id])
       payload = service_ng.key_manager.secret_payload(params[:id])
       send_data payload, filename: @secret.name
     end
 
     def create
       @secret = services_ng.key_manager.new_secret(secrets_params)
-      # validate and check
-      if @secret.valid? && @secret.save
-        # TODO should show a DISMISSIBLE flash message
-        #flash[:success] = "Secret #{@secret.name} was successfully added."
+
+      # validate and save
+      if @secret.save
+        flash[:success] = "Secret #{@secret.name} was successfully added."
         redirect_to plugin('key_manager').secrets_path
       else
-        unless @secret.errors.messages[:global].blank?
-          @secret.errors.messages[:global].each do |msg|
-            if flash.now[:danger].nil?
-              flash.now[:danger] = msg
-            else
-              flash.now[:danger] << " " + msg
-            end
-          end
-        end
         render action: 'new'
       end
     end
 
     def destroy
       # delete secret
-      @secret = services_ng.key_manager.secret(params[:id])
-      @secret.destroy
-      flash.now[:success] = "Secret #{@secret.name} was successfully removed."
+      @secret = services_ng.key_manager.new_secret
+      @secret.id = params[:id]
+      if @secret.destroy
+        flash.now[:success] = "Secret #{params[:id]} was successfully removed."
+      end
       # grap a new list of secrets
-      secrets()
+      @secrets = secrets
       # render
-      render action: "index"
+      render action: 'index'
     end
 
     private
@@ -80,32 +72,35 @@ module KeyManager
 
     def secret_form_attr
       @types = ::KeyManager::Secret::Type.to_hash
-      @selected_type = params.fetch('secret', {}).fetch('secret_type', nil) || params[:secret_type] || ::KeyManager::Secret::Type::PASSPHRASE
+      @selected_type = params.fetch('secret', {}).fetch('secret_type', nil) ||
+                       params[:secret_type] ||
+                       ::KeyManager::Secret::Type::PASSPHRASE
 
-      @payload_content_types = ::KeyManager::Secret::PayloadContentType.relation_to_type[@selected_type.to_sym]
-      @selected_payload_content_type = @payload_content_types.first
+      @payload_content_types = ::KeyManager::Secret::PayloadContentType
+                               .relation_to_type[@selected_type.to_sym]
 
-      @payload_encoding_relation = ::KeyManager::Secret::Encoding.relation_to_payload_content_type
+      @selected_payload_content_type = secrets_params[:payload_content_type] ||
+                                       @payload_content_types.find { |r| r == ::KeyManager::Secret::PayloadContentType::TEXTPLAIN } ||
+                                       @payload_content_types.first
+
+      @payload_encoding_relation = ::KeyManager::Secret::Encoding
+                                   .relation_to_payload_content_type
     end
 
     def secrets_params
-      unless params['secret'].blank?
-        secret = params.clone.fetch('secret', {})
+      return {} if params['secret'].blank?
+      secret = params.clone.fetch('secret', {})
 
-        # remove if blank
-        secret.delete_if { |key, value| value.blank? }
+      # remove if blank
+      secret.delete_if { |_key, value| value.blank? }
 
-        # correct time
-        unless secret.fetch(:expiration, nil).nil?
-          dateTime = DateTime.parse(secret['expiration'])
-          secret[:expiration] = dateTime.strftime("%FT%TZ")
-        end
-
-        return secret
+      # correct time
+      unless secret.fetch(:expiration, nil).nil?
+        date_time = DateTime.parse(secret['expiration'])
+        secret[:expiration] = date_time.strftime('%FT%TZ')
       end
-      return {}
+
+      secret
     end
-
   end
-
 end

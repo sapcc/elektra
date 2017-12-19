@@ -64,10 +64,10 @@ module Core
       end
 
       def requires(*attrs)
-        attrs.each do |attribute|
-          if send(attribute.to_s).nil?
+        attrs.each do |attr|
+          if send(attr.to_s).nil?
             raise Core::ServiceLayer::Errors::MissingAttribute,
-                  "#{attribute} is missing"
+                  "#{attr} is missing"
           end
         end
       end

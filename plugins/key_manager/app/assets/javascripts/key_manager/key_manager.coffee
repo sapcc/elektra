@@ -17,6 +17,9 @@ switch_secret_content_type= (e) ->
   value = $(e.target).val()
   # hide area and add spinner
   $(secret_payload_content_info).addClass('hide')
+  # return if value is empty
+  return if !value || value.trim().length==0
+
   $(section_spinner).removeClass('hide')
   $.ajax
     url: $(e.target).data('update-url'),
@@ -30,11 +33,9 @@ switch_secret_payload_content_type= (e) ->
   relation = $(payload_content_type_select).data('encoding-relation')
   val = $(e.target).val()
   if relation[val] == null
-    console.log("null")
     $('.js-secret-encoding').addClass('hide')
     $('#secret_payload_content_encoding').prop('disabled', true)
   else
-    console.log(relation[val])
     $('#secret_payload_content_encoding').prop('disabled', false)
     $('.js-secret-encoding').removeClass('hide')
 

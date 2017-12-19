@@ -1,24 +1,13 @@
-module KeyManager
+# frozen_string_literal: true
 
+module KeyManager
+  # application controller
   class ApplicationController < ::DashboardController
-    rescue_and_render_exception_page [
-      {
-       "KeyManager::ApiError" => {
-         header_title: "Monsoon Key-Manager",
-         title: -> e, c { e.title},
-         description: -> e, c { e.description},
-         details: -> e, c { e.details.html_safe}
-       }
-      }
-     ]
 
      private
 
      def release_state
-       "experimental"
+       'experimental'
      end
-
-
   end
-
 end
