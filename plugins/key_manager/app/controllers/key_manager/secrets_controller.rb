@@ -27,7 +27,8 @@ module KeyManager
     end
 
     def payload
-      payload = service_ng.key_manager.secret_payload(params[:id])
+      @secret = services_ng.key_manager.find_secret(params[:id])
+      payload = services_ng.key_manager.secret_payload(params[:id])
       send_data payload, filename: @secret.name
     end
 

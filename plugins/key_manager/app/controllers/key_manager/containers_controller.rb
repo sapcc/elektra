@@ -1,7 +1,8 @@
-module KeyManager
+# frozen_String_literal: true
 
+module KeyManager
   class ContainersController < ::KeyManager::ApplicationController
-    before_action :container_form_attr, only: [:new, :create]
+    before_action :container_form_attr, only: %i[new create]
 
     helper :all
 
