@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: e2141586a4e125e32a44a235d1c5322106574641
+  revision: 82d5adc18f47ffee9f7959b8a48888dade3c0d71
   specs:
-    elektron (0.1.0)
+    elektron (1.0.0)
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
@@ -70,11 +70,6 @@ PATH
   specs:
     automation (0.0.1)
       virtus
-
-PATH
-  remote: plugins/bare_metal_hana
-  specs:
-    bare_metal_hana (0.0.1)
 
 PATH
   remote: plugins/block_storage
@@ -579,7 +574,6 @@ DEPENDENCIES
   arc-client!
   audit!
   automation!
-  bare_metal_hana!
   block_storage!
   bootstrap-sass
   byebug

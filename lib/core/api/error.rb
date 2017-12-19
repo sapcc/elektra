@@ -31,10 +31,10 @@ module Core
         end
       end
 
-      def self.read_error_messages(hash,messages=[])
+      def self.read_error_messages(hash, messages = [])
         return [hash.to_s] unless hash.respond_to?(:each)
         hash.each do |k, v|
-          messages << v if %w[message type].include?(k)
+          messages << v if %w[description message type].include?(k)
           if v.is_a?(Hash)
             read_error_messages(v, messages)
           elsif v.is_a?(Array)

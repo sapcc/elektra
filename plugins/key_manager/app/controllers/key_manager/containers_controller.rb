@@ -1,81 +1,67 @@
-module KeyManager
+# frozen_String_literal: true
 
+module KeyManager
   class ContainersController < ::KeyManager::ApplicationController
-    before_action :container_form_attr, only: [:new, :create]
+    before_action :container_form_attr, only: %i[new create]
 
     helper :all
 
     def index
-      containers()
+      @containers = containers
     end
 
     def show
-      @container = services.key_manager.container(params[:id])
+      @container = services_ng.key_manager.find_container(params[:id])
       # get the user name from the openstack id
-      begin
-        @user = service_user.identity.find_user(@container.creator_id).name
-      rescue
-        nil
-      end
+      @user = service_user.identity.find_user(@container.creator_id).name
     end
 
-    def new
-    end
+    def new; end
 
     def create
-      @container = services.key_manager.new_container(container_params)
-      if @container.valid? && @container.save
-        redirect_to plugin('key_manager').containers_path()
+      @container = services_ng.key_manager.new_container(container_params)
+      if @container.save
+        redirect_to plugin('key_manager').containers_path
       else
-        flash_message_from_key([:secret_refs, :global], @container)
-        render action: "new"
+        render action: :new
       end
     end
 
     def destroy
       # delete container
-      @container = services.key_manager.container(params[:id])
+      @container = services_ng.key_manager.new_container
+      @container.id = params[:id]
 
-      @container.destroy
-      flash.now[:success] = "Container #{@container.name} was successfully removed."
+      if @container.destroy
+        flash.now[:success] = "Container #{params[:id]} was successfully removed."
+      end
       # grap a new list of secrets
-      containers()
+      @containers = containers
 
       # render
-      render action: "index"
+      render action: :index
     end
 
     private
 
-    def flash_message_from_key(keys, container)
-      keys.each do |value|
-        unless container.errors.messages[value].blank?
-          container.errors.messages[value].each do |msg|
-            if value == :secret_refs
-              msg = "Secrets #{msg}"
-            end
-            if flash.now[:danger].nil?
-              flash.now[:danger] = msg
-            else
-              flash.now[:danger] << " " + msg
-            end
-          end
-        end
-      end
-    end
-
     def containers
-      page = params[:page]||1
+      page = params[:page] || 1
       per_page = 10
       offset = (page.to_i - 1) * per_page
-      result = services.key_manager.containers({sort: 'created:desc', limit: per_page, offset: offset})
-      @containers = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(page).per(per_page)
+      result = services_ng.key_manager.containers(
+        sort: 'created:desc', limit: per_page, offset: offset
+      )
+      Kaminari.paginate_array(
+        result[:items], total_count: result[:total]
+      ).page(page).per(per_page)
     end
 
     def container_form_attr
       @types = ::KeyManager::Container::Type.to_hash
-      @selected_type = params.fetch('container', {}).fetch('type', nil) || params[:container_type] || ::KeyManager::Container::Type::GENERIC
-      @container = ::KeyManager::Container.new({})
+      @selected_type = params.fetch('container', {}).fetch('type', nil) ||
+                       params[:container_type] ||
+                       ::KeyManager::Container::Type::GENERIC
+      @container = services_ng.key_manager.new_container
       @selected_secrets = {}
 
       # get all secrets
@@ -83,10 +69,12 @@ module KeyManager
       offset = 0
       limit = 100
       begin
-        secrets_chunk = services.key_manager.secrets({sort: 'created:desc', offset: offset, limit: limit})
-        @secrets += secrets_chunk[:elements] unless secrets_chunk[:elements].blank?
+        secrets_chunk = services_ng.key_manager.secrets(
+          sort: 'created:desc', offset: offset, limit: limit
+        )
+        @secrets += secrets_chunk[:items] unless secrets_chunk[:items].blank?
         offset += limit
-      end while offset < secrets_chunk[:total_elements].to_i
+      end while offset < secrets_chunk[:total].to_i
 
       # sort by type
       @symmetrics = []
@@ -155,7 +143,5 @@ module KeyManager
       end
       return {}
     end
-
   end
-
 end

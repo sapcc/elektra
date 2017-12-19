@@ -1,15 +1,14 @@
-require 'fog/key_manager/openstack/models/secret'
+# frozen_string_literal: true
 
 module KeyManager
-
-  class Secret < ::Fog::KeyManager::OpenStack::Secret
-
+  # represents the seret
+  class Secret < Core::ServiceLayerNg::Model
     module Status
       ACTIVE = 'ACTIVE'
     end
 
+    # Secret types
     module Type
-
       SYMMETRIC = 'symmetric'
       PUBLIC = 'public'
       PRIVATE = 'private'
@@ -18,20 +17,23 @@ module KeyManager
       OPAQUE = 'opaque'
 
       def self.to_hash
-        res = {}
-        res[SYMMETRIC.to_sym] = 'Used for storing byte arrays such as keys suitable for symmetric encryption'
-        res[PUBLIC.to_sym] = 'Used for storing the public key of an asymmetric keypair'
-        res[PRIVATE.to_sym] = 'Used for storing the private key of an asymmetric keypair'
-        res[PASSPHRASE.to_sym] = 'Used for storing plain text passphrases'
-        res[CERTIFICATE.to_sym] = 'Used for storing cryptographic certificates such as X.509 certificates'
-        res[OPAQUE.to_sym] = 'Used for backwards compatibility with previous versions of the API without typed secrets'
-        res
+        {
+          SYMMETRIC.to_sym => 'Used for storing byte arrays such as keys
+                               suitable for symmetric encryption',
+          PUBLIC.to_sym => 'Used for storing the public key of an asymmetric
+                            keypair',
+          PRIVATE.to_sym => 'Used for storing the private key of an asymmetric
+                             keypair',
+          PASSPHRASE.to_sym => 'Used for storing plain text passphrases',
+          CERTIFICATE.to_sym => 'Used for storing cryptographic certificates
+                                 such as X.509 certificates',
+          OPAQUE.to_sym => 'Used for backwards compatibility with previous
+                            versions of the API without typed secrets'
+        }
       end
-
     end
 
     module PayloadContentType
-
       OCTET_STREAM = 'application/octet-stream'
       TEXTPLAIN = 'text/plain'
       TEXTPLAIN_CHARSET_UTF8 = 'text/plain;charset=utf-8'
@@ -39,95 +41,72 @@ module KeyManager
       PKIX_CERT = 'application/pkix-cert'
 
       def self.relation_to_type
-        res = {}
-        res[Type::SYMMETRIC.to_sym] = [PayloadContentType::OCTET_STREAM]
-        res[Type::PUBLIC.to_sym] = [PayloadContentType::OCTET_STREAM, PayloadContentType::TEXTPLAIN]
-        res[Type::PRIVATE.to_sym] = [PayloadContentType::OCTET_STREAM, PayloadContentType::TEXTPLAIN]
-        res[Type::PASSPHRASE.to_sym] = [PayloadContentType::TEXTPLAIN, PayloadContentType::TEXTPLAIN_CHARSET_UTF8]
-        res[Type::CERTIFICATE.to_sym] = [PayloadContentType::PKCS8, PayloadContentType::PKIX_CERT, PayloadContentType::TEXTPLAIN]
-        res[Type::OPAQUE.to_sym] = [PayloadContentType::TEXTPLAIN]
-        res
+        {
+          Type::SYMMETRIC.to_sym => [OCTET_STREAM],
+          Type::PUBLIC.to_sym => [OCTET_STREAM, TEXTPLAIN],
+          Type::PRIVATE.to_sym => [OCTET_STREAM, TEXTPLAIN],
+          Type::PASSPHRASE.to_sym => [TEXTPLAIN, TEXTPLAIN_CHARSET_UTF8],
+          Type::CERTIFICATE.to_sym => [PKCS8, PKIX_CERT, TEXTPLAIN],
+          Type::OPAQUE.to_sym => [TEXTPLAIN]
+        }
       end
-
     end
 
     module Encoding
-
       BASE64 = 'base64'
 
       def self.relation_to_payload_content_type
-        res = {}
-        res[PayloadContentType::OCTET_STREAM.to_sym] = BASE64
-        res[PayloadContentType::TEXTPLAIN.to_sym] = nil
-        res[PayloadContentType::TEXTPLAIN_CHARSET_UTF8.to_sym] = nil
-        res[PayloadContentType::PKCS8.to_sym] = BASE64
-        res[PayloadContentType::PKIX_CERT.to_sym] = BASE64
-        res
+        {
+          PayloadContentType::OCTET_STREAM.to_sym => BASE64,
+          PayloadContentType::TEXTPLAIN.to_sym => nil,
+          PayloadContentType::TEXTPLAIN_CHARSET_UTF8.to_sym => nil,
+          PayloadContentType::PKCS8.to_sym => BASE64,
+          PayloadContentType::PKIX_CERT.to_sym => BASE64
+        }
       end
-
     end
-
-
-    extend ActiveModel::Naming
-    include ActiveModel::Conversion
-    include ActiveModel::Validations
-    prepend ::KeyManager::FogModelExtensions
-    include ActiveModel::Validations::Callbacks
-
-    identity :secret_ref
 
     strip_attributes
 
     # validation
     validates_presence_of :name, :secret_type, :payload, :payload_content_type
 
-    # TODO validate with condition
-    # :payload_content_encoding
-
-    def self.attributes
-      ::Fog::KeyManager::OpenStack::Secret.attributes+super
+    def attributes_for_create
+      {
+        'name'                      => read('name'),
+        'expiration'                => read('expiration'),
+        'algorithm'                 => read('algorithm'),
+        'bit_length'                => read('bit_length').to_i,
+        'mode'                      => read('mode'),
+        'payload'                   => read('payload'),
+        'payload_content_type'      => read('payload_content_type'),
+        'payload_content_encoding'  => read('payload_content_encoding'),
+        'secret_type'               => read('secret_type')
+      }.delete_if { |_k, v| v.blank? }
     end
 
-    def self.create_secrets(_secrets=[])
-      total = nil
-      unless _secrets.blank?
-        total = _secrets.response.body.fetch('total', 0)
-      end
-
-      secrets = []
-      _secrets.each do |_secret|
-        secret = Secret.new(_secret.attributes)
-        secrets << secret
-      end
-      {elements: secrets, total_elements: total}
+    def id
+      super || URI(secret_ref).path.split('/').last
+    rescue
+      nil
     end
 
     def payload_link
-      File.join(self.secret_ref, 'payload')
+      File.join(secret_ref, 'payload')
     end
 
     def payload_binary?
-      if self.secret_type == Type::PASSPHRASE
-        return false
-      end
-      return true
+      secret_type != Type::PASSPHRASE
     end
 
     def display_bit_length
-      if !self.bit_length.blank? && self.bit_length != 0
-        return self.bit_length
-      end
-      ''
+      !bit_length.blank? && bit_length != 0 ? bit_length : ''
     end
 
     def display_name
-      unless self.name.blank?
-        self.name
-      else
-        'Empty name'
-      end
+      name.blank? ? 'Empty name' : name
     end
 
+    alias uuid id
   end
-
 end

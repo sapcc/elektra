@@ -3,7 +3,7 @@ module KeyManager
   class FakeFactory
 
     def secret(params = {})
-      ::KeyManager::Secret.new({status: "ACTIVE",
+      ::KeyManager::Secret.new(nil, {status: "ACTIVE",
                                 secret_type: "certificate",
                                 updated: "2016-10-17T14:30:26.168015",
                                 name: "test certificate text_plain",
@@ -20,7 +20,7 @@ module KeyManager
     end
 
     def container(params = {})
-      ::KeyManager::Container.new({status: "ACTIVE",
+      ::KeyManager::Container.new(nil, {status: "ACTIVE",
                                        updated: "2016-10-20T13:45:01.232805",
                                        name: "test container",
                                        consumers: [],
