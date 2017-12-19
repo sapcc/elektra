@@ -1,15 +1,14 @@
-require 'fog/key_manager/openstack/models/secret'
+# frozen_string_literal: true
 
 module KeyManager
-
-  class Secret < ::Fog::KeyManager::OpenStack::Secret
-
+  # represents the seret
+  class Secret < Core::ServiceLayerNg::Model
     module Status
       ACTIVE = 'ACTIVE'
     end
 
+    # Secret types
     module Type
-
       SYMMETRIC = 'symmetric'
       PUBLIC = 'public'
       PRIVATE = 'private'
@@ -27,11 +26,9 @@ module KeyManager
         res[OPAQUE.to_sym] = 'Used for backwards compatibility with previous versions of the API without typed secrets'
         res
       end
-
     end
 
     module PayloadContentType
-
       OCTET_STREAM = 'application/octet-stream'
       TEXTPLAIN = 'text/plain'
       TEXTPLAIN_CHARSET_UTF8 = 'text/plain;charset=utf-8'
@@ -48,11 +45,9 @@ module KeyManager
         res[Type::OPAQUE.to_sym] = [PayloadContentType::TEXTPLAIN]
         res
       end
-
     end
 
     module Encoding
-
       BASE64 = 'base64'
 
       def self.relation_to_payload_content_type
@@ -64,70 +59,35 @@ module KeyManager
         res[PayloadContentType::PKIX_CERT.to_sym] = BASE64
         res
       end
-
     end
-
-
-    extend ActiveModel::Naming
-    include ActiveModel::Conversion
-    include ActiveModel::Validations
-    prepend ::KeyManager::FogModelExtensions
-    include ActiveModel::Validations::Callbacks
-
-    identity :secret_ref
 
     strip_attributes
 
     # validation
     validates_presence_of :name, :secret_type, :payload, :payload_content_type
 
-    # TODO validate with condition
-    # :payload_content_encoding
-
-    def self.attributes
-      ::Fog::KeyManager::OpenStack::Secret.attributes+super
-    end
-
-    def self.create_secrets(_secrets=[])
-      total = nil
-      unless _secrets.blank?
-        total = _secrets.response.body.fetch('total', 0)
-      end
-
-      secrets = []
-      _secrets.each do |_secret|
-        secret = Secret.new(_secret.attributes)
-        secrets << secret
-      end
-      {elements: secrets, total_elements: total}
+    def id
+      URI(secret_ref).path.split('/').last
+    rescue
+      nil
     end
 
     def payload_link
-      File.join(self.secret_ref, 'payload')
+      File.join(secret_ref, 'payload')
     end
 
     def payload_binary?
-      if self.secret_type == Type::PASSPHRASE
-        return false
-      end
-      return true
+      secret_type != Type::PASSPHRASE
     end
 
     def display_bit_length
-      if !self.bit_length.blank? && self.bit_length != 0
-        return self.bit_length
-      end
-      ''
+      !bit_length.blank? && bit_length != 0 ? bit_length : ''
     end
 
     def display_name
-      unless self.name.blank?
-        self.name
-      else
-        'Empty name'
-      end
+      name.blank? ? 'Empty name' : name
     end
 
+    alias uuid id
   end
-
 end

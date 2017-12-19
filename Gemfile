@@ -81,7 +81,7 @@ gem 'puma', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = ['webconsole'] #e.g. ['compute']
+black_list = ['webconsole','bare_metal_hana'] #e.g. ['compute']
 if ENV.has_key?('BLACK_LIST_PLUGINS')
   ENV['BLACK_LIST_PLUGINS'].split(',').each{|plugin_name| black_list << plugin_name.strip}
 end

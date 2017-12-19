@@ -6,11 +6,11 @@ module KeyManager
     helper :all
 
     def index
-      secrets()
+      @secrets = secrets
     end
 
     def show
-      @secret = services.key_manager.secret_with_metadata_payload(params[:id])
+      @secret = services_ng.key_manager.secret_with_metadata_payload(params[:id])
       # get the user name from the openstack id
       begin
         @user = service_user.identity.find_user(@secret.creator_id).name
@@ -19,24 +19,21 @@ module KeyManager
     end
 
     def new
-      @secret = ::KeyManager::Secret.new({})
+      @secret = services_ng.key_manager.new_secret
     end
 
     def type_update
-      @secret = ::KeyManager::Secret.new({})
+      @secret = services_ng.key_manager.new_secret
     end
 
     def payload
-      @secret = services.key_manager.secret(params[:id])
-      response = RestClient::Request.new(method: :get,
-                                         url: @secret.payload_link,
-                                         headers: {'X-Auth-Token': current_user.token},
-                                         timeout: 5).execute
-      send_data response, filename: @secret.name
+      @secret = services_ng.key_manager.find_secret(params[:id])
+      payload = service_ng.key_manager.secret_payload(params[:id])
+      send_data payload, filename: @secret.name
     end
 
     def create
-      @secret = services.key_manager.new_secret(secrets_params)
+      @secret = services_ng.key_manager.new_secret(secrets_params)
       # validate and check
       if @secret.valid? && @secret.save
         # TODO should show a DISMISSIBLE flash message
@@ -52,13 +49,13 @@ module KeyManager
             end
           end
         end
-        render action: "new"
+        render action: 'new'
       end
     end
 
     def destroy
       # delete secret
-      @secret = services.key_manager.secret(params[:id])
+      @secret = services_ng.key_manager.secret(params[:id])
       @secret.destroy
       flash.now[:success] = "Secret #{@secret.name} was successfully removed."
       # grap a new list of secrets
@@ -70,11 +67,15 @@ module KeyManager
     private
 
     def secrets
-      page = params[:page]||1
+      page = params[:page] || 1
       per_page = 10
       offset = (page.to_i - 1) * per_page
-      result = services.key_manager.secrets({sort: 'created:desc', limit: per_page, offset: offset})
-      @secrets = Kaminari.paginate_array(result[:elements], total_count: result[:total_elements]).page(page).per(per_page)
+      result = services_ng.key_manager.secrets(
+        sort: 'created:desc', limit: per_page, offset: offset
+      )
+      Kaminari.paginate_array(
+        result[:items], total_count: result[:total]
+      ).page(page).per(per_page)
     end
 
     def secret_form_attr
