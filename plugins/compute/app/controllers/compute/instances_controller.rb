@@ -93,7 +93,7 @@ module Compute
       azs = services_ng.compute.availability_zones
       if azs
         @availability_zones = azs.select { |az| az.zoneState['available'] }
-        @availability_zones.sort_by!{|az| az.zoneName}
+        @availability_zones.sort_by!(&:zoneName).reverse! 
       else
         @instance.errors.add :availability_zone, 'not available'
       end
