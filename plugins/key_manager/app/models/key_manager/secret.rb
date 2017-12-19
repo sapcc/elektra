@@ -72,17 +72,21 @@ module KeyManager
     validates_presence_of :name, :secret_type, :payload, :payload_content_type
 
     def attributes_for_create
-      {
+      attrs = {
         'name'                      => read('name'),
         'expiration'                => read('expiration'),
         'algorithm'                 => read('algorithm'),
-        'bit_length'                => read('bit_length').to_i,
         'mode'                      => read('mode'),
         'payload'                   => read('payload'),
         'payload_content_type'      => read('payload_content_type'),
         'payload_content_encoding'  => read('payload_content_encoding'),
         'secret_type'               => read('secret_type')
       }.delete_if { |_k, v| v.blank? }
+      bit_length = read('bit_length')
+      if bit_length && bit_length.to_i.positive?
+        attrs['bit_length'] = bit_length.to_i
+      end
+      attrs
     end
 
     def id
