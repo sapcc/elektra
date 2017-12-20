@@ -5,7 +5,7 @@ module ServiceLayerNg
     # This module implements Openstack Designate Pool API
     module Pool
       def pool_map
-        @pool_map ||= class_map_proc(DnsService::PoolNg)
+        @pool_map ||= class_map_proc(DnsService::Pool)
       end
 
       def pools(filter = {})

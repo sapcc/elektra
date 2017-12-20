@@ -8,7 +8,9 @@ module DnsService
 
     def index
       @zones = paginatable(per_page: 20) do |pagination_options|
-        services_ng.dns_service.zones(@admin_option.merge(pagination_options))
+        services_ng.dns_service.zones(
+          @admin_option.merge(pagination_options)
+        )[:items]
       end
 
       active_requests = services_ng.dns_service.zone_transfer_requests(status: 'ACTIVE')
@@ -34,25 +36,23 @@ module DnsService
 
     def show
       @recordsets = paginatable(per_page: 20) do |pagination_options|
-        services.dns_service.recordsets(
+        services_ng.dns_service.recordsets(
+          params[:id],
           {
-            zone_id: params[:id],
             sort_key: 'name'
           }.merge(@impersonate_option).merge(pagination_options)
-        )
+        )[:items]
       end
 
-      @nameservers = services.dns_service.recordsets(
-        {
-          zone_id: params[:id],
-          type: 'NS'
-        }.merge(@impersonate_option)
-      )
+      @nameservers = services_ng.dns_service.recordsets(
+        params[:id],
+        { type: 'NS' }.merge(@impersonate_option)
+      )[:items]
 
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        zone = services.dns_service.find_zone(params[:id])
+        zone = services_ng.dns_service.find_zone(params[:id], @impersonate_option)
         render partial: 'dns_service/zones/recordsets/recordsets', locals: { recordsets: @recordsets, zone: zone }
       else
         # comon case, render index page with layout
@@ -61,11 +61,11 @@ module DnsService
     end
 
     def new
-      @zone = services.dns_service.new_zone
+      @zone = services_ng.dns_service.new_zone
     end
 
     def create
-      @zone = services.dns_service.new_zone(params[:zone])
+      @zone = services_ng.dns_service.new_zone(params[:zone])
 
       if @zone.save
         flash.now[:notice] = "Zone successfully created."
@@ -96,17 +96,19 @@ module DnsService
     end
 
     def destroy
-      @zone = services.dns_service.delete_zone(params[:id], @impersonate_option)
+      @deleted = services_ng.dns_service.delete_zone(params[:id], @impersonate_option)
       respond_to do |format|
-        format.js{}
-        format.html{redirect_to zones_url  }
+        format.js {}
+        format.html { redirect_to zones_url }
       end
     end
 
     private
 
     def load_pools
-      @pools = current_user.is_allowed?("dns_service:pool_list") ? services.dns_service.pools : []
+      @pools = []
+      return unless current_user.is_allowed?("dns_service:pool_list")
+      @pools = services_ng.dns_service.pools[:items]
     end
   end
 end

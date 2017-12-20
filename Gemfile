@@ -66,8 +66,13 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: :master
 
 # replacement for misty and fog
+
 gem 'elektron', git: 'https://github.com/sapcc/elektron'
+<<<<<<< HEAD
 #gem 'elektron', path: '../elektron'
+=======
+# gem 'elektron', path: '../elektron'
+>>>>>>> finish moving dns to elektron
 
 #gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'master'
 #gem 'misty', path: '../misty'

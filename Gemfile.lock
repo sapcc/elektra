@@ -15,7 +15,11 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
+<<<<<<< HEAD
   revision: 8fc5bc9a9bab4f26cadb8ee11f6bb53092149f2a
+=======
+  revision: 38ab016961dec1f8549b42d4e16f0595defc9a71
+>>>>>>> finish moving dns to elektron
   specs:
     elektron (1.0.0)
 

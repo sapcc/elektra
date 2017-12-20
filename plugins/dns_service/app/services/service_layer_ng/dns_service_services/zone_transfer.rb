@@ -5,11 +5,11 @@ module ServiceLayerNg
     # This module implements Openstack Designate Pool API
     module ZoneTransfer
       def zone_transfer_request_map
-        @zone_transfer_request_map ||= class_map_proc(DnsService::ZoneTransferRequestNg)
+        @zone_transfer_request_map ||= class_map_proc(DnsService::ZoneTransferRequest)
       end
 
       def zone_transfer_accept_map
-        @zone_transfer_accept_map ||= class_map_proc(DnsService::ZoneTransferAcceptNg)
+        @zone_transfer_accept_map ||= class_map_proc(DnsService::ZoneTransferAccept)
       end
 
       def zone_transfer_requests(filter = {})
@@ -22,8 +22,8 @@ module ServiceLayerNg
         true
       end
 
-      def new_zone_transfer_request(attributes = {})
-        zone_transfer_request_map.call(attributes)
+      def new_zone_transfer_request(zone_id, attributes = {})
+        zone_transfer_request_map.call(attributes.merge(zone_id: zone_id))
       end
 
       def find_zone_transfer_request(id)
@@ -58,12 +58,21 @@ module ServiceLayerNg
       end
 
       def update_zone_transfer_request(id, attributes = {})
+        elektron_dns.patch("zones/tasks/transfer_requests/#{id}") do
+          attributes
+        end.body
       end
 
       def delete_zone_transfer_request(id)
+        elektron_dns.delete("zones/tasks/transfer_requests/#{id}")
       end
 
       def create_zone_transfer_accept(attributes = {})
+        project_id = attributes.delete(:target_project_id)
+        filter = project_id ? { project_id: project_id } : {}
+        elektron_dns.post('zones/tasks/transfer_accepts', filter) do
+          attributes
+        end.body
       end
     end
   end

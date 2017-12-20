@@ -1,2 +1,3 @@
-$('tr#zone_<%=@zone.id%>').replaceWith("<%= j(render(partial: 'dns_service/zones/zone_item', locals: {zone: @zone, active_zone_transfer_requests: {}, pools: {}} )) %>");
-MoModal.close();
+<% if @deleted %>
+  $('table tr#zone_<%=params[:id]%>').remove();
+<% end %> 

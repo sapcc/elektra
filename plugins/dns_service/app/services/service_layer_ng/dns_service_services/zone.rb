@@ -5,7 +5,7 @@ module ServiceLayerNg
     # This module implements Openstack Designate Pool API
     module Zone
       def zone_map
-        @zone_map ||= class_map_proc(DnsService::ZoneNg)
+        @zone_map ||= class_map_proc(DnsService::Zone)
       end
 
       def zones(filter = {})
@@ -38,13 +38,17 @@ module ServiceLayerNg
       end
 
       def update_zone(id, attributes = {})
-        elektron_dns.patch("zones/#{id}") do
+        filter = {}
+        filter[:all_projects] = attributes.delete(:all_projects)
+        filter[:project_id] = attributes.delete(:project_id)
+
+        elektron_dns.patch("zones/#{id}", filter) do
           attributes
         end.body
       end
 
-      def delete_zone(id)
-        elektron_dns.delete("zones/#{id}")
+      def delete_zone(id, filter = {})
+        elektron_dns.delete("zones/#{id}", filter)
       end
     end
   end

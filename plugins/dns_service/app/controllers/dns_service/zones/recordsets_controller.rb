@@ -6,19 +6,19 @@ module DnsService
     class RecordsetsController < DnsService::ApplicationController
       before_action ->(id = params[:zone_id]) { load_zone id }
       def show
-        @recordset = services.dns_service.find_recordset(
+        @recordset = services_ng.dns_service.find_recordset(
           params[:zone_id], params[:id], @impersonate_option
         )
       end
 
       def new
-        @recordset = services.dns_service.new_recordset(
-          @zone.id, @impersonate_option
+        @recordset = services_ng.dns_service.new_recordset(
+          @impersonate_option.merge(zone_id: @zone.id)
         )
       end
 
       def create
-        @recordset = services.dns_service.new_recordset(
+        @recordset = services_ng.dns_service.new_recordset(
           @zone.id, params[:recordset]
         )
         @recordset.zone_name = @zone.name
@@ -29,20 +29,23 @@ module DnsService
 
         if @recordset.save
           flash.now[:notice] = 'Recordset successfully created.'
-          redirect_to zone_path(@zone.id)
+          respond_to do |format|
+            format.html { redirect_to zone_path(@zone.id) }
+            format.js { render 'create.js' }
+          end
         else
           render action: :new
         end
       end
 
       def edit
-        @recordset = services.dns_service.find_recordset(
+        @recordset = services_ng.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
       end
 
       def update
-        @recordset = services.dns_service.find_recordset(
+        @recordset = services_ng.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
 
@@ -69,8 +72,8 @@ module DnsService
       end
 
       def destroy
-        @deleted = services.dns_service.delete_recordset(
-          params[:zone_id], params[:id], @impersonate_option
+        @deleted = services_ng.dns_service.delete_recordset(
+          params[:zone_id], params[:id]
         )
         respond_to do |format|
           format.js {}
