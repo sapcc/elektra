@@ -1,29 +1,28 @@
 - if healthmonitor.blank?
-  %table.table.datatable
+  %table.table
     %thead
     %tbody
       %tr
         %td
           No Healthmonitor defined
 - else
-  %table.table.datatable
+  %table.table
     %thead
     %tbody
       %tr
+        %th Prov. State
+        %td
+          %label{class: 'spinner', data: {prov_status: "#{healthmonitor.id}"}}
+      %tr
         %th Name/ID
-        %td= name_or_id(healthmonitor.name, healthmonitor.id)
+        %td
+          = name_or_id(healthmonitor.name, healthmonitor.id)
       %tr
         %th Type
         %td= healthmonitor.type
       %tr
-        %th Max Retries
-        %td= healthmonitor.max_retries
-      %tr
-        %th Timeout
-        %td= healthmonitor.timeout
-      %tr
-        %th Delays
-        %td= healthmonitor.delay
+        %th Retries/Timeout/Delay
+        %td= "#{healthmonitor.max_retries} / #{healthmonitor.timeout} / #{healthmonitor.delay}"
       - if healthmonitor.http_type?
         %tr
           %th HTTP Method

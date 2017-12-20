@@ -7,6 +7,7 @@
   %td= pool.members ? pool.members.count : 0
   %td
     %label{class: 'spinner',data: {op_status: "#{pool.id}"}}
+    %label{class: 'spinner', data: {prov_status: "#{pool.id}"}}
   %td.snug
     .btn-group
       %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }

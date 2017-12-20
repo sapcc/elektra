@@ -5,8 +5,9 @@
     %tbody
       %tr
         %th
-          Provisioning Status:
+          States:
         %td
+          %label{class: 'spinner', data: {op_status: "#{listener.id}"}}
           %label{class: 'spinner', data: {prov_status: "#{listener.id}"}}
       %tr
         %th.snug-nowrap
