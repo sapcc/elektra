@@ -519,13 +519,13 @@ module Compute
               cidr = NetAddr::CIDR.create(sub.cidr)
               if cidr.contains?(fip.floating_ip_address)
                 @grouped_fips[sub.name] ||= []
-                @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
+                @grouped_fips[sub.name] << fip#[fip.floating_ip_address, fip.id]
                 break
               end
             end
           else
             @grouped_fips[net.name] ||= []
-            @grouped_fips[net.name] << [fip.floating_ip_address, fip.id]
+            @grouped_fips[net.name] << fip#[fip.floating_ip_address, fip.id]
           end
         end
       end
