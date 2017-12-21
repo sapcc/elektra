@@ -15,7 +15,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 82d5adc18f47ffee9f7959b8a48888dade3c0d71
+  revision: 8fc5bc9a9bab4f26cadb8ee11f6bb53092149f2a
   specs:
     elektron (1.0.0)
 

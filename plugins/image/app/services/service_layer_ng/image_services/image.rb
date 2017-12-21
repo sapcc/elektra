@@ -28,6 +28,10 @@ module ServiceLayerNg
         all_images
       end
 
+      def new_image(attributes = {})
+        image_map.call(attributes)
+      end
+
       def find_image!(id)
         return nil if id.blank?
         elektron_images.get("images/#{id}").map_to('body', &image_map)
@@ -40,7 +44,12 @@ module ServiceLayerNg
       end
 
       def publish_image(id)
-        elektron_images.patch("images/#{id}") do
+        elektron_images.patch(
+          "images/#{id}",
+          headers: {
+            'Content-Type' => 'application/openstack-images-v2.1-json-patch'
+          }
+        ) do
           [
             {
               op: 'replace',
@@ -48,11 +57,16 @@ module ServiceLayerNg
               value: 'public'
             }
           ]
-        end
+        end.body
       end
 
       def unpublish_image(id)
-        elektron_images.patch("images/#{id}") do
+        elektron_images.patch(
+          "images/#{id}",
+          headers: {
+            'Content-Type' => 'application/openstack-images-v2.1-json-patch'
+          }
+        ) do
           [
             {
               op: 'replace',
@@ -60,7 +74,7 @@ module ServiceLayerNg
               value: 'private'
             }
           ]
-        end
+        end.body
       end
 
       ################# INTERFACE METHODS ######################

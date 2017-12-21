@@ -1,6 +1,6 @@
-<% if @success %>
+<% if @image.errors.empty? && @image.visibility == 'private' %>
   $("#image_<%=params[:public_id]%>").remove();
-  
+
   // Update tab badge
   var badge = $("#image-tab-private").find('.badge');
   if (badge.length==0) {
@@ -9,8 +9,8 @@
     var count = badge.find('.count');
     count.text(parseInt(count.text())+1);
   }
-  //------------------ 
-  
+  //------------------
+
 <% else %>
   $("#image_<%=params[:public_id]%>").removeClass('updating');
-<% end %>  
+<% end %>
