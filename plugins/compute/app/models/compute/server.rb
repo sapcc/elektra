@@ -16,6 +16,8 @@ module Compute
       Otherwise you will not be able to log in."
     }, if: :new?
 
+    validates_format_of :name, without: /\A.*\.\d+\Z/
+
     NO_STATE    = 0
     RUNNING     = 1
     BLOCKED     = 2

@@ -4,7 +4,7 @@
       .alert.alert-error
         = render_errors(@instance.errors)
 
-    = f.input :name
+    = f.input :name, icon_hint: 'The name must not end with dot and number'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
