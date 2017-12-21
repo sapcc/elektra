@@ -93,7 +93,7 @@ module Compute
       azs = services_ng.compute.availability_zones
       if azs
         @availability_zones = azs.select { |az| az.zoneState['available'] }
-        @availability_zones.sort_by!(&:zoneName).reverse! 
+        @availability_zones.sort_by!(&:zoneName).reverse!
       else
         @instance.errors.add :availability_zone, 'not available'
       end
@@ -133,8 +133,13 @@ module Compute
 
     def create
       @instance = services_ng.compute.new_server
-      params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?} unless params[:server][:security_groups].blank?
-      @instance.attributes=params[@instance.model_name.param_key]
+      #params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?} unless params[:server][:security_groups].blank?
+
+      if params[:server] && !params[:server][:security_groups].blank?
+        params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
+      end
+
+      @instance.attributes = params[@instance.model_name.param_key]
 
       if @instance.image_id
         @images = services_ng.image.images
