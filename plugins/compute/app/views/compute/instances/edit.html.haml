@@ -1,0 +1,14 @@
+= simple_form_for @instance, url: plugin('compute').instance_path(id: @instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    - if @instance.errors.present?
+      .alert.alert-error
+        = render_errors(@instance.errors)
+
+    = f.input :name
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", instances_url(), class: 'btn btn-default'
+    = button_tag "Save", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

@@ -145,6 +145,10 @@ module ServiceLayerNg
         api.compute.create_server(server: params).data
       end
 
+      def update_server(id, params = {})
+        api.compute.update_server(id, server: params).data
+      end
+
       def delete_server(id)
         return nil if id.empty?
         api.compute.delete_server(id)

@@ -6,15 +6,15 @@ module Compute
   # Represents the Openstack Server
   class Server < Core::ServiceLayerNg::Model
     validates :name, presence: { message: 'Please provide a name' }
-    validates :image_id, presence: { message: 'Please select an image' }
-    validates :flavor_id, presence: { message: 'Please select a flavor' }
+    validates :image_id, presence: { message: 'Please select an image' }, if: :new?
+    validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?
     validates :network_ids, presence: {
       message: 'Please select at least one network'
-    }
+    }, if: :new?
     validates :keypair_id, presence: {
       message: "Please choose a keypair for us to provision to the server.
       Otherwise you will not be able to log in."
-    }
+    }, if: :new?
 
     NO_STATE    = 0
     RUNNING     = 1
@@ -79,6 +79,12 @@ module Compute
       end
       # byebug
       params
+    end
+
+    def attributes_for_update
+      {
+        'name'              => read('name')
+      }.delete_if { |_k, v| v.blank? }
     end
 
     def security_groups
@@ -348,6 +354,12 @@ module Compute
       requires :id
       @service.remove_security_group(id, sg_id)
       true
+    end
+
+    protected
+
+    def new?
+      id.nil?
     end
   end
 end

@@ -1,5 +1,5 @@
 Compute::Engine.routes.draw do
-  resources :instances, except: [:edit, :update] do
+  resources :instances do
     member do
       get 'console'
       get 'update_item'

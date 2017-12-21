@@ -180,6 +180,24 @@ module Compute
       end
     end
 
+    def edit
+      @instance = services_ng.compute.find_server(params[:id])
+    end
+
+    def update
+      @instance = services_ng.compute.new_server(params[:server])
+      @instance.id = params[:id]
+      if @instance.save
+        flash.now[:notice] = 'Server successfully updated.'
+        respond_to do |format|
+          format.html { redirect_to instances_url }
+          format.js { render 'update.js' }
+        end
+      else
+        render action: :edit
+      end
+    end
+
     def new_floatingip
       enforce_permissions('::networking:floating_ip_associate')
       @instance = services_ng.compute.find_server(params[:id])
