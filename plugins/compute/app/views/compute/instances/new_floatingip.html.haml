@@ -24,7 +24,7 @@
         prompt: "Select a Floating IP",
         as: :grouped_select,
         collection: @grouped_fips,
-        label_method:       -> fip { "#{fip.floating_ip_address} (#{fip.description.truncate(30)})" },
+        label_method:       -> fip { "#{fip.floating_ip_address} #{fip.description.truncate(30)}" },
         value_method:       -> fip { fip.id },
         group_method: :last,
         required: true,

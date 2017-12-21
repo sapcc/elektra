@@ -214,6 +214,7 @@ module Compute
       # get project ports
       ports = services_ng.networking.ports(device_id: params[:id])
       # find port which contains the fixed ip or take the first one.
+
       port = ports.find do |prt|
         prt.fixed_ips.collect { |ip| ip['ip_address'] }.include?(
           params[:floating_ip][:fixed_ip_address]
@@ -221,8 +222,7 @@ module Compute
       end || ports.first
 
       # update floating ip with the new assigned interface ip
-      @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
-      @floating_ip.id = params[:floating_ip][:id]
+      @floating_ip = services_ng.networking.find_floating_ip(params[:floating_ip][:id])
       @floating_ip.port_id = port.id
 
       if @floating_ip.save
