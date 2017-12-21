@@ -90,6 +90,12 @@ module Compute
       @flavors            = services_ng.compute.flavors
       @images             = services_ng.image.all_images
 
+      if params[:image_id]
+        # preselect image_id
+        image = @images.find { |i| i.id == params[:image_id] }
+        @instance.image_id = image.id if image
+      end
+
       azs = services_ng.compute.availability_zones
       if azs
         @availability_zones = azs.select { |az| az.zoneState['available'] }
