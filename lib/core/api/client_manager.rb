@@ -10,25 +10,6 @@ module Core
       @cloud_admin_api_client_mutex = Mutex.new
 
       def self.default_client_params
-        # {
-        #   region_id:       Rails.configuration.default_region,
-        #   ssl_verify_mode: Rails.configuration.ssl_verify_peer,
-        #   interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
-        #   log_level:       Logger::INFO,
-        #   keep_alive_timeout: 5,
-        #   #headers: { "Accept-Encoding" => "" },
-        #
-        #   # compute: {:version => '2.9'}, ...waiting for backend support
-        #
-        #   # needed because of wrong urls in service catalog.
-        #   # The identity url contains a /v3. This leads to a wrong url in misty!
-        #   identity: { base_path: '/' },
-        #   resources: { interface: 'public' },
-        #   database: { interface: 'public' },
-        #   metrics: { interface: 'public' },
-        #   masterdata:  { interface: 'public' },
-        #   shared_file_systems: { service_name: 'sharev2' }
-        # }
         {
           region: Rails.configuration.default_region,
           interface: ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
@@ -79,17 +60,6 @@ module Core
           },
           default_client_params
         )
-        # ::Misty::Cloud.new(
-        #   {
-        #     auth: {
-        #       context: {
-        #         catalog: current_user.context['catalog'],
-        #         expires: current_user.context['expires_at'],
-        #         token: current_user.token
-        #       }
-        #     },
-        #   }.merge(default_client_params).merge(SERVICE_OPTIONS)
-        # )
       end
 
       def self.create_service_user_api_client(scope_domain)
@@ -100,17 +70,6 @@ module Core
           password: Rails.application.config.service_user_password,
           scope_domain_name: scope_domain
         }
-
-        # misty_params = {
-        #   auth: {
-        #     url:            ::Core.keystone_auth_endpoint,
-        #     user:           Rails.application.config.service_user_id,
-        #     user_domain:    Rails.application.config.service_user_domain_name,
-        #     password:       Rails.application.config.service_user_password,
-        #     domain:         scope_domain
-        #   }
-        # }.merge(default_client_params)
-
         begin
           ::Elektron.client(auth_config, default_client_params)
           # Misty::Cloud.new(misty_params)
@@ -120,12 +79,6 @@ module Core
             auth_config[:scope_domain_id] = scope_domain
             retry
           end
-
-          # unless misty_params[:auth][:domain_id]
-          #   misty_params[:auth].delete(:domain)
-          #   misty_params[:auth][:domain_id] = scope_domain
-          #   retry
-          # end
 
           raise ::Core::Error::ServiceUserNotAuthenticated,
                 <<~ERROR
@@ -147,19 +100,6 @@ module Core
           },
           default_client_params
         )
-
-        # Misty::Cloud.new(
-        #   {
-        #     auth: {
-        #       url:            ::Core.keystone_auth_endpoint,
-        #       user:           Rails.application.config.service_user_id,
-        #       user_domain:    Rails.application.config.service_user_domain_name,
-        #       password:       Rails.application.config.service_user_password,
-        #       project:        Rails.configuration.cloud_admin_project,
-        #       project_domain: Rails.configuration.cloud_admin_domain
-        #     }
-        #   }.merge(default_client_params)
-        # )
       end
     end
   end
