@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 8fc5bc9a9bab4f26cadb8ee11f6bb53092149f2a
+  revision: 7543f05f64d3c15a08a5afea6146db5bc461c1e3
   specs:
-    elektron (1.0.0)
+    elektron (1.1.2)
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
@@ -34,13 +34,6 @@ GIT
   revision: 5846553e5e657943d936130a0c8fa9d0a1805a5f
   specs:
     lyra-client (0.1.1)
-
-GIT
-  remote: https://github.com/sapcc/misty-cc.git
-  revision: ee0b9a490300b8d0198d028582f2a424b04aa042
-  specs:
-    misty-cc (0.1.3)
-      misty (>= 1.2.0)
 
 GIT
   remote: https://github.com/sapcc/misty.git
@@ -611,7 +604,6 @@ DEPENDENCIES
   masterdata_cockpit!
   metrics!
   misty!
-  misty-cc!
   monsoon-openstack-auth!
   net-ssh
   netaddr

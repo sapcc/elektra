@@ -1,8 +1,6 @@
-require "resource_management/engine"
-# use misty with our converged cloud extension
-require 'misty/openstack/cc'
+require 'resource_management/engine'
 # load resource management related config
-require_relative "resource_management/package"
+require_relative 'resource_management/package'
 
 module ResourceManagement
 end

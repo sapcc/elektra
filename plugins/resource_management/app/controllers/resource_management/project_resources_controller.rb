@@ -186,7 +186,9 @@ module ResourceManagement
     end
 
     def sync_now
-      services_ng.resource_management.sync_project_asynchronously(@scoped_domain_id, @scoped_project_id)
+      services_ng.resource_management.sync_project_asynchronously(
+        @scoped_domain_id, @scoped_project_id
+      )
       @start_time = Time.now.to_i
     end
 
@@ -194,8 +196,8 @@ module ResourceManagement
 
     def load_project
       @project = services_ng.resource_management.find_project(
-        @scoped_domain_id, @scoped_project_id,
-      ) or raise ActiveRecord::RecordNotFound
+        @scoped_domain_id, @scoped_project_id
+      ) || raise(ActiveRecord::RecordNotFound)
     end
 
     def load_project_resource
