@@ -47,7 +47,7 @@
       dispatch(loadClusters())
 
 
-  # ---- item ----
+  # ---- CLUSTER ----
   requestCluster = (clusterName) ->
     type: app.REQUEST_CLUSTER
     clusterName: clusterName
@@ -84,6 +84,9 @@
         success: (data, textStatus, jqXHR) ->
           dispatch(receiveCluster(data))
         error: ( jqXHR, textStatus, errorThrown) ->
+          unless jqXHR?
+            dispatch(loadClusters()) # if no valid object is returned, just reload the whole list
+          else
           switch jqXHR.status
             when 404 then dispatch(loadClusters()) # if requested cluster not found reload the whole list to see what we have (the cluster was probably deleted)
             else
@@ -133,8 +136,12 @@
 
   openNewClusterDialog = () ->
     (dispatch) ->
+      dispatch(app.loadMetaData())
       dispatch(clusterFormForCreate())
       dispatch(newClusterModal())
+
+  toggleAdvancedOptions = () ->
+    type: app.FORM_TOGGLE_ADVANCED_OPTIONS
 
 
   # -------------- EDIT ---------------
@@ -274,6 +281,11 @@
     name: name
     value: value
 
+  updateAdvancedOptions = (name, value) ->
+    type: app.FORM_UPDATE_ADVANCED_OPTIONS
+    name: name
+    value: value
+
   updateNodePoolForm = (index, name, value) ->
     type: app.UPDATE_NODE_POOL_FORM
     index: index
@@ -315,6 +327,8 @@
   app.requestDeleteCluster       = requestDeleteCluster
   app.openNewClusterDialog       = openNewClusterDialog
   app.openEditClusterDialog      = openEditClusterDialog
+  app.toggleAdvancedOptions      = toggleAdvancedOptions
+  app.updateAdvancedOptions      = updateAdvancedOptions
   app.loadCluster                = loadCluster
   app.loadClusterEvents          = loadClusterEvents
   app.getCredentials             = getCredentials

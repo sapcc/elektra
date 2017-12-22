@@ -1,19 +1,22 @@
 #= require components/form_helpers
+#= require kubernetes/components/clusters/advancedoptions
 
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm } = kubernetes
+{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, AdvancedOptions, toggleAdvancedOptions } = kubernetes
 
 
 NewCluster = ({
   close,
   clusterForm,
+  metaData,
   handleSubmit,
   handleChange,
   handleNodePoolChange,
   handleNodePoolAdd,
-  handleNodePoolRemove
+  handleNodePoolRemove,
+  handleAdvancedOptionsToggle
 
 
 }) ->
@@ -43,6 +46,14 @@ NewCluster = ({
                 placeholder: "lower case letters and numbers",
                 value: cluster.name || '',
                 onChange: onChange
+
+        p className: 'u-clearfix',
+          a className: 'pull-right', onClick: ((e) => e.preventDefault(); handleAdvancedOptionsToggle()), href: '#',
+            "#{if clusterForm.advancedOptionsVisible then 'Hide ' else ''}Advanced Options"
+
+        if clusterForm.advancedOptionsVisible
+            React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData
+
 
 
       div className: 'toolbar toolbar-controlcenter',
@@ -100,15 +111,14 @@ NewCluster = ({
                 value: (nodePool.flavor || ''),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value)),
 
-                  option value: '', 'Choose flavor'
-                  option value: 'm1.small', 'm1.small'
-                  option value: 'm1.medium', 'm1.medium'
-                  option value: 'm1.xmedium', 'm1.xmedium'
-                  option value: 'm1.large', 'm1.large'
-                  option value: 'm1.xlarge', 'm1.xlarge'
-                  option value: 'm1.10xlarge', 'm1.10xlarge'
-                  option value: 'x1.2xmemory', 'x1.2xmemory'
-                  
+                  if metaData.flavors?
+                    option value: '', 'Choose flavor'
+                    for flavor in metaData.flavors
+                      option value: flavor.name, key: flavor.name, flavor.name
+                  else
+                    option value: '', 'Loading...'
+
+
 
             button
               className: 'btn btn-default',
@@ -117,27 +127,6 @@ NewCluster = ({
               onClick: ((e) => e.preventDefault(); handleNodePoolRemove(e.currentTarget.dataset.index)),
                 span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
 
-
-
-#       <option value="88813ab0-8f42-4d36-add1-9322187f2f56">baremetal  (RAM: 16 MiB, VCPUs: 1, Disk: 100 GiB )</option>
-# <option value="10">m1.tiny  (RAM: 512 MiB, VCPUs: 1, Disk: 1 GiB )</option>
-# <option value="20">m1.small  (RAM: 2 GiB, VCPUs: 2, Disk: 16 GiB )</option>
-# <option value="22">m1.xsmall  (RAM: 4 GiB, VCPUs: 2, Disk: 64 GiB )</option>
-# <option value="30">m1.medium  (RAM: 4 GiB, VCPUs: 4, Disk: 64 GiB )</option>
-# <option value="32">m1.xmedium  (RAM: 8 GiB, VCPUs: 2, Disk: 64 GiB )</option>
-# <option value="40">m1.large  (RAM: 8 GiB, VCPUs: 4, Disk: 64 GiB )</option>
-# <option value="50">m1.xlarge  (RAM: 16 GiB, VCPUs: 4, Disk: 64 GiB )</option>
-# <option value="110">m2.xlarge  (RAM: 16 GiB, VCPUs: 8, Disk: 64 GiB )</option>
-# <option value="120">m2.2xlarge  (RAM: 24 GiB, VCPUs: 8, Disk: 64 GiB )</option>
-# <option value="60">m1.2xlarge  (RAM: 32 GiB, VCPUs: 8, Disk: 64 GiB )</option>
-# <option value="130">m2.3xlarge  (RAM: 48 GiB, VCPUs: 8, Disk: 64 GiB )</option>
-# <option value="100">m2.large  (RAM: 64 GiB, VCPUs: 4, Disk: 64 GiB )</option>
-# <option value="140">m2.4xlarge  (RAM: 64 GiB, VCPUs: 8, Disk: 64 GiB )</option>
-# <option value="70">m1.4xlarge  (RAM: 64 GiB, VCPUs: 16, Disk: 64 GiB )</option>
-# <option value="90">x1.memory  (RAM: 128 GiB, VCPUs: 8, Disk: 64 GiB )</option>
-# <option value="80">m1.10xlarge  (RAM: 160 GiB, VCPUs: 40, Disk: 64 GiB )</option>
-# <option value="99">x1.2xmemory  (RAM: 256 GiB, VCPUs: 16, Disk: 64 GiB )</option>
-# <option value="150">x1.4xmemory  (RAM: 512 GiB, VCPUs: 32, Disk: 64 GiB )</option>
 
 
 
@@ -151,14 +140,16 @@ NewCluster = ({
 
 NewCluster = connect(
   (state) ->
-    clusterForm: state.clusterForm
+    clusterForm:  state.clusterForm
+    metaData:     state.metaData
 
   (dispatch) ->
-    handleChange:         (name, value)         -> dispatch(updateClusterForm(name, value))
-    handleNodePoolChange: (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
-    handleNodePoolAdd:    ()                    -> dispatch(addNodePool())
-    handleNodePoolRemove: (index)               -> dispatch(deleteNodePool(index))
-    handleSubmit:         (callback)            -> dispatch(submitClusterForm(callback))
+    handleChange:             (name, value)         -> dispatch(updateClusterForm(name, value))
+    handleAdvancedOptionsToggle:()                  -> dispatch(toggleAdvancedOptions())
+    handleNodePoolChange:     (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
+    handleNodePoolAdd:        ()                    -> dispatch(addNodePool())
+    handleNodePoolRemove:     (index)               -> dispatch(deleteNodePool(index))
+    handleSubmit:             (callback)            -> dispatch(submitClusterForm(callback))
 
 )(NewCluster)
 

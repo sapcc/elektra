@@ -14,17 +14,19 @@
             size: ''
           }
         ]
+        openstack: {}
       }
     }
     isSubmitting: false
     errors: null
     isValid: false
     nodePoolsValid: false
+    advancedOptionsVisible: false
 
   resetClusterForm = (action, {})->
     initialClusterFormState
 
-  updateClusterForm = (state, {name, value})->
+  updateClusterForm = (state, {name, value}) ->
     data = ReactHelpers.mergeObjects({}, state.data, {"#{name}":value})
     ReactHelpers.mergeObjects({}, state, {
       data: data
@@ -33,7 +35,12 @@
       isValid: (data.name.length > 0 && state.nodePoolsValid)
     })
 
-  updateNodePoolForm = (state, {index, name, value})->
+  updateAdvancedOptions = (state, {name, value}) ->
+    dataClone = state.data
+    dataClone.spec.openstack[name] = value
+    ReactHelpers.mergeObjects({},state,{data: dataClone})
+
+  updateNodePoolForm = (state, {index, name, value}) ->
     nodePool = ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {"#{name}":value})
     nodePoolsClone = state.data.spec.nodePools.slice(0)
     if index>=0 then nodePoolsClone[index] = nodePool else nodePoolsClone.push nodePool
@@ -102,16 +109,54 @@
       errors: errors
     })
 
+  toggleAdvancedOptions=(state, {})->
+    optionsVisible = state.advancedOptionsVisible
+    ReactHelpers.mergeObjects({}, state, {
+      advancedOptionsVisible: !optionsVisible
+    })
+
+  setClusterFormDefaults = (state, {metaData}) ->
+    # set default values in cluster form
+    defaults = {}
+    # router -> network -> subnet chain
+    if metaData.routers?
+      router = metaData.routers[0]
+      defaults.routerID = router.id
+
+      if router.networks?
+        network = router.networks[0]
+        defaults.networkID = network.id
+
+        if network.subnets?
+          defaults.lbSubnetID = network.subnets[0].id
+
+    # keyPairs
+    if metaData.keyPairs?
+      defaults.keyPair = metaData.keyPairs[0].name
+
+    # securityGroups
+    if metaData.securityGroups?
+      defaults.securityGroupID = metaData.securityGroups[0].name
+
+    dataClone = state.data
+    dataClone.spec.openstack = defaults
+    ReactHelpers.mergeObjects({},state,{data: dataClone})
+
+
+
   app.clusterForm = (state = initialClusterFormState, action) ->
     switch action.type
-      when app.RESET_CLUSTER_FORM     then resetClusterForm(state,action)
-      when app.UPDATE_CLUSTER_FORM    then updateClusterForm(state,action)
-      when app.UPDATE_NODE_POOL_FORM  then updateNodePoolForm(state,action)
-      when app.ADD_NODE_POOL          then addNodePool(state,action)
-      when app.DELETE_NODE_POOL       then deleteNodePool(state,action)
-      when app.SUBMIT_CLUSTER_FORM    then submitClusterForm(state,action)
-      when app.PREPARE_CLUSTER_FORM   then prepareClusterForm(state,action)
-      when app.CLUSTER_FORM_FAILURE   then clusterFormFailure(state,action)
+      when app.RESET_CLUSTER_FORM           then resetClusterForm(state,action)
+      when app.UPDATE_CLUSTER_FORM          then updateClusterForm(state,action)
+      when app.UPDATE_NODE_POOL_FORM        then updateNodePoolForm(state,action)
+      when app.ADD_NODE_POOL                then addNodePool(state,action)
+      when app.DELETE_NODE_POOL             then deleteNodePool(state,action)
+      when app.SUBMIT_CLUSTER_FORM          then submitClusterForm(state,action)
+      when app.PREPARE_CLUSTER_FORM         then prepareClusterForm(state,action)
+      when app.CLUSTER_FORM_FAILURE         then clusterFormFailure(state,action)
+      when app.FORM_TOGGLE_ADVANCED_OPTIONS then toggleAdvancedOptions(state,action)
+      when app.FORM_UPDATE_ADVANCED_OPTIONS then updateAdvancedOptions(state,action)
+      when app.SET_CLUSTER_FORM_DEFAULTS    then setClusterFormDefaults(state,action)
       else state
 
 )(kubernetes)
