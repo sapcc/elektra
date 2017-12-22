@@ -15,7 +15,7 @@
     "lat":        50.91,
     "lon":        9.08,
     "available":  false,
-    "date":       "2017"
+    "date":       "2018"
   },
   {
     "country":    "USA",
@@ -33,7 +33,7 @@
     "lat":        37.35,
     "lon":        -121.95,
     "available":  false,
-    "date":       "2017"
+    "date":       "2018"
   },
   {
     "country":    "USA",
@@ -87,7 +87,7 @@
     "lat":        -31.35,
     "lon":        23.96,
     "available":  false,
-    "date":       "2017"
+    "date":       "2018"
   },
   {
     "country":    "United Arab Emirates",
@@ -95,7 +95,7 @@
     "regionname": "AP-AE-1",
     "lat":        25.09,
     "lon":        55.17,
-    "available":  false,
+    "available":  true,
     "date":       "2017"
   },
   {
@@ -105,7 +105,7 @@
     "lat":        24.70,
     "lon":        46.68,
     "available":  false,
-    "date":       "2017"
+    "date":       "2018"
   },
   {
     "country":    "India",
@@ -114,7 +114,7 @@
     "lat":        17.37,
     "lon":        78.48,
     "available":  false,
-    "date":       "2017"
+    "date":       "2018"
   },
   {
     "country":    "China",
@@ -141,7 +141,7 @@
     "lat":        35.66,
     "lon":        139.77,
     "available":  false,
-    "date":       "2017"
+    "date":       "2018"
   },
   {
     "country":    "Australia",
