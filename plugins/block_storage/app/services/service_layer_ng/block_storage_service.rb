@@ -10,7 +10,7 @@ module ServiceLayerNg
     end
 
     def elektron_volumes
-      @elektron_volumes ||= elektron(debug: Rails.env.development?).service(
+      @elektron_volumes ||= elektron.service(
         'volumev2'
       )
     end

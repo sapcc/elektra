@@ -16,7 +16,7 @@ module ServiceLayerNg
     end
 
     def elektron_shares
-      @elektron_shares ||= elektron(debug: Rails.env.development?).service(
+      @elektron_shares ||= elektron.service(
         'sharev2',
         headers: { 'X-OpenStack-Manila-API-Version' => MICROVERSION.to_s }
       )

@@ -11,7 +11,7 @@ module ServiceLayerNg
     end
 
     def elektron_images
-      @elektron_images ||= elektron(debug: Rails.env.development?).service(
+      @elektron_images ||= elektron.service(
         'image', path_prefix: '/v2'
       )
     end
