@@ -19,7 +19,7 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 **We have UIs for the following Openstack core services**:
 * Compute: servers, server images, server snapshots (Nova)
 * Block storage: volumes, volume snapshots (Cinder)
-* User and group roles assignemnts (Keystone)
+* User and group roles assignments (Keystone)
 * Secure key store (Barbican)
 * Software-defined networks, routers, floating IPs, security groups (Neutron)
 * Loadbalancing (Neutron LBaaS extension)
@@ -31,7 +31,7 @@ To that end Elektra provides web UIs that turn operator actions into user self-s
 
 * SAP Automation as a Service
 * SAP Hana as a Service
-* SAP Kubernetes as a Service (2017)
+* SAP Kubernetes as a Service
 
 
 **Project Landing Page:**
