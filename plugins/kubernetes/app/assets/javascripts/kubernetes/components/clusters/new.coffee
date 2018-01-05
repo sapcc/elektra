@@ -2,7 +2,7 @@
 #= require kubernetes/components/clusters/advancedoptions
 
 
-{ div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
+{ div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,optgroup,p,i,a } = React.DOM
 { connect } = ReactRedux
 { updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, AdvancedOptions, toggleAdvancedOptions } = kubernetes
 
@@ -111,12 +111,13 @@ NewCluster = ({
                 value: (nodePool.flavor || ''),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value)),
 
-                  if metaData.flavors?
-                    option value: '', 'Choose flavor'
-                    for flavor in metaData.flavors
-                      option value: flavor.name, key: flavor.name, flavor.name
-                  else
+                  if !metaData.loaded || (metaData.error? && metaData.errorCount <= 20)
                     option value: '', 'Loading...'
+                  else
+                    if metaData.flavors?
+                      for flavor in metaData.flavors
+                        flavorMetaData = if flavor.ram? && flavor.vcpus? then "(ram: #{flavor.ram}, vcpus: #{flavor.vcpus})" else ""
+                        option value: flavor.name, key: flavor.name, "#{flavor.name} #{flavorMetaData}"
 
 
 

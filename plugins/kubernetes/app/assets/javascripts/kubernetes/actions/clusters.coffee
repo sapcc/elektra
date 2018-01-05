@@ -282,9 +282,47 @@
     value: value
 
   updateAdvancedOptions = (name, value) ->
-    type: app.FORM_UPDATE_ADVANCED_OPTIONS
+    (dispatch) ->
+      switch name
+        when 'routerID'  then dispatch(setDefaultsForRouter(value))
+        when 'networkID' then dispatch(setDefaultsForNetwork(value))
+        else dispatch(updateAdvancedValue(name, value))
+
+  setDefaultsForRouter = (value) ->
+    (dispatch, getState) ->
+      metaData = getState().metaData
+      # going down the nested array rabbit hole
+      selectedRouterIndex = ReactHelpers.findIndexInArray(metaData.routers,value, 'id')
+      selectedRouter      = metaData.routers[selectedRouterIndex]
+      defaultNetwork      = selectedRouter.networks[0]
+      defaultSubnet       = defaultNetwork.subnets[0]
+
+      dispatch(updateAdvancedValue('routerID',    value))
+      dispatch(updateAdvancedValue('networkID',   defaultNetwork.id))
+      dispatch(updateAdvancedValue('lbSubnetID',  defaultSubnet.id))
+
+
+
+  setDefaultsForNetwork = (value) ->
+    (dispatch, getState) ->
+      metaData = getState().metaData
+      # going down the nested array rabbit hole
+      selectedRouterIndex     = ReactHelpers.findIndexInArray(metaData.routers,getState().clusterForm.data.spec.openstack.routerID, 'id')
+      selectedRouter          = metaData.routers[selectedRouterIndex]
+      selectedNetworkIndex    = ReactHelpers.findIndexInArray(selectedRouter.networks,value, 'id')
+      selectedNetwork         = selectedRouter.networks[selectedNetworkIndex]
+      defaultSubnet           = selectedNetwork.subnets[0]
+
+      dispatch(updateAdvancedValue('networkID', value))
+      dispatch(updateAdvancedValue('lbSubnetID', defaultSubnet.id))
+
+
+
+  updateAdvancedValue = (name, value) ->
+    type: app.FORM_UPDATE_ADVANCED_VALUE
     name: name
     value: value
+
 
   updateNodePoolForm = (index, name, value) ->
     type: app.UPDATE_NODE_POOL_FORM

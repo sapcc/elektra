@@ -19,7 +19,9 @@
   loadMetaData = () ->
     (dispatch, getState) ->
 
-      return if getState().metaData?  # don't fetch if we already have the metadata
+      metaData = getState().metaData
+      return if metaData? && metaData.error == ""  # don't fetch if we already have the metadata
+
       dispatch(requestMetaData())
 
       app.ajaxHelper.get "/api/v1/openstack/metadata",
@@ -32,6 +34,9 @@
                             jqXHR.responseJSON.message
                           else jqXHR.responseText
           dispatch(requestMetaDataFailure(errorMessage))
+          # retry up to 20 times
+          if getState().metaData.errorCount <= 20
+            dispatch(loadMetaData())
 
   # export
   app.loadMetaData = loadMetaData

@@ -21,11 +21,15 @@ AdvancedOptions = ({
   cluster  = clusterForm.data
   options  = cluster.spec.openstack
 
-  if !metaData? || metaData.isFetching
-    div className: 'u-clearfix',
-      div className: 'pull-right',
-        'Loading options '
-        span className: 'spinner'
+  if !metaData.loaded? || metaData.isFetching || metaData.error?
+    if metaData.error? && metaData.errorCount > 20
+      div className: 'alert alert-warning',
+        "We couldn't retrieve the advanced options at this time, please try again later"
+    else
+      div className: 'u-clearfix',
+        div className: 'pull-right',
+          'Loading options '
+          span className: 'spinner'
 
   else
     selectedRouterIndex     = ReactHelpers.findIndexInArray(metaData.routers,options.routerID, 'id')
