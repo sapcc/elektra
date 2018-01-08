@@ -126,8 +126,9 @@
           defaults.lbSubnetID = network.subnets[0].id
 
     # keyPairs
-    if metaData.keyPairs?
-      defaults.keyPair = metaData.keyPairs[0].name
+    # remove until we have keypair or public key support in kubernikus
+    # if metaData.keyPairs?
+    #   defaults.keyPair = metaData.keyPairs[0].name
 
     # securityGroups
     if metaData.securityGroups?

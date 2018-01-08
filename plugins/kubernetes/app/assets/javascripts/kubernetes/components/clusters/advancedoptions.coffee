@@ -60,24 +60,25 @@ AdvancedOptions = ({
                       for securityGroup in metaData.securityGroups
                         option value: securityGroup.id, key: securityGroup.id, securityGroup.name
 
-      if metaData.keyPairs?
-        # Keypair
-        div null,
-          div className: "form-group required string" ,
-            label className: "string required col-sm-4 control-label", htmlFor: "keyPair",
-              abbr title: "required", '*'
-              ' Keypair'
-            div className: "col-sm-8",
-              div className: "input-wrapper",
-                select
-                  name: "keyPair",
-                  className: "select required form-control",
-                  value: (options.keyPair || ''),
-                  disabled: ('disabled' if metaData.keyPairs.length == 1),
-                  onChange: ((e) -> handleChange(e.target.name, e.target.value)),
-
-                      for keyPair in metaData.keyPairs
-                        option value: keyPair.name, key: keyPair.name, keyPair.name
+      # remove until we have keypair or public key support in kubernikus
+      # if metaData.keyPairs?
+      #   # Keypair
+      #   div null,
+      #     div className: "form-group required string" ,
+      #       label className: "string required col-sm-4 control-label", htmlFor: "keyPair",
+      #         abbr title: "required", '*'
+      #         ' Keypair'
+      #       div className: "col-sm-8",
+      #         div className: "input-wrapper",
+      #           select
+      #             name: "keyPair",
+      #             className: "select required form-control",
+      #             value: (options.keyPair || ''),
+      #             disabled: ('disabled' if metaData.keyPairs.length == 1),
+      #             onChange: ((e) -> handleChange(e.target.name, e.target.value)),
+      #
+      #                 for keyPair in metaData.keyPairs
+      #                   option value: keyPair.name, key: keyPair.name, keyPair.name
 
 
 
