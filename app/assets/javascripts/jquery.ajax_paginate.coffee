@@ -79,7 +79,6 @@ jQuery.fn.ajaxPaginate= ( options ) ->
         # call the callback method
         callback(data) if callback
 
-
     # load recursively next items until all items are loaded or stopAllLoad is true
     loadAll=(callback) ->
       return if stopLoadAll

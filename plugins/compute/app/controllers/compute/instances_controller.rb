@@ -8,6 +8,9 @@ module Compute
 
     authorization_context 'compute'
     authorization_required except: %i[new_floatingip attach_floatingip
+                                      detach_floatingip remove_floatingip 
+                                      attach_interface create_interface
+                                      remove_interface detach_interface
                                       detach_floatingip new_snapshot update_item new_size
                                       automation_script]
 

@@ -127,15 +127,25 @@
               %th Device Name
               %th.snug
           %tbody
-            - attached_volumes = @instance.attached_volumes
-            - if attached_volumes.empty?
-              %tr
-                %td No volumes attached.
-            - else
-              - attached_volumes.each do |vol|
+            - if current_user.is_allowed?("block_storage:volume_list")
+              - attached_volumes = @instance.attached_volumes
+              - if attached_volumes.empty?
                 %tr
-                  %td= vol.displayName || vol.name
-                  %td= vol.attachments.first['device']
+                  %td{colspan: 2} No volumes attached.
+              - else
+                - attached_volumes.each do |vol|
+                  %tr
+                    %td= vol.displayName || vol.name
+                    %td= vol.attachments.first['device']
+            - else
+              %tr
+                %td{colspan: 2}
+                  - involved_roles = policy.try(:involved_roles, "block_storage:volume_list")
+                  You are not authorized to view volumes.
+                  - if involved_roles
+                    Please check (role assignments) if you have one of the following roles:
+                    = involved_roles.join(', ')
+
 
       - if current_user.is_allowed?("compute:all_projects")
         .tab-pane{role: 'tabpanel', id: 'actions'}

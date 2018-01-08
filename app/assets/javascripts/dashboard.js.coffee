@@ -101,7 +101,19 @@ $ ->
     $('.searchable-input').toggleClass('expanded').find('#search-input').focus()
 
 
-  $('[data-collapsable]').collapsable()
+  # $('[data-collapsable]').collapsable()
+
+
+# use MutationObserver to make new added nodes collapsable
+observer = new MutationObserver (mutations) ->
+  for mutation in mutations
+    if (mutation.type == 'childList')
+      containers = $(mutation.addedNodes).find('[data-collapsable]')
+      containers.collapsable() if containers && containers.length > 0
+
+observer.observe(document.documentElement, {childList: true, subtree: true});
+# -------------- END
+
 # -------------------------------------------------------------------------------------------------------------
 # Initialize Modal Windows
 $(document).on 'modal:contentUpdated', (e) ->
@@ -114,7 +126,7 @@ $(document).on 'modal:contentUpdated', (e) ->
     # find triger elements
     $form.find("select[data-trigger=change]").change Dashboard.showFormDetails
 
-    $(selector).find('[data-collapsable]').collapsable()
+    # $(selector).find('[data-collapsable]').collapsable()
 
     # Dynamic Form - Hide/reveal parts of the form following a trigger event
     $form.find(".dynamic-form-trigger").change Dashboard.hideRevealFormParts
