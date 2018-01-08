@@ -54,18 +54,7 @@
       nodePoolsValid: poolValidity
       isValid: (state.data.name.length > 0 && poolValidity)
     })
-    
-    # data = ReactHelpers.mergeObjects({}, state.data, {spec: {nodePools: nodePoolsClone}})
-    # poolValidity = nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0
-    #
-    #
-    # ReactHelpers.mergeObjects({}, state, {
-    #   data: data
-    #   errors: null
-    #   isSubmitting: false
-    #   nodePoolsValid: poolValidity
-    #   isValid: (state.data.name.length > 0 && poolValidity)
-    # })
+
 
   addNodePool = (state, {}) ->
     # TODO: remove hardcoded flavor selection
@@ -142,11 +131,14 @@
 
     # securityGroups
     if metaData.securityGroups?
-      defaults.securityGroupID = metaData.securityGroups[0].name
+      defaults.securityGroupID = metaData.securityGroups[0].id
 
-    dataClone = state.data
-    dataClone.spec.openstack = defaults
-    ReactHelpers.mergeObjects({},state,{data: dataClone})
+    # ensure already selected values aren't overwritten by the defaults
+    dataMerged = ReactHelpers.mergeObjects({},defaults,state.data.spec.openstack)
+
+    stateClone = state
+    stateClone.data.spec.openstack = dataMerged
+    ReactHelpers.mergeObjects({},state,stateClone)
 
 
 

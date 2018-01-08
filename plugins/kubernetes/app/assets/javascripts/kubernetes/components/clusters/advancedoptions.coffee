@@ -9,7 +9,8 @@
 AdvancedOptions = ({
   clusterForm,
   metaData,
-  handleChange
+  handleChange,
+  edit
 
 
 }) ->
@@ -21,7 +22,8 @@ AdvancedOptions = ({
   cluster  = clusterForm.data
   options  = cluster.spec.openstack
 
-  if !metaData.loaded? || metaData.isFetching || metaData.error?
+
+  if !metaData.loaded || metaData.error?
     if metaData.error? && metaData.errorCount > 20
       div className: 'alert alert-warning',
         "We couldn't retrieve the advanced options at this time, please try again later"
@@ -92,7 +94,7 @@ AdvancedOptions = ({
                 name: "routerID",
                 className: "select required form-control",
                 value: (options.routerID || ''),
-                disabled: ('disabled' if metaData.routers.length == 1),
+                disabled: ('disabled' if metaData.routers.length == 1 || edit),
                 onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
                     for router in metaData.routers
@@ -110,7 +112,7 @@ AdvancedOptions = ({
                 name: "networkID",
                 className: "select required form-control",
                 value: (options.networkID || ''),
-                disabled: ('disabled' if selectedRouter.networks.length == 1),
+                disabled: ('disabled' if selectedRouter.networks.length == 1 || edit),
                 onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
                     for network in selectedRouter.networks
@@ -129,7 +131,7 @@ AdvancedOptions = ({
                 name: "lbSubnetID",
                 className: "select required form-control",
                 value: (options.lbSubnetID || ''),
-                disabled: ('disabled' if selectedNetwork.subnets.length == 1),
+                disabled: ('disabled' if selectedNetwork.subnets.length == 1 || edit),
                 onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
                     for subnet in selectedNetwork.subnets

@@ -1,20 +1,23 @@
 #= require components/form_helpers
+#= require kubernetes/components/clusters/advancedoptions
 
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster } = kubernetes
+{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions } = kubernetes
 
 
 EditCluster = ({
   close,
   clusterForm,
+  metaData,
   handleSubmit,
   handleChange,
   handleNodePoolChange,
   handleNodePoolAdd,
   handleNodePoolRemove,
-  handleClusterDelete
+  handleClusterDelete,
+  handleAdvancedOptionsToggle
 }) ->
 
   cluster = clusterForm.data
@@ -37,6 +40,13 @@ EditCluster = ({
                 type: "text",
                 name: "name",
                 value: cluster.name || ''
+
+        p className: 'u-clearfix',
+          a className: 'pull-right', onClick: ((e) => e.preventDefault(); handleAdvancedOptionsToggle()), href: '#',
+            "#{if clusterForm.advancedOptionsVisible then 'Hide ' else ''}Advanced Options"
+
+        if clusterForm.advancedOptionsVisible
+            React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, edit: true
 
 
       div className: 'toolbar toolbar-controlcenter',
@@ -98,21 +108,20 @@ EditCluster = ({
                 value: (nodePool.flavor || ''),
                 onChange: ((e) -> e.preventDefault; handleNodePoolChange(e.target.dataset.index, e.target.name, e.target.value)),
 
-                  option value: '', 'Choose flavor'
-                  option value: 'm1.small', 'm1.small'
-                  option value: 'm1.medium', 'm1.medium'
-                  option value: 'm1.xmedium', 'm1.xmedium'
-                  option value: 'm1.large', 'm1.large'
-                  option value: 'm1.xlarge', 'm1.xlarge'
-                  option value: 'm1.10xlarge', 'm1.10xlarge'
-                  option value: 'x1.2xmemory', 'x1.2xmemory'
+                  if !metaData.loaded || (metaData.error? && metaData.errorCount <= 20)
+                    option value: '', 'Loading...'
+                  else
+                    if metaData.flavors?
+                      for flavor in metaData.flavors
+                        flavorMetaData = if flavor.ram? && flavor.vcpus? then "(ram: #{flavor.ram}, vcpus: #{flavor.vcpus})" else ""
+                        option value: flavor.name, key: flavor.name, "#{flavor.name} #{flavorMetaData}"
 
 
             button
               className: 'btn btn-default',
               "data-index": index,
               disabled: 'disabled' unless nodePool.new,
-              onClick: ((e) -> e.preventDefault(); console.log("dataset: ", e.currentTarget.dataset.index); handleNodePoolRemove(e.target.dataset.index)),
+              onClick: ((e) -> e.preventDefault(); handleNodePoolRemove(e.target.dataset.index)),
                 span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
 
 
@@ -136,12 +145,13 @@ EditCluster = connect(
     clusterForm: state.clusterForm
 
   (dispatch) ->
-    handleChange:         (name, value)         -> dispatch(updateClusterForm(name, value))
-    handleNodePoolChange: (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
-    handleNodePoolAdd:    ()                    -> dispatch(addNodePool())
-    handleNodePoolRemove: (index)               -> dispatch(deleteNodePool(index))
-    handleSubmit:         (callback)            -> dispatch(submitClusterForm(callback))
-    handleClusterDelete:  (clusterName)         -> dispatch(requestDeleteCluster(clusterName))
+    handleChange:               (name, value)         -> dispatch(updateClusterForm(name, value))
+    handleAdvancedOptionsToggle:()                    -> dispatch(toggleAdvancedOptions())
+    handleNodePoolChange:       (index, name, value)  -> dispatch(updateNodePoolForm(index, name, value))
+    handleNodePoolAdd:          ()                    -> dispatch(addNodePool())
+    handleNodePoolRemove:       (index)               -> dispatch(deleteNodePool(index))
+    handleSubmit:               (callback)            -> dispatch(submitClusterForm(callback))
+    handleClusterDelete:        (clusterName)         -> dispatch(requestDeleteCluster(clusterName))
 
 
 )(EditCluster)

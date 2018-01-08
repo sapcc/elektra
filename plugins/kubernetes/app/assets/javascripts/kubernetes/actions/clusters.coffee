@@ -152,6 +152,7 @@
 
   openEditClusterDialog = (cluster) ->
     (dispatch) ->
+      dispatch(app.loadMetaData())
       dispatch(clusterFormForUpdate(cluster))
       dispatch(editClusterModal())
 
