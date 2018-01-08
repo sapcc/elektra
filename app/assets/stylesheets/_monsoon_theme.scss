@@ -389,6 +389,10 @@ section {
   margin-top: $line-height-computed*2;
 }
 
+.u-clearfix {
+  @include pie-clearfix;
+}
+
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
