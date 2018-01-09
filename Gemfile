@@ -38,8 +38,13 @@ gem 'activerecord-session_store'
 # Openstack
 gem 'net-ssh'
 gem 'netaddr'
+
+gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: :master
+# gem 'elektron', path: '../elektron'
 gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
 #gem 'fog-openstack', path: '../fog-openstack', branch: :master
+# api client (replacement for misty and fog)
+gem 'elektron', git: 'https://github.com/sapcc/elektron'
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
@@ -62,13 +67,6 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
-gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: :master
-
-# replacement for misty and fog
-
-gem 'elektron', git: 'https://github.com/sapcc/elektron'
-# gem 'elektron', path: '../elektron'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
