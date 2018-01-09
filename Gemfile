@@ -70,11 +70,6 @@ gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: :master
 gem 'elektron', git: 'https://github.com/sapcc/elektron'
 # gem 'elektron', path: '../elektron'
 
-#gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: 'master'
-#gem 'misty', path: '../misty'
-gem 'misty-cc', git: 'https://github.com/sapcc/misty-cc.git'
-#gem 'misty-cc', path: '../misty-cc'
-
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.

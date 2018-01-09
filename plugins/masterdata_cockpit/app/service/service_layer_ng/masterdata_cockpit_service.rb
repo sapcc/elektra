@@ -1,64 +1,67 @@
+# frozen_string_literal: true
+
 module ServiceLayerNg
-
   class MasterdataCockpitService < Core::ServiceLayerNg::Service
-
     def available?(_action_name_sym = nil)
-      api.catalog_include_service?('sapcc-billing', region)
+      elektron.service?('sapcc-billing')
+    end
+
+    def elektron_billing
+      @elektron_billing ||= elektron(debug: Rails.env.development?).service(
+        'sapcc-billing', path_prefix: '/masterdata'
+      )
+    end
+
+    def project_map
+      @project_map ||= class_map_proc(MasterdataCockpit::ProjectMasterdata)
+    end
+
+    def domain_map
+      @domain_map ||= class_map_proc(MasterdataCockpit::DomainMasterdata)
     end
 
     def missing_projects
-      Rails.logger.debug  "[masterdata cockpit-service] -> missing_projects -> GET /missing}"
-      api.masterdata.get_missing_project().map_to(MasterdataCockpit::ProjectMasterdata)
+      elektron_billing.get('missing').map_to('body', &project_map)
     end
 
-    def get_project(project_id)
-       Rails.logger.debug  "[masterdata cockpit-service] -> get_project -> GET /projects/#{project_id}"
-       response = api.masterdata.get_project(project_id)
-       map_to(MasterdataCockpit::ProjectMasterdata, response.body)
+    def get_project(id)
+      elektron_billing.get("projects/#{id}").map_to('body', &project_map)
     end
 
-    def get_domain(domain_id)
-       Rails.logger.debug  "[masterdata cockpit-service] -> get_domain -> GET /domain/#{domain_id}"
-       response = api.masterdata.get_domain(domain_id)
-       map_to(MasterdataCockpit::DomainMasterdata, response.body)
+    def get_domain(id)
+      elektron_billing.get("domains/#{id}").map_to('body', &domain_map)
     end
 
-    def new_project_masterdata(params = {})
-      Rails.logger.debug  "[masterdata cockpit-service] -> new_project_masterdata"
-      # this is used for created masterdata dialog
-      map_to(MasterdataCockpit::ProjectMasterdata, params)
+    def new_project_masterdata(attributes = {})
+      project_map.call(attributes)
     end
 
-    def new_domain_masterdata(params = {})
-      Rails.logger.debug  "[masterdata cockpit-service] -> new_domain_masterdata"
-      # this is used for created masterdata dialog
-      map_to(MasterdataCockpit::DomainMasterdata, params)
+    def new_domain_masterdata(attributes = {})
+      domain_map.call(attributes)
     end
 
     def create_domain_masterdata(masterdata)
-      Rails.logger.debug  "[masterdata cockpit-service] -> create_domain_masterdata"
-      Rails.logger.debug  "[masterdata cockpit-service] -> masterdata: #{masterdata}"
-      response = api.masterdata.set_domain(masterdata["domain_id"],masterdata)
-      response.body
+      id = masterdata['domain_id']
+      elektron_billing.put("domains/#{id}") { masterdata }.body
     end
 
     def create_project_masterdata(masterdata)
-      Rails.logger.debug  "[masterdata cockpit-service] -> create_project_masterdata"
-      Rails.logger.debug  "[masterdata cockpit-service] -> masterdata: #{masterdata}"
-      response = api.masterdata.set_project(masterdata["project_id"],masterdata)
-      response.body
-    end
-    
-    def get_solutions
-      Rails.logger.debug  "[masterdata cockpit-service] -> get_solutions"
-      response = api.masterdata.get_solutions
-      map_to(MasterdataCockpit::CostControlSolution, response.body)
+      id = masterdata['project_id']
+      elektron_billing.put("projects/#{id}") { masterdata }.body
     end
 
-    def check_inheritance(domain_id,parent_id = "") 
-      Rails.logger.debug  "[masterdata cockpit-service] -> check_inheritance"
-      response = api.masterdata.inheritance(domain_id:domain_id, parent_id:parent_id)
-      map_to(MasterdataCockpit::ProjectInheritance, response.body)
+    def get_solutions
+      elektron_billing.get('solutions').map_to('body') do |data|
+        MasterdataCockpit::CostControlSolution.new(self, data)
+      end
+    end
+
+    def check_inheritance(domain_id, parent_id = '')
+      elektron_billing.get(
+        'inheritance', domain_id: domain_id, parent_id: parent_id
+      ).map_to('body') do |data|
+        MasterdataCockpit::ProjectInheritance.new(self, data)
+      end
     end
   end
 end
