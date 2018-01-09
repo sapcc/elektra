@@ -19,6 +19,11 @@ module ServiceLayerNg
       end
 
       def networks(filter = {})
+        # byebug
+        # elektron = elektron(debug: Rails.env.development?).service(
+        #   'network', path_prefix: '/v2.0'
+        # )
+        # elektron.get('networks')
         api.networking.list_networks(filter).map_to(Networking::Network)
       end
 

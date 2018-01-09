@@ -10,7 +10,7 @@ module Networking
         'router:external' => @network_type == 'external',
         sort_key: 'name'
       }
-      @networks = paginatable(per_page: 15) do |pagination_options|
+      @networks = paginatable(per_page: 20) do |pagination_options|
         services_ng.networking.networks(filter_options.merge(pagination_options))
       end
 
