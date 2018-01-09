@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module DnsService
-  class Pool < Core::ServiceLayer::Model
+  # This class represents the Openstack Designate Pool
+  class Pool < Core::ServiceLayerNg::Model
   end
 end

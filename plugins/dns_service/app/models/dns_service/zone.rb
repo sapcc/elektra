@@ -2,7 +2,7 @@
 
 module DnsService
   # Presents the zone model
-  class Zone < Core::ServiceLayer::Model
+  class Zone < Core::ServiceLayerNg::Model
     validates :name, presence: { message: 'Please provide the domain name' },
                      on: :create
     validates :email, presence: { message: 'Please provide an email' }
@@ -13,7 +13,7 @@ module DnsService
       zone_attributes[:name] = read('name').strip if read('name')
       zone_attributes[:email] = read('email').strip if read('email')
       zone_attributes[:description] = read('description')
-      zone_attributes[:attributes] = (read('attributes') || {}).keep_if do |k,_v|
+      zone_attributes[:attributes] = (read('attributes') || {}).keep_if do |k, _v|
         %w[external label].include?(k)
       end
 
@@ -27,15 +27,6 @@ module DnsService
       end
       zone_attributes.delete(:name)
       zone_attributes.delete_if { |_k, v| v.blank? }
-    end
-
-    # msp to driver create method
-    def perform_driver_create(create_attributes)
-      attrs = create_attributes.with_indifferent_access
-      name  = attrs.delete('name')
-      email = attrs.delete('email')
-
-      @driver.create_zone(name, email, attrs)
     end
   end
 end

@@ -2,7 +2,7 @@
 
 module DnsService
   # represents the openstack dns recordset
-  class Recordset < Core::ServiceLayer::Model
+  class Recordset < Core::ServiceLayerNg::Model
     validate :is_cname
 
     TYPE_LABELS = {
@@ -39,18 +39,15 @@ module DnsService
         'records'     => (read('records').is_a?(Array) ? read('records') : [read('records')]),
         'ttl'         => (read('ttl').present? ? read('ttl').to_i : nil),
         'description' => read('description'),
-        'zone_id'     => read('zone_id')
+        #'zone_id'     => read('zone_id')
       }.delete_if { |_k, v| v.blank? }
     end
 
     def attributes_for_update
       {
-        'type'        => (read('type').nil? ? nil : read('type').upcase),
-        'name'        => read('name'),
         'records'     => (read('records').is_a?(Array) ? read('records') : [read('records')]),
         'ttl'         => (read('ttl').present? ? read('ttl').to_i : nil),
         'description' => read('description'),
-        'zone_id'     => read('zone_id'),
         'project_id'  => read('project_id')
       }.delete_if { |_k, v| v.blank? }
     end
@@ -63,6 +60,18 @@ module DnsService
           end
         end
       end
+    end
+
+    def perform_service_create(create_attributes)
+      service.create_recordset(zone_id, create_attributes)
+    end
+
+    def perform_service_update(id, update_attributes)
+      service.update_recordset(zone_id, id, update_attributes)
+    end
+
+    def perform_service_delete(id)
+      service.delete_recordset(zone_id, id)
     end
   end
 end

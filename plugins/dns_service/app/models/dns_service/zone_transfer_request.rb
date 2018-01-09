@@ -1,16 +1,19 @@
-module DnsService
-  class ZoneTransferRequest < Core::ServiceLayer::Model
-    def accept(target_project_id=nil)
-      begin
-        params= {key: self.key, zone_transfer_request_id: self.id}
-        params[:target_project_id] = target_project_id if target_project_id
-        @driver.create_zone_transfer_accept(params)
-      rescue => e
-        raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
+# frozen_string_literal: true
 
-        Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-        return false
+module DnsService
+  # represents the zone transfer request
+  class ZoneTransferRequest < Core::ServiceLayerNg::Model
+    # this method creates a request accept
+    def accept(target_project_id = nil)
+      rescue_api_errors do
+        attrs = { key: key, zone_transfer_request_id: id }
+        attrs[:target_project_id] = target_project_id if target_project_id
+        service.create_zone_transfer_accept(attrs)
       end
+    end
+
+    def perform_service_create(create_attributes)
+      service.create_zone_transfer_request(zone_id, create_attributes)
     end
   end
 end
