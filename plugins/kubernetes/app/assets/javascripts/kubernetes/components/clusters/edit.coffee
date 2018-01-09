@@ -137,7 +137,7 @@ EditCluster = ({
       React.createElement ReactFormHelpers.SubmitButton,
         label: 'Update',
         loading: clusterForm.isSubmitting,
-        disabled: !clusterForm.isValid
+        disabled: !(clusterForm.isValid && clusterForm.updatePending)
         onSubmit: (() -> handleSubmit(close))
 
 EditCluster = connect(

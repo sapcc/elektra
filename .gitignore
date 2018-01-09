@@ -41,6 +41,7 @@ build
 .procfile
 tags
 .tags
+.tags_swap
 
 .byebug_history
 vendor_4.2.4/

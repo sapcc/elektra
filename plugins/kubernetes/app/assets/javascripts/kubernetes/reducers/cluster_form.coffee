@@ -22,6 +22,8 @@
     errors: null
     isValid: false
     nodePoolsValid: false
+    advancedOptionsValid: true
+    updatePending: false
     advancedOptionsVisible: false
 
   resetClusterForm = (action, {})->
@@ -33,13 +35,17 @@
       data: data
       errors: null
       isSubmitting: false
-      isValid: (data.name.length > 0 && state.nodePoolsValid)
+      updatePending: true
+      isValid: (data.name.length > 0 && state.nodePoolsValid && state.advancedOptionsValid)
     })
 
   updateAdvancedValue = (state, {name, value}) ->
     dataClone = state.data
     dataClone.spec.openstack[name] = value
-    ReactHelpers.mergeObjects({},state,{data: dataClone})
+    ReactHelpers.mergeObjects({},state,{
+      data: dataClone
+      updatePending: true
+    })
 
 
   updateNodePoolForm = (state, {index, name, value}) ->
@@ -52,7 +58,8 @@
 
     ReactHelpers.mergeObjects(state, stateClone, {
       nodePoolsValid: poolValidity
-      isValid: (state.data.name.length > 0 && poolValidity)
+      isValid: (state.data.name.length > 0 && poolValidity && state.advancedOptionsValid)
+      updatePending: true
     })
 
 
@@ -96,7 +103,17 @@
       errors: null
     values['data'] = data if data
 
+    # validity check
+    if data
+      nodePoolsValid = true
+      for nodePool in data.spec.nodePools
+        unless nodePool.name.length > 0 && nodePool.size >= 0 && nodePool.flavor.length > 0
+          nodePoolsValid = false
+
+      values['isValid'] = data.name.length > 0 && nodePoolsValid && state.advancedOptionsValid
+
     ReactHelpers.mergeObjects({}, initialClusterFormState,values)
+
 
   clusterFormFailure=(state, {errors})->
     ReactHelpers.mergeObjects({}, state, {
