@@ -11,7 +11,7 @@ module ServiceLayerNg
     end
 
     def elektron_key_manager
-      @elektron_key_manager ||= elektron(debug: Rails.env.development?).service(
+      @elektron_key_manager ||= elektron.service(
         'key-manager', path_prefix: '/v1'
       )
     end

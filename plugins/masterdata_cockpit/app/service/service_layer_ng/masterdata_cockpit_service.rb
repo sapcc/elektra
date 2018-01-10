@@ -7,7 +7,7 @@ module ServiceLayerNg
     end
 
     def elektron_billing
-      @elektron_billing ||= elektron(debug: Rails.env.development?).service(
+      @elektron_billing ||= elektron.service(
         'sapcc-billing', path_prefix: '/masterdata', interface: 'public'
       )
     end

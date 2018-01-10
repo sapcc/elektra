@@ -7,7 +7,7 @@ module ServiceLayerNg
     end
 
     def elektron_limes
-      @elektron_limes ||= elektron(debug: Rails.env.development?).service(
+      @elektron_limes ||= elektron.service(
         'limes', path_prefix: '/v1', interface: 'public'
       )
     end

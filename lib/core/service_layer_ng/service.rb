@@ -7,10 +7,10 @@ module Core
     # It provides the context of current user
     class Service
       attr_accessor :services
-      attr_reader :api_client, :region
+      attr_reader :elektron, :region
 
-      def initialize(api_client)
-        @api_client = api_client
+      def initialize(elektron)
+        @elektron = elektron
         @region = Rails.configuration.default_region
       end
 
@@ -18,32 +18,50 @@ module Core
         false
       end
 
+      ############################ OBSOLETE ############################
+      # TODO: remove this code after all dependencies to misty are removed!
       def api
-        @api ||= ::Core::Api::ClientWrapper.new(@api_client, self)
+        @api ||= ::Core::Api::ClientWrapper.new(misty_client, self)
       end
 
-      def elektron(options = {})
-        key = options.to_s
-        @elektron_clients ||= {}
-        @elektron_clients[key] ||= Elektron.client(
+      def misty_client
+        @misty_client ||= create_misty_client
+      end
+
+      def create_misty_client
+        options = {
+          region_id:       Rails.configuration.default_region,
+          ssl_verify_mode: Rails.configuration.ssl_verify_peer,
+          interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
+          log_level:       Logger::INFO,
+          keep_alive_timeout: 5,
+          #headers: { "Accept-Encoding" => "" },
+
+          # compute: {:version => '2.9'}, ...waiting for backend support
+
+          # needed because of wrong urls in service catalog.
+          # The identity url contains a /v3. This leads to a wrong url in misty!
+          identity: { base_path: '/' },
+          resources: { interface: 'public' },
+          database: { interface: 'public' },
+          metrics: { interface: 'public' },
+          masterdata:  { interface: 'public' },
+          shared_file_systems: { service_name: 'sharev2' }
+        }
+        @elektron.enforce_valid_token
+
+        ::Misty::Cloud.new(
           {
-            token_context: {
-              'catalog' => @api_client.auth.catalog,
-              'expires_at' => @api_client.auth.instance_variable_get(:@expires)
+            auth: {
+              context: {
+                catalog: @elektron.catalog,
+                expires: @elektron.expires_at.to_s,
+                token: @elektron.token
+              }
             },
-            token: @api_client.auth.token
-          },
-          {
-            debug: options[:debug],
-            interface: (options[:interface] || ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal'),
-            region: (options[:region] || @region)
-          }
+          }.merge(options)
         )
       end
-
-      # def inspect
-      #   {}.to_s
-      # end
 
       # This method is used to map raw data to a Object.
       def self.map_to(klazz, data, options = {}, &block)
@@ -74,6 +92,8 @@ module Core
         end
       end
 
+      ####################### END OBSOLETE #######################
+
       # CGI.escape, but without special treatment on spaces
       def self.escape(str, extra_exclude_chars = '')
         str.gsub(/([^a-zA-Z0-9_.-#{extra_exclude_chars}]+)/) do
@@ -88,11 +108,6 @@ module Core
       def class_map_proc(klass)
         proc { |params| klass.new(self, params) }
       end
-
-      # def catalog
-      #   api_client.instance_variable_get('@auth').catalog
-      # end
-
     end
   end
 end

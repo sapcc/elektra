@@ -11,23 +11,15 @@ module Core
 
       def self.default_client_params
         {
-          region_id:       Rails.configuration.default_region,
-          ssl_verify_mode: Rails.configuration.ssl_verify_peer,
-          interface:       ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
-          log_level:       Logger::INFO,
-          keep_alive_timeout: 5,
-          #headers: { "Accept-Encoding" => "" },
-
-          # compute: {:version => '2.9'}, ...waiting for backend support
-
-          # needed because of wrong urls in service catalog.
-          # The identity url contains a /v3. This leads to a wrong url in misty!
-          identity: { base_path: '/' },
-          resources: { interface: 'public' },
-          database: { interface: 'public' },
-          metrics: { interface: 'public' },
-          masterdata:  { interface: 'public' },
-          shared_file_systems: { service_name: 'sharev2' }
+          region: Rails.configuration.default_region,
+          interface: ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
+          debug: Rails.env.development?,
+          client: {
+            open_timeout: 10,
+            read_timeout: 60,
+            verify_ssl: Rails.configuration.ssl_verify_peer,
+            keep_alive_timeout: 30
+          }
         }
       end
 
@@ -61,36 +53,30 @@ module Core
       end
 
       def self.create_user_api_client(current_user)
-        ::Misty::Cloud.new(
+        ::Elektron.client(
           {
-            auth: {
-              context: {
-                catalog: current_user.context['catalog'],
-                expires: current_user.context['expires_at'],
-                token: current_user.token
-              }
-            },
-          }.merge(default_client_params).merge(SERVICE_OPTIONS)
+            token_context: current_user.context,
+            token: current_user.token
+          },
+          default_client_params
         )
       end
 
       def self.create_service_user_api_client(scope_domain)
-        misty_params = {
-          auth: {
-            url:            ::Core.keystone_auth_endpoint,
-            user:           Rails.application.config.service_user_id,
-            user_domain:    Rails.application.config.service_user_domain_name,
-            password:       Rails.application.config.service_user_password,
-            domain:         scope_domain
-          }
-        }.merge(default_client_params)
-
+        auth_config = {
+          url: ::Core.keystone_auth_endpoint,
+          user_name: Rails.application.config.service_user_id,
+          user_domain_name: Rails.application.config.service_user_domain_name,
+          password: Rails.application.config.service_user_password,
+          scope_domain_name: scope_domain
+        }
         begin
-          Misty::Cloud.new(misty_params)
-        rescue Misty::Auth::AuthenticationError => _e
-          unless misty_params[:auth][:domain_id]
-            misty_params[:auth].delete(:domain)
-            misty_params[:auth][:domain_id] = scope_domain
+          ::Elektron.client(auth_config, default_client_params)
+          # Misty::Cloud.new(misty_params)
+        rescue ::Elektron::Errors::ApiResponse => _e
+          unless auth_config[:scope_domain_id]
+            auth_config.delete(:scope_domain_name)
+            auth_config[:scope_domain_id] = scope_domain
             retry
           end
 
@@ -103,17 +89,16 @@ module Core
       end
 
       def self.create_cloud_admin_api_client
-        Misty::Cloud.new(
+        ::Elektron.client(
           {
-            auth: {
-              url:            ::Core.keystone_auth_endpoint,
-              user:           Rails.application.config.service_user_id,
-              user_domain:    Rails.application.config.service_user_domain_name,
-              password:       Rails.application.config.service_user_password,
-              project:        Rails.configuration.cloud_admin_project,
-              project_domain: Rails.configuration.cloud_admin_domain
-            }
-          }.merge(default_client_params)
+            url: ::Core.keystone_auth_endpoint,
+            user_name: Rails.application.config.service_user_id,
+            user_domain_name: Rails.application.config.service_user_domain_name,
+            password: Rails.application.config.service_user_password,
+            scope_project_name: Rails.configuration.cloud_admin_project,
+            scope_project_domain_name: Rails.configuration.cloud_admin_domain
+          },
+          default_client_params
         )
       end
     end

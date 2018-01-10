@@ -20,7 +20,7 @@ module ServiceLayerNg
 
       def networks(filter = {})
         # byebug
-        # elektron = elektron(debug: Rails.env.development?).service(
+        # elektron = elektron.service(
         #   'network', path_prefix: '/v2.0'
         # )
         # elektron.get('networks')

@@ -40,11 +40,11 @@ gem 'net-ssh'
 gem 'netaddr'
 
 gem 'misty', git: 'https://github.com/sapcc/misty.git', branch: :master
-# gem 'elektron', path: '../elektron'
 gem 'fog-openstack', git: 'https://github.com/sapcc/fog-openstack.git', branch: :master
-#gem 'fog-openstack', path: '../fog-openstack', branch: :master
+
 # api client (replacement for misty and fog)
 gem 'elektron', git: 'https://github.com/sapcc/elektron'
+# gem 'elektron', path: '../elektron'
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 #gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
