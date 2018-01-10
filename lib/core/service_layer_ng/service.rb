@@ -48,6 +48,7 @@ module Core
           masterdata:  { interface: 'public' },
           shared_file_systems: { service_name: 'sharev2' }
         }
+        @elektron.enforce_valid_token
 
         ::Misty::Cloud.new(
           {

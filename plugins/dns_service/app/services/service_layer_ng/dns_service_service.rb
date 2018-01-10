@@ -38,9 +38,7 @@ module ServiceLayerNg
     private
 
     def create_elektron_service
-      dns = elektron.service(
-        'dns', path_prefix: '/v2'
-      )
+      dns = elektron.service('dns', path_prefix: '/v2')
       dns.add_middleware(SetupHeadersMiddleware)
       dns
     end
