@@ -18,12 +18,12 @@ module Core
         false
       end
 
+      ############################ OBSOLETE ############################
+      # TODO: remove this code after all dependencies to misty are removed!
       def api
         @api ||= ::Core::Api::ClientWrapper.new(misty_client, self)
       end
 
-      ############################ OBSOLETE ############################
-      # TODO: remove this code after all dependencies to misty are removed!
       def misty_client
         @misty_client ||= create_misty_client
       end
