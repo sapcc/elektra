@@ -14,12 +14,13 @@ module ServicesNg
   end
 
   def services_ng
-    return @services_ng if @services_ng
+    return @services_ng if @services_ng && @token_expires_at == current_user.token_expires_at
     api_client = begin
                    Core::Api::ClientManager.user_api_client(current_user)
                  rescue => _e
                    nil
                  end
+    @token_expires_at = current_user.token_expires_at
     @services_ng = Core::ServiceLayerNg::ServicesManager.new(api_client)
   end
 
