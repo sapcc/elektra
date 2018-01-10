@@ -112,6 +112,14 @@ module Core
         new_id = (@attributes.delete('id') || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
         @id = new_id if @id.nil? || (@id.is_a?(String) && @id.empty?)
+
+        @attributes.update(@attributes) { |key, value| sanitize(value) }
+      end
+
+      def sanitize(value)
+        return value unless value.is_a?(String)
+        @full_sanitizer ||= Rails::Html::FullSanitizer.new
+        @full_sanitizer.sanitize(value)
       end
 
       def escape_attributes!
@@ -171,7 +179,7 @@ module Core
       end
 
       def write(attribute_name, value)
-        @attributes[attribute_name.to_s] = value
+        @attributes[attribute_name.to_s] = sanitize(value)
       end
 
       def read(attribute_name)
