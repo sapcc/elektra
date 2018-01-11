@@ -4,34 +4,47 @@ module ServiceLayerNg
   module LoadbalancingServices
     # This module implements Openstack Designate Pool API
     module Listener
-
-      def listeners(filter={})
-        driver.map_to(Loadbalancing::Listener).listeners(filter)
+      def listener_map
+        @listener_map ||= class_map_proc(::Loadbalancing::Listener)
       end
 
-      def find_listener(listener_id)
-        driver.map_to(Loadbalancing::Listener).get_listener(listener_id)
+      def listeners(filter = {})
+        elektron_lb.get('listeners', filter).map_to(
+          'body.listeners', &listener_map
+        )
       end
 
-      def new_listener(attributes={})
-        Loadbalancing::Listener.new(driver, attributes)
+      def find_listener!(id)
+        elektron_lb.get("listeners/#{id}").map_to(
+          'body.listener', &listener_map
+        )
+      end
+
+      def find_listener(id)
+        find_listener!(id)
+      rescue Elektron::Errors::ApiResponse
+        nil
+      end
+
+      def new_listener(attributes = {})
+        listener_map.call(attributes)
       end
 
       ################# INTERFACE METHODS ######################
-      def create_listener(params)
-        elektron_shares.post('security-services') do
-          { security_service: params }
-        end.body['security_service']
+      def create_listener(attributes)
+        elektron_lb.post('listeners') do
+          { listener: attributes }
+        end.body['listener']
       end
 
-      def update_listener(id, params)
-        elektron_shares.put("security-services/#{id}") do
-          { security_service: params }
-        end.body['security_service']
+      def update_listener(id, attributes)
+        elektron_lb.put("listeners/#{id}") do
+          { listener: attributes }
+        end.body['listener']
       end
 
       def delete_listener(id)
-        elektron_shares.delete("security-services/#{id}")
+        elektron_lb.delete("listeners/#{id}")
       end
     end
   end

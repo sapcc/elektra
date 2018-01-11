@@ -4,34 +4,47 @@ module ServiceLayerNg
   module LoadbalancingServices
     # This module implements Openstack Designate Pool API
     module Healthmonitor
-
-      def healthmonitors(filter={})
-        driver.map_to(Loadbalancing::Healthmonitor).healthmonitors(filter)
+      def healthmonitor_map
+        @healthmonitor_map ||= class_map_proc(::Loadbalancing::Healthmonitor)
       end
 
-      def find_healthmonitor(healthmonitor_id)
-        driver.map_to(Loadbalancing::Healthmonitor).get_healthmonitor(healthmonitor_id)
+      def healthmonitors(filter = {})
+        elektron_lb.get('healthmonitors', filter).map_to(
+          'body.healthmonitors', &healthmonitor_map
+        )
       end
 
-      def new_healthmonitor(attributes={})
-        Loadbalancing::Healthmonitor.new(driver, attributes)
+      def find_healthmonitor!(id)
+        elektron_lb.get("healthmonitors/#{id}").map_to(
+          'body.healthmonitor', &healthmonitor_map
+        )
+      end
+
+      def find_healthmonitor(id)
+        find_healthmonitor!(id)
+      rescue Elektron::Errors::ApiResponse
+        nil
+      end
+
+      def new_healthmonitor(attributes = {})
+        healthmonitor_map.call(attributes)
       end
 
       ################# INTERFACE METHODS ######################
       def create_healthmonitor(params)
-        elektron_shares.post('security-services') do
-          { security_service: params }
-        end.body['security_service']
+        elektron_lb.post('healthmonitors') do
+          { healthmonitor: params }
+        end.body['healthmonitor']
       end
 
       def update_healthmonitor(id, params)
-        elektron_shares.put("security-services/#{id}") do
-          { security_service: params }
-        end.body['security_service']
+        elektron_lb.put("healthmonitors/#{id}") do
+          { healthmonitor: params }
+        end.body['healthmonitor']
       end
 
       def delete_healthmonitor(id)
-        elektron_shares.delete("security-services/#{id}")
+        elektron_lb.delete("healthmonitors/#{id}")
       end
     end
   end

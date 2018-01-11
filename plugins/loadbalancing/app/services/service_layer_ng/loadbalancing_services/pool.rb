@@ -4,50 +4,43 @@ module ServiceLayerNg
   module LoadbalancingServices
     # This module implements Openstack Designate Pool API
     module Pool
-
-      def pools(filter={})
-        driver.map_to(Loadbalancing::Pool).pools(filter)
+      def pool_map
+        @pool_map ||= class_map_proc(::Loadbalancing::Pool)
       end
 
-      def find_pool(pool_id)
-        driver.map_to(Loadbalancing::Pool).get_pool(pool_id)
+      def pools(filter = {})
+        elektron_lb.get('pools', filter).map_to('body.pools', &pool_map)
       end
 
-      def new_pool(attributes={})
-        Loadbalancing::Pool.new(driver, attributes)
+      def find_pool!(id)
+        elektron_lb.get("pools/#{id}").map_to('body.pool', &pool_map)
       end
 
-      def pool_members(filter={})
-        driver.map_to(Loadbalancing::PoolMember).pool_members(filter)
+      def find_pool(id)
+        find_pool!(id)
+      rescue Elektron::Errors::ApiResponse
+        nil
       end
 
-      def find_pool_member(pool_id, member_id)
-        driver.map_to(Loadbalancing::PoolMember).get_pool_member(pool_id, member_id)
-      end
-
-      def delete_pool_member(pool_id, member_id)
-        driver.map_to(Loadbalancing::PoolMember).delete_pool_member(pool_id, member_id)
-      end
-
-      def new_pool_member(attributes={})
-        Loadbalancing::PoolMember.new(driver, attributes)
+      def new_pool(attributes = {})
+        pool_map.call(attributes)
       end
 
       ################# INTERFACE METHODS ######################
       def create_pool(params)
-        elektron_shares.post('security-services') do
-          { security_service: params }
-        end.body['security_service']
+        elektron_lb.post('pools') do
+          { pool: params }
+        end.body['pool']
       end
 
       def update_pool(id, params)
-        elektron_shares.put("security-services/#{id}") do
-          { security_service: params }
-        end.body['security_service']
+        elektron_lb.put("pools/#{id}") do
+          { pool: params }
+        end.body['pool']
       end
 
       def delete_pool(id)
-        elektron_shares.delete("security-services/#{id}")
+        elektron_lb.delete("pools/#{id}")
       end
     end
   end

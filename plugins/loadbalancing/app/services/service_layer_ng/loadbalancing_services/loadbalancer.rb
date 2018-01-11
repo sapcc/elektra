@@ -4,25 +4,57 @@ module ServiceLayerNg
   module LoadbalancingServices
     # This module implements Openstack Designate Pool API
     module Loadbalancer
+      def loadbalancer_map
+        @loadbalancer_map ||= class_map_proc(::Loadbalancing::Loadbalancer)
+      end
 
-      def loadbalancers(filter={})
-        driver.map_to(Loadbalancing::Loadbalancer).loadbalancers(filter)
+      def lb_status_map
+        @lb_status_map ||= class_map_proc(::Loadbalancing::Statuses)
+      end
+
+      def loadbalancers(filter = {})
+        elektron_lb.get('loadbalancers', filter).map_to(
+          'body.loadbalancers', &loadbalancer_map
+        )
+      end
+
+      def find_loadbalancer!(id)
+        elektron_lb.get("loadbalancers/#{id}").map_to(
+          'body.loadbalancer', &loadbalancer_map
+        )
       end
 
       def find_loadbalancer(id)
-        driver.map_to(Loadbalancing::Loadbalancer).get_loadbalancer(id)
+        find_loadbalancer!(id)
+      rescue Elektron::Errors::ApiResponse
+        nil
+      end
+
+      def get_loadbalancer_hosting_agent!(id)
+        elektron_lb.get("loadbalancers/#{id}/loadbalancer-hosting-agent")
+                   .map_to('body.agent', &loadbalancer_map)
       end
 
       def get_loadbalancer_hosting_agent(id)
-        driver.map_to(Loadbalancing::Loadbalancer).get_loadbalancer_hosting_agent(id)
+        get_loadbalancer_hosting_agent!(id)
+      rescue Elektron::Errors::ApiResponse
+        nil
       end
 
-      def new_loadbalancer(attributes={})
-        Loadbalancing::Loadbalancer.new(driver, attributes)
+      def new_loadbalancer(attributes = {})
+        loadbalancer_map.call(attributes)
+      end
+
+      def loadbalancer_statuses!(id)
+        elektron_lb.get("loadbalancers/#{id}/statuses").map_to(
+          'body.statuses', &lb_status_map
+        )
       end
 
       def loadbalancer_statuses(id)
-        driver.map_to(Loadbalancing::Statuses).get_loadbalancer_statuses(id)
+        loadbalancer_statuses!(id)
+      rescue Elektron::Errors::ApiResponse
+        nil
       end
 
       def loadbalancer_changeable?(id, block_source)
@@ -30,42 +62,37 @@ module ServiceLayerNg
         return false unless status
         count = 0
         until ['ACTIVE', 'ERROR'].include?(status)
-          if count >= 6*2
-            return false
-          else
-            count += 1
-            Rails.logger.warn "Loadbalancer in state: #{status}. Waiting for action execution of #{block_source} for #{10*count} seconds in total."
-            sleep 10
-            status = loadbalancer_statuses(id).find_state(id).provisioning_status rescue nil
-            return false unless status
-          end
+          return false if count >= (6*2)
+
+          count += 1
+          Rails.logger.warn "Loadbalancer in state: #{status}. Waiting for action execution of #{block_source} for #{10*count} seconds in total."
+          sleep 10
+          status = loadbalancer_statuses(id).find_state(id).provisioning_status rescue nil
+          return false unless status
         end
-        return true
+        true
       end
 
       def execute(id, &block)
-        if loadbalancer_changeable?(id, block.source)
-          return block.call
-        else
-          return false
-        end
-      end
-      
-      ################# INTERFACE METHODS ######################
-      def create_loadbalancer(params)
-        elektron_shares.post('security-services') do
-          { security_service: params }
-        end.body['security_service']
+        return yield if loadbalancer_changeable?(id, block.source)
+        false
       end
 
-      def update_loadbalancer(id, params)
-        elektron_shares.put("security-services/#{id}") do
-          { security_service: params }
-        end.body['security_service']
+      ################# INTERFACE METHODS ######################
+      def create_loadbalancer(attributes)
+        elektron_lb.post('loadbalancers') do
+          { loadbalancer: attributes }
+        end.body['loadbalancer']
+      end
+
+      def update_loadbalancer(id, attributes)
+        elektron_lb.put("loadbalancers/#{id}") do
+          { loadbalancer: attributes }
+        end.body['loadbalancer']
       end
 
       def delete_loadbalancer(id)
-        elektron_shares.delete("security-services/#{id}")
+        elektron_lb.delete("loadbalancers/#{id}")
       end
     end
   end

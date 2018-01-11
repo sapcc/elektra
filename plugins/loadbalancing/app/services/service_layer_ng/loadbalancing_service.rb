@@ -6,17 +6,17 @@ module ServiceLayerNg
     include LoadbalancingServices::Loadbalancer
     include LoadbalancingServices::Listener
     include LoadbalancingServices::Pool
+    include LoadbalancingServices::PoolMember
     include LoadbalancingServices::Healthmonitor
-    include LoadbalancingServices::L7Rule
+    include LoadbalancingServices::L7policy
+    include LoadbalancingServices::L7rule
 
     def available?(_action_name_sym = nil)
       elektron.service?('neutron')
     end
 
     def elektron_lb
-      @elektron_lb ||= elektron(debug: Rails.env.development?).service(
-        'neutron', path_prefix: '/v2.0/lbaas'
-      )
+      @elektron_lb ||= elektron.service('neutron', path_prefix: '/v2.0/lbaas')
     end
   end
 end
