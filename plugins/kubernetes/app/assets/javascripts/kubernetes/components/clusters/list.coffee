@@ -16,7 +16,7 @@ Clusters = React.createClass
     {flashError, isFetching, clusters, handleNewCluster, error, kubernikusBaseUrl} = @props
 
     div null,
-      if flashError or error
+      if flashError? or error?
         div className: 'alert alert-error alert-dismissible',
           button className: 'close', type: 'button', 'data-dismiss': 'alert',
             span null,
@@ -24,7 +24,7 @@ Clusters = React.createClass
           flashError
           error
 
-      unless clusters && clusters.length
+      unless isFetching || error? || (clusters? && clusters.length > 0)
         div className: 'toolbar toolbar-controlcenter',
           div className: 'main-control-buttons',
             button className: "btn btn-primary", onClick: ((e) => e.preventDefault(); handleNewCluster()),
@@ -48,7 +48,7 @@ Clusters = React.createClass
               td colSpan: '5',
                 span className: 'spinner'
         else
-          if clusters && clusters.length
+          if clusters? && clusters.length
             for cluster in clusters
               React.createElement ClusterItem, cluster: cluster, key: cluster.name, kubernikusBaseUrl: kubernikusBaseUrl
 
@@ -56,7 +56,7 @@ Clusters = React.createClass
             tbody null,
               tr null,
                 td colSpan: '5',
-                  if error
+                  if error?
                     'Could not retrieve clusters'
                   else
                     'No clusters found'
