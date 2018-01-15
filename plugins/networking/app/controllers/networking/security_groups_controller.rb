@@ -3,6 +3,9 @@
 module Networking
   # Implements Security Group actions
   class SecurityGroupsController < DashboardController
+    authorization_context 'networking'
+    authorization_required
+
     def index
       @security_groups = services_ng.networking.security_groups(
         tenant_id: @scoped_project_id
@@ -67,6 +70,7 @@ module Networking
 
     def show
       @security_group = services_ng.networking.find_security_group(params[:id])
+      enforce_permissions('networking:rule_list')
       @rules = services_ng.networking.security_group_rules(
         security_group_id: @security_group.id
       )

@@ -6,6 +6,9 @@ module Networking
   module SecurityGroups
     # Implements Security Group Rule actions
     class RulesController < ::DashboardController
+      authorization_context 'networking'
+      authorization_required
+
       def new
         @security_groups = services_ng.networking.security_groups(
           tenant_id: @scoped_project_id
