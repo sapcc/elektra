@@ -47,7 +47,7 @@ gem 'elektron', git: 'https://github.com/sapcc/elektron'
 # gem 'elektron', path: '../elektron'
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
-#gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+# gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
 gem 'ruby-radius'
 
