@@ -149,7 +149,7 @@
 
     # securityGroups
     if metaData.securityGroups?
-      defaults.securityGroupID = metaData.securityGroups[0].id
+      defaults.securityGroupName = metaData.securityGroups[0].name
 
     # ensure already selected values aren't overwritten by the defaults
     dataMerged = ReactHelpers.mergeObjects({},defaults,state.data.spec.openstack)

@@ -45,20 +45,20 @@ AdvancedOptions = ({
         # SecurityGroups
         div null,
           div className: "form-group required string" ,
-            label className: "string required col-sm-4 control-label", htmlFor: "securityGroupID",
+            label className: "string required col-sm-4 control-label", htmlFor: "securityGroupName",
               abbr title: "required", '*'
               ' Security Group'
             div className: "col-sm-8",
               div className: "input-wrapper",
                 select
-                  name: "securityGroupID",
+                  name: "securityGroupName",
                   className: "select required form-control",
-                  value: (options.securityGroupID || ''),
+                  value: (options.securityGroupName || ''),
                   disabled: ('disabled' if metaData.securityGroups.length == 1),
                   onChange: ((e) -> handleChange(e.target.name, e.target.value)),
 
                       for securityGroup in metaData.securityGroups
-                        option value: securityGroup.id, key: securityGroup.id, securityGroup.name
+                        option value: securityGroup.name, key: securityGroup.id, securityGroup.name
 
       # remove until we have keypair or public key support in kubernikus
       # if metaData.keyPairs?
