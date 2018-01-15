@@ -38,6 +38,10 @@ module Networking
       errors.add(:remote_ip_prefix, 'Please enter a valid IP Address')
     end
 
+    def display_protocol
+      protocol || 'Any'
+    end
+
     def port_range
       if port_range_min.blank? && port_range_max.blank?
         nil
@@ -72,7 +76,7 @@ module Networking
     end
 
     def to_s(security_groups = [])
-      result = "ALLOW #{ethertype} #{display_port} #{direction == 'ingress' ? 'from' : 'to'} "
+      result = "ALLOW #{ethertype} #{display_protocol} #{display_port} #{direction == 'ingress' ? 'from' : 'to'} "
       result += if remote_ip_prefix.blank? && remote_group_id.blank?
                   if (ethertype || '').downcase == 'ipv4'
                     '0.0.0.0/0'
