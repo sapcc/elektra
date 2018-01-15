@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: dab239038ac8e9b78a68daffbc0fae62d09896aa
+  revision: ba21e0889b58e8e045e95e77553bfd029ba50f1a
   specs:
-    elektron (1.1.3)
+    elektron (1.1.4)
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
