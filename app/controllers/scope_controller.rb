@@ -93,7 +93,8 @@ class ScopeController < ::ApplicationController
       title: 'Unsupported Domain',
       description: -> (_e, controller) { "A domain with the name <b>#{controller.params[:domain_id]}</b> doesn't seem to exist. Please check the spelling and try again" },
       details: :message,
-      warning: true
+      warning: true,
+      sentry: true
     )
   end
 end
