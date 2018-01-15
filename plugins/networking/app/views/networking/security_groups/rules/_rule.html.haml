@@ -1,7 +1,7 @@
 %tr{id: "security_group_rule_#{rule.id}"}
   %td= rule.direction
   %td= rule.ethertype
-  %td= rule.protocol || 'Any'
+  %td= rule.display_protocol
   %td= rule.display_port
   %td
     - if rule.remote_ip_prefix
@@ -14,7 +14,7 @@
   %td= rule.description
 
   %td.snug
-    - if current_user.is_allowed?("networking:security_group_delete")
+    - if current_user.is_allowed?("networking:rule_delete")
       = link_to plugin('networking').security_group_rule_path(security_group.id, rule.id), method: :delete, remote: true, class: "btn btn-default btn-sm", data: { confirm: 'Are you sure you want to remove this rule?', ok: "Yes, delete it", confirmed: :loading_status} do
         %i.fa.fa-trash.fa-fw
         Remove
