@@ -13,14 +13,13 @@
 
       %label.sr-only{:for => "username"} User ID
       = text_field_tag :username, @username,
-        autofocus: "",
         placeholder: "User ID",
         required: "",
         class: "form-control",
         disabled: !@username.nil?
 
       %label.sr-only{:for => "passcode"} Password
-      = password_field_tag :passcode, nil, placeholder: "SecurID Passcode", required: "", class: "form-control bottom-input"
+      = password_field_tag :passcode, nil, placeholder: "SecurID Passcode", autofocus: "", required: "", class: "form-control bottom-input"
 
       %button.btn.btn-lg.btn-primary.btn-block{:type => "submit"} Sign in
 
