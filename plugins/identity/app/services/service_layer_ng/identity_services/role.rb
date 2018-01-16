@@ -4,8 +4,14 @@ module ServiceLayerNg
   module IdentityServices
     # This module implements Openstack Role API
     module Role
+      def role_map
+        @role_map ||= class_map_proc(Identity::Role)
+      end
+
       def roles
-        @roles ||= api.identity.list_roles.map_to(Identity::Role)
+        @roles ||= elektron_identity.get('roles').map_to(
+          'body.roles', &role_map
+        )
       end
 
       def find_role(id)

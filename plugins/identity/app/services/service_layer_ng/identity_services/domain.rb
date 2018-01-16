@@ -4,28 +4,37 @@ module ServiceLayerNg
   module IdentityServices
     # This module implements Openstack Domain API
     module Domain
+      def domain_map
+        @domain_map ||= class_map_proc(Identity::Domain)
+      end
+
       def find_domain!(id)
         return nil if id.blank?
-        api.identity.show_domain_details(id).map_to(Identity::Domain)
+        elektron_identity.get("domains/#{id}").map_to(
+          'body.domain', &domain_map
+        )
       end
 
       def find_domain(id)
         find_domain!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def new_domain(attributes = {})
-        map_to(Identity::Domain, attributes)
+        domain_map.call(attributes)
       end
 
       def auth_domains
-        @domains ||= api.identity
-                        .get_available_domain_scopes.map_to(Identity::Domain)
+        @domains ||= elektron_identity.get('auth/domains').map_to(
+          'body.domains', &domain_map
+        )
       end
 
       def domains(filter = {})
-        api.identity.list_domains(filter).map_to(Identity::Domain)
+        elektron_identity.get('domains', filter).map_to(
+          'body.domains', &domain_map
+        )
       end
     end
   end

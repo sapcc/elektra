@@ -4,34 +4,40 @@ module ServiceLayerNg
   module IdentityServices
     # This module implements Openstack Project API
     module Project
+      def project_map
+        @project_map ||= class_map_proc(Identity::Project)
+      end
+
       def has_projects?
-        api.identity.get_available_project_scopes.data.length.positive?
+        auth_projects.length.positive?
       end
 
       def new_project(attributes = {})
-        map_to(Identity::Project, attributes)
+        project_map.call(attributes)
       end
 
       def find_project!(id = nil, options = {})
         return nil if id.blank?
-        api.identity.show_project_details(id, options).map_to(Identity::Project)
+        elektron_identity.get("projects/#{id}", options).map_to(
+          'body.project', &project_map
+        )
       end
 
       def find_project(id = nil, options = {})
         find_project!(id, options)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def user_projects!(user_id, filter = {})
-        api.identity
-           .list_projects_for_user(user_id, filter)
-           .map_to(Identity::Project)
+        elektron_identity.get("users/#{user_id}/projects", filter).map_to(
+          'body.projects', &project_map
+        )
       end
 
       def user_projects(user_id, filter = {})
         user_projects!(user_id, filter)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         []
       end
 
@@ -39,9 +45,11 @@ module ServiceLayerNg
         project_attrs = Rails.cache.fetch(
           "project/#{id}", expires_in: 1.minute
         ) do
-          api.identity.show_project_details(id, filter).data
+          elektron_identity.get("projects/#{id}", filter).body['project']
         end
-        map_to(Identity::Project, project_attrs)
+        project_attrs.collect do |data|
+          project_map.call(data)
+        end
       end
 
       def cached_user_projects(user_id, filter = {})
@@ -50,27 +58,25 @@ module ServiceLayerNg
         user_domain_projects_data = Rails.cache.fetch(
           "user/#{user_id}/user_domain_projects", expires_in: 1.minute
         ) do
-          api.identity.list_projects_for_user(user_id, filter).data
+          elektron_identity.get("users/#{user_id}/projects", filter)
+                           .body['projects']
         end || []
         user_domain_projects_data.collect do |project_attrs|
-          map_to(Identity::Project, project_attrs)
+          project_map.call(project_attrs)
         end
       end
 
-      # def reset_projects_cach(project_id = nil)
-      #
-      # end
-
       def projects_by_user_id(user_id)
-        api.identity.list_projects_for_user(user_id).map_to(Identity::Project)
+        elektron_identity.get("users/#{user_id}/projects").map_to(
+          'body.projects', &project_map
+        )
       end
 
       def auth_projects(domain_id = nil)
         # caching
-        @auth_projects ||= api.identity
-                              .get_available_project_scopes
-                              .map_to(Identity::Project)
-
+        @auth_projects ||= elektron_identity.get('auth/projects').map_to(
+          'body.projects', &project_map
+        )
         return @auth_projects if domain_id.nil?
         @auth_projects.select { |project| project.domain_id == domain_id }
       end
@@ -80,7 +86,9 @@ module ServiceLayerNg
       end
 
       def projects(filter = {})
-        api.identity.list_projects(filter).map_to(Identity::Project)
+        elektron_identity.get('projects', filter).map_to(
+          'body.projects', &project_map
+        )
       end
 
       def find_project_by_name_or_id(domain_id, name_or_id)
@@ -92,18 +100,22 @@ module ServiceLayerNg
       # This method is used by model.
       # It has to return the data hash.
       def create_project(params)
-        api.identity.create_project(project: params).data
+        elektron_identity.post('projects') do
+          { project: params }
+        end.body['project']
       end
 
       # This method is used by model.
       # It has to return the data hash.
       def update_project(id, params)
-        api.identity.update_project(id, project: params).data
+        elektron_identity.put("projects/#{id}") do
+          { project: params }
+        end.body['project']
       end
 
       # This method is used by model.
       def delete_project(id)
-        api.identity.delete_project(id)
+        elektron_identity.delete("projects/#{id}")
       end
     end
   end

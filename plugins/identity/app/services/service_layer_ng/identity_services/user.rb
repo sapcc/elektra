@@ -4,36 +4,27 @@ module ServiceLayerNg
   module IdentityServices
     # This module implements Openstack User API
     module User
+      def user_map
+        @puser_map ||= class_map_proc(Identity::User)
+      end
+
       def users(filter = {})
-        api.identity.list_users(filter).map_to(Identity::User)
+        elektron_identity.get('users', filter).map_to('body.users', &user_map)
       end
 
       def find_user!(id)
-        api.identity.show_user_details(id).map_to(Identity::User)
+        elektron_identity.get("users/#{id}").map_to('body.user', &user_map)
       end
 
       def find_user(id)
         find_user!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def new_user(attributes = {})
-        map_to(Identity::User, attributes)
+        user_map.call(attributes)
       end
-
-      # This method is used by model.
-      # It has to return the data hash.
-      def create_user(attributes = {})
-        api.identity.create_user(user: attributes).data
-      end
-
-      # This method is used by model.
-      # It has to return the data hash.
-      def update_user(id, attributes)
-        api.identity.update_user(id, user: attributes).data
-      end
-
 
       # Users who have the role admin in ccadmin
       def list_ccadmins
@@ -52,7 +43,7 @@ module ServiceLayerNg
         list_scope_resource_admins({project_id: project.id}, 'cloud_resource_admin')
       end
 
-      def list_scope_resource_admins(scope = {},role_name = 'resource_admin')
+      def list_scope_resource_admins(scope = {}, role_name = 'resource_admin')
         role = find_role_by_name(role_name)
         list_scope_assigned_users(scope.merge(role: role))
       end
@@ -66,14 +57,6 @@ module ServiceLayerNg
         role = find_role_by_name('admin')
         list_scope_assigned_users(scope.merge(role: role))
       end
-
-      ############### MODEL INTERFACE ####################
-      # This method is used by model.
-      def delete_user(id)
-        api.identity.delete_user(id)
-      end
-
-      private
 
       def role_assignments_to_users(ras)
         ras.each_with_object([]) do |r, array|
@@ -131,6 +114,29 @@ module ServiceLayerNg
         end
 
         admins.delete_if { |a| a.id.nil? } # delete crap
+      end
+
+      ############### MODEL INTERFACE ####################
+
+      # This method is used by model.
+      # It has to return the data hash.
+      def create_user(attributes = {})
+        elektron_identity.post('users') do
+          { user: attributes }
+        end.body['user']
+      end
+
+      # This method is used by model.
+      # It has to return the data hash.
+      def update_user(id, attributes)
+        elektron_identity.put("users/#{id}") do
+          { user: attributes }
+        end.body['user']
+      end
+
+      # This method is used by model.
+      def delete_user(id)
+        elektron_identity.delete("users/#{id}")
       end
     end
   end
