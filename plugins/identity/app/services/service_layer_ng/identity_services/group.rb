@@ -4,51 +4,66 @@ module ServiceLayerNg
   module IdentityServices
     # This module implements Openstack Group API
     module Group
-      def user_groups
-        api.identity.list_groups_to_which_a_user_belongs.map_to(Identity::Group)
+      def group_map
+        @group_map ||= class_map_proc(Identity::Group)
+      end
+
+      def user_map
+        @user_map ||= class_map_proc(Identity::User)
+      end
+
+      def user_groups(user_id)
+        elektron_identity.get("users/#{user_id}/groups").map_to(
+          'body.groups', &group_map
+        )
       end
 
       def groups(filter = {})
-        api.identity.list_groups(filter).map_to(Identity::Group)
-      end
-
-      # This method is used by model.
-      # It has to return the data hash.
-      def create_group(attributes = {})
-        api.identity.create_group(group: attributes).data
-      end
-
-      # This method is used by model.
-      def delete_group(group_id)
-        api.identity.delete_group(group_id)
+        elektron_identity.get('groups', filter).map_to(
+          'body.groups', &group_map
+        )
       end
 
       def new_group(attributes = {})
-        map_to(Identity::Group, attributes)
+        group_map.call(attributes)
       end
 
       def find_group!(id)
-        api.identity.show_group_details(id).map_to(Identity::Group)
+        elektron_identity.get("groups/#{id}").map_to('body.group', &group_map)
       end
 
       def find_group(id)
         find_group!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def group_members(group_id, filter = {})
-        api.identity
-           .list_users_in_group(group_id, filter)
-           .map_to(Identity::User)
+        elektron_identity.get("groups/#{group_id}/users", filter).map_to(
+          'body.users', &user_map
+        )
       end
 
       def add_group_member(group_id, user_id)
-        api.identity.add_user_to_group(group_id, user_id)
+        elektron_identity.put("groups/#{group_id}/users/#{user_id}")
       end
 
       def remove_group_member(group_id, user_id)
-        api.identity.remove_user_from_group(group_id, user_id)
+        elektron_identity.delete("groups/#{group_id}/users/#{user_id}")
+      end
+
+      ################### MODEL INTERFACE ###################
+      # This method is used by model.
+      # It has to return the data hash.
+      def create_group(attributes = {})
+        elektron_identity.post('groups') do
+          { group: attributes }
+        end.body['group']
+      end
+
+      # This method is used by model.
+      def delete_group(group_id)
+        elektron_identity.delete("groups/#{group_id}")
       end
     end
   end

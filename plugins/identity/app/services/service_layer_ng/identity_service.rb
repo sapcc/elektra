@@ -12,7 +12,13 @@ module ServiceLayerNg
     include IdentityServices::OsCredential
 
     def available?(_action_name_sym = nil)
-      api.catalog_include_service?('identity', region)
+      elektron.service?('identity')
+    end
+
+    def elektron_identity
+      @elektron_identity ||= elektron.service(
+        'identity', path_prefix: '/v3'
+      )
     end
 
     def find_domain_and_project(filter)
