@@ -11,6 +11,8 @@
       - flash.each do |name, msg|
         .alert{class: "alert-#{name}"}= msg
 
+      = hidden_field_tag :username, @username if @username
+
       %label.sr-only{:for => "username"} User ID
       = text_field_tag :username, @username,
         placeholder: "User ID",
@@ -26,4 +28,4 @@
       %p.pull-right
         %br
         %i.fa.fa-info-circle.text-info
-        This is valid for one day.
+        This is valid for 4 hours.
