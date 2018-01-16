@@ -4,13 +4,27 @@ module ServiceLayerNg
   module ComputeServices
     # This module implements Openstack Domain API
     module Flavor
+      def flavor_map
+        @flavor_map ||= class_map_proc(Compute::Flavor)
+      end
+
+      def flavor_access_map
+        @flavor_access_map ||= class_map_proc(Compute::FlavorAccess)
+      end
+
+      def flavor_metadata_map
+        @flavor_metadata_map ||= class_map_proc(Compute::FlavorMetadata)
+      end
+
       def new_flavor(params = {})
         # this is used for inital create flavor dialog
-        map_to(Compute::Flavor, params)
+        flavor_map.call(params)
       end
 
       def flavors(filter = {})
-        api.compute.list_flavors_with_details(filter).map_to(Compute::Flavor)
+        elektron_compute.get('flavors/detail', filter).map_to(
+          'body.flavors', &flavor_map
+        )
       end
 
       def find_flavor!(flavor_id, use_cache = false)
@@ -18,41 +32,49 @@ module ServiceLayerNg
 
         flavor_data = if use_cache
                         Rails.cache.fetch(cache_key, expires_in: 24.hours) do
-                          api.compute.show_flavor_details(flavor_id).data
+                          #api.compute.show_flavor_details(flavor_id).data
+                          elektron_compute.get("flavors/#{flavor_id}")
+                                          .body['flavor']
                         end
                       else
-                        data = api.compute.show_flavor_details(flavor_id).data
+                        data = elektron_compute.get("flavors/#{flavor_id}")
+                                               .body['flavor']
                         Rails.cache.write(cache_key, data,
                                           expires_in: 24.hours)
                         data
+
+                        # data = api.compute.show_flavor_details(flavor_id).data
+                        # Rails.cache.write(cache_key, data,
+                        #                   expires_in: 24.hours)
+                        # data
                       end
 
         return nil if flavor_data.nil?
-        map_to(Compute::Flavor, flavor_data)
+        flavor_map.call(flavor_data)
       end
 
       def find_flavor(flavor_id, use_cache = false)
         find_flavor!(flavor_id, use_cache)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def add_flavor_access_to_tenant(flavor_id, tenant_id)
-        api.compute.add_flavor_access_to_tenant_addtenantaccess_action(
-          flavor_id, 'addTenantAccess' => { 'tenant' => tenant_id }
-        )
+        elektron_compute.post("flavors/#{flavor_id}/action") do
+          { 'addTenantAccess' => { 'tenant' => tenant_id.to_s } }
+        end
       end
 
       def remove_flavor_access_from_tenant(flavor_id, tenant_id)
-        api.compute.remove_flavor_access_from_tenant_removetenantaccess_action(
-          flavor_id, 'removeTenantAccess' => { 'tenant' => tenant_id.to_s }
-        )
+        elektron_compute.post("flavors/#{flavor_id}/action") do
+          { 'removeTenantAccess' => { 'tenant' => tenant_id.to_s } }
+        end
       end
 
-
       def flavor_members(flavor_id)
-        api.compute.list_flavor_access_information_for_given_flavor(flavor_id)
-           .map_to(Compute::FlavorAccess)
+        elektron_compute.get("/flavors/#{flavor_id}/os-flavor-access").map_to(
+          'body.flavor_access', &flavor_access_map
+        )
       end
 
       def find_flavor_metadata!(flavor_id)
@@ -67,11 +89,11 @@ module ServiceLayerNg
       end
 
       def new_flavor_metadata(flavor_id)
-        Compute::FlavorMetadata.new(self, flavor_id: flavor_id)
+        flavor_metadata_map.call(flavor_id: flavor_id)
       end
 
       def new_flavor_access(params = {})
-        Compute::FlavorAccess.new(self, params)
+        flavor_access_map.call(params)
       end
 
       ###################### MODEL INTERFACE ####################
