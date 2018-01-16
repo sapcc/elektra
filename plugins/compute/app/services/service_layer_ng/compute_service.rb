@@ -16,17 +16,27 @@ module ServiceLayerNg
     include ComputeServices::OsServerGroup
 
     def available?(_action_name_sym = nil)
-      api.catalog_include_service?('compute', region)
+      elektron.service?('compute')
+    end
+
+    def elektron_compute
+      @elektron_identity ||= elektron.service('compute')
     end
 
     def usage(filter = {})
-      response = api.compute.show_rate_and_absolute_limits(filter).body['limits']['absolute']
-      map_to(Compute::Usage,response)
+      elektron_compute.get('limits', filter).map_to(
+        'body.limits.absolute'
+      ) do |limits|
+        Compute::Usage.new(self, limits)
+      end
     end
 
     def availability_zones
-      api.compute.get_availability_zone_information
-         .map_to(Compute::AvailabilityZone)
+      elektron_compute.get('os-availability-zone').map_to(
+        'body.availabilityZoneInfo'
+      ) do |data|
+        Compute::AvailabilityZone.new(self, data)
+      end
     end
   end
 end

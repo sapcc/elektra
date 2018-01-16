@@ -109,6 +109,7 @@ observer = new MutationObserver (mutations) ->
   for mutation in mutations
     if (mutation.type == 'childList')
       containers = $(mutation.addedNodes).find('[data-collapsable]')
+      #console.log(containers, containers.length) if containers && containers.length > 0
       containers.collapsable() if containers && containers.length > 0
 
 observer.observe(document.documentElement, {childList: true, subtree: true});

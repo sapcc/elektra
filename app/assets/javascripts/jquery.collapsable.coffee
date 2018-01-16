@@ -3,6 +3,8 @@ class Collapsable
   constructor: (elem, options) ->
     @options = options || {}
     @$content = $(elem)
+    return if @$content.data('registered')
+    @$content.data('registered', true)
 
     lineHeight = try
       parseInt(@$content.css('lineHeight'))
