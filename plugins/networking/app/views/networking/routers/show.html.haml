@@ -4,6 +4,8 @@
 .modal-body
   %ul.nav.nav-tabs
     %li.active{role: "presentation"}= link_to 'Overview', '#overview', aria: {controls:"overview"}, role: "tab", data: {toggle:"tab"}
+    - if @router.ha_enabled?
+      %li{role: "presentation"}= link_to 'Redundancy Routers', '#redundancy_routers', aria: {controls:"redundancy_routers"}, role: "tab", data: {toggle:"tab"}
     %li{role: "presentation"}= link_to 'External Network', '#external_network', aria: {controls:"external_network"}, role: "tab", data: {toggle:"tab"}
 
     %li{role: "presentation"}
@@ -30,6 +32,26 @@
           %tr
             %th Admin State
             %td= @router.admin_state_up ? 'UP' : 'DOWN'
+          %tr
+            %th Hosting Device
+            %td= @router.hosting_device
+          - unless @router.role.nil?
+            %tr
+              %th Role
+              %td= @router.role
+
+    .tab-pane{role:"tabpanel", id:"redundancy_routers"}
+      %table.table.datatable
+        %thead
+          %tr
+            %th ID
+            %th Status
+
+        %tbody
+          - @router.redundancy_routers.each do |redundancy_router|
+            %tr
+              %td= redundancy_router['id']
+              %td= redundancy_router['state']
 
     .tab-pane{role:"tabpanel", id:"external_network"}
       %table.table.datatable

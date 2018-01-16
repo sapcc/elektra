@@ -47,5 +47,25 @@ module Networking
     def external_gateway_info
       read('external_gateway_info') || {}
     end
+
+    def hosting_device
+      read('routerhost:hosting_device')
+    end
+
+    def role
+      read('routerrole:role')
+    end
+
+    def ha_enabled?
+      read('cisco_ha:enabled')
+    end
+
+    def ha_details
+      read('cisco_ha:details') || {}
+    end
+
+    def redundancy_routers
+      ha_details.fetch('redundancy_routers', [])
+    end
   end
 end

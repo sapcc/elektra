@@ -7,34 +7,41 @@ module Networking
 
     def index
       ################# NEW
-      # find routers of shared networks
-      private_shared_networks = services_ng.networking.networks(
-        'router:external' => false, 'shared' => true
-      )
-
-      shared_routers = private_shared_networks.each_with_object([]) do |n, arr|
-        ports = cloud_admin.networking.ports(
-          device_owner: 'network:router_interface', network_id: n.id, tenant_id: n.tenant_id
-        )
-        ports.each do |port|
-          router = cloud_admin.networking.find_router(port.device_id)
-          arr << router if router
-        end
-      end.flatten.uniq
-      ################## END
-      @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
-
-      # NEW
-      @routers.concat(shared_routers).uniq! { |r| r.id }
-
-      usage = @routers.length
+      @routers = []
       @quota_data = []
-      if current_user.is_allowed?("access_to_project")
-        @quota_data = services_ng.resource_management.quota_data(
-          current_user.domain_id || current_user.project_domain_id,
-          current_user.project_id,
-          [{ service_type: :network, resource_name: :routers, usage: usage }]
+
+      if current_user.is_allowed?('context_is_cloud_network_admin')
+        @routers = services_ng.networking.routers(sort_key: 'name', sort_dir: 'asc')
+      else
+        # find routers of shared networks
+        private_shared_networks = services_ng.networking.networks(
+          'router:external' => false, 'shared' => true
         )
+
+        shared_routers = private_shared_networks.each_with_object([]) do |n, arr|
+          ports = cloud_admin.networking.ports(
+            device_owner: 'network:router_interface', network_id: n.id, tenant_id: n.tenant_id
+          )
+          ports.each do |port|
+            router = cloud_admin.networking.find_router(port.device_id)
+            arr << router if router
+          end
+        end.flatten.uniq
+        ################## END
+        @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
+
+        # NEW
+        @routers.concat(shared_routers).uniq! { |r| r.id }
+
+        usage = @routers.length
+
+        if current_user.is_allowed?("access_to_project")
+          @quota_data = services_ng.resource_management.quota_data(
+            current_user.domain_id || current_user.project_domain_id,
+            current_user.project_id,
+            [{ service_type: :network, resource_name: :routers, usage: usage }]
+          )
+        end
       end
     end
 
