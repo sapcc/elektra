@@ -2,9 +2,9 @@
 #= require kubernetes/components/clusters/advancedoptions
 
 
-{ div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,p,i,a } = React.DOM
+{ div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,optgroup,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions } = kubernetes
+{ updateClusterForm, addNodePool, deleteNodePool, updateNodePoolForm, submitClusterForm, requestDeleteCluster, AdvancedOptions, toggleAdvancedOptions, updateSSHKey, updateKeyPair } = kubernetes
 
 
 EditCluster = ({
@@ -17,10 +17,12 @@ EditCluster = ({
   handleNodePoolAdd,
   handleNodePoolRemove,
   handleClusterDelete,
-  handleAdvancedOptionsToggle
+  handleAdvancedOptionsToggle,
+  handleSSHKeyChange,
+  handleKeyPairChange
 }) ->
-
   cluster = clusterForm.data
+  spec    = cluster.spec
 
   div null,
     div className: 'modal-body',
@@ -40,6 +42,50 @@ EditCluster = ({
                 type: "text",
                 name: "name",
                 value: cluster.name || ''
+
+
+
+        # Keypair
+        div null,
+          div className: "form-group required string" ,
+            label className: "string required col-sm-4 control-label", htmlFor: "keypair",
+              ' Key Pair'
+            div className: "col-sm-8",
+              div className: "input-wrapper",
+                select
+                  name: "keypair",
+                  className: "select form-control",
+                  value: (spec.keyPair || ''),
+                  onChange: ((e) -> handleKeyPairChange(e.target.value)),
+
+                    if metaData.keyPairs?
+                      optgroup label: "Choose from personal keys or provide other",
+                        option value: '', "None"
+
+                        for keyPair in metaData.keyPairs
+                          option value: keyPair.publicKey, key: keyPair.name, keyPair.name
+
+                        option value: 'other', "Other"
+                    else
+                      option value: '', "Loading..."
+
+        # SSH Public Key
+        if metaData.keyPairs? && spec.keyPair == 'other'
+          div null,
+            div className: "form-group string" ,
+              label className: "string required col-sm-4 control-label", htmlFor: "sshkey",
+                ' SSH Public Key'
+              div className: "col-sm-8",
+                div className: "input-wrapper",
+                  textarea
+                    name: "sshkey",
+                    className: "form-control",
+                    value: (spec.sshPublicKey || ''),
+                    onChange: ((e) -> handleSSHKeyChange(e.target.value)),
+                    rows: 6,
+                    placeholder: 'Please paste any valid SSH public key'
+
+
 
         p className: 'u-clearfix',
           a className: 'pull-right', onClick: ((e) => e.preventDefault(); handleAdvancedOptionsToggle()), href: '#',
@@ -143,6 +189,7 @@ EditCluster = ({
 EditCluster = connect(
   (state) ->
     clusterForm: state.clusterForm
+    metaData: state.metaData
 
   (dispatch) ->
     handleChange:               (name, value)         -> dispatch(updateClusterForm(name, value))
@@ -152,6 +199,10 @@ EditCluster = connect(
     handleNodePoolRemove:       (index)               -> dispatch(deleteNodePool(index))
     handleSubmit:               (callback)            -> dispatch(submitClusterForm(callback))
     handleClusterDelete:        (clusterName)         -> dispatch(requestDeleteCluster(clusterName))
+    handleSSHKeyChange:         (value)               -> dispatch(updateSSHKey(value))
+    handleKeyPairChange:        (value)               -> dispatch(updateKeyPair(value))
+
+
 
 
 )(EditCluster)
