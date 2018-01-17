@@ -15,9 +15,9 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 9d70b6a6497c9aeb217dbfbfbf9b0bf0cf259e1c
+  revision: d80da158ec10b463ce2c788693e2a46a3d86fc15
   specs:
-    elektron (1.1.6)
+    elektron (1.2.0)
 
 GIT
   remote: https://github.com/sapcc/fog-openstack.git
@@ -37,7 +37,7 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/misty.git
-  revision: dd9e7f2b5b957cffd60c273668a53a3f6177557b
+  revision: b26e3fe45078e018aef927df695c81c68a4203ca
   branch: master
   specs:
     misty (1.2.0)
@@ -640,4 +640,4 @@ DEPENDENCIES
   webpacker (~> 3.0)
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

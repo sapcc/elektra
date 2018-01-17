@@ -28,6 +28,10 @@
   "networking:network_external_update": "rule:context_is_cloud_network_admin",
   "networking:network_external_delete": "rule:context_is_cloud_network_admin",
   "networking:network_get:segments": "rule:context_is_network_viewer",
+  "networking:network_get:dhcp_agents": "rule:context_is_cloud_network_admin",
+
+  "networking:network_dhcp_agent_create": "rule:context_is_cloud_network_admin",
+  "networking:network_dhcp_agent_delete": "rule:context_is_cloud_network_admin",
 
   "networking:router_create": "rule:context_is_network_admin",
   "networking:router_update": "rule:context_is_network_admin and project_id:%(router.tenant_id)s",
