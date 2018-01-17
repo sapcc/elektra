@@ -50,12 +50,17 @@ module Screenshots
               "user": {
                 "name": user,
                 "password": password,
-                "project": {
-                  "name": project
-                },
                 "domain": {
                   "name": domain
                 }
+              }
+            }
+          },
+          "scope": {
+            "project": {
+              "name": project,
+              "domain": {
+                "name": domain
               }
             }
           }
