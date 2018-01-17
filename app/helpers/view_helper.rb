@@ -6,7 +6,7 @@ module ViewHelper
       'Project', @scoped_domain_id, id
     )
     # project not found in friendly ids -> load from api
-    remote_project ||= service_user.identity.find_project_by_name_or_id(
+    remote_project ||= cloud_admin.identity.find_project_by_name_or_id(
       @scoped_domain_id, id
     )
     remote_project ||= services_ng.identity.find_project(id)
@@ -22,7 +22,7 @@ module ViewHelper
         'Project', @scoped_domain_id, project
       )
       # project not found in friendly ids -> load from api
-      remote_project ||= service_user.identity.find_project_by_name_or_id(
+      remote_project ||= cloud_admin.identity.find_project_by_name_or_id(
         @scoped_domain_id, project
       )
       remote_project ||= services_ng.identity.find_project(project)
