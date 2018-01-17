@@ -1,0 +1,28 @@
+= content_for :title do
+  DHCP Agents
+
+%div{class: modal? ? 'modal-body' : ''}
+  %table.table#dhcp_agents
+    %thead
+      %tr
+        %th Agent Hosting Device
+        %th Status
+        %th Admin State
+        %th.snug
+    %tbody
+      - if @dhcp_agents.length == 0
+        %tr
+          %td{colspan: 5} No DHCP Agent present!
+      - else
+        - @dhcp_agents.each do | dhcp_agent |
+          = render partial: 'dhcp_agent_item', locals: {dhcp_agent: dhcp_agent}
+
+      - if current_user.is_allowed?("networking:network_dhcp_agent_create",{tenant_id:@scoped_project_id, network: @network})
+        = render partial: 'networking/networks/dhcp_agents/new_dhcp_agent_form'
+
+
+%div.buttons{class: modal? ? 'modal-footer' : ''}
+  - if modal?
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+  - else
+    = link_to "Cancel", plugin('networking').send("networks_#{@network_type}_index_url"), class: 'btn btn-default'

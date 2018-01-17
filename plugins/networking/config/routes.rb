@@ -23,6 +23,7 @@ Networking::Engine.routes.draw do
     %i[external private].each do |type|
       resources type do
         resources :access
+        resources :dhcp_agents
       end
     end
 
