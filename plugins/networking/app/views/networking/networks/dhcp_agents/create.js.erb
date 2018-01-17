@@ -1,0 +1,18 @@
+location.reload();
+// FIXME: ideally handle without full reload, need to fill the new dhcp_agent element somehow
+// but the create request response doesn't contain anything
+// <% if @dhcp_agent.errors.empty? %>
+//   $('#new_dhcp_form .alert-error').empty().addClass('hidden');
+//   var html="<%= j(render(partial: 'networking/networks/dhcp_agents/dhcp_agent_item', locals:{dhcp_agent: @dhcp_agent})) %>"
+//
+//
+//   if($("table#dhcp_agents tr[data-empty]").length==1) {
+//     $("table#dhcp_agents tr[data-empty]").replaceWith(html);
+//   } else {
+//     $("table#dhcp_agents tbody").prepend(html);
+//   }
+//
+//   $('[data-control-dhcp-form]').dhcpFormControl('hide');
+// <% else %>
+//   $('#new_dhcp_form .alert-error').html('<%=@dhcp_agent.errors.full_messages.to_sentence%>').removeClass('hidden');
+// <% end %>

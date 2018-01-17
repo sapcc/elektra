@@ -12,6 +12,7 @@ module ServiceLayerNg
     include NetworkingServices::Router
     include NetworkingServices::Rbac
     include NetworkingServices::Quota
+    include NetworkingServices::DhcpAgent
 
     def available?(_action_name_sym = nil)
       api.catalog_include_service?('network', region)
