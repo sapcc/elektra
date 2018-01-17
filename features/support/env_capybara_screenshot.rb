@@ -9,7 +9,7 @@ module Screenshots
     basename     = File.basename(path)
     extension    = File.extname(path)[1..-1]
     type         = MIME::Types.type_for(extension)
-    endpoint_url = URI.parse("#{endpoint}/debug/#{basename}")
+    endpoint_url = URI.parse("#{endpoint}/elektra_capybara_screenshots/#{basename}")
     content      = File.read(path)
 
     Net::HTTP.start(endpoint_url.host,
@@ -38,7 +38,7 @@ module Screenshots
                     endpoint_url.port,
                     use_ssl: endpoint_url.scheme == "https",
                     verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
-      post  = Net::HTTP::Post.new(endpoint_url.request_uri)
+      post = Net::HTTP::Post.new(endpoint_url.request_uri)
       post['Content-type'] = "application/json"
       post.body = {
         "auth": {
