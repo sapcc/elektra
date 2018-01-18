@@ -49,8 +49,7 @@ module Networking
       end
 
       def load_networks
-        #options = 'fields=tenant_id&fields=name&fields=id'
-        options = 'router:external=true&fields=tenant_id&fields=name&fields=id'
+        options = %w[router:external=true fields=tenant_id fields=name fields=id]
         services_ng.networking.networks(options)
                    .each_with_object({}) { |n, networks| networks[n.id] = n }
       end
