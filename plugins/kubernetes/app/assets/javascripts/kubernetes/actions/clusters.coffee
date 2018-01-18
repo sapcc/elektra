@@ -324,6 +324,19 @@
     name: name
     value: value
 
+  updateSSHKey = (value) ->
+    type: app.FORM_UPDATE_SSH_KEY
+    value: value
+
+  updateKeyPair = (value) ->
+    (dispatch) ->
+      dispatch(setKeyPair(value))
+      keyValue = if value == 'other' then '' else value
+      dispatch(updateSSHKey(keyValue))
+
+  setKeyPair = (value) ->
+    type: app.FORM_UPDATE_KEY_PAIR
+    value: value
 
   updateNodePoolForm = (index, name, value) ->
     type: app.UPDATE_NODE_POOL_FORM
@@ -368,6 +381,8 @@
   app.openEditClusterDialog      = openEditClusterDialog
   app.toggleAdvancedOptions      = toggleAdvancedOptions
   app.updateAdvancedOptions      = updateAdvancedOptions
+  app.updateSSHKey               = updateSSHKey
+  app.updateKeyPair              = updateKeyPair
   app.loadCluster                = loadCluster
   app.loadClusterEvents          = loadClusterEvents
   app.getCredentials             = getCredentials

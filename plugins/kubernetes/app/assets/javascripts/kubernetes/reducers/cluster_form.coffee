@@ -16,6 +16,8 @@
           }
         ]
         openstack: {}
+        sshPublicKey: ''
+        keyPair: ''
       }
     }
     isSubmitting: false
@@ -47,6 +49,21 @@
       updatePending: true
     })
 
+  updateSSHKey = (state, {value}) ->
+    dataClone = state.data
+    dataClone.spec.sshPublicKey = value
+    ReactHelpers.mergeObjects({},state,{
+      data: dataClone
+      updatePending: true
+    })
+
+  updateKeyPair = (state, {value}) ->
+    dataClone = state.data
+    dataClone.spec.keyPair = value
+    ReactHelpers.mergeObjects({},state,{
+      data: dataClone
+      updatePending: true
+    })
 
   updateNodePoolForm = (state, {index, name, value}) ->
     nodePool = ReactHelpers.mergeObjects({}, state.data.spec.nodePools[index], {"#{name}":value})
@@ -102,6 +119,8 @@
       action: action
       errors: null
     values['data'] = data if data
+    # deep copy spec
+    values.data.spec = ReactHelpers.mergeObjects({}, initialClusterFormState.data.spec, data.spec) if data
 
     # validity check
     if data
@@ -142,11 +161,6 @@
         if network.subnets?
           defaults.lbSubnetID = network.subnets[0].id
 
-    # keyPairs
-    # remove until we have keypair or public key support in kubernikus
-    # if metaData.keyPairs?
-    #   defaults.keyPair = metaData.keyPairs[0].name
-
     # securityGroups
     if metaData.securityGroups?
       defaults.securityGroupName = metaData.securityGroups[0].name
@@ -154,8 +168,25 @@
     # ensure already selected values aren't overwritten by the defaults
     dataMerged = ReactHelpers.mergeObjects({},defaults,state.data.spec.openstack)
 
+
+    # keyPair
+    keyPair = ''
+    if metaData.keyPairs?
+      sshPublicKey = state.data.spec.sshPublicKey
+      if sshPublicKey? && sshPublicKey.length > 0
+        index = ReactHelpers.findIndexInArray(metaData.keyPairs, sshPublicKey, 'publicKey')
+        if index >= 0
+          # in this case the key belongs to a key pair
+          keyPair = sshPublicKey
+        else
+          # in this case the key is a key that can't be found in the user's key pairs
+          keyPair = 'other'
+
+
+
     stateClone = state
     stateClone.data.spec.openstack = dataMerged
+    stateClone.data.spec.keyPair = keyPair
     ReactHelpers.mergeObjects({},state,stateClone)
 
 
@@ -172,6 +203,8 @@
       when app.CLUSTER_FORM_FAILURE         then clusterFormFailure(state,action)
       when app.FORM_TOGGLE_ADVANCED_OPTIONS then toggleAdvancedOptions(state,action)
       when app.FORM_UPDATE_ADVANCED_VALUE   then updateAdvancedValue(state,action)
+      when app.FORM_UPDATE_SSH_KEY          then updateSSHKey(state,action)
+      when app.FORM_UPDATE_KEY_PAIR         then updateKeyPair(state,action)
       when app.SET_CLUSTER_FORM_DEFAULTS    then setClusterFormDefaults(state,action)
       else state
 
