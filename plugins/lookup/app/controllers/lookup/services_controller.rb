@@ -19,7 +19,7 @@ module Lookup
       'flavor' => %w[compute find_flavor],
       'flavor_metadata' => %w[compute find_flavor_metadata],
       'hypervisor' => %w[compute find_hypervisor],
-      'server_image' => %w[compute find_image],
+      #'server_image' => %w[compute find_image],
       'keypair' => %w[compute find_keypair],
       'volume' => %w[block_storage find_volume],
       'snapshot' => %w[block_storage find_snapshot],
