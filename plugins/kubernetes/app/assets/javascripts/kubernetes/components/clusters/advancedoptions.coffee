@@ -3,14 +3,13 @@
 
 { div,form,input,textarea,h4, h5,label,span,button,abbr,select,option,optgroup,p,i,a } = React.DOM
 { connect } = ReactRedux
-{ updateAdvancedOptions, updateSSHKey} = kubernetes
+{ updateAdvancedOptions} = kubernetes
 
 
 AdvancedOptions = ({
   clusterForm,
   metaData,
   handleChange,
-  handleSSHKeyChange,
   edit
 
 
