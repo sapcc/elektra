@@ -16,7 +16,7 @@ module Core
           debug: Rails.env.development?,
           client: {
             open_timeout: 10,
-            read_timeout: 60,
+            read_timeout: 30,
             verify_ssl: Rails.configuration.ssl_verify_peer,
             keep_alive_timeout: 30
           }

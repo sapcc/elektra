@@ -26,21 +26,29 @@ class ApplicationController < ActionController::Base
   helper_method :modal?, :plugin_name
 
   # catch all api errors and render exception page
-  rescue_and_render_exception_page [
-    {
-      'Core::Api::Error' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
-    },
-    {
-      'Core::Api::ResponseError' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
-    },
-    {
-      'Excon::Error' => { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
-    },
-    {
-      'Fog::OpenStack::Errors::ServiceError' =>
-        { title: 'Backend Slowdown Detected', description: 'We are currently experiencing a higher latency in our backend calls. This should be fixed momentarily. Please try again in a couple of minutes.', warning: true }
+
+  rescue_from 'Elektron::Errors::Request',
+              'Core::Api::Error',
+              'Core::Api::ResponseError',
+              'Excon::Error',
+              'Fog::OpenStack::Errors::ServiceError' do |exception|
+
+    options = {
+      title: 'Backend Slowdown Detected',
+      description: 'We are currently experiencing a higher latency in our ' \
+                   'backend calls. This should be fixed momentarily. Please ' \
+                   'try again in a couple of minutes.',
+      warning: true, sentry: false
     }
-  ]
+
+    if exception.is_a?(Elektron::Errors::Request) &&
+       exception.message != 'Net::ReadTimeout'
+      # send to sentry if exception isn't a timeout error
+      options[:sentry] = true
+    end
+
+    render_exception_page(exception, options)
+  end
 
   def modal?
     if @modal.nil?
