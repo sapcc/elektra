@@ -8,7 +8,7 @@ module Compute
 
     authorization_context 'compute'
     authorization_required except: %i[new_floatingip attach_floatingip
-                                      detach_floatingip remove_floatingip 
+                                      detach_floatingip remove_floatingip
                                       attach_interface create_interface
                                       remove_interface detach_interface
                                       detach_floatingip new_snapshot update_item new_size
@@ -108,7 +108,7 @@ module Compute
       end
 
       @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
-      @private_networks   = services_ng.networking.project_networks(@scoped_project_id, "router:external"=>false) if services_ng.networking.available?
+      @private_networks = services_ng.networking.project_networks(@scoped_project_id, "router:external"=>false) if services_ng.networking.available?
 
       @keypairs = services_ng.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 
@@ -476,16 +476,16 @@ module Compute
         end
 
         begin
-          to_be_assigned.each do |sg|
+          to_be_assigned.uniq.each do |sg|
             execute_instance_action('assign_security_group',sg, false)
           end
 
-          to_be_unassigned.each do |sg|
+          to_be_unassigned.uniq.each do |sg|
             execute_instance_action('unassign_security_group',sg, false)
           end
 
           respond_to do |format|
-            format.html{redirect_to instances_url}
+            format.html{ redirect_to instances_url }
           end
 
         rescue => e

@@ -19,7 +19,7 @@ class UserProfile < ApplicationRecord
   end
 
   # this methods tries to find cached user ba name. It expects a block which
-  # returns the user from api.
+  # returns the user from API.
   def self.find_by_name_or_create_or_update(user_name)
     user_profile = UserProfile.search_by_name(user_name).first
 

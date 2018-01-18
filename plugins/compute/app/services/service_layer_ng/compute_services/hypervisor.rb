@@ -2,24 +2,35 @@
 
 module ServiceLayerNg
   module ComputeServices
-    # This module implements Openstack Domain API
+    # This module implements Openstack Compute Hypervisor API
     module Hypervisor
+      def hypervisor_map
+        @hypervisor_map ||= class_map_proc(Compute::Hypervisor)
+      end
+
       def hypervisors(filter = {})
-        api.compute.list_hypervisors_details(filter).map_to(Compute::Hypervisor)
+        elektron_compute.get('os-hypervisors/detail', filter).map_to(
+          'body.hypervisors', &hypervisor_map
+        )
       end
 
       def find_hypervisor(id)
         return nil if id.blank?
-        api.compute.show_hypervisor_details(id).map_to(Compute::Hypervisor)
+        elektron_compute.get("os-hypervisors/#{id}").map_to(
+          'body.hypervisor', &hypervisor_map
+        )
       end
 
       def hypervisor_servers(hypervisor_hostname_pattern)
-        # in that case we do not use the map_to directly because the api
-        # client fails to get the correct data from the response
-        hypervisors = api.compute.list_hypervisor_servers(
-          hypervisor_hostname_pattern
+        data = elektron_compute.get(
+          "os-hypervisors/#{hypervisor_hostname_pattern}/servers"
         ).body['hypervisors']
-        map_to(Compute::HypervisorServer, hypervisors.first['servers'])
+        data.each_with_object([]) do |hypervisor, results|
+          next unless hypervisor['servers']
+          hypervisor['servers'].each do |server|
+            results << Compute::HypervisorServer.new(self, server)
+          end
+        end
       end
     end
   end

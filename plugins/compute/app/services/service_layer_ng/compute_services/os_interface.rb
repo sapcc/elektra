@@ -2,30 +2,34 @@
 
 module ServiceLayerNg
   module ComputeServices
-    # This module implements Openstack Domain API
+    # This module implements Openstack Compute Interface API
     module OsInterface
-      def new_os_interface(server_id, params = {})
-        os_interface = map_to(Compute::OsInterface, params)
-        # the server_id is needed to bind the interface on the related server
-        # take a look to innstances_controller create_interface()
-        os_interface.server_id = server_id
-        os_interface
-      end
-
-      # this is a special case and called from OsInterface model
-      # perform_create()
-      def create_os_interface(server_id, attributes)
-        api.compute.create_interface(
-          server_id, interfaceAttachment: attributes
-        ).data
-      end
-
-      def delete_os_interface(server_id, port_id)
-        api.compute.detach_interface(server_id, port_id)
+      def os_interface_map
+        @os_interface_map ||= class_map_proc(Compute::OsInterface)
       end
 
       def server_os_interfaces(server_id)
-        api.compute.list_port_interfaces(server_id).map_to(Compute::OsInterface)
+        elektron_compute.get("servers/#{server_id}/os-interface").map_to(
+          'body.interfaceAttachments', &os_interface_map
+        )
+      end
+
+      def new_os_interface(server_id, params = {})
+        params = params.to_unsafe_hash if params.respond_to?(:to_unsafe_hash)
+        os_interface_map.call({server_id: server_id}.merge(params))
+      end
+
+      ######################## MODEL INTERFACE ###################
+      # this is a special case and called from OsInterface model
+      # perform_create()
+      def create_os_interface(server_id, attributes)
+        elektron_compute.post("servers/#{server_id}/os-interface") do
+          { 'interfaceAttachment' => attributes }
+        end.body['interfaceAttachment']
+      end
+
+      def delete_os_interface(server_id, port_id)
+        elektron_compute.delete("servers/#{server_id}/os-interface/#{port_id}")
       end
     end
   end
