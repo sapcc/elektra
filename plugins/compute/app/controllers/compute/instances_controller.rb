@@ -108,7 +108,7 @@ module Compute
       end
 
       @security_groups = services_ng.networking.security_groups(tenant_id: @scoped_project_id)
-      @private_networks   = services_ng.networking.project_networks(@scoped_project_id, "router:external"=>false) if services_ng.networking.available?
+      @private_networks = services_ng.networking.project_networks(@scoped_project_id, "router:external"=>false) if services_ng.networking.available?
 
       @keypairs = services_ng.compute.keypairs.collect {|kp| Hashie::Mash.new({id: kp.name, name: kp.name})}
 

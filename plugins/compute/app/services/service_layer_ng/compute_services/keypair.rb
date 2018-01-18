@@ -11,12 +11,10 @@ module ServiceLayerNg
       def keypairs
         # keypair structure different to others, so manual effort needed
         return @user_keypairs if @user_keypairs
-        keypairs = elektron_compute.get('os-keypairs').map_to(
-          'body.keypairs', &keypair_map
-        )
+        keypairs = elektron_compute.get('os-keypairs').body['keypairs']
 
-        @user_keypairs = keypairs.each_with_object([]) do |k, user_keypairs|
-          user_keypairs << map_to(Compute::Keypair, k.keypair) if k.keypair
+        @user_keypairs = keypairs.each_with_object([]) do |k, array|
+          array << keypair_map.call(k['keypair']) if k['keypair']
         end
       end
 
