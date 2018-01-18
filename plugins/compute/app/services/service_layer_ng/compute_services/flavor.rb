@@ -32,7 +32,6 @@ module ServiceLayerNg
 
         flavor_data = if use_cache
                         Rails.cache.fetch(cache_key, expires_in: 24.hours) do
-                          #api.compute.show_flavor_details(flavor_id).data
                           elektron_compute.get("flavors/#{flavor_id}")
                                           .body['flavor']
                         end
@@ -42,11 +41,6 @@ module ServiceLayerNg
                         Rails.cache.write(cache_key, data,
                                           expires_in: 24.hours)
                         data
-
-                        # data = api.compute.show_flavor_details(flavor_id).data
-                        # Rails.cache.write(cache_key, data,
-                        #                   expires_in: 24.hours)
-                        # data
                       end
 
         return nil if flavor_data.nil?
@@ -78,8 +72,9 @@ module ServiceLayerNg
       end
 
       def find_flavor_metadata!(flavor_id)
-        api.compute.list_extra_specs_for_a_flavor(flavor_id)
-           .map_to(Compute::FlavorMetadata)
+        elektron_compute.get("flavors/#{flavor_id}/os-extra_specs").map_to(
+          'body.extra_specs', &flavor_metadata_map
+        )
       end
 
       def find_flavor_metadata(flavor_id)

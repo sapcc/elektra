@@ -8,7 +8,7 @@ module ServiceLayerNg
     end
 
     def test
-      api.%{PLUGIN_NAME}.requests
+      elektron.service('%{PLUGIN_NAME}').get('/')
     end
   end
 end

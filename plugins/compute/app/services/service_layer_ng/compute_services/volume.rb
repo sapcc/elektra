@@ -9,7 +9,6 @@ module ServiceLayerNg
       end
 
       def volumes(server_id, filter = {})
-        # volumes = api.compute.list_volumes(filter).body['volumes']
         volumes = elektron_compute.get('os-volumes', filter).body['volumes']
 
         server_volumes = volumes.select do |vol|

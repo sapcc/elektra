@@ -31,9 +31,9 @@ module ServiceLayerNg
       end
 
       def enable_service(host, name)
-        api.compute.enable_scheduling_for_a_compute_service(
-          'host' => host, 'binary' => name
-        )
+        elektron_compute.put('os-services/enable') do
+          { 'host' => host, 'binary' => name }
+        end
       end
     end
   end
