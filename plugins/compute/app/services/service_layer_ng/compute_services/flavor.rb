@@ -84,7 +84,7 @@ module ServiceLayerNg
 
       def find_flavor_metadata(flavor_id)
         find_flavor_metadata!(flavor_id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
@@ -98,21 +98,25 @@ module ServiceLayerNg
 
       ###################### MODEL INTERFACE ####################
       def create_flavor(attributes)
-        api.compute.create_flavor('flavor' => attributes).data
+        elektron_compute.post('flavors') do
+          { 'flavor' => attributes }
+        end.body['flavor']
       end
 
       def delete_flavor(id)
-        api.compute.delete_flavor(id)
+        elektron_compute.delete("flavors/#{id}")
       end
 
       def create_flavor_metadata(flavor_id, flavor_extras)
-        api.compute.create_extra_specs_for_a_flavor(
-          flavor_id, 'extra_specs' => flavor_extras
-        ).data
+        elektron_compute.post("flavors/#{flavor_id}/os-extra_specs") do
+          { 'extra_specs' => flavor_extras }
+        end.body['extra_specs']
       end
 
       def delete_flavor_metadata(flavor_id, key)
-        api.compute.delete_an_extra_spec_for_a_flavor(flavor_id, key)
+        elektron_compute.delete(
+          "flavors/#{flavor_id}/os-extra_specs/#{key}"
+        )
       end
     end
   end

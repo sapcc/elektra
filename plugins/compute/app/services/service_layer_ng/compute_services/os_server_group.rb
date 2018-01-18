@@ -4,30 +4,37 @@ module ServiceLayerNg
   module ComputeServices
     # This module implements Openstack Domain API
     module OsServerGroup
+      def os_server_group_map
+        @os_server_group_map ||= class_map_proc(Compute::OsServerGroup)
+      end
+
       def os_server_groups(filter = {})
-        api.compute.list_server_groups(filter).map_to(
-          'server_groups' => Compute::OsServerGroup
+        elektron_compute.get('os-server-groups', filter).map_to(
+          'body.server_groups', &os_server_group_map
         )
       end
 
-      def create_os_server_group(params = {})
-        api.compute.create_server_group(params).data
-      end
-
       def find_os_server_group!(id)
-        api.compute.show_server_group_details(id).map_to(
-          'server_group' => Compute::OsServerGroup
+        elektron_compute.get("os-server-groups/#{id}").map_to(
+          'body.server_group', &os_server_group_map
         )
       end
 
       def find_os_server_group(id)
         find_os_server_group!(id)
-      rescue => _e
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
+      ################### MODEL INTERFACE ##################
+      def create_os_server_group(params = {})
+        elektron_compute.post('os-server-groups') do
+          { 'server_group' => params }
+        end.body['server_group']
+      end
+
       def delete_os_server_group(id)
-        api.compute.delete_server_group(id)
+        elektron_compute.delete("os-server-groups/#{id}")
       end
     end
   end

@@ -6,7 +6,7 @@ module ServiceLayerNg
     include ComputeServices::Flavor
     include ComputeServices::HostAggregate
     include ComputeServices::Hypervisor
-    include ComputeServices::Image
+    # include ComputeServices::Image
     include ComputeServices::Keypair
     include ComputeServices::OsInterface
     include ComputeServices::SecurityGroup

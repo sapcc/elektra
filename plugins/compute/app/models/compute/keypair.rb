@@ -14,7 +14,7 @@ module Compute
 
     def public_key_valid?
       Net::SSH::KeyFactory.load_data_public_key(public_key)
-    rescue => _e
+    rescue StandardError
       errors.add :public_key, "#{name} is not a valid ssh public key"
     end
 
