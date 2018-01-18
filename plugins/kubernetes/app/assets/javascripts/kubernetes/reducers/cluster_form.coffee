@@ -121,7 +121,6 @@
     values['data'] = data if data
     # deep copy spec
     values.data.spec = ReactHelpers.mergeObjects({}, initialClusterFormState.data.spec, data.spec) if data
-    # values.data.spec.keyPair = values.data.spec.sshPublicKey # set key pair initally to same value as sshPublicKey
 
     # validity check
     if data
