@@ -27,11 +27,11 @@ Events = React.createClass
             div key: event.firstTimestamp,
               i className: "event-type #{event.type.toLowerCase()}"
               strong null,
-                moment(event.firstTimestamp).format("HH:mm:ss")
+                moment(event.firstTimestamp, 'YYYY-MM-DD HH:mm:ss ZZ Z').format("HH:mm:ss")
                 if (event.count > 1)
                   span null,
                     " - "
-                    moment(event.lastTimestamp).format("HH:mm:ss")
+                    moment(event.lastTimestamp, 'YYYY-MM-DD HH:mm:ss ZZ Z').format("HH:mm:ss")
                     " (#{event.count} times)"
 
               p null,
