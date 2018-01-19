@@ -41,8 +41,8 @@ module ResourceManagement
           ports:         500,
           rbac_policies: 5,
           routers:       1,
-          security_group_rules: 16,
-          security_groups:      2,
+          security_group_rules: 100,
+          security_groups:      20,
         },
         dns: {
           recordsets: 5,
