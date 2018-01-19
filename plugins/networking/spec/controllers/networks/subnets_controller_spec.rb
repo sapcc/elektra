@@ -23,8 +23,8 @@ describe Networking::Networks::SubnetsController, type: :controller do
   before :each do
     stub_authentication
     allow_any_instance_of(ServiceLayerNg::NetworkingService)
-      .to receive(:api).and_return(
-        double('api', networking: double('networking').as_null_object)
+      .to receive(:elektron).and_return(
+        double('elektron', service: double('network').as_null_object)
       )
 
     allow_any_instance_of(ServiceLayerNg::ResourceManagementService)
