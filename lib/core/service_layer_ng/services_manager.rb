@@ -76,7 +76,7 @@ module Core
           return service if service
 
           service = self.class.service(method_sym, @api_client)
-          service.services = self
+          service.service_manager = self
           instance_variable_set("@#{method_sym}", service)
         else
           super
