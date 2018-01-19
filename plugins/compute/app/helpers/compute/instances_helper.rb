@@ -57,7 +57,7 @@ module Compute
 
     def render_image_name(image)
       return '-' if image.blank?
-      build_number = image.metadata["buildnumber"].blank? ? '' : "(#{image.metadata["buildnumber"]})"
+      build_number = image.buildnumber.blank? ? '' : "(#{image.buildnumber})"
       "#{image.name} #{build_number}"
     end
 
