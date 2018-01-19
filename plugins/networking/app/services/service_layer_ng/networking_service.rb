@@ -15,7 +15,13 @@ module ServiceLayerNg
     include NetworkingServices::DhcpAgent
 
     def available?(_action_name_sym = nil)
-      api.catalog_include_service?('network', region)
+      elektron.service?('network')
+    end
+
+    def elektron_networking
+      @elektron_networking ||= elektron.service(
+        'network', path_prefix: '/v2.0'
+      )
     end
   end
 end

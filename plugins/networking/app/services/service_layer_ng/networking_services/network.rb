@@ -4,58 +4,68 @@ module ServiceLayerNg
   module NetworkingServices
     # Implements Openstack Network
     module Network
+      def network_map
+        @network_map ||= class_map_proc(Networking::Network)
+      end
+
+      def network_ip_availability_map
+        @network_ip_availability_map ||= class_map_proc(Networking::NetworkIpAvailability)
+      end
+
       def new_network_wizard(attributes = {})
-        map_to(Networking::NetworkWizard, attributes)
+        Networking::NetworkWizard.new(self, attributes)
       end
 
       def network_ip_availability(network_id)
-        api.networking.show_network_ip_availability(network_id)
-           .map_to(Networking::NetworkIpAvailability)
+        elektron_networking.get(
+          "network-ip-availabilities/#{network_id}"
+        ).map_to('body.network_ip_availability', &network_ip_availability_map)
       end
 
       def network_ip_availabilities
-        api.networking.list_network_ip_availability
-           .map_to(Networking::NetworkIpAvailability)
+        elektron_networking.get('network-ip-availabilities').map_to(
+          'body.network_ip_availabilities', &network_ip_availability_map
+        )
       end
 
       def networks(filter = {})
-        # byebug
-        # elektron = elektron.service(
-        #   'network', path_prefix: '/v2.0'
-        # )
-        # elektron.get('networks')
-        api.networking.list_networks(filter).map_to(Networking::Network)
+        elektron_networking.get('networks', filter).map_to(
+          'body.networks', &network_map
+        )
       end
 
       def project_networks(project_id, filter = {})
-        api.networking.list_networks(filter).data.each_with_object([]) do |n, array|
+        networks = elektron_networking.get('networks', filter).body['networks']
+        networks.each_with_object([]) do |n, array|
           if n['shared'] == true || n['tenant_id'] == project_id
-            array << map_to(Networking::Network, n)
+            array << network_map.call(n)
           end
         end
       end
 
       def find_network!(id)
         return nil unless id
-        api.networking.show_network_details(id).map_to(Networking::Network)
+        elektron_networking.get("networks/#{id}").map_to(
+          'body.network', &network_map
+        )
       end
 
       def find_network(id)
         find_network!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def cached_network(id)
         network_data = Rails.cache.fetch("network_#{id}", expires_in: 2.hours) do
           begin
-            api.networking.show_network_details(id).data
-          rescue => e
+            elektron_networking.get("networks/#{id}").body['network']
+          rescue Elektron::Errors::ApiResponse
             nil
           end
         end
         return nil unless network_data
-        map_to(Networking::Network, network_data)
+        network_map.call(network_data)
       end
 
       def domain_floatingip_network(domain_name)
@@ -69,29 +79,33 @@ module ServiceLayerNg
                            "FloatingIP-external-#{domain_name}",
                            'Converged Cloud External']
         name_candidates.each do |name|
-          network = api.networking.list_networks(
-            'router:external' => true, 'name' => name
-          ).map_to(Networking::Network).first
+          network = elektron_networking.get(
+            'networks', 'router:external' => true, 'name' => name
+          ).map_to('body.networks', &network_map).first
           return network if network
         end
         nil
       end
 
       def new_network(attributes = {})
-        map_to(Networking::Network, attributes)
+        network_map.call(attributes)
       end
 
       ############## Model Interface ##############
       def create_network(attributes)
-        api.networking.create_network(network: attributes).data
+        elektron_networking.post('networks') do
+          { 'network' => attributes }
+        end.body['network']
       end
 
       def update_network(id, attributes)
-        api.networking.update_network(id, network: attributes).data
+        elektron_networking.put("networks/#{id}") do
+          { 'network' => attributes }
+        end.body['network']
       end
 
       def delete_network(id)
-        api.networking.delete_network(id)
+        elektron_networking.delete("networks/#{id}")
       end
     end
   end

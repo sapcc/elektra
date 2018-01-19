@@ -9,9 +9,7 @@ module Networking
       )
       @network = services_ng.networking.find_network(@network_id)
 
-      rbac_target_tenant_ids = services_ng.networking.rbacs(
-        object_id: @network_id, object_type: 'network'
-      ).collect(&:target_tenant)
+      rbac_target_tenant_ids = @rbacs.collect(&:target_tenant)
 
       @rbac_auth_projects = []
       @user_domain_projects.each do |project|
@@ -32,6 +30,8 @@ module Networking
       if @rbac.target_tenant.include?('(')
         @rbac.target_tenant = @rbac.target_tenant.split('(').first.strip
       end
+
+      @network = services_ng.networking.find_network(@network_id)
 
       @rbac.save
     end

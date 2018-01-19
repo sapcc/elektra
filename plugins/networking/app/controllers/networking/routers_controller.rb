@@ -201,9 +201,11 @@ module Networking
         to_be_detached = (@old_selected_internal_subnet_ids - @selected_internal_subnet_ids)
         to_be_attached = (@selected_internal_subnet_ids - @old_selected_internal_subnet_ids)
 
-        services_ng.networking.remove_router_interfaces(@router.id, to_be_detached)
-        services_ng.networking.add_router_interfaces(@router.id, to_be_attached)
+        @router.remove_interfaces(to_be_detached)
+        @router.add_interfaces(to_be_attached)
+      end
 
+      if @router.errors.empty?
         audit_logger.info(current_user, 'has updated', @router)
 
         flash.now[:notice] = 'Router successfully created.'
