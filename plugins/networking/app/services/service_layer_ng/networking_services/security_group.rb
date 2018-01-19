@@ -4,38 +4,48 @@ module ServiceLayerNg
   module NetworkingServices
     # Implements Openstack SecurityGroup
     module SecurityGroup
+      def security_group_map
+        @security_group_map ||= class_map_proc(Networking::SecurityGroup)
+      end
+
       def security_groups(filter = {})
-        api.networking.list_security_groups(filter)
-           .map_to(Networking::SecurityGroup)
+        elektron_networking.get('security-groups', filter).map_to(
+          'body.security_groups', &security_group_map
+        )
       end
 
       def new_security_group(attributes = {})
-        map_to(Networking::SecurityGroup, attributes)
+        security_group_map.call(attributes)
       end
 
       def find_security_group!(id)
         return nil unless id
-        api.networking.show_security_group(id).map_to(Networking::SecurityGroup)
+        elektron_networking.get("security-groups/#{id}").map_to(
+          'body.security_group', &security_group_map
+        )
       end
 
       def find_security_group(id)
         find_security_group!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       ########### Model Interface ###################
       def create_security_group(attributes)
-        api.networking.create_security_group(security_group: attributes).data
+        elektron_networking.post('security-groups') do
+          { security_group: attributes }
+        end.body['security_group']
       end
 
       def update_security_group(id, attributes)
-        api.networking
-           .update_security_group(id, security_group: attributes).data
+        elektron_networking.put("security-groups/#{id}") do
+          { security_group: attributes }
+        end.body['security_group']
       end
 
       def delete_security_group(id)
-        api.networking.delete_security_group(id)
+        elektron_networking.delete("security-groups/#{id}")
       end
     end
   end

@@ -4,32 +4,40 @@ module ServiceLayerNg
   module NetworkingServices
     # Implements Openstack Port
     module Port
+      def port_map
+        @port_map ||= class_map_proc(Networking::Port)
+      end
+
       def ports(filter = {})
-        api.networking.list_ports(filter).map_to(Networking::Port)
+        elektron_networking.get('ports', filter).map_to('body.ports', &port_map)
       end
 
       def find_port!(id)
         return nil unless id
-        api.networking.show_port_details(id).map_to(Networking::Port)
+        elektron_networking.get("ports/#{id}").map_to('body.port', &port_map)
       end
 
       def find_port(id)
         find_port!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       ################### Model Interface #############
       def create_port(attributes)
-        api.networking.create_port(port: attributes).data
+        elektron_networking.post('ports') do
+          { 'port' => attributes }
+        end.body['port']
       end
 
       def update_port(id, attributes)
-        api.networking.update_port(id, port: attributes).data
+        elektron_networking.put("ports/#{id}") do
+          { 'port' => attributes }
+        end.body['port']
       end
 
       def delete_port(id)
-        api.networking.delete_port(id)
+        elektron_networking.delete("ports/#{id}")
       end
     end
   end
