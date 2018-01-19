@@ -1,6 +1,6 @@
 <% if @rbac.errors.empty? %>
   $('#new_rbac_form .alert-error').empty().addClass('hidden');
-  var html="<%= j(render(partial: 'networking/networks/access/rbac_item', locals:{rbac: @rbac})) %>"
+  var html="<%= j(render(partial: 'networking/networks/access/rbac_item', locals:{rbac: @rbac, network: @network})) %>"
 
 
   if($("table#rbacs tr[data-empty]").length==1) {

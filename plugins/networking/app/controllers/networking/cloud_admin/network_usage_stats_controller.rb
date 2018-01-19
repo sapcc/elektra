@@ -70,7 +70,7 @@ module Networking
           quota = services_ng.networking.project_quotas(projects.first.id)
           { projects.first.id => quota }
         else
-          quotas = services_ng.networking.quotas.each_with_object({}) do |quota, quotas|
+          services_ng.networking.quotas.each_with_object({}) do |quota, quotas|
             quotas[quota.project_id || quota.tenant_id] = quota
           end
           # # projects with default quotas are not contained in quotas.

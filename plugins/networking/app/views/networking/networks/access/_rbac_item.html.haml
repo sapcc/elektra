@@ -5,7 +5,7 @@
     - rbac_target(rbac.target_tenant)
 
   %td.snug
-    - if current_user.is_allowed?("networking:rbac_policy_delete", {rbac: rbac})
+    - if current_user.is_allowed?("networking:rbac_policy_delete", {network: network })
       = link_to plugin('networking').send("networks_#{@network_type}_access_path", @network_id, rbac.id),
         class: "btn btn-danger btn-sm",
         method: :delete,

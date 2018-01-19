@@ -4,36 +4,48 @@ module ServiceLayerNg
   module NetworkingServices
     # Implements Openstack RBAC
     module Rbac
+      def rbac_map
+        @rbac_map ||= class_map_proc(Networking::Rbac)
+      end
+
       def rbacs(filter = {})
-        api.networking.list_rbac_policies(filter).map_to(Networking::Rbac)
+        elektron_networking.get('rbac-policies', filter).map_to(
+          'body.rbac_policies', &rbac_map
+        )
       end
 
       def find_rbac!(id)
         return nil unless id
-        api.networking.show_rbac_policy_details(id).map_to(Networking::Rbac)
+        elektron_networking.get("rbac-policies/#{id}").map_to(
+          'body.rbac_policy', &rbac_map
+        )
       end
 
       def find_rbac(id)
         find_rbac!(id)
-      rescue
+      rescue Elektron::Errors::ApiResponse
         nil
       end
 
       def new_rbac(attributes = {})
-        map_to(Networking::Rbac, attributes)
+        rbac_map.call(attributes)
       end
 
       # Model Interface
       def create_rbac(attributes)
-        api.networking.create_rbac_policy(rbac_policy: attributes).data
+        elektron_networking.post('rbac-policies') do
+          { rbac_policy: attributes }
+        end.body['rbac_policy']
       end
 
       def delete_rbac(id)
-        api.networking.delete_rbac_policy(id)
+        elektron_networking.delete("rbac-policies/#{id}")
       end
 
       def update_rbac(id, attributes)
-        api.networking.update_rbac_policy(id, rbac_policy: attributes).data
+        elektron_networking.put("rbac-policies/#{id}") do
+          { rbac_policy: attributes }
+        end.body['rbac_policy']
       end
     end
   end
