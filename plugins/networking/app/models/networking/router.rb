@@ -39,6 +39,18 @@ module Networking
       nil
     end
 
+    def add_interfaces(interface_ids)
+      rescue_api_errors do
+        @service.add_router_interfaces(id, interface_ids)
+      end
+    end
+
+    def remove_interfaces(interface_ids)
+      rescue_api_errors do
+        @service.remove_router_interfaces(id, interface_ids)
+      end
+    end
+
     def external_subnet_ids
       external_fixed_ips = external_gateway_info.fetch('external_fixed_ips', [])
       external_fixed_ips.collect { |external_fixed_ip| external_fixed_ip['subnet_id']}
