@@ -159,12 +159,10 @@ module ServiceLayerNg
         # Note: `contents` is an IO object to allow for easy future expansion to
         # more clever upload strategies (e.g. SLO); for now, we just send
         # everything at once
-        byebug
-        # elektron_object_storage.put(
-        #   "#{container_name}/#{object_path}",
-        #   headers: stringify_header_values(header_attrs)
-        # ) { contents.read }
-        api.object_storage.create_or_replace_object(container_name, object_path, contents.read, build_custom_request_header(header_attrs))
+        elektron_object_storage.put(
+          "#{container_name}/#{object_path}",
+          headers: stringify_header_values(header_attrs)
+        ) { contents.read }
       end
 
       def delete_object(container_name, object_path)
@@ -200,14 +198,9 @@ module ServiceLayerNg
         # a pseudo-folder is created by writing an empty object at its path, with
         # a "/" suffix to indicate the folder-ness
         elektron_object_storage.put(
-          "#{container_name}/#{object_path}/",
+          "#{container_name}/#{sanitize_path(object_path)}/",
           headers: { 'Content-Type' => 'application/directory' }
         )
-        # api.object_storage.create_or_replace_object(
-        #   container_name,
-        #   sanitize_path(object_path) + '/',
-        #   build_custom_request_header({'Content-Type':'application/directory'})
-        # )
       end
 
       def delete_folder(container_name, object_path)

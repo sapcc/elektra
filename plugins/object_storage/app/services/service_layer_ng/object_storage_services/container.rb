@@ -78,13 +78,13 @@ module ServiceLayerNg
       def create_container(params = {})
         name = params.delete(:name)
         elektron_object_storage.put(name) { params }
-        # return nil because nothing usable is returned from the api
+        # return nil because nothing usable is returned from the API
         nil
       end
 
       def delete_container(container_name)
         elektron_object_storage.delete(container_name)
-        # return nil because nothing usable is returned from the api
+        # return nil because nothing usable is returned from the API
         nil
       end
 
@@ -114,7 +114,7 @@ module ServiceLayerNg
         header_attrs = stringify_header_values(header_attrs)
 
         elektron_object_storage.post(container_name, headers: header_attrs)
-        # return nil because nothing usable is returned from the api
+        # return nil because nothing usable is returned from the API
         nil
       end
 
