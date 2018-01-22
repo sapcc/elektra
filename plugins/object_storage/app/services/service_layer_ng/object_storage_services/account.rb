@@ -23,7 +23,9 @@ module ServiceLayerNg
                      # 404 account is not existing
                      return nil if e.code == 404
                    end
-        account_data = map_attribute_names(extract_header_data(response), ACCOUNT_ATTRMAP)
+        account_data = map_attribute_names(
+          extract_header_data(response), ACCOUNT_ATTRMAP
+        )
         ObjectStorage::Account.new(self, account_data)
       end
     end

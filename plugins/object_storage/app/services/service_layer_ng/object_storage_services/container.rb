@@ -65,8 +65,6 @@ module ServiceLayerNg
       end
 
       def empty(container_name)
-        byebug
-        Rails.logger.debug "[object-storage-service] -> empty -> #{container_name}"
         targets = list_objects(container_name).map do |obj|
           { container: container_name, object: obj['path'] }
         end
@@ -118,6 +116,22 @@ module ServiceLayerNg
         elektron_object_storage.post(container_name, headers: header_attrs)
         # return nil because nothing usable is returned from the api
         nil
+      end
+
+      protected
+
+      def extract_container_header_data(response, container_name = nil)
+        header_hash = map_attribute_names(extract_header_data(response), CONTAINER_ATTRMAP)
+        # enrich data with additional information
+        header_hash['id']               = header_hash['name'] = container_name
+        header_hash['public_url']       = public_url(container_name)
+        header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
+        header_hash['metadata']         = extract_metadata_data(extract_header_data(response), 'x-container-meta-').reject do |key, _value|
+          # skip metadata fields that are recognized by us
+          CONTAINER_ATTRMAP.key?('x-container-meta-' + key)
+        end
+
+        header_hash
       end
     end
   end

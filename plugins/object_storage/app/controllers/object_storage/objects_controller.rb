@@ -61,7 +61,7 @@ module ObjectStorage
     end
 
     def destroy
-      # instead of @object.destroy we need to call the delete function directly 
+      # instead of @object.destroy we need to call the delete function directly
       # because we need to give more than one parameter
       services_ng.object_storage.delete_object(@container_name,@object.path)
       back_to_object_list

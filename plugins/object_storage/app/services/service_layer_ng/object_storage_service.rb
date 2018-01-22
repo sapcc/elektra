@@ -18,7 +18,7 @@ module ServiceLayerNg
       end
     end
 
-    private
+    protected
 
     # Rename keys in `data` using the `attribute_map` and delete unknown keys.
     def map_attribute_names(data, attribute_map)
@@ -39,40 +39,14 @@ module ServiceLayerNg
       header_data
     end
 
-    def extract_container_header_data(response, container_name = nil)
-      header_hash = map_attribute_names(extract_header_data(response), CONTAINER_ATTRMAP)
-      # enrich data with additional information
-      header_hash['id']               = header_hash['name'] = container_name
-      header_hash['public_url']       = public_url(container_name)
-      header_hash['web_file_listing'] = header_hash['web_file_listing'] == 'true' # convert to Boolean
-      header_hash['metadata']         = extract_metadata_data(extract_header_data(response), 'x-container-meta-').reject do |key, _value|
-        # skip metadata fields that are recognized by us
-        CONTAINER_ATTRMAP.key?('x-container-meta-' + key)
-      end
-
-      header_hash
+    def build_custom_request_header(header_attrs)
+      # stringify keys and values
+      # https://stackoverflow.com/questions/34595141/process-nested-hash-to-convert-all-values-to-strings
+      header_attrs.deep_merge!(header_attrs) { |_, _, v| v.to_s }
+      header_attrs.stringify_keys!
+      # create custom header
+      Misty::HTTP::Header.new(header_attrs)
     end
-
-    def extract_object_header_data(response, container_name = nil, object_path = nil)
-      header_hash = map_attribute_names(extract_header_data(response), OBJECT_ATTRMAP)
-      header_hash['id']               = header_hash['path'] = object_path
-      header_hash['container_name']   = container_name
-      header_hash['public_url']       = public_url(container_name, object_path)
-      header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
-      header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
-      header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.key?('expires_at') # optional!
-      header_hash['metadata']         = extract_metadata_data(extract_header_data(response), 'x-object-meta-')
-      header_hash
-    end
-
-    # def build_custom_request_header(header_attrs)
-    #   # stringify keys and values
-    #   # https://stackoverflow.com/questions/34595141/process-nested-hash-to-convert-all-values-to-strings
-    #   header_attrs.deep_merge!(header_attrs) { |_, _, v| v.to_s }
-    #   header_attrs.stringify_keys!
-    #   # create custom header
-    #   Misty::HTTP::Header.new(header_attrs)
-    # end
 
     def stringify_header_values(header_attrs)
       header_attrs.deep_merge!(header_attrs) { |_, _, v| v.to_s }

@@ -90,7 +90,7 @@ class DashboardController < ::ScopeController
     end
   end
 
-  rescue_from 'Excon::Error::Unauthorized',
+  rescue_from 'Excon::Error::Unauthorized', 'Elektron::Errors::TokenExpired',
               'MonsoonOpenstackAuth::Authentication::NotAuthorized' do
     redirect_to monsoon_openstack_auth.login_path(
       domain_fid: @scoped_domain_fid,

@@ -63,7 +63,6 @@ module Identity
       @project = service_user.identity.new_project(params[:project])
       @project.id = @project_id
       @project.domain_id = @scoped_domain_id
-
       if @project.save &&
         # has updated project #{@project.name} (#{@project.id})")
         # audit_logger.info(user: current_user, has: "updated",

@@ -76,7 +76,6 @@ module ServiceLayerNg
           end
           object
         end
-        byebug
         result
       end
 
@@ -128,15 +127,10 @@ module ServiceLayerNg
             object_list += "\n"
           end
 
-          byebug
           elektron_object_storage.post(
             '',
-            'bulk-delete' => 0,
-            headers: { 'Content-Type' => 'text/plain' }
+            'bulk-delete' => true, headers: { 'Content-Type' => 'text/plain' }
           ) { object_list }
-
-          #api.object_storage.bulk_delete(object_list)
-
         else
           targets.each do |target|
             unless target.key?(:container)
@@ -165,11 +159,12 @@ module ServiceLayerNg
         # Note: `contents` is an IO object to allow for easy future expansion to
         # more clever upload strategies (e.g. SLO); for now, we just send
         # everything at once
-
-        elektron_object_storage.put(
-          "#{container_name}/#{object_path}",
-          headers: stringify_header_values(header_attrs)
-        ) { contents.read }
+        byebug
+        # elektron_object_storage.put(
+        #   "#{container_name}/#{object_path}",
+        #   headers: stringify_header_values(header_attrs)
+        # ) { contents.read }
+        api.object_storage.create_or_replace_object(container_name, object_path, contents.read, build_custom_request_header(header_attrs))
       end
 
       def delete_object(container_name, object_path)
@@ -208,6 +203,11 @@ module ServiceLayerNg
           "#{container_name}/#{object_path}/",
           headers: { 'Content-Type' => 'application/directory' }
         )
+        # api.object_storage.create_or_replace_object(
+        #   container_name,
+        #   sanitize_path(object_path) + '/',
+        #   build_custom_request_header({'Content-Type':'application/directory'})
+        # )
       end
 
       def delete_folder(container_name, object_path)
@@ -217,6 +217,20 @@ module ServiceLayerNg
           { container: container_name, object: obj.path }
         end
         bulk_delete(targets)
+      end
+
+      protected
+
+      def extract_object_header_data(response, container_name = nil, object_path = nil)
+        header_hash = map_attribute_names(extract_header_data(response), OBJECT_ATTRMAP)
+        header_hash['id']               = header_hash['path'] = object_path
+        header_hash['container_name']   = container_name
+        header_hash['public_url']       = public_url(container_name, object_path)
+        header_hash['last_modified_at'] = DateTime.httpdate(header_hash['last_modified_at']) # parse date
+        header_hash['created_at']       = DateTime.strptime(header_hash['created_at'], '%s') # parse UNIX timestamp
+        header_hash['expires_at']       = DateTime.strptime(header_hash['expires_at'], '%s') if header_hash.key?('expires_at') # optional!
+        header_hash['metadata']         = extract_metadata_data(extract_header_data(response), 'x-object-meta-')
+        header_hash
       end
     end
   end
