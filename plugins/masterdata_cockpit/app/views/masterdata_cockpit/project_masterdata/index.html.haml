@@ -1,7 +1,7 @@
 =content_for :main_toolbar do
   Project Masterdata
 
-- if @project_masterdata.errors.present?
+- if @project_masterdata && @project_masterdata.errors.present?
   .alert.alert-error
     = render_errors(@project_masterdata.errors)
 
@@ -12,4 +12,3 @@
   .col-md-4
     #project_masterdata_additional_infos
       = render partial: 'masterdata_additional_infos'
-

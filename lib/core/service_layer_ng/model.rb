@@ -74,6 +74,7 @@ module Core
 
       def save
         # execute before callback
+        before_create if id.nil?
         before_save
 
         success = valid?
@@ -213,13 +214,10 @@ module Core
       def perform_create
         rescue_api_errors do
           # execute before callback
-          before_create
           create_attrs = attributes_for_create
           create_attrs.delete(:id)
           created_attributes = perform_service_create(create_attrs)
           self.attributes = created_attributes
-          after_create
-          return true
         end
       end
 
@@ -229,7 +227,6 @@ module Core
           update_attrs.delete(:id)
           updated_attributes = perform_service_update(id, update_attrs)
           self.attributes = updated_attributes if updated_attributes
-          return true
         end
       end
 

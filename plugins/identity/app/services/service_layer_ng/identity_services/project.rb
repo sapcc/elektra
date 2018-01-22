@@ -106,7 +106,7 @@ module ServiceLayerNg
       # This method is used by model.
       # It has to return the data hash.
       def update_project(id, params)
-        elektron_identity.put("projects/#{id}") do
+        elektron_identity.patch("projects/#{id}") do
           { project: params }
         end.body['project']
       end

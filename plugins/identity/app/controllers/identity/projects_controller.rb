@@ -71,7 +71,7 @@ module Identity
         audit_logger.info(current_user, 'has updated', @project)
 
         flash[:notice] = "Project #{@project.name} successfully updated."
-        redirect_to plugin('masterdata_cockpit').project_masterdata_path
+        redirect_to plugin('masterdata_cockpit').project_masterdata_path(project_id: @project.id)
       else
         flash.now[:error] = @project.errors.full_messages.to_sentence
         render action: :edit
@@ -215,7 +215,7 @@ module Identity
         #  return false
         #end
       end
-      
+
       if project_masterdata && @project_masterda_is_complete
         @project_profile.update_wizard_status(
           'masterdata_cockpit', ProjectProfile::STATUS_DONE
@@ -227,7 +227,7 @@ module Identity
       else
         @project_profile.update_wizard_status('masterdata_cockpit', nil)
       end
-      
+
       @project_profile.wizard_finished?('masterdata_cockpit')
     end
 

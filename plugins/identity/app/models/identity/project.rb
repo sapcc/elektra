@@ -9,7 +9,8 @@ module Identity
     attr_accessor :inquiry_id # to close inquiry after creation
 
     def after_save
-      FriendlyIdEntry.update_project_entry(self)
+      # FriendlyIdEntry.update_project_entry(self)
+      FriendlyIdEntry.delete_project_entry(self)
       true
     end
 

@@ -80,4 +80,21 @@ class FriendlyIdEntry < ApplicationRecord
     end
     entry
   end
+
+  def self.delete_project_entry(project)
+    if project.nil? || project.id.nil? || !(project.id.is_a?(String) ||
+       project.id.is_a?(Integer))
+      return nil
+    end
+
+    sql = [
+      'class_name=? and lower(key)=? and lower(scope)=?',
+      'Project',
+      project.id,
+      project.domain_id
+    ]
+
+    entry = where(sql).first
+    entry.delete if entry
+  end
 end
