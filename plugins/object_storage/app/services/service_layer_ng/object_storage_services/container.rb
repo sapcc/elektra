@@ -113,8 +113,7 @@ module ServiceLayerNg
 
         # update metadata
         # stringify keys and values
-        header_attrs.deep_merge!(header_attrs) { |_, _, v| v.to_s }
-        header_attrs.stringify_keys!
+        header_attrs = stringify_header_values(header_attrs)
 
         elektron_object_storage.post(container_name, headers: header_attrs)
         # return nil because nothing usable is returned from the api

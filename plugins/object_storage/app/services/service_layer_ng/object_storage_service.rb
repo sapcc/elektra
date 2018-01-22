@@ -65,13 +65,18 @@ module ServiceLayerNg
       header_hash
     end
 
-    def build_custom_request_header(header_attrs)
-      # stringify keys and values
-      # https://stackoverflow.com/questions/34595141/process-nested-hash-to-convert-all-values-to-strings
+    # def build_custom_request_header(header_attrs)
+    #   # stringify keys and values
+    #   # https://stackoverflow.com/questions/34595141/process-nested-hash-to-convert-all-values-to-strings
+    #   header_attrs.deep_merge!(header_attrs) { |_, _, v| v.to_s }
+    #   header_attrs.stringify_keys!
+    #   # create custom header
+    #   Misty::HTTP::Header.new(header_attrs)
+    # end
+
+    def stringify_header_values(header_attrs)
       header_attrs.deep_merge!(header_attrs) { |_, _, v| v.to_s }
       header_attrs.stringify_keys!
-      # create custom header
-      Misty::HTTP::Header.new(header_attrs)
     end
 
     # remove duplicate slashes that might have been created by naive path
