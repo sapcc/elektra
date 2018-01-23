@@ -44,7 +44,7 @@ module Identity
       return id if domain_id.blank? || name.blank?
 
       friendly_id_entry = FriendlyIdEntry
-                          .find_or_create_entry('Project', domain_id, id, name)
+                          .find_or_create_entry('Project', domain_id, id, attributes['name'])
       friendly_id_entry.slug
     end
 

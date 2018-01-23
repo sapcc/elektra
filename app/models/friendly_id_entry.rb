@@ -74,7 +74,7 @@ class FriendlyIdEntry < ApplicationRecord
     entry = where(sql).first
 
     if entry && entry.name != project.name
-      entry.name = project.name
+      entry.name = project.attributes['name']
       entry.slug = nil
       entry.save
     end

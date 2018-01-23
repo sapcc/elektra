@@ -8,7 +8,7 @@ module Identity
       return id if name.blank?
 
       friendly_id_entry = FriendlyIdEntry
-                          .find_or_create_entry('Domain', nil, id, name)
+                          .find_or_create_entry('Domain', nil, id, attributes['name'])
       friendly_id_entry.slug
     end
   end

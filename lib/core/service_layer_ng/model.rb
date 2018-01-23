@@ -51,7 +51,7 @@ module Core
         elsif arguments.count.positive?
           write(attribute_name, arguments.first)
         else
-          read(attribute_name)
+          sanitize(read(attribute_name))
         end
       end
 
@@ -113,8 +113,7 @@ module Core
         new_id = (@attributes.delete('id') || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
         @id = new_id if @id.nil? || (@id.is_a?(String) && @id.empty?)
-
-        @attributes.update(@attributes) { |key, value| sanitize(value) }
+        @attributes
       end
 
       def sanitize(value)
@@ -180,7 +179,7 @@ module Core
       end
 
       def write(attribute_name, value)
-        @attributes[attribute_name.to_s] = sanitize(value)
+        @attributes[attribute_name.to_s] = value
       end
 
       def read(attribute_name)
