@@ -25,7 +25,7 @@ RSpec.describe Dashboard::RescopingService do
 
     context 'entry does not exists' do
       before :each do
-        domain = double('domain', id: '12-34', name: 'test_domain')
+        domain = double('domain', id: '12-34', name: 'test_domain', attributes: {'name' => 'test_domain'})
         auth_domains = double('auth_domains')
         allow(auth_domains).to receive(:find).and_return(domain)
         identity = double('identity', auth_domains: auth_domains)
