@@ -31,6 +31,10 @@ module ObjectStorage
       end
     end
 
+    def after_create
+      id ||= read('name')
+    end
+
     def web_file_listing?
       read(:web_file_listing)
     end
