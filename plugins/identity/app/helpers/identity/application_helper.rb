@@ -5,7 +5,7 @@ module Identity
     def project_tree(nodes, result=[])
       nodes = [nodes] unless nodes.is_a?(Array)
       nodes.collect do |node|
-        attrs = {"text" => node.name}
+        attrs = {"text" => node.name.try(:html_safe)}
         attrs["tags"] = [node.children.length] if node.children.length>0
         attrs["href"] = plugin('identity').project_path(project_id: node.friendly_id) unless node.root?
         attrs["nodes"] = project_tree(node.children) if node.children.length>0
@@ -38,7 +38,7 @@ module Identity
               end
 
               # concat link_to(name, plugin('identity').project_path(project_id: node.friendly_id), tooltip_options)
-              concat link_to(name, main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: node.friendly_id), tooltip_options)
+              concat link_to(name.try(:html_safe), main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: node.friendly_id), tooltip_options)
             end
 
             if has_children
