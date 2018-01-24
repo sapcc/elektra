@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 module Loadbalancing
-  class Loadbalancer < Core::ServiceLayer::Model
-    validates :vip_subnet_id, presence: true
+  # represents openstack lb
+  class Loadbalancer < Core::ServiceLayerNg::Model
+    validates :vip_subnet_id, presence: true, if: -> { id.nil? }
 
     def in_transition?
       return false
@@ -21,8 +24,29 @@ module Loadbalancing
     end
 
     def delete?
-      return (self.listeners.blank?  && self.pools.blank?)
+      listeners.blank? && pools.blank?
     end
 
+    def attributes_for_create
+      {
+        'vip_subnet_id'   => read('vip_subnet_id'),
+        'name'            => read('name'),
+        'description'     => read('description'),
+        'vip_address'     => read('vip_address'),
+        'provider'        => read('provider'),
+        'flavor'          => read('flavor'),
+        'admin_state_up'  => read('admin_state_up'),
+        'tenant_id'       => read('tenant_id'),
+        'project_id'      => read('project_id')
+      }.delete_if { |_k, v| v.blank? }
+    end
+
+    def attributes_for_update
+      {
+        'name'            => read('name'),
+        'description'     => read('description'),
+        'admin_state_up'  => read('admin_state_up')
+      }.delete_if { |_k, v| v.blank? }
+    end
   end
 end

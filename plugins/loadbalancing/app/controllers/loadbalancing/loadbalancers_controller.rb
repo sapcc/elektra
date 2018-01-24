@@ -6,7 +6,9 @@ module Loadbalancing
     authorization_required except: [:new_floatingip, :attach_floatingip, :detach_floatingip, :update_item, :get_item]
 
     def index
-      @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
+      @loadbalancers = services_ng.loadbalancing.loadbalancers(
+        tenant_id: @scoped_project_id
+      )
       @fips = services_ng.networking.project_floating_ips(@scoped_project_id)
 
       @subnets = {}
@@ -16,114 +18,134 @@ module Loadbalancing
           break if lb.floating_ip
         end
         unless @subnets[lb.vip_subnet_id]
-          @subnets[lb.vip_subnet_id] = services_ng.networking.subnets(id: lb.vip_subnet_id).first
+          @subnets[lb.vip_subnet_id] = services_ng.networking.subnets(
+            id: lb.vip_subnet_id
+          ).first
         end
         lb.subnet = @subnets[lb.vip_subnet_id]
       end
 
       @quota_data = []
-      if current_user.is_allowed?("access_to_project")
-        @quota_data = services_ng.resource_management.quota_data(current_user.domain_id || current_user.project_domain_id,
-                                                                 current_user.project_id,[
-                                                                  {service_type: :network, resource_name: :loadbalancers, usage: @loadbalancers.length},
-                                                              ])
-      end
+
+      return unless current_user.is_allowed?('access_to_project')
+      @quota_data = services_ng.resource_management.quota_data(
+        current_user.domain_id || current_user.project_domain_id,
+        current_user.project_id,
+        [
+          {
+            service_type: :network,
+            resource_name: :loadbalancers,
+            usage: @loadbalancers.length
+          }
+        ]
+      )
     end
 
     def show
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
-      statuses = services.loadbalancing.loadbalancer_statuses(params[:id])
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
+      statuses = services_ng.loadbalancing.loadbalancer_statuses(params[:id])
       @statuses = statuses.state
-      @hosting_agent_name = nil
-      begin
-        hosting_agent = services.loadbalancing.get_loadbalancer_hosting_agent(params[:id])
-        @hosting_agent_name = hosting_agent.host if hosting_agent
-      rescue Exception
-      end
+
+      hosting_agent = services_ng.loadbalancing.get_loadbalancer_hosting_agent(
+        params[:id]
+      )
+
+      @hosting_agent_name = hosting_agent ? hosting_agent.host : nil
     end
 
     # Get statuses object for one loadbalancer
     def update_status
-      begin
-        @states = services.loadbalancing.loadbalancer_statuses(params[:id])
-      rescue ::Core::ServiceLayer::Errors::ApiError
-
-      end
+      @states = services_ng.loadbalancing.loadbalancer_statuses(params[:id])
     end
 
     # get statuses for all loadbalancers in project (for index)
     def update_all_status
-      begin
-        @loadbalancers = services.loadbalancing.loadbalancers(tenant_id: @scoped_project_id)
-        @states = []
-        @loadbalancers.each do |lb|
-          begin
-            @states << services.loadbalancing.loadbalancer_statuses(lb.id)
-          rescue ::Core::ServiceLayer::Errors::ApiError
-          end
-        end
-        @states
+      @loadbalancers = services_ng.loadbalancing.loadbalancers(
+        tenant_id: @scoped_project_id
+      )
+
+      @states = @loadbalancers.each_with_object([]) do |lb, states|
+        status = services_ng.loadbalancing.loadbalancer_statuses(lb.id)
+        states << status if status
       end
     end
 
     def new
-      @loadbalancer = services.loadbalancing.new_loadbalancer
-      @private_networks = services_ng.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services_ng.networking.available?
+      @loadbalancer = services_ng.loadbalancing.new_loadbalancer
+      return unless services_ng.networking.available?
+
+      @private_networks = services_ng.networking.project_networks(
+        @scoped_project_id
+      ).delete_if { |n| n.attributes['router:external'] == true }
     end
 
     def create
-      @loadbalancer = services.loadbalancing.new_loadbalancer()
-      @loadbalancer.attributes = loadbalancer_params.delete_if { |key, value| value.blank? }
+      @loadbalancer = services_ng.loadbalancing.new_loadbalancer(
+        loadbalancer_params
+      )
 
       if @loadbalancer.save
-        audit_logger.info(current_user, "has created", @loadbalancer)
+        audit_logger.info(current_user, 'has created', @loadbalancer)
         render template: 'loadbalancing/loadbalancers/create.js'
-        #redirect_to loadbalancers_path, notice: 'Load Balancer successfully created.'
+        # redirect_to loadbalancers_path, notice: 'Load Balancer successfully created.'
       else
-        @private_networks = services_ng.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services_ng.networking.available?
+        if services_ng.networking.available?
+          @private_networks = services_ng.networking.project_networks(
+            @scoped_project_id
+          ).delete_if { |n| n.attributes['router:external'] == true }
+        end
         render :new
       end
 
-      @attributes    end
+      @attributes
+    end
 
     def edit
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
-      @private_networks = services_ng.networking.project_networks(@scoped_project_id).delete_if { |n| n.attributes["router:external"]==true } if services_ng.networking.available?
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
+      return unless services_ng.networking.available?
+      @private_networks = services_ng.networking.project_networks(
+        @scoped_project_id
+      ).delete_if { |n| n.attributes['router:external'] == true }
     end
 
     def update
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer = services_ng.loadbalancing.new_loadbalancer
+      @loadbalancer.id = params[:id]
       @loadbalancer.name = loadbalancer_params[:name]
       @loadbalancer.description = loadbalancer_params[:description]
+
       if @loadbalancer.save
-        audit_logger.info(current_user, "has updated", @loadbalancer)
-        redirect_to loadbalancers_path(), notice: 'Load Balancer was successfully updated.'
+        audit_logger.info(current_user, 'has updated', @loadbalancer)
+        redirect_to loadbalancers_path, notice: 'Load Balancer was ' \
+                                                'successfully updated.'
       else
         render :edit
       end
     end
 
     def refresh_state
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
       @loadbalancer.save
       render template: 'loadbalancing/loadbalancers/update_item.js'
     end
 
     def destroy
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer = services_ng.loadbalancing.new_loadbalancer
+      @loadbalancer.id = params[:id]
+
       if @loadbalancer.destroy
-        @loadbalancer.provisioning_status = "PENDING_DELETE"
-        audit_logger.info(current_user, "has deleted", @loadbalancer)
-        flash.now[:error] = "Load Balancer will be deleted."
+        @loadbalancer.provisioning_status = 'PENDING_DELETE'
+        audit_logger.info(current_user, 'has deleted', @loadbalancer)
+        flash.now[:error] = 'Load Balancer will be deleted.'
         render template: 'loadbalancing/loadbalancers/destroy_item.js'
       else
-        flash.now[:error] = "Load Balancer deletion failed."
+        flash.now[:error] = 'Load Balancer deletion failed.'
         redirect_to loadbalancers_path
       end
     end
 
     def new_floatingip
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
       collect_available_ips
       @floating_ip = Networking::FloatingIp.new(nil)
     end
@@ -131,7 +153,7 @@ module Loadbalancing
     def attach_floatingip
       enforce_permissions("loadbalancing:loadbalancer_assign_ip")
       # get loadbalancer
-      @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
       vip_port_id = @loadbalancer.vip_port_id
 
       # update floating ip with the new assigned interface ip
@@ -140,7 +162,10 @@ module Loadbalancing
       @floating_ip.port_id = vip_port_id
 
       if @floating_ip.save
-        audit_logger.info(current_user, "has attached", @floating_ip, "to loadbalancer", params[:id])
+        audit_logger.info(
+          current_user, 'has attached', @floating_ip,
+          'to loadbalancer', params[:id]
+        )
 
         respond_to do |format|
           format.html { redirect_to loadbalancers_url }
@@ -155,9 +180,11 @@ module Loadbalancing
     end
 
     def detach_floatingip
-      enforce_permissions("loadbalancing:loadbalancer_assign_ip")
+      enforce_permissions('loadbalancing:loadbalancer_assign_ip')
       begin
-        @floating_ip = services_ng.networking.detach_floatingip(params[:floating_ip_id])
+        @floating_ip = services_ng.networking.detach_floatingip(
+          params[:floating_ip_id]
+        )
       rescue => e
         flash.now[:error] = "Could not detach Floating IP. Error: #{e.message}"
       end
@@ -168,45 +195,40 @@ module Loadbalancing
           redirect_to loadbalancers_url
         }
         format.js {
-          if @floating_ip and @floating_ip.port_id.nil?
-            @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
+          if @floating_ip && @floating_ip.port_id.nil?
+            @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
             @loadbalancer.floating_ip = nil
           end
         }
       end
     end
 
-    # update instance table row (ajax call)
+    # update lb table row (ajax call)
     def update_item
-      begin
-        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
-        @fips = services_ng.networking.project_floating_ips(@scoped_project_id)
-        @fips.each do |fip|
-          @loadbalancer.floating_ip = @loadbalancer.vip_port_id == fip.port_id ? fip : nil
-          break if @loadbalancer.floating_ip
-        end
-
-        respond_to do |format|
-          format.js do
-            @loadbalancer if @loadbalancer
-          end
-        end
-      rescue => e
-        return nil
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
+      @fips = services_ng.networking.project_floating_ips(@scoped_project_id)
+      @fips.each do |fip|
+        @loadbalancer.floating_ip = @loadbalancer.vip_port_id == fip.port_id ? fip : nil
+        break if @loadbalancer.floating_ip
       end
+
+      respond_to do |format|
+        format.js do
+          @loadbalancer if @loadbalancer
+        end
+      end
+    rescue => _e
+      return nil
     end
 
     # used for polling state information
     def get_item
-      begin
-        @loadbalancer = services.loadbalancing.find_loadbalancer(params[:id])
-        #puts ">>>>>>>>>>>>>>>>>>>>>>>>>>   #{ @loadbalancer.provisioning_status}   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-        render json: {provisioning_status: @loadbalancer.provisioning_status}
-      rescue => e
-        render json: {provisioning_status: 'UNKNOWN'}
-      end
+      @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:id])
+      #puts ">>>>>>>>>>>>>>>>>>>>>>>>>>   #{ @loadbalancer.provisioning_status}   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+      render json: { provisioning_status: @loadbalancer.provisioning_status }
+    rescue => _e
+      render json: { provisioning_status: 'UNKNOWN' }
     end
-
 
     private
 
@@ -215,32 +237,34 @@ module Loadbalancing
       networks = {}
       subnets = {}
       services_ng.networking.project_floating_ips(@scoped_project_id).each do |fip|
-        if fip.fixed_ip_address.nil?
-          networks[fip.floating_network_id] = services_ng.networking.find_network(fip.floating_network_id) unless networks[fip.floating_network_id]
-          net = networks[fip.floating_network_id]
-          unless net.subnets.blank?
-            net.subnets.each do |subid|
-              subnets[subid] = services_ng.networking.find_subnet(subid) unless subnets[subid]
-              sub = subnets[subid]
-              cidr = NetAddr::CIDR.create(sub.cidr)
-              if cidr.contains?(fip.floating_ip_address)
-                @grouped_fips[sub.name] ||= []
-                @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
-                break
-              end
+        next unless fip.fixed_ip_address.nil?
+
+        unless networks[fip.floating_network_id]
+          networks[fip.floating_network_id] = services_ng.networking.find_network(fip.floating_network_id)
+        end
+        net = networks[fip.floating_network_id]
+        if !net.subnets.blank?
+          net.subnets.each do |subid|
+            unless subnets[subid]
+              subnets[subid] = services_ng.networking.find_subnet(subid)
             end
-          else
-            @grouped_fips[net.name] ||= []
-            @grouped_fips[net.name] << [fip.floating_ip_address, fip.id]
+            sub = subnets[subid]
+            cidr = NetAddr::CIDR.create(sub.cidr)
+
+            next unless cidr.contains?(fip.floating_ip_address)
+            @grouped_fips[sub.name] ||= []
+            @grouped_fips[sub.name] << [fip.floating_ip_address, fip.id]
+            break
           end
+        else
+          @grouped_fips[net.name] ||= []
+          @grouped_fips[net.name] << [fip.floating_ip_address, fip.id]
         end
       end
-      return
     end
 
     def loadbalancer_params
-      return params[:loadbalancer].merge(tenant_id: @scoped_project_id)
+      params[:loadbalancer].merge(tenant_id: @scoped_project_id)
     end
-
   end
 end

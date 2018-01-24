@@ -22,7 +22,7 @@ module Core
         @service = service
         # get just the name of class without namespaces
         @class_name = self.class.name.split('::').last.underscore
-        self.attributes = params
+        self.attributes = params || {}
         # create errors object
         @errors = ActiveModel::Errors.new(self)
         # execute after callback
@@ -87,7 +87,7 @@ module Core
 
       def update(attributes = {})
         return false unless attributes
-        attributes.each do |key, value|
+        action_controller_params_to_hash(attributes.clone).each do |key, value|
           send("#{key}=", value)
         end
         save
@@ -108,7 +108,8 @@ module Core
       end
 
       def attributes=(new_attributes)
-        @attributes = (new_attributes.is_a?(ActionController::Parameters) ? new_attributes.to_unsafe_hash : (new_attributes.blank? ? {} : new_attributes.with_indifferent_access)).clone
+        new_attributes = new_attributes.blank? ? {} : new_attributes.clone
+        @attributes = action_controller_params_to_hash(new_attributes)
         # delete id from attributes!
         new_id = (@attributes.delete('id') || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
@@ -120,6 +121,19 @@ module Core
         return value unless value.is_a?(String)
         @full_sanitizer ||= Rails::Html::FullSanitizer.new
         @full_sanitizer.sanitize(value)
+      end
+
+      def action_controller_params_to_hash(params)
+        if params.is_a?(ActionController::Parameters)
+          params = params.to_unsafe_hash
+        end
+        if params.is_a?(Hash)
+          params = params.with_indifferent_access
+          params.each do |k, v|
+            params[k] = action_controller_params_to_hash(v)
+          end
+        end
+        params
       end
 
       def escape_attributes!

@@ -1,5 +1,4 @@
-require "loadbalancing/engine"
-require_relative "loadbalancing/driver"
+require 'loadbalancing/engine'
 
 module Loadbalancing
 end

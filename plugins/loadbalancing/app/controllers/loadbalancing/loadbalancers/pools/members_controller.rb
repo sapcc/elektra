@@ -1,26 +1,28 @@
+# frozen_string_literal: true
+
 module Loadbalancing
   module Loadbalancers
     module Pools
       class MembersController < ApplicationController
-
-        before_action :load_objects, only: [:new, :destroy, :update_item, :create]
+        before_action :load_objects, only: %i[new destroy update_item create]
 
         # set policy context
         authorization_context 'loadbalancing'
-        # enforce permission checks. This will automatically investigate the rule name.
-        authorization_required except: [:add, :add_external, :update_item]
+        # enforce permission checks. This will automatically investigate
+        # the rule name.
+        authorization_required except: %i[add add_external update_item]
 
         def new
           load_members
         end
 
         def add
-          enforce_permissions("loadbalancing:member_create")
+          enforce_permissions('loadbalancing:member_create')
 
           ips = params['ips'] || []
           @new_members = []
           ips.each do |ip|
-            member = services.loadbalancing.new_pool_member(id: SecureRandom.hex)
+            member = services_ng.loadbalancing.new_pool_member(id: SecureRandom.hex)
             member.attributes = {pool_id: params[:pool_id], address: ip, weight: 1}
             @new_members << member
           end
@@ -28,11 +30,11 @@ module Loadbalancing
         end
 
         def add_external
-          enforce_permissions("loadbalancing:member_create")
+          enforce_permissions('loadbalancing:member_create')
 
           @new_members = []
-          member = services.loadbalancing.new_pool_member(id: SecureRandom.hex)
-          member.attributes = {pool_id: params[:pool_id], address: nil, weight: 1}
+          member = services_ng.loadbalancing.new_pool_member(id: SecureRandom.hex)
+          member.attributes = { pool_id: params[:pool_id], address: nil, weight: 1 }
           @new_members << member
           render 'loadbalancing/loadbalancers/pools/members/add_members.js'
         end
@@ -46,11 +48,11 @@ module Loadbalancing
           success = true
           new_servers.each do |new_member|
             begin
-              member = services.loadbalancing.new_pool_member
+              member = services_ng.loadbalancing.new_pool_member
               member.attributes = {pool_id: params[:pool_id], address: new_member['address'], protocol_port: new_member['protocol_port'],
                                    weight: new_member['weight'], subnet_id: vip_subnet_id}
 
-              msuccess = services.loadbalancing.execute(@loadbalancer.id) { member.save }
+              msuccess = services_ng.loadbalancing.execute(@loadbalancer.id) { member.save }
               unless msuccess
                 success = false
                 member.id = SecureRandom.hex
@@ -76,8 +78,8 @@ module Loadbalancing
         def destroy
           pool_id = params[:pool_id]
           member_id = params[:id]
-          @member = services.loadbalancing.find_pool_member(pool_id, member_id)
-          services.loadbalancing.execute(@loadbalancer.id) { services.loadbalancing.delete_pool_member(pool_id, member_id) }
+          @member = services_ng.loadbalancing.find_pool_member(pool_id, member_id)
+          services_ng.loadbalancing.execute(@loadbalancer.id) { services_ng.loadbalancing.delete_pool_member(pool_id, member_id) }
           audit_logger.info(current_user, "has deleted", @member)
           render template: 'loadbalancing/loadbalancers/pools/members/destroy_item.js'
         end
@@ -85,7 +87,7 @@ module Loadbalancing
         # update instance table row (ajax call)
         def update_item
           begin
-            @member = services.loadbalancing.find_pool_member(@pool.id, member_id)
+            @member = services_ng.loadbalancing.find_pool_member(@pool.id, member_id)
             @member.in_transition = true
             respond_to do |format|
               format.js do
@@ -105,12 +107,12 @@ module Loadbalancing
         end
 
         def load_objects
-          @pool = services.loadbalancing.find_pool(params[:pool_id])
-          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+          @pool = services_ng.loadbalancing.find_pool(params[:pool_id])
+          @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
         end
 
         def load_members
-          @members = services.loadbalancing.pool_members(@pool.id) if @pool
+          @members = services_ng.loadbalancing.pool_members(@pool.id) if @pool
           @ips = []
           @servers = services_ng.compute.servers
           @servers.each do |server|
