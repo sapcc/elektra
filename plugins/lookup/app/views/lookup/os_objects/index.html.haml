@@ -11,12 +11,36 @@
           as: :select,
           collection: @types,
           include_blank: false,
-          label: 'OpenStack Object'
-        = f.input :query, required: true, label: 'Object Identifier'
+          label: 'OpenStack Object',
+          selected: params[:os_type]
+
+        = f.input :query, required: true, label: 'Object Identifier', input_html: {value: params[:query]}
         = f.hidden_field :lookup_method, value: 'show'
 
-      %div
+      %div.u-clearfix
         = button_tag 'Look Up', { class: 'btn btn-primary pull-right', data: { disable_with: 'Please wait...' } }
+
+
+    %section
+      - if @friendly_id
+
+        %h4 Friendly ID Info
+        %table.table
+          %tr
+            %th Slug
+            %td= @friendly_id.slug
+
+          %tr
+            %th Project ID:
+            %td= @friendly_id.key
+
+          %tr
+            %th Project Name:
+            %td= @friendly_id.name
+
+      - elsif params[:os_type] == "friendly_id"
+        %p Sorry, couldn't find that friendly ID
+
 
   .col-md-3
     = render partial: 'good_to_know'

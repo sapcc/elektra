@@ -4,3 +4,4 @@ en:
   network_private: 'Network (Private)'
   network_external: 'Network (External)'
   project: Project
+  friendly_id: Friendly ID

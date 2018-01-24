@@ -15,17 +15,27 @@ module Lookup
       allowed_objects << 'network_external' if current_user.is_allowed?('lookup:os_object_show_network_external')
       allowed_objects << 'dns_record'       if current_user.is_allowed?('lookup:os_object_show_dns_record')
       allowed_objects << 'project'          if current_user.is_allowed?('lookup:os_object_show_project')
+      allowed_objects << 'friendly_id'
       allowed_objects.each do |type|
         @types[t(type)] = type
       end
       @os_object = Lookup::OsObject.new(nil)
+
+      if params['os_type'] == 'friendly_id' && !params['query'].blank?
+        @friendly_id = FriendlyIdEntry.where(slug: params['query']).first
+      end
     end
 
     def show_object
       os_object = params['os_object']
       @query = os_object['query']
-      lookup_method = os_object['lookup_method']
-      send("#{lookup_method}_#{os_object['os_type']}")
+
+      if os_object['os_type'] == 'friendly_id'
+        redirect_to action: :index, os_type: 'friendly_id', query: @query
+      else
+        lookup_method = os_object['lookup_method']
+        send("#{lookup_method}_#{os_object['os_type']}")
+      end
     end
 
     def show_instance
