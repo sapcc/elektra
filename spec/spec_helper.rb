@@ -98,10 +98,6 @@ RSpec.configure do |config|
                                 .first['region_id'])
     allow(Core).to receive(:locate_region).and_return(region)
 
-    # stub misty client
-    misty = double('misty').as_null_object
-    allow(::Misty::Cloud).to receive(:new).and_return(misty)
-
     # stub service user and cloud admin
     service_user = double('service_user').as_null_object
     cloud_admin = double('cloud_admin').as_null_object

@@ -55,7 +55,7 @@ module ServiceLayerNg
 
     def public_url(container_name, object_path = nil)
       return nil if container_name.nil?
-      url = "#{api.object_storage.uri}/#{escape(container_name)}"
+      url = "#{elektron_object_storage.endpoint_url}/#{escape(container_name)}"
       if object_path.nil?
         # path to container listing needs a trailing slash to work in a browser
         url << '/'

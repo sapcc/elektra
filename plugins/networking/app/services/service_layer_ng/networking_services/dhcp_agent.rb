@@ -38,7 +38,6 @@ module ServiceLayerNg
           elektron_networking.post("agents/#{agent_id}/dhcp-networks") do
             create_attributes
           end
-          # api.networking.create_agent_dhcp_network(agent_id, create_attributes)
         rescue Elektron::Errors::ApiResponse => e
           # neutron returns invalid json response 'null'
           raise e unless e.message.match?("unexpected token at 'null'")

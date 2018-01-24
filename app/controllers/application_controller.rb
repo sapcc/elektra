@@ -28,8 +28,6 @@ class ApplicationController < ActionController::Base
   # catch all api errors and render exception page
 
   rescue_from 'Elektron::Errors::Request',
-              'Core::Api::Error',
-              'Core::Api::ResponseError',
               'Excon::Error',
               'Fog::OpenStack::Errors::ServiceError' do |exception|
 

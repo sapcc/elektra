@@ -17,7 +17,7 @@ module ServicesNg
     token_expires_at = current_user.token_expires_at if current_user
     return @services_ng if @services_ng && @token_expires_at == token_expires_at
     api_client = begin
-                   Core::Api::ClientManager.user_api_client(current_user)
+                   Core::ApiClientManager.user_api_client(current_user)
                  rescue => _e
                    nil
                  end
@@ -37,13 +37,13 @@ module ServicesNg
 
     @service_user_loaded = true
     @service_user ||= Core::ServiceLayerNg::ServicesManager.new(
-      Core::Api::ClientManager.service_user_api_client(scope_domain)
+      Core::ApiClientManager.service_user_api_client(scope_domain)
     )
   end
 
   def cloud_admin
     @cloud_admin ||= Core::ServiceLayerNg::ServicesManager.new(
-      Core::Api::ClientManager.cloud_admin_api_client
+      Core::ApiClientManager.cloud_admin_api_client
     )
   end
 end

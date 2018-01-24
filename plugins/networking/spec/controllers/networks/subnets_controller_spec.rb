@@ -167,7 +167,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
       before :each do
         response = OpenStruct.new(code: 404)
         allow_any_instance_of(ServiceLayerNg::NetworkingService)
-          .to receive(:delete_subnet).and_raise(Core::Api::Error, response)
+          .to receive(:delete_subnet).and_raise(Elektron::Errors::ApiResponse, response)
       end
 
       it 'returns 400' do
@@ -195,9 +195,9 @@ describe Networking::Networks::SubnetsController, type: :controller do
 
     context 'api returns an error' do
       before :each do
-        response = OpenStruct.new(code: 404)
+        error_response = OpenStruct.new(code: 404, body: { 'message' => 'Error'})
         allow_any_instance_of(ServiceLayerNg::NetworkingService)
-          .to receive(:delete_subnet).and_raise(Core::Api::Error, response)
+          .to receive(:delete_subnet).and_raise(Elektron::Errors::ApiResponse.new(error_response))
       end
 
       it 'renders an json with error' do

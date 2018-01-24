@@ -261,7 +261,7 @@ module Core
       def rescue_api_errors
         yield
         true
-      rescue ::Core::Api::Error, ::Elektron::Errors::ApiResponse => e
+      rescue ::Elektron::Errors::ApiResponse => e
         e.messages.each { |m| errors.add('api', m) }
         false
       end

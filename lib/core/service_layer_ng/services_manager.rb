@@ -36,7 +36,7 @@ module Core
           else
             @service_classes[service_name]
           end
-        rescue
+        rescue StandardError
           nil
         end
 
@@ -62,7 +62,7 @@ module Core
 
       def available?(service_name, action_name = nil)
         send(service_name.to_sym).send(:available?, action_name.try(:to_sym))
-      rescue
+      rescue StandardError
         false
       end
 

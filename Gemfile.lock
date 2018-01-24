@@ -36,14 +36,6 @@ GIT
     lyra-client (0.1.1)
 
 GIT
-  remote: https://github.com/sapcc/misty.git
-  revision: b26e3fe45078e018aef927df695c81c68a4203ca
-  branch: master
-  specs:
-    misty (1.2.0)
-      json (>= 1.8.3, < 3)
-
-GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
   revision: 5621dd8dfae6155ccbc22ae2f934bdd780a1be56
   specs:
@@ -603,7 +595,6 @@ DEPENDENCIES
   lyra-client!
   masterdata_cockpit!
   metrics!
-  misty!
   monsoon-openstack-auth!
   net-ssh
   netaddr
