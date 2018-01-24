@@ -48,7 +48,7 @@ module ServiceLayerNg
         body = elektron_object_storage.get(
           "#{container_name}/#{object_path}"
         ).body
-        # default behavior from misty -> converts returned json to an object
+        # default behavior from elektron -> converts returned json to an object
         # normaly thats fine but in some cases we want to download a json file
         # from the object storage if thats the case convert it back to json
         return body if body.is_a?(String)

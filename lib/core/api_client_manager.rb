@@ -71,7 +71,6 @@ module Core
       }
       begin
         ::Elektron.client(auth_config, default_client_params)
-        # Misty::Cloud.new(misty_params)
       rescue ::Elektron::Errors::ApiResponse => _e
         unless auth_config[:scope_domain_id]
           auth_config.delete(:scope_domain_name)

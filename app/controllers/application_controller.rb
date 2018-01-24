@@ -11,9 +11,6 @@ class ApplicationController < ActionController::Base
   # use: services.SERVICE_NAME.METHOD_NAME
   # (e.g. services_ng.identity.auth_projects)
   include ServicesNg
-  # TODO: should be removed after switch to misty
-  include Services
-
   include CurrentUserWrapper
   include Core::Paginatable
 
