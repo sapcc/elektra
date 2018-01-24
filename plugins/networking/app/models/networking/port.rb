@@ -2,7 +2,7 @@
 
 module Networking
   # Implements Openstack Port
-  class Port < Core::ServiceLayerNg::Model
+  class Port < Core::ServiceLayer::Model
     DEVICE_OWNER_INSTANCE = 'instance'
     DEVICE_OWNER_LOADBALANCER = 'loadbalancer'
 

@@ -2,6 +2,6 @@
 
 module DnsService
   # This class represents the Openstack Designate Pool
-  class Pool < Core::ServiceLayerNg::Model
+  class Pool < Core::ServiceLayer::Model
   end
 end

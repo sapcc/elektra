@@ -44,7 +44,7 @@ module Identity
     end
 
     def view
-      @project = services_ng.identity.find_project(
+      @project = services.identity.find_project(
         @project_id, subtree_as_ids: true, parents_as_ids: true
       )
     end
@@ -54,7 +54,7 @@ module Identity
     end
 
     def edit
-      @project = services_ng.identity.find_project(@project_id)
+      @project = services.identity.find_project(@project_id)
     end
 
     def update
@@ -163,7 +163,7 @@ module Identity
 
     ################### HELPER METHODS #########################
     def update_resource_management_wizard_status
-      if services_ng.resource_management.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
+      if services.resource_management.has_project_quotas?(@scoped_domain_id, @scoped_project_id)
         @project_profile.update_wizard_status('resource_management',ProjectProfile::STATUS_DONE)
       else
         # try to find a quota inquiry and get status of it
@@ -203,7 +203,7 @@ module Identity
       @project_masterda_is_complete = false
       @project_masterdata_missing_attributes = nil
       begin
-        project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
+        project_masterdata = services.masterdata_cockpit.get_project(@scoped_project_id)
         # @project_masterda_is_complete is used in plugins/identity/app/views/identity/projects/_wizard_steps.html.haml
         @project_masterda_is_complete =  project_masterdata.is_complete
       rescue
@@ -232,7 +232,7 @@ module Identity
 
     def update_networking_wizard_status
       if current_user.has_role?('admin') && !current_user.has_role?('network_admin')
-        network_admin_role = services_ng.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
+        network_admin_role = services.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
         # Hack: extend current_user context to add the new assigned role
         current_user.context['roles'] << { 'id' => network_admin_role.id, 'name' => network_admin_role.name }
       end

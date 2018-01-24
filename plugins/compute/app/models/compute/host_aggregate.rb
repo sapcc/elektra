@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module Compute
-  class HostAggregate < Core::ServiceLayerNg::Model
+  class HostAggregate < Core::ServiceLayer::Model
   end
 end

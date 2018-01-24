@@ -1,5 +1,5 @@
 module MasterdataCockpit
-  class ProjectInheritance < Core::ServiceLayerNg::Model
+  class ProjectInheritance < Core::ServiceLayer::Model
     # the following attributes ar known
     # "co_inheritable": true,
     # "cost_object": {

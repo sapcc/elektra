@@ -8,13 +8,13 @@ module SharedFilesystemStorage
       authorization_required
 
       def index
-        render json: services_ng.shared_filesystem_storage.share_rules(
+        render json: services.shared_filesystem_storage.share_rules(
           params[:share_id]
         )
       end
 
       def create
-        rule = services_ng.shared_filesystem_storage.new_share_rule(
+        rule = services.shared_filesystem_storage.new_share_rule(
           params[:share_id],
           rule_params
         )
@@ -28,7 +28,7 @@ module SharedFilesystemStorage
       end
 
       def destroy
-        rule = services_ng.shared_filesystem_storage.new_share_rule(
+        rule = services.shared_filesystem_storage.new_share_rule(
           params[:share_id]
         )
         rule.id = params[:id]

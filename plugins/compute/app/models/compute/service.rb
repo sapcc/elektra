@@ -2,7 +2,7 @@
 
 module Compute
   # Represents the Service 
-  class Service < Core::ServiceLayerNg::Model
+  class Service < Core::ServiceLayer::Model
     def name
       read('binary')
     end

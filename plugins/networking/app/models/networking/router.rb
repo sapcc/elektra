@@ -2,7 +2,7 @@
 
 module Networking
   # represents the Openstack Router
-  class Router < Core::ServiceLayerNg::Model
+  class Router < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Please provide a name' }
 
     attr_accessor :internal_subnets

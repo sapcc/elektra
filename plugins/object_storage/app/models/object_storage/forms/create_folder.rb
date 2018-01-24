@@ -1,6 +1,6 @@
 module ObjectStorage
   module Forms
-    class CreateFolder < Core::ServiceLayerNg::Model
+    class CreateFolder < Core::ServiceLayer::Model
 
       def initialize(attributes={})
         super(nil, attributes) # no driver

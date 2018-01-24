@@ -1,6 +1,6 @@
 module ObjectStorage
   module Forms
-    class EditObjectPath < Core::ServiceLayerNg::Model
+    class EditObjectPath < Core::ServiceLayer::Model
 
       def initialize(attributes={})
         super(nil, attributes) # no driver

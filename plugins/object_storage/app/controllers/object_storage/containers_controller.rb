@@ -5,24 +5,24 @@ module ObjectStorage
     before_action :load_quota_data, only: [ :index, :show ]
 
     def index
-      @capabilities = services_ng.object_storage.list_capabilities
-      @containers   = services_ng.object_storage.containers
+      @capabilities = services.object_storage.list_capabilities
+      @containers   = services.object_storage.containers
     end
 
     def show
       # for the "Object versioning" feature, we need to offer a selection of container names,
       # but to avoid confusion, the archive container should be different from the current one
-      @other_container_names = services_ng.object_storage.containers.map(&:name).reject { |n| n == @container.name }
+      @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
     end
 
     def confirm_deletion
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
-      @empty = services_ng.object_storage.empty?(@container.name)
+      @empty = services.object_storage.empty?(@container.name)
     end
 
     def confirm_emptying
       @form = ObjectStorage::Forms::ConfirmContainerAction.new()
-      @empty = services_ng.object_storage.empty?(@container.name)
+      @empty = services.object_storage.empty?(@container.name)
     end
 
     def show_access_control
@@ -38,7 +38,7 @@ module ObjectStorage
     end
 
     def new
-      @container = services_ng.object_storage.new_container(name: "")
+      @container = services.object_storage.new_container(name: "")
     end
 
     def pre_empty
@@ -50,11 +50,11 @@ module ObjectStorage
     end
 
     def empty
-      services_ng.object_storage.empty(@container.name)
+      services.object_storage.empty(@container.name)
     end
 
     def create
-      @container = services_ng.object_storage.new_container(params.require(:container))
+      @container = services.object_storage.new_container(params.require(:container))
       unless @container.save
         render action: 'new'
         return
@@ -79,7 +79,7 @@ module ObjectStorage
       attrs[:web_file_listing] = attrs[:web_file_listing] == '1'
 
       unless @container.update_attributes(attrs)
-        @other_container_names = services_ng.object_storage.containers.map(&:name).reject { |n| n == @container.name }
+        @other_container_names = services.object_storage.containers.map(&:name).reject { |n| n == @container.name }
         render action: 'show' # "edit" view is covered by "show"
         return
       end
@@ -101,14 +101,14 @@ module ObjectStorage
     private
 
     def load_container
-      @container = services_ng.object_storage.container_metadata(params[:id])
+      @container = services.object_storage.container_metadata(params[:id])
       raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found" unless @container
     end
 
     def back_to_container_list
       respond_to do |format|
         format.js do
-          @containers = services_ng.object_storage.containers
+          @containers = services.object_storage.containers
           render action: 'reload_container_list'
         end
         format.html { redirect_to plugin('object_storage').containers_path }

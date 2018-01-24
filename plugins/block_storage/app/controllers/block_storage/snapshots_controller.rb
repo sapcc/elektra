@@ -11,12 +11,12 @@ module BlockStorage
     def index
       if @scoped_project_id
         @snapshots = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
-          services_ng.block_storage.snapshots(pagination_options)
+          services.block_storage.snapshots(pagination_options)
         end
 
         @quota_data = []
         if current_user.is_allowed?("access_to_project")
-          @quota_data = services_ng.resource_management.quota_data(
+          @quota_data = services.resource_management.quota_data(
             current_user.domain_id || current_user.project_domain_id,
             current_user.project_id,[
             {service_type: :volumev2, resource_name: :snapshots, usage: @snapshots.length},
@@ -65,7 +65,7 @@ module BlockStorage
     end
 
     def create_volume
-      @volume = services_ng.block_storage_.new_volume
+      @volume = services.block_storage_.new_volume
       @volume.name = 'vol-' + @snapshot.name
       @volume.description = @snapshot.description
       @volume.size = @snapshot.size
@@ -80,7 +80,7 @@ module BlockStorage
     def reset_status
       @snapshot.reset_status(params[:snapshot][:status])
       # reload snapshot
-      @snapshot = services_ng.block_storage.find_snapshot(params[:id])
+      @snapshot = services.block_storage.find_snapshot(params[:id])
       if @snapshot.status == params[:snapshot][:status]
         audit_logger.info(current_user, 'has reset', @snapshot)
         render template: 'block_storage/snapshots/reset_status.js'
@@ -92,7 +92,7 @@ module BlockStorage
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_snapshot
-      @snapshot = services_ng.block_storage.find_snapshot(params[:id])
+      @snapshot = services.block_storage.find_snapshot(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

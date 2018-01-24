@@ -26,13 +26,6 @@ RSpec.describe InstallNodeService do
         @instance_type = 'compute'
       end
 
-      it 'should raise an exception if instance not found' do
-        Object.const_set 'NotFound', Class.new(StandardError)
-        compute_service = double('compute_service')
-        allow(compute_service).to receive(:find_server){ raise Core::ServiceLayer::Errors::ApiError.new(NotFound.new('test')) }
-        expect { @service.process_request(@instance_id, @instance_type, '', compute_service, nil) }.to raise_error(InstallNodeParamError)
-      end
-
       it "should not raise an error if agent already exists on the instance" do
         instance = double('instance', id: @instance_id, name: 'instance_name', image_object: double('image', name: 'cuak_cuak', metadata: {}), addresses: {'first_ip' => [{'addr' => 'this_is_the_ip'}]}, metadata: double('metadata', dns_name: ''))
         compute_service = double('compute_service', find_server: instance)

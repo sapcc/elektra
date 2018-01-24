@@ -1,5 +1,5 @@
 module Identity
-  class User < Core::ServiceLayerNg::Model
+  class User < Core::ServiceLayer::Model
     validates :description, presence: true
 
     def full_name

@@ -2,7 +2,7 @@
 
 module KeyManager
   # barbican container
-  class Container < ::Core::ServiceLayerNg::Model
+  class Container < ::Core::ServiceLayer::Model
     module Type
       GENERIC = 'generic'
       CERTIFICATE = 'certificate'

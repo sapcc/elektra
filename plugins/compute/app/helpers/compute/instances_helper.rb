@@ -73,7 +73,7 @@ module Compute
     end
 
     def instance_ips(instance)
-      @project_floating_ips ||= services_ng.networking.floating_ips(
+      @project_floating_ips ||= services.networking.floating_ips(
         project_id: @scoped_project_id
       )
       instance.ip_maps(@project_floating_ips)

@@ -1,4 +1,4 @@
 module SharedFilesystemStorage
-  class ShareExportLocation < Core::ServiceLayerNg::Model
+  class ShareExportLocation < Core::ServiceLayer::Model
   end
 end

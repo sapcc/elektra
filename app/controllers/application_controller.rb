@@ -9,8 +9,8 @@ class ApplicationController < ActionController::Base
 
   # includes services method
   # use: services.SERVICE_NAME.METHOD_NAME
-  # (e.g. services_ng.identity.auth_projects)
-  include ServicesNg
+  # (e.g. services.identity.auth_projects)
+  include Services
   include CurrentUserWrapper
   include Core::Paginatable
 
@@ -24,10 +24,7 @@ class ApplicationController < ActionController::Base
 
   # catch all api errors and render exception page
 
-  rescue_from 'Elektron::Errors::Request',
-              'Excon::Error',
-              'Fog::OpenStack::Errors::ServiceError' do |exception|
-
+  rescue_from 'Elektron::Errors::Request' do |exception|
     options = {
       title: 'Backend Slowdown Detected',
       description: 'We are currently experiencing a higher latency in our ' \
@@ -36,11 +33,8 @@ class ApplicationController < ActionController::Base
       warning: true, sentry: false
     }
 
-    if exception.is_a?(Elektron::Errors::Request) &&
-       exception.message != 'Net::ReadTimeout'
-      # send to sentry if exception isn't a timeout error
-      options[:sentry] = true
-    end
+    # send to sentry if exception isn't a timeout error
+    options[:sentry] = true unless exception.message == 'Net::ReadTimeout'
 
     render_exception_page(exception, options)
   end

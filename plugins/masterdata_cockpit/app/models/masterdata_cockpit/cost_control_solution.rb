@@ -1,5 +1,5 @@
 module MasterdataCockpit
-  class CostControlSolution < Core::ServiceLayerNg::Model
+  class CostControlSolution < Core::ServiceLayer::Model
     # the following attributes ar known
     #"solution_name": "mySolution",
     #"cost_objects": [

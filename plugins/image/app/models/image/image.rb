@@ -1,5 +1,5 @@
 module Image
-  class Image < Core::ServiceLayerNg::Model
+  class Image < Core::ServiceLayer::Model
     def publish
       rescue_api_errors do
         self.attributes = service.publish_image(id)

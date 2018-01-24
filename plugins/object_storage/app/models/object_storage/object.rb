@@ -1,5 +1,5 @@
 module ObjectStorage
-  class Object < Core::ServiceLayerNg::Model
+  class Object < Core::ServiceLayer::Model
 
     # The following properties are known:
     #   - path

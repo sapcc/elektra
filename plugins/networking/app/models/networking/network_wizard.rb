@@ -3,6 +3,6 @@
 module Networking
   # This is not a Openstack Model.
   # It is used only for internal process.
-  class NetworkWizard < Core::ServiceLayerNg::Model
+  class NetworkWizard < Core::ServiceLayer::Model
   end
 end

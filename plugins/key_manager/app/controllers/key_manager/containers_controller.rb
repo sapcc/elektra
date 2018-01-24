@@ -11,7 +11,7 @@ module KeyManager
     end
 
     def show
-      @container = services_ng.key_manager.find_container(params[:id])
+      @container = services.key_manager.find_container(params[:id])
       # get the user name from the openstack id
       @user = service_user.identity.find_user(@container.creator_id).name
     end
@@ -19,7 +19,7 @@ module KeyManager
     def new; end
 
     def create
-      @container = services_ng.key_manager.new_container(container_params)
+      @container = services.key_manager.new_container(container_params)
       if @container.save
         redirect_to plugin('key_manager').containers_path
       else
@@ -29,7 +29,7 @@ module KeyManager
 
     def destroy
       # delete container
-      @container = services_ng.key_manager.new_container
+      @container = services.key_manager.new_container
       @container.id = params[:id]
 
       if @container.destroy
@@ -48,7 +48,7 @@ module KeyManager
       page = params[:page] || 1
       per_page = 10
       offset = (page.to_i - 1) * per_page
-      result = services_ng.key_manager.containers(
+      result = services.key_manager.containers(
         sort: 'created:desc', limit: per_page, offset: offset
       )
       Kaminari.paginate_array(
@@ -61,7 +61,7 @@ module KeyManager
       @selected_type = params.fetch('container', {}).fetch('type', nil) ||
                        params[:container_type] ||
                        ::KeyManager::Container::Type::GENERIC
-      @container = services_ng.key_manager.new_container
+      @container = services.key_manager.new_container
       @selected_secrets = {}
 
       # get all secrets
@@ -69,7 +69,7 @@ module KeyManager
       offset = 0
       limit = 100
       begin
-        secrets_chunk = services_ng.key_manager.secrets(
+        secrets_chunk = services.key_manager.secrets(
           sort: 'created:desc', offset: offset, limit: limit
         )
         @secrets += secrets_chunk[:items] unless secrets_chunk[:items].blank?

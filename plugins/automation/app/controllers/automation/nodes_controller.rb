@@ -36,7 +36,7 @@ module Automation
 
     def install
       begin
-        @compute_instances = services_ng.compute.servers
+        @compute_instances = services.compute.servers
       rescue => exception
         logger.error exception.message
         @compute_instances = []
@@ -50,7 +50,7 @@ module Automation
       @instance_os = params[:instance_os]
       @os_types = ::Automation::Node.os_types
 
-      result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services_ng.compute, services.automation)
+      result = InstallNodeService.new().process_request(@instance_id, @instance_type, @instance_os, services.compute, services.automation)
 
       @instance = result[:instance]
       @login_info = result[:log_info]

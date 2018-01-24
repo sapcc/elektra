@@ -1,5 +1,5 @@
 module ResourceManagement
-  class NewStyleResource < Core::ServiceLayerNg::Model
+  class NewStyleResource < Core::ServiceLayer::Model
     include ManualValidation
 
     validates_presence_of :quota, unless: :cluster_id

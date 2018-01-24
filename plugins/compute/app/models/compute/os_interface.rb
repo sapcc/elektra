@@ -2,7 +2,7 @@
 
 module Compute
   # Represents the Server Interface
-  class OsInterface < Core::ServiceLayerNg::Model
+  class OsInterface < Core::ServiceLayer::Model
     def attributes_for_create
       attrs = {
         'net_id'      => read('net_id'),

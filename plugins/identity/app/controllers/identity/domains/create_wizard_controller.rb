@@ -5,7 +5,7 @@ module Identity
       before_action :load_and_authorize_inquiry
 
       def new
-        @project = services_ng.identity.new_project
+        @project = services.identity.new_project
         @project.cost_control = {}
         return unless @inquiry
         @project.attributes = @inquiry.payload
@@ -18,7 +18,7 @@ module Identity
 
         # user is not allowed to create a project (maybe)
         # so use admin identity for that!
-        @project = services_ng.identity.new_project
+        @project = services.identity.new_project
         @project.attributes = project_params
 
         @project.enabled = @project.enabled == 'true'
@@ -37,9 +37,10 @@ module Identity
 
             inquiry = services.inquiry.set_inquiry_state(
               @inquiry.id, :approved, "Project #{@project.name} approved and \
-              created by #{current_user.full_name}"
+              created by #{current_user.full_name}",
+              current_user
             )
-            services_ng.identity.grant_project_user_role_by_role_name(
+            services.identity.grant_project_user_role_by_role_name(
               @project.id, inquiry.requester.uid, 'admin'
             )
             render 'identity/domains/create_wizard/create.js'
@@ -76,7 +77,7 @@ module Identity
 
       def assign_needed_roles(project_id, user_id)
         %w[admin member network_admin resource_admin].each do |role_name|
-          services_ng.identity.grant_project_user_role_by_role_name(
+          services.identity.grant_project_user_role_by_role_name(
             project_id, user_id, role_name
           )
         end

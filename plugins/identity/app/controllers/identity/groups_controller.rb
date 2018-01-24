@@ -5,25 +5,25 @@ module Identity
   class GroupsController < ::DashboardController
     def show
       enforce_permissions('identity:group_get', domain_id: @scoped_domain_id)
-      @group = services_ng.identity.find_group(params[:id])
-      @group_members = services_ng.identity.group_members(params[:id])
+      @group = services.identity.find_group(params[:id])
+      @group_members = services.identity.group_members(params[:id])
     end
 
     def index
       enforce_permissions('identity:group_list', domain_id: @scoped_domain_id)
-      @groups = services_ng.identity.groups(domain_id: @scoped_domain_id)
+      @groups = services.identity.groups(domain_id: @scoped_domain_id)
     end
 
     def new_member
-      @group = services_ng.identity.find_group(params[:group_id])
+      @group = services.identity.find_group(params[:group_id])
       enforce_permissions('identity:group_add_member', group: @group)
     end
 
     def add_member
-      @group = services_ng.identity.find_group(params[:group_id])
+      @group = services.identity.find_group(params[:group_id])
       enforce_permissions('identity:group_add_member', group: @group)
 
-      @group_members = services_ng.identity.group_members(params[:group_id])
+      @group_members = services.identity.group_members(params[:group_id])
 
       @user = if params[:user_name].blank?
                 nil
@@ -46,7 +46,7 @@ module Identity
         @error = 'User is not a member of this domain.'
         render action: :new_member
       else
-        services_ng.identity.add_group_member(@group.id, @user.id)
+        services.identity.add_group_member(@group.id, @user.id)
         audit_logger.info(current_user,
                           "has added user #{@user.name} (#{@user.id})",
                           'to', @group)
@@ -55,9 +55,9 @@ module Identity
     end
 
     def remove_member
-      @group = services_ng.identity.find_group(params[:group_id])
+      @group = services.identity.find_group(params[:group_id])
       enforce_permissions('identity:group_remove_member', group: @group)
-      services_ng.identity.remove_group_member(@group.id, params[:id])
+      services.identity.remove_group_member(@group.id, params[:id])
       audit_logger.info(current_user, "has removed user #{params[:id]}",
                         'from', @group)
       redirect_to group_path(@group.id)
@@ -65,12 +65,12 @@ module Identity
 
     def new
       enforce_permissions('identity:group_create', domain_id: @scoped_domain_id)
-      @group = services_ng.identity.new_group
+      @group = services.identity.new_group
     end
 
     def create
       enforce_permissions('identity:group_create', domain_id: @scoped_domain_id)
-      @group = services_ng.identity.new_group(
+      @group = services.identity.new_group(
         params[:group].merge(domain_id: @scoped_domain_id)
       )
       if @group.save
@@ -82,12 +82,12 @@ module Identity
     end
 
     def edit
-      @group = services_ng.identity.find_group(params[:id])
+      @group = services.identity.find_group(params[:id])
       enforce_permissions('identity:group_update', group: @group)
     end
 
     def update
-      @group = services_ng.identity.new_group
+      @group = services.identity.new_group
       @group.id = params[:id]
       enforce_permissions('identity:group_update', group: @group)
       @group.description = params[:group][:description]
@@ -100,7 +100,7 @@ module Identity
     end
 
     def destroy
-      @group = services_ng.identity.new_group
+      @group = services.identity.new_group
       @group.id = params[:id]
       enforce_permissions('identity:group_delete', group: @group)
       if @group.destroy

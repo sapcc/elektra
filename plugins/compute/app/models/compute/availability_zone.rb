@@ -2,7 +2,7 @@
 
 module Compute
   # Represents Openstack AvailabilityZone
-  class AvailabilityZone < Core::ServiceLayerNg::Model
+  class AvailabilityZone < Core::ServiceLayer::Model
     def id
       read('zoneName')
     end

@@ -2,6 +2,6 @@
 
 module Compute
   # Represents the Server Security Group
-  class ServerSecurityGroup < Core::ServiceLayerNg::Model
+  class ServerSecurityGroup < Core::ServiceLayer::Model
   end
 end

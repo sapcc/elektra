@@ -71,4 +71,4 @@ module AuditLog
 end
 
 ActionController::Base.send(:include,AuditLog)
-Core::ServiceLayerNg::Service.send(:include, AuditLog)
+Core::ServiceLayer::Service.send(:include, AuditLog)

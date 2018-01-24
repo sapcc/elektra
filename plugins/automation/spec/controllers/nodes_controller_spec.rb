@@ -75,7 +75,7 @@ describe Automation::NodesController, type: :controller do
 
   describe "GET 'install'" do
     before :each do
-      allow_any_instance_of(ServiceLayerNg::ComputeService).to receive(:servers).and_raise("boom")
+      allow_any_instance_of(ServiceLayer::ComputeService).to receive(:servers).and_raise("boom")
     end
 
     it "returns http success" do

@@ -4,11 +4,11 @@ module SharedFilesystemStorage
   # share networks
   class ShareNetworksController < ApplicationController
     def index
-      render json: services_ng.shared_filesystem_storage.share_networks_detail
+      render json: services.shared_filesystem_storage.share_networks_detail
     end
 
     def update
-      share_network = services_ng.shared_filesystem_storage
+      share_network = services.shared_filesystem_storage
                                  .new_share_network(share_network_params)
       share_network.id = params[:id]
 
@@ -20,17 +20,17 @@ module SharedFilesystemStorage
     end
 
     def networks
-      render json: services_ng.networking.networks('router:external' => false)
+      render json: services.networking.networks('router:external' => false)
     end
 
     def subnets
-      render json: services_ng.networking.subnets(
+      render json: services.networking.subnets(
         network_id: params[:network_id]
       )
     end
 
     def create
-      share_network = services_ng.shared_filesystem_storage
+      share_network = services.shared_filesystem_storage
                                  .new_share_network(share_network_params)
 
       if share_network.save
@@ -44,7 +44,7 @@ module SharedFilesystemStorage
     end
 
     def destroy
-      share_network = services_ng.shared_filesystem_storage.new_share_network
+      share_network = services.shared_filesystem_storage.new_share_network
       share_network.id = params[:id]
 
       if share_network.destroy

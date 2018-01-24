@@ -1,5 +1,5 @@
 module MasterdataCockpit
-  class DomainMasterdata < Core::ServiceLayerNg::Model
+  class DomainMasterdata < Core::ServiceLayer::Model
     # the following attributes ar known
     #"domain_id":"ABCD1234",
     #"domain_name":"MyDomain0815",

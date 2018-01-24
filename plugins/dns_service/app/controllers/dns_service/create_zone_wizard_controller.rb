@@ -13,19 +13,23 @@ module DnsService
 
     def create
       @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
-      @zone = services_ng.dns_service.new_zone(@zone_request.attributes)
+      @zone = services.dns_service.new_zone(@zone_request.attributes)
       @zone.name = @zone_request.zone_name
       @pool = load_pool(@zone_request.domain_pool)
       @zone.write('attributes', @pool.read('attributes'))
 
       if @zone.save
-        @zone_transfer_request = services_ng.dns_service.new_zone_transfer_request(
+        @zone_transfer_request = services.dns_service.new_zone_transfer_request(
           @zone.id, target_project_id: @inquiry.project_id
         )
         if @zone_transfer_request.save
           @zone_transfer_request.accept(@inquiry.project_id)
           if @inquiry
-            services.inquiry.set_inquiry_state(@inquiry.id, :approved, "Domain #{@zone.name} approved and created by #{current_user.full_name}")
+            services.inquiry.set_inquiry_state(
+              @inquiry.id, :approved,
+              "Domain #{@zone.name} approved and created by #{current_user.full_name}",
+              current_user
+            )
           end
         else
           @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }

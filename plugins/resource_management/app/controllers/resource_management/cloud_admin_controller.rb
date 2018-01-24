@@ -13,7 +13,7 @@ module ResourceManagement
       # NOTE: do not need to get data for all clusters here; the totals for
       # quota and usage for the cluster already include the quotas and usages
       # of other clusters for shared resources
-      @cluster = services_ng.resource_management.find_current_cluster
+      @cluster = services.resource_management.find_current_cluster
       @view_services = @cluster.services
 
       @areas = @cluster.services.map(&:area).uniq
@@ -23,7 +23,7 @@ module ResourceManagement
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @cluster = services_ng.resource_management.find_current_cluster
+      @cluster = services.resource_management.find_current_cluster
       @view_services = @cluster.services.select { |srv| srv.area.to_sym == @area }
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
@@ -113,7 +113,7 @@ module ResourceManagement
         if params[:new_style_resource][:comment].present?
           comment += ", comment from approver: #{params[:new_style_resource][:comment]}"
         end
-        services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment)
+        services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment, current_user)
       else
         @domain_resource.quota = old_quota
         self.review_request
@@ -130,7 +130,7 @@ module ResourceManagement
       @resource_name = params.require(:resource).to_sym
 
       # get the cluster resource for the current cluster
-      clusters, current_cluster_id = services_ng.resource_management.list_clusters(service: @service_type.to_s, resource: @resource_name.to_s, local: true)
+      clusters, current_cluster_id = services.resource_management.list_clusters(service: @service_type.to_s, resource: @resource_name.to_s, local: true)
       cluster_resources = clusters.reject { |c| c.resources.empty? }.map { |c| c.resources.first }
       @cluster_resource = cluster_resources.find { |r| r.cluster_id == current_cluster_id } or raise ActiveRecord::RecordNotFound, "no data for cluster"
 
@@ -147,7 +147,7 @@ module ResourceManagement
         @combined_resource = @cluster_resource
       end
 
-      domains = services_ng.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s)
+      domains = services.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given
@@ -178,7 +178,7 @@ module ResourceManagement
 
     def load_domain_resource
       enforce_permissions(":resource_management:cloud_admin_list")
-      domain = services_ng.resource_management.find_domain(
+      domain = services.resource_management.find_domain(
         params.require(:id),
         service:  [ params.require(:service) ],
         resource: [ params.require(:resource) ],
@@ -187,7 +187,7 @@ module ResourceManagement
     end
 
     def load_cluster_resource
-      cluster = services_ng.resource_management.find_current_cluster(
+      cluster = services.resource_management.find_current_cluster(
         service:  [ params.require(:service) ],
         resource: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "cluster not found"
@@ -207,13 +207,13 @@ module ResourceManagement
       data = @inquiry.payload.symbolize_keys
       raise ArgumentError, "inquiry #{@inquiry.id} has not been migrated to new format!" if data.include?(:resource_id)
 
-      @domain_resource = services_ng.resource_management.find_domain(
+      @domain_resource = services.resource_management.find_domain(
         @inquiry.domain_id,
         service:  [ data[:service]  ],
         resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
 
-      @cluster_resource = services_ng.resource_management.find_current_cluster(
+      @cluster_resource = services.resource_management.find_current_cluster(
         service:  [ data[:service]  ],
         resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound

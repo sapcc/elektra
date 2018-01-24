@@ -12,7 +12,7 @@ describe Identity::CredentialsController, type: :controller do
   before(:each) do
     stub_authentication
 
-    allow_any_instance_of(ServiceLayerNg::IdentityService)
+    allow_any_instance_of(ServiceLayer::IdentityService)
       .to receive(:credentials).and_return([])
   end
 

@@ -4,10 +4,10 @@ module Networking
   # Implements Network Rbac actions
   class Networks::AccessController < NetworksController
     def index
-      @rbacs = services_ng.networking.rbacs(
+      @rbacs = services.networking.rbacs(
         object_id: @network_id, object_type: 'network'
       )
-      @network = services_ng.networking.find_network(@network_id)
+      @network = services.networking.find_network(@network_id)
 
       rbac_target_tenant_ids = @rbacs.collect(&:target_tenant)
 
@@ -22,7 +22,7 @@ module Networking
     end
 
     def create
-      @rbac = services_ng.networking.new_rbac(params[:rbac])
+      @rbac = services.networking.new_rbac(params[:rbac])
       @rbac.object_id     = @network_id
       @rbac.object_type   = 'network'
       @rbac.action        = 'access_as_shared'
@@ -31,13 +31,13 @@ module Networking
         @rbac.target_tenant = @rbac.target_tenant.split('(').first.strip
       end
 
-      @network = services_ng.networking.find_network(@network_id)
+      @network = services.networking.find_network(@network_id)
 
       @rbac.save
     end
 
     def destroy
-      @rbac = services_ng.networking.new_rbac
+      @rbac = services.networking.new_rbac
       @rbac.id = params[:id]
 
       if @rbac.destroy

@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # represents lbaas pool member
-  class PoolMember < Core::ServiceLayerNg::Model
+  class PoolMember < Core::ServiceLayer::Model
     attr_accessor :id
     validates :address, presence: true
     validates :weight, presence: true, inclusion: {

@@ -36,7 +36,7 @@ module Identity
         @members = begin
           service_user.identity.group_members(params[:group_id])
         rescue
-          services_ng.identity.group_members(params[:group_id])
+          services.identity.group_members(params[:group_id])
         end
       end
 

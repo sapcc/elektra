@@ -4,15 +4,15 @@ module SharedFilesystemStorage
   # snapshots
   class SnapshotsController < ApplicationController
     def index
-      render json: services_ng.shared_filesystem_storage.snapshots_detail
+      render json: services.shared_filesystem_storage.snapshots_detail
     end
 
     def show
-      render json: services_ng.shared_filesystem_storage.find_snapshot(params[:id])
+      render json: services.shared_filesystem_storage.find_snapshot(params[:id])
     end
 
     def update
-      snapshot = services_ng.shared_filesystem_storage
+      snapshot = services.shared_filesystem_storage
                             .new_snapshot(snapshot_params)
       snapshot.id = params[:id]
       if snapshot.save
@@ -23,7 +23,7 @@ module SharedFilesystemStorage
     end
 
     def create
-      snapshot = services_ng.shared_filesystem_storage
+      snapshot = services.shared_filesystem_storage
                             .new_snapshot(snapshot_params)
 
       if snapshot.save
@@ -34,7 +34,7 @@ module SharedFilesystemStorage
     end
 
     def destroy
-      snapshot = services_ng.shared_filesystem_storage.new_snapshot
+      snapshot = services.shared_filesystem_storage.new_snapshot
       snapshot.id = params[:id]
 
       if snapshot.destroy

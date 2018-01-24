@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # represents openstack lbaas l7 policy
-  class L7policy < Core::ServiceLayerNg::Model
+  class L7policy < Core::ServiceLayer::Model
     include ActiveModel::Conversion
 
     PREDEFINED_POLICIES = [

@@ -77,7 +77,7 @@ module Lookup
     protected
 
     def object_service(name)
-      return services_ng.send(name) if services_ng.respond_to?(name)
+      return services.send(name) if services.respond_to?(name)
       services.send(name)
     end
 

@@ -5,7 +5,7 @@ module Networking
     before_action :find_floatingip_network, :load_rbacs
 
     def new
-      @network_wizard = services_ng.networking.new_network_wizard(
+      @network_wizard = services.networking.new_network_wizard(
         setup_options: ['advanced'], setup_option: 'advanced'
       )
       if @floatingip_network
@@ -22,7 +22,7 @@ module Networking
     end
 
     def create
-      @network_wizard = services_ng.networking.new_network_wizard(
+      @network_wizard = services.networking.new_network_wizard(
         params[:network_wizard]
       )
 

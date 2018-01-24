@@ -2,7 +2,7 @@
 
 module Compute
   # Openstack Hypervisor Server
-  class HypervisorServer < Core::ServiceLayerNg::Model
+  class HypervisorServer < Core::ServiceLayer::Model
     def id
       read('uuid')
     end

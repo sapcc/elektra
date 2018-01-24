@@ -4,15 +4,15 @@ module Compute
     authorization_required
 
     def index
-      @user_keypairs = services_ng.compute.keypairs
+      @user_keypairs = services.compute.keypairs
     end
 
     def new
-      @keypair = services_ng.compute.new_keypair
+      @keypair = services.compute.new_keypair
     end
 
     def create
-      @keypair = services_ng.compute.new_keypair
+      @keypair = services.compute.new_keypair
       @keypair.attributes = params.fetch(:keypair, {}).merge(user_id: current_user.id)
 
       if @keypair.save
@@ -25,11 +25,11 @@ module Compute
     end
 
     def show
-      @keypair = services_ng.compute.find_keypair(params[:id])
+      @keypair = services.compute.find_keypair(params[:id])
     end
 
     def destroy
-      if services_ng.compute.delete_keypair(params[:id])
+      if services.compute.delete_keypair(params[:id])
         audit_logger.info(current_user, "has deleted keypair", params[:id])
         flash[:notice] = "Key pair deleted."
       else

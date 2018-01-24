@@ -27,13 +27,13 @@ module BlockStorage
 
       per_page = (params[:per_page] || 20)
       @volumes = paginatable(per_page: per_page) do |pagination_options|
-        services_ng.block_storage.volumes_detail(pagination_options)
+        services.block_storage.volumes_detail(pagination_options)
       end
 
       @quota_data = []
 
       if current_user.is_allowed?('access_to_project')
-        @quota_data = services_ng.resource_management.quota_data(
+        @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id, [
           { service_type: :volumev2, resource_name: :volumes, usage: @volumes.length },
@@ -58,18 +58,18 @@ module BlockStorage
 
     # GET /volumes/new
     def new
-      @volume = services_ng.block_storage_.new_volume
-      @availability_zones = services_ng.compute.availability_zones
+      @volume = services.block_storage_.new_volume
+      @availability_zones = services.compute.availability_zones
     end
 
     # POST /volumes
     def create
-      @volume = services_ng.block_storage.new_volume
+      @volume = services.block_storage.new_volume
       @volume.attributes = params[@volume.model_name.param_key].to_unsafe_hash.delete_if{ |*,value| value.blank?} # delete blank attributes from hash. If they are passed as empty strings the API doesn't recognize them as blank and throws a fit ...
 
       if @volume.save
         if @volume.snapshot_id.blank?
-          @volume = services_ng.block_storage.find_volume(@volume.id)
+          @volume = services.block_storage.find_volume(@volume.id)
           @volume.status = 'creating'
           @target_state = target_state_for_action 'create'
           sleep(SLEEP)
@@ -79,7 +79,7 @@ module BlockStorage
           redirect_to volumes_path
         end
       else
-        @availability_zones = services_ng.compute.availability_zones
+        @availability_zones = services.compute.availability_zones
         @volume.errors[:base] << "Volume creation failed!"
         render :new
       end
@@ -101,14 +101,14 @@ module BlockStorage
 
     # GET /volumes/1/snapshot
     def new_snapshot
-      @snapshot = services_ng.block_storage.new_snapshot
+      @snapshot = services.block_storage.new_snapshot
       @snapshot.name = "snap-#{@volume.name}"
       @snapshot.description = "snap-#{@volume.description}"
     end
 
     # POST /volumes/1/snapshot
     def snapshot
-      @snapshot = services_ng.block_storage.new_snapshot({force: false})
+      @snapshot = services.block_storage.new_snapshot({force: false})
       @snapshot.attributes = @snapshot.attributes.merge(params[@snapshot.model_name.param_key].to_unsafe_hash)
       @snapshot.volume_id = params[:id]
 
@@ -126,7 +126,7 @@ module BlockStorage
     def edit_attach
       @volume_server = VolumeServer.new
       @volume_server.volume = @volume
-      @volume_server.servers = services_ng.compute.servers.keep_if do |s|
+      @volume_server.servers = services.compute.servers.keep_if do |s|
         SERVER_STATES_NEEDED_FOR_ATTACH.include?(s.status) and
         s.availability_zone==@volume.availability_zone
       end
@@ -138,24 +138,24 @@ module BlockStorage
       @volume_server.device = nil if @volume_server.device.blank?
       if @volume_server.valid?
         begin
-          if services_ng.compute.attach_volume(@volume_server.volume.id, @volume_server.server, @volume_server.device)
+          if services.compute.attach_volume(@volume_server.volume.id, @volume_server.server, @volume_server.device)
             @volume.status = 'attaching'
             @target_state = target_state_for_action 'attach'
             sleep(SLEEP)
             audit_logger.info(current_user, "has attached", @volume, "to", @volume_server.server['server_id'])
             render template: 'block_storage/volumes/update_item_with_close.js'
           else
-            @volume_server.servers = services_ng.compute.servers
+            @volume_server.servers = services.compute.servers
             @volume_server.errors[:base] << "Volume attachment failed!"
             render :edit_attach and return
           end
         rescue Exception => e
-          @volume_server.servers = services_ng.compute.servers
+          @volume_server.servers = services.compute.servers
           @volume_server.errors[:base] << "Volume attachment failed! #{e.message}"
           render :edit_attach and return
         end
       else
-        @volume_server.servers = services_ng.compute.servers
+        @volume_server.servers = services.compute.servers
         render :edit_attach and return
       end
     end
@@ -171,7 +171,7 @@ module BlockStorage
       @volume_server.volume = @volume
       @volume_server.server = @volume.attachments.first
       begin
-        if services_ng.compute.detach_volume(@volume_server.volume.id, @volume_server.server['server_id'])
+        if services.compute.detach_volume(@volume_server.volume.id, @volume_server.server['server_id'])
           @volume.status = 'detaching'
           @target_state = target_state_for_action 'detach'
           sleep(SLEEP)
@@ -194,7 +194,7 @@ module BlockStorage
     def reset_status
       @volume.reset_status(params[:volume])
       # reload volume
-      @volume = services_ng.block_storage.find_volume(params[:id])
+      @volume = services.block_storage.find_volume(params[:id])
       if @volume.status==params[:volume][:status]
         @servers = get_cached_servers if @volume.status == 'in-use'
         audit_logger.info(current_user, "has reset", @volume)
@@ -228,7 +228,7 @@ module BlockStorage
     # update instance table row (ajax call)
     def update_item
       begin
-        @volume = services_ng.block_storage.find_volume(params[:id])
+        @volume = services.block_storage.find_volume(params[:id])
         @target_state = params[:target_state]
         respond_to do |format|
           format.js do
@@ -245,12 +245,12 @@ module BlockStorage
     private
 
     def get_cached_servers
-      services_ng.compute.cached_project_servers(@scoped_project_id)
+      services.compute.cached_project_servers(@scoped_project_id)
     end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_volume
-      @volume = services_ng.block_storage.find_volume(params[:id])
+      @volume = services.block_storage.find_volume(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

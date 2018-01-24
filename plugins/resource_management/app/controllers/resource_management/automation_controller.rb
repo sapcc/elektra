@@ -25,8 +25,8 @@ module ResourceManagement
         :volumev2       => 'block_storage',
       }
 
-      services_ng.resource_management.list_domains(service: ['none']).each do |domain|
-        services_ng.resource_management.list_projects(domain.id).each do |project|
+      services.resource_management.list_domains(service: ['none']).each do |domain|
+        services.resource_management.list_projects(domain.id).each do |project|
           project.services.each do |srv|
             srv.resources.each do |res|
               dt = res.data_type

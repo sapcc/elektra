@@ -2,7 +2,7 @@
 
 module Networking
   # Represents the Openstack Security Group
-  class SecurityGroup < Core::ServiceLayerNg::Model
+  class SecurityGroup < Core::ServiceLayer::Model
     validates :name, presence: true
 
     def rule_objects

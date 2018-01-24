@@ -37,7 +37,7 @@ module ObjectStorage
     def load_quota_data
       @quota_data = []
       if current_user.is_allowed?("access_to_project")
-        @quota_data = services_ng.resource_management.quota_data(
+        @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,[
             { service_type: :'object-store', resource_name: :capacity }

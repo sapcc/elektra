@@ -2,7 +2,7 @@
 
 module Identity
   # This class represents the Openstack OS Credential
-  class OsCredential < Core::ServiceLayerNg::Model
+  class OsCredential < Core::ServiceLayer::Model
     validates :type, presence: { message: 'Please select type' }
     validates :project_id, presence: { message: 'Please select project' },
                            if: :ec2?

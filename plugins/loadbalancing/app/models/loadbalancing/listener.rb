@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # represents openstack lb listener
-  class Listener < Core::ServiceLayerNg::Model
+  class Listener < Core::ServiceLayer::Model
     PROTOCOLS = %w[HTTP TCP TERMINATED_HTTPS].freeze
 
     validates :name, presence: false

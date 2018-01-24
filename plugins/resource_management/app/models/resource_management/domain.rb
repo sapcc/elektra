@@ -1,5 +1,5 @@
 module ResourceManagement
-  class Domain < Core::ServiceLayerNg::Model
+  class Domain < Core::ServiceLayer::Model
 
     def name
       read(:name)

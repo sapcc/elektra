@@ -2,7 +2,7 @@
 
 module Identity
   # This class represents the Openstack Domain
-  class Domain < Core::ServiceLayerNg::Model
+  class Domain < Core::ServiceLayer::Model
     def friendly_id
       return nil if id.nil?
       return id if name.blank?

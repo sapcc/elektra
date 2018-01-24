@@ -10,15 +10,15 @@ module Identity
       authorization_required only: %i[index new create]
 
       def index
-        services_ng.identity.users(domain_id: @scoped_domain_id,
+        services.identity.users(domain_id: @scoped_domain_id,
                                    'name__startswith' => 'T').length
-        @technical_users = services_ng.identity.users(
+        @technical_users = services.identity.users(
           domain_id: @scoped_domain_id, 'name__startswith' => 'T'
         ).select { |user| user.name.start_with?('T') }
       end
 
       def new
-        @technical_user = services_ng.identity.new_user(
+        @technical_user = services.identity.new_user(
           description: "Created by #{current_user.name}. Purpose: "
         )
       end
@@ -31,7 +31,7 @@ module Identity
           domain_id: params[:user][:domain_id]
         }
 
-        @technical_user = services_ng.identity.new_user(attributes)
+        @technical_user = services.identity.new_user(attributes)
         @password = attributes[:password]
         if @technical_user.save
           audit_logger.info(
@@ -45,12 +45,12 @@ module Identity
       end
 
       def edit
-        @technical_user = services_ng.identity.find_user(params[:id])
+        @technical_user = services.identity.find_user(params[:id])
         enforce_permissions('identity:technical_user_update', user: @technical_user)
       end
 
       def update
-        @technical_user = services_ng.identity.find_user(params[:id])
+        @technical_user = services.identity.find_user(params[:id])
         enforce_permissions('identity:technical_user_update', user: @technical_user)
 
         @technical_user.description = params[:user][:description]
@@ -63,12 +63,12 @@ module Identity
       end
 
       def reset_password
-        @technical_user = services_ng.identity.find_user(params[:id])
+        @technical_user = services.identity.find_user(params[:id])
         enforce_permissions('identity:technical_user_reset_password', user: @technical_user)
       end
 
       def change_password
-        @technical_user = services_ng.identity.find_user(params[:id])
+        @technical_user = services.identity.find_user(params[:id])
         enforce_permissions('identity:technical_user_reset_password', user: @technical_user)
 
         @new_password = generate_password
@@ -82,7 +82,7 @@ module Identity
       end
 
       def destroy
-        @technical_user = services_ng.identity.find_user(params[:id])
+        @technical_user = services.identity.find_user(params[:id])
         enforce_permissions('identity:technical_user_delete', user: @technical_user)
 
         if @technical_user.destroy

@@ -4,7 +4,7 @@ module Image
 
     def index
       @images = paginatable(per_page: 15) do |pagination_options|
-        services_ng.image.images(filter_params.merge(pagination_options))
+        services.image.images(filter_params.merge(pagination_options))
       end
 
       # this is relevant in case an ajax paginate call is made.
@@ -18,7 +18,7 @@ module Image
     end
 
     def show
-      @image = services_ng.image.find_image(params[:id])
+      @image = services.image.find_image(params[:id])
 
       properties = @image.attributes.clone.stringify_keys
       known_attributes = %w[
@@ -45,7 +45,7 @@ module Image
     end
 
     def destroy
-      @image = services_ng.image.find_image(params[:id])
+      @image = services.image.find_image(params[:id])
       @success = (@image && @image.destroy)
     end
 

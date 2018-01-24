@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module Compute
-  class Metadata < Core::ServiceLayerNg::Model
+  class Metadata < Core::ServiceLayer::Model
   end
 end

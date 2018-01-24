@@ -1,5 +1,5 @@
 module ObjectStorage
-  class Container < Core::ServiceLayerNg::Model
+  class Container < Core::ServiceLayer::Model
 
     # The following properties are known:
     #   - name

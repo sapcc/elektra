@@ -22,18 +22,18 @@ describe Networking::Networks::SubnetsController, type: :controller do
 
   before :each do
     stub_authentication
-    allow_any_instance_of(ServiceLayerNg::NetworkingService)
+    allow_any_instance_of(ServiceLayer::NetworkingService)
       .to receive(:elektron).and_return(
         double('elektron', service: double('network').as_null_object)
       )
 
-    allow_any_instance_of(ServiceLayerNg::ResourceManagementService)
+    allow_any_instance_of(ServiceLayer::ResourceManagementService)
       .to receive(:quota_data).and_return([])
   end
 
   describe "GET 'index'" do
     before :each do
-      allow_any_instance_of(ServiceLayerNg::NetworkingService)
+      allow_any_instance_of(ServiceLayer::NetworkingService)
         .to receive(:subnets).with(network_id: '123').and_return(['test1'])
     end
 
@@ -48,7 +48,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
     end
 
     it 'calls api to list all subnets' do
-      expect_any_instance_of(ServiceLayerNg::NetworkingService)
+      expect_any_instance_of(ServiceLayer::NetworkingService)
         .to receive(:subnets).with(network_id: '123')
       get :index, params: default_params.merge(network_id: '123')
     end
@@ -90,7 +90,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
 
     context 'api returns success' do
       before :each do
-        allow_any_instance_of(ServiceLayerNg::NetworkingService)
+        allow_any_instance_of(ServiceLayer::NetworkingService)
           .to receive(:create_subnet)
           .with(create_params.with_indifferent_access)
           .and_return(subnet_params.with_indifferent_access)
@@ -120,7 +120,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
       end
 
       it 'calls api for create a new subnet' do
-        expect_any_instance_of(ServiceLayerNg::NetworkingService)
+        expect_any_instance_of(ServiceLayer::NetworkingService)
           .to receive(:create_subnet)
           .with(create_params.with_indifferent_access)
 
@@ -166,7 +166,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
     context 'api returns an error' do
       before :each do
         response = OpenStruct.new(code: 404)
-        allow_any_instance_of(ServiceLayerNg::NetworkingService)
+        allow_any_instance_of(ServiceLayer::NetworkingService)
           .to receive(:delete_subnet).and_raise(Elektron::Errors::ApiResponse, response)
       end
 
@@ -187,7 +187,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
       end
 
       it 'calls api for destroy a subnet' do
-        expect_any_instance_of(ServiceLayerNg::NetworkingService)
+        expect_any_instance_of(ServiceLayer::NetworkingService)
           .to receive(:delete_subnet).with('456')
         delete :destroy, params: default_params.merge(network_id: '123', id: '456')
       end
@@ -196,7 +196,7 @@ describe Networking::Networks::SubnetsController, type: :controller do
     context 'api returns an error' do
       before :each do
         error_response = OpenStruct.new(code: 404, body: { 'message' => 'Error'})
-        allow_any_instance_of(ServiceLayerNg::NetworkingService)
+        allow_any_instance_of(ServiceLayer::NetworkingService)
           .to receive(:delete_subnet).and_raise(Elektron::Errors::ApiResponse.new(error_response))
       end
 

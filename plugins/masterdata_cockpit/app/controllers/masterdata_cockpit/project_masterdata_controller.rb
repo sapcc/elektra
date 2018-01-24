@@ -21,7 +21,7 @@ module MasterdataCockpit
     
     def new
       solutions
-      @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
+      @project_masterdata = services.masterdata_cockpit.new_project_masterdata
       inject_projectdata
     end
 
@@ -92,7 +92,7 @@ module MasterdataCockpit
     
     def load_project_masterdata
       begin
-        @project_masterdata = services_ng.masterdata_cockpit.get_project(@scoped_project_id)
+        @project_masterdata = services.masterdata_cockpit.get_project(@scoped_project_id)
         inject_projectdata
         # overide projectdata with current data from identity
       rescue Exception => e
@@ -107,7 +107,7 @@ module MasterdataCockpit
     end
     
     def prepare_params
-      @project_masterdata = services_ng.masterdata_cockpit.new_project_masterdata
+      @project_masterdata = services.masterdata_cockpit.new_project_masterdata
       # to merge options into .merge(project_id: @scoped_project_id)
       @project_masterdata.attributes =params.fetch(:project_masterdata,{})
       inject_projectdata
@@ -115,7 +115,7 @@ module MasterdataCockpit
     
     def solutions
       begin
-        @solutions = services_ng.masterdata_cockpit.get_solutions
+        @solutions = services.masterdata_cockpit.get_solutions
       rescue
         flash.now[:error] = "Could not load solutions."
         @solutions = []
@@ -125,9 +125,9 @@ module MasterdataCockpit
     def inheritance
       begin
         if @active_project.parent_id != @scoped_domain_id
-          @inheritance = services_ng.masterdata_cockpit.check_inheritance(@scoped_domain_id, @active_project.parent_id)
+          @inheritance = services.masterdata_cockpit.check_inheritance(@scoped_domain_id, @active_project.parent_id)
         else
-          @inheritance = services_ng.masterdata_cockpit.check_inheritance(@scoped_domain_id)
+          @inheritance = services.masterdata_cockpit.check_inheritance(@scoped_domain_id)
         end
       rescue
         flash.now[:error] = "Could not check inheritance."
