@@ -227,6 +227,7 @@ module Compute
       # update floating ip with the new assigned interface ip
       @floating_ip = services.networking.find_floating_ip(params[:floating_ip][:id])
       @floating_ip.port_id = port.id
+      @floating_ip.fixed_ip_address = params[:floating_ip][:fixed_ip_address]
 
       if @floating_ip.save
         respond_to do |format|
