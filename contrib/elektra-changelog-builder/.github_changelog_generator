@@ -1,4 +1,4 @@
 project=elektra
 user=sapcc
-exclude_tags_regex=v1.0.0+.+
+since_tag=2018.1
 output=/host/CHANGELOG.md
