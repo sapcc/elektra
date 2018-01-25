@@ -23,5 +23,5 @@
     - if modal?
       %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
     - else
-      = link_to "Cancel", inquiries_url(), class: 'btn btn-default'
+      = link_to "Cancel", plugin('inquiry').inquiries_url(), class: 'btn btn-default'
     %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Reduce
