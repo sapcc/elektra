@@ -9,5 +9,23 @@ ifneq ($(NO_CACHE),)
 BUILD_ARGS += --no-cache
 endif
 
+.PHONY: build CHANGELOG.md
+
 build:
 	docker build $(BUILD_ARGS) -t $(IMAGE) .
+
+#
+# Creates a changelog file
+# Set the environment variable GITHUB_TOKEN=<your github token> or
+# Run following command make CHANGELOG.md GITHUB_TOKEN=<your github token>
+#
+VERSION  ?= $(shell git rev-parse --verify HEAD)
+BUILD_ARGS = --build-arg VERSION=$(VERSION)
+CHANGELOG.md:
+ifndef GITHUB_TOKEN
+	$(error set GITHUB_TOKEN to a personal access token that has repo:read permission)
+else
+	docker build $(BUILD_ARGS) -t sapcc/elektra-changelog-builder:$(VERSION) --cache-from=sapcc/elektra-changelog-builder:latest ./contrib/elektra-changelog-builder
+	docker tag sapcc/elektra-changelog-builder:$(VERSION)  sapcc/elektra-changelog-builder:latest
+	docker run --rm -v $(PWD):/host -e GITHUB_TOKEN=$(GITHUB_TOKEN) sapcc/elektra-changelog-builder:latest
+endif
