@@ -10,7 +10,7 @@ module Identity
       end
 
       def new
-        @project = services_ng.identity.new_project
+        @project = services.identity.new_project
         @project.enabled = true
         @project.parent_id = @scoped_project_id
         @project.parent_name = @scoped_project_name
@@ -20,7 +20,7 @@ module Identity
       end
 
       def create
-        @project = services_ng.identity.new_project
+        @project = services.identity.new_project
         @project.attributes = params.fetch(:project, {})
                                     .merge(domain_id: @scoped_domain_id)
                                     

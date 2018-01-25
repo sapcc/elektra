@@ -1,5 +1,5 @@
 module ResourceManagement
-  class Cluster < Core::ServiceLayerNg::Model
+  class Cluster < Core::ServiceLayer::Model
 
     def services
       metadata = {

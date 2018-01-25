@@ -2,7 +2,7 @@
 
 module Compute
   # Represents the Key Value pair
-  class Keypair < Core::ServiceLayerNg::Model
+  class Keypair < Core::ServiceLayer::Model
     validate :public_key_valid?
     validates :name, :public_key, presence: true
 

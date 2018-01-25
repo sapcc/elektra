@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BlockStorage
-  class Snapshot < Core::ServiceLayerNg::Model
+  class Snapshot < Core::ServiceLayer::Model
     validates :name, :description, presence: true
 
     STATUS = [

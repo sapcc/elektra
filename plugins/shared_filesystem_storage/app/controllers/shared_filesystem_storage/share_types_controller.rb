@@ -7,7 +7,7 @@ module SharedFilesystemStorage
     authorization_required
 
     def index
-      render json: services_ng.shared_filesystem_storage.share_types
+      render json: services.shared_filesystem_storage.share_types
     end
   end
 end

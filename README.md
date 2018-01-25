@@ -220,7 +220,7 @@ In principle an Elektra plugin is able to store data in the Elektra database and
 
 As described above, the ``DashboardController`` in the core app takes care of user authentication. Each plugin controller that inherits from this controller automatically includes a reference to ``current_user`` which represents the token. The plugin can now use the information in ``current_user`` (mainly the token) to interact with the backend services.
 
-But how can a plugin, for example the compute plugin, access the network methods which are implemented in the network plugin? This is where the service layer comes into play. The ``DashboardController`` offers a method called ``services`` which contains the reference to all available plugin backend services. For example: ```services_ng.networking.networks``` invokes the method networks from the network backend service. Thus, the _Service Layer_ represents a communication channel to the main backend service a plugin consumes and also to the other plugin backend services.
+But how can a plugin, for example the compute plugin, access the network methods which are implemented in the network plugin? This is where the service layer comes into play. The ``DashboardController`` offers a method called ``services`` which contains the reference to all available plugin backend services. For example: ```services.networking.networks``` invokes the method networks from the network backend service. Thus, the _Service Layer_ represents a communication channel to the main backend service a plugin consumes and also to the other plugin backend services.
 
 **Before you consume other backend services:** Check how expensive a backend call is. If it is expensive take steps to reduce how often the call is made (e.g. by caching, displaying the information on a view that isn't accessed very often) or at least make the call asynchronously so as to not block the rest of the page from loading.
 
@@ -311,7 +311,7 @@ If the variable ```@quota_data``` is set the view will display all data inside t
 
 This will load quota data from the database and update the usage attribute.
 ```ruby
-@quota_data = services_ng.resource_management.quota_data(
+@quota_data = services.resource_management.quota_data(
   current_user.domain_id || current_user.project_domain_id,
   current_user.project_id,[
   {service_type: 'compute', resource_name: 'instances', usage: @instances.length},
@@ -323,7 +323,7 @@ This will load quota data from the database and update the usage attribute.
 Same example but without updating the usage attribute. It just loads the values from the database. Note that the database is not always up to date.
 
 ```ruby
-@quota_data = services_ng.resource_management.quota_data(
+@quota_data = services.resource_management.quota_data(
   current_user.domain_id || current_user.project_domain_id,
   current_user.project_id,[
   {service_type: 'compute', resource_name: 'instances'},
@@ -339,7 +339,7 @@ Pagination
 
 ```ruby
 @images = paginatable(per_page: 15) do |pagination_options|
-  services_ng.image.images({sort_key: 'name', visibility: @visibility}.merge(pagination_options))
+  services.image.images({sort_key: 'name', visibility: @visibility}.merge(pagination_options))
 end
 ```
 

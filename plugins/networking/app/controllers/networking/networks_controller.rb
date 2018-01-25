@@ -11,22 +11,22 @@ module Networking
         sort_key: 'name'
       }
       @networks = paginatable(per_page: 30) do |pagination_options|
-        services_ng.networking.networks(filter_options.merge(pagination_options))
+        services.networking.networks(filter_options.merge(pagination_options))
       end
 
       # all owned networks + subnets without pagination + filtering
-      usage_networks = services_ng.networking.networks.select do |n|
+      usage_networks = services.networking.networks.select do |n|
         n.tenant_id == @scoped_project_id
       end.length
 
-      usage_subnets = services_ng.networking.subnets.select do |s|
+      usage_subnets = services.networking.subnets.select do |s|
         s.tenant_id == @scoped_project_id
       end.length
 
 
       @quota_data = []
       if current_user.is_allowed?("access_to_project")
-        @quota_data = services_ng.resource_management.quota_data(
+        @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,
           [
@@ -50,20 +50,20 @@ module Networking
     end
 
     def manage_subnets
-      @network = services_ng.networking.find_network(params[:network_id])
+      @network = services.networking.find_network(params[:network_id])
     end
 
     def show
-      @network = services_ng.networking.find_network(params[:id])
-      @subnets = services_ng.networking.subnets(network_id: @network.id)
-      @ports   = services_ng.networking.ports(network_id: @network.id)
+      @network = services.networking.find_network(params[:id])
+      @subnets = services.networking.subnets(network_id: @network.id)
+      @ports   = services.networking.ports(network_id: @network.id)
     end
 
     def new
-      @network = services_ng.networking.new_network(
+      @network = services.networking.new_network(
         name: "#{@scoped_project_name}_#{@network_type}"
       )
-      @subnet = services_ng.networking.new_subnet(
+      @subnet = services.networking.new_subnet(
         name: "#{@network.name}_sub", enable_dhcp: true
       )
     end
@@ -71,12 +71,12 @@ module Networking
     def create
       network_params = params[:network]
       subnets_params = network_params.delete(:subnets)
-      @network = services_ng.networking.new_network(network_params)
+      @network = services.networking.new_network(network_params)
       @errors = Array.new
 
       if @network.save
         if subnets_params.present?
-          @subnet = services_ng.networking.new_subnet(subnets_params)
+          @subnet = services.networking.new_subnet(subnets_params)
           @subnet.network_id = @network.id
 
           # FIXME: anti-pattern of doing two things in one action
@@ -102,11 +102,11 @@ module Networking
     end
 
     def edit
-      @network = services_ng.networking.find_network(params[:id])
+      @network = services.networking.find_network(params[:id])
     end
 
     def update
-      @network = services_ng.networking.new_network(params[:network])
+      @network = services.networking.new_network(params[:network])
       @network.id = params[:id]
 
       if @network.save
@@ -119,7 +119,7 @@ module Networking
     end
 
     def destroy
-      @network = services_ng.networking.new_network
+      @network = services.networking.new_network
       @network.id = params[:id]
 
       if @network

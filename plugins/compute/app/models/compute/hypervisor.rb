@@ -2,7 +2,7 @@
 
 module Compute
   # Represents the Openstack Hypervisor
-  class Hypervisor < Core::ServiceLayerNg::Model
+  class Hypervisor < Core::ServiceLayer::Model
     def name
       read('hypervisor_hostname')
     end

@@ -8,12 +8,12 @@ module DnsService
 
     def index
       @zones = paginatable(per_page: 20) do |pagination_options|
-        services_ng.dns_service.zones(
+        services.dns_service.zones(
           @admin_option.merge(pagination_options)
         )[:items]
       end
 
-      active_requests = services_ng.dns_service.zone_transfer_requests(status: 'ACTIVE')
+      active_requests = services.dns_service.zone_transfer_requests(status: 'ACTIVE')
 
       @zone_transfer_requests = active_requests.select do |r|
         r.project_id.nil? or r.project_id != @scoped_project_id
@@ -36,7 +36,7 @@ module DnsService
 
     def show
       @recordsets = paginatable(per_page: 20) do |pagination_options|
-        services_ng.dns_service.recordsets(
+        services.dns_service.recordsets(
           params[:id],
           {
             sort_key: 'name'
@@ -44,7 +44,7 @@ module DnsService
         )[:items]
       end
 
-      @nameservers = services_ng.dns_service.recordsets(
+      @nameservers = services.dns_service.recordsets(
         params[:id],
         { type: 'NS' }.merge(@impersonate_option)
       )[:items]
@@ -52,7 +52,7 @@ module DnsService
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        zone = services_ng.dns_service.find_zone(params[:id], @impersonate_option)
+        zone = services.dns_service.find_zone(params[:id], @impersonate_option)
         render partial: 'dns_service/zones/recordsets/recordsets', locals: { recordsets: @recordsets, zone: zone }
       else
         # comon case, render index page with layout
@@ -61,11 +61,11 @@ module DnsService
     end
 
     def new
-      @zone = services_ng.dns_service.new_zone
+      @zone = services.dns_service.new_zone
     end
 
     def create
-      @zone = services_ng.dns_service.new_zone(params[:zone])
+      @zone = services.dns_service.new_zone(params[:zone])
 
       if @zone.save
         flash.now[:notice] = "Zone successfully created."
@@ -96,7 +96,7 @@ module DnsService
     end
 
     def destroy
-      @deleted = services_ng.dns_service.delete_zone(params[:id], @impersonate_option)
+      @deleted = services.dns_service.delete_zone(params[:id], @impersonate_option)
       respond_to do |format|
         format.js {}
         format.html { redirect_to zones_url }
@@ -108,7 +108,7 @@ module DnsService
     def load_pools
       @pools = []
       return unless current_user.is_allowed?("dns_service:pool_list")
-      @pools = services_ng.dns_service.pools[:items]
+      @pools = services.dns_service.pools[:items]
     end
   end
 end

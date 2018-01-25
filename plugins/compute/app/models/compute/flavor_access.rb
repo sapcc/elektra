@@ -2,7 +2,7 @@
 
 module Compute
   # Represents the Openstack Flavor
-  class FlavorAccess < Core::ServiceLayerNg::Model
+  class FlavorAccess < Core::ServiceLayer::Model
     def save
       # execute before callback
       before_save

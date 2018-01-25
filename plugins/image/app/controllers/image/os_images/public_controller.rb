@@ -1,7 +1,7 @@
 module Image
   class OsImages::PublicController < OsImagesController
     def unpublish
-      @image = services_ng.image.new_image
+      @image = services.image.new_image
       @image.id = params[:public_id]
       @image.unpublish
     end

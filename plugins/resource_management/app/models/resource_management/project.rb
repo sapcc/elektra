@@ -1,5 +1,5 @@
 module ResourceManagement
-  class Project < Core::ServiceLayerNg::Model
+  class Project < Core::ServiceLayer::Model
 
     validate :validate_resources
 

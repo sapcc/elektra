@@ -2,7 +2,7 @@
 
 module DnsService
   # Presents the zone model
-  class Zone < Core::ServiceLayerNg::Model
+  class Zone < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Please provide the domain name' },
                      on: :create
     validates :email, presence: { message: 'Please provide an email' }

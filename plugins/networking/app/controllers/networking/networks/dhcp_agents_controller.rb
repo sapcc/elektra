@@ -4,18 +4,18 @@ module Networking
   # Implements Network Rbac actions
   class Networks::DhcpAgentsController < NetworksController
     def index
-      @dhcp_agents = services_ng.networking.network_dhcp_agents(@network_id)
-      @new_dhcp_agents = services_ng.networking.dhcp_agents.delete_if{ |existing_agent| @dhcp_agents.map(&:id).include?(existing_agent.id) }
+      @dhcp_agents = services.networking.network_dhcp_agents(@network_id)
+      @new_dhcp_agents = services.networking.dhcp_agents.delete_if{ |existing_agent| @dhcp_agents.map(&:id).include?(existing_agent.id) }
     end
 
     def create
-      @dhcp_agent = services_ng.networking.new_dhcp_agent(params[:dhcp])
+      @dhcp_agent = services.networking.new_dhcp_agent(params[:dhcp])
       @dhcp_agent.network_id = @network_id
       @dhcp_agent.save
     end
 
     def destroy
-      @dhcp_agent = services_ng.networking.new_dhcp_agent
+      @dhcp_agent = services.networking.new_dhcp_agent
       @dhcp_agent.id = params[:id]
       @dhcp_agent.network_id = @network_id
 

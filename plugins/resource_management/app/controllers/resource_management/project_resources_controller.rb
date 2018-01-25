@@ -11,7 +11,7 @@ module ResourceManagement
     authorization_required
 
     def index
-      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @view_services = @project.services
 
       # special case to poll elektra during sync now process
@@ -34,7 +34,7 @@ module ResourceManagement
       @area = area || params.require(:area).to_sym
 
       # load all resources for these services
-      @project = services_ng.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      @project = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
       @view_services = @project.services.select { |srv| srv.area.to_sym == @area }
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
@@ -186,7 +186,7 @@ module ResourceManagement
     end
 
     def sync_now
-      services_ng.resource_management.sync_project_asynchronously(
+      services.resource_management.sync_project_asynchronously(
         @scoped_domain_id, @scoped_project_id
       )
       @start_time = Time.now.to_i
@@ -195,13 +195,13 @@ module ResourceManagement
     private
 
     def load_project
-      @project = services_ng.resource_management.find_project(
+      @project = services.resource_management.find_project(
         @scoped_domain_id, @scoped_project_id
       ) || raise(ActiveRecord::RecordNotFound)
     end
 
     def load_project_resource
-      @resource = services_ng.resource_management.find_project(
+      @resource = services.resource_management.find_project(
         @scoped_domain_id, @scoped_project_id,
         service: Array.wrap(params.require(:service)),
         resource: Array.wrap(params.require(:resource)),
@@ -212,7 +212,7 @@ module ResourceManagement
       enforce_permissions("resource_management:project_resource_list")
       # if no quota has been approved yet, the user may request an initial
       # package of quotas
-      @show_package_request_banner = ! services_ng.resource_management.has_project_quotas?(current_user.domain_id,current_user.project_id,current_user.project_domain_id)
+      @show_package_request_banner = ! services.resource_management.has_project_quotas?(current_user.domain_id,current_user.project_id,current_user.project_domain_id)
       @has_requested_package = Inquiry::Inquiry.
         where(domain_id: @scoped_domain_id, project_id: @scoped_project_id, kind: 'project_quota_package', aasm_state: 'open').
         count > 0

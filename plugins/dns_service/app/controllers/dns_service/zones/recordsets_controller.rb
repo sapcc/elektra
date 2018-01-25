@@ -6,19 +6,19 @@ module DnsService
     class RecordsetsController < DnsService::ApplicationController
       before_action ->(id = params[:zone_id]) { load_zone id }
       def show
-        @recordset = services_ng.dns_service.find_recordset(
+        @recordset = services.dns_service.find_recordset(
           params[:zone_id], params[:id], @impersonate_option
         )
       end
 
       def new
-        @recordset = services_ng.dns_service.new_recordset(
+        @recordset = services.dns_service.new_recordset(
           @impersonate_option.merge(zone_id: @zone.id)
         )
       end
 
       def create
-        @recordset = services_ng.dns_service.new_recordset(
+        @recordset = services.dns_service.new_recordset(
           @zone.id, params[:recordset]
         )
         @recordset.zone_name = @zone.name
@@ -39,13 +39,13 @@ module DnsService
       end
 
       def edit
-        @recordset = services_ng.dns_service.find_recordset(
+        @recordset = services.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
       end
 
       def update
-        @recordset = services_ng.dns_service.find_recordset(
+        @recordset = services.dns_service.find_recordset(
           @zone.id, params[:id], @impersonate_option
         )
 
@@ -72,7 +72,7 @@ module DnsService
       end
 
       def destroy
-        @deleted = services_ng.dns_service.delete_recordset(
+        @deleted = services.dns_service.delete_recordset(
           params[:zone_id], params[:id]
         )
         respond_to do |format|

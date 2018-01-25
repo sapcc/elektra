@@ -49,48 +49,24 @@ class DashboardController < ::ScopeController
                 :load_webcli_endpoint, except: %i[terms_of_use]
   before_action :set_mailer_host
 
-  # even if token is not expired yet we get sometimes the error
-  # "token not found"
-  # so we try to catch this error here and redirect user to login screen
-  rescue_from 'Excon::Error::NotFound' do |error|
-    if error.message.match(/Could not find token/i) ||
-       error.message.match(/Failed to validate token/i)
-      redirect_to monsoon_openstack_auth.login_path(
-        domain_fid: @scoped_domain_fid,
-        domain_name: @scoped_domain_name, after_login: params[:after_login]
-      )
-    else
-      render_exception_page(error, title: 'Backend Service Error')
-    end
-  end
 
-  rescue_from 'Core::ServiceLayer::Errors::ApiError' do |error|
-    if error.response_data &&
-       error.response_data['error'] &&
-       error.response_data['error']['code'] == 403
-      render_exception_page(
-        error,
-        title: 'Permission Denied',
-        description: error.response_data['error']['message'] ||
-                     'You are not authorized to request this page.'
-      )
-    elsif (error.response_data &&
-        error.response_data['error'] &&
-        error.response_data['error']['code'] == 404) || error.type == 'NotFound'
-      render_exception_page(
-        error,
-        title: 'Object not Found',
-        sentry: false,
-        warning: true,
-        description: "The object you're looking for doesn't exist. \
-        Please verify your input."
-      )
-    else
-      render_exception_page(error, title: 'Backend Service Error')
-    end
-  end
+  # TODO: this lines of code are obsolete. Remove them after March 31.
+  # # even if token is not expired yet we get sometimes the error
+  # # "token not found"
+  # # so we try to catch this error here and redirect user to login screen
+  # rescue_from 'Excon::Error::NotFound' do |error|
+  #   if error.message.match(/Could not find token/i) ||
+  #      error.message.match(/Failed to validate token/i)
+  #     redirect_to monsoon_openstack_auth.login_path(
+  #       domain_fid: @scoped_domain_fid,
+  #       domain_name: @scoped_domain_name, after_login: params[:after_login]
+  #     )
+  #   else
+  #     render_exception_page(error, title: 'Backend Service Error')
+  #   end
+  # end
 
-  rescue_from 'Excon::Error::Unauthorized', 'Elektron::Errors::TokenExpired',
+  rescue_from 'Elektron::Errors::TokenExpired',
               'MonsoonOpenstackAuth::Authentication::NotAuthorized' do
     redirect_to monsoon_openstack_auth.login_path(
       domain_fid: @scoped_domain_fid,
@@ -98,8 +74,7 @@ class DashboardController < ::ScopeController
     )
   end
 
-  rescue_from 'Core::Api::Error',
-              'Elektron::Errors::ApiResponse' do |exception|
+  rescue_from 'Elektron::Errors::ApiResponse' do |exception|
     options = {
       title: exception.code_type, description: :message,
       warning: true, sentry: false
@@ -116,7 +91,9 @@ class DashboardController < ::ScopeController
       options[:description] = "The object you are looking for doesn't exist. \
       Please verify your input. (#{exception.message})"
     when 403 # forbidden
-      options[:title] = 'Forbidden'
+      options[:title] = 'Permission Denied'
+      options[:description] = exception.message ||
+                              'You are not authorized to request this page.'
     end
     render_exception_page(exception, options.merge(sentry: true))
   end
@@ -338,7 +315,7 @@ class DashboardController < ::ScopeController
     end
     return if @active_project && @active_project.name == @scoped_project_name
 
-    @active_project = services_ng.identity.find_project(
+    @active_project = services.identity.find_project(
       @scoped_project_id, subtree_as_ids: true, parents_as_ids: true
     )
     FriendlyIdEntry.update_project_entry(@active_project)

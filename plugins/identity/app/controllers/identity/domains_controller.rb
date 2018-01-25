@@ -8,7 +8,7 @@ module Identity
     }, except: [:show]
 
     def show
-      @user_domain_projects_tree = services_ng.identity.auth_projects_tree(
+      @user_domain_projects_tree = services.identity.auth_projects_tree(
         @user_domain_projects
       )
       @root_projects = @user_domain_projects.select { |pr| pr.parent.blank? }
@@ -16,7 +16,7 @@ module Identity
     end
 
     def index
-      @domains = services_ng.identity.domains
+      @domains = services.identity.domains
     end
   end
 end

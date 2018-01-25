@@ -5,7 +5,7 @@ module DnsService
     private
 
     def load_zone(id)
-      @zone = services_ng.dns_service.find_zone(id, @admin_option)
+      @zone = services.dns_service.find_zone(id, @admin_option)
       @impersonate_option = if @all_projects && @scoped_project_id != @zone.project_id
                               { project_id: @zone.project_id }
                             else

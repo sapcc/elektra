@@ -12,28 +12,28 @@ module KeyManager
     end
 
     def show
-      @secret = services_ng.key_manager
+      @secret = services.key_manager
                            .secret_with_metadata_payload(params[:id])
       # get the user name from the openstack id
       @user = service_user.identity.find_user(@secret.creator_id).name
     end
 
     def new
-      @secret = services_ng.key_manager.new_secret
+      @secret = services.key_manager.new_secret
     end
 
     def type_update
-      @secret = services_ng.key_manager.new_secret
+      @secret = services.key_manager.new_secret
     end
 
     def payload
-      @secret = services_ng.key_manager.find_secret(params[:id])
-      payload = services_ng.key_manager.secret_payload(params[:id])
+      @secret = services.key_manager.find_secret(params[:id])
+      payload = services.key_manager.secret_payload(params[:id])
       send_data payload, filename: @secret.name
     end
 
     def create
-      @secret = services_ng.key_manager.new_secret(secrets_params)
+      @secret = services.key_manager.new_secret(secrets_params)
 
       # validate and save
       if @secret.save
@@ -46,7 +46,7 @@ module KeyManager
 
     def destroy
       # delete secret
-      @secret = services_ng.key_manager.new_secret
+      @secret = services.key_manager.new_secret
       @secret.id = params[:id]
       if @secret.destroy
         flash.now[:success] = "Secret #{params[:id]} was successfully removed."
@@ -63,7 +63,7 @@ module KeyManager
       page = params[:page] || 1
       per_page = 10
       offset = (page.to_i - 1) * per_page
-      result = services_ng.key_manager.secrets(
+      result = services.key_manager.secrets(
         sort: 'created:desc', limit: per_page, offset: offset
       )
       Kaminari.paginate_array(

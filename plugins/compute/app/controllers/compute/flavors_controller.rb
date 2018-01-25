@@ -5,15 +5,15 @@ module Compute
     authorization_required
 
     def index
-      @flavors = services_ng.compute.flavors({is_public: 'None'}).sort_by{|a| [a.ram, a.vcpus]}
+      @flavors = services.compute.flavors({is_public: 'None'}).sort_by{|a| [a.ram, a.vcpus]}
     end
 
     def new
-      @flavor = services_ng.compute.new_flavor
+      @flavor = services.compute.new_flavor
     end
 
     def create
-      @flavor = services_ng.compute.new_flavor(params[:flavor])
+      @flavor = services.compute.new_flavor(params[:flavor])
       if @flavor.save
         respond_to do |format|
           format.html{redirect_to plugin('compute').flavors_url}
@@ -25,11 +25,11 @@ module Compute
     end
 
     def edit
-      @flavor = services_ng.compute.find_flavor(params[:id])
+      @flavor = services.compute.find_flavor(params[:id])
     end
 
     def update
-      @flavor = services_ng.compute.new_flavor(params[:flavor])
+      @flavor = services.compute.new_flavor(params[:flavor])
       @flavor.id = params[:id]
       if @flavor.save
         respond_to do |format|
@@ -42,7 +42,7 @@ module Compute
     end
 
     def destroy
-      @flavor = services_ng.compute.new_flavor
+      @flavor = services.compute.new_flavor
       @flavor.id = params[:id]
       @error = 'Could not delete Flavor' unless @flavor.destroy
 

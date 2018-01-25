@@ -31,19 +31,19 @@ describe Inquiry::InquiriesController, type: :controller do
       inq = controller.services.inquiry.create_inquiry("test", "test description", controller.current_user, @payload, @processors)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 2
 
-      controller.services.inquiry.set_inquiry_state(inq.id, 'approved', 'Set state to approved')
+      controller.services.inquiry.set_inquiry_state(inq.id, 'approved', 'Set state to approved', controller.current_user)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 1
       expect(controller.services.inquiry.get_inquiries({:state => 'approved'}).count).to eq 1
 
       expect {
-        controller.services.inquiry.set_inquiry_state(inq.id, 'rejected', 'Set state to rejected')
+        controller.services.inquiry.set_inquiry_state(inq.id, 'rejected', 'Set state to rejected', controller.current_user)
       }.to raise_error Exception
 
       expect {
-        controller.services.inquiry.set_inquiry_state(inq.id, 'open', 'Set state to open')
+        controller.services.inquiry.set_inquiry_state(inq.id, 'open', 'Set state to open', controller.current_user)
       }.to raise_error Exception
 
-      controller.services.inquiry.set_inquiry_state(inq.id, 'closed', 'Set state to closed')
+      controller.services.inquiry.set_inquiry_state(inq.id, 'closed', 'Set state to closed', controller.current_user)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 1
       expect(controller.services.inquiry.get_inquiries({:state => 'approved'}).count).to eq 0
       expect(controller.services.inquiry.get_inquiries({:state => 'closed'}).count).to eq 1
@@ -63,27 +63,25 @@ describe Inquiry::InquiriesController, type: :controller do
       inq = controller.services.inquiry.create_inquiry("test", "test description", controller.current_user, @payload, @processors)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 2
 
-      controller.services.inquiry.set_inquiry_state(inq.id, 'rejected', 'Set state to rejected')
+      controller.services.inquiry.set_inquiry_state(inq.id, 'rejected', 'Set state to rejected', controller.current_user)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 1
       expect(controller.services.inquiry.get_inquiries({:state => 'rejected'}).count).to eq 1
 
       expect {
-        controller.services.inquiry.set_inquiry_state(inq.id, 'approved', 'Set state to approved')
+        controller.services.inquiry.set_inquiry_state(inq.id, 'approved', 'Set state to approved', controller.current_user)
       }.to raise_error Exception
 
-      controller.services.inquiry.set_inquiry_state(inq.id, 'open', 'Set state to open')
+      controller.services.inquiry.set_inquiry_state(inq.id, 'open', 'Set state to open', controller.current_user)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 2
 
-      controller.services.inquiry.set_inquiry_state(inq.id, 'rejected', 'Set state to rejected')
+      controller.services.inquiry.set_inquiry_state(inq.id, 'rejected', 'Set state to rejected', controller.current_user)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 1
       expect(controller.services.inquiry.get_inquiries({:state => 'rejected'}).count).to eq 1
 
-      controller.services.inquiry.set_inquiry_state(inq.id, 'closed', 'Set state to closed')
+      controller.services.inquiry.set_inquiry_state(inq.id, 'closed', 'Set state to closed', controller.current_user)
       expect(controller.services.inquiry.get_inquiries({:state => 'open'}).count).to eq 1
       expect(controller.services.inquiry.get_inquiries({:state => 'rejected'}).count).to eq 0
       expect(controller.services.inquiry.get_inquiries({:state => 'closed'}).count).to eq 1
-
     end
-
   end
 end

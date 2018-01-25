@@ -2,7 +2,7 @@
 
 module SharedFilesystemStorage
   # represents share
-  class Share < Core::ServiceLayerNg::Model
+  class Share < Core::ServiceLayer::Model
     def attributes_for_update
       {
         'display_name'              => read('name'),

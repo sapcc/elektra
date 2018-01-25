@@ -2,7 +2,7 @@
 
 module Networking
   # Implements Openstack DHCP Agent
-  class DhcpAgent < Core::ServiceLayerNg::Model
+  class DhcpAgent < Core::ServiceLayer::Model
     def status
       alive == true ? 'alive' : 'dead'
     end

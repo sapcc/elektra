@@ -13,13 +13,13 @@ module Loadbalancing
 
       def index
         # get all pools for project and calc. quota
-        @pools = services_ng.loadbalancing.pools(
+        @pools = services.loadbalancing.pools(
           loadbalancer_id: @loadbalancer.id
         )
         @quota_data = []
         return unless current_user.is_allowed?('access_to_project')
 
-        @quota_data = services_ng.resource_management.quota_data(
+        @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,
           [
@@ -34,27 +34,27 @@ module Loadbalancing
       def show_all
         enforce_permissions('loadbalancing:pool_get')
 
-        @members = services_ng.loadbalancing.pool_members(@pool.id) if @pool
+        @members = services.loadbalancing.pool_members(@pool.id) if @pool
 
         if @pool && @pool.healthmonitor_id
-          @healthmonitor = services_ng.loadbalancing.find_healthmonitor(@pool.healthmonitor_id)
+          @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id)
         end
       end
 
       def show_details
         enforce_permissions('loadbalancing:pool_get')
 
-        @members = services_ng.loadbalancing.pool_members(@pool.id) if @pool
+        @members = services.loadbalancing.pool_members(@pool.id) if @pool
         begin
-          @healthmonitor = services_ng.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool and @pool.healthmonitor_id
+          @healthmonitor = services.loadbalancing.find_healthmonitor(@pool.healthmonitor_id) if @pool and @pool.healthmonitor_id
         rescue
           @healthmonitor = nil
         end
       end
 
       def new
-        @pool = services_ng.loadbalancing.new_pool
-        @listeners = services_ng.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
+        @pool = services.loadbalancing.new_pool
+        @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
         if params[:listener_id]
           @pool.listener_id = params[:listener_id]
         end
@@ -65,7 +65,7 @@ module Loadbalancing
       end
 
       def create
-        @pool = services_ng.loadbalancing.new_pool
+        @pool = services.loadbalancing.new_pool
         @pool.attributes = pool_params.merge(session_persistence)
         @pool.loadbalancer_id = params[:loadbalancer_id]
         if @pool.save
@@ -75,13 +75,13 @@ module Loadbalancing
         else
           @pool.loadbalancer_id = @loadbalancer.id
           @protocols = @pool.listener_id.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
-          @listeners = services_ng.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
+          @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]}).keep_if { |l| l.default_pool_id.blank? }
           render :new
         end
       end
 
       def edit
-        @listeners = services_ng.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
+        @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
         @protocols = @pool.listener_id.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
       end
 
@@ -91,30 +91,30 @@ module Loadbalancing
           audit_logger.info(current_user, 'has updated', @pool)
           render template: 'loadbalancing/loadbalancers/pools/update_item_with_close.js'
         else
-          @listeners = services_ng.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
+          @listeners = services.loadbalancing.listeners({loadbalancer_id: params[:loadbalancer_id]})
           @protocols = @pool.listener_id.blank? ? Loadbalancing::Pool::PROTOCOLS : [@pool.protocol]
           render :edit
         end
       end
 
       def destroy
-        @pool = services_ng.loadbalancing.find_pool(params[:id])
+        @pool = services.loadbalancing.find_pool(params[:id])
         if @pool.healthmonitor_id
-          @healthmonitor = services_ng.loadbalancing.find_healthmonitor(
+          @healthmonitor = services.loadbalancing.find_healthmonitor(
             @pool.healthmonitor_id
           )
         end
 
 
         if @healthmonitor
-          unless services_ng.loadbalancing.execute(params[:loadbalancer_id]) {@healthmonitor.destroy}
+          unless services.loadbalancing.execute(params[:loadbalancer_id]) {@healthmonitor.destroy}
             redirect_to loadbalancer_pools_path(loadbalancer_id: @loadbalancer.id),
                         flash: {error: "Could not delete attached Healthmonitor #{@healthmonitor.errors.full_messages.to_sentence}"} and return
           end
         end
 
         pool_deleted = true
-        pool_deleted = services_ng.loadbalancing.execute(params[:loadbalancer_id]) {@pool.destroy} if @pool
+        pool_deleted = services.loadbalancing.execute(params[:loadbalancer_id]) {@pool.destroy} if @pool
 
         if pool_deleted and @healthmonitor
           audit_logger.info(current_user, "has deleted", @pool)
@@ -131,16 +131,16 @@ module Loadbalancing
       private
 
       def load_objects
-        @pool = services_ng.loadbalancing.find_pool(params[:id]) if params[:id]
+        @pool = services.loadbalancing.find_pool(params[:id]) if params[:id]
         if params[:loadbalancer_id]
-          @loadbalancer = services_ng.loadbalancing.find_loadbalancer(
+          @loadbalancer = services.loadbalancing.find_loadbalancer(
             params[:loadbalancer_id]
           )
         end
         return unless @pool
 
         if @pool.listeners.first
-          @listener = services_ng.loadbalancing.find_listener(
+          @listener = services.loadbalancing.find_listener(
             @pool.listeners.first['id']
           )
         end

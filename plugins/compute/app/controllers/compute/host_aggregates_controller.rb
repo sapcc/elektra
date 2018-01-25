@@ -4,7 +4,7 @@ module Compute
     authorization_required
 
     def index
-      @host_aggregates = services_ng.compute.host_aggregates
+      @host_aggregates = services.compute.host_aggregates
     end
   end
 end

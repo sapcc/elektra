@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ServiceLayerNg::IdentityService do
+RSpec.describe ServiceLayer::IdentityService do
 
   describe "required methods" do
 

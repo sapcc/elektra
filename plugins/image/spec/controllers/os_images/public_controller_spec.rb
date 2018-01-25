@@ -15,7 +15,7 @@ describe Image::OsImages::PublicController, type: :controller do
     stub_authentication
 
     os_image_service = double('image service').as_null_object
-    allow_any_instance_of(ServiceLayerNg::ImageService).to receive(:elektron_images).and_return(os_image_service)
+    allow_any_instance_of(ServiceLayer::ImageService).to receive(:elektron_images).and_return(os_image_service)
   end
 
   describe "GET 'index'" do

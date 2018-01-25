@@ -3,13 +3,11 @@
 require_relative 'core/data_type'
 require_relative 'core/formatter'
 require_relative 'core/plugins_manager'
+require_relative 'core/api_client_manager'
 require_relative 'core/service_layer'
-require_relative 'core/api'
-require_relative 'core/service_layer_ng'
 require_relative 'core/audit_logger'
 require_relative 'core/errors'
 require_relative 'core/paginatable'
-require_relative 'core/strip_attributes'
 require_relative 'core/static_config'
 
 # Core module contains all essential functionalities

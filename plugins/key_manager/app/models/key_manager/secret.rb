@@ -2,7 +2,7 @@
 
 module KeyManager
   # represents the seret
-  class Secret < Core::ServiceLayerNg::Model
+  class Secret < Core::ServiceLayer::Model
     module Status
       ACTIVE = 'ACTIVE'
     end

@@ -1,6 +1,6 @@
 module ObjectStorage
   module Forms
-    class ConfirmContainerAction < Core::ServiceLayerNg::Model
+    class ConfirmContainerAction < Core::ServiceLayer::Model
 
       def initialize(attributes={})
         super(nil, attributes) # no driver

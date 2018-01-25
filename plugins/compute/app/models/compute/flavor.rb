@@ -2,7 +2,7 @@
 
 module Compute
   # Represents Openstack Flavor
-  class Flavor < Core::ServiceLayerNg::Model
+  class Flavor < Core::ServiceLayer::Model
     def to_s
       "#{name}, #{vcpus} VCPUs, #{disk}GB Disk, #{ram}MB Ram"
     end

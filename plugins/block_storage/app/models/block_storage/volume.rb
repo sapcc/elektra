@@ -1,7 +1,7 @@
  # frozen_string_literal: true
 
 module BlockStorage
-  class Volume < Core::ServiceLayerNg::Model
+  class Volume < Core::ServiceLayer::Model
     validates :name, :description, :size, presence: true
     validates :size, numericality: { only_integer: true, greater_than: 0 }
     validate :avalability_zone_or_snapshot_id

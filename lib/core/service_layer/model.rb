@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 require_relative '../strip_attributes'
 
 module Core
   module ServiceLayer
+    # Describes the Openstack Model
     class Model
+      class MissingAttributeError < StandardError; end
+
       extend ActiveModel::Naming
       extend ActiveModel::Translation
       include ActiveModel::Conversion
@@ -12,34 +17,29 @@ module Core
 
       strip_attributes
 
-      attr_reader :errors
+      attr_reader :errors, :service
+      attr_accessor :id
 
-      def initialize(driver, params=nil)
-        @driver = driver
+      def initialize(service, params = nil)
+        @service = service
         # get just the name of class without namespaces
         @class_name = self.class.name.split('::').last.underscore
-        self.attributes = params
-
+        self.attributes = params || {}
         # create errors object
         @errors = ActiveModel::Errors.new(self)
-
         # execute after callback
         after_initialize
       end
 
-      def id
-        @id
-      end
-
-      def id=(id)
-        @id=id
+      def inspect
+        attributes.to_s
       end
 
       def attributes
-        @attributes.merge(id:@id).with_indifferent_access
+        @attributes.merge(id: @id)
       end
 
-      def as_json(options=nil)
+      def as_json(_options = nil)
         attributes
       end
 
@@ -48,136 +48,137 @@ module Core
         attribute_name = method_sym.to_s
         attribute_name = attribute_name.chop if attribute_name.ends_with?('=')
 
-        if arguments.count>1
+        if arguments.count > 1
           write(attribute_name, arguments)
-        elsif arguments.count>0
+        elsif arguments.count.positive?
           write(attribute_name, arguments.first)
         else
-          read(attribute_name)
+          sanitize(read(attribute_name))
         end
       end
 
       def respond_to?(method_name, include_private = false)
         keys = @attributes.keys
-        method_name.to_s=="id" or keys.include?(method_name.to_s) or keys.include?(method_name.to_sym) or super
+        method_name.to_s == 'id' ||
+          keys.include?(method_name.to_s) ||
+          keys.include?(method_name.to_sym) ||
+          super
       end
 
       def requires(*attrs)
-        attrs.each do |attribute|
-          if self.send(attribute.to_s).nil?
-            raise Core::ServiceLayer::Errors::MissingAttribute.new("#{attribute} is missing")
+        attrs.each do |attr|
+          if send(attr.to_s).nil?
+            raise MissingAttributeError, "#{attr} is missing"
           end
         end
-      end
-
-      def api_error_name_mapping
-        {
-            #"message": " ",
-            "Message": "message"
-        }
       end
 
       def save
         # execute before callback
+        before_create if id.nil?
         before_save
 
-        success = self.valid?
+        success = valid?
 
         if success
-          if self.id.nil?
-            success = perform_create
-          else
-            success = perform_update
-          end
+          success = id.nil? ? perform_create : perform_update
         end
-
-        return success & after_save
+        success & after_save
       end
 
-      def update(attributes={})
-        attributes.each do |key, value|
-          send("#{key.to_s}=", value)
+      def update(attributes = {})
+        return false unless attributes
+        action_controller_params_to_hash(attributes.clone).each do |key, value|
+          send("#{key}=", value)
         end
-        return save
+        save
       end
 
       alias_method :update_attributes, :update
 
       def destroy
         requires :id
+
         # execute before callback
         before_destroy
 
-        error_names = api_error_name_mapping
-        begin
-          if id
-            perform_driver_delete(id) #@driver.send("delete_#{@class_name}", id)
-            return true
-          else
-            self.errors.add(:id, "Could not destroy #{@class_name}. Id not presented.")
-            return false
-          end
-        rescue => e
-          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-
-          Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-          return false
+        rescue_api_errors do
+          perform_service_delete(id)
+          return true
         end
       end
 
       def attributes=(new_attributes)
-        @attributes = (new_attributes.is_a?(ActionController::Parameters) ? new_attributes.to_unsafe_hash : (new_attributes.blank? ? {} : new_attributes.with_indifferent_access)).clone
+        new_attributes = new_attributes.blank? ? {} : new_attributes.clone
+        @attributes = action_controller_params_to_hash(new_attributes)
         # delete id from attributes!
-        new_id = nil
-        if @attributes["id"] or @attributes[:id]
-          new_id = (@attributes.delete("id") or @attributes.delete(:id))
-        end
+        new_id = (@attributes.delete('id') || @attributes.delete(:id))
         # if current_id is nil then overwrite it with new_id.
-        @id = new_id if (@id.nil? or (@id.is_a?(String) and @id.empty?))
+        @id = new_id if @id.nil? || (@id.is_a?(String) && @id.empty?)
+        @attributes
+      end
+
+      def sanitize(value)
+        return value unless value.is_a?(String)
+        @full_sanitizer ||= Rails::Html::FullSanitizer.new
+        @full_sanitizer.sanitize(value)
+      end
+
+      def action_controller_params_to_hash(params)
+        if params.is_a?(ActionController::Parameters)
+          params = params.to_unsafe_hash
+        end
+        if params.is_a?(Hash)
+          params = params.with_indifferent_access
+          params.each do |k, v|
+            params[k] = action_controller_params_to_hash(v)
+          end
+        end
+        params
       end
 
       def escape_attributes!
         escaped_attributes = (@attributes || {}).clone
-        escaped_attributes.each{|k,v| @attributes[k]=escape_value(v)}
+        escaped_attributes.each { |k, v| @attributes[k] = escape_value(v) }
       end
 
       # callbacks
-      def before_create;
-        return true;
+      def before_create
+        true
       end
 
-      def before_destroy;
-        return true;
+      def before_destroy
+        true
       end
 
-      def before_save;
-        return true;
+      def before_save
+        true
       end
 
-      def after_initialize;
-        return true;
+      def after_initialize
+        true
       end
 
-      def after_create;
-        return true;
+      def after_create
+        true
       end
 
-      def after_save;
-        return true;
+      def after_save
+        true
       end
 
       def created_at
-        value = read("created") || read("created_at")
-        DateTime.parse(value) if value
-      end
-
-      def updated_at
-        value = read("updated") || read("updated_at")
+        value = read('created') || read('created_at')
         DateTime.parse(value) if value
       end
 
       def pretty_created_at
         Core::Formatter.format_modification_time(created_at) if created_at
+      end
+
+      def updated_at
+        value = read('updated') || read('updated_at')
+        DateTime.parse(value) if value
       end
 
       def pretty_updated_at
@@ -203,12 +204,12 @@ module Core
       end
 
       def escape_value(value)
-        value = CGI::escapeHTML(value) if value.is_a?(String)
+        value = CGI.escapeHTML(value) if value.is_a?(String)
         value
       end
 
       def pretty_attributes
-        JSON.pretty_generate(@attributes.merge(id: self.id))
+        JSON.pretty_generate(@attributes.merge(id: id))
       end
 
       def to_s
@@ -218,91 +219,53 @@ module Core
       def attribute_to_object(attribute_name, klass)
         value = read(attribute_name)
 
-        if value
-          if value.is_a?(Hash)
-            return klass.new(@driver, value)
-          elsif value.is_a?(Array)
-            return value.collect { |attrs| klass.new(@driver, attrs) }
-          end
-        end
-        return nil
+        return nil unless value
+        @service.map_to(klass, value)
       end
 
       protected
 
       def perform_create
-        # execute before callback
-        before_create
-
-        create_attrs = self.attributes_for_create
-        create_attrs.delete(:id)
-
-        # begin
-        #   created_attributes = perform_driver_create(create_attrs) #@driver.send("create_#{@class_name}", create_attrs)
-        #   self.attributes= created_attributes
-        # rescue => e
-        #   raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-        #   Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-        #
-        #   return false
-        # end
-        rescue_errors do
-          created_attributes = perform_driver_create(create_attrs) #@driver.send("create_#{@class_name}", create_attrs)
-          self.attributes= created_attributes
-          after_create
-          return true
+        rescue_api_errors do
+          # execute before callback
+          create_attrs = attributes_for_create
+          create_attrs.delete(:id)
+          created_attributes = perform_service_create(create_attrs)
+          self.attributes = created_attributes
         end
-
-        #self.attributes = @model.attributes
-
       end
 
       def perform_update
-        # begin
-        #   update_attrs = attributes_for_update.with_indifferent_access
-        #   update_attrs.delete(:id)
-        #   updated_attributes = perform_driver_update(id,update_attrs) #@driver.send("update_#{@class_name}", id, update_attrs)
-        #   self.attributes=updated_attributes if updated_attributes
-        # rescue => e
-        #   raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-        #
-        #   Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-        #   return false
-        # end
-        rescue_errors do
+        rescue_api_errors do
           update_attrs = attributes_for_update
           update_attrs.delete(:id)
-          updated_attributes = perform_driver_update(id,update_attrs) #@driver.send("update_#{@class_name}", id, update_attrs)
-          self.attributes=updated_attributes if updated_attributes
-          return true
+          updated_attributes = perform_service_update(id, update_attrs)
+          self.attributes = updated_attributes if updated_attributes
         end
       end
 
-      # msp to driver create method
-      def perform_driver_create(create_attributes)
-        @driver.send("create_#{@class_name}", create_attributes.with_indifferent_access)
+      # msp to service create method
+      def perform_service_create(create_attributes)
+        @service.send("create_#{@class_name}", create_attributes)
       end
 
-      # map to driver update method
-      def perform_driver_update(id,update_attributes)
-        @driver.send("update_#{@class_name}", id, update_attributes.with_indifferent_access)
+      # map to service update method
+      def perform_service_update(id, update_attributes)
+        @service.send("update_#{@class_name}", id, update_attributes)
       end
 
-      # map to driver delete method
-      def perform_driver_delete(id)
-        @driver.send("delete_#{@class_name}", id)
+      # map to service delete method
+      def perform_service_delete(id)
+        @service.send("delete_#{@class_name}", id)
       end
 
-      def rescue_errors(&block)
-        begin
-          block.call
-        rescue => e
-          raise e unless defined?(@driver.handle_api_errors?) and @driver.handle_api_errors?
-          Core::ServiceLayer::ApiErrorHandler.get_api_error_messages(e).each{|message| self.errors.add(:api, message)}
-          return false
-        end
+      def rescue_api_errors
+        yield
+        true
+      rescue ::Elektron::Errors::ApiResponse => e
+        e.messages.each { |m| errors.add('api', m) }
+        false
       end
-
     end
   end
 end

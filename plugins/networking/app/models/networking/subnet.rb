@@ -2,7 +2,7 @@
 
 module Networking
   # Implements Openstack Subnet
-  class Subnet < Core::ServiceLayerNg::Model
+  class Subnet < Core::ServiceLayer::Model
     validates :name, presence: true
     validates :cidr, presence: true
     validate :cidr_must_be_in_reserved_range

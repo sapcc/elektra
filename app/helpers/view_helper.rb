@@ -9,7 +9,7 @@ module ViewHelper
     remote_project ||= cloud_admin.identity.find_project_by_name_or_id(
       @scoped_domain_id, id
     )
-    remote_project ||= services_ng.identity.find_project(id)
+    remote_project ||= services.identity.find_project(id)
     # projects where the service user does not have permissions
     # or deleted projects get 'N/A'
     remote_project ? remote_project.name : ''
@@ -25,7 +25,7 @@ module ViewHelper
       remote_project ||= cloud_admin.identity.find_project_by_name_or_id(
         @scoped_domain_id, project
       )
-      remote_project ||= services_ng.identity.find_project(project)
+      remote_project ||= services.identity.find_project(project)
       # projects where the service user does not have permissions or
       # deleted projects get 'N/A'
       project_name = remote_project ? remote_project.name : ''

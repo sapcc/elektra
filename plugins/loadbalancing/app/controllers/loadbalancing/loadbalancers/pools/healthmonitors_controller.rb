@@ -13,14 +13,14 @@ module Loadbalancing
         authorization_required except: []
 
         def new
-          @healthmonitor = services_ng.loadbalancing.new_healthmonitor
+          @healthmonitor = services.loadbalancing.new_healthmonitor
           @healthmonitor.http_method = 'GET'
           @healthmonitor.expected_codes = '200'
           @healthmonitor.url_path = '/'
         end
 
         def create
-          @healthmonitor = services_ng.loadbalancing.new_healthmonitor
+          @healthmonitor = services.loadbalancing.new_healthmonitor
           @healthmonitor.attributes = healthmonitor_params.delete_if do |_k, v|
             v.blank?
           end.merge(pool_id: params[:pool_id])
@@ -42,7 +42,7 @@ module Loadbalancing
             audit_logger.info(current_user, 'has updated', @healthmonitor)
             render template: 'loadbalancing/loadbalancers/pools/healthmonitors/update_item_with_close.js'
           else
-            @pool = services_ng.loadbalancing.find_pool(params[:pool_id])
+            @pool = services.loadbalancing.find_pool(params[:pool_id])
             render :edit
           end
         end
@@ -58,15 +58,15 @@ module Loadbalancing
 
         def load_objects
           if params[:loadbalancer_id]
-            @loadbalancer = services_ng.loadbalancing.find_loadbalancer(
+            @loadbalancer = services.loadbalancing.find_loadbalancer(
               params[:loadbalancer_id]
             )
           end
           if params[:pool_id]
-            @pool = services_ng.loadbalancing.find_pool(params[:pool_id])
+            @pool = services.loadbalancing.find_pool(params[:pool_id])
           end
           if params[:id]
-            @healthmonitor = services_ng.loadbalancing.find_healthmonitor(
+            @healthmonitor = services.loadbalancing.find_healthmonitor(
               params[:id]
             )
           end

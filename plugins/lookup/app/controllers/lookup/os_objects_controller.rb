@@ -57,7 +57,7 @@ module Lookup
     def show_dns_record
       # TODO: remove default wildcard search and document capabilities
       # TODO: display all results, not just the first
-      record = services_ng.dns_service.recordsets(all_projects: true, name: "*#{@query}*").first
+      record = services.dns_service.recordsets(all_projects: true, name: "*#{@query}*").first
       raise 'no matching record found' unless record
       redirect_to plugin('dns_service').zone_recordset_path(zone_id: record.zone_id, id: record.id)
     end

@@ -28,7 +28,7 @@ RSpec.describe ServiceLayer::AutomationService do
 
         allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_service).and_return(automation_service)
 
-        service = ServiceLayer::AutomationService.new('test_url','test_region','test_token')
+        service = ServiceLayer::AutomationService.new(nil)
 
         expect(service.automations_collect_all).to match( ['element1', 'element2', 'element3', 'element4', 'element5'] )
       end

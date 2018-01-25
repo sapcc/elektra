@@ -13,19 +13,19 @@ module Loadbalancing
 
         def index
           @l7policies = paginatable(per_page: 20) do |pagination_options|
-            services_ng.loadbalancing.l7policies({loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id],
+            services.loadbalancing.l7policies({loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id],
                                                sort_key: 'position', sort_dir: 'asc'}.merge(pagination_options))
           end
           @pre_polices = get_unused_predefined_policies
         end
 
         def new
-          @pools = services_ng.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
-          @l7policy = services_ng.loadbalancing.new_l7policy
+          @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
+          @l7policy = services.loadbalancing.new_l7policy
         end
 
         def create
-          @l7policy = services_ng.loadbalancing.new_l7policy
+          @l7policy = services.loadbalancing.new_l7policy
           @l7policy.attributes = l7policy_params.merge(listener_id: @listener.id)
           @l7policy.action = 'REJECT' if @l7policy.predefined?
           @l7policy.position = 999 if @l7policy.predefined?
@@ -39,41 +39,41 @@ module Loadbalancing
               @pre_polices = get_unused_predefined_policies
               render :new_pre
             else
-              @pools = services_ng.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
+              @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
               render :new
             end
           end
         end
 
         def new_pre
-          @l7policy = services_ng.loadbalancing.new_l7policy
+          @l7policy = services.loadbalancing.new_l7policy
           @pre_polices = get_unused_predefined_policies
         end
 
         def show
-          @l7policy = services_ng.loadbalancing.find_l7policy(params[:id])
+          @l7policy = services.loadbalancing.find_l7policy(params[:id])
         end
 
         def edit
-          @pools = services_ng.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
-          @l7policy = services_ng.loadbalancing.find_l7policy(params[:id])
+          @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
+          @l7policy = services.loadbalancing.find_l7policy(params[:id])
         end
 
         def update
-          # @l7policy = services_ng.loadbalancing.find_l7policy(params[:id])
-          @l7policy = services_ng.loadbalancing.new_l7policy(l7policy_params)
+          # @l7policy = services.loadbalancing.find_l7policy(params[:id])
+          @l7policy = services.loadbalancing.new_l7policy(l7policy_params)
           @l7policy.id = params[:id]
           if @l7policy.save
             audit_logger.info(current_user, 'has updated', @l7policy)
             redirect_to loadbalancer_listener_l7policies_path(loadbalancer_id: params[:loadbalancer_id], listener_id: params[:listener_id]), notice: 'L7 Policy was successfully updated.'
           else
-            @pools = services_ng.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
+            @pools = services.loadbalancing.pools({loadbalancer_id: params[:loadbalancer_id]})
             render :edit
           end
         end
 
         def destroy
-          @l7policy = services_ng.loadbalancing.find_l7policy(params[:id])
+          @l7policy = services.loadbalancing.find_l7policy(params[:id])
           @l7policy.destroy
           audit_logger.info(current_user, "has deleted", @l7policy)
           render template: 'loadbalancing/loadbalancers/listeners/l7policies/destroy_item.js'
@@ -82,7 +82,7 @@ module Loadbalancing
         # update instance table row (ajax call)
         def update_item
           begin
-            @l7policy = services_ng.loadbalancing.find_l7policy(params[:id])
+            @l7policy = services.loadbalancing.find_l7policy(params[:id])
             respond_to do |format|
               format.js do
                 @l7policy if @l7policy
@@ -97,7 +97,7 @@ module Loadbalancing
 
         def get_unused_predefined_policies
           @policies = Loadbalancing::L7policy.predefined(@listener.protocol )
-          used = services_ng.loadbalancing.l7policies({loadbalancer_id: @loadbalancer.id, listener_id: @listener.id})
+          used = services.loadbalancing.l7policies({loadbalancer_id: @loadbalancer.id, listener_id: @listener.id})
           pre_polices = []
           @policies.each do |p|
             p[:ids].each do |id|
@@ -122,8 +122,8 @@ module Loadbalancing
         end
 
         def load_objects
-          @loadbalancer = services_ng.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
-          @listener = services_ng.loadbalancing.find_listener(params[:listener_id])
+          @loadbalancer = services.loadbalancing.find_loadbalancer(params[:loadbalancer_id])
+          @listener = services.loadbalancing.find_listener(params[:listener_id])
         end
       end
     end

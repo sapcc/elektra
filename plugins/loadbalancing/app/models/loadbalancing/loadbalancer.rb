@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # represents openstack lb
-  class Loadbalancer < Core::ServiceLayerNg::Model
+  class Loadbalancer < Core::ServiceLayer::Model
     validates :vip_subnet_id, presence: true, if: -> { id.nil? }
 
     def in_transition?

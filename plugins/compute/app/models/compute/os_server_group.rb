@@ -2,6 +2,6 @@
 
 module Compute
   # Represents the Server Interface
-  class OsServerGroup < Core::ServiceLayerNg::Model
+  class OsServerGroup < Core::ServiceLayer::Model
   end
 end

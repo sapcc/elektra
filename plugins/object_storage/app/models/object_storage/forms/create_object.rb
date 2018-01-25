@@ -1,6 +1,6 @@
 module ObjectStorage
   module Forms
-    class CreateObject < Core::ServiceLayerNg::Model
+    class CreateObject < Core::ServiceLayer::Model
 
       def initialize(attributes={})
         super(nil, attributes) # no driver

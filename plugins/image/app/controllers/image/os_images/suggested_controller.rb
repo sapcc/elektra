@@ -3,12 +3,12 @@ module Image
     before_action :find_member, only: [:accept, :reject]
 
     def accept
-      @success = services_ng.image.accept_member(@member)
+      @success = services.image.accept_member(@member)
       render action: :accept, format: :js
     end
 
     def reject
-      @success = services_ng.image.reject_member(@member)
+      @success = services.image.reject_member(@member)
       render action: :reject, format: :js
     end
 
@@ -18,7 +18,7 @@ module Image
     end
 
     def find_member
-      members = services_ng.image.members(params[:suggested_id])
+      members = services.image.members(params[:suggested_id])
       @member = catch :found do
         members.each do |m|
           throw :found, m if m.member_id == @scoped_project_id && m.status == 'pending'

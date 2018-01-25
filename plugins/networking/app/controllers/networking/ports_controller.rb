@@ -12,7 +12,7 @@ module Networking
     def index
       per_page = params[:per_page] || 15
       @ports = paginatable(per_page: per_page) do |pagination_options|
-        services_ng.networking.ports({ sort_key: 'id'}.merge(pagination_options))
+        services.networking.ports({ sort_key: 'id'}.merge(pagination_options))
       end
 
       # this is relevant in case an ajax paginate call is made.
@@ -26,7 +26,7 @@ module Networking
     end
 
     def show
-      @port = services_ng.networking.find_port(params[:id])
+      @port = services.networking.find_port(params[:id])
       enforce_permissions('::networking:port_get', port: @port)
     end
 

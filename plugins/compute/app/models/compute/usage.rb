@@ -2,7 +2,7 @@
 
 module Compute
   # Represents the Compute Usage
-  class Usage < Core::ServiceLayerNg::Model
+  class Usage < Core::ServiceLayer::Model
     def cores
       read('totalCoresUsed')
     end

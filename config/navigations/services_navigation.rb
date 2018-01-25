@@ -92,7 +92,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :access_management, 'Authorizations', nil,
       html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
-      if: -> {services_ng.available?(:identity) and current_user && (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
+      if: -> {services.available?(:identity) and current_user && (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
         access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
         access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
         access_management_nav.item :key_manager, 'Key Manager', -> {plugin('key_manager').secrets_path}, if: -> { services.available?(:key_manager) }, highlights_on: Proc.new { params[:controller][/key_manager\/.*/] }
@@ -142,7 +142,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :storage, 'Storage', nil, html: {class: "fancy-nav-header", 'data-icon': "storage-icon" },
       if: -> { services.available?(:object_storage,:containers) } do |storage_nav|
-      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services_ng.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
+      storage_nav.item :shared_storage, 'Shared Object Storage', -> {plugin('object_storage').entry_path}, if: -> { services.available?(:object_storage,:containers) }, highlights_on: Proc.new { params[:controller][/object_storage\/.*/] }
       storage_nav.item :shared_filesystem_storage, 'Shared File System Storage', -> {plugin('shared_filesystem_storage').start_path('shares')},
         if: -> { services.available?(:shared_filesystem_storage) and current_user.is_allowed?("shared_filesystem_storage:application_get") },
         highlights_on: Proc.new { params[:controller][/shared_filesystem_storage\/.*/] }
@@ -154,9 +154,9 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :resource_management, 'Capacity, Masterdata & Metrics', nil,
       html: {class: "fancy-nav-header", 'data-icon': "monitoring-icon" },
-      if: -> {services_ng.available?(:resource_management,:resources) or services.available?(:masterdata_cockpit)} do |monitoring_nav|
-      monitoring_nav.item :resource_management, 'Resource Management ', -> {plugin('resource_management').resources_path}, if: -> { services_ng.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
-      monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services_ng.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
+      if: -> {services.available?(:resource_management,:resources) or services.available?(:masterdata_cockpit)} do |monitoring_nav|
+      monitoring_nav.item :resource_management, 'Resource Management ', -> {plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
+      monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
       monitoring_nav.item :metrics, 'Metrics', -> { plugin('metrics').index_path }, if: -> { plugin_available?(:metrics)}, highlights_on: Proc.new { params[:controller][/metrics\/.*/] }
       monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit)}, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     end

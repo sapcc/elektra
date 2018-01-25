@@ -10,7 +10,7 @@ module Networking
       authorization_required
 
       def new
-        @security_groups = services_ng.networking.security_groups(
+        @security_groups = services.networking.security_groups(
           tenant_id: @scoped_project_id
         )
         @security_group = @security_groups.select  do |sg|
@@ -27,11 +27,11 @@ module Networking
           port_range_max: range.last,
           remote_ip_prefix: '0.0.0.0/0'
         }
-        @rule = services_ng.networking.new_security_group_rule(attributes)
+        @rule = services.networking.new_security_group_rule(attributes)
 
         @quota_data = []
         if current_user.is_allowed?("access_to_project")
-          @quota_data = services_ng.resource_management.quota_data(
+          @quota_data = services.resource_management.quota_data(
             current_user.domain_id || current_user.project_domain_id,
             current_user.project_id,
             [{ service_type: :network, resource_name: :security_group_rules }]
@@ -46,13 +46,13 @@ module Networking
 
         attributes = build_rule_attributes(rule_params)
         if attributes
-          @rule = services_ng.networking.new_security_group_rule(attributes)
+          @rule = services.networking.new_security_group_rule(attributes)
         end
 
         if @rule && @rule.save
           redirect_to security_group_path(params[:security_group_id])
         else
-          @security_groups = services_ng.networking.security_groups(
+          @security_groups = services.networking.security_groups(
             tenant_id: @scoped_project_id
           )
           @security_group = @security_groups.select do |sg|
@@ -62,7 +62,7 @@ module Networking
 
           @quota_data = []
           if current_user.is_allowed?("access_to_project")
-            @quota_data = services_ng.resource_management.quota_data(
+            @quota_data = services.resource_management.quota_data(
               current_user.domain_id || current_user.project_domain_id,
               current_user.project_id,
               [{ service_type: :network, resource_name: :security_group_rules }]
@@ -75,7 +75,7 @@ module Networking
       def show; end
 
       def destroy
-        @rule = services_ng.networking.new_security_group_rule
+        @rule = services.networking.new_security_group_rule
         @rule.id = params[:id]
 
         @error = @rule.errors.full_messages.to_sentence unless @rule.destroy

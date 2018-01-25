@@ -69,13 +69,13 @@ module Identity
 
           role_ids_to_add.each do |role_id|
             next unless available_role_ids.include?(role_id)
-            services_ng.identity.grant_project_user_role(@scoped_project_id,
+            services.identity.grant_project_user_role(@scoped_project_id,
                                                           user_id, role_id)
           end
 
           role_ids_to_remove.each do |role_id|
             next unless available_role_ids.include?(role_id)
-            services_ng.identity.revoke_project_user_role(@scoped_project_id,
+            services.identity.revoke_project_user_role(@scoped_project_id,
                                                            user_id, role_id)
           end
         end
@@ -86,7 +86,7 @@ module Identity
                                .collect { |role| role[:id] }
           role_ids_to_remove.each do |role_id|
             next unless available_role_ids.include?(role_id)
-            services_ng.identity.revoke_project_user_role(
+            services.identity.revoke_project_user_role(
               @scoped_project_id, user_id, role_id
             )
           end

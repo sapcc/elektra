@@ -1,5 +1,5 @@
 module Loadbalancing
-  class L7rule < Core::ServiceLayerNg::Model
+  class L7rule < Core::ServiceLayer::Model
 
     TYPES          = %w[HOST_NAME PATH FILE_TYPE HEADER COOKIE].freeze
     COMPARE_TYPES  = %w[EQUAL_TO STARTS_WITH ENDS_WITH CONTAINS REGEX].freeze

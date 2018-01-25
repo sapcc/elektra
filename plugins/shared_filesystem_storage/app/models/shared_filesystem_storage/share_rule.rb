@@ -2,7 +2,7 @@
 
 module SharedFilesystemStorage
   # represents access rule
-  class ShareRule < Core::ServiceLayerNg::Model
+  class ShareRule < Core::ServiceLayer::Model
     # msp to driver create method
     def perform_service_create(create_attributes)
       share_id = create_attributes.delete('share_id')

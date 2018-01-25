@@ -2,7 +2,7 @@
 
 module Identity
   # This class represents the Openstack Role Assignment
-  class RoleAssignment < Core::ServiceLayerNg::Model
+  class RoleAssignment < Core::ServiceLayer::Model
     attr_accessor :role_name, :user_name, :group_name, :domain_name
 
     def user_id

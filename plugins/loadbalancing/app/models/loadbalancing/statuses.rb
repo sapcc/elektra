@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # represents openstack lb status
-  class Statuses < Core::ServiceLayerNg::Model
+  class Statuses < Core::ServiceLayer::Model
     def state
       @state ||= (Hashie::Mash.new loadbalancer).extend Hashie::Extensions::DeepLocate
       @state.extend Hashie::Extensions::DeepFind

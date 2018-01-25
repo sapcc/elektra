@@ -11,10 +11,10 @@ module Networking
       @quota_data = []
 
       if current_user.is_allowed?('context_is_cloud_network_admin')
-        @routers = services_ng.networking.routers(sort_key: 'name', sort_dir: 'asc')
+        @routers = services.networking.routers(sort_key: 'name', sort_dir: 'asc')
       else
         # find routers of shared networks
-        private_shared_networks = services_ng.networking.networks(
+        private_shared_networks = services.networking.networks(
           'router:external' => false, 'shared' => true
         )
 
@@ -28,7 +28,7 @@ module Networking
           end
         end.flatten.uniq
         ################## END
-        @routers = services_ng.networking.routers(tenant_id: @scoped_project_id)
+        @routers = services.networking.routers(tenant_id: @scoped_project_id)
 
         # NEW
         @routers.concat(shared_routers).uniq! { |r| r.id }
@@ -36,7 +36,7 @@ module Networking
         usage = @routers.length
 
         if current_user.is_allowed?("access_to_project")
-          @quota_data = services_ng.resource_management.quota_data(
+          @quota_data = services.resource_management.quota_data(
             current_user.domain_id || current_user.project_domain_id,
             current_user.project_id,
             [{ service_type: :network, resource_name: :routers, usage: usage }]
@@ -81,19 +81,19 @@ module Networking
       when 'router'
         render partial: 'networking/routers/node_details/router',
                locals: {
-                 router: services_ng.networking.find_router(params[:router_id])
+                 router: services.networking.find_router(params[:router_id])
                }
       when 'network'
         render partial: 'networking/routers/node_details/network',
-               locals: { network: services_ng.networking.find_network(params[:id]) }
+               locals: { network: services.networking.find_network(params[:id]) }
       when 'gateway'
         render partial: 'networking/routers/node_details/gateway',
                locals: {
-                 external_network: services_ng.networking.find_network(params[:id])
+                 external_network: services.networking.find_network(params[:id])
                }
       when 'server'
-        server = services_ng.compute.find_server(params[:id])
-        port = services_ng.networking.ports(device_id: server.id).first if server
+        server = services.compute.find_server(params[:id])
+        port = services.networking.ports(device_id: server.id).first if server
         render partial: 'networking/routers/node_details/server',
                locals: { server: server, port: port },
                status: server.nil? ? 404 : 200
@@ -115,7 +115,7 @@ module Networking
     def new
       @quota_data = []
       if current_user.is_allowed?("access_to_project")
-        @quota_data = services_ng.resource_management.quota_data(
+        @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,
           [
@@ -125,7 +125,7 @@ module Networking
       end
 
       # build new router object (no api call done yet!)
-      @router = services_ng.networking.new_router('admin_state_up' => true)
+      @router = services.networking.new_router('admin_state_up' => true)
     end
 
     def create
@@ -134,12 +134,12 @@ module Networking
         params[:router].delete(:internal_subnets) || []
       ).reject(&:empty?)
       # build new router object
-      @router = services_ng.networking.new_router(params[:router])
+      @router = services.networking.new_router(params[:router])
       @router.internal_subnets = @selected_internal_subnets
 
       if @router.save
         # router is created -> add subnets as interfaces
-        services_ng.networking.add_router_interfaces(
+        services.networking.add_router_interfaces(
           @router.id, @selected_internal_subnets
         )
         audit_logger.info(current_user, 'has created', @router)
@@ -153,11 +153,11 @@ module Networking
     end
 
     def edit
-      @router = services_ng.networking.find_router(params[:id])
-      @external_network = services_ng.networking.find_network(
+      @router = services.networking.find_router(params[:id])
+      @external_network = services.networking.find_network(
         @router.external_gateway_info['network_id']
       )
-      @router_interface_ports = services_ng.networking.ports(
+      @router_interface_ports = services.networking.ports(
         device_id: @router.id, device_owner: 'network:router_interface'
       )
       @router_internal_subnet_ids = @router_interface_ports
@@ -178,7 +178,7 @@ module Networking
       ).reject(&:empty?)
 
       # build new router object
-      @router = services_ng.networking.new_router(params[:router].to_unsafe_hash)
+      @router = services.networking.new_router(params[:router].to_unsafe_hash)
       @router.id = params[:id]
 
       if params[:router][:external_gateway_info].blank? ||
@@ -191,7 +191,7 @@ module Networking
       @router.internal_subnets = @selected_internal_subnet_ids
 
       if @router.save
-        attached_ports = services_ng.networking.ports(
+        attached_ports = services.networking.ports(
           device_id: @router.id, device_owner: 'network:router_interface'
         )
         @old_selected_internal_subnet_ids = attached_ports.each_with_object([]) do |port, array|
@@ -211,16 +211,16 @@ module Networking
         flash.now[:notice] = 'Router successfully created.'
         redirect_to plugin('networking').routers_path
       else
-        @external_network = services_ng.networking.find_network(@router.external_gateway_info['network_id'])
+        @external_network = services.networking.find_network(@router.external_gateway_info['network_id'])
 
         render action: :edit
       end
     end
 
     def destroy
-      @router = services_ng.networking.new_router
+      @router = services.networking.new_router
       @router.id = params[:id]
-      ports = services_ng.networking.ports(
+      ports = services.networking.ports(
         device_owner: 'network:router_interface', device_id: @router.id
       ) || []
 
@@ -231,7 +231,7 @@ module Networking
           port.fixed_ips.each { |ip| array << ip['subnet_id'] }
         end
 
-        services_ng.networking.remove_router_interfaces(
+        services.networking.remove_router_interfaces(
           @router.id, attached_subnet_ids
         )
         if @router.destroy
@@ -254,9 +254,9 @@ module Networking
     def allowed_networks
       # only cloud admin can cross-assign interfaces
       if current_user.is_allowed?('cloud_network_admin')
-        services_ng.networking.networks
+        services.networking.networks
       else
-        services_ng.networking.project_networks(@scoped_project_id)
+        services.networking.project_networks(@scoped_project_id)
       end
     end
 

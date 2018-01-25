@@ -1,5 +1,5 @@
 module Image
-  class Member < Core::ServiceLayerNg::Model
+  class Member < Core::ServiceLayer::Model
     def id
       member_id
     end

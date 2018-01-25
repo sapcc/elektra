@@ -1,15 +1,15 @@
 module Identity
   class CredentialsController < ::DashboardController
     def index
-      @user_credentials = services_ng.identity.credentials
+      @user_credentials = services.identity.credentials
     end
 
     def new
-      @credential = services_ng.identity.new_credential
+      @credential = services.identity.new_credential
     end
 
     def create
-      @credential = services_ng.identity.new_credential
+      @credential = services.identity.new_credential
       @credential.attributes = params.fetch(:os_credential,{}).merge(user_id: current_user.id)
 
       if @credential.save
@@ -21,7 +21,7 @@ module Identity
     end
 
     def destroy
-      @credential = services_ng.identity.find_credential(params[:id])
+      @credential = services.identity.find_credential(params[:id])
 
       if @credential.destroy
         flash[:notice] = "Credential deleted."

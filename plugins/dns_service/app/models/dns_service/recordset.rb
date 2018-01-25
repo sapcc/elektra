@@ -2,7 +2,7 @@
 
 module DnsService
   # represents the openstack dns recordset
-  class Recordset < Core::ServiceLayerNg::Model
+  class Recordset < Core::ServiceLayer::Model
     validate :is_cname
 
     TYPE_LABELS = {

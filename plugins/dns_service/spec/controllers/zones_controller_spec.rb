@@ -22,9 +22,9 @@ describe DnsService::ZonesController, type: :controller do
     stub_authentication
     dns_service_driver = double('dns_service_driver').as_null_object
 
-    allow_any_instance_of(ServiceLayerNg::DnsServiceService)
+    allow_any_instance_of(ServiceLayer::DnsServiceService)
       .to receive(:elektron).and_return(dns_service_driver)
-    allow_any_instance_of(ServiceLayerNg::DnsServiceService)
+    allow_any_instance_of(ServiceLayer::DnsServiceService)
       .to receive(:zone_transfer_requests).and_return([])
   end
 

@@ -1,5 +1,5 @@
 module ObjectStorage
-  class Account < Core::ServiceLayerNg::Model
+  class Account < Core::ServiceLayer::Model
   # The following properties are known:
   # container_count
   # object_count

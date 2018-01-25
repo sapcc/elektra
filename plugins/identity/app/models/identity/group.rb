@@ -2,7 +2,7 @@
 
 module Identity
   # This class represents the Openstack Group
-  class Group < Core::ServiceLayerNg::Model
+  class Group < Core::ServiceLayer::Model
     validates :name, presence: {
       message: 'Please provide a name for this group.'
     }

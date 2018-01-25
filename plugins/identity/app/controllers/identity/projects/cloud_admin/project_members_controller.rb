@@ -22,10 +22,10 @@ module Identity
                     nil
                   else
                     begin
-                      services_ng.identity.users(domain_id: @domain.id,
+                      services.identity.users(domain_id: @domain.id,
                                                  name: params[:user_name]).first
                     rescue
-                      services_ng.identity.find_user(params[:user_name])
+                      services.identity.find_user(params[:user_name])
                     end
                   end
 
@@ -61,14 +61,14 @@ module Identity
 
             role_ids_to_add.each do |role_id|
               if available_role_ids.include?(role_id)
-                services_ng.identity.grant_project_user_role(@project.id,
+                services.identity.grant_project_user_role(@project.id,
                                                              user_id, role_id)
               end
             end
 
             role_ids_to_remove.each do |role_id|
               if available_role_ids.include?(role_id)
-                services_ng.identity.revoke_project_user_role(@project.id,
+                services.identity.revoke_project_user_role(@project.id,
                                                               user_id, role_id)
               end
             end
@@ -80,7 +80,7 @@ module Identity
                                  .collect { |role| role[:id] }
             role_ids_to_remove.each do |role_id|
               next unless available_role_ids.include?(role_id)
-              services_ng.identity.revoke_project_user_role(@project.id,
+              services.identity.revoke_project_user_role(@project.id,
                                                             user_id, role_id)
             end
           end
@@ -99,30 +99,30 @@ module Identity
           return unless params[:project]
 
           @domain = if params[:domain]
-                      services_ng.identity.domains(name: params[:domain].strip)
+                      services.identity.domains(name: params[:domain].strip)
                                  .first ||
-                        services_ng.identity.find_domain(params[:domain].strip)
+                        services.identity.find_domain(params[:domain].strip)
                     end
           @project = if @domain
-                       services_ng.identity.projects(
+                       services.identity.projects(
                          domain_id: @domain.id, name: params[:project].strip
                        ).first
                      end
-          @project ||= services_ng.identity.find_project(params[:project].strip)
+          @project ||= services.identity.find_project(params[:project].strip)
           return unless @project
-          @domain ||= services_ng.identity.find_domain(@project.domain_id)
+          @domain ||= services.identity.find_domain(@project.domain_id)
         end
 
         # FIXME: duplicated in ProjectGroupsController
         def load_scope_and_roles
-          @domain, @project = services_ng.identity.find_domain_and_project(
+          @domain, @project = services.identity.find_domain_and_project(
             params.permit(:domain, :project)
           )
-          @roles = services_ng.identity.roles.sort_by(&:name)
+          @roles = services.identity.roles.sort_by(&:name)
         end
 
         def load_role_assignments(project_id)
-          @role_assignments ||= services_ng.identity.role_assignments(
+          @role_assignments ||= services.identity.role_assignments(
             'scope.project.id' => project_id, include_names: true
           )
 

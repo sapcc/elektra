@@ -15,20 +15,20 @@ module Identity
 
         def new
           enforce_permissions('identity:project_group_create', {})
-          @groups = services_ng.identity.groups(domain_id: @domain.id)
+          @groups = services.identity.groups(domain_id: @domain.id)
         end
 
         def create
           enforce_permissions('identity:project_group_create', {})
 
           @group = nil if params[:group_name].blank?
-          @group ||= services_ng.identity.groups(
+          @group ||= services.identity.groups(
             domain_id: @domain.id, name: params[:group_name]
           ).first
-          @group ||= services_ng.identity.find_group(params[:group_name])
+          @group ||= services.identity.find_group(params[:group_name])
 
           load_role_assignments(@project.id)
-          @groups = services_ng.identity.groups(domain_id: @domain.id)
+          @groups = services.identity.groups(domain_id: @domain.id)
 
           if @group.nil? || @group.id.nil?
             @error = 'Group not found.'
@@ -61,13 +61,13 @@ module Identity
 
             role_ids_to_add.each do |role_id|
               next unless available_role_ids.include?(role_id)
-              services_ng.identity.grant_project_group_role(
+              services.identity.grant_project_group_role(
                 @project.id, group_id, role_id
               )
             end
             role_ids_to_remove.each do |role_id|
               next unless available_role_ids.include?(role_id)
-              services_ng.identity.revoke_project_group_role(
+              services.identity.revoke_project_group_role(
                 @project.id, group_id, role_id
               )
             end
@@ -79,7 +79,7 @@ module Identity
                                  .collect { |role| role[:id] }
             role_ids_to_remove.each do |role_id|
               next unless available_role_ids.include?(role_id)
-              services_ng.identity.revoke_project_group_role(
+              services.identity.revoke_project_group_role(
                 @project.id, group_id, role_id
               )
             end
@@ -96,14 +96,14 @@ module Identity
 
         # FIXME: duplicated in ProjectMembersController
         def load_scope_and_roles
-          @domain, @project = services_ng.identity.find_domain_and_project(
+          @domain, @project = services.identity.find_domain_and_project(
             params.permit(:domain, :project)
           )
-          @roles = services_ng.identity.roles.sort_by(&:name)
+          @roles = services.identity.roles.sort_by(&:name)
         end
 
         def load_role_assignments(project_id)
-          @role_assignments ||= services_ng.identity.role_assignments(
+          @role_assignments ||= services.identity.role_assignments(
             'scope.project.id' => project_id,
             include_names: true,
             include_subtree: true

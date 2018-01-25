@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # represents openstack lbaas pool
-  class Pool < Core::ServiceLayerNg::Model
+  class Pool < Core::ServiceLayer::Model
     ALGORITHMS = %w[ROUND_ROBIN LEAST_CONNECTIONS SOURCE_IP].freeze
     SESSION_PERSISTENCE_TYPES = %w[SOURCE_IP HTTP_COOKIE APP_COOKIE].freeze
     PROTOCOLS = %w[TCP HTTP HTTPS].freeze

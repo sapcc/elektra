@@ -2,7 +2,7 @@
 
 module DnsService
   # represents the zone transfer request
-  class ZoneTransferRequest < Core::ServiceLayerNg::Model
+  class ZoneTransferRequest < Core::ServiceLayer::Model
     # this method creates a request accept
     def accept(target_project_id = nil)
       rescue_api_errors do

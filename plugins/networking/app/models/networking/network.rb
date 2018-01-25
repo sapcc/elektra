@@ -1,5 +1,5 @@
 module Networking
-  class Network < Core::ServiceLayerNg::Model
+  class Network < Core::ServiceLayer::Model
     validates :name, presence: true
 
     def external

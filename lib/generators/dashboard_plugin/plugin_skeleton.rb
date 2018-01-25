@@ -33,7 +33,7 @@ class PluginSkeletonGenerator
   end
 
   def create_service_layer_service
-    copy_file 'shared/app/services/service_layer_ng/service.rb', "#{plugin_path}/#{name}/app/services/service_layer_ng/#{name}_service.rb"
+    copy_file 'shared/app/services/service_layer/service.rb', "#{plugin_path}/#{name}/app/services/service_layer/#{name}_service.rb"
   end
 
   def update_dependencies_to_gemspec

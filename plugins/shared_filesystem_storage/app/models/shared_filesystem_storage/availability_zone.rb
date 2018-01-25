@@ -1,4 +1,4 @@
 module SharedFilesystemStorage
-  class AvailabilityZone < Core::ServiceLayerNg::Model
+  class AvailabilityZone < Core::ServiceLayer::Model
   end
 end

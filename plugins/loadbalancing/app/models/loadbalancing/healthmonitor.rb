@@ -2,7 +2,7 @@
 
 module Loadbalancing
   # openstak healthmonitor
-  class Healthmonitor < Core::ServiceLayerNg::Model
+  class Healthmonitor < Core::ServiceLayer::Model
     TYPES = %w[TCP PING HTTP HTTPS].freeze
     METHODS = %w[GET HEAD POST].freeze
 

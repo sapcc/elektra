@@ -12,7 +12,7 @@ module Networking
     def index
       per_page = params[:per_page] || 20
       @floating_ips = paginatable(per_page: per_page) do |pagination_options|
-        services_ng.networking.project_floating_ips(
+        services.networking.project_floating_ips(
           @scoped_project_id,
           pagination_options.merge(
             sort_key: [:floating_ip_address], sort_dir: [:desc]
@@ -21,7 +21,7 @@ module Networking
       end
       @quota_data = []
       if current_user.is_allowed?("access_to_project")
-        @quota_data = services_ng.resource_management.quota_data(
+        @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,
           [
@@ -42,25 +42,25 @@ module Networking
     end
 
     def show
-      @floating_ip = services_ng.networking.find_floating_ip(params[:id])
-      @port = services_ng.networking.find_port(@floating_ip.port_id)
-      @network = services_ng.networking.find_network(@floating_ip.floating_network_id)
+      @floating_ip = services.networking.find_floating_ip(params[:id])
+      @port = services.networking.find_port(@floating_ip.port_id)
+      @network = services.networking.find_network(@floating_ip.floating_network_id)
     end
 
     def new
-      @floating_networks = services_ng.networking.networks(
+      @floating_networks = services.networking.networks(
         'router:external' => true
       )
-      @floating_ip = services_ng.networking.new_floating_ip
+      @floating_ip = services.networking.new_floating_ip
       return unless @floating_networks.length == 1
       @floating_ip.floating_network_id = @floating_networks.first.id
     end
 
     def create
-      @floating_networks = services_ng.networking.networks(
+      @floating_networks = services.networking.networks(
         'router:external' => true
       )
-      @floating_ip = services_ng.networking.new_floating_ip(params[:floating_ip])
+      @floating_ip = services.networking.new_floating_ip(params[:floating_ip])
       @floating_ip.tenant_id = @scoped_project_id
 
       if @floating_ip.save
@@ -72,11 +72,11 @@ module Networking
     end
 
     def edit
-      @floating_ip = services_ng.networking.find_floating_ip(params[:id])
+      @floating_ip = services.networking.find_floating_ip(params[:id])
     end
 
     def update
-      @floating_ip = services_ng.networking.find_floating_ip(params[:id])
+      @floating_ip = services.networking.find_floating_ip(params[:id])
       # save existing port_id and fixed_ip_address, blame neutron API for needing that on no-op
       port_id = @floating_ip.attributes['port_id']
       fixed_ip_address = @floating_ip.attributes['fixed_ip_address']
@@ -95,7 +95,7 @@ module Networking
     end
 
     def destroy
-      @floating_ip = services_ng.networking.new_floating_ip
+      @floating_ip = services.networking.new_floating_ip
       @floating_ip.id = params[:id]
 
       if @floating_ip.destroy

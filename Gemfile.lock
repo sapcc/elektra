@@ -20,28 +20,10 @@ GIT
     elektron (1.2.3)
 
 GIT
-  remote: https://github.com/sapcc/fog-openstack.git
-  revision: a7c71721f3b250a8dac69e5fc9150818339d38c2
-  branch: master
-  specs:
-    fog-openstack (0.1.21)
-      fog-core (>= 1.40)
-      fog-json (>= 1.0)
-      ipaddress (>= 0.8)
-
-GIT
   remote: https://github.com/sapcc/lyra-client.git
   revision: 5846553e5e657943d936130a0c8fa9d0a1805a5f
   specs:
     lyra-client (0.1.1)
-
-GIT
-  remote: https://github.com/sapcc/misty.git
-  revision: b26e3fe45078e018aef927df695c81c68a4203ca
-  branch: master
-  specs:
-    misty (1.2.0)
-      json (>= 1.8.3, < 3)
 
 GIT
   remote: https://github.com/sapcc/monsoon-openstack-auth.git
@@ -301,13 +283,6 @@ GEM
     faraday (0.13.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
-    fog-core (1.45.0)
-      builder
-      excon (~> 0.58)
-      formatador (~> 0.2)
-    fog-json (1.0.2)
-      fog-core (~> 1.0)
-      multi_json (~> 1.10)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.84.0)
@@ -353,7 +328,6 @@ GEM
     httpclient (2.8.3)
     i18n (0.8.6)
     ice_nine (0.11.2)
-    ipaddress (0.8.3)
     jquery-rails (4.3.1)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
@@ -583,7 +557,6 @@ DEPENDENCIES
   elektra-extension!
   elektron!
   factory_girl_rails (~> 4.0)
-  fog-openstack!
   font-awesome-sass
   foreman
   friendly_id
@@ -603,7 +576,6 @@ DEPENDENCIES
   lyra-client!
   masterdata_cockpit!
   metrics!
-  misty!
   monsoon-openstack-auth!
   net-ssh
   netaddr

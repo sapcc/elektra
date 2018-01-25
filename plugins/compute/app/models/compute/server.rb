@@ -4,7 +4,7 @@ require 'base64'
 
 module Compute
   # Represents the Openstack Server
-  class Server < Core::ServiceLayerNg::Model
+  class Server < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Please provide a name' }
     validates :image_id, presence: { message: 'Please select an image' }, if: :new?
     validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?

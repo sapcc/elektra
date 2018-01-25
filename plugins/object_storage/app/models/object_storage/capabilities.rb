@@ -1,5 +1,5 @@
 module ObjectStorage
-  class Capabilities < Core::ServiceLayerNg::Model
+  class Capabilities < Core::ServiceLayer::Model
 
   # known attributes
   # "account_quotas": {},

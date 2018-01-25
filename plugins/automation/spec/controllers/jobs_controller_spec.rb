@@ -21,6 +21,7 @@ describe Automation::JobsController, type: :controller do
     automation_run_service = double('automation_run_service').as_null_object
 
     allow(UserProfile).to receive(:tou_accepted?).and_return(true)
+    allow_any_instance_of(ServiceLayer::AutomationService).to receive(:elektron).and_return(double('elektron').as_null_object)
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:client).and_return(client)
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_service).and_return(automation_service)
     allow_any_instance_of(ServiceLayer::AutomationService).to receive(:automation_run_service).and_return(automation_run_service)

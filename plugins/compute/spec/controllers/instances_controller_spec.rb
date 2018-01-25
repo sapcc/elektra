@@ -15,13 +15,13 @@ describe Compute::InstancesController, type: :controller do
 
   before :each do
     stub_authentication
-    allow_any_instance_of(ServiceLayerNg::ComputeService)
+    allow_any_instance_of(ServiceLayer::ComputeService)
       .to receive(:servers).and_return([])
 
-    allow_any_instance_of(ServiceLayerNg::ComputeService)
+    allow_any_instance_of(ServiceLayer::ComputeService)
       .to receive(:usage).and_return(double('usage', instances: 1, ram: 2, cores: 4))
 
-    allow_any_instance_of(ServiceLayerNg::ResourceManagementService)
+    allow_any_instance_of(ServiceLayer::ResourceManagementService)
       .to receive(:quota_data).and_return([])
   end
 

@@ -2,7 +2,7 @@
 
 module Identity
   # This class represents the Openstack Project
-  class Project < Core::ServiceLayerNg::Model
+  class Project < Core::ServiceLayer::Model
     validates :name, presence: { message: 'Name should not be empty' }
     validates :description, presence: { message: 'Please enter a description' }
 

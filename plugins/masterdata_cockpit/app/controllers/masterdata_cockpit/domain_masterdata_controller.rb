@@ -12,13 +12,13 @@ module MasterdataCockpit
     def index
       if !@domain_masterdata && @masterdata_api_error_code == 404
         # no masterdata was found please define it
-        @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
+        @domain_masterdata = services.masterdata_cockpit.new_domain_masterdata
         render action: :new
       end
     end
 
     def new
-      @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
+      @domain_masterdata = services.masterdata_cockpit.new_domain_masterdata
     end
 
     def create
@@ -46,7 +46,7 @@ module MasterdataCockpit
     
     def load_domain_masterdata
       begin
-        @domain_masterdata = services_ng.masterdata_cockpit.get_domain(@scoped_domain_id)
+        @domain_masterdata = services.masterdata_cockpit.get_domain(@scoped_domain_id)
       rescue Exception => e
         # do nothing if no masterdata was found
         # the api will only return 404 if no masterdata for the domains was found
@@ -59,7 +59,7 @@ module MasterdataCockpit
     end
     
     def prepare_params
-      @domain_masterdata = services_ng.masterdata_cockpit.new_domain_masterdata
+      @domain_masterdata = services.masterdata_cockpit.new_domain_masterdata
       # to merge options into .merge(domain_id: @scoped_domain_id)
       @domain_masterdata.attributes =params.fetch(:domain_masterdata,{})
       inject_domaindata

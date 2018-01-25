@@ -1,5 +1,5 @@
 module MasterdataCockpit
-  class ProjectMasterdata < Core::ServiceLayerNg::Model
+  class ProjectMasterdata < Core::ServiceLayer::Model
     # the following attributes ar known
     # "project_id":"ABCD1234",
     # "project_name":"MyProject0815",

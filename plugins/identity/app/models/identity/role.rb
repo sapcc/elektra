@@ -2,6 +2,6 @@
 
 module Identity
   # This class represents the Openstack Role
-  class Role < Core::ServiceLayerNg::Model
+  class Role < Core::ServiceLayer::Model
   end
 end

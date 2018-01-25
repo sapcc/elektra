@@ -2,7 +2,7 @@
 
 module Networking
   # Represents the Openstack Security Group Rule
-  class SecurityGroupRule < Core::ServiceLayerNg::Model
+  class SecurityGroupRule < Core::ServiceLayer::Model
     RULE_TYPES = HashWithIndifferentAccess.new(
       YAML.safe_load(
         File.open(

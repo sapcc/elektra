@@ -17,7 +17,7 @@ module ObjectStorage
         return
       end
 
-      services_ng.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
+      services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
       back_to_object_list(@container_name, @object.path)
     end
 
@@ -32,12 +32,12 @@ module ObjectStorage
         return
       end
 
-      services_ng.object_storage.create_folder(@container_name, @object.path + @form.name)
+      services.object_storage.create_folder(@container_name, @object.path + @form.name)
       back_to_object_list(@container_name, @object.path)
     end
 
     def destroy
-      services_ng.object_storage.delete_folder(@container_name, @object.path)
+      services.object_storage.delete_folder(@container_name, @object.path)
       back_to_object_list(@container_name, @object.dirname)
     end
 
@@ -61,7 +61,7 @@ module ObjectStorage
     def back_to_object_list(container_name, path)
       respond_to do |format|
         format.js do
-          @objects = services_ng.object_storage.list_objects_at_path(container_name, path)
+          @objects = services.object_storage.list_objects_at_path(container_name, path)
           render template: '/object_storage/objects/reload_index'
         end
         format.html { redirect_to plugin('object_storage').list_objects_path(container_name, path) }

@@ -2,7 +2,7 @@
 
 module Compute
   # Openstack Flavor Metadata
-  class FlavorMetadata < Core::ServiceLayerNg::Model
+  class FlavorMetadata < Core::ServiceLayer::Model
     def save
       raise 'Do not use save. Use add and remove instead'
     end
