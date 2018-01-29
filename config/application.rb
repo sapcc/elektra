@@ -50,7 +50,7 @@ module MonsoonDashboard
           method: env['REQUEST_METHOD'].downcase,
           host:   env['HTTP_HOST'].to_s,
           # just take the first component of the path as a label
-          path:   env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
+          path:   ['health'].include?(controller_name) ? env['REQUEST_PATH'] : env['REQUEST_PATH'][0, env['REQUEST_PATH'].index('/', 1) || 20],
           controller: controller_name,
           action: env.fetch("action_dispatch.request.path_parameters",{}).fetch(:action, ''),
           plugin: ['health'].include?(controller_name) ? controller_name : controller_name[%r{^([^/]+)/},1]
