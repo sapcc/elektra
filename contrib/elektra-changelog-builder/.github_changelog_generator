@@ -2,3 +2,4 @@ project=elektra
 user=sapcc
 since_tag=2018.1
 output=/host/CHANGELOG.md
+issue_line_body=true
