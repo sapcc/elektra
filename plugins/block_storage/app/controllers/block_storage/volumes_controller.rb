@@ -87,6 +87,9 @@ module BlockStorage
 
     # GET /volumes/1/edit
     def edit
+      if @volume.blank?
+        flash.now[:error] = "We couldn't retrieve the volume details. Please try again."
+      end
     end
 
     # PATCH/PUT /volumes/1
