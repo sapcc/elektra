@@ -5,7 +5,7 @@
   .flashes_area
     = render 'flashes'
 
-= simple_form_for @floating_ip, url: plugin('networking').floating_ips_path, method: :post, remote: request.xhr?, html: {data: {modal: true} } do |f|
+= simple_form_for @floating_ip, url: plugin('networking').floating_ips_path, method: :post, remote: request.xhr?, html: {class: 'form-horizontal', data: {modal: true} }, wrapper: :horizontal_form do |f|
 
   %div{class: modal? ? 'modal-body' : ''}
     - unless @floating_ip.errors.empty?
@@ -14,6 +14,7 @@
     %fieldset
       = f.input :floating_network_id,
         as: :select,
+        required: true,
         collection: @floating_networks
 
     %fieldset#subnets
@@ -21,7 +22,10 @@
         as: :select,
         collection: @floating_networks
 
-      = f.input :description, { label: 'Description' }
+      = f.input :description
+      - if current_user.is_allowed?("context_is_network_admin")
+        = f.input :floating_ip_address,
+          icon_hint: 'The floating IP address. Leave it blank if you are unsure. If you request a specific address the selected subnet will be ignored!'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
