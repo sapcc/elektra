@@ -70,50 +70,54 @@ module Networking
 
     def show
       @security_group = services.networking.find_security_group(params[:id])
-      enforce_permissions('networking:rule_list')
-      @rules = services.networking.security_group_rules(
-        security_group_id: @security_group.id
-      )
-      # @security_groups = {}
-      # @rules.each do |rule|
-      #   unless @security_groups[rule.remote_group_id]
-      #     if rule.remote_group_id == @security_group.id
-      #       @security_groups[rule.remote_group_id] = @security_group
-      #     else
-      #       @security_groups[rule.remote_group_id] =
-      #         services.networking.find_security_group(rule.remote_group_id)
-      #     end
-      #   end
-      #   if @security_groups[rule.remote_group_id]
-      #     rule.remote_group_name = @security_groups[rule.remote_group_id].name
-      #   end
-      # end
-
-      @security_groups = @rules.each_with_object({}) do |rule, hash|
-        next if rule.remote_group_id.blank?
-        unless hash[rule.remote_group_id]
-          if rule.remote_group_id == @security_group.id
-            hash[rule.remote_group_id] = @security_group
-          else
-            hash[rule.remote_group_id] =
-              services.networking.find_security_group(rule.remote_group_id)
-          end
-        end
-        rule.remote_group_name = hash[rule.remote_group_id].name
-      end
-
-      @quota_data = []
-      if current_user.is_allowed?("access_to_project")
-        @quota_data = services.resource_management.quota_data(
-          current_user.domain_id || current_user.project_domain_id,
-          current_user.project_id,
-          [
-            { service_type: :network, resource_name: :security_groups,
-              usage: @security_groups.length },
-            { service_type: :network, resource_name: :security_group_rules,
-              usage: @rules.length }
-          ]
+      if @security_group.blank?
+        flash.now[:error] = "We couldn't retrieve the security group details. Please try again."
+      else
+        enforce_permissions('networking:rule_list')
+        @rules = services.networking.security_group_rules(
+          security_group_id: @security_group.id
         )
+        # @security_groups = {}
+        # @rules.each do |rule|
+        #   unless @security_groups[rule.remote_group_id]
+        #     if rule.remote_group_id == @security_group.id
+        #       @security_groups[rule.remote_group_id] = @security_group
+        #     else
+        #       @security_groups[rule.remote_group_id] =
+        #         services.networking.find_security_group(rule.remote_group_id)
+        #     end
+        #   end
+        #   if @security_groups[rule.remote_group_id]
+        #     rule.remote_group_name = @security_groups[rule.remote_group_id].name
+        #   end
+        # end
+
+        @security_groups = @rules.each_with_object({}) do |rule, hash|
+          next if rule.remote_group_id.blank?
+          unless hash[rule.remote_group_id]
+            if rule.remote_group_id == @security_group.id
+              hash[rule.remote_group_id] = @security_group
+            else
+              hash[rule.remote_group_id] =
+                services.networking.find_security_group(rule.remote_group_id)
+            end
+          end
+          rule.remote_group_name = hash[rule.remote_group_id].name
+        end
+
+        @quota_data = []
+        if current_user.is_allowed?("access_to_project")
+          @quota_data = services.resource_management.quota_data(
+            current_user.domain_id || current_user.project_domain_id,
+            current_user.project_id,
+            [
+              { service_type: :network, resource_name: :security_groups,
+                usage: @security_groups.length },
+              { service_type: :network, resource_name: :security_group_rules,
+                usage: @rules.length }
+            ]
+          )
+        end
       end
     end
 
