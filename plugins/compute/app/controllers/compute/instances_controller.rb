@@ -185,6 +185,9 @@ module Compute
 
     def edit
       @instance = services.compute.find_server(params[:id])
+      if @instance.blank?
+        flash.now[:error] = "We couldn't retrieve the instance details. Please try again."
+      end
     end
 
     def update
