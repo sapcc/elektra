@@ -252,20 +252,22 @@ Each controller which inherits from ```DashboardController``` provides access to
 ### How to use Audit Logger
 
 ```ruby
-audit_logger.info(“user johndoe has deleted project 54353454353455435345")
+audit_logger.info("user johndoe has deleted project 54353454353455435345")
 # => [AUDIT LOG] user johndoe has deleted project 54353454353455435345
 ```
 
 ```ruby
-audit_logger.info(current_user, "has deleted project", @project_id)  
+audit_logger.info(current_user, "has deleted project", @project_id)
 # => [AUDIT LOG] CurrentUserWrapper johndoe (7ebe1bbd17b36c685389c29bd861d8c337d70a2f56022f80b71a5a13852e6f96) has deleted project JohnProject (adac5c36277b4346bbd631811af533f3)
 ```
+
 ```ruby
-audit_logger.info(user: johndoe, has: “deleted”, project: "54353454353455435345")
+audit_logger.info(user: johndoe, has: "deleted", project: "54353454353455435345")
 # => [AUDIT LOG] user johndoe has deleted project 54353454353455435345
 ```
+
 ```ruby
-audit_logger.info(“user johndoe”, “has deleted”, “project 54353454353455435345")
+audit_logger.info("user johndoe", "has deleted", "project 54353454353455435345")
 # => [AUDIT LOG] user johndoe has deleted project 54353454353455435345
 ```
 
@@ -283,7 +285,7 @@ Catch Errors in Controller
 The Elektra ApplicationController provides a class method which allows the catching of errors and will render a well designed error page.
 
 ```ruby
-rescue_and_render_exception_pagepage [
+rescue_and_render_exception_page [
   { "Excon::Error" => { title: 'Backend Service Error', description: 'Api Error', details: -> e {e.backtrace.join("\n")}}},
   { "Fog::OpenStack::Errors::ServiceError" => { title: 'Backend Service Error' }},
   "Core::ServiceLayer::Errors::ApiError"
@@ -292,14 +294,14 @@ rescue_and_render_exception_pagepage [
 
 Errors that are caught in this way, are rendered within the application layout so that the navigation remains visible. For example if a service is unavailable the user gets to see an error but she can still navigate to other services.
 
-### How to urescue_and_render_exception_pagepage accepts an array of hashes and/or strings. In case you want to overwrite the rendered attributes you should provide a hash with a mapping.
+rescue_and_render_exception_page accepts an array of hashes and/or strings. In case you want to overwrite the rendered attributes you should provide a hash with a mapping.
 
 Available attributes:
 * ```title``` (error title)
 * ```description``` (error message)
 * ```details``` (some details like backtrace)
 * ```exception_id``` (default is request uuid)
-* ```warnign``` (default false. If true a warning page is rendered instead of error page)
+* ```warning``` (default false. If true a warning page is rendered instead of error page)
 
 
 Display Quota Data
