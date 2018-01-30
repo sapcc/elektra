@@ -2,7 +2,7 @@
 
 module ServiceLayer
   module SharedFilesystemStorageServices
-    # This module implements Openstack Designate Pool API
+    # This module implements Openstack Manila Share API
     module Share
       def share_map
         @share_map ||= class_map_proc(SharedFilesystemStorage::Share)
