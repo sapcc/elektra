@@ -7,12 +7,12 @@
   .text-muted
     - name = resource.name
     - service = resource.service_type
+    - translated_name = userfriendly_resource_name(resource)
     - if overview
-      = link_to t("resource_management.#{resource.name}"), plugin('resource_management').send("#{scope}_area_path", area: resource.service_area)
+      = link_to translated_name, plugin('resource_management').send("#{scope}_area_path", area: resource.service_area)
       .small
         .small= t("resource_management.#{resource.service_type}")
     - else
-      - translated_name = t("resource_management.#{resource.name}")
       - linktitle = "Open #{service} service"
       - if scope == 'resources'
         - case service

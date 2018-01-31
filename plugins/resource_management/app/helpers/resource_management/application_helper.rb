@@ -3,6 +3,23 @@ module ResourceManagement
 
     include ResourceBarHelper
 
+    def userfriendly_resource_name(resource)
+      if resource.respond_to?(:name)
+        resource_name = resource.name.to_s
+      else
+        resource_name = resource.to_s
+      end
+
+      # special case: for per-flavor instance quotas, do not attempt to
+      # translate the flavor ID
+      if resource_name =~ /^instances_/
+        return resource_name.sub(/^instances_/, '')
+      end
+
+      # standard case: retrieve the resource name from the locale file
+      return t("resource_management.#{resource_name}")
+    end
+
     # Given a number of timestamps from ResourceManagement::Resource#updated_at,
     # calculates a string representation of the data age, such as
     #     "between 3 days and 1 hour ago"

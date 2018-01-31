@@ -37,7 +37,7 @@
               %td
                 = t("resource_management.#{domain_resource.service_type}")
                 &gt;
-                = t("resource_management.#{domain_resource.name}")
+                = userfriendly_resource_name(domain_resource)
               %td= dt.format(domain_resource.quota)
               %td
                 = dt.format(domain_resource.projects_quota)
