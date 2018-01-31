@@ -8,6 +8,12 @@ RSpec.describe "networking/floating_ips/new.html.haml", type: :view do
     assign(:scoped_domain_fid, default_params[:domain_id])
     assign(:floating_ip, Networking::FloatingIp.new(nil))
     assign(:floating_networks, [])
+
+    view.stub(:current_user) {
+      current_user = double('current_user')
+      allow(current_user).to receive(:is_allowed?).with("context_is_network_admin").and_return true
+      current_user
+    }
   end
 
   it "displays the subnet select box" do
@@ -15,5 +21,4 @@ RSpec.describe "networking/floating_ips/new.html.haml", type: :view do
 
     expect(rendered).to match /id="floating_ip_floating_subnet_id"/
   end
-
 end

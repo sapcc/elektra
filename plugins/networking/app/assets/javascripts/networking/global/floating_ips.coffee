@@ -9,7 +9,6 @@ showSubnets= (subnets) ->
   for subnet in subnets
     available_ips = (subnet.total_ips-subnet.used_ips)
     $select.append('<option '+("disabled=\"disabled\"" if available_ips<=0)+' value="'+subnet.subnet_id+'">'+subnet.subnet_name+' ('+subnet.cidr+', available IPs: '+available_ips+')'+'</option>')
-
   $('fieldset#subnets .form-group').show()
 
 
@@ -39,14 +38,25 @@ init= () ->
     $('fieldset#subnets .form-group').hide()
     $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
 
+  #loadSubnets(this.value) if $('#floating_ip_floating_network_id').trim().length>0
+
   $('#floating_ip_floating_network_id').change () -> loadSubnets(this.value)
-  if $('#floating_ip_floating_network_id').val()
-    loadSubnets($('#floating_ip_floating_network_id').val())
 
   $('#floating_ip_floating_subnet_id').change () ->
-    if this.value.trim().length==0
-      $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
-    else
+    if this.value.trim().length>0 || $('#floating_ip_floating_ip_address').val().trim().length>0
       $('form#new_floating_ip button[type="submit"]').prop('disabled',false)
+    else
+      $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
+
+  $('#floating_ip_floating_ip_address').change () ->
+    if this.value.trim().length>0 || $('#floating_ip_floating_subnet_id').val().trim().length>0
+      $('form#new_floating_ip button[type="submit"]').prop('disabled',false)
+    else
+      $('form#new_floating_ip button[type="submit"]').prop('disabled',true)
+
+  if $('#floating_ip_floating_network_id').val()
+    setTimeout () ->
+      loadSubnets($('#floating_ip_floating_network_id').val())
+    , 500
 
 $(document).on 'modal:contentUpdated', (e) -> init()

@@ -61,7 +61,12 @@ module Networking
         'router:external' => true
       )
       @floating_ip = services.networking.new_floating_ip(params[:floating_ip])
-      @floating_ip.tenant_id = @scoped_project_id
+
+      # unset subnet_id if a specific address for floating ip is requested
+      unless @floating_ip.floating_ip_address.blank?
+        @floating_ip.floating_subnet_id = nil
+      end
+      #@floating_ip.tenant_id = @scoped_project_id
 
       if @floating_ip.save
         audit_logger.info(current_user, 'has created', @floating_ip)
