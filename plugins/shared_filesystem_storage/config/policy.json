@@ -23,6 +23,9 @@
   "shared_filesystem_storage:share_type_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:share_availability_zones": "rule:context_is_share_viewer",
 
+  "shared_filesystem_storage:pool_list": "rule:context_is_cloud_sharedfilesystem_admin",
+  "shared_filesystem_storage:pool_get": "rule:context_is_cloud_sharedfilesystem_admin",
+
   "shared_filesystem_storage:snapshot_create": "rule:context_is_share_editor",
   "shared_filesystem_storage:snapshot_delete": "rule:context_is_share_editor",
   "shared_filesystem_storage:snapshot_get": "rule:context_is_share_viewer",

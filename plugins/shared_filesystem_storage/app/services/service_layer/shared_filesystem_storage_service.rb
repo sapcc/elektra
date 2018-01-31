@@ -3,6 +3,7 @@
 module ServiceLayer
   # implements manila api
   class SharedFilesystemStorageService < Core::ServiceLayer::Service
+    include SharedFilesystemStorageServices::Pool
     include SharedFilesystemStorageServices::Share
     include SharedFilesystemStorageServices::ShareRule
     include SharedFilesystemStorageServices::ShareNetwork

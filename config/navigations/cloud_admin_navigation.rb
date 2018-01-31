@@ -63,7 +63,10 @@ SimpleNavigation::Configuration.run do |navigation|
     ccadmin_nav.item :project_members, 'Project User Role Assignments', -> {plugin('identity').projects_cloud_admin_project_members_path}, if: -> { services.available?(:identity) }
     ccadmin_nav.item :project_groups, 'Project Group Role Assignments', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-    ccadmin_nav.item :hypervisors, 'Show Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
+    ccadmin_nav.item :hypervisors, 'Compute Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
+    ccadmin_nav.item :network_stats, 'Share Aggregates', lambda {
+      plugin('shared_filesystem_storage').cloud_admin_pools_path
+    }, highlights_on: -> { params[:controller][%r{pools/?.*}] }
     ccadmin_nav.item :lookup, 'OpenStack Object Lookup', -> { plugin('lookup').root_path }, highlights_on: -> { params[:controller][%r{lookup/?.*}] }
     ccadmin_nav.item :network_stats, 'Network Usage Stats', lambda {
       plugin('networking').cloud_admin_network_usage_stats_path

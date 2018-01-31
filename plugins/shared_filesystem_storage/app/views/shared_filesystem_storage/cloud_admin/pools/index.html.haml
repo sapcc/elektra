@@ -1,0 +1,21 @@
+= content_for :main_toolbar do
+  Share Backend Pools
+
+%table.table
+  %thead
+    %tr
+      %th Aggregate
+      %th Host
+      %th Total Capacity
+      %th Allocated Capacity
+      %th Free Capacity
+      %th Reserved Capacity
+      %th
+  %tbody#pools_table
+    - if @pools.blank?
+      %tr
+        %td{colspan: 3}
+          No Pools available
+    - else
+      - @pools.each do |pool|
+        = render partial: 'item', locals: {pool: pool}

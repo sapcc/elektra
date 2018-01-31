@@ -12,6 +12,10 @@ SharedFilesystemStorage::Engine.routes.draw do
 
   resources :share_types, only: %i[index], constraints: { format: :json }
 
+  namespace :cloud_admin do
+    resources :pools, only: %i[index show]
+  end
+
   resources :security_services, except: %i[show new edit],
                                 constraints: { format: :json },
                                 path: 'security-services'
