@@ -14,10 +14,10 @@ module Core
         interface: ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
         debug: Rails.env.development?,
         client: {
-          open_timeout: 10,
-          read_timeout: 30,
+          open_timeout: nil,
+          read_timeout: 60,
           verify_ssl: Rails.configuration.ssl_verify_peer,
-          keep_alive_timeout: 30
+          keep_alive_timeout: 5
         }
       }
     end
