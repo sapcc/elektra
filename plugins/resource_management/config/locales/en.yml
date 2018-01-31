@@ -45,4 +45,4 @@ en:
     share_capacity: Share Capacity
     share_snapshots: Share Snapshots
     snapshot_capacity: Share Snapshot Capacity
-    per_flavor: Special Flavors
+    per_flavor: Restricted Flavors
