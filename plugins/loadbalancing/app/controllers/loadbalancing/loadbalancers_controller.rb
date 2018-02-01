@@ -242,6 +242,8 @@ module Loadbalancing
         unless networks[fip.floating_network_id]
           networks[fip.floating_network_id] = services.networking.find_network(fip.floating_network_id)
         end
+        next if networks[fip.floating_network_id].nil?
+
         net = networks[fip.floating_network_id]
         if !net.subnets.blank?
           net.subnets.each do |subid|
