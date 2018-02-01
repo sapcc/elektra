@@ -30,7 +30,12 @@ module Compute
       return false unless valid?
 
       rescue_api_errors do
-        @service.delete_flavor(id) unless id.blank?
+        begin
+          @service.delete_flavor(id) unless id.blank?
+        rescue ::Elektron::Errors::ApiResponse => e
+          # 404 while deleting is not an error
+          raise e unless e.code == 404
+        end
         # create the new flavor. Caution: if this operation fails then it is
         # just a delete.
         new_attributes = attributes_for_create
