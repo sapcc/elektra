@@ -54,7 +54,7 @@ module Networking
     end
 
     def show
-      @network = services.networking.find_network(params[:id])
+      @network = services.networking.find_network!(params[:id])
       @subnets = services.networking.subnets(network_id: @network.id)
       @ports   = services.networking.ports(network_id: @network.id)
     end
