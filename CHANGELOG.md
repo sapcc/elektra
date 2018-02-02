@@ -29,6 +29,8 @@ Implement an autogeneratable changelog that is easier readable and more condense
 Often times we only have a project's elektra URL which contains a friendly id slug that often doesn't match the actual name if people use URL unfriendly characters in their project names.
 - Add health routes to the prometheus metric exporter [\#189](https://github.com/sapcc/elektra/issues/189)   
 With rails5 upgrade it is not necessary to have the healthcheck middleware anymore. Rewrite those checks and add them to the prometheus exporter to be used in new grafana dashboards
+- Kubernikus: ability to choose ssh key on create and edit [\#183](https://github.com/sapcc/elektra/pull/183)   
+Adds a new dropdown on the create and edit screens that allows the user to choose one of their existing keypairs or alternatively paste another public key for provisioning onto their nodes.
 
 **Fixed bugs:**
 
