@@ -14,12 +14,6 @@ GIT
       rest-client (~> 2.0.0.rc3)
 
 GIT
-  remote: https://github.com/sapcc/elektron
-  revision: f208d627e2e93c8e7ad81e04bfc7e3d5b5f4e03e
-  specs:
-    elektron (1.2.3)
-
-GIT
   remote: https://github.com/sapcc/lyra-client.git
   revision: 5846553e5e657943d936130a0c8fa9d0a1805a5f
   specs:
@@ -34,6 +28,11 @@ GIT
       hashie
       rails
       uglifier (>= 1.3.0)
+
+PATH
+  remote: ../elektron
+  specs:
+    elektron (2.0.0)
 
 PATH
   remote: plugins/audit
