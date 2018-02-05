@@ -59,7 +59,7 @@ module Compute
         'swap'                        => read('swap'),
         'OS-FLV-EXT-DATA:ephemeral'   => ephemeral,
         'os-flavor-access:is_public'  => public?
-      }.delete_if { |_k, v| v.nil? }
+      }.delete_if { |_k, v| v.blank? }
     end
   end
 end

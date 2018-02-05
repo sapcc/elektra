@@ -76,3 +76,9 @@ table.package-comparison {
     margin-right: 0.5em;
   }
 }
+
+/* avoid line breaks in tooltips containing flavor descriptions */
+.tooltip.right > .tooltip-inner {
+  white-space: nowrap;
+  max-width: 600px;
+}

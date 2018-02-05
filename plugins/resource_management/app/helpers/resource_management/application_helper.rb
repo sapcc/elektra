@@ -20,6 +20,33 @@ module ResourceManagement
       return t("resource_management.#{resource_name}")
     end
 
+    def userfriendly_resource_description(resource)
+      if resource.respond_to?(:name)
+        resource_name = resource.name.to_s
+      else
+        resource_name = resource.to_s
+      end
+
+      # special case: for per-flavor instance quotas, there is a description of
+      # the flavor in the "catalog:description" extra-spec
+      if resource_name =~ /^instances_/
+        flavor_name = resource_name.sub(/^instances_/, '')
+        # map flavor name to ID
+        flavor_id = (@flavor_cache ||= services.compute.flavors).
+          find { |flavor| flavor.name == flavor_name }.
+          try(&:id)
+        return '' if flavor_id.nil?
+        # retrieve extraspecs
+        @flavor_metadata_cache ||= {}
+        m = (@flavor_metadata_cache[flavor_id] ||= services.compute.find_flavor_metadata(flavor_id))
+        return '' if m.nil?
+        return m.attributes['catalog:description'] || ''
+      end
+
+      # standard case: most stuff does not have a description
+      return ''
+    end
+
     # Given a number of timestamps from ResourceManagement::Resource#updated_at,
     # calculates a string representation of the data age, such as
     #     "between 3 days and 1 hour ago"

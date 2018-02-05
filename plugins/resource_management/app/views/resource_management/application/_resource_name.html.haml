@@ -41,7 +41,10 @@
               - else
                 = translated_name
           - when :compute
-            = link_to translated_name, plugin('compute').instances_path(), title: linktitle
+            - if resource.name =~ /^instances_/
+              %span{title: userfriendly_resource_description(resource), data: { toggle: "tooltip", placement: "right" }}= translated_name
+            - else
+              = link_to translated_name, plugin('compute').instances_path(), title: linktitle
           - when :network
             - case name
               - when :networks, :subnets, :ports, :rbac_policies
