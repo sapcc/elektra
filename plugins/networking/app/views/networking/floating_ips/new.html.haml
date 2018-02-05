@@ -25,7 +25,8 @@
       = f.input :description
       - if current_user.is_allowed?("context_is_network_admin")
         = f.input :floating_ip_address,
-          icon_hint: 'The floating IP address. Leave it blank if you are unsure. If you request a specific address the selected subnet will be ignored!'
+          placeholder: 'Optional',
+          icon_hint: 'Optional: Specify floating IP address. Leave blank to get one assigned by the DHCP server. If you request a specific address the selected subnet will be ignored since the FIP determines the subnet.'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
