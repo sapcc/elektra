@@ -27,6 +27,7 @@
   "compute:instance_lock": "rule:instance_actions",
   "compute:instance_unlock": "rule:instance_actions",
   "compute:instance_update": "rule:instance_actions",
+  "compute:instance_reset_status": "rule:context_is_compute_admin",
   "compute:instance_edit_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin",
   "compute:instance_assign_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin",
   "compute:instance_create_image": "rule:instance_actions",

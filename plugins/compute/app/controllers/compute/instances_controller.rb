@@ -355,8 +355,17 @@ module Compute
     end
 
     def resize
-      @close_modal=true
+      @close_modal = true
       execute_instance_action('resize',params[:server][:flavor_id])
+    end
+
+    def new_status
+      @instance = services.compute.find_server(params[:id])
+    end
+
+    def reset_status
+      @close_modal = true
+      execute_instance_action(:reset_vm_state, params[:server][:status])
     end
 
     def new_snapshot

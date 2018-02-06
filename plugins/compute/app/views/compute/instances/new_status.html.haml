@@ -1,0 +1,28 @@
+= content_for :title do
+  Reset Status
+= simple_form_for @instance, url: plugin('compute').reset_status_instance_path(id: @instance.id), method: :put, remote: request.xhr?, html: {data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+  %div{class: modal? ? 'modal-body' : ''}
+    .alert.alert-warning
+      %p
+        In some cases, a server may hang in the error state, e.g.
+        if a server is turned off via console (without OpenStack knowing) and then rebooted, the
+        server could go into the error state.
+
+      %p To solve this problem: reset state to active, then stop and start the server again.
+
+    - unless @instance.errors.blank?
+      %p.alert.alert-error= @instance.errors.full_messages.to_sentence(two_words_connector: '. ')
+
+    %p
+      = f.input :status,
+        as: :select,
+        collection: %w[active error],
+        selected: @instance.status.downcase,
+        include_blank: false
+
+  %div.buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+    - else
+      = link_to "Cancel", volumes_url(), class: 'btn btn-default'
+    = button_tag "Reset", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
