@@ -91,5 +91,9 @@
               %li.divider
               %li= link_to 'Edit Security Groups', plugin('compute').edit_securitygroups_instance_path(id: instance.id), data: { modal: true}
               %li.divider
+
+            - if current_user.is_allowed?("compute:instance_reset_status")
+              %li= link_to 'Reset Status', plugin('compute').new_status_instance_path(id: instance.id), data: { modal: true }
+
             - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
               %li= link_to 'Terminate', plugin('compute').instance_path(id: instance.id), method: :delete, data: { confirm: "Are you sure you want to terminate instance '#{instance.name}'?", ok: "Yes, terminate it", confirmed: :loading_status}, remote: true
