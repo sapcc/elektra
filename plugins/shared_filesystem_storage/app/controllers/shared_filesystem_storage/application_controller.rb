@@ -10,7 +10,8 @@ module SharedFilesystemStorage
     authorization_required
 
     def show
-      render inline: '<div id="shared_filesystem_storage_react_container"></div>',
+      render inline: "<div id=\"shared_filesystem_storage_react_container\" " \
+                     "data-url=#{services.shared_filesystem_storage.elektron.service_url('sharev2')}></div>",
              layout: true,
              content_type: 'text/html'
     end
