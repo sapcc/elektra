@@ -7,6 +7,7 @@ formState= (form) ->
 
 multiselect=(elementsSelector) ->
   $(elementsSelector).multiselect({
+    includeSelectAllOption: true,
     buttonText: (options, select) ->
       # options are selected checkboxes in role select
       # select is the form select.

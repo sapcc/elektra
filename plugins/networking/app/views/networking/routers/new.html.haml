@@ -27,13 +27,12 @@
             collection: @subnets
 
     = f.input :internal_subnets, {label: "Private Network Subnets",
-      input_html:         {multiple: true},
+      input_html:         {multiple: true, data: { multiselect_box: true }},
       as:                 :select,
       collection:         @internal_subnets.sort{|a,b| a.network_name<=>b.network_name},
       selected:           @selected_internal_subnets,
       label_method:       -> s {"#{s.name} (#{s.network_name})"},
       required:           true}
-
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
