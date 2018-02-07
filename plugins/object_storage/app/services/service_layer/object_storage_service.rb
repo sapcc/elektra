@@ -13,7 +13,7 @@ module ServiceLayer
     end
 
     def list_capabilities
-      elektron_object_storage.get('/info').map_to('body') do |data|
+      elektron_object_storage.get('info', path_prefix: '/').map_to('body') do |data|
         ObjectStorage::Capabilities.new(self, data)
       end
     end
