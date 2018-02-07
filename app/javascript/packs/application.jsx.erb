@@ -37,10 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let domElement = document.getElementById(pluginName+'_react_container');
 
     if (domElement) { // plugin react container exists!
+      let container_options = {}
+      for(let key of Object.keys(domElement.dataset)) {
+        container_options[key] = domElement.dataset[key]
+      }
+
       // remove domElement, cause we are going to create a new one.
       domElement.parentNode.removeChild(domElement);
       // create react component and add it to containers
-      containers.push(React.createElement(pluginContainers[pluginName], Object.assign({}, {
+      containers.push(React.createElement(pluginContainers[pluginName], Object.assign(container_options, {
         key: pluginName
       })))
     }

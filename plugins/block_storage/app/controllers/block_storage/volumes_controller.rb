@@ -198,7 +198,7 @@ module BlockStorage
       @volume.reset_status(params[:volume])
       # reload volume
       @volume = services.block_storage.find_volume(params[:id])
-      if @volume.status==params[:volume][:status]
+      if @volume.status == params[:volume][:status]
         @servers = get_cached_servers if @volume.status == 'in-use'
         audit_logger.info(current_user, "has reset", @volume)
         render template: 'block_storage/volumes/reset_status.js'

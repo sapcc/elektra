@@ -35,8 +35,9 @@ const tabsConfig = [
 ]
 
 // render all components inside a hash router
-const Container = (props) =>
-  <HashRouter /*hashType="noslash"*/ >
+const Container = (props) => {
+  //console.log(props)
+  return <HashRouter /*hashType="noslash"*/ >
     <div>
       {/* redirect root to shares tab */}
       { policy.isAllowed("shared_filesystem_storage:share_get") &&
@@ -93,5 +94,6 @@ const Container = (props) =>
       }
     </div>
   </HashRouter>
+}
 
 export default { Reducers, Container };
