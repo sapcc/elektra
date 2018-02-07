@@ -16,7 +16,7 @@ module ServiceLayer
 
       def account
         response = begin
-                     elektron_object_storage.head('')
+                     elektron_object_storage.head('/')
                    rescue Elektron::Errors::ApiResponse => e
                      # 200 success list containers
                      # 202 success but no content found

@@ -39,8 +39,8 @@ gem 'activerecord-session_store'
 gem 'net-ssh'
 gem 'netaddr'
 
-# gem 'elektron', git: 'https://github.com/sapcc/elektron'
-gem 'elektron', path: '../elektron'
+gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.0.0'
+# gem 'elektron', path: '../elektron'
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
