@@ -131,6 +131,7 @@ group :development, :test, :integration_tests do
 end
 
 group :integration_tests do
+  gem 'elektron', git: 'https://github.com/sapcc/elektron'
   gem "capybara"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false
