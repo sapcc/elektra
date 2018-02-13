@@ -312,14 +312,42 @@ module Compute
       end
     end
 
+    def locked?
+      metadata.locked == true || metadata.locked == 'true'
+    end
+
     def lock
+      # Since the locked attribute is available in version 2.9 and we use 2.1
+      # we need to simulate this attribute. For that we use the server
+      # metadata
       requires :id
-      @service.lock_server(id)
+      tries = 1
+      begin
+        # try to update locked attribute in server metadata.
+        # It can fail with 409 if server already locked.
+        @service.update_metadata_key(id, 'locked', 'true')
+        @service.lock_server(id)
+      rescue Elektron::Errors::ApiResponse => e
+        if e.code == 409 && !locked? && tries > 0
+          tries -= 1
+          # unlock server and try again to lock
+          @service.unlock_server(id) && retry
+        end
+      ensure
+        self.attributes = @service.find_server(id).attributes
+        true
+      end
     end
 
     def unlock
       requires :id
-      @service.unlock_server(id)
+      begin
+        @service.unlock_server(id)
+        @service.update_metadata_key(id, 'locked', 'false')
+      ensure
+        self.attributes = @service.find_server(id).attributes
+        true
+      end
     end
 
     def create_image(name, metadata = {})
