@@ -108,9 +108,17 @@ $ ->
 observer = new MutationObserver (mutations) ->
   for mutation in mutations
     if (mutation.type == 'childList')
-      containers = $(mutation.addedNodes).find('[data-collapsable]')
-      #console.log(containers, containers.length) if containers && containers.length > 0
-      containers.collapsable() if containers && containers.length > 0
+      collapsable_containers = $(mutation.addedNodes).find('[data-collapsable]')
+      if collapsable_containers && collapsable_containers.length > 0
+        collapsable_containers.collapsable()
+
+      multiselect_boxes = $(mutation.addedNodes).find('[data-multiselect-box]')
+
+      if multiselect_boxes && multiselect_boxes.length > 0
+        multiselect_boxes.multiselect
+          buttonText: (options, select) ->
+            if options.length == 0 then 'No option selected ...' else "#{options.length} options selected"
+
 
 observer.observe(document.documentElement, {childList: true, subtree: true});
 # -------------- END

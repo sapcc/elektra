@@ -3,22 +3,30 @@
 module ServiceLayer
   class DnsServiceService < Core::ServiceLayer::Service
     # middleware for elektron to setup headers based on params
-    class SetupHeadersMiddleware
-      def call(params, options, data)
+    class SetupHeadersMiddleware < Elektron::Middlewares::Base
+      def call(request_context)
+        # In this case it is meaningless. But in the case that this middlware
+        # would be added directly to the electron client, this middleware
+        # would apply to all services and then we should filter
+        # for service name.
+        unless request_context.service_name == 'dns'
+          return @next_middleware.call(request_context)
+        end
+
         # user needs to have admin privileges to ask for all projects
-        all_projects = params.delete(:all_projects)
+        all_projects = request_context.params.delete(:all_projects)
 
         # user needs to have admin privileges to impersonate another project
         # don't ask for all and one project at the same time
-        project_id = params.delete(:project_id) unless all_projects
+        project_id = request_context.params.delete(:project_id) unless all_projects
 
-        options[:headers] ||= {}
+        request_context.options[:headers] ||= {}
         if project_id
-          options[:headers]['X-Auth-Sudo-Project-Id'] = project_id
+          request_context.options[:headers]['X-Auth-Sudo-Project-Id'] = project_id
         elsif all_projects
-          options[:headers]['X-Auth-All-Projects'] = all_projects.to_s
+          request_context.options[:headers]['X-Auth-All-Projects'] = all_projects.to_s
         end
-        [params, options, data]
+        @next_middleware.call(request_context)
       end
     end
 
@@ -39,7 +47,7 @@ module ServiceLayer
 
     def create_elektron_service
       dns = elektron.service('dns', path_prefix: '/v2')
-      dns.add_middleware(SetupHeadersMiddleware)
+      dns.middlewares.add(SetupHeadersMiddleware)
       dns
     end
   end

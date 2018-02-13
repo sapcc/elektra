@@ -42,7 +42,7 @@ module ServiceLayer
       end
 
       def containers
-        list = elektron_object_storage.get('').body
+        list = elektron_object_storage.get('/').body
         list.map do |c|
           container_map.call(map_attribute_names(c, CONTAINERS_ATTRMAP))
         end

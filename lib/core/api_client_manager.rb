@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative './elektron_middlewares/pretty_debug'
+
 module Core
   # this class manages the api clients for service user.
   # The client is created for each domain (organization) and
@@ -52,13 +54,15 @@ module Core
     end
 
     def self.create_user_api_client(current_user)
-      ::Elektron.client(
+      client = ::Elektron.client(
         {
           token_context: current_user.context,
           token: current_user.token
         },
         default_client_params
       )
+      client.middlewares.add(ElektronMiddlewares::PrettyDebugUser)
+      client
     end
 
     def self.create_service_user_api_client(scope_domain)
@@ -70,7 +74,9 @@ module Core
         scope_domain_name: scope_domain
       }
       begin
-        ::Elektron.client(auth_config, default_client_params)
+        client = ::Elektron.client(auth_config, default_client_params)
+        client.middlewares.add(ElektronMiddlewares::PrettyDebugServiceUser)
+        client
       rescue ::Elektron::Errors::ApiResponse => _e
         unless auth_config[:scope_domain_id]
           auth_config.delete(:scope_domain_name)
@@ -87,7 +93,7 @@ module Core
     end
 
     def self.create_cloud_admin_api_client
-      ::Elektron.client(
+      client = ::Elektron.client(
         {
           url: ::Core.keystone_auth_endpoint,
           user_name: Rails.application.config.service_user_id,
@@ -98,6 +104,8 @@ module Core
         },
         default_client_params
       )
+      client.middlewares.add(ElektronMiddlewares::PrettyDebugCloudAdmin)
+      client
     end
   end
 end
