@@ -39,8 +39,6 @@ gem 'activerecord-session_store'
 gem 'net-ssh'
 gem 'netaddr'
 
-gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.0.0'
-# gem 'elektron', path: '../elektron'
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
 
@@ -86,6 +84,10 @@ end
 
 ######################## END #######################
 
+group :api_client do
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.0.0'
+  # gem 'elektron', path: '../elektron'
+end
 
 # Avoid double log lines in development
 # See: https://github.com/heroku/rails_stdout_logging/issues/1
@@ -131,7 +133,6 @@ group :development, :test, :integration_tests do
 end
 
 group :integration_tests do
-  gem 'elektron', git: 'https://github.com/sapcc/elektron'
   gem "capybara"
   gem 'capybara-screenshot'
   gem "cucumber-rails", require: false
