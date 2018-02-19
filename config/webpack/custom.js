@@ -24,7 +24,7 @@ function extendConfig(orgConfig) {
 
   //orgConfig.resolve.modules = orgConfig.resolve.modules.concat(customConfig.resolve.modules)
   Object.assign(orgConfig.entry, customConfig.entry)
-  console.log(orgConfig)
+  // console.log(orgConfig)
   return orgConfig
 }
 
