@@ -14,7 +14,10 @@ import { setPolicy } from 'policy';
 import { configureAjaxHelper } from 'ajax_helper';
 
 
-export function renderWidget(currentScript, name, reducers, container) {
+export function renderWidget(name, container, reducers) {
+  let scripts = document.getElementsByTagName( 'script' );
+  let currentScript = scripts[ scripts.length - 1 ];
+
   const store = createWidgetStore({name: name, reducers: reducers})
   const reactContainer = window.document.createElement('div');
   currentScript.parentNode.replaceChild(reactContainer, currentScript);
