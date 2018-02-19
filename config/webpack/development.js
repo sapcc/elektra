@@ -1,3 +1,4 @@
 const environment = require('./environment')
+const extendConfig = require('./custom')
 
-module.exports = environment.toWebpackConfig()
+module.exports = extendConfig(environment)

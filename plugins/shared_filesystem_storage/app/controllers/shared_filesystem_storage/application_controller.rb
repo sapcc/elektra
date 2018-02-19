@@ -8,12 +8,5 @@ module SharedFilesystemStorage
     # enforce permission checks. This will automatically
     # investigate the rule name.
     authorization_required
-
-    def show
-      render inline: "<div id=\"shared_filesystem_storage_react_container\" " \
-                     "></div>",
-             layout: true,
-             content_type: 'text/html'
-    end
   end
 end

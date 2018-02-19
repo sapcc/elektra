@@ -92,6 +92,7 @@ module Core
       end
 
       def has_application_css?
+        return false unless File.exists?(File.join(path,"app/assets/stylesheets/#{name}"))
         entries = Dir.entries(File.join(path,"app/assets/stylesheets/#{name}"))
         entries.any?{|e| e=~/.*application\..+/}
       end
