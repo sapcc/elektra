@@ -51,6 +51,7 @@ module ResourceManagement
     # calculates a string representation of the data age, such as
     #     "between 3 days and 1 hour ago"
     def data_age_as_string(*update_times)
+      return "" if update_times.empty?
       max_age = age_to_string(update_times.min())
       min_age = age_to_string(update_times.max())
 

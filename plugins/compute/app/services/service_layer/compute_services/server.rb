@@ -167,6 +167,12 @@ module ServiceLayer
       end
 
       ################## MODEL INTERFACE ######################
+      def update_metadata_key(server_id, key, value)
+        elektron_compute.put("/servers/#{server_id}/metadata/#{key}") do
+          { 'meta' => { key => value } }
+        end
+      end
+
       def create_server(params = {})
         elektron_compute.post('servers') do
           { server: params }

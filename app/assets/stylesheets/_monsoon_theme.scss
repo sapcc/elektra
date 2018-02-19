@@ -1527,32 +1527,45 @@ tr.deleting, tr.updating {
   }
 }
 
-tr.state-active {
-  td:first-child {
-
+.state-locked-icon {
+  &:before {
+    @include fa-icon;
+    @extend .fa;
+    @extend .fa-fw;
+    @extend .fa-lock;
+    color: $alarm-red;
   }
 }
 
-tr.state-paused {
-  &:not(.deleting):not(.updating) {
-    td:first-child {
-      &:before {
-        font-family: 'Glyphicons Halflings';
-        content: "\e034";
-        color: #FFCC33;
-      }
-    }
+.state-shutoff-icon {
+  &:before {
+    @include fa-icon;
+    @extend .fa;
+    @extend .fa-fw;
+    @extend .fa-flag;
+    color: $help-info-blue;
+  }
+}
+
+.state-error-icon {
+  &:before {
+    @include fa-icon;
+    @extend .fa;
+    @extend .fa-fw;
+    @extend .fa-flag;
+    color: $alarm-red;
+  }
+}
+
+tr.state-active {
+  td:first-child {
   }
 }
 
 tr.state-shutoff {
   &:not(.deleting):not(.updating) {
     td:first-child {
-      &:before {
-        font-family: 'Glyphicons Halflings';
-        content: "\e034";
-        color: #000000;
-      }
+      @extend .state-shutoff-icon;
     }
   }
 }
@@ -1560,11 +1573,15 @@ tr.state-shutoff {
 tr.state-error {
   &:not(.deleting):not(.updating) {
     td:first-child {
-      &:before {
-        font-family: 'Glyphicons Halflings';
-        content: "\e034";
-        color: red;
-      }
+      @extend .state-shutoff-icon;
+    }
+  }
+}
+
+tr.state-locked {
+  &:not(.deleting):not(.updating) {
+    td:first-child {
+      @extend .state-locked-icon;
     }
   }
 }
@@ -1636,9 +1653,6 @@ tr.task-state {
   }
 
 }
-
-
-
 
 .loading {
   &:before {
