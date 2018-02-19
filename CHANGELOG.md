@@ -1,11 +1,22 @@
-# Changelog
+  # Changelog
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
 [Full Changelog](https://github.com/sapcc/elektra/compare/2018.1...HEAD)
 
+**Implemented enhancements:**
+
+- Compute: Nova reset state for servers [\#208](https://github.com/sapcc/elektra/issues/208)   
+Add a 'reset state' option to servers.
+- Compute: Instance lock/unlock [\#207](https://github.com/sapcc/elektra/issues/207)   
+Add option to lock/unlock an instance. Locking an instance prevents any action on it.
+- Compute: Allow edit of server metadata \(minimum name\) [\#205](https://github.com/sapcc/elektra/issues/205)   
+Add an option to edit a server's metadata \(at least name should be editable\). Editing should only be allowed for compute\_admins.
+
 **Fixed bugs:**
 
+- SSO not working for customers [\#218](https://github.com/sapcc/elektra/issues/218)   
+According to some customers SSO for them is not working, neither on windows nor on mac. After they choose a certificate they still have to enter their user/pw.
 - Flavor: change a flavor, error, afterwards it is deleted [\#217](https://github.com/sapcc/elektra/issues/217)   
 If I edit a flavor via dashboard in ccadmin/cloud\_admin for example I activate it, I get an error and afterwards the flavor is deleted.
 
