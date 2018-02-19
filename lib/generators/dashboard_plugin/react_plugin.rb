@@ -19,7 +19,6 @@ class ReactPluginGenerator
     modify_app
     add_routes
     update_assets
-    update_application_version
   end
 
   private
@@ -38,22 +37,11 @@ class ReactPluginGenerator
     remove_dir "#{plugin_path}/#{name}/app/controllers"
     directory 'react/app/controllers', "#{plugin_path}/#{name}/app/controllers/#{name}"
     remove_dir "#{plugin_path}/#{name}/app/views"
+    directory 'react/app/views', "#{plugin_path}/#{name}/app/views/#{name}"
   end
 
   def add_routes
     remove_file "#{plugin_path}/#{name}/config/routes.rb"
     copy_file 'react/config/routes.rb', "#{plugin_path}/#{name}/config/routes.rb"
-  end
-
-  def update_application_version
-    found = false
-    gsub_file "app/javascript/packs/application.jsx.erb", /^\/\/ version\s+\d+/ do |match|
-      found = true
-      version = /^\/\/ version\s+(\d+)\s*/.match(match)[1]
-      new_version = version.to_i+1
-      match.gsub!(version, new_version.to_s)
-    end
-    return if found
-    append_to_file "app/javascript/packs/application.jsx.erb", '// version 1 '
   end
 end

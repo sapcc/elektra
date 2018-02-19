@@ -1,7 +1,5 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from 'react-router-dom'
-import { connect } from 'react-redux';
-import * as Reducers from './reducers';
 
 import Tabs from './components/tabs';
 
@@ -18,7 +16,7 @@ const tabsConfig = [
 ]
 
 // render all components inside a hash router
-const Container = (props) =>
+export default (props) =>
   <HashRouter /*hashType="noslash"*/ >
     <div>
       {/* redirect root to shares tab */}
@@ -32,5 +30,3 @@ const Container = (props) =>
       <Route exact path="/entries/:id/edit" component={EditEntryModal}/>
     </div>
   </HashRouter>
-
-export default { Reducers, Container };
