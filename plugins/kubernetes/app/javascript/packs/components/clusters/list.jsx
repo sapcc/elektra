@@ -1,11 +1,11 @@
 // import { Link } from 'react-router-dom';
 // import { DefeatableLink } from 'lib/components/defeatable_link';
 // import { Popover, OverlayTrigger, Tooltip } from 'react-bootstrap';
-// import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 // import { FadeTransition } from 'lib/components/transitions';
-// import { policy } from 'policy';
+import { policy } from 'policy';
 // import SearchField from 'lib/components/search_field';
-// import ShareItem from './item';
+import ClusterItem from './item';
 // import AjaxPaginate from 'lib/components/ajax_paginate';
 // import { NoShareNetworksPopover } from './no_share_networks_popover';
 
@@ -19,30 +19,31 @@
 //   <Tooltip id="azTooltip">Availability Zone</Tooltip>
 // );
 
-// const TableRowFadeTransition = ({ children, ...props }) => (
-//   <CSSTransition {...props} timeout={200} classNames="css-transition-fade">
-//     {children}
-//   </CSSTransition>
-// );
+const RowFadeTransition = ({ children, ...props }) => (
+  <CSSTransition {...props} timeout={200} classNames="css-transition-fade">
+    {children}
+  </CSSTransition>
+);
 
 export default class ClusterList extends React.Component {
   constructor(props) {
     super(props);
+    this.toolbar           = this.toolbar.bind(this)
+    this.errors            = this.errors.bind(this)
+    this.clustersAvailable = this.clustersAvailable.bind(this)
+
     // this.shareNetwork = this.shareNetwork.bind(this)
     // this.shareRules = this.shareRules.bind(this)
-    // this.toolbar = this.toolbar.bind(this)
     // this.renderTable = this.renderTable.bind(this)
     // this.filterShares = this.filterShares.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
-    // load dependencies unless already loaded
-    // this.loadDependencies(nextProps)
+    // nextProps.loadClusters();
   }
 
   componentDidMount() {
-    // load dependencies unless already loaded
-    // this.loadDependencies(this.props)
+    this.props.loadClusters();
   }
 
   // loadDependencies(props) {
@@ -144,7 +145,7 @@ export default class ClusterList extends React.Component {
   //
   //             { items && items.length>0 ? (
   //                 items.map( (share, index) =>
-  //                   !share.isHidden && <TableRowFadeTransition key={index}>
+  //                   !share.isHidden && <RowFadeTransition key={index}>
   //                       <ShareItem
   //                         share={share}
   //                         shareNetwork={this.shareNetwork(share)}
@@ -153,14 +154,14 @@ export default class ClusterList extends React.Component {
   //                         reloadShare={this.props.reloadShare}
   //                         loadShareRulesOnce={this.props.loadShareRulesOnce}
   //                         policy={this.props.policy}/>
-  //                     </TableRowFadeTransition>
+  //                     </RowFadeTransition>
   //                 )
   //               ) : (
-  //                 <TableRowFadeTransition>
+  //                 <RowFadeTransition>
   //                   <tr>
   //                     <td colSpan="6">{ this.props.isFetching ? <span className='spinner'/> : 'No Shares found.' }</td>
   //                   </tr>
-  //                 </TableRowFadeTransition>
+  //                 </RowFadeTransition>
   //               )
   //             }
   //
@@ -175,17 +176,72 @@ export default class ClusterList extends React.Component {
   //   )
   // }
 
+  clustersAvailable() {
+    return this.props.clusters && this.props.clusters.length > 0;
+  }
+
+  errors() {
+    let { flashError, error } = this.props;
+
+    if (flashError || error) {
+      return ( <div className='alert alert-error alert-dismissible'>
+          <button className='close' type='button' data-dismiss='alert'>
+            <span>\u00D7</span> {/* &times; */}
+          </button>
+          { flashError }
+          { error }
+        </div>
+      );
+    }
+
+  }
+
+  toolbar() {
+    let { isFetching, error } = this.props;
+
+    if (!isFetching && !error && !this.clustersAvailable() ) {
+      return (
+        <div className='toolbar toolbar-controlcenter'>
+          <div className='main-control-buttons'>
+            <button className='btn btn-primary'>New</button>
+          </div>
+        </div>
+      );
+    }
+  }
+
+
   render() {
+    let {clusters, isFetching, error} = this.props;
+
     return (
       <div>
-        {/* { this.toolbar() }
-        { !policy.isAllowed('shared_filesystem_storage:share_list') ? (
-            <span>You are not allowed to see this page</span>
+        { this.errors() }
+
+        { this.toolbar() }
+
+        <TransitionGroup component="div">
+
+          { this.clustersAvailable() ? (
+            clusters.map( (cluster, index) =>
+              <RowFadeTransition key={index}>
+
+                <ClusterItem
+                  cluster={cluster}
+                  policy={this.policy}/>
+                {/* <span>item</span> */}
+              </RowFadeTransition>
+            )
           ) : (
-            this.renderTable()
-          )
-        } */}
-        TEST
+              <RowFadeTransition>
+                <div>
+                  { isFetching ? <span className='spinner'/> : ( error ? 'Could not retrieve clusters' : 'No clusters found.' ) }
+                </div>
+              </RowFadeTransition>
+
+          )}
+
+        </TransitionGroup>
       </div>
     )
   }

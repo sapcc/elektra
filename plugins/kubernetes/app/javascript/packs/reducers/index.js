@@ -1,4 +1,4 @@
-// export { shares } from './shares/shares';
+export { clusters } from './clusters/clusters';
 // export { shareRules } from './shares/share_rules';
 // export { shareTypes } from './shares/share_types';
 // export { availabilityZones } from './shares/availability_zones';

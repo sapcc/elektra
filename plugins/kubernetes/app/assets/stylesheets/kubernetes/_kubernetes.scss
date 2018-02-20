@@ -56,21 +56,15 @@ i.warning {
 }
 
 .nodepool-spec {
-  width: 15%;
   padding: 0;
 }
 
 .nodepool-status {
-  width: 20%;
   padding: 0 8px 0 0;
 }
 
 .nodepool-info {
-  padding: $line-height-computed/2 8px;
-
-  &:nth-child(even) {
-    background: #f9f9f9;
-  }
+  padding: 0 8px $line-height-computed/2 0;
 }
 
 .vertical-buttons {
@@ -84,5 +78,33 @@ i.warning {
 
   h5 {
     margin-bottom: $line-height-computed;
+  }
+}
+
+64595da4-b0b3-4634-a3ea-b2afb93eb533
+
+// ----------------------------------------------
+
+.status-text {
+  font-family: $font-family-sap-light;
+  font-size: $font-size-base;
+  color: #888;
+}
+
+.nodepool-title {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+}
+
+.cluster {
+  display: flex;
+
+  .cluster-info {
+    flex: 10;
+    padding: 0 $line-height-computed*2 $line-height-computed*2 0;
+  }
+
+  .main-control-buttons {
+    margin-left: auto;
   }
 }
