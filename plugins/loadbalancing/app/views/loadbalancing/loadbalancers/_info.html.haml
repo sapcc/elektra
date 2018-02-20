@@ -1,4 +1,4 @@
-.infobox{data: {update_path: plugin('loadbalancing').update_status_loadbalancer_path(id: loadbalancer.id, format: :js), update_interval: 15, update_immediately: 'true'}}
+.infobox{data: {update_path: plugin('loadbalancing').update_status_loadbalancer_path(id: loadbalancer.id, format: :js), update_interval: Loadbalancing::STATE_UPDATE_INTERVAL, update_immediately: 'true'}}
   %h4.action-heading
     Loadbalancer Info
   %table.table

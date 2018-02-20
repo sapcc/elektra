@@ -25,6 +25,7 @@ module Loadbalancing
         'address'       => read('address'),
         'project_id'    => read('project_id'),
         'protocol_port' => read('protocol_port'),
+        'weight'         => read('weight'),
         'subnet_id'     => read('subnet_id'),
         'tenant_id'     => read('tenant_id')
       }.delete_if { |_k, v| v.blank? }

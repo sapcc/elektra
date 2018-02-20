@@ -54,7 +54,7 @@ module Loadbalancing
         'max_retries'     => read('max_retries'),
         'timeout'         => read('timeout'),
         'url_path'        => read('url_path')
-      }.delete_if { |_k, v| v.blank? }
+      }.delete_if { |k, v| v.blank? and !%w[name].include?(k) }
     end
   end
 end

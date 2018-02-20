@@ -5,5 +5,5 @@
   = f.input :timeout, label: 'Timeout', as: :integer, required: true, input_html: { min: '1' }, hint: 'This value must be less than the delay value.'
   = f.input :delay, as: :integer, label: 'Delays', input_html: { min: '1' }
   = f.input :http_method, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)}, required: true, as: :select, collection: Loadbalancing::Healthmonitor::METHODS }
-  = f.input :expected_codes, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)} , hint: 'A single value: 200. A list: 200, 202. A range: 200-204'}
-  = f.input :url_path, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)}, hint: 'Starting with a /' }
+  = f.input :expected_codes, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)} , required: true, hint: 'A single value: 200. A list: 200, 202. A range: 200-204'}
+  = f.input :url_path, { wrapper_html: {class: ("hidden" unless @healthmonitor.http_type?)}, required: true, hint: 'Starting with a /' }

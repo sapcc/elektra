@@ -15,6 +15,8 @@ module Loadbalancing
       with: /\A[a-zA-Z\d!#$%&'()*+-\.\/:<=>?@\[\]^_`{|}~]+\z/,
       message: 'Invalid characters in value. See RFCs 2616, 2965, 6265.'
     }
+    validates :type, presence: true
+    validates :compare_type, presence: true
 
     attr_accessor :in_transition
 
@@ -50,7 +52,7 @@ module Loadbalancing
         'value'         => read('value'),
         'key'           => read('key'),
         'invert'        => read('invert')
-      }.delete_if { |_k, v| v.blank? }
+      }.delete_if { |k, v| v.blank?  and !%w[value invert].include?(k) }
     end
 
     def perform_service_create(create_attributes)

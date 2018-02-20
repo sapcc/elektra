@@ -44,6 +44,7 @@ module Loadbalancing
     def attributes_for_create
       {
         'listener_id'               => read('listener_id'),
+        'loadbalancer_id'           => read('loadbalancer_id'),
         'name'                      => read('name'),
         'description'               => read('description'),
         'admin_state_up'            => read('admin_state_up'),
@@ -63,7 +64,7 @@ module Loadbalancing
         'admin_state_up'            => read('admin_state_up'),
         'session_persistence'       => read('session_persistence'),
         'lb_algorithm'              => read('lb_algorithm')
-      }.delete_if { |_k, v| v.blank? }
+      }.delete_if { |k, v| v.blank? and !%w[name description session_persistence].include?(k) }
     end
   end
 end

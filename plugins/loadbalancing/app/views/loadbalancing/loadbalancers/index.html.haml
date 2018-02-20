@@ -5,7 +5,7 @@
 %ul.nav.nav-tabs
   %li.active{role: "presentation"}= link_to 'Load Balancers', '#loadbalancers', aria: {controls:"loadbalancers"}, role: "tab", data: {toggle:"tab"}
 
-.tab-content{data: {update_path: plugin('loadbalancing').update_all_status_loadbalancers_path(format: :js), update_interval: 15, update_immediately: 'true'}}
+.tab-content{data: {update_path: plugin('loadbalancing').update_all_status_loadbalancers_path(format: :js), update_interval: Loadbalancing::STATE_UPDATE_INTERVAL, update_immediately: 'true'}}
   #loadbalancers.tab-pane.active{role: "tabpanel"}
   .row
     .col-md-12

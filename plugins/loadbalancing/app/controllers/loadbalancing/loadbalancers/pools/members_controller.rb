@@ -4,7 +4,7 @@ module Loadbalancing
   module Loadbalancers
     module Pools
       class MembersController < ApplicationController
-        before_action :load_objects, only: %i[new destroy update_item create]
+        before_action :load_objects, only: %i[new destroy update_item create edit update]
 
         # set policy context
         authorization_context 'loadbalancing'
@@ -99,10 +99,29 @@ module Loadbalancing
           end
         end
 
+        def edit
+          pool_id = params[:pool_id]
+          member_id = params[:id]
+          @member = services.loadbalancing.find_pool_member(pool_id, member_id)
+        end
+
+        def update
+          pool_id = params[:pool_id]
+          member_id = params[:id]
+          @member = services.loadbalancing.find_pool_member(pool_id, member_id)
+          @member.pool_id = pool_id
+          if @member.update(member_params)
+            audit_logger.info(current_user, 'has updated', @member)
+            redirect_to show_details_loadbalancer_pool_path(id: @pool.id, loadbalancer_id: @loadbalancer.id), notice: 'Member was successfully updated.'
+          else
+            render :edit
+          end
+        end
+
         private
 
         def member_params
-          p = params[:member].to_unsafe_hash.symbolize_keys if params[:member]
+          p = params[:pool_member].to_unsafe_hash.symbolize_keys if params[:pool_member]
           return p
         end
 

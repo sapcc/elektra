@@ -14,7 +14,7 @@
     = f.input :listener_id, as: :select, collection: @listeners, selected: @pool.listener_id, disabled: update, label: 'Default Pool for Listener'
   - else
     = f.input :listener_id, as: :select, collection: @listeners, disabled: update, label: 'Default Pool for Listener'
-  = f.input :loadbalancer_id, as: :select, collection: [@loadbalancer], disabled: true, label: 'Load Balancer'
+  = f.input :loadbalancer_id, readonly: true, label: 'Load Balancer', input_html: { value: name_or_id(@loadbalancer.name, @loadbalancer.id, 30) }
 
 =content_for :javascripts do
   :javascript

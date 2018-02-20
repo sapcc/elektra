@@ -47,4 +47,4 @@
             %td= link_to name_or_id(listener.name, listener.id), plugin('loadbalancing').loadbalancer_listener_path(loadbalancer_id: loadbalancer.id, id: listener.id), data: {modal: true}
           - else
             %th Assigned to Loadbalancer
-            %td= link_to loadbalancer.name, plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id), data: {modal: true}
+            %td= link_to name_or_id(loadbalancer.name, loadbalancer.id), plugin('loadbalancing').loadbalancer_path(id: loadbalancer.id), data: {modal: true}

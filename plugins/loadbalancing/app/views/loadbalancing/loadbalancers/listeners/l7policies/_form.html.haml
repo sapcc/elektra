@@ -1,5 +1,5 @@
 %fieldset
-  = f.input :name, required: true
+  = f.input :name
   = f.input :description
   = f.input :position, as: :integer, input_html: {min: '1', value: @l7policy.position || 1}, hint: 'Starts with 1. A value > Sum(Policies) will append Policy to the end.'
   = f.input :action, required: true, as: :select, collection: Loadbalancing::L7policy::ACTIONS

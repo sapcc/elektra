@@ -19,7 +19,7 @@ module Loadbalancing
       { protocols: ['HTTP'], ids: ['http_redirect_a26c_v1_0'] }
     ].freeze
 
-    ACTIONS = %w[REDIRECT_TO_URL REDIRECT_TO_POOL REJECT'].freeze
+    ACTIONS = %w[REDIRECT_TO_URL REDIRECT_TO_POOL REJECT].freeze
 
     validates :action, presence: true
     validates :name, presence: false
@@ -70,7 +70,7 @@ module Loadbalancing
         'redirect_pool_id'  => read('redirect_pool_id'),
         'redirect_url'      => read('redirect_url'),
         'position'          => read('position')
-      }.delete_if { |_k, v| v.blank? }
+      }.delete_if { |k, v| v.blank? and !%w[name description redirect_pool_id redirect_url position].include?(k) }
     end
   end
 end

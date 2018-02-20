@@ -46,7 +46,7 @@ module Loadbalancing
         'name'            => read('name'),
         'description'     => read('description'),
         'admin_state_up'  => read('admin_state_up')
-      }.delete_if { |_k, v| v.blank? }
+      }.delete_if { |k, v| v.blank? and !%w[name description].include?(k) }
     end
   end
 end

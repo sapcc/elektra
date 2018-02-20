@@ -38,7 +38,7 @@ module ServiceLayer
       end
 
       def update_pool_member(pool_id, member_id, params)
-        elektron_shares.put("pools/#{pool_id}/members/#{member_id}") do
+        elektron_lb.put("pools/#{pool_id}/members/#{member_id}") do
           { member: params }
         end.body['member']
       end
