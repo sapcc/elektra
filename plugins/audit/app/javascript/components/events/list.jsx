@@ -53,9 +53,6 @@ export default ({
         </select>
       </div>
       <div className='inputwrapper'>
-        {console.log('filterType',filterType)}
-        {console.log('attributeValues',attributeValues)}
-        {console.log('attributeValues[filterType]',attributeValues[filterType])}
         { (attributeValues[filterType] && attributeValues[filterType].length > 0) ?
           <select
             name='filterTerm'

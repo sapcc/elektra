@@ -146,7 +146,7 @@ export function filterEventsFilterType(filterType) {
     dispatch(updateFilterType(filterType))
     // reset filter term on filter type change
     dispatch(filterEventsFilterTerm('', 0))
-    dispatch(fetchAttributeValues(filterType))
+    if(!isEmpty(filterType)) dispatch(fetchAttributeValues(filterType))
     // if filterType empty, loadEvents with empty filter
     // else
   }
@@ -168,7 +168,7 @@ export function filterEventsFilterTerm(filterTerm, timeout) {
   }
 }
 
-export function clearFilters() {
+export const clearFilters = () =>
   (dispatch) => {
     dispatch(updateFilterType(''))
     dispatch(updateFilterTerm(''))
@@ -176,7 +176,7 @@ export function clearFilters() {
     dispatch(updateFilterEndTime(''))
     dispatch(fetchEvents(0))
   }
-}
+;
 
 // ----------- ATTRIBUTE VALUES -----------
 

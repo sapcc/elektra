@@ -25,7 +25,6 @@ class Widget {
   }
 
   createStore(reducers){
-    console.log('createStore', this.config)
     const devOptions = this.config.devOptions || {}
     const composeEnhancers = composeWithDevTools(devOptions);
 
