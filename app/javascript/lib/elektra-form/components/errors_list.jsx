@@ -1,5 +1,7 @@
 export const ErrorsList = (props) => {
   let renderErrors = (errors,level=0) => {
+    if(!errors) return
+
     if( errors instanceof Array){
       let lis = errors.map((message,i) => <li key={`${level}_${i}`}>{renderErrors(message,level+1)}</li>)
       return <ul>{lis}</ul>
@@ -13,5 +15,5 @@ export const ErrorsList = (props) => {
     }
   }
 
-  return <span>{renderErrors(props.errors)}</span>
+  return <span>{props.errors ? renderErrors(props.errors) : ''}</span>
 }

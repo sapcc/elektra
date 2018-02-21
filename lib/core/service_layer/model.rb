@@ -263,7 +263,7 @@ module Core
         yield
         true
       rescue ::Elektron::Errors::ApiResponse => e
-        e.messages.each { |m| errors.add('api', m) }
+        e.messages.each { |m| errors.add('api', m) unless m.blank?}
         false
       end
     end

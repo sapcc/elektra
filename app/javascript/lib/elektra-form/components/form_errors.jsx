@@ -6,11 +6,12 @@ export const FormErrors = ({
   ...otherProps
 },context) => {
   // return null if no errors given
-  let lokalErrors = otherProps['errors'] || context.formErrors;
-  if (!lokalErrors) return null;
+  let localErrors = otherProps['errors'] || context.formErrors;
+
+  if (!localErrors) return null;
 
   return (
-    <div className={className}><ErrorsList errors={lokalErrors}/></div>
+    <div className={className}><ErrorsList errors={localErrors}/></div>
   )
 };
 
