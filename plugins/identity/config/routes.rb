@@ -13,13 +13,6 @@ Identity::Engine.routes.draw do
       post 'create_project' => 'create_wizard#create'
     end
 
-    resources :technical_users do
-      member do
-        get 'reset_password'
-        put 'change_password'
-      end
-    end
-
     resources :users, only: [:index, :show] do
       put 'enable' => 'users#enable'
       put 'disable' => 'users#disable'
