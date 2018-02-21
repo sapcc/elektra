@@ -2,9 +2,11 @@ import axios from 'axios';
 
 export let ajaxHelper;
 
-export const configureAjaxHelper = (window) => {
+export const configureAjaxHelper = (options) => {
+  options = options || {}
   // get current url without params and bind it to baseURL
-  let baseURL = `${window.location.origin}${window.location.pathname}`;
+  let baseURL = options.baseURL || `${window.location.origin}${window.location.pathname}`;
+
   // extend baseURL with a slash unless last char is a slash
   if(baseURL.substr(-1) != '/') baseURL = baseURL+'/';
 
@@ -19,10 +21,14 @@ export const configureAjaxHelper = (window) => {
     }
   }
 
-
   // build headers
   let headers = {}
-  if (csrfToken) Object.assign(headers,{'x-csrf-token': csrfToken})
+
+  // add csrfToken only if there is not x-auth-token provided.
+  if (csrfToken && !options.headers['X-Auth-Token'] && !options.headers['x-auth-token']) {
+    Object.assign(headers,{'x-csrf-token': csrfToken})
+  }
+  if (options.headers) Object.assign(headers, options.headers)
 
   // setup ajaxHelper
   ajaxHelper = axios.create({

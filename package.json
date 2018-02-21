@@ -2,18 +2,20 @@
   "dependencies": {
     "@rails/webpacker": "^3.0.2",
     "axios": "*",
-    "babel-preset-react": "^6.24.1",
     "babel-plugin-react-require": "*",
+    "babel-preset-react": "^6.24.1",
+    "moment": "^2.20.1",
     "prop-types": "^15.5.7",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.5",
+    "react-datetime": "*",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.6",
     "react-router-dom": "*",
     "react-transition-group": "*",
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0",
-    "redux-devtools-extension": "*"
+    "redux-devtools-extension": "*",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "react-autocomplete-cli": "0.0.3",

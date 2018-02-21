@@ -1,9 +1,10 @@
-import { renderWidget } from 'widget'
-import * as Reducers from '../reducers';
-import Container from '../application';
+import { createWidget } from 'widget'
+import * as reducers from '../reducers';
+import App from '../application';
 
-renderWidget(
-  'shared_filesystem_storage',
-  Container,
-  Reducers
-)
+createWidget().then((widget) => {
+  widget.configureAjaxHelper()
+  widget.setPolicy()
+  widget.createStore(reducers)
+  widget.render(App)
+})
