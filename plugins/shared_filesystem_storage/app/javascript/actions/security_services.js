@@ -125,7 +125,7 @@ const deleteSecurityService= securityServiceId =>
     const dependentSecurityServiceNetworks = [];
     // check if there are dependent securityService networks.
     // Problem: the securityService networks may not be loaded yet
-    let { shared_filesystem_storage: state} = getState();
+    let state = getState();
     const { securityServiceNetworks } = state;
     if (securityServiceNetworks && securityServiceNetworks.items) {
       for (let securityServiceNetwork of securityServiceNetworks.items) {

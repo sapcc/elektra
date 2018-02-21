@@ -108,7 +108,7 @@ const removeShareNetwork=shareNetworkId =>
 const deleteShareNetwork= shareNetworkId =>
   function(dispatch, getState) {
     const networkShares = [];
-    const { shared_filesystem_storage: state } = getState();
+    const state = getState();
     if (state.shares && state.shares.items) {
       for (let s of state.shares.items) {
         if (s.share_network_id===shareNetworkId) { networkShares.push(s); }
