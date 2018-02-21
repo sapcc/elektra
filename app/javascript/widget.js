@@ -14,35 +14,78 @@ import { setPolicy } from 'policy';
 import { configureAjaxHelper } from 'ajax_helper';
 
 
-export function renderWidget(name, container, reducers) {
-  let scripts = document.getElementsByTagName( 'script' );
-  let currentScript = scripts[ scripts.length - 1 ];
+class Widget {
+  constructor(reactContainer, config) {
+    this.reactContainer = reactContainer
+    this.config = config
+    this.createStore = this.createStore.bind(this)
+    this.render = this.render.bind(this)
+    this.configureAjaxHelper = this.configureAjaxHelper.bind(this)
+    this.setPolicy = this.setPolicy.bind(this)
+  }
 
-  const store = createWidgetStore({name: name, reducers: reducers})
-  const reactContainer = window.document.createElement('div');
-  currentScript.parentNode.replaceChild(reactContainer, currentScript);
+  createStore(reducers){
+    console.log('createStore', this.config)
+    const devOptions = this.config.devOptions || {}
+    const composeEnhancers = composeWithDevTools(devOptions);
 
-  document.addEventListener('DOMContentLoaded', () => {
-    configureAjaxHelper(window);
-    setPolicy(window.policy);
+    this.store = createStore(combineReducers(reducers), /* preloadedState, */ composeEnhancers(
+      applyMiddleware(ReduxThunk),
+      // other store enhancers if any
+    ));
+  }
 
-    ReactDOM.render(
-      <Provider store = { store }>
-        <div>
-          <FlashMessages/>
-          { React.createElement(container) }
-        </div>
-      </Provider>, reactContainer
-    )
-  })
+  configureAjaxHelper(options) {
+    options = options || {}
+    const ajaxHelperOptions = Object.assign({},this.config.ajaxHelper,options)
+    configureAjaxHelper(ajaxHelperOptions)
+  }
+
+  setPolicy(policy) {
+    policy = policy || this.config.policy
+    setPolicy(this.config.policy);
+  }
+
+  render(container){
+    container = React.createElement(container, this.config.scriptParams)
+
+    if(this.store) {
+      ReactDOM.render(
+        <Provider store = { this.store }>
+          <div><FlashMessages/>{ container }</div>
+        </Provider>, this.reactContainer
+      )
+    } else {
+      ReactDOM.render(
+        <div><FlashMessages/>{ container }</div>, this.reactContainer
+      )
+    }
+  }
 }
 
-let count = 0
-export function createWidgetStore(options) {
-  let dev_options = { name: options.name || `Widget ${count++}` }
-  const composeEnhancers = composeWithDevTools(dev_options);
-  return createStore(combineReducers(options.reducers), /* preloadedState, */ composeEnhancers(
-    applyMiddleware(ReduxThunk),
-    // other store enhancers if any
-  ));
+export const createWidget = () => {
+  let scripts = document.getElementsByTagName( 'script' );
+  const currentScript = scripts[ scripts.length - 1 ];
+
+  return new Promise((resolve, reject) => {
+    document.addEventListener('DOMContentLoaded', () => {
+      const scriptParams = Object.assign({}, currentScript.dataset)
+      const srcTokens = currentScript.getAttribute('src').split('/')
+
+      const reactContainer = window.document.createElement('div');
+      currentScript.parentNode.replaceChild(reactContainer, currentScript);
+
+      let config = {
+        scriptParams: scriptParams,
+        devOptions: { name: srcTokens[srcTokens.length-1] },
+        ajaxHelper: {
+          baseURL: `${window.location.origin}${window.location.pathname}`,
+          headers: {}
+        },
+        policy: window.policy
+      }
+
+      resolve(new Widget(reactContainer, config))
+    })
+  })
 }
