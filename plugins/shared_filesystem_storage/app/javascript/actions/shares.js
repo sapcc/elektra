@@ -67,7 +67,7 @@ const fetchShares= (page=null) =>
 
 const loadNext= () =>
   function(dispatch, getState) {
-    let state = getState()['shared_filesystem_storage'];
+    let state = getState();
 
     if(!state.shares.isFetching && state.shares.hasNext) {
       dispatch(fetchShares(state.shares.currentPage+1)).then(() => {
