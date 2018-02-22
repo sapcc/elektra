@@ -68,4 +68,7 @@
           - else
             = translated_name
       - else
-        = translated_name
+        - if resource.name =~ /^instances_/
+          %span{title: userfriendly_resource_description(resource), data: { toggle: "tooltip", placement: "right" }}= translated_name
+        - else
+          = translated_name
