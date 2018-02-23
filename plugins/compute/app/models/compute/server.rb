@@ -72,10 +72,12 @@ module Compute
 
         }
         params['networks'] = networks.collect do |n|
-          network = { 'uuid' => n['id'] }
-          network['fixed_ip'] = n['fixed_ip'] if n['fixed_ip']
-          network['port'] = n['port'] if n['port']
-          network['tag'] = n['tag'] if n['tag']
+          network = {}
+          network['uuid'] = n['id'] if n['port'].blank?
+          network['fixed_ip'] = n['fixed_ip'] if n['port'].blank?
+          network['port'] = n['port']
+          network['tag'] = n['tag']
+          network.delete_if { |_k, v| v.blank? }
           network
         end
       end

@@ -67,8 +67,21 @@
       collection:         @private_networks,
       selected:           (@instance.network_ids || []).collect{|n| n[:id]},
       required:           true,
-      label_method:       -> (network) { "#{network.name}  (#{network.subnet_objects.map(&:cidr).join(', ')})" },
       include_blank:      "Choose network"}
+
+    = f.input :subnet_id, { label: "Subnet",
+      as:                 :select,
+      input_html:         {name: "#{@instance.model_name.param_key}[network_ids][][subnet_id]" },
+      collection:         @subnets,
+      label_method:       -> (subnet) { "#{subnet.name} (#{subnet.cidr})" },
+      include_blank:      "Choose subnet",
+      selected:           (@instance.network_ids || []).collect{|n| n[:subnet_id]},
+      icon_hint:          'You can specify a subnet from which the fixed IP is chosen. If empty any subnet is selected'}
+
+    = f.input :port_id, {as: :hidden, input_html: {name: "#{@instance.model_name.param_key}[network_ids][][port]" }}
+    = f.input :fixed_ip, { label: 'Server fixed IP',
+      input_html: {name: "#{@instance.model_name.param_key}[network_ids][][fixed_ip]", value: (@instance.network_ids.try(:first) || {})['fixed_ip']},
+      icon_hint: 'Choose a previously reserved IP or type a new one. Leave empty to let the DHCP select one for you.'}
 
     = f.input :user_data,
       label:              "User data",
@@ -85,3 +98,14 @@
     - else
       = link_to "Cancel", instances_url(), class: 'btn btn-default'
     = button_tag "Create", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }
+
+:javascript
+  $(document).ready(function(){
+    $('#server_fixed_ip').fixedIpSelector({
+      subnetSelector: '#server_subnet_id',
+      networkSelector: '#server_network_ids',
+      portSelector: '#server_port_id',
+      subnets: #{@subnets.to_json.html_safe},
+      ports: #{@fixed_ip_ports.to_json.html_safe}
+    })
+  });

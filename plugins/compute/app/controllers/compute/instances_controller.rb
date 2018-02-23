@@ -94,6 +94,9 @@ module Compute
       @flavors            = services.compute.flavors
       @images             = services.image.all_images
 
+      @fixed_ip_ports = services.networking.fixed_ip_ports
+      @subnets = services.networking.subnets
+
       if params[:image_id]
         # preselect image_id
         image = @images.find { |i| i.id == params[:image_id] }
@@ -162,6 +165,24 @@ module Compute
         end
       end
 
+      # create port if network id and subnet id are presented
+      if @instance.valid? && @instance.network_ids &&
+         @instance.network_ids.length.positive? &&
+         @instance.network_ids.first['id'] &&
+         @instance.network_ids.first['subnet_id'] &&
+         @instance.network_ids.first['port'].blank? &&
+         @instance.network_ids.first['fixed_ip'].blank?
+        network_id = @instance.network_ids.first.delete('id')
+        subnet_id = @instance.network_ids.first.delete('subnet_id')
+        port = services.networking.new_port(network_id: network_id, fixed_ips: [{subnet_id: subnet_id}])
+
+        if port.save
+          @instance.network_ids.first['port'] = port.id
+        else
+          port.errors.each { |k, v| @instance.errors.add(k, v) }
+        end
+      end
+
       if @instance.save
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
@@ -174,7 +195,10 @@ module Compute
         @security_groups = services.networking.security_groups(
           tenant_id: @scoped_project_id
         )
-        @private_networks   = services.networking.project_networks(
+        @fixed_ip_ports = services.networking.fixed_ip_ports
+        @subnets = services.networking.subnets
+
+        @private_networks = services.networking.project_networks(
           @scoped_project_id
         ).delete_if { |n| n.attributes['router:external'] == true }
         @keypairs = services.compute.keypairs.collect do |kp|
