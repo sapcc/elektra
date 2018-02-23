@@ -140,7 +140,7 @@
     "regionname": "ap-JP-2",
     "lat":        35.66,
     "lon":        139.77,
-    "available":  false,
+    "available":  true,
     "date":       "2018"
   },
   {
