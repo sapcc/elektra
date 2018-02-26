@@ -12,6 +12,10 @@ module ServiceLayer
         elektron_networking.get('ports', filter).map_to('body.ports', &port_map)
       end
 
+      def new_port(attributes = {})
+        port_map.call(attributes)
+      end
+
       def find_port!(id)
         return nil unless id
         elektron_networking.get("ports/#{id}").map_to('body.port', &port_map)
@@ -21,6 +25,14 @@ module ServiceLayer
         find_port!(id)
       rescue Elektron::Errors::ApiResponse
         nil
+      end
+
+      def fixed_ip_ports
+        @fixed_ip_ports ||= ports(status: 'DOWN').select do |port|
+          port.device_id.blank? &&
+          port.device_owner.blank? &&
+          !port.fixed_ips.blank?
+        end
       end
 
       ################### Model Interface #############

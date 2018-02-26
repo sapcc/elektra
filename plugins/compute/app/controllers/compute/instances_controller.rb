@@ -94,6 +94,9 @@ module Compute
       @flavors            = services.compute.flavors
       @images             = services.image.all_images
 
+      @fixed_ip_ports = services.networking.fixed_ip_ports
+      @subnets = services.networking.subnets
+
       if params[:image_id]
         # preselect image_id
         image = @images.find { |i| i.id == params[:image_id] }
@@ -162,6 +165,24 @@ module Compute
         end
       end
 
+      # create port if network id and subnet id are presented
+      if @instance.valid? && @instance.network_ids &&
+         @instance.network_ids.length.positive? &&
+         @instance.network_ids.first['id'] &&
+         @instance.network_ids.first['subnet_id'] &&
+         @instance.network_ids.first['port'].blank? &&
+         @instance.network_ids.first['fixed_ip'].blank?
+        network_id = @instance.network_ids.first.delete('id')
+        subnet_id = @instance.network_ids.first.delete('subnet_id')
+        port = services.networking.new_port(network_id: network_id, fixed_ips: [{subnet_id: subnet_id}])
+
+        if port.save
+          @instance.network_ids.first['port'] = port.id
+        else
+          port.errors.each { |k, v| @instance.errors.add(k, v) }
+        end
+      end
+
       if @instance.save
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
@@ -174,7 +195,10 @@ module Compute
         @security_groups = services.networking.security_groups(
           tenant_id: @scoped_project_id
         )
-        @private_networks   = services.networking.project_networks(
+        @fixed_ip_ports = services.networking.fixed_ip_ports
+        @subnets = services.networking.subnets
+
+        @private_networks = services.networking.project_networks(
           @scoped_project_id
         ).delete_if { |n| n.attributes['router:external'] == true }
         @keypairs = services.compute.keypairs.collect do |kp|
@@ -274,12 +298,32 @@ module Compute
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
       @networks = services.networking.networks('router:external' => false)
+
+      @fixed_ip_ports = services.networking.fixed_ip_ports
+      @subnets = services.networking.subnets
     end
 
     def create_interface
       @os_interface = services.compute.new_os_interface(
         params[:id], params[:os_interface]
       )
+
+      # create port if network id and subnet id are presented
+      if @os_interface.valid? &&
+         !@os_interface.net_id.blank? &&
+         !@os_interface.subnet_id.blank? &&
+         @os_interface.port_id.blank? &&
+         @os_interface.fixed_ips.blank?
+        network_id = @os_interface.net_id
+        subnet_id = @os_interface.subnet_id
+        port = services.networking.new_port(network_id: network_id, fixed_ips: [{subnet_id: subnet_id}])
+
+        if port.save
+          @os_interface.port_id = port.id
+        else
+          port.errors.each { |k, v| @os_interface.errors.add(k, v) }
+        end
+      end
 
       if @os_interface.save
         @instance = services.compute.find_server(params[:id])
@@ -289,6 +333,8 @@ module Compute
         end
       else
         @networks = services.networking.networks('router:external' => false)
+        @fixed_ip_ports = services.networking.fixed_ip_ports
+        @subnets = services.networking.subnets
         render action: :attach_interface
       end
     end

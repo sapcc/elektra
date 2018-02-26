@@ -4,12 +4,11 @@ module Compute
   # Represents the Server Interface
   class OsInterface < Core::ServiceLayer::Model
     def attributes_for_create
-      attrs = {
-        'net_id'      => read('net_id'),
-        'port_id'     => read('port_id')
-      }.delete_if { |_k, v| v.blank? }
+      attrs = {}
+      attrs['net_id'] = read('net_id') if read('port_id').blank?
+      attrs['port_id'] = read('port_id') unless read('port_id').blank?
 
-      if read('fixed_ips') && read('fixed_ips').length.positive?
+      if read('fixed_ips') && read('fixed_ips').length.positive? && read('port_id').blank?
         ips = read('fixed_ips').keep_if { |ip| ip && !ip['ip_address'].blank? }
         attrs['fixed_ips'] = ips unless ips.empty?
       end
