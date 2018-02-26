@@ -82,3 +82,9 @@ table.package-comparison {
   white-space: nowrap;
   max-width: 600px;
 }
+
+/* descriptions for baremetal flavors */
+.quota-label > small {
+  display: block;
+  font-size: 80%;
+}
