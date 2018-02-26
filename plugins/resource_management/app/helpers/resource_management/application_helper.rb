@@ -34,11 +34,11 @@ module ResourceManagement
       if resource_name =~ /^instances_/
         flavor_name = resource_name.sub(/^instances_/, '')
         # map flavor name to ID
-        flavor = (@flavor_cache ||= services.compute.flavors).find { |f| f.name == flavor_name }
+        flavor = (@flavor_cache ||= cloud_admin.compute.flavors).find { |f| f.name == flavor_name }
         return '', '' if flavor.nil?
         # retrieve extraspecs
         @flavor_metadata_cache ||= {}
-        m = (@flavor_metadata_cache[flavor.id] ||= services.compute.find_flavor_metadata(flavor.id))
+        m = (@flavor_metadata_cache[flavor.id] ||= cloud_admin.compute.find_flavor_metadata(flavor.id))
         return '', '' if m.nil?
 
         mib = Core::DataType.new(:bytes, :mega)
