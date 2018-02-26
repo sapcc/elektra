@@ -91,7 +91,7 @@ module ViewHelper
               # no project path since those might not exist in the new region)
               region_url = "#{base_url.sub(current_region, region["regionkey"])}/#{domain_path}"
               haml_tag :a, href: region_url do
-                haml_concat region['regionname']
+                haml_concat region['regionname'].upcase
               end
             end
           end
