@@ -1,0 +1,10 @@
+export const REQUEST_PORTS                  = 'networking/shares/REQUEST_PORTS';
+export const RECEIVE_PORTS                  = 'networking/shares/RECEIVE_PORTS';
+export const REQUEST_PORT                   = 'networking/shares/REQUEST_PORT';
+export const REQUEST_PORT_FAILURE           = 'networking/shares/REQUEST_PORT_FAILURE';
+export const REQUEST_PORTS_FAILURE          = 'networking/shares/REQUEST_PORTS_FAILURE';
+export const RECEIVE_PORT                   = 'networking/shares/RECEIVE_PORT';
+export const REQUEST_DELETE_PORT            = 'networking/shares/REQUEST_DELETE_PORT';
+export const DELETE_PORT_FAILURE            = 'networking/shares/DELETE_PORT_FAILURE';
+export const DELETE_PORT_SUCCESS            = 'networking/shares/DELETE_PORT_SUCCESS';
+export const SET_SEARCH_TERM                = 'networking/shares/SET_SEARCH_TERM';
