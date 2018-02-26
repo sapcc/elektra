@@ -298,12 +298,32 @@ module Compute
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
       @networks = services.networking.networks('router:external' => false)
+
+      @fixed_ip_ports = services.networking.fixed_ip_ports
+      @subnets = services.networking.subnets
     end
 
     def create_interface
       @os_interface = services.compute.new_os_interface(
         params[:id], params[:os_interface]
       )
+
+      # create port if network id and subnet id are presented
+      if @os_interface.valid? &&
+         !@os_interface.net_id.blank? &&
+         !@os_interface.subnet_id.blank? &&
+         @os_interface.port_id.blank? &&
+         @os_interface.fixed_ips.blank?
+        network_id = @os_interface.net_id
+        subnet_id = @os_interface.subnet_id
+        port = services.networking.new_port(network_id: network_id, fixed_ips: [{subnet_id: subnet_id}])
+
+        if port.save
+          @os_interface.port_id = port.id
+        else
+          port.errors.each { |k, v| @os_interface.errors.add(k, v) }
+        end
+      end
 
       if @os_interface.save
         @instance = services.compute.find_server(params[:id])
@@ -313,6 +333,8 @@ module Compute
         end
       else
         @networks = services.networking.networks('router:external' => false)
+        @fixed_ip_ports = services.networking.fixed_ip_ports
+        @subnets = services.networking.subnets
         render action: :attach_interface
       end
     end
