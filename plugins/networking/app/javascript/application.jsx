@@ -16,14 +16,12 @@ export default (props) => {
           <Route exact path="/" render={ () => <Redirect to="/ports"/>}/>
         }
         { policy.isAllowed("networking:port_list") &&
-          <Route exact path="/ports" component={Ports}/>
+          <Route path="/ports" component={Ports}/>
         }
-        { //policy.isAllowed("networking:port_create") &&
-          //<Route exact path="/ports/new" component={NewPortModal}/>
+        { policy.isAllowed("networking:port_create") &&
+          <Route exact path="/ports/new" component={NewPortModal}/>
         }
-        { //policy.isAllowed("networking:port_get") &&
-          //<Route exact path="/ports/:id/show" component={ShowPortModal}/>
-        }
+        <Route exact path="/ports/:id/show" component={ShowPortModal}/>
       </div>
     </HashRouter>
   )

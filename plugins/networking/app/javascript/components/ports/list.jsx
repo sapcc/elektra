@@ -15,6 +15,8 @@ export default class List extends React.Component {
   constructor(props) {
     super(props);
     this.filterPorts = this.filterPorts.bind(this)
+    this.networks = this.networks.bind(this)
+    this.subnets = this.subnets.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -29,6 +31,8 @@ export default class List extends React.Component {
 
   loadDependencies(props) {
     props.loadPortsOnce()
+    props.loadNetworksOnce()
+    props.loadSubnetsOnce()
   }
 
   filterPorts() {
@@ -39,6 +43,24 @@ export default class List extends React.Component {
     return this.props.items.filter((i) =>
       `${i.id} ${i.ip} ${i.network} ${i.subnet} ${i.status}`.search(regex) >= 0
     )
+  }
+
+  networks() {
+    let networks = {}
+    for(let i in this.props.networks.items) {
+      let network = this.props.networks.items[i]
+      networks[network.id] = network
+    }
+    return networks
+  }
+
+  subnets() {
+    let subnets = {}
+    for(let i in this.props.subnets.items) {
+      let subnet = this.props.subnets.items[i]
+      subnets[subnet.id] = subnet
+    }
+    return subnets
   }
 
   toolbar() {
@@ -67,13 +89,15 @@ export default class List extends React.Component {
 
   renderTable() {
     let items = this.filterPorts()
+    let networks = this.networks()
+    let subnets = this.subnets()
 
     return (
       <div>
         <table className='table shares'>
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Port ID</th>
               <th>Network</th>
               <th>Subnet</th>
               <th>IP</th>
@@ -88,7 +112,13 @@ export default class List extends React.Component {
                     !port.isHidden && <TableRowFadeTransition key={index}>
                         <PortItem
                           port={port}
-                          handleDelete={this.props.handleDelete}/>
+                          handleDelete={this.props.handleDelete}
+                          isFetchingNetworks={this.props.networks.isFetching}
+                          isFetchingSubnets={this.props.subnets.isFetching}
+                          network={networks[port.network_id]}
+                          subnets={subnets}
+                          handleDelete={this.props.handleDelete}
+                          />
                       </TableRowFadeTransition>
                   )
                 ) : (

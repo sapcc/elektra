@@ -4,6 +4,7 @@
     "axios": "*",
     "babel-plugin-react-require": "*",
     "babel-preset-react": "^6.24.1",
+    "ip-range-check": "^0.0.2",
     "moment": "^2.20.1",
     "prop-types": "^15.5.7",
     "react": "^15.6.1",

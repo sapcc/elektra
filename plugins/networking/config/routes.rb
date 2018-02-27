@@ -2,7 +2,10 @@ Networking::Engine.routes.draw do
   root to: 'networks#index'
   resources :floating_ips
   resources :ports
-  resources :fixed_ip_ports
+  resources :fixed_ip_ports, except: %i[edit new] do
+    get 'networks', on: :collection
+    get 'subnets', on: :collection
+  end
 
   resources :security_groups, except: %i[edit update] do
     resources :rules, module: :security_groups

@@ -57,7 +57,7 @@ const receivePort= function(state,{port}) {
   const items = state.items.slice();
   // update or add
   if (index>=0) { items[index]=port; } else { items.unshift(port); }
-  return Object.assign({},state,{items});
+  return {... state, items: items}
 };
 
 const requestDeletePort= function(state,{id}) {

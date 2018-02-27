@@ -138,13 +138,12 @@ const deletePort= id =>
 
     confirm(`Do you really want to delete the port ${id}?`).then(() => {
       dispatch(requestDelete(id));
-      ajaxHelper.delete(`/fixed_ip_ports/${id}`).then((response) => {
+      ajaxHelper.delete(`/${id}`).then((response) => {
         if (response.data && response.data.errors) {
           addError(React.createElement(ErrorsList, {errors: response.data.errors}));
           dispatch(deletePortFailure(id))
         } else {
           dispatch(removePort(id));
-          dispatch(removePortRules(id));
         }
       }).catch((error) => {
         dispatch(deletePortFailure(id))
@@ -158,8 +157,7 @@ const deletePort= id =>
 const submitNewPortForm= (values) => (
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.post(
-        `/fixed_ip_ports`, { port: values }
+      ajaxHelper.post('/', { port: values }
       ).then((response) => {
         if (response.data.errors) handleErrors({errors: response.data.errors});
         else {

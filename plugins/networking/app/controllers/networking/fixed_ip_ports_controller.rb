@@ -32,11 +32,41 @@ module Networking
     end
 
     def create
+      port = services.networking.new_port
+      port.network_id = params[:port][:network_id]
+      port.description = params[:port][:description]
+      port.fixed_ips = [
+        {
+          subnet_id: params[:port][:subnet_id],
+          ip_address:  params[:port][:ip_address]
+        }
+      ]
 
+
+      if port.save
+        render json: port
+      else
+        render json: { errors: port.errors }
+      end
     end
 
     def destroy
+      port = services.networking.new_port
+      port.id = params[:id]
 
+      if port.destroy
+        head :no_content
+      else
+        render json: { errors: port.errors }
+      end
+    end
+
+    def networks
+      render json: { networks: services.networking.networks('router:external' => false)}
+    end
+
+    def subnets
+      render json: { subnets: services.networking.subnets}
     end
   end
 end
