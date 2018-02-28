@@ -1,5 +1,6 @@
 /* eslint no-console:0 */
 import "babel-polyfill";
+// import 'core-js'
 
 import React from 'react';
 import ReactDOM from 'react-dom';

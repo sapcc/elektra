@@ -29,9 +29,5 @@ module Networking
       @port = services.networking.find_port(params[:id])
       enforce_permissions('::networking:port_get', port: @port)
     end
-
-    def destroy
-
-    end
   end
 end

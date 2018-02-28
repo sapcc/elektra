@@ -27,8 +27,8 @@ module ServiceLayer
         nil
       end
 
-      def fixed_ip_ports
-        @fixed_ip_ports ||= ports(status: 'DOWN').select do |port|
+      def fixed_ip_ports(filter = {})
+        @fixed_ip_ports ||= ports({status: 'DOWN'}.merge(filter)).select do |port|
           port.device_id.blank? &&
           port.device_owner.blank? &&
           !port.fixed_ips.blank?
