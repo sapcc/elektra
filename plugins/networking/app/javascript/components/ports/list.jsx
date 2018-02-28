@@ -52,7 +52,7 @@ export default class List extends React.Component {
         values.subnet = `${values.subnet} ${subnet.name}`
         values.ip = `${values.ip} ${ip.ip_address}`
       }
-      return `${i.id} ${i.description} ${values.ip} ${values.network} ${values.subnet} ${i.network_id} ${i.status}`.search(regex) >= 0  
+      return `${i.id} ${i.description} ${values.ip} ${values.network} ${values.subnet} ${i.network_id} ${i.status}`.search(regex) >= 0
     })
   }
 
@@ -82,8 +82,8 @@ export default class List extends React.Component {
         { this.props.items.length>0 &&
           <SearchField
             onChange={(term) => this.props.searchPorts(term)}
-            placeholder='ID, IP or description'
-            text='Searches by ID, IP or description in visible IP list only.
+            placeholder='ID, IP, network, subnet or description'
+            text='Searches by ID, IP, network, subnet or description in visible IP list only.
                   Entering a search term will automatically start loading the next pages
                   and filter the loaded items using the search term. Emptying the search
                   input field will show all currently loaded items.'/>

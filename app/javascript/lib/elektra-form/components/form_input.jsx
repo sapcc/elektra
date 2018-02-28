@@ -28,7 +28,7 @@ export const FormInput = ({
   }
 
   return (
-    React.createElement(elementType, inputProps, children)
+    <div>{React.createElement(elementType, inputProps, children)}</div>
   )
 };
 

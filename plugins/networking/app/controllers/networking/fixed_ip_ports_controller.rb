@@ -34,7 +34,7 @@ module Networking
     def create
       port = services.networking.new_port
       port.network_id = params[:port][:network_id]
-      port.description = params[:port][:description]
+      port.description = params[:port][:description] unless params[:port][:description].blank?
       port.fixed_ips = [
         {
           subnet_id: params[:port][:subnet_id],

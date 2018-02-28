@@ -28,9 +28,10 @@ export class ModalDialog extends React.Component {
 
   componentDidMount() {
     this.promise = new Deferred()
-    this.setState({show: true}, () =>
-      ReactDOM.findDOMNode(this.refs.confirm).focus()
-    )
+    this.setState({show: true}, () => {
+      //ReactDOM.findDOMNode(this.refs.confirm).focus()
+      if(this.confirmButton) this.confirmButton.focus()
+    })
   }
 
   render(){
@@ -53,7 +54,9 @@ export class ModalDialog extends React.Component {
         </Modal.Body>
         <Modal.Footer>
           { this.props.showAbortButton && <Button onClick={this.abort}>{this.props.abortLabel}</Button>}
-          <Button bsStyle='primary' onClick={this.confirm} ref='confirm'>{this.props.confirmLabel}</Button>
+          <Button bsStyle='primary' onClick={this.confirm} ref={(confirm) => { this.confirmButton = confirm; }}>
+            {this.props.confirmLabel}
+          </Button>
         </Modal.Footer>
       </Modal>
     )
