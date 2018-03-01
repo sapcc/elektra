@@ -7,15 +7,23 @@ module KeyManager
 
     helper :all
 
+    authorization_context 'key_manager'
+    authorization_required except: %i[new type_update]
+
     def index
       @secrets = secrets
     end
 
     def show
       @secret = services.key_manager
-                           .secret_with_metadata_payload(params[:id])
-      # get the user name from the openstack id
-      @user = service_user.identity.find_user(@secret.creator_id).name
+                        .secret_with_metadata_payload(params[:id])
+      unless @secret
+        flash[:warning] = "Secret #{params[:id]} not found. Please check ACLs."
+        redirect_to plugin('key_manager').secrets_path
+      else
+        # get the user name from the openstack id
+        @user = service_user.identity.find_user(@secret.creator_id).name
+      end
     end
 
     def new

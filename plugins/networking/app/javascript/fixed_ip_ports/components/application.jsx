@@ -1,9 +1,9 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 
-import Ports from './containers/ports/list'
-import ShowPortModal from './containers/ports/show';
-import NewPortModal from './containers/ports/new';
+import Ports from '../containers/ports/list'
+import ShowPortModal from '../containers/ports/show';
+import NewPortModal from '../containers/ports/new';
 
 // render all components inside a hash router
 export default (props) => {

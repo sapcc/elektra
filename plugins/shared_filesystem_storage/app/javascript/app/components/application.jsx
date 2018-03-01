@@ -1,29 +1,29 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 
-import Tabs from './components/tabs';
+import Tabs from '../components/tabs';
 
-import Shares from './containers/shares/list'
-import EditShareModal from './containers/shares/edit';
-import ShowShareModal from './containers/shares/show';
-import NewShareModal from './containers/shares/new';
-import AccessControlModal from './containers/shares/access_control';
+import Shares from '../containers/shares/list'
+import EditShareModal from '../containers/shares/edit';
+import ShowShareModal from '../containers/shares/show';
+import NewShareModal from '../containers/shares/new';
+import AccessControlModal from '../containers/shares/access_control';
 
-import Snapshots from './containers/snapshots/list';
-import EditSnapshotModal from './containers/snapshots/edit';
-import ShowSnapshotModal from './containers/snapshots/show';
-import NewSnapshotModal from './containers/snapshots/new';
+import Snapshots from '../containers/snapshots/list';
+import EditSnapshotModal from '../containers/snapshots/edit';
+import ShowSnapshotModal from '../containers/snapshots/show';
+import NewSnapshotModal from '../containers/snapshots/new';
 
-import ShareNetworks from './containers/share_networks/list';
-import NewShareNetworkModal from './containers/share_networks/new';
-import ShowShareNetworkModal from './containers/share_networks/show';
-import EditShareNetworkModal from './containers/share_networks/edit';
-import ShareNetworkSecurityServicesModal from './containers/share_networks/security_services';
+import ShareNetworks from '../containers/share_networks/list';
+import NewShareNetworkModal from '../containers/share_networks/new';
+import ShowShareNetworkModal from '../containers/share_networks/show';
+import EditShareNetworkModal from '../containers/share_networks/edit';
+import ShareNetworkSecurityServicesModal from '../containers/share_networks/security_services';
 
-import SecurityServices from './containers/security_services/list';
-import ShowSecurityServiceModal from './containers/security_services/show';
-import NewSecurityServiceModal from './containers/security_services/new';
-import EditSecurityServiceModal from './containers/security_services/edit';
+import SecurityServices from '../containers/security_services/list';
+import ShowSecurityServiceModal from '../containers/security_services/show';
+import NewSecurityServiceModal from '../containers/security_services/new';
+import EditSecurityServiceModal from '../containers/security_services/edit';
 
 const tabsConfig = [
   { to: '/shares', label: 'Shares', component: Shares },

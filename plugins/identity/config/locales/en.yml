@@ -16,6 +16,7 @@ en:
       cloud_compute_admin: Nova Cloud Administrator
       cloud_dns_admin: Designate Cloud Administrator
       cloud_image_admin: Glance Cloud Administrator
+      cloud_keymanager_admin: Barbican Cloud Administrator
       cloud_network_admin: Neutron Cloud Administrator
       cloud_resource_admin: Limes Cloud Administrator
       cloud_resource_viewer: Limes Cloud Read-Only
@@ -26,6 +27,8 @@ en:
       dns_viewer: Designate Read-Only
       dns_admin: Designate Administrator
       image_viewer: Glance Read-Only
+      keymanager_admin: Barbican Administrator
+      keymanager_viewer: Barbican Read-Only
       member: Member
       network_admin: Neutron Administrator
       network_viewer: Neutron Read-Only

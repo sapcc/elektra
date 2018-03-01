@@ -1,6 +1,6 @@
 import { createWidget } from 'widget'
-import * as reducers from '../reducers';
-import App from '../containers/app';
+import * as reducers from './reducers';
+import App from './containers/app';
 
 createWidget().then((widget) => {
   widget.configureAjaxHelper(
