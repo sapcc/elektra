@@ -6,6 +6,9 @@ module KeyManager
 
     helper :all
 
+    authorization_context 'key_manager'
+    authorization_required except: %i[]
+
     def index
       @containers = containers
     end
