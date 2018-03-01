@@ -62,6 +62,7 @@ $.fn.fixedIpSelector = (options={}) ->
     updateAvailableSubnets = (networkId) ->
       $subnetSelect.find("option").remove()
       return unless networkId
+      $subnetSelect.append($("<option></option>"))
       for subnet in subnets
         if subnet.network_id == networkId
           $subnetSelect.append(

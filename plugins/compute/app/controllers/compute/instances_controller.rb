@@ -168,8 +168,8 @@ module Compute
       # create port if network id and subnet id are presented
       if @instance.valid? && @instance.network_ids &&
          @instance.network_ids.length.positive? &&
-         @instance.network_ids.first['id'] &&
-         @instance.network_ids.first['subnet_id'] &&
+         !@instance.network_ids.first['id'].blank? &&
+         !@instance.network_ids.first['subnet_id'].blank? &&
          @instance.network_ids.first['port'].blank? &&
          @instance.network_ids.first['fixed_ip'].blank?
         network_id = @instance.network_ids.first.delete('id')
@@ -187,7 +187,6 @@ module Compute
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
-        render template: 'compute/instances/create.js'
       else
         @flavors = services.compute.flavors
         # @images = services.image.images
