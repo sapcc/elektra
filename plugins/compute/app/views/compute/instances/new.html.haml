@@ -35,7 +35,7 @@
     = f.input :security_groups, { label: "Security groups",
       input_html:         {multiple: true},
       as:                 :select,
-      collection:         @security_groups.collect{|sg| [sg.name,sg.name]},
+      collection:         @security_groups.collect{|sg| [sg.name,sg.id]},
       selected:           (@instance.security_groups || []).collect{|sg| sg},
       required:           true}
 

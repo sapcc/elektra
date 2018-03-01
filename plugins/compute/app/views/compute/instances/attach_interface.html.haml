@@ -26,12 +26,20 @@
       collection:         @subnets,
       label_method:       -> (subnet) { "#{subnet.name} (#{subnet.cidr})" },
       include_blank:      "Choose subnet",
+      required:           true,
       icon_hint:          'You can specify a subnet from which the fixed IP is chosen. If empty any subnet is selected'}
 
     = f.input :port_id, as: :hidden
     = f.input :fixed_ip, { label: 'Server fixed IP',
       input_html: {name: 'os_interface[fixed_ips][][ip_address]', value: @os_interface.fixed_ips.try(:first).try(:fetch, 'ip_address')},
       icon_hint: 'Choose a previously reserved IP or type a new one. Leave empty to let the DHCP select one for you.'}
+
+    = f.input :security_groups, { label: "Security groups",
+      input_html:         {multiple: true},
+      as:                 :select,
+      collection:         @security_groups.collect{|sg| [sg.name,sg.id]},
+      selected:           (@os_interface.security_groups || []).collect{|sg| sg},
+      required:           false}
 
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

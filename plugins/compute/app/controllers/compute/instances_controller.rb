@@ -165,25 +165,41 @@ module Compute
         end
       end
 
-      # create port if network id and subnet id are presented
       if @instance.valid? && @instance.network_ids &&
-         @instance.network_ids.length.positive? &&
-         !@instance.network_ids.first['id'].blank? &&
-         !@instance.network_ids.first['subnet_id'].blank? &&
-         @instance.network_ids.first['port'].blank? &&
-         @instance.network_ids.first['fixed_ip'].blank?
-        network_id = @instance.network_ids.first.delete('id')
-        subnet_id = @instance.network_ids.first.delete('subnet_id')
-        port = services.networking.new_port(network_id: network_id, fixed_ips: [{subnet_id: subnet_id}])
+         @instance.network_ids.length.positive?
 
-        if port.save
-          @instance.network_ids.first['port'] = port.id
-        else
-          port.errors.each { |k, v| @instance.errors.add(k, v) }
+        if @instance.network_ids.first['port'].present?
+           @port = services.networking.new_port(
+             security_groups: @instance.security_groups
+           )
+           @port.id = @instance.network_ids.first['port']
+         elsif @instance.network_ids.first['id'].present? &&
+               @instance.network_ids.first['subnet_id'].present?
+           services.networking.new_port(
+             network_id: @instance.network_ids.first.delete('id'),
+             fixed_ips: [{subnet_id: @instance.network_ids.first.delete('subnet_id')}],
+             security_groups: @instance.security_groups
+           )
+         end
+
+        if @port
+          if @port.save
+            @instance.network_ids.first['port'] = @port.id
+          else
+            @port.errors.each { |k, v| @instance.errors.add(k, v) }
+          end
+        elsif @instance.security_groups.present?
+          @security_groups = services.networking.security_groups(
+            tenant_id: @scoped_project_id
+          )
+          @instance.security_groups = @instance.security_groups.each_with_object([]) do |sg_id, array|
+            security_group = @security_groups.find { |sg| sg_id == sg.id }
+            array << security_group.name if security_group
+          end
         end
       end
 
-      if @instance.save
+      if @instance.errors.empty? && @instance.save
         flash.now[:notice] = 'Instance successfully created.'
         audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
@@ -191,9 +207,10 @@ module Compute
         @flavors = services.compute.flavors
         # @images = services.image.images
         @availability_zones = services.compute.availability_zones
-        @security_groups = services.networking.security_groups(
+        @security_groups ||= services.networking.security_groups(
           tenant_id: @scoped_project_id
         )
+
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
 
@@ -297,34 +314,49 @@ module Compute
       @os_interface = services.compute.new_os_interface(params[:id])
       @os_interface.fixed_ips = []
       @networks = services.networking.networks('router:external' => false)
+      @security_groups = services.networking.security_groups(
+        tenant_id: @scoped_project_id
+      )
 
       @fixed_ip_ports = services.networking.fixed_ip_ports
       @subnets = services.networking.subnets
     end
 
     def create_interface
+      if params[:os_interface][:security_groups].present?
+        params[:os_interface][:security_groups] =
+          params[:os_interface][:security_groups].delete_if(&:blank?)
+      end
+
       @os_interface = services.compute.new_os_interface(
         params[:id], params[:os_interface]
       )
 
-      # create port if network id and subnet id are presented
-      if @os_interface.valid? &&
-         !@os_interface.net_id.blank? &&
-         !@os_interface.subnet_id.blank? &&
-         @os_interface.port_id.blank? &&
-         @os_interface.fixed_ips.blank?
-        network_id = @os_interface.net_id
-        subnet_id = @os_interface.subnet_id
-        port = services.networking.new_port(network_id: network_id, fixed_ips: [{subnet_id: subnet_id}])
+      if @os_interface.valid? && @os_interface.net_id.present?
+        if @os_interface.port_id.present?
+          @port = services.networking.new_port(
+            security_groups: @os_interface.security_groups
+          )
+          @port.id = @os_interface.port_id
+        elsif @os_interface.net_id.present? &&
+              @os_interface.subnet_id.present?
+          @port = services.networking.new_port(
+            network_id: @os_interface.net_id,
+            fixed_ips: [{subnet_id: @os_interface.subnet_id}],
+            security_groups: @os_interface.security_groups
+          )
+        end
 
-        if port.save
-          @os_interface.port_id = port.id
-        else
-          port.errors.each { |k, v| @os_interface.errors.add(k, v) }
+        if @port
+          if @port.save
+            @os_interface.port_id = @port.id
+          else
+            @port.errors.each { |k, v| @os_interface.errors.add(k, v) }
+          end
         end
       end
 
-      if @os_interface.save
+      if @os_interface.errors.empty? && @os_interface.save
         @instance = services.compute.find_server(params[:id])
         respond_to do |format|
           format.html { redirect_to instances_url }
@@ -334,6 +366,9 @@ module Compute
         @networks = services.networking.networks('router:external' => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
+        @security_groups = services.networking.security_groups(
+          tenant_id: @scoped_project_id
+        )
         render action: :attach_interface
       end
     end

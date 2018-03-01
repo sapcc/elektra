@@ -82,7 +82,7 @@ export default class ShowPortModal extends React.Component{
           <Row label='Updated at' value={port.created_at}/>
           <Row label='Project ID' value={port.tenant_id || port.project_id}/>
           <Row label='Status' value={port.status}/>
-
+          <Row label='Security Groups' value={port.security_groups}/>
         </tbody>
       </table>
     )
@@ -105,7 +105,6 @@ export default class ShowPortModal extends React.Component{
     // mac_address
     // port_security_enabled
     // revision_number
-    // security_groups
   }
 
   render(){
