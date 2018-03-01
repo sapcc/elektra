@@ -1,8 +1,11 @@
 ALLOWED_ROLES = %w(
   admin
+  audit_viewer
   compute_admin
   compute_viewer
   dns_viewer
+  keymanager_admin
+  keymanager_viewer
   member
   monitoring_viewer
   network_admin
@@ -14,7 +17,6 @@ ALLOWED_ROLES = %w(
   swiftoperator
   volume_admin
   volume_viewer
-  audit_viewer
 ).freeze
 
 BETA_ROLES = %w(
