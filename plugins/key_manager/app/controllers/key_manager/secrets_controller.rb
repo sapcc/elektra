@@ -8,7 +8,7 @@ module KeyManager
     helper :all
 
     authorization_context 'key_manager'
-    authorization_required except: %i[]
+    authorization_required except: %i[new type_update]
 
     def index
       @secrets = secrets

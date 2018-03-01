@@ -9,6 +9,7 @@
 
   "key_manager:secret_list": "rule:context_is_keymanager_viewer",
   "key_manager:secret_get": "rule:context_is_keymanager_viewer",
+  "key_manager:secret_payload": "rule:context_is_keymanager_viewer",
   "key_manager:secret_create": "rule:context_is_keymanager_editor",
   "key_manager:secret_delete": "rule:context_is_keymanager_editor",
   "key_manager:secret_update": "rule:context_is_keymanager_editor",
