@@ -35,6 +35,8 @@ module DnsService
     end
 
     def show
+      @zone = services.dns_service.find_zone(params[:id])
+
       @recordsets = paginatable(per_page: 20) do |pagination_options|
         services.dns_service.recordsets(
           params[:id],
@@ -44,9 +46,12 @@ module DnsService
         )[:items]
       end
 
+      ns_options = { type: 'NS' }
+      ns_options[:name] = @zone.name if @zone
+
       @nameservers = services.dns_service.recordsets(
         params[:id],
-        { type: 'NS' }.merge(@impersonate_option)
+        ns_options.merge(@impersonate_option)
       )[:items]
 
       # this is relevant in case an ajax paginate call is made.
