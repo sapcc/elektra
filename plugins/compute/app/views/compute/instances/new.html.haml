@@ -60,12 +60,13 @@
       include_blank: "Choose image",
       required:      true
 
+
     = f.input :network_ids, { label: "Private Network",
       wrapper_html:       { class: ('has-error' if @private_networks.empty?) },
       input_html:         {name: "#{@instance.model_name.param_key}[network_ids][][id]" },
       as:                 :select,
       collection:         @private_networks,
-      selected:           (@instance.network_ids || []).collect{|n| n[:id]},
+      selected:           (@instance.network_ids || []).collect{|n| n['id']},
       required:           true,
       include_blank:      "Choose network"}
 
@@ -75,7 +76,7 @@
       collection:         @subnets,
       label_method:       -> (subnet) { "#{subnet.name} (#{subnet.cidr})" },
       include_blank:      "Choose subnet",
-      selected:           (@instance.network_ids || []).collect{|n| n[:subnet_id]},
+      selected:           (@instance.network_ids || []).collect{|n| n['subnet_id']},
       icon_hint:          'You can specify a subnet from which the fixed IP is chosen. If empty any subnet is selected'}
 
     = f.input :port_id, {as: :hidden, input_html: {name: "#{@instance.model_name.param_key}[network_ids][][port]" }}

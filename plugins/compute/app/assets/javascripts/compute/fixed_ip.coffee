@@ -60,13 +60,14 @@ $.fn.fixedIpSelector = (options={}) ->
       $fixedIpInput.autocomplete('option', 'source', source)
 
     updateAvailableSubnets = (networkId) ->
+      selected = $subnetSelect.val()
       $subnetSelect.find("option").remove()
       return unless networkId
       $subnetSelect.append($("<option></option>"))
       for subnet in subnets
         if subnet.network_id == networkId
           $subnetSelect.append(
-            $("<option value='#{subnet.id}'>#{sanitize(subnet.name)} (#{subnet.cidr})</option>")
+            $("<option value='#{subnet.id}' #{'selected' if subnet.id==selected}>#{sanitize(subnet.name)} (#{subnet.cidr})</option>")
           )
       updateAvailablePorts($subnetSelect.val())
 

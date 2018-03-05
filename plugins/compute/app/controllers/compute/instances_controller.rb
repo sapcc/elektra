@@ -148,6 +148,7 @@ module Compute
       @instance = services.compute.new_server
       #params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?} unless params[:server][:security_groups].blank?
 
+      # remove empty security groups from params
       if params[:server] && !params[:server][:security_groups].blank?
         params[:server][:security_groups] = params[:server][:security_groups].delete_if{|sg| sg.empty?}
       end
@@ -166,23 +167,29 @@ module Compute
       end
 
       if @instance.valid? && @instance.network_ids &&
-         @instance.network_ids.length.positive?
+        @instance.network_ids.length.positive?
 
         if @instance.network_ids.first['port'].present?
-           @port = services.networking.new_port(
-             security_groups: @instance.security_groups
-           )
-           @port.id = @instance.network_ids.first['port']
-         elsif @instance.network_ids.first['id'].present? &&
-               @instance.network_ids.first['subnet_id'].present?
-           services.networking.new_port(
-             network_id: @instance.network_ids.first.delete('id'),
-             fixed_ips: [{subnet_id: @instance.network_ids.first.delete('subnet_id')}],
-             security_groups: @instance.security_groups
-           )
-         end
+          # port is presented -> pre-resereved fixed IP is selected
+          # use provided port id and update security group on port
+          @port = services.networking.new_port(
+            security_groups: @instance.security_groups
+          )
+          # set id
+          @port.id = @instance.network_ids.first['port']
+        elsif @instance.network_ids.first['id'].present? &&
+              @instance.network_ids.first['subnet_id'].present?
+          # port id isn't given but networkid and subnet id are provided.
+          # -> create a port with network and subnet
+          @port = services.networking.new_port(
+            network_id: @instance.network_ids.first['id'],
+            fixed_ips: [{subnet_id: @instance.network_ids.first['subnet_id']}],
+            security_groups: @instance.security_groups
+          )
+        end
 
         if @port
+          # create or update port
           if @port.save
             @instance.network_ids.first['port'] = @port.id
           else

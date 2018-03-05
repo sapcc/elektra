@@ -396,9 +396,9 @@ module Compute
       ids = network_ids.each_with_object([]) do |n, a|
         a << n['id'] unless n['id'].blank?
       end
-      return if network_ids && network_ids.length.positive? && ids.length.positive?
 
-      errors.add(:network_ids, 'Please select at a network')
+      return if network_ids && network_ids.length.positive? && ids.length.positive?
+      errors.add(:network_ids, 'Please select a network')
     end
   end
 end
