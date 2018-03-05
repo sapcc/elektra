@@ -8,9 +8,7 @@ module Compute
     validates :name, presence: { message: 'Please provide a name' }
     validates :image_id, presence: { message: 'Please select an image' }, if: :new?
     validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?
-    validates :network_ids, presence: {
-      message: 'Please select at least one network'
-    }, if: :new?
+    validate :validate_network
     validates :keypair_id, presence: {
       message: "Please choose a keypair for us to provision to the server.
       Otherwise you will not be able to log in."
@@ -392,6 +390,15 @@ module Compute
 
     def new?
       id.nil?
+    end
+
+    def validate_network
+      ids = network_ids.each_with_object([]) do |n, a|
+        a << n['id'] unless n['id'].blank?
+      end
+      return if network_ids && network_ids.length.positive? && ids.length.positive?
+
+      errors.add(:network_ids, 'Please select at a network')
     end
   end
 end
