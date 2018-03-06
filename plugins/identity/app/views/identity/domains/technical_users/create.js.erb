@@ -1,9 +1,0 @@
-$('form#new_user').replaceWith("<%= escape_javascript(render(partial: 'created')) %>")
-
-var html="<%= escape_javascript(render(partial: 'user', locals: {user: @technical_user})) %>";
-
-if($("table#technical_users tr[data-empty]").length==1) {
-  $("table#technical_users tr[data-empty]").replaceWith(html);
-} else {
-  $("table#technical_users tbody").append(html);
-}
