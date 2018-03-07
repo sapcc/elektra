@@ -76,7 +76,17 @@ module Networking
         enforce_permissions('networking:rule_list')
         @rules = services.networking.security_group_rules(
           security_group_id: @security_group.id
-        )
+        ).sort_by do |rule|
+          sprintf("%s-%s-%s-%05d-%05d-%s",
+            rule.direction.presence || 'unknown',
+            rule.ethertype.presence || 'unknown',
+            rule.protocol.presence  || 'unknown',
+            rule.port_range_min.presence || 00000,
+            rule.port_range_max.presence || 99999,
+            # sort by ID as last resort to ensure stable ordering
+            rule.id,
+          )
+        end
         # @security_groups = {}
         # @rules.each do |rule|
         #   unless @security_groups[rule.remote_group_id]
