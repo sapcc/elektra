@@ -1874,7 +1874,11 @@ table.searchable.search-mode {
 // ------------------------------------
 
 .ajax-paginate {
-  float: right;
+  @include pie-clearfix;
+
+  .buttons {
+    float: right;
+  }
 
   .btn {
     margin-left: 8px;

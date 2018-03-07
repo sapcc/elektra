@@ -63,29 +63,53 @@ class Widget {
   }
 }
 
-export const createWidget = () => {
-  let scripts = document.getElementsByTagName( 'script' );
-  const currentScript = scripts[ scripts.length - 1 ];
+const getWidgetName = (dirname) => {
+  if(!dirname) return null
+  const name_regex = /.*plugins\/([^\/]+)\/app\/javascript\/([^\.]+)/
+  const name_tokens = dirname.match(name_regex);
+  if(name_tokens.length<2) return null
+  return `${name_tokens[1]}_${name_tokens[2]}`
+}
 
+const getCurrentScript = (widgetName) => {
+  if(widgetName) {
+    let script = document.querySelector(`script[src*="/${widgetName}"]`);
+    if(script) return script
+  }
+  let scripts = document.getElementsByTagName( 'script' );
+  return scripts[ scripts.length - 1 ];
+}
+
+export const createWidget = (dirname) => {
+  const widgetName = getWidgetName(dirname)
+  const currentScript = getCurrentScript(widgetName)
+  const scriptParams = Object.assign({}, currentScript.dataset)
+  const srcTokens = currentScript && currentScript.getAttribute('src') ? currentScript.getAttribute('src').split('/') : []
+  const reactContainer = window.document.createElement('div');
+  currentScript.parentNode.replaceChild(reactContainer, currentScript);
+
+  const createConfig = () => (
+    {
+      scriptParams: scriptParams,
+      devOptions: { name: srcTokens[srcTokens.length-1] },
+      ajaxHelper: {
+        baseURL: `${window.location.origin}${window.location.pathname}`,
+        headers: {}
+      },
+      policy: window.policy
+    }
+  )
+
+  // if document is already loaded then resolve Promise immediately
+  // with a new widget object
+  if (document.readyState === "complete")
+    return Promise.resolve(new Widget(reactContainer, createConfig()))
+
+  // document is not loaded yet -> create a new Promise and resolve it as soon
+  // as document is loaded.
   return new Promise((resolve, reject) => {
     document.addEventListener('DOMContentLoaded', () => {
-      const scriptParams = Object.assign({}, currentScript.dataset)
-      const srcTokens = currentScript.getAttribute('src').split('/')
-
-      const reactContainer = window.document.createElement('div');
-      currentScript.parentNode.replaceChild(reactContainer, currentScript);
-
-      let config = {
-        scriptParams: scriptParams,
-        devOptions: { name: srcTokens[srcTokens.length-1] },
-        ajaxHelper: {
-          baseURL: `${window.location.origin}${window.location.pathname}`,
-          headers: {}
-        },
-        policy: window.policy
-      }
-
-      resolve(new Widget(reactContainer, config))
+      resolve(new Widget(reactContainer, createConfig()))
     })
   })
 }
