@@ -46,7 +46,7 @@ module ServiceLayer
           elektron_networking.put(
             "routers/#{router_id}/remove_router_interface"
           ) do
-            { subnet_id: interface_id }
+            { subnet_id: interface_id }
           end
         end
       end
