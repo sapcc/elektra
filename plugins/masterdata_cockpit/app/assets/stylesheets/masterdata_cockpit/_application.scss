@@ -61,22 +61,19 @@
   border-bottom-left-radius: 0px !important;
 }
 
-.masterdata-hr-label {
-  margin-top: 0px  !important;
-}
-
 .masterdata-top {
   margin-top: 21px !important;
 }
 
-.margin-top-zero {
-  margin-top: 0px !important;
+.masterdata-heading {
+  padding: 0 10px 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #ccc;
 }
 
-.masterdata-heading {
-  margin-top: 20px;
-  margin-left: 10px;
-  font-size: 14px;
+.masterdata-group {
+  margin: $line-height-computed 0 $line-height-computed * 2.5 0;
+
 }
 
 .masterdata-toolbar {

@@ -14,6 +14,7 @@
         .toolbar
           %h4
             Members
+
         = form_tag plugin('loadbalancing').loadbalancer_pool_members_path(@pool.id, loadbalancer_id: @loadbalancer.id), method: :post , remote: true, id: 'newMembers' do
           %table.table.table-condensed#newmembers
             %thead
@@ -46,6 +47,7 @@
         .toolbar
           %h4
             Servers
+            
         = form_tag plugin('loadbalancing').add_loadbalancer_pool_members_path(pool_id: @pool.id, loadbalancer_id: @loadbalancer.id), method: :post, remote: true do
           %table.table.table-condensed#ips
             %thead

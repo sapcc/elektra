@@ -4,18 +4,19 @@
     = link_to 'show', transfer_requests_path, data: { modal: true }
 
 .toolbar
-  .pull-left
-    .has-feedback.has-feedback-searchable
-      = text_field_tag 'search_zones_input', '', class: "form-control", placeholder: 'Zone name or ID'
+  .has-feedback.has-feedback-searchable
+    = text_field_tag 'search_zones_input', '', class: "form-control", placeholder: 'Zone name or ID'
 
-    .has-feedback-help
-      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by zone name or ID in visible zone list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-        %i.fa.fa-question-circle
+  .has-feedback-help
+    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by zone name or ID in visible zone list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+      %i.fa.fa-question-circle
 
   - if current_user.is_allowed?("dns_service:zone_create")
-    = link_to 'Create New', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    .main-buttons
+      = link_to 'Create New', plugin('dns_service').new_zone_path, data: {modal: true}, class: 'btn btn-primary'
   - elsif current_user.is_allowed?("dns_service:request_zone")
-    = link_to 'Request New Domain', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    .main-buttons
+      = link_to 'Request New Domain', plugin('dns_service').new_zone_request_path, data: {modal: true}, class: 'btn btn-primary'
 
 %table.table.zones.searchable{data:{search_input: '#search_zones_input'}}
   %thead

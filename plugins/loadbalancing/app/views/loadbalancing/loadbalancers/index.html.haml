@@ -7,36 +7,35 @@
 
 .tab-content{data: {update_path: plugin('loadbalancing').update_all_status_loadbalancers_path(format: :js), update_interval: Loadbalancing::STATE_UPDATE_INTERVAL, update_immediately: 'true'}}
   #loadbalancers.tab-pane.active{role: "tabpanel"}
-  .row
-    .col-md-12
-      .toolbar
-        .pull-left
-          .has-feedback.has-feedback-searchable
-            = text_field_tag 'search_loadbalancers_input', '', class: "form-control", placeholder: 'name/id, description or fip'
 
-          .has-feedback-help
-            %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by load balancer name, description or assigned floating ip address in visible list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-              %i.fa.fa-question-circle
+  .toolbar
+    .has-feedback.has-feedback-searchable
+      = text_field_tag 'search_loadbalancers_input', '', class: "form-control", placeholder: 'name/id, description or fip'
 
-        - if current_user.is_allowed?("loadbalancing:resource_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-          = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    .has-feedback-help
+      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by load balancer name, description or assigned floating ip address in visible list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+        %i.fa.fa-question-circle
 
-      - if current_user.is_allowed?("loadbalancing:resource_list", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-        %table.table.loadbalancers.searchable{data:{search_input: '#search_loadbalancers_input'}}
-          %thead
-            %tr
-              %th Name/ID
-              %th Description
-              %th State
-              %th Prov. Status
-              %th IP Address
-              %th Listeners
-              %th Pools
-              %th.snug
-          %tbody
-            - if @loadbalancers.length==0
-              %tr{data:{empty:true}}
-                %td{colspa: 3} No Load Balancers available
-            - else
-              - @loadbalancers.each do | loadbalancer |
-                = render partial: 'item', locals: {loadbalancer: loadbalancer}
+    - if current_user.is_allowed?("loadbalancing:resource_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+      .main-buttons
+        = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_path, data: {modal: true}, class: 'btn btn-primary'
+
+  - if current_user.is_allowed?("loadbalancing:resource_list", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+    %table.table.loadbalancers.searchable{data:{search_input: '#search_loadbalancers_input'}}
+      %thead
+        %tr
+          %th Name/ID
+          %th Description
+          %th State
+          %th Prov. Status
+          %th IP Address
+          %th Listeners
+          %th Pools
+          %th.snug
+      %tbody
+        - if @loadbalancers.length==0
+          %tr{data:{empty:true}}
+            %td{colspa: 3} No Load Balancers available
+        - else
+          - @loadbalancers.each do | loadbalancer |
+            = render partial: 'item', locals: {loadbalancer: loadbalancer}

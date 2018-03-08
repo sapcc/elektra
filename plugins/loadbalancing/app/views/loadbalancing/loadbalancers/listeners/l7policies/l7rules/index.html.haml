@@ -16,7 +16,8 @@
     .col-md-9
       - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
         .toolbar.toolbar-aligntop
-          = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          .main-buttons
+            = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_l7policy_l7rule_path(loadbalancer_id: @loadbalancer.id, listener_id: @listener.id, l7policy_id: @l7policy.id), data: {modal: true}, class: 'btn btn-primary'
 
       %table.table.listeners
         %tr
@@ -33,5 +34,6 @@
           %tr
             %td{colspan:6} No L7 Rules defined
       =# render_paginatable(@l7rules)
+
     .col-md-3
       = render :partial => 'loadbalancing/loadbalancers/listeners/l7policies/info', locals: {loadbalancer: @loadbalancer, listener: @listener, l7policy: @l7policy}

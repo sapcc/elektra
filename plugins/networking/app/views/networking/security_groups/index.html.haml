@@ -3,7 +3,8 @@
 - if @scoped_project_id
   - if current_user.is_allowed?("networking:security_group_create", {security_group: {user_id: current_user.id} })
     .toolbar
-      = link_to 'Create new', plugin('networking').new_security_group_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+      .main-buttons
+        = link_to 'Create new', plugin('networking').new_security_group_path, data: {modal: true}, class: 'btn btn-primary'
 
   - if current_user.is_allowed?("networking:security_group_list", {security_group: {user_id: current_user.id} })
     %table.table#security_groups

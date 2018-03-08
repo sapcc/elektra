@@ -1,13 +1,13 @@
 .toolbar.toolbar-aligntop
-  .pull-left
-    .has-feedback.has-feedback-searchable
-      = text_field_tag 'search_records_input', '', class: "form-control", placeholder: 'Record name, ID, or type'
-    .has-feedback-help
-      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by record name, ID or type in visible record list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-        %i.fa.fa-question-circle
+  .has-feedback.has-feedback-searchable
+    = text_field_tag 'search_records_input', '', class: "form-control", placeholder: 'Record name, ID, or type'
+  .has-feedback-help
+    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by record name, ID or type in visible record list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+      %i.fa.fa-question-circle
 
   - if current_user.is_allowed?("dns_service:recordset_create", zone: zone) && @scoped_project_id == zone.project_id
-    = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary btn-lg'
+    .main-buttons
+      = link_to 'Create New', plugin('dns_service').new_zone_recordset_path(zone_id: zone.id), data: {modal: true}, class: 'btn btn-primary'
 
 %table.table#recordsets.searchable{data:{search_input: '#search_records_input'}}
   %thead

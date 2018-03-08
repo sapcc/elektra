@@ -1,18 +1,20 @@
 - if modal?
-  = content_for :title do 
-    Authorizations   
+  = content_for :title do
+    Authorizations
 - else
   = content_for :main_toolbar do
     Authorizations
-  = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }     
-  
+  = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }
+
 = simple_form_for :role_assignments, url: plugin('identity').projects_groups_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
   %div{class: modal? ? 'modal-body' : ''}
     - if current_user.is_allowed?('identity:project_group_create',{})
-      .toolbar= link_to 'Assign new Group', plugin('identity').new_projects_group_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+      .toolbar
+        .main-buttons
+          = link_to 'Assign new Group', plugin('identity').new_projects_group_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
-    = render partial: 'identity/projects/groups/group_list'  
-                    
+    = render partial: 'identity/projects/groups/group_list'
+
   %div{class: modal? ? 'modal-footer' : ''}
     - if modal?
       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close

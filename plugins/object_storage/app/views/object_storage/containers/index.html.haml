@@ -2,8 +2,12 @@
   Object Storage
 
 .toolbar
-  = link_to 'Create container', plugin('object_storage').new_container_path(), class: 'btn btn-primary btn-lg', data: {modal:true}
-  = link_to 'Cluster capabilities', 'javascript:void(0)', class: 'btn btn-default btn-lg', id: 'capabilities_btn', title: 'Cluster capabilities', data: { content: render(partial: 'capabilities') }
+  .main-buttons
+    = link_to 'javascript:void(0)', id: 'capabilities_btn', title: 'Cluster capabilities', data: { content: render(partial: 'capabilities') } do
+      %i.fa.fa-info-circle
+    = link_to 'Create container', plugin('object_storage').new_container_path(), class: 'btn btn-primary', data: {modal:true}
+
+
 
 #container_list
   = render partial: 'list'

@@ -11,7 +11,9 @@
       .col-sm-9
         .toolbar
           - if current_user.is_allowed?('key_manager:container_create')
-            = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+            .main-buttons
+              = link_to "New Container", plugin('key_manager').new_container_path, data: {modal: true}, class: 'btn btn-primary'
+
         .js-table-container
           = render partial: 'table_containers', locals: {containers: @containers}
 

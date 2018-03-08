@@ -620,12 +620,14 @@ section {
 .toolbar {
   @include pie-clearfix;
   position: relative;
+  display: flex;
   color: #666;
   background-color: #f9f9f9;
   border-top: 2px solid #ddd;
   border-bottom: 1px solid #eee;
   padding: $toolbar-vertical-padding 8px;
   margin-top: $line-height-computed;
+  line-height: $line-height-computed * 1.7;
 
   &.toolbar-aligntop {
     margin-top: 0;
@@ -643,11 +645,6 @@ section {
     margin-bottom: 10px;
     color: #333;
 
-    .main-buttons {
-      top: 0;
-      right: 0;
-    }
-
     h1, h2, h3, h4, h5, h6 {
       margin-top: $line-height-computed / 2;
       margin-bottom: $line-height-computed / 2;
@@ -655,9 +652,16 @@ section {
   }
 
   .main-buttons {
-    position: absolute;
-    right: 8px;
-    top: 3px;
+    margin-left: auto;
+  }
+
+  .btn {
+    margin: 0 0 0 5px;
+  }
+
+  h3, h4 {
+    margin-top: 6px;
+    margin-bottom: 6px;
   }
 
   &.toolbar-with-h {
@@ -690,30 +694,6 @@ section {
     }
   }
 
-  .btn {
-    @extend .btn-sm;
-
-    &.btn-xs {
-      @extend .btn-xs;
-    }
-
-    &.btn-default-size {
-      padding: $padding-base-vertical $padding-base-horizontal;
-      font-size: $font-size-base;
-      line-height: $line-height-base;
-    }
-
-  }
-
-  .btn-primary {
-    float: right;
-    margin-left: 5px;
-  }
-
-  h3, h4 {
-    margin-top: 6px;
-    margin-bottom: 6px;
-  }
 
   .has-feedback.has-feedback-searchable {
     float: left;
@@ -1916,6 +1896,10 @@ table.searchable.search-mode {
 .form-inline {
   .form-group {
     margin-right: 3px;
+  }
+
+  label {
+    margin-right: 8px;
   }
 
   &.form-inline-flex {

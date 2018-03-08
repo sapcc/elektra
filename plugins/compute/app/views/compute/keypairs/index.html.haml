@@ -3,7 +3,8 @@
 
 - if current_user.is_allowed?("compute:keypair_create", {target: {scoped_domain_name: @scoped_domain_name, user_id: current_user.id}})
   .toolbar
-    = link_to 'Create new', new_keypair_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    .main-buttons
+      = link_to 'Create new', new_keypair_path, data: {modal: true}, class: 'btn btn-primary'
 
 %table.table
   %thead

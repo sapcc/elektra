@@ -2,10 +2,8 @@
   Users
 
 .toolbar
-  .row
-    .col-sm-5
-      .has-feedback
-        = text_field_tag 'filter_users', '', class: "form-control", placeholder: 'User name, description or ID'
+  .has-feedback
+    = text_field_tag 'filter_users', '', class: "form-control", placeholder: 'User name, description or ID'
 
 %table.table#users.searchable{data: {search_input: '#filter_users'}}
   %thead

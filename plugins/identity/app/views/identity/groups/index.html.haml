@@ -2,8 +2,9 @@
   Groups
 - if current_user.is_allowed?("identity:group_create",{domain_id: @scoped_domain_id})
   .toolbar
-    = link_to 'New Group', new_group_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
-    
+    .main-buttons
+      = link_to 'New Group', new_group_path, data: {modal: true}, class: 'btn btn-primary'
+
 %table.table#groups
   %thead
     %tr
@@ -13,4 +14,4 @@
 
   %tbody
     - @groups.each do |group|
-      = render partial: 'group', locals: {group: group} 
+      = render partial: 'group', locals: {group: group}

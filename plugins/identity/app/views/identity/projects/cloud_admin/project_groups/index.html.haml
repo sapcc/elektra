@@ -4,7 +4,9 @@
   = render partial: 'identity/projects/cloud_admin/shared/project_tabs'
   = simple_form_for :cloud_admin_project_groups, url: plugin('identity').projects_cloud_admin_project_groups_path(project:@project.id), method: :put, html: {class: 'role_assignments'} do |f|
     - if current_user.is_allowed?('identity:project_group_create',{})
-      .toolbar= link_to 'Assign New Group', plugin('identity').new_projects_cloud_admin_project_group_path(project: @project.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+      .toolbar
+        .main-buttons
+          = link_to 'Assign New Group', plugin('identity').new_projects_cloud_admin_project_group_path(project: @project.id), data: {modal: true}, class: 'btn btn-primary'
 
     = render partial: 'identity/projects/groups/group_list', locals: {group_roles: @group_roles, roles: @roles}
     = f.submit 'Save', class: 'btn btn-primary hidden', data: { disable_with: "Please wait..." }

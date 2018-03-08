@@ -9,7 +9,8 @@
         Available Automations
 
       .toolbar
-        = link_to "New Automation", plugin('automation').new_automation_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
+        .main-buttons
+          = link_to "New Automation", plugin('automation').new_automation_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
 
       .js-table-automations{data: {toggle: 'paginationSpinner'}}
         = render partial: 'table_automations', locals: {automations: @automations}

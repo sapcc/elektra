@@ -37,6 +37,10 @@
   }
 }
 
+.toolbar-search-box {
+  width: 280px;
+}
+
 .search-dimmed-area {
   .search-spinner {
     @include spinner;

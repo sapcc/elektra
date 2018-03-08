@@ -27,6 +27,12 @@
   }
 }
 
+#capabilities_btn {
+  &:hover, &:active, &:focus {
+    text-decoration: none;
+  }
+}
+
 .popover-capabilities {
   max-width: none !important;
   li {

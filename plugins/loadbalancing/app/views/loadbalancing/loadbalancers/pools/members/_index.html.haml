@@ -3,8 +3,11 @@
     .toolbar
       %h4
         Pool Members
-        - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-          = link_to 'Add', plugin('loadbalancing').new_loadbalancer_pool_member_path(loadbalancer_id: loadbalancer.id, pool_id: pool.id ), data: {modal: true}, class: 'btn btn-primary btn-sm'
+
+      - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+        .main-buttons
+          = link_to 'Add', plugin('loadbalancing').new_loadbalancer_pool_member_path(loadbalancer_id: loadbalancer.id, pool_id: pool.id ), data: {modal: true}, class: 'btn btn-primary'
+
     %table.table#members
       %thead
         %tr

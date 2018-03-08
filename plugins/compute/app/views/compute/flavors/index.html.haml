@@ -3,7 +3,8 @@
 
 - if current_user.is_allowed?("compute:flavor_create", {target: {scoped_domain_name: @scoped_domain_name, user_id: current_user.id}})
   .toolbar
-    = link_to 'Create new', plugin('compute').new_flavor_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+    .main-buttons
+      = link_to 'Create new', plugin('compute').new_flavor_path, data: {modal: true}, class: 'btn btn-primary'
 
 %table.table.flavors
   %thead
@@ -16,7 +17,7 @@
       %th Swap Disk
       %th RX/TX factor
       %th Public
-      %th 
+      %th
   %tbody#flavors
     - if @flavors.length==0
       %tr{data: {empty: true}}

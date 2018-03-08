@@ -1,53 +1,60 @@
 - if @domain_masterdata
-  .toolbar.margin-top-zero
-    .pull-left.masterdata-toolbar
-      %label Masterdata
-    - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
-      .pull-right
-        = link_to 'Edit', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-small pull-right'
-  %label.masterdata-heading
-    Cost Object 
-  %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-    = icon('question-circle')
-  %hr.masterdata-hr-label
-  .row
-    .col-sm-4.details-label
-      Type
-    .col-sm-8.details-value
-      - if @domain_masterdata.cost_object_type
-        = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
-      - else 
-        \-
-  .row
-    .col-sm-4.details-label
-      Name
-    .col-sm-8.details-value
-      - if @domain_masterdata.cost_object_name
-        = @domain_masterdata.cost_object_name
-      - else
-        \-
-  .row
-    .col-sm-4.details-label
-      %strong
-        Projects can inherit
-    .col-sm-8.details-value
-      - if @domain_masterdata.cost_object_projects_can_inherit
-        = icon('check-square-o')
-      -else 
-        = icon('times')
-  %label.masterdata-heading Responsibility
-  %hr.masterdata-hr-label
-  .row
-    .col-sm-4.details-label
-      Controller
-    .col-sm-2.details-value
-      - unless @domain_masterdata.responsible_controller_id
-        Not defined
-      = @domain_masterdata.responsible_controller_id
-    - if @domain_masterdata.responsible_controller_email
-      .col-sm-1.details-label
-        Contact
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @domain_masterdata.responsible_controller_email
+  .toolbar.toolbar-aligntop
+    %h4 Masterdata
 
+    - if current_user.is_allowed?('masterdata_cockpit:masterdata_edit')
+      .main-buttons
+        = link_to 'Edit', plugin('masterdata_cockpit').domain_masterdata_edit_path(), title: "", data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
+
+
+  .masterdata-group
+
+    %h5.masterdata-heading
+      Cost Object
+      %a.help-link{data:{content:  t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('question-circle')
+
+    .row
+      .col-sm-4.details-label
+        Type
+      .col-sm-8.details-value
+        - if @domain_masterdata.cost_object_type
+          = MasterdataCockpit::Config.cost_object_types[@domain_masterdata.cost_object['type']]
+        - else
+          \-
+    .row
+      .col-sm-4.details-label
+        Name
+      .col-sm-8.details-value
+        - if @domain_masterdata.cost_object_name
+          = @domain_masterdata.cost_object_name
+        - else
+          \-
+    .row
+      .col-sm-4.details-label
+        %strong
+          Projects can inherit
+      .col-sm-8.details-value
+        - if @domain_masterdata.cost_object_projects_can_inherit
+          = icon('check-square-o')
+        -else
+          = icon('times')
+
+
+  .masterdata-group
+
+    %h5.masterdata-heading Responsibility
+
+    .row
+      .col-sm-4.details-label
+        Controller
+      .col-sm-2.details-value
+        - unless @domain_masterdata.responsible_controller_id
+          Not defined
+        = @domain_masterdata.responsible_controller_id
+      - if @domain_masterdata.responsible_controller_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @domain_masterdata.responsible_controller_email

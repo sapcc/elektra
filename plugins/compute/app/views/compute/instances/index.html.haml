@@ -2,17 +2,17 @@
 
 - if @scoped_project_id
   .toolbar
-    .pull-left
-      .has-feedback.has-feedback-searchable
-        = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
+    .has-feedback.has-feedback-searchable
+      = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
 
-      .has-feedback-help
-        %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-          %i.fa.fa-question-circle
+    .has-feedback-help
+      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+        %i.fa.fa-question-circle
 
 
     - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+      .main-buttons
+        = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary'
 
   -# add searchable plugin to instances table (identified by css class searchable)
   %table.table.instances.searchable{data:{search_input: '#search_instances_input'}}

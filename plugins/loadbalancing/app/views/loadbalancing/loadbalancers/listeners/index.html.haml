@@ -13,10 +13,11 @@
     .col-md-9
       - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
         .toolbar.toolbar-aligntop
-          - if true #@loadbalancer.active?
-            = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
-          - else
-            = link_to 'Create new', '#', disabled: true, class: 'btn btn-primary btn-sm'
+          .main-buttons
+            - if true #@loadbalancer.active?
+              = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_listener_path(@loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+            - else
+              = link_to 'Create new', '#', disabled: true, class: 'btn btn-primary btn-sm'
 
       %table.table.listeners
         %tr

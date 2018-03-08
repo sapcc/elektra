@@ -1,5 +1,6 @@
 .toolbar.toolbar-aligntop
-  = link_to "#", class: 'btn btn-default btn-xs', data: {toggle: 'automationBootstrap', automation_script_action: @automation_script_action} do
-    %i.fa.fa-plus.fa-fw
-    %i.loading-spinner-button.hide
-    Automation
+  .main-buttons
+    = link_to "#", class: 'btn btn-default btn-xs', data: {toggle: 'automationBootstrap', automation_script_action: @automation_script_action} do
+      %i.fa.fa-plus.fa-fw
+      %i.loading-spinner-button.hide
+      Automation

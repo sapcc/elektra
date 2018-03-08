@@ -3,7 +3,8 @@
 - if @scoped_project_id
   - if current_user.is_allowed?("networking:router_create", tenant_id: @scoped_project_id)
     .toolbar
-      = link_to 'Create new', plugin('networking').new_router_path, data: {modal: true}, class: 'btn btn-primary btn-lg'
+      .main-buttons
+        = link_to 'Create new', plugin('networking').new_router_path, data: {modal: true}, class: 'btn btn-primary'
 
 
   %table.table

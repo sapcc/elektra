@@ -9,8 +9,10 @@
   %li.active= last_crumb
 
 .toolbar
-  = link_to 'Upload file', plugin('object_storage').new_object_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
-  = link_to 'Create folder', plugin('object_storage').new_folder_path(@container_name, params[:path]), class: 'btn btn-primary btn-lg', data: { modal: true }
+  .main-buttons
+    = link_to 'Create folder', plugin('object_storage').new_folder_path(@container_name, params[:path]), class: 'btn btn-default', data: { modal: true }
+    = link_to 'Upload file', plugin('object_storage').new_object_path(@container_name, params[:path]), class: 'btn btn-primary', data: { modal: true }
+
 
 #object_list
   = render partial: 'object_list'

@@ -13,7 +13,8 @@
     .col-md-9
       - if current_user.is_allowed?('loadbalancing:resource_create', {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
         .toolbar.toolbar-aligntop
-          = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_pool_path(loadbalancer_id: @loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
+          .main-buttons
+            = link_to 'Create new', plugin('loadbalancing').new_loadbalancer_pool_path(loadbalancer_id: @loadbalancer.id), data: {modal: true}, class: 'btn btn-primary btn-sm'
 
       %table.table#pools
         %tr

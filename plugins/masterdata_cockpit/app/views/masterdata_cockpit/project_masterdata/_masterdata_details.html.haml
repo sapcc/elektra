@@ -2,154 +2,159 @@
 
   -# projectdata, only vissible in masterdata view
   - unless modal?
-    .toolbar.margin-top-zero
-      .pull-left.masterdata-toolbar
-        %label Project
+    .toolbar.toolbar-aligntop
+      %h4  Project
       - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-        .pull-right
-          = link_to 'Edit', plugin('identity').edit_project_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
+        .main-buttons
+          = link_to 'Edit', plugin('identity').edit_project_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
+
   - unless modal?
+    .masterdata-group
+      .row
+        .col-sm-4.details-label
+          Name
+        .col-sm-8.details-value
+          = @project_masterdata.project_name
+      .row
+        .col-sm-4.details-label
+          Description
+        .col-sm-8.details-value
+          =# use active project here because at the moment the masterdata api supports at the moment max 255 chars
+          %span.description
+            = @active_project.description
+
+    .toolbar
+      %h4 Masterdata
+      - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
+        .main-buttons
+          = link_to 'Edit', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
+
+  -# masterdata details
+  .masterdata-group
+    %h5.masterdata-heading
+      Cost Object
+      %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
+        = icon('question-circle')
+
+    - if @inheritance.co_inheritable
+      .row
+        .col-sm-4.details-label
+          - if @active_project.parent_id == @active_project.domain_id
+            Inherited from domain
+          - else
+            Inherited from parent project
+        .col-sm-8.details-value
+          - if @project_masterdata.cost_object_inherited
+            = icon('check-square-o')
+          -else
+            = icon('times')
+    .row
+      .col-sm-4.details-label
+        Solution
+      .col-sm-8.details-value
+        - unless @project_masterdata.solution
+          Other
+        = @project_masterdata.solution
+    .row
+      .col-sm-4.details-label
+        Revenue Relevance
+      .col-sm-8.details-value
+        - if @project_masterdata.revenue_relevance
+          = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
+        - else
+          \-
+    .row
+      .col-sm-4.details-label
+        Type
+      .col-sm-8.details-value
+        - if @project_masterdata.cost_object_type
+          = MasterdataCockpit::Config.cost_object_types[@project_masterdata.cost_object['type']]
+        - else
+          \-
     .row
       .col-sm-4.details-label
         Name
       .col-sm-8.details-value
-        = @project_masterdata.project_name
+        - if @project_masterdata.cost_object_name
+          = @project_masterdata.cost_object_name
+        - else
+          \-
+
+  .masterdata-group
+    %h5.masterdata-heading Responsibility
+
     .row
       .col-sm-4.details-label
-        Description
-      .col-sm-8.details-value
-        =# use active project here because at the moment the masterdata api supports at the moment max 255 chars
-        %span.description
-          = @active_project.description
-        
-    .toolbar
-      .pull-left.masterdata-toolbar
-        %label Masterdata
-      - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
-        .pull-right
-          = link_to 'Edit', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary btn-sm pull-right'
-  
-  -# masterdata details
-  %label.masterdata-heading
-    Cost Object
-    %a.help-link{data:{content: t('masterdata_cockpit.co_info'), popover: {type: "help-hint"}, toggle: "popover"}}
-      = icon('question-circle')
-  %hr.masterdata-hr-label
-  - if @inheritance.co_inheritable
+        Operator
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_operator_id
+          \Not defined
+        = @project_masterdata.responsible_operator_id
+      - if @project_masterdata.responsible_operator_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_operator_email
     .row
       .col-sm-4.details-label
-        - if @active_project.parent_id == @active_project.domain_id
-          Inherited from domain
-        - else
-          Inherited from parent project
+        Security Expert
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_security_expert_id
+          \Not defined
+        = @project_masterdata.responsible_security_expert_id
+      - if @project_masterdata.responsible_security_expert_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_security_expert_email
+    .row
+      .col-sm-4.details-label
+        Product Owner
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_product_owner_id
+          \Not defined
+        = @project_masterdata.responsible_product_owner_id
+      - if @project_masterdata.responsible_product_owner_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_product_owner_email
+    .row
+      .col-sm-4.details-label
+        Controller
+      .col-sm-2.details-value
+        - unless @project_masterdata.responsible_controller_id
+          \Not defined
+        = @project_masterdata.responsible_controller_id
+      - if @project_masterdata.responsible_controller_email
+        .col-sm-1.details-label
+          Contact
+        .col-sm-4.details-value
+          = icon('envelope-o')
+          = mail_to @project_masterdata.responsible_controller_email
+
+  .masterdata-group
+    %h5.masterdata-heading Importance
+
+    .row
+      .col-sm-4.details-label
+        Business Criticality
       .col-sm-8.details-value
-        - if @project_masterdata.cost_object_inherited
-          = icon('check-square-o')
-        -else 
-          = icon('times')
-  .row
-    .col-sm-4.details-label
-      Solution 
-    .col-sm-8.details-value
-      - unless @project_masterdata.solution
-        Other
-      = @project_masterdata.solution 
-  .row
-    .col-sm-4.details-label
-      Revenue Relevance
-    .col-sm-8.details-value
-      - if @project_masterdata.revenue_relevance
-        = MasterdataCockpit::Config.revenue_relevances[@project_masterdata.revenue_relevance]
-      - else
-        \-
-  .row
-    .col-sm-4.details-label
-      Type
-    .col-sm-8.details-value
-      - if @project_masterdata.cost_object_type
-        = MasterdataCockpit::Config.cost_object_types[@project_masterdata.cost_object['type']]
-      - else 
-        \-
-  .row
-    .col-sm-4.details-label
-      Name
-    .col-sm-8.details-value
-      - if @project_masterdata.cost_object_name
-        = @project_masterdata.cost_object_name
-      - else
-        \-
-  %label.masterdata-heading Responsibility
-  %hr.masterdata-hr-label
-  .row
-    .col-sm-4.details-label
-      Operator
-    .col-sm-2.details-value
-      - unless @project_masterdata.responsible_operator_id
-        \Not defined
-      = @project_masterdata.responsible_operator_id
-    - if @project_masterdata.responsible_operator_email
-      .col-sm-1.details-label
-        Contact
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_operator_email
-  .row
-    .col-sm-4.details-label
-      Security Expert
-    .col-sm-2.details-value
-      - unless @project_masterdata.responsible_security_expert_id
-        \Not defined
-      = @project_masterdata.responsible_security_expert_id
-    - if @project_masterdata.responsible_security_expert_email
-      .col-sm-1.details-label
-        Contact
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_security_expert_email
-  .row
-    .col-sm-4.details-label
-      Product Owner
-    .col-sm-2.details-value
-      - unless @project_masterdata.responsible_product_owner_id
-        \Not defined
-      = @project_masterdata.responsible_product_owner_id
-    - if @project_masterdata.responsible_product_owner_email
-      .col-sm-1.details-label
-        Contact
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_product_owner_email
-  .row
-    .col-sm-4.details-label
-      Controller
-    .col-sm-2.details-value
-      - unless @project_masterdata.responsible_controller_id
-        \Not defined
-      = @project_masterdata.responsible_controller_id
-    - if @project_masterdata.responsible_controller_email
-      .col-sm-1.details-label
-        Contact
-      .col-sm-4.details-value
-        = icon('envelope-o')
-        = mail_to @project_masterdata.responsible_controller_email
-  %label.masterdata-heading Importance
-  %hr.masterdata-hr-label
-  .row
-    .col-sm-4.details-label
-      Business Criticality
-    .col-sm-8.details-value
-      - if @project_masterdata.business_criticality
-        = MasterdataCockpit::Config.business_criticalitys[@project_masterdata.business_criticality]
-      - else
-        \-
-  .row
-    .col-sm-4.details-label
-      Number of Endusers
-    .col-sm-8.details-value
-      - unless @project_masterdata.number_of_endusers
-        \-
-      - else
-        - if @project_masterdata.number_of_endusers == -1
-          Unlimited
+        - if @project_masterdata.business_criticality
+          = MasterdataCockpit::Config.business_criticalitys[@project_masterdata.business_criticality]
         - else
-          = @project_masterdata.number_of_endusers
+          \-
+    .row
+      .col-sm-4.details-label
+        Number of Endusers
+      .col-sm-8.details-value
+        - unless @project_masterdata.number_of_endusers
+          \-
+        - else
+          - if @project_masterdata.number_of_endusers == -1
+            Unlimited
+          - else
+            = @project_masterdata.number_of_endusers
