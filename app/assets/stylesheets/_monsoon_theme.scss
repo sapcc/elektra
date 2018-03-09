@@ -627,7 +627,7 @@ section {
   border-bottom: 1px solid #eee;
   padding: $toolbar-vertical-padding 8px;
   margin-top: $line-height-computed;
-  line-height: $line-height-computed * 1.7;
+  line-height: 34px; // to match input height
 
   &.toolbar-aligntop {
     margin-top: 0;
@@ -651,6 +651,22 @@ section {
     }
   }
 
+  label {
+    margin: 0 10px 0 0;
+
+    &.radio-inline, &.checkbox-inline {
+      margin-right: 2px;
+    }
+  }
+
+  .inputwrapper {
+    margin: 0 10px 0 0;
+  }
+
+  .toolbar-input-divider {
+    padding: 0 8px;
+  }
+
   .main-buttons {
     margin-left: auto;
   }
@@ -664,44 +680,21 @@ section {
     margin-bottom: 6px;
   }
 
+  .radio-inline input[type="radio"], .checkbox-inline input[type="checkbox"] {
+    margin-top: 11px;
+  }
+
   &.toolbar-with-h {
     .main-buttons {
       top: ($line-height-computed / 2) - 2px;
     }
   }
 
-  &.toolbar-controlcenter {
-    display: flex;
-
-    label, span, a {
-      line-height: 34px; // to match input height
-    }
-
-    a.btn {
-      line-height: inherit;
-    }
-
-    label, .inputwrapper{
-      margin: 0 8px 0 0;
-    }
-
-    .toolbar-input-divider {
-      padding: 0 8px;
-    }
-
-    .main-control-buttons {
-      margin-left: auto;
-    }
-  }
-
-
   .has-feedback.has-feedback-searchable {
-    float: left;
     width: 250px;
   }
 
   .has-feedback-help {
-    float: left;
     padding-left: 8px;
     font-size: $font-size-medium;
     line-height: $input-height-base;
