@@ -14,7 +14,7 @@
     "regionname": "EU-DE-2",
     "lat":        50.91,
     "lon":        9.08,
-    "available":  false,
+    "available":  true,
     "date":       "2018"
   },
   {
