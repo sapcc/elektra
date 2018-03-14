@@ -89,11 +89,13 @@ export default class List extends React.Component {
                   input field will show all currently loaded items.'/>
         }
 
-        <DefeatableLink
-          to='/ports/new'
-          className='btn btn-primary'>
-          Reserve new IP
-        </DefeatableLink>
+        <div className="main-buttons">
+          <DefeatableLink
+            to='/ports/new'
+            className='btn btn-primary'>
+            Reserve new IP
+          </DefeatableLink>
+        </div>
       </div>
     )
   }
