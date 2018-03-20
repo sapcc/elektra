@@ -11,4 +11,7 @@ Lookup::Engine.routes.draw do
 
   get '/object/:object_type/:object_id' => 'services#find', as: :find_object
   get '/object/types' => 'services#object_types'
+
+  get 'reverselookup/index' => 'reverse_lookup#index'
+  post 'reverselookup/search' => 'reverse_lookup#search'
 end

@@ -67,7 +67,14 @@
             %li
               = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true}
 
+      - if plugin_available?('lookup') # TODO: ADD policy check here
+        %h5
+          %i.lookup-icon
+          Project Lookup
 
+        %ul.plain-list
+          %li
+            = link_to 'Find Project by Child IP or DNS', plugin('lookup').reverselookup_index_path, data: {modal: true}
 
   .col-md-3
     %h4.heading-top
