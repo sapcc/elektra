@@ -27,5 +27,5 @@ ifndef CHANGELOG_GITHUB_TOKEN
 else
 	docker build $(BUILD_ARGS) -t sapcc/elektra-changelog-builder:$(VERSION) --cache-from=sapcc/elektra-changelog-builder:latest ./contrib/elektra-changelog-builder
 	docker tag sapcc/elektra-changelog-builder:$(VERSION)  sapcc/elektra-changelog-builder:latest
-	docker run --rm -v $(PWD):/host -e GITHUB_TOKEN=$(CHANGELOG_GITHUB_TOKEN) sapcc/elektra-changelog-builder:latest
+	docker run --rm -v $(PWD):/host -e HTTPS_PROXY='http://proxy.wdf.sap.corp:8080/' -e GITHUB_TOKEN=$(CHANGELOG_GITHUB_TOKEN) sapcc/elektra-changelog-builder:latest
 endif
