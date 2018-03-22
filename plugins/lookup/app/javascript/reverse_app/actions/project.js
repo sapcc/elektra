@@ -1,5 +1,7 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
+import { fetchDomain } from './domain';
+import { fetchParents } from './parents';
 import { addNotice as showNotice, addError as showError } from 'lib/flashes';
 
 //################### PROJECT #########################
@@ -18,9 +20,10 @@ const receiveProject= json => (
   }
 );
 
-const requestProjectFailure= () => (
+const requestProjectFailure= (err) => (
   {
     type: constants.REQUEST_PROJECT_FAILURE,
+    error: err
   }
 );
 
@@ -30,7 +33,7 @@ const fetchProjectForm= (value) => (
     new Promise((handleSuccess,handleErrors) => {
       if (!value.trim()) {
         showError(`Input field is empty or contains only spaces.`)
-        dispatch(requestProjectFailure())
+        handleErrors({errors: `Input field is empty or contains only spaces.`})
         return
       }
       dispatch(requestProject())
@@ -39,17 +42,17 @@ const fetchProjectForm= (value) => (
         {searchValue: value}
       ).then((response) => {
         if (response.data.errors) {
-          dispatch(requestProjectFailure())
-          showError(response.data.errors)
-          // handleErrors({errors: response.data.errors})
+          dispatch(requestProjectFailure(`Could not load project (${response.data.errors})`))
+          handleErrors({errors: response.data.errors})
         }else {
           dispatch(receiveProject(response.data))
+          dispatch(fetchDomain(response.data.domainId))
+          dispatch(fetchParents(response.data.id))
           handleSuccess()
         }
       }).catch(error => {
-        dispatch(requestProjectFailure())
-        showError(error.message)
-        // handleErrors({errors: error.message})
+        dispatch(requestProjectFailure(`Could not load project (${error.message})`))
+        handleErrors({errors: error.message})
       })
     })
 );

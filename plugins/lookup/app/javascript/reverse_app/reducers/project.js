@@ -4,19 +4,20 @@ const initialState = {
   data: null,
   requestedAt: null,
   receivedAt: null,
-  isFetching: false
+  isFetching: false,
+  error: null
 };
 
 const requestProject= function(state,{requestedAt}) {
-  return {...state, requestedAt, isFetching: true};
+  return {...state, requestedAt, isFetching: true, data: null, error: null};
 };
 
 const receiveProject= function(state,{data, receivedAt}) {
-  return {...state, data, receivedAt, isFetching: false};
+  return {...state, data, receivedAt, isFetching: false, error: null};
 };
 
-const requestProjectFailure= function(state) {
-  return {...state, isFetching: false};
+const requestProjectFailure= function(state, {error}) {
+  return {...state, error, isFetching: false, data:null};
 };
 
 export const project = function(state, action) {

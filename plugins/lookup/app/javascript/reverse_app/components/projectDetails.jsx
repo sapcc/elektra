@@ -11,21 +11,45 @@ class ProjectDetails extends React.Component {
         <table className="table datatable">
           <tbody>
             <tr>
-              <th>Project Domain:</th>
-              <td>{}</td>
-            </tr>
-            <tr>
               <th>Project Name:</th>
-              <td>{this.props.project.name}</td>
+              <td>
+                {this.props.project.name}
+                <small className="text-muted"> ( {this.props.project.id} )</small>
+              </td>
             </tr>
             <tr>
-              <th>Project ID:</th>
-              <td>{this.props.project.id}</td>
+              <th>Project Domain:</th>
+              <td>
+                {this.props.domain.isFetching &&
+                  <span className="spinner" />
+                }
+                {
+                  this.props.domain.error &&
+                  <span className="text-danger">{this.props.domain.error.error}</span>
+                }
+                {
+                  this.props.domain.data &&
+                  <React.Fragment>
+                    {this.props.domain.data.name}
+                    <small className="text-muted"> ( {this.props.domain.data.id} )</small>
+                  </React.Fragment>
+                }
+              </td>
             </tr>
             <tr>
               <th>Parents:</th>
               <td>
-                <Parents parents={this.props.project.parents} />
+                {this.props.parents.isFetching &&
+                  <span className="spinner" />
+                }
+                {
+                  this.props.parents.error &&
+                  <span className="text-danger">{this.props.parents.error.error}</span>
+                }
+                {
+                  this.props.parents.data &&
+                  <Parents parents={this.props.parents.data} />
+                }
               </td>
             </tr>
           </tbody>

@@ -7,6 +7,8 @@ class App extends React.Component {
     error: null
   };
 
+  searchValue = "";
+
   handleChange = (event) => {
     const newState = {}
     newState[event.currentTarget.name] = event.currentTarget.value
@@ -15,7 +17,8 @@ class App extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.handleSubmit(this.state.value).catch(({errors}) => {
+    this.searchValue = this.state.value;
+    this.props.handleSubmit(this.searchValue).catch(({errors}) => {
       this.setState({error: errors})
     })
   }
@@ -25,11 +28,6 @@ class App extends React.Component {
       <React.Fragment>
         <div className={this.props.modal ? 'modal-body' : ''}>
           <form action="" className="form-horizontal">
-            {this.state.error &&
-              <div className="alert alert-error">
-                {this.state.error}
-              </div>
-            }
             <div className="form-group">
               <label
                 htmlFor="reverseLookupValue"
@@ -56,12 +54,19 @@ class App extends React.Component {
               </div>
             </div>
           </form>
-          {this.props.isFetching &&
-            <span className="spinner">
+          {this.props.project.isFetching &&
+            <React.Fragment>
+              <span>Loading details for <b>{this.searchValue}</b></span>
+              <span className="spinner"/>
+            </React.Fragment>
+          }
+          {this.props.project.error &&
+            <span className="text-danger">
+              {this.props.project.error}
             </span>
           }
           { this.props.project.data &&
-            <ProjectDetails project={this.props.project.data}/>
+            <ProjectDetails project={this.props.project.data} domain={this.props.domain} parents={this.props.parents}/>
           }
         </div>
         {this.props.modal &&
