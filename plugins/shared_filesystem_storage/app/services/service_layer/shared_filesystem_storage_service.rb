@@ -10,7 +10,7 @@ module ServiceLayer
     include SharedFilesystemStorageServices::SecurityService
     include SharedFilesystemStorageServices::Snapshot
 
-    MICROVERSION = 2.15
+    MICROVERSION = 2.43
 
     def available?(_action_name_sym = nil)
       elektron.service?('sharev2')
