@@ -39,6 +39,7 @@
       selected:           (@instance.security_groups || []).collect{|sg| sg},
       required:           true}
 
+
     = f.input :keypair_id, { label: "Key pair",
       input_html:         {},
       as:                 :select,
@@ -70,19 +71,27 @@
       required:           true,
       include_blank:      "Choose network"}
 
-    = f.input :subnet_id, { label: "Subnet",
-      as:                 :select,
-      input_html:         {name: "#{@instance.model_name.param_key}[network_ids][][subnet_id]" },
-      collection:         @subnets,
-      label_method:       -> (subnet) { "#{subnet.name} (#{subnet.cidr})" },
-      include_blank:      "Choose subnet",
-      selected:           (@instance.network_ids || []).collect{|n| n['subnet_id']},
-      icon_hint:          'You can specify a subnet from which the fixed IP is chosen. If empty any subnet is selected'}
+    %p.u-clearfix
+      = link_to "Toggle advanced network options","#", data: {action: 'toggle', target: '.advanced-options'}, class: "pull-right"
 
-    = f.input :port_id, {as: :hidden, input_html: {name: "#{@instance.model_name.param_key}[network_ids][][port]" }}
-    = f.input :fixed_ip, { label: 'Server fixed IP',
-      input_html: {name: "#{@instance.model_name.param_key}[network_ids][][fixed_ip]", value: (@instance.network_ids.try(:first) || {})['fixed_ip']},
-      icon_hint: 'Choose a previously reserved IP or type a new one. Leave empty to let the DHCP select one for you.'}
+    .advanced-options.hidden
+      %h5 Advanced Network Options
+      %p
+        These optional settings are for advanced usecases that require more control over the network configuration of the new instance. To ensure an instance is created in a specific subnet we have to create a port in the subnet first and then spawn the instance with that port. The same is true if you choose to specify a new fixed IP below.
+
+      = f.input :subnet_id, { label: "Subnet",
+        as:                 :select,
+        input_html:         {name: "#{@instance.model_name.param_key}[network_ids][][subnet_id]" },
+        collection:         @subnets,
+        label_method:       -> (subnet) { "#{subnet.name} (#{subnet.cidr})" },
+        include_blank:      "Choose subnet",
+        selected:           (@instance.network_ids || []).collect{|n| n['subnet_id']},
+        icon_hint:          'You can specify a subnet from which the fixed IP is chosen. If empty any subnet is selected'}
+
+      = f.input :port_id, {as: :hidden, input_html: {name: "#{@instance.model_name.param_key}[network_ids][][port]" }}
+      = f.input :fixed_ip, { label: 'Server fixed IP',
+        input_html: {name: "#{@instance.model_name.param_key}[network_ids][][fixed_ip]", value: (@instance.network_ids.try(:first) || {})['fixed_ip']},
+        icon_hint: 'Choose a previously reserved IP or type a new one. Leave empty to let the DHCP select one for you.'}
 
     = f.input :user_data,
       label:              "User data",

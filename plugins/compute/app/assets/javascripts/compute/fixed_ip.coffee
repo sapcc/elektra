@@ -61,15 +61,30 @@ $.fn.fixedIpSelector = (options={}) ->
 
     updateAvailableSubnets = (networkId) ->
       selected = $subnetSelect.val()
-      $subnetSelect.find("option").remove()
-      return unless networkId
-      $subnetSelect.append($("<option></option>"))
-      for subnet in subnets
-        if subnet.network_id == networkId
+      $subnetSelect.find("option").remove() # remove all options first
+      unless networkId
+        # indicate to the user that no network is selected
+        $subnetSelect.append( $("<option value=''>Please choose a network first</option>") )
+        updateAvailablePorts('')
+        return
+
+      filtered_subnets = subnets.filter (sub) -> sub.network_id == networkId # filter for subnets for the selected network
+      if filtered_subnets.length > 1
+        $subnetSelect.append($("<option value=''>Choose a subnet (optional)</option>"))
+        for subnet in filtered_subnets
           $subnetSelect.append(
             $("<option value='#{subnet.id}' #{'selected' if subnet.id==selected}>#{sanitize(subnet.name)} (#{subnet.cidr})</option>")
           )
-      updateAvailablePorts($subnetSelect.val())
+        updateAvailablePorts($subnetSelect.val())
+      else
+        # if network has only one subnet display it to the user but don't actually select it to prevent the special handling with port creation
+        first_subnet = filtered_subnets[0]
+        $subnetSelect.append(
+          $("<option value=''>#{sanitize(first_subnet.name)} (#{first_subnet.cidr})</option>")
+        )
+        updateAvailablePorts('')
+
+
 
     $networkSelect.change () -> updateAvailableSubnets($(this).val())
     $subnetSelect.change () -> updateAvailablePorts($(this).val())

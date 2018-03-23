@@ -49,3 +49,9 @@
   margin-right: 5px;
   @include spinner(background rgba(0,0,0,0.2));
 }
+
+.advanced-options {
+  background: #f1f1f1;
+  padding: 10px;
+  margin-bottom: 18px;
+}

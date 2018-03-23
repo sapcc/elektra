@@ -78,6 +78,11 @@ $ ->
     e.preventDefault()
     $('.plugin-help').toggleClass('visible')
 
+  # generic visibility toggle
+  $('[data-action="toggle"]').click (e) ->
+    e.preventDefault()
+    $($(this).attr('data-target')).toggleClass('hidden')
+
 
 
 
@@ -171,6 +176,13 @@ $(document).on 'modal:contentUpdated', (e) ->
   # -------------
   # init tooltips
   $('[data-toggle="tooltip"]').tooltip()
+
+
+  # generic visibility toggle
+  $('[data-action="toggle"]').click (e) ->
+    e.preventDefault()
+    $($(this).attr('data-target')).toggleClass('hidden')
+
 
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
 # # React to turbolinks page load events to indicate to the user that something is happening

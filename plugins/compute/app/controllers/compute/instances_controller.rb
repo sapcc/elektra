@@ -89,13 +89,11 @@ module Compute
         ])
       end
 
-      @instance = services.compute.new_server
-
-      @flavors            = services.compute.flavors
-      @images             = services.image.all_images
-
+      @instance       = services.compute.new_server
+      @flavors        = services.compute.flavors
+      @images         = services.image.all_images
       @fixed_ip_ports = services.networking.fixed_ip_ports
-      @subnets = services.networking.subnets
+      @subnets        = services.networking.subnets
 
       if params[:image_id]
         # preselect image_id
@@ -121,10 +119,10 @@ module Compute
 
       # @instance.flavor_id             = @flavors.first.try(:id)
       # @instance.image_id              = params[:image_id] || @images.first.try(:id)
-      @instance.availability_zone_id  = @availability_zones.first.try(:id)
-      #@instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
-      @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
-      @instance.keypair_id = @keypairs.first['name'] unless @keypairs.blank?
+      @instance.availability_zone_id    = @availability_zones.first.try(:id)
+      #@instance.network_ids            = [{ id: @private_networks.first.try(:id) }]
+      @instance.security_groups         = [@security_groups.find { |sg| sg.name == 'default' }.try(:id)] if @instance.security_groups.blank? # if no security group has been selected force select the default group
+      @instance.keypair_id              = @keypairs.first['name'] unless @keypairs.blank?
 
       @instance.max_count = 1
     end
