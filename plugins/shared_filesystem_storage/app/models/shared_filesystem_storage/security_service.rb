@@ -18,7 +18,6 @@ module SharedFilesystemStorage
           'user'        => read('user'),
           'password'    => read('password'),
           'domain'      => read('domain'),
-          'server'      => read('server'),
           'ou'          => read('ou')
         }
       end.delete_if { |_, v| v.blank? }

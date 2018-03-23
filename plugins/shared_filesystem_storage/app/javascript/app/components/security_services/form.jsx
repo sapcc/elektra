@@ -69,10 +69,6 @@ export default class SecurityServiceForm extends React.Component {
           <Form.ElementHorizontal label='Domain' name="domain">
             <Form.Input elementType='input'/>
           </Form.ElementHorizontal>
-
-          <Form.ElementHorizontal label='Server' name="server">
-            <Form.Input elementType='input'/>
-          </Form.ElementHorizontal>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.close}>Cancel</Button>
