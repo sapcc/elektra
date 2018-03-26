@@ -3,6 +3,12 @@
 module Lookup
   # Collect project information
   class ReverseLookupController < DashboardController
+
+    module SEARCH_BY
+      IP = 'ip'
+      DNS = 'dns'
+    end
+
     def index; end
 
     def domain
@@ -31,6 +37,29 @@ module Lookup
     end
 
     def users
+      project_id = params[:reverseLookupProjectId]
+      filter_by = params[:filterby]
+      # role object
+      role = nil
+      if filter_by == SEARCH_BY::IP
+        role = cloud_admin.identity.find_role_by_name('network_admin')
+      elsif filter_by == SEARCH_BY::DNS
+        role = cloud_admin.identity.find_role_by_name('dns_admin')
+      end
+      # role assigments
+      assigments = cloud_admin.identity.role_assignments(
+        'scope.project.id' => project_id,
+        'role.id' => role.id,
+        include_names: true
+      )
+      # get users
+      ra_users = []
+      assigments.select{|ra| !ra.user.blank?}.each_with_object([]) do |ra, users|
+        user_profile = UserProfile.search_by_name(ra.user[:name]).first
+        ra_users << "#{ra.user[:name]}#{(' (' + user_profile["full_name"] + ')') unless user_profile.blank?}"
+      end
+
+      render json: {users: ra_users}
     end
 
     def search
@@ -46,6 +75,7 @@ module Lookup
       # decide if IP or DNS
       if (IPAddr.new(search_value) rescue false)
         res[:searchValue] = search_value
+        res[:searchBy] = SEARCH_BY::IP
 
         # floating IPs
         floating_ip = cloud_admin.networking.floating_ips(floating_ip_address: search_value).first

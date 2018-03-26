@@ -7,14 +7,14 @@ const mapStateToProps = state => {
   return {
     project: state.project,
     domain: state.domain,
-    parents: state.parents
+    parents: state.parents,
+    users: state.users
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleSubmit: (value) => dispatch(fetchProjectForm(value)),
-    fetchDomain: (value) => dispatch(fetchDomain(value))
+    handleSubmit: (value) => dispatch(fetchProjectForm(value))
   }
 }
 

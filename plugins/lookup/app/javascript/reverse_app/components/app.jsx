@@ -3,11 +3,9 @@ import ProjectDetails from './projectDetails';
 class App extends React.Component {
 
   state = {
-    value: '',
+    searchValue: "",
     error: null
   };
-
-  searchValue = "";
 
   handleChange = (event) => {
     const newState = {}
@@ -18,7 +16,7 @@ class App extends React.Component {
   onSubmit = (event) => {
     event.preventDefault();
     this.searchValue = this.state.value;
-    this.props.handleSubmit(this.searchValue).catch(({errors}) => {
+    this.props.handleSubmit(this.state.searchValue).catch(({errors}) => {
       this.setState({error: errors})
     })
   }
@@ -37,10 +35,10 @@ class App extends React.Component {
               <div className="col-sm-6">
                 <input
                   className="form-control"
-                  name="value"
+                  name="searchValue"
                   id="reverseLookupValue"
                   type="text"
-                  value={this.state.name}
+                  value={this.state.searchValue}
                   onChange={this.handleChange}
                   />
               </div>
@@ -56,7 +54,7 @@ class App extends React.Component {
           </form>
           {this.props.project.isFetching &&
             <React.Fragment>
-              <span>Loading details for <b>{this.searchValue}</b></span>
+              <span>Loading details for <b>{this.state.searchValue}</b></span>
               <span className="spinner"/>
             </React.Fragment>
           }
@@ -66,7 +64,7 @@ class App extends React.Component {
             </span>
           }
           { this.props.project.data &&
-            <ProjectDetails project={this.props.project.data} domain={this.props.domain} parents={this.props.parents}/>
+            <ProjectDetails project={this.props.project.data} domain={this.props.domain} parents={this.props.parents} users={this.props.users}/>
           }
         </div>
         {this.props.modal &&

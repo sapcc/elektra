@@ -9,3 +9,7 @@ export const REQUEST_DOMAIN_FAILURE           = 'reverselookup/project/REQUEST_D
 export const REQUEST_PARENTS                  = 'reverselookup/project/REQUEST_PARENTS';
 export const RECEIVE_PARENTS                  = 'reverselookup/project/RECEIVE_PARENTS';
 export const REQUEST_PARENTS_FAILURE          = 'reverselookup/project/REQUEST_PARENTS_FAILURE';
+
+export const REQUEST_USERS                  = 'reverselookup/project/REQUEST_USERS';
+export const RECEIVE_USERS                  = 'reverselookup/project/RECEIVE_USERS';
+export const REQUEST_USERS_FAILURE          = 'reverselookup/project/REQUEST_USERS_FAILURE';

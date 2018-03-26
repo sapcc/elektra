@@ -1,4 +1,5 @@
 import Parents from './parents';
+import Users from './users';
 
 class ProjectDetails extends React.Component {
   render() {
@@ -49,6 +50,22 @@ class ProjectDetails extends React.Component {
                 {
                   this.props.parents.data &&
                   <Parents parents={this.props.parents.data} />
+                }
+              </td>
+            </tr>
+            <tr>
+              <th>Users:</th>
+              <td>
+                {this.props.users.isFetching &&
+                  <span className="spinner" />
+                }
+                {
+                  this.props.users.error &&
+                  <span className="text-danger">{this.props.users.error.error}</span>
+                }
+                {
+                  this.props.users.data &&
+                  <Users users={this.props.users.data.users} />
                 }
               </td>
             </tr>
