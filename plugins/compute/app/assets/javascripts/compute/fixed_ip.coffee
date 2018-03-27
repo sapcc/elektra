@@ -80,7 +80,7 @@ $.fn.fixedIpSelector = (options={}) ->
         # if network has only one subnet display it to the user but don't actually select it to prevent the special handling with port creation
         first_subnet = filtered_subnets[0]
         $subnetSelect.append(
-          $("<option value=''>#{sanitize(first_subnet.name)} (#{first_subnet.cidr})</option>")
+          $("<option value='#{first_subnet.id}'>#{sanitize(first_subnet.name)} (#{first_subnet.cidr})</option>")
         )
         updateAvailablePorts('')
 

@@ -209,6 +209,7 @@ module Compute
         audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
       else
+        @port.destroy if @port && params[:server][:network_ids].first['port'].blank?
         @flavors = services.compute.flavors
         # @images = services.image.images
         @availability_zones = services.compute.availability_zones
@@ -368,6 +369,7 @@ module Compute
           format.js {}
         end
       else
+        @port.destroy if @port && params[:os_interface][:port_id].blank?
         @networks = services.networking.networks('router:external' => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
