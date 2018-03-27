@@ -24,7 +24,7 @@
             %span.icon-bar
             %span.icon-bar
             %span.icon-bar
-          = link_to main_app.landing_page_url(@scoped_domain_fid ? @scoped_domain_fid : Rails.configuration.default_domain), class: "navbar-brand" do
+          = link_to main_app.landing_page_url(@scoped_domain_fid ? @scoped_domain_fid : params[:domain_id]), class: "navbar-brand" do
             .logo
             Converged Cloud
 
@@ -36,9 +36,7 @@
           %ul.nav.navbar-nav.navbar-right
             - unless logged_in?
               %li
-                = link_to "Log in", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id],
-                  domain_name: (params[:domain_id] || Rails.configuration.default_domain),
-                  after_login: main_app.domain_home_path(domain_id:params[:domain_id])), id: "navbar-login-btn"
+                = link_to "Log in", main_app.domain_home_path(domain_id: params[:domain_id], project_id:nil), id: "navbar-login-btn"
 
     = yield :page_lead
 
