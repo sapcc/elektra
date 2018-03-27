@@ -121,8 +121,7 @@ observer = new MutationObserver (mutations) ->
 
       if multiselect_boxes && multiselect_boxes.length > 0
         multiselect_boxes.multiselect
-          buttonText: (options, select) ->
-            if options.length == 0 then 'No option selected ...' else "#{options.length} options selected"
+          numberDisplayed: 1
 
 
 observer.observe(document.documentElement, {childList: true, subtree: true});
