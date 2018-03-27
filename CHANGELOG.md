@@ -4,8 +4,17 @@
 
 [Full Changelog](https://github.com/sapcc/elektra/compare/2018.2...HEAD)
 
+**Implemented enhancements:**
+
+- **Simplify and robustify instance create dialog [\#241](https://github.com/sapcc/elektra/issues/241)**   
+We have recently added some advanced features to the instance create form that relate to advanced network topics \(choosing a subnet or a predefined port\). The way they are currently presented in the form suggest to the user that they are mandatory which is not the case. We don't want people to use these options if they don't know why. Hide these options behind an "advanced networking options" toggle.
+- **Toolbar enhancements [\#238](https://github.com/sapcc/elektra/issues/238)**   
+We have the need to add more elements into the toolbar \(mostly filters\). Toolbar styles need to be adjusted to facilitate this.
+
 **Fixed bugs:**
 
+- **Revoke role from group doesn't work [\#239](https://github.com/sapcc/elektra/issues/239)**   
+When you try to revoke a role from a group nothing happens. After clicking "Save" the page reloads and the role is back.
 - **Router can't be deleted [\#237](https://github.com/sapcc/elektra/issues/237)**   
 If you try to delete a router, there is an error that subnet or port should be given
 - **Server create with subnet [\#236](https://github.com/sapcc/elektra/issues/236)**   
