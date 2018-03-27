@@ -54,12 +54,14 @@ module Lookup
       )
       # get users
       ra_users = []
-      assigments.select{|ra| !ra.user.blank?}.each_with_object([]) do |ra, users|
+      assigments.reject{ |ra| ra.user.blank? }.each_with_object([]) do |ra, _|
         user_profile = UserProfile.search_by_name(ra.user[:name]).first
-        ra_users << "#{ra.user[:name]}#{(' (' + user_profile["full_name"] + ')') unless user_profile.blank?}"
+        user = { name: ra.user[:name], id: ra.user[:id] }
+        user[:fullName] = user_profile['full_name'] unless user_profile.blank?
+        ra_users << user
       end
 
-      render json: {users: ra_users}
+      render json: ra_users
     end
 
     def search

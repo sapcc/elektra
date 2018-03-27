@@ -65,7 +65,7 @@ class ProjectDetails extends React.Component {
                 }
                 {
                   this.props.users.data &&
-                  <Users users={this.props.users.data.users} />
+                  <Users users={this.props.users.data} />
                 }
               </td>
             </tr>
