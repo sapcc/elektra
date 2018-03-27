@@ -1,106 +1,93 @@
-import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import {Modal, Button, Tabs, Tab} from 'react-bootstrap';
+import {Link} from 'react-router-dom';
+import {PrettyDate} from 'lib/components/pretty_date';
+import {PrettySize} from 'lib/components/pretty_size';
 
-const Row = ({label,value,children}) => {
-  return (
-    <tr>
-      <th style={{width: '30%'}}>{label}</th>
-      <td>{value || children}</td>
-    </tr>
-  )
+const Row = ({label, value, children}) => {
+  return (<tr>
+    <th style={ {width: '30%'} }>{label}</th>
+    <td>{value || children}</td>
+  </tr>)
 };
 
-export default class ShowShareModal extends React.Component{
-  constructor(props){
-  	super(props);
-  	this.state = {show: props.share!=null};
-    this.close = this.close.bind(this)
+export default class ShowModal extends React.Component {
+  state = {show: false}
+
+  restoreUrl = (e) => {
+    if (!this.state.show)
+      this.props.history.replace(`/os-images/${this.props.activeTab}`)
   }
 
-  close(e) {
-    if(e) e.stopPropagation()
-    //this.props.history.goBack()
+  hide = (e) => {
+    if (e) e.stopPropagation()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'),300)
   }
 
   componentDidMount() {
-    if(this.props.share) this.props.loadExportLocationsOnce(this.props.share.id)
-    this.props.loadShareTypesOnce()
+    this.setState({
+      show: this.props.image != null
+    })
   }
-
   componentWillReceiveProps(nextProps) {
-    this.setState({show: nextProps.share!=null})
-    if(nextProps.share && !nextProps.share.export_locations) {
-      this.props.loadExportLocationsOnce(nextProps.share.id)
-    }
+    this.setState({
+      show: nextProps.image != null
+    })
   }
 
-  overview(share) {
-    return (
-      <table className='table no-borders'>
-        <tbody>
-          <Row label='Name' value={share.name}/>
-          <Row label='Description' value={share.description}/>
-          <Row label='ID' value={share.id}/>
-          <Row label='Status' value={share.status}/>
-          <Row label='Export Locations'>
-            {share.export_locations ? (
-              share.export_locations.map((location) =>
-                <div key={location.id}>{location.path}</div>)
-              ) : (<span className='spinner'></span>)
-            }
-          </Row>
-          <Row label='Availability zone' value={share.availability_zone}/>
-          <Row label='Size' value={share.size+' GiB'}/>
-          <Row label='Protocol' value={share.share_proto}/>
-          <Row label='Share Type' value={share.share_type_name + ' ('+share.share_type+')'}/>
-          <Row label='Share network'>
-            <Link to={`/share-networks/${share.share_network_id}/show`}>{share.share_network_id}</Link>
-          </Row>
-          <Row label='Created At' value={share.created_at}/>
-          <Row label='Host' value={share.host}/>
-        </tbody>
-      </table>
-    );
-  }
-
-  metadata(share) {
-    if (share.metadata && Object.keys(share.metadata).length>0) {
-      return (
-        <table className="table no-borders">
-          <tbody>
-            Object.keys(share.metadata).map((key) =>
-              <Row label={key} value={share.metadata[key]}/>
-            )
-          </tbody>
-        </table>
-      )
-    } else return null
-  }
-
-  render(){
-    let { share, onHide } = this.props
+  render() {
+    let {image} = this.props
 
     return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Share {share ? share.name : ''}</Modal.Title>
+      <Modal
+        show={this.state.show}
+        onExited={this.restoreUrl}
+        onHide={this.hide}
+        bsSize="large"
+        aria-labelledby="contained-modal-title-lg">
+        <Modal.Header closeButton={true}>
+          <Modal.Title id="contained-modal-title-lg">Share {
+              image
+                ? image.name
+                : ''
+            }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { share &&
-            ( share.metadata && Object.keys(share.metadata).length>0 ? (
-              <Tabs defaultActiveKey={1} id="share">
-                <Tab eventKey={1} title="Overview">{this.overview(share)}</Tab>
-                <Tab eventKey={2} title="Metadata">{this.metadata(share)}</Tab>
-              </Tabs>
-            ) : (
-              this.overview(share)
-            ))
+          {image &&
+            <table className='table no-borders'>
+              <tbody>
+                <Row label='Name' value={image.name}/>
+                <Row label='ID' value={image.id}/>
+                <Row label='Owner Project' value={image.owner}/>
+                <Row label='Container Format' value={image.container_format}/>
+                <Row label='Disk Format' value={image.disk_format}/>
+                <Row label='Visibility' value={image.visibility}/>
+                <Row label='Status' value={image.status}/>
+                <Row label='Tags'>
+                  {image.tags && image.tags.map((tag, index) => <div key={index}>{tag}</div>)}
+                </Row>
+                <Row label='Min Disk' value={image.min_disk && `${image.min_disk} GB`}/>
+                <Row label='Protected' value={image.protected}/>
+                <Row label='File' value={image.file}/>
+                <Row label='Checksum' value={image.checksum}/>
+                <Row label='Size'><PrettySize size={image.size}/></Row>
+                <Row label='Min Ram' value={image.min_ram && `${image.min_ram} MB`}/>
+                <Row label='Schema' value={image.schema}/>
+                <Row label='Virtual Size'>
+                  <PrettySize size={image.virtual_size}/>
+                </Row>
+
+                <Row label='Created At'>
+                  <PrettyDate date={image.created_at}/>
+                </Row>
+                <Row label='Updated At'>
+                  <PrettyDate date={image.updated_at}/>
+                </Row>
+              </tbody>
+            </table>
           }
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.close}>Close</Button>
+          <Button onClick={this.hide}>Close</Button>
         </Modal.Footer>
       </Modal>
     )

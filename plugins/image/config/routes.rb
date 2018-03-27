@@ -1,9 +1,19 @@
 Image::Engine.routes.draw do
+  root to: 'application#index'
+
+  # next generation plugin
+  namespace :ng do
+    get '/', to: 'images#app'
+    resources :images, except: %i[show new edit] do
+      resources :members, except: %i[show new edit]
+    end
+  end
+
   namespace :os_images do
     resources :public do
       put :unpublish
     end
-    
+
     resources :private do
       put :publish
       resources :members, module: :private, except: [:edit, :update, :show]

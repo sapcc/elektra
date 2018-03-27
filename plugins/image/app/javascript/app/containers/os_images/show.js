@@ -1,21 +1,17 @@
 import { connect } from  'react-redux';
-import ShowShareModal from '../../components/shares/show';
-import { fetchShareExportLocationsIfNeeded } from '../../actions/shares';
-import { fetchShareTypesIfNeeded } from '../../actions/share_types';
+import ShowOsImageModal from '../../components/os_images/show';
 
 export default connect(
   (state,ownProps ) => {
-    let share;
+    let image;
+    let activeTab;
     let match = ownProps.match
-    if (match && match.params && match.params.id) {
-      let shares = state.shares.items
-      if (shares) share = shares.find(item => item.id==match.params.id)
-    }
 
-    return { share, shareTypes: state.shareTypes }
-  },
-  dispatch => ({
-    loadExportLocationsOnce: (shareId) => dispatch(fetchShareExportLocationsIfNeeded(shareId)),
-    loadShareTypesOnce: () => dispatch(fetchShareTypesIfNeeded())
-  })
-)(ShowShareModal);
+    if (match && match.params && match.params.activeTab && match.params.id) {
+      activeTab = match.params.activeTab
+      let images = state[match.params.activeTab].items
+      if (images) image = images.find(item => item.id == match.params.id)
+    }
+    return { image, activeTab }
+  }
+)(ShowOsImageModal);

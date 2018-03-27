@@ -1,7 +1,7 @@
-import * as constants from '../../constants';
+import { imageConstants } from '../constants';
 
-//########################## SHARES ##############################
-const initialSharesState = {
+//########################## IMAGES ##############################
+const initialState = {
   items: [],
   receivedAt: null,
   updatedAt: null,
@@ -11,17 +11,17 @@ const initialSharesState = {
   searchTerm: null
 };
 
-const requestShares=(state,{requestedAt})=>
+const requestOsImages=(state,{requestedAt})=>
   Object.assign({},state,{isFetching: true, requestedAt});
 
-const requestSharesFailure=function(state,...rest){
+const requestOsImagesFailure=function(state,...rest){
   const obj = rest[0];
   return Object.assign({},state,{isFetching: false});
 };
 
-const receiveShares=(state,{shares,hasNext,receivedAt}) => {
-  let newItems = (state.items.slice() || []).concat(shares);
-  var items = newItems.filter( (share, pos, arr) => arr.indexOf(share)==pos);
+const receiveOsImages=(state,{osImages,hasNext,receivedAt}) => {
+  let newItems = (state.items.slice() || []).concat(osImages);
+  var items = newItems.filter( (osImage, pos, arr) => arr.indexOf(osImage)==pos);
 
   return Object.assign({},state,{
     isFetching: false,
@@ -32,8 +32,8 @@ const receiveShares=(state,{shares,hasNext,receivedAt}) => {
   })
 };
 
-const requestShare= function(state,{shareId,requestedAt}) {
-  const index = state.items.findIndex((item) => item.id==shareId);
+const requestOsImage= function(state,{osImageId,requestedAt}) {
+  const index = state.items.findIndex((item) => item.id==osImageId);
   if (index<0) { return state; }
 
   const newState = Object.assign(state);
@@ -42,8 +42,8 @@ const requestShare= function(state,{shareId,requestedAt}) {
   return newState;
 };
 
-const requestShareFailure=function(state,{shareId}){
-  const index = state.items.findIndex((item) => item.id==shareId);
+const requestOsImageFailure=function(state,{osImageId}){
+  const index = state.items.findIndex((item) => item.id==osImageId);
   if (index<0) { return state; }
 
   const newState = Object.assign(state);
@@ -51,16 +51,16 @@ const requestShareFailure=function(state,{shareId}){
   return newState;
 };
 
-const receiveShare= function(state,{share}) {
-  const index = state.items.findIndex((item) => item.id==share.id);
+const receiveOsImage= function(state,{osImage}) {
+  const index = state.items.findIndex((item) => item.id==osImage.id);
   const items = state.items.slice();
   // update or add
-  if (index>=0) { items[index]=share; } else { items.unshift(share); }
+  if (index>=0) { items[index]=osImage; } else { items.unshift(osImage); }
   return Object.assign({},state,{items});
 };
 
-const requestDeleteShare= function(state,{shareId}) {
-  const index = state.items.findIndex((item) => item.id==shareId);
+const requestDeleteOsImage= function(state,{osImageId}) {
+  const index = state.items.findIndex((item) => item.id==osImageId);
   if (index<0) { return state; }
 
   const items = state.items.slice();
@@ -68,8 +68,8 @@ const requestDeleteShare= function(state,{shareId}) {
   return Object.assign({},state,{items});
 };
 
-const deleteShareFailure= function(state,{shareId}) {
-  const index = state.items.findIndex((item) => item.id==shareId);
+const deleteOsImageFailure= function(state,{osImageId}) {
+  const index = state.items.findIndex((item) => item.id==osImageId);
   if (index<0) { return state; }
 
   const items = state.items.slice();
@@ -77,8 +77,8 @@ const deleteShareFailure= function(state,{shareId}) {
   return Object.assign({},state,{items});
 };
 
-const deleteShareSuccess= function(state,{shareId}) {
-  const index = state.items.findIndex((item) => item.id==shareId);
+const deleteOsImageSuccess= function(state,{osImageId}) {
+  const index = state.items.findIndex((item) => item.id==osImageId);
   if (index<0) { return state; }
   const items = state.items.slice();
   items.splice(index,1);
@@ -90,32 +90,21 @@ const setSearchTerm= (state,{searchTerm}) => {
   return Object.assign({},state,{searchTerm});
 }
 
-const receiveShareExportLocations= function(state,{shareId,export_locations}){
-  const index = state.items.findIndex((item) => item.id==shareId);
-  if (index<0) { return state; }
-  const items = state.items.slice();
-  let item = Object.assign({},items[index])
-  item.export_locations = export_locations;
-  items[index] = item
-  return Object.assign({},state,{items});
-};
-
-// shares reducer
-export const shares = function(state, action) {
-  if (state == null) { state = initialSharesState; }
+// osImages reducer
+export const osImages = (type) => function(state, action) {
+  const constants = imageConstants(type)
+  if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.SET_SEARCH_TERM: return setSearchTerm(state,action);
-    case constants.RECEIVE_SHARES: return receiveShares(state,action);
-    case constants.REQUEST_SHARES: return requestShares(state,action);
-    case constants.REQUEST_SHARES_FAILURE: return requestSharesFailure(state,action);
-    case constants.REQUEST_SHARE: return requestShare(state,action);
-    case constants.REQUEST_SHARE_FAILURE: return requestShareFailure(state,action);
-    case constants.RECEIVE_SHARE: return receiveShare(state,action);
-    case constants.REQUEST_DELETE_SHARE: return requestDeleteShare(state,action);
-    case constants.DELETE_SHARE_FAILURE: return deleteShareFailure(state,action);
-    case constants.DELETE_SHARE_SUCCESS: return deleteShareSuccess(state,action);
-    case constants.REQUEST_SHARE_EXPORT_LOCATIONS: return state;
-    case constants.RECEIVE_SHARE_EXPORT_LOCATIONS: return receiveShareExportLocations(state,action);
+    case constants.RECEIVE_IMAGES: return receiveOsImages(state,action);
+    case constants.REQUEST_IMAGES: return requestOsImages(state,action);
+    case constants.REQUEST_IMAGES_FAILURE: return requestOsImagesFailure(state,action);
+    case constants.REQUEST_IMAGE: return requestOsImage(state,action);
+    case constants.REQUEST_IMAGE_FAILURE: return requestOsImageFailure(state,action);
+    case constants.RECEIVE_IMAGE: return receiveOsImage(state,action);
+    case constants.REQUEST_DELETE_IMAGE: return requestDeleteOsImage(state,action);
+    case constants.DELETE_IMAGE_FAILURE: return deleteOsImageFailure(state,action);
+    case constants.DELETE_IMAGE_SUCCESS: return deleteOsImageSuccess(state,action);
 
     default: return state;
   }

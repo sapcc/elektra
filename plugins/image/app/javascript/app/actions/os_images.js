@@ -1,326 +1,240 @@
-import * as constants from '../constants';
+import { imageConstants } from '../constants';
 import { ajaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice, addError } from 'lib/flashes';
 
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
-import { removeShareRules } from './share_rules';
 
-//################### SHARES #########################
-const requestShares= () =>
-  ({
-    type: constants.REQUEST_SHARES,
-    requestedAt: Date.now()
-  })
-;
+export default (type) => {
+  const constants = imageConstants(type)
 
-const requestSharesFailure= () => ({type: constants.REQUEST_SHARES_FAILURE});
-
-const receiveShares= (json, hasNext) =>
-  ({
-    type: constants.RECEIVE_SHARES,
-    shares: json,
-    hasNext,
-    receivedAt: Date.now()
-  })
-;
-
-const requestShare= shareId =>
-  ({
-    type: constants.REQUEST_SHARE,
-    shareId,
-    requestedAt: Date.now()
-  })
-;
-
-const requestShareFailure= shareId =>
-  ({
-    type: constants.REQUEST_SHARE_FAILURE,
-    shareId
-  })
-;
-
-const receiveShare= json =>
-  ({
-    type: constants.RECEIVE_SHARE,
-    share: json
-  })
-;
-
-const fetchShares= (page=null) =>
-  function(dispatch,getState) {
-    dispatch(requestShares());
-
-    return ajaxHelper.get('/shares', {params: { page } }).then( (response) => {
-      if (response.data.errors) {
-        addError(React.createElement(ErrorsList, {errors: response.data.errors}))
-      } else {
-        dispatch(receiveShares(response.data.shares, response.data.has_next));
-      }
+  //################### IMAGES #########################
+  const requestOsImages= () =>
+    ({
+      type: constants.REQUEST_IMAGES,
+      requestedAt: Date.now()
     })
-    .catch( (error) => {
-      dispatch(requestSharesFailure());
-      addError(`Could not load shares (${error.message})`)
-    });
-  }
-;
+  ;
 
-const loadNext= () =>
-  function(dispatch, getState) {
-    let state = getState();
+  const requestOsImagesFailure= () => ({type: constants.REQUEST_IMAGES_FAILURE});
 
-    if(!state.shares.isFetching && state.shares.hasNext) {
-      dispatch(fetchShares(state.shares.currentPage+1)).then(() => {
-        // load next if search modus (searchTerm is presented)
-        dispatch(loadNextOnSearch(state.shares.searchTerm))
-      })
-    }
-  }
-;
+  const receiveOsImages= (json, hasNext) =>
+    ({
+      type: constants.RECEIVE_IMAGES,
+      osImages: json,
+      hasNext,
+      receivedAt: Date.now()
+    })
+  ;
 
-const loadNextOnSearch=(searchTerm) =>
-  function(dispatch) {
-    if(searchTerm && searchTerm.trim().length>0) {
-      dispatch(loadNext());
-    }
-  }
-;
+  const requestOsImage= osImageId =>
+    ({
+      type: constants.REQUEST_IMAGE,
+      osImageId,
+      requestedAt: Date.now()
+    })
+  ;
 
-const setSearchTerm= (searchTerm) =>
-  ({
-    type: constants.SET_SEARCH_TERM,
-    searchTerm
-  })
+  const requestOsImageFailure= osImageId =>
+    ({
+      type: constants.REQUEST_IMAGE_FAILURE,
+      osImageId
+    })
+  ;
 
-const searchShares= (searchTerm) =>
-  function(dispatch) {
-    dispatch(setSearchTerm(searchTerm))
-    dispatch(loadNextOnSearch(searchTerm))
-  }
-;
+  const receiveOsImage= json =>
+    ({
+      type: constants.RECEIVE_IMAGE,
+      osImage: json
+    })
+  ;
 
-const shouldFetchShares= function(state) {
-  const { shares } = state;
-  if (shares.isFetching || shares.requestedAt) {
-    return false;
-  } else {
-    return true;
-  }
-};
+  const fetchOsImages= () =>
+    function(dispatch,getState) {
+      dispatch(requestOsImages());
+      const { items } = getState()[type]
+      const marker = items.length > 0 ? items[items.length-1] : null
+      const params = {type}
+      if(marker) params['marker'] = marker.id
 
-const fetchSharesIfNeeded= () =>
-  function(dispatch, getState) {
-    if (shouldFetchShares(getState())) { return dispatch(fetchShares()); }
-  }
-;
-
-const canReloadShare= function(state,shareId) {
-  const { items } = state.shares;
-  let index = items.findIndex(i=>i.id==shareId)
-  if (index<0) { return true; }
-  return !items[index].isFetching;
-};
-
-const reloadShare= shareId =>
-  function(dispatch,getState) {
-    if (!canReloadShare(getState(),shareId)) { return; }
-
-    dispatch(requestShare(shareId));
-    ajaxHelper.get(`/shares/${shareId}`)
-      .then((response) => dispatch(receiveShare(response.data)))
-      .catch((error) => {
-        dispatch(requestShareFailure());
-      }
-    )
-  }
-;
-
-const requestDelete=shareId =>
-  ({
-    type: constants.REQUEST_DELETE_SHARE,
-    shareId
-  })
-;
-
-const deleteShareFailure=shareId =>
-  ({
-    type: constants.DELETE_SHARE_FAILURE,
-    shareId
-  })
-;
-
-const removeShare=shareId =>
-  ({
-    type: constants.DELETE_SHARE_SUCCESS,
-    shareId
-  })
-;
-
-const deleteShare= shareId =>
-  function(dispatch, getState) {
-    const shareSnapshots = [];
-    // check if there are dependent snapshots.
-    // Problem: the snapshots may not be loaded yet
-    const { snapshots } = getState();
-    if (snapshots && snapshots.items) {
-      for (let snapshot of snapshots.items) {
-        if (snapshot.share_id===shareId) { shareSnapshots.push(snapshot); }
-      }
-    }
-
-    if (shareSnapshots.length > 0) {
-      return addNotice(`Share still has ${shareSnapshots.length} dependent snapshots. Please remove dependent snapshots first.`)
-    }
-
-    confirm(`Do you really want to delete the share ${shareId}?`).then(() => {
-      dispatch(requestDelete(shareId));
-      ajaxHelper.delete(`/shares/${shareId}`).then((response) => {
-        if (response.data && response.data.errors) {
-          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
-          dispatch(deleteShareFailure(shareId))
+      return ajaxHelper.get('/ng/images', {params: params }).then( (response) => {
+        if (response.data.errors) {
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}))
         } else {
-          dispatch(removeShare(shareId));
-          dispatch(removeShareRules(shareId));
+          dispatch(receiveOsImages(response.data.os_images, response.data.has_next));
         }
-      }).catch((error) => {
-        dispatch(deleteShareFailure(shareId))
-        addError(React.createElement(ErrorsList, {errors: error.message}));
       })
-    }).catch((aborted) => null)
-  }
-;
-
-//############### SHARE EXPORT LOCATIONS ################
-const requestShareExportLocations= shareId =>
-  ({
-    type: constants.REQUEST_SHARE_EXPORT_LOCATIONS,
-    shareId
-  })
-;
-
-const receiveShareExportLocations= (shareId, json) =>
-  ({
-    type: constants.RECEIVE_SHARE_EXPORT_LOCATIONS,
-    shareId,
-    export_locations: json,
-    receivedAt: Date.now()
-  })
-;
-
-const fetchShareExportLocations= shareId =>
-  function(dispatch) {
-    dispatch(requestShareExportLocations(shareId));
-    ajaxHelper.get(`/shares/${shareId}/export_locations`).then(response => {
-      dispatch(receiveShareExportLocations(shareId,response.data))
-    }).catch((error) => {
-      // dispatch(app.showErrorDialog({title: 'Could not load share export locations', message:jqXHR.responseText}));
-    });
-  }
-;
-
-const shouldFetchShareExportLocations= function(state, shareId) {
-  const { shares } = state;
-  if(!(shares && shares.items && shareId)) return false
-
-  let share = shares.items.find(share => share.id==shareId)
-  if(share && share.export_locations) return false
-  return true
-};
-
-const fetchShareExportLocationsIfNeeded = shareId =>
-  function(dispatch, getState) {
-    if (shouldFetchShareExportLocations(getState(), shareId)) {
-      return dispatch(fetchShareExportLocations(shareId));
+      .catch( (error) => {
+        dispatch(requestOsImagesFailure());
+        addError(`Could not load images (${error.message})`)
+      });
     }
-  }
-;
+  ;
 
-//################ SHARE FORM ###################
-const submitEditShareForm= (values) => (
-  (dispatch) =>
-    new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.put(
-        `/shares/${values.id}`,
-        { share: values }
-      ).then((response) => {
-        if (response.data.errors) handleErrors({errors: response.data.errors});
-        else {
-          dispatch(receiveShare(response.data))
-          handleSuccess()
+  const loadNext= () =>
+    function(dispatch, getState) {
+      let state = getState()[type];
+
+      if(!state.isFetching && state.hasNext) {
+        dispatch(fetchOsImages(state.currentPage+1)).then(() => {
+          // load next if search modus (searchTerm is presented)
+          dispatch(loadNextOnSearch(state.searchTerm))
+        })
+      }
+    }
+  ;
+
+  const loadNextOnSearch=(searchTerm) =>
+    function(dispatch) {
+      if(searchTerm && searchTerm.trim().length>0) {
+        dispatch(loadNext());
+      }
+    }
+  ;
+
+  const setSearchTerm= (searchTerm) =>
+    ({
+      type: constants.SET_SEARCH_TERM,
+      searchTerm
+    })
+
+  const searchOsImages= (searchTerm) =>
+    function(dispatch) {
+      dispatch(setSearchTerm(searchTerm))
+      dispatch(loadNextOnSearch(searchTerm))
+    }
+  ;
+
+  const shouldFetchOsImages= function(state) {
+    const osImages = state[type];
+    if (osImages.isFetching || osImages.requestedAt) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const fetchOsImagesIfNeeded= () =>
+    function(dispatch, getState) {
+      if (shouldFetchOsImages(getState())) { return dispatch(fetchOsImages()); }
+    }
+  ;
+
+  const canReloadOsImage= function(state,osImageId) {
+    const { items } = state[type];
+    let index = items.findIndex(i=>i.id==osImageId)
+    if (index<0) { return true; }
+    return !items[index].isFetching;
+  };
+
+  const reloadOsImage= osImageId =>
+    function(dispatch,getState) {
+      if (!canReloadOsImage(getState(),osImageId)) { return; }
+
+      dispatch(requestOsImage(osImageId));
+      ajaxHelper.get(`/osImages/${osImageId}`)
+        .then((response) => dispatch(receiveOsImage(response.data)))
+        .catch((error) => {
+          dispatch(requestOsImageFailure());
         }
-      }).catch(error => handleErrors({errors:error.message}))
-    )
-);
+      )
+    }
+  ;
 
-const submitNewShareForm= (values) => (
-  (dispatch) =>
-    new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.post(
-        `/shares`,
-        { share: values }
-      ).then((response) => {
-        if (response.data.errors) handleErrors({errors: response.data.errors});
-        else {
-          dispatch(receiveShare(response.data))
-          handleSuccess()
+  const requestDelete=osImageId =>
+    ({
+      type: constants.REQUEST_DELETE_IMAGE,
+      osImageId
+    })
+  ;
+
+  const deleteOsImageFailure=osImageId =>
+    ({
+      type: constants.DELETE_IMAGE_FAILURE,
+      osImageId
+    })
+  ;
+
+  const removeOsImage=osImageId =>
+    ({
+      type: constants.DELETE_IMAGE_SUCCESS,
+      osImageId
+    })
+  ;
+
+  const deleteOsImage= osImageId =>
+    function(dispatch, getState) {
+      const osImageSnapshots = [];
+      // check if there are dependent snapshots.
+      // Problem: the snapshots may not be loaded yet
+      const { snapshots } = getState();
+      if (snapshots && snapshots.items) {
+        for (let snapshot of snapshots.items) {
+          if (snapshot.osImage_id===osImageId) { osImageSnapshots.push(snapshot); }
         }
-      }).catch(error => handleErrors({errors: error.message}))
-    )
-);
+      }
 
-//####################### AVAILABILITY ZONES ###########################
-// Manila availability zones, not nova!!!
-const shouldFetchAvailabilityZones= function(state) {
-  const azs = state.availabilityZones;
+      if (osImageSnapshots.length > 0) {
+        return addNotice(`OsImage still has ${osImageSnapshots.length} dependent snapshots. Please remove dependent snapshots first.`)
+      }
 
-  if (!azs.isFetching && !azs.requestedAt) {
-    return true;
-  } else {
-    return false;
+      confirm(`Do you really want to delete the osImage ${osImageId}?`).then(() => {
+        dispatch(requestDelete(osImageId));
+        ajaxHelper.delete(`/ng/images/${osImageId}`).then((response) => {
+          if (response.data && response.data.errors) {
+            addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+            dispatch(deleteOsImageFailure(osImageId))
+          } else {
+            dispatch(removeOsImage(osImageId));
+            dispatch(removeOsImageRules(osImageId));
+          }
+        }).catch((error) => {
+          dispatch(deleteOsImageFailure(osImageId))
+          addError(React.createElement(ErrorsList, {errors: error.message}));
+        })
+      }).catch((aborted) => null)
+    }
+  ;
+
+
+  //################ IMAGE FORM ###################
+  const submitEditOsImageForm= (values) => (
+    (dispatch) =>
+      new Promise((handleSuccess,handleErrors) =>
+        ajaxHelper.put(
+          `/ng/images/${values.id}`,
+          { osImage: values }
+        ).then((response) => {
+          if (response.data.errors) handleErrors({errors: response.data.errors});
+          else {
+            dispatch(receiveOsImage(response.data))
+            handleSuccess()
+          }
+        }).catch(error => handleErrors({errors:error.message}))
+      )
+  );
+
+  const submitNewOsImageForm= (values) => (
+    (dispatch) =>
+      new Promise((handleSuccess,handleErrors) =>
+        ajaxHelper.post(
+          `/ng/images`,
+          { osImage: values }
+        ).then((response) => {
+          if (response.data.errors) handleErrors({errors: response.data.errors});
+          else {
+            dispatch(receiveOsImage(response.data))
+            handleSuccess()
+          }
+        }).catch(error => handleErrors({errors: error.message}))
+      )
+  );
+
+  return {
+    fetchOsImagesIfNeeded,
+    reloadOsImage,
+    deleteOsImage,
+    searchOsImages,
+    loadNext
   }
-
-};
-const requestAvailableZones= () => ({
-  type: constants.REQUEST_AVAILABLE_ZONES,
-  requestedAt: Date.now()
-});
-
-const requestAvailableZonesFailure= () => ({type: constants.REQUEST_AVAILABLE_ZONES_FAILURE});
-
-const receiveAvailableZones= json =>
-  ({
-    type: constants.RECEIVE_AVAILABLE_ZONES,
-    availabilityZones: json,
-    receivedAt: Date.now()
-  })
-;
-
-const fetchAvailabilityZones=() =>
-  function(dispatch) {
-    dispatch(requestAvailableZones());
-    ajaxHelper.get('/shares/availability_zones')
-      .then((response) => dispatch(receiveAvailableZones(response.data)))
-      .catch((error) => {
-        dispatch(requestAvailableZonesFailure());
-      })
-  }
-;
-
-const fetchAvailabilityZonesIfNeeded= () =>
-  function(dispatch, getState) {
-    if (shouldFetchAvailabilityZones(getState())) { return dispatch(fetchAvailabilityZones()); }
-  }
-;
-
-export {
-  fetchShares,
-  fetchSharesIfNeeded,
-  reloadShare,
-  deleteShare,
-  fetchShareExportLocationsIfNeeded,
-  fetchAvailabilityZonesIfNeeded,
-  submitNewShareForm,
-  submitEditShareForm,
-  searchShares,
-  loadNext
 }

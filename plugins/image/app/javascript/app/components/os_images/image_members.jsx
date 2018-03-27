@@ -1,7 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import AccessControlItem from './access_control_item';
-import AccessControlForm from './access_control_form';
+import ImageMemberItem from './image_member_item';
+import ImageMemberForm from './image_member_form';
 
 const FadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
@@ -9,85 +9,93 @@ const FadeTransition = ({ children, ...props }) => (
   </CSSTransition>
 );
 
-export default class AccessControlModal extends React.Component{
-  constructor(props){
-  	super(props);
-  	this.state = {show: true, showForm: false};
-    this.close = this.close.bind(this)
-    this.toggleForm = this.toggleForm.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+export default class ImageMembersModal extends React.Component{
+  state = {show: true, showForm: false}
+
+  restoreUrl = (e) => {
+    if (!this.state.show)
+      this.props.history.replace(`/os-images/${this.props.activeTab}`)
   }
 
-  close(e) {
-    if(e) e.stopPropagation()
-    //this.props.history.goBack()
+  hide = (e) => {
+    if (e) e.stopPropagation()
     this.setState({show: false})
-    setTimeout(() => this.props.history.replace('/shares'),300)
   }
 
-  toggleForm() {
+  toggleForm = () => {
     this.setState({showForm: !this.state.showForm})
   }
 
-  handleSubmit(values){
+  componentDidMount() {
+    // load dependencies unless already loaded
+    this.loadDependencies(this.props)
+  }
+
+  loadDependencies(props) {
+    if (!props.active)
+      return;
+    props.loadMembersOnce(props.image.id)
+  }
+
+  handleSubmit = (values) => {
     return this.props.handleSubmit(values).then(() =>
       this.setState({showForm:false})
     );
   }
 
   render(){
-    let { share, shareRules, shareNetwork, handleSubmit, handleDelete } = this.props
+    let { image, imageMembers } = this.props
 
     return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal
+        show={this.state.show}
+        onExited={this.restoreUrl}
+        onHide={this.hide}
+        bsSize="large"
+        aria-labelledby="contained-modal-title-lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Access Control for Share {share ? share.name : ''}
+            Access Control for Image {image ? image.name : ''}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { shareRules && shareRules.isFetching ? (
-            <div>
-              <span className='spinner'/>
-              Loading...
-            </div>
-          ) : (
+          { imageMembers && imageMembers.isFetching ?
+            <div><span className='spinner'/>Loading...</div>
+            :
             <table className='table share-rules'>
               <thead>
                 <tr>
-                  <th>Access Type</th>
-                  <th>Access to</th>
-                  <th>Access Level</th>
-                  <th>Status</th>
+                  <th>Target Project</th>
+                  <th className='snug'>Status</th>
                   <th className='snug'></th>
                 </tr>
               </thead>
               <tbody>
-                { !shareRules || shareRules.items.length==0 ? (
-                  <tr><td colSpan='5'>No Rules found.</td></tr>
+                { !imageMembers || imageMembers.items.length==0 ? (
+                  <tr><td colSpan='3'>No members found.</td></tr>
                 ) : (
-                  shareRules.items.map(rule =>
+                  imageMembers.items.map((member,index) =>
                     <AccessControlItem
-                      key={rule.id}
-                      rule={rule}
-                      shareNetwork={shareNetwork}
-                      handleDelete={() => handleDelete(share.id,rule.id)}/>
+                      key={index}
+                      member={member}
+                      handleDelete={() => handleDelete(image.id,member.id)}/>
                   )
                 )}
 
                 <tr>
-                  <td colSpan='4'>
+                  <td>
                     <TransitionGroup>
                       { this.state.showForm &&
                         <FadeTransition>
-                          <AccessControlForm
-                            share={share}
-                            shareNetwork={shareNetwork}
+                          <ImageMemberForm
+                            image={image}
                             handleSubmit={this.handleSubmit}/>
                         </FadeTransition>
                       }
                     </TransitionGroup>
                   </td>
+                  <td></td>
                   <td>
                     <a
                       className={`btn btn-${this.state.showForm ? 'default' : 'primary'} btn-sm`}
@@ -99,11 +107,11 @@ export default class AccessControlModal extends React.Component{
                 </tr>
               </tbody>
             </table>
-          )}
+          }
 
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.close}>Close</Button>
+          <Button onClick={this.hide}>Close</Button>
         </Modal.Footer>
       </Modal>
     )

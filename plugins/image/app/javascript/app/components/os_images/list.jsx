@@ -1,42 +1,38 @@
-import { Link } from 'react-router-dom';
-import { DefeatableLink } from 'lib/components/defeatable_link';
-import { Popover, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { FadeTransition } from 'lib/components/transitions';
-import { policy } from 'policy';
+import {Link} from 'react-router-dom';
+import {DefeatableLink} from 'lib/components/defeatable_link';
+import {Popover, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
+import {FadeTransition} from 'lib/components/transitions';
+import {policy} from 'policy';
 import SearchField from 'lib/components/search_field';
-import ShareItem from './item';
+import Item from './item';
 import AjaxPaginate from 'lib/components/ajax_paginate';
-import { NoShareNetworksPopover } from './no_share_networks_popover';
 
-const loadingShareNetworksInfo = (
-  <Popover id="popover-loading-share-networks" title="Loading Share Networks ...">
-    Please wait.
-  </Popover>
-);
-
-const azTooltip = (
-  <Tooltip id="azTooltip">Availability Zone</Tooltip>
-);
-
-const TableRowFadeTransition = ({ children, ...props }) => (
-  <CSSTransition {...props} timeout={200} classNames="css-transition-fade">
-    {children}
-  </CSSTransition>
-);
+const TableRowFadeTransition = ({
+  children,
+  ...props
+}) => (<CSSTransition {...props} timeout={200} classNames="css-transition-fade">
+  {children}
+</CSSTransition>);
 
 export default class List extends React.Component {
-  constructor(props) {
-    super(props);
-    this.shareNetwork = this.shareNetwork.bind(this)
-    this.shareRules = this.shareRules.bind(this)
-    this.toolbar = this.toolbar.bind(this)
-    this.renderTable = this.renderTable.bind(this)
-    this.filterShares = this.filterShares.bind(this)
+  state = {
+    visibilityFilters: [],
+    activeFilter: null
   }
 
   componentWillReceiveProps(nextProps) {
-    // load dependencies unless already loaded
+    if (nextProps.items && nextProps.items.length > 0) {
+
+      // build available filters array
+      let availableFilters = []
+      for(let i of nextProps.items) {
+        if(availableFilters.indexOf(i.visibility) <0) availableFilters.push(i.visibility)
+      }
+      let activeFilter = this.state.activeFilter || availableFilters[0]
+      // set available filters and set active filter to the first
+      this.setState({visibilityFilters: availableFilters, activeFilter: activeFilter})
+    }
     this.loadDependencies(nextProps)
   }
 
@@ -46,146 +42,107 @@ export default class List extends React.Component {
   }
 
   loadDependencies(props) {
-    if(!props.active) return;
-    props.loadSharesOnce()
-    props.loadShareNetworksOnce()
-    props.loadAvailabilityZonesOnce()
+    if (!props.active)
+      return;
+    props.loadOsImagesOnce()
   }
 
-  shareNetwork(share) {
-    for (let network of this.props.shareNetworks.items) {
-      if (network.id==share.share_network_id) return network
-    }
-    return null
+  changeActiveFilter = (name) => {
+    // set active filter in state to the name
+    this.setState({activeFilter: name})
   }
 
-  shareRules(share) {
-    let rules = this.props.shareRules[share.id]
-    if (!rules) return null;
-    return rules
-  }
+  filterItems = () => {
+    // filter items dependent on the active filter
+    let items = this.props.items.filter((i) => this.state.activeFilter==i.visibility)
 
-  filterShares() {
-    if(!this.props.searchTerm) return this.props.items;
+    if (!this.props.searchTerm)
+      return items;
 
-    // filter items
+    // search term is given -> filter items dependent on the search term
     const regex = new RegExp(this.props.searchTerm.trim(), "i");
-    return this.props.items.filter((i) =>
-      `${i.name} ${i.id} ${i.share_proto} ${i.status}`.search(regex) >= 0
-    )
+    return items.filter((i) => `${i.name} ${i.id} ${i.format} ${i.status}`.search(regex) >= 0)
   }
 
-  toolbar() {
-    if (!policy.isAllowed('shared_filesystem_storage:share_create')) return null;
+  toolbar = () => {
+    // return null if no items available
+    if (this.props.items.length <= 0)
+      return null;
 
-    let { shareNetworks: {items: shareNetworkItems, isFetching: fetchingShareNetworks} } = this.props
-    let hasShareNetworks = shareNetworkItems && shareNetworkItems.length>0
+    return (<div className='toolbar'>
+      <SearchField onChange={(term) => this.props.searchOsImages(term)} placeholder='name, ID, format or status' text='Searches by name, ID, format or status in visible images list only.
+                Entering a search term will automatically start loading the next pages
+                and filter the loaded items using the search term. Emptying the search
+                input field will show all currently loaded items.'/>
+              {this.state.visibilityFilters.length > 1 && // show filter checkboxes
+          <React.Fragment>
+            <span className="toolbar-input-divider"></span>
+            <label>Show:</label>
+            {this.state.visibilityFilters.map((name, index) =>
+              <label className="radio-inline" key={index}>
+                <input
+                  type="radio"
+                  onChange={() => this.changeActiveFilter(name)}
+                  checked={this.state.activeFilter==name}
+                />{name}
+              </label>
+            )}
+          </React.Fragment>
+      }
+    </div>)
+  }
 
-    return (
-      <div className='toolbar'>
-        { this.props.items.length>0 &&
-          <SearchField
-            onChange={(term) => this.props.searchShares(term)}
-            placeholder='name, ID, protocol or status'
-            text='Searches by name, ID, protocol or status in visible shares list only.
-                  Entering a search term will automatically start loading the next pages
-                  and filter the loaded items using the search term. Emptying the search
-                  input field will show all currently loaded items.'/>
-        }
+  renderTable = () => {
+    let items = this.filterItems()
 
-        <DefeatableLink
-          to='/shares/new'
-          className='btn btn-primary'
-          disabled={!hasShareNetworks}>
-          Create new
-        </DefeatableLink>
+    return (<div>
+      <table className='table shares'>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Format</th>
+            <th>Size</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <TransitionGroup component="tbody">
+          {
+            items && items.length > 0
+              ? (items.map((image, index) => !image.isHidden && <TableRowFadeTransition key={index}>
+                <Item
+                  {...this.props}
+                  image={image}
+                  activeTab={this.props.activeTab} />
+              </TableRowFadeTransition>))
+              : (<TableRowFadeTransition>
+                <tr>
+                  <td colSpan="7">{
+                      this.props.isFetching
+                        ? <span className='spinner'/>
+                        : 'No images found.'
+                    }</td>
+                </tr>
+              </TableRowFadeTransition>)
+          }
 
-        <TransitionGroup>
-          { fetchingShareNetworks ? (
-            <FadeTransition>
-              <OverlayTrigger trigger="click" placement="top" rootClose overlay={loadingShareNetworksInfo}>
-                <span className="pull-right"><a href="#"><span className="spinner"></span></a></span>
-              </OverlayTrigger>
-            </FadeTransition>
-          ) : ( !hasShareNetworks &&
-            <FadeTransition>
-              <NoShareNetworksPopover className="pull-right"/>
-            </FadeTransition>
-          )}
         </TransitionGroup>
+      </table>
 
-      </div>
-    )
-  }
-
-  renderTable() {
-    let items = this.filterShares()
-
-    return (
-      <div>
-        <table className='table shares'>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>
-                AZ
-                <OverlayTrigger placement="top" overlay={azTooltip}>
-                  <i className='fa fa-fw fa-info-circle'/>
-                </OverlayTrigger>
-              </th>
-              <th>Protocol</th>
-              <th>Size</th>
-              <th>Status</th>
-              <th>Network</th>
-              <th></th>
-            </tr>
-          </thead>
-          <TransitionGroup component="tbody">
-
-              { items && items.length>0 ? (
-                  items.map( (share, index) =>
-                    !share.isHidden && <TableRowFadeTransition key={index}>
-                        <ShareItem
-                          share={share}
-                          shareNetwork={this.shareNetwork(share)}
-                          shareRules={this.shareRules(share)}
-                          handleDelete={this.props.handleDelete}
-                          reloadShare={this.props.reloadShare}
-                          loadShareRulesOnce={this.props.loadShareRulesOnce}
-                          policy={this.props.policy}/>
-                      </TableRowFadeTransition>
-                  )
-                ) : (
-                  <TableRowFadeTransition>
-                    <tr>
-                      <td colSpan="6">{ this.props.isFetching ? <span className='spinner'/> : 'No Shares found.' }</td>
-                    </tr>
-                  </TableRowFadeTransition>
-                )
-              }
-
-          </TransitionGroup>
-        </table>
-
-        <AjaxPaginate
-          hasNext={this.props.hasNext}
-          isFetching={this.props.isFetching}
-          onLoadNext={this.props.loadNext}/>
-      </div>
-    )
+      <AjaxPaginate hasNext={this.props.hasNext} isFetching={this.props.isFetching} onLoadNext={this.props.loadNext}/>
+    </div>)
   }
 
   render() {
-    return (
-      <div>
-        { this.toolbar() }
-        { !policy.isAllowed('shared_filesystem_storage:share_list') ? (
-            <span>You are not allowed to see this page</span>
-          ) : (
-            this.renderTable()
-          )
-        }
-      </div>
-    )
+    return (<div>
+      {this.toolbar()}
+      {
+        !policy.isAllowed('image:image_list')
+          ? (<span>You are not allowed to see this page</span>)
+          : (this.renderTable())
+      }
+    </div>)
   }
 }
