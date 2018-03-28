@@ -41,6 +41,11 @@
             selected: @security_groups.first.id,
             wrapper_html: {class: ("hidden" unless @rule.remote_ip_prefix.blank?)} }
 
+          %p#wrapper_has_read_documentation{class: "text-danger " + ("hidden" unless @rule.remote_ip_prefix.blank?)}
+            This should only be used if you operate within the documented boundaries. Please review the
+            = succeed '.' do
+              = link_to 'recommendations for security group design', "#{@sap_docu_url}/docs/network/secgroup-design.html", target: '_blank'
+
           = f.input :ethertype, {label: 'Ether Type',
             as: :select,
             collection: [["IPv4","ipv4"],["IPv6","ipv6"]],
