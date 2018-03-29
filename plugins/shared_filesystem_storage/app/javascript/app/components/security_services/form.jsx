@@ -52,7 +52,7 @@ export default class SecurityServiceForm extends React.Component {
           <Form.ElementHorizontal label='DNS IP' name="dns_ip">
             <Form.Input elementType='input'/>
             <p className="help-block">
-              <i className="fa fa-info-circle"/>Please provide an IP (ipv4) of your AD's DNS
+              <i className="fa fa-info-circle"/>Please provide an IP (ipv4) of your AD's DNS. You can specify multiple addresses separated by commas.
             </p>
           </Form.ElementHorizontal>
 
