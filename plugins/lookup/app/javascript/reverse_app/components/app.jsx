@@ -1,4 +1,5 @@
-import ProjectDetails from './projectDetails';
+// import ProjectDetails from './projectDetails';
+import ProjectDetails from '../containers/projectDetails';
 
 class App extends React.Component {
 
@@ -64,7 +65,7 @@ class App extends React.Component {
             </span>
           }
           { this.props.project.data &&
-            <ProjectDetails project={this.props.project.data} domain={this.props.domain} parents={this.props.parents} users={this.props.users}/>
+            <ProjectDetails project={this.props.project.data} />
           }
         </div>
         {this.props.modal &&

@@ -1,5 +1,6 @@
 import Parents from './parents';
 import Users from './users';
+import Groups from '../containers/groups';
 
 class ProjectDetails extends React.Component {
   render() {
@@ -66,6 +67,22 @@ class ProjectDetails extends React.Component {
                 {
                   this.props.users.data &&
                   <Users users={this.props.users.data} />
+                }
+              </td>
+            </tr>
+            <tr>
+              <th>Groups:</th>
+              <td>
+                {this.props.groups.isFetching &&
+                  <span className="spinner" />
+                }
+                {
+                  this.props.groups.error &&
+                  <span className="text-danger">{this.props.groups.error.error}</span>
+                }
+                {
+                  this.props.groups.data &&
+                  <Groups groups={this.props.groups.data} />
                 }
               </td>
             </tr>

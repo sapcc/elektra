@@ -13,3 +13,11 @@ export const REQUEST_PARENTS_FAILURE          = 'reverselookup/project/REQUEST_P
 export const REQUEST_USERS                  = 'reverselookup/project/REQUEST_USERS';
 export const RECEIVE_USERS                  = 'reverselookup/project/RECEIVE_USERS';
 export const REQUEST_USERS_FAILURE          = 'reverselookup/project/REQUEST_USERS_FAILURE';
+
+export const REQUEST_GROUPS                  = 'reverselookup/project/REQUEST_GROUPS';
+export const RECEIVE_GROUPS                  = 'reverselookup/project/RECEIVE_GROUPS';
+export const REQUEST_GROUPS_FAILURE          = 'reverselookup/project/REQUEST_GROUPS_FAILURE';
+
+export const REQUEST_GROUPMEMBERS                  = 'reverselookup/project/REQUEST_GROUPMEMBERS';
+export const RECEIVE_GROUPMEMBERS                  = 'reverselookup/project/RECEIVE_GROUPMEMBERS';
+export const REQUEST_GROUPMEMBERS_FAILURE          = 'reverselookup/project/REQUEST_GROUPMEMBERS_FAILURE';

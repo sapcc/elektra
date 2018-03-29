@@ -3,6 +3,7 @@ import { ajaxHelper } from 'ajax_helper';
 import { fetchDomain } from './domain';
 import { fetchParents } from './parents';
 import { fetchUsers } from './users';
+import { fetchGroups } from './groups';
 import { addNotice as showNotice, addError as showError } from 'lib/flashes';
 
 //################### PROJECT #########################
@@ -50,6 +51,7 @@ const fetchProjectForm= (value) => (
           dispatch(fetchDomain(response.data.domainId))
           dispatch(fetchParents(response.data.id))
           dispatch(fetchUsers(response.data.id, response.data.searchBy))
+          dispatch(fetchGroups(response.data.id, response.data.searchBy))
           handleSuccess()
         }
       }).catch(error => {

@@ -17,4 +17,6 @@ Lookup::Engine.routes.draw do
   get 'reverselookup/domain/:reverseLookupDomainId' => 'reverse_lookup#domain'
   get 'reverselookup/parents/:reverseLookupProjectId' => 'reverse_lookup#parents'
   get 'reverselookup/users/:reverseLookupProjectId' => 'reverse_lookup#users'
+  get 'reverselookup/groups/:reverseLookupProjectId' => 'reverse_lookup#groups'
+  get 'reverselookup/group_members/:reverseLookupGrouptId' => 'reverse_lookup#group_members'
 end

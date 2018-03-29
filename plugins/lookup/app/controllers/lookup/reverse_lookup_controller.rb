@@ -3,8 +3,9 @@
 module Lookup
   # Collect project information
   class ReverseLookupController < DashboardController
+    before_action :role_assigments, only: [:users, :groups]
 
-    module SEARCH_BY
+    module SearchBy
       IP = 'ip'
       DNS = 'dns'
     end
@@ -37,24 +38,9 @@ module Lookup
     end
 
     def users
-      project_id = params[:reverseLookupProjectId]
-      filter_by = params[:filterby]
-      # role object
-      role = nil
-      if filter_by == SEARCH_BY::IP
-        role = cloud_admin.identity.find_role_by_name('network_admin')
-      elsif filter_by == SEARCH_BY::DNS
-        role = cloud_admin.identity.find_role_by_name('dns_admin')
-      end
-      # role assigments
-      assigments = cloud_admin.identity.role_assignments(
-        'scope.project.id' => project_id,
-        'role.id' => role.id,
-        include_names: true
-      )
       # get users
       ra_users = []
-      assigments.reject{ |ra| ra.user.blank? }.each_with_object([]) do |ra, _|
+      @assigments.reject{ |ra| ra.user.blank? }.each_with_object([]) do |ra, _|
         user_profile = UserProfile.search_by_name(ra.user[:name]).first
         user = { name: ra.user[:name], id: ra.user[:id] }
         user[:fullName] = user_profile['full_name'] unless user_profile.blank?
@@ -62,6 +48,18 @@ module Lookup
       end
 
       render json: ra_users
+    end
+
+    def groups
+      groups = @assigments.reject{ |ra| ra.group.blank? }.map do |ra|
+        { id: ra.group[:id], name: ra.group[:name] }
+      end
+
+      render json: groups
+    end
+
+    def group_members
+      render json: {name: 'arturo', id: '123'}
     end
 
     def search
@@ -77,7 +75,7 @@ module Lookup
       # decide if IP or DNS
       if (IPAddr.new(search_value) rescue false)
         res[:searchValue] = search_value
-        res[:searchBy] = SEARCH_BY::IP
+        res[:searchBy] = SearchBy::IP
 
         # floating IPs
         floating_ip = cloud_admin.networking.floating_ips(floating_ip_address: search_value).first
@@ -102,6 +100,24 @@ module Lookup
         # head 500
       end
       render json: res
+    end
+
+    def role_assigments
+      project_id = params[:reverseLookupProjectId]
+      filter_by = params[:filterby]
+      # role object
+      role = nil
+      if filter_by == SearchBy::IP
+        role = cloud_admin.identity.find_role_by_name('network_admin')
+      elsif filter_by == SearchBy::DNS
+        role = cloud_admin.identity.find_role_by_name('dns_admin')
+      end
+      # role assigments
+      @assigments = cloud_admin.identity.role_assignments(
+        'scope.project.id' => project_id,
+        'role.id' => role.id,
+        include_names: true
+      )
     end
 
     def flatten_nested_hash(hash)
