@@ -31,14 +31,21 @@ export default class ImageMembersModal extends React.Component{
     this.loadDependencies(this.props)
   }
 
+  componentWillReceiveProps(props) {
+    this.loadDependencies(props)
+  }
+
+  componentWillUnmount() {
+    this.props.resetImageMembers(this.props.image.id)
+  }
+
   loadDependencies(props) {
-    if (!props.active)
-      return;
+    if(!props.image) return
     props.loadMembersOnce(props.image.id)
   }
 
-  handleSubmit = (values) => {
-    return this.props.handleSubmit(values).then(() =>
+  handleSubmit = (imageId, memberId) => {
+    return this.props.handleSubmit(imageId, memberId).then(() =>
       this.setState({showForm:false})
     );
   }
@@ -60,7 +67,7 @@ export default class ImageMembersModal extends React.Component{
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { imageMembers && imageMembers.isFetching ?
+          { !imageMembers || imageMembers.isFetching ?
             <div><span className='spinner'/>Loading...</div>
             :
             <table className='table share-rules'>
@@ -68,7 +75,7 @@ export default class ImageMembersModal extends React.Component{
                 <tr>
                   <th>Target Project</th>
                   <th className='snug'>Status</th>
-                  <th className='snug'></th>
+                  <th className='actions'></th>
                 </tr>
               </thead>
               <tbody>
@@ -76,35 +83,37 @@ export default class ImageMembersModal extends React.Component{
                   <tr><td colSpan='3'>No members found.</td></tr>
                 ) : (
                   imageMembers.items.map((member,index) =>
-                    <AccessControlItem
+                    <ImageMemberItem
                       key={index}
                       member={member}
-                      handleDelete={() => handleDelete(image.id,member.id)}/>
+                      image={image}
+                      handleDelete={() => this.props.handleDelete(image.id,member.member_id)}/>
                   )
                 )}
 
-                <tr>
-                  <td>
-                    <TransitionGroup>
-                      { this.state.showForm &&
-                        <FadeTransition>
-                          <ImageMemberForm
-                            image={image}
-                            handleSubmit={this.handleSubmit}/>
-                        </FadeTransition>
-                      }
-                    </TransitionGroup>
-                  </td>
-                  <td></td>
-                  <td>
-                    <a
-                      className={`btn btn-${this.state.showForm ? 'default' : 'primary'} btn-sm`}
-                      href='#'
-                      onClick={(e) => { e.preventDefault(); this.toggleForm()}}>
-                      <i className={`fa ${this.state.showForm ? 'fa-close' : 'fa-plus'}`}/>
-                    </a>
-                  </td>
-                </tr>
+                { policy.isAllowed('image:member_create', {image: image}) &&
+                  <tr>
+                    <td>
+                      <TransitionGroup>
+                        { this.state.showForm &&
+                          <FadeTransition>
+                            <ImageMemberForm
+                              handleSubmit={(memberId) => this.handleSubmit(image.id, memberId)}/>
+                          </FadeTransition>
+                        }
+                      </TransitionGroup>
+                    </td>
+                    <td></td>
+                    <td>
+                      <a
+                        className={`btn btn-${this.state.showForm ? 'default' : 'primary'} btn-sm pull-right`}
+                        href='#'
+                        onClick={(e) => { e.preventDefault(); this.toggleForm()}}>
+                        <i className={`fa ${this.state.showForm ? 'fa-close' : 'fa-plus'}`}/>
+                      </a>
+                    </td>
+                  </tr>
+                }
               </tbody>
             </table>
           }

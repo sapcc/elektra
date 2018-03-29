@@ -29,7 +29,11 @@ export default class List extends React.Component {
       for(let i of nextProps.items) {
         if(availableFilters.indexOf(i.visibility) <0) availableFilters.push(i.visibility)
       }
-      let activeFilter = this.state.activeFilter || availableFilters[0]
+      availableFilters.sort()
+      let index = availableFilters.indexOf('public')
+      if(index < 0) index = 0
+
+      let activeFilter = this.state.activeFilter || availableFilters[index]
       // set available filters and set active filter to the first
       this.setState({visibilityFilters: availableFilters, activeFilter: activeFilter})
     }
@@ -115,6 +119,8 @@ export default class List extends React.Component {
                 <Item
                   {...this.props}
                   image={image}
+                  handleAccept={this.props.handleAccept}
+                  handleReject={this.props.handleReject}
                   activeTab={this.props.activeTab} />
               </TableRowFadeTransition>))
               : (<TableRowFadeTransition>
@@ -127,7 +133,6 @@ export default class List extends React.Component {
                 </tr>
               </TableRowFadeTransition>)
           }
-
         </TransitionGroup>
       </table>
 

@@ -8,8 +8,6 @@ import SuggestedImages from '../containers/os_images/list_suggested'
 import ShowImageModal from '../containers/os_images/show';
 import ImageMembersModal from '../containers/os_images/image_members';
 
-let NewImageModal =() => <div>Test</div>
-
 const tabsConfig = [
   { to: '/os-images/available', label: 'Available', component: AvailableImages },
   { to: '/os-images/suggested', label: 'Suggested', component: SuggestedImages }

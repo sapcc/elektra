@@ -2,56 +2,70 @@ import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice, addError } from 'lib/flashes';
-
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
-//################### IMAGES #########################
-const requestImageMembers= () =>
-  ({
-    type: constants.REQUEST_IMAGE_MEMBERS,
-    requestedAt: Date.now()
-  })
-;
+import imageActions from './os_images'
 
-const requestImageMembersFailure= () => (
-  {type: constants.REQUEST_IMAGE_MEMBERS_FAILURE}
+//################### IMAGES #########################
+const requestImageMembers= (imageId) => (
+  {
+    type: constants.REQUEST_IMAGE_MEMBERS,
+    imageId,
+    requestedAt: Date.now()
+  }
+)
+
+const requestImageMembersFailure= (imageId) => (
+  {
+    type: constants.REQUEST_IMAGE_MEMBERS_FAILURE,
+    imageId
+  }
 );
 
-const receiveImageMembers= (json) =>
+const receiveImageMembers= (imageId,json) =>
   ({
     type: constants.RECEIVE_IMAGE_MEMBERS,
     items: json,
+    imageId,
     receivedAt: Date.now()
   })
 ;
 
-const receiveImageMember= (member) =>
+const receiveImageMember= (imageId,member) =>
   ({
     type: constants.RECEIVE_IMAGE_MEMBER,
+    imageId,
     member
   })
 ;
 
 const fetchImageMembers= (imageId) =>
   function(dispatch) {
-    dispatch(requestImageMembers());
-
+    dispatch(requestImageMembers(imageId));
     return ajaxHelper.get(`/ng/images/${imageId}/members`).then( (response) => {
       if (response.data.errors) {
         addError(React.createElement(ErrorsList, {errors: response.data.errors}))
       } else {
-        dispatch(receiveImageMembers(response.data.members));
+        dispatch(receiveImageMembers(imageId,response.data.members));
       }
     })
     .catch( (error) => {
-      dispatch(requestImageMembersFailure());
+      dispatch(requestImageMembersFailure(imageId));
       addError(`Could not load image members (${error.message})`)
     });
   }
 ;
 
-const shouldFetchImageMembers= (state) => {
-  const members = state.imageMembers;
+const resetImageMembers= (imageId) => {
+  return {
+    type: constants.RESET_IMAGE_MEMBERS,
+    imageId
+  }
+}
+
+const shouldFetchImageMembers= (imageId,state) => {
+  const members = state.imageMembers[imageId] || {};
+
   if (members.isFetching || members.requestedAt) {
     return false;
   } else {
@@ -59,73 +73,113 @@ const shouldFetchImageMembers= (state) => {
   }
 };
 
-const fetchImageMembersIfNeeded= () =>
+const fetchImageMembersIfNeeded= (imageId) =>
   function(dispatch, getState) {
-    if (shouldFetchImageMembers(getState())) {
-      return dispatch(fetchImageMembers());
+    if (shouldFetchImageMembers(imageId,getState())) {
+      return dispatch(fetchImageMembers(imageId));
     }
   }
 ;
 
-const requestDeleteMember= memberId =>
+const requestDeleteMember= (imageId,memberId) =>
   ({
     type: constants.REQUEST_DELETE_IMAGE_MEMBER,
+    imageId,
     memberId
   })
 ;
 
-const deleteImageMemberFailure=memberId =>
+const deleteImageMemberFailure=(imageId,memberId) =>
   ({
     type: constants.DELETE_IMAGE_MEMBER_FAILURE,
+    imageId,
     memberId
   })
 ;
 
-const removeImageMember=memberId =>
+const removeImageMember=(imageId,memberId) =>
   ({
     type: constants.DELETE_IMAGE_MEMBER,
+    imageId,
     memberId
   })
 ;
 
 const deleteImageMember= (imageId,memberId) =>
   function(dispatch) {
-    confirm(`Do you really want to delete the member ${memberId}?`).then(() => {
-      dispatch(requestDeleteMember(memberId));
-      ajaxHelper.delete(`/ng/images/${imageId}/members/${memberId}`).then((response) => {
-        if (response.data && response.data.errors) {
-          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
-          dispatch(deleteImageMemberFailure(memberId))
-        } else {
-          dispatch(removeImageMember(memberId));
-        }
-      }).catch((error) => {
-        dispatch(deleteImageMemberFailure(memberId))
-        addError(React.createElement(ErrorsList, {errors: error.message}));
-      })
-    }).catch((aborted) => null)
+    dispatch(requestDeleteMember(imageId,memberId));
+    ajaxHelper.delete(`/ng/images/${imageId}/members/${memberId}`).then((response) => {
+      if (response.data && response.data.errors) {
+        addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+        dispatch(deleteImageMemberFailure(imageId,memberId))
+      } else {
+        dispatch(removeImageMember(imageId,memberId));
+      }
+    }).catch((error) => {
+      dispatch(deleteImageMemberFailure(memberId))
+      addError(React.createElement(ErrorsList, {errors: error.message}));
+    })
   }
 ;
 
 //################ IMAGE FORM ###################
-const submitNewImageMember= (values) => (
+const submitNewImageMember= (imageId,memberId) => (
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) =>
       ajaxHelper.post(
-        `/ng/images/${values.imageId}/members`,
-        { member: values }
+        `/ng/images/${imageId}/members`,
+        { member_id: memberId }
       ).then((response) => {
         if (response.data.errors) handleErrors({errors: response.data.errors});
         else {
-          dispatch(receiveImageMember(response.data))
+          dispatch(receiveImageMember(imageId,response.data))
           handleSuccess()
         }
       }).catch(error => handleErrors({errors: error.message}))
     )
 );
 
+const acceptSuggestedImage = (imageId) => (
+  (dispatch, getState) => {
+    dispatch(imageActions('suggested').requestOsImage(imageId))
+    return ajaxHelper.put(
+      `/ng/images/${imageId}/members/accept`,
+      { image_id: imageId }
+    ).then((response) => {
+      if (response.data.errors)
+        addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+      else {
+        if (getState().available.requestedAt)
+          dispatch(imageActions('available').receiveOsImage(response.data))
+          
+        dispatch(imageActions('suggested').removeOsImage(imageId))
+      }
+    })
+  }
+)
+
+const rejectSuggestedImage = (imageId) => (
+  (dispatch) => {
+    dispatch(imageActions('suggested').requestOsImage(imageId))
+    return ajaxHelper.put(
+      `/ng/images/${imageId}/members/reject`,
+      { image_id: imageId }
+    ).then((response) => {
+      if (response.data.errors)
+        addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+      else {
+        dispatch(imageActions('suggested').removeOsImage(imageId))
+      }
+    })
+  }
+)
+
 export {
   fetchImageMembers,
+  resetImageMembers,
+  fetchImageMembersIfNeeded,
   deleteImageMember,
-  submitNewImageMember
+  submitNewImageMember,
+  acceptSuggestedImage,
+  rejectSuggestedImage
 }

@@ -5,7 +5,7 @@ import { PrettyDate } from 'lib/components/pretty_date';
 import { PrettySize } from 'lib/components/pretty_size';
 
 export const ImageIcon = ({image}) => {
-  const tooltip = <Tooltip id='iconTooltip'>{image.visibility}</Tooltip>;
+  const tooltip = <Tooltip id='imageIconTooltip'>{image.visibility}</Tooltip>;
   let iconType;
   switch(image.visibility) {
     case 'public': iconType='fa-cloud'; break;
@@ -26,7 +26,7 @@ export const ImageIcon = ({image}) => {
 }
 
 export const OwnerIcon = () => {
-  const tooltip = <Tooltip id='iconTooltip'>Owned by this project</Tooltip>;
+  const tooltip = <Tooltip id='ownerIconTooltip'>Owned by this project</Tooltip>;
 
   return (
     <OverlayTrigger
@@ -35,6 +35,20 @@ export const OwnerIcon = () => {
       delayShow={300}
       delayHide={150}>
       <i className='text-primary fa fa-fw fa-user'/>
+    </OverlayTrigger>
+  )
+}
+
+export const SnapshotIcon = () => {
+  const tooltip = <Tooltip id='snapshotIconTooltip'>Snapshot</Tooltip>;
+
+  return (
+    <OverlayTrigger
+      overlay={tooltip}
+      placement="top"
+      delayShow={300}
+      delayHide={150}>
+      <i className='fa fa-fw fa-camera'/>
     </OverlayTrigger>
   )
 }
@@ -50,13 +64,13 @@ export default (props) => {
   )
 
   return(
-    <tr className={ image.isDeleting ? 'updating' : ''}>
+    <tr className={ (image.isDeleting || image.isFetching) ? 'updating' : ''}>
       <td className="snug">
         <ImageIcon image={image}/>
         {policy.isAllowed("image:image_owner", {image}) && <OwnerIcon/>}
       </td>
       <td>
-        <Link to={`/os-images/${props.activeTab}/${image.id}/show`}>{image.name || image.id}</Link>
+        <Link to={`/os-images/${props.activeTab}/${image.id}/show`}>{image.image_type=='snapshot' && <SnapshotIcon/>} {image.name || image.id}</Link>
         { image.name && <span className='info-text'><br/>{image.id}</span> }
       </td>
       <td>{image.disk_format}</td>
@@ -74,7 +88,7 @@ export default (props) => {
               <i className='fa fa-cog'></i>
             </button>
             <ul className='dropdown-menu dropdown-menu-right' role='menu'>
-              { canCreateInstance &&
+              { props.activeTab !== 'suggested' && canCreateInstance &&
                 <li>
                   <a
                     href={`${props.launchInstanceUrl}?image_id=${image.id}`}
@@ -84,22 +98,22 @@ export default (props) => {
                 </li>
               }
               { props.activeTab == 'suggested' && image.visibility == 'shared' &&
-                <li><a href='#' onClick={(e) => props.handleAccept(image.id)}>Accept</a></li>
+                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleAccept(image.id)}}>Accept</a></li>
               }
               { props.activeTab == 'suggested' && image.visibility == 'shared' &&
-                <li><a href='#' onClick={(e) => props.handleReject(image.id)}>Reject</a></li>
+                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleReject(image.id)}}>Reject</a></li>
               }
               { props.activeTab == 'available' && (image.visibility == 'shared' || image.visibility == 'private') &&
                 <li><Link to={`/os-images/${props.activeTab}/${image.id}/members`}>Access Control</Link></li>
               }
               { image.visibility == 'public' && policy.isAllowed("image:image_unpublish") &&
-                <li><a href='#' onClick={() => props.handleUnpublish(image.id)}>Unpublish</a></li>
+                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleUnpublish(image.id)}}>Unpublish</a></li>
               }
               { image.visibility != 'public' && policy.isAllowed("image:image_publish") &&
-                <li><a href='#' onClick={(e) => props.handlePublish(image.id)}>Publish</a></li>
+                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handlePublish(image.id)}}>Publish</a></li>
               }
               { policy.isAllowed("image:image_delete", {image}) &&
-                <li><a href='#' onClick={(e) => props.handleDelete(image.id)}>Delete</a></li>
+                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleDelete(image.id)}}>Delete</a></li>
               }
             </ul>
           </div>

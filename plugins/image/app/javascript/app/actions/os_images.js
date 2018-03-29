@@ -186,7 +186,6 @@ export default (type) => {
             dispatch(deleteOsImageFailure(osImageId))
           } else {
             dispatch(removeOsImage(osImageId));
-            dispatch(removeOsImageRules(osImageId));
           }
         }).catch((error) => {
           dispatch(deleteOsImageFailure(osImageId))
@@ -230,11 +229,48 @@ export default (type) => {
       )
   );
 
+  const publishImage = (imageId) => (
+    (dispatch) => {
+      dispatch(requestOsImage(imageId))
+      return ajaxHelper.put(
+        `/ng/images/${imageId}/publish`,
+        { id: imageId }
+      ).then((response) => {
+        if (response.data.errors)
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+        else {
+          dispatch(receiveOsImage(response.data))
+        }
+      })
+    }
+  )
+
+  const unpublishImage = (imageId) => (
+    (dispatch) => {
+      dispatch(requestOsImage(imageId))
+      return ajaxHelper.put(
+        `/ng/images/${imageId}/unpublish`,
+        { id: imageId }
+      ).then((response) => {
+        if (response.data.errors)
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+        else {
+          dispatch(receiveOsImage(response.data))
+        }
+      })
+    }
+  )
+
   return {
+    requestOsImage,
+    receiveOsImage,
+    removeOsImage,
     fetchOsImagesIfNeeded,
     reloadOsImage,
     deleteOsImage,
     searchOsImages,
-    loadNext
+    loadNext,
+    publishImage,
+    unpublishImage
   }
 }

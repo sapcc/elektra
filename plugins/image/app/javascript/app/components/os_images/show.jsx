@@ -57,7 +57,10 @@ export default class ShowModal extends React.Component {
               <tbody>
                 <Row label='Name' value={image.name}/>
                 <Row label='ID' value={image.id}/>
-                <Row label='Owner Project' value={image.owner}/>
+                <Row label='Owner Project'>
+                  {image.project_name || image.owner}
+                  {image.project_name && <span className='info-text'><br/>{image.owner}</span>}
+                </Row>
                 <Row label='Container Format' value={image.container_format}/>
                 <Row label='Disk Format' value={image.disk_format}/>
                 <Row label='Visibility' value={image.visibility}/>
@@ -72,6 +75,20 @@ export default class ShowModal extends React.Component {
                 <Row label='Size'><PrettySize size={image.size}/></Row>
                 <Row label='Min Ram' value={image.min_ram && `${image.min_ram} MB`}/>
                 <Row label='Schema' value={image.schema}/>
+                {image.hypervisor_type && <Row label='Hypervisor Type' value={image.hypervisor_type}/>}
+                {image.vmware_ostype && <Row label='Vmware OS Type' value={image.vmware_ostype}/>}
+                {image.virtual_size && <Row label='Virtual Size' value={image.virtual_size}/>}
+                {image.vmware_disktype && <Row label='Vmware Disktype' value={image.vmware_disktype}/>}
+                {image.vmware_adaptertype && <Row label='Vmware Adaptertype' value={image.vmware_adaptertype}/>}
+                {image.base_image_ref && <Row label='Base Image Ref' value={image.base_image_ref}/>}
+                {image.user_id && <Row label='User ID' value={image.user_id}/>}
+                {image.image_type && <Row label='Image Type' value={image.image_type}/>}
+                {image.instance_uuid && <Row label='Instance UUID' value={image.instance_uuid}/>}
+                {image.hw_video_ram && <Row label='HW Video RAM' value={image.hw_video_ram}/>}
+                {image.hw_vif_model && <Row label='HW VIF Model' value={image.hw_vif_model}/>}
+                {image.hw_disk_bus && <Row label='HW Disk BUS' value={image.hw_disk_bus}/>}
+                {image.buildnumber && <Row label='Buildnumber' value={image.buildnumber}/>}
+                {image.architecture && <Row label='Architecture' value={image.architecture}/>}
                 <Row label='Virtual Size'>
                   <PrettySize size={image.virtual_size}/>
                 </Row>
@@ -82,6 +99,10 @@ export default class ShowModal extends React.Component {
                 <Row label='Updated At'>
                   <PrettyDate date={image.updated_at}/>
                 </Row>
+                {/*image.password_0 && <Row label='Password 0'>{image.password_0}</Row>*/}
+                {/*image.password_1 && <Row label='Password 1'>{image.password_1}</Row>*/}
+                {/*image.password_2 && <Row label='Password 2'>{image.password_2}</Row>*/}
+                {/*image.password_3 && <Row label='Password 3'>{image.password_3}</Row>*/}
               </tbody>
             </table>
           }

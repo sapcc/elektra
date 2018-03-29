@@ -1421,6 +1421,10 @@ blockquote, .bs-callout {
 }
 
 div, td, th {
+  &.actions {
+    width: 12%
+  }
+
   &.snug {
     width: 1px;
   }

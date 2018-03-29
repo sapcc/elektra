@@ -12,6 +12,7 @@ export const imageConstants = (type) => ({
 })
 
 export const REQUEST_IMAGE_MEMBERS          = 'image/image_members/REQUEST_IMAGE_MEMBERS';
+export const RESET_IMAGE_MEMBERS          = 'image/image_members/RESET_IMAGE_MEMBERS';
 export const REQUEST_IMAGE_MEMBERS_FAILURE  = 'image/image_members/REQUEST_IMAGE_MEMBERS_FAILURE';
 export const RECEIVE_IMAGE_MEMBERS          = 'image/image_members/RECEIVE_IMAGE_MEMBERS';
 export const RECEIVE_IMAGE_MEMBER           = 'image/image_members/RECEIVE_IMAGE_MEMBER';

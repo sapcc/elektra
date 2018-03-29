@@ -14,6 +14,8 @@ export default connect(
   }),
 
   dispatch => ({
+    handlePublish: (imageId) => dispatch(actions.publishImage(imageId)),
+    handleUnpublish: (imageId) => dispatch(actions.unpublishImage(imageId)), 
     loadOsImagesOnce: () => dispatch(actions.fetchOsImagesIfNeeded()),
     loadNext: () => dispatch(actions.loadNext()),
     searchOsImages: (term) => dispatch(actions.searchOsImages(term)),

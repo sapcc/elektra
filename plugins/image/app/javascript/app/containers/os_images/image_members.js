@@ -1,12 +1,13 @@
 import { connect } from  'react-redux';
 import ImageMembersModal from '../../components/os_images/image_members';
-import { fetchImageMembersIfNeeded, submitNewImageMember, deleteImageMember} from '../../actions/image_members';
+import { fetchImageMembersIfNeeded, resetImageMembers, submitNewImageMember, deleteImageMember} from '../../actions/image_members';
 
 export default connect(
   (state,ownProps ) => {
     let image;
     let activeTab;
     let imageMembers;
+
     const match = ownProps.match
 
     if (match && match.params && match.params.activeTab && match.params.id) {
@@ -15,14 +16,15 @@ export default connect(
       if (images) image = images.find(item => item.id == match.params.id)
     }
 
-    if(state.members && image) {
-      imageMembers = state.members.find((m,i) => m.image_id == image.id)
+    if(image && state.imageMembers && state.imageMembers[image.id] ) {
+      imageMembers = state.imageMembers[image.id]
     }
     return { image, activeTab, imageMembers }
   },
   (dispatch) => ({
     loadMembersOnce: (imageId) => dispatch(fetchImageMembersIfNeeded(imageId)),
-    handleSubmit: (values) => dispatch(submitNewImageMember(values)),
+    resetImageMembers: (imageId) => dispatch(resetImageMembers(imageId)),
+    handleSubmit: (imageId,memberId) => dispatch(submitNewImageMember(imageId, memberId)),
     handleDelete: (imageId,memberId) => dispatch(deleteImageMember(imageId,memberId))
   })
 )(ImageMembersModal);
