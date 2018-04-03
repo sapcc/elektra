@@ -20,12 +20,15 @@ const requestUsersFailure= function(state, error) {
   return {...state, error, isFetching: false, data: null};
 };
 
+const resetUsers= (state, {}) => ({...initialState})
+
 export const users = function(state, action) {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.REQUEST_USERS: return requestUsers(state,action);
     case constants.REQUEST_USERS_FAILURE: return requestUsersFailure(state,action);
     case constants.RECEIVE_USERS: return receiveUsers(state,action);
+    case constants.RESET_STORE: return resetUsers(state,action);
 
     default: return state;
   }

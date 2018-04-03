@@ -21,3 +21,5 @@ export const REQUEST_GROUPS_FAILURE          = 'reverselookup/project/REQUEST_GR
 export const REQUEST_GROUPMEMBERS                  = 'reverselookup/project/REQUEST_GROUPMEMBERS';
 export const RECEIVE_GROUPMEMBERS                  = 'reverselookup/project/RECEIVE_GROUPMEMBERS';
 export const REQUEST_GROUPMEMBERS_FAILURE          = 'reverselookup/project/REQUEST_GROUPMEMBERS_FAILURE';
+
+export const RESET_STORE          = 'reverselookup/project/RESET_STORE';

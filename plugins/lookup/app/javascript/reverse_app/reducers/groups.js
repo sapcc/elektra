@@ -20,12 +20,15 @@ const requestGroupsFailure= function(state, error) {
   return {...state, error, isFetching: false, data: null};
 };
 
+const resetGroups= (state, {}) => ({...initialState})
+
 export const groups = function(state, action) {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.REQUEST_GROUPS: return requestGroups(state,action);
     case constants.REQUEST_GROUPS_FAILURE: return requestGroupsFailure(state,action);
     case constants.RECEIVE_GROUPS: return receiveGroups(state,action);
+    case constants.RESET_STORE: return resetGroups(state,action);
 
     default: return state;
   }

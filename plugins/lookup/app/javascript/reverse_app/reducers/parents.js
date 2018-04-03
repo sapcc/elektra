@@ -20,12 +20,15 @@ const requestParentsFailure= function(state, error) {
   return {...state, error, isFetching: false, data: null};
 };
 
+const resetParents= (state, {}) => ({...initialState})
+
 export const parents = function(state, action) {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.REQUEST_PARENTS: return requestParents(state,action);
     case constants.REQUEST_PARENTS_FAILURE: return requestParentsFailure(state,action);
     case constants.RECEIVE_PARENTS: return receiveParents(state,action);
+    case constants.RESET_STORE: return resetParents(state,action);
 
     default: return state;
   }

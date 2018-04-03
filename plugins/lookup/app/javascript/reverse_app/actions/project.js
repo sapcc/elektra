@@ -29,6 +29,12 @@ const requestProjectFailure= (err) => (
   }
 );
 
+const resetProject= () => (
+  {
+    type: constants.RESET_STORE
+  }
+);
+
 //################ PROJECT FORM ###################
 const fetchProjectForm= (value) => (
   (dispatch) =>
@@ -38,6 +44,7 @@ const fetchProjectForm= (value) => (
         handleErrors({errors: `Input field is empty or contains only spaces.`})
         return
       }
+      dispatch(resetProject())
       dispatch(requestProject())
       ajaxHelper.post(
         `/reverselookup/search`,
