@@ -7,13 +7,6 @@ import { policy } from 'policy';
 import SearchField from 'lib/components/search_field';
 import ShareItem from './item';
 import AjaxPaginate from 'lib/components/ajax_paginate';
-import { NoShareNetworksPopover } from './no_share_networks_popover';
-
-const loadingShareNetworksInfo = (
-  <Popover id="popover-loading-share-networks" title="Loading Share Networks ...">
-    Please wait.
-  </Popover>
-);
 
 const azTooltip = (
   <Tooltip id="azTooltip">Availability Zone</Tooltip>
@@ -24,6 +17,46 @@ const TableRowFadeTransition = ({ children, ...props }) => (
     {children}
   </CSSTransition>
 );
+
+const CreateNewButton = ({fetchingShareNetworks, hasShareNetworks}) => {
+  if (fetchingShareNetworks) {
+    const popover = <Popover id='loadingNetworksPopover' title="Loading Share Networks">
+      Please wait...
+    </Popover>;
+
+    return (
+      <OverlayTrigger overlay={popover} placement="top" delayShow={300} delayHide={150}>
+        <button className='btn btn-primary disabled loading'>Create New</button>
+      </OverlayTrigger>
+    )
+  }
+
+  if (!hasShareNetworks) {
+    const popover = <Popover id="popover-no-share-networks" title="No Share Network found">
+      Please create a Share Network first.
+    </Popover>
+
+    return (
+      <OverlayTrigger
+        overlay={popover}
+        placement="top"
+        >
+        <button className='btn btn-primary disabled'>
+          <i className='fa fa-fw fa-exclamation-triangle fa-2'></i> Create New
+        </button>
+      </OverlayTrigger>
+    )
+  }
+
+  return (
+    <DefeatableLink
+      to='/shares/new'
+      className='btn btn-primary'>
+      Create New
+    </DefeatableLink>
+  )
+}
+
 
 export default class List extends React.Component {
   constructor(props) {
@@ -93,27 +126,11 @@ export default class List extends React.Component {
                   input field will show all currently loaded items.'/>
         }
 
-        <DefeatableLink
-          to='/shares/new'
-          className='btn btn-primary'
-          disabled={!hasShareNetworks}>
-          Create new
-        </DefeatableLink>
-
-        <TransitionGroup>
-          { fetchingShareNetworks ? (
-            <FadeTransition>
-              <OverlayTrigger trigger="click" placement="top" rootClose overlay={loadingShareNetworksInfo}>
-                <span className="pull-right"><a href="#"><span className="spinner"></span></a></span>
-              </OverlayTrigger>
-            </FadeTransition>
-          ) : ( !hasShareNetworks &&
-            <FadeTransition>
-              <NoShareNetworksPopover className="pull-right"/>
-            </FadeTransition>
-          )}
-        </TransitionGroup>
-
+        <div className="main-buttons">
+          <CreateNewButton
+            fetchingShareNetworks={fetchingShareNetworks}
+            hasShareNetworks={hasShareNetworks}/>
+        </div>
       </div>
     )
   }

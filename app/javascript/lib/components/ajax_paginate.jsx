@@ -13,10 +13,10 @@ export default ({
   return (
     <div className='ajax-paginate'>
       { isFetching ?
-        <div className='buttons'><span className="spinner"></span> Loading...</div>
+        <div className='main-buttons'><span className="spinner"></span> Loading...</div>
         :
         ( hasNext &&
-          <div className='buttons'>
+          <div className='main-buttons'>
             { loadNextButton &&
               <button
                 className={loadNextItemsCssClass}

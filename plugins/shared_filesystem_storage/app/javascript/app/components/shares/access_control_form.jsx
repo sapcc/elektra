@@ -1,7 +1,9 @@
 import { Form } from 'lib/elektra-form';
 
 const AccessControlForm = (props) => {
-  const accessTypes = { ip: 'ip', user: 'user'}
+  let accessTypes = {}
+  if (props.share.share_proto == 'NFS') accessTypes['ip'] = 'ip'
+  else if(props.share.share_proto == 'CIFS') accessTypes['user'] = 'user'
   const accessLevels = { ro: 'read-only', rw: 'read-write'}
 
   const accessToPlaceholder = () => {
@@ -31,7 +33,7 @@ const AccessControlForm = (props) => {
   }
 
   return(
-    <div>
+    <React.Fragment>
       { props.shareNetwork &&
         <div>{ `Network: ${props.shareNetwork.cidr}`}</div>
       }
@@ -71,11 +73,11 @@ const AccessControlForm = (props) => {
       { accessToInfo() &&
         <p className='help-block'><i className="fa fa-info-circle"/>{accessToInfo()}</p>
       }
-    </div>
+    </React.Fragment>
   )
 }
 
-export default ({shareNetwork, handleSubmit}) => {
+export default ({share, shareNetwork, handleSubmit}) => {
   const validate = (values) => {
     return values.access_type && values.access_level && values.access_to && true
   }
@@ -85,7 +87,7 @@ export default ({shareNetwork, handleSubmit}) => {
       validate={validate}
       className='form form-inline'
       onSubmit={handleSubmit}>
-      <AccessControlForm shareNetwork={shareNetwork}/>
+      <AccessControlForm share={share} shareNetwork={shareNetwork}/>
     </Form>
   );
 }

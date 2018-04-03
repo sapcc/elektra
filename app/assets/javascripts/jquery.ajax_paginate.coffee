@@ -20,7 +20,7 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     # define spinner element
     $spinner = $('<div><span class="spinner"></span> Loading&hellip;</div>').appendTo($container).hide()
     # define buttons container
-    $buttons = $('<div></div>').appendTo($container)
+    $buttons = $('<div class="main-buttons"></div>').appendTo($container)
 
     # default only for the current pagination (this)
     searchInputSelector = $container.data('searchInputSelector') || settings.searchInputSelector

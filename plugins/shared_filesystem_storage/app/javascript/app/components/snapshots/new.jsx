@@ -25,7 +25,7 @@ export default class NewSnapshotForm extends React.Component {
   render(){
     let {share} = this.props
     return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
             New Snapshot for Share {share && (share.name || share.id)}
