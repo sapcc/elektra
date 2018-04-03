@@ -9,9 +9,6 @@ const initialState = {
 };
 
 const requestProject= function(state,{requestedAt}) {
-
-  console.log(state)
-
   return {...state, requestedAt, isFetching: true, data: null, error: null};
 };
 

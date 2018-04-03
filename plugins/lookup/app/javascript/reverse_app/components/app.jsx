@@ -1,5 +1,6 @@
 // import ProjectDetails from './projectDetails';
 import ProjectDetails from '../containers/projectDetails';
+import { Form } from 'lib/elektra-form';
 
 class App extends React.Component {
 
@@ -17,6 +18,7 @@ class App extends React.Component {
   onSubmit = (event) => {
     event.preventDefault();
     this.searchValue = this.state.value;
+    this.setState({error: null})
     this.props.handleSubmit(this.state.searchValue).catch(({errors}) => {
       this.setState({error: errors})
     })
@@ -27,6 +29,7 @@ class App extends React.Component {
       <React.Fragment>
         <div className={this.props.modal ? 'modal-body' : ''}>
           <form action="" className="form-horizontal">
+            <Form.Errors errors={this.state.error}/>
             <div className="form-group">
               <label
                 htmlFor="reverseLookupValue"

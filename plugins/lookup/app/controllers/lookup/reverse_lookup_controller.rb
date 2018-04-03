@@ -59,7 +59,14 @@ module Lookup
     end
 
     def group_members
-      render json: {name: 'arturo', id: '123'}
+      group_id = params[:reverseLookupGrouptId]
+      members_raw = cloud_admin.identity.group_members(group_id)
+
+      members = members_raw.map do |item|
+        { name: item.name, id: item.id, fullName: item.description }
+      end
+
+      render json: members
     end
 
     def search

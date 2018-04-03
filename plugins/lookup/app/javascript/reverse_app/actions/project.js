@@ -4,7 +4,6 @@ import { fetchDomain } from './domain';
 import { fetchParents } from './parents';
 import { fetchUsers } from './users';
 import { fetchGroups } from './groups';
-import { addNotice as showNotice, addError as showError } from 'lib/flashes';
 
 //################### PROJECT #########################
 const requestProject= json => (
@@ -40,7 +39,6 @@ const fetchProjectForm= (value) => (
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) => {
       if (!value.trim()) {
-        showError(`Input field is empty or contains only spaces.`)
         handleErrors({errors: `Input field is empty or contains only spaces.`})
         return
       }

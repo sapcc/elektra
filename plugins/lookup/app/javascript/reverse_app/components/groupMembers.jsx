@@ -7,10 +7,15 @@ const GroupMembers = props => (
       <span className="text-danger">{props.members.error.error}</span>
     }
     {props.members.data &&
-      <React.Fragment>
-        {props.members.data.name}
-        <small className="text-muted"> ( {props.members.data.id} )</small>
-      </React.Fragment>
+      <ul className="plain-list plain-list-widespaced">
+        {Object.keys(props.members.data).map(key => (
+          <li key={key}>
+            {props.members.data[key]['name']}
+            {props.members.data[key]['fullName'] ? " - " + props.members.data[key]['fullName'] : null}
+            <small className="text-muted"> ( {props.members.data[key]['id']} )</small>
+          </li>
+        ))}
+      </ul>
     }
   </React.Fragment>
 );
