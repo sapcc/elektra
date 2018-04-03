@@ -1421,6 +1421,10 @@ blockquote, .bs-callout {
 }
 
 div, td, th {
+  &.actions {
+    width: 12%
+  }
+
   &.snug {
     width: 1px;
   }
@@ -1874,7 +1878,11 @@ table.searchable.search-mode {
 // ------------------------------------
 
 .ajax-paginate {
-  float: right;
+  @include pie-clearfix;
+
+  .buttons {
+    float: right;
+  }
 
   .btn {
     margin-left: 8px;

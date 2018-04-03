@@ -10,6 +10,7 @@
     "prop-types": "^15.5.7",
     "react": "^16.1.1",
     "react-bootstrap": "^0.31.5",
+    "react-bootstrap-typeahead": "^3.0.0-alpha.1",
     "react-datetime": "*",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.7",
