@@ -369,7 +369,7 @@ module Compute
           format.js {}
         end
       else
-        @port.destroy if @port && params[:os_interface][:port_id].blank?
+        @port.destroy if @port && @port.id && params[:os_interface][:port_id].blank?
         @networks = services.networking.networks('router:external' => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets
