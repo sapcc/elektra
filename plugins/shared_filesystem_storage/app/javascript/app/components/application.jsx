@@ -25,6 +25,8 @@ import ShowSecurityServiceModal from '../containers/security_services/show';
 import NewSecurityServiceModal from '../containers/security_services/new';
 import EditSecurityServiceModal from '../containers/security_services/edit';
 
+import ErrorMessagesModal from '../containers/error_messages/list';
+
 const tabsConfig = [
   { to: '/shares', label: 'Shares', component: Shares },
   { to: '/snapshots', label: 'Snapshots', component: Snapshots },
@@ -91,6 +93,8 @@ export default (props) => {
         { policy.isAllowed("shared_filesystem_storage:security_service_update") &&
           <Route exact path="/security-services/:id/edit" component={EditSecurityServiceModal}/>
         }
+
+        <Route exact path="/:type/:id/error-log" component={ErrorMessagesModal}/>
       </div>
     </HashRouter>
   )

@@ -80,3 +80,9 @@ export const RECEIVE_SNAPSHOT                   = 'shared_filesystem_storage/sna
 export const REQUEST_DELETE_SNAPSHOT            = 'shared_filesystem_storage/snapshots/REQUEST_DELETE_SNAPSHOT'
 export const DELETE_SNAPSHOT_FAILURE            = 'shared_filesystem_storage/snapshots/DELETE_SNAPSHOT_FAILURE'
 export const DELETE_SNAPSHOT_SUCCESS            = 'shared_filesystem_storage/snapshots/DELETE_SNAPSHOT_SUCCESS'
+
+// ERROR MESSAGES
+export const REQUEST_ERROR_MESSAGES             = 'shared_filesystem_storage/error_messages/REQUEST_ERROR_MESSAGES'
+export const RECEIVE_ERROR_MESSAGES             = 'shared_filesystem_storage/error_messages/RECEIVE_ERROR_MESSAGES'
+export const REQUEST_ERROR_MESSAGES_FAILURE     = 'shared_filesystem_storage/error_messages/REQUEST_ERROR_MESSAGES_FAILURE'
+export const SET_ERROR_MESSAGE_SEARCH_TERM      = 'shared_filesystem_storage/error_messages/SET_ERROR_MESSAGE_SEARCH_TERM'
