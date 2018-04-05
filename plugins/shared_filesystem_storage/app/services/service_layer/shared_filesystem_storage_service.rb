@@ -9,6 +9,7 @@ module ServiceLayer
     include SharedFilesystemStorageServices::ShareNetwork
     include SharedFilesystemStorageServices::SecurityService
     include SharedFilesystemStorageServices::Snapshot
+    include SharedFilesystemStorageServices::ErrorMessage
 
     MICROVERSION = 2.43
 

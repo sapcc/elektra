@@ -27,6 +27,9 @@ export default ({ securityService, handleDelete }) =>
             { policy.isAllowed("shared_filesystem_storage:security_service_update") &&
               <li><Link to={`/security-services/${securityService.id}/edit`}>Edit</Link></li>
             }
+            <li>
+              <Link to={`/security-services/${securityService.id}/error-log`}>Error Log</Link>
+            </li>
           </ul>
         </div>
       }

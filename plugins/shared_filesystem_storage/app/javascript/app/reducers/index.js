@@ -10,3 +10,5 @@ export { shareNetworkSecurityServices } from './share_networks/security_services
 
 export { snapshots } from './snapshots/snapshots';
 export { securityServices } from './security_services/security_services';
+
+export { errorMessages } from './error_messages';

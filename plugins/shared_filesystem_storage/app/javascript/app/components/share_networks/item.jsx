@@ -105,6 +105,9 @@ export default ({
                   <Link to={`/share-networks/${shareNetwork.id}/security-services`}>Security Services</Link>
                 </li>
               }
+              <li>
+                <Link to={`/share-networks/${shareNetwork.id}/error-log`}>Error Log</Link>
+              </li>
             </ul>
           </div>
         }
