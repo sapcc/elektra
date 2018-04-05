@@ -81,6 +81,11 @@ class DashboardController < ::ScopeController
     }
 
     case exception.code.to_i
+    # when 407 # Authentication required
+    #   # ignore this error here. It should be caught by
+    #   # Elektron::Errors::TokenExpired rescue.
+    #   # Most likely this is the cause of double render error!
+    #   return
     when 401 # unauthorized
       redirect_to monsoon_openstack_auth.login_path(
         domain_fid: @scoped_domain_fid,

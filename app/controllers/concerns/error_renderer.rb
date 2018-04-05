@@ -83,8 +83,8 @@ module ErrorRenderer
           end
         end
       end
-    rescue AbstractController::DoubleRenderError
-      
+    rescue AbstractController::DoubleRenderError => _e
+
     end
   end
 
