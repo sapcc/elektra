@@ -29,12 +29,14 @@
   spinner = button.find('i.loading-spinner-button')
   icon.addClass('hide')
   spinner.removeClass('hide')
+  button.addClass('disabled');
 
 @stopSpinner = (button) ->
   icon = button.find('i.fa-plus')
   spinner = button.find('i.loading-spinner-button')
   icon.removeClass('hide')
   spinner.addClass('hide')
+  button.removeClass('disabled');
 
 @addEventListenerOnSelect= (button) ->
   $( "#server_image_id" ).unbind "change.automtion"
