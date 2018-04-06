@@ -6,6 +6,14 @@ import { fetchUsers } from './users';
 import { fetchGroups } from './groups';
 
 //################### PROJECT #########################
+
+const setSearchedValue= searchedValue => (
+  {
+    type: constants.SET_SEARCHED_VALUE,
+    searchedValue
+  }
+);
+
 const requestProject= json => (
   {
     type: constants.REQUEST_PROJECT,
@@ -28,7 +36,7 @@ const requestProjectFailure= (err) => (
   }
 );
 
-const resetProject= () => (
+const resetStore= () => (
   {
     type: constants.RESET_STORE
   }
@@ -36,13 +44,14 @@ const resetProject= () => (
 
 //################ PROJECT FORM ###################
 const fetchProjectForm= (value) => (
-  (dispatch) =>
+  (dispatch,getState) =>
     new Promise((handleSuccess,handleErrors) => {
       if (!value.trim()) {
         handleErrors({errors: `Input field is empty or contains only spaces.`})
         return
       }
-      dispatch(resetProject())
+      dispatch(resetStore())
+      dispatch(setSearchedValue(value))
       dispatch(requestProject())
       ajaxHelper.post(
         `/reverselookup/search`,
@@ -50,18 +59,19 @@ const fetchProjectForm= (value) => (
       ).then((response) => {
         if (response.data.errors) {
           dispatch(requestProjectFailure(`Could not load project (${response.data.errors})`))
-          handleErrors({errors: response.data.errors})
         }else {
+          const searchValue = response.data.searchValue
           dispatch(receiveProject(response.data))
-          dispatch(fetchDomain(response.data.domainId))
-          dispatch(fetchParents(response.data.id))
-          dispatch(fetchUsers(response.data.id, response.data.searchBy))
-          dispatch(fetchGroups(response.data.id, response.data.searchBy))
+          if ( response.data.id != '' && typeof response.data.id !== 'undefined' ) {
+            dispatch(fetchDomain(searchValue, response.data.id))
+            dispatch(fetchParents(searchValue, response.data.id))
+            dispatch(fetchUsers(searchValue, response.data.id, response.data.searchBy))
+            dispatch(fetchGroups(searchValue, response.data.id, response.data.searchBy))
+          }
           handleSuccess()
         }
       }).catch(error => {
         dispatch(requestProjectFailure(`Could not load project (${error.message})`))
-        handleErrors({errors: error.message})
       })
     })
 );

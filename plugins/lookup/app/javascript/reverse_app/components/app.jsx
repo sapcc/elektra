@@ -5,7 +5,8 @@ import { Form } from 'lib/elektra-form';
 class App extends React.Component {
 
   state = {
-    searchValue: "",
+    searchValue: '',
+    searchedValue: '',
     error: null
   };
 
@@ -17,8 +18,9 @@ class App extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.searchValue = this.state.value;
+    //this.searchValue = this.state.value;
     this.setState({error: null})
+    this.setState({searchedValue: this.state.searchValue})
     this.props.handleSubmit(this.state.searchValue).catch(({errors}) => {
       this.setState({error: errors})
     })
@@ -58,14 +60,17 @@ class App extends React.Component {
           </form>
           {this.props.project.isFetching &&
             <React.Fragment>
-              <span>Loading details for <b>{this.state.searchValue}</b></span>
+              <span>Loading details for <b>{this.state.searchedValue}</b></span>
               <span className="spinner"/>
             </React.Fragment>
           }
           {this.props.project.error &&
-            <span className="text-danger">
-              {this.props.project.error}
-            </span>
+            <React.Fragment>
+              <p>Loading details for <b>{this.state.searchedValue}</b></p>
+              <span className="text-danger">
+                {this.props.project.error}
+              </span>
+            </React.Fragment>
           }
           { this.props.project.data &&
             <ProjectDetails project={this.props.project.data} />

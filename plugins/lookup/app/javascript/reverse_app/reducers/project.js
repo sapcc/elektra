@@ -5,7 +5,12 @@ const initialState = {
   requestedAt: null,
   receivedAt: null,
   isFetching: false,
-  error: null
+  error: null,
+  searchedValue: ''
+};
+
+const setSearchedValue= function(state,{searchedValue}) {
+  return {...state, searchedValue};
 };
 
 const requestProject= function(state,{requestedAt}) {
@@ -25,6 +30,7 @@ const resetProject= (state, {}) => ({...initialState})
 export const project = function(state, action) {
   if (state == null) { state = initialState; }
   switch (action.type) {
+    case constants.SET_SEARCHED_VALUE: return setSearchedValue(state,action);
     case constants.REQUEST_PROJECT: return requestProject(state,action);
     case constants.REQUEST_PROJECT_FAILURE: return requestProjectFailure(state,action);
     case constants.RECEIVE_PROJECT: return receiveProject(state,action);

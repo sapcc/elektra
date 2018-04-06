@@ -3,6 +3,23 @@ import Users from './users';
 import Groups from '../containers/groups';
 
 class ProjectDetails extends React.Component {
+
+  projectInfo = () => {
+    const {name,id} = this.props.project
+    if (name != '' && id != '' && typeof name !== 'undefined' && typeof id !== 'undefined') {
+      return(
+        <React.Fragment>
+          {this.props.project.name}
+          <small className="text-muted"> ( {this.props.project.id} )</small>
+        </React.Fragment>
+      )
+    } else {
+      return(
+        <span className="text-danger">No information found.</span>
+      )
+    }
+  }
+
   render() {
     return(
       <div className="details">
@@ -15,8 +32,7 @@ class ProjectDetails extends React.Component {
             <tr>
               <th>Project Name:</th>
               <td>
-                {this.props.project.name}
-                <small className="text-muted"> ( {this.props.project.id} )</small>
+                {this.projectInfo()}
               </td>
             </tr>
             <tr>

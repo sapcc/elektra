@@ -24,10 +24,12 @@ const requestDomainFailure= (err) => (
   }
 );
 
-const fetchDomain= (domainId) =>
-  function(dispatch) {
+const fetchDomain= (searchValue,projectId) =>
+  function(dispatch,getSate) {
     dispatch(requestDomain());
-    ajaxHelper.get(`/reverselookup/domain/${domainId}`).then( (response) => {
+    ajaxHelper.get(`/reverselookup/domain/${projectId}`).then( (response) => {
+      const searchedValue = getSate().project.searchedValue
+      if(searchValue!=searchedValue) return
       return dispatch(receiveDomain(response.data));
     })
     .catch( (error) => {

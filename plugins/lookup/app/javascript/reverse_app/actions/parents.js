@@ -24,10 +24,12 @@ const requestParentsFailure= (err) => (
   }
 );
 
-const fetchParents= (projectId) =>
-  function(dispatch) {
+const fetchParents= (searchValue, projectId) =>
+  function(dispatch, getSate) {
     dispatch(requestParents());
     ajaxHelper.get(`/reverselookup/parents/${projectId}`).then( (response) => {
+      const searchedValue = getSate().project.searchedValue
+      if(searchValue!=searchedValue) return
       return dispatch(receiveParents(response.data));
     })
     .catch( (error) => {

@@ -13,7 +13,8 @@ module Lookup
     def index; end
 
     def domain
-      domain = cloud_admin.identity.find_domain(params[:reverseLookupDomainId])
+      identity_project = cloud_admin.identity.find_project(params[:reverseLookupProjectId])
+      domain = cloud_admin.identity.find_domain(identity_project.domain_id)
       render json: { id: domain.id, name: domain.name }
     end
 
@@ -71,23 +72,22 @@ module Lookup
 
     def search
       res = {}
-
       search_value = params[:searchValue]
+      res[:searchValue] = search_value
 
       if search_value.blank?
-        render json: res
+        render json: res, status: 404
         return
       end
 
       # decide if IP or DNS
       if (IPAddr.new(search_value) rescue false)
-        res[:searchValue] = search_value
         res[:searchBy] = SearchBy::IP
 
         # floating IPs
         floating_ip = cloud_admin.networking.floating_ips(floating_ip_address: search_value).first
         if floating_ip.blank?
-          render json: {}
+          render json: res, status: 404
           return
         end
 
@@ -96,16 +96,21 @@ module Lookup
         res[:id] = project_id
 
         # project name
-        identity_project = cloud_admin.identity.find_project(
-          project_id, parents_as_ids: true
-        )
+        identity_project = cloud_admin.identity.find_project(project_id)
         res[:name] = identity_project.name
-
-        # domain id
-        res[:domainId] = identity_project.domain_id
       else
-        # head 500
+        res[:searchBy] = SearchBy::DNS
+
+        dns_record = cloud_admin.dns_service.zones(all_projects: true, name: search_value).fetch(:items, []).first
+        if dns_record.blank?
+          render json: res, status: 404
+          return
+        end
+
+        res[:id] = dns_record.project_id
+        res[:name] = dns_record.name
       end
+
       render json: res
     end
 
