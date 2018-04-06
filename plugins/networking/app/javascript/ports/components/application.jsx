@@ -16,7 +16,7 @@ export default (props) => {
           <Route exact path="/" render={ () => <Redirect to="/ports"/>}/>
         }
         { policy.isAllowed("networking:port_list") &&
-          <Route path="/ports" component={Ports}/>
+          <Route path="/ports" render={(routeProps) => <Ports {...routeProps} instancesPath={props.instancesPath}/>}/>
         }
         { policy.isAllowed("networking:port_create") &&
           <Route exact path="/ports/new" component={NewPortModal}/>

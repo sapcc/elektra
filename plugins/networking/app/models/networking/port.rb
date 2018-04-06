@@ -5,6 +5,7 @@ module Networking
   class Port < Core::ServiceLayer::Model
     DEVICE_OWNER_INSTANCE = 'instance'
     DEVICE_OWNER_LOADBALANCER = 'loadbalancer'
+    FIXED_IP_PORT_NAME = 'fixed_ip_allocation'
 
     DEVICE_OWNER_MAP = {
       'compute:' => DEVICE_OWNER_INSTANCE,
@@ -20,6 +21,10 @@ module Networking
         return type if device_owner.to_s.start_with?(key)
       end
       'unknown'
+    end
+
+    def fixed_ip_port?
+      name == FIXED_IP_PORT_NAME
     end
 
     def attributes_for_create

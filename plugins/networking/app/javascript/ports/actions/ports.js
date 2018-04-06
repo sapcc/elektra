@@ -46,11 +46,18 @@ const receivePort= json =>
   })
 ;
 
-const fetchPorts= (page=null) =>
+const fetchPorts= (page) =>
   function(dispatch,getState) {
     dispatch(requestPorts());
 
-    return ajaxHelper.get('/', {params: { page } }).then( (response) => {
+    const { items } = getState().ports
+    const marker = items.length > 0 ? items[items.length-1] : null
+    const params = {}
+    if(page) params['page'] = page
+    if(marker) params['marker'] = marker.id
+
+
+    return ajaxHelper.get('/', {params: params }).then( (response) => {
       if (response.data.errors) {
         addError(React.createElement(ErrorsList, {errors: response.data.errors}))
       } else {

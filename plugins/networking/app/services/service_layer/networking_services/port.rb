@@ -28,11 +28,14 @@ module ServiceLayer
       end
 
       def fixed_ip_ports(filter = {})
-        @fixed_ip_ports ||= ports({status: 'DOWN'}.merge(filter)).select do |port|
-          port.device_id.blank? &&
-          port.device_owner.blank? &&
-          !port.fixed_ips.blank?
-        end
+        @fixed_ip_ports ||= ports(
+          { name: Networking::Port::FIXED_IP_PORT_NAME }.merge(filter)
+        )
+        # @fixed_ip_ports ||= ports({status: 'DOWN'}.merge(filter)).select do |port|
+        #   port.device_id.blank? &&
+        #   port.device_owner.blank? &&
+        #   !port.fixed_ips.blank?
+        # end
       end
 
       ################### Model Interface #############

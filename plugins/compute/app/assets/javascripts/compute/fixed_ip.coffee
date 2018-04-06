@@ -57,6 +57,7 @@ $.fn.fixedIpSelector = (options={}) ->
               description = port.description || port.name
               description = if description then "(#{description})" else ''
               source.push(port)
+
       $fixedIpInput.autocomplete('option', 'source', source)
 
     updateAvailableSubnets = (networkId) ->
@@ -82,7 +83,7 @@ $.fn.fixedIpSelector = (options={}) ->
         $subnetSelect.append(
           $("<option value='#{first_subnet.id}'>#{sanitize(first_subnet.name)} (#{first_subnet.cidr})</option>")
         )
-        updateAvailablePorts('')
+        updateAvailablePorts(first_subnet.id)
 
 
 

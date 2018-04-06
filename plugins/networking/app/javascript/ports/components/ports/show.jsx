@@ -78,6 +78,8 @@ export default class ShowPortModal extends React.Component{
           <Row label='IP'>{ this.renderSubnets(port) }</Row>
           <Row label='Description' value={port.description}/>
           <Row label='Name' value={port.name}/>
+          <Row label='Device Owner' value={port.device_owner}/>
+          <Row label='Device ID' value={port.device_id}/>
           <Row label='Created at' value={port.created_at}/>
           <Row label='Updated at' value={port.created_at}/>
           <Row label='Project ID' value={port.tenant_id || port.project_id}/>
