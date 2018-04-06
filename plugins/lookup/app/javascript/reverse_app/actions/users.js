@@ -24,10 +24,10 @@ const requestUsersFailure= (err) => (
   }
 );
 
-const fetchUsers= (searchValue, projectId, searchBy) =>
+const fetchUsers= (searchValue, projectId) =>
   function(dispatch, getSate) {
     dispatch(requestUsers());
-    ajaxHelper.get(`/reverselookup/users/${projectId}?filterby=${searchBy}`).then( (response) => {
+    ajaxHelper.get(`/reverselookup/users/${projectId}`).then( (response) => {
       const searchedValue = getSate().project.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveUsers(response.data));

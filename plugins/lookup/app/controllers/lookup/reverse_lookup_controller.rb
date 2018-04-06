@@ -5,10 +5,8 @@ module Lookup
   class ReverseLookupController < DashboardController
     before_action :role_assigments, only: [:users, :groups]
 
-    module SearchBy
-      IP = 'ip'
-      DNS = 'dns'
-    end
+    SEARCHBY = { ip: 'ip', dns: 'dns' }.freeze
+    SEARCHBY.values.each(&:freeze) # change because of warning{ |v| v.freeze }
 
     def index; end
 
@@ -74,6 +72,7 @@ module Lookup
       res = {}
       search_value = params[:searchValue]
       res[:searchValue] = search_value
+      res[:searchTypes] = SEARCHBY
 
       if search_value.blank?
         render json: res, status: 404
@@ -82,7 +81,7 @@ module Lookup
 
       # decide if IP or DNS
       if (IPAddr.new(search_value) rescue false)
-        res[:searchBy] = SearchBy::IP
+        res[:searchBy] = SEARCHBY[:ip]
 
         # floating IPs
         floating_ip = cloud_admin.networking.floating_ips(floating_ip_address: search_value).first
@@ -99,7 +98,7 @@ module Lookup
         identity_project = cloud_admin.identity.find_project(project_id)
         res[:name] = identity_project.name
       else
-        res[:searchBy] = SearchBy::DNS
+        res[:searchBy] = SEARCHBY[:dns]
 
         dns_record = cloud_admin.dns_service.zones(all_projects: true, name: search_value).fetch(:items, []).first
         if dns_record.blank?
@@ -116,14 +115,10 @@ module Lookup
 
     def role_assigments
       project_id = params[:reverseLookupProjectId]
-      filter_by = params[:filterby]
+
       # role object
-      role = nil
-      if filter_by == SearchBy::IP
-        role = cloud_admin.identity.find_role_by_name('network_admin')
-      elsif filter_by == SearchBy::DNS
-        role = cloud_admin.identity.find_role_by_name('dns_admin')
-      end
+      role = cloud_admin.identity.find_role_by_name('admin')
+
       # role assigments
       @assigments = cloud_admin.identity.role_assignments(
         'scope.project.id' => project_id,

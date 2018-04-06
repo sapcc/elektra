@@ -4,35 +4,39 @@ import Groups from '../containers/groups';
 
 class ProjectDetails extends React.Component {
 
-  projectInfo = () => {
-    const {name,id} = this.props.project
-    if (name != '' && id != '' && typeof name !== 'undefined' && typeof id !== 'undefined') {
-      return(
-        <React.Fragment>
-          {this.props.project.name}
-          <small className="text-muted"> ( {this.props.project.id} )</small>
-        </React.Fragment>
-      )
-    } else {
-      return(
-        <span className="text-danger">No information found.</span>
-      )
-    }
+  detailsText = () => {
+    var detailsText = '';
+    const {searchBy, searchTypes, searchValue} = this.props.project
+    var filteredTypes = {... searchTypes}
+    delete filteredTypes[searchBy]
+    const searchKeys = Object.keys(filteredTypes)
+    searchKeys.map( (key, i) => {
+      detailsText = detailsText + filteredTypes[key]
+      if (i < searchKeys.length - 2) {
+        detailsText = detailsText + ','
+      } else if (i < searchKeys.length - 1) {
+        detailsText = detailsText + ' and '
+      }
+    })
+    return (
+      <React.Fragment>
+        Searched by <b>{searchBy}</b>. Details for <b>{searchValue}</b>:
+        <br/><small>(It didn't complain the constraints for {detailsText})</small>
+      </React.Fragment>
+    )
   }
 
   render() {
     return(
-      <div className="details">
-        <p>Details for
-          <b> {this.props.project.searchValue}</b>:
-        </p>
-
-        <table className="table datatable">
+      <div className="searchResults">
+        <p>{this.detailsText()}</p>
+        <table className="table">
           <tbody>
             <tr>
               <th>Project Name:</th>
               <td>
-                {this.projectInfo()}
+                {this.props.project.name}
+                <small className="text-muted"> ( {this.props.project.id} )</small>
               </td>
             </tr>
             <tr>
@@ -71,7 +75,7 @@ class ProjectDetails extends React.Component {
               </td>
             </tr>
             <tr>
-              <th>Users:</th>
+              <th>Admin Users:</th>
               <td>
                 {this.props.users.isFetching &&
                   <span className="spinner" />

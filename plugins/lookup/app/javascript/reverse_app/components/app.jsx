@@ -26,6 +26,12 @@ class App extends React.Component {
     })
   }
 
+  loadingDetails = () => {
+    return(
+      <React.Fragment>Loading details for <b>{this.state.searchedValue}</b></React.Fragment>
+    )
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -59,14 +65,14 @@ class App extends React.Component {
             </div>
           </form>
           {this.props.project.isFetching &&
-            <React.Fragment>
-              <span>Loading details for <b>{this.state.searchedValue}</b></span>
+            <div className="searchResults">
+              {this.loadingDetails()}
               <span className="spinner"/>
-            </React.Fragment>
+            </div>
           }
           {this.props.project.error &&
             <React.Fragment>
-              <p>Loading details for <b>{this.state.searchedValue}</b></p>
+              <div className="searchResults">{this.loadingDetails()}</div>
               <span className="text-danger">
                 {this.props.project.error}
               </span>
