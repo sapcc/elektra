@@ -1,4 +1,6 @@
-%tr{id: "port_#{port.id}", data: { search_name: port.name+'_'+port.id+'_'+port.device_owner+'_'+port.device_id+'_'+port.network_id+'_'+port.status, marker_id: port.id} }
+- fixed_ips = (port.fixed_ips || []).collect{|ip| ip['ip_address']}.join(', ')
+- search_name = port.name+'_'+port.id+'_'+port.device_owner+'_'+port.device_id+'_'+port.network_id+'_'+port.status+'_'+fixed_ips
+%tr{id: "port_#{port.id}", data: { search_name: search_name, marker_id: port.id} }
   %td
     = link_to (port.name.blank? ? port.id : port.name), plugin('networking').port_path(port.id), data: {modal: true}
     - unless port.name.blank?
@@ -6,6 +8,7 @@
       %span.info-text=port.id
   %td= port.status
   %td= link_to port.network_id, plugin('networking').networks_private_path(port.network_id), data: {modal: true}
+  %td= (port.fixed_ips || []).collect{|ip| ip['ip_address']}.join(', ')
   %td
     = port.device_owner
     %br
