@@ -324,7 +324,9 @@ module Compute
         tenant_id: @scoped_project_id
       )
 
-      @fixed_ip_ports = services.networking.fixed_ip_ports
+      @fixed_ip_ports = services.networking.fixed_ip_ports.select do |ip|
+        ip.device_id.blank?
+      end
       @subnets = services.networking.subnets
     end
 
@@ -369,7 +371,6 @@ module Compute
           format.js {}
         end
       else
-        byebug
         @port.destroy if @port && @port.id && !@port.fixed_ip_port? && params[:os_interface][:port_id].blank?
         @networks = services.networking.networks('router:external' => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
