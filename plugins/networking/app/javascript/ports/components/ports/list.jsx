@@ -12,16 +12,20 @@ const TableRowFadeTransition = ({ children, ...props }) => (
 );
 
 export default class List extends React.Component {
-  constructor(props) {
-    super(props);
-    this.filterPorts = this.filterPorts.bind(this)
-    this.networks = this.networks.bind(this)
-    this.subnets = this.subnets.bind(this)
+  state = {
+    filters: ['fixed ip ports', 'other ports'],
+    activeFilter: null
   }
 
   componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
+
+    let index = this.state.filters.indexOf('fixed ip ports')
+    if(index < 0) index = 0
+    let activeFilter = this.state.activeFilter || this.state.filters[index]
+    // set available filters and set active filter to the first
+    this.setState({activeFilter: activeFilter})
   }
 
   componentDidMount() {
@@ -29,19 +33,29 @@ export default class List extends React.Component {
     this.loadDependencies(this.props)
   }
 
-  loadDependencies(props) {
+  loadDependencies = (props) => {
     props.loadPortsOnce()
     props.loadNetworksOnce()
     props.loadSubnetsOnce()
   }
 
-  filterPorts() {
-    if(!this.props.searchTerm) return this.props.items;
+  changeActiveFilter = (name) => {
+    // set active filter in state to the name
+    this.setState({activeFilter: name})
+  }
+
+  filterPorts = () => {
+    let items = this.props.items.filter((i) =>
+      this.state.activeFilter=='other ports' && i.name != 'fixed_ip_allocation' ||
+      this.state.activeFilter=='fixed ip ports' && i.name == 'fixed_ip_allocation'
+    )
+
+    if(!this.props.searchTerm) return items;
 
     // filter items
     const regex = new RegExp(this.props.searchTerm.trim(), "i");
 
-    return this.props.items.filter((i) => {
+    return items.filter((i) => {
       let network = this.props.networks.items.find((n) => n.id==i.network_id)
       let values = { network: network.name}
 
@@ -52,11 +66,13 @@ export default class List extends React.Component {
         values.subnet = `${values.subnet} ${subnet.name}`
         values.ip = `${values.ip} ${ip.ip_address}`
       }
+      console.log(regex)
+      console.log(i.description)
       return `${i.id} ${i.description} ${values.ip} ${values.network} ${values.subnet} ${i.network_id} ${i.status}`.search(regex) >= 0
     })
   }
 
-  networks() {
+  networks = () => {
     let networks = {}
     for(let i in this.props.networks.items) {
       let network = this.props.networks.items[i]
@@ -65,7 +81,7 @@ export default class List extends React.Component {
     return networks
   }
 
-  subnets() {
+  subnets = () => {
     let subnets = {}
     for(let i in this.props.subnets.items) {
       let subnet = this.props.subnets.items[i]
@@ -74,33 +90,50 @@ export default class List extends React.Component {
     return subnets
   }
 
-  toolbar() {
-    if (!policy.isAllowed('networking:port_create')) return null;
+  toolbar = () => {
+    // return null if no items available
+    if (this.props.items.length <= 0)
+      return null;
 
     return (
       <div className='toolbar'>
-        { this.props.items.length>0 &&
-          <SearchField
-            onChange={(term) => this.props.searchPorts(term)}
-            placeholder='ID, IP, network, subnet or description'
-            text='Searches by ID, IP, network, subnet or description in visible IP list only.
-                  Entering a search term will automatically start loading the next pages
-                  and filter the loaded items using the search term. Emptying the search
-                  input field will show all currently loaded items.'/>
-        }
+        <SearchField
+          onChange={(term) => this.props.searchPorts(term)}
+          placeholder='ID, IP, network, subnet or description'
+          text='Searches by ID, IP, network, subnet or description in visible IP list only.
+                Entering a search term will automatically start loading the next pages
+                and filter the loaded items using the search term. Emptying the search
+                input field will show all currently loaded items.'/>
 
-        <div className="main-buttons">
-          <DefeatableLink
-            to='/ports/new'
-            className='btn btn-primary'>
-            Reserve new IP
-          </DefeatableLink>
-        </div>
+        {this.state.filters.length > 1 && // show filter checkboxes
+          <React.Fragment>
+            <span className="toolbar-input-divider"></span>
+            <label>Show:</label>
+            {this.state.filters.map((name, index) =>
+              <label className="radio-inline" key={index}>
+                <input
+                  type="radio"
+                  onChange={() => this.changeActiveFilter(name)}
+                  checked={this.state.activeFilter==name}
+                />{name}
+              </label>
+            )}
+          </React.Fragment>
+        }
+        {this.state.activeFilter=='fixed ip ports' &&
+          <div className="main-buttons">
+            <DefeatableLink
+              to='/ports/new'
+              className='btn btn-primary'>
+              Reserve new IP
+            </DefeatableLink>
+          </div>
+        }
       </div>
     )
   }
 
-  renderTable() {
+  renderTable = () => {
     let items = this.filterPorts()
     let networks = this.networks()
     let subnets = this.subnets()
@@ -110,10 +143,11 @@ export default class List extends React.Component {
         <table className='table shares'>
           <thead>
             <tr>
-              <th>Port ID</th>
+              <th className='snug'></th>
+              <th>Port ID / Description</th>
               <th>Network</th>
-              <th>Subnet</th>
-              <th>IP</th>
+              <th>Fixed IPs / Subnet</th>
+              <th>Device Owner / ID</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -125,6 +159,7 @@ export default class List extends React.Component {
                     !port.isHidden && <TableRowFadeTransition key={index}>
                         <PortItem
                           port={port}
+                          instancesPath={this.props.instancesPath}
                           handleDelete={this.props.handleDelete}
                           isFetchingNetworks={this.props.networks.isFetching}
                           isFetchingSubnets={this.props.subnets.isFetching}

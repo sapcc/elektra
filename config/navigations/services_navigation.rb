@@ -118,7 +118,7 @@ SimpleNavigation::Configuration.run do |navigation|
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/(backup_networks)/?.*}
                     networking_nav.item :ports,
-                                        'Ports',
+                                        'Fixed IPs / Ports',
                                         -> { plugin('networking').ports_path },
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/ports/?.*}
@@ -127,11 +127,6 @@ SimpleNavigation::Configuration.run do |navigation|
                                         -> { plugin('networking').floating_ips_path },
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/floating_ips/?.*}
-                    networking_nav.item :fixed_ips,
-                                        'Fixed IP Reservation',
-                                        -> { plugin('networking').fixed_ip_ports_path },
-                                        if: -> { plugin_available?(:networking) },
-                                        highlights_on: %r{networking/fixed_ip_ports/?.*}
                     networking_nav.item :security_groups,
                                         'Security Groups',
                                         -> { plugin('networking').security_groups_path },
