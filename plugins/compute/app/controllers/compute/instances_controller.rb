@@ -255,15 +255,26 @@ module Compute
       enforce_permissions('::networking:floating_ip_associate')
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
+
       @floating_ip = services.networking.new_floating_ip
     end
 
     # attach existing floating ip to a server interface.
     def attach_floatingip
       enforce_permissions('::networking:floating_ip_associate')
+
       # get instance
       @instance = services.compute.find_server(params[:id])
 
+      # first ensure that both floating ip and fixed ip have been provided
+      if params[:floating_ip][:id].blank? || params[:floating_ip][:fixed_ip_address].blank?
+        collect_available_ips
+        @floating_ip = services.networking.new_floating_ip
+        flash.now[:error] = "Please specify both a floating IP and the interface to attach to."
+
+        render action: :new_floatingip and return
+      end
+      
       # get project ports
       ports = services.networking.ports(device_id: params[:id])
       # find port which contains the fixed ip or take the first one.
