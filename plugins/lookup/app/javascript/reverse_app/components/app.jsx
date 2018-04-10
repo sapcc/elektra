@@ -1,5 +1,4 @@
-// import ProjectDetails from './projectDetails';
-import ProjectDetails from '../containers/projectDetails';
+import ObjectDetails from '../containers/objectDetails';
 import { Form } from 'lib/elektra-form';
 
 class App extends React.Component {
@@ -59,27 +58,27 @@ class App extends React.Component {
                   className="btn btn-primary"
                   onClick={(e)=>this.onSubmit(e)}
                   disabled={this.props.isFetching}>
-                  {this.props.isFetching ? 'Please wait...' : 'Find Project'}
+                  {this.props.isFetching ? 'Please wait...' : 'Find Object'}
                 </button>
               </div>
             </div>
           </form>
-          {this.props.project.isFetching &&
+          {this.props.object.isFetching &&
             <div className="searchResults">
               {this.loadingDetails()}
               <span className="spinner"/>
             </div>
           }
-          {this.props.project.error &&
+          {this.props.object.error &&
             <React.Fragment>
               <div className="searchResults">{this.loadingDetails()}</div>
               <span className="text-danger">
-                {this.props.project.error}
+                {this.props.object.error}
               </span>
             </React.Fragment>
           }
-          { this.props.project.data &&
-            <ProjectDetails project={this.props.project.data} />
+          { this.props.object.data &&
+            <ObjectDetails object={this.props.object}/>
           }
         </div>
         {this.props.modal &&

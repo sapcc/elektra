@@ -1,16 +1,16 @@
 import { connect } from  'react-redux';
 import App from '../components/app';
-import { fetchProjectForm } from '../actions/project'
+import { fetchObject } from '../actions/object'
 
 const mapStateToProps = state => {
   return {
-    project: state.project
+    object: state.object
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleSubmit: (value) => dispatch(fetchProjectForm(value)),
+    handleSubmit: (value) => dispatch(fetchObject(value)),
   }
 }
 

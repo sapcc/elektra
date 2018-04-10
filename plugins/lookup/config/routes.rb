@@ -14,6 +14,8 @@ Lookup::Engine.routes.draw do
 
   get 'reverselookup/index' => 'reverse_lookup#index'
   post 'reverselookup/search' => 'reverse_lookup#search'
+  get 'reverselookup/object_info/:reverseLookupObjectId' => 'reverse_lookup#object_info'
+  get 'reverselookup/project/:reverseLookupProjectId' => 'reverse_lookup#project'
   get 'reverselookup/domain/:reverseLookupProjectId' => 'reverse_lookup#domain'
   get 'reverselookup/parents/:reverseLookupProjectId' => 'reverse_lookup#parents'
   get 'reverselookup/users/:reverseLookupProjectId' => 'reverse_lookup#users'

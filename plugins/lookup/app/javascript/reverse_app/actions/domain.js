@@ -28,7 +28,7 @@ const fetchDomain= (searchValue,projectId) =>
   function(dispatch,getSate) {
     dispatch(requestDomain());
     ajaxHelper.get(`/reverselookup/domain/${projectId}`).then( (response) => {
-      const searchedValue = getSate().project.searchedValue
+      const searchedValue = getSate().object.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveDomain(response.data));
     })

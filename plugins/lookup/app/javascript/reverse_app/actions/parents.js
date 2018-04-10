@@ -28,7 +28,7 @@ const fetchParents= (searchValue, projectId) =>
   function(dispatch, getSate) {
     dispatch(requestParents());
     ajaxHelper.get(`/reverselookup/parents/${projectId}`).then( (response) => {
-      const searchedValue = getSate().project.searchedValue
+      const searchedValue = getSate().object.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveParents(response.data));
     })

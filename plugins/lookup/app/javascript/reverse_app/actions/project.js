@@ -1,20 +1,8 @@
 import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
-import { fetchDomain } from './domain';
-import { fetchParents } from './parents';
-import { fetchUsers } from './users';
-import { fetchGroups } from './groups';
 
 //################### PROJECT #########################
-
-const setSearchedValue= searchedValue => (
-  {
-    type: constants.SET_SEARCHED_VALUE,
-    searchedValue
-  }
-);
-
-const requestProject= json => (
+const requestProject= () => (
   {
     type: constants.REQUEST_PROJECT,
     requestedAt: Date.now()
@@ -36,46 +24,19 @@ const requestProjectFailure= (err) => (
   }
 );
 
-const resetStore= () => (
-  {
-    type: constants.RESET_STORE
-  }
-);
-
-//################ PROJECT FORM ###################
-const fetchProjectForm= (value) => (
-  (dispatch,getState) =>
-    new Promise((handleSuccess,handleErrors) => {
-      if (!value.trim()) {
-        handleErrors({errors: `Input field is empty or contains only spaces.`})
-        return
-      }
-      dispatch(resetStore())
-      dispatch(setSearchedValue(value))
-      dispatch(requestProject())
-      ajaxHelper.post(
-        `/reverselookup/search`,
-        {searchValue: value}
-      ).then((response) => {
-        if (response.data.errors) {
-          dispatch(requestProjectFailure(`Could not load project (${response.data.errors})`))
-        }else {
-          const searchValue = response.data.searchValue
-          dispatch(receiveProject(response.data))
-          if ( response.data.id != '' && typeof response.data.id !== 'undefined' ) {
-            dispatch(fetchDomain(searchValue, response.data.id))
-            dispatch(fetchParents(searchValue, response.data.id))
-            dispatch(fetchUsers(searchValue, response.data.id, response.data.searchBy))
-            dispatch(fetchGroups(searchValue, response.data.id, response.data.searchBy))
-          }
-          handleSuccess()
-        }
-      }).catch(error => {
-        dispatch(requestProjectFailure(`Could not load project (${error.message})`))
-      })
+const fetchProject= (searchValue, projectId) =>
+  function(dispatch, getSate) {
+    dispatch(requestProject());
+    ajaxHelper.get(`/reverselookup/project/${projectId}`).then( (response) => {
+      const searchedValue = getSate().object.searchedValue
+      if(searchValue!=searchedValue) return
+      return dispatch(receiveProject(response.data));
     })
-);
+    .catch( (error) => {
+      dispatch(requestProjectFailure(`Could not load Project (${error.message})`));
+    });
+  }
 
 export {
-  fetchProjectForm
+  fetchProject
 }

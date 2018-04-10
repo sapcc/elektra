@@ -68,6 +68,42 @@ module Lookup
       render json: members
     end
 
+    def object_info
+      search_by = params[:searchBy]
+      obj_id = params[:reverseLookupObjectId]
+      res = {searchBy: search_by, searchObjectId: obj_id}
+
+      if search_by == SEARCHBY[:ip]
+        floating_ip = cloud_admin.networking.find_floating_ip(obj_id)
+        if floating_ip.blank?
+          render json: res, status: 404
+          return
+        end
+        res[:detailsTitle] = 'Port information'
+        res[:details] = cloud_admin.networking.find_port(floating_ip.port_id)
+      elsif search_by == SEARCHBY[:dns]
+        recordsets = cloud_admin.dns_service.recordsets(obj_id, all_projects: true).fetch(:items, [])
+        if recordsets.blank?
+          render json: res, status: 404
+          return
+        end
+        res[:detailsTitle] = 'Recordsets information'
+        res[:details] = recordsets
+      end
+      render json: res
+    end
+
+    def project
+      project_id = params[:reverseLookupProjectId]
+      res = { searchProjectId: project_id }
+
+      identity_project = cloud_admin.identity.find_project(project_id)
+      res[:id] = identity_project.id
+      res[:name] = identity_project.name
+
+      render json: res
+    end
+
     def search
       res = {}
       search_value = params[:searchValue]
@@ -90,15 +126,19 @@ module Lookup
           return
         end
 
-        # project id
-        project_id = floating_ip.tenant_id
-        res[:id] = project_id
+        # object id
+        res[:id] = floating_ip.id
+        res[:name] = floating_ip.floating_ip_address
 
-        # project name
-        identity_project = cloud_admin.identity.find_project(project_id)
-        res[:name] = identity_project.name
+        # project id
+        res[:projectId] = floating_ip.tenant_id
       else
         res[:searchBy] = SEARCHBY[:dns]
+
+        # check if the dns has a point at the end
+        unless search_value.end_with? '.'
+          search_value = search_value + '.'
+        end
 
         dns_record = cloud_admin.dns_service.zones(all_projects: true, name: search_value).fetch(:items, []).first
         if dns_record.blank?
@@ -106,8 +146,12 @@ module Lookup
           return
         end
 
-        res[:id] = dns_record.project_id
+        # object id, name
+        res[:id] = dns_record.id
         res[:name] = dns_record.name
+
+        # project id
+        res[:projectId] = dns_record.project_id
       end
 
       render json: res
@@ -128,10 +172,10 @@ module Lookup
     end
 
     def flatten_nested_hash(hash)
-      unless hash.blank?
-        hash.flat_map { |k, v| [k, *flatten_nested_hash(v)] }
-      else
+      if hash.blank?
         []
+      else
+        hash.flat_map { |k, v| [k, *flatten_nested_hash(v)] }
       end
     end
   end

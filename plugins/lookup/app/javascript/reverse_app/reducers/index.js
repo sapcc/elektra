@@ -1,3 +1,4 @@
+export { object } from './object';
 export { project } from './project';
 export { domain } from './domain';
 export { parents } from './parents';

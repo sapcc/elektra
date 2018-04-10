@@ -28,7 +28,7 @@ const fetchGroups= (searchValue, projectId) =>
   function(dispatch, getSate) {
     dispatch(requestGroups());
     ajaxHelper.get(`/reverselookup/groups/${projectId}`).then( (response) => {
-      const searchedValue = getSate().project.searchedValue
+      const searchedValue = getSate().object.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveGroups(response.data));
     })
