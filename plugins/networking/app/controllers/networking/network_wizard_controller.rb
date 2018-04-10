@@ -26,6 +26,15 @@ module Networking
         params[:network_wizard]
       )
 
+      # remove self-referential ingress rules from the default security group
+      # (users can then add their own ingress rules that should use remote
+      # CIDRs instead of remote groups)
+      services.networking.security_groups(name: 'default').each do |sg|
+        sg.rule_objects.each do |rule|
+          rule.destroy if rule.remote_group_id.present?
+        end
+      end
+
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
 
