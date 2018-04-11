@@ -131,6 +131,9 @@ export default class ShareItem extends React.Component {
                     <Link to={`/shares/${share.id}/access-control`}>Access Control</Link>
                   </li>
                 }
+                <li>
+                  <Link to={`/shares/${share.id}/error-log`}>Error Log</Link>
+                </li>
               </ul>
             </div>
           }

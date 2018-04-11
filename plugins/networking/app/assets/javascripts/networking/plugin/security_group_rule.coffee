@@ -41,7 +41,9 @@ $(document).on 'modal:contentUpdated', (e) ->
       $form.find(".form-group.security_group_rule_remote_ip_prefix").removeClass('hidden')
       $form.find(".form-group.security_group_rule_remote_group_id").addClass('hidden')
       $form.find(".form-group.security_group_rule_ethertype").addClass('hidden')
+      $form.find("#wrapper_has_read_documentation").addClass('hidden')
     else
       $form.find(".form-group.security_group_rule_remote_ip_prefix").addClass('hidden')
       $form.find(".form-group.security_group_rule_remote_group_id").removeClass('hidden')
       $form.find(".form-group.security_group_rule_ethertype").removeClass('hidden')
+      $form.find("#wrapper_has_read_documentation").removeClass('hidden')

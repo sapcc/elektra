@@ -26,11 +26,20 @@ module Networking
         params[:network_wizard]
       )
 
+      # remove self-referential ingress rules from the default security group
+      # (users can then add their own ingress rules that should use remote
+      # CIDRs instead of remote groups)
+      services.networking.security_groups(name: 'default').each do |sg|
+        sg.rule_objects.each do |rule|
+          rule.destroy if rule.remote_group_id.present?
+        end
+      end
+
       if @floatingip_network
         @network_wizard.floatingip_network_name = @floatingip_network.name
 
         if @rbacs.nil? || @rbacs.length.zero?
-          rbac = cloaud_admin_networking.new_rbac(
+          rbac = cloud_admin_networking.new_rbac(
             object_id: @floatingip_network.id, object_type: 'network',
             action: 'access_as_shared', target_tenant: @scoped_project_id
           )
@@ -57,19 +66,19 @@ module Networking
 
     protected
 
-    def cloaud_admin_networking
-      @cloaud_admin_networking ||= cloud_admin.networking
+    def cloud_admin_networking
+      @cloud_admin_networking ||= cloud_admin.networking
     end
 
     def find_floatingip_network
-      @floatingip_network = cloaud_admin_networking.domain_floatingip_network(
+      @floatingip_network = cloud_admin_networking.domain_floatingip_network(
         @scoped_domain_name
       )
     end
 
     def load_rbacs
       return unless @floatingip_network
-      @rbacs = cloaud_admin_networking.rbacs(
+      @rbacs = cloud_admin_networking.rbacs(
         object_id: @floatingip_network.id,
         object_type: 'network',
         target_tenant: @scoped_project_id

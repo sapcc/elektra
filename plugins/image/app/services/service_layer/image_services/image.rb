@@ -56,7 +56,7 @@ module ServiceLayer
               path: '/visibility',
               value: 'public'
             }
-          ]
+          ].to_json
         end.body
       end
 
@@ -73,7 +73,7 @@ module ServiceLayer
               path: '/visibility',
               value: 'private'
             }
-          ]
+          ].to_json
         end.body
       end
 

@@ -3,12 +3,30 @@ import { policy } from 'policy';
 import { Popover, OverlayTrigger } from 'react-bootstrap';
 import ShareNetworkItem from './item';
 
-const noCreatePermissionPopover = (
-  <Popover id="popover-no-create-permission" title="Missing Create Permission">
-    You don't have permission to create a share network.
-    Please check if you have the role sharedfilesystem_admin.
-  </Popover>
-);
+const CreateNewButton = () => {
+  if(!policy.isAllowed('shared_filesystem_storage:share_network_create')) {
+    const popover = <Popover id="popover-no-create-permission" title="Missing Create Permission">
+      You don't have permission to create a share network.
+      Please check if you have the role sharedfilesystem_admin.
+    </Popover>
+
+    return (
+      <OverlayTrigger overlay={popover} placement="top" delayShow={300} delayHide={150}>
+        <button className='btn btn-primary disabled'>
+          <i className='fa fa-fw fa-exclamation-triangle fa-2'></i> Create New
+        </button>
+      </OverlayTrigger>
+    )
+  }
+
+  return (
+    <DefeatableLink
+      to='/share-networks/new'
+      className='btn btn-primary'>
+      Create New
+    </DefeatableLink>
+  )
+}
 
 export default class ShareNetworkList extends React.Component {
   constructor(props){
@@ -53,24 +71,9 @@ export default class ShareNetworkList extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div className='toolbar'>
-          <DefeatableLink
-            to='/share-networks/new'
-            className='btn btn-primary'
-            disabled={!policy.isAllowed('shared_filesystem_storage:share_network_create')}>
-            Create New
-          </DefeatableLink>
-
-          { !policy.isAllowed('shared_filesystem_storage:share_network_create') &&
-            <span className="pull-right">
-              <OverlayTrigger trigger="click" placement="top" rootClose overlay={noCreatePermissionPopover}>
-                <a className='text-warning' href='#' onClick={(e) => e.preventDefault()}>
-                  <i className='fa fa-fw fa-exclamation-triangle fa-2'></i>
-                </a>
-              </OverlayTrigger>
-            </span>
-          }
+          <div className='main-buttons'><CreateNewButton/></div>
         </div>
 
         { this.props.isFetching ? (
@@ -102,7 +105,7 @@ export default class ShareNetworkList extends React.Component {
               </tbody>
             </table>
         )}
-      </div>
+      </React.Fragment>
     )
   }
 

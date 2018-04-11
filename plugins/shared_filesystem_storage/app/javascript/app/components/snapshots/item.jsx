@@ -70,6 +70,9 @@ export default class SnapshotItem extends React.Component {
                 { policy.isAllowed("shared_filesystem_storage:snapshot_update") &&
                   <li><Link to={`/snapshots/${snapshot.id}/edit`}>Edit</Link></li>
                 }
+                <li>
+                  <Link to={`/snapshots/${snapshot.id}/error-log`}>Error Log</Link>
+                </li>
               </ul>
             </div>
           }

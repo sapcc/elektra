@@ -46,7 +46,7 @@ export default class NewShareForm extends React.Component {
 
   render(){
     return (
-      <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+      <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
         </Modal.Header>

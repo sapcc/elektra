@@ -26,7 +26,7 @@ export default class SecurityServiceForm extends React.Component {
 
   renderForm({values}) {
     return(
-      <div>
+      <React.Fragment>
         <Modal.Body>
           <Form.Errors/>
 
@@ -52,7 +52,7 @@ export default class SecurityServiceForm extends React.Component {
           <Form.ElementHorizontal label='DNS IP' name="dns_ip">
             <Form.Input elementType='input'/>
             <p className="help-block">
-              <i className="fa fa-info-circle"/>Please provide an IP (ipv4) of your AD's DNS
+              <i className="fa fa-info-circle"/>Please provide an IP (ipv4) of your AD's DNS. You can specify multiple addresses separated by commas.
             </p>
           </Form.ElementHorizontal>
 
@@ -69,33 +69,31 @@ export default class SecurityServiceForm extends React.Component {
           <Form.ElementHorizontal label='Domain' name="domain">
             <Form.Input elementType='input'/>
           </Form.ElementHorizontal>
-
-          <Form.ElementHorizontal label='Server' name="server">
-            <Form.Input elementType='input'/>
-          </Form.ElementHorizontal>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.close}>Cancel</Button>
           <Form.SubmitButton label='Save'/>
         </Modal.Footer>
-      </div>
+      </React.Fragment>
     )
   }
 
   render(){
-    return <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-lg">{this.props.title}</Modal.Title>
-      </Modal.Header>
+    return (
+      <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-lg">{this.props.title}</Modal.Title>
+        </Modal.Header>
 
-      <Form
-        className='form form-horizontal'
-        validate={this.validate}
-        onSubmit={this.onSubmit}
-        initialValues={this.props.securityService || {}}>
+        <Form
+          className='form form-horizontal'
+          validate={this.validate}
+          onSubmit={this.onSubmit}
+          initialValues={this.props.securityService || {}}>
 
-        <this.renderForm/>
-      </Form>
-    </Modal>
+          <this.renderForm/>
+        </Form>
+      </Modal>
+    )
   }
 }

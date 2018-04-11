@@ -7,7 +7,7 @@ module SharedFilesystemStorage
       authorization_required context: '::shared_filesystem_storage', only: %i[index]
 
       def index
-        @pools = services.shared_filesystem_storage.pools
+        @pools = services.shared_filesystem_storage.pools.uniq(&:aggregate)
       end
 
       def show

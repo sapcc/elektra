@@ -66,7 +66,7 @@ const fetchShareRules= shareId =>
     ajaxHelper.get(`/shares/${shareId}/rules`)
       .then( (response) => dispatch(receiveShareRules(shareId,response.data)))
       .catch((error) => {
-        console.log(error)
+        // console.log(error)
         // return dispatch(app.showErrorDialog({title: 'Could not load share rules', message:jqXHR.responseText}));
       })
   }

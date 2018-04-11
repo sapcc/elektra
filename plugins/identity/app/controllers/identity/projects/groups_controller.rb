@@ -76,7 +76,7 @@ module Identity
             next unless available_role_ids.include?(role_id)
             begin
               service_user.identity.revoke_project_group_role(@scoped_project_id,
-                                                     roup_id, role_id)
+                                                     group_id, role_id)
             rescue
               nil
             end

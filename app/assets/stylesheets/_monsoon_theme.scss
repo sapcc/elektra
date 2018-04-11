@@ -1421,6 +1421,10 @@ blockquote, .bs-callout {
 }
 
 div, td, th {
+  &.actions {
+    width: 12%
+  }
+
   &.snug {
     width: 1px;
   }
@@ -1497,6 +1501,16 @@ tr.deleting, tr.updating {
       }
 
     }
+  }
+}
+
+.table > tbody > tr.details > td {
+  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
+  border-top: none;
+  background: #f5f5f5;
+
+  table {
+    background: none;
   }
 }
 
@@ -1874,7 +1888,11 @@ table.searchable.search-mode {
 // ------------------------------------
 
 .ajax-paginate {
-  float: right;
+  @include pie-clearfix;
+
+  .main-buttons {
+    float: right;
+  }
 
   .btn {
     margin-left: 8px;

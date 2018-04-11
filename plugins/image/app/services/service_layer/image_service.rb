@@ -10,6 +10,16 @@ module ServiceLayer
       elektron.service?('image')
     end
 
+    def versions
+      @versions ||= elektron_images.get('/', path_prefix: '/').body['versions']
+    end
+
+    def current_version
+      version = versions.find { |v| v['status'] == 'CURRENT' }
+      return unless version
+      version['id']
+    end
+
     def elektron_images
       @elektron_images ||= elektron.service(
         'image', path_prefix: '/v2'

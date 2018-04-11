@@ -81,6 +81,11 @@ class DashboardController < ::ScopeController
     }
 
     case exception.code.to_i
+    # when 407 # Authentication required
+    #   # ignore this error here. It should be caught by
+    #   # Elektron::Errors::TokenExpired rescue.
+    #   # Most likely this is the cause of double render error!
+    #   return
     when 401 # unauthorized
       redirect_to monsoon_openstack_auth.login_path(
         domain_fid: @scoped_domain_fid,
@@ -221,9 +226,9 @@ class DashboardController < ::ScopeController
   def find_users_by_name
     name = params[:name] || params[:term] || ''
     users = UserProfile.search_by_name(name).to_a.uniq(&:name)
-    render json: users.collect do |u|
-      { id: u.full_name, name: u.name, full_name: u.full_name, email: u.email }
-    end
+    render json: (users.collect do |u|
+      { id: u.full_name, name: u.name, key: u.name, full_name: u.full_name, email: u.email }
+    end.to_json)
   end
 
   def find_cached_domains
@@ -235,9 +240,9 @@ class DashboardController < ::ScopeController
   def find_cached_projects
     name = params[:name] || params[:term] || ''
     projects = FriendlyIdEntry.search('Project', @scoped_domain_id, name)
-    render json: projects.collect do |project|
+    render json: (projects.collect do |project|
       { id: project.key, name: project.name }
-    end.to_json
+    end.to_json)
   end
 
   def two_factor_required?

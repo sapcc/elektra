@@ -78,6 +78,11 @@ $ ->
     e.preventDefault()
     $('.plugin-help').toggleClass('visible')
 
+  # generic visibility toggle
+  $('[data-action="toggle"]').click (e) ->
+    e.preventDefault()
+    $($(this).attr('data-target')).toggleClass('hidden')
+
 
 
 
@@ -116,8 +121,7 @@ observer = new MutationObserver (mutations) ->
 
       if multiselect_boxes && multiselect_boxes.length > 0
         multiselect_boxes.multiselect
-          buttonText: (options, select) ->
-            if options.length == 0 then 'No option selected ...' else "#{options.length} options selected"
+          numberDisplayed: 1
 
 
 observer.observe(document.documentElement, {childList: true, subtree: true});
@@ -171,6 +175,13 @@ $(document).on 'modal:contentUpdated', (e) ->
   # -------------
   # init tooltips
   $('[data-toggle="tooltip"]').tooltip()
+
+
+  # generic visibility toggle
+  $('[data-action="toggle"]').click (e) ->
+    e.preventDefault()
+    $($(this).attr('data-target')).toggleClass('hidden')
+
 
 # # TURBOLINKS SUPPORT ---------------------------------------------------------------------
 # # React to turbolinks page load events to indicate to the user that something is happening

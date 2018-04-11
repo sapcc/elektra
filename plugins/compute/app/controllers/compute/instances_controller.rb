@@ -89,13 +89,11 @@ module Compute
         ])
       end
 
-      @instance = services.compute.new_server
-
-      @flavors            = services.compute.flavors
-      @images             = services.image.all_images
-
+      @instance       = services.compute.new_server
+      @flavors        = services.compute.flavors
+      @images         = services.image.all_images
       @fixed_ip_ports = services.networking.fixed_ip_ports
-      @subnets = services.networking.subnets
+      @subnets        = services.networking.subnets
 
       if params[:image_id]
         # preselect image_id
@@ -121,10 +119,10 @@ module Compute
 
       # @instance.flavor_id             = @flavors.first.try(:id)
       # @instance.image_id              = params[:image_id] || @images.first.try(:id)
-      @instance.availability_zone_id  = @availability_zones.first.try(:id)
-      #@instance.network_ids           = [{ id: @private_networks.first.try(:id) }]
-      @instance.security_group_ids    = [{ id: @security_groups.find { |sg| sg.name == 'default' }.try(:id) }]
-      @instance.keypair_id = @keypairs.first['name'] unless @keypairs.blank?
+      @instance.availability_zone_id    = @availability_zones.first.try(:id)
+      #@instance.network_ids            = [{ id: @private_networks.first.try(:id) }]
+      @instance.security_groups         = [@security_groups.find { |sg| sg.name == 'default' }.try(:id)] if @instance.security_groups.blank? # if no security group has been selected force select the default group
+      @instance.keypair_id              = @keypairs.first['name'] unless @keypairs.blank?
 
       @instance.max_count = 1
     end
@@ -190,7 +188,7 @@ module Compute
 
         if @port
           # create or update port
-          if @port.save
+          if @port.id || @port.save
             @instance.network_ids.first['port'] = @port.id
           else
             @port.errors.each { |k, v| @instance.errors.add(k, v) }
@@ -211,6 +209,7 @@ module Compute
         audit_logger.info(current_user, "has created", @instance)
         @instance = services.compute.find_server(@instance.id)
       else
+        @port.destroy if @port && @port.id && !@port.fixed_ip_port? && params[:server][:network_ids].first['port'].blank?
         @flavors = services.compute.flavors
         # @images = services.image.images
         @availability_zones = services.compute.availability_zones
@@ -256,15 +255,26 @@ module Compute
       enforce_permissions('::networking:floating_ip_associate')
       @instance = services.compute.find_server(params[:id])
       collect_available_ips
+
       @floating_ip = services.networking.new_floating_ip
     end
 
     # attach existing floating ip to a server interface.
     def attach_floatingip
       enforce_permissions('::networking:floating_ip_associate')
+
       # get instance
       @instance = services.compute.find_server(params[:id])
 
+      # first ensure that both floating ip and fixed ip have been provided
+      if params[:floating_ip][:id].blank? || params[:floating_ip][:fixed_ip_address].blank?
+        collect_available_ips
+        @floating_ip = services.networking.new_floating_ip
+        flash.now[:error] = "Please specify both a floating IP and the interface to attach to."
+
+        render action: :new_floatingip and return
+      end
+      
       # get project ports
       ports = services.networking.ports(device_id: params[:id])
       # find port which contains the fixed ip or take the first one.
@@ -325,7 +335,9 @@ module Compute
         tenant_id: @scoped_project_id
       )
 
-      @fixed_ip_ports = services.networking.fixed_ip_ports
+      @fixed_ip_ports = services.networking.fixed_ip_ports.select do |ip|
+        ip.device_id.blank?
+      end
       @subnets = services.networking.subnets
     end
 
@@ -355,7 +367,7 @@ module Compute
         end
 
         if @port
-          if @port.save
+          if @port.id || @port.save
             @os_interface.port_id = @port.id
           else
             @port.errors.each { |k, v| @os_interface.errors.add(k, v) }
@@ -370,6 +382,7 @@ module Compute
           format.js {}
         end
       else
+        @port.destroy if @port && @port.id && !@port.fixed_ip_port? && params[:os_interface][:port_id].blank?
         @networks = services.networking.networks('router:external' => false)
         @fixed_ip_ports = services.networking.fixed_ip_ports
         @subnets = services.networking.subnets

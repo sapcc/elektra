@@ -13,7 +13,7 @@ export default class ShowSecurityService extends React.Component {
   	this.state = {show: true};
     this.close = this.close.bind(this)
   }
-  
+
   close(e){
     if(e) e.stopPropagation()
     //this.props.history.goBack()
@@ -35,7 +35,6 @@ export default class ShowSecurityService extends React.Component {
           <Row label="User" value={securityService.user}/>
           <Row label="Password" value={securityService.password}/>
           <Row label='Domain' value={securityService.domain}/>
-          <Row label='Server' value={securityService.server}/>
           <Row label='Created At' value={securityService.created_at}/>
           <Row label='Updated At' value={securityService.updated_at}/>
         </tbody>

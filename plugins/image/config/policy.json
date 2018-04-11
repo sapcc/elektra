@@ -11,5 +11,6 @@
   "image:member_create": "project_id:%(image.owner)s",
   "image:member_update": "@",
   "image:member_delete": "project_id:%(image.owner)s",
-  "image:member_list": "@"
+  "image:member_list": "@",
+  "image:image_owner": "project_id:%(image.owner)s"
 }
