@@ -105,7 +105,7 @@ module ResourceManagement
       if project_id and project_domain_id
         rescue_api_errors { @service.put_project_data(project_domain_id, project_id, services) }
       elsif domain_id
-        rescue_api_errors { @service.put_domain_data(domain_id, services) }
+        rescue_api_errors { @service.put_domain_data(cluster_id, domain_id, services) }
       elsif cluster_id
         rescue_api_errors { @service.put_cluster_data(services) }
       else

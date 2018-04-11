@@ -13,7 +13,7 @@ module ResourceManagement
       # NOTE: do not need to get data for all clusters here; the totals for
       # quota and usage for the cluster already include the quotas and usages
       # of other clusters for shared resources
-      @cluster = services.resource_management.find_current_cluster
+      @cluster = services.resource_management.find_cluster('current')
       @view_services = @cluster.services
 
       @areas = @cluster.services.map(&:area).uniq
@@ -23,7 +23,7 @@ module ResourceManagement
       @area = area || params.require(:area).to_sym
 
       # which services belong to this area?
-      @cluster = services.resource_management.find_current_cluster
+      @cluster = services.resource_management.find_cluster('current')
       @view_services = @cluster.services.select { |srv| srv.area.to_sym == @area }
       raise ActiveRecord::RecordNotFound, "unknown area #{@area}" if @view_services.empty?
 
@@ -59,12 +59,17 @@ module ResourceManagement
     end
 
     def cancel
+      # this alias is necessary for rendering view partials from the "details" screen
+      @combined_resource = @cluster_resource
+
       respond_to do |format|
         format.js { render action: 'update' }
       end
     end
 
     def update
+      # TODO get params[:cluster] and pass onto Limes
+
       # set new quota value
       old_quota = @domain_resource.quota
       begin
@@ -128,26 +133,30 @@ module ResourceManagement
 
       @service_type  = params.require(:service).to_sym
       @resource_name = params.require(:resource).to_sym
+      @cluster_id    = params[:cluster] || 'current'
 
       # get the cluster resource for the current cluster
       clusters, current_cluster_id = services.resource_management.list_clusters(service: @service_type.to_s, resource: @resource_name.to_s, local: true)
       cluster_resources = clusters.reject { |c| c.resources.empty? }.map { |c| c.resources.first }
-      @cluster_resource = cluster_resources.find { |r| r.cluster_id == current_cluster_id } or raise ActiveRecord::RecordNotFound, "no data for cluster"
+
+      if @cluster_id == 'current'
+        @cluster_id = current_cluster_id
+      end
+      @cluster_resource = cluster_resources.find { |r| r.cluster_id == @cluster_id } or raise ActiveRecord::RecordNotFound, "no data for cluster"
 
       # if this is a shared resource, we need to show quota/usage consumption in foreign clusters as well
       if @cluster_resource.shared_service?
-        @other_cluster_resources = cluster_resources.select { |r| r.cluster_id != current_cluster_id && r.shared_service? }
+        @all_cluster_resources = cluster_resources.select { |r| r.shared_service? }
         # the bars at the top are aggregated across all clusters for shared resources
         @combined_resource = ResourceManagement::NewStyleResource.new(nil, @cluster_resource.attributes)
-        all_cluster_resources = [@cluster_resource, @other_cluster_resources].flatten
-        @combined_resource.domains_quota = all_cluster_resources.map(&:domains_quota).sum
-        @combined_resource.usage = all_cluster_resources.map(&:usage).sum
+        @combined_resource.domains_quota = @all_cluster_resources.map(&:domains_quota).sum
+        @combined_resource.usage = @all_cluster_resources.map(&:usage).sum
       else
-        @other_cluster_resources = []
+        @all_cluster_resources = []
         @combined_resource = @cluster_resource
       end
 
-      domains = services.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s)
+      domains = services.resource_management.list_domains(service: @service_type.to_s, resource: @resource_name.to_s, cluster_id: @cluster_id.to_s)
       @domain_resources = domains.map { |d| d.resources.first }.reject(&:nil?)
 
       # show danger and warning projects on top if no sort by is given
@@ -180,14 +189,16 @@ module ResourceManagement
       enforce_permissions(":resource_management:cloud_admin_list")
       domain = services.resource_management.find_domain(
         params.require(:id),
-        service:  [ params.require(:service) ],
-        resource: [ params.require(:resource) ],
+        service:    [ params.require(:service) ],
+        resource:   [ params.require(:resource) ],
+        cluster_id: params.require(:cluster),
       ) or raise ActiveRecord::RecordNotFound, "domain #{params[:domain]} not found"
       @domain_resource = domain.resources.first or raise ActiveRecord::RecordNotFound, "resource not found"
     end
 
     def load_cluster_resource
-      cluster = services.resource_management.find_current_cluster(
+      @cluster_id = params[:cluster] || 'current'
+      cluster = services.resource_management.find_cluster(@cluster_id,
         service:  [ params.require(:service) ],
         resource: [ params.require(:resource) ],
       ) or raise ActiveRecord::RecordNotFound, "cluster not found"
@@ -213,7 +224,7 @@ module ResourceManagement
         resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
 
-      @cluster_resource = services.resource_management.find_current_cluster(
+      @cluster_resource = services.resource_management.find_cluster('current',
         service:  [ data[:service]  ],
         resource: [ data[:resource] ],
       ).resources.first or raise ActiveRecord::RecordNotFound
