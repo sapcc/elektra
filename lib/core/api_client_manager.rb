@@ -14,7 +14,7 @@ module Core
       {
         region: Rails.configuration.default_region,
         interface: ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
-        debug: Rails.env.development?,
+        debug: Rails.env.development? && ENV['ELEKTRON_QUIET'] != 'true',
         client: {
           open_timeout: nil,
           read_timeout: 60,
