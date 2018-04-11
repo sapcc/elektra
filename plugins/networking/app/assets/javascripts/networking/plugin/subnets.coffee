@@ -240,3 +240,10 @@ class Subnets
 
 $(document).on 'modal:contentUpdated', (e) ->
   $('*[data-network-subnets]').each () -> new Subnets(this)
+
+$ ->
+  # init the subnets also on plain pages like from object lookup and wait until policy
+  if typeof policy == 'undefined'
+    setTimeout ( ->
+      $('*[data-network-subnets]').each () -> new Subnets(this)
+    ), 1000
