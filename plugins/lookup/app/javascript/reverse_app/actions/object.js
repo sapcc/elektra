@@ -61,6 +61,8 @@ const fetchObject= (value) => (
           dispatch(requestOjectFailure(`Could not load object (${response.data.errors})`))
         }else {
           const searchValue = response.data.searchValue
+          const searchedValue = getState().object.searchedValue
+          if(searchValue!=searchedValue) return
           dispatch(receiveObject(response.data))
           if ( response.data.projectId != '' && typeof response.data.projectId !== 'undefined' ) {
             dispatch(fetchProject(searchValue, response.data.projectId))

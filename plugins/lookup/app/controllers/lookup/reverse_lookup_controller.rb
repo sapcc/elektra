@@ -3,6 +3,10 @@
 module Lookup
   # Collect project information
   class ReverseLookupController < DashboardController
+
+    authorization_context 'lookup'
+    authorization_required
+
     before_action :role_assigments, only: [:users, :groups]
 
     SEARCHBY = { ip: 'ip', dns: 'dns' }.freeze

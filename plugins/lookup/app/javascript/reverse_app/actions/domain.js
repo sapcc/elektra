@@ -25,10 +25,10 @@ const requestDomainFailure= (err) => (
 );
 
 const fetchDomain= (searchValue,projectId) =>
-  function(dispatch,getSate) {
+  function(dispatch,getState) {
     dispatch(requestDomain());
     ajaxHelper.get(`/reverselookup/domain/${projectId}`).then( (response) => {
-      const searchedValue = getSate().object.searchedValue
+      const searchedValue = getState().object.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveDomain(response.data));
     })

@@ -25,10 +25,10 @@ const requestGroupsFailure= (err) => (
 );
 
 const fetchGroups= (searchValue, projectId) =>
-  function(dispatch, getSate) {
+  function(dispatch, getState) {
     dispatch(requestGroups());
     ajaxHelper.get(`/reverselookup/groups/${projectId}`).then( (response) => {
-      const searchedValue = getSate().object.searchedValue
+      const searchedValue = getState().object.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveGroups(response.data));
     })

@@ -25,10 +25,10 @@ const requestProjectFailure= (err) => (
 );
 
 const fetchProject= (searchValue, projectId) =>
-  function(dispatch, getSate) {
+  function(dispatch, getState) {
     dispatch(requestProject());
     ajaxHelper.get(`/reverselookup/project/${projectId}`).then( (response) => {
-      const searchedValue = getSate().object.searchedValue
+      const searchedValue = getState().object.searchedValue
       if(searchValue!=searchedValue) return
       return dispatch(receiveProject(response.data));
     })
