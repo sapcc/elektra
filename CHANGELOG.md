@@ -2,7 +2,33 @@
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
-[Full Changelog](https://github.com/sapcc/elektra/compare/2018.2...HEAD)
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.3...HEAD)
+
+**Implemented enhancements:**
+
+- **Mark "Interface IP" field mandatory on the "Attach Floating IP" form [\#253](https://github.com/sapcc/elektra/issues/253)**   
+There is no use case, which could attach a floating IP to a VM without an interface.
+- **Manila: Access IP/User [\#242](https://github.com/sapcc/elektra/issues/242)**   
+Please make it easier to not allow to select not working modes on share access control.
+- **Manila: messages [\#240](https://github.com/sapcc/elektra/issues/240)**   
+Implement messages list+show to give users more transparency about errors: https://developer.openstack.org/api-ref/shared-file-system/\#user-messages-since-api-2-37
+- **Ports UI enhancements [\#235](https://github.com/sapcc/elektra/issues/235)**   
+Unify ports and fixed IP UI. Add possibility to delete ports.
+- **Shared Images with Glance Ocata \(or later\) [\#234](https://github.com/sapcc/elektra/issues/234)**   
+The Ocata release of Glance changed the meaning of the visibility attribute as specified here:
+
+**Fixed bugs:**
+
+- **When looking up a network in cloud\_admin the subnet tab is empty [\#260](https://github.com/sapcc/elektra/issues/260)**   
+When using the lookup tool in the cloud\_admin area to look up a network and then switching to the subnet tab no subnets are shown.
+- **Subnet tab is empty when you open the network details in a new tab [\#255](https://github.com/sapcc/elektra/issues/255)**   
+However it works within the pop-up modal window
+- **Automation button on new instance form doesn't work correctly [\#250](https://github.com/sapcc/elektra/issues/250)**   
+\* `User data` doesn't appear and the error message appears
+
+## [2018.3](https://github.com/sapcc/elektra/tree/2018.3) (2018-03-29)
+
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.2...2018.3)
 
 **Implemented enhancements:**
 
