@@ -68,8 +68,6 @@ module ResourceManagement
     end
 
     def update
-      # TODO get params[:cluster] and pass onto Limes
-
       # set new quota value
       old_quota = @domain_resource.quota
       begin
