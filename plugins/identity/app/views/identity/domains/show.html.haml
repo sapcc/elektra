@@ -67,7 +67,7 @@
             %li
               = link_to 'Create a New Project', plugin('identity').domains_create_project_path, data: {modal: true}
 
-    - if plugin_available?('lookup') && current_user.is_allowed?('lookup:reverse_lookup_search', domain_id: @scoped_domain_id)
+    - if plugin_available?('lookup') && current_user.is_allowed?('lookup:reverse_lookup_list', domain_id: @scoped_domain_id)
       %h5
         %i.lookup-icon
         Project Lookup
