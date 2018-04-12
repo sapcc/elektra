@@ -100,9 +100,11 @@ module Identity
         "export OS_PROJECT_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
         "export OS_USERNAME=#{current_user.name}\n" \
         "export OS_USER_DOMAIN_NAME=\"#{@scoped_domain_name}\"\n" \
-        "echo \"Please enter your OpenStack Password: \"\n" \
-        "read -sr OS_PASSWORD_INPUT\n" \
-        "export OS_PASSWORD=$OS_PASSWORD_INPUT\n" \
+        "if [ -z OS_PASSWORD ]; then\n" \
+        "  echo \"Please enter your OpenStack Password: \"\n" \
+        "  read -sr OS_PASSWORD_INPUT\n" \
+        "  export OS_PASSWORD=$OS_PASSWORD_INPUT\n" \
+        "endif\n" \
         "export OS_REGION_NAME=#{current_region}\n" \
 
       send_data(
