@@ -13,5 +13,5 @@
   "lookup:reverse_lookup_group_members": "rule:security_ops or rule:domain_admin",
   "lookup:reverse_lookup_object_info": "rule:security_ops or rule:domain_admin",
   "lookup:reverse_lookup_project": "rule:security_ops or rule:domain_admin",
-  "lookup:reverse_lookup_search": "rule:security_ops or rule:domain_admin",
+  "lookup:reverse_lookup_search": "rule:security_ops or rule:domain_admin"
 }
