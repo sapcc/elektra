@@ -23,16 +23,13 @@ module ServiceLayer
     ############################################################################
     # cloud-admin level
 
-    def find_current_cluster(query = {})
-      elektron_limes.get('clusters/current', query)
+    def find_cluster(id = 'current', query = {})
+      elektron_limes.get("clusters/#{id}", query)
                     .map_to('body.cluster', &cluster_map)
     end
 
     def list_clusters(query = {})
       # Returns a pair of cluster list and ID of current cluster.
-      # .map_to() does not work here because the toplevel JSON object contains
-      # multiple keys ("clusters" and "current_cluster"), so instantiate the
-      # models manually.
       response = elektron_limes.get('clusters', query)
       [
         response.map_to('body.clusters', &cluster_map),
@@ -40,8 +37,8 @@ module ServiceLayer
       ]
     end
 
-    def put_cluster_data(services)
-      elektron_limes.put('clusters/current') do
+    def put_cluster_data(id, services)
+      elektron_limes.put("clusters/#{id}") do
         { cluster: { services: services } }
       end
     end
@@ -50,17 +47,27 @@ module ServiceLayer
     # domain-admin level
 
     def find_domain(id, query = {})
-      elektron_limes.get("domains/#{id}", query)
-                    .map_to('body.domain', &domain_map)
+      cluster_id = query[:cluster_id]
+      result = elektron_limes.get("domains/#{id}", query, prepare_headers(query))
+                             .map_to('body.domain', &domain_map)
+      result.cluster_id = cluster_id if cluster_id
+      result
     end
 
     def list_domains(query = {})
-      elektron_limes.get('domains', query)
+      cluster_id = query[:cluster_id]
+      result = elektron_limes.get('domains', query, prepare_headers(query))
                     .map_to('body.domains', &domain_map)
+      if cluster_id
+        result.each { |d| d.cluster_id = cluster_id }
+      end
+      result
     end
 
-    def put_domain_data(domain_id, services)
-      elektron_limes.put("domains/#{domain_id}") do
+    def put_domain_data(cluster_id, domain_id, services)
+      options = {}
+      options[:headers] = { "X-Limes-Cluster-ID" => cluster_id } if cluster_id
+      elektron_limes.put("domains/#{domain_id}", options) do
         { domain: { services: services } }
       end
     end
@@ -114,6 +121,8 @@ module ServiceLayer
       end
     end
 
+    ############################################################################
+
     def quota_data(domain_id,project_id,options=[])
       return [] if options.empty?
 
@@ -144,5 +153,16 @@ module ServiceLayer
       Rails.logger.error "Error trying to get quota data for project: #{project_id}. Error: #{e}"
       []
     end
+
+    private
+
+    def prepare_headers(query)
+      if cluster_id = query.delete(:cluster_id)
+        { headers: { "X-Limes-Cluster-ID" => cluster_id } }
+      else
+        {}
+      end
+    end
+
   end
 end

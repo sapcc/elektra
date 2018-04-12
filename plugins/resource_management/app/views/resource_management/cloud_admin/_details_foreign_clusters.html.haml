@@ -1,14 +1,20 @@
-- unless @other_cluster_resources.empty?
+- unless @all_cluster_resources.empty?
   %table.table
     %thead
       %tr
-        %th Foreign Cluster
+        %th Cluster
         %th Total domain quota
         %th Usage
+        %th Actions
     %tbody
-      - @other_cluster_resources.sort_by(&:cluster_id).each do |resource|
+      - @all_cluster_resources.sort_by(&:cluster_id).each do |resource|
         - data_type = resource.data_type
         %tr
           %td.col-md-4= resource.cluster_id
           %td.col-md-4= data_type.format(resource.domains_quota)
-          %td.col-md-4= data_type.format(resource.usage)
+          %td.col-md-2= data_type.format(resource.usage)
+          %td.col-md-2
+            - if @cluster_id == resource.cluster_id
+              = link_to 'Selected', '#', disabled: true, class: 'btn btn-default btn-sm'
+            - else
+              = link_to 'Select', plugin('resource_management').cloud_admin_details_path(service: resource.service_type, resource: resource.name, cluster: resource.cluster_id), data: { modal: true }, class: 'btn btn-primary btn-sm', title: 'Show details for this cluster'

@@ -10,6 +10,7 @@ module ResourceManagement
         domain_id:   id,
         domain_name: name,
       }
+      metadata[:cluster_id] = read(:cluster_id) if read(:cluster_id)
 
       @services ||= read(:services).map { |data| ResourceManagement::NewStyleService.new(@service, data.merge(metadata)) }
     end
@@ -37,7 +38,7 @@ module ResourceManagement
         }
       end
       rescue_api_errors do
-        @service.put_domain_data(id, data)
+        @service.put_domain_data(read(:cluster_id), id, data)
       end
     end
 

@@ -37,14 +37,22 @@ $(function() {
     $(this).unbind('mouseenter');
     $(this).unbind('mouseleave');
 
+    var data = { 
+      sort_order: sort_order,
+      sort_column: $(this).attr('id'),
+      service: "<%= @service_type %>",
+      resource: "<%= @resource_name %>",
+    };
+
+    // cluster ID (for domains) is annotated on the table
+    var table = $(this).closest('table');
+    if (table.data('cluster-id')) {
+      data["cluster"] = table.data('cluster-id');
+    }
+
     $.ajax({ 
       url: "<%= details_path %>",
-      data: { 
-        sort_order: sort_order,
-        sort_column: $(this).attr('id'),
-        service: "<%= @service_type %>",
-        resource: "<%= @resource_name %>",
-      },
+      data: data,
       dataType: 'script',
     });
   });
