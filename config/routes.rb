@@ -10,6 +10,12 @@ Rails.application.routes.draw do
     get :readiness, to: 'health#readiness'
   end
 
+  #mount Cloudops::Engine => '/ccadmin/cloud_admin/cloudops', as: 'cloudops'
+  get '/cloudops', to: redirect(
+    "/#{Rails.application.config.cloud_admin_domain}/" \
+    "#{Rails.configuration.cloud_admin_project}/cloudops"
+  )
+
   scope '/:domain_id' do
     match '/', to: 'pages#show', id: 'landing', via: :get, as: :landing_page
 
@@ -23,7 +29,7 @@ Rails.application.routes.draw do
 
       ###################### MOUNT PLUGINS #####################
       Core::PluginsManager.mountable_plugins.each do |plugin|
-        next if ['docs'].include?(plugin.name)
+        next if ['docs','cloudops'].include?(plugin.name)
         Logger.new(STDOUT).debug(
           "Mount plugin #{plugin.mount_point} as #{plugin.name}_plugin"
         )
@@ -33,6 +39,10 @@ Rails.application.routes.draw do
       end
       ######################## END ############################
     end
+
+    mount Cloudops::Engine => "/#{Rails.configuration.cloud_admin_project}" \
+                              "/cloudops", as: 'cloudops_plugin',
+                              constraints: { domain_id: Rails.application.config.cloud_admin_domain }
   end
 
   scope module: 'identity' do

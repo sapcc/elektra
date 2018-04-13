@@ -1,0 +1,10 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "cloudops:entry_list": "rule:admin or rule:member",
+  "cloudops:entry_get": "rule:admin or rule:member",
+  "cloudops:entry_create": "rule:admin or rule:member",
+  "cloudops:entry_delete": "rule:admin or rule:member",
+  "cloudops:entry_update": "rule:admin or rule:member"
+}

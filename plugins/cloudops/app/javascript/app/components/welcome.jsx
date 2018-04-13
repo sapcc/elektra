@@ -1,6 +1,6 @@
 export default (props) =>
   <div>
-    <h4>Welcome to %{PLUGIN_NAME}</h4>
+    <h4>Welcome to cloudops</h4>
     <p>This is an example how to build simple react app inside elektra.</p>
 
     <h5>Folder structure</h5>
