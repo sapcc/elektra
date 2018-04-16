@@ -1,0 +1,10 @@
+export const REQUEST_ENTRIES                 = 'cloudops/entries/REQUEST_ENTRIES';
+export const RECEIVE_ENTRIES                 = 'cloudops/entries/RECEIVE_ENTRIES';
+export const REQUEST_ENTRY                   = 'cloudops/entries/REQUEST_ENTRY';
+export const REQUEST_ENTRY_FAILURE           = 'cloudops/entries/REQUEST_ENTRY_FAILURE';
+export const REQUEST_ENTRIES_FAILURE         = 'cloudops/entries/REQUEST_ENTRIES_FAILURE';
+export const RECEIVE_ENTRY                   = 'cloudops/entries/RECEIVE_ENTRY';
+export const REQUEST_DELETE_ENTRY            = 'cloudops/entries/REQUEST_DELETE_ENTRY';
+export const DELETE_ENTRY_FAILURE            = 'cloudops/entries/DELETE_ENTRY_FAILURE';
+export const DELETE_ENTRY_SUCCESS            = 'cloudops/entries/DELETE_ENTRY_SUCCESS';
+export const FILTER_ENTRIES                  = 'cloudops/entries/FILTER_ENTRIES';

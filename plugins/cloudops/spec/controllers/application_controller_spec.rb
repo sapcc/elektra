@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe %{PLUGIN_NAME}::ApplicationController, type: :controller do
-  routes { %{PLUGIN_NAME}::Engine.routes }
+describe Cloudops::ApplicationController, type: :controller do
+  routes { Cloudops::Engine.routes }
 
   default_params = { domain_id: AuthenticationStub.domain_id,
                      project_id: AuthenticationStub.project_id }
@@ -23,7 +23,7 @@ describe %{PLUGIN_NAME}::ApplicationController, type: :controller do
 
   describe 'GET index' do
     it 'returns http success' do
-      get :index, params: default_params
+      get :show, params: default_params
       expect(response).to be_success
     end
   end

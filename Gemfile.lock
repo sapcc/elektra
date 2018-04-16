@@ -53,6 +53,11 @@ PATH
     block_storage (0.0.1)
 
 PATH
+  remote: plugins/cloudops
+  specs:
+    cloudops (0.0.1)
+
+PATH
   remote: plugins/compute
   specs:
     compute (0.0.1)
@@ -547,6 +552,7 @@ DEPENDENCIES
   byebug
   capybara
   capybara-screenshot
+  cloudops!
   coffee-rails
   compass-rails
   compute!

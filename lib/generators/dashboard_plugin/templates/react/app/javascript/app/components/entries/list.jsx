@@ -46,7 +46,7 @@ export default class Entries extends React.Component {
           }
         </TransitionGroup>
 
-        { policy.isAllowed('cloud_ops:entry_create') &&
+        { policy.isAllowed('%{PLUGIN_NAME}:entry_create') &&
           <Link to='/entries/new' className='btn btn-primary'>Create new</Link>
         }
       </div>
@@ -86,7 +86,7 @@ export default class Entries extends React.Component {
     return (
       <div>
         { this.toolbar() }
-        { !policy.isAllowed('cloud_ops:entry_list') ? (
+        { !policy.isAllowed('%{PLUGIN_NAME}:entry_list') ? (
           <span>You are not allowed to see this page</span>) : (
           this.props.isFetching ? <span className='spinner'></span> : this.renderTable()
         )}
