@@ -4,5 +4,14 @@
   "lookup:os_object_show_network_external":  "role:cloud_network_admin",
   "lookup:os_object_show_dns_record": "role:cloud_dns_admin",
   "lookup:os_object_show_project": "rule:cloud_admin",
-  "lookup:os_object_list":  "rule:lookup:os_object_show_instance or rule:lookup:os_object_show_network_private or rule:lookup:os_object_show_network_external or rule:lookup:os_object_show_dns_record or rule:lookup:os_object_show_project"
+  "lookup:os_object_list":  "rule:lookup:os_object_show_instance or rule:lookup:os_object_show_network_private or rule:lookup:os_object_show_network_external or rule:lookup:os_object_show_dns_record or rule:lookup:os_object_show_project",
+  "lookup:reverse_lookup_list": "rule:domain_admin",
+  "lookup:reverse_lookup_domain": "rule:domain_admin",
+  "lookup:reverse_lookup_parents": "rule:domain_admin",
+  "lookup:reverse_lookup_users": "rule:domain_admin",
+  "lookup:reverse_lookup_groups": "rule:domain_admin",
+  "lookup:reverse_lookup_group_members": "rule:domain_admin",
+  "lookup:reverse_lookup_object_info": "rule:domain_admin",
+  "lookup:reverse_lookup_project": "rule:domain_admin",
+  "lookup:reverse_lookup_search": "rule:domain_admin"
 }

@@ -547,6 +547,12 @@ section {
   @extend .fa-exchange;
 }
 
+.lookup-icon {
+  @extend .fa;
+  @extend .fa-fw;
+  @extend .fa-search;
+}
+
 .experimental-icon {
   @extend .fa;
   @extend .fa-flash;

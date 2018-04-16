@@ -1,0 +1,9 @@
+- title = "Find Project"
+- if modal?
+  = content_for :title do
+    Find Project
+- else
+  = content_for :main_toolbar do
+    Find Project
+
+= javascript_pack_tag("lookup_reverse_app", data:{url:plugin("lookup").root_path, modal:modal?})
