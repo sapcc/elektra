@@ -12,13 +12,17 @@ Lookup::Engine.routes.draw do
   get '/object/:object_type/:object_id' => 'services#find', as: :find_object
   get '/object/types' => 'services#object_types'
 
-  get 'reverselookup/index' => 'reverse_lookup#index'
-  post 'reverselookup/search' => 'reverse_lookup#search'
-  get 'reverselookup/object_info/:reverseLookupObjectId' => 'reverse_lookup#object_info'
-  get 'reverselookup/project/:reverseLookupProjectId' => 'reverse_lookup#project'
-  get 'reverselookup/domain/:reverseLookupProjectId' => 'reverse_lookup#domain'
-  get 'reverselookup/parents/:reverseLookupProjectId' => 'reverse_lookup#parents'
-  get 'reverselookup/users/:reverseLookupProjectId' => 'reverse_lookup#users'
-  get 'reverselookup/groups/:reverseLookupProjectId' => 'reverse_lookup#groups'
-  get 'reverselookup/group_members/:reverseLookupGrouptId' => 'reverse_lookup#group_members'
+  resources :reverselookup, controller: 'reverse_lookup', only: %i[index] do
+    collection do
+      post 'search'
+      get '/object_info/:reverseLookupObjectId' => 'reverse_lookup#object_info'
+      get '/project/:reverseLookupProjectId' => 'reverse_lookup#project'
+      get '/domain/:reverseLookupProjectId' => 'reverse_lookup#domain'
+      get '/parents/:reverseLookupProjectId' => 'reverse_lookup#parents'
+      get '/users/:reverseLookupProjectId' => 'reverse_lookup#users'
+      get '/groups/:reverseLookupProjectId' => 'reverse_lookup#groups'
+      get '/group_members/:reverseLookupGrouptId' =>
+        'reverse_lookup#group_members'
+    end
+  end
 end
