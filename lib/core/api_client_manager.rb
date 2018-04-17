@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require_relative './elektron_middlewares/pretty_debug'
+require_relative './elektron_middlewares/debug_logger'
+require_relative './elektron_middlewares/user_context_logger'
+require_relative './elektron_middlewares/object_cache'
 
 module Core
   # this class manages the api clients for service user.
@@ -61,7 +63,10 @@ module Core
         },
         default_client_params
       )
-      client.middlewares.add(ElektronMiddlewares::PrettyDebugUser)
+
+      client.middlewares.add(ElektronMiddlewares::DebugLogger)
+      client.middlewares.add(ElektronMiddlewares::UserLogger)
+      client.middlewares.add(ElektronMiddlewares::ObjectCache)
       client
     end
 
@@ -75,7 +80,9 @@ module Core
       }
       begin
         client = ::Elektron.client(auth_config, default_client_params)
-        client.middlewares.add(ElektronMiddlewares::PrettyDebugServiceUser)
+        client.middlewares.add(ElektronMiddlewares::DebugLogger)
+        client.middlewares.add(ElektronMiddlewares::ServiceUserLogger)
+        client.middlewares.add(ElektronMiddlewares::ObjectCache)
         client
       rescue ::Elektron::Errors::ApiResponse => _e
         unless auth_config[:scope_domain_id]
@@ -104,7 +111,9 @@ module Core
         },
         default_client_params
       )
-      client.middlewares.add(ElektronMiddlewares::PrettyDebugCloudAdmin)
+      client.middlewares.add(ElektronMiddlewares::DebugLogger)
+      client.middlewares.add(ElektronMiddlewares::CloudAdminLogger)
+      client.middlewares.add(ElektronMiddlewares::ObjectCache)
       client
     end
   end

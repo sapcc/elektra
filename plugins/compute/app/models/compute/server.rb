@@ -8,7 +8,7 @@ module Compute
     validates :name, presence: { message: 'Please provide a name' }
     validates :image_id, presence: { message: 'Please select an image' }, if: :new?
     validates :flavor_id, presence: { message: 'Please select a flavor' }, if: :new?
-    validate :validate_network
+    validate :validate_network, if: :new?
     validates :keypair_id, presence: {
       message: "Please choose a keypair for us to provision to the server.
       Otherwise you will not be able to log in."
