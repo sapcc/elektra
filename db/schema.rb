@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170427103721) do
+ActiveRecord::Schema.define(version: 20180417090223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,20 @@ ActiveRecord::Schema.define(version: 20170427103721) do
     t.string "email"
     t.string "full_name"
     t.string "name"
+  end
+
+  create_table "object_cache", id: :string, force: :cascade do |t|
+    t.string "name"
+    t.string "project_id"
+    t.string "domain_id"
+    t.string "cached_object_type"
+    t.json "payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cached_object_type"], name: "index_object_cache_on_cached_object_type"
+    t.index ["id"], name: "index_object_cache_on_id"
+    t.index ["name"], name: "index_object_cache_on_name"
+    t.index ["project_id"], name: "index_object_cache_on_project_id"
   end
 
   create_table "project_profiles", id: :serial, force: :cascade do |t|
