@@ -77,8 +77,8 @@ module Compute
     end
 
     def instance_ips(instance)
-      @project_floating_ips ||= services.networking.floating_ips(
-        project_id: @scoped_project_id
+      @project_floating_ips ||= services.networking.project_floating_ips(
+        @scoped_project_id
       )
       instance.ip_maps(@project_floating_ips)
     end

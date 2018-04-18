@@ -9,10 +9,14 @@ module ServiceLayer
       end
 
       def project_floating_ips(project_id, filter = {})
-        floatingips = elektron_networking.get('floatingips', filter)
-                                         .body['floatingips']
+        floatingips = elektron_networking.get(
+          'floatingips', {tenant_id: project_id, project_id: project_id}.merge(filter)
+        ).body['floatingips']
+
         floatingips.each_with_object([]) do |fip, array|
-          next unless fip['tenant_id'] == project_id
+          fip_project_id = fip['tenant_id'] || fip['project_id']
+          next unless fip_project_id == project_id
+
           array << floatingip_map.call(fip)
         end
       end
