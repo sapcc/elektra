@@ -9,7 +9,7 @@
 
   "context_is_network_admin": "role:cloud_network_admin or role:network_admin",
 
-  "compute:all_projects": "rule:context_is_cloud_compute_admin",
+  "compute:all_projects": "rule:context_is_cloud_compute_admin and token.is_admin_project:true",
 
   "instance_actions": "rule:context_is_compute_editor and (not rule:monsoon2_domain or rule:project_parent)",
   "compute:instance_get": "rule:context_is_compute_viewer",
@@ -25,7 +25,7 @@
   "compute:instance_confirm_resize": "rule:instance_actions",
   "compute:instance_revert_resize": "rule:instance_actions",
   "compute:instance_lock": "rule:context_is_compute_admin",
-  "compute:instance_unlock": "rule:context_is_compute_admin",  
+  "compute:instance_unlock": "rule:context_is_compute_admin",
   "compute:instance_update": "rule:instance_actions",
   "compute:instance_reset_status": "rule:context_is_compute_admin",
   "compute:instance_edit_securitygroups": "rule:context_is_compute_admin or rule:context_is_network_admin",

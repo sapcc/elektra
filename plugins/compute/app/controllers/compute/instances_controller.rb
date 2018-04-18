@@ -64,7 +64,7 @@ module Compute
 
     def show
       @instance = services.compute.find_server(params[:id])
-
+      byebug
       return if @instance.blank?
 
       @instance_security_groups = @instance.security_groups_details
@@ -274,7 +274,7 @@ module Compute
 
         render action: :new_floatingip and return
       end
-      
+
       # get project ports
       ports = services.networking.ports(device_id: params[:id])
       # find port which contains the fixed ip or take the first one.

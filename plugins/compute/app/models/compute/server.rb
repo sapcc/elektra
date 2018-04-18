@@ -147,13 +147,20 @@ module Compute
       return @ip_maps if @ip_maps
       return {} unless addresses
 
-      ip_network_names = addresses.each_with_object({}) do |(network_name, ips), map|
+      ip_network_names = {}
+      server_floating_ips = []
+
+      addresses.each do |network_name, ips|
         ips.each do |ip|
-          map[ip['addr']] = network_name
+          ip_network_names[ip['addr']] = network_name
+          if ip['OS-EXT-IPS:type'] == 'floating'
+            server_floating_ips << ip['addr']
+          end
         end
       end
 
       fixed_floating_map = project_floating_ips.each_with_object({}) do |fip, map|
+        next unless server_floating_ips.include?(fip.floating_ip_address)
         map[fip.fixed_ip_address] = fip
       end
 
@@ -190,12 +197,12 @@ module Compute
     # borrowed from fog
     def ip_addresses_by_type(type)
       ips = if addresses
-                      addresses.values.flatten.select do |data|
-                        data['OS-EXT-IPS:type'] == 'floating'
-                      end.map { |addr| addr['addr'] }
-                    else
-                      []
-                    end
+              addresses.values.flatten.select do |data|
+                data['OS-EXT-IPS:type'] == 'floating'
+              end.map { |addr| addr['addr'] }
+            else
+              []
+            end
       return [] if ips.empty?
       # Return them all, leading with manually assigned addresses
       manual = ips.map { |addr| addr['ip'] }
