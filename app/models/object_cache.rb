@@ -59,7 +59,7 @@ class ObjectCache < ApplicationRecord
     where(
       [
         'id ILIKE :term or name ILIKE :term or project_id ILIKE :term or ' \
-        'domain_id ILIKE :term or cached_object_type ILIKE :term',
+        'domain_id ILIKE :term',
         term: "%#{args}%"
       ]
     )

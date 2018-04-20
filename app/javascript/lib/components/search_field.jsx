@@ -2,7 +2,11 @@ import { Popover, OverlayTrigger } from 'react-bootstrap';
 
 let counter = 0;
 
-export default class SearchField extends React.Component {
+/**
+ * This component implements a serach field.
+ * Usage: <SearchField placeholder='Name' text='Search by name' onChange={(term) => handleSearch}/>
+ **/
+export class SearchField extends React.Component {
   state = {
     searchTerm: ''
   }

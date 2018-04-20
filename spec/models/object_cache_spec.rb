@@ -134,12 +134,6 @@ RSpec.describe ObjectCache, type: :model do
       expect(items.length).to eql(1)
     end
 
-    it 'should find items by object type' do
-      type = random_type
-      items = ObjectCache.search(type)
-      expect(items.length).to eql(ObjectCache.where(cached_object_type: type).length)
-    end
-
     it 'should find items by name' do
       items = ObjectCache.search(ObjectCache.first.name)
       expect(items.first.name).to eql(ObjectCache.first.name)

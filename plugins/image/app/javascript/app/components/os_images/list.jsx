@@ -4,9 +4,9 @@ import {Popover, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {FadeTransition} from 'lib/components/transitions';
 import {policy} from 'policy';
-import SearchField from 'lib/components/search_field';
+import { SearchField } from 'lib/components/search_field';
 import Item from './item';
-import AjaxPaginate from 'lib/components/ajax_paginate';
+import { AjaxPaginate } from 'lib/components/ajax_paginate';
 
 const TableRowFadeTransition = ({
   children,

@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { DefeatableLink } from 'lib/components/defeatable_link';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import SearchField from 'lib/components/search_field';
+import { SearchField } from 'lib/components/search_field';
 import PortItem from './item';
-import AjaxPaginate from 'lib/components/ajax_paginate';
+import { AjaxPaginate } from 'lib/components/ajax_paginate';
 
 const TableRowFadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={200} classNames="css-transition-fade">
