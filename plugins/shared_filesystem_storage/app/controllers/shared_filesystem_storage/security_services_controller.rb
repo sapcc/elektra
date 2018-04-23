@@ -72,6 +72,7 @@ module SharedFilesystemStorage
         :type,
         :name,
         :domain,
+        :server,
         :ou
       )
     end
