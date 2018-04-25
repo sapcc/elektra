@@ -31,7 +31,7 @@
       %tr
         %td{colspa: 5} No volumes available
     - else
-      = render partial: 'list', locals: {volumes: @volumes, servers: @servers}
+      = render partial: 'list', locals: {volumes: @volumes}
 
 
 - if @pagination_has_next

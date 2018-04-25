@@ -1,5 +1,11 @@
-export default ({
+/**
+ * This component implements a pagination based on AJAX. It creates a
+ * "Load Next" button which calls a given callback method on click.
+  * Usage: <AjaxPaginate hasNext={true} onLoadNext={() => handleLoadNext()}/>
+ **/
+export const AjaxPaginate = ({
   hasNext,
+  text,
   isFetching,
   onLoadNext,
   onLoadAll,
@@ -17,6 +23,7 @@ export default ({
         :
         ( hasNext &&
           <div className='main-buttons'>
+            { text }
             { loadNextButton &&
               <button
                 className={loadNextItemsCssClass}

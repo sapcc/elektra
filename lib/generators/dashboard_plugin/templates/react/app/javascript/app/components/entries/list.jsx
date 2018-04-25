@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { TransitionGroup } from 'react-transition-group';
 import { FadeTransition } from 'lib/components/transitions';
 import { policy } from 'policy';
-import SearchField from 'lib/components/search_field';
+import { SearchField } from 'lib/components/search_field';
 import EntryItem from './item';
 
 export default class Entries extends React.Component {

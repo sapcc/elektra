@@ -16,16 +16,13 @@
     %td= volume.availability_zone
     %td= volume.description
     %td= volume.size
-    - attachments = get_attachments(volume, local_assigns[:servers])
+    - attachments = get_attachments(volume)
     - if !attachments.blank?
       - attachments.each do |att|
-        - if att[:server_name]
-          %td
-            = link_to "#{att[:server_name]}", plugin('compute').instance_path(id: att[:server_id]), data: {modal: true}
-            = "on #{att[:device]}"
-        - else
-          %td
-            = "N/A (#{att[:server_id]}) on #{att[:device]}"
+        %td
+          = link_to "#{att[:server_name]}", plugin('compute').instance_path(id: att[:server_id]), data: {modal: true}
+          = "on #{att[:device]}"
+
     - else
       %td
     %td= volume.status

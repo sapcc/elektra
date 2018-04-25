@@ -21,7 +21,6 @@ module BlockStorage
 
     # GET /volumes
     def index
-      @servers = get_cached_servers
       @action_id = params[:id]
       return unless  @scoped_project_id
 
@@ -44,7 +43,7 @@ module BlockStorage
       # this is relevant in case an ajax paginate call is made.
       # in this case we don't render the layout, only the list!
       if request.xhr?
-        render partial: 'list', locals: { volumes: @volumes, servers: @servers }
+        render partial: 'list', locals: { volumes: @volumes }
       else
         # comon case, render index page with layout
         render action: :index
@@ -53,7 +52,6 @@ module BlockStorage
 
     # GET /volumes/1
     def show
-      @servers = get_cached_servers if @volume.status == 'in-use'
     end
 
     # GET /volumes/new
@@ -199,7 +197,6 @@ module BlockStorage
       # reload volume
       @volume = services.block_storage.find_volume(params[:id])
       if @volume.status == params[:volume][:status]
-        @servers = get_cached_servers if @volume.status == 'in-use'
         audit_logger.info(current_user, "has reset", @volume)
         render template: 'block_storage/volumes/reset_status.js'
       else
@@ -246,10 +243,6 @@ module BlockStorage
     end
 
     private
-
-    def get_cached_servers
-      services.compute.cached_project_servers(@scoped_project_id)
-    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_volume
