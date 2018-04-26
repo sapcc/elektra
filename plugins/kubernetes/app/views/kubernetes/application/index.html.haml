@@ -11,9 +11,14 @@
   - unless current_user.is_allowed?('kubernetes:application_list')
     %p
       %strong
-        This service is currently in closed beta with a limited amount of beta testers. If you are interested in trying it out please contact
-        = render_contact_for_beta_access(@beta_contact)
-        with a short description of your use case.
+        You need the role
+        %code kubernetes_admin
+        to be able to access and use this service.
+
+        For questions and support please use the
+        %code= "#kubernikus-users"
+        Slack channel
+
   %p
     = link_to 'Read more about Kubernetes as a Service in our documentation', "#{sap_url_for('documentation')}docs/containers/kubernetes/", target: '_blank'
 

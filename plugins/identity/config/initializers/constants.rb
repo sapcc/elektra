@@ -6,6 +6,7 @@ ALLOWED_ROLES = %w(
   dns_viewer
   keymanager_admin
   keymanager_viewer
+  kubernetes_admin
   member
   monitoring_viewer
   network_admin
@@ -20,5 +21,4 @@ ALLOWED_ROLES = %w(
 ).freeze
 
 BETA_ROLES = %w(
-  kubernetes_admin
 ).freeze
