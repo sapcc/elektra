@@ -1,0 +1,58 @@
+%nav.navbar.navbar-inverse.navbar-sap
+  .container
+    .navbar-header
+      %button.navbar-toggle.collapsed{"data-target": "#main-nav-collapse", "data-toggle": "collapse", type: "button"}
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      = link_to main_app.landing_page_url(@scoped_domain_fid ? @scoped_domain_fid : Rails.configuration.default_domain), class: "navbar-brand" do
+        .logo
+        Converged Cloud
+
+    .collapse.navbar-collapse#main-nav-collapse
+      %ul.nav.navbar-nav
+        %li
+          = link_to (@scoped_domain_name || params[:domain_id]), main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil) if @scoped_domain_id
+
+      %ul.nav.navbar-nav.navbar-right
+
+        - unless logged_in?
+          %li
+            = link_to "Log in", monsoon_openstack_auth.login_path(domain_fid: @scoped_domain_fid || params[:domain_id],
+              domain_name: @scoped_domain_name,
+              after_login: main_app.domain_home_path(domain_id: @scoped_domain_fid)), id: "navbar-login-btn"
+        - else
+          %li.dropdown
+            %a.navbar-identity.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+              %img.avatar{src: url_for_avatar}
+              = current_user.full_name
+              %span.caret
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                = link_to "Profile", '#', data: { toggle: "modal", target: "#profile"}
+
+              - if current_user.is_allowed?("compute:keypair_list", {target: {scoped_domain_name: @scoped_domain_name}}) && @scoped_project_id
+                %li= link_to "Key Pairs", plugin('compute').keypairs_path
+
+              %li.divider
+              %li
+                = link_to 'Log out', monsoon_openstack_auth.logout_path(domain_fid: @scoped_domain_fid || params[:domain_id],
+                  domain_name: @scoped_domain_name, redirect_to: main_app.landing_page_url)
+
+
+        %li.dropdown
+          %a.nav-highlight.dropdown-toggle{"aria-expanded" => "false", "data-toggle" => "dropdown", :href => "#", :role => "button"}
+            = current_region.upcase
+            %span.caret
+
+          = render_available_regions
+          -# %ul.dropdown-menu{:role => "menu"}
+          -#   %li
+          -#     %a{:href => "#"} Canada
+          -#   %li.active
+          -#     %a{:href => "#"} Europe
+          -#   %li
+          -#     %a{:href => "#"} US-East
+          -#   %li
+          -#     %a{:href => "#"} US-West

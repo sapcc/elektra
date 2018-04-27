@@ -164,7 +164,9 @@ span.highlight {
 html {
   /* Needed for sticky footer */
   position: relative;
+  height: 100%;
   min-height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -175,6 +177,30 @@ body {
     padding-top: $navbar-height;
   }
 }
+
+// FLEX LAYOUT /w sticky header and footer
+// ---------------------------------------------------------------------------
+
+body.flex-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.flex-header-sticky, .flex-footer-sticky {
+  flex: 0 0 auto;
+}
+
+.flex-body {
+  flex: 1 1 auto;
+  overflow-y: scroll;
+}
+
+// ---------------------------------------------------------------------------
 
 h4 {
   font-family: $font-family-sans-serif-medium;
@@ -401,6 +427,10 @@ section {
   font-family: monospace;
 }
 
+.u-flex-pos-right {
+  margin-left: auto;
+}
+
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -410,6 +440,7 @@ section {
   width: $login-max-width;
   margin: 0 auto;
 }
+
 
 // ---------------------------------------------------------------------------------
 // Icons
@@ -732,6 +763,10 @@ section {
 // Navigation
 // ---------------------------------------------------------------------------------
 
+.flex-layout .navbar {
+  margin-bottom: 0;
+}
+
 // special top of page navbar
 .navbar-sap {
   &.navbar-inverse .dropdown-menu > .active > a {
@@ -888,6 +923,11 @@ footer, .footer {
   bottom: 0;
   width: 100%;
   height: $footer-height;
+}
+
+.flex-footer-sticky .footer {
+  position: static;
+  height: auto;
 }
 
 .footer-nav {
@@ -1100,6 +1140,26 @@ footer, .footer {
       }
     }
   }
+}
+
+// ---------------------------------------------------------------------------------
+// Main Toolbar
+// ---------------------------------------------------------------------------------
+
+.mega-nav-responsive {
+  background: linear-gradient(darken(#f5f5f5, 5%), #f5f5f5);
+  z-index: 1029;
+
+  .container {
+    display: flex;
+  }
+
+  .has-feedback.has-feedback-searchable {
+    width: 250px;
+  }
+
+  @media (min-width: 1700px) { }
+
 }
 
 

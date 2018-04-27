@@ -2,5 +2,6 @@
 
 module Cloudops
   class ApplicationController < DashboardController
+    layout "cloudops"
   end
 end
