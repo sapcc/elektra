@@ -1538,13 +1538,33 @@ tr.deleting, tr.updating {
   }
 }
 
+// .state-active-icon {
+//   &:before {
+//     @include fa-icon;
+//     @extend .fa;
+//     @extend .fa-fw;
+//     @extend .fa-power-off;
+//     color: $medium-green;
+//   }
+// }
+
 .state-shutoff-icon {
   &:before {
     @include fa-icon;
     @extend .fa;
     @extend .fa-fw;
-    @extend .fa-flag;
-    color: $help-info-blue;
+    @extend .fa-power-off;
+    color: $alarm-red;
+  }
+}
+
+.state-suspended-icon, .state-paused-icon {
+  &:before {
+    @include fa-icon;
+    @extend .fa;
+    @extend .fa-fw;
+    @extend .fa-power-off;
+    color: $medium-gray;
   }
 }
 
@@ -1553,7 +1573,7 @@ tr.deleting, tr.updating {
     @include fa-icon;
     @extend .fa;
     @extend .fa-fw;
-    @extend .fa-flag;
+    @extend .fa-exclamation-triangle;
     color: $alarm-red;
   }
 }
