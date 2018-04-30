@@ -20,7 +20,7 @@
           = f.input :direction, as: :select, collection: [["Ingress","ingress"],["Egress","egress"]]
 
           = f.input :port_range, { label: 'Port Range',
-            hint: 'Example for range 0-80 and single port 80',
+            hint: 'Example for range 1-80 and single port 80',
             wrapper_html: {class: ('hidden' if @rule.protocol=='icmp')} }
 
           = f.input :icmp_type, { label: 'ICMP Type',
