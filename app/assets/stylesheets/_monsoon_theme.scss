@@ -1538,15 +1538,15 @@ tr.deleting, tr.updating {
   }
 }
 
-// .state-active-icon {
-//   &:before {
-//     @include fa-icon;
-//     @extend .fa;
-//     @extend .fa-fw;
-//     @extend .fa-power-off;
-//     color: $medium-green;
-//   }
-// }
+.state-active-icon {
+  &:before {
+    @include fa-icon;
+    @extend .fa;
+    @extend .fa-fw;
+    @extend .fa-power-off;
+    color: $medium-green;
+  }
+}
 
 .state-shutoff-icon {
   &:before {
