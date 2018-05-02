@@ -1516,6 +1516,10 @@ tr.deleting, tr.updating {
 
     }
   }
+  .state-error-icon, .state-suspended-icon, .state-paused-icon,
+  .state-locked-icon, .state-shutoff-icon {
+    display: none;
+  }
 }
 
 .table > tbody > tr.details > td {
@@ -1538,15 +1542,15 @@ tr.deleting, tr.updating {
   }
 }
 
-.state-active-icon {
-  &:before {
-    @include fa-icon;
-    @extend .fa;
-    @extend .fa-fw;
-    @extend .fa-power-off;
-    color: $medium-green;
-  }
-}
+// .state-active-icon {
+//   &:before {
+//     @include fa-icon;
+//     @extend .fa;
+//     @extend .fa-fw;
+//     @extend .fa-power-off;
+//     color: $medium-green;
+//   }
+// }
 
 .state-shutoff-icon {
   &:before {
@@ -1554,7 +1558,7 @@ tr.deleting, tr.updating {
     @extend .fa;
     @extend .fa-fw;
     @extend .fa-power-off;
-    color: $alarm-red;
+    color: $medium-gray;
   }
 }
 
@@ -1594,7 +1598,7 @@ tr.state-shutoff {
 tr.state-error {
   &:not(.deleting):not(.updating) {
     td:first-child {
-      @extend .state-shutoff-icon;
+      @extend .state-error-icon;
     }
   }
 }
