@@ -164,9 +164,11 @@ span.highlight {
 html {
   /* Needed for sticky footer */
   position: relative;
-  height: 100%;
   min-height: 100%;
-  overflow: hidden;
+
+  &.flex-layout {
+    height: 100%;
+  }
 }
 
 body {
@@ -181,12 +183,11 @@ body {
 // FLEX LAYOUT /w sticky header and footer
 // ---------------------------------------------------------------------------
 
-body.flex-layout {
+.flex-layout body {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 100%;
-  overflow: hidden;
   padding: 0;
   margin: 0;
 }
@@ -196,8 +197,7 @@ body.flex-layout {
 }
 
 .flex-body {
-  flex: 1 1 auto;
-  overflow-y: scroll;
+  flex: 1 0 auto;
 }
 
 // ---------------------------------------------------------------------------
@@ -1152,6 +1152,25 @@ footer, .footer {
 
   .container {
     display: flex;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .mega-nav-items {
+    display: flex;
+    flex-wrap: wrap;
+
+    ul {
+      padding-left: 0;
+    }
+
+    li {
+      list-style-type: none;
+    }
+  }
+
+  .mega-nav-utils {
+    margin-left: auto;
   }
 
   .has-feedback.has-feedback-searchable {

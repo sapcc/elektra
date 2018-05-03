@@ -1,7 +1,15 @@
 .mega-nav-responsive
   .container
-    %h2 CloudOps
-    .has-feedback.has-feedback-searchable.u-flex-pos-right
-      %input(type="text" class="form-control" value="" placeholder="Object ID, name or project ID")
-      %span.form-control-feedback
-        %i.fa.fa-search
+    .mega-nav-items
+      .mega-nav-block
+        %h5
+          %i.fa.fa-fw.fa-search
+          Finding All the Things
+        %ul
+          %li
+            %a(href="#") Universal Search
+    .mega-nav-utils
+      .has-feedback.has-feedback-searchable.u-flex-pos-right
+        %input(type="text" class="form-control" value="" placeholder="Object ID, name or project ID")
+        %span.form-control-feedback
+          %i.fa.fa-search

@@ -13,7 +13,7 @@
     .collapse.navbar-collapse#main-nav-collapse
       %ul.nav.navbar-nav
         %li
-          = link_to (@scoped_domain_name || params[:domain_id]), main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil) if @scoped_domain_id
+          = link_to "CLOUDOPS", plugin('cloudops').start_path
 
       %ul.nav.navbar-nav.navbar-right
 
@@ -47,12 +47,3 @@
             %span.caret
 
           = render_available_regions
-          -# %ul.dropdown-menu{:role => "menu"}
-          -#   %li
-          -#     %a{:href => "#"} Canada
-          -#   %li.active
-          -#     %a{:href => "#"} Europe
-          -#   %li
-          -#     %a{:href => "#"} US-East
-          -#   %li
-          -#     %a{:href => "#"} US-West

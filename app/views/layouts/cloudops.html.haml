@@ -1,5 +1,5 @@
 !!!
-%html
+%html.flex-layout
   %head
     %meta(http-equiv="X-UA-Compatible" content="IE=edge")
     %meta(name="viewport" content="width=device-width, initial-scale=1")
@@ -35,13 +35,13 @@
 
     = csrf_meta_tags
 
-  %body{class: "#{body_class} #{domain_class} flex-layout"}
+  %body{class: "#{body_class} #{domain_class}"}
     .flex-header-sticky
       = render "cloudops_nav"
       = render "cloudops_mega_nav"
 
     .flex-body
-      = render "main_toolbar"
+      = render "cloudops_main_toolbar"
       = yield :page_lead
 
       .container
