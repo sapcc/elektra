@@ -13,6 +13,7 @@
     "react-bootstrap-typeahead": "^3.0.0-alpha.1",
     "react-datetime": "*",
     "react-dom": "^16.1.1",
+    "react-json-view": "^1.16.6",
     "react-redux": "^5.0.7",
     "react-router-dom": "*",
     "react-transition-group": "*",

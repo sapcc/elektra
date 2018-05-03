@@ -1,5 +1,6 @@
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
+import ReactJson from 'react-json-view'
 
 export default class ShowSearchObjectModal extends React.Component{
   state = {
@@ -54,7 +55,26 @@ export default class ShowSearchObjectModal extends React.Component{
           { this.state.isFetching &&
             <React.Fragment><span className='spinner'/>Loading...</React.Fragment>}
           { this.state.error && <span>{this.state.error}</span>}
-          { item && <pre>{JSON.stringify(item.payload, null, 2)}</pre> }
+          { item &&
+            <React.Fragment>
+              <Tabs defaultActiveKey={1} id="item_payload">
+                <Tab eventKey={1} title="Formatted">
+                  <ReactJson src={item.payload} collapsed={1}/>
+                </Tab>
+                <Tab eventKey={2} title="Raw">
+                  <pre>{JSON.stringify(item.payload, null, 2)}</pre>
+                </Tab>
+              </Tabs>
+              {item.cached_object_type == 'project' &&
+                <a
+                  href={`/${item.domain_id}/${item.id}/home`}
+                  target='_blank'
+                  className='btn btn-primary'>
+                  Switch to Project
+                </a>
+              }
+            </React.Fragment>
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.hide}>Close</Button>

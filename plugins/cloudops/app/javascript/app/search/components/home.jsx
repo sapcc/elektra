@@ -52,6 +52,7 @@ export default class Search extends React.Component {
   }
 
   render() {
+    const availableTypes = this.props.types.items.sort()
     return (
       <React.Fragment>
 
@@ -68,7 +69,7 @@ export default class Search extends React.Component {
               value={this.state.objectType}
             >
               <option value="">All</option>
-              { this.props.types.items.map((type,index) =>
+              { availableTypes.map((type,index) =>
                 <option value={type} key={index}>{type}</option>
               )}
             </select>
@@ -95,6 +96,7 @@ export default class Search extends React.Component {
                 <th>ID</th>
                 <th>Name</th>
                 <th>Project ID</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
