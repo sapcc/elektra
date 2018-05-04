@@ -1,0 +1,74 @@
+!!!
+%html.flex-layout
+  %head
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    %meta(name="viewport" content="width=device-width, initial-scale=1")
+
+
+    %title= page_title
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
+    -# = content_for :javascripts do
+    :javascript
+      //window.History = { options: { html4Mode: true} };
+      window.pluginName = "#{plugin_name}";
+      window.scopedDomainId = "#{@scoped_domain_id}";
+      window.scopedDomainFid = "#{@scoped_domain_fid}";
+      window.scopedProjectId = "#{@scoped_project_id}";
+      window.scopedProjectFid = "#{@scoped_project_fid}";
+
+    = javascript_include_tag 'raven'
+    - if $sentry_public_dsn
+      :javascript
+        Raven.config('#{$sentry_public_dsn}').install();
+        Raven.setUserContext(#{@sentry_user_context ? @sentry_user_context.to_json.html_safe : ''});
+        Raven.setTagsContext(#{@sentry_tags_context ? @sentry_tags_context.to_json.html_safe : '{}' })
+    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+
+    / Load plugin js (plugin_name/plugin.js)
+    - plugin = Core::PluginsManager.plugin(plugin_name)
+    - if plugin and plugin.has_plugin_js?
+      = javascript_include_tag "#{plugin.name}/#{plugin.class::PLUGIN_JS_FILE_NAME}"
+
+    = favicon_png
+    = favicon_ico
+    = apple_touch_icon
+
+    = csrf_meta_tags
+
+  %body{class: "#{body_class} #{domain_class}"}
+    .flex-header-sticky
+      = render "cloudops_nav"
+      = render "cloudops_mega_nav"
+
+    .flex-body
+      = render "cloudops_main_toolbar"
+      = yield :page_lead
+
+      .container
+        .content{class: "#{plugin_name if plugin_name}"}
+          = render "application/help_text"
+          .flashes
+            = render "application/flashes"
+          = yield
+
+    .flex-footer-sticky
+      = render "application/footer"
+
+
+    = render "application/user_profile"
+
+    = yield :templates
+    = yield :javascripts
+
+    #modal-holder
+
+  :javascript
+
+    $(document).ready(function(){
+      try {
+        window.policy = new PolicyEngine(#{policy.try(:to_js).try(:html_safe) || {}});
+
+        // usage:
+        //console.log(policy.isAllowed("identity:project_get"))
+      } catch(e) { }
+    });

@@ -2,6 +2,8 @@
 
 module Cloudops
   class ObjectsController < DashboardController
+    layout "cloudops"
+    
     def index
       page = (params[:page] || 1).to_i
       per_page = 30

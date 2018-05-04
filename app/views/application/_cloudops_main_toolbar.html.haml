@@ -1,0 +1,11 @@
+- if @can_access_domain
+  .main-toolbar
+    .container
+      %h1
+        .page-title
+          %i.fa.fa-angle-right
+          = link_to request.fullpath do
+            - if content_for? :main_toolbar
+              = yield :main_toolbar
+            - else
+              = active_service_breadcrumb
