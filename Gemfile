@@ -88,7 +88,6 @@ end
 group :api_client do
   gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.0.0'
   # gem 'elektron', path: '../elektron'
-  gem 'colorize'
 end
 
 # Avoid double log lines in development
@@ -132,6 +131,7 @@ end
 
 group :development, :test, :integration_tests do
   gem "rspec"
+  gem 'colorize'
 end
 
 group :integration_tests do
