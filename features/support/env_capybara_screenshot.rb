@@ -2,11 +2,20 @@ require 'capybara-screenshot'
 require 'capybara-screenshot/cucumber'
 require 'mime-types'
 require 'elektron'
+require 'colorize'
 
 Capybara.save_path = 'features/screenshots'
 
 module Screenshots
   class Uploader
+    def self.can_upload?
+      %w[SCREEN_SHOT_UPLOAD_URL SCREEN_SHOT_UPLOAD_USER
+         SCREEN_SHOT_UPLOAD_DOMAIN SCREEN_SHOT_UPLOAD_PASSWORD
+         SCREEN_SHOT_UPLOAD_DOMAIN SCREEN_SHOT_UPLOAD_PROJECT].collect do |v|
+           ENV[v] && !ENV[v].empty? && true
+      end.all?
+    end
+
     def initialize
       @client = Elektron.client(
         {
@@ -37,6 +46,9 @@ module Screenshots
       @swift.put(
         "elektra_capybara_screenshots/#{basename}", headers: headers
       ) { content }
+
+      # return the public url
+      "#{@swift.endpoint_url}/elektra_capybara_screenshots/#{basename}"
     end
   end
 end
@@ -60,12 +72,14 @@ at_exit do
         puts 'FAIL  / /o/\`    /'
         puts '^^^^^^^^^^^^^^^^^^^^'
         puts ''
-        puts 'Some tests failed. But do not despair. Check these URLs:'
 
-        uploader = Screenshots::Uploader.new
-        Dir['features/screenshots/*'].each do |file|
-          # puts Screenshots::upload(File.expand_path(file))
-          uploader.upload(File.expand_path(file))
+        if Screenshots::Uploader.can_upload?
+          puts 'Some tests failed. But do not despair. Check these URLs:'
+          uploader = Screenshots::Uploader.new
+          Dir['features/screenshots/*'].each do |file|
+            # puts Screenshots::upload(File.expand_path(file))
+            puts uploader.upload(File.expand_path(file)).colorize(:green)
+          end
         end
 
         puts ''

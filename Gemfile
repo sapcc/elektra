@@ -27,6 +27,7 @@ gem 'simple-navigation' # Navigation menu builder
 gem 'font-awesome-sass'
 
 gem 'responders'
+gem 'colorize'
 
 # make it fancy with react
 gem 'react-rails' #, "1.8.2"
