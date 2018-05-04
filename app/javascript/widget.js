@@ -52,12 +52,12 @@ class Widget {
     if(this.store) {
       ReactDOM.render(
         <Provider store = { this.store }>
-          <div><FlashMessages/>{ container }</div>
+          <React.Fragment><FlashMessages/>{ container }</React.Fragment>
         </Provider>, this.reactContainer
       )
     } else {
       ReactDOM.render(
-        <div><FlashMessages/>{ container }</div>, this.reactContainer
+        <React.Fragment><FlashMessages/>{ container }</React.Fragment>, this.reactContainer
       )
     }
   }
@@ -80,12 +80,20 @@ const getCurrentScript = (widgetName) => {
   return scripts[ scripts.length - 1 ];
 }
 
-export const createWidget = (dirname) => {
+export const createWidget = (dirname, options={}) => {
   const widgetName = getWidgetName(dirname)
   const currentScript = getCurrentScript(widgetName)
   const scriptParams = Object.assign({}, currentScript.dataset)
   const srcTokens = currentScript && currentScript.getAttribute('src') ? currentScript.getAttribute('src').split('/') : []
   const reactContainer = window.document.createElement('div');
+
+  let htmlOptions = options.html || {};
+  let defaultHtmlOptions = {class: '.react-widget-content'};
+  htmlOptions = Object.assign({}, defaultHtmlOptions, htmlOptions);
+  for(let attr in htmlOptions) {
+    reactContainer.setAttribute(attr, htmlOptions[attr]);
+  }
+
   currentScript.parentNode.replaceChild(reactContainer, currentScript);
 
   const createConfig = () => (

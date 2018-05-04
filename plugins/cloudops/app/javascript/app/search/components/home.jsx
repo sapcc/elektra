@@ -56,8 +56,6 @@ export default class Search extends React.Component {
     return (
       <React.Fragment>
 
-        <Link to='/'>Menu</Link>
-
         <div className="toolbar">
           { this.props.types.isFetching ?
             <React.Fragment>
