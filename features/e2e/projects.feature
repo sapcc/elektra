@@ -55,10 +55,10 @@ Feature: Projects
     Then the page status code is successful
     And  I see "Groups"
 
-  @admin
-  Scenario: Manage Resources
-    When I visit domain path "home"
-    Then I see "Domain Resources Admin" button
-    When I click on "Domain Resources Admin"
-    Then the page status code is successful
-    And  I see "Manage Domain Resources"
+  # @admin
+  # Scenario: Manage Resources
+  #   When I visit domain path "home"
+  #   Then I see "Domain Resources Admin" button
+  #   When I click on "Domain Resources Admin"
+  #   Then the page status code is successful
+  #   And  I see "Manage Domain Resources"
