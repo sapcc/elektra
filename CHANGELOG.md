@@ -2,12 +2,32 @@
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
-[Full Changelog](https://github.com/sapcc/elektra/compare/2018.3...HEAD)
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.4...HEAD)
 
 **Implemented enhancements:**
 
+- **Cloudops layout [\#281](https://github.com/sapcc/elektra/pull/281)**   
+Layout for new cloudops area. This has a new type of "always there" navigation with integrated universal search bar which will eventually be responsive and attach to the left side on very wide screens.
+
+**Fixed bugs:**
+
+- **Unable to create VM from the private image via Dashboard [\#277](https://github.com/sapcc/elektra/issues/277)**   
+The way images are categorized has changed in newer versions of the Glance service. In regions where Glance has been upgraded to Ocata you will see the new UI with the new categories. The snapshots, for example, get the status shared and not private as before.
+
+## [2018.4](https://github.com/sapcc/elektra/tree/2018.4) (2018-04-30)
+
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.3...2018.4)
+
+**Implemented enhancements:**
+
+- **Volume Index: Timeout for projects with large number of servers [\#271](https://github.com/sapcc/elektra/issues/271)**   
+When going to the volumes index page in projects with a very large number of servers you get a timeout.
+- **Object Cache [\#266](https://github.com/sapcc/elektra/issues/266)**   
+Cache all objects coming from the API. Elektron with its middlewares seems to be the most suitable place for it.
+- **User request: Use monospace font for user data textarea in create server dialog [\#261](https://github.com/sapcc/elektra/issues/261)**   
+Text area currently uses our regular non-monopaced font which makes it harder to format the cloud config file.
 - **Mark "Interface IP" field mandatory on the "Attach Floating IP" form [\#253](https://github.com/sapcc/elektra/issues/253)**   
-There is no use case, which could attach a floating IP to a VM without an interface.
+There is no use case which could attach a floating IP to a VM without an interface.
 - **Manila: Access IP/User [\#242](https://github.com/sapcc/elektra/issues/242)**   
 Please make it easier to not allow to select not working modes on share access control.
 - **Manila: messages [\#240](https://github.com/sapcc/elektra/issues/240)**   
@@ -15,7 +35,11 @@ Implement messages list+show to give users more transparency about errors: https
 - **Ports UI enhancements [\#235](https://github.com/sapcc/elektra/issues/235)**   
 Unify ports and fixed IP UI. Add possibility to delete ports.
 - **Shared Images with Glance Ocata \(or later\) [\#234](https://github.com/sapcc/elektra/issues/234)**   
-The Ocata release of Glance changed the meaning of the visibility attribute as specified here:
+The Ocata release of Glance changed the meaning of the visibility attribute as specified here: https://wiki.openstack.org/wiki/Glance-v2-community-image-visibility-design
+- **Admin Service: Find projects by floating IP or DNS record [\#201](https://github.com/sapcc/elektra/issues/201)**   
+Implement a service for admins that allows an input of floating IP or DNS record. The service should then find which project the input belongs to and display the following information about the project:
+- **Cloudops search, object cache [\#268](https://github.com/sapcc/elektra/pull/268)**   
+Use the object read cache to create a universal search that allows search for any object by id or name without having specify what type of object it is and where it is located
 
 **Fixed bugs:**
 
