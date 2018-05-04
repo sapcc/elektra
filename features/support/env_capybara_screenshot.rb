@@ -1,8 +1,8 @@
+require 'colorize'
 require 'capybara-screenshot'
 require 'capybara-screenshot/cucumber'
 require 'mime-types'
 require 'elektron'
-require 'colorize'
 
 Capybara.save_path = 'features/screenshots'
 

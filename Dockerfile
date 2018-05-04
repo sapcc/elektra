@@ -20,7 +20,6 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install puma -v 3.9.1  \
       && gem install redcarpet -v 3.4.0 \
       && gem install unf -v 0.2.0.beta2 \
-      && gem install colorize -v 0.8.1 \
       && gem install websocket-driver -v 0.6.5 \
       && runDeps="$( \
 		      scanelf --needed --nobanner --recursive /usr/local \
