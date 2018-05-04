@@ -27,7 +27,6 @@ gem 'simple-navigation' # Navigation menu builder
 gem 'font-awesome-sass'
 
 gem 'responders'
-gem 'colorize'
 
 # make it fancy with react
 gem 'react-rails' #, "1.8.2"
@@ -42,6 +41,7 @@ gem 'netaddr'
 
 gem 'monsoon-openstack-auth', git: 'https://github.com/sapcc/monsoon-openstack-auth.git'
 # gem 'monsoon-openstack-auth', path: '../monsoon-openstack-auth'
+gem 'colorize'
 
 gem 'ruby-radius'
 
@@ -88,6 +88,7 @@ end
 group :api_client do
   gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.0.0'
   # gem 'elektron', path: '../elektron'
+  gem 'colorize'
 end
 
 # Avoid double log lines in development
