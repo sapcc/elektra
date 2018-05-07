@@ -72,7 +72,8 @@ module ServiceLayer
         # ccadmin, cc3test -> FloatingIP-internal-monsoon3
         domain_name = 'monsoon3' if %w[ccadmin cc3test].include?(domain_name)
 
-        name_candidates = ["FloatingIP-external-#{domain_name}-04",
+        name_candidates = ["FloatingIP-external-#{domain_name}-05",
+                           "FloatingIP-external-#{domain_name}-04",
                            "FloatingIP-external-#{domain_name}-03",
                            "FloatingIP-external-#{domain_name}-02",
                            "FloatingIP-external-#{domain_name}-01",
