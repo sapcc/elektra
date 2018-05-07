@@ -28,7 +28,7 @@ export default class ShowSearchObjectModal extends React.Component{
 
   restoreUrl = (e) => {
     if (!this.state.show)
-      this.props.history.replace('/search')
+      this.props.history.replace('/universal-search')
   }
 
   hide = (e) => {

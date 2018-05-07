@@ -5,7 +5,7 @@ export default ({item, term}) =>
   <tr>
     <td>{item.cached_object_type}</td>
     <td>
-      <Link to={`/search/${item.id}/show`}>
+      <Link to={`/universal-search/${item.id}/show`}>
         <SearchHighlight term={term} text={item.id}/>
       </Link>
     </td>
@@ -13,7 +13,7 @@ export default ({item, term}) =>
       <SearchHighlight term={term} text={item.name}/>
     </td>
     <td>
-      <Link to={`/search/${item.project_id}/show`}>
+      <Link to={`/universal-search/${item.project_id}/show`}>
         <SearchHighlight term={term} text={item.project_id}/>
       </Link>
     </td>
