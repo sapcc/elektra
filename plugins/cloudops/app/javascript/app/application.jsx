@@ -7,19 +7,13 @@ import { withRouter } from 'react-router'
 
 
 let Breadcrumb = (props) => {
-  // crumbName = (string) => {
-  //   if (string.startsWith('/')) {
-  //     string = string.substring(1); // cut off leading slash
-  //   }
-  //
-  //   // upcase first letter
-  //   string = string.charAt(0).toUpperCase() + string.slice(1);
-  //
-  //
-  //   return (
-  //     string
-  //   )
-  // }
+  let label = ''
+  if(props.location && props.location.pathname) {
+    label = props.location.pathname
+    if (label.startsWith('/')) label = label.substring(1)
+    if (label.length==0) label = 'Cloudops'
+    label = label.split('-').map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(' ')
+  }
 
   return(
     <div className="main-toolbar">
@@ -28,7 +22,7 @@ let Breadcrumb = (props) => {
           <div className="page-title">
             <i className="fa fa-angle-right"></i>
             &nbsp;
-            { props.location && props.location.pathname}
+            { label }
           </div>
         </h1>
       </div>

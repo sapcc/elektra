@@ -21,7 +21,7 @@ const resetImageMembers = (state,{imageId})=> {
   return {...state}
 }
 
-const requestImageMembersFailure = (state) => {
+const requestImageMembersFailure = (state, {imageId}) => {
   state[imageId] = Object.assign(
     {}, initialState, state[imageId], {isFetching: false}
   )

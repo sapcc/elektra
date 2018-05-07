@@ -14,7 +14,7 @@ export default (props) =>
             </h5>
             <ul>
               <li>
-                <Link to='/search'>Universal Search</Link>
+                <Link to='/universal-search'>Universal Search</Link>
               </li>
             </ul>
           </div>

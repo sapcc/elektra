@@ -9,6 +9,8 @@ module Image
           member
         end
         render json: { members: members }
+      rescue => e
+        render json: { errors: e.message}
       end
 
       def create

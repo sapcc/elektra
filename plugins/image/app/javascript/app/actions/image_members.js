@@ -42,17 +42,22 @@ const receiveImageMember= (imageId,member) =>
 const fetchImageMembers= (imageId) =>
   function(dispatch) {
     dispatch(requestImageMembers(imageId));
-    return ajaxHelper.get(`/ng/images/${imageId}/members`).then( (response) => {
-      if (response.data.errors) {
-        addError(React.createElement(ErrorsList, {errors: response.data.errors}))
-      } else {
-        dispatch(receiveImageMembers(imageId,response.data.members));
-      }
+    return new Promise((handleSuccess,handleErrors) => {
+      ajaxHelper.get(`/ng/images/${imageId}/members`).then( (response) => {
+        if (response.data.errors) {
+          dispatch(requestImageMembersFailure(imageId));
+          handleErrors(response.data.errors)
+          // addError(React.createElement(ErrorsList, {errors: response.data.errors}))
+        } else {
+          dispatch(receiveImageMembers(imageId,response.data.members));
+        }
+      })
+      .catch( (error) => {
+        dispatch(requestImageMembersFailure(imageId));
+        handleErrors(error.message)
+        // addError(`Could not load image members (${error.message})`)
+      });
     })
-    .catch( (error) => {
-      dispatch(requestImageMembersFailure(imageId));
-      addError(`Could not load image members (${error.message})`)
-    });
   }
 ;
 
@@ -151,7 +156,7 @@ const acceptSuggestedImage = (imageId) => (
       else {
         if (getState().available.requestedAt)
           dispatch(imageActions('available').receiveOsImage(response.data))
-          
+
         dispatch(imageActions('suggested').removeOsImage(imageId))
       }
     })

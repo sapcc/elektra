@@ -2,6 +2,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import ImageMemberItem from './image_member_item';
 import ImageMemberForm from './image_member_form';
+import { FormErrors} from 'lib/elektra-form/components/form_errors';
 
 const FadeTransition = ({ children, ...props }) => (
   <CSSTransition {...props} timeout={500} classNames="css-transition-fade">
@@ -10,7 +11,7 @@ const FadeTransition = ({ children, ...props }) => (
 );
 
 export default class ImageMembersModal extends React.Component{
-  state = {show: true, showForm: false}
+  state = {show: true, showForm: false, error: null}
 
   restoreUrl = (e) => {
     if (!this.state.show)
@@ -41,7 +42,8 @@ export default class ImageMembersModal extends React.Component{
 
   loadDependencies(props) {
     if(!props.image) return
-    props.loadMembersOnce(props.image.id)
+    const promise = props.loadMembersOnce(props.image.id)
+    if (promise) promise.catch((error) => this.setState({error}))
   }
 
   handleSubmit = (imageId, memberId) => {
@@ -67,6 +69,7 @@ export default class ImageMembersModal extends React.Component{
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {this.state.error && <FormErrors errors={this.state.error}/>}
           { !imageMembers || imageMembers.isFetching ?
             <div><span className='spinner'/>Loading...</div>
             :

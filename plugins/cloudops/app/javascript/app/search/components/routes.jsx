@@ -5,6 +5,6 @@ import ShowItemModal from '../containers/show'
 
 export default () =>
   <React.Fragment>
-    <Route path="/search" component={Home}/>
-    <Route exact path='/search/:id/show' component={ShowItemModal}/>
+    <Route path="/universal-search" component={Home}/>
+    <Route exact path='/universal-search/:id/show' component={ShowItemModal}/>
   </React.Fragment>
