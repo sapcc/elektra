@@ -1,6 +1,6 @@
 FROM ruby:2.4.1-alpine3.6 AS elektra
 
-ENV OVERLAY=sucks
+ENV OVERLAY=sucks2
 
 RUN echo '@edge http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 RUN apk update
