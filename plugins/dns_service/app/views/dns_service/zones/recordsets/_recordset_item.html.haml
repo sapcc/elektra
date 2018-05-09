@@ -17,14 +17,14 @@
 
   %td= recordset.ttl
   %td.snug
-    - if recordset.type!='NS' and (current_user.is_allowed?("dns_service:recordset_update", zone: zone) or current_user.is_allowed?("dns_service:recordset_delete", zone: zone))
+    - if current_user.is_allowed?("dns_service:recordset_update", zone: zone) || current_user.is_allowed?("dns_service:recordset_delete", zone: zone)
       .btn-group
         %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
           %span.fa.fa-cog
           -# %span.spinner
 
         %ul.dropdown-menu.dropdown-menu-right{ role:"menu"}
-          - if current_user.is_allowed?("dns_service:recordset_update", zone: zone)
+          - if recordset.type!='NS' && current_user.is_allowed?("dns_service:recordset_update", zone: zone)
             %li= link_to 'Edit', plugin('dns_service').edit_zone_recordset_path(zone_id:zone.id,id: recordset.id), data: {modal: true}
           - if current_user.is_allowed?("dns_service:recordset_delete", zone: zone)
             %li= link_to 'Delete', plugin('dns_service').zone_recordset_path(zone_id:zone.id,id:recordset.id), method: :delete, data: { confirm: 'Are you sure you want to delete this record?', ok: "Yes, delete it", confirmed: :loading_status}, remote: true

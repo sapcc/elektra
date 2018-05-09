@@ -18,7 +18,7 @@
   "dns_service:recordset_get": "rule:context_is_dns_viewer",
   "dns_service:recordset_create": "rule:zone_primary_or_admin",
   "dns_service:recordset_update": "rule:zone_primary_or_admin",
-  "dns_service:recordset_delete": "rule:zone_primary_or_admin",
+  "dns_service:recordset_delete": "rule:zone_primary_or_admin or rule:context_is_cloud_dns_admin",
 
   "dns_service:pool_list": "rule:context_is_cloud_dns_admin",
 

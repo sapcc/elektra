@@ -73,7 +73,7 @@ module DnsService
 
       def destroy
         @deleted = services.dns_service.delete_recordset(
-          params[:zone_id], params[:id]
+          params[:zone_id], params[:id], all_projects: @all_projects
         )
         respond_to do |format|
           format.js {}

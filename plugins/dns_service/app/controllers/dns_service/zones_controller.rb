@@ -35,7 +35,7 @@ module DnsService
     end
 
     def show
-      @zone = services.dns_service.find_zone(params[:id])
+      @zone = services.dns_service.find_zone(params[:id], all_projects: @all_projects)
 
       @recordsets = paginatable(per_page: 20) do |pagination_options|
         services.dns_service.recordsets(

@@ -41,8 +41,8 @@ module ServiceLayer
         end.body
       end
 
-      def delete_recordset(zone_id, id)
-        elektron_dns.delete("zones/#{zone_id}/recordsets/#{id}")
+      def delete_recordset(zone_id, id, options = {})
+        elektron_dns.delete("zones/#{zone_id}/recordsets/#{id}", options)
       end
     end
   end
