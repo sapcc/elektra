@@ -52,6 +52,11 @@
   -# %td= instance.flavor_object.name if instance.flavor_object
 
   %td= instance.power_state_string
+  %td
+    - if instance.task_state
+      %span.spinner
+    = instance.task_state.nil? ? instance.status.humanize : instance.task_state.humanize
+
   %td= instance.pretty_created_at
   %td.snug
     - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("compute:instance_update", {})
