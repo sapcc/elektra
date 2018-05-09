@@ -7,20 +7,33 @@
 
 - state_icon = 'state-locked-icon' if instance.locked?
 - state_icon = "state-#{instance.status.downcase}-icon" if state_icon.nil? && instance.status
+- state_text = "Status: #{instance.task_state.nil? ? instance.status.humanize : instance.task_state.humanize}"
+- state_text += " #{instance.fault['message']}" if instance.fault
+
+- if instance.locked?
+  - state_text = 'This instance is locked. Please note that |
+    this status is only displayed correctly if you use the lock/unlock functions |
+    via Elektra exclusively!' |
 
 %tr{data: data, id: "instance_#{instance.id}"}
   %td
     - if state_icon
       %span{ class: state_icon,
         data: { toggle: 'tooltip', placement: 'top'},
-        title: instance.locked? ? 'This instance is locked. Please note that this status is only displayed correctly if you use the lock/unlock functions via Elektra exclusively!' : "Status: #{instance.status}"}
-
+        title: state_text}
+  %td
+    - name = (instance.name || '').truncate(30)
     - if current_user.is_allowed?("compute:instance_get", {})
-      = link_to instance.name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
+      = link_to name, plugin('compute').instance_path(id: instance.id), data: {modal: true}
     - else
-      = instance.name
+      = name
     %br
     = instance.availability_zone
+    - hypervisor = instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
+    - if hypervisor == 'nova-compute-ironic'
+      %span.badge
+        %smal.text-lowercase Bare Metal
+
   - if @all_projects
     %td
       - project_id_and_name(instance.tenant_id)
@@ -39,13 +52,6 @@
   -# %td= instance.flavor_object.name if instance.flavor_object
 
   %td= instance.power_state_string
-  %td.big-data-cell
-    - if instance.task_state
-      %span.spinner
-    = instance.task_state.nil? ? instance.status.humanize : instance.task_state.humanize
-    - if instance.fault
-      %br
-      %span.info-text= instance.fault["message"]
   %td= instance.pretty_created_at
   %td.snug
     - if current_user.is_allowed?("compute:instance_delete", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}}) or current_user.is_allowed?("compute:instance_update", {})
