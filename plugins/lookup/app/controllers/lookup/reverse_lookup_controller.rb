@@ -8,7 +8,7 @@ module Lookup
 
     before_action :role_assigments, only: %i[users groups]
 
-    SEARCHBY = { ip: 'ip', dns: 'dns' }.freeze
+    SEARCHBY = { ip: 'ip', dns: 'dns', instance: 'instance' }.freeze
     SEARCHBY.values.each(&:freeze) # change because of warning{ |v| v.freeze }
 
     def index; end
@@ -96,6 +96,14 @@ module Lookup
         end
         res[:detailsTitle] = 'Port information'
         res[:details] = cloud_admin.networking.find_port(floating_ip.port_id)
+      elsif search_by == SEARCHBY[:instance]
+        server = cloud_admin.compute.find_server(obj_id)
+        if server.blank?
+          render json: res, status: 404
+          return
+        end
+        res[:detailsTitle] = 'Compute instance information'
+        res[:details] = server
       elsif search_by == SEARCHBY[:dns]
         recordsets = cloud_admin.dns_service.recordsets(obj_id, all_projects: true).fetch(:items, [])
         if recordsets.blank?
@@ -119,7 +127,7 @@ module Lookup
       render json: res
     end
 
-    def search
+    def search # floating ip
       res = {}
       search_value = params[:searchValue]
       res[:searchValue] = search_value
@@ -130,7 +138,7 @@ module Lookup
         return
       end
 
-      # decide if IP or DNS
+      # decide if IP, DNS or instance
       if begin
             IPAddr.new(search_value)
           rescue StandardError
@@ -151,7 +159,20 @@ module Lookup
 
         # project id
         res[:projectId] = floating_ip.tenant_id
-      else
+      elsif search_value.count("^0-9a-z\-").zero? # instance id
+        res[:searchBy] = SEARCHBY[:instance]
+        server = cloud_admin.compute.find_server(search_value)
+        if server.blank?
+          render json: res, status: 404
+          return
+        end
+        # object id, name
+        res[:id] = server.id
+        res[:name] = server.name
+
+        # project id
+        res[:projectId] = server.project_id
+      else # dns
         res[:searchBy] = SEARCHBY[:dns]
 
         # check if the dns has a point at the end
