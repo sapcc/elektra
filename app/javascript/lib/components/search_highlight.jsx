@@ -8,7 +8,7 @@ export const SearchHighlight = ({children,term,text}) => {
   if(!text) return null
   if(!term || term.length==0) return text
 
-  const index = text.indexOf(term)
+  const index = text.toLowerCase().indexOf(term.toLowerCase())
   if(index<0) return text
 
   return (

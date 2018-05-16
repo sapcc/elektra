@@ -1,10 +1,12 @@
 Cloudops::Engine.routes.draw do
   root to: 'application#show', as: :start
 
-  resources :entries, only: %i[index create update destroy]
-  resources :objects, only: %i[index show] do
+  resources :role_assignments, only: %i[index create update destroy]
+  
+  resources :search, only: %i[index show] do
     collection do
       get 'types'
+      get 'projects'
     end
   end
 end

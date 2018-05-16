@@ -7,3 +7,5 @@ export const RECEIVE_OBJECT                  = 'cloudops/app/search/RECEIVE_OBJE
 export const REQUEST_TYPES                   = 'cloudops/app/search/REQUEST_TYPES';
 export const RECEIVE_TYPES                   = 'cloudops/app/search/RECEIVE_TYPES';
 export const REQUEST_TYPES_FAILURE           = 'cloudops/app/search/REQUEST_TYPES_FAILURE';
+
+export const UPDATE_SEARCH_PARAMS            = 'cloudops/app/search/UPDATE_SEARCH_PARAMS';

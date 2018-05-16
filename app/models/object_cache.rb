@@ -2,6 +2,9 @@ class ObjectCache < ApplicationRecord
   self.table_name = 'object_cache'
   ATTRIBUTE_KEYS = %w[name project_id domain_id cached_object_type]
 
+  belongs_to :project, class_name: 'ObjectCache', primary_key: 'id', foreign_key: 'project_id'
+  belongs_to :domain, class_name: 'ObjectCache', primary_key: 'id', foreign_key: 'domain_id'
+
   def self.cache_objects(objects)
     # create a id => object map
     id_object_map = objects.each_with_object({}) { |o, map| map[o['id']] = o }

@@ -41,7 +41,7 @@ Rails.application.routes.draw do
     end
 
     mount Cloudops::Engine => "/#{Rails.configuration.cloud_admin_project}" \
-                              "/cloudops", as: 'cloudops_plugin',
+                              "/cloudops", as: 'cloudops_plugin', defaults: { project_id: Rails.configuration.cloud_admin_project },
                               constraints: { domain_id: Rails.application.config.cloud_admin_domain }
   end
 

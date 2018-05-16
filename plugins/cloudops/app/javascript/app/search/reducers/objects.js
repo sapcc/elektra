@@ -3,6 +3,8 @@ import * as constants from '../constants';
 //########################## OBJECTS ##############################
 const initialState = {
   items: [],
+  searchTerm: null,
+  searchType: null,
   receivedAt: null,
   updatedAt: null,
   isFetching: false,
@@ -19,10 +21,18 @@ const requestObjectsFailure=(state) => (
   {...state, isFetching: false}
 )
 
-const receiveObjects=(state,{objects,receivedAt, currentPage, hasNext, total})=> {
+const updateSearchParams=(state, {term,objectType}) => {
+  const newState = {...state}
+  if(typeof term == 'string') newState.searchTerm = term
+  if(typeof objectType == 'string') newState.searchType = objectType
+
+  return newState
+}
+
+const receiveObjects=(state,{objects,receivedAt, currentPage, hasNext, total, replace})=> {
   let items = state.items.slice()
 
-  if(currentPage>1) {
+  if(currentPage>1 && !replace) {
     items = items.concat(objects)
   } else {
     items = objects
@@ -49,6 +59,7 @@ export const objects = function(state, action) {
     case constants.REQUEST_OBJECTS_FAILURE: return requestObjectsFailure(state,action);
 
     case constants.RECEIVE_OBJECT: return receiveObject(state,action);
+    case constants.UPDATE_SEARCH_PARAMS: return updateSearchParams(state,action)
     default: return state;
   }
 };

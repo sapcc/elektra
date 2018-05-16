@@ -1,6 +1,8 @@
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
+import projectUrl from '../../shared/project_link'
+import RoleAssignments from '../../role_assignments/containers/roles'
 
 export default class ShowSearchObjectModal extends React.Component{
   state = {
@@ -27,8 +29,7 @@ export default class ShowSearchObjectModal extends React.Component{
   }
 
   restoreUrl = (e) => {
-    if (!this.state.show)
-      this.props.history.replace('/universal-search')
+    if (!this.state.show) this.props.history.goBack();
   }
 
   hide = (e) => {
@@ -38,6 +39,9 @@ export default class ShowSearchObjectModal extends React.Component{
 
   render(){
     const { item } = this.props
+    const projectLink = projectUrl(item)
+    const found = this.props.location.search.match(/\?tab=([^\&]+)/)
+    const activeTab = found ? found[1] : null
 
     return (
       <Modal
@@ -57,26 +61,29 @@ export default class ShowSearchObjectModal extends React.Component{
           { this.state.error && <span>{this.state.error}</span>}
           { item &&
             <React.Fragment>
-              <Tabs defaultActiveKey={1} id="item_payload">
-                <Tab eventKey={1} title="Formatted">
+              <Tabs defaultActiveKey={activeTab || 'data'} id="item_payload">
+                <Tab eventKey='data' title="Data">
                   <ReactJson src={item.payload} collapsed={1}/>
                 </Tab>
-                <Tab eventKey={2} title="Raw">
-                  <pre>{JSON.stringify(item.payload, null, 2)}</pre>
-                </Tab>
+
+                { item.cached_object_type=='project' &&
+                  <Tab eventKey='roles' title="User Role Assignments">
+                    <RoleAssignments project={item}/>
+                  </Tab>
+                }
               </Tabs>
-              {item.cached_object_type == 'project' &&
-                <a
-                  href={`/${item.domain_id}/${item.id}/home`}
-                  target='_blank'
-                  className='btn btn-primary'>
-                  Switch to Project
-                </a>
-              }
             </React.Fragment>
           }
         </Modal.Body>
         <Modal.Footer>
+          {projectLink &&
+            <a
+              href={projectLink}
+              target='_blank'
+              className='btn btn-primary'>
+              Switch to Project
+            </a>
+          }
           <Button onClick={this.hide}>Close</Button>
         </Modal.Footer>
       </Modal>
