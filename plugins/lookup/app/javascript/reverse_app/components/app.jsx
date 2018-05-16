@@ -17,7 +17,6 @@ class App extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    //this.searchValue = this.state.value;
     this.setState({error: null})
     this.setState({searchedValue: this.state.searchValue})
     this.props.handleSubmit(this.state.searchValue).catch(({errors}) => {
@@ -41,7 +40,7 @@ class App extends React.Component {
               <label
                 htmlFor="reverseLookupValue"
                 className="col-sm-4 control-label">
-                Enter Child IP or DNS
+                Child Object
               </label>
               <div className="col-sm-6">
                 <input
@@ -50,6 +49,7 @@ class App extends React.Component {
                   id="reverseLookupValue"
                   type="text"
                   value={this.state.searchValue}
+                  placeholder="Enter Child IP, DNS or Instance ID"
                   onChange={this.handleChange}
                   />
               </div>

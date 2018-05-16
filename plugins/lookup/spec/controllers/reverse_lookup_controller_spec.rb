@@ -65,6 +65,40 @@ describe Lookup::ReverseLookupController, type: :controller do
       end
     end
 
+    context 'Instance' do
+      it 'returns http success' do
+        @instance_obj = double('instance_test',
+                               id:                   'instance_test_id',
+                               name:  'instance_test_name',
+                               project_id:            'instance_test_tenant_id',
+                               'blank?' => false)
+        allow(controller.cloud_admin)
+          .to receive(:find_server).and_return(
+            @instance_obj
+          )
+        post :search, params: default_params.merge(searchValue: '852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
+        expect(response).to be_success
+        body = JSON.parse(response.body)
+        expect(body['searchValue']).to eq('852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
+        expect(body['searchBy']).to eq('instance')
+        expect(body['id']).to eq(@instance_obj.id)
+        expect(body['name']).to eq(@instance_obj.name)
+        expect(body['projectId']).to eq(@instance_obj.project_id)
+      end
+      it 'returns 404' do
+        allow(controller.cloud_admin)
+          .to receive(:find_server).and_return(
+            nil
+          )
+        post :search, params: default_params.merge(searchValue: '852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
+        expect(response).to_not be_success
+        expect(response.status).to eq(404)
+        body = JSON.parse(response.body)
+        expect(body['searchValue']).to eq('852588dd-3f7a-4d8a-a3f3-8f2792fbcd14')
+        expect(body['searchBy']).to eq('instance')
+      end
+    end
+
     context 'DNS' do
       it 'returns http success' do
         @dns_obj = double('zone_test',
@@ -216,6 +250,106 @@ describe Lookup::ReverseLookupController, type: :controller do
       expect(response.status).to eq(404)
       body = JSON.parse(response.body)
       expect(body['projectId']).to eq('123456789')
+    end
+  end
+  describe "GET 'object_info'" do
+    context 'IP' do
+      it 'should http success' do
+        @ip_obj = double('ip',
+                         id:                   'ip_test_id',
+                         port_id: 'abcdfg',
+                         'blank?' => false)
+        @port_obj = double('port',
+                           id: 'port_test_id')
+
+        allow(controller.cloud_admin)
+          .to receive(:find_floating_ip).and_return(
+            @ip_obj
+          )
+        allow(controller.cloud_admin)
+          .to receive(:find_port).and_return(
+            @port_obj
+          )
+        get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:ip])
+        expect(response).to be_success
+        body = JSON.parse(response.body)
+        expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:ip])
+        expect(body['searchObjectId']).to eq('123456789')
+        expect(body['detailsTitle']).to eq('Port information')
+        expect(body['details'].to_json).to eq(@port_obj.to_json)
+      end
+      it 'should return 404' do
+        allow(controller.cloud_admin)
+          .to receive(:find_floating_ip).and_return(
+            nil
+          )
+        get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:ip])
+        expect(response).to_not be_success
+        body = JSON.parse(response.body)
+        expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:ip])
+        expect(body['searchObjectId']).to eq('123456789')
+      end
+    end
+    context 'DNS' do
+      it 'returns http success' do
+        @recordsets_obj = double('recordsets_test',
+                                 id: 'recordset_test_id')
+        allow(controller.cloud_admin)
+          .to receive(:recordsets).and_return(
+            items: [@recordsets_obj]
+          )
+        get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:dns])
+        expect(response).to be_success
+        body = JSON.parse(response.body)
+        expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:dns])
+        expect(body['searchObjectId']).to eq('123456789')
+        expect(body['detailsTitle']).to eq('Recordsets information')
+        expect(body['details'].to_json).to eq([@recordsets_obj].to_json)
+      end
+      it 'should return 404' do
+        allow(controller.cloud_admin)
+          .to receive(:recordsets).and_return(
+            items: []
+          )
+        get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:dns])
+        expect(response).to_not be_success
+        expect(response.status).to eq(404)
+        body = JSON.parse(response.body)
+        expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:dns])
+        expect(body['searchObjectId']).to eq('123456789')
+      end
+    end
+    context 'Instance' do
+      it 'should http success' do
+        @instance_obj = double('instance_test',
+                               id:                   'instance_test_id',
+                               name:  'instance_test_name',
+                               project_id:            'instance_test_tenant_id',
+                               'blank?' => false)
+        allow(controller.cloud_admin)
+          .to receive(:find_server).and_return(
+            @instance_obj
+          )
+        get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:instance])
+        expect(response).to be_success
+        body = JSON.parse(response.body)
+        expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:instance])
+        expect(body['searchObjectId']).to eq('123456789')
+        expect(body['detailsTitle']).to eq('Compute instance information')
+        expect(body['details'].to_json).to eq(@instance_obj.to_json)
+      end
+      it 'should return 404' do
+        allow(controller.cloud_admin)
+          .to receive(:find_server).and_return(
+            nil
+          )
+        get :object_info, params: default_params.merge(reverseLookupObjectId: '123456789', searchBy: Lookup::ReverseLookupController::SEARCHBY[:instance])
+        expect(response).to_not be_success
+        expect(response.status).to eq(404)
+        body = JSON.parse(response.body)
+        expect(body['searchBy']).to eq(Lookup::ReverseLookupController::SEARCHBY[:instance])
+        expect(body['searchObjectId']).to eq('123456789')
+      end
     end
   end
 end
