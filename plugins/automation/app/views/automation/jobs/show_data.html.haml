@@ -7,7 +7,19 @@
   Job id:
 = @job_id
 
-%pre
-  %code
+%pre.hidden
+  %code#logData
     = preserve do
       = @data
+
+%pre#logDataAnsi
+
+= content_for :javascript do
+  :javascript
+    window.onload = function(){
+      var ansi_up = new AnsiUp;
+      var cdiv, html, data;
+      data = document.getElementById('logData').innerHTML;
+      html = ansi_up.ansi_to_html(data);
+      return document.getElementById('logDataAnsi').innerHTML = html;
+    };
