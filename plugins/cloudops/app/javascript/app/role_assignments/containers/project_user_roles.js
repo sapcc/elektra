@@ -2,7 +2,7 @@ import { connect } from  'react-redux';
 import Roles from '../components/project_user_roles';
 
 import {
-  fetchProjectUserRoles,
+  fetchProjectRoles,
   updateProjectUserRoles
 } from '../actions/project_user_roles'
 
@@ -17,12 +17,11 @@ export default connect(
     if (ownProps.project) {
       projectUserRoles = state.role_assignments.project_user_roles[ownProps.project.id]
     }
-    //console.log('roles',roles)
-    console.log('projectUserRoles',projectUserRoles)
+
     return { projectUserRoles, roles: state.role_assignments.roles }
   },
   dispatch => ({
-    loadProjectUserRoles: (projectId) => dispatch(fetchProjectUserRoles(projectId)),
+    loadProjectRoles: (projectId) => dispatch(fetchProjectRoles(projectId)),
     updateProjectUserRoles: (projectId, userId, roles) => dispatch(updateProjectUserRoles(projectId,userId,roles)),
     loadRolesOnce: () => dispatch(fetchRolesIfNeeded())
   })

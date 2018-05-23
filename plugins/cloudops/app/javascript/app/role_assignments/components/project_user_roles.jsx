@@ -7,7 +7,7 @@ export default class ProjectUserRoles extends React.Component {
   state = { filterString: null }
 
   componentDidMount() {
-    this.props.loadProjectUserRoles(this.props.project.id)
+    this.props.loadProjectRoles(this.props.project.id)
   }
 
   filterRoleAssignments = () => {
@@ -22,6 +22,12 @@ export default class ProjectUserRoles extends React.Component {
       `${role.user.name} ${role.user.description} ${role.user.id}`.match(regex)
     )
   }
+
+  // important:
+  // this.props.updateProjectUserRoles should return a promise object which
+  // is propagated to the role assignment items
+  handleNewUserRoles = (userId, roles) =>
+    this.props.updateProjectUserRoles(this.props.project.id, userId, roles)
 
   render() {
     const items = this.filterRoleAssignments()
@@ -55,6 +61,7 @@ export default class ProjectUserRoles extends React.Component {
                     key={index}
                     availableRoles={this.props.roles}
                     loadRolesOnce={this.props.loadRolesOnce}
+                    handleNewUserRoles={this.handleNewUserRoles}
                     searchTerm={this.state.filterString} />
                 )
               }

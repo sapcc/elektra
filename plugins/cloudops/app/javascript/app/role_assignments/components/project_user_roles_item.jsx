@@ -13,7 +13,8 @@ const removeMemberTooltip = (
 export default class ProjectUserRoles extends React.Component {
   state = {
     editMode: false, //used for the switch between view and edit modes
-    newUserRoles: {} //stores the edited version of user roles
+    newUserRoles: {}, //stores the edited version of user roles
+    saving: false
   }
 
   // This method sorts roles by name
@@ -103,8 +104,13 @@ export default class ProjectUserRoles extends React.Component {
   }
 
   // Called by save button
-  saveChanges = () =>
-    this.setState({editMode: false})
+  saveChanges = () => {
+    this.setState({saving: true})
+    this.props.handleNewUserRoles(
+      this.props.item.user.id, Object.keys(this.state.newUserRoles)
+    ).then(() => this.setState({saving: false, editMode: false}))
+     .catch((error) => {console.log(error); this.setState({saving: false})})
+  }
 
   // Leave edit mode
   cancelEdit = () =>
@@ -198,16 +204,17 @@ export default class ProjectUserRoles extends React.Component {
                   <OverlayTrigger placement="top" overlay={removeMemberTooltip}>
                     <button
                       className='btn btn-danger btn-sm'
+                      disabled={this.state.saving}
                       onClick={this.saveChanges}>
-                      Remove Member
+                      { this.state.saving ? 'Please Wait ...'  : 'Remove Member'}
                     </button>
                   </OverlayTrigger>
                   :
                   <button
                     className='btn btn-primary btn-sm'
                     onClick={this.saveChanges}
-                    disabled={!hasChanged}>
-                    Save
+                    disabled={!hasChanged || this.state.saving}>
+                    { this.state.saving ? 'Please Wait ...'  : 'Save'}
                   </button>
                 }
               </div>
