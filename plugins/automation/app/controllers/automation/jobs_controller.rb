@@ -1,7 +1,5 @@
 module Automation
-
   class JobsController < ::Automation::ApplicationController
-
     def show
       @job = services.automation.job(params[:id])
 
@@ -32,7 +30,6 @@ module Automation
       @truncated_log = ::Automation::DataTruncation.new(log)
     end
 
-
     def show_data
       @job_id = params[:id]
       @attr = params[:attr]
@@ -62,20 +59,16 @@ module Automation
         end
       end
 
-      render :layout => false
+      render layout: 'automation/ansi_app'
     end
 
     private
 
     def prettify(data)
-      begin
-        json = JSON.parse(data)
-        JSON.pretty_generate(json)
-      rescue JSON::ParserError
-        data
-      end
+      json = JSON.parse(data)
+      JSON.pretty_generate(json)
+    rescue JSON::ParserError
+      data
     end
-
   end
-
 end
