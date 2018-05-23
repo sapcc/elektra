@@ -1,21 +1,21 @@
 import { Link } from 'react-router-dom'
-import { SearchHighlight } from 'lib/components/search_highlight'
+import { Highlighter } from 'react-bootstrap-typeahead'
 import projectUrl from '../../shared/project_link'
 
 const ObjectLink = ({id, name, term}) =>
   <React.Fragment>
     <Link to={`/project-user-role-assignments/${id}/show?tab=roles`}>
       {name ?
-        <SearchHighlight term={term} text={name}/>
+        <Highlighter search={term || ''}>{name || ''}</Highlighter>
         :
-        <SearchHighlight term={term} text={id}/>
+        <Highlighter search={term || ''}>{id || ''}</Highlighter>
       }
     </Link>
     {name &&
       <React.Fragment>
         <br/>
         <span className='info-text'>
-          <SearchHighlight term={term} text={id}/>
+          <Highlighter search={term || ''}>{id || ''}</Highlighter>
         </span>
       </React.Fragment>
     }

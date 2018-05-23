@@ -1,18 +1,35 @@
 import { SearchField } from 'lib/components/search_field';
 import { AjaxPaginate } from 'lib/components/ajax_paginate';
+import ProjectUserRolesItem from './project_user_roles_item';
+import { regexString } from 'lib/tools/regex_string';
 
-export default class RoleAssignments extends React.Component {
+export default class ProjectUserRoles extends React.Component {
+  state = { filterString: null }
+
   componentDidMount() {
-    this.props.loadRoles(this.props.project.id)
+    this.props.loadProjectUserRoles(this.props.project.id)
+  }
+
+  filterRoleAssignments = () => {
+    if(!this.props.projectUserRoles) return []
+
+    if(!this.state.filterString || this.state.filterString.trim().length==0) {
+      return this.props.projectUserRoles.items
+    }
+
+    const regex = new RegExp(regexString(this.state.filterString.trim()), "i");
+    return this.props.projectUserRoles.items.filter((role) =>
+      `${role.user.name} ${role.user.description} ${role.user.id}`.match(regex)
+    )
   }
 
   render() {
-    console.log('roles',this.props.roles)
+    const items = this.filterRoleAssignments()
     return (
       <React.Fragment>
         <div className="toolbar">
           <SearchField
-            onChange={(user) => console.log('Filter by user')}
+            onChange={(term) => this.setState({filterString: term})}
             placeholder='Name, C/D/I-number, or ID'
             isFetching={false}
             searchIcon={true}
@@ -21,7 +38,7 @@ export default class RoleAssignments extends React.Component {
           <span className="toolbar-input-divider"></span>
         </div>
 
-        { this.props.roles && this.props.roles.items.length > 0 &&
+        { items.length > 0 &&
           <table className="table">
             <thead>
               <tr>
@@ -32,16 +49,13 @@ export default class RoleAssignments extends React.Component {
             </thead>
             <tbody>
               {
-                this.props.roles.items.map((item,index) =>
-                  <tr key={index}>
-                    <td>{item.user.description || item.user.name}</td>
-                    <td>
-                      {item.roles.map((role,index) =>
-                        <span key={index}>{role.description || role.name} </span>
-                      )}
-                    </td>
-                    <td></td>
-                  </tr>
+                items.map((item,index) =>
+                  <ProjectUserRolesItem
+                    item={item}
+                    key={index}
+                    availableRoles={this.props.roles}
+                    loadRolesOnce={this.props.loadRolesOnce}
+                    searchTerm={this.state.filterString} />
                 )
               }
 

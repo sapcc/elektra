@@ -17,14 +17,25 @@ module Cloudops
         map[assignment.user['id']]['roles'] << assignment.role
       end
 
-      ObjectCache.where(cached_object_type: 'user', id: user_roles.keys).pluck(:id, :payload).each do |data|
-        if (user_roles[data[0]] && user_roles[data[0]]['user'])
+      ObjectCache.where(cached_object_type: 'user', id: user_roles.keys).pluck(
+        :id, :payload
+      ).each do |data|
+        if user_roles[data[0]] && user_roles[data[0]]['user']
           user_roles[data[0]]['user']['description'] = data[1]['description']
         end
       end
 
 
       render json: { roles: user_roles.values }
+    end
+
+    def available_roles
+      roles = services.identity.roles.sort_by(&:name)
+      roles.each do |role|
+        role.description = I18n.t("roles.#{role.name}", default: role.name.try(:titleize)) + " (#{role.name})"
+      end
+
+      render json: { roles: roles }
     end
   end
 end

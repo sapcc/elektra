@@ -5,46 +5,55 @@ import { addNotice as showNotice, addError as showError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 //################### OBJECTS #########################
-const requestProjectRoles= (projectId) => (
+const requestRoles= () => (
   {
-    type: constants.REQUEST_PROJECT_ROLES,
-    requestedAt: Date.now(),
-    projectId
+    type: constants.REQUEST_ROLES,
+    requestedAt: Date.now()
   }
 );
 
-const requestProjectRolesFailure= (projectId) => (
+const requestRolesFailure= () => (
   {
-    type: constants.REQUEST_PROJECT_ROLES_FAILURE,
-    projectId
+    type: constants.REQUEST_ROLES_FAILURE
   }
 );
 
-const receiveProjectRoles= (projectId, roles) => (
+const receiveRoles= (roles) => (
   {
-    type: constants.RECEIVE_PROJECT_ROLES,
+    type: constants.RECEIVE_ROLES,
     receivedAt: Date.now(),
-    projectId,
     roles
   }
 );
 
-const fetchProjectRoles = (projectId) =>
+const fetchRoles = () =>
   (dispatch) => {
-    dispatch(requestProjectRoles(projectId));
-    ajaxHelper.get(`/role_assignments?scope_project_id=${projectId}`).then( (response) => {
-      dispatch(receiveProjectRoles(projectId, response.data.roles));
+    dispatch(requestRoles());
+    ajaxHelper.get('/role_assignments/available_roles').then( (response) => {
+      dispatch(receiveRoles(response.data.roles));
     })
     .catch( (error) => {
-      dispatch(requestProjectRolesFailure());
-      showError(`Could not load project roles (${error.message})`)
+      dispatch(requestRolesFailure());
+      showError(`Could not load roles (${error.message})`)
     });
   }
 ;
 
-const updateProjectRoles = (projectId, roles) => {}
+const shouldFetchRoles= function(state) {
+  const { roles } = state.role_assignments;
+  if (roles.isFetching || roles.requestedAt) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const fetchRolesIfNeeded= () =>
+  function(dispatch, getState) {
+    if (shouldFetchRoles(getState())) { return dispatch(fetchRoles()); }
+  }
+;
 
 export {
-  fetchProjectRoles,
-  updateProjectRoles
+  fetchRolesIfNeeded
 }

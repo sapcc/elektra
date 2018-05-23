@@ -2,7 +2,7 @@ import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
 import projectUrl from '../../shared/project_link'
-import RoleAssignments from '../../role_assignments/containers/roles'
+import ProjectUserRoles from '../../role_assignments/containers/project_user_roles'
 
 export default class ShowSearchObjectModal extends React.Component{
   state = {
@@ -68,7 +68,7 @@ export default class ShowSearchObjectModal extends React.Component{
 
                 { item.cached_object_type=='project' &&
                   <Tab eventKey='roles' title="User Role Assignments">
-                    <RoleAssignments project={item}/>
+                    <ProjectUserRoles project={item}/>
                   </Tab>
                 }
               </Tabs>
