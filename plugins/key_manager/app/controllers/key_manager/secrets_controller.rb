@@ -15,7 +15,6 @@ module KeyManager
     end
 
     def show
-      byebug
       @secret = services.key_manager
                         .secret_with_metadata_payload(params[:id])
       unless @secret
