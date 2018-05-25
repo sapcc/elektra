@@ -66,8 +66,6 @@ export default class List extends React.Component {
         values.subnet = `${values.subnet} ${subnet.name}`
         values.ip = `${values.ip} ${ip.ip_address}`
       }
-      console.log(regex)
-      console.log(i.description)
       return `${i.id} ${i.description} ${values.ip} ${values.network} ${values.subnet} ${i.network_id} ${i.status}`.search(regex) >= 0
     })
   }

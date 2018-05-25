@@ -29,7 +29,17 @@ export default class ShowSearchObjectModal extends React.Component{
   }
 
   restoreUrl = (e) => {
-    if (!this.state.show) this.props.history.goBack();
+    if(this.state.show) return;
+
+    if(this.props.match && this.props.match.path) {
+      const found = this.props.match.path.match(/(\/[^\/]+)\/:id\/show/)
+      if(found) {
+        this.props.history.replace(found[1])
+        return
+      }
+    }
+
+    this.props.history.goBack();
   }
 
   hide = (e) => {

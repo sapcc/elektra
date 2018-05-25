@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Cloudops
-  class RoleAssignmentsController < ApplicationController
+  class RoleAssignmentsController < Cloudops::ApplicationController
     def index
       role_assignments = services.identity.role_assignments(
         'scope.project.id' => params[:scope_project_id], include_names: true
@@ -26,11 +26,18 @@ module Cloudops
       user_id = params[:user_id]
       new_roles = params[:roles]
 
+      # do not update role assignments if user or project are blank
+      if scope_project_id.blank? || user_id.blank?
+        render json: {roles: []}
+        return
+      end
+
       # get current project user role assignments from API
       current_role_assignments = services.identity.role_assignments(
         'scope.project.id' => scope_project_id,
         'user.id' => user_id
       )
+
       # get role ids from current role assignments
       current_roles = current_role_assignments.collect do |role_assignment|
         role_assignment.role['id']
@@ -86,7 +93,7 @@ module Cloudops
         end
       end
 
-      user_roles.values
+      user_roles.values.sort_by {|r| r['user']['name']}
     end
   end
 end

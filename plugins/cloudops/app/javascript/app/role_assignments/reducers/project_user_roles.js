@@ -41,8 +41,6 @@ const receiveProjectUserRoles=(state,{projectId,userId,roles})=> {
   const newState = {...state}
   const items = newState[projectId].items.slice()
   const index = items.findIndex((item) => item.user.id==userId);
-  console.log(items)
-  console.log('index',index,'userId',userId)
 
   if(roles) {
     if(index<0) items.push(roles)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Cloudops
-  class SearchController < ApplicationController
+  class SearchController < Cloudops::ApplicationController
     layout "cloudops"
 
     def index

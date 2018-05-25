@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     "#{Rails.configuration.cloud_admin_project}/cloudops"
   )
 
+  resource :cache, only: [] do
+    get 'users'
+    get 'projects'
+    get 'domains'
+  end
+
   scope '/:domain_id' do
     match '/', to: 'pages#show', id: 'landing', via: :get, as: :landing_page
 
@@ -23,8 +29,6 @@ Rails.application.routes.draw do
       scope module: 'dashboard' do
         post 'accept_terms_of_use'
         get 'terms_of_use'
-        get 'find_users_by_name'
-        get 'find_cached_projects'
       end
 
       ###################### MOUNT PLUGINS #####################

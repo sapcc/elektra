@@ -8,18 +8,21 @@ export class AutocompleteField extends React.Component {
   }
 
   handleSearch = (searchTerm) => {
-    const match = window.location.href.match(/.+\/\/[^\/]+\/[^\/]+/)
-    let url = match[0]
-    if(this.props.type=='projects')
-      url = `${url}/find_cached_projects`
-    else if (this.props.type=='users')
-      url = `${url}/find_users_by_name`
+    let path
+    switch(this.props.type) {
+      case 'projects':
+        path = 'projects'
+        break;
+      case 'users':
+        path = 'users'
+        break;
+    }
 
     this.setState({isLoading: true, options:[]})
-    ajaxHelper.get(url, {params: { term: searchTerm } }).then( (response) => {
+    ajaxHelper.get(`//${window.location.host}/cache/${path}`, {params: { term: searchTerm } }).then( (response) => {
       if(response.data) {
         const options = response.data.map((i) =>
-          ({name: i.full_name || i.name, id: i.key || i.id})
+          ({name: i.full_name || i.name, id: i.uid || i.key || i.id})
         )
         this.setState({isLoading: false, options: options})
       }
@@ -38,9 +41,12 @@ export class AutocompleteField extends React.Component {
       <AsyncTypeahead
         isLoading={this.state.isLoading}
         options={this.state.options}
+        autoFocus={true}
+        emptyLabel={false}
         allowNew={false}
         multiple={false}
         onChange={this.props.onSelected}
+        onInputChange={this.props.onInputChange}
         onSearch={this.handleSearch}
         labelKey="name"
         placeholder={placeholder}

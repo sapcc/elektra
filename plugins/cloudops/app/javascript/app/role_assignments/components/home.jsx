@@ -56,6 +56,7 @@ export default class Search extends React.Component {
                   <SearchItem
                     key={index}
                     item={item}
+                    location={this.props.location}
                     domain={this.state.domain}
                     project={this.state.project}/>
                 )
