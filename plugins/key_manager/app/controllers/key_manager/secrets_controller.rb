@@ -15,6 +15,7 @@ module KeyManager
     end
 
     def show
+      byebug
       @secret = services.key_manager
                         .secret_with_metadata_payload(params[:id])
       unless @secret
@@ -22,7 +23,7 @@ module KeyManager
         redirect_to plugin('key_manager').secrets_path
       else
         # get the user name from the openstack id
-        @user = service_user.identity.find_user(@secret.creator_id).name
+        @user = service_user.identity.find_user(@secret.creator_id).try(:name)
       end
     end
 
