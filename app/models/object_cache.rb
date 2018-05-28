@@ -1,9 +1,11 @@
 class ObjectCache < ApplicationRecord
   self.table_name = 'object_cache'
-  ATTRIBUTE_KEYS = %w[name project_id domain_id cached_object_type]
+  ATTRIBUTE_KEYS = %w[name project_id domain_id cached_object_type].freeze
 
-  belongs_to :project, class_name: 'ObjectCache', primary_key: 'id', foreign_key: 'project_id'
-  belongs_to :domain, class_name: 'ObjectCache', primary_key: 'id', foreign_key: 'domain_id'
+  belongs_to :project, class_name: 'ObjectCache', primary_key: 'id',
+                       foreign_key: 'project_id', optional: true
+  belongs_to :domain, class_name: 'ObjectCache', primary_key: 'id',
+                      foreign_key: 'domain_id', optional: true
 
   def self.cache_objects(objects)
     # create a id => object map
