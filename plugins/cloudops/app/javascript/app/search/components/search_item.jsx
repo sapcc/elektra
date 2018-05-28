@@ -28,21 +28,21 @@ export default ({item, term}) => {
   return(
     <tr>
       <td>{item.cached_object_type}</td>
-      <td>
+      <td className="big-data-cell">
         {/* Object */}
         <ObjectLink
           id={item.id}
           name={item.name}
           term={term}/>
       </td>
-      <td>
+      <td className="big-data-cell">
         {/* Domain */}
         <ObjectLink
           id={(scope.domain_id || item.domain_id)}
           name={scope.domain_name}
           term={term}/>
       </td>
-      <td>
+      <td className="big-data-cell">
         {/* Project */}
         <ObjectLink
           id={scope.project_id}
