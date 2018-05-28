@@ -57,10 +57,17 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
       const isNew = (checked && this.state.currentUserRoleIDs.indexOf(role.id)<0)
       const removed = (!checked && this.state.currentUserRoleIDs.indexOf(role.id)>=0)
       const roleDescription = role.description ? '('+role.description.replace(/(.+)\s+\(.+\)/,"$1")+')' : ''
+      let labelClassName = ''
+      if (isNew) {
+        labelClassName = 'bg-info'
+      }
+      if (removed) {
+        labelClassName = 'u-text-remove-highlight'
+      }
 
       return(
-        <li key={index} className='fancy-nav-header'>
-          <label className={isNew ? 'bg-info' : ''}>
+        <li key={index}>
+          <label className={labelClassName}>
             <input
               type="checkbox"
               checked={checked}
@@ -68,14 +75,9 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
               onChange={(e) => this.updateUserRole(e.target.value, e.target.checked)}/>
             &nbsp;
             <span key={index}>
-              {removed ?
-                <s><strong>{role.name}</strong> {roleDescription}</s>
-                :
-                <React.Fragment>
-                  <strong>{role.name}</strong> {roleDescription}
-                </React.Fragment>
-              }
-
+              <React.Fragment>
+                <strong>{role.name}</strong> {roleDescription}
+              </React.Fragment>
             </span>
           </label>
         </li>
@@ -143,33 +145,36 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
 
     return(
       <React.Fragment>
-        <div className="toolbar toolbar-aligntop">
-          { isFetching ?
-            <React.Fragment>
-              <span className='spinner'/>Loading ...
-            </React.Fragment>
-            :
-            <React.Fragment>
-              <button
-                className='btn btn-default btn-sm'
-                onClick={this.selectAllRoles}
-                disabled={this.state.saving}>
-                Select All
-              </button>
-              <button
-                className='btn btn-default btn-sm'
-                onClick={this.selectAdminRoles}
-                disabled={this.state.saving}>
-                Select Admin Roles
-              </button>
-              <button
-                className='btn btn-default btn-sm hover-danger'
-                onClick={this.removeAllRoles}
-                disabled={this.state.saving}>
-                Remove All
-              </button>
-            </React.Fragment>
-          }
+        <div className="toolbar toolbar-inline">
+          <div className="toolbar-container">
+            { isFetching ?
+              <React.Fragment>
+                <span className='spinner'/>Loading ...
+              </React.Fragment>
+              :
+              <React.Fragment>
+                <button
+                  className='btn btn-default btn-sm'
+                  onClick={this.selectAllRoles}
+                  disabled={this.state.saving}>
+                  Select All
+                </button>
+                <button
+                  className='btn btn-default btn-sm'
+                  onClick={this.selectAdminRoles}
+                  disabled={this.state.saving}>
+                  Select Admin Roles
+                </button>
+                <button
+                  className='btn btn-default btn-sm hover-danger'
+                  onClick={this.removeAllRoles}
+                  disabled={this.state.saving}>
+                  Remove All
+                </button>
+              </React.Fragment>
+            }
+          </div>
+
           <div className="main-buttons">
             <button
               className='btn btn-default btn-sm'
