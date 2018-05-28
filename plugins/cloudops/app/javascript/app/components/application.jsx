@@ -1,17 +1,18 @@
 /* eslint no-console:0 */
-import { HashRouter, Route, Switch } from 'react-router-dom'
-
-import Menu from './menu';
-import SearchRoutes from './search/components/routes'
+import { HashRouter, Route, Redirect } from 'react-router-dom'
 import { withRouter } from 'react-router'
 
+import Menu from '../containers/menu';
+import CloudopsHome from './home'
+import SearchRoutes from '../search/components/routes'
+import RoleAssignmentRoutes from '../role_assignments/components/routes'
 
 let Breadcrumb = (props) => {
   let label = ''
   if(props.location && props.location.pathname) {
     label = props.location.pathname
     if (label.startsWith('/')) label = label.substring(1)
-    if (label.length==0) label = 'Cloudops'
+    if (label.length==0) return null
     label = label.split('-').map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(' ')
   }
 
@@ -41,9 +42,10 @@ export default (props) =>
       <Breadcrumb/>
 
       <div className="container">
-        <Switch>
-            <SearchRoutes/>
-        </Switch>
+        <Route exact path="/" render={ () => <Redirect to="/universal-search"/>}/>
+        {/*<Route exact path="/" component={CloudopsHome}/> */}
+        <RoleAssignmentRoutes/>
+        <SearchRoutes/>
       </div>
     </React.Fragment>
   </HashRouter>

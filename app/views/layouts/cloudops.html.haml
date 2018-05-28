@@ -35,25 +35,11 @@
 
     = csrf_meta_tags
 
-  %body{class: "#{body_class} #{domain_class}"}
+  %body{class: "#{body_class} #{domain_class} #{plugin_name if plugin_name}"}
     .flex-header-sticky
       = render "cloudops_nav"
-      
+
     = yield
-    -# .flex-header-sticky
-    -#   = render "cloudops_nav"
-    -#   = render "cloudops_mega_nav"
-    -#
-    -# .flex-body
-    -#   = render "cloudops_main_toolbar"
-    -#   = yield :page_lead
-    -#
-    -#   .container
-    -#     .content{class: "#{plugin_name if plugin_name}"}
-    -#       = render "application/help_text"
-    -#       .flashes
-    -#         = render "application/flashes"
-    -#       = yield
 
     .flex-footer-sticky
       = render "application/footer"

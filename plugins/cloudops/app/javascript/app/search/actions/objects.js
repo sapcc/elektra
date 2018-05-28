@@ -12,20 +12,29 @@ const requestObjects= () => (
   }
 );
 
+const updateSearchParams= ({term,objectType}) => (
+  {
+    type: constants.UPDATE_SEARCH_PARAMS,
+    term,
+    objectType
+  }
+)
+
 const requestObjectsFailure= () => (
   {
     type: constants.REQUEST_OBJECTS_FAILURE
   }
 );
 
-const receiveObjects= ({objects,currentPage,hasNext,total}) => (
+const receiveObjects= ({objects,currentPage,hasNext,total,replace}) => (
   {
     type: constants.RECEIVE_OBJECTS,
     receivedAt: Date.now(),
     objects,
     currentPage,
     hasNext,
-    total
+    total,
+    replace
   }
 );
 
@@ -35,18 +44,20 @@ const fetchObjects = (options) => {
     type: options.objectType,
     term: options.term
   }
-  return ajaxHelper.get('/objects', {params: params})
+  return ajaxHelper.get('/search', {params: params})
 }
 
-const searchObjects= ({term,objectType}) =>
-  function(dispatch) {
+const loadObjects= ({term, objectType, page=1, replace=false}) => {
+  return (dispatch) => {
     dispatch(requestObjects());
-    fetchObjects({term,objectType}).then( (response) => {
+
+    fetchObjects({term, objectType, page}).then( (response) => {
       return dispatch(receiveObjects({
         objects: response.data.items,
-        currentPage: 1,
+        currentPage: page,
         total: response.data.total,
-        hasNext: response.data.hasNext
+        hasNext: response.data.hasNext,
+        replace
       }));
     })
     .catch( (error) => {
@@ -54,27 +65,48 @@ const searchObjects= ({term,objectType}) =>
       showError(`Could not load objects (${error.message})`)
     });
   }
+};
 
-const loadNextObjects= ({term,objectType}) =>
+const loadNextObjects= () =>
   function(dispatch, getState) {
     const {objects} = getState()['search'];
     const page = objects.currentPage + 1
+    const term = objects.searchTerm
+    const objectType = objects.searchType
 
     if(!objects.isFetching && objects.hasNext) {
-      dispatch(requestObjects());
-      fetchObjects({term,objectType,page}).then( (response) => {
-        return dispatch(receiveObjects({
-          objects: response.data.items,
-          currentPage: page,
-          total: response.data.total,
-          hasNext: response.data.hasNext
-        }));
-      })
-      .catch( (error) => {
-        dispatch(requestObjectsFailure());
-        showError(`Could not load objects (${error.message})`)
-      });
+      dispatch(loadObjects({term, objectType, page}))
     }
+  }
+;
+
+const loadObjectsPage= (page) =>
+  function(dispatch, getState) {
+    const {objects} = getState()['search'];
+    const term = objects.searchTerm
+    const objectType = objects.searchType
+
+    if(!objects.isFetching) {
+      dispatch(loadObjects({term, objectType, page, replace: true}))
+    }
+  }
+;
+
+let searchTimer = null
+const searchObjects = ({term,objectType}) =>
+  (dispatch,getState) => {
+    if(searchTimer) clearTimeout(searchTimer)
+
+    const timeout = objectType==null ? 500 : 0
+    searchTimer = setTimeout(() => {
+      dispatch(updateSearchParams({term,objectType}))
+      const {objects} = getState()['search'];
+      term = objects.searchTerm
+      objectType = objects.searchType
+      dispatch(loadObjects({term, objectType, page: 1}))
+    }
+    , timeout
+    )
   }
 ;
 
@@ -88,7 +120,7 @@ const receiveObject= (json) => (
 const fetchObject = (id) =>
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.get(`/objects/${id}`).then( response => {
+      ajaxHelper.get(`/search/${id}`).then( response => {
         dispatch(receiveObject(response.data))
       }).catch( error => handleErrors(error.message))
     )
@@ -97,5 +129,6 @@ const fetchObject = (id) =>
 export {
   searchObjects,
   loadNextObjects,
+  loadObjectsPage,
   fetchObject
 }

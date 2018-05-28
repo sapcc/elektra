@@ -1,7 +1,11 @@
 import { connect } from  'react-redux';
 import Home from '../components/home';
 
-import { searchObjects, loadNextObjects } from '../actions/objects'
+import {
+  searchObjects,
+  loadNextObjects,
+  loadObjectsPage
+} from '../actions/objects'
 
 import { fetchTypesIfNeeded } from '../actions/types'
 
@@ -13,6 +17,7 @@ export default connect(
   dispatch => ({
     search: (searchOptions) => dispatch(searchObjects(searchOptions)),
     loadTypesOnce: () => dispatch(fetchTypesIfNeeded()),
-    loadNext:(searchOptions) => dispatch(loadNextObjects(searchOptions))
+    loadNext:() => dispatch(loadNextObjects()),
+    loadPage: (page) => dispatch(loadObjectsPage(page))
   })
 )(Home);

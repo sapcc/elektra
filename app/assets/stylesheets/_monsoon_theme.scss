@@ -431,6 +431,11 @@ section {
   margin-left: auto;
 }
 
+.u-text-remove-highlight {
+  background-color: #ddd;
+  text-decoration: line-through;
+}
+
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -683,6 +688,12 @@ section {
     margin-bottom: $line-height-computed * 2.5;
   }
 
+  &.toolbar-inline {
+    margin-top: 0;
+    margin-bottom: $line-height-computed / 2;
+    border-top: 1px solid #eee;
+  }
+
   &.toolbar-fancy {
     background: none;
     border-top: 10px solid $bright-blue;
@@ -712,13 +723,22 @@ section {
     padding: 0 8px;
   }
 
+  .toolbar-container {
+
+  }
+
   .main-buttons {
     margin-left: auto;
   }
 
   .btn {
     margin: 0 0 0 5px;
+
+    &:first-child {
+      margin-left: 0;
+    }
   }
+
 
   h3, h4 {
     margin-top: 6px;
@@ -2065,6 +2085,12 @@ i.confirm-icon {
 
 input[type='checkbox'], input[type='radio'] {
   cursor: pointer;
+}
+
+label {
+  input[type='checkbox'], input[type='radio'] {
+    margin-right: 4px;
+  }
 }
 
 .inline-form {

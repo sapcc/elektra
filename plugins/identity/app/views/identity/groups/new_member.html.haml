@@ -17,7 +17,7 @@
       .col-sm-6
         .input-wrapper
           %input.string.required.form-control#member_name{ name: "user_name",
-            data: { autocomplete: { url: main_app.find_users_by_name_path, label: 'name', details: 'full_name', value: 'id' }}}
+            data: { autocomplete: { url: main_app.users_cache_path, label: 'name', details: 'full_name', value: 'id' }}}
         %p.help-block
           %i.fa.fa-info-circle
           You can add users from the same domain as members of this project.

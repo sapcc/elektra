@@ -223,28 +223,6 @@ class DashboardController < ::ScopeController
     render action: :terms_of_use
   end
 
-  def find_users_by_name
-    name = params[:name] || params[:term] || ''
-    users = UserProfile.search_by_name(name).to_a.uniq(&:name)
-    render json: (users.collect do |u|
-      { id: u.full_name, name: u.name, key: u.name, full_name: u.full_name, email: u.email }
-    end.to_json)
-  end
-
-  def find_cached_domains
-    name = params[:name] || params[:term] || ''
-    domains = FriendlyIdEntry.search('Domain', nil, name)
-    render json: domains.collect { |d| { id: d.key, name: d.name } }.to_json
-  end
-
-  def find_cached_projects
-    name = params[:name] || params[:term] || ''
-    projects = FriendlyIdEntry.search('Project', @scoped_domain_id, name)
-    render json: (projects.collect do |project|
-      { id: project.key, name: project.name }
-    end.to_json)
-  end
-
   def two_factor_required?
     if ENV['TWO_FACTOR_AUTH_DOMAINS']
       return ENV['TWO_FACTOR_AUTH_DOMAINS'].gsub(/\s+/, '').split(',').include?(@scoped_domain_name)
