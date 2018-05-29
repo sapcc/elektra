@@ -29,7 +29,7 @@ const receiveTypes= json => (
 const fetchTypes= () =>
   function(dispatch) {
     dispatch(requestTypes());
-    ajaxHelper.get('/search/types').then( (response) => {
+    ajaxHelper.get('/cache/types').then( (response) => {
       return dispatch(receiveTypes(response.data));
     })
     .catch( (error) => {

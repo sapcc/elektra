@@ -7,7 +7,7 @@
     - if @error
       %p.alert.alert-error= @error
 
-    = f.input :project, input_html: {data: {autocomplete_url: main_app.projects_cache_path}},
+    = f.input :project, input_html: {data: {autocomplete_url: main_app.projects_cache_index_path}},
       icon_hint: 'Project (name or ID) with whom the image will be shared.'
 
   %div.buttons{class: modal? ? 'modal-footer' : ''}

@@ -2,6 +2,7 @@ import { SearchField } from 'lib/components/search_field';
 import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Highlighter } from 'react-bootstrap-typeahead';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import makeCancelable from 'lib/tools/cancelable_promise';
 
 const removeMemberTooltip = (
   <Tooltip id="removeMemberTooltip">
@@ -33,6 +34,11 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
     // save current user roles in the state, change edit mode and trigger
     // the loadRoles method to get all available roles
     this.setState(newState, this.props.loadRolesOnce)
+  }
+
+  componentWillUnmount() {
+    // cancel submit promis if already created
+    if(this.submitPromise) this.submitPromise.cancel();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -110,14 +116,26 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
   // Called by save button
   saveChanges = () => {
     this.setState({saving: true})
-    this.props.updateProjectUserRoles(
-      this.props.projectId,
-      this.props.userId,
-      this.state.newUserRoleIDs
-    ).then(() => this.setState({saving: false, error: null}, this.props.onSave))
-     .catch((error) => {
-       this.setState({saving: false, error: error})
-     })
+
+    this.submitPromise = makeCancelable(
+      this.props.updateProjectUserRoles(
+        this.props.projectId,
+        this.props.userId,
+        this.state.newUserRoleIDs
+     )
+    )
+
+    this.submitPromise
+        .promise
+        .then(() => {
+          this.setState({saving: false, error: null}, this.props.onSave)
+        })
+        .catch(reason => {
+          if (!reason.isCanceled) { // promise is not canceled
+            // handle errors
+            this.setState({saving: false, errors: reason.errors})
+          }
+      })
   }
 
   // Leave edit mode
@@ -202,8 +220,8 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
             }
           </div>
         </div>
-        { this.state.error &&
-          <div className='text-danger'>{this.state.error}</div>
+        { this.state.errors &&
+          <div className='alert alert-error'>{this.state.errors}</div>
         }
         { !isFetching && this.renderEditView()}
       </React.Fragment>
