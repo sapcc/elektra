@@ -268,6 +268,21 @@ const submitNewShareForm= (values) => (
     )
 );
 
+const submitEditShareSizeForm= (values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) => 
+      ajaxHelper.put(
+        `/shares/${values.id}/size`, { size: values.size }
+      ).then((response) => {
+        if (response.data.errors) handleErrors({errors: response.data.errors});
+        else {
+          dispatch(receiveShare(response.data))
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors:error.message}))
+    )
+);
+
 //####################### AVAILABILITY ZONES ###########################
 // Manila availability zones, not nova!!!
 const shouldFetchAvailabilityZones= function(state) {
@@ -321,6 +336,7 @@ export {
   fetchAvailabilityZonesIfNeeded,
   submitNewShareForm,
   submitEditShareForm,
+  submitEditShareSizeForm,
   searchShares,
   loadNext
 }

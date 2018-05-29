@@ -84,6 +84,18 @@ module ServiceLayer
         elektron_shares.delete("shares/#{share_id}")
       end
 
+      def shrink_share_size(share_id, new_size)
+        elektron_shares.post("shares/#{share_id}/action") do
+          { "shrink": { "new_size": new_size } }
+        end
+      end
+
+      def extend_share_size(share_id, new_size)
+        elektron_shares.post("shares/#{share_id}/action") do
+          { "extend": { "new_size": new_size } }
+        end
+      end
+
       protected
 
       def types

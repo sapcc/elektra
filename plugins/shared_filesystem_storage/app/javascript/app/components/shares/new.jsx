@@ -93,7 +93,7 @@ export default class NewShareForm extends React.Component {
               }
             </Form.ElementHorizontal>
 
-            <Form.ElementHorizontal label='Size (GiB)' name="size" required={true}>
+            <Form.ElementHorizontal label='Size (GB)' name="size" required={true}>
               <Form.Input elementType='input' className="integer required optional form-control" type="number"
                 name="size"/>
             </Form.ElementHorizontal>

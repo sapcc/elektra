@@ -39,6 +39,16 @@ module SharedFilesystemStorage
       end
     end
 
+    def update_size
+      share = services.shared_filesystem_storage.find_share(params[:id])
+
+      if share.update_size(params[:size])
+        render json: share
+      else
+        render json: { errors: share.errors }
+      end
+    end
+
     def create
       share = services.shared_filesystem_storage.new_share(share_params)
       share.share_type ||= 'default'

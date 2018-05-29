@@ -117,9 +117,10 @@ export default class ShareItem extends React.Component {
                   <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(share.id) } }>Delete</a></li>
                 }
                 { policy.isAllowed("shared_filesystem_storage:share_update") &&
-                  <li>
-                    <Link to={`/shares/${share.id}/edit`}>Edit</Link>
-                  </li>
+                  <React.Fragment>
+                    <li><Link to={`/shares/${share.id}/edit`}>Edit</Link></li>
+                    <li><Link to={`/shares/${share.id}/edit-size`}>Extend / Shrink</Link></li>
+                  </React.Fragment>
                 }
                 { policy.isAllowed("shared_filesystem_storage:share_update") && share.status=='available' &&
                   <li>
