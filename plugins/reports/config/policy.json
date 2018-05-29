@@ -1,0 +1,6 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "lookup:cost_report_list": "rule:member"
+}

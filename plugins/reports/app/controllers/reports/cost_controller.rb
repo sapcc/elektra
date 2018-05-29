@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+module Reports
+  class CostController < DashboardController
+    def index
+      data =  '[{ "region": "TAZ01", "year": 2018, "month": 5, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2018, "month": 4, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2018, "month": 3, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2018, "month": 2, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 12, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 11, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 10, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 9, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 8, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 7, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 6, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 5, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 4, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false},'\
+              '{ "region": "TAZ01", "year": 2017, "month": 3, "project_id": "project1", "object_id": "instance1", "service": "compute", "measure": "ram", "allocation_type": "quota", "amount": 0.73,"amount_unit": "GiBh", "duration": 0.7, "duration_unit": "h", "price_loc": 0.25, "price_sec": 0.15, "currency": "EUR", "cost_object": "testCO", "cost_object_type": "CC","co_inherited": false}'\
+              ']'
+
+      respond_to do |format|
+        format.html
+        format.json { render json: data.to_json }
+      end
+    end
+  end
+end
