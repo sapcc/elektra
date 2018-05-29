@@ -30,22 +30,29 @@ class CacheController < ::ApplicationController
   def domain_projects
     page = (params[:page] || 1).to_i
 
-    domain = options[:domain]
-    project = options[:project]
+    domain = params[:domain]
+    project = params[:project]
+
+    domain_ids = ObjectCache.where(cached_object_type: 'domain').where(
+      [
+        'object_cache.name ILIKE :domain OR object_cache.id ILIKE :domain',
+        domain: "%#{domain}%"
+      ]
+    ).pluck(:id) unless domain.blank?
+
 
     items = ObjectCache.find_objects(
       paginate: { page: page, per_page: 30 },
+      type: 'project',
       include_scope: true
     ) do |scope|
-      domain_ids = scope.where(cached_object_type: 'domain').where(
-        ['name ILIKE :domain OR id ILIKE :domain', domain: "%#{domain}%"]
-      ).pluck(:id) unless domain.blank?
-
-      projects = scope.where(cached_object_type: 'project')
-      projects = projects.where(domain_id: domain_ids) if domain_ids
+      projects = domain_ids.nil? ? scope : scope.where(domain_id: domain_ids)
       unless project.blank?
         projects = projects.where(
-          ['name ILIKE :project OR id ILIKE :project', project: "%#{project}%"]
+          [
+            'object_cache.name ILIKE :project OR object_cache.id ILIKE :project',
+            project: "%#{project}%"
+          ]
         )
       end
       projects
