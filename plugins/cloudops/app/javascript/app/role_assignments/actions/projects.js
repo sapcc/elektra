@@ -35,7 +35,7 @@ const fetchProjects = (options) => {
     domain: options.domain,
     project: options.project
   }
-  return ajaxHelper.get('/search/projects', {params: params})
+  return ajaxHelper.get('/cache/domain_projects', {params: params})
 }
 
 const searchProjects= ({domain,project}) =>

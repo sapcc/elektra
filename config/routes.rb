@@ -10,16 +10,21 @@ Rails.application.routes.draw do
     get :readiness, to: 'health#readiness'
   end
 
-  #mount Cloudops::Engine => '/ccadmin/cloud_admin/cloudops', as: 'cloudops'
+  # mount Cloudops::Engine => '/ccadmin/cloud_admin/cloudops', as: 'cloudops'
   get '/cloudops', to: redirect(
     "/#{Rails.application.config.cloud_admin_domain}/" \
     "#{Rails.configuration.cloud_admin_project}/cloudops"
   )
 
-  resource :cache, only: [] do
-    get 'users'
-    get 'projects'
-    get 'domains'
+  scope '(/:domain_id)(/:project_id)(/:plugin)' do
+    resources :cache, only: %i[index show] do
+      collection do
+        get 'types'
+        get 'users'
+        get 'domain_projects'
+        get 'projects'
+      end
+    end
   end
 
   scope '/:domain_id' do

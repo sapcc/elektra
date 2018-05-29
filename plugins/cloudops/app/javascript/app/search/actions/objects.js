@@ -44,7 +44,7 @@ const fetchObjects = (options) => {
     type: options.objectType,
     term: options.term
   }
-  return ajaxHelper.get('/search', {params: params})
+  return ajaxHelper.get('/cache', {params: params})
 }
 
 const loadObjects= ({term, objectType, page=1, replace=false}) => {
@@ -120,7 +120,7 @@ const receiveObject= (json) => (
 const fetchObject = (id) =>
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.get(`/search/${id}`).then( response => {
+      ajaxHelper.get(`/cache/${id}`).then( response => {
         dispatch(receiveObject(response.data))
       }).catch( error => handleErrors(error.message))
     )

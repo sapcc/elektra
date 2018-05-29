@@ -124,43 +124,84 @@ RSpec.describe ObjectCache, type: :model do
       random_objects(100).each { |d| ObjectCache.cache_object(d) }
     end
 
-    it 'should find item by id' do
+    it 'should search for item by id' do
       item = ObjectCache.search(ObjectCache.first.id)
       expect(item).not_to be(nil)
     end
 
-    it 'should find exactly one item by id' do
+    it 'should search for exactly one item by id' do
       items = ObjectCache.search(ObjectCache.first.id)
       expect(items.length).to eql(1)
     end
 
-    it 'should find items by name' do
+    it 'should search for items by name' do
       items = ObjectCache.search(ObjectCache.first.name)
       expect(items.first.name).to eql(ObjectCache.first.name)
     end
 
-    it 'should find items by project_id' do
+    it 'should search for items by project_id' do
       item = ObjectCache.where('project_id IS NOT NULL').first
       items = ObjectCache.search(item.project_id)
       expect(items.first.project_id).to eql(item.project_id)
     end
 
-    it 'should find items by project_id' do
+    it 'should search for items by project_id' do
       item = ObjectCache.where('project_id IS NOT NULL').first
       items = ObjectCache.search(item.project_id)
       expect(items.first.project_id).to eql(item.project_id)
     end
 
-    it 'should find items by domain_id' do
+    it 'should search for items by domain_id' do
       item = ObjectCache.where('domain_id IS NOT NULL').first
       items = ObjectCache.search(item.domain_id)
       expect(items.first.domain_id).to eql(item.domain_id)
     end
 
-    it 'should find items by given options' do
+    it 'should search for items by given options' do
       item = ObjectCache.where('name IS NOT NULL').first
       items = ObjectCache.search(name: item.name)
       expect(items.first.name).to eql(item.name)
+    end
+  end
+
+  describe '::find_objects' do
+    before :each do
+      random_objects(100).each { |d| ObjectCache.cache_object(d) }
+    end
+
+    it 'should find items by id' do
+      items = ObjectCache.find_objects { |scope| scope.find(ObjectCache.first.id)}
+      expect(items.first.id).to eq(ObjectCache.first.id)
+    end
+
+    it 'should add scope to items' do
+      items = ObjectCache.find_objects(include_scope: true, term: ObjectCache.first.id)
+      expect(items.first.payload['scope']).not_to be(nil)
+    end
+
+    it 'should respond to total' do
+      items = ObjectCache.find_objects(paginate: {page: 1, per_page: 20})
+      expect(items).to respond_to(:total)
+    end
+
+    it 'should return total count of items' do
+      items = ObjectCache.find_objects(paginate: { page: 1, per_page: 20 })
+      expect(items.total).to eq(ObjectCache.count)
+    end
+
+    it 'should return respond to has_next' do
+      items = ObjectCache.find_objects(paginate: { page: 1, per_page: 20 })
+      expect(items).to respond_to(:has_next)
+    end
+
+    it 'should return true by calling has_next' do
+      items = ObjectCache.find_objects(paginate: { page: 1, per_page: 20 })
+      expect(items.has_next).to eq(true)
+    end
+
+    it 'should return false by calling has_next' do
+      items = ObjectCache.find_objects(paginate: { page: 1, per_page: 100 })
+      expect(items.has_next).to eq(false)
     end
   end
 

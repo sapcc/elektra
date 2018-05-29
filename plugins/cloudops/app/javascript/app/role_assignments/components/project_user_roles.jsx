@@ -74,24 +74,27 @@ export default class ProjectUserRoles extends React.Component {
     return (
       <React.Fragment>
         <div className="toolbar">
-          {!this.state.showNewMemberInput &&
-            <React.Fragment>
-              <SearchField
-                onChange={(term) => this.setState({filterString: term})}
-                placeholder='Name, C/D/I-number, or ID'
-                isFetching={false}
-                searchIcon={true}
-                text='Filter users by name or id'
-              />
-              <span className="toolbar-input-divider"></span>
-            </React.Fragment>
+          {!this.state.showNewMemberInput && items.length>0 &&
+            <SearchField
+              onChange={(term) => this.setState({filterString: term})}
+              placeholder='Name, C/D/I-number, or ID'
+              isFetching={false}
+              searchIcon={true}
+              text='Filter users by name or id'
+            />
           }
+          <span className="toolbar-input-divider"></span>
+          {(!this.props.projectUserRoles || this.props.projectUserRoles.isFetching) &&
+            <React.Fragment><span className='spinner'></span>Loading ...</React.Fragment>
+          }
+
           <div className='main-buttons'>
             {this.state.showNewMemberInput ?
               <div className="col-lg-6 pull-right">
                 <div className="input-group">
                   <AutocompleteField
                     type='users'
+                    domainId={this.props.project.domain_id}
                     onSelected={this.handleNewMember}
                     onInputChange={this.handleNewMember}/>
                   <span className="input-group-btn">
