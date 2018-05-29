@@ -6,7 +6,10 @@ SharedFilesystemStorage::Engine.routes.draw do
   resources :shares, except: %i[new edit], constraints: { format: :json } do
     resources :rules, module: 'shares', except: %i[show new edit update]
     get :availability_zones, constraints: { format: :json }, on: :collection
-    get :export_locations, constraints: { format: :json }, on: :member
+    member do
+      get :export_locations, constraints: { format: :json }
+      put :size, to: 'shares#update_size'
+    end
   end
   resources :snapshots, except: %i[new edit], constraints: { format: :json }
   resources :error_messages, only: %i[index], constraints: { format: :json }

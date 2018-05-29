@@ -5,6 +5,7 @@ import Tabs from '../components/tabs';
 
 import Shares from '../containers/shares/list'
 import EditShareModal from '../containers/shares/edit';
+import EditShareSizeModal from '../containers/shares/edit_size';
 import ShowShareModal from '../containers/shares/show';
 import NewShareModal from '../containers/shares/new';
 import AccessControlModal from '../containers/shares/access_control';
@@ -55,7 +56,10 @@ export default (props) => {
           <Route exact path="/shares/:id/show" component={ShowShareModal}/>
         }
         { policy.isAllowed("shared_filesystem_storage:share_update") &&
-          <Route exact path="/shares/:id/edit" component={EditShareModal}/>
+          <React.Fragment>
+            <Route exact path="/shares/:id/edit" component={EditShareModal}/>
+            <Route exact path="/shares/:id/edit-size" component={EditShareSizeModal}/>
+          </React.Fragment>  
         }
         { policy.isAllowed("shared_filesystem_storage:share_update") &&
           <Route exact path="/shares/:id/access-control" component={AccessControlModal}/>
