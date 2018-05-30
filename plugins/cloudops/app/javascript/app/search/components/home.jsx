@@ -59,11 +59,8 @@ export default class Search extends React.Component {
             isFetching={this.props.objects.isFetching}
             onChange={(term) => this.props.search({term})}
             value={this.props.objects.searchTerm}
-            placeholder='Object ID, name or project ID'
-            text='Searches by ID, IP, network, subnet or description in visible IP list only.
-                  Entering a search term will automatically start loading the next pages
-                  and filter the loaded items using the search term. Emptying the search
-                  input field will show all currently loaded items.'
+            placeholder='Object ID, name or description'
+            text='Searches by ID, name or description.'
           />
           {this.props.objects.total > 0 &&
             <React.Fragment>
