@@ -6,7 +6,7 @@
       = network.name
 
   %td
-    - network.subnet_objects.each do |subnet|
+    - @network_subnets[network.id].each do |subnet|
       %strong= subnet.name
       = "(#{subnet.cidr})"
       %br
