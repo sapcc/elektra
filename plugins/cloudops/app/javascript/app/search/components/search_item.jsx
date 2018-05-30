@@ -35,6 +35,13 @@ export default ({item, term}) => {
           name={item.name}
           term={term}/>
       </td>
+      <td>
+        {item.search_label && item.search_label.trim().length>0 &&
+          <span className="info-text">
+            <Highlighter search={term || ''}>{item.search_label}</Highlighter>
+          </span>
+        }
+      </td>
       <td className="big-data-cell">
         {/* Domain */}
         <ObjectLink

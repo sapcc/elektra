@@ -1,6 +1,6 @@
 class ObjectCache < ApplicationRecord
   self.table_name = 'object_cache'
-  ATTRIBUTE_KEYS = %w[name project_id domain_id cached_object_type].freeze
+  ATTRIBUTE_KEYS = %w[name project_id domain_id cached_object_type search_label].freeze
 
   belongs_to :project, class_name: 'ObjectCache', primary_key: 'id',
                        foreign_key: 'project_id', optional: true
@@ -9,6 +9,38 @@ class ObjectCache < ApplicationRecord
 
   @cache_objects_mutex = Mutex.new
   @cache_object_mutex = Mutex.new
+
+  SEARCH_LABEL_KEYS = {
+    'access' => %w[share_id access_to],
+    'agent' => %w[description topic host agent_type],
+    'export_location' => %w[path],
+    'floatingip' => %w[description floating_ip_address floating_network_id
+                       router_id fixed_ip_address dns_name port_id],
+    'hypervisor' => %w[hypervisor_type hypervisor_hostname host_ip],
+    'image' => %w[owner user_id image_type instance_uuid],
+    'keypair' => %w[user_id],
+    'listener' => %w[default_pool_id description],
+    'member' => %w[protocol_port subnet_id address],
+    'message' => %w[resource_id message_level request_id resource_type],
+    'network' => %w[dns_domain description],
+    'pool' => %w[protocol description],
+    'port' => %w[device_owner mac_address description device_id network_id dns_name],
+    'rbac_policy' => %w[object_type object_id],
+    'recordset' => %w[description zone_id zone_name],
+    'router' => %w[description],
+    'security_group' => %w[description],
+    'security_group_rule' => %w[direction protocol description security_group_id],
+    'security_service' => %w[dns_ip description],
+    'server' => %w[hostId user_id],
+    'share' => %w[availability_zone share_network_id user_id share_proto],
+    'share_network' => %w[neutron_subnet_id neutron_net_id cidr description],
+    'snapshot' => %w[volume_id description],
+    'subnet' => %w[description network_id gateway_ip cidr],
+    'transfer_request' => %w[zone_id zone_name description],
+    'user' => %w[description],
+    'volume' => %w[displayDescription availabilityZone displayName volumeType],
+    'zone' => %w[email description pool_id]
+  }
 
   def self.cache_objects(objects)
     # create a id => object map
@@ -56,6 +88,7 @@ class ObjectCache < ApplicationRecord
       transaction do
         item = find_by_id(id)
         if item
+          attributes[:payload] = item.payload.merge(attributes[:payload])
           item.update(attributes)
         else
           item = create(attributes.merge(id: id))
@@ -72,7 +105,7 @@ class ObjectCache < ApplicationRecord
     where(
       [
         'id ILIKE :term or name ILIKE :term or project_id ILIKE :term or ' \
-        "domain_id ILIKE :term or payload::json->>'description' ilike :term",
+        'domain_id ILIKE :term or search_label ILIKE :term',
         term: "%#{args}%"
       ]
     )
@@ -126,6 +159,7 @@ class ObjectCache < ApplicationRecord
 
   def self.object_attributes(data)
     data['project_id'] = data['project_id'] || data['tenant_id']
+    data['search_label'] = search_label(data)
     data.select do |k, v|
       ATTRIBUTE_KEYS.include?(k) && !v.blank?
     end.merge(payload: data)
@@ -155,4 +189,17 @@ class ObjectCache < ApplicationRecord
       end
     end
   end
+
+  # generate a search label for object
+  def self.search_label(data)
+    object_type = data['cached_object_type'].try(:downcase)
+    keys = SEARCH_LABEL_KEYS[object_type] if object_type
+
+    return '' if keys.nil? || keys.empty?
+
+    keys.each_with_object([]) do |key, search_string|
+      search_string << "#{key}: #{data[key]}" unless data[key].blank?
+    end.join(' ')
+  end
+
 end

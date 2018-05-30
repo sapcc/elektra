@@ -28,6 +28,12 @@ RSpec.describe ObjectCache, type: :model do
         item = ObjectCache.find_by_id(data['id'])
         expect(item.name).to eq(data['name'])
       end
+
+      it 'should create search label' do
+        ObjectCache.cache_object(data)
+        item = ObjectCache.find_by_id(data['id'])
+        expect(item.search_label).to eq(data['description'])
+      end
     end
 
     context 'object already registered' do
@@ -52,6 +58,18 @@ RSpec.describe ObjectCache, type: :model do
         ObjectCache.cache_object(new_data)
         item = ObjectCache.find_by_id(new_data['id'])
         expect(item.name).to eql(new_data['name'])
+      end
+
+      it 'should respond to search label' do
+        ObjectCache.cache_object(data)
+        item = ObjectCache.find_by_id(data['id'])
+        expect(item).to respond_to(:search_label)
+      end
+
+      it 'should return search label' do
+        ObjectCache.cache_object(data)
+        item = ObjectCache.find_by_id(data['id'])
+        expect(item.search_label).to eq(data['description'])
       end
     end
   end
@@ -103,6 +121,18 @@ RSpec.describe ObjectCache, type: :model do
         ObjectCache.cache_objects(new_records)
         items = ObjectCache.search(name: 'New Name')
         expect(items.length).to eq(2)
+      end
+
+      it 'should respond to search label' do
+        ObjectCache.cache_objects(objects)
+        item = ObjectCache.find_by_id(objects[0]['id'])
+        expect(item).to respond_to(:search_label)
+      end
+
+      it 'should return search label' do
+        ObjectCache.cache_objects(objects)
+        item = ObjectCache.find_by_id(objects[0]['id'])
+        expect(item.search_label).to eq(item.payload['description'])
       end
     end
 
@@ -161,6 +191,11 @@ RSpec.describe ObjectCache, type: :model do
       item = ObjectCache.where('name IS NOT NULL').first
       items = ObjectCache.search(name: item.name)
       expect(items.first.name).to eql(item.name)
+    end
+
+    it 'should search for items by search label' do
+      items = ObjectCache.search(ObjectCache.first.payload['description'])
+      expect(items.first.search_label).to eql(ObjectCache.first.search_label)
     end
   end
 
@@ -226,6 +261,7 @@ RSpec.describe ObjectCache, type: :model do
       item['id'] = random_string
       item['name'] = random_string(10)
       item['cached_object_type'] = random_type
+      item['description'] = random_string
       5.times { item[random_attribute] = random_string(15) }
       objects << item
     end
