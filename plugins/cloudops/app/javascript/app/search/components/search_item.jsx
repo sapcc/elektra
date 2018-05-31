@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Highlighter } from 'react-bootstrap-typeahead'
-import projectUrl from '../../shared/project_link'
+import { projectUrl, objectUrl } from '../../shared/object_link_helper'
 
 const ObjectLink = ({id, name, term}) =>
   <React.Fragment>
@@ -24,6 +24,7 @@ const ObjectLink = ({id, name, term}) =>
 export default ({item, term}) => {
   const scope = item.payload.scope || {}
   const projectLink = projectUrl(item)
+  const objectLink = objectUrl(item)
 
   return(
     <tr>
@@ -57,19 +58,30 @@ export default ({item, term}) => {
           term={term}/>
       </td>
       <td>
-        {projectLink &&
+        {(projectLink || objectLink) &&
           <div className='btn-group'>
             <button className="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
               <i className='fa fa-cog'></i>
             </button>
             <ul className='dropdown-menu dropdown-menu-right' role="menu">
-              <li>
-                <a
-                  href={projectLink}
-                  target='_blank'>
-                  <i className='fa fa-fw fa-external-link'/> Switch to Project
-                </a>
-              </li>
+              {objectLink &&
+                <li>
+                  <a
+                    href={objectLink}
+                    target='_blank'> 
+                    <i className='fa fa-fw fa-external-link'/> Show in Elektra
+                  </a>
+                </li>
+              }
+              {projectLink &&
+                <li>
+                  <a
+                    href={projectLink}
+                    target='_blank'>
+                    <i className='fa fa-fw fa-external-link'/> Switch to Project
+                  </a>
+                </li>
+              }
             </ul>
           </div>
         }

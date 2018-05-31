@@ -1,7 +1,7 @@
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
-import projectUrl from '../../shared/project_link'
+import { projectUrl, objectUrl } from '../../shared/object_link_helper'
 import ProjectUserRoles from '../../role_assignments/containers/project_user_roles'
 
 export default class ShowSearchObjectModal extends React.Component{
@@ -50,6 +50,7 @@ export default class ShowSearchObjectModal extends React.Component{
   render(){
     const { item } = this.props
     const projectLink = projectUrl(item)
+    const objectLink = objectUrl(item)
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
     const activeTab = found ? found[1] : null
 
@@ -86,6 +87,15 @@ export default class ShowSearchObjectModal extends React.Component{
           }
         </Modal.Body>
         <Modal.Footer>
+          {objectLink &&
+            <a
+              href={objectLink}
+              target='_blank'
+              className='btn btn-primary'>
+              Show in Elektra
+            </a>
+          }
+
           {projectLink &&
             <a
               href={projectLink}
