@@ -679,6 +679,10 @@ section {
   margin-top: $line-height-computed;
   line-height: 34px; // to match input height
 
+  * {
+    flex-shrink: 0;
+  }
+
   &.toolbar-aligntop {
     margin-top: 0;
   }
@@ -729,6 +733,11 @@ section {
 
   .main-buttons {
     margin-left: auto;
+    flex-shrink: 1;
+
+    .input-group {
+      width: 320px;
+    }
   }
 
   .btn {

@@ -75,51 +75,52 @@ export default class ProjectUserRoles extends React.Component {
       <React.Fragment>
         <div className="toolbar">
           {!this.state.showNewMemberInput && items.length>0 &&
-            <SearchField
-              onChange={(term) => this.setState({filterString: term})}
-              placeholder='Name, C/D/I-number, or ID'
-              isFetching={false}
-              searchIcon={true}
-              text='Filter users by name or id'
-            />
+            <React.Fragment>
+              <SearchField
+                onChange={(term) => this.setState({filterString: term})}
+                placeholder='Name, C/D/I-number, or ID'
+                isFetching={false}
+                searchIcon={true}
+                text='Filter users by name or id'
+              />
+              <span className="toolbar-input-divider"></span>
+          </React.Fragment>
           }
-          <span className="toolbar-input-divider"></span>
+
           {(!this.props.projectUserRoles || this.props.projectUserRoles.isFetching) &&
-            <React.Fragment><span className='spinner'></span>Loading ...</React.Fragment>
+            <div className="toolbar-container"><span className='spinner'></span>Loading ...</div>
           }
 
           <div className='main-buttons'>
             {this.state.showNewMemberInput ?
-              <div className="col-lg-6 pull-right">
-                <div className="input-group">
-                  <AutocompleteField
-                    type='users'
-                    domainId={this.props.project.domain_id}
-                    onSelected={this.handleNewMember}
-                    onInputChange={this.handleNewMember}/>
-                  <span className="input-group-btn">
-                    {this.state.newMember ?
-                      <button
-                        className='btn btn-primary'
-                        disabled={isMember}
-                        onClick={() => this.setState({showNewMemberForm: true})}>
-                          {isMember ?
-                            <OverlayTrigger placement="top" overlay={isMemberTooltip}>
-                              <span>Add</span>
-                            </OverlayTrigger>
-                            :
+              <div className="input-group">
+                <AutocompleteField
+                  type='users'
+                  domainId={this.props.project.domain_id}
+                  onSelected={this.handleNewMember}
+                  onInputChange={this.handleNewMember}/>
+                <span className="input-group-btn">
+                  {this.state.newMember ?
+                    <button
+                      className='btn btn-primary'
+                      disabled={isMember}
+                      onClick={() => this.setState({showNewMemberForm: true})}>
+                        {isMember ?
+                          <OverlayTrigger placement="top" overlay={isMemberTooltip}>
                             <span>Add</span>
-                          }
-                      </button>
-                      :
-                      <button
-                        className='btn btn-default'
-                        onClick={() => this.setState({showNewMemberInput: false})}>
-                        x
-                      </button>
-                    }
-                  </span>
-                </div>
+                          </OverlayTrigger>
+                          :
+                          <span>Add</span>
+                        }
+                    </button>
+                    :
+                    <button
+                      className='btn btn-default'
+                      onClick={() => this.setState({showNewMemberInput: false})}>
+                      x
+                    </button>
+                  }
+                </span>
               </div>
               :
               <button
