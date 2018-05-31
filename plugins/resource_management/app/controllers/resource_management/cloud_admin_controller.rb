@@ -94,7 +94,8 @@ module ResourceManagement
     end
 
     def review_request
-      @desired_quota = @inquiry.payload['desired_quota']
+      @desired_quota ||= @inquiry.payload['desired_quota'] # may already be set if coming from approve_request()
+      @maximum_quota_before_overcommit = @cluster_resource.capacity - @cluster_resource.domains_quota + @domain_resource.quota
 
       # this alias is necessary for rendering view partials from the "details" screen
       @combined_resource = @cluster_resource
@@ -104,11 +105,19 @@ module ResourceManagement
     end
 
     def approve_request
+      @maximum_quota_before_overcommit = @cluster_resource.capacity - @cluster_resource.domains_quota + @domain_resource.quota
+      overcommit_accepted = params.require(:new_style_resource).permit(:accept_overcommit)[:accept_overcommit] == "1"
+
       old_quota = @domain_resource.quota
       begin
-        @domain_resource.quota = @domain_resource.data_type.parse(params.require(:new_style_resource).require(:quota))
+        @desired_quota = @domain_resource.data_type.parse(params.require(:new_style_resource).require(:quota))
+        @domain_resource.quota = @desired_quota
+
+        if @desired_quota > @maximum_quota_before_overcommit && !overcommit_accepted
+          @domain_resource.add_validation_error(:quota, 'is too large (unless you accept overcommit)')
+        end
       rescue ArgumentError => e
-        @domain_resource.add_validation_error(:approved_quota, 'is invalid: ' + e.message)
+        @domain_resource.add_validation_error(:quota, 'is invalid: ' + e.message)
       end
 
       if @domain_resource.save
@@ -118,6 +127,7 @@ module ResourceManagement
         end
         services.inquiry.set_inquiry_state(@inquiry.id, :approved, comment, current_user)
       else
+        puts ">>>>>>> we found the following problems: #{@domain_resource.errors.full_messages.join(" ")}"
         @domain_resource.quota = old_quota
         self.review_request
         render action: 'review_request'

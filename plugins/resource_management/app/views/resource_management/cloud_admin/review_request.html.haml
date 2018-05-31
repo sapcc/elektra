@@ -13,7 +13,7 @@
 
     %p
       The domain
-      %strong= @domain_resource.name
+      %strong= @domain_resource.domain_name
       requests that their quota be extended from
       %strong= @domain_resource.data_type.format(@domain_resource.quota)
       to
@@ -25,6 +25,12 @@
       .col-md-2.quota-label.text-muted Preview
       .col-md-9= render partial: 'bar', locals: { resource: @cluster_resource_projected }
 
+    - if @desired_quota > @maximum_quota_before_overcommit
+      %p.text-danger{style:"margin-top:1rem"}
+        This request would exceed the cluster capacity. If you do not want to overcommit capacity, you can only approve a domain quota of
+        %strong= @domain_resource.data_type.format(@maximum_quota_before_overcommit)
+        or less.
+
     %fieldset
       - previous_value = params[:new_style_resource] ? params[:new_style_resource][:quota] : nil
       - if @domain_resource.data_type.to_sym == :number
@@ -35,6 +41,9 @@
 
       - previous_comment = params[:new_style_resource] ? params[:new_style_resource][:comment] : nil
       = f.input :comment, label: 'Comment', as: :string, input_html: { value: previous_comment, placeholder: 'Optional'}
+
+      - if @desired_quota > @maximum_quota_before_overcommit
+        = f.input :accept_overcommit, label: 'I am aware of the consequences of overcommitting this resource.', as: :boolean
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
