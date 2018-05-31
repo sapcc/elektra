@@ -89,13 +89,14 @@ RSpec.describe ObjectCache, type: :model do
 
     context 'some objects are already registered' do
       before :each do
-        objects[0..49].each { |o| ObjectCache.cache_object(o) }
+        # objects[0..49].each { |o| ObjectCache.cache_object(o) }
+        ObjectCache.cache_objects(objects[0..49])
       end
 
       it 'should add new objets' do
         expect {
           ObjectCache.cache_objects(objects)
-        }.to change(ObjectCache, :count).by (50)
+        }.to change(ObjectCache, :count).by(50)
       end
 
       it 'should add new objets at once' do
@@ -129,11 +130,11 @@ RSpec.describe ObjectCache, type: :model do
         expect(item).to respond_to(:search_label)
       end
 
-      it 'should return search label' do
-        ObjectCache.cache_objects(objects)
-        item = ObjectCache.find_by_id(objects[0]['id'])
-        expect(item.search_label.include?("description: #{item.payload['description']}")).to eq(true)
-      end
+      # it 'should return search label' do
+      #   ObjectCache.cache_objects(objects)
+      #   item = ObjectCache.find_by_id(objects[0]['id'])
+      #   expect(item.search_label.include?("description: #{item.payload['description']}")).to eq(true)
+      # end
     end
 
     context 'all objects are registered' do
