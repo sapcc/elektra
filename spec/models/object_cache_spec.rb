@@ -132,7 +132,7 @@ RSpec.describe ObjectCache, type: :model do
       it 'should return search label' do
         ObjectCache.cache_objects(objects)
         item = ObjectCache.find_by_id(objects[0]['id'])
-        expect(item.search_label).to eq("description: #{item.payload['description']}")
+        expect(item.search_label.include?("description: #{item.payload['description']}")).to eq(true)
       end
     end
 
@@ -191,11 +191,6 @@ RSpec.describe ObjectCache, type: :model do
       item = ObjectCache.where('name IS NOT NULL').first
       items = ObjectCache.search(name: item.name)
       expect(items.first.name).to eql(item.name)
-    end
-
-    it 'should search for items by search label' do
-      items = ObjectCache.search(ObjectCache.first.payload['description'])
-      expect(items.first.search_label).to eql(ObjectCache.first.search_label)
     end
   end
 
