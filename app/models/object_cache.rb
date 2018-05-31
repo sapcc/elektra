@@ -31,7 +31,7 @@ class ObjectCache < ApplicationRecord
     'security_group' => %w[description],
     'security_group_rule' => %w[direction protocol description security_group_id],
     'security_service' => %w[dns_ip description],
-    'server' => %w[hostId user_id],
+    'server' => %w[description hostId user_id],
     'share' => %w[availability_zone share_network_id user_id share_proto],
     'share_network' => %w[neutron_subnet_id neutron_net_id cidr description],
     'snapshot' => %w[volume_id description],
