@@ -32,7 +32,7 @@ RSpec.describe ObjectCache, type: :model do
       it 'should create search label' do
         ObjectCache.cache_object(data)
         item = ObjectCache.find_by_id(data['id'])
-        expect(item.search_label).to eq(data['description'])
+        expect(item.search_label).to eq("description: #{data['description']}")
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe ObjectCache, type: :model do
       it 'should return search label' do
         ObjectCache.cache_object(data)
         item = ObjectCache.find_by_id(data['id'])
-        expect(item.search_label).to eq(data['description'])
+        expect(item.search_label).to eq("description: #{data['description']}")
       end
     end
   end
@@ -132,7 +132,7 @@ RSpec.describe ObjectCache, type: :model do
       it 'should return search label' do
         ObjectCache.cache_objects(objects)
         item = ObjectCache.find_by_id(objects[0]['id'])
-        expect(item.search_label).to eq(item.payload['description'])
+        expect(item.search_label).to eq("description: #{item.payload['description']}")
       end
     end
 
