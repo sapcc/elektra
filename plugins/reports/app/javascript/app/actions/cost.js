@@ -32,7 +32,7 @@ const fetchCostReport= (value) => (
       ajaxHelper.get(`/`).then((response) => {
         if (response.data.errors) {
           dispatch(requestCostReportFailure(`Could not load report (${response.data.errors})`))
-        }else {
+        }else {          
           dispatch(receiveCostReport(response.data))
           handleSuccess()
         }

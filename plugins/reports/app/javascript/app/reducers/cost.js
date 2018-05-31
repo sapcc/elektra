@@ -20,7 +20,7 @@ const requestCostReportFailure= function(state, error) {
   return {...state, error, isFetching: false, data: null};
 };
 
-export const costReport = function(state, action) {
+export const cost = function(state, action) {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.REQUEST_COST_REPORT: return requestCostReport(state,action);

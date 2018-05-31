@@ -4,7 +4,7 @@ import { fetchCostReport } from '../actions/cost'
 
 const mapStateToProps = state => {
   return {
-    report: state.report
+    cost: state.cost
   }
 }
 

@@ -1,1 +1,1 @@
-export { costReport } from './costReport';
+export { cost } from './cost';
