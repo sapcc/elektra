@@ -38,7 +38,7 @@ class ObjectCache < ApplicationRecord
     'subnet' => %w[description network_id gateway_ip cidr],
     'transfer_request' => %w[zone_id zone_name description],
     'user' => %w[description],
-    'volume' => %w[displayDescription availabilityZone displayName volumeType],
+    'volume' => %w[displayDescription availabilityZone displayName volumeType links os-vol-tenant-attr:tenant_id],
     'zone' => %w[email description pool_id]
   }
 

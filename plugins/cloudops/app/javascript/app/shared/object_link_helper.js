@@ -4,6 +4,7 @@ const OBJECT_URL_PATH = {
   volume_snapshot: (id) => `block-storage/snapshots?overlay=${id}`,
   image: (id) => `image/ng#/os-images/available/${id}/show`,
   flavor: (id) => `compute/flavors`,
+  external_network: (id) => `networking/networks/external?overlay=${id}`,
   network: (id) => `networking/networks/external?overlay=${id}`,
   router: (id) => `networking/routers?overlay=${id}`,
   port: (id) => `networking/ports#/ports/${id}/show`,
@@ -32,8 +33,19 @@ export const projectUrl = (item) => {
 
 export const objectUrl = (item) => {
   if(!item) return null
-  const path = OBJECT_URL_PATH[item.cached_object_type]
-  console.log(path)
+  if(!item.project_id) return null
+
+  let object_type = item.cached_object_type
+  if (object_type == 'snapshot') {
+    if(item.payload.share_id) object_type = 'share_snapshot'
+    else if(item.payload.volume_id) object_type = 'volume_snapshot'
+  } else if(object_type == 'network') {
+    if(item.payload["router:external"]) {
+      object_type = 'external_network'
+    }
+  }
+
+  const path = OBJECT_URL_PATH[object_type]
   if(!path) return null
   const scope = item.payload.scope || {}
   return(`/${scope.domain_id}/${scope.project_id}/${path(item.id)}`)

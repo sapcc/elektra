@@ -75,7 +75,7 @@ export default class Search extends React.Component {
               <tr>
                 <th>Type</th>
                 <th>Name/ID</th>
-                <th>Details</th>
+                <th width="35%">Details</th>
                 <th>Domain</th>
                 <th>(Parent) Project</th>
                 <th></th>
