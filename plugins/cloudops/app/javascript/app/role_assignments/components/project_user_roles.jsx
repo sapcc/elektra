@@ -93,33 +93,32 @@ export default class ProjectUserRoles extends React.Component {
 
           <div className='main-buttons'>
             {this.state.showNewMemberInput ?
-              <div className="input-group">
+              <div className="input-group input-group-left-button">
+                <span className="input-group-btn">
+                  <button
+                    className='btn btn-default'
+                    onClick={() => this.setState({showNewMemberInput: false})}>
+                    x
+                  </button>
+                </span>
                 <AutocompleteField
                   type='users'
                   domainId={this.props.project.domain_id}
                   onSelected={this.handleNewMember}
                   onInputChange={this.handleNewMember}/>
                 <span className="input-group-btn">
-                  {this.state.newMember ?
-                    <button
-                      className='btn btn-primary'
-                      disabled={isMember}
-                      onClick={() => this.setState({showNewMemberForm: true})}>
-                        {isMember ?
-                          <OverlayTrigger placement="top" overlay={isMemberTooltip}>
-                            <span>Add</span>
-                          </OverlayTrigger>
-                          :
+                  <button
+                    className='btn btn-primary'
+                    disabled={isMember || !this.state.newMember}
+                    onClick={() => this.setState({showNewMemberForm: true})}>
+                      {isMember ?
+                        <OverlayTrigger placement="top" overlay={isMemberTooltip}>
                           <span>Add</span>
-                        }
-                    </button>
-                    :
-                    <button
-                      className='btn btn-default'
-                      onClick={() => this.setState({showNewMemberInput: false})}>
-                      x
-                    </button>
-                  }
+                        </OverlayTrigger>
+                        :
+                        <span>Add</span>
+                      }
+                  </button>
                 </span>
               </div>
               :
