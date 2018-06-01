@@ -1,9 +1,9 @@
-import {max, sum} from 'd3-array'
-import {scaleLinear} from 'd3-scale'
+import { max, sum } from 'd3-array'
+import { scaleLinear, scaleThreshold, scaleBand } from 'd3-scale'
 import { select } from 'd3-selection'
 import { legendColor } from 'd3-svg-legend'
 import { transition } from 'd3-transition'
-import { scaleThreshold } from 'd3-scale'
+import { stack } from 'd3-shape'
 
 class BarChart extends React.Component {
 
@@ -21,6 +21,8 @@ class BarChart extends React.Component {
     }
     const node = this.node
     const barWidth = this.props.size[0] / this.getData().length
+    const width = this.props.size[0]
+    const height = this.props.size[1]
     const colorScaleOld = scaleThreshold().domain([5,10,20,30]).range(["#75739F", "#5EAFC6", "#41A368", "#93C464"])
     const dataMax = this.getDataMax()
     const yScale = scaleLinear().domain([0, dataMax]).range([0, this.props.size[1]])
@@ -30,50 +32,86 @@ class BarChart extends React.Component {
       .scale(colorScale)
       .labels(services)
 
+    // create legend node
     select(node)
       .selectAll("g.legend")
       .data([0])
-      .enter()
-      .append("g")
-      .attr("class", "legend")
+      .enter().append("g")
+        .attr("class", "legend")
       .call(legend)
 
-     select(node)
-      .select("g.legend")
-      .attr("transform", "translate(" + (this.props.size[0] - 100) + ", 20)")
+    // Position legend node
+    //  select(node)
+    //   .select("g.legend")
+    //   .attr("transform", "translate(" + (this.props.size[0] - 100) + ", 20)")
+
+    // select(node)
+    //   .selectAll("rect.bar")
+    //   .data(this.getData())
+    //   .enter()
+    //   .append("rect")
+    //   .attr("class", "bar")
+    //   .on("mouseover", this.props.onHover)
+
+    // select(node)
+    //   .selectAll("rect.bar")
+    //   .data(this.getData())
+    //   .exit()
+    //   .remove()
+
+    console.log(stack().keys(this.getServices())(this.getTestData()))
+    console.log(this.getDates())
+    console.log(this.getServices())
+    console.log(this.getTestData())
+
+    var x = scaleBand()
+        .rangeRound([0, width])
+        .paddingInner(0.05)
+        .align(0.1);
+
+    var y = scaleLinear()
+        .rangeRound([height, 0]);
 
     select(node)
-      .selectAll("rect.bar")
-      .data(this.getData())
-      .enter()
-      .append("rect")
-      .attr("class", "bar")
-      .on("mouseover", this.props.onHover)
+      .selectAll("g.service")
+      .data(stack().keys(this.getServices())(this.getTestData()))
+      .enter().append("g")
+        .attr("class", "service")
+        .attr("fill", (d,i) => this.setColorV2(d,i,colorScale))
+      .selectAll("rect")
+      .data(function(d) { console.log(d); return d; })
+      .enter().append("rect")
+        .attr("x", function(d) { console.log(d.data.date); return x(d.data.date); })
+        .attr("y", function(d) { return y(d[1]); })
+        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+        .attr("width", 5);
 
-    select(node)
-      .selectAll("rect.bar")
-      .data(this.getData())
-      .exit()
-      .remove()
+    // select(node)
+    //   .selectAll("g")
+    //   .data(stack().keys(this.getServices())(this.getTestData()))
+    //   .enter().append("g")
+    //     .attr("fill", (d,i) => this.setColorV2(d,i,colorScale))
+    //   .selectAll("rect")
+    //   .data(function(d) { console.log(d); return d; })
+    //   .enter().append("rect")
+    //     .attr("x", function(d) { console.log(x(d.data.Date)); return x(d.data.Date); })
+    //     .attr("y", function(d) { return y(d[1]); })
+    //     .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+    //     .attr("width", x.bandwidth());
 
-    select(node)
-      .selectAll("rect.bar")
-      .data(this.getData())
-      .attr("x", (d,i) => this.setX(d,i,barWidth))
-      .attr("y", (d) => this.setY(d,yScale))
-      .attr("height", (d) => this.setHeight(d,yScale))
-      .attr("width", barWidth)
-      .style("fill",(d,i) =>  this.setColor(d,i,colorScale))
-      .style("stroke", "black")
-      .style("stroke-opacity", 0.25)
+    // select(node)
+    //   .selectAll("rect.bar")
+    //   .data(this.getData())
+    //   .attr("x", (d,i) => this.setX(d,i,barWidth))
+    //   .attr("y", (d) => this.setY(d,yScale))
+    //   .attr("height", (d) => this.setHeight(d,yScale))
+    //   .attr("width", barWidth)
+    //   .style("fill",(d,i) =>  this.setColor(d,i,colorScale))
+    //   .style("stroke", "black")
+    //   .style("stroke-opacity", 0.25)
   }
 
   setX = (d,i,barWidth) => {
-    // if (this.props.hoverElement === d.id) {
-    //   return "#FCBC34"
-    // } else {
-    //   return colorScale(d.service)
-    // }
     return i * barWidth
   }
 
@@ -83,6 +121,11 @@ class BarChart extends React.Component {
 
   setHeight = (d, yScale) => {
     return yScale(d.data)
+  }
+
+  setColorV2 = (d,i,colorScale) => {
+    console.log(d)
+    return colorScale(d.key)
   }
 
   setColor = (d,i,colorScale) => {
@@ -109,11 +152,43 @@ class BarChart extends React.Component {
     }
   }
 
-  getData = () => {
+  getDates = () => {
     if (this.props.realData) {
-      return [].concat(...this.props.realData).map(i => ({data: i.price_loc + i.price_sec, service: i.service + "::" + i.measure}))
+      return [].concat(...this.props.realData).map(i => i.year + "/" + i.month).filter( (item, pos, arr) => arr.indexOf(item)==pos)
     }
   }
+
+  getData = () => {
+    if (this.props.realData) {
+      return [].concat(...this.props.realData)
+                .map(i => {
+                  let key = i.year + "/" + i.month
+                  let data = {data: i.price_loc + i.price_sec, service: i.service + "::" + i.measure, date: i.year + "/" + i.month}
+                  data[key] = i.year + "/" + i.month
+                  return data
+                })
+    }
+  }
+
+getTestData = () => {
+  if (this.props.realData) {
+    let resultData = {}
+    let temp = [].concat(...this.props.realData)
+    temp.map(i => {
+      let key = i.year + "/" + i.month
+      let service = i.service + "::" + i.measure
+      if (resultData[key]) {
+        resultData[key][service] = i.price_loc + i.price_sec
+      } else {
+        resultData[key] = {
+          date: i.year + "/" + i.month
+        }
+        resultData[key][service] = i.price_loc + i.price_sec
+      }
+    })
+    return Object.keys(resultData).map(i => resultData[i])
+  }
+}
 
   getDataMax = () => {
     if (this.getData()) {
