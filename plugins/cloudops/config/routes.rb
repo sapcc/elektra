@@ -8,11 +8,4 @@ Cloudops::Engine.routes.draw do
   end
 
   resource :role_assignments, only: %i[update]
-
-  resources :search, only: %i[index show] do
-    collection do
-      get 'types'
-      get 'projects'
-    end
-  end
 end

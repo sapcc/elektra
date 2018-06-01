@@ -1,17 +1,33 @@
 # frozen_string_literal: true
 
 class CacheController < ::ApplicationController
+  include Services
+  include LiveSearch
+
+  class NotFound < StandardError; end
+
   def index
     page = (params[:page] || 1).to_i
 
     items = ObjectCache.find_objects(
-      type: params[:type],
-      term: params[:term],
-      include_scope: true,
-      paginate: { page: page, per_page: 30}
+      type: params[:type], term: params[:term], include_scope: true,
+      paginate: { page: page, per_page: 30 }
     ) { |scope| scope.order(:name) }
 
+    # no items found -> start live search
+    if items.length.zero? && params[:type]
+      found_objects = live_search(params[:term], object_type: params[:type])
+      if found_objects.length.positive?
+        items = ObjectCache.find_objects(
+          type: params[:type], term: params[:term], include_scope: true,
+          paginate: { page: page, per_page: 30 }
+        ) { |scope| scope.order(:name) }
+      end
+    end
+
     render json: { items: items, total: items.total, has_next: items.has_next }
+  rescue StandardError
+    render json: { items: [] }
   end
 
   def show
