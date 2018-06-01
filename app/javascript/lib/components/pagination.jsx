@@ -1,5 +1,5 @@
 export const Pagination = (props) => {
-  if(props.total<=props.perPage) return null;
+  if(!props.total || props.total<=props.perPage) return null;
 
   const pageCount = Math.ceil(props.total / props.perPage)
   const pageWindow = props.pageWindow || 10
