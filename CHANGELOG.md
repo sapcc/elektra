@@ -2,15 +2,36 @@
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
-[Full Changelog](https://github.com/sapcc/elektra/compare/2018.4...HEAD)
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.5...HEAD)
 
 **Implemented enhancements:**
 
+- **Object Cache: DB cleanup job [\#296](https://github.com/sapcc/elektra/issues/296)**   
+Add an automatic job which cleans up object cache entries that haven't been updated in over a month to prevent object sprawl in cache table.
+- **Cloudops: Universal Search improvements [\#295](https://github.com/sapcc/elektra/issues/295)**   
+Elektra link to project from search results. Add more search fields: floating IP, mac address, cidr, descriptions,...\). Search for Manila log messages.
+- **Cloudops: Project user role assignment UI [\#294](https://github.com/sapcc/elektra/issues/294)**   
+Add project user role assignment UI to Cloudops. This shall be accessible from a project view in the universal search results and also standalone. New features: "select admin roles", "remove all roles"
+
+## [2018.5](https://github.com/sapcc/elektra/tree/2018.5) (2018-05-31)
+
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.4...2018.5)
+
+**Implemented enhancements:**
+
+- **Compute: Mark baremetal servers in the server list and server show screens [\#269](https://github.com/sapcc/elektra/issues/269)**   
+It would be convenient to be able to see at a glance which servers are baremetal nodes and which are VMs.
+- **Manila: extend/shrink share [\#202](https://github.com/sapcc/elektra/issues/202)**   
+Add the ability to extend or shrink a manila share
 - **Cloudops layout [\#281](https://github.com/sapcc/elektra/pull/281)**   
 Layout for new cloudops area. This has a new type of "always there" navigation with integrated universal search bar which will eventually be responsive and attach to the left side on very wide screens.
 
 **Fixed bugs:**
 
+- **In some cases not all private networks are shown in networks list [\#293](https://github.com/sapcc/elektra/issues/293)**   
+This is due to a bug in Neutron where it can happen that not all networks of a project are returned if the api is called using the "limit" parameter.
+- **Keymanager: Error when trying to display wildcard certs [\#289](https://github.com/sapcc/elektra/issues/289)**   
+The Keymanager UI throws an error when you try to show a wildcard cert.
 - **Unable to create VM from the private image via Dashboard [\#277](https://github.com/sapcc/elektra/issues/277)**   
 The way images are categorized has changed in newer versions of the Glance service. In regions where Glance has been upgraded to Ocata you will see the new UI with the new categories. The snapshots, for example, get the status shared and not private as before.
 
@@ -39,7 +60,7 @@ The Ocata release of Glance changed the meaning of the visibility attribute as s
 - **Admin Service: Find projects by floating IP or DNS record [\#201](https://github.com/sapcc/elektra/issues/201)**   
 Implement a service for admins that allows an input of floating IP or DNS record. The service should then find which project the input belongs to and display the following information about the project:
 - **Cloudops search, object cache [\#268](https://github.com/sapcc/elektra/pull/268)**   
-Use the object read cache to create a universal search that allows search for any object by id or name without having specify what type of object it is and where it is located
+Use the object read cache to create a universal search that allows search for any object by id or name without having to specify what type of object it is and where it is located
 
 **Fixed bugs:**
 
@@ -48,7 +69,7 @@ When using the lookup tool in the cloud\_admin area to look up a network and the
 - **Subnet tab is empty when you open the network details in a new tab [\#255](https://github.com/sapcc/elektra/issues/255)**   
 However it works within the pop-up modal window
 - **Automation button on new instance form doesn't work correctly [\#250](https://github.com/sapcc/elektra/issues/250)**   
-\* `User data` doesn't appear and the error message appears
+\* `User data` doesn't appear instead an error message is shown
 
 ## [2018.3](https://github.com/sapcc/elektra/tree/2018.3) (2018-03-29)
 
