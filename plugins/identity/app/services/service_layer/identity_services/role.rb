@@ -8,8 +8,8 @@ module ServiceLayer
         @role_map ||= class_map_proc(Identity::Role)
       end
 
-      def roles
-        @roles ||= elektron_identity.get('roles').map_to(
+      def roles(filter = {})
+        elektron_identity.get('roles', filter).map_to(
           'body.roles', &role_map
         )
       end

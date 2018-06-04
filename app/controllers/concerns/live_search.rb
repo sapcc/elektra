@@ -44,7 +44,7 @@ module LiveSearch
     'share_security_service' => %w[shared_filesystem_storage find_security_service all_tenants]
   }.freeze
 
-  def live_search(term, options = {})
+  def live_search(service_manager, term, options = {})
     object_type = options[:object_type]
 
     service_name, method_name, all_projects_param = service_and_method_name(
@@ -53,7 +53,9 @@ module LiveSearch
 
     raise StandardError, "#{object_type} is not supported." unless service_name
 
-    service = object_service(service_name)
+    # service = object_service(service_name)
+    service = service_manager.send(service_name) if service_manager.respond_to?(service_name)
+
     raise StandardError, "Service #{service_name} not found." unless service
 
     object = service.send(method_name, term)
@@ -66,10 +68,10 @@ module LiveSearch
 
   protected
 
-  def object_service(name)
-    return nil unless cloud_admin.respond_to?(name)
-    cloud_admin.send(name)
-  end
+  # def object_service(name)
+  #   return nil unless cloud_admin.respond_to?(name)
+  #   cloud_admin.send(name)
+  # end
 
   def service_and_method_name(object_type)
     SERVICE_METHOD_MAP[object_type]

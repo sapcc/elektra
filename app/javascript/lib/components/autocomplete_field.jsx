@@ -19,10 +19,10 @@ export class AutocompleteField extends React.Component {
     }
 
     const params = { term: searchTerm }
-    if(this.props.domainId) params['domain_id'] = this.props.domainId
+    if(this.props.domainId) params['domain'] = this.props.domainId
 
     this.setState({isLoading: true, options:[]})
-    ajaxHelper.get(`//${window.location.host}/cache/${path}`, {params}).then( (response) => {
+    ajaxHelper.get(`/cache/${path}`, {params}).then( (response) => {
       if(response.data) {
         const options = response.data.map((i) => {
           return {

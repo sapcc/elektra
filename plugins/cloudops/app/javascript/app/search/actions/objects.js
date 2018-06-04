@@ -96,10 +96,12 @@ let searchTimer = null
 const searchObjects = ({term,objectType}) =>
   (dispatch,getState) => {
     if(searchTimer) clearTimeout(searchTimer)
-
+    dispatch(updateSearchParams({term,objectType}))
+    
     const timeout = objectType==null ? 500 : 0
     searchTimer = setTimeout(() => {
-      dispatch(updateSearchParams({term,objectType}))
+      const lastTimer = searchTimer
+
       const {objects} = getState()['search'];
       term = objects.searchTerm
       objectType = objects.searchType

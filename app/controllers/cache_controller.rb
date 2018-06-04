@@ -6,44 +6,54 @@ class CacheController < ::ApplicationController
 
   class NotFound < StandardError; end
 
+  before_action :load_user_session
+
   def index
+    return if login_required?
+
     page = (params[:page] || 1).to_i
 
     items = ObjectCache.find_objects(
       type: params[:type], term: params[:term], include_scope: true,
       paginate: { page: page, per_page: 30 }
-    ) { |scope| scope.order(:name) }
-
-    # no items found -> start live search
-    if items.length.zero? && params[:type]
-      found_objects = live_search(params[:term], object_type: params[:type])
-      if found_objects.length.positive?
-        items = ObjectCache.find_objects(
-          type: params[:type], term: params[:term], include_scope: true,
-          paginate: { page: page, per_page: 30 }
-        ) { |scope| scope.order(:name) }
-      end
-    end
+    ) { |scope| where_current_token_scope(scope).order(:name) }
 
     render json: { items: items, total: items.total, has_next: items.has_next }
   rescue StandardError
     render json: { items: [] }
   end
 
+  def start_live_search
+    return if login_required?
+
+    render json: { items: live_search(services, params[:term], object_type: params[:type]) }
+  end
+
   def show
+    return if login_required?
+
     objects = ObjectCache.find_objects(include_scope: true) do |scope|
-      scope.where(id: params[:id])
+      where_current_token_scope(scope).where(id: params[:id])
     end
 
     render json: objects.first
   end
 
   def types
+    return if login_required?
+
     render json: ::ObjectCache.distinct.pluck(:cached_object_type)
                               .delete_if(&:blank?)
   end
 
   def domain_projects
+    return if login_required?
+
+    unless cloud_admin?
+      render json: { projects: [], has_next: false, total: 0 }
+      return
+    end
+
     page = (params[:page] || 1).to_i
 
     domain = params[:domain]
@@ -78,16 +88,19 @@ class CacheController < ::ApplicationController
   end
 
   def users
+    return if login_required?
+
     items = ObjectCache.find_objects(
       type: 'user',
       term:  params[:name] || params[:term] || '',
       include_scope: false,
       paginate: false
     ) do |scope|
-       unless params[:domain_id].blank?
-         scope = scope.where(domain_id: params[:domain_id])
-       end
-       scope.order(:name)
+      if cloud_admin?
+        scope.where(domain_id: params[:domain]).order(:name)
+      else
+        where_current_token_scope(scope).order(:name)
+      end
     end
 
     items = items.to_a.map do |u|
@@ -102,16 +115,19 @@ class CacheController < ::ApplicationController
   end
 
   def projects
+    return if login_required?
+
     items = ObjectCache.find_objects(
       type: 'project',
       term:  params[:name] || params[:term] || '',
       include_scope: false,
       paginate: false
     ) do |scope|
-      unless params[:domain_id].blank?
-        scope = scope.where(domain_id: params[:domain_id])
+      if cloud_admin?
+        scope.where(domain_id: params[:domain]).order(:name)
+      else
+        where_current_token_scope(scope).order(:name)
       end
-      scope.order(:name)
     end
 
     items = items.to_a.uniq(&:name).map do |prj|
@@ -119,5 +135,49 @@ class CacheController < ::ApplicationController
     end
 
     render json: items
+  end
+
+  protected
+
+  def where_current_token_scope(scope)
+    return scope if cloud_admin?
+
+    project_id = @current_user.project_id
+    domain_id = @current_user.project_domain_id ||
+                      @current_user.domain_id ||
+                      @current_user.user_domain_id
+
+    sql = []
+    sql << 'project_id = :project_id' if project_id
+    sql << 'domain_id = :domain_id' if domain_id
+
+    scope.where(
+      [sql.join(' OR '), project_id: project_id, domain_id: domain_id]
+    )
+  end
+
+  def load_user_session
+    # check if user is authenticated
+    @auth_session = AuthSession.load_user_from_session(
+      self, domain: params[:domain_id], project: params[:project_id]
+    )
+    @current_user = @auth_session.user if logged_in?
+  end
+
+  def render_authentication_error
+    render json: { error: 'You are not authorized!' }, status: 401
+  end
+
+  def login_required?
+    return false if @current_user
+    render_authentication_error
+    true
+  end
+
+  def cloud_admin?
+    return false unless @current_user
+    return false unless @current_user.project_domain_name ==
+                        Rails.application.config.cloud_admin_domain
+    @current_user.project_name == Rails.configuration.cloud_admin_project
   end
 end
