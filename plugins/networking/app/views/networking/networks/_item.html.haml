@@ -6,10 +6,11 @@
       = network.name
 
   %td
-    - @network_subnets[network.id].each do |subnet|
-      %strong= subnet.name
-      = "(#{subnet.cidr})"
-      %br
+    - if @network_subnets[network.id]
+      - @network_subnets[network.id].each do |subnet|
+        %strong= subnet.name
+        = "(#{subnet.cidr})"
+        %br
   %td
     - project_id_and_name(network.tenant_id)
   %td= network.shared ? 'Yes' : 'No'
