@@ -72,6 +72,9 @@ class BarChart extends React.Component {
     var y = scaleLinear()
         .rangeRound([height, 0]);
 
+    x.domain(this.getTestData().map(function(d) { return d.date; }));
+    y.domain([0, d3.max(this.getTestData(), function(d) { return d.total; })]).nice();
+
     select(node)
       .selectAll("g.service")
       .data(stack().keys(this.getServices())(this.getTestData()))
@@ -79,12 +82,12 @@ class BarChart extends React.Component {
         .attr("class", "service")
         .attr("fill", (d,i) => this.setColorV2(d,i,colorScale))
       .selectAll("rect")
-      .data(function(d) { console.log(d); return d; })
+      .data(function(d) { return d; })
       .enter().append("rect")
-        .attr("x", function(d) { console.log(d.data.date); return x(d.data.date); })
+        .attr("x", function(d) { console.log(d.data.date);console.log(x(d.data.date)); return x(d.data.date); })
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-        .attr("width", 5);
+        .attr("width", x.bandwidth());
 
     // select(node)
     //   .selectAll("g")
@@ -173,20 +176,23 @@ class BarChart extends React.Component {
 getTestData = () => {
   if (this.props.realData) {
     let resultData = {}
-    let temp = [].concat(...this.props.realData)
+    let temp = [].concat(...this.props.realData) //flate data
     temp.map(i => {
       let key = i.year + "/" + i.month
       let service = i.service + "::" + i.measure
       if (resultData[key]) {
         resultData[key][service] = i.price_loc + i.price_sec
+        resultData[key]["total"] += i.price_loc + i.price_sec
       } else {
         resultData[key] = {
-          date: i.year + "/" + i.month
+          date: i.year + "/" + i.month,
+          total: 0
         }
         resultData[key][service] = i.price_loc + i.price_sec
+        resultData[key]["total"] += i.price_loc + i.price_sec
       }
     })
-    return Object.keys(resultData).map(i => resultData[i])
+    return Object.keys(resultData).map(i => resultData[i]) // remove keys to just have array of objects
   }
 }
 
