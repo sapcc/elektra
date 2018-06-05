@@ -23,8 +23,8 @@ class BarChart extends React.Component {
 
     const node = this.node
     const chartWidth = this.props.size[0] - 150
-    const chartHeight = this.props.size[1] - 40
-    const margin = 20
+    const chartHeight = this.props.size[1] - 50
+    const margin = 25
     const xAxisYpos = this.props.size[1] - margin
     const colorScale = this.setColorScale()
     const services = this.getServices()
@@ -122,7 +122,7 @@ class BarChart extends React.Component {
   setColorScale = () => {
     return scaleOrdinal()
       .domain(this.getServices())
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+      .range(["#008fcc", "#9c277b", "#de8a2e", "#b4ca48", "#ccc", "#f0ab00"])
   }
 
   getServices = () => {
@@ -133,15 +133,26 @@ class BarChart extends React.Component {
 
   getData = () => {
     if (this.props.data) {
+      // init data to have allways 12 months with all services
       let resultData = {}
-      let temp = [].concat(...this.props.data) //flate data
-      temp.map(i => {
+      let now = new Date()
+      for (let i = 0; i <= 11; i++) {
+        let past = new Date(now)
+        past.setMonth(now.getMonth() - i)
+        let key = past.getFullYear() + '/' + past.getMonth()
+        resultData[key] = {total: 0, date: key}
+        this.getServices().map(i => resultData[key][i] = 0)
+      }
+
+      //flate data
+      this.props.data.map(i => {
         let key = i.year + "/" + i.month
         let service = i.service + "::" + i.measure
         if (resultData[key]) {
           resultData[key][service] = i.price_loc + i.price_sec
           resultData[key]["total"] += i.price_loc + i.price_sec
         } else {
+          console.log("new: " + key)
           resultData[key] = {
             date: i.year + "/" + i.month,
             total: 0
@@ -150,7 +161,9 @@ class BarChart extends React.Component {
           resultData[key]["total"] += i.price_loc + i.price_sec
         }
       })
-      return Object.keys(resultData).map(i => resultData[i]) // remove keys to just have array of objects
+      // remove keys to just have array of objects
+      let tmp = Object.keys(resultData).map(i => resultData[i])
+      return tmp.reverse()
     }
   }
 
