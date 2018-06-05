@@ -23,7 +23,7 @@ Rails.application.routes.draw do
         get 'users'
         get 'domain_projects'
         get 'projects'
-        get 'start_live_search'
+        get 'live_search'
       end
     end
   end

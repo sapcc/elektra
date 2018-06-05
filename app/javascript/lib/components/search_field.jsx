@@ -52,10 +52,11 @@ export class SearchField extends React.Component {
             value={this.state.searchTerm}
             placeholder={this.props.placeholder}
             onChange={this.onChangeTerm}
+            disabled={this.props.disabled==true}
           />
           <span
             className={`form-control-feedback ${!empty && 'not-empty'}`}
-            onClick={(e) => !empty && this.reset(e)}>
+            onClick={(e) => iconClassName!='spinner' && !empty && this.reset(e)}>
             <i className={iconClassName}/>
           </span>
         </div>

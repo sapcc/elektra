@@ -2,7 +2,8 @@
 
 class CacheController < ::ApplicationController
   include Services
-  include LiveSearch
+  include ApiLookup
+  include ApiServiceTypes
 
   class NotFound < StandardError; end
 
@@ -23,10 +24,9 @@ class CacheController < ::ApplicationController
     render json: { items: [] }
   end
 
-  def start_live_search
+  def live_search
     return if login_required?
-
-    render json: { items: live_search(services, params[:term], object_type: params[:type]) }
+    render json: api_search(services, params[:type], params[:term])
   end
 
   def show
@@ -42,8 +42,10 @@ class CacheController < ::ApplicationController
   def types
     return if login_required?
 
-    render json: ::ObjectCache.distinct.pluck(:cached_object_type)
-                              .delete_if(&:blank?)
+    cached_types = ::ObjectCache.distinct.pluck(:cached_object_type)
+                                .delete_if(&:blank?)
+
+    render json: (cached_types + KNOWN_TYPES).uniq
   end
 
   def domain_projects
