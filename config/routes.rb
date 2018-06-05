@@ -16,13 +16,14 @@ Rails.application.routes.draw do
     "#{Rails.configuration.cloud_admin_project}/cloudops"
   )
 
-  scope '(/:domain_id)(/:project_id)(/:plugin)' do
+  scope '/:domain_id(/:project_id)(/:plugin)' do
     resources :cache, only: %i[index show] do
       collection do
         get 'types'
         get 'users'
         get 'domain_projects'
         get 'projects'
+        get 'start_live_search'
       end
     end
   end
