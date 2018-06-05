@@ -6,9 +6,10 @@ export default class LiveSearchModal extends React.Component{
   state = {
     show: true,
     isFetching: false,
-    error: null,
+    errors: null,
     objectType: '',
-    term: ''
+    term: '',
+    responseData: null
   }
 
   componentDidMount = () => {
@@ -29,11 +30,20 @@ export default class LiveSearchModal extends React.Component{
     this.setState({show: false})
   }
 
-  search = () => {
+  liveSearch = () => {
     this.setState({isFetching: true})
-    this.props.search(this.state.objectType, this.state.term)
-      .then(this.hide)
+    this.props.liveSearch(this.state.objectType, this.state.term)
+      .then((responseData) => this.setState({
+        responseData: {...responseData, items: responseData.items.length},
+        isFetching: false,
+        errors: null
+      }))
       .catch(errors => this.setState({isFetching: false, errors: errors}))
+  }
+
+  search = () => {
+    this.props.search(this.state.objectType, this.state.term)
+    this.hide()
   }
 
   isValid = () =>
@@ -87,13 +97,21 @@ export default class LiveSearchModal extends React.Component{
             </div>
             <button
               className="btn btn-primary"
-              onClick={this.search}
+              onClick={this.liveSearch}
               disabled={this.state.isFetching || !this.isValid()}
               type="button">
               {this.state.isFetching ? 'Please wait ...' : 'Go!' }
             </button>
           </form>
 
+          {this.state.responseData &&
+            <React.Fragment>
+              <pre>{JSON.stringify(this.state.responseData, null, "\t")}</pre>
+              <button
+                className='btn btn-primary'
+                onClick={this.search}>Close and refresh results</button>
+            </React.Fragment>
+          }
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.hide}>Close</Button>

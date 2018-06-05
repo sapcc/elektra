@@ -132,8 +132,7 @@ const liveSearch = (type, term) =>
   (dispatch) =>
     new Promise((handleSuccess, handleErrors) =>
       ajaxHelper.get('/cache/live_search', { params: {type, term}}).then( response => {
-        dispatch(searchObjects({term, objectType: type}))
-        handleSuccess()
+        handleSuccess(response.data)
       }).catch( error => handleSuccess(error.message))
     )
 
