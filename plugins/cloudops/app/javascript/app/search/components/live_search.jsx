@@ -22,6 +22,15 @@ export default class LiveSearchModal extends React.Component{
   restoreUrl = (e) => {
     if(this.state.show) return;
 
+
+    if(this.props.match && this.props.match.path) {
+      const found = this.props.match.path.match(/(\/[^\/]+)\/live/)
+      if(found) {
+        this.props.history.replace(found[1])
+        return
+      }
+    }
+
     this.props.history.goBack();
   }
 
@@ -52,6 +61,7 @@ export default class LiveSearchModal extends React.Component{
 
   render(){
     const availableTypes = this.props.types.items.sort()
+    const responseData = this.state.responseData
 
     return (
       <Modal
@@ -67,7 +77,7 @@ export default class LiveSearchModal extends React.Component{
         </Modal.Header>
         <Modal.Body>
 
-          <form className="form-inline">
+          <form className="form-inline" onSubmit={(e) => {e.preventDefault(); this.search()}}>
             <div className="form-group">
               <select
                 onChange={(e) => this.setState({objectType: e.target.value})}
@@ -97,24 +107,34 @@ export default class LiveSearchModal extends React.Component{
             </div>
             <button
               className="btn btn-primary"
-              onClick={this.liveSearch}
+              onClick={(e) => {e.preventDefault(); this.liveSearch()}}
               disabled={this.state.isFetching || !this.isValid()}
               type="button">
               {this.state.isFetching ? 'Please wait ...' : 'Go!' }
             </button>
           </form>
 
-          {this.state.responseData &&
-            <React.Fragment>
-              <pre>{JSON.stringify(this.state.responseData, null, "\t")}</pre>
-              <button
-                className='btn btn-primary'
-                onClick={this.search}>Close and refresh results</button>
-            </React.Fragment>
+          {responseData &&
+            <p>
+              <br/>
+              Found <b>{responseData.items}</b> item{responseData.items != 1 ? 's' : ''}
+              {responseData.service_call &&
+                <React.Fragment> by calling <b>{responseData.service_call}</b></React.Fragment>
+              }
+            </p>
           }
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.hide}>Close</Button>
+
+          {responseData && responseData.items > 0 ?
+            <Button
+              bsStyle='primary'
+              onClick={this.search}>
+              Close and refresh results
+            </Button>
+            :
+            <Button onClick={this.hide}>Close</Button>
+          }
         </Modal.Footer>
       </Modal>
     )

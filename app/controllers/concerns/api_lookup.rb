@@ -64,9 +64,7 @@ module ApiLookup
     if object
       return {
         items: [object],
-        service_name: service_name,
-        method_name: method,
-        found_by: 'ID'
+        service_call: "#{service_name}->#{method}(\"#{term}\")"
       }
     end
 
@@ -75,9 +73,7 @@ module ApiLookup
 
     {
       items: service.send(object_type.pluralize, filter),
-      service_name: service_name,
-      method_name: method,
-      found_by: 'name'
+      service_call: "#{service_name}->#{object_type.pluralize}(#{filter})"
     }
   end
 end

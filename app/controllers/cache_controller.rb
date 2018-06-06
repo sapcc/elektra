@@ -28,7 +28,8 @@ class CacheController < ::ApplicationController
     return if login_required?
     data = begin
              api_search(services, params[:type], params[:term])
-           rescue StandardError
+           rescue StandardError => e
+             p e
              { items: [] }
            end
     render json: data
