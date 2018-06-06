@@ -25,7 +25,7 @@ class App extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <BarChart onHoverRect={this.onHoverRect} hoverElement={this.state.hover} data={this.props.cost.data} size={[700,300]} />
+        <BarChart onHoverRect={this.onHoverRect} hoverElement={this.state.hover} data={this.props.cost.data} size={[1170,300]} />
       </React.Fragment>
     )
   }

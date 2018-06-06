@@ -74,7 +74,22 @@ class BarChart extends React.Component {
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return y(d[0]) - y(d[1]); })
         .attr("width", x.bandwidth())
-        .on("mouseover", this.props.onHoverRect)
+        .attr("class", function(d) { return d.data.month; })
+        // .on("mouseover", (d) => this.onHover(d, this))
+        .on('mouseover', function(d){
+            let selector = "rect."+d.data.month
+            select(node)
+              .selectAll(selector)
+              .style("opacity", 0.5);
+        })
+        .on("mouseout", function(d) {
+          let selector = "rect."+d.data.month
+          select(node)
+            .selectAll(selector)
+            .transition()
+            .duration(250)
+            .style("opacity", 1);
+        });
 
     // create axis
     let xAxis = axisBottom().scale(x)
@@ -120,6 +135,10 @@ class BarChart extends React.Component {
           .text("EUR")
   }
 
+  onHover = (d, _this) => {
+    this.props.onHoverRect(d)
+  }
+
   setColor = (d,i,colorScale) => {
     return colorScale(d.key)
   }
@@ -127,7 +146,7 @@ class BarChart extends React.Component {
   setColorScale = () => {
     return scaleOrdinal()
       .domain(this.getServices())
-      .range(["#008fcc", "#9c277b", "#de8a2e", "#b4ca48", "#ccc", "#f0ab00"])
+      .range(["#008fd3", "#be008c", "#fa9100", "#93c939", "#ccc"])
   }
   getServices = () => {
     if (this.props.data) {
@@ -139,14 +158,17 @@ class BarChart extends React.Component {
     if (this.props.data) {
       // init data to have allways 12 months with all services
       let resultData = {}
+      let monthNames = [ "January", "February", "March", "April", "May", "June",
+                     "July", "August", "September", "October", "November", "December" ];
       let now = new Date()
       for (let i = 0; i <= 11; i++) {
         let past = new Date(now)
         past.setMonth(now.getMonth() - i)
-        let key = past.getFullYear() + '/' + past.getMonth()
-        resultData[key] = {total: 0, date: key, id: UUID.v4()}
+        let key = past.getFullYear() + '/' + (past.getMonth()+1) // +1 to get the month from 1-12
+        resultData[key] = {total: 0, date: key, id: UUID.v4(), month: monthNames[past.getMonth()], year: past.getFullYear()}
         this.getServices().map(i => resultData[key][i] = 0)
       }
+
       // iterate through data
       this.props.data.map(i => {
         let key = i.year + "/" + i.month
