@@ -26,7 +26,12 @@ class CacheController < ::ApplicationController
 
   def live_search
     return if login_required?
-    render json: api_search(services, params[:type], params[:term])
+    data = begin
+             api_search(services, params[:type], params[:term])
+           rescue StandardError
+             { items: [] }
+           end
+    render json: data
   end
 
   def show
