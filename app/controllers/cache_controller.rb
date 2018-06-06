@@ -3,7 +3,6 @@
 class CacheController < ::ApplicationController
   include Services
   include ApiLookup
-  include ApiServiceTypes
 
   class NotFound < StandardError; end
 
@@ -51,7 +50,7 @@ class CacheController < ::ApplicationController
     cached_types = ::ObjectCache.distinct.pluck(:cached_object_type)
                                 .delete_if(&:blank?)
 
-    render json: (cached_types + KNOWN_TYPES).uniq
+    render json: (cached_types + ObjectCache::TYPE_SEARCH_LABEL_KEYS.keys).uniq
   end
 
   def domain_projects

@@ -22,7 +22,9 @@ export default class LiveSearchModal extends React.Component{
   restoreUrl = (e) => {
     if(this.state.show) return;
 
-
+    // go to previous url
+    // this is the path before /live
+    // for example /universal-search/live -> /universal-search
     if(this.props.match && this.props.match.path) {
       const found = this.props.match.path.match(/(\/[^\/]+)\/live/)
       if(found) {
@@ -30,7 +32,7 @@ export default class LiveSearchModal extends React.Component{
         return
       }
     }
-
+    // else go back
     this.props.history.goBack();
   }
 
@@ -41,6 +43,8 @@ export default class LiveSearchModal extends React.Component{
 
   liveSearch = () => {
     this.setState({isFetching: true})
+    // this.props.liveSearch is a Promise
+    // so we call then and catch
     this.props.liveSearch(this.state.objectType, this.state.term)
       .then((responseData) => this.setState({
         responseData: {...responseData, items: responseData.items.length},
@@ -51,6 +55,7 @@ export default class LiveSearchModal extends React.Component{
   }
 
   search = () => {
+    // refresh search results and close
     this.props.search(this.state.objectType, this.state.term)
     this.hide()
   }
