@@ -5,6 +5,7 @@ import { legendColor } from 'd3-svg-legend'
 import { transition } from 'd3-transition'
 import { stack } from 'd3-shape'
 import { axisBottom, axisLeft } from 'd3-axis'
+import {default as UUID} from "node-uuid"
 
 class BarChart extends React.Component {
 
@@ -24,16 +25,18 @@ class BarChart extends React.Component {
     const node = this.node
     const chartWidth = this.props.size[0] - 150
     const chartHeight = this.props.size[1] - 50
-    const margin = 25
-    const xAxisYpos = this.props.size[1] - margin
+    const xMargin = 40
+    const yMargin = 25
+    const xAxisYpos = this.props.size[1] - yMargin
     const colorScale = this.setColorScale()
     const services = this.getServices()
     const data = this.getData()
-    const legend = legendColor()
+
+    // create legend node
+    let legend = legendColor()
       .scale(colorScale)
       .labels(services)
 
-    // create legend node
     select(node)
       .selectAll("g.legend")
       .data([0])
@@ -47,16 +50,15 @@ class BarChart extends React.Component {
       .attr("transform", "translate(" + (this.props.size[0] - 100) + ", 20)")
 
     // create chart
-    var x = scaleBand()
+    let x = scaleBand()
         .rangeRound([0, chartWidth])
         .paddingInner(0.05)
         .align(0.1)
+        .domain(data.map(function(d) { return d.date; }))
 
-    var y = scaleLinear()
+    let y = scaleLinear()
         .rangeRound([chartHeight, 0])
-
-    x.domain(data.map(function(d) { return d.date; }));
-    y.domain([0, max(data, function(d) { return d.total; })]).nice();
+        .domain([0, max(data, function(d) { return d.total; })]).nice()
 
     select(node)
       .selectAll("g.service")
@@ -64,7 +66,7 @@ class BarChart extends React.Component {
       .enter().append("g")
         .attr("class", "service")
         .attr("fill", (d,i) => this.setColor(d,i,colorScale))
-        .attr("transform", "translate("+margin+","+margin+")")
+        .attr("transform", "translate("+xMargin+","+yMargin+")")
       .selectAll("rect")
       .data(function(d) { return d; })
       .enter().append("rect")
@@ -72,23 +74,24 @@ class BarChart extends React.Component {
         .attr("y", function(d) { return y(d[1]); })
         .attr("height", function(d) { return y(d[0]) - y(d[1]); })
         .attr("width", x.bandwidth())
+        .on("mouseover", this.props.onHoverRect)
 
     // create axis
-    const xAxis = axisBottom().scale(x)
+    let xAxis = axisBottom().scale(x)
 
     select(node)
-       .selectAll("g.xaxis")
-       .data([0])
-       .enter()
-       .append("g")
-         .attr("class", "xaxis")
-         .attr("transform", "translate("+margin+","+xAxisYpos+")")
+      .selectAll("g.xaxis")
+      .data([0])
+      .enter()
+      .append("g")
+        .attr("class", "xaxis")
+        .attr("transform", "translate("+xMargin+","+xAxisYpos+")")
 
     select(node)
       .select("g.xaxis")
         .call(xAxis)
 
-    const yAxis = axisLeft().scale(y).ticks(10)
+    let yAxis = axisLeft().scale(y).ticks(10)
 
     select(node)
        .selectAll("g.yaxis")
@@ -96,26 +99,28 @@ class BarChart extends React.Component {
        .enter()
        .append("g")
          .attr("class", "yaxis")
-         .attr("transform", "translate("+margin+","+margin+")")
+         .attr("transform", "translate("+xMargin+","+yMargin+")")
 
      select(node)
       .select("g.yaxis")
         .call(yAxis)
-      .append("text")
-       .attr("transform", "rotate(-90)")
-       .attr("y", 6)
-       .attr("dy", ".71em")
-       .style("text-anchor", "end")
-       .text("Value ($)");
+
+    select(node)
+      .select("g.yaxis")
+      .selectAll("text.axisName")
+        .data([0])
+        .enter()
+        .append("text")
+          .attr("class", "axisName")
+          .attr("transform", "rotate(-90)")
+          .attr("y", -30)
+          .attr("x", -chartHeight/2)
+          .attr("fill", "#000")
+          .style("text-anchor", "end")
+          .text("EUR")
   }
 
   setColor = (d,i,colorScale) => {
-    // if (this.props.hoverElement === d.id) {
-    //   return "#FCBC34"
-    // } else {
-    //   console.log(d.service)
-    //   return colorScale(d.service)
-    // }
     return colorScale(d.key)
   }
 
@@ -124,7 +129,6 @@ class BarChart extends React.Component {
       .domain(this.getServices())
       .range(["#008fcc", "#9c277b", "#de8a2e", "#b4ca48", "#ccc", "#f0ab00"])
   }
-
   getServices = () => {
     if (this.props.data) {
       return [].concat(...this.props.data).map(i => i.service + "::" + i.measure).filter( (item, pos, arr) => arr.indexOf(item)==pos)
@@ -140,11 +144,10 @@ class BarChart extends React.Component {
         let past = new Date(now)
         past.setMonth(now.getMonth() - i)
         let key = past.getFullYear() + '/' + past.getMonth()
-        resultData[key] = {total: 0, date: key}
+        resultData[key] = {total: 0, date: key, id: UUID.v4()}
         this.getServices().map(i => resultData[key][i] = 0)
       }
-
-      //flate data
+      // iterate through data
       this.props.data.map(i => {
         let key = i.year + "/" + i.month
         let service = i.service + "::" + i.measure
@@ -152,7 +155,6 @@ class BarChart extends React.Component {
           resultData[key][service] = i.price_loc + i.price_sec
           resultData[key]["total"] += i.price_loc + i.price_sec
         } else {
-          console.log("new: " + key)
           resultData[key] = {
             date: i.year + "/" + i.month,
             total: 0

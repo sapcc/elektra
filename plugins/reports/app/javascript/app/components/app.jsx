@@ -17,10 +17,15 @@ class App extends React.Component {
     })
   }
 
+  onHoverRect = (d) => {
+    console.log(d)
+    this.setState({ hover: d.data.id })
+  }
+
   render() {
     return (
       <React.Fragment>
-        <BarChart data={this.props.cost.data} size={[700,300]} />
+        <BarChart onHoverRect={this.onHoverRect} hoverElement={this.state.hover} data={this.props.cost.data} size={[700,300]} />
       </React.Fragment>
     )
   }
