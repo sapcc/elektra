@@ -28,6 +28,9 @@ export default withRouter((props) => {
                 <li>
                   <Link to='/project-user-role-assignments'>Project User Role Assignments</Link>
                 </li>
+                <li>
+                  <a href={window.location.href.replace(/(.*)\/cloudops.*/, "$1/home")}>Cloudadmin Area</a>
+                </li>
               </ul>
             </div>
           </div>

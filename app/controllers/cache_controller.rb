@@ -49,7 +49,7 @@ class CacheController < ::ScopeController
   end
 
   def domain_projects
-    unless cloud_admin?
+    unless current_user.is_allowed?('cloud_admin')
       render json: { projects: [], has_next: false, total: 0 }
       return
     end

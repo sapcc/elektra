@@ -9,6 +9,7 @@ import RoleAssignmentRoutes from '../role_assignments/components/routes'
 
 let Breadcrumb = (props) => {
   let label = ''
+
   if(props.location && props.location.pathname) {
     label = props.location.pathname
     if (label.startsWith('/')) label = label.substring(1)
