@@ -81,6 +81,12 @@ SimpleNavigation::Configuration.run do |navigation|
       access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
   end
 
+  primary.item :cloudops, "Cloudops", nil,
+    html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },
+    if: -> { true } do |cloudops_nav|
+      cloudops_nav.item :user_role_assignments, 'Cloudops Tools', -> {plugin('cloudops').start_path}
+  end
+
 
 
   # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
