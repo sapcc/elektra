@@ -7,6 +7,7 @@ ALLOWED_ROLES = %w(
   keymanager_admin
   keymanager_viewer
   kubernetes_admin
+  kubernetes_member
   member
   monitoring_viewer
   network_admin
