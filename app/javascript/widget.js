@@ -52,12 +52,18 @@ class Widget {
     if(this.store) {
       ReactDOM.render(
         <Provider store = { this.store }>
-          <React.Fragment><FlashMessages/>{ container }</React.Fragment>
+          <React.Fragment>
+            { (this.config.scriptParams.flashescontainer !== "custom") && <FlashMessages/>}
+            { container }
+          </React.Fragment>
         </Provider>, this.reactContainer
       )
     } else {
       ReactDOM.render(
-        <React.Fragment><FlashMessages/>{ container }</React.Fragment>, this.reactContainer
+        <React.Fragment>
+          { (this.config.scriptParams.flashescontainer !== "custom") && <FlashMessages/>}
+          { container }
+        </React.Fragment>, this.reactContainer
       )
     }
   }

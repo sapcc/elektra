@@ -4,17 +4,37 @@ import { TransitionGroup } from 'react-transition-group';
 import { FadeTransition } from 'lib/components/transitions';
 
 let flashMessages;
-export const addMessage = (message) => flashMessages.addMessage(message);
-export const removeMessage = (message) => flashMessages.removeMessage(message);
+export const addMessage = (message) => {
+  if (flashMessages) {
+    flashMessages.addMessage(message);
+  }
+}
+export const removeMessage = (message) => {
+  if (flashMessages) {
+    flashMessages.removeMessage(message);
+  }
+}
 
-export const addError = (message,options={}) =>
-  flashMessages.addMessage({type: 'error', text: message, timeout: options.timeout});
-export const addNotice = (message,options={}) =>
-  flashMessages.addMessage({type: 'notice', text: message, timeout: options.timeout});
-export const addWarning = (message,options={}) =>
-  flashMessages.addMessage({type: 'warning', text: message, timeout: options.timeout});
-export const addSuccess = (message,options={}) =>
-  flashMessages.addMessage({type: 'success', text: message, timeout: options.timeout});
+export const addError = (message,options={}) => {
+  if (flashMessages) {
+    flashMessages.addMessage({type: 'error', text: message, timeout: options.timeout});
+  }
+}
+export const addNotice = (message,options={}) => {
+   if (flashMessages) {
+     flashMessages.addMessage({type: 'notice', text: message, timeout: options.timeout});
+   }
+ }
+export const addWarning = (message,options={}) => {
+  if (flashMessages) {
+    flashMessages.addMessage({type: 'warning', text: message, timeout: options.timeout});
+  }
+}
+export const addSuccess = (message,options={}) => {
+  if (flashMessages) {
+    flashMessages.addMessage({type: 'success', text: message, timeout: options.timeout});
+  }
+}
 
 export class FlashMessages extends React.Component {
   constructor(props) {
