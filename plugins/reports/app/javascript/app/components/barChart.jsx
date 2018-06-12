@@ -150,12 +150,13 @@ class BarChart extends React.Component {
   }
   getServices = () => {
     if (this.props.data) {
-      return [].concat(...this.props.data).map(i => i.service + "::" + i.measure).filter( (item, pos, arr) => arr.indexOf(item)==pos)
+      return this.props.data.map(i => i.service).filter((item, pos, arr) => arr.indexOf(item)==pos)
     }
   }
 
   getData = () => {
     if (this.props.data) {
+      let services = this.getServices()
       // init data to have allways 12 months with all services
       let resultData = {}
       let monthNames = [ "January", "February", "March", "April", "May", "June",
@@ -164,30 +165,31 @@ class BarChart extends React.Component {
       for (let i = 0; i <= 11; i++) {
         let past = new Date(now)
         past.setMonth(now.getMonth() - i)
-        let key = past.getFullYear() + '/' + (past.getMonth()+1) // +1 to get the month from 1-12
-        resultData[key] = {total: 0, date: key, id: UUID.v4(), month: monthNames[past.getMonth()], year: past.getFullYear()}
-        this.getServices().map(i => resultData[key][i] = 0)
+        let date = past.getFullYear() + '/' + (past.getMonth()+1) // +1 to get the month from 1-12
+        resultData[date] = {total: 0, date: date, id: UUID.v4(), month: monthNames[past.getMonth()], year: past.getFullYear()}
+        services.map(i => resultData[date][i] = 0)
       }
 
-      // iterate through data
+      // add prices per service and add to total per month
       this.props.data.map(i => {
-        let key = i.year + "/" + i.month
-        let service = i.service + "::" + i.measure
-        if (resultData[key]) {
-          resultData[key][service] = i.price_loc + i.price_sec
-          resultData[key]["total"] += i.price_loc + i.price_sec
-        } else {
-          resultData[key] = {
-            date: i.year + "/" + i.month,
-            total: 0
-          }
-          resultData[key][service] = i.price_loc + i.price_sec
-          resultData[key]["total"] += i.price_loc + i.price_sec
+        let date = i.year + "/" + i.month
+        let service = i.service
+        if (resultData[date]) {
+          resultData[date][service] += i.price_loc + i.price_sec
+          resultData[date]["total"] += i.price_loc + i.price_sec
         }
       })
+
       // remove keys to just have array of objects
-      let tmp = Object.keys(resultData).map(i => resultData[i])
-      return tmp.reverse()
+      let resultArray = Object.keys(resultData).map(i => resultData[i])
+
+      // merge if we have more then 5 services
+      if (services.length > 5) {
+        services.forEach()
+        max(resultArray.map(i => i[service]) )
+      }
+
+      return resultArray.reverse()
     }
   }
 
