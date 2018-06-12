@@ -2,10 +2,20 @@ import * as constants from '../constants';
 
 const initialState = {
   data: null,
+  serviceMap: null,
+  services: null,
   requestedAt: null,
   receivedAt: null,
   isFetching: false,
   error: null
+};
+
+const calcServiceMap= function(state,{serviceMap}) {
+  return {...state, serviceMap};
+};
+
+const calcServices= function(state,{services}) {
+  return {...state, services};
 };
 
 const requestCostReport= function(state,{requestedAt}) {
@@ -24,6 +34,8 @@ export const cost = function(state, action) {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.REQUEST_COST_REPORT: return requestCostReport(state,action);
+    case constants.CALC_SERVICE_MAP_COST_REPORT: return calcServiceMap(state,action);
+    case constants.CALC_SERVICES_COST_REPORT: return calcServices(state,action);
     case constants.REQUEST_COST_REPORT_FAILURE: return requestCostReportFailure(state,action);
     case constants.RECEIVE_COST_REPORT: return receiveCostReport(state,action);
 

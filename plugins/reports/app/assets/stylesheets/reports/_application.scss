@@ -59,3 +59,22 @@
     }
   }
 }
+
+.details-container-enter {
+  opacity: 0.01;
+  transform: scale(0.9) translateY(0%);
+}
+.details-container-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(50%);
+  transition: all 300ms ease-out;
+}
+.details-container-exit {
+  opacity: 1;
+  transform: scale(1) translateY(50%);
+}
+.details-container-exit-active {
+  opacity: 0.01;
+  transform: scale(0.9) translateY(0%);
+  transition: all 300ms ease-out;
+}
