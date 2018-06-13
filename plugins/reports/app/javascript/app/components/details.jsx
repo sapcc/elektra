@@ -1,5 +1,5 @@
 import { scaleOrdinal } from 'd3-scale'
-import { CSSTransition } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 class Details extends React.Component {
 
@@ -19,49 +19,52 @@ class Details extends React.Component {
   render() {
     const data = this.props.data
     return (
-      <React.Fragment>
-        {data &&
-          <React.Fragment>
+      <CSSTransition
+        in={this.props.showDetails}
+        timeout={300}
+        classNames="details-container"
+        unmountOnExit>
+          <div>
             <h3>
-              Details for <b>{data.date}</b>
+              Details for <b>{data && data.date}</b>
             <button aria-label="Close" onClick={(e)=>this.onClose(e)} className="close" type="button">
                 <span aria-hidden="true">×</span>
               </button>
             </h3>
-
-          </React.Fragment>
-        }
-        <CSSTransition
-          in={data != null}
-          timeout={300}
-          classNames="details-container"
-          unmountOnExit>
-          <div className="details-container">
-            {data && data.rawData.map((service, index) => (
-              <div className="service-details" key={service+index}>
-                <table className="table datatable">
-                  <thead>
-                    <tr>
-                      <th colSpan="2">
-                        <i className="fa fa-square header-square" style={{color: this.getColor(service["service"])}}/>
-                        <span>{service["service"]}</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.keys(service).map(key => (
-                      <tr key={service+key}>
-                        <th>{key}</th>
-                        <td>{service[key]}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))}
+            <div className="details-container">
+              <TransitionGroup>
+                {data && data.rawData.map((service, index) => (
+                  <CSSTransition
+                    key={data.date.toString()+service+index}
+                    timeout={300}
+                    classNames="details-container"
+                    unmountOnExit>
+                    <div className="service-details">
+                      <table className="table datatable">
+                        <thead>
+                          <tr>
+                            <th colSpan="2">
+                              <i className="fa fa-square header-square" style={{color: this.getColor(service["service"])}}/>
+                              <span>{service["service"]}</span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.keys(service).map(key => (
+                            <tr key={service+key}>
+                              <th>{key}</th>
+                              <td>{service[key]}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CSSTransition>
+                ))}
+                </TransitionGroup>
           </div>
-        </CSSTransition>
-      </React.Fragment>
+        </div>
+      </CSSTransition>
     )
   }
 }

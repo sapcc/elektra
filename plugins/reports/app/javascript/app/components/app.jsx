@@ -7,6 +7,7 @@ class App extends React.Component {
     hover: "none",
     clickData: null,
     filter: '',
+    showDetails: false,
     error: null
   };
 
@@ -21,11 +22,11 @@ class App extends React.Component {
   }
 
   onClickBarChart = (data) => {
-    this.setState({clickData: data})
+    this.setState({clickData: data, showDetails: true})
   }
 
   onCloseDetails = () => {
-    this.setState({clickData: null})
+    this.setState({showDetails: false})
   }
 
   render() {
@@ -39,7 +40,7 @@ class App extends React.Component {
         <NivoBarChart cost={this.props.cost} colors={colors} onClick={this.onClickBarChart}/>
 
         <div className="cost-details">
-          <Details data={this.state.clickData} colors={colors} services={this.props.cost.services} serviceMap={this.props.cost.serviceMap} onClose={this.onCloseDetails}/>
+          <Details data={this.state.clickData} colors={colors} services={this.props.cost.services} serviceMap={this.props.cost.serviceMap} onClose={this.onCloseDetails} showDetails={this.state.showDetails}/>
         </div>
       </React.Fragment>
     )
