@@ -35,7 +35,7 @@ class Details extends React.Component {
               <TransitionGroup>
                 {data && data.rawData.map((service, index) => (
                   <CSSTransition
-                    key={data.date.toString()+service+index}
+                    key={service+index}
                     timeout={300}
                     classNames="details-container"
                     unmountOnExit>
@@ -51,10 +51,20 @@ class Details extends React.Component {
                         </thead>
                         <tbody>
                           {Object.keys(service).map(key => (
-                            <tr key={service+key}>
-                              <th>{key}</th>
-                              <td>{service[key]}</td>
-                            </tr>
+                              <tr key={service+key}>
+                                <th>{key}</th>
+                                <td>
+                                  <TransitionGroup>
+                                    <CSSTransition
+                                      key={service+key+service[key]}
+                                      timeout={300}
+                                      classNames="details-container"
+                                      unmountOnExit>
+                                      <span>{service[key]}</span>
+                                    </CSSTransition>
+                                  </TransitionGroup>
+                                </td>
+                              </tr>
                           ))}
                         </tbody>
                       </table>
