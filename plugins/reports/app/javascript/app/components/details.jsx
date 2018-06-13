@@ -1,5 +1,6 @@
 import { scaleOrdinal } from 'd3-scale'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import ServiceDetail from './ServiceDetail'
 
 const DetailsViewFadeTransition = ({
   children,
@@ -32,10 +33,24 @@ class Details extends React.Component {
     this.props.onClose()
   }
 
+  renderTableService = (service, index, clickService) => {
+    if (clickService == "all") {
+      return (<DetailsViewFadeTransition key={service+index}>
+                <ServiceDetail service={service} getColor={this.getColor}/>
+              </DetailsViewFadeTransition>)
+    } else {
+      if (clickService == this.props.serviceMap[service.service]) {
+        return (<DetailsViewFadeTransition key={service+index}>
+                  <ServiceDetail service={service} getColor={this.getColor}/>
+                </DetailsViewFadeTransition>)
+      }
+    }
+  }
+
   render() {
-    const data = this.props.data
+    const {data,showDetails,clickService} = this.props
     return (
-      <DetailsViewFadeTransition in={this.props.showDetails}>
+      <DetailsViewFadeTransition in={showDetails}>
           <div>
             {data &&
               <h3>
@@ -49,34 +64,9 @@ class Details extends React.Component {
             }
             <TransitionGroup className="details-container">
               {data && data.rawData.map((service, index) => (
-                <DetailsViewFadeTransition key={service+index}>
-                  <div className="service-details">
-                    <table className="table datatable">
-                      <thead>
-                        <tr>
-                          <th colSpan="2">
-                            <i className="fa fa-square header-square" style={{color: this.getColor(service["service"])}}/>
-                            <span>{service["service"]}</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.keys(service).map(key => (
-                            <tr key={service+key}>
-                              <th>{key}</th>
-                              <td>
-                                <TransitionGroup>
-                                  <DetailsViewHighlightTransition key={service+key+service[key]}>
-                                    <span>{service[key]}</span>
-                                  </DetailsViewHighlightTransition>
-                                </TransitionGroup>
-                              </td>
-                            </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </DetailsViewFadeTransition>
+
+                this.renderTableService(service,index,clickService)
+
               ))}
             </TransitionGroup>
         </div>

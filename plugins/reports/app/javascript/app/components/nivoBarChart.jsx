@@ -1,5 +1,7 @@
 import { ResponsiveBar } from '@nivo/bar'
 import Legend from './legend'
+import { scaleOrdinal } from 'd3-scale'
+import { CSSTransition } from 'react-transition-group';
 
 class NivoBarChart extends React.Component {
 
@@ -22,11 +24,12 @@ class NivoBarChart extends React.Component {
     data.map(i => {
       let date = i.year + "/" + i.month
       if (resultData[date]) {
-        resultData[date][serviceMap[i.service]] += i.price_loc + i.price_sec
-        resultData[date]["rawData"].push(i)
+        if (services.includes(serviceMap[i.service])){
+          resultData[date][serviceMap[i.service]] += i.price_loc + i.price_sec
+          resultData[date]["rawData"].push(i)
+        }
       }
     })
-
     return resultData
   }
 
@@ -46,8 +49,35 @@ class NivoBarChart extends React.Component {
     this.props.onClick({date: recData.indexValue, rawData: rawData})
   }
 
+  getServiceByColor = (color) => {
+    const colorScale = scaleOrdinal()
+      .domain(this.props.cost.services)
+      .range(this.props.colors)
+    let colorIndex = colorScale.range().indexOf(color)
+    return colorScale.domain()[colorIndex]
+  }
+
   render() {
     const {data,services,isFetching,serviceMap} = this.props.cost
+
+    // barComponent={RectBarComponent}
+    const RectBarComponent = ({ x, y, width, height, color, data, onClick}) => {
+      const choosenService = this.props.clickService
+      let service = this.getServiceByColor(color)
+      if (choosenService === "all") {
+        return (<rect width={width} height={height} x={x} y={y} fill={color} onClick={() => onClick(data)}>
+        </rect>)
+      } else {
+        if (service === choosenService) {
+          return <rect width={width} height={height} x={x} y={240-height} fill={color} onClick={() => onClick(data)}/>
+        } else {
+          return (
+            <rect width={width} height={height} x={x} y={y} fill={color} opacity="0" onClick={() => onClick(data)}/>
+          )
+        }
+      }
+    }
+
     return (
       <React.Fragment>
         {isFetching &&
@@ -88,11 +118,12 @@ class NivoBarChart extends React.Component {
                   motionDamping={15}
                   enableLabel={false}
                   onClick={this.onClickRect}
+                  barComponent={RectBarComponent}
                 />
               </div>
             </div>
             <div className="col-sm-2 col-xs-2">
-              <Legend height="300" colors={this.props.colors} services={services} serviceMap={serviceMap}/>
+              <Legend height="300" colors={this.props.colors} services={services} serviceMap={serviceMap} onClickLegend={this.props.onClickLegend}/>
             </div>
           </div>
 
