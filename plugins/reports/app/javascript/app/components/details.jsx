@@ -11,7 +11,7 @@ const DetailsViewFadeTransition = ({
 const DetailsViewHighlightTransition = ({
   children,
   ...props
-}) => (<CSSTransition {...props} unmountOnExit classNames="css-transition-highlight">
+}) => (<CSSTransition {...props} timeout={300} unmountOnExit classNames="css-transition-highlight">
   {children}
 </CSSTransition>);
 
@@ -37,12 +37,16 @@ class Details extends React.Component {
     return (
       <DetailsViewFadeTransition in={this.props.showDetails}>
           <div>
-            <h3>
-              Details for <b>{data && data.date}</b>
-            <button aria-label="Close" onClick={(e)=>this.onClose(e)} className="close" type="button">
-                <span aria-hidden="true">×</span>
-              </button>
-            </h3>
+            {data &&
+              <h3>
+                <TransitionGroup>
+                  Details for <DetailsViewHighlightTransition key={data.date}><b>{data && data.date}</b></DetailsViewHighlightTransition>
+                </TransitionGroup>
+                <button aria-label="Close" onClick={(e)=>this.onClose(e)} className="close" type="button">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </h3>
+            }
             <TransitionGroup className="details-container">
               {data && data.rawData.map((service, index) => (
                 <DetailsViewFadeTransition key={service+index}>
