@@ -30,6 +30,12 @@
   }
 }
 
+.legend {
+  rect {
+    cursor: pointer;
+  }  
+}
+
 .legendCells {
   text {
     font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;

@@ -5,7 +5,8 @@ class App extends React.Component {
 
   state = {
     hover: "none",
-    clickData: null,
+    clickBarData: null,
+    clickedBar: "none",
     filter: '',
     showDetails: false,
     clickService: "all",
@@ -23,7 +24,7 @@ class App extends React.Component {
   }
 
   onClickBarChart = (data) => {
-    this.setState({clickData: data, showDetails: true})
+    this.setState({clickBarData: data, showDetails: true, clickedBar: data.date})
   }
 
   onClickLegendRect = (service) => {
@@ -31,7 +32,7 @@ class App extends React.Component {
   }
 
   onCloseDetails = () => {
-    this.setState({showDetails: false})
+    this.setState({showDetails: false, clickedBar: "none"})
   }
 
   render() {
@@ -39,13 +40,17 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <div className="bs-callout bs-callout-info bs-callout-emphasize">
-          Cost report for the last 12 months. Click on the columns to show a detailed view for the services.
+          <p>Cost report for the last 12 months.</p>
+          <ul>
+            <li>Click on the columns to show a detailed view for the services.</li>
+            <li>Click on the legend to choose a service.</li>
+          </ul>
         </div>
 
-        <NivoBarChart cost={this.props.cost} colors={colors} onClick={this.onClickBarChart} onClickLegend={this.onClickLegendRect} clickService={this.state.clickService}/>
+        <NivoBarChart cost={this.props.cost} colors={colors} onClick={this.onClickBarChart} clickedBar={this.state.clickedBar} onClickLegend={this.onClickLegendRect} clickService={this.state.clickService}/>
 
         <div className="cost-details">
-          <Details data={this.state.clickData} colors={colors} services={this.props.cost.services} serviceMap={this.props.cost.serviceMap} onClose={this.onCloseDetails} showDetails={this.state.showDetails} clickService={this.state.clickService}/>
+          <Details data={this.state.clickBarData} colors={colors} services={this.props.cost.services} serviceMap={this.props.cost.serviceMap} onClose={this.onCloseDetails} showDetails={this.state.showDetails} clickService={this.state.clickService}/>
         </div>
       </React.Fragment>
     )

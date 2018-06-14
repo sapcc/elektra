@@ -43,7 +43,7 @@ class NivoBarChart extends React.Component {
     return resultArray.reverse()
   }
 
-  onClickRect = (recData, event) => {
+  onClickRect = (recData) => {
     const data = this.setUpData()
     let rawData = data[recData.indexValue]["rawData"]
     this.props.onClick({date: recData.indexValue, rawData: rawData})
@@ -62,20 +62,13 @@ class NivoBarChart extends React.Component {
 
     // barComponent={RectBarComponent}
     const RectBarComponent = ({ x, y, width, height, color, data, onClick}) => {
-      const choosenService = this.props.clickService
+      const {clickService,clickedBar} = this.props
       let service = this.getServiceByColor(color)
-      if (choosenService === "all") {
-        return (<rect width={width} height={height} x={x} y={y} fill={color} onClick={() => onClick(data)}>
-        </rect>)
-      } else {
-        if (service === choosenService) {
-          return <rect width={width} height={height} x={x} y={240-height} fill={color} onClick={() => onClick(data)}/>
-        } else {
-          return (
-            <rect width={width} height={height} x={x} y={y} fill={color} opacity="0" onClick={() => onClick(data)}/>
-          )
-        }
-      }
+
+      let newY = (service === clickService) ? 240-height : y
+      let opacity = (clickService !== "all" && service !== clickService) ? 0 : 1
+      opacity = (opacity == 1 && clickedBar!== "none" && data.indexValue !== clickedBar) ? 0.5 : opacity
+      return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)} />
     }
 
     return (
