@@ -43,43 +43,42 @@ class Legend extends React.Component {
         return "id" + d.replace(/\s/g, '');
       })
       .on('click', (d, e) => {
-        if (this.state.activeLink === "0") { //nothing selected, turn on this selection
+        if (this.state.activeLink === d) {//active square selected; turn it OFF
+          // unborder
+          select(node)
+            select("#id" + d)
+              .style("stroke", "none")
+
+          this.setState({activeLink: "0"})
+
+          //restore remaining boxes to normal opacity
+          for (let i = 0; i < services.length; i++) {
+            select(node)
+              select("#id" + services[i])
+                .style("opacity", 1)
+          }
+          // callback
+          this.props.onClickLegend("all")
+        } else {
           this.setState({activeLink: d})
-          // border the selected
+          // prittify the selected
           select(node)
             select("#id" + d)
               .style("stroke", "black")
-              .style("stroke-width", 2);
+              .style("opacity", 1)
+              .style("stroke-width", 2)
           // gray out the others
           for (let i = 0; i < services.length; i++) {
             if (services[i] != this.state.activeLink) {
               select(node)
                 select("#id" + services[i])
-                  .style("opacity", 0.5);
+                  .style("opacity", 0.5)
+                  .style("stroke", "none")
             }
           }
           // callback
           this.props.onClickLegend(d)
-        } else { //deactivate
-          if (this.state.activeLink === d) {//active square selected; turn it OFF
-            // unborder
-            select(node)
-              select("#id" + d)
-                .style("stroke", "none");
-
-            this.setState({activeLink: "0"})
-
-            //restore remaining boxes to normal opacity
-            for (let i = 0; i < services.length; i++) {
-              select(node)
-                select("#id" + services[i])
-                  .style("opacity", 1);
-            }
-            // callback
-            this.props.onClickLegend("all")
-          }
         }
-
       })
 
     select(node)
