@@ -61,15 +61,42 @@ class NivoBarChart extends React.Component {
     const {data,services,isFetching,serviceMap} = this.props.cost
 
     // barComponent={RectBarComponent}
-    const RectBarComponent = ({ x, y, width, height, color, data, onClick}) => {
+    const RectBarComponent = ({ x, y, width, height, color, data, onClick, tooltip, showTooltip, hideTooltip}) => {
       const {clickService,clickedBar} = this.props
       let service = this.getServiceByColor(color)
+      const handleTooltip = e => showTooltip(CustomTooltip(data, color), e)
 
       let newY = (service === clickService) ? 240-height : y
       let opacity = (clickService !== "all" && service !== clickService) ? 0 : 1
       opacity = (opacity == 1 && clickedBar!== "none" && data.indexValue !== clickedBar) ? 0.5 : opacity
-      return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)} />
+      return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}
+                onMouseEnter={handleTooltip}
+                onMouseMove={handleTooltip}
+                onMouseLeave={hideTooltip}/>
     }
+
+    const CustomTooltip = (node, color) => (
+        <div
+            style={{
+                fontFamily: "SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace",
+                fontSize: "11px",
+                fontWeight: "normal",
+                color: "#fff",
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gridColumnGap: '12px',
+                background: "#333",
+                padding: "8px",
+                borderRadius: "3px"
+            }}
+        >
+            <span style={{ fontWeight: 500 }}>Service</span>
+            <span><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
+            <span style={{ fontWeight: 500 }}>Value</span>
+            <span>{node.value}</span>
+        </div>
+    )
+
 
     return (
       <React.Fragment>
