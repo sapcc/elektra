@@ -16,6 +16,9 @@ export class AutocompleteField extends React.Component {
       case 'users':
         path = 'users'
         break;
+      case 'groups':
+        path = 'groups'
+        break;
     }
 
     const params = { term: searchTerm }
@@ -43,6 +46,8 @@ export class AutocompleteField extends React.Component {
       placeholder = `Project ${placeholder}`
     else if(this.props.type=='users')
       placeholder = `User ${placeholder}`
+    else if(this.props.type=='groups')
+      placeholder = `Group ${placeholder}`
     return (
       <AsyncTypeahead
         isLoading={this.state.isLoading}

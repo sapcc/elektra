@@ -8,7 +8,7 @@ const initialState = {
   isFetching: false
 };
 
-const requestProjectRoles=(state,{projectId, requestedAt})=> {
+const requestProjectRoleAssignments=(state,{projectId, requestedAt})=> {
   const newState = {...state}
   newState[projectId] = Object.assign({},initialState,newState[projectId],{
     isFetching: true,
@@ -17,7 +17,7 @@ const requestProjectRoles=(state,{projectId, requestedAt})=> {
   return newState;
 }
 
-const requestProjectRolesFailure=(state, {projectId}) => {
+const requestProjectRoleAssignmentsFailure=(state, {projectId}) => {
   const newState = {...state}
   newState[projectId] = Object.assign({},initialState,newState[projectId],{
     isFetching: false
@@ -25,7 +25,7 @@ const requestProjectRolesFailure=(state, {projectId}) => {
   return newState;
 }
 
-const receiveProjectRoles=(state,{projectId,roles,receivedAt})=> {
+const receiveProjectRoleAssignments=(state,{projectId,roles,receivedAt})=> {
   const newState = {...state}
   newState[projectId] = Object.assign({},initialState,newState[projectId],{
     isFetching: false,
@@ -35,19 +35,24 @@ const receiveProjectRoles=(state,{projectId,roles,receivedAt})=> {
   return newState;
 }
 
-const receiveProjectUserRoles=(state,{projectId,userId,roles})=> {
+const receiveProjectOwnerRoleAssignments=(state,{projectId,ownerType,ownerId,roles})=> {
   if(!state[projectId]) return state
 
   const newState = {...state}
   const items = newState[projectId].items.slice()
-  const index = items.findIndex((item) => item.user.id==userId);
+  const index = items.findIndex((item) =>
+    item[ownerType] && item[ownerType].id==ownerId
+  );
 
+  if(Array.isArray(roles)) roles = roles[0]
   if(roles) {
     if(index<0) items.push(roles)
     else items[index] = roles
   } else {
     if(index>=0) delete(items[index])
   }
+
+  console.log(items)
 
   newState[projectId] = Object.assign({},initialState,newState[projectId],{
     items
@@ -60,10 +65,10 @@ const receiveProjectUserRoles=(state,{projectId,userId,roles})=> {
 export default (state, action) => {
   if (state == null) { state = {}; }
   switch (action.type) {
-    case constants.RECEIVE_PROJECT_ROLES: return receiveProjectRoles(state,action);
-    case constants.REQUEST_PROJECT_ROLES: return requestProjectRoles(state,action);
-    case constants.REQUEST_PROJECT_ROLES_FAILURE: return requestProjectRolesFailure(state,action);
-    case constants.RECEIVE_PROJECT_USER_ROLES: return receiveProjectUserRoles(state,action);
+    case constants.RECEIVE_PROJECT_ROLE_ASSIGNMENTS: return receiveProjectRoleAssignments(state,action);
+    case constants.REQUEST_PROJECT_ROLE_ASSIGNMENTS: return requestProjectRoleAssignments(state,action);
+    case constants.REQUEST_PROJECT_ROLE_ASSIGNMENTS_FAILURE: return requestProjectRoleAssignmentsFailure(state,action);
+    case constants.RECEIVE_PROJECT_OWNER_ROLE_ASSIGNMENTS: return receiveProjectOwnerRoleAssignments(state,action);
     default: return state;
   }
 };

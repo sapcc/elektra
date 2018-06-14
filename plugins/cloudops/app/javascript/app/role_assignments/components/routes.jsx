@@ -5,6 +5,6 @@ import ShowItemModal from '../../search/containers/show'
 
 export default () =>
   <React.Fragment>
-    <Route path="/project-user-role-assignments" component={Home}/>
-    <Route path='/project-user-role-assignments/:id/show' component={ShowItemModal}/>
+    <Route path="/project-role-assignments" component={Home}/>
+    <Route path='/project-role-assignments/:id/show' component={ShowItemModal}/>
   </React.Fragment>

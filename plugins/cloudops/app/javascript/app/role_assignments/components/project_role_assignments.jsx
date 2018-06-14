@@ -1,19 +1,19 @@
 import { SearchField } from 'lib/components/search_field';
 import { AjaxPaginate } from 'lib/components/ajax_paginate';
-import ProjectUserRolesItem from './project_user_roles_item';
+import ProjectRoleAssignment from './project_role_assignment';
 import { regexString } from 'lib/tools/regex_string';
 import { AutocompleteField } from 'lib/components/autocomplete_field';
-import ProjectUserRolesInlineEdit from '../containers/project_user_roles_edit_form';
+import ProjectRoleAssignmentForm from '../containers/project_role_assignments_form';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-const isMemberTooltip = (
+const isMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">
-    This user is already a member of this project!
+    {`This ${type} is already a member of this project!`}
   </Tooltip>
 );
 
 
-export default class ProjectUserRoles extends React.Component {
+export default class ProjectRoleAssignments extends React.Component {
   state = {
     filterString: null,
     showNewMemberForm: false,
@@ -22,35 +22,36 @@ export default class ProjectUserRoles extends React.Component {
   }
 
   componentDidMount() {
-    this.props.loadProjectRoles(this.props.project.id)
+    this.props.loadProjectRoleAssignments(this.props.project.id)
   }
 
   filterRoleAssignments = () => {
-    if(!this.props.projectUserRoles) return []
+    if(!this.props.items) return []
 
     if(!this.state.filterString || this.state.filterString.trim().length==0) {
-      return this.props.projectUserRoles.items
+      return this.props.items
     }
 
     const regex = new RegExp(regexString(this.state.filterString.trim()), "i");
-    return this.props.projectUserRoles.items.filter((role) =>
-      `${role.user.name} ${role.user.description} ${role.user.id}`.match(regex)
-    )
+    return this.props.items.filter((role) => {
+      let item = role[this.props.type]
+      return `${item.name} ${item.description} ${item.id}`.match(regex)
+    })
   }
 
-  handleNewMember = (user) => {
-    if(Array.isArray(user)) user = user[0]
+  handleNewMember = (member) => {
+    if(Array.isArray(member)) member = member[0]
 
-    if(!user) return this.setState({newMember: null})
+    if(!member) return this.setState({newMember: null})
 
-    if(user.constructor == String) {
-      if(user.trim().length==0) {
+    if(member.constructor == String) {
+      if(member.trim().length==0) {
         this.setState({newMember: null})
       } else {
-        this.setState({newMember: {id: user}})
+        this.setState({newMember: {id: member}})
       }
-    } else if(user.constructor == Object) {
-      this.setState({newMember: {id: user.id, name: user.name, description: user.full_name}})
+    } else if(member.constructor == Object) {
+      this.setState({newMember: {id: member.id, name: member.name, description: member.full_name || member.description}})
     } else this.setState({newMember: null})
   }
 
@@ -59,18 +60,21 @@ export default class ProjectUserRoles extends React.Component {
   }
 
   alreadyMember = () => {
-    if(!this.props.projectUserRoles || this.props.projectUserRoles.items.length==0) {
+    if(!this.props.items || this.props.items.length==0) {
       return false
     }
-    const item = this.props.projectUserRoles.items.find((i) =>
-      i && i.user.id == this.state.newMember.id
-    )
+    const item = this.props.items.find((i) => {
+      let member = i[this.props.type]
+      member && member.id == this.state.newMember.id
+    })
     return item ? true : false
   }
 
   render() {
     const items = this.filterRoleAssignments()
     const isMember = this.state.newMember && this.alreadyMember()
+    const memberLabel = this.props.type.charAt(0).toUpperCase() + this.props.type.slice(1);
+
     return (
       <React.Fragment>
         <div className="toolbar">
@@ -78,16 +82,16 @@ export default class ProjectUserRoles extends React.Component {
             <React.Fragment>
               <SearchField
                 onChange={(term) => this.setState({filterString: term})}
-                placeholder='Name, C/D/I-number, or ID'
+                placeholder={`Name ${this.props.type=='user' ? ', C/D/I-number, ' : ''} or ID`}
                 isFetching={false}
                 searchIcon={true}
-                text='Filter users by name or id'
+                text={`Filter ${this.props.type}s by name or id`}
               />
               <span className="toolbar-input-divider"></span>
           </React.Fragment>
           }
 
-          {(!this.props.projectUserRoles || this.props.projectUserRoles.isFetching) &&
+          {(!this.props.items || this.props.isFetching) &&
             <div className="toolbar-container"><span className='spinner'></span>Loading ...</div>
           }
 
@@ -102,7 +106,7 @@ export default class ProjectUserRoles extends React.Component {
                   </button>
                 </span>
                 <AutocompleteField
-                  type='users'
+                  type={`${this.props.type}s`}
                   domainId={this.props.project.domain_id}
                   onSelected={this.handleNewMember}
                   onInputChange={this.handleNewMember}/>
@@ -112,7 +116,7 @@ export default class ProjectUserRoles extends React.Component {
                     disabled={isMember || !this.state.newMember}
                     onClick={() => this.setState({showNewMemberForm: true})}>
                       {isMember ?
-                        <OverlayTrigger placement="top" overlay={isMemberTooltip}>
+                        <OverlayTrigger placement="top" overlay={isMemberTooltip(this.props.type)}>
                           <span>Add</span>
                         </OverlayTrigger>
                         :
@@ -135,7 +139,7 @@ export default class ProjectUserRoles extends React.Component {
           <table className="table">
             <thead>
               <tr>
-                <th>User</th>
+                <th>{memberLabel}</th>
                 <th>Roles</th>
                 <th></th>
               </tr>
@@ -161,10 +165,11 @@ export default class ProjectUserRoles extends React.Component {
 
                   <td colSpan={2}>
                     {this.state.newMember &&
-                      <ProjectUserRolesInlineEdit
+                      <ProjectRoleAssignmentForm
                         projectId={this.props.project.id}
-                        userId={this.state.newMember.id}
-                        userRoles={[]}
+                        ownerId={this.state.newMember.id}
+                        ownerType={this.props.type}
+                        ownerRoles={[]}
                         onSave={this.resetNewMemberState}
                         onCancel={this.resetNewMemberState}/>
                     }
@@ -173,10 +178,11 @@ export default class ProjectUserRoles extends React.Component {
               }
               {
                 items.map((item,index) =>
-                  <ProjectUserRolesItem
+                  <ProjectRoleAssignment
                     item={item}
                     key={index}
                     projectId={this.props.project.id}
+                    ownerType={this.props.type}
                     searchTerm={this.state.filterString} />
                 )
               }

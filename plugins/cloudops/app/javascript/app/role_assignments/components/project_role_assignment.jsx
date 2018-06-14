@@ -1,10 +1,10 @@
 import { SearchField } from 'lib/components/search_field';
 import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Highlighter } from 'react-bootstrap-typeahead';
-import ProjectUserRolesInlineEdit from '../containers/project_user_roles_edit_form';
+import ProjectRoleAssignmentsInlineEdit from '../containers/project_role_assignments_form';
 
 // This class renders project user role assignments
-export default class ProjectUserRolesItem extends React.Component {
+export default class ProjectRoleAssignmentsItem extends React.Component {
   state = {
     editMode: false //used for the switch between view and edit modes
   }
@@ -20,32 +20,34 @@ export default class ProjectUserRolesItem extends React.Component {
   render() {
     const item = this.props.item
     const searchTerm = this.props.searchTerm || ''
-    const userRoles = this.sortRoles(this.props.item.roles)
-    const count = userRoles.length
+    const ownerRoles = this.sortRoles(this.props.item.roles)
+    const count = ownerRoles.length
+    const owner = item[this.props.ownerType]
 
     return(
       <tr>
         <td className='user-name-cell'>
           {/*user name*/}
           <Highlighter search={searchTerm}>
-            {item.user.description ?
-              `${item.user.description} (${item.user.name})`
+            {owner.description ?
+              `${owner.description} (${owner.name})`
               :
-              item.user.name
+              owner.name
             }
           </Highlighter>
           <br/>
           <span className='info-text'>
-            <Highlighter search={searchTerm}>{item.user.id}</Highlighter>
+            <Highlighter search={searchTerm}>{owner.id}</Highlighter>
           </span>
         </td>
 
         {this.state.editMode ? //edit mode
           <td colSpan={2}>
-            <ProjectUserRolesInlineEdit
+            <ProjectRoleAssignmentsInlineEdit
               projectId={this.props.projectId}
-              userId={this.props.item.user.id}
-              userRoles={this.props.item.roles}
+              ownerId={owner.id}
+              ownerRoles={this.props.item.roles}
+              ownerType={this.props.ownerType}
               onSave={() => this.setState({editMode: false})}
               onCancel={() => this.setState({editMode: false})}/>
           </td>
@@ -53,7 +55,7 @@ export default class ProjectUserRolesItem extends React.Component {
           <React.Fragment>
             <td>
               {  /* show role names with descriptions comma separated in a row */
-                 userRoles.map((role, index) =>
+                 ownerRoles.map((role, index) =>
                    <span key={index}>
                      <strong>{role.name}</strong>
                      {role.description && ' ('+role.description.replace(/(.+)\s+\(.+\)/,"$1")+')'}

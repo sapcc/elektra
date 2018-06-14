@@ -94,7 +94,7 @@ class CacheController < ::ScopeController
       include_scope: false,
       paginate: false
     ) do |scope|
-      if cloud_admin?
+      if current_user.is_allowed?('cloud_admin')
         scope.where(domain_id: params[:domain]).order(:name)
       else
         where_current_token_scope(scope).order(:name)
@@ -112,6 +112,28 @@ class CacheController < ::ScopeController
     render json: items
   end
 
+  def groups
+    items = ObjectCache.find_objects(
+      type: 'group',
+      term:  params[:name] || params[:term] || '',
+      include_scope: false,
+      paginate: false
+    ) do |scope|
+      if current_user.is_allowed?('cloud_admin')
+        scope.where(domain_id: params[:domain]).order(:name)
+      else
+        where_current_token_scope(scope).order(:name)
+      end
+    end
+
+
+    items = items.to_a.map do |g|
+      { id: g.id, name: g.name }
+    end
+
+    render json: items
+  end
+
   def projects
     items = ObjectCache.find_objects(
       type: 'project',
@@ -119,7 +141,7 @@ class CacheController < ::ScopeController
       include_scope: false,
       paginate: false
     ) do |scope|
-      if cloud_admin?
+      if current_user.is_allowed?('cloud_admin')
         scope.where(domain_id: params[:domain]).order(:name)
       else
         where_current_token_scope(scope).order(:name)

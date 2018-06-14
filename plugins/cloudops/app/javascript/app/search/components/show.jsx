@@ -2,7 +2,7 @@ import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
 import { projectUrl, objectUrl } from '../../shared/object_link_helper'
-import ProjectUserRoles from '../../role_assignments/containers/project_user_roles'
+import ProjectRoleAssignments from '../../role_assignments/containers/project_role_assignments'
 
 export default class ShowSearchObjectModal extends React.Component{
   state = {
@@ -53,6 +53,7 @@ export default class ShowSearchObjectModal extends React.Component{
     const objectLink = objectUrl(item)
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
     const activeTab = found ? found[1] : null
+    const isProject = item && item.cached_object_type == 'project'
 
     return (
       <Modal
@@ -63,7 +64,11 @@ export default class ShowSearchObjectModal extends React.Component{
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
-            Show object {item ? item.cached_object_type : ''}
+            Show {item &&
+              <React.Fragment>
+                {item.cached_object_type} {item.name} ({item.id})
+              </React.Fragment>
+            }
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -76,10 +81,14 @@ export default class ShowSearchObjectModal extends React.Component{
                 <Tab eventKey='data' title="Data">
                   <ReactJson src={item.payload} collapsed={1}/>
                 </Tab>
-
-                { item.cached_object_type=='project' &&
-                  <Tab eventKey='roles' title="User Role Assignments">
-                    <ProjectUserRoles project={item}/>
+                { isProject &&
+                  <Tab eventKey='userRoles' title="User Role Assignments">
+                    <ProjectRoleAssignments project={item} type='user'/>
+                  </Tab>
+                }
+                { isProject &&
+                  <Tab eventKey='groupRoles' title="Group Role Assignments">
+                    <ProjectRoleAssignments project={item} type='group'/>
                   </Tab>
                 }
               </Tabs>

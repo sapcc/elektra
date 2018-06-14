@@ -4,7 +4,7 @@ import { projectUrl } from '../../shared/object_link_helper'
 
 const ObjectLink = ({id, name, term}) =>
   <React.Fragment>
-    <Link to={`/project-user-role-assignments/${id}/show?tab=roles`}>
+    <Link to={`/project-role-assignments/${id}/show?tab=roles`}>
       {name ?
         <Highlighter search={term || ''}>{name || ''}</Highlighter>
         :
@@ -57,7 +57,7 @@ export default ({item, domain, project}) => {
               </li>
             }
             <li>
-              <Link to={`/project-user-role-assignments/${item.id}/show`}>
+              <Link to={`/project-role-assignments/${item.id}/show`}>
                 Role Assignments
               </Link>
             </li>

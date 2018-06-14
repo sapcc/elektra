@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { SearchField } from 'lib/components/search_field';
 import SearchItem from './search_item'
-import { AjaxPaginate } from 'lib/components/ajax_paginate';
+// import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from 'lib/components/pagination';
 
 export default class Search extends React.Component {
