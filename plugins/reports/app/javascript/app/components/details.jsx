@@ -35,12 +35,12 @@ class Details extends React.Component {
 
   renderTableService = (service, index, clickService) => {
     if (clickService == "all") {
-      return (<DetailsViewFadeTransition key={service+index}>
+      return (<DetailsViewFadeTransition key={service.service}>
                 <ServiceDetail service={service} getColor={this.getColor}/>
               </DetailsViewFadeTransition>)
     } else {
       if (clickService == this.props.serviceMap[service.service]) {
-        return (<DetailsViewFadeTransition key={service+index}>
+        return (<DetailsViewFadeTransition key={service.service}>
                   <ServiceDetail service={service} getColor={this.getColor}/>
                 </DetailsViewFadeTransition>)
       }
@@ -62,11 +62,9 @@ class Details extends React.Component {
                 </button>
               </h3>
             }
-            <TransitionGroup className="details-container">
+            <TransitionGroup className="details-container" >
               {data && data.rawData.map((service, index) => (
-
                 this.renderTableService(service,index,clickService)
-
               ))}
             </TransitionGroup>
         </div>
