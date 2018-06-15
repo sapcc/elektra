@@ -68,10 +68,6 @@ export default class Search extends React.Component {
               total: {this.props.objects.total}
             </React.Fragment>
           }
-          <span className="toolbar-input-divider"></span>
-          <Link to='/universal-search/live'>
-            Couldn't find what you were looking for?
-          </Link>
         </div>
         { this.props.objects.items && this.props.objects.items.length > 0 &&
           <table className="table">
@@ -97,12 +93,22 @@ export default class Search extends React.Component {
         }
 
 
-        <Pagination
-          currentPage={this.props.objects.currentPage}
-          total={this.props.objects.total}
-          perPage={30}
-          onChange={this.props.loadPage}
-        />
+
+        <div className="u-flex-container pagination-container">
+          { this.props.objects.receivedAt &&
+            // show this only after we have searched at least once (don't want this to be visible on initial load)
+            <Link to='/universal-search/live'>
+              Couldn't find what you were looking for?
+            </Link>
+          }
+          <Pagination
+            currentPage={this.props.objects.currentPage}
+            total={this.props.objects.total}
+            perPage={30}
+            onChange={this.props.loadPage}
+            className="pagination-container u-flex-pos-right"
+          />
+        </div>
 
       {/*
         <AjaxPaginate

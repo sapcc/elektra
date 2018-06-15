@@ -82,6 +82,10 @@ export default class LiveSearchModal extends React.Component{
         </Modal.Header>
         <Modal.Body>
 
+          <div className="alert alert-info">
+            It is possible that an object exists in OpenStack but not in our object cache. If you know the OpenStack object type we can try to do a live search for the object against the OpenStack backend. Please choose the type from the dropdown.
+          </div>
+
           <form className="form-inline" onSubmit={(e) => {e.preventDefault(); this.search()}}>
             <div className="form-group">
               <select
