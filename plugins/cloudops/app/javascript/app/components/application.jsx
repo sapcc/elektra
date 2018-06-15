@@ -2,6 +2,8 @@
 import { HashRouter, Route, Redirect } from 'react-router-dom'
 import { withRouter } from 'react-router'
 
+import { FlashMessages } from 'lib/flashes';
+
 import Menu from '../containers/menu';
 import CloudopsHome from './home'
 import SearchRoutes from '../search/components/routes'
@@ -43,6 +45,7 @@ export default (props) =>
       <Breadcrumb/>
 
       <div className="container">
+        <FlashMessages/>
         <Route exact path="/" render={ () => <Redirect to="/universal-search"/>}/>
         {/*<Route exact path="/" component={CloudopsHome}/> */}
         <RoleAssignmentRoutes/>

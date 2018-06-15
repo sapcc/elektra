@@ -146,6 +146,7 @@ module Identity
       # for all services that implements a wizard integration do
       # check the order in /elektra/plugins/identity/spec/controllers/projects_controller_spec.rb
       %w[resource_management masterdata_cockpit networking].each do |service_name|
+
         next unless services.available?(service_name.to_sym)
         # set instance variable service available to true
         instance_variable_set("@#{service_name}_service_available", true)
@@ -231,30 +232,23 @@ module Identity
     end
 
     def update_networking_wizard_status
+      # ensure current user has the network admin role (UNTREATED EDGE CASE: current user isn't admin. Might have to add some stuff for this)
       if current_user.has_role?('admin') && !current_user.has_role?('network_admin')
         network_admin_role = services.identity.grant_project_user_role_by_role_name(@scoped_project_id, current_user.id, 'network_admin')
         # Hack: extend current_user context to add the new assigned role
         current_user.context['roles'] << { 'id' => network_admin_role.id, 'name' => network_admin_role.name }
       end
 
-      networking_service = cloud_admin.networking
-      floatingip_network = networking_service
-                           .domain_floatingip_network(@scoped_domain_name)
-      rbacs = if floatingip_network
-                networking_service.rbacs(
-                  object_id: floatingip_network.id,
-                  object_type: 'network',
-                  target_tenant: @scoped_project_id
-                )
-              else
-                []
-              end
+      # get external networks for this project (using the current user context -> this will retrieve both self-owned and shared networks)
+      external_nets = services.networking.networks('router:external' => true)
 
-      if rbacs.length.positive?
+      # mark wizard done if project has at least one external network. Either shared or owned
+      unless external_nets.blank?
         @project_profile.update_wizard_status('networking', ProjectProfile::STATUS_DONE)
       else
         @project_profile.update_wizard_status('networking', nil)
       end
+
       @project_profile.wizard_finished?('networking')
     end
   end
