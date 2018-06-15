@@ -69,6 +69,12 @@ class NivoBarChart extends React.Component {
       let newY = (service === clickService) ? 240-height : y
       let opacity = (clickService !== "all" && service !== clickService) ? 0 : 1
       opacity = (opacity == 1 && clickedBar!== "none" && data.indexValue !== clickedBar) ? 0.5 : opacity
+
+      // hide hideTooltip
+      if (opacity == 0) {
+        return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}/>
+      }
+
       return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}
                 onMouseEnter={handleTooltip}
                 onMouseMove={handleTooltip}
