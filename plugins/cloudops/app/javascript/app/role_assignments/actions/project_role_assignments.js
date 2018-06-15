@@ -29,12 +29,12 @@ const receiveProjectRoleAssignments= (projectId, roles) => (
   }
 );
 
-const receiveProjectOwnerRoleAssignments= (projectId, ownerType, ownerId, roles) => (
+const receiveProjectMemberRoleAssignments= (projectId, memberType, memberId, roles) => (
   {
-    type: constants.RECEIVE_PROJECT_OWNER_ROLE_ASSIGNMENTS,
+    type: constants.RECEIVE_PROJECT_MEMBER_ROLE_ASSIGNMENTS,
     projectId,
-    ownerType,
-    ownerId,
+    memberType,
+    memberId,
     roles
   }
 );
@@ -55,19 +55,19 @@ const fetchProjectRoleAssignments = (projectId) =>
   }
 ;
 
-const updateProjectOwnerRoleAssignments = (projectId, ownerType, ownerId, roles) =>
+const updateProjectMemberRoleAssignments = (projectId, memberType, memberId, roles) =>
   (dispatch) => {
     const data = {scope_project_id: projectId, roles}
-    data[`${ownerType}_id`] = ownerId
+    data[`${memberType}_id`] = memberId
 
     return ajaxHelper.put(
       '/role_assignments', data
-    ).then((response) => dispatch(receiveProjectOwnerRoleAssignments(
-      projectId, ownerType, ownerId, response.data.roles)
+    ).then((response) => dispatch(receiveProjectMemberRoleAssignments(
+      projectId, memberType, memberId, response.data.roles)
     ))
   }
 
 export {
   fetchProjectRoleAssignments,
-  updateProjectOwnerRoleAssignments
+  updateProjectMemberRoleAssignments
 }

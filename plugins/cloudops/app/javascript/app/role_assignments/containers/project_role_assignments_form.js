@@ -1,7 +1,7 @@
 import { connect } from  'react-redux';
 import EditForm from '../components/project_role_assignments_form';
 
-import { updateProjectOwnerRoleAssignments } from '../actions/project_role_assignments'
+import { updateProjectMemberRoleAssignments } from '../actions/project_role_assignments'
 import { fetchRolesIfNeeded } from '../actions/roles'
 
 export default connect(
@@ -9,10 +9,10 @@ export default connect(
     { availableRoles: state.role_assignments.roles }
   ),
   (dispatch, ownProps) => {
-    let type = ownProps.ownerType.toLowerCase()
+    let type = ownProps.memberType.toLowerCase()
 
     return {
-      updateProjectOwnerRoleAssignments: (projectId, ownerId, roles) => dispatch(updateProjectOwnerRoleAssignments(projectId,type,ownerId,roles)),
+      updateProjectMemberRoleAssignments: (projectId, memberId, roles) => dispatch(updateProjectMemberRoleAssignments(projectId,type,memberId,roles)),
       loadRolesOnce: () => dispatch(fetchRolesIfNeeded())
     }
   }

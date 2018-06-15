@@ -13,25 +13,25 @@ const removeMemberTooltip = (type) => (
 // This class renders edit form for project role assignments
 export default class ProjectRoleAssignmentsInlineForm extends React.Component {
   state = {
-    currentOwnerRoleIDs: [], //stores current owner roles
-    newOwnerRoleIDs: [], //stores the edited version of owner roles
+    currentMemberRoleIDs: [], //stores current member roles
+    newMemberRoleIDs: [], //stores the edited version of member roles
     availableRoles: [],
     saving: false,
     error: null
   }
 
   componentDidMount() {
-    const currentOwnerRoleIDs = this.props.ownerRoles.map((r) => r.id)
+    const currentMemberRoleIDs = this.props.memberRoles.map((r) => r.id)
 
     const newState = {
-      currentOwnerRoleIDs,
-      newOwnerRoleIDs: currentOwnerRoleIDs,
+      currentMemberRoleIDs,
+      newMemberRoleIDs: currentMemberRoleIDs,
     }
 
     if(this.props.availableRoles) {
       newState['availableRoles'] = this.sortRoles(this.props.availableRoles.items)
     }
-    // save current owner roles in the state, change edit mode and trigger
+    // save current member roles in the state, change edit mode and trigger
     // the loadRoles method to get all available roles
     this.setState(newState, this.props.loadRolesOnce)
   }
@@ -55,13 +55,13 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       return 0
     })
 
-  // This method renders the edit view for project owner role assignments
+  // This method renders the edit view for project member role assignments
   renderEditView = () => {
     // create list items
     const lis = this.state.availableRoles.map((role,index) => {
-      const checked = this.state.newOwnerRoleIDs.indexOf(role.id)>=0
-      const isNew = (checked && this.state.currentOwnerRoleIDs.indexOf(role.id)<0)
-      const removed = (!checked && this.state.currentOwnerRoleIDs.indexOf(role.id)>=0)
+      const checked = this.state.newMemberRoleIDs.indexOf(role.id)>=0
+      const isNew = (checked && this.state.currentMemberRoleIDs.indexOf(role.id)<0)
+      const removed = (!checked && this.state.currentMemberRoleIDs.indexOf(role.id)>=0)
       const roleDescription = role.description ? '('+role.description.replace(/(.+)\s+\(.+\)/,"$1")+')' : ''
       let labelClassName = ''
       if (isNew) {
@@ -78,7 +78,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
               type="checkbox"
               checked={checked}
               value={role.id}
-              onChange={(e) => this.updateOwnerRole(e.target.value, e.target.checked)}/>
+              onChange={(e) => this.updateMemberRole(e.target.value, e.target.checked)}/>
             &nbsp;
             <span key={index}>
               <React.Fragment>
@@ -94,21 +94,21 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
   }
 
   // This method updates the state of newUserRoles
-  updateOwnerRole = (roleId, checked) => {
-    const index = this.state.newOwnerRoleIDs.indexOf(roleId)
+  updateMemberRole = (roleId, checked) => {
+    const index = this.state.newMemberRoleIDs.indexOf(roleId)
 
     if( (index>=0 && checked) || (index<0 && !checked)) return;
 
-    let newOwnerRoleIDs = this.state.newOwnerRoleIDs.slice()
-    if(index>=0 && !checked) newOwnerRoleIDs.splice(index,1)
-    if(index<0 && checked) newOwnerRoleIDs.push(roleId)
+    let newMemberRoleIDs = this.state.newMemberRoleIDs.slice()
+    if(index>=0 && !checked) newMemberRoleIDs.splice(index,1)
+    if(index<0 && checked) newMemberRoleIDs.push(roleId)
 
-    this.setState({newOwnerRoleIDs})
+    this.setState({newMemberRoleIDs})
   }
 
   hasChanged = () => {
-    const oldRoles = this.state.currentOwnerRoleIDs.sort().join('')
-    const newRoles = this.state.newOwnerRoleIDs.sort().join('')
+    const oldRoles = this.state.currentMemberRoleIDs.sort().join('')
+    const newRoles = this.state.newMemberRoleIDs.sort().join('')
 
     return oldRoles != newRoles
   }
@@ -118,10 +118,10 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
     this.setState({saving: true})
 
     this.submitPromise = makeCancelable(
-      this.props.updateProjectOwnerRoleAssignments(
+      this.props.updateProjectMemberRoleAssignments(
         this.props.projectId,
-        this.props.ownerId,
-        this.state.newOwnerRoleIDs
+        this.props.memberId,
+        this.state.newMemberRoleIDs
      )
     )
 
@@ -142,23 +142,23 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
   cancelEdit = () => this.props.onCancel()
 
   selectAdminRoles = () => {
-    const newOwnerRoleIDs = this.state.availableRoles.filter((r) =>
+    const newMemberRoleIDs = this.state.availableRoles.filter((r) =>
       r.name.indexOf('cloud')<0
     ).map((r) => r.id)
-    this.setState({newOwnerRoleIDs})
+    this.setState({newMemberRoleIDs})
   }
 
   selectAllRoles = () => {
-    this.setState({newOwnerRoleIDs: this.state.availableRoles.map((r) => r.id)})
+    this.setState({newMemberRoleIDs: this.state.availableRoles.map((r) => r.id)})
   }
 
   removeAllRoles = () => {
-    this.setState({newOwnerRoleIDs: []})
+    this.setState({newMemberRoleIDs: []})
   }
 
   render() {
     const hasChanged = this.hasChanged()
-    const isEmpty = this.state.newOwnerRoleIDs.length==0
+    const isEmpty = this.state.newMemberRoleIDs.length==0
     const isFetching = (!this.props.availableRoles || this.props.availableRoles.isFetching)
 
     return(
@@ -202,7 +202,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
             </button>
             { !isFetching &&
               isEmpty ?
-              <OverlayTrigger placement="top" overlay={removeMemberTooltip(this.props.ownerType)}>
+              <OverlayTrigger placement="top" overlay={removeMemberTooltip(this.props.memberType)}>
                 <button
                   className='btn btn-danger btn-sm'
                   disabled={this.state.saving}

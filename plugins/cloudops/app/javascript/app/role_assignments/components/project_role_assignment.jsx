@@ -20,24 +20,24 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
   render() {
     const item = this.props.item
     const searchTerm = this.props.searchTerm || ''
-    const ownerRoles = this.sortRoles(this.props.item.roles)
-    const count = ownerRoles.length
-    const owner = item[this.props.ownerType]
+    const memberRoles = this.sortRoles(this.props.item.roles)
+    const count = memberRoles.length
+    const member = item[this.props.memberType]
 
     return(
       <tr>
         <td className='user-name-cell'>
           {/*user name*/}
           <Highlighter search={searchTerm}>
-            {owner.description ?
-              `${owner.description} (${owner.name})`
+            {member.description ?
+              `${member.description} (${member.name})`
               :
-              owner.name
+              member.name
             }
           </Highlighter>
           <br/>
           <span className='info-text'>
-            <Highlighter search={searchTerm}>{owner.id}</Highlighter>
+            <Highlighter search={searchTerm}>{member.id}</Highlighter>
           </span>
         </td>
 
@@ -45,9 +45,9 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
           <td colSpan={2}>
             <ProjectRoleAssignmentsInlineEdit
               projectId={this.props.projectId}
-              ownerId={owner.id}
-              ownerRoles={this.props.item.roles}
-              ownerType={this.props.ownerType}
+              memberId={member.id}
+              memberRoles={this.props.item.roles}
+              memberType={this.props.memberType}
               onSave={() => this.setState({editMode: false})}
               onCancel={() => this.setState({editMode: false})}/>
           </td>
@@ -55,7 +55,7 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
           <React.Fragment>
             <td>
               {  /* show role names with descriptions comma separated in a row */
-                 ownerRoles.map((role, index) =>
+                 memberRoles.map((role, index) =>
                    <span key={index}>
                      <strong>{role.name}</strong>
                      {role.description && ' ('+role.description.replace(/(.+)\s+\(.+\)/,"$1")+')'}

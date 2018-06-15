@@ -35,13 +35,13 @@ const receiveProjectRoleAssignments=(state,{projectId,roles,receivedAt})=> {
   return newState;
 }
 
-const receiveProjectOwnerRoleAssignments=(state,{projectId,ownerType,ownerId,roles})=> {
+const receiveProjectMemberRoleAssignments=(state,{projectId,memberType,memberId,roles})=> {
   if(!state[projectId]) return state
 
   const newState = {...state}
   const items = newState[projectId].items.slice()
   const index = items.findIndex((item) =>
-    item[ownerType] && item[ownerType].id==ownerId
+    item[memberType] && item[memberType].id==memberId
   );
 
   if(Array.isArray(roles)) roles = roles[0]
@@ -68,7 +68,7 @@ export default (state, action) => {
     case constants.RECEIVE_PROJECT_ROLE_ASSIGNMENTS: return receiveProjectRoleAssignments(state,action);
     case constants.REQUEST_PROJECT_ROLE_ASSIGNMENTS: return requestProjectRoleAssignments(state,action);
     case constants.REQUEST_PROJECT_ROLE_ASSIGNMENTS_FAILURE: return requestProjectRoleAssignmentsFailure(state,action);
-    case constants.RECEIVE_PROJECT_OWNER_ROLE_ASSIGNMENTS: return receiveProjectOwnerRoleAssignments(state,action);
+    case constants.RECEIVE_PROJECT_MEMBER_ROLE_ASSIGNMENTS: return receiveProjectMemberRoleAssignments(state,action);
     default: return state;
   }
 };

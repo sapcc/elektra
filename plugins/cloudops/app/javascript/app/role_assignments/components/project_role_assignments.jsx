@@ -74,11 +74,12 @@ export default class ProjectRoleAssignments extends React.Component {
     const items = this.filterRoleAssignments()
     const isMember = this.state.newMember && this.alreadyMember()
     const memberLabel = this.props.type.charAt(0).toUpperCase() + this.props.type.slice(1);
+    const hasItems = this.props.items && this.props.items.length>0
 
     return (
       <React.Fragment>
         <div className="toolbar">
-          {!this.state.showNewMemberInput && items.length>0 &&
+          {!this.state.showNewMemberInput && hasItems &&
             <React.Fragment>
               <SearchField
                 onChange={(term) => this.setState({filterString: term})}
@@ -135,6 +136,12 @@ export default class ProjectRoleAssignments extends React.Component {
           </div>
         </div>
 
+        {!hasItems && !this.props.isFetching &&
+          <div className="alert">
+            {`No ${this.props.type} role assignments for this project yet`}
+          </div>
+        }
+
         { (items.length > 0 || this.state.showNewMemberForm) &&
           <table className="table">
             <thead>
@@ -167,9 +174,9 @@ export default class ProjectRoleAssignments extends React.Component {
                     {this.state.newMember &&
                       <ProjectRoleAssignmentForm
                         projectId={this.props.project.id}
-                        ownerId={this.state.newMember.id}
-                        ownerType={this.props.type}
-                        ownerRoles={[]}
+                        memberId={this.state.newMember.id}
+                        memberType={this.props.type}
+                        memberRoles={[]}
                         onSave={this.resetNewMemberState}
                         onCancel={this.resetNewMemberState}/>
                     }
@@ -182,7 +189,7 @@ export default class ProjectRoleAssignments extends React.Component {
                     item={item}
                     key={index}
                     projectId={this.props.project.id}
-                    ownerType={this.props.type}
+                    memberType={this.props.type}
                     searchTerm={this.state.filterString} />
                 )
               }

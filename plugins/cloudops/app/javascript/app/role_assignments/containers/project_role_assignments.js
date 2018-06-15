@@ -3,7 +3,7 @@ import Roles from '../components/project_role_assignments';
 
 import {
   fetchProjectRoleAssignments,
-  updateProjectOwnerRoleAssignments
+  updateProjectMemberRoleAssignments
 } from '../actions/project_role_assignments'
 
 import {
@@ -31,8 +31,8 @@ export default connect(
 
     return {
       loadProjectRoleAssignments: (projectId) => dispatch(fetchProjectRoleAssignments(projectId)),
-      updateProjectOwnerRoleAssignments: (projectId, ownerId, roles) =>
-        dispatch(updateProjectOwnerRoleAssignments(projectId,type, ownerId,roles)),
+      updateProjectMemberRoleAssignments: (projectId, memberId, roles) =>
+        dispatch(updateProjectMemberRoleAssignments(projectId,type, memberId,roles)),
       loadRolesOnce: () => dispatch(fetchRolesIfNeeded())
     }
   }

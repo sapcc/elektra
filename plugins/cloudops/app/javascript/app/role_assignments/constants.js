@@ -5,7 +5,7 @@ export const REQUEST_PROJECTS_FAILURE      = 'cloudops/app/role_assignments/REQU
 export const REQUEST_PROJECT_ROLE_ASSIGNMENTS         = 'cloudops/app/role_assignments/REQUEST_PROJECT_ROLE_ASSIGNMENTS';
 export const RECEIVE_PROJECT_ROLE_ASSIGNMENTS         = 'cloudops/app/role_assignments/RECEIVE_PROJECT_ROLE_ASSIGNMENTS';
 export const REQUEST_PROJECT_ROLE_ASSIGNMENTS_FAILURE = 'cloudops/app/role_assignments/REQUEST_PROJECT_ROLE_ASSIGNMENTS_FAILURE';
-export const RECEIVE_PROJECT_OWNER_ROLE_ASSIGNMENTS   = 'cloudops/app/role_assignments/RECEIVE_PROJECT_OWNER_ROLE_ASSIGNMENTS';
+export const RECEIVE_PROJECT_MEMBER_ROLE_ASSIGNMENTS   = 'cloudops/app/role_assignments/RECEIVE_PROJECT_MEMBER_ROLE_ASSIGNMENTS';
 
 export const REQUEST_ROLES         = 'cloudops/app/role_assignments/REQUEST_ROLES';
 export const RECEIVE_ROLES         = 'cloudops/app/role_assignments/RECEIVE_ROLES';
