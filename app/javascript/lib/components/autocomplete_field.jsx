@@ -1,5 +1,7 @@
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead'
-import { ajaxHelper } from 'ajax_helper';
+import { pluginAjaxHelper } from 'ajax_helper';
+
+const ajaxHelper = pluginAjaxHelper('/')
 
 export class AutocompleteField extends React.Component {
   state = {

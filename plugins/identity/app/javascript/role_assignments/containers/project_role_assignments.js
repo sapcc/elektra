@@ -16,8 +16,8 @@ export default connect(
     let isFetching;
     let type = ownProps.type.toLowerCase()
 
-    if (ownProps.project) {
-      const projectRoleAssignments = state.role_assignments.project_role_assignments[ownProps.project.id]
+    if (ownProps.projectId) {
+      const projectRoleAssignments = state.role_assignments.project_role_assignments[ownProps.projectId]
       if (projectRoleAssignments && projectRoleAssignments.items) {
         isFetching = projectRoleAssignments.isFetching
         items = projectRoleAssignments.items.filter(i => i.hasOwnProperty(type) )

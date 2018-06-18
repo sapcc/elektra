@@ -17,7 +17,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
     newMemberRoleIDs: [], //stores the edited version of member roles
     availableRoles: [],
     saving: false,
-    error: null
+    errors: null
   }
 
   componentDidMount() {
@@ -90,7 +90,9 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       )
     })
 
-    return <div className='role-assignments'><ul role="menu">{lis}</ul></div>
+    return <div className='role-assignments'>
+      <ul role="menu" className='role-assignments'>{lis}</ul>
+    </div>
   }
 
   // This method updates the state of newUserRoles
@@ -133,7 +135,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
         .catch(reason => {
           if (!reason.isCanceled) { // promise is not canceled
             // handle errors
-            this.setState({saving: false, errors: reason.errors})
+            this.setState({saving: false, errors: reason})
           }
       })
   }

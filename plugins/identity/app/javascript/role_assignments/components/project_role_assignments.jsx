@@ -22,7 +22,7 @@ export default class ProjectRoleAssignments extends React.Component {
   }
 
   componentDidMount() {
-    this.props.loadProjectRoleAssignments(this.props.project.id)
+    this.props.loadProjectRoleAssignments(this.props.projectId)
   }
 
   filterRoleAssignments = () => {
@@ -63,9 +63,10 @@ export default class ProjectRoleAssignments extends React.Component {
     if(!this.props.items || this.props.items.length==0) {
       return false
     }
+
     const item = this.props.items.find((i) => {
       let member = i[this.props.type]
-      member && member.id == this.state.newMember.id
+      return (member && (member.id == this.state.newMember.id || member.name == this.state.newMember.name))
     })
     return item ? true : false
   }
@@ -108,7 +109,7 @@ export default class ProjectRoleAssignments extends React.Component {
                 </span>
                 <AutocompleteField
                   type={`${this.props.type}s`}
-                  domainId={this.props.project.domain_id}
+                  domainId={this.props.projectDomainId}
                   onSelected={this.handleNewMember}
                   onInputChange={this.handleNewMember}/>
                 <span className="input-group-btn">
@@ -173,7 +174,7 @@ export default class ProjectRoleAssignments extends React.Component {
                   <td colSpan={2}>
                     {this.state.newMember &&
                       <ProjectRoleAssignmentForm
-                        projectId={this.props.project.id}
+                        projectId={this.props.projectId}
                         memberId={this.state.newMember.id}
                         memberType={this.props.type}
                         memberRoles={[]}
@@ -188,7 +189,7 @@ export default class ProjectRoleAssignments extends React.Component {
                   <ProjectRoleAssignment
                     item={item}
                     key={index}
-                    projectId={this.props.project.id}
+                    projectId={this.props.projectId}
                     memberType={this.props.type}
                     searchTerm={this.state.filterString} />
                 )

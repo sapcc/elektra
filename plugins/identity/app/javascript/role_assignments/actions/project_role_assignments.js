@@ -1,8 +1,10 @@
 import * as constants from '../constants';
-import { ajaxHelper } from 'ajax_helper';
+import { pluginAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice as showNotice, addError as showError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+
+const ajaxHelper = pluginAjaxHelper('identity')
 
 //################### OBJECTS #########################
 const requestProjectRoleAssignments= (projectId) => (
@@ -45,7 +47,7 @@ const fetchProjectRoleAssignments = (projectId) =>
     if (projectRoleAssignments && projectRoleAssignments[projectId] &&
         projectRoleAssignments[projectId].isFetching) return
     dispatch(requestProjectRoleAssignments(projectId));
-    ajaxHelper.get(`/role_assignments?scope_project_id=${projectId}`).then( (response) => {
+    ajaxHelper.get(`/projects/${projectId}/role_assignments`).then( (response) => {
       dispatch(receiveProjectRoleAssignments(projectId, response.data.roles));
     })
     .catch( (error) => {
@@ -57,14 +59,21 @@ const fetchProjectRoleAssignments = (projectId) =>
 
 const updateProjectMemberRoleAssignments = (projectId, memberType, memberId, roles) =>
   (dispatch) => {
-    const data = {scope_project_id: projectId, roles}
+    const data = {roles}
     data[`${memberType}_id`] = memberId
 
-    return ajaxHelper.put(
-      '/role_assignments', data
-    ).then((response) => dispatch(receiveProjectMemberRoleAssignments(
-      projectId, memberType, memberId, response.data.roles)
-    ))
+    return new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/projects/${projectId}/role_assignments`, data
+      ).then((response) => {
+        if(response.data.errors) handleErrors(response.data.errors)
+        else {
+          dispatch(receiveProjectMemberRoleAssignments(
+            projectId, memberType, memberId, response.data.roles)
+          )
+          handleSuccess()
+        }
+      }).catch( error => handleErrors(error.message))
+    )
   }
 
 export {

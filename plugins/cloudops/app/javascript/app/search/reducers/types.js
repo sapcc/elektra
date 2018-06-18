@@ -21,7 +21,7 @@ const receiveTypes=(state,{types,receivedAt})=> (
 );
 
 // entries reducer
-export const types = function(state, action) {
+export default (state, action) => {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.RECEIVE_TYPES: return receiveTypes(state,action);

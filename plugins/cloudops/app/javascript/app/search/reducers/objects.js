@@ -51,7 +51,7 @@ const receiveObject=(state,{json})=> {
 }
 
 // entries reducer
-export const objects = function(state, action) {
+export default (state, action) => {
   if (state == null) { state = initialState; }
   switch (action.type) {
     case constants.RECEIVE_OBJECTS: return receiveObjects(state,action);

@@ -52,8 +52,6 @@ const receiveProjectMemberRoleAssignments=(state,{projectId,memberType,memberId,
     if(index>=0) delete(items[index])
   }
 
-  console.log(items)
-
   newState[projectId] = Object.assign({},initialState,newState[projectId],{
     items
   });

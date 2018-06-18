@@ -7,7 +7,6 @@ import { FlashMessages } from 'lib/flashes';
 import Menu from '../containers/menu';
 import CloudopsHome from './home'
 import SearchRoutes from '../search/components/routes'
-import RoleAssignmentRoutes from '../role_assignments/components/routes'
 
 let Breadcrumb = (props) => {
   let label = ''
@@ -47,8 +46,6 @@ export default (props) =>
       <div className="container">
         <FlashMessages/>
         <Route exact path="/" render={ () => <Redirect to="/universal-search"/>}/>
-        {/*<Route exact path="/" component={CloudopsHome}/> */}
-        <RoleAssignmentRoutes/>
         <SearchRoutes/>
       </div>
     </React.Fragment>
