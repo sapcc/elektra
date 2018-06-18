@@ -160,10 +160,10 @@ class CacheController < ::ScopeController
   def where_current_token_scope(scope)
     return scope if current_user.is_allowed?('cloud_admin')
 
-    project_id = @current_user.project_id
-    domain_id = @current_user.project_domain_id ||
-                      @current_user.domain_id ||
-                      @current_user.user_domain_id
+    project_id = current_user.project_id
+    domain_id = current_user.project_domain_id ||
+                      current_user.domain_id ||
+                      current_user.user_domain_id
 
     sql = []
     sql << 'project_id = :project_id' if project_id

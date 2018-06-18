@@ -1,8 +1,10 @@
 import * as constants from '../constants';
-import { ajaxHelper } from 'ajax_helper';
+import { pluginAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice as showNotice, addError as showError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+
+const ajaxHelper = pluginAjaxHelper('identity')
 
 //################### OBJECTS #########################
 const requestRoles= () => (
@@ -29,7 +31,7 @@ const receiveRoles= (roles) => (
 const fetchRoles = () =>
   (dispatch) => {
     dispatch(requestRoles());
-    ajaxHelper.get('/role_assignments/available_roles').then( (response) => {
+    ajaxHelper.get('/roles').then( (response) => {
       dispatch(receiveRoles(response.data.roles));
     })
     .catch( (error) => {

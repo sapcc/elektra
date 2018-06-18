@@ -1,4 +1,5 @@
-import { objects } from './objects';
-import { types } from './types';
+import objects from './objects';
+import types from './types';
+import projects from './projects';
 
-export { objects, types }
+export { objects, types, projects }

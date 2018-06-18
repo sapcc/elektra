@@ -1,6 +1,0 @@
-%tr.table{class: "#{'danger' if local_assigns.has_key?(:new_group)}"}
-  %td.snug
-    = link_to group_name, projects_group_members_path(group_id: group_id), data: {modal: true}
-  %td{data: {roles_display: true, roles_current: group_roles.collect{|r| role_label_long(r[:name])} }}
-  %td.snug
-    = select_tag("role_assignments[#{group_id}]",options_for_select(roles.collect{|r| [role_label_long(r.name), r.id] }, group_roles.collect{|r| r[:id]}), {multiple: true, data: {roles_select: true}, disabled: !can_update})

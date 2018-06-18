@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Highlighter } from 'react-bootstrap-typeahead'
-import { projectUrl } from '../../shared/object_link_helper'
+import { projectUrl } from '../../../shared/object_link_helper'
 
 const ObjectLink = ({id, name, term}) =>
   <React.Fragment>

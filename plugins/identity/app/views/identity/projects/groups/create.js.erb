@@ -1,4 +1,0 @@
-// close modal window
-Dashboard.hideModal();
-// reload remote inquries
-$("table#project_groups tbody").append("<%= escape_javascript(render(partial: 'group', locals: {group_id: @group.id, group_name: @group.name, roles: @roles, group_roles: [], can_update: true,new_group: true})) %>");

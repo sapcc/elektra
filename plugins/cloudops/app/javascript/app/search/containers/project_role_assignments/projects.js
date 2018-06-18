@@ -1,14 +1,14 @@
 import { connect } from  'react-redux';
-import Home from '../components/home';
+import Projects from '../../components/project_role_assignments/projects';
 
-import { searchProjects, loadNextProjects } from '../actions/projects'
+import { searchProjects, loadNextProjects } from '../../actions/projects'
 
 export default connect(
   (state) => ({
-    projects: state.role_assignments.projects
+    projects: state.search.projects
   }),
   dispatch => ({
     search: (searchOptions) => dispatch(searchProjects(searchOptions)),
     loadNext:(searchOptions) => dispatch(loadNextProjects(searchOptions))
   })
-)(Home);
+)(Projects);

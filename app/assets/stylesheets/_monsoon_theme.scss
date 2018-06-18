@@ -81,6 +81,16 @@ span.highlight {
   }
 }
 
+.role-assignments{
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    label {
+      font-weight: normal;
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Collapsible
 // ---------------------------------------------------------------------------

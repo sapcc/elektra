@@ -4,20 +4,5 @@
 - else
   = content_for :main_toolbar do
     Authorizations
-  = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }
 
-= simple_form_for :role_assignments, url: plugin('identity').projects_groups_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
-  %div{class: modal? ? 'modal-body' : ''}
-    - if current_user.is_allowed?('identity:project_group_create',{})
-      .toolbar
-        .main-buttons
-          = link_to 'Assign new Group', plugin('identity').new_projects_group_path, data: {modal: true}, class: 'btn btn-primary btn-sm'
-
-    = render partial: 'identity/projects/groups/group_list'
-
-  %div{class: modal? ? 'modal-footer' : ''}
-    - if modal?
-      %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
-    - else
-      = link_to 'Cancel', plugin('identity').projects_groups_path, class: 'btn btn-default cancel stash hidden'
-    = f.submit 'Save', class: 'btn btn-primary hidden', data: { disable_with: "Please wait..." }
+= javascript_pack_tag("identity_role_assignments", data: {flashescontainer: "custom", project_id: @scoped_project_id, domain_id: @scoped_domain_id, active_tab: 'groupRoles'})

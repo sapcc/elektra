@@ -2,7 +2,8 @@ import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
 import { projectUrl, objectUrl } from '../../shared/object_link_helper'
-import ProjectRoleAssignments from '../../role_assignments/containers/project_role_assignments'
+
+import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
 
 export default class ShowSearchObjectModal extends React.Component{
   state = {
@@ -76,23 +77,41 @@ export default class ShowSearchObjectModal extends React.Component{
             <React.Fragment><span className='spinner'/>Loading...</React.Fragment>}
           { this.state.error && <span>{this.state.error}</span>}
           { item &&
-            <React.Fragment>
-              <Tabs defaultActiveKey={activeTab || 'data'} id="item_payload">
-                <Tab eventKey='data' title="Data">
-                  <ReactJson src={item.payload} collapsed={1}/>
+            <Tabs defaultActiveKey={activeTab || 'data'} id="item_payload">
+              <Tab eventKey='data' title="Data">
+                <ReactJson src={item.payload} collapsed={1}/>
+              </Tab>
+              { isProject &&
+                <Tab eventKey='userRoles' title="User Role Assignments">
+                  <ProjectRoleAssignments
+                    projectId={item.id}
+                    projectDomainId={item.domain_id}
+                    type='user'
+                  />
                 </Tab>
-                { isProject &&
-                  <Tab eventKey='userRoles' title="User Role Assignments">
-                    <ProjectRoleAssignments project={item} type='user'/>
-                  </Tab>
-                }
-                { isProject &&
-                  <Tab eventKey='groupRoles' title="Group Role Assignments">
-                    <ProjectRoleAssignments project={item} type='group'/>
-                  </Tab>
-                }
-              </Tabs>
-            </React.Fragment>
+              }
+              { isProject &&
+                <Tab eventKey='groupRoles' title="Group Role Assignments">
+                  <ProjectRoleAssignments
+                    projectId={item.id}
+                    projectDomainId={item.domain_id}
+                    type='group'
+                  />
+                </Tab>
+              }
+              {/*
+              { isProject &&
+                <Tab eventKey='userRoles' title="User Role Assignments">
+                  <ProjectRoleAssignments project={item} type='user'/>
+                </Tab>
+              }
+              { isProject &&
+                <Tab eventKey='groupRoles' title="Group Role Assignments">
+                  <ProjectRoleAssignments project={item} type='group'/>
+                </Tab>
+              }
+              */}
+            </Tabs>
           }
         </Modal.Body>
         <Modal.Footer>

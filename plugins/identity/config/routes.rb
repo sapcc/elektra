@@ -1,4 +1,5 @@
 Identity::Engine.routes.draw do
+  root to: 'application#index'
 
   resources :domains, only: [:index]
   resources :groups do
@@ -23,9 +24,19 @@ Identity::Engine.routes.draw do
     delete '/' => 'projects#destroy', on: :member, as: :delete
   end
 
+  resources :roles, only: [:index]
+
   get 'user-projects' => 'projects#user_projects'
 
   namespace :projects do
+
+    #### PROJECT ROLE ASSIGNMENTS ####
+    # do not use project_id! This would overwrite global project_id parameter
+    scope '/:scope_project_id' do
+      resources :role_assignments, only: %i[index]
+      resource :role_assignments, only: %i[update]
+    end
+    ##### END #####
 
     get 'web-console'
     get 'api-endpoints'

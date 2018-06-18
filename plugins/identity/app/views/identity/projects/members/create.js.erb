@@ -1,4 +1,0 @@
-// close modal window
-Dashboard.hideModal();
-// reload remote inquries
-$("table#project_members tbody").append("<%= escape_javascript(render(partial: 'member', locals: {user_id: @user.id, user_name: @user.name, user_description: @user.description, roles: @roles, user_roles: [], can_update: true,new_member: true})) %>");
