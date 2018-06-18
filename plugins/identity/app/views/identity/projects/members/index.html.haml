@@ -4,29 +4,5 @@
 - else
   = content_for :main_toolbar do
     Authorizations
--#   = render partial: 'identity/projects/shared/tabs', locals: { tab: nil }
--#
--# = simple_form_for :role_assignments, url: plugin('identity').projects_members_path, method: :put, remote: request.xhr?, html: {data: {modal: modal?} } do |f|
--#   %div{class: modal? ? 'modal-body' : ''}
--#     .toolbar
--#       .has-feedback.has-feedback-searchable
--#         = text_field_tag 'search_users_input', '', class: "form-control", placeholder: 'Name, C/D/I-number, or ID'
--#
--#       .has-feedback-help
--#         %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by user name, C/D/I-number, or ID in visible users list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
--#           %i.fa.fa-question-circle
--#
--#       - if current_user.is_allowed?('identity:project_member_create',{})
--#         .main-buttons
--#           = link_to 'New Project Member', plugin('identity').new_projects_member_path, data: {modal: true}, class: 'btn btn-primary'
--#
--#     = render partial: 'identity/projects/members/member_list', locals: {user_roles: @user_roles, roles: @roles}
--#
--#   %div{class: modal? ? 'modal-footer' : ''}
--#     - if modal?
--#       %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
--#     - else
--#       = link_to 'Cancel', plugin('identity').projects_members_path, class: 'btn btn-default cancel stash hidden'
--#     = f.submit 'Save', class: 'btn btn-primary hidden', data: { disable_with: "Please wait..." }
 
 = javascript_pack_tag("identity_role_assignments", data: {flashescontainer: "custom", project_id: @scoped_project_id, domain_id: @scoped_domain_id})

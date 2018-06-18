@@ -90,9 +90,7 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
       )
     })
 
-    return <div className='role-assignments'>
-      <ul role="menu" className='role-assignments'>{lis}</ul>
-    </div>
+    return <div className='role-assignments'><ul role="menu">{lis}</ul></div>
   }
 
   // This method updates the state of newUserRoles

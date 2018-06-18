@@ -2,7 +2,6 @@ import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
 import { projectUrl, objectUrl } from '../../shared/object_link_helper'
-// import ProjectRoleAssignments from '../../role_assignments/containers/project_role_assignments'
 
 import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
 

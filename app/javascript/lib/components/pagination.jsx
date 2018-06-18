@@ -34,7 +34,7 @@ export const Pagination = (props) => {
   // console.log('total', props.total, 'pageCount', pageCount,'startPage',startPage,'endPage',endPage)
 
   return(
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" className={props.className || ""}>
       <ul className="pagination">
         <li className={showPrev ? '' : 'disabled'}>
           <a

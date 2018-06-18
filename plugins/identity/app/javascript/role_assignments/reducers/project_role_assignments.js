@@ -49,7 +49,7 @@ const receiveProjectMemberRoleAssignments=(state,{projectId,memberType,memberId,
     if(index<0) items.push(roles)
     else items[index] = roles
   } else {
-    if(index>=0) delete(items[index])
+    if(index>=0) items.splice(index, 1)
   }
 
   newState[projectId] = Object.assign({},initialState,newState[projectId],{

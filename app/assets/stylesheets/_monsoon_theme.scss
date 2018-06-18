@@ -81,11 +81,13 @@ span.highlight {
   }
 }
 
-ul.role-assignments {
-  list-style-type: none;
-  padding-left: 0;
-  label {
-    font-weight: normal;
+.role-assignments{
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    label {
+      font-weight: normal;
+    }
   }
 }
 
@@ -433,6 +435,11 @@ section {
 
 .u-text-monospace {
   font-family: monospace;
+}
+
+.u-flex-container {
+  display: flex;
+  align-items: center;
 }
 
 .u-flex-pos-right {
