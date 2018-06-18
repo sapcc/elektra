@@ -6,7 +6,9 @@ module Identity
       include Identity::RestrictedRoles
 
       def index
-        role_assignments = services.identity.role_assignments(
+        # use cloud admin! This is needed for users who has only the member role
+        # and so can't request role assignments
+        role_assignments = cloud_admin.identity.role_assignments(
           'scope.project.id' => params[:scope_project_id], include_names: true
         )
 
@@ -26,8 +28,9 @@ module Identity
         if user_id.present? # user role assignments
           # try to load user.
           # render an error if user could not be found
-          user = services.identity.find_user(user_id) ||
-                 services.identity.users(name: user_id).first
+          # Cloud admin is important for the user lookup! 
+          user = cloud_admin.identity.find_user(user_id) ||
+                 cloud_admin.identity.users(name: user_id).first
           unless user
             render json: { errors: "Could not find user with id #{user_id}"}
             return
@@ -40,8 +43,8 @@ module Identity
         elsif group_id.present? # group role assignments
           # try to load group.
           # render an error if group could not be found
-          group = services.identity.find_group(group_id) ||
-                  services.identity.groups(name: group_id).first
+          group = cloud_admin.identity.find_group(group_id) ||
+                  cloud_admin.identity.groups(name: group_id).first
           unless group
             render json: { errors: "Could not find group with id #{group_id}"}
             return
@@ -68,7 +71,9 @@ module Identity
         }
 
         # get current project member role assignments from API
-        current_role_assignments = services.identity.role_assignments(
+        # Cloud admin is important! If user removes himself from the
+        # project role assignments, so he cant request role assignments.
+        current_role_assignments = cloud_admin.identity.role_assignments(
           filter_options
         )
 
@@ -102,7 +107,7 @@ module Identity
         end
 
         # reload uproject member role assignments
-        new_role_assignments = services.identity.role_assignments(
+        new_role_assignments = cloud_admin.identity.role_assignments(
           filter_options.merge(include_names: true)
         )
 

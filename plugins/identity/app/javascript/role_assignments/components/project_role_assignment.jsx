@@ -1,6 +1,7 @@
 import { SearchField } from 'lib/components/search_field';
 import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Highlighter } from 'react-bootstrap-typeahead';
+import { policy } from 'policy';
 import ProjectRoleAssignmentsInlineEdit from '../containers/project_role_assignments_form';
 
 // This class renders project user role assignments
@@ -23,6 +24,10 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
     const memberRoles = this.sortRoles(this.props.item.roles)
     const count = memberRoles.length
     const member = item[this.props.memberType]
+
+    const canEdit = this.props.memberType == 'user' ?
+      policy.isAllowed('identity:project_member_update') :
+      policy.isAllowed('identity:project_group_update')
 
     return(
       <tr>
@@ -65,11 +70,13 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
               }
             </td>
             <td>
-              <button
-                onClick={() => this.setState({editMode: true})}
-                className='btn btn-default'>
-                Edit
-              </button>
+              { canEdit &&
+                <button
+                  onClick={() => this.setState({editMode: true})}
+                  className='btn btn-default'>
+                  Edit
+                </button>
+              }
             </td>
           </React.Fragment>
         }

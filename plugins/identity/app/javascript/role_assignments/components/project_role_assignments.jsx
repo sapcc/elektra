@@ -5,6 +5,7 @@ import { regexString } from 'lib/tools/regex_string';
 import { AutocompleteField } from 'lib/components/autocomplete_field';
 import ProjectRoleAssignmentForm from '../containers/project_role_assignments_form';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { policy } from 'policy';
 
 const isMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">
@@ -72,10 +73,23 @@ export default class ProjectRoleAssignments extends React.Component {
   }
 
   render() {
+    const canList = this.props.type == 'user' ?
+                    policy.isAllowed("identity:project_member_list") :
+                    policy.isAllowed("identity:project_group_list")
+
+    if(!canList) {
+      return (
+        <div className='alert'>You are not allowed to see role assignments</div>
+      )
+    }
+
     const items = this.filterRoleAssignments()
     const isMember = this.state.newMember && this.alreadyMember()
     const memberLabel = this.props.type.charAt(0).toUpperCase() + this.props.type.slice(1);
     const hasItems = this.props.items && this.props.items.length>0
+    const canCreate = this.props.type == 'user' ?
+                      policy.isAllowed("identity:project_member_create") :
+                      policy.isAllowed("identity:project_group_create")
 
     return (
       <React.Fragment>
@@ -97,44 +111,46 @@ export default class ProjectRoleAssignments extends React.Component {
             <div className="toolbar-container"><span className='spinner'></span>Loading ...</div>
           }
 
-          <div className='main-buttons'>
-            {this.state.showNewMemberInput ?
-              <div className="input-group input-group-left-button">
-                <span className="input-group-btn">
-                  <button
-                    className='btn btn-default'
-                    onClick={() => this.setState({showNewMemberInput: false})}>
-                    x
-                  </button>
-                </span>
-                <AutocompleteField
-                  type={`${this.props.type}s`}
-                  domainId={this.props.projectDomainId}
-                  onSelected={this.handleNewMember}
-                  onInputChange={this.handleNewMember}/>
-                <span className="input-group-btn">
-                  <button
-                    className='btn btn-primary'
-                    disabled={isMember || !this.state.newMember}
-                    onClick={() => this.setState({showNewMemberForm: true})}>
-                      {isMember ?
-                        <OverlayTrigger placement="top" overlay={isMemberTooltip(this.props.type)}>
+          { canCreate &&
+            <div className='main-buttons'>
+              {this.state.showNewMemberInput ?
+                <div className="input-group input-group-left-button">
+                  <span className="input-group-btn">
+                    <button
+                      className='btn btn-default'
+                      onClick={() => this.setState({showNewMemberInput: false})}>
+                      x
+                    </button>
+                  </span>
+                  <AutocompleteField
+                    type={`${this.props.type}s`}
+                    domainId={this.props.projectDomainId}
+                    onSelected={this.handleNewMember}
+                    onInputChange={this.handleNewMember}/>
+                  <span className="input-group-btn">
+                    <button
+                      className='btn btn-primary'
+                      disabled={isMember || !this.state.newMember}
+                      onClick={() => this.setState({showNewMemberForm: true})}>
+                        {isMember ?
+                          <OverlayTrigger placement="top" overlay={isMemberTooltip(this.props.type)}>
+                            <span>Add</span>
+                          </OverlayTrigger>
+                          :
                           <span>Add</span>
-                        </OverlayTrigger>
-                        :
-                        <span>Add</span>
-                      }
-                  </button>
-                </span>
-              </div>
-              :
-              <button
-                className='btn btn-primary'
-                onClick={() => this.setState({showNewMemberInput: true})}>
-                Add New Member
-              </button>
-            }
-          </div>
+                        }
+                    </button>
+                  </span>
+                </div>
+                :
+                <button
+                  className='btn btn-primary'
+                  onClick={() => this.setState({showNewMemberInput: true})}>
+                  Add New Member
+                </button>
+              }
+            </div>
+          }
         </div>
 
         {!hasItems && !this.props.isFetching &&
