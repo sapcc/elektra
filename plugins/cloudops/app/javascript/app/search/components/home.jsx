@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { SearchField } from 'lib/components/search_field';
 import SearchItem from './search_item'
-import { AjaxPaginate } from 'lib/components/ajax_paginate';
+// import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from 'lib/components/pagination';
 
 export default class Search extends React.Component {
@@ -93,12 +93,22 @@ export default class Search extends React.Component {
         }
 
 
-        <Pagination
-          currentPage={this.props.objects.currentPage}
-          total={this.props.objects.total}
-          perPage={30}
-          onChange={this.props.loadPage}
-        />
+
+        <div className="u-flex-container pagination-container">
+          { this.props.objects.receivedAt &&
+            // show this only after we have searched at least once (don't want this to be visible on initial load)
+            <Link to='/universal-search/live'>
+              Couldn't find what you were looking for?
+            </Link>
+          }
+          <Pagination
+            currentPage={this.props.objects.currentPage}
+            total={this.props.objects.total}
+            perPage={30}
+            onChange={this.props.loadPage}
+            className="pagination-container u-flex-pos-right"
+          />
+        </div>
 
       {/*
         <AjaxPaginate

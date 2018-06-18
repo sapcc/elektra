@@ -1,4 +1,4 @@
-module LiveSearch
+module ApiLookup
   # include Services
 
   SERVICE_METHOD_MAP = {
@@ -39,41 +39,41 @@ module LiveSearch
     'lb_healthmonitor' => %w[loadbalancing find_healthmonitor],
     'storage_container' => %w[object_storage container_metadata],
     'share' => %w[shared_filesystem_storage find_share all_tenants],
-    'share_network' => %w[shared_filesystem_storage find_share_network all_tenants],
-    'share_snapshot' => %w[shared_filesystem_storage snapshots_detail all_tenants],
-    'share_security_service' => %w[shared_filesystem_storage find_security_service all_tenants]
+    'share_network' => %w[shared_filesystem_storage find_share_network
+                          all_tenants],
+    'share_snapshot' => %w[shared_filesystem_storage snapshots_detail
+                           all_tenants],
+    'share_security_service' => %w[shared_filesystem_storage
+                                   find_security_service all_tenants]
   }.freeze
 
-  def live_search(service_manager, term, options = {})
-    object_type = options[:object_type]
-
-    service_name, method_name, all_projects_param = service_and_method_name(
-      object_type
-    )
+  # This method tries to find an object by id or name via API
+  def api_search(service_manager, object_type, term)
+    service_name, method, all_projects_param = SERVICE_METHOD_MAP[object_type]
 
     raise StandardError, "#{object_type} is not supported." unless service_name
 
     # service = object_service(service_name)
-    service = service_manager.send(service_name) if service_manager.respond_to?(service_name)
+    if service_manager.respond_to?(service_name)
+      service = service_manager.send(service_name)
+    end
 
     raise StandardError, "Service #{service_name} not found." unless service
 
-    object = service.send(method_name, term)
-    render json: [object] && return if object
+    object = service.send(method, term)
+    if object
+      return {
+        items: [object],
+        service_call: "#{service_name}->#{method}(\"#{term}\")"
+      }
+    end
 
     filter = { name: term }
     filter[all_projects_param] = true if all_projects_param
-    service.send(object_type.pluralize, filter)
-  end
 
-  protected
-
-  # def object_service(name)
-  #   return nil unless cloud_admin.respond_to?(name)
-  #   cloud_admin.send(name)
-  # end
-
-  def service_and_method_name(object_type)
-    SERVICE_METHOD_MAP[object_type]
+    {
+      items: service.send(object_type.pluralize, filter),
+      service_call: "#{service_name}->#{object_type.pluralize}(#{filter})"
+    }
   end
 end

@@ -10,15 +10,18 @@ class ObjectCache < ApplicationRecord
   @cache_objects_mutex = Mutex.new
   @cache_object_mutex = Mutex.new
 
-  SEARCH_LABEL_KEYS = {
+  TYPE_SEARCH_LABEL_KEYS = {
     'access' => %w[share_id access_to],
+    'access_list' => %w[],
     'agent' => %w[description topic host agent_type],
+    'availability_zone' => %w[],
     'export_location' => %w[path],
     'floatingip' => %w[description floating_ip_address floating_network_id
                        router_id fixed_ip_address dns_name port_id],
     'hypervisor' => %w[hypervisor_type hypervisor_hostname host_ip],
     'image' => %w[owner user_id image_type instance_uuid],
     'keypair' => %w[user_id],
+    'error' => %w[body],
     'listener' => %w[default_pool_id description],
     'member' => %w[protocol_port subnet_id address],
     'message' => %w[resource_id message_level request_id resource_type],
@@ -39,7 +42,19 @@ class ObjectCache < ApplicationRecord
     'transfer_request' => %w[zone_id zone_name description],
     'user' => %w[description],
     'volume' => %w[displayDescription availabilityZone displayName volumeType links os-vol-tenant-attr:tenant_id],
-    'zone' => %w[email description pool_id]
+    'zone' => %w[email description pool_id],
+
+    'catalog' => %w[],
+    'cluster' => %w[],
+    'domain' => %w[],
+    'flavor' => %w[],
+    'group' => %w[],
+    'healthmonitor' => %w[],
+    'l7policy' => %w[],
+    'loadbalancer' => %w[],
+    'project' => %w[],
+    'role' => %w[],
+    'share_type' => %w[]
   }
 
   def self.cache_objects(objects)
@@ -193,7 +208,7 @@ class ObjectCache < ApplicationRecord
   # generate a search label for object
   def self.search_label(data)
     object_type = data['cached_object_type'].try(:downcase)
-    keys = SEARCH_LABEL_KEYS[object_type] if object_type
+    keys = TYPE_SEARCH_LABEL_KEYS[object_type] if object_type
 
     return '' if keys.nil? || keys.empty?
 

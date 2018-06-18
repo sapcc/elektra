@@ -21,9 +21,10 @@ Rails.application.routes.draw do
       collection do
         get 'types'
         get 'users'
+        get 'groups'
         get 'domain_projects'
         get 'projects'
-        get 'start_live_search'
+        get 'live_search'
       end
     end
   end

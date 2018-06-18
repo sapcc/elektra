@@ -427,6 +427,11 @@ section {
   font-family: monospace;
 }
 
+.u-flex-container {
+  display: flex;
+  align-items: center;
+}
+
 .u-flex-pos-right {
   margin-left: auto;
 }

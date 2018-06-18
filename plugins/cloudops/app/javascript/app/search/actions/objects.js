@@ -97,7 +97,7 @@ const searchObjects = ({term,objectType}) =>
   (dispatch,getState) => {
     if(searchTimer) clearTimeout(searchTimer)
     dispatch(updateSearchParams({term,objectType}))
-    
+
     const timeout = objectType==null ? 500 : 0
     searchTimer = setTimeout(() => {
       const lastTimer = searchTimer
@@ -128,9 +128,19 @@ const fetchObject = (id) =>
     )
 ;
 
+const liveSearch = (type, term) =>
+  (dispatch) =>
+    new Promise((handleSuccess, handleErrors) =>
+      ajaxHelper.get('/cache/live_search', { params: {type, term}}).then( response => {
+        handleSuccess(response.data)
+      }).catch( error => handleSuccess(error.message))
+    )
+
+
 export {
   searchObjects,
   loadNextObjects,
   loadObjectsPage,
-  fetchObject
+  fetchObject,
+  liveSearch
 }

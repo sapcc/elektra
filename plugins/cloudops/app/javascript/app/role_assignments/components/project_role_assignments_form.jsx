@@ -4,34 +4,34 @@ import { Highlighter } from 'react-bootstrap-typeahead';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import makeCancelable from 'lib/tools/cancelable_promise';
 
-const removeMemberTooltip = (
+const removeMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">
-    This will remove user from project role assignments.
+    {`This will remove ${type} from project role assignments.`}
   </Tooltip>
 );
 
-// This class renders edit form for project user role assignments
-export default class ProjectUserRolesInlineEdit extends React.Component {
+// This class renders edit form for project role assignments
+export default class ProjectRoleAssignmentsInlineForm extends React.Component {
   state = {
-    currentUserRoleIDs: [], //stores current user roles
-    newUserRoleIDs: [], //stores the edited version of user roles
+    currentMemberRoleIDs: [], //stores current member roles
+    newMemberRoleIDs: [], //stores the edited version of member roles
     availableRoles: [],
     saving: false,
     error: null
   }
 
   componentDidMount() {
-    const currentUserRoleIDs = this.props.userRoles.map((r) => r.id)
+    const currentMemberRoleIDs = this.props.memberRoles.map((r) => r.id)
 
     const newState = {
-      currentUserRoleIDs,
-      newUserRoleIDs: currentUserRoleIDs,
+      currentMemberRoleIDs,
+      newMemberRoleIDs: currentMemberRoleIDs,
     }
 
     if(this.props.availableRoles) {
       newState['availableRoles'] = this.sortRoles(this.props.availableRoles.items)
     }
-    // save current user roles in the state, change edit mode and trigger
+    // save current member roles in the state, change edit mode and trigger
     // the loadRoles method to get all available roles
     this.setState(newState, this.props.loadRolesOnce)
   }
@@ -55,13 +55,13 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
       return 0
     })
 
-  // This method renders the edit view for project user role assignments
+  // This method renders the edit view for project member role assignments
   renderEditView = () => {
     // create list items
     const lis = this.state.availableRoles.map((role,index) => {
-      const checked = this.state.newUserRoleIDs.indexOf(role.id)>=0
-      const isNew = (checked && this.state.currentUserRoleIDs.indexOf(role.id)<0)
-      const removed = (!checked && this.state.currentUserRoleIDs.indexOf(role.id)>=0)
+      const checked = this.state.newMemberRoleIDs.indexOf(role.id)>=0
+      const isNew = (checked && this.state.currentMemberRoleIDs.indexOf(role.id)<0)
+      const removed = (!checked && this.state.currentMemberRoleIDs.indexOf(role.id)>=0)
       const roleDescription = role.description ? '('+role.description.replace(/(.+)\s+\(.+\)/,"$1")+')' : ''
       let labelClassName = ''
       if (isNew) {
@@ -78,7 +78,7 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
               type="checkbox"
               checked={checked}
               value={role.id}
-              onChange={(e) => this.updateUserRole(e.target.value, e.target.checked)}/>
+              onChange={(e) => this.updateMemberRole(e.target.value, e.target.checked)}/>
             &nbsp;
             <span key={index}>
               <React.Fragment>
@@ -94,21 +94,21 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
   }
 
   // This method updates the state of newUserRoles
-  updateUserRole = (roleId, checked) => {
-    const index = this.state.newUserRoleIDs.indexOf(roleId)
+  updateMemberRole = (roleId, checked) => {
+    const index = this.state.newMemberRoleIDs.indexOf(roleId)
 
     if( (index>=0 && checked) || (index<0 && !checked)) return;
 
-    let newUserRoleIDs = this.state.newUserRoleIDs.slice()
-    if(index>=0 && !checked) newUserRoleIDs.splice(index,1)
-    if(index<0 && checked) newUserRoleIDs.push(roleId)
+    let newMemberRoleIDs = this.state.newMemberRoleIDs.slice()
+    if(index>=0 && !checked) newMemberRoleIDs.splice(index,1)
+    if(index<0 && checked) newMemberRoleIDs.push(roleId)
 
-    this.setState({newUserRoleIDs})
+    this.setState({newMemberRoleIDs})
   }
 
   hasChanged = () => {
-    const oldRoles = this.state.currentUserRoleIDs.sort().join('')
-    const newRoles = this.state.newUserRoleIDs.sort().join('')
+    const oldRoles = this.state.currentMemberRoleIDs.sort().join('')
+    const newRoles = this.state.newMemberRoleIDs.sort().join('')
 
     return oldRoles != newRoles
   }
@@ -118,10 +118,10 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
     this.setState({saving: true})
 
     this.submitPromise = makeCancelable(
-      this.props.updateProjectUserRoles(
+      this.props.updateProjectMemberRoleAssignments(
         this.props.projectId,
-        this.props.userId,
-        this.state.newUserRoleIDs
+        this.props.memberId,
+        this.state.newMemberRoleIDs
      )
     )
 
@@ -142,23 +142,23 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
   cancelEdit = () => this.props.onCancel()
 
   selectAdminRoles = () => {
-    const newUserRoleIDs = this.state.availableRoles.filter((r) =>
+    const newMemberRoleIDs = this.state.availableRoles.filter((r) =>
       r.name.indexOf('cloud')<0
     ).map((r) => r.id)
-    this.setState({newUserRoleIDs})
+    this.setState({newMemberRoleIDs})
   }
 
   selectAllRoles = () => {
-    this.setState({newUserRoleIDs: this.state.availableRoles.map((r) => r.id)})
+    this.setState({newMemberRoleIDs: this.state.availableRoles.map((r) => r.id)})
   }
 
   removeAllRoles = () => {
-    this.setState({newUserRoleIDs: []})
+    this.setState({newMemberRoleIDs: []})
   }
 
   render() {
     const hasChanged = this.hasChanged()
-    const isEmpty = this.state.newUserRoleIDs.length==0
+    const isEmpty = this.state.newMemberRoleIDs.length==0
     const isFetching = (!this.props.availableRoles || this.props.availableRoles.isFetching)
 
     return(
@@ -202,7 +202,7 @@ export default class ProjectUserRolesInlineEdit extends React.Component {
             </button>
             { !isFetching &&
               isEmpty ?
-              <OverlayTrigger placement="top" overlay={removeMemberTooltip}>
+              <OverlayTrigger placement="top" overlay={removeMemberTooltip(this.props.memberType)}>
                 <button
                   className='btn btn-danger btn-sm'
                   disabled={this.state.saving}

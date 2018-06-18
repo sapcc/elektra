@@ -66,7 +66,10 @@ module Core
 
       client.middlewares.add(ElektronMiddlewares::DebugLogger)
       client.middlewares.add(ElektronMiddlewares::UserLogger)
-      client.middlewares.add(ElektronMiddlewares::ObjectCache)
+      client.middlewares.add(
+        ElektronMiddlewares::ObjectCache,
+        before: Elektron::Middlewares::ResponseErrorHandler
+      )
       client
     end
 
@@ -82,7 +85,10 @@ module Core
         client = ::Elektron.client(auth_config, default_client_params)
         client.middlewares.add(ElektronMiddlewares::DebugLogger)
         client.middlewares.add(ElektronMiddlewares::ServiceUserLogger)
-        client.middlewares.add(ElektronMiddlewares::ObjectCache)
+        client.middlewares.add(
+          ElektronMiddlewares::ObjectCache,
+          before: Elektron::Middlewares::ResponseErrorHandler
+        )
         client
       rescue ::Elektron::Errors::ApiResponse => _e
         unless auth_config[:scope_domain_id]
@@ -113,7 +119,10 @@ module Core
       )
       client.middlewares.add(ElektronMiddlewares::DebugLogger)
       client.middlewares.add(ElektronMiddlewares::CloudAdminLogger)
-      client.middlewares.add(ElektronMiddlewares::ObjectCache)
+      client.middlewares.add(
+        ElektronMiddlewares::ObjectCache,
+        before: Elektron::Middlewares::ResponseErrorHandler
+      )
       client
     end
   end
