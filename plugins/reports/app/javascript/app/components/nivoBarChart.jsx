@@ -94,7 +94,12 @@ class NivoBarChart extends React.Component {
             <span className="spinner"/>
           </div>
         }
-        {data && services && serviceMap &&
+        {data && data.length == 0 &&
+          <div>
+            No data available for this project.
+          </div>
+        }
+        {data && data.length > 0 && services && serviceMap &&
           <div className="row">
             <div className="col-sm-10 col-xs-10">
               <div className="barChart">
@@ -104,7 +109,7 @@ class NivoBarChart extends React.Component {
                   margin={{
                     top: 30,
                     bottom: 30,
-                    left: 40
+                    left: 50
                   }}
                   axisLeft={{
                       "orient": "left",
@@ -113,7 +118,7 @@ class NivoBarChart extends React.Component {
                       "tickRotation": 0,
                       "legend": "EUR",
                       "legendPosition": "center",
-                      "legendOffset": -30
+                      "legendOffset": -40
                   }}
                   indexBy="date"
                   keys={services}
