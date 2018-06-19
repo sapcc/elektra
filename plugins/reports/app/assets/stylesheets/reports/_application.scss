@@ -30,10 +30,14 @@
   }
 }
 
+.barChartLegend {
+  position: relative;
+}
+
 .legend {
   rect {
     cursor: pointer;
-  }  
+  }
 }
 
 .legendCells {
@@ -63,5 +67,21 @@
     .datatable {
       margin-top: 20px;
     }
+  }
+}
+
+.customTooltip {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 11px;
+  font-weight: normal;
+  color: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 12px;
+  background: #333;
+  padding: 8px;
+  border-radius: 3px;
+  ul {
+    padding-left: 15px;
   }
 }

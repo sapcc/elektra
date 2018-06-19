@@ -2,6 +2,8 @@ import { scaleOrdinal } from 'd3-scale'
 import { legendColor } from 'd3-svg-legend'
 import { transition } from 'd3-transition'
 import { select } from 'd3-selection'
+import { decompose } from 'd3-decompose'
+import jsxToString from 'jsx-to-string'
 
 class Legend extends React.Component {
 
@@ -18,6 +20,7 @@ class Legend extends React.Component {
   }
 
   createLegend = () => {
+    const self = this
     const node = this.node
     const services = this.props.services
     const colorScale = scaleOrdinal()
@@ -39,9 +42,33 @@ class Legend extends React.Component {
       .select("g.legend")
       .attr("transform", "translate(3," + (this.props.height - (17 * services.length) - 27) + ")")
       .selectAll("rect")
-      .attr("id", function (d, i) {
-        return "id" + d.replace(/\s/g, '');
+        .attr("id", function (d, i) {
+          return "id" + d.replace(/\s/g, '')
+        })
+      .on("mouseover", (nodeName,index,nodeList) => {
+        if (nodeName !== "others") {
+          return
+        }
+
+        const currentNode = nodeList[index]
+        let legend = decompose(select("g.legend").attr("transform"), false).translate
+        let legendEntry = decompose(select(currentNode.parentNode).attr("transform"), false).translate
+        let top = parseInt(legend[1]) + parseInt(legendEntry[1])
+        let left = parseInt(legend[0]) + parseInt(legendEntry[0] + 20)
+
+        select(node.parentNode)
+            .append("div")
+            .attr("class", "customTooltip")
+            .style("top", top + "px")
+            .style("left", left + "px")
+            .style("position", "absolute")
+            .style("pointer-events", "none")
+            .html(jsxToString(this.tooltip()))
       })
+      .on("mouseout",function(){
+        select(node.parentNode)
+          .select(".customTooltip").remove()
+       })
       .on('click', (d, e) => {
         if (this.state.activeLink === d) {//active square selected; turn it OFF
           // unborder
@@ -80,16 +107,16 @@ class Legend extends React.Component {
           this.props.onClickLegend(d)
         }
       })
+  }
 
-    select(node)
-      .select("g.legend")
-
-
-    select(node)
-      .selectAll("g.legend")
-      .selectAll("text")
-        .style("text-anchor", "start")
-        .style("alignment-baseline", "middle")
+  tooltip = () => {
+    return (<ul>
+      {Object.keys(this.props.serviceMap).map( key => {
+          if(this.props.serviceMap[key] == "others"){
+            return <li key={key}>{key}</li>
+          }
+        })}
+      </ul>)
   }
 
   render() {
