@@ -6,29 +6,22 @@ Feature: Role Assignments
     And I log in as test_user
     Then I am redirected to domain path "home"
 
-  Scenario: The Project Members page is reachable
-    When I visit project path "identity/projects/members"
+  Scenario: The project user role assignments page is reachable
+    When I visit project path "identity/projects/role-assignments"
     Then the page status code is successful
     And I see "User"
 
-  Scenario: The Project Groups page is reachable
-    When I visit project path "identity/projects/groups"
+  Scenario: The project group role assignments page is reachable
+    When I visit project path "identity/projects/role-assignments?active_tab=groupRoles"
     Then the page status code is successful
     And I see "Group"
 
   @admin
-  Scenario: The Project Members page is reachable
-    When I visit project path "identity/projects/members"
-    Then I see "New Project Member" button
-    When I click on "New Project Member"
-    Then the page status code is successful
-    And  I see "User name or ID"
+  Scenario: Add new member to project user role assignments
+    When I visit project path "identity/projects/role-assignments"
+    Then I see "Add New Member" button
 
   @admin
-  Scenario: The Project Groups page is reachable
-    When I visit project path "identity/projects/groups"
-    Then I see "Assign new Group" button
-    When I click on "Assign new Group"
-    Then the page status code is successful
-    And  I see "Group name or ID"
-
+  Scenario: Add new member to project group role assignments
+    When I visit project path "identity/projects/role-assignments?active_tab=groupRoles"
+    Then I see "Add new Member" button
