@@ -9,14 +9,11 @@ class App extends React.Component {
     clickedBar: "none",
     filter: '',
     showDetails: false,
-    clickService: "all",
-    error: null
+    clickService: "all"
   };
 
   componentDidMount() {
-    this.props.fetchCostReport().catch(({errors}) => {
-      this.setState({error: errors})
-    })
+    this.props.fetchCostReport()
   }
 
   onHoverRect = (d) => {
@@ -46,6 +43,14 @@ class App extends React.Component {
             <li>Click on the legend to choose a service.</li>
           </ul>
         </div>
+
+        {this.props.cost.error &&
+          <React.Fragment>
+            <span className="text-danger">
+              {this.props.cost.error.error}
+            </span>
+          </React.Fragment>
+        }
 
         <NivoBarChart cost={this.props.cost} colors={colors} onClick={this.onClickBarChart} clickedBar={this.state.clickedBar} onClickLegend={this.onClickLegendRect} clickService={this.state.clickService}/>
 
