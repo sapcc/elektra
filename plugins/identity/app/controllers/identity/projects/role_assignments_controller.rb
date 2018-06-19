@@ -6,13 +6,17 @@ module Identity
       include Identity::RestrictedRoles
 
       def index
-        # use cloud admin! This is needed for users who has only the member role
-        # and so can't request role assignments
-        role_assignments = cloud_admin.identity.role_assignments(
-          'scope.project.id' => params[:scope_project_id], include_names: true
-        )
-
-        render json: { roles: group_and_extend_role_assignments(role_assignments) }
+        respond_to do |format|
+          format.html { }
+          format.json do
+            # use cloud admin! This is needed for users who has only the member role
+            # and so can't request role assignments
+            role_assignments = cloud_admin.identity.role_assignments(
+              'scope.project.id' => params[:scope_project_id], include_names: true
+            )
+            render json: { roles: group_and_extend_role_assignments(role_assignments) }
+          end
+        end
       end
 
       def update
@@ -28,7 +32,7 @@ module Identity
         if user_id.present? # user role assignments
           # try to load user.
           # render an error if user could not be found
-          # Cloud admin is important for the user lookup! 
+          # Cloud admin is important for the user lookup!
           user = cloud_admin.identity.find_user(user_id) ||
                  cloud_admin.identity.users(name: user_id).first
           unless user
@@ -45,6 +49,7 @@ module Identity
           # render an error if group could not be found
           group = cloud_admin.identity.find_group(group_id) ||
                   cloud_admin.identity.groups(name: group_id).first
+
           unless group
             render json: { errors: "Could not find group with id #{group_id}"}
             return
@@ -91,6 +96,7 @@ module Identity
         roles_to_be_added.each do |role_id|
           next unless available_role_ids.include?(role_id)
 
+          # important: use current user (services.) to grant new roles
           services.identity.send(
             "grant_project_#{member_type}_role",
             scope_project_id, member_id, role_id
@@ -100,6 +106,7 @@ module Identity
         # remove obsolete user roles from project
         roles_to_be_removed.each do |role_id|
           next unless available_role_ids.include?(role_id)
+          # important: use current user (services.) to revoke roles
           services.identity.send(
             "revoke_project_#{member_type}_role",
             scope_project_id, member_id, role_id
@@ -107,6 +114,7 @@ module Identity
         end
 
         # reload uproject member role assignments
+        # here we can use cloud admin again.
         new_role_assignments = cloud_admin.identity.role_assignments(
           filter_options.merge(include_names: true)
         )

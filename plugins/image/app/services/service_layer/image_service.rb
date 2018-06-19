@@ -7,7 +7,12 @@ module ServiceLayer
     include ImageServices::Member
 
     def available?(_action_name_sym = nil)
-      elektron.service?('image')
+      return false unless elektron.service?('image')
+
+      # check if endpoint is available. If not it throws an error
+      elektron_images.endpoint_url
+    rescue Elektron::Errors::ServiceEndpointUnavailable
+      false
     end
 
     def versions

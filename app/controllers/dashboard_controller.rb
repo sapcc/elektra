@@ -67,7 +67,8 @@ class DashboardController < ::ScopeController
   # end
 
   rescue_from 'Elektron::Errors::TokenExpired',
-              'MonsoonOpenstackAuth::Authentication::NotAuthorized' do
+              'MonsoonOpenstackAuth::Authentication::NotAuthorized',
+              'ActionController::InvalidAuthenticityToken' do
     redirect_to monsoon_openstack_auth.login_path(
       domain_fid: @scoped_domain_fid,
       domain_name: @scoped_domain_name, after_login: params[:after_login]
@@ -123,11 +124,12 @@ class DashboardController < ::ScopeController
     },
     { 'Core::Error::ProjectNotFound' => {
       title: 'Project Not Found', sentry: false, warning: true
-    } },
-    { 'ActionController::InvalidAuthenticityToken' => {
-      title: 'User session expired', sentry: false, warning: true,
-      description: 'The user session is expired, please reload the page!'
     } }
+    # ,
+    # { 'ActionController::InvalidAuthenticityToken' => {
+    #   title: 'User session expired', sentry: false, warning: true,
+    #   description: 'The user session is expired, please reload the page!'
+    # } }
   ]
 
   # this method checks if user has permissions for the new scope and if so

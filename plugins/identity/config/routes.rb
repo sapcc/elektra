@@ -29,10 +29,11 @@ Identity::Engine.routes.draw do
   get 'user-projects' => 'projects#user_projects'
 
   namespace :projects do
-
+    # start page which renders react components
+    get '/role-assignments' => 'role_assignments#index', constraints: { format: :html }
     #### PROJECT ROLE ASSIGNMENTS ####
     # do not use project_id! This would overwrite global project_id parameter
-    scope '/:scope_project_id' do
+    scope '/:scope_project_id', constraints: { format: :json } do
       resources :role_assignments, only: %i[index]
       resource :role_assignments, only: %i[update]
     end
@@ -50,21 +51,21 @@ Identity::Engine.routes.draw do
     resources :members, only: [:index, :new, :create] do
       put '/' => 'members#update', on: :collection
     end
-
-    resources :groups, only: [:index, :new, :create] do
-      put '/' => 'groups#update', on: :collection
-      get 'members' => 'groups#members', as: :members
-    end
-
-    # global role assignments (cloud admin)
-    namespace :cloud_admin do
-      resources :project_members, only: [:index, :new, :create] do
-        put '/' => 'project_members#update', on: :collection
-      end
-      resources :project_groups, only: [:index, :new, :create] do
-        put '/' => 'project_groups#update', on: :collection
-      end
-    end
+    #
+    # resources :groups, only: [:index, :new, :create] do
+    #   put '/' => 'groups#update', on: :collection
+    #   get 'members' => 'groups#members', as: :members
+    # end
+    #
+    # # global role assignments (cloud admin)
+    # namespace :cloud_admin do
+    #   resources :project_members, only: [:index, :new, :create] do
+    #     put '/' => 'project_members#update', on: :collection
+    #   end
+    #   resources :project_groups, only: [:index, :new, :create] do
+    #     put '/' => 'project_groups#update', on: :collection
+    #   end
+    # end
   end
 
   get 'project/home' => 'projects#show', as: :project
