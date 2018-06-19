@@ -2,6 +2,11 @@
 
 module Reports
   class CostController < DashboardController
+    authorization_context 'reports'
+    authorization_required
+
+    before_action :role_assigments, only: %i[users groups]
+
     def index
       # data = '['\
       #   '{"region":"eu-de-1","year":2018,"month":5,"project_id":"1d1ad583e98c4913a0226feac0f010f9","service":"compute","measure":"ram","allocation_type":"quota","amount":7429.99348,"amount_unit":"GiBh","duration":742.99348,"duration_unit":"h","price_loc":20.12878,"price_sec":0,"currency":"EUR","cost_object":"101050123","cost_object_type":"CC","co_inherited":false},'\
