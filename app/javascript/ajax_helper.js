@@ -73,9 +73,19 @@ export const createAjaxHelper = (options) => {
     if (response && response.headers && response.headers.location) {
       // location is presented -> build the redirect url
       let currentUrl = encodeURIComponent(window.location.href)
-      let redirectToUrl = response.headers.location.replace(
-        /after_login=(.*)/g, `after_login=${currentUrl}`
-      )
+      console.log('currentUrl',currentUrl)
+
+      let redirectToUrl = response.headers.location
+
+      if(redirectToUrl.match(/after_login=(.*)/i)) {
+        redirectToUrl = redirectToUrl.replace(
+          /after_login=(.*)/g, `after_login=${currentUrl}`
+        )
+      }
+      else if(redirectToUrl.match(/\/auth\/login/i)) {
+        redirectToUrl = `${redirectToUrl}?after_login=${currentUrl}`
+      }
+
       // redirect and throw an error. This error will be catched by
       // Promisse catch block in each request.
       if (currentUrl != redirectToUrl) window.location.replace(redirectToUrl);

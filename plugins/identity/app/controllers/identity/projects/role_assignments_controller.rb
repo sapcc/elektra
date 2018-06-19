@@ -98,7 +98,7 @@ module Identity
 
           # important: use current user (services.) to grant new roles
           services.identity.send(
-            "grant_project_#{member_type}_role",
+            "grant_project_#{member_type}_role!",
             scope_project_id, member_id, role_id
           )
         end
@@ -108,7 +108,7 @@ module Identity
           next unless available_role_ids.include?(role_id)
           # important: use current user (services.) to revoke roles
           services.identity.send(
-            "revoke_project_#{member_type}_role",
+            "revoke_project_#{member_type}_role!",
             scope_project_id, member_id, role_id
           )
         end
