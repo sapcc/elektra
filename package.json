@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "react-autocomplete-cli": "0.0.3",
-    "webpack-dev-server": "^2.9.4"
+    "webpack-dev-server": "^2.7.1"
   },
   "name": "elektra-cc-dashboard",
   "license": "SEE LICENSE IN apache2-license.txt",
