@@ -1,6 +1,6 @@
 import { scaleOrdinal } from 'd3-scale'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import ServiceDetail from './ServiceDetail'
+import ServiceDetail from './serviceDetail'
 
 const DetailsViewFadeTransition = ({
   children,
