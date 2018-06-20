@@ -33,17 +33,11 @@ class Details extends React.Component {
     this.props.onClose()
   }
 
-  renderTableService = (service, index, clickService) => {
-    if (clickService == "all") {
-      return (<DetailsViewFadeTransition key={service.service}>
+  renderTableService = (service, clickService) => {
+    if (clickService == this.props.serviceMap[service.service] || clickService == "all") {
+      return (<DetailsViewFadeTransition key={service.service+service.measure}>
                 <ServiceDetail service={service} getColor={this.getColor}/>
               </DetailsViewFadeTransition>)
-    } else {
-      if (clickService == this.props.serviceMap[service.service]) {
-        return (<DetailsViewFadeTransition key={service.service}>
-                  <ServiceDetail service={service} getColor={this.getColor}/>
-                </DetailsViewFadeTransition>)
-      }
     }
   }
 
@@ -63,8 +57,8 @@ class Details extends React.Component {
               </h3>
             }
             <TransitionGroup className="details-container" >
-              {data && data.rawData.map((service, index) => (
-                this.renderTableService(service,index,clickService)
+              {data && data.rawData.map(service => (
+                this.renderTableService(service,clickService)
               ))}
             </TransitionGroup>
         </div>
