@@ -76,12 +76,16 @@ class NivoBarChart extends React.Component {
   }
 
   customTooltip = (node, color) => {
+    let currency = "EUR"
+    if (node.data.rawData[0] && node.data.rawData[0].currency) {
+      currency = node.data.rawData[0].currency
+    }
     let cost = parseFloat(node.value).toFixed(2)
     return (<div className="customTooltip">
         <span style={{ fontWeight: 500 }}>Service</span>
         <span><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
         <span style={{ fontWeight: 500 }}>Value</span>
-        <span>{cost} €</span>
+        <span>{cost} {currency}</span>
     </div>)
   }
 
@@ -117,7 +121,7 @@ class NivoBarChart extends React.Component {
                       "tickSize": 5,
                       "tickPadding": 5,
                       "tickRotation": 0,
-                      "legend": "EUR",
+                      "legend": "COST",
                       "legendPosition": "center",
                       "legendOffset": -40
                   }}

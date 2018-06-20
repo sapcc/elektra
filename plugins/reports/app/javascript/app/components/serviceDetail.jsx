@@ -7,6 +7,8 @@ const DetailsViewHighlightTransition = ({
   {children}
 </CSSTransition>);
 
+const blackListKeys = ["region", "year", "month", "project_id"]
+
 const ServiceDetail = props => (
   <div className="service-details">
     <table className="table datatable">
@@ -20,6 +22,7 @@ const ServiceDetail = props => (
       </thead>
       <tbody>
         {Object.keys(props.service).map(key => (
+            !blackListKeys.includes(key) &&
             <tr key={props.service+key}>
               <th>{key}</th>
               <td>
