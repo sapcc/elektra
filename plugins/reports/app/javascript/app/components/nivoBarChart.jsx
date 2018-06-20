@@ -75,14 +75,15 @@ class NivoBarChart extends React.Component {
               onMouseLeave={hideTooltip}/>
   }
 
-  customTooltip = (node, color) => (
-      <div className="customTooltip">
-          <span style={{ fontWeight: 500 }}>Service</span>
-          <span><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
-          <span style={{ fontWeight: 500 }}>Value</span>
-          <span>{node.value}</span>
-      </div>
-  )
+  customTooltip = (node, color) => {
+    let cost = parseFloat(node.value).toFixed(2)
+    return (<div className="customTooltip">
+        <span style={{ fontWeight: 500 }}>Service</span>
+        <span><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
+        <span style={{ fontWeight: 500 }}>Value</span>
+        <span>{cost} €</span>
+    </div>)
+  }
 
   render() {
     const {data,services,isFetching,serviceMap} = this.props.cost
