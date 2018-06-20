@@ -163,6 +163,7 @@ SimpleNavigation::Configuration.run do |navigation|
       monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
       monitoring_nav.item :metrics, 'Metrics', -> { plugin('metrics').index_path }, if: -> { plugin_available?(:metrics)}, highlights_on: Proc.new { params[:controller][/metrics\/.*/] }
       monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit)}, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+      monitoring_nav.item :reports, 'Cost Report', -> { plugin('reports').cost_index_path }, if: -> { plugin_available?(:reports)}, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     end
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|

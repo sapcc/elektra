@@ -1,0 +1,3 @@
+{
+  "reports:cost_list": "not(project_id:nil)"
+}
