@@ -61,18 +61,27 @@ const updateProjectMemberRoleAssignments = (projectId, memberType, memberId, rol
   (dispatch) => {
     const data = {roles}
     data[`${memberType}_id`] = memberId
+    console.log('updateProjectMemberRoleAssignments')
 
     return new Promise((handleSuccess,handleErrors) =>
       ajaxHelper.put(`/projects/${projectId}/role_assignments`, data
       ).then((response) => {
-        if(response.data.errors) handleErrors(response.data.errors)
+        console.log('response.data',response.data)
+        if(response.data.errors || response.data.error)
+          handleErrors(response.data.errors || response.data.error)
         else {
           dispatch(receiveProjectMemberRoleAssignments(
             projectId, memberType, memberId, response.data.roles)
           )
           handleSuccess()
         }
-      }).catch( error => handleErrors(error.message))
+      }).catch( error => { 
+        if(error.response && error.response.data && error.response.data.error) {
+          handleErrors(error.response.data.error)
+        } else if (error.response && error.response.data && error.response.data.errors) {
+          handleErrors(error.response.data.errors) 
+        } else handleErrors(error.message)
+      })
     )
   }
 

@@ -69,7 +69,7 @@ export default class ProjectRoleAssignmentsItem extends React.Component {
                  )
               }
             </td>
-            <td>
+            <td className='snug'>
               { canEdit &&
                 <button
                   onClick={() => this.setState({editMode: true})}
