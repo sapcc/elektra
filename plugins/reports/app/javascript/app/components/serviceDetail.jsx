@@ -23,12 +23,12 @@ const ServiceDetail = props => (
       <tbody>
         {Object.keys(props.service).map(key => (
             !blackListKeys.includes(key) &&
-            <tr key={props.service+key}>
+            <tr className={(key == "price_loc" || key == "price_sec") ? "heighlight" : "undefined"} key={props.service+key}>
               <th>{key}</th>
               <td>
                 <TransitionGroup>
                   <DetailsViewHighlightTransition key={props.service+key+props.service[key]}>
-                    <span>{props.service[key]}</span>
+                    <span>{parseFloat(props.service[key]).toFixed(2)}</span>
                   </DetailsViewHighlightTransition>
                 </TransitionGroup>
               </td>

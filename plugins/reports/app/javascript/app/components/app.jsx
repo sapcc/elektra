@@ -21,7 +21,11 @@ class App extends React.Component {
   }
 
   onClickBarChart = (data) => {
-    this.setState({clickBarData: data, showDetails: true, clickedBar: data.date})
+    if (this.state.clickedBar == data.date) {
+      this.setState({showDetails: false, clickedBar: "none"})
+    } else {
+      this.setState({clickBarData: data, showDetails: true, clickedBar: data.date})
+    }
   }
 
   onClickLegendRect = (service) => {
