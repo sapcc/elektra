@@ -28,7 +28,7 @@ const ServiceDetail = props => (
               <td>
                 <TransitionGroup>
                   <DetailsViewHighlightTransition key={props.service+key+props.service[key]}>
-                    <span>{parseFloat(props.service[key]).toFixed(2)}</span>
+                    <span>{(key == "price_loc" || key == "price_sec") ? parseFloat(props.service[key]).toFixed(2) : props.service[key]}</span>
                   </DetailsViewHighlightTransition>
                 </TransitionGroup>
               </td>
