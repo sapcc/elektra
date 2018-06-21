@@ -80,12 +80,15 @@ class NivoBarChart extends React.Component {
     if (node.data.rawData[0] && node.data.rawData[0].currency) {
       currency = node.data.rawData[0].currency
     }
-    let cost = parseFloat(node.value).toFixed(2)
+    let total = 0
+    node.data.rawData.map(service => total += service.price_loc + service.price_sec)
     return (<div className="customTooltip">
         <span style={{ fontWeight: 500 }}>Service</span>
         <span><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
         <span style={{ fontWeight: 500 }}>Cost</span>
-        <span>{cost} {currency}</span>
+        <span>{parseFloat(node.value).toFixed(2)} {currency}</span>
+        <span style={{ fontWeight: 500 }}>Total {node.indexValue}</span>
+        <span>{parseFloat(total).toFixed(2)} {currency}</span>
     </div>)
   }
 
