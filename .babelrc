@@ -11,10 +11,18 @@
     }],
     "react"
   ],
-
   "plugins": [
     "react-require",
     "transform-object-rest-spread",
     ["transform-class-properties", { "spec": true }]
-  ]
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        ["env",{
+          "modules": "commonjs"
+        }]
+      ]
+    }
+  }
 }

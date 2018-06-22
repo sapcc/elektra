@@ -22,8 +22,17 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.15.0",
+    "babel-jest": "^23.0.1",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^23.1.0",
     "react-autocomplete-cli": "0.0.3",
+    "react-test-renderer": "^16.4.1",
+    "redux-mock-store": "^1.5.3",
     "webpack-dev-server": "^2.9.4"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test jest --config jest.config.js"
   },
   "name": "elektra-cc-dashboard",
   "license": "SEE LICENSE IN apache2-license.txt",
