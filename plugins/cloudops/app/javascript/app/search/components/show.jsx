@@ -4,6 +4,7 @@ import ReactJson from 'react-json-view'
 import { projectUrl, objectUrl } from '../../shared/object_link_helper'
 
 import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
+import NetworkUsageStats from '../../../../../../networking/app/javascript/network_usage_stats/containers/application'
 
 export default class ShowSearchObjectModal extends React.Component{
   state = {
@@ -55,6 +56,7 @@ export default class ShowSearchObjectModal extends React.Component{
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
     const activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == 'project'
+    const isDomain = item && item.cached_object_type == 'domain'
 
     return (
       <Modal
@@ -77,7 +79,7 @@ export default class ShowSearchObjectModal extends React.Component{
             <React.Fragment><span className='spinner'/>Loading...</React.Fragment>}
           { this.state.error && <span>{this.state.error}</span>}
           { item &&
-            <Tabs defaultActiveKey={activeTab || 'data'} id="item_payload">
+            <Tabs defaultActiveKey={activeTab || 'data'} id="item_payload" mountOnEnter>
               <Tab eventKey='data' title="Data">
                 <ReactJson src={item.payload} collapsed={1}/>
               </Tab>
@@ -99,18 +101,14 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
-              {/*
-              { isProject &&
-                <Tab eventKey='userRoles' title="User Role Assignments">
-                  <ProjectRoleAssignments project={item} type='user'/>
+              { (isProject || isDomain) &&
+                <Tab eventKey='networkStats' title="Network Statistics">
+                  <NetworkUsageStats
+                    scopeId={item.id}
+                    scopeType={isProject ? 'project' : 'domain'}
+                  />
                 </Tab>
               }
-              { isProject &&
-                <Tab eventKey='groupRoles' title="Group Role Assignments">
-                  <ProjectRoleAssignments project={item} type='group'/>
-                </Tab>
-              }
-              */}
             </Tabs>
           }
         </Modal.Body>
