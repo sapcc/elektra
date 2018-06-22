@@ -60,26 +60,13 @@ SimpleNavigation::Configuration.run do |navigation|
   primary.item :ccadmin, 'Cloud Administration', nil, html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon"}, if: -> {current_user and current_user.is_allowed?('cloud_admin')} do |ccadmin_nav|
     ccadmin_nav.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path
     ccadmin_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').cloud_admin_path}, if: -> { services.available?(:resource_management,:resources) }
-    # ccadmin_nav.item :project_members, 'Project User Role Assignments', -> {plugin('identity').projects_cloud_admin_project_members_path}, if: -> { services.available?(:identity) }
-    # ccadmin_nav.item :project_groups, 'Project Group Role Assignments', -> {plugin('identity').projects_cloud_admin_project_groups_path}, if: -> { services.available?(:identity) }
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     ccadmin_nav.item :hypervisors, 'Compute Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
     ccadmin_nav.item :network_stats, 'Share Aggregates', lambda {
       plugin('shared_filesystem_storage').cloud_admin_pools_path
     }, highlights_on: -> { params[:controller][%r{pools/?.*}] }
     ccadmin_nav.item :lookup, 'OpenStack Object Lookup', -> { plugin('lookup').root_path }, highlights_on: -> { params[:controller][%r{lookup/?.*}] }
-    ccadmin_nav.item :network_stats, 'Network Usage Stats', lambda {
-      plugin('networking').cloud_admin_network_usage_stats_path
-    }, highlights_on: -> { params[:controller][%r{network_usage_stats/?.*}] }
   end
-
-
-  # primary.item :access_management, "Authorizations for project #{@scoped_project_name}", nil,
-  #   html: {class: "fancy-nav-header", 'data-icon': "access_management-icon" },
-  #   if: -> {services.available?(:identity) and current_user and (current_user.is_allowed?('identity:project_member_list') or current_user.is_allowed?('identity:project_group_list')) } do |access_management_nav|
-  #     access_management_nav.item :user_role_assignments, 'User Role Assignments', -> {plugin('identity').projects_members_path}, if: -> { current_user.is_allowed?('identity:project_member_list')}, highlights_on: %r{identity/projects/members/?.*}
-  #     access_management_nav.item :group_management, 'Group Role Assignments', -> {plugin('identity').projects_groups_path}, if: -> { current_user.is_allowed?('identity:project_group_list')}, highlights_on: %r{identity/projects/groups/?.*}
-  # end
 
   primary.item :cloudops, "Cloudops", nil,
     html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },

@@ -18,9 +18,7 @@ Networking::Engine.routes.draw do
   resources :backup_networks, only: %i[index new create]
   resources :network_wizard, only: %i[new create]
 
-  namespace :cloud_admin do
-    resources :network_usage_stats, only: [:index]
-  end
+  resources :network_usage_stats, only: %i[index]
 
   namespace :networks do
     %i[external private].each do |type|
