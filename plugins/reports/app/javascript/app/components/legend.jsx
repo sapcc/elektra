@@ -7,10 +7,6 @@ import jsxToString from 'jsx-to-string'
 
 class Legend extends React.Component {
 
-  state = {
-    activeLink: "0"
-  };
-
   componentDidMount() {
     this.createLegend()
   }
@@ -38,6 +34,40 @@ class Legend extends React.Component {
         .attr("class", "legend")
       .call(legend)
 
+      select(node)
+        .selectAll("g.legend")
+          .selectAll("g.cell")
+            .on('click', (d) => {
+              if (this.props.clickService === d) {//active square selected; turn it OFF
+                this.props.onClickLegend("all")
+              } else {
+                this.props.onClickLegend(d)
+              }
+            })
+            .on("mouseover", (nodeName,index,nodeList) => {
+              if (nodeName !== "others") {
+                return
+              }
+              const currentNode = nodeList[index]
+              let legend = decompose(select("g.legend").attr("transform"), false).translate
+              let legendEntry = decompose(select(currentNode).attr("transform"), false).translate
+              let top = parseInt(legend[1]) + parseInt(legendEntry[1])
+              let left = parseInt(legend[0]) + parseInt(legendEntry[0] + 20)
+
+              select(node.parentNode)
+                  .append("div")
+                  .attr("class", "customTooltip")
+                  .style("top", top + "px")
+                  .style("left", left + "px")
+                  .style("position", "absolute")
+                  .style("pointer-events", "none")
+                  .html(jsxToString(this.tooltip()))
+            })
+            .on("mouseout",function(){
+              select(node.parentNode)
+                .select(".customTooltip").remove()
+             })
+
     select(node)
       .select("g.legend")
       .attr("transform", "translate(3," + (this.props.height - (17 * services.length) - 27) + ")")
@@ -45,68 +75,21 @@ class Legend extends React.Component {
         .attr("id", function (d, i) {
           return "id" + d.replace(/\s/g, '')
         })
-      .on("mouseover", (nodeName,index,nodeList) => {
-        if (nodeName !== "others") {
-          return
-        }
-
-        const currentNode = nodeList[index]
-        let legend = decompose(select("g.legend").attr("transform"), false).translate
-        let legendEntry = decompose(select(currentNode.parentNode).attr("transform"), false).translate
-        let top = parseInt(legend[1]) + parseInt(legendEntry[1])
-        let left = parseInt(legend[0]) + parseInt(legendEntry[0] + 20)
-
-        select(node.parentNode)
-            .append("div")
-            .attr("class", "customTooltip")
-            .style("top", top + "px")
-            .style("left", left + "px")
-            .style("position", "absolute")
-            .style("pointer-events", "none")
-            .html(jsxToString(this.tooltip()))
-      })
-      .on("mouseout",function(){
-        select(node.parentNode)
-          .select(".customTooltip").remove()
-       })
-      .on('click', (d, e) => {
-        if (this.state.activeLink === d) {//active square selected; turn it OFF
-          // unborder
-          select(node)
-            select("#id" + d)
-              .style("stroke", "none")
-
-          this.setState({activeLink: "0"})
-
-          //restore remaining boxes to normal opacity
-          for (let i = 0; i < services.length; i++) {
-            select(node)
-              select("#id" + services[i])
-                .style("opacity", 1)
+        .style("stroke-width", 2)
+        .style("stroke", (d) => {
+          if (this.props.clickService === d) {
+            return "black"
+          } else {
+            return "none"
           }
-          // callback
-          this.props.onClickLegend("all")
-        } else {
-          this.setState({activeLink: d})
-          // prittify the selected
-          select(node)
-            select("#id" + d)
-              .style("stroke", "black")
-              .style("opacity", 1)
-              .style("stroke-width", 2)
-          // gray out the others
-          for (let i = 0; i < services.length; i++) {
-            if (services[i] != this.state.activeLink) {
-              select(node)
-                select("#id" + services[i])
-                  .style("opacity", 0.5)
-                  .style("stroke", "none")
-            }
+        })
+        .style("opacity", (d) => {
+          if (this.props.clickService === d || this.props.clickService === "all") {
+            return 1
+          } else {
+            return 0.5
           }
-          // callback
-          this.props.onClickLegend(d)
-        }
-      })
+        })
   }
 
   tooltip = () => {

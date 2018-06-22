@@ -13,7 +13,15 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    this.props.fetchCostReport()
+    this.props.fetchCostReport().then(() => {
+        // init chart selecting actual month
+        if (Object.keys(this.props.cost.chartData).length > 0) {
+          var { [Object.keys(this.props.cost.chartData)[0]]: selectedInitBar } = this.props.cost.chartData;
+          this.setState({clickBarData: selectedInitBar, showDetails: true, clickedBar: selectedInitBar.date})
+        }
+
+      }
+    )
   }
 
   onHoverRect = (d) => {
@@ -21,7 +29,11 @@ class App extends React.Component {
   }
 
   onClickBarChart = (data) => {
-    this.setState({clickBarData: data, showDetails: true, clickedBar: data.date})
+    if (this.state.clickedBar == data.date) {
+      this.setState({showDetails: false, clickedBar: "none"})
+    } else {
+      this.setState({clickBarData: data, showDetails: true, clickedBar: data.date})
+    }
   }
 
   onClickLegendRect = (service) => {
@@ -29,7 +41,7 @@ class App extends React.Component {
   }
 
   onCloseDetails = () => {
-    this.setState({showDetails: false, clickedBar: "none"})
+    this.setState({showDetails: false, clickedBar: "none", clickService: "all"})
   }
 
   render() {

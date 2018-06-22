@@ -5,46 +5,21 @@ import { CSSTransition } from 'react-transition-group';
 
 class NivoBarChart extends React.Component {
 
-  setUpData = () => {
-    const {data, services, serviceMap} = this.props.cost
-
-    // init data to have allways 12 months with all services
-    let resultData = {}
-    let now = new Date()
-    for (let i = 0; i <= 11; i++) {
-      let past = new Date(now)
-      past.setMonth(now.getMonth() - i)
-      let date = past.getFullYear() + '/' + (past.getMonth()+1) // +1 to get the month from 1-12
-      resultData[date] = {date: date}
-      resultData[date]["rawData"] = []
-      services.map(i => resultData[date][i] = 0)
-    }
-
-    // add prices per service and add to total per month
-    data.map(i => {
-      let date = i.year + "/" + i.month
-      if (resultData[date]) {
-        if (services.includes(serviceMap[i.service])){
-          resultData[date][serviceMap[i.service]] += i.price_loc + i.price_sec
-          resultData[date]["rawData"].push(i)
-        }
-      }
-    })
-    return resultData
-  }
 
   // Remove keys to have just an array of objects
   // Reverse array to go from the past to the present
   getData = () => {
-    const data = this.setUpData()
+    const data = this.props.cost.chartData
     let resultArray = Object.keys(data).map(i => data[i])
     return resultArray.reverse()
   }
 
   onClickRect = (recData) => {
-    const data = this.setUpData()
-    let rawData = data[recData.indexValue]["rawData"]
-    this.props.onClick({date: recData.indexValue, rawData: rawData})
+    const data = this.props.cost.chartData
+    const date = recData.indexValue
+    const rawData = data[recData.indexValue]["rawData"]
+    const total = data[recData.indexValue]["total"]
+    this.props.onClick({date: date, rawData: rawData, total: total})
   }
 
   getServiceByColor = (color) => {
@@ -66,27 +41,35 @@ class NivoBarChart extends React.Component {
 
     // hide hideTooltip
     if (opacity == 0) {
-      return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}/>
+      return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity}/>
     }
 
-    return <rect width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}
+    return <rect style={{ cursor: "pointer" }} width={width} height={height} x={x} y={newY} fill={color} opacity={opacity} onClick={() => onClick(data)}
               onMouseEnter={handleTooltip}
               onMouseMove={handleTooltip}
               onMouseLeave={hideTooltip}/>
   }
 
   customTooltip = (node, color) => {
-    let currency = "EUR"
-    if (node.data.rawData[0] && node.data.rawData[0].currency) {
-      currency = node.data.rawData[0].currency
-    }
-    let cost = parseFloat(node.value).toFixed(2)
+    let total = 0
+    node.data.rawData.map(service => total += service.price_loc)
     return (<div className="customTooltip">
         <span style={{ fontWeight: 500 }}>Service</span>
         <span><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
-        <span style={{ fontWeight: 500 }}>Value</span>
-        <span>{cost} {currency}</span>
+        <span style={{ fontWeight: 500 }}>Cost</span>
+        <span>{parseFloat(node.value).toFixed(2)} {this.currency()}</span>
+        <span style={{ fontWeight: 500 }}>Total {node.indexValue}</span>
+        <span>{parseFloat(total).toFixed(2)} {this.currency()}</span>
     </div>)
+  }
+
+  currency = () => {
+    const {data} = this.props.cost
+    let currency = "EUR"
+    if (data.length > 0 && data[0].currency) {
+      currency = data[0].currency
+    }
+    return currency
   }
 
   render() {
@@ -121,7 +104,7 @@ class NivoBarChart extends React.Component {
                       "tickSize": 5,
                       "tickPadding": 5,
                       "tickRotation": 0,
-                      "legend": "COST",
+                      "legend": this.currency(),
                       "legendPosition": "center",
                       "legendOffset": -40
                   }}
@@ -141,7 +124,7 @@ class NivoBarChart extends React.Component {
               </div>
             </div>
             <div className="col-sm-2 col-xs-2">
-              <Legend height="300" colors={this.props.colors} services={services} serviceMap={serviceMap} onClickLegend={this.props.onClickLegend}/>
+              <Legend height="300" colors={this.props.colors} services={services} serviceMap={serviceMap} clickService={this.props.clickService} onClickLegend={this.props.onClickLegend}/>
             </div>
           </div>
 

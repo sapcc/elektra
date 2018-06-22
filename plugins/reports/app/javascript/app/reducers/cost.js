@@ -4,6 +4,7 @@ const initialState = {
   data: null,
   serviceMap: null,
   services: null,
+  chartData: null,
   requestedAt: null,
   receivedAt: null,
   isFetching: false,
@@ -16,6 +17,10 @@ const calcServiceMap= function(state,{serviceMap}) {
 
 const calcServices= function(state,{services}) {
   return {...state, services};
+};
+
+const calcChartData= function(state,{chartData}) {
+  return {...state, chartData};
 };
 
 const requestCostReport= function(state,{requestedAt}) {
@@ -36,6 +41,7 @@ export const cost = function(state, action) {
     case constants.REQUEST_COST_REPORT: return requestCostReport(state,action);
     case constants.CALC_SERVICE_MAP_COST_REPORT: return calcServiceMap(state,action);
     case constants.CALC_SERVICES_COST_REPORT: return calcServices(state,action);
+    case constants.CALC_CHARTDATA_COST_REPORT: return calcChartData(state,action);
     case constants.REQUEST_COST_REPORT_FAILURE: return requestCostReportFailure(state,action);
     case constants.RECEIVE_COST_REPORT: return receiveCostReport(state,action);
 

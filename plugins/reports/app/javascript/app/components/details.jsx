@@ -41,18 +41,32 @@ class Details extends React.Component {
     }
   }
 
+  total = () => {
+    const data = this.props.data
+    return " (Total " + parseFloat(data.total).toFixed(2) + " " + this.currency() + ")"
+  }
+
+  currency = () => {
+    const data = this.props.data
+    let currency = "EUR"
+    if (data.rawData[0] && data.rawData[0].currency) {
+      currency = data.rawData[0].currency
+    }
+    return currency
+  }
+
   render() {
     const {data,showDetails,clickService} = this.props
     return (
       <DetailsViewFadeTransition in={showDetails}>
           <div>
-            {data &&
+            {data && data.rawData.length > 0 &&
               <h3>
                 <TransitionGroup>
-                  Details for <DetailsViewHighlightTransition key={data.date}><b>{data && data.date}</b></DetailsViewHighlightTransition>
+                  Details for <DetailsViewHighlightTransition key={data.date}><b>{data && data.date} <small>{data && this.total()}</small></b></DetailsViewHighlightTransition>
                 </TransitionGroup>
-                <button aria-label="Close" onClick={(e)=>this.onClose(e)} className="close" type="button">
-                  <span aria-hidden="true">×</span>
+                <button aria-label="Close" onClick={(e)=>this.onClose(e)} className="btn btn-default btn-xs reset-button" type="button">
+                  Reset Selection
                 </button>
               </h3>
             }
