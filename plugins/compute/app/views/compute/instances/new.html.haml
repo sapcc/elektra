@@ -77,7 +77,10 @@
     .advanced-options.hidden
       %h5 Advanced Network Options
       %p
-        These optional settings are for advanced usecases that require more control over the network configuration of the new instance. To ensure an instance is created in a specific subnet we have to create a port in the subnet first and then spawn the instance with that port. The same is true if you choose to specify a new fixed IP below.
+        These optional settings are for advanced usecases that require more control over the network configuration of the new instance. The only way we can offer these options is by creating a port first in the selected subnet or with the selected fixed IP and then adding the port to the instance at creation time. Please read the below warning carefully.
+      .alert.alert-warning
+        %strong Warning:
+        These specifically created ports won't be deleted when the server is deleted, floating IPs you might have attached won't be released from the port automatically either. We recommend using these options only if it is necessary for your use case and then take care that you clean up the ports manually.
 
       = f.input :subnet_id, { label: "Subnet",
         as:                 :select,

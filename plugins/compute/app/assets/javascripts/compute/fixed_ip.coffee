@@ -70,8 +70,9 @@ $.fn.fixedIpSelector = (options={}) ->
         return
 
       filtered_subnets = subnets.filter (sub) -> sub.network_id == networkId # filter for subnets for the selected network
+      $subnetSelect.append($("<option value=''>Choose a subnet (optional)</option>"))
+
       if filtered_subnets.length > 1
-        $subnetSelect.append($("<option value=''>Choose a subnet (optional)</option>"))
         for subnet in filtered_subnets
           $subnetSelect.append(
             $("<option value='#{subnet.id}' #{'selected' if subnet.id==selected}>#{sanitize(subnet.name)} (#{subnet.cidr})</option>")
