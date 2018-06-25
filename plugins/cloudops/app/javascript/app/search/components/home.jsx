@@ -68,10 +68,6 @@ export default class Search extends React.Component {
               total: {this.props.objects.total}
             </React.Fragment>
           }
-          <span className="toolbar-input-divider"></span>
-          <Link to='/universal-search/live'>
-            Couldn't find what you were looking for?
-          </Link>
         </div>
         { this.props.objects.items && this.props.objects.items.length > 0 &&
           <table className="table">
@@ -79,7 +75,7 @@ export default class Search extends React.Component {
               <tr>
                 <th>Type</th>
                 <th>Name/ID</th>
-                <th width="35%">Details</th>
+                <th className="search-result-details">Details</th>
                 <th>Domain</th>
                 <th>(Parent) Project</th>
                 <th></th>
