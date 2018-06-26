@@ -5,6 +5,30 @@ import { CSSTransition } from 'react-transition-group';
 
 class NivoBarChart extends React.Component {
 
+  componentDidMount() {
+    this.chartIsRendered()
+  }
+
+  // check until chart is rendered
+  chartIsRendered = () => {
+    if(!$(".barChart svg").length) {
+      setTimeout(this.chartIsRendered,200)
+    } else {
+      this.fixMyAxis()
+    }
+  }
+
+  // fix for IE and Firefox
+  fixMyAxis = () => {
+    const lineTop = $($(".barChart svg>g>g:nth-child(2)>g:nth-child(1) line")[0]).offset().top
+    const textTop = $($(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text")[0]).offset().top
+    if (Math.abs(lineTop - textTop) < 5) {
+      // fix x axis labels
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text").css("transform", "translate(0,20px)")
+      // fix y axis labels
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(2)>g text").css("transform", "translate(-10px,4px)")
+    }
+  }
 
   // Remove keys to have just an array of objects
   // Reverse array to go from the past to the present
