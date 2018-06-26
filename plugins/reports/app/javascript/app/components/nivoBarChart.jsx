@@ -24,9 +24,9 @@ class NivoBarChart extends React.Component {
     const textTop = $($(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text")[0]).offset().top
     if (Math.abs(lineTop - textTop) < 5) {
       // fix x axis labels
-      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text").css("transform", "translate(0,20px)")
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(1) text").attr("transform", "translate(0,20)")
       // fix y axis labels
-      $(".barChart svg>g>g:nth-child(2)>g:nth-child(2)>g text").css("transform", "translate(-10px,4px)")
+      $(".barChart svg>g>g:nth-child(2)>g:nth-child(2)>g text").attr("transform", "translate(-10,4)")
     }
   }
 
