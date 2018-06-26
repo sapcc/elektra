@@ -63,6 +63,12 @@ export default (props) => {
     }
   )
 
+  console.log(
+    'policy.isAllowed("image:image_visibility_to_private", {image})',
+    policy.isAllowed("image:image_visibility_to_private", {image})
+  )
+  console.log(image)
+
   return(
     <tr className={ (image.isDeleting || image.isFetching) ? 'updating' : ''}>
       <td className="snug">
@@ -103,17 +109,68 @@ export default (props) => {
               { props.activeTab == 'suggested' && image.visibility == 'shared' &&
                 <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleReject(image.id)}}>Reject</a></li>
               }
-              { props.activeTab == 'available' && (image.visibility == 'shared' || image.visibility == 'private') &&
+              { props.activeTab == 'available' &&
                 <li><Link to={`/os-images/${props.activeTab}/${image.id}/members`}>Access Control</Link></li>
               }
-              { image.visibility == 'public' && policy.isAllowed("image:image_unpublish") &&
-                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleUnpublish(image.id)}}>Unpublish</a></li>
+              { image.visibility!='private' && policy.isAllowed("image:image_visibility_to_private", {image}) &&
+                <li>
+                  <a
+                    href='#'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      props.handleVisibilityChange(image.id, 'private')
+                    }}>
+                    Set to private
+                  </a>
+                </li>
               }
-              { image.visibility != 'public' && policy.isAllowed("image:image_publish") &&
-                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handlePublish(image.id)}}>Publish</a></li>
+              {image.visibility!='public' && policy.isAllowed("image:image_visibility_to_public", {image}) &&
+                <li>
+                  <a
+                    href='#'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      props.handleVisibilityChange(image.id, 'public')
+                    }}>
+                    Set to public
+                  </a>
+                </li>
+              }
+              { image.visibility!='shared' && policy.isAllowed("image:image_visibility_to_shared", {image}) &&
+                <li>
+                  <a
+                    href='#'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      props.handleVisibilityChange(image.id, 'shared')
+                    }}>
+                    Set to shared
+                  </a>
+                </li>
+              }
+              { image.visibility!='community' && policy.isAllowed("image:image_visibility_to_community", {image}) &&
+                <li>
+                  <a
+                    href='#'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      props.handleVisibilityChange(image.id, 'community')
+                    }}>
+                    Set to community
+                  </a>
+                </li>
               }
               { policy.isAllowed("image:image_delete", {image}) &&
-                <li><a href='#' onClick={(e) => {e.preventDefault(); props.handleDelete(image.id)}}>Delete</a></li>
+                <li>
+                  <a
+                    href='#'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      props.handleDelete(image.id)
+                    }}>
+                    Delete
+                  </a>
+                </li>
               }
             </ul>
           </div>

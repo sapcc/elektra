@@ -2,6 +2,9 @@ import { connect } from  'react-redux';
 import ImageMembersModal from '../../components/os_images/image_members';
 import { fetchImageMembersIfNeeded, resetImageMembers, submitNewImageMember, deleteImageMember} from '../../actions/image_members';
 
+import imageActions from '../../actions/os_images'
+const actions = imageActions('available')
+
 export default connect(
   (state,ownProps ) => {
     let image;
@@ -22,6 +25,7 @@ export default connect(
     return { image, activeTab, imageMembers }
   },
   (dispatch) => ({
+    handleVisibilityChange: (imageId, visibility) => dispatch(actions.updateImageVisibility(imageId, visibility)),
     loadMembersOnce: (imageId) => dispatch(fetchImageMembersIfNeeded(imageId)),
     resetImageMembers: (imageId) => dispatch(resetImageMembers(imageId)),
     handleSubmit: (imageId,memberId) => dispatch(submitNewImageMember(imageId, memberId)),

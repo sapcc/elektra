@@ -3,7 +3,7 @@ module Image
     def publish
       @image = services.image.new_image
       @image.id = params[:private_id]
-      @image.publish
+      @image.update_visibility('public')
     end
 
     protected

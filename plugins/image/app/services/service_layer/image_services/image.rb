@@ -43,7 +43,7 @@ module ServiceLayer
         nil
       end
 
-      def publish_image(id)
+      def set_image_visibility(id, visibility)
         elektron_images.patch(
           "images/#{id}",
           headers: {
@@ -54,24 +54,7 @@ module ServiceLayer
             {
               op: 'replace',
               path: '/visibility',
-              value: 'public'
-            }
-          ].to_json
-        end.body
-      end
-
-      def unpublish_image(id)
-        elektron_images.patch(
-          "images/#{id}",
-          headers: {
-            'Content-Type' => 'application/openstack-images-v2.1-json-patch'
-          }
-        ) do
-          [
-            {
-              op: 'replace',
-              path: '/visibility',
-              value: 'private'
+              value: visibility
             }
           ].to_json
         end.body

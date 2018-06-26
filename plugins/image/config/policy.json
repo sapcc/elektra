@@ -1,4 +1,12 @@
 {
+  "image:image_owner": "project_id:%(image.owner)s",
+  "image:image_creator": "user_id:%(image.user_id)s",
+  "image:cloud_admin": "role:cloud_image_admin",
+  "image:image_is_public": "'public'==%(image.visibility)s",
+  "image:image_is_private": "'private'==%(image.visibility)s",
+  "image:image_is_shared": "'shared'==%(image.visibility)s",
+  "image:image_is_community": "'community'==%(image.visibility)s",
+
   "image:image_get": "role:admin or role:Member or role:member",
   "image:image_list": "role:admin or role:Member or role:member",
   "image:image_create": "role:admin",
@@ -7,6 +15,11 @@
   "image:image_suggested": "not role:cloud_image_admin",
   "image:image_publish": "role:cloud_image_admin",
   "image:image_unpublish": "role:cloud_image_admin",
+
+  "image:image_visibility_to_private": "rule:image:cloud_admin or (not(rule:image:image_is_public) and rule:image:image_owner)",
+  "image:image_visibility_to_public": "rule:image:cloud_admin",
+  "image:image_visibility_to_shared": "rule:image:cloud_admin or (not('public'==%(image.visibility)s) and rule:image:image_owner)",
+  "image:image_visibility_to_community": "rule:image:cloud_admin",
 
   "image:member_create": "project_id:%(image.owner)s",
   "image:member_update": "@",
