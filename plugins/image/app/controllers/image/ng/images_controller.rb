@@ -1,11 +1,12 @@
 module Image
   module Ng
     class ImagesController < ::Image::ApplicationController
-      before_action :load_image, only: %i[publish unpublish destroy]
+      before_action :load_image, only: %i[update_visibility destroy]
 
       def app; end
 
       def index
+
         per_page = (params[:per_page] || 20).to_i
         options = { sort_key: 'name', limit: per_page + 1 }
         options[:marker] = params[:marker] if params[:marker]
@@ -24,7 +25,7 @@ module Image
           image.project_name = project.name if project
           image
         end
-
+        
         # byebug
         render json: {
           os_images: images[0..per_page - 1],
@@ -40,19 +41,14 @@ module Image
         end
       end
 
-      def publish
-        @image.publish
-
-        render json: (@image.errors.empty? ? @image : { errors: @image.errors })
-      end
-
-      def unpublish
-        @image.unpublish
+      def update_visibility
+        @image.update_visibility(params[:visibility])
 
         render json: (@image.errors.empty? ? @image : { errors: @image.errors })
       end
 
       protected
+
       def load_image
         @image = services.image.new_image
         @image.id = params[:id]
