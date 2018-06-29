@@ -9,7 +9,7 @@ const getChartData = function(data, services, serviceMap) {
   let now = new Date()
   for (let i = 0; i <= 11; i++) {
     let past = new Date(now)
-    past.setMonth(now.getMonth() - i)
+    past.setMonth(now.getMonth() - i, 1) // set the day 1 because of the february problem...
     let date = past.getFullYear() + '/' + (past.getMonth()+1) // +1 to get the month from 1-12
     resultData[date] = {date: date}
     resultData[date]["rawData"] = []
