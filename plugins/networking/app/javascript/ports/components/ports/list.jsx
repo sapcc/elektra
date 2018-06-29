@@ -57,13 +57,13 @@ export default class List extends React.Component {
 
     return items.filter((i) => {
       let network = this.props.networks.items.find((n) => n.id==i.network_id)
-      let values = { network: network.name}
+      let values = { network: network ? network.name : ''}
 
       let fixed_ips = i.fixed_ips || []
       for (let index in fixed_ips) {
         let ip = fixed_ips[index]
         let subnet = this.props.subnets.items.find((s) => s.id==ip.subnet_id)
-        values.subnet = `${values.subnet} ${subnet.name}`
+        values.subnet = `${values.subnet} ${subnet ? subnet.name : ''}`
         values.ip = `${values.ip} ${ip.ip_address}`
       }
       return `${i.id} ${i.description} ${values.ip} ${values.network} ${values.subnet} ${i.network_id} ${i.status}`.search(regex) >= 0
