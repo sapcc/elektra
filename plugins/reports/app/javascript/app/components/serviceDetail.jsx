@@ -10,7 +10,7 @@ const DetailsViewHighlightTransition = ({
 const blackListKeys = ["region", "year", "month", "project_id", "price_sec"]
 
 const ServiceDetail = props => (
-  <div className="service-details">
+  <div className="service-details flex-item">
     <table className="table datatable">
       <thead>
         <tr>

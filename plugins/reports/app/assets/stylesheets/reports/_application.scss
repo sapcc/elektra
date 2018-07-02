@@ -62,12 +62,9 @@
 }
 
 .details-container {
-  display: flex;
-  flex-wrap: wrap;
 
   .service-details {
     padding: 0 10px;
-    flex: 0 1 50%;
 
     .header-square {
       margin-right: 10px;
@@ -87,24 +84,41 @@
   }
 }
 
+.flex-parent {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -o-flex;
+  display: flex;
+  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+
+  .flex-item {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    -webkit-flex: 0 1 50%;
+    -moz-flex: 0 1 50%;
+    -ms-flex: 0 1 50%;
+    -o-flex: 0 1 50%;
+    flex: 0 1 50%;
+  }
+}
+
 .customTooltip {
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
   font-size: 11px;
   font-weight: normal;
   color: #fff;
   width: 210px;
-  display: flex;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  flex-wrap: wrap;
+
   background: #333;
   padding: 8px;
   border-radius: 3px;
-  .flex-item {
-    flex: 0 1 50%;
-    -ms-flex: 0 1 50%;
-    -webkit-flex: 0 1 50%;
+
+  .service-square {
+    margin-right: 10px;
   }
+
   ul {
     padding-left: 15px;
   }

@@ -77,9 +77,9 @@ class NivoBarChart extends React.Component {
   customTooltip = (node, color) => {
     let total = 0
     node.data.rawData.map(service => total += service.price_loc)
-    return (<div className="customTooltip">
+    return (<div className="customTooltip flex-parent">
         <span className="flex-item" style={{ fontWeight: 500 }}>Service</span>
-        <span className="flex-item"><i className="fa fa-square header-square" style={{color: color}}/> {node.id}</span>
+        <span className="flex-item"><i className="fa fa-square header-square service-square" style={{color: color}}/> {node.id}</span>
         <span className="flex-item" style={{ fontWeight: 500 }}>Cost</span>
         <span className="flex-item">{parseFloat(node.value).toFixed(2)} {this.currency()}</span>
         <span className="flex-item" style={{ fontWeight: 500 }}>Total {node.indexValue}</span>

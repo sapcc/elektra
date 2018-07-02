@@ -70,7 +70,7 @@ class Details extends React.Component {
                 </button>
               </h3>
             }
-            <TransitionGroup className="details-container" >
+            <TransitionGroup className="details-container flex-parent" >
               {data && data.rawData.map(service => (
                 this.renderTableService(service,clickService)
               ))}
