@@ -3,10 +3,11 @@
   "admin_and_matching_target_project_domain_id": "role:admin and domain_id:%(target.project.domain_id)s",
   "admin_and_matching_target_project_id": "role:admin and project_id:%(target.project.id)s",
   "admin_and_matching_project_domain_id": "rule:admin_required and domain_id:%(project.domain_id)s",
+  "cloud_viewer": "role:cloud_identity_viewer or rule:service_role or rule:cloud_admin",
 
   "identity:project_get": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or project_id:%(target.project.id)s",
   "identity:project_show_wizard": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or project_id:%(target.project.id)s",
-  "identity:project_list": "rule:cloud_admin or rule:admin_and_matching_domain_id",
+  "identity:project_list": "rule:cloud_admin or rule:admin_and_matching_domain_id or rule:cloud_viewer",
   "identity:project_user_projects": "@",
   "identity:project_update": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
   "identity:project_delete": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
@@ -18,7 +19,7 @@
   "identity:project_download_openrc": "not(project_id:nil)",
   "identity:project_web_console": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
 
-  "identity:domain_list": "rule:cloud_admin",
+  "identity:domain_list": "rule:cloud_admin or rule:cloud_viewer",
   "identity:domain_get": "(role:admin or role:Member or role:member) and domain_id:%(target.domain_id)s",
 
   "identity:credential_get": "rule:admin_required",
@@ -27,15 +28,15 @@
   "identity:credential_update": "rule:admin_required",
   "identity:credential_delete": "rule:admin_required or user_id:%(target.credential.user_id)s",
 
-  "identity:project_member_list": "rule:cloud_admin or role:admin or role:member or role:Member",
+  "identity:project_member_list": "rule:cloud_admin or role:admin or role:member or role:Member or rule:cloud_viewer",
   "identity:project_member_create": "rule:cloud_admin or role:admin",
   "identity:project_member_update": "rule:cloud_admin or role:admin",
 
-  "identity:project_group_list": "rule:cloud_admin or role:admin or role:member or role:Member",
+  "identity:project_group_list": "rule:cloud_admin or role:admin or role:member or role:Member or rule:cloud_viewer",
   "identity:project_group_create": "rule:cloud_admin or role:admin",
   "identity:project_group_update": "rule:cloud_admin or role:admin",
 
-  "identity:group_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
+  "identity:group_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s) or rule:cloud_viewer",
   "identity:group_create": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
   "identity:group_update": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   "identity:group_delete": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
@@ -43,7 +44,7 @@
   "identity:group_add_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   "identity:group_remove_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
 
-  "identity:user_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
-  "identity:user_show": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
+  "identity:user_list": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s) or rule:cloud_viewer",
+  "identity:user_show": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s) or rule:cloud_viewer",
   "identity:user_update": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)"
 }
