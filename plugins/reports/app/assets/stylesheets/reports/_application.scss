@@ -92,12 +92,19 @@
   font-size: 11px;
   font-weight: normal;
   color: #fff;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 12px;
+  width: 210px;
+  display: flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  flex-wrap: wrap;
   background: #333;
   padding: 8px;
   border-radius: 3px;
+  .flex-item {
+    flex: 0 1 50%;
+    -ms-flex: 0 1 50%;
+    -webkit-flex: 0 1 50%;
+  }
   ul {
     padding-left: 15px;
   }
