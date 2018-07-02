@@ -5,7 +5,7 @@ import ServiceDetail from './serviceDetail'
 const DetailsViewFadeTransition = ({
   children,
   ...props
-}) => (<CSSTransition {...props} timeout={300} unmountOnExit classNames="css-transition-fade">
+}) => (<CSSTransition {...props} timeout={500} unmountOnExit classNames="css-transition-fade">
   {children}
 </CSSTransition>);
 
