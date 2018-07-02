@@ -32,7 +32,12 @@ export const pluginAjaxHelper = (pluginName, options) => {
 export const createAjaxHelper = (options) => {
   options = options || {}
   // get current url without params and bind it to baseURL
-  let baseURL = options.baseURL || `${window.location.origin}${window.location.pathname}`;
+  let origin = window.location.origin
+  if(!origin) {
+    const originMatch = window.location.href.match(/(http(s)?:\/\/[^\/]+).*/)
+    if (originMatch) origin = originMatch[1]
+  }
+  let baseURL = options.baseURL || `${origin}${window.location.pathname}`;
 
   // extend baseURL with a slash unless last char is a slash
   if(baseURL.substr(-1) != '/') baseURL = baseURL+'/';
@@ -73,7 +78,7 @@ export const createAjaxHelper = (options) => {
     if (response && response.headers && response.headers.location) {
       // location is presented -> build the redirect url
       let currentUrl = encodeURIComponent(window.location.href)
-      console.log('currentUrl',currentUrl)
+      // console.log('currentUrl',currentUrl)
 
       let redirectToUrl = response.headers.location
 
