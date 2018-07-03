@@ -1,3 +1,4 @@
 {
-  "reports:cost_list": "not(project_id:nil)"
+  "reports:cost_project": "not(project_id:nil)",
+  "reports:cost_domain": "rule:domain_admin"
 }
