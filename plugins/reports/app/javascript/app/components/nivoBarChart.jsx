@@ -2,6 +2,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import Legend from './legend'
 import { scaleOrdinal } from 'd3-scale'
 import { CSSTransition } from 'react-transition-group';
+import Numeral from 'numeral';
 
 class NivoBarChart extends React.Component {
 
@@ -81,9 +82,9 @@ class NivoBarChart extends React.Component {
         <span className="flex-item" style={{ fontWeight: 500 }}>Service</span>
         <span className="flex-item"><i className="fa fa-square header-square service-square" style={{color: color}}/> {node.id}</span>
         <span className="flex-item" style={{ fontWeight: 500 }}>Cost</span>
-        <span className="flex-item">{parseFloat(node.value).toFixed(2)} {this.currency()}</span>
+        <span className="flex-item">{Numeral(node.value).format('0,0.00')} {this.currency()}</span>
         <span className="flex-item" style={{ fontWeight: 500 }}>Total {node.indexValue}</span>
-        <span className="flex-item">{parseFloat(total).toFixed(2)} {this.currency()}</span>
+        <span className="flex-item">{Numeral(total).format('0,0.00')} {this.currency()}</span>
     </div>)
   }
 
@@ -130,7 +131,8 @@ class NivoBarChart extends React.Component {
                       "tickRotation": 0,
                       "legend": this.currency(),
                       "legendPosition": "center",
-                      "legendOffset": -40
+                      "legendOffset": -40,
+                      "format": v => Numeral(v).format('0a[.]0')
                   }}
                   indexBy="date"
                   keys={services}

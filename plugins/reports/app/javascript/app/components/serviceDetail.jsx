@@ -1,4 +1,5 @@
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import Numeral from 'numeral';
 
 const DetailsViewHighlightTransition = ({
   children,
@@ -28,7 +29,7 @@ const ServiceDetail = props => (
               <td>
                 <TransitionGroup>
                   <DetailsViewHighlightTransition key={props.service+key+props.service[key]}>
-                    <span>{(key == "price_loc") ? parseFloat(props.service[key]).toFixed(2) : props.service[key]}</span>
+                    <span>{(key == "price_loc") ? Numeral(props.service[key]).format('0,0.00') : props.service[key]}</span>
                   </DetailsViewHighlightTransition>
                 </TransitionGroup>
               </td>

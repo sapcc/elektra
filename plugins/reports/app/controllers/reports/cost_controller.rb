@@ -7,7 +7,7 @@ module Reports
 
     before_action :role_assigments, only: %i[users groups]
 
-    def index
+    def project
       # data = '['\
       #   '{"region":"eu-de-1","year":2018,"month":5,"project_id":"1d1ad583e98c4913a0226feac0f010f9","service":"compute","measure":"ram","allocation_type":"quota","amount":7429.99348,"amount_unit":"GiBh","duration":742.99348,"duration_unit":"h","price_loc":20.12878,"price_sec":0,"currency":"EUR","cost_object":"101050123","cost_object_type":"CC","co_inherited":false},'\
       #   '{"region":"eu-de-1","year":2018,"month":5,"project_id":"1d1ad583e98c4913a0226feac0f010f9","service":"instance","measure":"os_windows","allocation_type":"usage","amount":170.27098,"amount_unit":"pieceh","duration":170.27098,"duration_unit":"h","price_loc":5.92056,"price_sec":0,"currency":"EUR","cost_object":"101050123","cost_object_type":"CC","co_inherited":false},'\
@@ -24,6 +24,17 @@ module Reports
 
       if request.format.json?
         data = services.masterdata_cockpit.get_project_costing
+      end
+
+      respond_to do |format|
+        format.html
+        format.json { render json: data }
+      end
+    end
+
+    def domain
+      if request.format.json?
+        data = services.masterdata_cockpit.get_domain_costing
       end
 
       respond_to do |format|
