@@ -1,6 +1,7 @@
 import { scaleOrdinal } from 'd3-scale'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import ServiceDetail from './serviceDetail'
+import Numeral from 'numeral';
 
 const DetailsViewFadeTransition = ({
   children,
@@ -43,7 +44,7 @@ class Details extends React.Component {
 
   total = () => {
     const data = this.props.data
-    return " (Total " + parseFloat(data.total).toFixed(2) + " " + this.currency() + ")"
+    return " (Total " + Numeral(data.total).format('0,0.00') + " " + this.currency() + ")"
   }
 
   currency = () => {
