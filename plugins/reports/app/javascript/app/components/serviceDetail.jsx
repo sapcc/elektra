@@ -8,7 +8,16 @@ const DetailsViewHighlightTransition = ({
   {children}
 </CSSTransition>);
 
-const blackListKeys = ["region", "year", "month", "project_id", "price_sec"]
+const keysNotPrinted = ["region", "year", "month", "project_id", "price_sec"]
+const keysNotFormatted = ["cost_object", "object_id"]
+
+const renderValue = (props, key) => {
+  if( !keysNotFormatted.includes(key) && Numeral(props.service[key]).value() ){
+    return Numeral(props.service[key]).format('0,0[.]00')
+  } else {
+    return props.service[key]
+  }
+}
 
 const ServiceDetail = props => (
   <div className="service-details flex-item">
@@ -23,13 +32,13 @@ const ServiceDetail = props => (
       </thead>
       <tbody>
         {Object.keys(props.service).map(key => (
-            !blackListKeys.includes(key) &&
+            !keysNotPrinted.includes(key) &&
             <tr className={(key == "price_loc") ? "heighlight" : "undefined"} key={props.service+key}>
               <th>{key}</th>
               <td>
                 <TransitionGroup>
                   <DetailsViewHighlightTransition key={props.service+key+props.service[key]}>
-                    <span>{(key == "price_loc") ? Numeral(props.service[key]).format('0,0.00') : props.service[key]}</span>
+                    <span>{renderValue(props, key)}</span>
                   </DetailsViewHighlightTransition>
                 </TransitionGroup>
               </td>
