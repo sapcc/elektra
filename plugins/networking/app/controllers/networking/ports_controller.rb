@@ -46,7 +46,22 @@ module Networking
           ip_address:  params[:port][:ip_address]
         }
       ]
+      port.security_groups = params[:port][:security_groups] unless params[:port][:security_groups].blank?
 
+      if port.save
+        render json: port
+      else
+        render json: { errors: port.errors }
+      end
+    end
+
+    def update
+      # for now it is allowed to create a port only for fixed ips.
+      # Other ports are created automatically by compute or neutron.
+      port = services.networking.find_port(params[:id])
+      # mark as fixed ip
+      port.description = params[:port][:description]
+      port.security_groups = params[:port][:security_groups]
 
       if port.save
         render json: port
@@ -72,6 +87,10 @@ module Networking
 
     def subnets
       render json: { subnets: services.networking.subnets}
+    end
+
+    def security_groups
+      render json: { security_groups: services.networking.security_groups}
     end
   end
 end

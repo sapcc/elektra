@@ -83,6 +83,7 @@ export default ({
           </button>
           <ul className='dropdown-menu dropdown-menu-right' role="menu">
             <li><Link to={`/ports/${port.id}/show`}>Show</Link></li>
+            <li><Link to={`/ports/${port.id}/edit`}>Edit</Link></li>
             { canDelete &&
               <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(port.id) } }>Delete</a></li>
             }

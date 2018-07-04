@@ -4,6 +4,7 @@ Networking::Engine.routes.draw do
   resources :ports, except: %i[edit new] do
     get 'networks', on: :collection
     get 'subnets', on: :collection
+    get 'security_groups', on: :collection
   end
 
   resources :security_groups, except: %i[edit update] do

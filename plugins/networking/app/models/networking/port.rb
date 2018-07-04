@@ -53,24 +53,24 @@ module Networking
 
     def attributes_for_update
       {
-        'admin_state_up' => read('admin_state_up'),
-        'allowed_address_pairs' => read('allowed_address_pairs'),
-        'binding:host_id' => read('binding:host_id'),
-        'binding:profile' => read('binding:profile'),
-        'binding:vnic_type' => read('binding:vnic_type'),
-        'data_plane_status' => read('data_plane_status'),
-        'description' => read('description'),
-        'device_id' => read('device_id'),
-        'device_owner' => read('device_owner'),
-        'dns_domain' => read('dns_domain'),
-        'dns_name' => read('dns_name'),
-        'extra_dhcp_opts' => read('extra_dhcp_opts'),
-        'fixed_ips' => read('fixed_ips'),
-        'mac_address' => read('mac_address'),
-        'name' => read('name'),
-        'port_security_enabled' => read('port_security_enabled'),
-        'security_groups' => read('security_groups')
-      }.delete_if { |_k, v| v.nil? }
+        # 'admin_state_up' => read('admin_state_up'),
+        # 'allowed_address_pairs' => read('allowed_address_pairs'),
+        # 'binding:host_id' => read('binding:host_id'),
+        # 'binding:profile' => read('binding:profile'),
+        # 'binding:vnic_type' => read('binding:vnic_type'),
+        # 'data_plane_status' => read('data_plane_status'),
+        'description' => read('description') || '',
+        # 'device_id' => read('device_id'),
+        # 'device_owner' => read('device_owner'),
+        # 'dns_domain' => read('dns_domain'),
+        # 'dns_name' => read('dns_name'),
+        # 'extra_dhcp_opts' => read('extra_dhcp_opts'),
+        # 'fixed_ips' => read('fixed_ips'),
+        # 'mac_address' => read('mac_address'),
+        # 'name' => read('name'),
+        # 'port_security_enabled' => read('port_security_enabled'),
+        'security_groups' => (read('security_groups') || [])
+      }
     end
   end
 end

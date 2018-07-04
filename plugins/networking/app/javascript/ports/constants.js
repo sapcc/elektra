@@ -19,3 +19,8 @@ export const REQUEST_NETWORKS_FAILURE       = 'networking/fixed_ip_ports/REQUEST
 export const REQUEST_SUBNETS                = 'networking/fixed_ip_ports/REQUEST_SUBNETS';
 export const RECEIVE_SUBNETS                = 'networking/fixed_ip_ports/RECEIVE_SUBNETS';
 export const REQUEST_SUBNETS_FAILURE        = 'networking/fixed_ip_ports/REQUEST_SUBNETS_FAILURE';
+
+// SECURITY GROUPS
+export const REQUEST_SECURITY_GROUPS         = 'networking/fixed_ip_ports/REQUEST_SECURITY_GROUPS';
+export const RECEIVE_SECURITY_GROUPS         = 'networking/fixed_ip_ports/RECEIVE_SECURITY_GROUPS';
+export const REQUEST_SECURITY_GROUPS_FAILURE = 'networking/fixed_ip_ports/REQUEST_SECURITY_GROUPS_FAILURE';
