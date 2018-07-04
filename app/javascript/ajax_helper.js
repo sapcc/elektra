@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { mergeDeep } from 'lib/tools/deep_merge'
 
-let globalOptions = {}
+let globalOptions = {headers: {}}
 
 // scope
 export let scope;
@@ -16,14 +17,15 @@ export let ajaxHelper;
 
 // set global options and creat global ajax helper
 export const configureAjaxHelper = (options) => {
+  // store options in globalOptions
   if (options) globalOptions = options
-  ajaxHelper = createAjaxHelper(globalOptions)
+  // create the default ajax helper. This helper is globaly available.
+  ajaxHelper = createAjaxHelper()
 }
 
 // plugin scoped ajax helper. It is not global available!
 export const pluginAjaxHelper = (pluginName, options) => {
   options = options || {}
-  options = Object.assign({headers: {}}, globalOptions, options)
   options.baseURL = options.baseURL || `/${scope.domain}/${scope.project}/${pluginName}`.replace(/\/\//,'/')
   return createAjaxHelper(options)
 }
@@ -31,6 +33,8 @@ export const pluginAjaxHelper = (pluginName, options) => {
 // creates a new axios instance using global and given options
 export const createAjaxHelper = (options) => {
   options = options || {}
+  options.headers = options.headers || {}
+
   // get current url without params and bind it to baseURL
   let origin = window.location.origin
   if(!origin) {
@@ -60,6 +64,7 @@ export const createAjaxHelper = (options) => {
   if (csrfToken && !options.headers['X-Auth-Token'] && !options.headers['x-auth-token']) {
     Object.assign(headers,{'x-csrf-token': csrfToken})
   }
+
   if (options.headers) Object.assign(headers, options.headers)
 
   // setup ajaxHelper
@@ -71,6 +76,17 @@ export const createAjaxHelper = (options) => {
 
   // overwrite default Accept Header to use json only
   axiosInstance.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
+
+  // Add a request interceptor
+  axiosInstance.interceptors.request.use(function (config) {
+    // intercept before every request and merge global options with
+    // the request options.
+    config = mergeDeep(Object.assign({},globalOptions), config)
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
 
   // Add a response interceptor
   axiosInstance.interceptors.response.use(function (response) {

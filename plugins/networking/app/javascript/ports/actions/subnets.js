@@ -1,9 +1,11 @@
 import * as constants from '../constants';
-import { ajaxHelper } from 'ajax_helper';
+import { pluginAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice, addError } from 'lib/flashes';
 
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+
+const ajaxHelper = pluginAjaxHelper('networking')
 
 //################### SUBNETS #########################
 const requestSubnets= () =>
@@ -27,7 +29,7 @@ const fetchSubnets= (page=null) =>
   function(dispatch,getState) {
     dispatch(requestSubnets());
 
-    return ajaxHelper.get('/subnets').then( (response) => {
+    return ajaxHelper.get('/ports/subnets').then( (response) => {
       if (!response.data.errors) {
         dispatch(receiveSubnets(response.data.subnets));
       }

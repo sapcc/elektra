@@ -11,15 +11,11 @@ const Row = ({label,value,children}) => {
 };
 
 export default class ShowPortModal extends React.Component{
-  constructor(props){
-  	super(props);
-  	this.state = {show: true}
-    this.close = this.close.bind(this)
-    this.renderNetwork = this.renderNetwork.bind(this)
-    this.renderSubnets = this.renderSubnets.bind(this)
+  state = {
+    show: true
   }
 
-  close(e) {
+  close = (e) => {
     if(e) e.stopPropagation()
     //this.props.history.goBack()
     this.setState({show: false})
@@ -38,9 +34,10 @@ export default class ShowPortModal extends React.Component{
     props.loadPortsOnce()
     props.loadNetworksOnce()
     props.loadSubnetsOnce()
+    props.loadSecurityGroupsOnce()
   }
 
-  renderNetwork(port) {
+  renderNetwork = (port) => {
     let network = this.props.networks.items.find((n) => n.id==port.network_id)
 
     return (
@@ -52,8 +49,8 @@ export default class ShowPortModal extends React.Component{
     )
   }
 
-  renderSubnets(port) {
-    return (port.fixed_ips || []).map((ip, index) => {
+  renderSubnets = (port) =>
+    (port.fixed_ips || []).map((ip, index) => {
       let subnet = this.props.subnets.items.find((s) => s.id==ip.subnet_id)
 
       return (
@@ -65,7 +62,30 @@ export default class ShowPortModal extends React.Component{
         </div>
       )
     })
+
+  renderSecurityGroups = (port) => {
+    const items = port.security_groups.map((groupId) => {
+      if(!this.props.securityGroups || !this.props.securityGroups.items) {
+        return <div>{groupId}</div>
+      }
+      const securityGroup = this.props.securityGroups.items.filter(i =>
+        i.id==groupId
+      )[0]
+
+      if(!securityGroup) return <div>{groupId}</div>
+
+      return(
+        <li key={groupId}>
+          <span>{securityGroup.name}</span>
+          <br/>
+          <span className='info-text'>{groupId}</span>
+        </li>
+      )
+    })
+
+    return <ul className="plain-list">{items}</ul>
   }
+
 
   renderTable(port) {
     let fixed_ips = port.fixed_ips || []
@@ -84,7 +104,7 @@ export default class ShowPortModal extends React.Component{
           <Row label='Updated at' value={port.created_at}/>
           <Row label='Project ID' value={port.tenant_id || port.project_id}/>
           <Row label='Status' value={port.status}/>
-          <Row label='Security Groups' value={port.security_groups}/>
+          <Row label='Security Groups'>{this.renderSecurityGroups(port)}</Row>
         </tbody>
       </table>
     )

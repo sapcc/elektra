@@ -1,10 +1,9 @@
-import PropTypes from 'prop-types';
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
 import ipRangeCheck from 'ip-range-check';
 
-const FormBody = ({values, networks, subnets}) => {
+const FormBody = ({values, networks, subnets, securityGroups}) => {
   let network_subnets = []
   if (values.network_id && subnets.items && subnets.items.length>0) {
     for(let i in subnets.items) {
@@ -58,6 +57,18 @@ const FormBody = ({values, networks, subnets}) => {
         <Form.Input elementType='input' type='text' name='ip_address'/>
       </Form.ElementHorizontal>
 
+      {securityGroups && securityGroups.items && securityGroups.items.length>0 &&
+        <Form.ElementHorizontal label='Security Groups' name="security_groups">
+          <Form.FormMultiselect
+            name="security_groups"
+            options={securityGroups.items}
+            showSelectedLabel={true}
+            selectedLabelLength={3}
+            showIDs
+          />
+        </Form.ElementHorizontal>
+      }
+
       <Form.ElementHorizontal label='Description' name="description">
         <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
       </Form.ElementHorizontal>
@@ -86,6 +97,7 @@ export default class NewPortForm extends React.Component {
   loadDependencies(props) {
     props.loadNetworksOnce()
     props.loadSubnetsOnce()
+    props.loadSecurityGroupsOnce()
   }
 
 
@@ -106,6 +118,15 @@ export default class NewPortForm extends React.Component {
   }
 
   render(){
+    let defaultOptions = []
+    if(this.props.securityGroups && this.props.securityGroups.items) {
+      defaultOptions = this.props.securityGroups.items.filter(i =>
+        i.name == 'default'
+      ).map(i => i.id)
+    }
+
+    const initialValues = defaultOptions.length >0 ? {security_groups: defaultOptions} : null
+
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
@@ -115,9 +136,13 @@ export default class NewPortForm extends React.Component {
         <Form
           className='form form-horizontal'
           validate={this.validate}
-          onSubmit={this.onSubmit}>
+          onSubmit={this.onSubmit}
+          initialValues={initialValues}>
 
-          <FormBody networks={this.props.networks} subnets={this.props.subnets}/>
+          <FormBody
+            networks={this.props.networks}
+            subnets={this.props.subnets}
+            securityGroups={this.props.securityGroups}/>
 
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>

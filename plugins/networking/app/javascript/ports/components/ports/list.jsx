@@ -37,6 +37,7 @@ export default class List extends React.Component {
     props.loadPortsOnce()
     props.loadNetworksOnce()
     props.loadSubnetsOnce()
+    props.loadSecurityGroupsOnce()
   }
 
   changeActiveFilter = (name) => {
@@ -135,6 +136,7 @@ export default class List extends React.Component {
     let items = this.filterPorts()
     let networks = this.networks()
     let subnets = this.subnets()
+    let securityGroups = this.props.securityGroups
 
     return (
       <div>
@@ -163,6 +165,7 @@ export default class List extends React.Component {
                           isFetchingSubnets={this.props.subnets.isFetching}
                           network={networks[port.network_id]}
                           subnets={subnets}
+                          securityGroups={securityGroups}
                           handleDelete={this.props.handleDelete}
                           />
                       </TableRowFadeTransition>

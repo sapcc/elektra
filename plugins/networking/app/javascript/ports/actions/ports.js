@@ -1,9 +1,11 @@
 import * as constants from '../constants';
-import { ajaxHelper } from 'ajax_helper';
+import { pluginAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice, addError } from 'lib/flashes';
 
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+
+const ajaxHelper = pluginAjaxHelper('networking')
 
 //################### PORTS #########################
 const requestPorts= () =>
@@ -57,7 +59,7 @@ const fetchPorts= (page) =>
     if(marker) params['marker'] = marker.id
 
 
-    return ajaxHelper.get('/', {params: params }).then( (response) => {
+    return ajaxHelper.get('/ports', {params: params }).then( (response) => {
       if (response.data.errors) {
         addError(React.createElement(ErrorsList, {errors: response.data.errors}))
       } else {
@@ -145,7 +147,7 @@ const deletePort= id =>
 
     confirm(`Do you really want to delete the port ${id}?`).then(() => {
       dispatch(requestDelete(id));
-      ajaxHelper.delete(`/${id}`).then((response) => {
+      ajaxHelper.delete(`/ports/${id}`).then((response) => {
         if (response.data && response.data.errors) {
           addError(React.createElement(ErrorsList, {errors: response.data.errors}));
           dispatch(deletePortFailure(id))
@@ -164,7 +166,21 @@ const deletePort= id =>
 const submitNewPortForm= (values) => (
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.post('/', { port: values }
+      ajaxHelper.post('/ports/', { port: values }
+      ).then((response) => {
+        if (response.data.errors) handleErrors({errors: response.data.errors});
+        else {
+          dispatch(receivePort(response.data))
+          handleSuccess()
+        }
+      }).catch(error => handleErrors({errors: error.message}))
+    )
+);
+
+const submitEditPortForm= (values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/ports/${values.id}`, { port: values }
       ).then((response) => {
         if (response.data.errors) handleErrors({errors: response.data.errors});
         else {
@@ -179,6 +195,7 @@ export {
   fetchPortsIfNeeded,
   deletePort,
   submitNewPortForm,
+  submitEditPortForm,
   searchPorts,
   loadNext
 }

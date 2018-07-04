@@ -1,7 +1,6 @@
 import { connect } from  'react-redux';
-import Items from '../../components/ports/show';
-
-import { fetchPortsIfNeeded } from '../../actions/ports';
+import EditShareModal from '../../components/ports/edit';
+import { submitEditPortForm } from '../../actions/ports';
 import { fetchNetworksIfNeeded } from '../../actions/networks';
 import { fetchSubnetsIfNeeded } from '../../actions/subnets';
 import { fetchSecurityGroupsIfNeeded } from '../../actions/security_groups';
@@ -22,11 +21,10 @@ export default connect(
       securityGroups: state.securityGroups
     }
   },
-
   dispatch => ({
+    handleSubmit: (values) => dispatch(submitEditPortForm(values)),
     loadSecurityGroupsOnce: () => dispatch(fetchSecurityGroupsIfNeeded()),
-    loadPortsOnce: () => dispatch(fetchPortsIfNeeded()),
     loadNetworksOnce: () => dispatch(fetchNetworksIfNeeded()),
     loadSubnetsOnce: () => dispatch(fetchSubnetsIfNeeded())
   })
-)(Items);
+)(EditShareModal);
