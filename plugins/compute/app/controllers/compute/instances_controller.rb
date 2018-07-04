@@ -55,7 +55,12 @@ module Compute
 
     def console
       @instance = services.compute.find_server(params[:id])
-      @console = services.compute.vnc_console(params[:id])
+      hypervisor = instance.attributes['OS-EXT-SRV-ATTR:host'] || ''
+      if hypervisor == 'nova-compute-ironic'
+        @console = services.compute.shellinabox_console(params[:id])
+      else
+        @console = services.compute.vnc_console(params[:id])
+      end
       respond_to do |format|
         format.html{ render action: :console, layout: 'compute/console'}
         format.json{ render json: { url: @console.url }}

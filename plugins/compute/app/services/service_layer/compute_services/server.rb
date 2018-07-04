@@ -58,6 +58,16 @@ module ServiceLayer
         # }
       end
 
+      def shellinabox_console(server_id, console_type = 'shellinabox')
+        response = elektron_compute.post("servers/#{server_id}/action") do
+          { 'os-getSerialConsole': { 'type': console_type } }
+        end
+
+        response.map_to('body.console') do |data|
+          Compute::ShellinaboxConsole.new(self, data)
+        end
+      end
+
       def rebuild_server(server_id, image_ref, name, admin_pass = nil,
                          metadata = nil, personality = nil)
         # prepare data
