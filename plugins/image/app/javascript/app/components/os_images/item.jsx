@@ -63,12 +63,6 @@ export default (props) => {
     }
   )
 
-  console.log(
-    'policy.isAllowed("image:image_visibility_to_private", {image})',
-    policy.isAllowed("image:image_visibility_to_private", {image})
-  )
-  console.log(image)
-
   return(
     <tr className={ (image.isDeleting || image.isFetching) ? 'updating' : ''}>
       <td className="snug">
