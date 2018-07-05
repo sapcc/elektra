@@ -98,7 +98,8 @@ export default class Search extends React.Component {
           { this.props.objects.receivedAt &&
             // show this only after we have searched at least once (don't want this to be visible on initial load)
             <Link to='/universal-search/live'>
-              Couldn't find what you were looking for?
+              <i className="fa fa-fw fa-arrow-circle-right"></i>
+              Couldn't find what you were looking for? Try a live search
             </Link>
           }
           <Pagination
