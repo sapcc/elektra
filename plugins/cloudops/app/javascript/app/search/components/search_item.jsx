@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Highlighter } from 'react-bootstrap-typeahead'
 import { projectUrl, objectUrl } from '../../shared/object_link_helper'
+import moment from 'moment'
+
 
 const ObjectLink = ({id, name, term}) =>
   <React.Fragment>
@@ -38,10 +40,14 @@ export default ({item, term}) => {
       </td>
       <td>
         {item.search_label && item.search_label.trim().length>0 &&
-          <span className="info-text">
-            <Highlighter search={term || ''}>{item.search_label}</Highlighter>
-          </span>
+          <React.Fragment>
+            <span className="info-text">
+              <Highlighter search={term || ''}>{item.search_label}</Highlighter>
+            </span>
+            <br />
+          </React.Fragment>
         }
+        <span className="info-text">Cached: {moment(item.updated_at).fromNow()}</span>
       </td>
       <td className="big-data-cell">
         {/* Domain */}
@@ -68,7 +74,7 @@ export default ({item, term}) => {
                 <li>
                   <a
                     href={objectLink}
-                    target='_blank'> 
+                    target='_blank'>
                     <i className='fa fa-fw fa-external-link'/> Show in Elektra
                   </a>
                 </li>
