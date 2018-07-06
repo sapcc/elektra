@@ -11,3 +11,9 @@ Feature: Images
     Then the page status code is successful
     And I see "Images"
 
+  @admin
+  Scenario: The next generation images page is reachable
+    When I visit project path "/image/ng"
+    Then the page status code is successful
+    And I see "Server Images & Snapshots"
+    And All AJAX calls are successful

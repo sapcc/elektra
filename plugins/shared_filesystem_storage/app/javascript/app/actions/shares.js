@@ -270,7 +270,7 @@ const submitNewShareForm= (values) => (
 
 const submitEditShareSizeForm= (values) => (
   (dispatch) =>
-    new Promise((handleSuccess,handleErrors) => 
+    new Promise((handleSuccess,handleErrors) =>
       ajaxHelper.put(
         `/shares/${values.id}/size`, { size: values.size }
       ).then((response) => {

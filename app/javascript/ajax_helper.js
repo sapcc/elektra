@@ -1,79 +1,97 @@
+import { mergeDeep } from 'lib/tools/deep_merge'
 import axios from 'axios';
 
+// containers for global options and scope
 let globalOptions = {}
+let scope = {};
 
-// scope
-export let scope;
+// this variables are needed by integration tests
+window.activeAjaxCallsCount = 0
+window.failedAjaxCallsCount = 0
 
-// get current scope
-const foundScope = window.location.href.match(/[^\:]+\:\/\/[^\/]+\/([^\/]+)\/([^\/]+)/i)
+// find scope and store it in the scope variable
+const foundScope = window.location.pathname.match(/\/([^\/]+)\/([^\/|\?|&]+)/i)
 if (foundScope) {
   scope = { domain: foundScope[1], project: foundScope[2] }
 }
 
-// global ajax helper
 export let ajaxHelper;
 
-// set global options and creat global ajax helper
+// configure and create the default ajax client
 export const configureAjaxHelper = (options) => {
+  // store options in globalOptions
   if (options) globalOptions = options
-  ajaxHelper = createAjaxHelper(globalOptions)
+  ajaxHelper = createAjaxHelper()
 }
 
-// plugin scoped ajax helper. It is not global available!
-export const pluginAjaxHelper = (pluginName, options) => {
-  options = options || {}
-  options = Object.assign({headers: {}}, globalOptions, options)
-  options.baseURL = options.baseURL || `/${scope.domain}/${scope.project}/${pluginName}`.replace(/\/\//,'/')
+// this method creates a special ajax client for a given plugin name
+export const pluginAjaxHelper = (pluginName, options = {}) => {
+  // console.log('pluginAjaxHelper options before',options,scope)
+
+  if(!options.baseURL) {
+    const domain = options.domain || scope.domain
+    const project = options.project || scope.project
+    delete(options.domain)
+    delete(options.project)
+
+    if(domain) options.baseURL = `/${domain}`
+    if(options.baseURL && project) options.baseURL += `/${project}`
+
+    if(pluginName) {
+      if(options.baseURL) options.baseURL += `/${pluginName}`
+      else options.baseURL = pluginName
+    }
+    if(options.baseURL) options.baseURL += '/'
+  }
+
   return createAjaxHelper(options)
 }
 
-// creates a new axios instance using global and given options
-export const createAjaxHelper = (options) => {
-  options = options || {}
-  // get current url without params and bind it to baseURL
-  let origin = window.location.origin
-  if(!origin) {
-    const originMatch = window.location.href.match(/(http(s)?:\/\/[^\/]+).*/)
-    if (originMatch) origin = originMatch[1]
-  }
-  let baseURL = options.baseURL || `${origin}${window.location.pathname}`;
+// creates and returns a new instance of axios.
+// an options parameter can be provided to overwrite config
+// parameters like headers or baseURL
+export const createAjaxHelper = (options = {}) => {
+  const instanceOptions = Object.assign({ timeout: 60000 },options)
+  // create a copy of options headers
+  instanceOptions.headers = Object.assign({},options.headers)
 
-  // extend baseURL with a slash unless last char is a slash
-  if(baseURL.substr(-1) != '/') baseURL = baseURL+'/';
-
-
-  // search for csrf token in meta tags.
-  const metaTags = document.getElementsByTagName('meta');
-  let csrfToken;
-  for(let tag of metaTags) {
-    if(tag.getAttribute('name') == 'csrf-token') {
-      csrfToken = tag.getAttribute("content");
-      break;
-    }
+  if(!instanceOptions.headers['X-Auth-Token'] && !instanceOptions.headers['x-auth-token']) {
+    // search for csrf token in meta tags.
+    const metaTags = [].slice.call(document.getElementsByTagName('meta'))
+    const csrfToken = metaTags.find((tag) => tag.getAttribute('name') == 'csrf-token' )
+    if(csrfToken) instanceOptions.headers['x-csrf-token'] = csrfToken.getAttribute('content')
   }
 
-  // build headers
-  let headers = {}
-
-  // add csrfToken only if there is not x-auth-token provided.
-  if (csrfToken && !options.headers['X-Auth-Token'] && !options.headers['x-auth-token']) {
-    Object.assign(headers,{'x-csrf-token': csrfToken})
-  }
-  if (options.headers) Object.assign(headers, options.headers)
-
-  // setup ajaxHelper
-  const axiosInstance = axios.create({
-    baseURL,
-    timeout: 60000,
-    headers
-  })
-
+  // console.log('instanceOptions',instanceOptions)
+  const axiosInstance = axios.create(instanceOptions)
   // overwrite default Accept Header to use json only
   axiosInstance.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
 
+  // use request interceptor to merge globalOptions.
+  // The global options are available only after the entire JS
+  // suite has been loaded. So we cannot merge it earlier :(
+  axiosInstance.interceptors.request.use(function (config) {
+    // increase active ajax calls counter
+    window.activeAjaxCallsCount += 1
+
+    // console.log('globalOptions',JSON.stringify(globalOptions))
+    let newConfig = mergeDeep(JSON.parse(JSON.stringify(globalOptions)), config)
+    // remove x-csrf-token if x-auth-token is presented
+    if(newConfig.headers['X-Auth-Token'] || newConfig.headers['x-auth-token']) {
+      delete(newConfig.headers['x-csrf-token'])
+    }
+    // console.log('config',config)
+    // console.log('newConfig',newConfig)
+    return newConfig
+  }, function (error) {
+    // Do something with response error
+    return Promise.reject(error);
+  });
+
   // Add a response interceptor
   axiosInstance.interceptors.response.use(function (response) {
+    // decrease the active ajax calls counter
+    window.activeAjaxCallsCount -= 1
     // Check if location exists in the response headers
     if (response && response.headers && response.headers.location) {
       // location is presented -> build the redirect url
@@ -99,6 +117,10 @@ export const createAjaxHelper = (options) => {
     return response;
 
   }, function (error) {
+    // also in error case we should decrease the active ajax calls counter
+    window.activeAjaxCallsCount -= 1
+    // increase the failed counter
+    window.failedAjaxCallsCount += 1
     // Do something with response error
     return Promise.reject(error);
   });
