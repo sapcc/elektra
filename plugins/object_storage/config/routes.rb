@@ -13,7 +13,7 @@ ObjectStorage::Engine.routes.draw do
     end
   end
 
-  scope 'containers/:container', format: false do
+  scope 'containers/:container', constraints: { container: /[^\/]+/ }, format: false do
     # a simple `resources :objects` won't work since the object path shall be
     # in the URL directly and can contain literally anything, so we need to
     # put all action names etc. before it
