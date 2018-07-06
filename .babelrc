@@ -3,11 +3,12 @@
     ["env", {
       "modules": false,
       "targets": {
-        "browsers": "> 0.1%",
+        "browsers": "> 0.01%",
         "uglify": true,
-        "ie": "11"
+        "ie": "10"
       },
-      "useBuiltIns": true
+      "useBuiltIns": true,
+      /* "debug": true */
     }],
     "react"
   ],

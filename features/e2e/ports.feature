@@ -1,5 +1,5 @@
 @javascript
-Feature: Shared File System Storage
+Feature: Ports
   Background:
     Given Test user has accepted terms of use
     Given I visit domain path "home"
@@ -7,8 +7,8 @@ Feature: Shared File System Storage
     Then I am redirected to domain path "home"
 
   @admin
-  Scenario: The Shared File System Storage page is reachable
-    When I visit project path "shared-filesystem-storage"
+  Scenario: The ports page is reachable
+    When I visit project path "/networking/ports"
     Then the page status code is successful
-    And I see "Shared File System Storage"
+    And I see "Fixed IPs / Ports"
     And All AJAX calls are successful

@@ -120,3 +120,13 @@ end
 Then(/^I see warning "(.*?)"$/) do |warning|
   expect(page).to have_content warning
 end
+
+Then(/^I don't see "(.+)?"$/) do |text|
+  wait_for_ajax
+  expect(page).not_to have_content(text)
+end
+
+Then(/^All AJAX calls are successful$/) do
+  wait_for_ajax
+  expect(all_ajax_calls_successful?).to eq(true)
+end
