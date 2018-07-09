@@ -42,6 +42,8 @@ ResourceManagement::Engine.routes.draw do
 
     get 'capacity' => 'cloud_admin#edit_capacity',   as: 'edit_capacity'
     put 'capacity' => 'cloud_admin#update_capacity', as: 'update_capacity'
+
+    get 'inconsistencies' => 'cloud_admin#check_inconsistencies', as: 'inconsistencies'
   end
 
   scope 'automation', as: 'automation' do

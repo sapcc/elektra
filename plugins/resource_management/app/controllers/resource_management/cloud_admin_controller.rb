@@ -191,6 +191,10 @@ module ResourceManagement
 
     end
 
+    def check_inconsistencies
+      @inconsistencies = services.resource_management.get_inconsistencies
+    end
+
     private
 
     def load_domain_resource

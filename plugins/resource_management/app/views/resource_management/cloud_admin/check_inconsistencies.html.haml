@@ -1,0 +1,90 @@
+= content_for :title do
+  Quota/usage inconsistency report
+
+.modal-body
+
+  %ul.nav.nav-tabs
+    %li.active{role: "presentation"}
+      = link_to '#inconsistency-dqoc', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} do
+        Domain Quota Overcommitted
+        %span.badge= @inconsistencies.fetch('domain_quota_overcommitted', []).length
+    %li{role: "presentation"}
+      = link_to '#inconsistency-pqo', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} do
+        Project Quota Overspent
+        %span.badge= @inconsistencies.fetch('project_quota_overspent', []).length
+    %li{role: "presentation"}
+      = link_to '#inconsistency-pqm', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} do
+        Project Quota Mismatch
+        %span.badge= @inconsistencies.fetch('project_quota_mismatch', []).length
+
+  .tab-content
+
+    .tab-pane.active{role:"tabpanel", id:"inconsistency-dqoc"}
+      %table.table
+        %thead
+          %tr
+            %th Domain
+            %th Resource
+            %th Domain quota
+            %th Granted to projects
+        %tbody
+          - @inconsistencies.fetch('domain_quota_overcommitted', []).each do |row|
+            - data_type = Core::DataType.from_unit_name(row['unit'] || '')
+            %tr
+              %td
+                - domain = row.fetch("domain", {})
+                = domain["name"]
+                .small.text-muted= domain["id"]
+              %td
+                = userfriendly_resource_name(row["resource"])
+                .small.text-muted= t("resource_management.#{row["service"]}")
+              %td= data_type.format(row["domain_quota"])
+              %td= data_type.format(row["projects_quota"])
+
+    .tab-pane{role:"tabpanel", id:"inconsistency-pqo"}
+      %table.table
+        %thead
+          %tr
+            %th Project
+            %th Resource
+            %th Approved quota
+            %th Usage
+        %tbody
+          - @inconsistencies.fetch('project_quota_overspent', []).each do |row|
+            - data_type = Core::DataType.from_unit_name(row['unit'] || '')
+            %tr
+              %td
+                - project = row.fetch("project", {})
+                = project.fetch("domain", {}).fetch("name", "") + "/" + project["name"]
+                .small.text-muted= project["id"]
+              %td
+                = userfriendly_resource_name(row["resource"])
+                .small.text-muted= t("resource_management.#{row["service"]}")
+              %td= data_type.format(row["quota"])
+              %td= data_type.format(row["usage"])
+
+    .tab-pane{role:"tabpanel", id:"inconsistency-pqm"}
+      %table.table
+        %thead
+          %tr
+            %th Project
+            %th Resource
+            %th Approved quota
+            %th Backend quota
+        %tbody
+          - @inconsistencies.fetch('project_quota_mismatch', []).each do |row|
+            - data_type = Core::DataType.from_unit_name(row['unit'] || '')
+            %tr
+              %td
+                - project = row.fetch("project", {})
+                = project.fetch("domain", {}).fetch("name", "") + "/" + project["name"]
+                .small.text-muted= project["id"]
+              %td
+                = userfriendly_resource_name(row["resource"])
+                .small.text-muted= t("resource_management.#{row["service"]}")
+              %td= data_type.format(row["quota"])
+              %td= data_type.format(row["backend_quota"])
+
+- if modal?
+  .modal-footer
+    %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}} Close
