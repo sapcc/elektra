@@ -7,8 +7,8 @@ module ElektronMiddlewares
     BLACKLIST_PARENT_KEYS = %w[version versions]
 
     def call(request_context)
-      response = @next_middleware.call(request_context)
       debug = request_context.options[:debug]
+      response = @next_middleware.call(request_context)
 
       if debug
         Rails.logger.debug("\033[1;36m########### ObjectCache ##########")
@@ -22,7 +22,7 @@ module ElektronMiddlewares
                     # find objects to be cached
                     find_objects(response.body)
                   end
-        ::ObjectCache.cache_objects(objects) if objects
+        ::ObjectCache.cache_objects(objects) if objects && !objects.empty?
       rescue StandardError => e
         Rails.logger.debug("ObjectCache ERROR: #{e}") if debug
       end
