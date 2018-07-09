@@ -86,7 +86,7 @@ class ObjectCache < ApplicationRecord
       # update all objects at once
       transaction do
         update(objects_to_be_updated.keys, objects_to_be_updated.values)
-        where(id: objects_to_be_updated.keys).update_all(updated_at: Time.now)
+        # where(id: objects_to_be_updated.keys).update_all(updated_at: Time.now)
       end
 
       # create all objects at once
