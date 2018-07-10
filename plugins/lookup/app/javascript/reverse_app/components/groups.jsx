@@ -1,4 +1,3 @@
-import React from 'react'
 import GroupMembers from './groupMembers';
 
 class Groups extends React.Component {

@@ -1,5 +1,3 @@
-import React from 'react'
-
 const GroupMembers = props => (
   <React.Fragment>
     {props.members.isFetching &&

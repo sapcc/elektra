@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "axios-mock-adapter": "^1.15.0",
+    "babel-cli": "^6.26.0",
     "babel-jest": "^23.0.1",
     "babel-preset-env": "^1.7.0",
     "enzyme": "^3.3.0",

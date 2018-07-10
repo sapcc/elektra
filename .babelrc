@@ -1,29 +1,53 @@
 {
-  "presets": [
-    ["env", {
-      "modules": false,
-      "targets": {
-        "browsers": "> 1%",
-        "uglify": true,
-        "ie": "11"
-      },
-      "useBuiltIns": true
-    }],
-    "react"
-  ],
-
-  "plugins": [
-    "react-require",
-    "transform-object-rest-spread",
-    ["transform-class-properties", { "spec": true }]
-  ],
-
   "env": {
+    "development": {
+      "presets": [
+        ["env", {
+          "modules": false,
+          "targets": {
+            "browsers": "> 1%",
+            "uglify": true,
+            "ie": "11"
+          },
+          "useBuiltIns": true
+        }],
+        "react"
+      ],
+
+      "plugins": [
+        "react-require",
+        "transform-object-rest-spread",
+        ["transform-class-properties", { "spec": true }]
+      ],
+    },
+    "production": {
+      "presets": [
+        ["env", {
+          "modules": false,
+          "targets": {
+            "browsers": "> 1%",
+            "uglify": true,
+            "ie": "11"
+          },
+          "useBuiltIns": true
+        }],
+        "react"
+      ],
+
+      "plugins": [
+        "react-require",
+        "transform-object-rest-spread",
+        ["transform-class-properties", { "spec": true }]
+      ],
+    },
     "test": {
       "presets": [
-        ["env"]
+        ["env"],
+        "react"
       ],
       "plugins": [
+        "react-require",
+        "transform-object-rest-spread",
         ["transform-class-properties", { "spec": true }]
       ]
     }

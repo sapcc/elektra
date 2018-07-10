@@ -1,7 +1,5 @@
-import React from 'react'
-
 import Groups from '../../components/groups'
-import { shallow, render } from 'enzyme'
+import { shallow } from 'enzyme'
 
 describe('Groups component', () => {
 
