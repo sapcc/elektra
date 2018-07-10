@@ -99,6 +99,7 @@ module ApiLookup
     methods.each do |m|
       method = m.gsub(':term', term)
       found_items = eval("service.#{method}")
+
       if found_items
         items = if found_items.is_a?(Hash)
                   found_items[:items]
@@ -111,23 +112,7 @@ module ApiLookup
       end
     end
 
-    return { items: [], service_call: '' }
-
-    # object = service.send(method, term)
-    # if object
-    #   return {
-    #     items: [object],
-    #     service_call: "#{service_name}->#{method}(\"#{term}\")"
-    #   }
-    # end
-    #
-    # filter = { name: term }
-    # filter[all_projects_param] = true if all_projects_param
-    #
-    # {
-    #   items: service.send(object_type.pluralize, filter),
-    #   service_call: "#{service_name}->#{object_type.pluralize}(#{filter})"
-    # }
+    { items: [], service_call: '' }
   end
 
   def service_and_methods(object_type)
