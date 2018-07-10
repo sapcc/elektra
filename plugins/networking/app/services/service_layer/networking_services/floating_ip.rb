@@ -27,7 +27,7 @@ module ServiceLayer
           next_link = links && links.find { |link| link['rel'] == 'next' } && true
           tries -= 1
           floatingips += response.body['floatingips']
-          marker = floatingips.last['id']
+          marker = floatingips.last['id'] unless floatingips.blank?
 
           break if !next_link || tries <= 0
         end
