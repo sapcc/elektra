@@ -26,7 +26,7 @@ module Screenshots
           scope_project_domain_name: ENV['SCREEN_SHOT_UPLOAD_DOMAIN'],
           scope_project_name: ENV['SCREEN_SHOT_UPLOAD_PROJECT']
         },
-        region: 'staging', interface: 'public', debug: false
+        region: Rails.configuration.default_region, interface: 'public', debug: false
       )
       @swift = @client.service('object-store')
     end
