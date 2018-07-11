@@ -63,5 +63,16 @@ module ServiceLayer
         MasterdataCockpit::ProjectInheritance.new(self, data)
       end
     end
+
+    #
+    # COSTING
+    #
+    def get_project_costing
+      elektron_billing.get('projects', path_prefix: '/services/costing').body
+    end
+
+    def get_domain_costing
+      elektron_billing.get('domains', path_prefix: '/services/costing').body
+    end
   end
 end

@@ -1,9 +1,11 @@
 import { imageConstants } from '../constants';
-import { ajaxHelper } from 'ajax_helper';
+import { pluginAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
 import { addNotice, addError } from 'lib/flashes';
 
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
+
+const ajaxHelper = pluginAjaxHelper('image')
 
 export default (type) => {
   const constants = imageConstants(type)
@@ -229,28 +231,12 @@ export default (type) => {
       )
   );
 
-  const publishImage = (imageId) => (
+  const updateImageVisibility = (imageId, visibility) => (
     (dispatch) => {
       dispatch(requestOsImage(imageId))
       return ajaxHelper.put(
-        `/ng/images/${imageId}/publish`,
-        { id: imageId }
-      ).then((response) => {
-        if (response.data.errors)
-          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
-        else {
-          dispatch(receiveOsImage(response.data))
-        }
-      })
-    }
-  )
-
-  const unpublishImage = (imageId) => (
-    (dispatch) => {
-      dispatch(requestOsImage(imageId))
-      return ajaxHelper.put(
-        `/ng/images/${imageId}/unpublish`,
-        { id: imageId }
+        `/ng/images/${imageId}/update_visibility`,
+        { id: imageId, visibility }
       ).then((response) => {
         if (response.data.errors)
           addError(React.createElement(ErrorsList, {errors: response.data.errors}));
@@ -270,7 +256,6 @@ export default (type) => {
     deleteOsImage,
     searchOsImages,
     loadNext,
-    publishImage,
-    unpublishImage
+    updateImageVisibility
   }
 }

@@ -24,4 +24,4 @@ Feature: Role Assignments
   @admin
   Scenario: Add new member to project group role assignments
     When I visit project path "identity/projects/role-assignments?active_tab=groupRoles"
-    Then I see "Add new Member" button
+    Then I see "Add New Member" button

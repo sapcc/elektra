@@ -41,7 +41,7 @@ export default class ImageMembersModal extends React.Component{
   }
 
   loadDependencies(props) {
-    if(!props.image) return
+    if(!props.image || props.image.visibility!='shared') return
     const promise = props.loadMembersOnce(props.image.id)
     if (promise) promise.catch((error) => this.setState({error}))
   }
@@ -69,56 +69,74 @@ export default class ImageMembersModal extends React.Component{
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {this.state.error && <FormErrors errors={this.state.error}/>}
-          { !imageMembers || imageMembers.isFetching ?
-            <div><span className='spinner'/>Loading...</div>
+          {image && image.visibility != 'shared' ?
+            <div className='alert alert-notice'>
+              Only shared images may contain members
+              <br/>
+              { policy.isAllowed("image:image_visibility_to_shared", {image}) &&
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.props.handleVisibilityChange(image.id, 'shared')
+                  }}>Set to shared
+                </a>
+              }
+            </div>
             :
-            <table className='table share-rules'>
-              <thead>
-                <tr>
-                  <th>Target Project</th>
-                  <th className='snug'>Status</th>
-                  <th className='actions'></th>
-                </tr>
-              </thead>
-              <tbody>
-                { !imageMembers || imageMembers.items.length==0 ? (
-                  <tr><td colSpan='3'>No members found.</td></tr>
-                ) : (
-                  imageMembers.items.map((member,index) =>
-                    <ImageMemberItem
-                      key={index}
-                      member={member}
-                      image={image}
-                      handleDelete={() => this.props.handleDelete(image.id,member.member_id)}/>
-                  )
-                )}
+            <React.Fragment>
+              {this.state.error && <FormErrors errors={this.state.error}/>}
+              { !imageMembers || imageMembers.isFetching ?
+                <div><span className='spinner'/>Loading...</div>
+                :
+                <table className='table share-rules'>
+                  <thead>
+                    <tr>
+                      <th>Target Project</th>
+                      <th className='snug'>Status</th>
+                      <th className='actions'></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    { !imageMembers || imageMembers.items.length==0 ? (
+                      <tr><td colSpan='3'>No members found.</td></tr>
+                    ) : (
+                      imageMembers.items.map((member,index) =>
+                        <ImageMemberItem
+                          key={index}
+                          member={member}
+                          image={image}
+                          handleDelete={() => this.props.handleDelete(image.id,member.member_id)}/>
+                      )
+                    )}
 
-                { policy.isAllowed('image:member_create', {image: image}) &&
-                  <tr>
-                    <td>
-                      <TransitionGroup>
-                        { this.state.showForm &&
-                          <FadeTransition>
-                            <ImageMemberForm
-                              handleSubmit={(memberId) => this.handleSubmit(image.id, memberId)}/>
-                          </FadeTransition>
-                        }
-                      </TransitionGroup>
-                    </td>
-                    <td></td>
-                    <td>
-                      <a
-                        className={`btn btn-${this.state.showForm ? 'default' : 'primary'} btn-sm pull-right`}
-                        href='#'
-                        onClick={(e) => { e.preventDefault(); this.toggleForm()}}>
-                        <i className={`fa ${this.state.showForm ? 'fa-close' : 'fa-plus'}`}/>
-                      </a>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+                    { policy.isAllowed('image:member_create', {image: image}) &&
+                      <tr>
+                        <td>
+                          <TransitionGroup>
+                            { this.state.showForm &&
+                              <FadeTransition>
+                                <ImageMemberForm
+                                  handleSubmit={(memberId) => this.handleSubmit(image.id, memberId)}/>
+                              </FadeTransition>
+                            }
+                          </TransitionGroup>
+                        </td>
+                        <td></td>
+                        <td>
+                          <a
+                            className={`btn btn-${this.state.showForm ? 'default' : 'primary'} btn-sm pull-right`}
+                            href='#'
+                            onClick={(e) => { e.preventDefault(); this.toggleForm()}}>
+                            <i className={`fa ${this.state.showForm ? 'fa-close' : 'fa-plus'}`}/>
+                          </a>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+            </React.Fragment>
           }
 
         </Modal.Body>

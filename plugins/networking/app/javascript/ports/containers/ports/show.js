@@ -4,6 +4,7 @@ import Items from '../../components/ports/show';
 import { fetchPortsIfNeeded } from '../../actions/ports';
 import { fetchNetworksIfNeeded } from '../../actions/networks';
 import { fetchSubnetsIfNeeded } from '../../actions/subnets';
+import { fetchSecurityGroupsIfNeeded } from '../../actions/security_groups';
 
 export default connect(
   (state,ownProps ) => {
@@ -14,10 +15,16 @@ export default connect(
       if (ports) port = ports.find(item => item.id==match.params.id)
     }
 
-    return { port, networks: state.networks, subnets: state.subnets }
+    return {
+      port,
+      networks: state.networks,
+      subnets: state.subnets,
+      securityGroups: state.securityGroups
+    }
   },
 
   dispatch => ({
+    loadSecurityGroupsOnce: () => dispatch(fetchSecurityGroupsIfNeeded()),
     loadPortsOnce: () => dispatch(fetchPortsIfNeeded()),
     loadNetworksOnce: () => dispatch(fetchNetworksIfNeeded()),
     loadSubnetsOnce: () => dispatch(fetchSubnetsIfNeeded())

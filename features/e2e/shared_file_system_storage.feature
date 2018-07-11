@@ -11,3 +11,4 @@ Feature: Shared File System Storage
     When I visit project path "shared-filesystem-storage"
     Then the page status code is successful
     And I see "Shared File System Storage"
+    And All AJAX calls are successful

@@ -2,3 +2,5 @@
   %p
     These bars show the quota usage across the cloud. The total length of each
     bar indicates the available capacity for the corresponding resource.
+  %p
+    = link_to 'Check for Inconsistencies', plugin('resource_management').cloud_admin_inconsistencies_path, data: { modal: true }, class: 'btn btn-primary btn-sm'

@@ -9,10 +9,30 @@ module ServiceLayer
       end
 
       def project_floating_ips(project_id, filter = {})
-        floatingips = elektron_networking.get(
-          'floatingips', {tenant_id: project_id, project_id: project_id}.merge(filter)
-        ).body['floatingips']
+        next_link = true
+        tries = 10
+        marker = nil
+        floatingips = []
 
+        # because of pagination we have to loop over pages to get all fips
+        loop do
+          response = elektron_networking.get(
+            'floatingips', {
+              tenant_id: project_id,
+              project_id: project_id,
+              marker: marker
+            }.merge(filter)
+          )
+          links = response.body['floatingips_links']
+          next_link = links && links.find { |link| link['rel'] == 'next' } && true
+          tries -= 1
+          floatingips += response.body['floatingips']
+          marker = floatingips.last['id'] unless floatingips.blank?
+
+          break if !next_link || tries <= 0
+        end
+
+        # map ip values to models
         floatingips.each_with_object([]) do |fip, array|
           fip_project_id = fip['tenant_id'] || fip['project_id']
           next unless fip_project_id == project_id

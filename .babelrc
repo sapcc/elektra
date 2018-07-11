@@ -5,9 +5,9 @@
         ["env", {
           "modules": false,
           "targets": {
-            "browsers": "> 1%",
+            "browsers": "> 0.01%",
             "uglify": true,
-            "ie": "11"
+            "ie": "10"
           },
           "useBuiltIns": true
         }],
@@ -25,9 +25,9 @@
         ["env", {
           "modules": false,
           "targets": {
-            "browsers": "> 1%",
+            "browsers": "> 0.01%",
             "uglify": true,
-            "ie": "11"
+            "ie": "10"
           },
           "useBuiltIns": true
         }],

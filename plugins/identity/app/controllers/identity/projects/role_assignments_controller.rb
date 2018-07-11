@@ -34,7 +34,7 @@ module Identity
           # render an error if user could not be found
           # Cloud admin is important for the user lookup!
           user = cloud_admin.identity.find_user(user_id) ||
-                 cloud_admin.identity.users(name: user_id).first
+                 cloud_admin.identity.users(name: user_id, domain_id: @scoped_domain_id).first
           unless user
             render json: { errors: "Could not find user with id #{user_id}"}
             return
@@ -48,7 +48,7 @@ module Identity
           # try to load group.
           # render an error if group could not be found
           group = cloud_admin.identity.find_group(group_id) ||
-                  cloud_admin.identity.groups(name: group_id).first
+                  cloud_admin.identity.groups(name: group_id, domain_id: @scoped_domain_id).first
 
           unless group
             render json: { errors: "Could not find group with id #{group_id}"}
@@ -98,7 +98,7 @@ module Identity
 
           # important: use current user (services.) to grant new roles
           services.identity.send(
-            "grant_project_#{member_type}_role",
+            "grant_project_#{member_type}_role!",
             scope_project_id, member_id, role_id
           )
         end
@@ -108,7 +108,7 @@ module Identity
           next unless available_role_ids.include?(role_id)
           # important: use current user (services.) to revoke roles
           services.identity.send(
-            "revoke_project_#{member_type}_role",
+            "revoke_project_#{member_type}_role!",
             scope_project_id, member_id, role_id
           )
         end

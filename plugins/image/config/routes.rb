@@ -5,9 +5,8 @@ Image::Engine.routes.draw do
   namespace :ng do
     get '/', to: 'images#app'
     resources :images, except: %i[show new edit] do
-      put 'publish'
-      put 'unpublish'
-      
+      put 'update_visibility'
+
       resources :members, except: %i[show new edit] do
         put 'accept', on: :collection
         put 'reject', on: :collection

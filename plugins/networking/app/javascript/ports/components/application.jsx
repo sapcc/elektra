@@ -4,6 +4,7 @@ import { HashRouter, Route, Redirect } from 'react-router-dom'
 import Ports from '../containers/ports/list'
 import ShowPortModal from '../containers/ports/show';
 import NewPortModal from '../containers/ports/new';
+import EditPortModal from '../containers/ports/edit';
 
 // render all components inside a hash router
 export default (props) => {
@@ -22,6 +23,7 @@ export default (props) => {
           <Route exact path="/ports/new" component={NewPortModal}/>
         }
         <Route exact path="/ports/:id/show" component={ShowPortModal}/>
+        <Route exact path="/ports/:id/edit" component={EditPortModal}/>
       </div>
     </HashRouter>
   )

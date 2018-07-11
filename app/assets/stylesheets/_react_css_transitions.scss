@@ -1,0 +1,38 @@
+// fade transition
+.css-transition-fade {
+  opacity: 0;
+}
+
+.css-transition-fade-enter {
+  opacity: 0.01;
+}
+
+.css-transition-fade-enter.css-transition-fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.css-transition-fade-exit {
+  opacity: 1;
+}
+
+.css-transition-fade-exit.css-transition-fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 500ms ease-in;
+}
+
+// highlight transition
+.css-transition-highlight-exit {
+  display: none;
+}
+.css-transition-highlight-exit-active {
+  background-color: transparent;
+}
+.css-transition-highlight-enter {
+  display: normal;
+  background-color: $hover-orange;
+}
+.css-transition-highlight-enter-active {
+  background-color: transparent;
+  transition: all 1500ms ease-out;
+}

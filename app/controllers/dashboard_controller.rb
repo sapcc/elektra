@@ -88,20 +88,23 @@ class DashboardController < ::ScopeController
     #   # Most likely this is the cause of double render error!
     #   return
     when 401 # unauthorized
+
       redirect_to monsoon_openstack_auth.login_path(
         domain_fid: @scoped_domain_fid,
         domain_name: @scoped_domain_name, after_login: params[:after_login]
       )
+
     when 404 # not found
       options[:title] = 'Object not Found'
       options[:description] = "The object you are looking for doesn't exist. \
       Please verify your input. (#{exception.message})"
+      render_exception_page(exception, options.merge(sentry: true))
     when 403 # forbidden
       options[:title] = 'Permission Denied'
       options[:description] = exception.message ||
                               'You are not authorized to request this page.'
+      render_exception_page(exception, options.merge(sentry: true))
     end
-    render_exception_page(exception, options.merge(sentry: true))
   end
 
   # catch all mentioned errors and render error page

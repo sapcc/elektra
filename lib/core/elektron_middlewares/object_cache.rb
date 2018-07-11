@@ -11,7 +11,7 @@ module ElektronMiddlewares
       debug = request_context.options[:debug]
 
       if debug
-        Rails.logger.debug('\033[1;36m########### ObjectCache ##########')
+        Rails.logger.debug("\033[1;36m########### ObjectCache ##########")
       end
 
       begin

@@ -153,7 +153,7 @@ export default class ProjectRoleAssignments extends React.Component {
           }
         </div>
 
-        {!hasItems && !this.props.isFetching &&
+        {!hasItems && !this.props.isFetching && !this.state.showNewMemberForm &&
           <div className="alert">
             {`No ${this.props.type} role assignments for this project yet`}
           </div>

@@ -32,6 +32,9 @@
             %li
               = link_to "Domain Resources Administration", plugin('resource_management').admin_path
 
+          - if plugin_available?('reports') && current_user.is_allowed?('reports:cost_domain')
+            %li
+              = link_to "Cost Report", plugin('reports').domain_cost_index_path
 
       - if plugin_available?('inquiry') && current_user.is_allowed?('inquiry:inquiry_all_list')
         %h5

@@ -2,6 +2,12 @@
   Select Security Groups for Server
 
 .modal-body
+  .alert.alert-info
+    Please note that changing the security groups here affects all assigned
+    interfaces (ports). This means that the security groups of each attached
+    port are adapted accordingly. If you have individual port security group
+    settings we recommend making security group changes only via the ports UI
+    in the networking section.
 
   .row
     .col-md-12

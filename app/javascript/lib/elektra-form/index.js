@@ -1,4 +1,5 @@
 import { FormInput } from './components/form_input';
+import { FormMultiselect } from './components/form_multiselect';
 import {
   FormElement,
   FormElementHorizontal,
@@ -15,5 +16,6 @@ Form.ElementInline= FormElementInline;
 Form.Input = FormInput;
 Form.Errors = FormErrors;
 Form.SubmitButton = SubmitButton;
+Form.FormMultiselect = FormMultiselect;
 
 export { Form, ErrorsList };

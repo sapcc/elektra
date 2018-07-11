@@ -43,6 +43,10 @@ module ServiceLayer
       end
     end
 
+    def get_inconsistencies
+      elektron_limes.get("inconsistencies").body['inconsistencies']
+    end
+
     ############################################################################
     # domain-admin level
 
