@@ -7,7 +7,8 @@ module.exports = {
     "^.+\\.js$": "babel-jest"
   },
   "moduleNameMapper": {
-    "ajax_helper": "<rootDir>/app/javascript/ajax_helper.js"
+    "ajax_helper": "<rootDir>/app/javascript/ajax_helper.js",
+    "testHelper": "<rootDir>/app/javascript/test/support/testHelper.js"
   },
-  "setupTestFrameworkScriptFile": "<rootDir>/plugins/lookup/app/javascript/reverse_app/test/setupEnzyme.js"
+  "setupTestFrameworkScriptFile": "<rootDir>/app/javascript/test/support/setupEnzyme.js"
 };

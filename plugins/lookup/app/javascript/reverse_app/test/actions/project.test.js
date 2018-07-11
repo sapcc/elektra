@@ -1,4 +1,4 @@
-import { setupStore } from '../testHelper'
+import { setupStore } from 'testHelper'
 import * as constants from '../../constants'
 import { fetchProject } from '../../actions/project'
 import axios from 'axios'
