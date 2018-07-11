@@ -9,7 +9,8 @@
             "uglify": true,
             "ie": "10"
           },
-          "useBuiltIns": true
+          "useBuiltIns": true,
+          /* "debug": true */
         }],
         "react"
       ],
