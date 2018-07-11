@@ -26,7 +26,7 @@ module Screenshots
           scope_project_domain_name: ENV['SCREEN_SHOT_UPLOAD_DOMAIN'],
           scope_project_name: ENV['SCREEN_SHOT_UPLOAD_PROJECT']
         },
-        region: Rails.configuration.default_region, interface: 'public', debug: false
+        region: ENV['MONSOON_DASHBOARD_REGION'] || 'qa-de-1', interface: 'public', debug: false
       )
       @swift = @client.service('object-store')
     end
