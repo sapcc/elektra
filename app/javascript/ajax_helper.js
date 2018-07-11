@@ -1,4 +1,4 @@
-import { mergeDeep } from 'lib/tools/deep_merge'
+import { mergeDeep } from './lib/tools/deep_merge'
 import axios from 'axios';
 
 // containers for global options and scope
