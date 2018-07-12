@@ -57,6 +57,14 @@ And(/^options of "(.*?)" contains names and ids$/) do |id|
   expect(option.text).not_to eq("undefined")
 end
 
+Then(/^I select the first option of "([^"]*)"$/) do |selectbox|
+  options = find(:select, selectbox, {}).all('option').collect(&:text)
+  if options.length > 2
+      option = options.find { |item| item != "" }
+      find(:select, selectbox, {}).find(:option, option, {}).select_option
+  end
+end
+
 When(/^I select "([^"]*)" from "([^"]*)"$/) do |option, selectbox|
   find(:select, selectbox, {}).find(:option, option, {}).select_option
 end

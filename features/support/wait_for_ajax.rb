@@ -9,9 +9,10 @@ def finished_all_ajax_requests?
   # jquery active ajax calls
   page.evaluate_script('jQuery.active').zero? &&
     # axios active ajax calls (see app/javascript/ajax_helper for more infos)
-    page.evaluate_script('window.activeAjaxCallsCount').zero?
+    (!page.evaluate_script('window.activeAjaxCallsCount') ||
+    page.evaluate_script('window.activeAjaxCallsCount').zero?)
 end
 
 def all_ajax_calls_successful?
-  page.evaluate_script('window.failedAjaxCallsCount').zero?
+  !page.evaluate_script('window.failedAjaxCallsCount') || page.evaluate_script('window.failedAjaxCallsCount').zero?
 end

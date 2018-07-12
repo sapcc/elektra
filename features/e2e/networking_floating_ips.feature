@@ -15,9 +15,10 @@ Feature: Floating IP's
   Scenario: New Floating IP Dialog comes up
     When I visit project path "networking/floating_ips"
     And I click on "Allocate new"
-    And I wait for 10 seconds
+    And All AJAX calls are successful
     Then I see a selectbox with id "floating_ip_floating_network_id"
     And options of "floating_ip_floating_network_id" contains names and ids
-    When I wait for 10 seconds
+    And I select the first option of "floating_ip_floating_network_id"
+    And All AJAX calls are successful
     Then I see a selectbox with id "floating_ip_floating_subnet_id"
     And options of "floating_ip_floating_subnet_id" contains names and ids
