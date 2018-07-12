@@ -47,7 +47,11 @@ const flatten = (root) => {
   }
 
   root.size = recurse(root);
-  return nodes;
+  return nodes.filter((elem, pos, arr) => {
+    return arr.indexOf(elem) == pos;
+  });
+  //
+  // return nodes;
 }
 
 
@@ -67,36 +71,36 @@ export default class App extends Component {
         .attr("cy", (d) => d.y)
   }
 
-  mousemove = () => {
-    this.cursor.attr("transform", "translate(" + d3.mouse(this) + ")");
-  }
-
-  mousedownCanvas = () => {
-    var point = d3.mouse(this),
-        node = {x: point[0], y: point[1]},
-        n = this.nodes.push(node);
-
-    // add links to any nearby nodes
-    this.nodes.forEach(function(target) {
-      var x = target.x - node.x,
-          y = target.y - node.y;
-      if (Math.sqrt(x * x + y * y) < 30) {
-        this.links.push({source: node, target: target});
-      }
-    });
-
-    restart();
-  }
-
-  mousedownNode = (d, i) => {
-    this.nodes.splice(i, 1);
-    this.links = this.links.filter(function(l) {
-      return l.source !== d && l.target !== d;
-    });
-    d3.event.stopPropagation();
-
-    restart();
-  }
+  // mousemove = () => {
+  //   this.cursor.attr("transform", "translate(" + d3.mouse(this) + ")");
+  // }
+  //
+  // mousedownCanvas = () => {
+  //   var point = d3.mouse(this),
+  //       node = {x: point[0], y: point[1]},
+  //       n = this.nodes.push(node);
+  //
+  //   // add links to any nearby nodes
+  //   this.nodes.forEach(function(target) {
+  //     var x = target.x - node.x,
+  //         y = target.y - node.y;
+  //     if (Math.sqrt(x * x + y * y) < 30) {
+  //       this.links.push({source: node, target: target});
+  //     }
+  //   });
+  //
+  //   restart();
+  // }
+  //
+  // mousedownNode = (d, i) => {
+  //   this.nodes.splice(i, 1);
+  //   this.links = this.links.filter(function(l) {
+  //     return l.source !== d && l.target !== d;
+  //   });
+  //   d3.event.stopPropagation();
+  //
+  //   restart();
+  // }
 
   restart = () => {
     this.node = this.node.data(this.nodes);
@@ -105,7 +109,9 @@ export default class App extends Component {
         .attr("class", "node")
         .style("fill", "#000")
         .attr("r", 5)
-        .on("mousedown", this.mousedownNode);
+        .on('click', this.click)
+        .on('mouseover', d => console.log(d.name, d.cached_object_type))
+        // .on("mousedown", this.mousedownNode);
 
     this.node.exit()
         .remove();
@@ -115,10 +121,15 @@ export default class App extends Component {
     this.link.enter().insert("line", ".node")
         .style("stroke", "#999")
         .attr("class", "link");
-    this.link.exit()
-        .remove();
+    this.link.exit().remove();
 
     this.force.start();
+  }
+
+  click = (d) => {
+    if (!d.children) {
+      this.props.loadSubtree(d.id)
+    }
   }
 
   componentDidMount() {
@@ -128,7 +139,7 @@ export default class App extends Component {
 
     this.force = d3.layout.force()
         .size([this.props.width, this.props.height])
-        .nodes([]) // initialize with a single node
+        //.nodes([]) // initialize with a single node
         .linkDistance(30)
         .charge(-60)
         .on("tick", this.tick);
@@ -136,24 +147,26 @@ export default class App extends Component {
     var svg = d3.select(ReactDOM.findDOMNode(this.refs.graph))
         .attr("width", this.props.width)
         .attr("height", this.props.height)
-        .on("mousemove", this.mousemove)
-        .on("mousedown", this.mousedownCanvas);
+        // .on("mousemove", this.mousemove)
+        // .on("mousedown", this.mousedownCanvas);
 
     svg.append("rect")
         .style("fill", "none")
         .style("pointer-events", "all")
         .attr("width", this.width)
-        .attr("height", this.height);
+        .attr("height", this.height)
+
 
     this.nodes = this.force.nodes()
     this.links = this.force.links()
     this.node = svg.selectAll(".node")
     this.link = svg.selectAll(".link")
 
-    this.cursor = svg.append("circle")
-        .attr("r", 30)
-        .attr("transform", "translate(-100,-100)")
-        .attr("class", "cursor");
+    // this.cursor = svg.append("circle")
+    //     .attr("r", 30)
+    //     .attr("transform", "translate(-100,-100)")
+    //     .attr("class", "cursor")
+
 
     this.restart();
   }
@@ -164,10 +177,63 @@ export default class App extends Component {
     const initialNodes = flatten(root)
     const initialLinks = d3.layout.tree().links(initialNodes)
 
+    console.log('initialNodes', initialNodes)
+    console.log('initialLinks before', initialLinks)
+
+    // this.nodes.length = 0
+    // this.links.length = 0
+
     for(let n of initialNodes) this.nodes.push(n)
     for(let l of initialLinks) this.links.push(l)
 
+
+    //
+    // if( !root || root.isFetching ) {
+    //   this.nodes.length = 0
+    //   this.links.length = 0
+    // } else {
+    //
+    //   console.log('-----------------------')
+    //   this.links.length = 0
+    //
+    //
+    //
+    //   // const newNodes = []
+    //   const newLinks = []
+    //
+    //   const nodesToBeRemoved = []
+    //
+    //   const loadNodesAndLinks = (node, parentNode) => {
+    //
+    //     if(node.id) {
+    //       console.log('nodeIndex',node.id,this.nodes.findIndex(item => item.id==node.id))
+    //       if(this.nodes.findIndex(item => item.id==node.id) < 0) {
+    //         this.nodes.push(node)
+    //       } else {
+    //         // nodesToBeRemoved.push(node)
+    //       }
+    //       console.log('parentNode',parentNode, 'linkIndex', this.links.findIndex(item => item.source.id==parentNode.id && item.target.id==node.id))
+    //       if(parentNode && this.links.findIndex(item => item.source.id==parentNode.id && item.target.id==node.id) < 0) {
+    //         console.log('push link', {source: parentNode, target: node })
+    //         this.links.push({source: parentNode, target: node })
+    //       }
+    //
+    //       if(node.children) {
+    //         for(let sn of node.children) {
+    //           loadNodesAndLinks(sn, node)
+    //         }
+    //       }
+    //     }
+    //   }
+    //
+    //   loadNodesAndLinks(root)
+    //   console.log('this.nodes', this.nodes)
+    //   for(let i of this.links) console.log('source',i.source.id,'target',i.target.id)
+    //   console.log('nodesToBeRemoved', nodesToBeRemoved)
+    // }
+
     this.restart()
+
     // var width = 960,
     //     height = 500;
     //
