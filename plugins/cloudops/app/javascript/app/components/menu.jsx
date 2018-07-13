@@ -1,9 +1,9 @@
 /* eslint no-console:0 */
-import { Link, withRouter } from 'react-router-dom'
+import { NavLink, withRouter } from 'react-router-dom'
 import { SearchField } from 'lib/components/search_field';
 
 // render all components inside a hash router
-export default withRouter((props) => {
+export default (props) => {
   const search = (term) => {
     // if(term==null|| term.trim().length==0) return
 
@@ -16,26 +16,26 @@ export default withRouter((props) => {
       <div className="mega-nav-responsive">
         <div className="container">
           <div className="mega-nav-items">
-            <div className="mega-nav-block">
-              <h5>
-                <i className="fa fa-fw fa-search"></i>
-                Finding All the Things
-              </h5>
-              <ul>
-                <li>
-                  <Link to='/universal-search'>Universal Search</Link>
-                </li>
-                <li>
-                  <Link to='/project-role-assignments'>Project Role Assignments</Link>
-                </li>
-                <li>
-                  <a href={window.location.href.replace(/(.*)\/cloudops.*/, "$1/home")}>Cloudadmin Area</a>
-                </li>
-              </ul>
-            </div>
+            <ul className="mega-nav-block">
+              <li>
+                <NavLink to='/universal-search'>Universal Search</NavLink>
+              </li>
+              <li>
+                <NavLink to='/project-role-assignments'>Project Role Assignments</NavLink>
+              </li>
+
+            </ul>
           </div>
 
           <div className="mega-nav-utils">
+            <ul className="mega-nav-block">
+              <li>
+                <a href={window.location.href.replace(/(.*)\/cloudops.*/, "$1/home")}>
+                  Go to Cloudadmin
+                  <i className="fa fa-share-square u-text-icon-left-margin"></i>
+                </a>
+              </li>
+            </ul>
             <SearchField
               onChange={(term) => search(term)}
               value={props.objects.searchTerm}
@@ -45,4 +45,4 @@ export default withRouter((props) => {
       </div>
     </div>
   )
-})
+}

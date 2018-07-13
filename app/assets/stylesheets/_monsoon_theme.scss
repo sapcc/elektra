@@ -451,6 +451,10 @@ section {
   text-decoration: line-through;
 }
 
+.u-text-icon-left-margin {
+  margin-left: 5px;
+}
+
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -1193,7 +1197,7 @@ footer, .footer {
 }
 
 // ---------------------------------------------------------------------------------
-// Main Toolbar
+// Main Toolbar Mega Nav
 // ---------------------------------------------------------------------------------
 
 .mega-nav-responsive {
@@ -1210,17 +1214,46 @@ footer, .footer {
     display: flex;
     flex-wrap: wrap;
 
-    ul {
-      padding-left: 0;
-    }
+  }
 
-    li {
-      list-style-type: none;
+  ul.mega-nav-block {
+    padding-left: 0;
+    line-height: 34px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  li {
+    list-style-type: none;
+    padding-right: 25px;
+
+    a {
+      color: #333;
+      font-size: $font-size-small;
+      padding-bottom: 5px;
+      text-transform: uppercase;
+
+      &:hover {
+        text-decoration: none;
+        border-bottom: 2px solid #555;
+      }
+
+      &.active {
+        border-bottom: 2px solid $medium-blue;
+        text-decoration: none;
+
+        &:hover {
+          border-color: $medium-blue;
+        }
+
+      }
     }
   }
 
   .mega-nav-utils {
     margin-left: auto;
+    display: flex;
   }
 
   .has-feedback.has-feedback-searchable {
