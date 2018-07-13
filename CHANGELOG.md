@@ -2,16 +2,49 @@
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
-[Full Changelog](https://github.com/sapcc/elektra/compare/2018.5...HEAD)
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.6...HEAD)
 
 **Implemented enhancements:**
 
+- **Testing: Research and POC testing frameworks for React [\#326](https://github.com/sapcc/elektra/issues/326)**   
+Since the number of react apps in Elektra is ever increasing we need a way to write tests for them to automatically test in our deployment pipeline.
+- **Universal Search: Add cache age info to search results [\#322](https://github.com/sapcc/elektra/issues/322)**   
+Since the universal search operates on cached objects the search results can sometimes be not entirely accurate. To give the user an idea an indication that a result might be out of date display cache age for the result.
+- **Display Cost Report for Domains [\#315](https://github.com/sapcc/elektra/issues/315)**   
+Make the existing plugin to show the cost report for projects also available for domains.
+- **Ports: Edit dialog and security group selection [\#301](https://github.com/sapcc/elektra/issues/301)**   
+We can select a security group for a port when we attach a new interface to an instance, but since we don't have an edit dialog for ports it's not possible to change it later. Also the server UI doesn't show which security groups are attached to which ports.
+
+**Fixed bugs:**
+
+- **Role assignment: Assigning roles to technical users results in error [\#313](https://github.com/sapcc/elektra/issues/313)**   
+Trying to assign a role to a technical user results in the error message "User unknown" after clicking the "save" button.
+- **react ajax calls do not work in \<= IE10 [\#312](https://github.com/sapcc/elektra/issues/312)**   
+We use the window.location.origin in axios to build the baseURL for ajax calls. This attribute is not available in Internet Explorer version less than 11.
+
+## [2018.6](https://github.com/sapcc/elektra/tree/2018.6) (2018-06-29)
+
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.5...2018.6)
+
+**Implemented enhancements:**
+
+- **Billing: New plugin for displaying project costs [\#304](https://github.com/sapcc/elektra/issues/304)**   
+The billing team have created a new API that delivers cost information per service \(based on consumption/quota\) for each project. It shows what the customer has paid every month and how the cost was distributed. Build a UI that renders a chart for the monthly costs and allows viewing detailed information for each month.
 - **Object Cache: DB cleanup job [\#296](https://github.com/sapcc/elektra/issues/296)**   
 Add an automatic job which cleans up object cache entries that haven't been updated in over a month to prevent object sprawl in cache table.
 - **Cloudops: Universal Search improvements [\#295](https://github.com/sapcc/elektra/issues/295)**   
 Elektra link to project from search results. Add more search fields: floating IP, mac address, cidr, descriptions,...\). Search for Manila log messages.
 - **Cloudops: Project user role assignment UI [\#294](https://github.com/sapcc/elektra/issues/294)**   
 Add project user role assignment UI to Cloudops. This shall be accessible from a project view in the universal search results and also standalone. New features: "select admin roles", "remove all roles"
+- **Cloudops: Live Search [\#302](https://github.com/sapcc/elektra/pull/302)**   
+If the search term can't be found in the Object Cache, allow the user to perform a live search against the OpenStack backend \(user needs to specify object type so we know which API to search against\).
+
+**Fixed bugs:**
+
+- **Compute: Instance create also creates unnecessary ports [\#308](https://github.com/sapcc/elektra/issues/308)**   
+In the instance create dialog when the user selects a network a subnet is also selected because the select box doesn't have a blank option. This causes a port to be created with the subnet and flag "preserve on delete" in the Neutron database.
+- **Project wizard can't be completed in projects with non-standard external networks [\#299](https://github.com/sapcc/elektra/issues/299)**   
+We have some customer-specific domains where the external network names don't follow our naming convention. In these cases the project wizard can never be completed because the wizard checks whether the project has an rbac for one of the standard networks \(which don't exist in these domains\). If a project has a non-standard external network designed the wizard should checkmark the network box as completed.
 
 ## [2018.5](https://github.com/sapcc/elektra/tree/2018.5) (2018-05-31)
 
