@@ -1,4 +1,6 @@
 {
+  "image_viewer": "role:image_viewer",
+  
   "image:image_owner": "project_id:%(image.owner)s",
   "image:image_creator": "user_id:%(image.user_id)s",
   "image:cloud_admin": "role:cloud_image_admin",
@@ -7,8 +9,8 @@
   "image:image_is_shared": "'shared'==%(image.visibility)s",
   "image:image_is_community": "'community'==%(image.visibility)s",
 
-  "image:image_get": "role:admin or role:Member or role:member",
-  "image:image_list": "role:admin or role:Member or role:member",
+  "image:image_get": "role:admin or role:Member or role:member or rule:image_viewer",
+  "image:image_list": "role:admin or role:Member or role:member or rule:image_viewer",
   "image:image_create": "role:admin",
   "image:image_update": "role:admin or user_id:%(image.user_id)s",
   "image:image_delete": "project_id:%(image.owner)s",

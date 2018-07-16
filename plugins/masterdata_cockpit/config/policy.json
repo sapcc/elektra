@@ -1,5 +1,5 @@
 {
-  "masterdata_cockpit:masterdata_get": "role:admin",
+  "masterdata_cockpit:masterdata_get": "role:admin or role:masterdata_viewer",
   "masterdata_cockpit:masterdata_edit": "rule:project_admin or rule:domain_admin",
   "masterdata_cockpit:masterdata_create": "rule:project_admin or rule:domain_admin"
 }
