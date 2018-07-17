@@ -81,15 +81,6 @@
     "date":       "2017"
   },
   {
-    "country":    "South Africa",
-    "regionkey":  "af-za-1",
-    "regionname": "AF-ZA-1",
-    "lat":        -31.35,
-    "lon":        23.96,
-    "available":  false,
-    "date":       "2018"
-  },
-  {
     "country":    "United Arab Emirates",
     "regionkey":  "ap-ae-1",
     "regionname": "AP-AE-1",
@@ -105,15 +96,6 @@
     "lat":        24.70,
     "lon":        46.68,
     "available":  true,
-    "date":       "2018"
-  },
-  {
-    "country":    "India",
-    "regionkey":  "ap-in-1",
-    "regionname": "AP-IN-1",
-    "lat":        17.37,
-    "lon":        78.48,
-    "available":  false,
     "date":       "2018"
   },
   {
