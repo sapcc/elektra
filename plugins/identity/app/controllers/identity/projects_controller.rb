@@ -3,7 +3,7 @@
 module Identity
   # This class implements project actions
   class ProjectsController < ::DashboardController
-    before_action :project_id_required, except: %i[index create new user_projects]
+    before_action :project_id_required, except: %i[index create new]
     before_action :get_project_id,  except: %i[index create new]
 
     # check wizard state and redirect unless finished
@@ -19,29 +19,7 @@ module Identity
       }
     )
 
-    def user_projects
-      @projects = @user_domain_projects
-
-      respond_to do |format|
-        format.html do
-          if params[:partial]
-            render partial: 'projects',
-                   locals: { projects: @projects, remote_links: true },
-                   layout: false
-          else
-            render action: :index
-          end
-        end
-        format.js
-      end
-    end
-
-    def show
-      @subprojects = []
-      if @user_domain_projects
-        @subprojects = @user_domain_projects.select { |pr| pr.parent_id == @scoped_project_id }
-      end
-    end
+    def show; end
 
     def view
       @project = services.identity.find_project(

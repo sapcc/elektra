@@ -85,9 +85,9 @@ describe DashboardController, type: :controller do
     context 'project id is nil and domain id is provided' do
       context 'and user has access to domain' do
         before :each do
-          allow(Rails.cache).to receive(:fetch)
-            .with("user_domain_role_assignments/#{AuthenticationStub.test_token['user']['id']}/#{default_params[:domain_id]}", anything)
-            .and_return true
+          allow(controller.service_user.identity).to receive(
+            :has_domain_access
+          ).and_return(true)
         end
 
         it 'should return with ok header' do
@@ -103,9 +103,9 @@ describe DashboardController, type: :controller do
 
       context 'and user has no access to the requested domain' do
         before :each do
-          allow(Rails.cache).to receive(:fetch)
-            .with("user_domain_role_assignments/#{AuthenticationStub.test_token['user']['id']}/#{default_params[:domain_id]}", anything)
-            .and_return false
+          allow(controller.service_user.identity).to receive(
+            :has_domain_access
+          ).and_return(false)
         end
 
         it 'should return with ok header' do
