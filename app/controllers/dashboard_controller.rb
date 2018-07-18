@@ -149,7 +149,6 @@ class DashboardController < ::ScopeController
         return render(template: 'application/exceptions/project_not_found')
       end
 
-      # byebug
       # did not return -> check if user projects include the requested project.
       has_project_access = service_user.identity.user_projects(
         current_user.id,
@@ -167,20 +166,10 @@ class DashboardController < ::ScopeController
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
 
-      # if this works then cache it!!!!
+      # check if user has access to current domain
       has_domain_access = service_user.identity.has_domain_access(
         @scoped_domain_id, current_user.id
       )
-
-      # has_domain_access = Rails.cache.fetch(
-      #   "user_domain_role_assignments/#{current_user.id}/#{@scoped_domain_id}",
-      #   expires_in: 1.hour
-      # ) do
-      #   service_user.identity.role_assignments(
-      #     'user.id' => current_user.id, 'scope.domain.id' => @scoped_domain_id,
-      #     'effective' => true
-      #   ).length.positive?
-      # end
       unless has_domain_access
         # user has no permissions for the new domain -> rescope to
         # unscoped token and return
