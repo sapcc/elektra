@@ -11,14 +11,17 @@
   "identity:project_user_projects": "@",
   "identity:project_update": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
   "identity:project_delete": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
+
   "identity:project_create": "rule:cloud_admin or rule:admin_and_matching_project_domain_id",
   "identity:project_request": "not(project_id:nil and role:admin)",
+
   "identity:project_api_endpoints": "not(project_id:nil)",
   "identity:project_download_openrc": "not(project_id:nil)",
   "identity:project_web_console": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
 
   "identity:domain_list": "rule:cloud_admin or rule:cloud_viewer",
   "identity:domain_get": "(role:admin or role:Member or role:member) and domain_id:%(target.domain_id)s",
+
   "identity:credential_get": "rule:admin_required",
   "identity:credential_list": "rule:cloud_admin or domain_id:%(domain_id)s",
   "identity:credential_create": "rule:admin_required or user_id:%(credential.user_id)s",
@@ -37,6 +40,7 @@
   "identity:group_create": "rule:cloud_admin or (role:admin and domain_id:%(domain_id)s)",
   "identity:group_update": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   "identity:group_delete": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
+
   "identity:group_add_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
   "identity:group_remove_member": "rule:cloud_admin or (role:admin and domain_id:%(group.domain_id)s)",
 
