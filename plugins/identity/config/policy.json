@@ -8,7 +8,7 @@
   "identity:project_get": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or project_id:%(target.project.id)s",
   "identity:project_show_wizard": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or project_id:%(target.project.id)s",
   "identity:project_list": "rule:cloud_admin or rule:admin_and_matching_domain_id or rule:cloud_viewer",
-  "identity:project_user_projects": "@",
+  "identity:domain_auth_projects": "@",
   "identity:project_update": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
   "identity:project_delete": "rule:cloud_admin or rule:admin_and_matching_target_project_domain_id or rule:admin_and_matching_target_project_id",
 
