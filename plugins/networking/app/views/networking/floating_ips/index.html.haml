@@ -1,36 +1,31 @@
 = render "intro"
 
-- if @scoped_project_id
-  .toolbar
-    .has-feedback.has-feedback-searchable
-      = text_field_tag 'search_ips_input', '', class: "form-control", placeholder: 'floating ip or subnet name'
+.toolbar
+  .has-feedback.has-feedback-searchable
+    = text_field_tag 'search_ips_input', '', class: "form-control", placeholder: 'floating ip or subnet name'
 
-    .has-feedback-help
-      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by Floating IP name or subnet name in visible list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-        %i.fa.fa-question-circle
+  .has-feedback-help
+    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by Floating IP name or subnet name in visible list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+      %i.fa.fa-question-circle
 
-    - if current_user.is_allowed?("networking:floating_ip_create", {})
-      .main-buttons
-        = link_to 'Allocate new', plugin('networking').new_floating_ip_path, data: {modal: true}, class: 'btn btn-primary'
+  - if current_user.is_allowed?("networking:floating_ip_create", {})
+    .main-buttons
+      = link_to 'Allocate new', plugin('networking').new_floating_ip_path, data: {modal: true}, class: 'btn btn-primary'
 
-  %table.table#floating_ips.searchable{data:{search_input: '#search_ips_input'}}
-    %thead
-      %tr
-        %th Floating IP Address / Subnet
-        %th Fixed IP Address
-        %th Description
-        %th Status
-        %th.snug
-    %tbody
-      - if @floating_ips.length==0
-        %tr{data:{empty:true}}
-          %td{colspa: 5} No Floating IP available
-      - else
-        = render partial: 'list', locals: { floating_ips: @floating_ips}
+%table.table#floating_ips.searchable{data:{search_input: '#search_ips_input'}}
+  %thead
+    %tr
+      %th Floating IP Address / Subnet
+      %th Fixed IP Address
+      %th Description
+      %th Status
+      %th.snug
+  %tbody
+    - if @floating_ips.length==0
+      %tr{data:{empty:true}}
+        %td{colspa: 5} No Floating IP available
+    - else
+      = render partial: 'list', locals: { floating_ips: @floating_ips}
 
-  - if @pagination_has_next
-    .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table#floating_ips tbody', search_input_selector: '#search_ips_input'} }
-
-
-- else
-  = render "application/projects_list"
+- if @pagination_has_next
+  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table#floating_ips tbody', search_input_selector: '#search_ips_input'} }

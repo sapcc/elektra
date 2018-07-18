@@ -23,13 +23,6 @@ describe Identity::ProjectsController, type: :controller do
     allow(UserProfile).to receive(:tou_accepted?).and_return true
   end
 
-  describe 'GET index' do
-    it 'returns http success' do
-      get :user_projects, params: default_params
-      expect(response).to be_success
-    end
-  end
-
   describe 'GET show' do
     subject { get :show, params: default_params }
 

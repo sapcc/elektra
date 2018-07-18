@@ -1,53 +1,50 @@
 = render "intro"
 
-- if @scoped_project_id
-  .toolbar
-    .has-feedback.has-feedback-searchable
-      = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
+.toolbar
+  .has-feedback.has-feedback-searchable
+    = text_field_tag 'search_instances_input', '', class: "form-control", placeholder: 'Server name, ID, or status'
 
-    .has-feedback-help
-      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-        %i.fa.fa-question-circle
-
-
-    - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
-      .main-buttons
-        = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary'
-
-  -# add searchable plugin to instances table (identified by css class searchable)
-  %table.table.instances.searchable{data:{search_input: '#search_instances_input'}}
-    %thead
-      %tr
-        %th.snug
-        %th
-          Name / AZ
-          %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
-        - if @all_projects
-          %th Owning Project
-        -# %th
-        -#   AZ
-        -#   %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
-        %th IPs
-        %th
-          OS / Size
-        -# %th Size
-        %th Power state
-        %th Status
-        %th Created at
-        %th.snug
-    %tbody
-      - if @instances.empty?
-        %tr{data: {empty: true}}
-          %td{colspan: 8} No instances available
-      - else
-        = render partial: 'list', locals: {instances: @instances}
-
-  -# if has next items (comes from paginate helper in controller) render the
-  -# ajax paginate plugin (identified by data-ajax-paginate)
-  - if @pagination_has_next
-    .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
+  .has-feedback-help
+    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by server name, ID or status in visible server list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+      %i.fa.fa-question-circle
 
 
-  =# render_paginatable(@instances)
-- else
-  = render "application/projects_list"
+  - if current_user.is_allowed?("compute:instance_create", {target: { project: @active_project, scoped_domain_name: @scoped_domain_name}})
+    .main-buttons
+      = link_to 'Create new', plugin('compute').new_instance_path, data: {modal: true}, class: 'btn btn-primary'
+
+-# add searchable plugin to instances table (identified by css class searchable)
+%table.table.instances.searchable{data:{search_input: '#search_instances_input'}}
+  %thead
+    %tr
+      %th.snug
+      %th
+        Name / AZ
+        %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
+      - if @all_projects
+        %th Owning Project
+      -# %th
+      -#   AZ
+      -#   %i.fa.fa-fw.fa-info-circle{data: { toggle: "tooltip", placement: "top", title: "Availability Zone"}}
+      %th IPs
+      %th
+        OS / Size
+      -# %th Size
+      %th Power state
+      %th Status
+      %th Created at
+      %th.snug
+  %tbody
+    - if @instances.empty?
+      %tr{data: {empty: true}}
+        %td{colspan: 8} No instances available
+    - else
+      = render partial: 'list', locals: {instances: @instances}
+
+-# if has next items (comes from paginate helper in controller) render the
+-# ajax paginate plugin (identified by data-ajax-paginate)
+- if @pagination_has_next
+  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.instances tbody', search_input_selector: '#search_instances_input'} }
+
+
+=# render_paginatable(@instances)

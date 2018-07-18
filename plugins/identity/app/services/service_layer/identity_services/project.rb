@@ -41,6 +41,35 @@ module ServiceLayer
         []
       end
 
+      def has_domain_access(domain_id, user_id)
+        # load user role assignments on domain
+        assignments = elektron_identity.get(
+          'role_assignments',
+          'user.id' => user_id, 'scope.domain.id' => domain_id
+        ).body['role_assignments']
+
+        # return true if there is at least one role assignment
+        # for user and doamin
+        return true if assignments.length.positive?
+
+        # did not return
+        # load group role assignments on domain and collect group ids
+        domain_assigned_group_ids = elektron_identity.get(
+          'role_assignments', 'scope.domain.id' => domain_id
+        ).body['role_assignments'].each_with_object([]) do |ra, groups|
+          groups << ra['group']['id'] if ra['group']
+        end
+
+        # load all groups user belongs to and collect group ids
+        user_group_ids = elektron_identity.get(
+          "users/#{user_id}/groups"
+        ).body['groups'].collect { |group| group['id'] }
+
+        # user has domain access if there is a match between
+        # domain assigned groups and user groups
+        (domain_assigned_group_ids & user_group_ids).length.positive?
+      end
+
       def cached_project(id, filter = {})
         project_attrs = Rails.cache.fetch(
           "project/#{id}", expires_in: 1.minute
@@ -53,13 +82,12 @@ module ServiceLayer
       end
 
       def cached_user_projects(user_id, filter = {})
-        user_domain_projects_data = Rails.cache.fetch(
-          "user/#{user_id}/user_domain_projects", expires_in: 1.minute
-        ) do
+        key = "user/#{user_id}/user_domain_projects-#{filter}"
+        user_domain_projects = Rails.cache.fetch(key, expires_in: 10.minutes) do
           elektron_identity.get("users/#{user_id}/projects", filter)
                            .body['projects']
         end || []
-        user_domain_projects_data.collect do |project_attrs|
+        user_domain_projects.collect do |project_attrs|
           project_map.call(project_attrs)
         end
       end
