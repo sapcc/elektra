@@ -455,6 +455,11 @@ section {
   margin-left: 5px;
 }
 
+.u-text-break-word {
+  word-break: break-all;
+  word-break: break-word;
+}
+
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -1957,6 +1962,7 @@ tr.task-state {
   }
 
   li {
+    @extend .u-text-break-word;
     position: relative;
     padding-left: 19px;
     break-inside: avoid;
