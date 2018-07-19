@@ -5,22 +5,18 @@ module Identity
   class DomainsController < ::DashboardController
     authorization_required additional_policy_params: {
       domain_id: proc { @scoped_domain_id }
-    }, except: %i[show auth_projects]
+    }, except: [:show]
 
     def show
+      @user_domain_projects_tree = services.identity.auth_projects_tree(
+        @user_domain_projects
+      )
+      @root_projects = @user_domain_projects.select { |pr| pr.parent.blank? }
       @domain = service_user.identity.find_domain(@scoped_domain_id)
     end
 
     def index
       @domains = services.identity.domains
-    end
-
-    def auth_projects
-      projects = service_user.identity.cached_user_projects(
-        current_user.id, domain_id: @scoped_domain_id
-      ).sort_by(&:name)
-
-      render json: { auth_projects: projects }
     end
   end
 end

@@ -235,11 +235,11 @@ var AnsiUp = (function () {
         else {
             if (last_chunk.slice(-1) === "\x1B") {
                 this._buffer = "\x1B";
-                // console.log("raw", chunks);
+                console.log("raw", chunks);
                 chunks.pop();
                 chunks.push(last_chunk.substr(0, last_chunk.length - 1));
-                // console.log(chunks);
-                // console.log(last_chunk);
+                console.log(chunks);
+                console.log(last_chunk);
             }
             if (chunks.length === 2 &&
                 chunks[1] === "" &&

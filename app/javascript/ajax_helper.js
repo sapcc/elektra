@@ -29,8 +29,8 @@ export const pluginAjaxHelper = (pluginName, options = {}) => {
   // console.log('pluginAjaxHelper options before',options,scope)
 
   if(!options.baseURL) {
-    const domain = options.domain == false ? null : options.domain || scope.domain
-    const project = options.project == false ?  null : options.project || scope.project
+    const domain = options.domain || scope.domain
+    const project = options.project || scope.project
     delete(options.domain)
     delete(options.project)
 

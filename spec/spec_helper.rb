@@ -117,6 +117,6 @@ RSpec.configure do |config|
 
     # stub user_projects which is called in each request
     allow_any_instance_of(::DashboardController)
-      .to receive(:load_active_project).and_return([])
+      .to receive(:load_user_projects).and_return([])
   end
 end

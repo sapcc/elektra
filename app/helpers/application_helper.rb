@@ -97,19 +97,31 @@ module ApplicationHelper
   # ---------------------------------------------------------------------------------------------------
   # Breadcrumb/Hierarchy Helpers
   # ---------------------------------------------------------------------------------------------------
-  def current_project_parents
-    current_project = ObjectCache.where(cached_object_type: 'project', id: @scoped_project_id).first
-    return [] unless current_project
-    parent_id = current_project.payload['parent_id']
-    parents = []
-    while parent = ObjectCache.where(cached_object_type: 'project', id: parent_id).first
-      parent_id = parent.payload['parent_id']
-      parents << parent
-    end
 
-    parents.reverse unless block_given?
-    parents.reverse.each do |project|
-      yield(project)
+
+  def hierarchical_breadcrumb(active_project, auth_projects)
+    unless active_project.blank?
+      parents_project_ids = active_project.parents_project_ids
+      breadcrumb_projects = Array.new
+
+      # blank check necessary for root projects
+      unless parents_project_ids.blank?
+        parents_project_ids.compact!
+        auth_projects = auth_projects.inject({}){|hash,pr| hash[pr.id] = pr; hash } unless auth_projects.is_a?(Hash) # get all projects
+
+        breadcrumb_projects = parents_project_ids.reverse.inject([]) do |array,project_id|
+          project = auth_projects[project_id] # pick project from all projects
+          if project
+            yield(project) if block_given? # if block given do this
+            array << project               # this is for the case that no block is given: just add to array
+          end
+          array
+        end
+      end
+
+      # add active project to the end of the project list
+      yield(active_project) if block_given?
+      breadcrumb_projects << active_project
     end
   end
 

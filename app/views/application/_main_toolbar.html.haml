@@ -4,10 +4,9 @@
       %h1
         .small
           = link_to @scoped_domain_name, main_app.domain_home_path(domain_id: @scoped_domain_fid, project_id:nil)
-          - current_project_parents do |project|
+          - hierarchical_breadcrumb(@active_project, @user_domain_projects) do |project|
             \/
-            = link_to(project.name.try(:html_safe), main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: project.id))
-          = " / #{@scoped_project_name}" if @scoped_project_id
+            = link_to(project.name.try(:html_safe),main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: (project.try(:friendly_id) || project.id)))
 
           - unless @scoped_domain_id.blank?
             .info-box

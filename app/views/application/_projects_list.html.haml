@@ -1,0 +1,6 @@
+%h3 Choose a project context to view its instances:
+.row
+  .col-lg-6
+    .list-group
+      - @user_domain_projects.each do |project|
+        = link_to project.name.try(:html_safe), plugin('compute').instances_path(project_id: project.friendly_id), class: "list-group-item"

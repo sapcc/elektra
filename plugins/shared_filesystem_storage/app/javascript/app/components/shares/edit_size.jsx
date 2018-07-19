@@ -29,7 +29,7 @@ export default class EditShareSizeForm extends React.Component {
   }
 
   render(){
-    // console.log(this.props.share)
+    console.log(this.props.share)
     return (
       <Modal
         show={this.state.show}

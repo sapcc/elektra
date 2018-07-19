@@ -14,30 +14,10 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { setPolicy } from 'policy';
 import { configureAjaxHelper } from 'ajax_helper';
 
-const isIterable = (obj) => {
-  // checks for null and undefined
-  if (obj == null) {
-    return false;
-  }
-  return typeof obj[Symbol.iterator] === 'function';
-}
-
-const getDataset = (element) => {
-  const set = {}
-  for(let a of element.attributes) {
-    if(a.name.indexOf('data-')==0) set[a.name] = a.value
-  }
-  return set
-}
-
-const setAttributes = (element, attributes) => {
-  for(let key of attributes) element.setAttribute(key,attributes[key])
-}
 
 class Widget {
-  constructor(reactContainers, config) {
-    // reactContainers should always be an array (support global widgets)
-    this.reactContainers = isIterable(reactContainers) ? reactContainers : [reactContainers]
+  constructor(reactContainer, config) {
+    this.reactContainer = reactContainer
     this.config = config
     this.createStore = this.createStore.bind(this)
     this.render = this.render.bind(this)
@@ -68,29 +48,24 @@ class Widget {
   }
 
   render(container){
-    // const Container = React.createElement(container, this.config.params)
+    container = React.createElement(container, this.config.scriptParams)
 
-    for(let reactContainer of this.reactContainers) {
-      let dataset = getDataset(reactContainer)
-      let wrappedComponent = React.createElement(container, Object.assign({},dataset,this.config.params))
-
-      if(this.store) {
-        ReactDOM.render(
-          <Provider store = { this.store }>
-            <React.Fragment>
-              { (this.config.params.flashescontainer !== "custom") && <FlashMessages/>}
-              { wrappedComponent }
-            </React.Fragment>
-          </Provider>, reactContainer
-        )
-      } else {
-        ReactDOM.render(
+    if(this.store) {
+      ReactDOM.render(
+        <Provider store = { this.store }>
           <React.Fragment>
-            { (this.config.params.flashescontainer !== "custom") && <FlashMessages/>}
-            { wrappedComponent }
-          </React.Fragment>, reactContainer
-        )
-      }
+            { (this.config.scriptParams.flashescontainer !== "custom") && <FlashMessages/>}
+            { container }
+          </React.Fragment>
+        </Provider>, this.reactContainer
+      )
+    } else {
+      ReactDOM.render(
+        <React.Fragment>
+          { (this.config.scriptParams.flashescontainer !== "custom") && <FlashMessages/>}
+          { container }
+        </React.Fragment>, this.reactContainer
+      )
     }
   }
 }
@@ -114,23 +89,19 @@ const getCurrentScript = (widgetName) => {
 
 export const createWidget = (dirname, options={}) => {
   const widgetName = getWidgetName(dirname)
-  let reactContainers = options.containers
-  let params = options.params || {}
-
-  if(!reactContainers) {
-    let scriptTagContainer = getContainerFromCurrentScript(widgetName)
-    reactContainers = [scriptTagContainer.reactContainer]
-    params = scriptTagContainer.scriptParams
-  }
+  const currentScript = getCurrentScript(widgetName)
+  const scriptParams = JSON.parse(JSON.stringify(currentScript.dataset))
+  const srcTokens = currentScript && currentScript.getAttribute('src') ? currentScript.getAttribute('src').split('/') : []
+  const reactContainer = window.document.createElement('div');
 
   let htmlOptions = options.html || {};
   let defaultHtmlOptions = {class: '.react-widget-content'};
   htmlOptions = Object.assign({}, defaultHtmlOptions, htmlOptions);
   for(let attr in htmlOptions) {
-    for(let reactContainer of reactContainers) {
-      reactContainer.setAttribute(attr, htmlOptions[attr])
-    }
+    reactContainer.setAttribute(attr, htmlOptions[attr]);
   }
+
+  currentScript.parentNode.replaceChild(reactContainer, currentScript);
 
   const createConfig = () => {
     // get current url without params and bind it to baseURL
@@ -141,9 +112,8 @@ export const createWidget = (dirname, options={}) => {
     }
 
     return {
-      params,
-      scriptParams: params,
-      devOptions: { name: widgetName },
+      scriptParams: scriptParams,
+      devOptions: { name: srcTokens[srcTokens.length-1] },
       ajaxHelper: {
         baseURL: `${origin}${window.location.pathname}`,
         headers: {}
@@ -155,27 +125,13 @@ export const createWidget = (dirname, options={}) => {
   // if document is already loaded then resolve Promise immediately
   // with a new widget object
   if (document.readyState === "complete")
-    return Promise.resolve(new Widget(reactContainers, createConfig()))
+    return Promise.resolve(new Widget(reactContainer, createConfig()))
 
   // document is not loaded yet -> create a new Promise and resolve it as soon
   // as document is loaded.
   return new Promise((resolve, reject) => {
     document.addEventListener('DOMContentLoaded', () => {
-      resolve(new Widget(reactContainers, createConfig()))
+      resolve(new Widget(reactContainer, createConfig()))
     })
   })
-}
-
-
-const getContainerFromCurrentScript = (widgetName) => {
-  const currentScript = getCurrentScript(widgetName)
-  const scriptParams = JSON.parse(JSON.stringify(currentScript.dataset))
-  const srcTokens = currentScript && currentScript.getAttribute('src') ? currentScript.getAttribute('src').split('/') : []
-  const reactContainer = window.document.createElement('div');
-
-  currentScript.parentNode.replaceChild(reactContainer, currentScript);
-  return {
-    reactContainer,
-    scriptParams
-  }
 }

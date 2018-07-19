@@ -8,7 +8,10 @@
 
       - unless @domain_switch
         %ol.context-list
-          %li.dropdown{data: {react_auth_projects_link: 'true', icon_class: 'icon-link fa fa-th-list'}}
+          %li.dropdown
+            = link_to plugin('identity').user_projects_path(project_id: nil), data: {modal: true} do
+              %i.icon-link.fa.fa-th-list
+
 
     - if @can_access_project && !@domain_switch
       %ol.context-list

@@ -26,5 +26,7 @@
     - else
       = link_to plugin('identity').projects_request_project_path(), class: "header-action" , title: "Request new Subproject", data: {modal: true, toggle: "tooltip", placement: "left"} do
         %i.fa.fa-plus-square-o
--# subtree
-%div{data: {react_auth_projects: true, root: @scoped_project_id, title: 'false' } }
+- if @subprojects.blank?
+  %p None available.
+- else
+  %p= subprojects_tree(@subprojects.collect(&:id),@user_domain_projects, class: 'content-list subprojects')

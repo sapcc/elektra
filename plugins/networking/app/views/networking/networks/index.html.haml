@@ -1,38 +1,41 @@
 = render "intro"
 = render partial: 'networking/shared/tabs', locals: { tab: @network_type }
 
-.toolbar
-  .has-feedback.has-feedback-searchable
-    = text_field_tag 'search_networks_input', '', class: "form-control", placeholder: 'Network name'
+- if @scoped_project_id
+  .toolbar
+    .has-feedback.has-feedback-searchable
+      = text_field_tag 'search_networks_input', '', class: "form-control", placeholder: 'Network name'
 
-  .has-feedback-help
-    %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by network name in visible network list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
-      %i.fa.fa-question-circle
+    .has-feedback-help
+      %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: "Searches by network name in visible network list only. Entering a search term will automatically start loading the next pages and filter the loaded items using the search term. Emptying the search input field will show all currently loaded items."}}
+        %i.fa.fa-question-circle
 
-  - if current_user.is_allowed?("networking:network_#{@network_type}_create", project: @active_project)
-    .main-buttons
-      = link_to 'Create new', plugin('networking').send("new_networks_#{@network_type}_path"), data: {modal: true}, class: 'btn btn-primary'
+    - if current_user.is_allowed?("networking:network_#{@network_type}_create", project: @active_project)
+      .main-buttons
+        = link_to 'Create new', plugin('networking').send("new_networks_#{@network_type}_path"), data: {modal: true}, class: 'btn btn-primary'
 
-%table.table.networks.searchable{data:{search_input: '#search_networks_input'}}
-  %thead
-    %tr
-      %th Name
-      %th Subnets Associated
-      %th Owning Project
-      %th Shared
-      %th Status
-      %th Admin State
-      %th.snug
-  %tbody
-    - if @networks.length==0
-      %tr{data: {empty: true}}
-        %td{colspa: 6} No network available
-    - else
-      - @networks.each do | network |
-        = render partial: 'item', locals: {network: network}
+  %table.table.networks.searchable{data:{search_input: '#search_networks_input'}}
+    %thead
+      %tr
+        %th Name
+        %th Subnets Associated
+        %th Owning Project
+        %th Shared
+        %th Status
+        %th Admin State
+        %th.snug
+    %tbody
+      - if @networks.length==0
+        %tr{data: {empty: true}}
+          %td{colspa: 6} No network available
+      - else
+        - @networks.each do | network |
+          = render partial: 'item', locals: {network: network}
 
--# = render_paginatable(@networks)
--# if has next items (comes from paginate helper in controller) render the
--# ajax paginate plugin (identified by data-ajax-paginate)
-- if @pagination_has_next
-  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.networks tbody', search_input_selector: '#search_networks_input'} }
+  -# = render_paginatable(@networks)
+  -# if has next items (comes from paginate helper in controller) render the
+  -# ajax paginate plugin (identified by data-ajax-paginate)
+  - if @pagination_has_next
+    .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.networks tbody', search_input_selector: '#search_networks_input'} }
+- else
+  = render "application/projects_list"

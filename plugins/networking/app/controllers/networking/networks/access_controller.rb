@@ -12,10 +12,7 @@ module Networking
       rbac_target_tenant_ids = @rbacs.collect(&:target_tenant)
 
       @rbac_auth_projects = []
-      @auth_projects = service_user.identity.cached_user_projects(
-        current_user.id, domain_id: @scoped_domain_id
-      ).sort_by(&:name)
-      @auth_projects.each do |project|
+      @user_domain_projects.each do |project|
         if project.id == @scoped_project_id ||
            rbac_target_tenant_ids.include?(project.id)
           next

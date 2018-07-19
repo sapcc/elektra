@@ -18,8 +18,6 @@ Identity::Engine.routes.draw do
       put 'enable' => 'users#enable'
       put 'disable' => 'users#disable'
     end
-
-    get 'auth_projects'
   end
 
   resources :projects, only: [:index] do
@@ -27,6 +25,8 @@ Identity::Engine.routes.draw do
   end
 
   resources :roles, only: [:index]
+
+  get 'user-projects' => 'projects#user_projects'
 
   namespace :projects do
     # start page which renders react components

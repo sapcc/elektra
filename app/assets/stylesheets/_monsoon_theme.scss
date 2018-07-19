@@ -1947,9 +1947,6 @@ tr.task-state {
 // ---------------------------------------------------------------------------------
 
 .tree-expandable {
-  & {
-    columns: 280px 3;
-  }
 
   &, ul {
     list-style-type: none;
@@ -1959,7 +1956,6 @@ tr.task-state {
   li {
     position: relative;
     padding-left: 19px;
-    break-inside: avoid;
 
     a, span {
       display: inline-block;
