@@ -105,10 +105,10 @@
           = link_to 'Request a New Project', plugin('identity').projects_request_project_path(project_id: nil), data: {modal: true}
 
 
-
   .col-md-3
-    = render 'projects_tree'
-
+    -# this is a placeholder for React Component!
+    %div{data: {react_auth_projects: true} }
+      %h4.action-heading.heading-top Your Projects 
 
   .col-md-3
     .infobox

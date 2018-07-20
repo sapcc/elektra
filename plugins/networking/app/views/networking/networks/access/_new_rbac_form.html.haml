@@ -18,6 +18,6 @@
 
 :javascript
   $('[data-control-rbac-form]').rbacFormControl({
-    authProjects: #{sanitize(@user_domain_projects.collect{|project| project.id.to_s+" ("+project.name.to_s+")"}.to_json)},
+    authProjects: #{sanitize(auth_projects.collect{|project| project.id.to_s+" ("+project.name.to_s+")"}.to_json)},
     currentProject: "#{@scoped_project_id} (#{@scoped_project_name})"
   });

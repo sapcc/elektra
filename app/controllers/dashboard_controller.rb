@@ -45,7 +45,7 @@ class DashboardController < ::ScopeController
   # rescope token
   before_action :rescope_token, except: [:terms_of_use]
   before_action :raven_context, except: [:terms_of_use]
-  before_action :load_user_projects,
+  before_action :load_active_project,
                 :load_webcli_endpoint, except: %i[terms_of_use]
   before_action :set_mailer_host
 
@@ -149,7 +149,6 @@ class DashboardController < ::ScopeController
         return render(template: 'application/exceptions/project_not_found')
       end
 
-      # byebug
       # did not return -> check if user projects include the requested project.
       has_project_access = service_user.identity.user_projects(
         current_user.id,
@@ -166,15 +165,11 @@ class DashboardController < ::ScopeController
     elsif @scoped_domain_id
       # @scoped_project_id is nil and @scoped_domain_id exists -> check if
       # user can access the requested domain.
-      has_domain_access = Rails.cache.fetch(
-        "user_domain_role_assignments/#{current_user.id}/#{@scoped_domain_id}",
-        expires_in: 1.hour
-      ) do
-        service_user.identity.role_assignments(
-          'user.id' => current_user.id, 'scope.domain.id' => @scoped_domain_id,
-          'effective' => true
-        ).length.positive?
-      end
+
+      # check if user has access to current domain
+      has_domain_access = service_user.identity.has_domain_access(
+        @scoped_domain_id, current_user.id
+      )
       unless has_domain_access
         # user has no permissions for the new domain -> rescope to
         # unscoped token and return
@@ -288,19 +283,16 @@ class DashboardController < ::ScopeController
     Raven.tags_context(tags)
   end
 
-  def load_user_projects
-    # get all projects for user (this might be expensive, might need caching,
-    # ajaxifying, ...)
-    @user_domain_projects ||= service_user.identity.cached_user_projects(
-      current_user.id, domain_id: @scoped_domain_id
-    ).sort_by(&:name)
-
+  def load_active_project
     return unless @scoped_project_id
-    # load active project
-
-    @active_project = @user_domain_projects.find do |project|
-      project.id == @scoped_project_id
+    # load active project. Try first from ObjectCache and then from API
+    cached_active_project = ObjectCache.where(id: @scoped_project_id).first
+    if cached_active_project
+      @active_project = Identity::Project.new(services.identity, cached_active_project.payload)
+    else
+      @active_project = service_user.identity.find_project(@scoped_project_id)
     end
+
     return if @active_project && @active_project.name == @scoped_project_name
 
     @active_project = services.identity.find_project(

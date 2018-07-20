@@ -3,8 +3,8 @@ import * as reducers from './reducers';
 import App from './containers/app';
 
 createWidget(__dirname).then((widget) => {
-  console.log('widget.config', widget.config)
-  console.log('widget.config.scriptParams.url',widget.config.scriptParams.url)
+  // console.log('widget.config', widget.config)
+  // console.log('widget.config.scriptParams.url',widget.config.scriptParams.url)
 
   let ajaxHelperOptions = {}
   if(widget.config.scriptParams.url) {
