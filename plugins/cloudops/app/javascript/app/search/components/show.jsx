@@ -63,7 +63,7 @@ export default class ShowSearchObjectModal extends React.Component{
         show={this.state.show}
         onExited={this.restoreUrl}
         onHide={this.hide}
-        bsSize="large"
+        dialogClassName="modal-xl"
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">
