@@ -25,12 +25,15 @@ Rails.application.routes.draw do
         get 'domain_projects'
         get 'projects'
         get 'live_search'
+        get 'related-objects' => 'cache#related_objects'
       end
     end
   end
 
   scope '/:domain_id' do
     match '/', to: 'pages#show', id: 'landing', via: :get, as: :landing_page
+
+    match 'topology-test', to: 'pages#show', id: 'topology_test', via: :get
 
     scope '(/:project_id)' do
       scope module: 'dashboard' do

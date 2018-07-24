@@ -3,12 +3,19 @@
 class CacheController < ::ScopeController
   include ApiLookup
 
-  class NotFound < StandardError; end
+  RELATED_OBJECTS_KEYS = {
+    'port' => %w[network_id device_id security_groups],
+    'floatingip' => %w[router_id floating_network_id port_id],
+    'router' => %w[flavor_id external_gateway_info.network_id],
+    'subnet' => %w[network_id],
+    'server' => %w[image.id]
+  }.freeze
 
+  class NotFound < StandardError; end
   authentication_required domain: ->(c) { c.instance_variable_get(:@scoped_domain_id) },
                           domain_name: ->(c) { c.instance_variable_get(:@scoped_domain_name) },
                           project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
-                          rescope: true
+                          rescope: true#, except: %i[related_objects]
 
   def index
     page = (params[:page] || 1).to_i
@@ -155,6 +162,52 @@ class CacheController < ::ScopeController
     end
 
     render json: items
+  end
+
+  def related_object_values(key, payload)
+    if payload.is_a?(Array)
+      return payload.collect { |data| related_object_values(key, data) }
+    end
+
+    if key.include?('.')
+      nested_keys = key.split('.')
+
+      data = payload
+      nested_keys.each do |nested_key|
+        data = related_object_values(nested_key, data) if data
+      end
+
+      return data
+    end
+
+    payload[key]
+  end
+
+  def related_objects
+    sql = ['payload::text ILIKE ?', "%#{params[:id]}%"]
+
+    cached_object = ObjectCache.where(id: params[:id]).first
+
+    if cached_object
+      if cached_object.project_id
+        sql[0] += ' OR id = ?'
+        sql << cached_object.project_id
+      end
+
+      keys = RELATED_OBJECTS_KEYS[cached_object.cached_object_type] || []
+      values = keys.collect do |key|
+        related_object_values(key, cached_object.payload)
+      end.flatten.uniq
+
+      if values && values.length.positive?
+        sql[0] += " OR id IN (?)"
+        sql << values
+      end
+    end
+
+    render json: ObjectCache
+      .where.not(cached_object_type: %w[error flavor])
+      .where(sql)
   end
 
   protected
