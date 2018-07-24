@@ -8,7 +8,7 @@ Feature: Ports
 
   @admin
   Scenario: The ports page is reachable
-    When I visit project path "/networking/ports"
+    When I visit project path "/networking/ports/widget"
     Then the page status code is successful
     And I see "Fixed IPs / Ports"
     And All AJAX calls are successful
