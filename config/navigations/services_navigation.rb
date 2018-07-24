@@ -119,7 +119,7 @@ SimpleNavigation::Configuration.run do |navigation|
                                         highlights_on: %r{networking/(backup_networks)/?.*}
                     networking_nav.item :ports,
                                         'Fixed IPs / Ports',
-                                        -> { plugin('networking').ports_path },
+                                        -> { plugin('networking').widget_ports_path },
                                         if: -> { plugin_available?(:networking) },
                                         highlights_on: %r{networking/ports/?.*}
                     networking_nav.item :floating_ips,
