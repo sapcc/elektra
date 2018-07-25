@@ -219,9 +219,12 @@ module BlockStorage
       if @volume.destroy
         audit_logger.info(current_user, "has deleted", @volume)
       end
-      @volume.status = 'deleting'
-      @target_state = target_state_for_action 'destroy'
-      sleep(SLEEP)
+
+      if @volume.errors.empty?
+        @volume.status = 'deleting'
+        @target_state = target_state_for_action 'destroy'
+        sleep(SLEEP)
+      end
       render template: 'block_storage/volumes/update_item.js'
     end
 
