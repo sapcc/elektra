@@ -109,7 +109,7 @@ export default class NewShareNetworkForm extends React.Component {
     return (
       <Modal backdrop='static' show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">New Share</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">New Share Network</Modal.Title>
         </Modal.Header>
 
         <Form
