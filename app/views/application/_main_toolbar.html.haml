@@ -7,7 +7,9 @@
           - current_project_parents do |project|
             \/
             = link_to(project.name.try(:html_safe), main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: project.id))
-          = " / #{@scoped_project_name}" if @scoped_project_id
+          - if @scoped_project_id
+            \/
+            = link_to(@scoped_project_name, main_app.project_home_path(domain_id: @scoped_domain_fid, project_id: @scoped_project_fid))
 
           - unless @scoped_domain_id.blank?
             .info-box
