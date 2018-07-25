@@ -16,7 +16,9 @@ class CacheController < ::ScopeController
     items = ObjectCache.find_objects(
       type: params[:type], term: params[:term], include_scope: true,
       paginate: { page: page, per_page: 30 }
-    ) { |scope| where_current_token_scope(scope).order(:name) }
+    ) do |sql|
+      where_current_token_scope(sql).order(:name)
+    end
 
     render json: { items: items, total: items.total, has_next: items.has_next }
   rescue StandardError

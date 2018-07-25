@@ -141,23 +141,31 @@ class ObjectCache < ApplicationRecord
   # Returns an Array of found objects. If paginate options is provided then
   # it adds a "total" and "has_next" methods to it.
   def self.find_objects(options = {})
-    scope = ObjectCache.all
-    # reduce scope to objects with the given type
+    sql = ObjectCache.all
+
+    # reduce sql to objects with the given type
     unless options[:type].blank?
-      scope = scope.where(cached_object_type: options[:type])
+      sql = sql.where(cached_object_type: options[:type])
     end
 
-    # search objects by term
-    scope = scope.search(options[:term]) unless options[:term].blank?
+    unless options[:term].blank?
+      ids = FriendlyIdEntry.where(
+        ['name ILIKE :term OR slug ILIKE :term', term: "%#{options[:term]}%"]
+      ).pluck(:key)
+      # search objects by term
+      sql = sql.where(id: ids).or(sql.search(options[:term]))
+    end
+
     # include associations domain and project (two more queries)
-    scope = scope.includes(:domain, project: :domain) if options[:include_scope]
-    scope = yield scope if block_given?
+    sql = sql.includes(:domain, project: :domain) if options[:include_scope]
+    sql = yield sql if block_given?
 
     if options[:paginate]
       page = (options[:paginate][:page] || 1).to_i
       per_page = (options[:paginate][:per_page] || 30).to_i
 
-      objects = scope.limit(per_page + 1).offset((page - 1) * per_page)
+      objects = sql.limit(per_page + 1).offset((page - 1) * per_page)
+
       total = objects.except(:offset, :limit, :order).count
       has_next = objects.length > per_page
       objects = objects.to_a
@@ -167,7 +175,7 @@ class ObjectCache < ApplicationRecord
       objects.define_singleton_method(:total) { total }
       objects.define_singleton_method(:has_next) { has_next }
     else
-      objects = scope.respond_to?(:to_a) ? scope.to_a : [scope]
+      objects = sql.respond_to?(:to_a) ? sql.to_a : [sql]
       extend_object_payload_with_scope(objects) if options[:include_scope]
     end
     objects

@@ -5,7 +5,7 @@ class FriendlyIdEntry < ApplicationRecord
 
   friendly_id :name, :use => :scoped, :scope => :scope
 
-  def self.search(class_name,scope, term)
+  def self.search(class_name, scope, term)
     sql = [
       "class_name=? and (key ILIKE ? or name ILIKE ?) and endpoint=? #{'and lower(scope)=?' if scope}",
       class_name,
