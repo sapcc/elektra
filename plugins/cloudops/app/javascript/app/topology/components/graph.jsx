@@ -5,6 +5,7 @@ import { forceSimulation, forceLink, forceCenter, forceManyBody, forceX, forceY 
 import { drag } from 'd3-drag'
 import { zoom } from 'd3-zoom'
 
+
 export class Graph extends React.Component {
   static defaultProps = {
     width: 1138,
@@ -31,6 +32,7 @@ export class Graph extends React.Component {
 
     this.graph = select(ReactDOM.findDOMNode(this.refs.graph))
     this.tooltip = select(ReactDOM.findDOMNode(this.refs.tooltip))
+    this.details = select(ReactDOM.findDOMNode(this.refs.details))
 
     // we use svg groups to logically group the elements together
     this.linkGroup = this.graph.append('g').attr('class', 'links')
@@ -99,8 +101,19 @@ export class Graph extends React.Component {
     this.props.loadRelatedObjects(node.id)
   }
 
-  showDetails = () => {
-    console.log('show Details')
+  showDetails = (node) => {
+    this.props.showDetails(event,node)
+    // console.log(this.details.style('display'))
+    // this.details.transition()
+    //   .duration(200)
+    //   .style("opacity", .8)
+    //   .style('display','inline')
+    // // this.tooltip.html(
+    // //   <ReactJson src={JSON.stringify(node)} collapsed={1}/>
+    // // )
+    // .style("left", (event.offsetX + 10 ) + "px")
+    // .style("top", (event.offsetY) + "px")
+    // ReactDOM.render(<ReactJson src={node.payload} collapsed={1}/>, this.details.node())
   }
 
   handleTick = () => {
@@ -259,6 +272,7 @@ export class Graph extends React.Component {
       .attr('stroke-width', 1)
       .attr('stroke', this.props.linkColor)
 
+    // children
     nodeEnter
       .append('text')
       .attr("dx", -(this.props.nominalBaseNodeSize / 2+1)-13).attr("dy",this.props.nominalBaseNodeSize / 2 -2)
@@ -269,6 +283,7 @@ export class Graph extends React.Component {
       .text('\uf055')
       .on('click', (node) => this.handleToggleEvent(node))
 
+    // details
     nodeEnter
       .append('text')
       .attr('class','icon details')
@@ -353,6 +368,7 @@ export class Graph extends React.Component {
           <g ref='graph' />
         </svg>
         <div className='topology-tooltip' ref='tooltip'></div>
+        <div className='topology-details' ref='details'></div>
       </React.Fragment>
     )
   }

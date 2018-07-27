@@ -1,4 +1,6 @@
 import { Graph } from './graph'
+import ReactJson from 'react-json-view'
+import { Popover, Modal, Button } from 'react-bootstrap'
 
 export default class App extends React.Component {
   state = {
@@ -28,6 +30,10 @@ export default class App extends React.Component {
     }
   }
 
+  showDetails = (event,node) => {
+    this.setState({details: {x: event.offsetX, y: event.offsetY, node}})
+  }
+
   setInitialSelectedTypes = (objects) => {
     const availableObjectTypes = {}
     for(let obj of Object.values(objects)) {
@@ -44,7 +50,7 @@ export default class App extends React.Component {
 
     if(this.props.objects) {
       for(let node of Object.values(this.props.objects)) {
-        let newNode = { ...(node.payload || node),
+        let newNode = { ...node,
           label: Graph.nodeLabel(node),
           isFetching: node.isFetching
         }
@@ -120,7 +126,29 @@ export default class App extends React.Component {
           links={graphData[1]}
           width={1138}
           height={600}
-          loadRelatedObjects={this.props.loadRelatedObjects}/>
+          loadRelatedObjects={this.props.loadRelatedObjects}
+          showDetails={this.showDetails}/>
+
+        {this.state.details &&
+          <div
+            className="popover"
+            style={{top: this.state.details.y, left: this.state.details.x, display: 'block'}}
+            >
+            <h3 className="popover-title">
+              {`Details for ${this.state.details.node.cached_object_type} ${this.state.details.node.name}`}
+              <button
+                onClick={() => this.setState({details: null})}
+                type="button"
+                className="close"
+                aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </h3>
+            <div className="popover-content">
+              <ReactJson src={this.state.details.node.payload} collapsed={1}/>
+            </div>
+          </div>
+        }
       </React.Fragment>
     )
   }
