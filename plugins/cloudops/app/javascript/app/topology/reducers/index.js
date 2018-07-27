@@ -1,3 +1,3 @@
-import topology_objects from './topology_objects';
+import objects from './objects';
 
-export { topology_objects }
+export { objects }

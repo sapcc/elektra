@@ -206,7 +206,7 @@ class CacheController < ::ScopeController
     end
 
     render json: ObjectCache
-      .where.not(cached_object_type: %w[error flavor])
+      .where.not(cached_object_type: %w[error flavor], id: params[:id])
       .where(sql)
   end
 

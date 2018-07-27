@@ -1,12 +1,13 @@
 import { connect } from  'react-redux';
 import ObjectTopology from '../components/object_topology';
-import { fetchTopologyObjects } from '../actions/topology_objects'
+import { fetchTopologyObjects, reset } from '../actions/topology'
 
 export default connect(
   (state,ownProps ) => {
-    return { topologyObjects: state.topology.topology_objects }
+    return { objects: state.topology.objects }
   },
   dispatch => ({
-    loadSubtree: (objectId) => dispatch(fetchTopologyObjects(objectId))
+    loadRelatedObjects: (objectId) => dispatch(fetchTopologyObjects(objectId)),
+    resetState: () => dispatch(reset())
   })
 )(ObjectTopology);
