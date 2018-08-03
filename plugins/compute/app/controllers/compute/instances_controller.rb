@@ -12,7 +12,7 @@ module Compute
                                       attach_interface create_interface
                                       remove_interface detach_interface
                                       detach_floatingip new_snapshot update_item new_size
-                                      automation_script, new_status]
+                                      automation_script new_status]
 
     def index
       per_page = params[:per_page] || 20
