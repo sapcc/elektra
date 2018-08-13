@@ -231,7 +231,7 @@ export class Graph extends React.Component {
 
         this.tooltip.transition()
           .duration(200)
-          .style("opacity", .7)
+          .style("opacity", .9)
           .style('display','inline')
         this.tooltip.html(
           d.cached_object_type + "<br/>"  + d.label +

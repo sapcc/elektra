@@ -132,7 +132,7 @@ export default class App extends React.Component {
         {this.state.details &&
           <div
             className="popover"
-            style={{top: this.state.details.y, left: this.state.details.x, display: 'block'}}
+            style={{top: this.state.details.y, left: this.state.details.x, display: 'block', maxWidth: 700, minWidth: 530}}
             >
             <h3 className="popover-title">
               {`Details for ${this.state.details.node.cached_object_type} ${this.state.details.node.name}`}
