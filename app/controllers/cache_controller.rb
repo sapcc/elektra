@@ -184,6 +184,11 @@ class CacheController < ::ScopeController
   end
 
   def related_objects
+    unless current_user.is_allowed?('cloud_admin')
+      render json: []
+      return
+    end
+
     sql = ['payload::text ILIKE ?', "%#{params[:id]}%"]
 
     cached_object = ObjectCache.where(id: params[:id]).first
