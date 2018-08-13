@@ -1,0 +1,25 @@
+.topology-tooltip {
+  position: absolute;
+  text-align: center;
+  min-width: 100px;
+  min-height: 30px;
+  padding: 2px;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.topology-details {
+  position: absolute;
+  z-index: 1000;
+  min-width: 100px;
+  min-height: 30px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 2px;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}

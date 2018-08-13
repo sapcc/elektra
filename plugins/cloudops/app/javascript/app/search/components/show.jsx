@@ -6,6 +6,8 @@ import { projectUrl, objectUrl } from '../../shared/object_link_helper'
 import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
 import NetworkUsageStats from '../../../../../../networking/app/javascript/network_usage_stats/containers/application'
 
+import ObjectTopology from '../../topology/containers/object_topology'
+
 export default class ShowSearchObjectModal extends React.Component{
   state = {
     show: true,
@@ -109,6 +111,9 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
+              <Tab eventKey='objectTopology' title="Topology">
+                <ObjectTopology size={[500,500]} objectId={item.id} />
+              </Tab>
             </Tabs>
           }
         </Modal.Body>

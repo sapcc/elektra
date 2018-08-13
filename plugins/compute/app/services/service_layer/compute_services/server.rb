@@ -19,6 +19,28 @@ module ServiceLayer
         ) || []
       end
 
+      def servers_batched(batch_size, filter = {})
+        filter = filter.merge(limit: batch_size)
+        tries = (2000/batch_size).ceil
+        servers = []
+        marker = nil
+
+        loop do
+          filter = filter.merge(marker: marker) if marker
+          tries -= 1
+          response = elektron_compute.get('servers/detail', filter)
+          servers.concat(response.map_to('body.servers', &server_map) || [])
+
+          next_link = response.body.fetch('servers_links', []).select do |link|
+            link['rel'] == 'next'
+          end
+
+          break if tries <= 0 || next_link.blank?
+          marker = servers.last.id
+        end
+        servers
+      end
+
       def cached_project_servers(project_id)
         data = Rails.cache.fetch("#{project_id}_servers",
                                  expires_in: 2.hours) do
