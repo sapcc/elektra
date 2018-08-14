@@ -124,6 +124,14 @@ describe Automation::NodesController, type: :controller do
       expect(response).to be_success
       expect(response).to render_template(:run_automation)
     end
+    it 'returns a warning if the node is offline' do
+      node = ::Automation::FakeFactory.new.node
+      node.facts[:online] = false
+      allow_any_instance_of(ServiceLayer::AutomationService).to receive(:node).and_return(node)
+      get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
+      expect(response).to be_success
+      expect(flash.now[:warning]).to_not be_nil
+    end
   end
 
   describe 'DELETE destroy' do
