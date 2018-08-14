@@ -32,9 +32,7 @@ Rails.application.routes.draw do
 
   scope '/:domain_id' do
     match '/', to: 'pages#show', id: 'landing', via: :get, as: :landing_page
-
-    match 'topology-test', to: 'pages#show', id: 'topology_test', via: :get
-
+    
     scope '(/:project_id)' do
       scope module: 'dashboard' do
         post 'accept_terms_of_use'

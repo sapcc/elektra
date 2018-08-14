@@ -89,6 +89,12 @@ export class Graph extends React.Component {
     nodesToBeAdded.forEach(n => this.nodes.push({...n, x: this.props.width/2, y: this.props.height/2}))
     linksToBeAdded.forEach(l => this.links.push(l))
 
+    for(let node of this.nodes) {
+      let n = nextProps.nodes.find(newNode => node.id == newNode.id)
+      node.isFetching = n.isFetching
+      node.receivedAt = n.receivedAt
+    }
+
     // this.nodes = nextProps.nodes
     // this.links = nextProps.links
 
@@ -98,7 +104,12 @@ export class Graph extends React.Component {
   }
 
   handleToggleEvent = (node) => {
-    this.props.loadRelatedObjects(node.id)
+    // console.log(node)
+    if(node.receivedAt) {
+      this.props.removeRelatedObjects(node.id)
+    } else {
+      this.props.loadRelatedObjects(node.id)
+    }
   }
 
   showDetails = (node) => {
@@ -295,7 +306,7 @@ export class Graph extends React.Component {
       .on('click', (node) => this.showDetails(node))
 
     var icons = nodeEnter.append('text')
-      .attr('class','icon symbol')
+      .attr('class', (d) => d.isFetching ? 'icon symbol spinner' : 'icon symbol')
       .style('fill', this.props.nodeColor)
       .style('font-family', 'FontAwesome')
       .style('font-size', (d) => {
@@ -307,35 +318,37 @@ export class Graph extends React.Component {
         }
       })
       .attr("dx", -this.props.nominalBaseNodeSize / 2+1).attr("dy",this.props.nominalBaseNodeSize / 2 -2)
-      .text((d) => {
-        switch (d.cached_object_type) {
-          case 'network':
-            if(d['router:external']) return '\uf0ac'
-            else return '\uf0c2'
-          case 'server':
-            return '\uf0a0'
-          case 'router':
-            return '\uf0e8'
-          case 'port':
-            return '\uf0ec'
-          case 'security_group':
-            return '\uf132'
-          case 'volume':
-            return '\uf1c0'
-          case 'server':
-            return '\uf233'
-          case 'project':
-            return '\uf288'
-          case 'floatingip':
-            //return '\uf0ac'
-            return 'FIP'
-          default:
-            return '\uf013'
-        }
-      })
-
 
     this.nodeElements = nodeEnter.merge(this.nodeElements)
+
+    this.nodeElements.selectAll('.symbol').text((d) => {
+      if (d.isFetching) return '\uf110'
+
+      switch (d.cached_object_type) {
+        case 'network':
+          if(d['router:external']) return '\uf0ac'
+          else return '\uf0c2'
+        case 'server':
+          return '\uf0a0'
+        case 'router':
+          return '\uf0e8'
+        case 'port':
+          return '\uf0ec'
+        case 'security_group':
+          return '\uf132'
+        case 'volume':
+          return '\uf1c0'
+        case 'server':
+          return '\uf233'
+        case 'project':
+          return '\uf288'
+        case 'floatingip':
+          //return '\uf0ac'
+          return 'FIP'
+        default:
+          return '\uf013'
+      }
+    })
 
     // // texts
     // this.textElements = this.textGroup.selectAll('text').data(this.nodes, node => node.id)
@@ -367,8 +380,7 @@ export class Graph extends React.Component {
         <svg ref='svg' width={this.props.width} height={this.props.height}>
           <g ref='graph' />
         </svg>
-        <div className='topology-tooltip' ref='tooltip'></div>
-        <div className='topology-details' ref='details'></div>
+        <div className='topology-tooltip' ref='tooltip' style={{display: 'none'}}></div>
       </React.Fragment>
     )
   }

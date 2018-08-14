@@ -2,6 +2,13 @@ import * as constants from '../constants';
 import { ajaxHelper } from 'ajax_helper';
 
 //################### OBJECTS #########################
+const removeLeaves= (objectId) => (
+  {
+    type: constants.REMOVE_LEAVES,
+    objectId
+  }
+);
+
 const requestTopologyObjects= (objectId) => (
   {
     type: constants.REQUEST_TOPOLOGY_OBJECTS,
@@ -68,5 +75,6 @@ const reset = () => (
 
 export {
   fetchTopologyObjects,
+  removeLeaves,
   reset
 }

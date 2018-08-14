@@ -127,6 +127,7 @@ export default class App extends React.Component {
           width={1138}
           height={600}
           loadRelatedObjects={this.props.loadRelatedObjects}
+          removeRelatedObjects={this.props.removeRelatedObjects}
           showDetails={this.showDetails}/>
 
         {this.state.details &&
