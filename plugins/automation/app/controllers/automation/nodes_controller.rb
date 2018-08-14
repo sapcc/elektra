@@ -99,6 +99,14 @@ module Automation
       node_id = params[:node_id]
       automation_id = params[:automation_id]
       automation_name = params[:automation_name]
+      # check if the node is online
+      node = services.automation.node(node_id, ['all'])
+      facts = node.automation_facts
+      unless facts.attributes[:online]
+        flash.now[:warning] = I18n.t('automation.errors.node_executing_automation_error_offline', name: automation_name)
+        return
+      end
+      # run the automation
       run = services.automation.automation_execute(automation_id, "@identity='#{node_id}'")
       if run.save
         flash.now[:keep_success_htmlsafe] = "<b>#{automation_name}</b> successfully executed. See all runs on the Automations tab. #{view_context.link_to('Show details for this run.', plugin('automation').run_path(id: run.id), data: { modal: true }).html_safe}"

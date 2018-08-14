@@ -23,4 +23,5 @@ en:
       node_update_error: "Error updating node."
       node_executing_automation_error: "Error executing automation '%{name}'. Please try later"
       node_executing_automation_error_save: "Error executing automation %{name}. %{errors}"
+      node_executing_automation_error_offline: "The automation %{name} can't be executed. The node is offline."
       compute_image_not_found: "No image information found"
