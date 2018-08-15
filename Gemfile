@@ -86,7 +86,7 @@ end
 ######################## END #######################
 
 group :api_client do
-  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.0.1'
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.1.1'
   # gem 'elektron', path: '../elektron'
 end
 
@@ -96,7 +96,6 @@ group :production do
   # We are not using the railtie because it comes to late,
   # we are setting the logger in production.rb
   gem 'rails_stdout_logging', require: 'rails_stdout_logging/rails'
-
 end
 
 group :development do

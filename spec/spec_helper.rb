@@ -102,13 +102,22 @@ RSpec.configure do |config|
     service_user = double('service_user').as_null_object
     cloud_admin = double('cloud_admin').as_null_object
 
-    identity = double('identity').as_null_object
-    # service_user calls role_assignments for each request
-    # to check whether the user is allowed to enter the domain
-    # so, stub it
-    allow(identity)
-      .to receive(:role_assignments).and_return(['role_assignment'])
-    allow(service_user).to receive(:identity).and_return(identity)
+    # allow_any_instance_of(ServiceLayer::IdentityService)
+    #   .to receive(:has_domain_access).and_return true
+    # allow_any_instance_of(ServiceLayer::IdentityService)
+    #   .to receive(:has_project_access).and_return true
+
+    user_identity = double('user identity service').as_null_object
+    allow_any_instance_of(::ApplicationController)
+      .to receive(:services)
+      .and_wrap_original do |m|
+        services = m.call
+        allow(services).to receive(:identity).and_return user_identity
+        services
+      end
+
+    allow(user_identity).to receive(:has_domain_access).and_return true
+    allow(user_identity).to receive(:has_project_access).and_return true
 
     allow_any_instance_of(::ApplicationController)
       .to receive(:service_user).and_return(service_user)

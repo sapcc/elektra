@@ -16,10 +16,7 @@ module Identity
     end
 
     def auth_projects
-      projects = service_user.identity.cached_user_projects(
-        current_user.id, domain_id: @scoped_domain_id
-      ).sort_by(&:name)
-
+      projects = services.identity.auth_projects(@scoped_domain_id).sort_by(&:name)
       render json: { auth_projects: projects }
     end
   end

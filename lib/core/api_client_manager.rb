@@ -59,7 +59,8 @@ module Core
       client = ::Elektron.client(
         {
           token_context: current_user.context,
-          token: current_user.token
+          token: current_user.token,
+          url: ::Core.keystone_auth_endpoint
         },
         default_client_params
       )

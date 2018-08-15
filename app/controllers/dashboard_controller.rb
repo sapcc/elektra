@@ -150,11 +150,9 @@ class DashboardController < ::ScopeController
       end
 
       # did not return -> check if user projects include the requested project.
-      has_project_access = service_user.identity.user_projects(
-        current_user.id,
-        domain_id: @scoped_domain_id,
-        name: @scoped_project_name
-      ).select { |project| project.id == @scoped_project_id }.length.positive?
+      has_project_access = services.identity.has_project_access(
+        @scoped_project_id
+      )
 
       unless has_project_access
         # user has no permissions for requested project -> reset
@@ -167,9 +165,8 @@ class DashboardController < ::ScopeController
       # user can access the requested domain.
 
       # check if user has access to current domain
-      has_domain_access = service_user.identity.has_domain_access(
-        @scoped_domain_id, current_user.id
-      )
+      has_domain_access = services.identity.has_domain_access(@scoped_domain_id)
+
       unless has_domain_access
         # user has no permissions for the new domain -> rescope to
         # unscoped token and return

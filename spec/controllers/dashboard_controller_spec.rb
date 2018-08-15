@@ -29,8 +29,10 @@ describe DashboardController, type: :controller do
     context 'project id is provided' do
       context 'and user has access to project' do
         before :each do
-          project = double('Project', id: default_params[:project_id])
-          allow(controller.service_user.identity).to receive(:user_projects).and_return([project])
+          allow(controller.services.identity)
+            .to receive(:has_project_access)
+            .with(default_params[:project_id])
+            .and_return(true)
         end
 
         it 'should rescope' do
@@ -40,8 +42,10 @@ describe DashboardController, type: :controller do
       end
       context 'and user has no access to project' do
         before :each do
-          project = double('Project', id: '123456')
-          allow(controller.service_user.identity).to receive(:user_projects).and_return([project])
+          allow(controller.services.identity)
+            .to receive(:has_project_access)
+            .with(default_params[:project_id])
+            .and_return(false)
         end
 
         it 'should render unauthorized page' do
@@ -85,9 +89,10 @@ describe DashboardController, type: :controller do
     context 'project id is nil and domain id is provided' do
       context 'and user has access to domain' do
         before :each do
-          allow(controller.service_user.identity).to receive(
-            :has_domain_access
-          ).and_return(true)
+          allow(controller.services.identity)
+            .to receive(:has_domain_access)
+            .with(default_params[:domain_id])
+            .and_return(true)
         end
 
         it 'should return with ok header' do
@@ -103,9 +108,10 @@ describe DashboardController, type: :controller do
 
       context 'and user has no access to the requested domain' do
         before :each do
-          allow(controller.service_user.identity).to receive(
-            :has_domain_access
-          ).and_return(false)
+          allow(controller.services.identity)
+            .to receive(:has_domain_access)
+            .with(default_params[:domain_id])
+            .and_return(false)
         end
 
         it 'should return with ok header' do

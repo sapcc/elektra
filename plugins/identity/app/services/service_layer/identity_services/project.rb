@@ -41,33 +41,11 @@ module ServiceLayer
         []
       end
 
-      def has_domain_access(domain_id, user_id)
-        # load user role assignments on domain
-        assignments = elektron_identity.get(
-          'role_assignments',
-          'user.id' => user_id, 'scope.domain.id' => domain_id
-        ).body['role_assignments']
-
-        # return true if there is at least one role assignment
-        # for user and doamin
-        return true if assignments.length.positive?
-
-        # did not return
-        # load group role assignments on domain and collect group ids
-        domain_assigned_group_ids = elektron_identity.get(
-          'role_assignments', 'scope.domain.id' => domain_id
-        ).body['role_assignments'].each_with_object([]) do |ra, groups|
-          groups << ra['group']['id'] if ra['group']
-        end
-
-        # load all groups user belongs to and collect group ids
-        user_group_ids = elektron_identity.get(
-          "users/#{user_id}/groups"
-        ).body['groups'].collect { |group| group['id'] }
-
-        # user has domain access if there is a match between
-        # domain assigned groups and user groups
-        (domain_assigned_group_ids & user_group_ids).length.positive?
+      def has_project_access(project_id)
+        user_projects = elektron_identity.get('/auth/projects').map_to(
+          'body.projects', &project_map
+        )
+        !user_projects.find { |user_project| user_project.id == project_id }.nil?
       end
 
       def cached_project(id, filter = {})
