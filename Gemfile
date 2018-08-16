@@ -86,7 +86,7 @@ end
 ######################## END #######################
 
 group :api_client do
-  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.1.1'
+  gem 'elektron', git: 'https://github.com/sapcc/elektron', tag: 'v2.2.0'
   # gem 'elektron', path: '../elektron'
 end
 

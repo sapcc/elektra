@@ -15,10 +15,10 @@ GIT
 
 GIT
   remote: https://github.com/sapcc/elektron
-  revision: 9b3f7c55fe408378ad31a5b7cae367f7ff985033
-  tag: v2.1.1
+  revision: c5b656f3ad7aa32cda2f3578e603700a7e037f93
+  tag: v2.2.0
   specs:
-    elektron (2.1.1)
+    elektron (2.2.0)
 
 GIT
   remote: https://github.com/sapcc/lyra-client.git
