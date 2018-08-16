@@ -63,8 +63,9 @@ const updateProjectMemberRoleAssignments = (projectId, memberType, memberId, rol
     data[`${memberType}_id`] = memberId
     // console.log('updateProjectMemberRoleAssignments')
 
+    // added extra option timeout to 180000ms (3 min) because of the long time request for removing group roles.
     return new Promise((handleSuccess,handleErrors) =>
-      ajaxHelper.put(`/projects/${projectId}/role_assignments`, data
+      ajaxHelper.put(`/projects/${projectId}/role_assignments`, data, {timeout: 180000}
       ).then((response) => {
         // console.log('response.data',response.data)
         if(response.data.errors || response.data.error)
