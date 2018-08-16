@@ -8,29 +8,31 @@ module Networking
     def index
       filter_options = {
         'router:external' => @network_type == 'external',
-        sort_key: 'name',
-        sort_dir: 'asc'
+        sort_key: 'name'
       }
 
-      external = (@network_type == 'external')
+      @networks = paginatable(per_page: 30) do |pagination_options|
+        options = filter_options.merge(pagination_options)
+        unless current_user.has_role?('cloud_network_admin')
+          options.delete(:limit)
+        end
 
-      all_accessible_networks = services.networking.networks#(filter_options)
-      all_accessible_subnets = services.networking.subnets
-
-      @networks = all_accessible_networks.select { |n| n.external == external }
-      @network_subnets = all_accessible_subnets.each_with_object({}) do |sn, map|
-        map[sn.network_id] ||= []
-        map[sn.network_id] << sn
+        services.networking.networks(options)
       end
 
-      # all owned networks + subnets without pagination + filtering
-      usage_networks = all_accessible_networks.select do |n|
-        n.tenant_id == @scoped_project_id
-      end.length
+      @network_subnets = ObjectCache.where(cached_object_type: 'subnet').where(
+        ["payload ->> 'network_id' IN(?)", @networks.collect(&:id)]
+      ).each_with_object({}) do |cached_subnet, map|
+        sn = cached_subnet.payload
+        map[sn['network_id']] ||= []
+        map[sn['network_id']] << Networking::Subnet.new(nil, sn)
+      end
 
-      usage_subnets = all_accessible_subnets.select do |s|
-        s.tenant_id == @scoped_project_id
-      end.length
+      @network_projects = ObjectCache.where(
+        id: @networks.collect(&:tenant_id)
+      ).each_with_object({}) do |project, map|
+        map[project.id] = project
+      end
 
       @quota_data = []
       if current_user.is_allowed?("access_to_project")
@@ -38,10 +40,8 @@ module Networking
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,
           [
-            { service_type: :network, resource_name: :networks,
-              usage: usage_networks },
-            { service_type: :network, resource_name: :subnets,
-              usage: usage_subnets }
+            { service_type: :network, resource_name: :networks },
+            { service_type: :network, resource_name: :subnets }
           ]
         )
       end
@@ -54,57 +54,6 @@ module Networking
         # comon case, render index page with layout
         render action: :index
       end
-
-      # filter_options = {
-      #   'router:external' => @network_type == 'external',
-      #   sort_key: 'name'
-      # }
-      # @networks = paginatable(per_page: 30) do |pagination_options|
-      #   options = filter_options.merge(pagination_options)
-      #   unless current_user.has_role?('cloud_network_admin')
-      #     options.delete(:limit)
-      #   end
-      #
-      #   services.networking.networks(options)
-      # end
-      #
-      # @network_subnets = services.networking.subnets().each_with_object({}) do |sn, map|
-      #   map[sn.network_id] ||= []
-      #   map[sn.network_id] << sn
-      # end
-      #
-      # # all owned networks + subnets without pagination + filtering
-      # usage_networks = services.networking.networks.select do |n|
-      #   n.tenant_id == @scoped_project_id
-      # end.length
-      #
-      # usage_subnets = services.networking.subnets.select do |s|
-      #   s.tenant_id == @scoped_project_id
-      # end.length
-      #
-      #
-      # @quota_data = []
-      # if current_user.is_allowed?("access_to_project")
-      #   @quota_data = services.resource_management.quota_data(
-      #     current_user.domain_id || current_user.project_domain_id,
-      #     current_user.project_id,
-      #     [
-      #       { service_type: :network, resource_name: :networks,
-      #         usage: usage_networks },
-      #       { service_type: :network, resource_name: :subnets,
-      #         usage: usage_subnets }
-      #     ]
-      #   )
-      # end
-      #
-      # # this is relevant in case an ajax paginate call is made.
-      # # in this case we don't render the layout, only the list!
-      # if request.xhr?
-      #   render partial: 'list', locals: { networks: @networks }
-      # else
-      #   # comon case, render index page with layout
-      #   render action: :index
-      # end
 
     end
 

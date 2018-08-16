@@ -21,12 +21,11 @@ jQuery.fn.ajaxPaginate= ( options ) ->
     $spinner = $('<div><span class="spinner"></span> Loading&hellip;</div>').appendTo($container).hide()
     # define buttons container
     $buttons = $('<div class="main-buttons"></div>').appendTo($container)
-
     # default only for the current pagination (this)
     searchInputSelector = $container.data('searchInputSelector') || settings.searchInputSelector
     listSelector = $container.data('listSelector') || settings.listSelector
-    loadNextButton = if typeof $container.data('nextButton') != 'undefined' then $container.data('nextButton') else true
-    loadAllButton = if typeof $container.data('allButton') != 'undefined' then $container.data('allButton') else false
+    loadNextButton = if typeof $container.data('nextButton') != 'undefined' then $container.data('nextButton')==true else settings.loadNextButton
+    loadAllButton = if typeof $container.data('allButton') != 'undefined' then $container.data('allButton')==true else settings.loadAllButton
     loadNextLabel = $container.data('nextLabel') || settings.loadNextLabel
     loadAllLabel = $container.data('allLabel') || settings.loadAllLabel
     loadNextItemsCssClass = $container.data('nextCssClass') || settings.loadNextItemsCssClass
@@ -122,7 +121,7 @@ jQuery.fn.ajaxPaginate= ( options ) ->
         loadNext () -> hideLoading()
 
     # add load all items button
-    if settings.loadAllButton
+    if loadAllButton
       $loadAllButton = $(" <button class='#{loadAllItemsCssClass}' data-toggle='tooltip' title='This might take a while!'>#{loadAllLabel}</button> ").appendTo($buttons)
       $loadAllButton.tooltip();
       $loadAllButton.click () ->

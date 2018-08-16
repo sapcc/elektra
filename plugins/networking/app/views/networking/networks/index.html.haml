@@ -17,7 +17,9 @@
   %thead
     %tr
       %th Name
-      %th Subnets Associated
+      %th
+        Subnets Associated
+        %i from cache
       %th Owning Project
       %th Shared
       %th Status
@@ -35,4 +37,4 @@
 -# if has next items (comes from paginate helper in controller) render the
 -# ajax paginate plugin (identified by data-ajax-paginate)
 - if @pagination_has_next
-  .ajax-paginate{ data: { ajax_paginate: true, list_selector: 'table.networks tbody', search_input_selector: '#search_networks_input'} }
+  .ajax-paginate{ data: { ajax_paginate: true, all_button: "true", list_selector: 'table.networks tbody', search_input_selector: '#search_networks_input'} }
