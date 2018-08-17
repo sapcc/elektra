@@ -14,14 +14,24 @@ module Services
   end
 
   def services
-    token_expires_at = current_user.token_expires_at if current_user
-    return @services if @services && @token_expires_at == token_expires_at
+    if current_user
+      token_expires_at = current_user.token_expires_at
+      token = current_user.token
+    end
+
+    # re-initialize services if token re-newed or expired
+    if @services && @token_expires_at == token_expires_at && @services_token == token
+      return @services
+    end
+
     api_client = begin
                    Core::ApiClientManager.user_api_client(current_user)
                  rescue StandardError
                    nil
                  end
+    # cache token infos             
     @token_expires_at = token_expires_at
+    @services_token = token
     @services = Core::ServiceLayer::ServicesManager.new(api_client)
   end
 
