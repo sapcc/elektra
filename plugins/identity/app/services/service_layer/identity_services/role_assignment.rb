@@ -88,7 +88,8 @@ module ServiceLayer
 
       def revoke_project_group_role!(project_id, group_id, role_id)
         elektron_identity.delete(
-          "projects/#{project_id}/groups/#{group_id}/roles/#{role_id}"
+          "projects/#{project_id}/groups/#{group_id}/roles/#{role_id}",
+          http_client: { read_timeout: 180 }
         )
       end
 

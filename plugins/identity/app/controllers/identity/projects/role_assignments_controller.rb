@@ -7,7 +7,7 @@ module Identity
 
       def index
         respond_to do |format|
-          format.html { }
+          format.html {}
           format.json do
             # use cloud admin! This is needed for users who has only the member role
             # and so can't request role assignments
@@ -36,7 +36,7 @@ module Identity
           user = cloud_admin.identity.find_user(user_id) ||
                  cloud_admin.identity.users(name: user_id, domain_id: @scoped_domain_id).first
           unless user
-            render json: { errors: "Could not find user with id #{user_id}"}
+            render json: { errors: "Could not find user with id #{user_id}" }
             return
           end
           # update user role assignments
@@ -51,7 +51,7 @@ module Identity
                   cloud_admin.identity.groups(name: group_id, domain_id: @scoped_domain_id).first
 
           unless group
-            render json: { errors: "Could not find group with id #{group_id}"}
+            render json: { errors: "Could not find group with id #{group_id}" }
             return
           end
           new_role_assignments = update_project_role_assignments(
@@ -133,9 +133,9 @@ module Identity
         # get user or group descriptions from cache
         # map: id => description
         member_descriptions = ObjectCache.where(id: member_ids).pluck(:id, :payload)
-                                        .each_with_object({}) do |data, map|
-                                          map[data[0]] = data[1]['description']
-                                        end
+                                         .each_with_object({}) do |data, map|
+          map[data[0]] = data[1]['description']
+        end
 
         role_assignments.each_with_object({}) do |ra, map|
           member_type = ''

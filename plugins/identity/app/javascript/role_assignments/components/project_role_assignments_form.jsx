@@ -6,7 +6,7 @@ import makeCancelable from 'lib/tools/cancelable_promise';
 
 const removeMemberTooltip = (type) => (
   <Tooltip id="removeMemberTooltip">
-    {`This will remove ${type} from project role assignments.`}
+    {`This will remove ${type} from project role assignments. This may take several minutes.`}
   </Tooltip>
 );
 
