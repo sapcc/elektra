@@ -10,7 +10,7 @@ Given(/^the test network for subnets exists$/) do
 end
 
 When(/^I click on manage subnets of test network$/) do
-  tr = first('tr', text: 'Test Network For Subnets')
+  tr = find('tr', text: 'Test Network For Subnets').first
   within(tr) do
     find('.btn-group .btn.btn-default.btn-sm.dropdown-toggle').click
     click_on 'Manage Subnets'
