@@ -14,18 +14,16 @@ describe Networking::Networks::PrivateController, type: :controller do
   before :each do
     stub_authentication
     allow_any_instance_of(ServiceLayer::NetworkingService)
-      .to receive(:elektron).and_return(
-        double('elektron', service: double('network').as_null_object)
-      )
+      .to receive(:networks).and_return []
 
     allow_any_instance_of(ServiceLayer::ResourceManagementService)
       .to receive(:quota_data).and_return([])
   end
 
-  # describe "GET 'index'" do
-  #   it "returns http success" do
-  #     get :index, params: default_params
-  #     expect(response).to be_success
-  #   end
-  # end
+  describe "GET 'index'" do
+    it "returns http success" do
+      get :index, params: default_params
+      expect(response).to be_success
+    end
+  end
 end
