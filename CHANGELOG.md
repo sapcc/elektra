@@ -2,21 +2,49 @@
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
-[Full Changelog](https://github.com/sapcc/elektra/compare/2018.6...HEAD)
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.7...HEAD)
 
 **Implemented enhancements:**
 
+- **\[Automation\]: error message when running an automation on an offline node [\#333](https://github.com/sapcc/elektra/issues/333)**   
+A customer has reported that it's possible to execute automations on offline nodes.
+
+**Fixed bugs:**
+
+- **Network show: ports tab runs into hard limit \(max 500\) [\#338](https://github.com/sapcc/elektra/issues/338)**   
+In big projects with lots of ports the ports tab of the network show dialog displays only 500 ports because of the hard limit set in the backend. Looks like we need to add paging here. Example in eu-de-1 go to: /s4/s4-vlab/networking/networks/private?overlay=2b8ddbb9-f316-4050-a9f1-c97cf046cc04 and then the ports tab
+- **Uncaught exception after removing MONSOON3\_DOMAIN\_USERS group from project [\#204](https://github.com/sapcc/elektra/issues/204)**   
+Bug report:
+
+## [2018.7](https://github.com/sapcc/elektra/tree/2018.7) (2018-07-25)
+
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.6...2018.7)
+
+**Implemented enhancements:**
+
+- **Cloudops: Make nav look like a nav [\#328](https://github.com/sapcc/elektra/issues/328)**   
+The navigation in the cloudops area doesn't really look like a navigation right now. Create a nav style for it.
 - **Testing: Research and POC testing frameworks for React [\#326](https://github.com/sapcc/elektra/issues/326)**   
 Since the number of react apps in Elektra is ever increasing we need a way to write tests for them to automatically test in our deployment pipeline.
 - **Universal Search: Add cache age info to search results [\#322](https://github.com/sapcc/elektra/issues/322)**   
 Since the universal search operates on cached objects the search results can sometimes be not entirely accurate. To give the user an idea an indication that a result might be out of date display cache age for the result.
 - **Display Cost Report for Domains [\#315](https://github.com/sapcc/elektra/issues/315)**   
 Make the existing plugin to show the cost report for projects also available for domains.
+- **Policies: Update policies for viewer roles as necessary [\#314](https://github.com/sapcc/elektra/issues/314)**   
+With the introduction of viewer roles for every service we need to ensure that Elektra lets people with a viewer role use read actions as applicable. Update all plugin policies as necessary.
+- **Universal Search: Add search by friendly ID [\#310](https://github.com/sapcc/elektra/issues/310)**   
+Add generated friendly ID's to the object cache so that projects can be found by friendly ID.
 - **Ports: Edit dialog and security group selection [\#301](https://github.com/sapcc/elektra/issues/301)**   
 We can select a security group for a port when we attach a new interface to an instance, but since we don't have an edit dialog for ports it's not possible to change it later. Also the server UI doesn't show which security groups are attached to which ports.
+- **Improve performance [\#329](https://github.com/sapcc/elektra/pull/329)**   
+We have identified two major factors that slow down rendering time of pages in Elektra. 1\) Getting role assignments and 2\) Rendering the project tree. We need to improve this before we can roll out the new support team authorizations.
+- **Add policy rules for viewer roles [\#319](https://github.com/sapcc/elektra/pull/319)**   
+This adds the necessary policy entries to support viewer roles for all plugins that were missing them: identity, images, masterdata.
 
 **Fixed bugs:**
 
+- **Ports UI shows a JSON Outup when using browser navigation [\#331](https://github.com/sapcc/elektra/issues/331)**   
+We use the same route for rendering the HTML page and the JSON Response. It is decided by the headers whether HTML or JSON is delivered. This does not work if the user uses the browser navigation. Then, because of browser cache, JSON comes, although HTML is expected.
 - **Role assignment: Assigning roles to technical users results in error [\#313](https://github.com/sapcc/elektra/issues/313)**   
 Trying to assign a role to a technical user results in the error message "User unknown" after clicking the "save" button.
 - **react ajax calls do not work in \<= IE10 [\#312](https://github.com/sapcc/elektra/issues/312)**   
