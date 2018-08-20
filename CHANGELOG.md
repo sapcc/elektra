@@ -14,7 +14,7 @@ A customer has reported that it's possible to execute automations on offline nod
 - **Users who are assigned to groups but do not have domain permission can not log in. [\#344](https://github.com/sapcc/elektra/issues/344)**   
 Users are logged in Elektra always unscoped and then rescoped to the requested scope. But before the rescoping happens, the dashboard controller tests whether the user has permissions.
 - **Network show: ports tab runs into hard limit \(max 500\) [\#338](https://github.com/sapcc/elektra/issues/338)**   
-In big projects with lots of ports the ports tab of the network show dialog displays only 500 ports because of the hard limit set in the backend. Looks like we need to add paging here. Example in eu-de-1 go to: /s4/s4-vlab/networking/networks/private?overlay=2b8ddbb9-f316-4050-a9f1-c97cf046cc04 and then the ports tab
+In big projects with lots of ports the ports tab of the network show dialog displays only 500 ports because of the hard limit set in the backend. Looks like we need to add paging here.
 - **Uncaught exception after removing MONSOON3\_DOMAIN\_USERS group from project [\#204](https://github.com/sapcc/elektra/issues/204)**   
 Bug report: I accidentally assigned MONSOON3\_DOMAIN\_USERS instead of admins to my project when i removed them again Elektra first blocked for 1min or so.  then I got an error.
 
