@@ -5,6 +5,7 @@ import { projectUrl, objectUrl } from '../../shared/object_link_helper'
 
 import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
 import NetworkUsageStats from '../../../../../../networking/app/javascript/network_usage_stats/containers/application'
+import Asr from '../../../../../../networking/app/javascript/asr/application'
 
 import ObjectTopology from '../../topology/containers/object_topology'
 
@@ -59,6 +60,7 @@ export default class ShowSearchObjectModal extends React.Component{
     const activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == 'project'
     const isDomain = item && item.cached_object_type == 'domain'
+    const isRouter = item && item.cached_object_type == 'router'
 
     return (
       <Modal
@@ -111,6 +113,12 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
+              { (isRouter) &&
+                <Tab eventKey='asr' title="ASR Info">
+                  <Asr routerId={item.id}/>
+                </Tab>
+              }
+
               <Tab eventKey='objectTopology' title="Topology">
                 <ObjectTopology size={[500,500]} objectId={item.id} />
               </Tab>

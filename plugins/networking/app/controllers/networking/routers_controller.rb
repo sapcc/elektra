@@ -31,11 +31,11 @@ module Networking
         @routers = services.networking.routers(tenant_id: @scoped_project_id)
 
         # NEW
-        @routers.concat(shared_routers).uniq! { |r| r.id }
+        @routers.concat(shared_routers).uniq!(&:id)
 
         usage = @routers.length
 
-        if current_user.is_allowed?("access_to_project")
+        if current_user.is_allowed?('access_to_project')
           @quota_data = services.resource_management.quota_data(
             current_user.domain_id || current_user.project_domain_id,
             current_user.project_id,
@@ -114,7 +114,7 @@ module Networking
 
     def new
       @quota_data = []
-      if current_user.is_allowed?("access_to_project")
+      if current_user.is_allowed?('access_to_project')
         @quota_data = services.resource_management.quota_data(
           current_user.domain_id || current_user.project_domain_id,
           current_user.project_id,
@@ -165,9 +165,9 @@ module Networking
         (port.fixed_ips || []).each { |fixed_ip| array << fixed_ip['subnet_id'] }
       end
       @router_external_subnet_ids = if @router.external_gateway_info['external_fixed_ips'].nil?
-        []
-      else
-        @router.external_gateway_info['external_fixed_ips'].collect{|data| data['subnet_id']}
+                                      []
+                                    else
+                                      @router.external_gateway_info['external_fixed_ips'].collect { |data| data['subnet_id'] }
       end
     end
 

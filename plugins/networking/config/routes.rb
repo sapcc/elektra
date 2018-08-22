@@ -17,6 +17,14 @@ Networking::Engine.routes.draw do
     get 'node_details'
   end
 
+  scope :asr do
+    get 'routers/:router_id' => 'asr#show_router', as: :asr_router
+    put 'routers/:router_id' => 'asr#sync_router', as: :asr_sync_router
+
+    get '/configs/:router_id' => 'asr#show_config', as: :asr_config
+    get '/statistics/:router_id' => 'asr#show_statistics', as: :asr_statistics
+  end
+
   resources :backup_networks, only: %i[index new create]
   resources :network_wizard, only: %i[new create]
 
