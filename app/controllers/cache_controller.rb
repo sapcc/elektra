@@ -6,7 +6,7 @@ class CacheController < ::ScopeController
   RELATED_OBJECTS_KEYS = {
     'port' => %w[network_id device_id security_groups],
     'floatingip' => %w[router_id floating_network_id port_id],
-    'router' => %w[flavor_id external_gateway_info.network_id],
+    'router' => %w[network_id external_gateway_info.network_id external_gateway_info.external_fixed_ips.subnet_id subnet_id port_id],
     'subnet' => %w[network_id],
     'server' => %w[image.id]
   }.freeze
