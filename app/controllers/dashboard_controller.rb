@@ -78,7 +78,7 @@ class DashboardController < ::ScopeController
   rescue_from 'Elektron::Errors::ApiResponse' do |exception|
     options = {
       title: exception.code_type, description: :message,
-      warning: true, sentry: false
+      warning: true, sentry: true
     }
 
     case exception.code.to_i
