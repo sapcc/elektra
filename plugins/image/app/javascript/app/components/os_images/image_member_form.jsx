@@ -25,7 +25,11 @@ export default class ImageMemberForm extends React.Component {
       <React.Fragment>
         { this.state.errors && <FormErrors errors={this.state.errors}/> }
         <div className="input-group">
-          <AutocompleteField type='projects' onSelected={this.handleSelected}/>
+          <AutocompleteField
+            type='projects'
+            onSelected={this.handleSelected}
+            onInputChange={(id) => this.handleSelected([{id}])}
+          />
           <span className="input-group-btn">
             <button
               className="btn btn-primary"
