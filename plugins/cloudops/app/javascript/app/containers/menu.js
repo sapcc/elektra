@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import {
   searchObjects
-} from '../search/actions/objects'
+} from '../../../../../tools/app/javascript/universal_search/search/actions/objects'
 
 export default withRouter(connect(
   (state) => ({

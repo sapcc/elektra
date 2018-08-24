@@ -57,10 +57,11 @@ export default class ShowSearchObjectModal extends React.Component{
     const projectLink = projectUrl(item)
     const objectLink = objectUrl(item)
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
-    const activeTab = found ? found[1] : null
+    let activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == 'project'
     const isDomain = item && item.cached_object_type == 'domain'
     const isRouter = item && item.cached_object_type == 'router'
+    if (activeTab == 'userRoles' && isDomain) activeTab = 'data'
 
     return (
       <Modal
@@ -87,7 +88,7 @@ export default class ShowSearchObjectModal extends React.Component{
               <Tab eventKey='data' title="Data">
                 <ReactJson src={item.payload} collapsed={1}/>
               </Tab>
-              { isProject &&
+              { isProject && policy.isAllowed('tools:universal_search_role_assignments') &&
                 <Tab eventKey='userRoles' title="User Role Assignments">
                   <ProjectRoleAssignments
                     projectId={item.id}
@@ -96,7 +97,7 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
-              { isProject &&
+              { isProject && policy.isAllowed('tools:universal_search_role_assignments') &&
                 <Tab eventKey='groupRoles' title="Group Role Assignments">
                   <ProjectRoleAssignments
                     projectId={item.id}
@@ -105,7 +106,7 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
-              { (isProject || isDomain) &&
+              { (isProject || isDomain) && policy.isAllowed('tools:universal_search_netstats') &&
                 <Tab eventKey='networkStats' title="Network Statistics">
                   <NetworkUsageStats
                     scopeId={item.id}
@@ -113,15 +114,17 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
-              { (isRouter) &&
+              { (isRouter) && policy.isAllowed('tools:universal_search_asr') &&
                 <Tab eventKey='asr' title="ASR Info">
                   <Asr routerId={item.id}/>
                 </Tab>
               }
 
-              <Tab eventKey='objectTopology' title="Topology">
-                <ObjectTopology size={[500,500]} objectId={item.id} />
-              </Tab>
+              { policy.isAllowed('tools:universal_search_asr') &&
+                <Tab eventKey='objectTopology' title="Topology">
+                  <ObjectTopology size={[500,500]} objectId={item.id} />
+                </Tab>
+              }
             </Tabs>
           }
         </Modal.Body>

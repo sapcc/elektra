@@ -1,0 +1,9 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "tools:universal_search_asr": "rule:cloud_admin",
+  "tools:universal_search_netstats": "rule:cloud_admin",
+  "tools:universal_search_topology": "rule:cloud_admin",
+  "tools:universal_search_role_assignments": "@"
+}

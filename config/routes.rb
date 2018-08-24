@@ -32,7 +32,7 @@ Rails.application.routes.draw do
 
   scope '/:domain_id' do
     match '/', to: 'pages#show', id: 'landing', via: :get, as: :landing_page
-    
+
     scope '(/:project_id)' do
       scope module: 'dashboard' do
         post 'accept_terms_of_use'
@@ -41,7 +41,7 @@ Rails.application.routes.draw do
 
       ###################### MOUNT PLUGINS #####################
       Core::PluginsManager.mountable_plugins.each do |plugin|
-        next if ['docs','cloudops'].include?(plugin.name)
+        next if ['docs','cloudops','tools'].include?(plugin.name)
         Logger.new(STDOUT).debug(
           "Mount plugin #{plugin.mount_point} as #{plugin.name}_plugin"
         )
@@ -50,8 +50,9 @@ Rails.application.routes.draw do
               as: "#{plugin.name}_plugin"
       end
       ######################## END ############################
+      mount Tools::Engine => '/cc-tools'
     end
-
+    
     mount Cloudops::Engine => "/#{Rails.configuration.cloud_admin_project}" \
                               "/cloudops", as: 'cloudops_plugin', defaults: { project_id: Rails.configuration.cloud_admin_project },
                               constraints: { domain_id: Rails.application.config.cloud_admin_domain }
