@@ -1,6 +1,10 @@
 ALLOWED_ROLES = %w(
   admin
   audit_viewer
+  baremetal_admin
+  baremetal_viewer
+  cfm_admin
+  cfm_user
   compute_admin
   compute_viewer
   dns_viewer
