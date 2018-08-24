@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // containers for global options and scope
 let globalOptions = {}
-let scope = {};
+export let scope = {};
 
 // this variables are needed by integration tests
 window.activeAjaxCallsCount = 0

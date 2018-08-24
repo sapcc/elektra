@@ -47,6 +47,15 @@
               Manage Requests
               = " (#{::Inquiry::Inquiry.processor_open_requests(@scoped_domain_id, current_user.id).length})"
 
+      - if plugin_available?('cc-tools') && current_user.is_allowed?('tools:application_get')
+        %h5
+          %i.cloud-admin-icon
+          Tools
+
+        %ul.plain-list
+          %li
+            = link_to 'Universal Search', plugin('cc_tools').start_path
+
       - if plugin_available?('identity')
         %h5
           %i.access_management-icon
@@ -108,7 +117,7 @@
   .col-md-3
     -# this is a placeholder for React Component!
     %div{data: {react_auth_projects: true} }
-      %h4.action-heading.heading-top Your Projects 
+      %h4.action-heading.heading-top Your Projects
 
   .col-md-3
     .infobox

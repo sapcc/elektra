@@ -2,6 +2,8 @@
   "member": "role:member or role:Member",
   "admin": "role:admin",
 
+  "tools:application_get": "not project_id:nil",
+  /* "tools:application_get": "!", */
   "tools:universal_search_asr": "rule:cloud_admin",
   "tools:universal_search_netstats": "rule:cloud_admin",
   "tools:universal_search_topology": "rule:cloud_admin",
