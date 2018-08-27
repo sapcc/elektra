@@ -1,4 +1,4 @@
-FROM ruby:2.4.1-alpine3.6 AS elektra
+FROM ruby:2.4-alpine3.7 AS elektra
 
 ENV OVERLAY=sucks2
 
