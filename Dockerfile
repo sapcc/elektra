@@ -1,11 +1,12 @@
-FROM ruby:2.4.1-alpine3.6 AS elektra
+FROM ruby:2.4-alpine3.7 AS elektra
 
 ENV OVERLAY=sucks2
 
-RUN echo '@edge http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
+# RUN echo '@edge http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
 RUN apk update
 
-RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn@edge
+# RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn@edge
+RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 
 # Install gems with native extensions before running bundle install
 # This avoids recompiling them everytime the Gemfile.lock changes.
@@ -73,6 +74,7 @@ RUN if [ -z ${http_proxy} ]; then \
 
 ADD . /home/app/webapp
 
+RUN bundle binstubs bundler --force
 # create webpacker binstubs
 RUN bundle binstubs webpacker --force --path ./bin
 # precompile assets including webpacker packs
