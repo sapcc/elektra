@@ -29,6 +29,14 @@
           %tr
             %th Type
             %td= @volume.volume_type
+          - if @volume.snapshot_id
+            %tr
+              %th Snapshot
+              %td= cached_object(@volume.snapshot_id)
+          - if @volume.source_volid
+            %tr
+              %th Source Volume
+              %td= cached_object(@volume.source_volid)      
 
     .tab-pane{role:"tabpanel", id:"attachments"}
       %table.table.datatable

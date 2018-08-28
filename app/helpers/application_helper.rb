@@ -1,4 +1,29 @@
 module ApplicationHelper
+  def cached_object(searchTerm, options = {})
+    objects = ObjectCache.where(["id = :term OR name = :term", term: searchTerm])
+    objects = objects.where(cached_object_type: options[:type]) if options.key?(:type)
+
+    if objects.first
+      capture do
+        if block_given?
+          yield(objects.first.payload)
+        else
+          content_tag(:span) do
+            if options[:url]
+              concat link_to(objects.first.name, options[:url], data: {modal: true})
+            else
+              concat objects.first.name
+            end
+            concat tag(:br)
+            concat content_tag(:span, objects.first.id, class: 'info-text')
+          end
+        end
+      end
+    else
+      searchTerm
+    end
+  end
+
   def page_title
     "CCloud #{@scoped_domain_name if @scoped_domain_name} #{current_region if respond_to?(:current_region) and current_region}"
   end

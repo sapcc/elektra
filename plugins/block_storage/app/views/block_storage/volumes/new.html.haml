@@ -5,7 +5,20 @@
   %div{class: modal? ? 'modal-body' : ''}
 
     = render partial: 'errors', locals: {data: @volume}
-    
+
+    - if @volume.snapshot_id
+      .form-group.string
+        %label.col-sm-4.control-label.string{for: "snapshot_id"} Snapshot
+        .col-sm-8
+          = cached_object(@volume.snapshot_id) do |snapshot|
+            = snapshot['name']
+            %br
+            %span.info-text
+              = "ID: #{snapshot['id']}"
+              - if snapshot['volume_id']
+                %br
+                = "Source Volume: #{snapshot['volume_id']}"
+
     = f.input :name
     = f.input :description
     = f.input :size, { as: :integer, input_html: { min: '1' }, label: "Size in GB" }

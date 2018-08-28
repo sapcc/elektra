@@ -8,6 +8,7 @@
       %td= snapshot.name
     %td= snapshot.description
     %td= snapshot.size
+    %td= cached_object(snapshot.volume_id, type: 'volume', url: plugin('block_storage').volume_path(snapshot.volume_id))
     %td= snapshot.status
 
     %td.snug
