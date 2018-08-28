@@ -7,6 +7,11 @@ import { Pagination } from 'lib/components/pagination';
 export default class Search extends React.Component {
   componentDidMount() {
     this.props.loadTypesOnce()
+
+    // try to find init search term in url
+    const searchTermMatch = this.props.location.search.match(/[\?|\&]searchTerm=([^\&]+)/)
+    this.searchTerm = searchTermMatch && searchTermMatch[1]
+    if(this.searchTerm) this.props.search({term: this.searchTerm})
   }
 
   highlightSearchTerm = (string) => {

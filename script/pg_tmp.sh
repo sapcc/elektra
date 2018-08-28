@@ -26,13 +26,12 @@ trap '' HUP
 set +o posix
 
 USER_OPTS=""
->/dev/null getopt l:w:d:o:p:t "$@" || usage
+>/dev/null getopt w:d:o:p:t "$@" || usage
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-w) TIMEOUT="$2"; shift ;;
 		-d) TD="$2"; shift ;;
 		-t) LISTENTO="127.0.0.1"; PGPORT="$(getsocket)" ;;
-    -l) LISTENTO="$2"; shift ;;
 		-p) PGPORT="$2"; shift ;;
 		-o) USER_OPTS="$2"; shift ;;
 		 *) CMD=$1 ;;
@@ -40,8 +39,8 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-initdb -V > /dev/null
-PGVER=$(psql -V | sed 's/[^0-9.]*\([0-9]*\)\.\([0-9]*\).*/\1.\2/')
+initdb -V > /dev/null || exit 1
+PGVER=$(psql -V | awk '{print $NF}')
 
 case ${CMD:-start} in
 initdb)
@@ -69,22 +68,21 @@ start)
 	if [ -z $TD ]; then
 		for d in $(ls -d ${SYSTMP:-/tmp}/ephemeralpg.*/$PGVER 2> /dev/null); do
 			td=$(dirname "$d")
-			test -O $td/NEW && { TD=$td; break; }
+			test -O $td/NEW && rm $td/NEW 2> /dev/null && { TD=$td; break; }
 		done
-		[ -z $TD ] && TD=$($0 initdb)
+		[ -z $TD ] && { TD=$($0 initdb); rm $TD/NEW; }
 		nice -n 19 $0 initdb > /dev/null &
 	else
-		[ -d $TD/$PGVER ] || TD=$($0 initdb -d $TD)
+		[ -O $TD/$PGVER ] || TD=$($0 initdb -d $TD)
 	fi
 	nice -n 19 $0 -w ${TIMEOUT:-60} -d $TD -p ${PGPORT:-5432} stop > $TD/stop.log 2>&1 &
-	rm $TD/NEW
 	[ -n "$PGPORT" ] && OPTS="-c listen_addresses='$LISTENTO' -c port=$PGPORT"
 	LOGFILE="$TD/$PGVER/postgres.log"
-	pg_ctl -o "$OPTS $USER_OPTS" -s -D $TD/$PGVER -l $LOGFILE start
+	pg_ctl -W -o "$OPTS $USER_OPTS" -s -D $TD/$PGVER -l $LOGFILE start
 	PGHOST=$TD
 	export PGPORT PGHOST
 	if [ -n "$PGPORT" ]; then
-		url="postgresql://$LISTENTO:$PGPORT/test"
+		url="postgresql://$(whoami)@$LISTENTO:$PGPORT/test"
 	else
 		url="postgresql:///test?host=$(echo $PGHOST | sed 's:/:%2F:g')"
 	fi
@@ -103,11 +101,12 @@ stop)
 	trap "rm -r $TD" EXIT
 	PGHOST=$TD
 	export PGHOST PGPORT
+	q="SELECT count(*) FROM pg_stat_activity WHERE datname='test';"
 	until [ "${count:-2}" -lt "2" ]; do
 		sleep ${TIMEOUT:-0}
-		count=$(psql test -At -c 'SELECT count(*) FROM pg_stat_activity;' || echo 0)
+		count=$(psql test --no-psqlrc -At -c "$q" || echo 0)
 	done
-	pg_ctl -D $TD/$PGVER stop
+	pg_ctl -W -D $TD/$PGVER stop
 	sleep 1
 	;;
 selftest)
@@ -116,7 +115,7 @@ selftest)
 	printf "Running: "
 	printf "initdb "; dir=$($0 initdb)
 	printf "start " ; url=$($0 -w 3 -o '-c log_temp_files=100' start)
-	printf "psql "  ; [ "$(psql -At -c 'select 5' $url)" == "5" ]
+	printf "psql "  ; [ "$(psql --no-psqlrc -At -c 'select 5' $url)" == "5" ]
 	printf "stop "  ; sleep 10
 	printf "verify "; ! [ -d dir ]
 	echo; echo "OK"
@@ -125,4 +124,3 @@ selftest)
 	usage
 	;;
 esac
-

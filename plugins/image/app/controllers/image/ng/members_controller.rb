@@ -15,16 +15,13 @@ module Image
 
       def create
         @image = services.image.find_image(params[:image_id])
-        @project = service_user.identity.find_project_by_name_or_id(
-          @scoped_domain_id, params[:member_id]
-        )
-
         @member = services.image.new_member(
-          image_id: @image.id, member: @project.id
+          image_id: @image.id, member: params[:member_id]
         )
 
         if @member.save
-          @member.target_name = @project.name
+          cached_project = ObjectCache.where(id: params[:member_id]).first
+          @member.target_name = cached_project.name if cached_project
           render json: @member
         else
           render json: {errors: @member.errors}

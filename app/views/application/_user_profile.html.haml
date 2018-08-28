@@ -29,7 +29,7 @@
                   = current_user.role_names.join(', ')
                   - if @scoped_project_id && current_user.is_allowed?('identity:project_member_list')
                     %br
-                    = link_to 'edit role assignments', plugin('identity').projects_members_path
+                    = link_to 'edit role assignments', plugin('identity').projects_role_assignments_path
               %tr
                 %th.text-nobreak Sync password
                 %td

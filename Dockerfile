@@ -2,10 +2,6 @@ FROM ruby:2.4-alpine3.7 AS elektra
 
 ENV OVERLAY=sucks2
 
-# RUN echo '@edge http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories
-RUN apk update
-
-# RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn@edge
 RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 
 # Install gems with native extensions before running bundle install
@@ -86,7 +82,7 @@ CMD ["script/start.sh"]
 FROM elektra AS tests
 RUN apk add --no-cache postgresql bash
 ENV RAILS_ENV=test
-RUN su postgres -c 'script/pg_tmp.sh -p 5432 -l 127.0.0.1 -w 300 -d /tmp/pg start' \
+RUN LISTENTO=127.0.0.1 su postgres -c 'script/pg_tmp.sh -p 5432 -w 300 -d /tmp/pg start' \
       && rake db:create db:migrate \
       && bundle exec rspec \
       && su postgres -c 'script/pg_tmp.sh -d /tmp/pg stop'
