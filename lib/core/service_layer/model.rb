@@ -40,7 +40,9 @@ module Core
       end
 
       def as_json(_options = nil)
-        attributes
+        attributes.each_with_object({}) do |(k,v),hash|
+          hash[k] = sanitize(v)
+        end
       end
 
       # look in attributes if a method is missing

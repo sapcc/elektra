@@ -192,9 +192,10 @@ class Subnets
 
       $table = $('<table class="table">
       <thead><tr>
-      <th>Name</th>
-      <th>ID</th>
+      <th>Name / ID</th>
       <th>CIDR</th>
+      <th>Allocation Pools</th>
+      <th>Host Routes</th>
       <th>Gateway IP</th>
       <th></th>
       </tr></thead></table>').appendTo(@element)
@@ -206,17 +207,21 @@ class Subnets
       @$tbody.empty()
       self = this
       for subnet in @state.subnets
+        pools = "#{p.start} - #{p.end}<br/>" for p in subnet.allocation_pools
+        routes = "#{r.destination} -> #{r.nexthop}<br/>" for r in subnet.host_routes
         $tr = $('<tr id="'+subnet.id+'">
-        <td>'+subnet.name+'</td>
-        <td>'+subnet.id+'</td>
+        <td>'+subnet.name+'<br/><span class="info-text">'+subnet.id+'</span></td>
         <td>'+subnet.cidr+'</td>
-        <td>'+subnet.gateway_ip+'</td></tr>').appendTo(@$tbody)
+        <td>'+pools+'</td>
+        <td>'+(routes || "")+'</td>
+        <td>'+subnet.gateway_ip+'</td>
+        </tr>').appendTo(@$tbody)
+        $actions = $('<td class="snug"></td>').appendTo($tr)
 
 
 
         if policy.isAllowed("networking:network_#{networkType}_update", {network: @network})
-          $deleteButton = $('<a class="btn btn-danger btn-sm" href="#"><i class="fa fa-trash"></i></a>')
-                            .appendTo($('<td class="snug"></td>').appendTo($tr))
+          $deleteButton = $('<a class="btn btn-danger btn-sm" href="#"><i class="fa fa-trash"></i></a>').appendTo($actions)
           $deleteButton.click () ->
             subnet_id = $(this).closest('tr').prop('id')
             self.removeSubnet(this,subnet_id)

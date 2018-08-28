@@ -1,6 +1,6 @@
 / .modal#mainModal.fade{tabindex: "-1", role: "dialog", data: { backdrop: 'static' }, aria: {labelledby: "mainModalLabel", hidden: true} }
 .modal#mainModal{tabindex: "-1", role: "dialog", data: { backdrop: 'static' }, aria: {labelledby: "mainModalLabel", hidden: true} }
-  .modal-dialog.modal-lg
+  .modal-dialog.modal-xl
     .modal-content{class: "#{plugin_name if plugin_name}"}
       .modal-header
         %button.close{type:"button", data: {dismiss:"modal"}, aria: {label: "Close"}}
@@ -15,7 +15,7 @@
           .info-text
             %i.monitoring-icon
             = "Remaining Quota: #{@quota_data.collect(&:available_as_display_string).join(', ')}"
-            
+
       = yield
-      
-= yield :javascripts      
+
+= yield :javascripts
