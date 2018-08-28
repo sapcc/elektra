@@ -10,10 +10,11 @@
   %thead
     %tr
       %th Name
-      %th Project ID
-      %th Status
+      %th Project
       %th External Network
-      %th External IP / Subnet
+      %th External Subnet
+      %th Private Network
+      %th Status
       %th.snug
   %tbody
     - if @routers.length==0
@@ -21,26 +22,34 @@
         %td{colspa: 5} No routers available.
     - else
       - @routers.each do | router |
-        %tr{id: "router_#{router.id}", class: "#{'foreign-object' if foreign_router?(router)}"}
-          %td= link_to router.name, plugin('networking').router_path(router.id), data: {modal: true}
-          %td
-            = router.tenant_id
-            %br
-            %span.info-text= foreign_router?(router) ? 'foreign router' : 'owned by this project'
-          %td= router.status
-          %td
-            - if router.network_object
-              = router.network_object.name
-              %br
-              %span.info-text= router.try(:external_gateway_info).fetch('network_id',nil)
-            - else
-              = router.try(:external_gateway_info).fetch('network_id',nil)
-          %td
-            - if router.ip_subnet_objects
-              - router.ip_subnet_objects.each do |ip,subnet|
-                = "#{ip} / "
-                %span.info-text= subnet.name
+        - network_id = router.try(:external_gateway_info).fetch('network_id',nil)
+        - external_subnets = router.try(:external_gateway_info).fetch('external_fixed_ips',[])
 
+        %tr{id: "router_#{router.id}", class: "#{'foreign-object' if foreign_router?(router)}"}
+          %td
+            = link_to router.name, plugin('networking').router_path(router.id), data: {modal: true}
+            %br
+            %span.info-text= router.id
+          %td
+            = cached_object(router.tenant_id, type: 'project')
+            -# %br
+            -# %span.info-text= foreign_router?(router) ? 'foreign router' : 'owned by this project'
+          %td= cached_object(network_id, { type: 'network',
+            url: network_id ? plugin('networking').networks_external_path(network_id) : false})
+          %td
+            - external_subnets.each do |subnet|
+              = subnet['ip_address']
+              \/
+              %span.info-text
+                = cached_object(subnet['subnet_id'], type: 'subnet') do |s|
+                  = s['name']
+          %td
+            - router_internal_networks(router).each do |net|
+              = link_to net.name, plugin('networking').networks_private_path(net.id), data: {modal: true}
+              %br
+              %span.info-text= net.id
+
+          %td= router.status
           %td.snug
             .btn-group
               %button.btn.btn-default.btn-sm.dropdown-toggle{ type: "button", data: { toggle: "dropdown"}, aria: { expanded: true} }
