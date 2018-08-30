@@ -1,8 +1,8 @@
 = content_for :title do
   Reduce Quota: #{t("resource_management.#{@resource.service_type}")} &gt; #{userfriendly_resource_name(@resource)}
 
-=simple_form_for @resource, url: resources_reduce_quota_path(service: @resource.service_type, resource: @resource.name), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
-  
+=simple_form_for @resource, url: resources_reduce_quota_path(service: @resource.service_type, resource: @resource.name), method: :post, remote: request.xhr?, html: { data: { modal: true } }, wrapper: :horizontal_form do |f|
+
   %div{class: modal? ? 'modal-body' : ''}
 
     - unless @resource.errors.empty?
@@ -10,11 +10,18 @@
 
     %fieldset
       - if @resource.data_type.to_sym == :number
-        = f.input :quota, label: 'Your quota'
+        = f.input :quota,
+            label: 'Reduce your quota to',
+            input_html: { value: @resource.usage},
+            icon_hint:  "Your current quota is #{@resource.quota} and you are uising currently #{@resource.usage} #{userfriendly_resource_name(@resource)} in your project"
       - else
-        - current_value = @resource.data_type.format(@resource.quota)
+        - current_value = @resource.data_type.format(@resource.usage)
         - previous_value = params[:new_style_resource] ? params[:new_style_resource][:quota] : nil
-        = f.input :quota, label: 'Your quota', as: :string, input_html: { value: previous_value || current_value }
+        = f.input :quota,
+          label: 'Reduce your quota to',
+          as: :string,
+          input_html: { value: previous_value || current_value },
+          icon_hint:  "Your current quota is #{@resource.data_type.format(@resource.quota)} and you are uising currently #{current_value} of #{userfriendly_resource_name(@resource)} in your project"
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
