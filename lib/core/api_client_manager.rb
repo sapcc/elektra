@@ -17,7 +17,7 @@ module Core
         region: Rails.configuration.default_region,
         interface: ENV['DEFAULT_SERVICE_INTERFACE'] || 'internal',
         debug: Rails.env.development? && ENV['ELEKTRON_QUIET'] != 'true',
-        client: {
+        http_client: {
           open_timeout: nil,
           read_timeout: 60,
           verify_ssl: Rails.configuration.ssl_verify_peer,
