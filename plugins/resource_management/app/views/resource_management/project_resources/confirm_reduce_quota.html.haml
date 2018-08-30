@@ -15,13 +15,13 @@
             input_html: { value: @resource.usage},
             icon_hint:  "Your current quota is #{@resource.quota} and you are using #{@resource.usage} #{userfriendly_resource_name(@resource)} in your project"
       - else
-        - current_value = @resource.data_type.format(@resource.usage)
+        - current_usage = @resource.data_type.format(@resource.usage)
         - previous_value = params[:new_style_resource] ? params[:new_style_resource][:quota] : nil
         = f.input :quota,
           label: 'Reduce your quota to',
           as: :string,
-          input_html: { value: previous_value || current_value },
-          icon_hint:  "Your current quota is #{@resource.data_type.format(@resource.quota)} and you are using #{current_value} of #{userfriendly_resource_name(@resource)} in your project"
+          input_html: { value: previous_value || current_usage },
+          icon_hint:  "Your current quota is #{@resource.data_type.format(@resource.quota)} and you are using #{current_usage} of #{userfriendly_resource_name(@resource)} in your project"
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
