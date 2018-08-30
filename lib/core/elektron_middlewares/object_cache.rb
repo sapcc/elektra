@@ -53,8 +53,19 @@ module ElektronMiddlewares
       return nil if BLACKLIST_PARENT_KEYS.include?(parent_key)
 
       if data.is_a?(Hash)
-        # only objects with key id are important.
-        if data['id']
+        # speacial case role_assignments
+        if parent_key == 'role_assignments'
+          begin
+            url = data['links']['assignment']
+            id = url.scan(/(?:projects\/([^\/]+)|users\/([^\/]+)|roles\/([^\/]+)|groups\/([^\/]+)|domains\/([^\/]+))/).flatten.compact.join('-')
+            type = url.scan(/(?:project|user|role|groups|domain)/).flatten.compact.join('_')+'_assignment'
+            data['cached_object_type'] = type
+            data['id'] = id
+            data['name'] = data['role']['name']
+            return [data]
+          rescue StandardError => e
+          end
+        elsif data['id'] # only objects with key id are important.
           # return nil if object contains only the id key.
           # There is no more data available!
           return nil if data.keys.length == 1
