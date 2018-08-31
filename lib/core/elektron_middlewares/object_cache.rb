@@ -58,7 +58,7 @@ module ElektronMiddlewares
           begin
             url = data['links']['assignment']
             id = url.scan(/(?:projects\/([^\/]+)|users\/([^\/]+)|roles\/([^\/]+)|groups\/([^\/]+)|domains\/([^\/]+))/).flatten.compact.join('-')
-            type = url.scan(/(?:project|user|role|groups|domain)/).flatten.compact.join('_')+'_assignment'
+            type = url.scan(/(?:project|user|role|group|domain)/).flatten.compact.join('_')+'_assignment'
             data['cached_object_type'] = type
             data['id'] = id
             data['name'] = data['role']['name']

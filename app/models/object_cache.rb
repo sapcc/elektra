@@ -56,7 +56,10 @@ class ObjectCache < ApplicationRecord
     'role' => %w[],
     'share_type' => %w[],
 
-    'role_assignment' => %w[scope role user group]
+    'project_group_role_assignment' => %w[scope role user group],
+    'project_user_role_assignment' => %w[scope role user group],
+    'domain_group_role_assignment' => %w[scope role user group],
+    'domain_user_role_assignment' => %w[scope role user group]
   }
 
   def self.cache_objects(objects)
@@ -194,7 +197,7 @@ class ObjectCache < ApplicationRecord
   def self.extend_object_payload_with_scope(objects)
     objects.each do |obj|
       next unless obj.payload['scope'].blank?
-        
+
       project = obj.cached_object_type == 'project' ? obj : obj.project
       domain = project ? project.domain : obj.domain
 
