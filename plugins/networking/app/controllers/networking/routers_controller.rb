@@ -272,7 +272,7 @@ module Networking
         # FIXME: shared networks are not permitted for non cloud admin
         # this is a neutron bug https://bugs.launchpad.net/neutron/+bug/1662477
         # should be just 'else'
-        elsif !network.shared?
+      else
           network.subnet_objects.each do |subnet|
             subnet.network_name = network.name
             @internal_subnets << subnet
