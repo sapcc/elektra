@@ -42,8 +42,6 @@ module ResourceManagement
     end
 
     def confirm_reduce_quota
-      puts "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-      pp params
       # please do not delete
     end
 
