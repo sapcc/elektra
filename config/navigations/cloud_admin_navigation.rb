@@ -57,11 +57,13 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
 
-  primary.item :ccadmin, 'Cloud Administration', nil, html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon"}, if: -> {current_user and current_user.is_allowed?('cloud_admin')} do |ccadmin_nav|
+  primary.item :ccadmin, 'Cloud Administration', nil,
+    html: { class: 'fancy-nav-header', 'data-icon': 'cloud-admin-icon' },
+    if: -> { current_user and current_user.is_allowed?('cloud_admin') || current_user and current_user.is_allowed?('compute_cloud_admin')} do |ccadmin_nav|
     ccadmin_nav.item :requests, 'Manage Requests', plugin('inquiry').admin_inquiries_path
     ccadmin_nav.item :resource_management, 'Resource Management', -> {plugin('resource_management').cloud_admin_path}, if: -> { services.available?(:resource_management,:resources) }
     ccadmin_nav.item :flavors, 'Manage Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-    ccadmin_nav.item :hypervisors, 'Compute Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
+    ccadmin_nav.item :hypervisors, 'Compute Host Aggregates & Hypervisors', -> { plugin('compute').host_aggregates_path }, if: -> { plugin_available?(:compute) || current_user and current_user.is_allowed?('compute_cloud_admin') }, highlights_on: -> { params[:controller][%r{host_aggregates/?.*}] }
     ccadmin_nav.item :network_stats, 'Share Aggregates', lambda {
       plugin('shared_filesystem_storage').cloud_admin_pools_path
     }, highlights_on: -> { params[:controller][%r{pools/?.*}] }
