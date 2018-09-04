@@ -28,6 +28,10 @@ Identity::Engine.routes.draw do
 
   resources :roles, only: [:index]
 
+  resources :users, only: %i[], module: 'users' do
+    resources :role_assignments, only: %i[index]
+  end
+
   namespace :projects do
     # start page which renders react components
     get '/role-assignments' => 'role_assignments#index', constraints: { format: :html }

@@ -4,6 +4,7 @@ import ReactJson from 'react-json-view'
 import { projectUrl, objectUrl } from '../../shared/object_link_helper'
 
 import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
+import UserRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/user_role_assignments'
 import NetworkUsageStats from '../../../../../../networking/app/javascript/network_usage_stats/containers/application'
 import Asr from '../../../../../../networking/app/javascript/asr/application'
 
@@ -59,6 +60,7 @@ export default class ShowSearchObjectModal extends React.Component{
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
     const activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == 'project'
+    const isUser = item && item.cached_object_type == 'user'
     const isDomain = item && item.cached_object_type == 'domain'
     const isRouter = item && item.cached_object_type == 'router'
 
@@ -103,6 +105,11 @@ export default class ShowSearchObjectModal extends React.Component{
                     projectDomainId={item.domain_id}
                     type='group'
                   />
+                </Tab>
+              }
+              { isUser &&
+                <Tab eventKey='userRoles' title="User Role Assignments">
+                  <UserRoleAssignments userId={item.id}/>
                 </Tab>
               }
               { (isProject || isDomain) &&
