@@ -8,6 +8,12 @@ module ServiceLayer
         @role_assignment_map ||= class_map_proc(Identity::RoleAssignment)
       end
 
+      def origin_role_assignments(filter = {})
+        elektron_identity.get('role_assignments', filter).map_to(
+          'body.role_assignments', &role_assignment_map
+        )
+      end
+
       def role_assignments(filter = {})
         effective = filter.delete(:effective) || filter.delete('effective')
         # if effective is true remove user_id from filter to find also groups.

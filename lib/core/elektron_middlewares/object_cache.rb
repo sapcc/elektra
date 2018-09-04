@@ -55,16 +55,34 @@ module ElektronMiddlewares
       if data.is_a?(Hash)
         # speacial case role_assignments
         if parent_key == 'role_assignments'
+          result = []
           begin
             url = data['links']['assignment']
             id = url.scan(/(?:projects\/([^\/]+)|users\/([^\/]+)|roles\/([^\/]+)|groups\/([^\/]+)|domains\/([^\/]+))/).flatten.compact.join('-')
             type = url.scan(/(?:project|user|role|group|domain)/).flatten.compact.join('_')+'_assignment'
-            data['cached_object_type'] = type
-            data['id'] = id
-            data['name'] = data['role']['name']
-            return [data]
+            role_assignment = data.deep_dup
+
+            role_assignment['cached_object_type'] = type
+            role_assignment['id'] = id
+            role_assignment['name'] = role_assignment['role']['name']
+            if role_assignment.key?('scope')
+              role_assignment['origin_scope'] = role_assignment.delete('scope')
+            end
+
+            if role_assignment['origin_scope'] && role_assignment['origin_scope']['domain']
+              role_assignment['domain_id'] = role_assignment['origin_scope']['domain']['id']
+            end
+            if role_assignment['origin_scope'] && role_assignment['origin_scope']['project'] && role_assignment['origin_scope']['project']['domain']
+              role_assignment['domain_id'] = role_assignment['origin_scope']['project']['domain']['id']
+            end
+            if role_assignment['origin_scope'] && role_assignment['origin_scope']['project']
+              role_assignment['project_id'] = role_assignment['origin_scope']['project']['id']
+            end
+            result << role_assignment
           rescue StandardError => e
           end
+          result << find_objects([data])
+          return result.flatten
         elsif data['id'] # only objects with key id are important.
           # return nil if object contains only the id key.
           # There is no more data available!

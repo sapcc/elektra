@@ -56,10 +56,13 @@ class ObjectCache < ApplicationRecord
     'role' => %w[],
     'share_type' => %w[],
 
+    'user_role_assignment' => %w[scope role user group],
     'project_group_role_assignment' => %w[scope role user group],
     'project_user_role_assignment' => %w[scope role user group],
     'domain_group_role_assignment' => %w[scope role user group],
-    'domain_user_role_assignment' => %w[scope role user group]
+    'domain_group_role_project_assignment' => %w[scope role user group],
+    'domain_user_role_assignment' => %w[scope role user group],
+    'domain_user_role_project_assignment' => %w[scope role user group]
   }
 
   def self.cache_objects(objects)
