@@ -5,7 +5,7 @@
     Create folder below: #{@object.clean_path}
 
 - pl = plugin('object_storage')
-
-= simple_modal_form_for @form, submit_action: 'Create folder', url: pl.create_folder_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.path) do |f|
+- encoded_container_name = URI.encode_www_form_component(@container_name)
+= simple_modal_form_for @form, submit_action: 'Create folder', url: pl.create_folder_path(encoded_container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(encoded_container_name, @object.path) do |f|
   %fieldset
     = f.input :name, as: :string, label: 'Folder name', input_html: { autofocus: true }

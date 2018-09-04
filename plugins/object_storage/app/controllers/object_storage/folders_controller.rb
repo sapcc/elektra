@@ -18,7 +18,9 @@ module ObjectStorage
       end
 
       services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
-      back_to_object_list(@container_name, @object.path)
+      # to prevent problems with weird container names like "echo 1; rm -rf *)"
+      # the name must be form encoded to load it properly
+      back_to_object_list(URI.encode_www_form_component(@container_name), @object.path)
     end
 
     def new_folder
@@ -44,8 +46,11 @@ module ObjectStorage
     private
 
     def load_params
+
+      # to prevent problems with weird container names like "echo 1; rm -rf *)"
+      # the name is form encoded and must be decoded here
+      @container_name = URI.decode_www_form_component(params[:container])
       # do not load the whole container object as it is not needed usually
-      @container_name = params[:container]
 
       # params[:path] is optional to account for the "/" path (which Rails
       # routing recognizes as empty), but then it is given as nil

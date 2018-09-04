@@ -5,8 +5,8 @@
     File: #{@object.path}
 
 - pl = plugin('object_storage')
-
-= simple_modal_form_for @object, submit_action: 'Update object', url: pl.update_object_path(@container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(@container_name, @object.dirname) do |f|
+- encoded_container_name = URI.encode_www_form_component(@container_name)
+= simple_modal_form_for @object, submit_action: 'Update object', url: pl.update_object_path(encoded_container_name, @object.path), method: :post, cancel_url: pl.list_objects_path(encoded_container_name, @object.dirname) do |f|
 
   .row
     .col-md-6= f.input :content_type, required: false

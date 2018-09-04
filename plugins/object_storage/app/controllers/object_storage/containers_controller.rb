@@ -42,6 +42,10 @@ module ObjectStorage
     end
 
     def pre_empty
+      # needed to render pre_empty.js
+      @container_id = Digest::SHA1.hexdigest(@container.name)
+      @encoded_container_name = params[:id]
+
       @form = ObjectStorage::Forms::ConfirmContainerAction.new(params.require(:forms_confirm_container_action))
       unless @form.validate
         render action: 'confirm_emptying'
@@ -50,6 +54,10 @@ module ObjectStorage
     end
 
     def empty
+      # needed to render empty.js
+      @container_id = Digest::SHA1.hexdigest(@container.name)
+
+      # trigger bulk delete
       services.object_storage.empty(@container.name)
     end
 
@@ -101,7 +109,10 @@ module ObjectStorage
     private
 
     def load_container
-      @container = services.object_storage.container_metadata(params[:id])
+      # to prevent problems with weird container names like "echo 1; rm -rf *)"
+      # the name is form encoded and must be decoded here
+      @container_name = URI.decode_www_form_component(params[:id])
+      @container = services.object_storage.container_metadata(@container_name)
       raise ActiveRecord::RecordNotFound, "container #{params[:id]} not found" unless @container
     end
 

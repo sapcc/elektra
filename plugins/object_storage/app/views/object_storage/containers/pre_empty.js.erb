@@ -2,7 +2,7 @@
 Dashboard.hideModal();Dashboard
 
 // show progress and block the dropdown menu
-$('#<%=@container.name%>_item_count').html('<small>emptying </small><span class="loading"></span>');
-$('#<%=@container.name%>_menu.btn-group button').attr('disabled','disabled');
+$('#<%=@container_id%>_item_count').html('<small>emptying </small><span class="loading"></span>');
+$('#<%=@container_id%>_menu.btn-group button').attr('disabled','disabled');
 // empty container
-$.post("<%=plugin('object_storage').empty_container_path(@container.name)%>");
+$.post("<%=plugin('object_storage').empty_container_path(@encoded_container_name)%>");

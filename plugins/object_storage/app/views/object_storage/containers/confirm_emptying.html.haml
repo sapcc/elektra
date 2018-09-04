@@ -2,9 +2,9 @@
   Empty container: #{@container.name}
 
 - pl = plugin('object_storage')
-
+- encoded_container_name = URI.encode_www_form_component(@container_name)
 - unless @empty
-  = simple_modal_form_for @form, submit_action: 'Empty', url: pl.pre_empty_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
+  = simple_modal_form_for @form, submit_action: 'Empty', url: pl.pre_empty_container_path(encoded_container_name), method: :post, cancel_url: pl.containers_path do |f|
     .bs-callout.bs-callout-danger
       %span.fa.fa-exclamation-circle
       %strong Are you sure?
