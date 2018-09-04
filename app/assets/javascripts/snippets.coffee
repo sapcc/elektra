@@ -3,7 +3,16 @@
 $.fn.initSnippetCopyToClipboard = () ->
   this.each () ->
     $element = $(this)
+
+    if $element.find('button[data-clipboard-snippet]').length > 0
+      return
+
+    # add copy button
     $element.prepend('<button class="btn btn-default btn-icon-only" data-clipboard-snippet><i class="fa fa-clipboard"></i></button>')
+    button = $element.find('[data-clipboard-snippet]')
+    # add click event
+    button.on 'click', (e) ->
+      e.preventDefault()
 
     clipboardSnippets = new Clipboard('[data-clipboard-snippet]', target: (trigger) ->
       $(trigger).siblings( "code" ).get(0)
