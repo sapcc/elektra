@@ -95,11 +95,16 @@ module ObjectStorage
     private
 
     def load_params
+
+      # to prevent problems with weird container names like "echo 1; rm -rf *)"
+      # the name is form encoded and must be decoded here
+      @container_name = URI.decode_www_form_component(params[:container])
       # do not load the whole container object as it is not needed usually
-      @container_name = params[:container]
+
       # params[:path] is optional in some controllers to account for the "/"
       # path (which Rails routing recognizes as empty), but then it is given as nil
       params[:path] ||= ''
+      params[:path] = URI.decode_www_form_component(params[:path])
     end
 
     def load_object

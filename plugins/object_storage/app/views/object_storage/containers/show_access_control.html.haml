@@ -3,7 +3,7 @@
 
 - pl = plugin('object_storage')
 
-= simple_modal_form_for @container, submit_action: 'Update Access', url: pl.update_access_control_container_path(@container.name), method: :post, cancel_url: pl.containers_path do |f|
+= simple_modal_form_for @container, submit_action: 'Update Access', url: pl.update_access_control_container_path(URI.encode_www_form_component(@container_name)), method: :post, cancel_url: pl.containers_path do |f|
   .row
     .col-md-6
       - if has_capability?('staticweb')

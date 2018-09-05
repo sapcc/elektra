@@ -1,5 +1,6 @@
 var note = '<i class="fa fa-info-circle" title="Please note: Because of eventual consistency it is possible that the value is not zero. If thats the case don\'t worry it will be updated soon."></i>'
-$('#<%=@container.name%>_item_count').removeClass('loading');
-$('#<%=@container.name%>_item_count').html('<small>empty </small>'+note);
-$('#<%=@container.name%>_total_size').html('<small>empty </small>'+note);
-$('#<%=@container.name%>_menu.btn-group button').removeAttr('disabled');
+// we need to encode the container name here to handle weird container names like "echo 1; rm -rf *)"
+$('#<%=@container_id%>_item_count').removeClass('loading');
+$('#<%=@container_id%>_item_count').html('<small>empty </small>'+note);
+$('#<%=@container_id%>_total_size').html('<small>empty </small>'+note);
+$('#<%=@container_id%>_menu.btn-group button').removeAttr('disabled');
