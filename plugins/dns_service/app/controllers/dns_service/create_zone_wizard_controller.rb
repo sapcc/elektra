@@ -18,6 +18,21 @@ module DnsService
       @pool = load_pool(@zone_request.domain_pool)
       @zone.write('attributes', @pool.read('attributes'))
 
+      # get dns zones quota for target project
+      dns_zone_resource = cloud_admin.resource_management.find_project(
+        @inquiry.domain_id, @inquiry.project_id,
+        service: 'dns',
+        resource: 'zones',
+      ).resources.first or raise ActiveRecord::RecordNotFound
+
+      if dns_zone_resource.quota == 0 || dns_zone_resource.quota == dns_zone_resource.usage
+        # increase quota +1 if necessary
+        dns_zone_resource.quota += 1
+        unless dns_zone_resource.save
+           dns_zone_resource.errors.each { |k, m| @zone_request.errors.add(k,m) }
+        end
+      end
+
       if @zone.save
         @zone_transfer_request = services.dns_service.new_zone_transfer_request(
           @zone.id, target_project_id: @inquiry.project_id
