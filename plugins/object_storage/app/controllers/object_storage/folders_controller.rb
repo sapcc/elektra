@@ -55,6 +55,7 @@ module ObjectStorage
       # params[:path] is optional to account for the "/" path (which Rails
       # routing recognizes as empty), but then it is given as nil
       params[:path] ||= ''
+      params[:path] = URI.decode_www_form_component(params[:path])
 
       # we want to use the helper methods on ObjectStorage::Object, but the
       # folder identified by params[:path] need not necessarily exist as an

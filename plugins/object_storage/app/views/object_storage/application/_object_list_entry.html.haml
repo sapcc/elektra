@@ -1,9 +1,10 @@
 - encoded_container_name = URI.encode_www_form_component(@container_name)
+- encoded_object_path = URI.encode_www_form_component(object.path)
 %tr
   %td.name-with-icon
     - if object.is_directory?
       %span.fa.fa-fw.fa-folder-open{ title: 'Directory' }
-      = link_to object.basename, plugin('object_storage').list_objects_path(encoded_container_name, object.path), title: 'List contents'
+      = link_to object.basename, plugin('object_storage').list_objects_path(encoded_container_name, encoded_object_path), title: 'List contents'
     - else
       - if object.content_type.start_with?('image/')
         %span.fa.fa-fw.fa-file-image-o{ title: 'Object' }
@@ -11,7 +12,7 @@
         %span.fa.fa-fw.fa-file-text-o{ title: 'Object' }
       - else
         %span.fa.fa-fw.fa-file-o{ title: 'Object' }
-      = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, object.path, inline: 1), title: 'Show file contents in browser'
+      = link_to object.basename, plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path, inline: 1), title: 'Show file contents in browser'
   %td
     - unless object.is_directory?
       = format_bytes(object.size_bytes)
@@ -25,12 +26,12 @@
 
       %ul.dropdown-menu.dropdown-menu-right{ role: 'menu' }
         - if object.is_directory?
-          %li= link_to 'Delete recursively', plugin('object_storage').destroy_folder_path(encoded_container_name, object.path), method: :delete, remote: true
+          %li= link_to 'Delete recursively', plugin('object_storage').destroy_folder_path(encoded_container_name, encoded_object_path), method: :delete, remote: true
         - else
-          %li= link_to 'Download', plugin('object_storage').download_object_path(encoded_container_name, object.path)
+          %li= link_to 'Download', plugin('object_storage').download_object_path(encoded_container_name, encoded_object_path)
           %li.divider
-          %li= link_to 'Properties', plugin('object_storage').object_path(encoded_container_name, object.path), data: { modal: true }
+          %li= link_to 'Properties', plugin('object_storage').object_path(encoded_container_name, encoded_object_path), data: { modal: true }
           %li.divider
-          %li= link_to 'Copy', plugin('object_storage').new_copy_path(encoded_container_name, object.path), data: { modal: true }
-          %li= link_to 'Move/Rename', plugin('object_storage').move_object_path(encoded_container_name, object.path), data: { modal: true }
-          %li= link_to 'Delete', plugin('object_storage').destroy_object_path(encoded_container_name, object.path), method: :delete, remote: true
+          %li= link_to 'Copy', plugin('object_storage').new_copy_path(encoded_container_name, encoded_object_path), data: { modal: true }
+          %li= link_to 'Move/Rename', plugin('object_storage').move_object_path(encoded_container_name, encoded_object_path), data: { modal: true }
+          %li= link_to 'Delete', plugin('object_storage').destroy_object_path(encoded_container_name, encoded_object_path), method: :delete, remote: true

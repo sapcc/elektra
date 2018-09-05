@@ -104,6 +104,7 @@ module ObjectStorage
       # params[:path] is optional in some controllers to account for the "/"
       # path (which Rails routing recognizes as empty), but then it is given as nil
       params[:path] ||= ''
+      params[:path] = URI.decode_www_form_component(params[:path])
     end
 
     def load_object
