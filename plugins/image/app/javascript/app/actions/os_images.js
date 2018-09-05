@@ -63,7 +63,8 @@ export default (type) => {
         if (response.data.errors) {
           addError(React.createElement(ErrorsList, {errors: response.data.errors}))
         } else {
-          dispatch(receiveOsImages(response.data.os_images, response.data.has_next));
+          let osImages = $.isEmptyObject(response.data.os_images) ? [] : response.data.os_images
+          dispatch(receiveOsImages(osImages, response.data.has_next));
         }
       })
       .catch( (error) => {
