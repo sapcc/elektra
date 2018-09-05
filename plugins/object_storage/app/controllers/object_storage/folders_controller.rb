@@ -20,7 +20,7 @@ module ObjectStorage
       services.object_storage.create_object(@container_name, @object.path + @form.name, @form.file)
       # to prevent problems with weird container names like "echo 1; rm -rf *)"
       # the name must be form encoded to load it properly
-      back_to_object_list(URI.encode_www_form_component(@container_name), @object.path)
+      back_to_object_list(URI.encode_www_form_component(@container_name), URI.encode_www_form_component(@object.path))
     end
 
     def new_folder
