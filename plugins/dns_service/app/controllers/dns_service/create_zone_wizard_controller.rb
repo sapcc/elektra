@@ -25,7 +25,7 @@ module DnsService
         resource: 'zones',
       ).resources.first or raise ActiveRecord::RecordNotFound
 
-      if dns_zone_resource.quota == 0 || dns_zone_resource.quota == dns_zone_resource.usage || dns_zone_resource.quota < dns_zone_resource.usage
+      if dns_zone_resource.quota == 0 || dns_zone_resource.quota <= dns_zone_resource.usage
         unless dns_zone_resource.quota < dns_zone_resource.usage
           # standard increase quota +1
           dns_zone_resource.quota += 1
