@@ -16,7 +16,7 @@ const ObjectLink = ({id, name, term}) =>
     {name &&
       <React.Fragment>
         <br/>
-        <span className='info-text'>
+        <span className='info-text u-text-monospace u-text-small'>
           <Highlighter search={term || ''}>{id || ''}</Highlighter>
         </span>
       </React.Fragment>
@@ -47,7 +47,7 @@ export default ({item, term}) => {
             <br />
           </React.Fragment>
         }
-        <span className="info-text">Cached: {moment(item.updated_at).fromNow()}</span>
+        <span className="info-text">Last Updated: {moment(item.updated_at).fromNow()}</span>
       </td>
       <td className="big-data-cell">
         {/* Domain */}

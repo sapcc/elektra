@@ -23,19 +23,17 @@
           = render_navigation(expand_all: true, renderer: :fancy_list, context: navigation_context(@scoped_domain_name, @scoped_project_name))
 
     .special-crumb
-      - if true || services.available?(:webconsole) and plugin_name!='webconsole'
-        .pull-left
-          = link_to 'javascript:void(0)', class: 'solo-icon-link', data: {trigger: 'webconsole:open'} do
-            %span.fa-stack
-              %i.fa.fa-square.fa-stack-2x
-              %i.fa.fa-terminal.fa-stack-1x.fa-inverse
+      - if services.available?(:webconsole) and plugin_name!='webconsole'
+        = link_to 'javascript:void(0)', class: 'solo-icon-link', data: {trigger: 'webconsole:open'} do
+          %span.fa-stack
+            %i.fa.fa-square.fa-stack-2x
+            %i.fa.fa-terminal.fa-stack-1x.fa-inverse
 
       - if current_user && current_user.is_allowed?('tools:application_get')
-        .pull-left
-          .has-feedback.has-feedback-searchable
-            = text_field_tag('universal_search_field', '', { type: "text",
-              class: "form-control",
-              placeholder: "Object ID or name",
-              data: {universal_search_field: true, url: plugin('cc_tools').start_path}})
-            %span.form-control-feedback.false
-              %i.fa.fa-search
+        .has-feedback.has-feedback-searchable.universal-search-input
+          = text_field_tag('universal_search_field', '', { type: "text",
+            class: "form-control",
+            placeholder: "Find by ID, name, or description",
+            data: {universal_search_field: true, url: plugin('cc_tools').start_path}})
+          %span.form-control-feedback.false
+            %i.fa.fa-search
