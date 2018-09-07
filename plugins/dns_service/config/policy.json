@@ -4,7 +4,7 @@
   "dns_viewer": "role:dns_viewer",
   "dns_admin": "role:dns_admin",
 
-  "context_is_dns_ops": "rule:context_is_cloud_admin or role:cloud_dns_ops",
+  "context_is_dns_ops": "rule:context_is_cloud_dns_admin or role:cloud_dns_ops",
   "context_is_dns_support": "rule:context_is_dns_ops or role:cloud_dns_support",
   "context_is_zonemaster": "rule:context_is_dns_support or role:dns_zonemaster",
   "context_is_hostmaster": "rule:context_is_dns_support or role:dns_hostmaster",
