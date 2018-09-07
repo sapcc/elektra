@@ -95,8 +95,7 @@
     %pre
       %code
         = preserve do
-          :escaped
-            #{@truncated_payload.data_output}
+          #{@truncated_payload.data_output}
 
 
 %div{class: modal? ? 'modal-footer' : ''}
