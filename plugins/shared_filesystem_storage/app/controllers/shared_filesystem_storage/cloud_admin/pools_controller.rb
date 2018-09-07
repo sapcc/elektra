@@ -7,6 +7,8 @@ module SharedFilesystemStorage
       authorization_required context: '::shared_filesystem_storage', only: %i[index]
 
       def index
+        # pools contain no attribute for availibility zone. So we can't
+        # sort and group by availibility :(
         @pools = services.shared_filesystem_storage.pools.uniq(&:aggregate)
       end
 
