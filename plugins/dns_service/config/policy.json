@@ -10,14 +10,14 @@
   "context_is_hostmaster": "rule:context_is_dns_support or role:dns_hostmaster",
   "context_is_mailmaster": "rule:context_is_dns_support or role:dns_mailmaster",
   "context_is_webmaster": "rule:context_is_dns_support or rule:context_is_mailmaster or rule:context_is_hostmaster or role:dns_webmaster",
-  "context_is_dns_admin": "rule:context_is_webmaster or role:dns_admin",
+  "context_is_editor": "rule:member or rule:dns_admin",
   "context_is_dns_viewer": "rule:context_is_master or rule:dns_viewer",
 
-  "context_is_master": "rule:context_is_dns_support or rule:context_is_zonemaster or rule:context_is_hostmaster or rule:context_is_mailmaster or rule:context_is_webmaster or rule:member",
+  "context_is_master": "rule:context_is_dns_support or rule:context_is_zonemaster or rule:context_is_hostmaster or rule:context_is_mailmaster or rule:context_is_webmaster or rule:context_is_editor",
 
   "dns_service:all_projects": "rule:context_is_cloud_dns_admin and token.is_admin_project:true",
-  "dns_service:zone_list": "rule:context_is_dns_viewer or rule:member",
-  "dns_service:zone_get": "rule:context_is_dns_viewer or rule:member",
+  "dns_service:zone_list": "rule:context_is_dns_viewer",
+  "dns_service:zone_get": "rule:context_is_dns_viewer",
   "dns_service:zone_create": "rule:context_is_dns_ops",
   "dns_service:zone_update": "rule:context_is_dns_support",
   "dns_service:zone_delete": "rule:context_is_master",
