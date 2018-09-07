@@ -3,26 +3,33 @@
   "member": "role:member or role:Member",
   "dns_viewer": "role:dns_viewer",
   "dns_admin": "role:dns_admin",
-  "context_is_dns_admin": "rule:context_is_cloud_dns_admin or rule:dns_admin",
-  "context_is_dns_editor": "rule:context_is_dns_admin or rule:member",
-  "context_is_dns_viewer":  "rule:context_is_dns_editor or rule:dns_viewer",
-  "zone_primary_or_admin": "(%(zone.type)s=='PRIMARY' and rule:context_is_dns_editor) or (%(zone.type)s=='SECONDARY' and is_admin:True)",
+
+  "context_is_dns_ops": "rule:context_is_cloud_admin or role:cloud_dns_ops",
+  "context_is_dns_support": "rule:context_is_dns_ops or role:cloud_dns_support",
+  "context_is_zonemaster": "rule:context_is_dns_support or role:dns_zonemaster",
+  "context_is_hostmaster": "rule:context_is_dns_support or role:dns_hostmaster",
+  "context_is_mailmaster": "rule:context_is_dns_support or role:dns_mailmaster",
+  "context_is_webmaster": "rule:context_is_dns_support or rule:context_is_mailmaster or rule:context_is_hostmaster or role:dns_webmaster",
+  "context_is_editor": "rule:member or rule:dns_admin",
+  "context_is_dns_viewer": "rule:context_is_master or rule:dns_viewer",
+
+  "context_is_master": "rule:context_is_dns_support or rule:context_is_zonemaster or rule:context_is_hostmaster or rule:context_is_mailmaster or rule:context_is_webmaster or rule:context_is_editor",
 
   "dns_service:all_projects": "rule:context_is_cloud_dns_admin and token.is_admin_project:true",
   "dns_service:zone_list": "rule:context_is_dns_viewer",
   "dns_service:zone_get": "rule:context_is_dns_viewer",
-  "dns_service:zone_create": "rule:context_is_dns_admin",
-  "dns_service:zone_update": "rule:context_is_dns_admin",
-  "dns_service:zone_delete": "rule:context_is_dns_admin",
+  "dns_service:zone_create": "rule:context_is_dns_ops",
+  "dns_service:zone_update": "rule:context_is_dns_support",
+  "dns_service:zone_delete": "rule:context_is_master",
   "dns_service:recordset_list": "rule:context_is_dns_viewer",
   "dns_service:recordset_get": "rule:context_is_dns_viewer",
-  "dns_service:recordset_create": "rule:zone_primary_or_admin",
-  "dns_service:recordset_update": "rule:zone_primary_or_admin",
-  "dns_service:recordset_delete": "rule:zone_primary_or_admin or rule:context_is_cloud_dns_admin",
+  "dns_service:recordset_create": "rule:context_is_master",
+  "dns_service:recordset_update": "rule:context_is_master",
+  "dns_service:recordset_delete": "rule:context_is_master",
 
   "dns_service:pool_list": "rule:context_is_cloud_dns_admin",
 
-  "dns_service:transfer_request_create": "rule:context_is_dns_admin and project_id:%(zone.project_id)s",
-  "dns_service:transfer_request_accept": "rule:context_is_dns_editor or project_id:%(request.project_id)s or %(request.project_id)s==nil",
-  "dns_service:request_zone": "@"
+  "dns_service:transfer_request_create": "rule:context_is_zonemaster and project_id:%(zone.project_id)s",
+  "dns_service:transfer_request_accept": "rule:context_is_master or project_id:%(request.project_id)s or %(request.project_id)s==nil",
+  "dns_service:request_zone": "rule:context_is_master"
 }

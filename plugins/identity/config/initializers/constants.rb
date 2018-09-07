@@ -4,6 +4,7 @@ ALLOWED_ROLES = %w(
   compute_admin
   compute_viewer
   dns_viewer
+  dns_webmaster
   keymanager_admin
   keymanager_viewer
   kubernetes_admin
