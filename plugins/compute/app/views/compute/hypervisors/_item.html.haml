@@ -1,5 +1,5 @@
 %tr{id: "hypervisor_#{hypervisor.id}"}
-
+  %td=# hypervisor.availability_zone
   %td
     - if current_user.is_allowed?("compute:hypervisor_get")
       = link_to hypervisor.host, plugin('compute').hypervisor_path(id: hypervisor.id), data: {modal: true}

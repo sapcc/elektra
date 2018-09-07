@@ -1635,6 +1635,12 @@ div, td, th {
   }
 }
 
+.title-row {
+  th,td {
+    background-color: #efefef;
+  }
+}
+
 .table.no-borders {
   td, th {
     border: none;

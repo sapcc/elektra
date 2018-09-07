@@ -6,6 +6,7 @@
 %table.table
   %thead
     %tr
+      %th Availability Zone
       %th Host
       %th Type
       %th VCPUs (used)
@@ -24,5 +25,29 @@
         %td{colspan: 3}
           No hypervisors available
     - else
-      - @hypervisors.each do |hypervisor|
-        = render partial: 'item', locals: {hypervisor: hypervisor}
+      - accumulated_hypervisors(@hypervisors).each do |data|
+        %tr.title-row
+          %th= data[:availability_zone]
+          %th
+          %th
+          %th= data[:vcpus_used]
+          %th= data[:vcpus_total]
+          %th= data[:memory_used]
+          %th= data[:memory_total]
+          %th= data[:local_storage_used]
+          %th= data[:local_storage_total]
+          %th= data[:running_vms]
+          %th
+
+        - data[:items].each do |hypervisor|
+          = render partial: 'item', locals: {hypervisor: hypervisor}
+      -# - @hypervisors.each do |hypervisor|
+      -#   = render partial: 'item', locals: {hypervisor: hypervisor}
+
+
+        map[hv.availability_zone][:vcpus_used] += hv.vcpus_used
+        map[hv.availability_zone][:vcpus_total] += hv.vcpus_total
+        map[hv.availability_zone][:memory_used] += hv.memory_used
+        map[hv.availability_zone][:memory_total] += hv.memory_total
+        map[hv.availability_zone][:local_storage_used] += hv.vcpus_used
+        map[hv.availability_zone][:local_storage_total] += hv.vcpus_used

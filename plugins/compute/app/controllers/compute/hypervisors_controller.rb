@@ -6,7 +6,17 @@ module Compute
     authorization_required
 
     def index
-      @hypervisors = services.compute.hypervisors
+      host_az_map = services.compute.host_aggregates.each_with_object({}) do |aggregate,map|
+        aggregate.hosts.each do |host|
+          map[host] = aggregate.availability_zone
+        end
+      end
+      @hypervisors = services.compute.hypervisors.map do |h|
+        if h.attributes['service'] && h.attributes['service']['host']
+          h.availability_zone = host_az_map[h.attributes['service']['host']]
+        end
+        h
+      end.sort_by!(&:availability_zone)
     end
 
     def show
