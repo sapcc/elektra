@@ -1,0 +1,21 @@
+%table.table
+  %thead
+    %tr
+      %th Domain
+      %th Resource
+      %th Domain quota
+      %th Granted to projects
+  %tbody
+    - @domain_quota_overcommitted.each do |row|
+      - data_type = Core::DataType.from_unit_name(row['unit'] || '')
+      %tr
+        %td
+          - domain = row.fetch("domain", {})
+          = domain["name"]
+          .small.text-muted= domain["id"]
+        %td
+          = userfriendly_resource_name(row["resource"])
+          .small.text-muted= t("resource_management.#{row["service"]}")
+        %td= data_type.format(row["domain_quota"])
+        %td= data_type.format(row["projects_quota"])
+= paginate @domain_quota_overcommitted, theme: 'twitter-bootstrap-3', remote: true

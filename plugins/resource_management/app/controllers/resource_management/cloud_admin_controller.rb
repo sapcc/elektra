@@ -193,6 +193,12 @@ module ResourceManagement
 
     def check_inconsistencies
       @inconsistencies = services.resource_management.get_inconsistencies
+
+      @domain_quota_overcommitted = Kaminari.paginate_array(@inconsistencies["domain_quota_overcommitted"]).page(params[:page]).per(10)
+      @project_quota_overspent = Kaminari.paginate_array(@inconsistencies["project_quota_overspent"]).page(params[:page]).per(10)
+      @project_quota_mismatch = Kaminari.paginate_array(@inconsistencies["project_quota_mismatch"]).page(params[:page]).per(10)
+
+
     end
 
     private
