@@ -12,9 +12,10 @@ module Compute
         end
       end
       @hypervisors = services.compute.hypervisors.map do |h|
-        if h.attributes['service'] && h.attributes['service']['host']
+        if h.attributes['service'] && !h.attributes['service']['host'].blank?
           h.availability_zone = host_az_map[h.attributes['service']['host']]
         end
+        h.availability_zone ||= 'unknown'
         h
       end.sort_by!(&:availability_zone)
     end
