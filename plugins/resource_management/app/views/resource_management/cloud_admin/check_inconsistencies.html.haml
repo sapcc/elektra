@@ -16,6 +16,8 @@
       = link_to '#inconsistency-pqm', aria: {controls:"information"}, role: "tab", data: {toggle:"tab"} do
         Project Quota Mismatch
         %span.badge= @inconsistencies.fetch('project_quota_mismatch', []).length
+    .pull-right
+      %span.loading-place
 
   .tab-content
 
