@@ -7,9 +7,24 @@ module SharedFilesystemStorage
       authorization_required context: '::shared_filesystem_storage', only: %i[index]
 
       def index
-        # pools contain no attribute for availibility zone. So we can't
-        # sort and group by availibility :(
-        @pools = services.shared_filesystem_storage.pools.uniq(&:aggregate)
+        # load services and build a map of host => availability_zone
+        host_az_map = services.shared_filesystem_storage.services(
+          binary: 'manila-share'
+        ).each_with_object({}) do |service,map|
+          host = service.host.gsub(/@.+/,'')
+          map[host] = service.zone
+        end
+
+        # @pools = services.shared_filesystem_storage.pools.uniq(&:aggregate)
+        # load pools and add availability_zone to each pool based on host using
+        # the host_az_map. 
+        @pools = services.shared_filesystem_storage.pools.map do |pool|
+          if pool.host && !pool.host.blank?
+            pool.availability_zone = host_az_map[pool.host]
+          end
+          pool.availability_zone ||= 'unknown'
+          pool
+        end.sort_by!(&:availability_zone)
       end
 
       def show
