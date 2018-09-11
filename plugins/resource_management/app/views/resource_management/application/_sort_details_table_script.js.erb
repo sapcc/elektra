@@ -1,17 +1,18 @@
 $(function() {
-  
+
   var current_sort_order = "<%= @sort_order %>";
   var sort_column = "<%= @sort_column %>";
   var sort_type = "amount";
-  if (sort_column == "sortable_name_column") {sort_type = "alpha"}
-  
+  if (sort_column.match(/name/) || sort_column.match(/resource/)) {sort_type = "alpha"}
+
   if (current_sort_order == 'desc') {
     $("#"+sort_column).find('i').removeClass( "fa-sort-"+sort_type+"-asc" );
     $("#"+sort_column).find('i').addClass( "fa-sort-"+sort_type+"-desc" );
   }
 
-  // console.log("current sort order:"+current_sort_order);
-  // console.log("sort type:"+sort_type);
+   console.log("sort column:"+sort_column);
+   console.log("current sort order:"+current_sort_order);
+   console.log("sort type:"+sort_type);
 
   // show user sort option
   $( ".sortable" ).mouseenter(function() {
@@ -31,13 +32,13 @@ $(function() {
     if ( sort_icon.hasClass("fa-sort-"+sort_type+"-asc" )) {
       sort_order = 'desc';
     }
-    // console.log("sort order:"+sort_order);
+     console.log("sort order:"+sort_order);
 
     // to prevent hide icon
     $(this).unbind('mouseenter');
     $(this).unbind('mouseleave');
 
-    var data = { 
+    var data = {
       sort_order: sort_order,
       sort_column: $(this).attr('id'),
       service: "<%= @service_type %>",
@@ -50,7 +51,7 @@ $(function() {
       data["cluster"] = table.data('cluster-id');
     }
 
-    $.ajax({ 
+    $.ajax({
       url: "<%= details_path %>",
       data: data,
       dataType: 'script',

@@ -1,10 +1,18 @@
 %table.table
   %thead
     %tr
-      %th Domain
-      %th Resource
-      %th Domain quota
-      %th Granted to projects
+      %th.sortable#sortable_name_column
+        Domain
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.sortable#sortable_resource_column
+        Resource
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.sortable#sortable_domain_quota_column
+        Domain quota
+        %i.fa.fa-sort-amount-asc.hide-sort-order
+      %th.sortable#sortable_projects_quota_column
+        Granted to projects
+        %i.fa.fa-sort-amount-asc.hide-sort-order
   %tbody
     - @domain_quota_overcommitted.each do |row|
       - data_type = Core::DataType.from_unit_name(row['unit'] || '')

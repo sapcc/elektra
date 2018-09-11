@@ -180,6 +180,7 @@ module ResourceManagement
         @domain_resources.sort_by! { |r| [ r.send(sort_method), r.sortable_name ] }
         @domain_resources.reverse! if @sort_order.downcase == 'desc'
       end
+      pp @domain_resources
 
       # prepare the domains table
       @domain_resources = Kaminari.paginate_array(@domain_resources).page(params[:page]).per(6)
@@ -192,12 +193,25 @@ module ResourceManagement
     end
 
     def check_inconsistencies
+      @sort_order  = params[:sort_order] || 'asc'
+      @sort_column = params[:sort_column] || ''
+      sort_by = @sort_column.gsub("_column", "")
+      sort_by = sort_by.gsub("sortable_","")
+
       @inconsistencies = services.resource_management.get_inconsistencies
 
-      @domain_quota_overcommitted = Kaminari.paginate_array(@inconsistencies["domain_quota_overcommitted"]).page(params[:page]).per(10)
+      @domain_quota_overcommitted =  @inconsistencies["domain_quota_overcommitted"]
+      if sort_by == "name"
+        @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
+      else
+        @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by], r["domain"]["name"]] }
+      end
+      @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
+      @domain_quota_overcommitted = Kaminari.paginate_array(@domain_quota_overcommitted).page(params[:page]).per(10)
+
+
       @project_quota_overspent = Kaminari.paginate_array(@inconsistencies["project_quota_overspent"]).page(params[:page]).per(10)
       @project_quota_mismatch = Kaminari.paginate_array(@inconsistencies["project_quota_mismatch"]).page(params[:page]).per(10)
-
 
     end
 
