@@ -199,16 +199,16 @@ module ResourceManagement
       sort_by = sort_by.gsub("sortable_","")
 
       @inconsistencies = services.resource_management.get_inconsistencies
-
       @domain_quota_overcommitted =  @inconsistencies["domain_quota_overcommitted"]
-      if sort_by == "name"
-        @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
-      else
-        @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by], r["domain"]["name"]] }
+      unless sort_by.empty?
+        if sort_by == "name"
+          @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
+        else
+          @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by], r["domain"]["name"]] }
+        end
+        @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
       end
-      @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
       @domain_quota_overcommitted = Kaminari.paginate_array(@domain_quota_overcommitted).page(params[:page]).per(10)
-
 
       @project_quota_overspent = Kaminari.paginate_array(@inconsistencies["project_quota_overspent"]).page(params[:page]).per(10)
       @project_quota_mismatch = Kaminari.paginate_array(@inconsistencies["project_quota_mismatch"]).page(params[:page]).per(10)
