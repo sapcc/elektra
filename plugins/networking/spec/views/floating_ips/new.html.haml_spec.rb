@@ -9,7 +9,7 @@ RSpec.describe "networking/floating_ips/new.html.haml", type: :view do
     assign(:floating_ip, Networking::FloatingIp.new(nil))
     assign(:floating_networks, [])
 
-    view.stub(:current_user) {
+    allow(view).to receive(:current_user) {
       current_user = double('current_user')
       allow(current_user).to receive(:is_allowed?).with("context_is_network_admin").and_return true
       current_user

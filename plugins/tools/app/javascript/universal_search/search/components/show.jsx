@@ -108,12 +108,12 @@ export default class ShowSearchObjectModal extends React.Component{
                   />
                 </Tab>
               }
-              { isUser &&
+              { isUser && policy.isAllowed('tools:universal_search_user_role_assignments', {user: item}) &&
                 <Tab eventKey='userRoles' title="User Role Assignments">
                   <UserRoleAssignments userId={item.id}/>
                 </Tab>
               }
-              { (isProject || isDomain) &&
+              { (isProject || isDomain) && policy.isAllowed("tools:universal_search_netstats") &&
                 <Tab eventKey='networkStats' title="Network Statistics">
                   <NetworkUsageStats
                     scopeId={item.id}
