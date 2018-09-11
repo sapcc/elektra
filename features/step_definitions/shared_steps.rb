@@ -28,7 +28,8 @@ end
 # Elements
 #
 When /^I click on "(.*?)"$/ do |button|
-  click_on(button)
+  find(:link, button).trigger('click')
+  # click_on(button)
 end
 
 When /^I choose "(.*?)" radiobutton$/ do |radio|
