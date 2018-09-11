@@ -140,6 +140,11 @@ PATH
   specs:
     shared_filesystem_storage (0.0.1)
 
+PATH
+  remote: plugins/tools
+  specs:
+    tools (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -623,6 +628,7 @@ DEPENDENCIES
   simple_form
   spinners
   spring
+  tools!
   uglifier
   unf (>= 0.2.0beta2)
   web-console (~> 3.0)

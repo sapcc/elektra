@@ -1,0 +1,31 @@
+.search-result-type {
+}
+
+.search-result-name {
+  width: 18%;
+}
+
+.search-result-details {
+
+}
+
+.search-result-domain {
+  width: 12%;
+}
+
+.search-result-project {
+  width: 12%;
+}
+
+.pagination-container {
+  flex-wrap: wrap;
+
+  .alert {
+    flex-basis: 100%;
+    margin-bottom: 0;
+  }
+}
+
+.search-result-empty, .search-result-livesearch-link {
+  margin: $line-height-computed 0;
+}

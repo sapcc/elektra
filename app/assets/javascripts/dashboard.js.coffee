@@ -84,8 +84,18 @@ $ ->
     $($(this).attr('data-target')).toggleClass('hidden')
 
 
+  # init universal search input field
+  $('[data-universal-search-field]').keyup (event) ->
+    if event.keyCode == 13
+      $(this)
+        .attr('disabled',true)
+        .closest('.has-feedback')
+        .find('.fa-search').removeClass('fa-search').addClass('spinner')
 
-
+      url = $(this).data('url')+'#/universal-search'
+      window.location.href = url+'?searchTerm='+this.value
+      # the pathname didn't change -> reload page with new search term param
+      window.location.reload() if window.location.href.indexOf(url) >= 0
   # ---------------------------------------------
   # Expandable Tree
 

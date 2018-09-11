@@ -4,9 +4,15 @@ import SearchItem from './search_item'
 // import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from 'lib/components/pagination';
 
+
 export default class Search extends React.Component {
   componentDidMount() {
     this.props.loadTypesOnce()
+
+    // try to find init search term in url
+    const searchTermMatch = this.props.location.search.match(/[\?|\&]searchTerm=([^\&]+)/)
+    this.searchTerm = searchTermMatch && searchTermMatch[1]
+    if(this.searchTerm) this.props.search({term: this.searchTerm})
   }
 
   highlightSearchTerm = (string) => {
@@ -31,6 +37,7 @@ export default class Search extends React.Component {
       </React.Fragment>
     )
   }
+
 
   render() {
     const availableTypes = this.props.types.items.sort()
@@ -69,16 +76,17 @@ export default class Search extends React.Component {
             </React.Fragment>
           }
         </div>
-        { this.props.objects.items && this.props.objects.items.length > 0 &&
+
+        { this.props.objects.items && this.props.objects.items.length > 0 ?
           <table className="table">
             <thead>
               <tr>
-                <th>Type</th>
-                <th>Name/ID</th>
+                <th className="search-result-type">Type</th>
+                <th className="search-result-name">Name/ID</th>
                 <th className="search-result-details">Details</th>
-                <th>Domain</th>
-                <th>(Parent) Project</th>
-                <th></th>
+                <th className="search-result-domain">Domain</th>
+                <th className="search-result-project">(Parent) Project</th>
+                <th className="snug"></th>
               </tr>
             </thead>
             <tbody>
@@ -90,17 +98,27 @@ export default class Search extends React.Component {
 
             </tbody>
           </table>
+        :
+          <React.Fragment>
+              {this.props.objects.receivedAt &&
+                <div className="search-result-empty">Nothing found</div>
+              }
+          </React.Fragment>
         }
-
 
 
         <div className="u-flex-container pagination-container">
           { this.props.objects.receivedAt &&
             // show this only after we have searched at least once (don't want this to be visible on initial load)
-            <Link to='/universal-search/live'>
-              <i className="fa fa-fw fa-arrow-circle-right"></i>
-              Couldn't find what you were looking for? Try a live search
-            </Link>
+            <React.Fragment>
+              <div className="alert alert-info">
+                Please note that this search operates on cached data. It might not be 100% in sync with live data.
+              </div>
+              <Link to='/universal-search/live' className="search-result-livesearch-link">
+                <i className="fa fa-fw fa-arrow-circle-right"></i>
+                Couldn't find what you were looking for? Try a live search
+              </Link>
+            </React.Fragment>
           }
           <Pagination
             currentPage={this.props.objects.currentPage}

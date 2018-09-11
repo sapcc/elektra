@@ -344,7 +344,6 @@ section {
   &.info-clickable:hover {
     @include opacity(1);
   }
-
 }
 
 .info-box {
@@ -435,6 +434,10 @@ section {
 
 .u-text-monospace {
   font-family: monospace;
+}
+
+.u-text-small {
+  font-size: $font-size-small;
 }
 
 .u-flex-container {
@@ -1044,6 +1047,8 @@ footer, .footer {
   // Setup for megaflyout so that it can be positioned relative to the container rather than the dropdown parent
   .context-container {
     position: relative;
+    display: flex;
+
 
     .dropdown-mega {
       position: static;
@@ -1051,11 +1056,31 @@ footer, .footer {
   }
 
   .special-crumb {
-    position: absolute;
-    right: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+
+    > * {
+      margin-left: 8px;
+    }
 
     .context-list {
       margin-left: $context-breadcrumb-padding-horizontal;
+    }
+  }
+
+  .universal-search-input {
+    input {
+      height: 26px;
+      background-color: #efefef;
+      width: 260px;
+      padding-left: 10px;
+      padding-right: 30px;
+    }
+
+    .form-control-feedback {
+      line-height: 26px;
+      height: 26px;
     }
   }
 
@@ -1087,7 +1112,6 @@ footer, .footer {
 
   .context-list {
     @include pie-clearfix;
-    float: left;
     list-style-type: none;
     margin-left: -$context-breadcrumb-padding-horizontal;
     margin-right: $context-breadcrumb-padding-horizontal;
@@ -1167,7 +1191,7 @@ footer, .footer {
       > a {
         color: #333;
         display: inline-block;
-        padding: (($context-breadcrumb-height - 1px - ($context-breadcrumb-font-size - $font-size-base) - $line-height-computed) / 2) 0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
+        padding: (($context-breadcrumb-height - ($context-breadcrumb-font-size - $font-size-base) - $line-height-computed) / 2) 0; // to calculate the correct padding subtract from the total height the actual line-height (computed + adjustment for font size (if other than base size)), then divide by 2
         padding-right: $context-breadcrumb-padding-horizontal;
 
         &:active, &:focus {

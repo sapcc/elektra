@@ -166,6 +166,12 @@ SimpleNavigation::Configuration.run do |navigation|
       monitoring_nav.item :reports, 'Cost Report', -> { plugin('reports').project_cost_index_path }, if: -> { plugin_available?(:reports)}, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
     end
 
+    primary.item :cc_tools, "Tools", nil,
+      html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },
+      if: -> { current_user.is_allowed?('tools:application_get') } do |cc_tools_nav|
+        cc_tools_nav.item :universal_search, 'Universal Search', -> {plugin('cc_tools').start_path}
+    end
+
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
     #   account_nav.item :credentials, 'Credentials', plugin('identity').credentials_path, if: Proc.new { plugin_available?('identity') }
     #

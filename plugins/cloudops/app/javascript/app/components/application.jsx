@@ -6,7 +6,7 @@ import { FlashMessages } from 'lib/flashes';
 
 import Menu from '../containers/menu';
 import CloudopsHome from './home'
-import SearchRoutes from '../search/components/routes'
+import SearchRoutes from '../../../../../tools/app/javascript/universal_search/search/components/routes'
 
 let Breadcrumb = (props) => {
   let label = ''
