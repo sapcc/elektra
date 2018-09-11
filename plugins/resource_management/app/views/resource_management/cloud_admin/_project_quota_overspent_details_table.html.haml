@@ -1,10 +1,18 @@
 %table.table
   %thead
     %tr
-      %th Project
-      %th Resource
-      %th Approved quota
-      %th Usage
+      %th.project_overspent#sortable_name_column
+        Project
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.project_overspent#sortable_resource_column
+        Resource
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.project_overspent#sortable_approved_quota_column
+        Approved quota
+        %i.fa.fa-sort-amount-asc.hide-sort-order
+      %th.project_overspent#sortable_usage_column
+        Usage
+        %i.fa.fa-sort-amount-asc.hide-sort-order
   %tbody
     - @project_quota_overspent.each do |row|
       - data_type = Core::DataType.from_unit_name(row['unit'] || '')
@@ -19,3 +27,7 @@
         %td= data_type.format(row["quota"])
         %td= data_type.format(row["usage"])
 = paginate @project_quota_overspent, theme: 'twitter-bootstrap-3', remote: true
+
+= content_for :javascripts do
+  :javascript
+    #{render partial: 'sort_details_table_script.js', locals: {sortable_class:"project_overspent", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}

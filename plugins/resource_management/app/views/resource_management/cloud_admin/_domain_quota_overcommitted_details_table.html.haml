@@ -1,16 +1,16 @@
 %table.table
   %thead
     %tr
-      %th.sortable#sortable_name_column
+      %th.domain_overcommitted#domain_sortable_name_column
         Domain
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.sortable#sortable_resource_column
+      %th.domain_overcommitted#domain_sortable_resource_column
         Resource
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.sortable#sortable_domain_quota_column
+      %th.domain_overcommitted#sortable_domain_quota_column
         Domain quota
         %i.fa.fa-sort-amount-asc.hide-sort-order
-      %th.sortable#sortable_projects_quota_column
+      %th.domain_overcommitted#sortable_projects_quota_column
         Granted to projects
         %i.fa.fa-sort-amount-asc.hide-sort-order
   %tbody
@@ -27,3 +27,7 @@
         %td= data_type.format(row["domain_quota"])
         %td= data_type.format(row["projects_quota"])
 = paginate @domain_quota_overcommitted, theme: 'twitter-bootstrap-3', remote: true
+
+= content_for :javascripts do
+  :javascript
+    #{render partial: 'sort_details_table_script.js', locals: {sortable_class:"domain_overcommitted", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}

@@ -1,5 +1,8 @@
 $("#domain_quota_overcommitted_details_table").html("<%= escape_javascript(render(partial: 'domain_quota_overcommitted_details_table')) %>");
-$("#project_quota_overspent_details_table").html("<%= escape_javascript(render(partial: 'project_quota_overspent_details_table')) %>");
-$("#project_quota_mismatch_details_table").html("<%= escape_javascript(render(partial: 'project_quota_mismatch_details_table')) %>");
+<%= render partial: 'sort_details_table_script.js', locals: {sortable_class: "domain_overcommitted", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()} %>
 
-<%= render partial: 'sort_details_table_script.js', locals: {details_path: plugin('resource_management').cloud_admin_inconsistencies_path()} %>
+$("#project_quota_overspent_details_table").html("<%= escape_javascript(render(partial: 'project_quota_overspent_details_table')) %>");
+<%= render partial: 'sort_details_table_script.js', locals: {sortable_class: "project_overspent", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()} %>
+
+$("#project_quota_mismatch_details_table").html("<%= escape_javascript(render(partial: 'project_quota_mismatch_details_table')) %>");
+<%= render partial: 'sort_details_table_script.js', locals: {sortable_class: "project_mismatch", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()} %>

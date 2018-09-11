@@ -35,7 +35,3 @@
 
 - if modal?
   .modal-footer
-
-= content_for :javascripts do
-  :javascript
-    #{render partial: 'sort_details_table_script.js', locals: {details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}

@@ -197,21 +197,35 @@ module ResourceManagement
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
       sort_by = sort_by.gsub("sortable_","")
+      @sortable_class = params[:sortable_class] || "domain_overcommitted"
 
       @inconsistencies = services.resource_management.get_inconsistencies
       @domain_quota_overcommitted =  @inconsistencies["domain_quota_overcommitted"]
-      unless sort_by.empty?
-        if sort_by == "name"
-          @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
-        else
-          @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by], r["domain"]["name"]] }
-        end
-        @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
-      end
-      @domain_quota_overcommitted = Kaminari.paginate_array(@domain_quota_overcommitted).page(params[:page]).per(10)
+      @project_quota_overspent = @inconsistencies["project_quota_overspent"]
+      @project_quota_mismatch = @inconsistencies["project_quota_mismatch"]
 
-      @project_quota_overspent = Kaminari.paginate_array(@inconsistencies["project_quota_overspent"]).page(params[:page]).per(10)
-      @project_quota_mismatch = Kaminari.paginate_array(@inconsistencies["project_quota_mismatch"]).page(params[:page]).per(10)
+      unless sort_by.empty?
+        if @sortable_class == "domain_overcommitted"
+          if sort_by == "domain_name"
+            @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
+          else
+            @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by] ] }
+          end
+          @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
+        end
+        if @sortable_class == "project_overspent"
+          if sort_by == "project_name"
+            @project_quota_overspent.sort_by! { |r| [ r["project"]["name"], r["resource"]] }
+          else
+            @project_quota_overspent.sort_by! { |r| [ r[sort_by] ]}
+          end
+          @project_quota_overspent.reverse! if @sort_order.downcase == 'desc'
+        end
+      end
+
+      @domain_quota_overcommitted = Kaminari.paginate_array(@domain_quota_overcommitted).page(params[:page]).per(10)
+      @project_quota_overspent = Kaminari.paginate_array(@project_quota_overspent).page(params[:page]).per(10)
+      @project_quota_mismatch = Kaminari.paginate_array(@project_quota_mismatch).page(params[:page]).per(10)
 
     end
 
