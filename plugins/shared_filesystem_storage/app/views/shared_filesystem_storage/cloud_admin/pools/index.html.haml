@@ -4,6 +4,7 @@
 %table.table
   %thead
     %tr
+      %th Availability Zone
       %th Aggregate
       %th Host
       %th Total Capacity
@@ -17,5 +18,27 @@
         %td{colspan: 3}
           No Pools available
     - else
-      - @pools.each do |pool|
-        = render partial: 'item', locals: {pool: pool}
+      - accumulated_pools(@pools).each do |data|
+        %tr.title-row
+          %th= data[:availability_zone]
+          %th
+          %th
+          %th= data[:total_capacity]
+          %th
+            %span{title: "#{data[:allocated_capacity_percentage]}%", data: {toggle: :tooltip}}= data[:allocated_capacity]
+            =# data[:allocated_capacity]
+          %th
+            %span{title: "#{data[:free_capacity_percentage]}%", data: {toggle: :tooltip}}= data[:free_capacity]
+            =# data[:free_capacity]
+          %th
+            %span{title: "#{data[:reserved_capacity_percentage]}%", data: {toggle: :tooltip}}= data[:reserved_capacity]
+            =# data[:reserved_capacity]
+          %th
+
+        - data[:items].each do |pool|
+          = render partial: 'item', locals: {pool: pool}
+
+
+
+      -# - @pools.each do |pool|
+      -#   = render partial: 'item', locals: {pool: pool}

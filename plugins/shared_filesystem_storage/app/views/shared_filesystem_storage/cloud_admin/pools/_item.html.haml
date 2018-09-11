@@ -1,12 +1,19 @@
 %tr{id: "pool_#{pool.pool}"}
   %td
+  %td
     - if current_user.is_allowed?("shared_filesystem_storage:pool_get")
       = link_to pool.aggregate, plugin('shared_filesystem_storage').cloud_admin_pool_path(id: pool.aggregate), data: {modal: true}
     - else
       = pool.aggregate
   %td= pool.host
   %td= pool.total_capacity
-  %td= format_percentage(pool.allocated_capacity, pool.allocated_capacity_percentage)
-  %td= format_percentage(pool.free_capacity, pool.free_capacity_percentage)
-  %td= format_percentage(pool.reserved_capacity, pool.reserved_capacity_percentage)
+  %td
+    %span{title: "#{pool.allocated_capacity_percentage}%", data: {toggle: :tooltip}}= pool.allocated_capacity
+    = #format_percentage(pool.allocated_capacity, pool.allocated_capacity_percentage)
+  %td
+    %span{title: "#{pool.free_capacity_percentage}%", data: {toggle: :tooltip}}= pool.free_capacity
+    =# format_percentage(pool.free_capacity, pool.free_capacity_percentage)
+  %td
+    %span{title: "#{pool.reserved_capacity_percentage}%", data: {toggle: :tooltip}}= pool.reserved_capacity
+    =# format_percentage(pool.reserved_capacity, pool.reserved_capacity_percentage)
   %td.snug

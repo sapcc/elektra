@@ -41,13 +41,3 @@
 
         - data[:items].each do |hypervisor|
           = render partial: 'item', locals: {hypervisor: hypervisor}
-      -# - @hypervisors.each do |hypervisor|
-      -#   = render partial: 'item', locals: {hypervisor: hypervisor}
-
-
-        map[hv.availability_zone][:vcpus_used] += hv.vcpus_used
-        map[hv.availability_zone][:vcpus_total] += hv.vcpus_total
-        map[hv.availability_zone][:memory_used] += hv.memory_used
-        map[hv.availability_zone][:memory_total] += hv.memory_total
-        map[hv.availability_zone][:local_storage_used] += hv.vcpus_used
-        map[hv.availability_zone][:local_storage_total] += hv.vcpus_used
