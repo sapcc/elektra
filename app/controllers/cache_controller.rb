@@ -231,7 +231,7 @@ class CacheController < ::ScopeController
 
     sql = []
     sql << 'project_id = :project_id' if project_id
-    sql << 'domain_id = :domain_id' if domain_id
+    sql << '(domain_id = :domain_id OR domain_id IS NULL)' if domain_id
     sql_string = "(#{sql.join(' AND ')})"
     sql_string += " OR id = :project_id" if project_id
 
