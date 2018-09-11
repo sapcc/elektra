@@ -1,3 +1,4 @@
 = Tools
 
-This project rocks and uses MIT-LICENSE.
+This plugin implements different tools that do not interact directly with the
+backend services, but represent Elektra-Added Values.
