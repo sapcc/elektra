@@ -196,8 +196,7 @@ module ResourceManagement
       @sort_order  = params[:sort_order] || 'asc'
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
-      sort_by = sort_by.gsub("sortable_","")
-      @sortable_class = params[:sortable_class] || "domain_overcommitted"
+      @sortable_table = params[:sortable_table] || "domain_overcommitted"
 
       @inconsistencies = services.resource_management.get_inconsistencies
       @domain_quota_overcommitted =  @inconsistencies["domain_quota_overcommitted"]
@@ -205,18 +204,21 @@ module ResourceManagement
       @project_quota_mismatch = @inconsistencies["project_quota_mismatch"]
 
       unless sort_by.empty?
-        if @sortable_class == "domain_overcommitted"
-          if sort_by == "domain_name"
+        # decide which table we are sorting
+        if @sortable_table == "domain_overcommitted"
+          if sort_by == "domain_overcommitted_name"
             @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
           else
+            sort_by = sort_by.gsub("domain_overcommitted_", "")
             @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by] ] }
           end
           @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
         end
-        if @sortable_class == "project_overspent"
-          if sort_by == "project_name"
+        if @sortable_table == "project_overspent" || @sortable_table == "project_mismatch"
+          if sort_by == "project_overspent_name" || sort_by == "project_mismatch_name"
             @project_quota_overspent.sort_by! { |r| [ r["project"]["name"], r["resource"]] }
           else
+            sort_by = sort_by.gsub("#{@sortable_table}_", "")
             @project_quota_overspent.sort_by! { |r| [ r[sort_by] ]}
           end
           @project_quota_overspent.reverse! if @sort_order.downcase == 'desc'

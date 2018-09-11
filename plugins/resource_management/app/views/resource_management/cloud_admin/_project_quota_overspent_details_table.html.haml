@@ -1,16 +1,16 @@
 %table.table
   %thead
     %tr
-      %th.project_overspent#sortable_name_column
+      %th.project_overspent#project_overspent_name_column
         Project
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.project_overspent#sortable_resource_column
+      %th.project_overspent#project_overspent_resource_column
         Resource
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.project_overspent#sortable_approved_quota_column
+      %th.project_overspent#project_overspent_quota_column
         Approved quota
         %i.fa.fa-sort-amount-asc.hide-sort-order
-      %th.project_overspent#sortable_usage_column
+      %th.project_overspent#project_overspent_usage_column
         Usage
         %i.fa.fa-sort-amount-asc.hide-sort-order
   %tbody
@@ -30,4 +30,4 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'sort_details_table_script.js', locals: {sortable_class:"project_overspent", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}
+    #{render partial: 'sort_details_table_script.js', locals: {sortable_table:"project_overspent", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}

@@ -1,16 +1,16 @@
 %table.table
   %thead
     %tr
-      %th.domain_overcommitted#domain_sortable_name_column
+      %th.domain_overcommitted#domain_overcommitted_name_column
         Domain
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.domain_overcommitted#domain_sortable_resource_column
+      %th.domain_overcommitted#domain_overcommitted_resource_column
         Resource
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.domain_overcommitted#sortable_domain_quota_column
+      %th.domain_overcommitted#domain_overcommitted_domain_quota_column
         Domain quota
         %i.fa.fa-sort-amount-asc.hide-sort-order
-      %th.domain_overcommitted#sortable_projects_quota_column
+      %th.domain_overcommitted#domain_overcommitted_projects_quota_column
         Granted to projects
         %i.fa.fa-sort-amount-asc.hide-sort-order
   %tbody
@@ -30,4 +30,4 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'sort_details_table_script.js', locals: {sortable_class:"domain_overcommitted", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}
+    #{render partial: 'sort_details_table_script.js', locals: {sortable_table:"domain_overcommitted", details_path: plugin('resource_management').cloud_admin_inconsistencies_path()}}
