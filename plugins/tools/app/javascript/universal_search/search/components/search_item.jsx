@@ -30,7 +30,7 @@ export default ({item, term}) => {
 
   return(
     <tr>
-      <td>{item.cached_object_type}</td>
+      <td className="big-data-cell">{item.cached_object_type}</td>
       <td className="big-data-cell">
         {/* Object */}
         <ObjectLink
@@ -38,7 +38,7 @@ export default ({item, term}) => {
           name={item.name}
           term={term}/>
       </td>
-      <td>
+      <td className="big-data-cell">
         {item.search_label && item.search_label.trim().length>0 &&
           <React.Fragment>
             <span className="info-text">
