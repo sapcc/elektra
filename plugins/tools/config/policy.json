@@ -4,5 +4,6 @@
   "tools:universal_search_netstats": "rule:cloud_admin",
   "tools:universal_search_topology": "rule:cloud_admin",
   "tools:universal_search_role_assignments": "@",
-  "tools:universal_search_user_role_assignments": "rule:cloud_admin or user_id:%(user.id)s"
+  "tools:universal_search_user_role_assignments": "rule:cloud_admin or user_id:%(user.id)s",
+  "tools:switch_to_project": "rule:cloud_admin and not project_id:%(project.id)s"
 }

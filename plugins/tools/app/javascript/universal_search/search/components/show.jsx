@@ -145,7 +145,7 @@ export default class ShowSearchObjectModal extends React.Component{
             </a>
           }
 
-          {projectLink &&
+          {projectLink && policy.isAllowed('tools:switch_to_project', {project: item}) &&
             <a
               href={projectLink}
               target='_blank'
