@@ -47,7 +47,7 @@
               Manage Requests
               = " (#{::Inquiry::Inquiry.processor_open_requests(@scoped_domain_id, current_user.id).length})"
 
-      - if plugin_available?('cc-tools') && current_user.is_allowed?('tools:application_get')
+      - if plugin_available?('cc_tools') && current_user.is_allowed?('tools:application_get')
         %h5
           %i.cloud-admin-icon
           Tools
