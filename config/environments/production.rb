@@ -25,7 +25,7 @@ Rails.application.configure do
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=31536000"
+    'Cache-Control' => 'public, max-age=31536000'
   }
 
   # Compress JavaScripts and CSS.
@@ -58,10 +58,10 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
-  #config.log_tags = [ :request_id ]
+  # config.log_tags = [ :request_id ]
   config.logger = RailsStdoutLogging::Rails.heroku_stdout_logger
   STDOUT.sync = true # make sure STDOUT is not buffering
 
@@ -91,7 +91,7 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
+  if ENV['RAILS_LOG_TO_STDOUT'].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
@@ -102,6 +102,6 @@ Rails.application.configure do
 
   # error handling
   config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
-  config.log_tags = [ :uuid ]
+  config.log_tags = [:uuid]
   config.middleware.use TaggedExceptionsMiddleware
 end
