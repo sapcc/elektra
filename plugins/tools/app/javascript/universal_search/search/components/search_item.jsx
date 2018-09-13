@@ -64,17 +64,32 @@ export default ({item, term}) => {
       </td>
       <td className="big-data-cell">
         {/* Domain */}
-        <ObjectInfo
-          id={(scope.domain_id || item.domain_id)}
-          name={scope.domain_name}
-          term={term}/>
+        {policy.isAllowed("tools:show_scope_object") ?
+          <ObjectLink
+            id={(scope.domain_id || item.domain_id)}
+            name={scope.domain_name}
+            term={term}/>
+          :
+          <ObjectInfo
+            id={(scope.domain_id || item.domain_id)}
+            name={scope.domain_name}
+            term={term}/>
+        }
+
       </td>
       <td className="big-data-cell">
         {/* Project */}
-        <ObjectInfo
-          id={scope.project_id}
-          name={scope.project_name}
-          term={term}/>
+        {policy.isAllowed("tools:show_scope_object") ?
+          <ObjectLink
+            id={scope.project_id}
+            name={scope.project_name}
+            term={term}/>
+          :
+          <ObjectInfo
+            id={scope.project_id}
+            name={scope.project_name}
+            term={term}/>
+        }
       </td>
       <td>
         {(projectLink || objectLink) &&
