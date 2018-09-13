@@ -23,6 +23,19 @@ const ObjectLink = ({id, name, term}) =>
     }
   </React.Fragment>
 
+const ObjectInfo = ({id, name, term}) =>
+  name ?
+    <React.Fragment>
+      <Highlighter search={term || ''}>{name}</Highlighter>
+      <br/>
+      <span className='info-text u-text-monospace u-text-small'>
+        <Highlighter search={term || ''}>{id || ''}</Highlighter>
+      </span>
+    </React.Fragment>
+    :
+    <Highlighter search={term || ''}>{id || ''}</Highlighter>
+
+
 export default ({item, term}) => {
   const scope = item.payload.scope || {}
   const projectLink = projectUrl(item)
@@ -51,14 +64,14 @@ export default ({item, term}) => {
       </td>
       <td className="big-data-cell">
         {/* Domain */}
-        <ObjectLink
+        <ObjectInfo
           id={(scope.domain_id || item.domain_id)}
           name={scope.domain_name}
           term={term}/>
       </td>
       <td className="big-data-cell">
         {/* Project */}
-        <ObjectLink
+        <ObjectInfo
           id={scope.project_id}
           name={scope.project_name}
           term={term}/>
