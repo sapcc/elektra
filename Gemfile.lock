@@ -300,7 +300,7 @@ GEM
       railties (>= 3.0.0)
     faraday (0.13.0)
       multipart-post (>= 1.2, < 3)
-    ffi (1.9.18)
+    ffi (1.9.25)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
     foreman (0.84.0)
