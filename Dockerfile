@@ -9,7 +9,7 @@ RUN apk --no-cache add git curl tzdata nodejs postgresql-client yarn
 # The versions need to be kept in sync with the Gemfile.lock
 RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install byebug -v 9.0.6 \
-      && gem install ffi -v 1.9.18 \
+      && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.1.0 \
       && gem install nokogiri -v 1.8.4 \
