@@ -1,5 +1,5 @@
 {
-  "tools:application_get": "not project_id:nil or role:cloud_support_tools_viewer",
+  "tools:application_get": "rule:cloud_admin or role:cloud_support_tools_viewer",
   "tools:universal_search_asr": "rule:cloud_admin",
   "tools:universal_search_netstats": "rule:cloud_admin",
   "tools:universal_search_topology": "rule:cloud_admin",

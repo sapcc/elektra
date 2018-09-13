@@ -225,18 +225,22 @@ class CacheController < ::ScopeController
     end
 
     project_id = current_user.project_id
-    domain_id = current_user.project_domain_id ||
-                      current_user.domain_id ||
-                      current_user.user_domain_id
+    domain_id = (current_user.project_domain_id || current_user.domain_id)
 
-    sql = []
-    sql << 'project_id = :project_id' if project_id
-    sql << '(domain_id = :domain_id OR domain_id IS NULL)' if domain_id
-    sql_string = "(#{sql.join(' AND ')})"
-    sql_string += " OR id = :project_id" if project_id
+    if project_id
+      scope.where(["project_id = :project_id OR id = :project_id", project_id: project_id])
+    elsif domain_id
+      project_ids = ObjectCache.where(
+        cached_object_type: 'project', domain_id: domain_id
+      ).pluck(:id)
 
-    scope.where(
-      [sql_string, project_id: project_id, domain_id: domain_id]
-    )
+      scope.where(
+        ["domain_id = :domain_id OR id = :domain_id OR project_id IN (:project_ids)",
+        domain_id: domain_id,
+        project_ids: project_ids]
+      )
+    else
+      scope.where('domain_id IS NULL OR project_id IS NULL')
+    end
   end
 end

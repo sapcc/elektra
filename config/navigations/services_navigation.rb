@@ -64,7 +64,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
       compute_nav.item :images, 'Server Images & Snapshots', -> {
         services.image.current_version >= 'v2.5' ? plugin('image').ng_path : plugin('image').os_images_public_index_path
-      }, if: -> { services.available?(:image,:os_images) }, highlights_on: Proc.new { params[:controller][/image\/.*/] }
+      }, if: -> { services.available?(:image, :os_images) }, highlights_on: Proc.new { params[:controller][/image\/.*/] }
 
       compute_nav.item :flavors, 'Flavors', -> { plugin('compute').flavors_path }, if: -> { plugin_available?(:compute) }, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
       # compute_nav.dom_attributes = {class: 'content-list'}
