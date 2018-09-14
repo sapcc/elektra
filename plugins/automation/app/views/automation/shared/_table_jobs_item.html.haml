@@ -6,4 +6,4 @@
   %td
     - job_state(job.status)
   %td
-    = link_to('Show', plugin('automation').job_path(id: job.request_id), data: {modal_transition: true})
+    = link_to('Show', plugin('automation').job_path(id: job.request_id), data: ({ modal_transition: true } if modal?))

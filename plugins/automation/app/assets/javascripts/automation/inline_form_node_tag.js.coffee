@@ -51,3 +51,4 @@ $ ->
   $(document).on 'modal:contentUpdated', ->
     $('.js-inline-form-node-tags').initInlineFormNodeTag()
 
+  $('.js-inline-form-node-tags').initInlineFormNodeTag()

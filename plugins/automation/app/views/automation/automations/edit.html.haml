@@ -1,6 +1,9 @@
 = content_for :title do
   Edit Automation
 
+- unless modal?
+  %h3 Edit Automation
+
 = simple_form_for @automation, url: plugin('automation').automation_path(id: @automation.id), method: :put, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
   .modal-body.static-columns

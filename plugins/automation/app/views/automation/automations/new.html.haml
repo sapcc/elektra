@@ -1,6 +1,8 @@
 = content_for :title do
   New Automation
 
+- unless modal?
+  %h3 New Automation
 
 = simple_form_for @automation, url: plugin('automation').automations_path(), method: :post, remote: request.xhr?,  html: {id: 'form_automation', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
 
