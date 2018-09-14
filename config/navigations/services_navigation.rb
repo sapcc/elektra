@@ -162,14 +162,14 @@ SimpleNavigation::Configuration.run do |navigation|
       monitoring_nav.item :resource_management, 'Resource Management ', -> {plugin('resource_management').resources_path}, if: -> { services.available?(:resource_management,:resources) }, highlights_on: Proc.new { params[:controller][/resource_management\/.*/] }
       monitoring_nav.item :masterdata_cockpit,  'Masterdata',  -> {plugin('masterdata_cockpit').project_masterdata_path}, if: -> { services.available?(:masterdata_cockpit) }, highlights_on: Proc.new { params[:controller][/masterdata_cockpit\/.*/] }
       monitoring_nav.item :metrics, 'Metrics', -> { plugin('metrics').index_path }, if: -> { plugin_available?(:metrics)}, highlights_on: Proc.new { params[:controller][/metrics\/.*/] }
-      monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit)}, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
-      monitoring_nav.item :reports, 'Cost Report', -> { plugin('reports').project_cost_index_path }, if: -> { plugin_available?(:reports)}, highlights_on: -> { params[:controller][%r{flavors/?.*}] }
+      monitoring_nav.item :audit, 'Audit', -> { plugin('audit').root_path }, if: -> { plugin_available?(:audit)}, highlights_on: -> { params[:controller][%r{audit/?.*}] }
+      monitoring_nav.item :reports, 'Cost Report', -> { plugin('reports').project_cost_index_path }, if: -> { plugin_available?(:reports)}, highlights_on: -> { params[:controller][%r{reports/?.*}] }
     end
 
     primary.item :cc_tools, "Tools", nil,
       html: {class: "fancy-nav-header", 'data-icon': "cloud-admin-icon" },
       if: -> { current_user.is_allowed?('tools:application_get') } do |cc_tools_nav|
-        cc_tools_nav.item :universal_search, 'Universal Search', -> {plugin('cc_tools').start_path}
+        cc_tools_nav.item :universal_search, 'Universal Search', -> { plugin('cc_tools').start_path }, highlights_on: -> { params[:controller][%r{tools/?.*}] }
     end
 
     # primary.item :account, 'Account', nil, html: {class: "fancy-nav-header", 'data-icon': "fa fa-user fa-fw" } do |account_nav|
