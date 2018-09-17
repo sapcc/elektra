@@ -207,7 +207,7 @@ module ResourceManagement
         # decide which table we are sorting
         if @sortable_table == "domain_overcommitted"
           if sort_by == "domain_overcommitted_name"
-            @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"], r["resource"]] }
+            @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"].downcase, r["resource"]] }
           else
             sort_by = sort_by.gsub("domain_overcommitted_", "")
             @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by] ] }
@@ -216,7 +216,7 @@ module ResourceManagement
         end
         if @sortable_table == "project_overspent" || @sortable_table == "project_mismatch"
           if sort_by == "project_overspent_name" || sort_by == "project_mismatch_name"
-            @project_quota_overspent.sort_by! { |r| [ r["project"]["name"], r["resource"]] }
+            @project_quota_overspent.sort_by! { |r| [ r["project"]["name"].downcase, r["resource"]] }
           else
             sort_by = sort_by.gsub("#{@sortable_table}_", "")
             @project_quota_overspent.sort_by! { |r| [ r[sort_by] ]}
