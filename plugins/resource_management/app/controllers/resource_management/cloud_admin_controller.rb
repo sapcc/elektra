@@ -180,7 +180,6 @@ module ResourceManagement
         @domain_resources.sort_by! { |r| [ r.send(sort_method), r.sortable_name ] }
         @domain_resources.reverse! if @sort_order.downcase == 'desc'
       end
-      pp @domain_resources
 
       # prepare the domains table
       @domain_resources = Kaminari.paginate_array(@domain_resources).page(params[:page]).per(6)
@@ -196,7 +195,8 @@ module ResourceManagement
       @sort_order  = params[:sort_order] || 'asc'
       @sort_column = params[:sort_column] || ''
       sort_by = @sort_column.gsub("_column", "")
-      @sortable_table = params[:sortable_table] || "domain_overcommitted"
+      # identity the sortable table (must be a class name in the view)
+      @sortable_table = params[:sortable_table]
 
       @inconsistencies = services.resource_management.get_inconsistencies
       @domain_quota_overcommitted =  @inconsistencies["domain_quota_overcommitted"]
@@ -207,7 +207,7 @@ module ResourceManagement
         # decide which table we are sorting
         if @sortable_table == "domain_overcommitted"
           if sort_by == "domain_overcommitted_name"
-            @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"].downcase, r["resource"]] }
+            @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"].downcase, r["resource"].downcase] }
           else
             sort_by = sort_by.gsub("domain_overcommitted_", "")
             @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by] ] }
@@ -216,7 +216,7 @@ module ResourceManagement
         end
         if @sortable_table == "project_overspent" || @sortable_table == "project_mismatch"
           if sort_by == "project_overspent_name" || sort_by == "project_mismatch_name"
-            @project_quota_overspent.sort_by! { |r| [ r["project"]["name"].downcase, r["resource"]] }
+            @project_quota_overspent.sort_by! { |r| [ r["project"]["name"].downcase, r["resource"].downcase] }
           else
             sort_by = sort_by.gsub("#{@sortable_table}_", "")
             @project_quota_overspent.sort_by! { |r| [ r[sort_by] ]}

@@ -12,10 +12,10 @@ $(function() {
     $("#"+sort_column).find('i').addClass( "fa-sort-"+sort_type+"-desc" );
   }
 
-   console.log("sortable table:"+sortable_table);
-   console.log("sort column:"+sort_column);
-   console.log("current sort order:"+current_sort_order);
-   console.log("sort type:"+sort_type);
+   //console.log("sortable table:"+sortable_table);
+   //console.log("sort column:"+sort_column);
+   //console.log("current sort order:"+current_sort_order);
+   //console.log("sort type:"+sort_type);
 
   // show user sort option
   $( "."+sortable_table ).mouseenter(function() {
@@ -36,7 +36,7 @@ $(function() {
       sort_order = 'desc';
     }
 
-    console.log("sort order:"+sort_order);
+    //console.log("sort order:"+sort_order);
 
     // to prevent hide icon
     $(this).unbind('mouseenter');
