@@ -30,7 +30,9 @@ export const pluginAjaxHelper = (pluginName, options = {}) => {
 
   if(!options.baseURL) {
     const domain = options.domain == false ? null : options.domain || scope.domain
-    const project = options.project == false ?  null : options.project || scope.project
+    let project = options.project == false ?  null : options.project || scope.project
+    if(project == 'cc-tools') project = null
+    
     delete(options.domain)
     delete(options.project)
 
