@@ -1,0 +1,33 @@
+%table.table
+  %thead
+    %tr
+      %th.project_mismatch#project_mismatch_name_column
+        Project
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.project_mismatch#project_mismatch_resource_column
+        Resource
+        %i.fa.fa-sort-alpha-asc.hide-sort-order
+      %th.project_mismatch#project_mismatch_approved_quota_column
+        Approved quota
+        %i.fa.fa-sort-amount-asc.hide-sort-order
+      %th.project_mismatch#project_mismatch_backend_quota_column
+        Backend quota
+        %i.fa.fa-sort-amount-asc.hide-sort-order
+  %tbody
+    - @project_quota_mismatch.each do |row|
+      - data_type = Core::DataType.from_unit_name(row['unit'] || '')
+      %tr
+        %td
+          - project = row.fetch("project", {})
+          = project.fetch("domain", {}).fetch("name", "") + "/" + project["name"]
+          .small.text-muted= project["id"]
+        %td
+          = userfriendly_resource_name(row["resource"])
+          .small.text-muted= t("resource_management.#{row["service"]}")
+        %td= data_type.format(row["quota"])
+        %td= data_type.format(row["backend_quota"])
+= paginate @project_quota_mismatch, theme: 'twitter-bootstrap-3', remote: true
+
+= content_for :javascripts do
+  :javascript
+    #{render partial: 'sort_details_table_script.js', locals: {sortable_table:"project_mismatch", path: plugin('resource_management').cloud_admin_inconsistencies_path()}}

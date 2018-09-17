@@ -1,23 +1,27 @@
 $(function() {
-  
+
   var current_sort_order = "<%= @sort_order %>";
-  var sort_column = "<%= @sort_column %>";
+  var sort_column        = "<%= @sort_column %>";
+  var sortable_table     = "<%= sortable_table %>";
+
   var sort_type = "amount";
-  if (sort_column == "sortable_name_column") {sort_type = "alpha"}
-  
+  if (sort_column.match(/name/) || sort_column.match(/resource/)) {sort_type = "alpha"}
+
   if (current_sort_order == 'desc') {
     $("#"+sort_column).find('i').removeClass( "fa-sort-"+sort_type+"-asc" );
     $("#"+sort_column).find('i').addClass( "fa-sort-"+sort_type+"-desc" );
   }
 
-  // console.log("current sort order:"+current_sort_order);
-  // console.log("sort type:"+sort_type);
+   //console.log("sortable table:"+sortable_table);
+   //console.log("sort column:"+sort_column);
+   //console.log("current sort order:"+current_sort_order);
+   //console.log("sort type:"+sort_type);
 
   // show user sort option
-  $( ".sortable" ).mouseenter(function() {
+  $( "."+sortable_table ).mouseenter(function() {
     $(this).find('i').fadeIn( "fast");
   });
-  $( ".sortable" ).mouseleave(function() {
+  $( "."+sortable_table ).mouseleave(function() {
     $(this).find('i').fadeOut( "fast");
   });
   // remove mouse actions for active column
@@ -25,23 +29,28 @@ $(function() {
   $("#"+sort_column).unbind('mouseleave');
   $("#"+sort_column).find('i').css('display','inline');
 
-  $( ".sortable" ).click(function() {
+  $( "."+sortable_table ).click(function() {
     var sort_order = 'asc';
     var sort_icon = $(this).find('i');
     if ( sort_icon.hasClass("fa-sort-"+sort_type+"-asc" )) {
       sort_order = 'desc';
     }
-    // console.log("sort order:"+sort_order);
+
+    //console.log("sort order:"+sort_order);
 
     // to prevent hide icon
     $(this).unbind('mouseenter');
     $(this).unbind('mouseleave');
 
-    var data = { 
+    // service_type and resource_name are used to load the details data in
+    // details view
+    // sort_view is used by inconsistency view
+    var data = {
       sort_order: sort_order,
       sort_column: $(this).attr('id'),
       service: "<%= @service_type %>",
       resource: "<%= @resource_name %>",
+      sortable_table: sortable_table
     };
 
     // cluster ID (for domains) is annotated on the table
@@ -50,8 +59,9 @@ $(function() {
       data["cluster"] = table.data('cluster-id');
     }
 
-    $.ajax({ 
-      url: "<%= details_path %>",
+    // request sorted data
+    $.ajax({
+      url: "<%= path %>",
       data: data,
       dataType: 'script',
     });

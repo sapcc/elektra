@@ -192,7 +192,43 @@ module ResourceManagement
     end
 
     def check_inconsistencies
+      @sort_order  = params[:sort_order] || 'asc'
+      @sort_column = params[:sort_column] || ''
+      sort_by = @sort_column.gsub("_column", "")
+      # identity the sortable table (must be a class name in the view)
+      @sortable_table = params[:sortable_table]
+
       @inconsistencies = services.resource_management.get_inconsistencies
+      @domain_quota_overcommitted =  @inconsistencies["domain_quota_overcommitted"]
+      @project_quota_overspent = @inconsistencies["project_quota_overspent"]
+      @project_quota_mismatch = @inconsistencies["project_quota_mismatch"]
+
+      unless sort_by.empty?
+        # decide which table we are sorting
+        if @sortable_table == "domain_overcommitted"
+          if sort_by == "domain_overcommitted_name"
+            @domain_quota_overcommitted.sort_by! { |r| [ r["domain"]["name"].downcase, r["resource"].downcase] }
+          else
+            sort_by = sort_by.gsub("domain_overcommitted_", "")
+            @domain_quota_overcommitted.sort_by! { |r| [ r[sort_by] ] }
+          end
+          @domain_quota_overcommitted.reverse! if @sort_order.downcase == 'desc'
+        end
+        if @sortable_table == "project_overspent" || @sortable_table == "project_mismatch"
+          if sort_by == "project_overspent_name" || sort_by == "project_mismatch_name"
+            @project_quota_overspent.sort_by! { |r| [ r["project"]["name"].downcase, r["resource"].downcase] }
+          else
+            sort_by = sort_by.gsub("#{@sortable_table}_", "")
+            @project_quota_overspent.sort_by! { |r| [ r[sort_by] ]}
+          end
+          @project_quota_overspent.reverse! if @sort_order.downcase == 'desc'
+        end
+      end
+
+      @domain_quota_overcommitted = Kaminari.paginate_array(@domain_quota_overcommitted).page(params[:page]).per(10)
+      @project_quota_overspent = Kaminari.paginate_array(@project_quota_overspent).page(params[:page]).per(10)
+      @project_quota_mismatch = Kaminari.paginate_array(@project_quota_mismatch).page(params[:page]).per(10)
+
     end
 
     private

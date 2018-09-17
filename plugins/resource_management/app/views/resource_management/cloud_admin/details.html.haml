@@ -18,5 +18,4 @@
 
 = content_for :javascripts do
   :javascript
-    #{render partial: 'sort_details_table_script.js', locals: {details_path: plugin('resource_management').cloud_admin_details_path()}}
-
+    #{render partial: 'sort_details_table_script.js', locals: {sortable_table: "details_table", path: plugin('resource_management').cloud_admin_details_path()}}
