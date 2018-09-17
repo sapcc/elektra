@@ -2,15 +2,55 @@
 
 ## [Unreleased](https://github.com/sapcc/elektra/tree/HEAD)
 
-[Full Changelog](https://github.com/sapcc/elektra/compare/2018.7...HEAD)
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.8...HEAD)
 
 **Implemented enhancements:**
 
-- **\[Automation\]: error message when running an automation on an offline node [\#333](https://github.com/sapcc/elektra/issues/333)**   
-A customer has reported that it's possible to execute automations on offline nodes.
+- **Sort capacity data \(hypervisor stats and share pools\) by AZ [\#359](https://github.com/sapcc/elektra/issues/359)**   
+To make the Hypervisor stats \(/ccadmin/cloud\_admin/compute/hypervisors\) and Share Pools \(/ccadmin/cloud\_admin/shared-filesystem-storage/cloud\_admin/pools\) views more convenient to use for the ordering colleagues we need to sort and group the list by AZ \(e.g. eu-de-1a\). In addition display the aggregated numbers for each AZ.
+- **Show notification message after new Designate roles are rolled-out [\#354](https://github.com/sapcc/elektra/issues/354)**   
+It would be great to show a small hint/message when user opens DNS page in Elektra. Text could be like: "Please review user role assignments as new DNS roles are now live. More info: URL"
+- **Compute: Offer web console for baremetal servers [\#306](https://github.com/sapcc/elektra/issues/306)**   
+Ironic offers a web console for baremetal servers \(similar to VNC console for VMs\). We should display this instead of the VNC console for bm servers.
+- **Problem with cached user roles after role assignment change [\#286](https://github.com/sapcc/elektra/issues/286)**   
+When a user changes their or other people's role assignments the person with the changed roles needs to either relog or change scope to something else and then back. Most users don't know this which leads to support tickets.
+- **Broken automation details window [\#279](https://github.com/sapcc/elektra/issues/279)**   
+If you run an automation details window in a new browser tab \(not modal window\) it appears to be broken:
+- **ObjectCache: Add ObjectCache-powered search to end-user views [\#278](https://github.com/sapcc/elektra/issues/278)**   
+The ObjectCache-powered universal search works so well we should add it to end-user facing pages as well.
 
 **Fixed bugs:**
 
+- **Routers: Can't select shared private networks during router creation [\#357](https://github.com/sapcc/elektra/issues/357)**   
+Due to a bug in neutron shared private networks couldn't be chosen during router creation. The neutron bug has now been fixed so we can enable shared private network selection again.
+- **Swift: container creation with non-standard chars leads to inaccessible container [\#330](https://github.com/sapcc/elektra/issues/330)**   
+It seems that there are no restrictions as to which characters can be used to name a swift container. However using special chars \( probably related to being URL compatible or not \) leads to the container not being accessible in Elektra via URL.
+- **Automation window clears up after ~8 minutes [\#280](https://github.com/sapcc/elektra/issues/280)**   
+Open the automation window list, wait for 8 minutes and you'll get an empty window. See the screenshot.
+
+## [2018.8](https://github.com/sapcc/elektra/tree/2018.8) (2018-08-31)
+
+[Full Changelog](https://github.com/sapcc/elektra/compare/2018.7...2018.8)
+
+**Implemented enhancements:**
+
+- **Resolve security vulnerabilities in dependencies [\#346](https://github.com/sapcc/elektra/issues/346)**   
+Some of the dependencies defined in Gemfile.lock have known security vulnerabilities and should be updated.
+- **Networking: subnet show [\#337](https://github.com/sapcc/elektra/issues/337)**   
+Please show subnet details. Especially seeing the fields `allocation\_pools` and `host\_routes` would make troubleshooting in support cases easier.
+- **Cloudops - Feature: Show role assignments for user [\#336](https://github.com/sapcc/elektra/issues/336)**   
+It would sometimes be very handy to be able to see a user's role assignments for the whole domain but filterable by project. Currently we have to do this via CLI which is a bit cumbersome.
+- **\[Automation\]: error message when running an automation on an offline node [\#333](https://github.com/sapcc/elektra/issues/333)**   
+A customer has reported that it's possible to execute automations on offline nodes.
+- **Shared Filesystem Storage: Show quota data [\#270](https://github.com/sapcc/elektra/issues/270)**   
+The Shared Filesystem Storage plugin doesn't show quota information.
+- **Networking: Router - show attached internal network on the router list screen [\#203](https://github.com/sapcc/elektra/issues/203)**   
+Currently the internal network that a router is attached to is only shown in the router's details view. It would be helpful if it would already be shown on the router list screen.
+
+**Fixed bugs:**
+
+- **Routing Error [\#345](https://github.com/sapcc/elektra/issues/345)**   
+Getting a routing error when clicking from the profile page the link `edit role assignments`.
 - **Users who are assigned to groups but do not have domain permission can not log in. [\#344](https://github.com/sapcc/elektra/issues/344)**   
 Users are logged in Elektra always unscoped and then rescoped to the requested scope. But before the rescoping happens, the dashboard controller tests whether the user has permissions.
 - **Network show: ports tab runs into hard limit \(max 500\) [\#338](https://github.com/sapcc/elektra/issues/338)**   
