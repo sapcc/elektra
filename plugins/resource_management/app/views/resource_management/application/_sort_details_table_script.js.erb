@@ -1,8 +1,9 @@
 $(function() {
 
   var current_sort_order = "<%= @sort_order %>";
-  var sort_column = "<%= @sort_column %>";
-  var sortable_table = "<%= sortable_table %>";
+  var sort_column        = "<%= @sort_column %>";
+  var sortable_table     = "<%= sortable_table %>";
+
   var sort_type = "amount";
   if (sort_column.match(/name/) || sort_column.match(/resource/)) {sort_type = "alpha"}
 
@@ -58,8 +59,9 @@ $(function() {
       data["cluster"] = table.data('cluster-id');
     }
 
+    // request sorted data
     $.ajax({
-      url: "<%= details_path %>",
+      url: "<%= path %>",
       data: data,
       dataType: 'script',
     });
