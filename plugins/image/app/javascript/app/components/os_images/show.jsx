@@ -45,7 +45,7 @@ export default class ShowModal extends React.Component {
         bsSize="large"
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton={true}>
-          <Modal.Title id="contained-modal-title-lg">Share {
+          <Modal.Title id="contained-modal-title-lg">Image {
               image
                 ? image.name
                 : ''

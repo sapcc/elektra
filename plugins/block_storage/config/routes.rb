@@ -1,4 +1,5 @@
 BlockStorage::Engine.routes.draw do
+  get 'widget' => 'application#widget'
   resources :volumes do
     member do
       get 'new_snapshot'
