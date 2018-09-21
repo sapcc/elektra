@@ -13,7 +13,7 @@ const initialState = {
 };
 
 const requestVolumes = (state,{requestedAt})=> (
-  {...state, requestedAt, isFetching: true, lastError: null}
+  {...state, requestedAt, isFetching: true, error: null}
 )
 
 const requestVolumesFailure = (state,{error}) => (
@@ -22,12 +22,15 @@ const requestVolumesFailure = (state,{error}) => (
 
 const receiveVolumes = (state,{items,receivedAt,hasNext}) => {
   let newItems = (state.items.slice() || []).concat(items);
-  var items = newItems.filter( (item, pos, arr) => arr.indexOf(item)==pos);
+  // filter duplicated items
+  newItems = newItems.filter( (item, pos, arr) =>
+    arr.findIndex(i => i.id == item.id)==pos
+  );
 
   return {...state,
     receivedAt,
     isFetching: false,
-    items,
+    items: newItems,
     hasNext,
     marker: items[items.length-1]
   }
@@ -37,33 +40,45 @@ const setSearchTerm= (state,{searchTerm}) => (
   {...state, searchTerm}
 );
 
-// const requestVolume= function(state,{id,requestedAt}) {
-//   const index = state.items.findIndex((item) => item.id==id);
-//   if (index<0) { return state; }
-//
-//   const newState = Object.assign(state);
-//   newState.items[index].isFetching = true;
-//   newState.items[index].requestedAt = requestedAt;
-//   return newState;
-// };
-//
-// const requestVolumeFailure=function(state,{id}){
-//   const index = state.items.findIndex((item) => item.id==id);
-//   if (index<0) { return state; }
-//
-//   const newState = Object.assign(state);
-//   newState.items[index].isFetching = false;
-//   return newState;
-// };
-//
-// const receiveVolume= function(state,{port}) {
-//   const index = state.items.findIndex((item) => item.id==port.id);
-//   const items = state.items.slice();
-//   // update or add
-//   if (index>=0) { items[index]=port; } else { items.unshift(port); }
-//   return {... state, items: items}
-// };
+const receiveVolume= function(state,{volume}) {
+  const index = state.items.findIndex((item) => item.id==volume.id);
+  const items = state.items.slice();
+  // update or add
+  if (index>=0) { items[index]=volume; } else { items.push(volume); }
+  return {... state, items: items}
+};
 
+const requestVolumeDelete = (state,{id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].status = 'deleting'
+  return {...state, items: newItems}
+}
+
+const removeVolume = (state,{id}) => {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems.splice(index,1)
+  return {...state, items: newItems}
+}
+
+const requestVolumeAttach = (state,{id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].status = 'attaching'
+  return {...state, items: newItems}
+}
+
+const requestVolumeDetach = (state,{id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].status = 'detaching'
+  return {...state, items: newItems}
+}
 
 // osImages reducer
 export default(state=initialState, action) => {
@@ -71,7 +86,12 @@ export default(state=initialState, action) => {
     case constants.REQUEST_VOLUMES: return requestVolumes(state,action);
     case constants.REQUEST_VOLUMES_FAILURE: return requestVolumesFailure(state,action);
     case constants.RECEIVE_VOLUMES: return receiveVolumes(state,action);
-    case constants.SET_SEARCH_TERM: return setSearchTerm(state,action);
+    case constants.RECEIVE_VOLUME: return receiveVolume(state,action);
+    case constants.SET_VOLUME_SEARCH_TERM: return setSearchTerm(state,action);
+    case constants.REQUEST_VOLUME_DELETE: return requestVolumeDelete(state,action);
+    case constants.REQUEST_VOLUME_ATTACH: return requestVolumeAttach(state,action);
+    case constants.REQUEST_VOLUME_DETACH: return requestVolumeDetach(state,action);
+    case constants.REMOVE_VOLUME: return removeVolume(state,action);
     default: return state;
   }
 };

@@ -1,6 +1,6 @@
 import { connect } from  'react-redux';
-import ShowVolumeModal from '../../components/volumes/show';
-import {fetchVolume} from '../../actions/volumes';
+import AttachVolumeModal from '../../components/volumes/attach';
+import {attachVolume,fetchVolume} from '../../actions/volumes';
 
 export default connect(
   (state,ownProps ) => {
@@ -15,7 +15,8 @@ export default connect(
   (dispatch,ownProps) => {
     let id = ownProps.match && ownProps.match.params && ownProps.match.params.id
     return {
+      attachVolume: (values) => id ? dispatch(attachVolume(id, values.server_id)) : null,
       loadVolume: () => id ? dispatch(fetchVolume(id)) : null
     }
   }
-)(ShowVolumeModal);
+)(AttachVolumeModal);

@@ -1,12 +1,19 @@
 /* eslint no-console:0 */
 import { HashRouter, Route, Redirect } from 'react-router-dom'
+import { scope } from 'ajax_helper';
 
 import Tabs from './tabs';
 
 import Volumes from '../containers/volumes/list'
 import Snapshots from '../containers/snapshots/list'
 import ShowVolumeModal from '../containers/volumes/show'
+import NewVolumeModal from '../containers/volumes/new'
+import EditVolumeModal from '../containers/volumes/edit'
+import AttachVolumeModal from '../containers/volumes/attach'
+import ResetVolumeStatusModal from '../containers/volumes/reset_status'
+
 import ShowSnapshotModal from '../containers/snapshots/show'
+import NewSnapshotModal from '../containers/snapshots/new'
 
 const tabsConfig = [
   { to: '/volumes', label: 'Volumes', component: Volumes },
@@ -33,8 +40,24 @@ export default (props) => {
             <Route exact path="/snapshots/volumes/:id/show" component={ShowVolumeModal}/>
           </React.Fragment>
         }
+        { policy.isAllowed("block_storage:volume_create",{target:{scoped_domain_name: scope.domain}}) &&
+          <Route exact path="/volumes/new" component={NewVolumeModal}/>
+        }
+        { policy.isAllowed("block_storage:volume_update", {target: {scoped_domain_name: scope.domain}}) &&
+          <Route exact path="/volumes/:id/edit" component={EditVolumeModal}/>
+        }
+        { policy.isAllowed("compute:attach_volume", {target: {scoped_domain_name: scope.domain}}) &&
+          <Route exact path="/volumes/:id/attachments/new" component={AttachVolumeModal}/>
+        }
+        { policy.isAllowed("block_storage:volume_reset_status") &&
+          <Route exact path="/volumes/:id/reset-status" component={ResetVolumeStatusModal}/>
+        }
+
         { policy.isAllowed("block_storage:snapshot_get") &&
           <Route exact path="/snapshots/:id/show" component={ShowSnapshotModal}/>
+        }
+        { policy.isAllowed("block_storage:snapshot_create", {target: {scoped_domain_name: scope.domain}}) &&
+          <Route exact path="/volumes/:id/snapshots/new" component={NewSnapshotModal}/>
         }
       </div>
     </HashRouter>

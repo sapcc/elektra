@@ -1,19 +1,27 @@
 import {Link} from 'react-router-dom';
 import { scope } from 'ajax_helper';
+import { Highlighter } from 'react-bootstrap-typeahead';
 
-export default ({snapshot}) =>
+const MyHighlighter = ({search,children}) => {
+  if(!search || !children) return children
+  return <Highlighter search={search}>{children+''}</Highlighter>
+}
+
+export default ({snapshot, searchTerm}) =>
   <tr className={`state-${snapshot.status}`}>
     <td>
       {policy.isAllowed("block_storage:snapshot_get", {}) ?
-        <Link to={`/snapshots/${snapshot.id}/show`}>{snapshot.name}</Link>
+        <Link to={`/snapshots/${snapshot.id}/show`}>
+          <MyHighlighter search={searchTerm}>{snapshot.name}</MyHighlighter>
+        </Link>
         :
-        snapshot.name
+        <MyHighlighter search={searchTerm}>{snapshot.name}</MyHighlighter>
       }
       <br/>
-      <span className='info-text'>{snapshot.id}</span>
+      <span className='info-text'><MyHighlighter search={searchTerm}>{snapshot.id}</MyHighlighter></span>
     </td>
-    <td>{snapshot.description}</td>
-    <td>{snapshot.size}</td>
+    <td><MyHighlighter search={searchTerm}>{snapshot.description}</MyHighlighter></td>
+    <td><MyHighlighter search={searchTerm}>{snapshot.size}</MyHighlighter></td>
     <td>
       {snapshot.volume_name ?
         <React.Fragment>
@@ -25,6 +33,6 @@ export default ({snapshot}) =>
         snapshot.volume_id
       }
     </td>
-    <td>{snapshot.status}</td>
+    <td><MyHighlighter search={searchTerm}>{snapshot.status}</MyHighlighter></td>
     <td className='snug'></td>
   </tr>

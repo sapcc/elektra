@@ -11,7 +11,7 @@ const Row = ({label, value, children}) => {
 };
 
 export default class ShowModal extends React.Component {
-  state = {show: false}
+  state = {show: false, loadError: null}
 
   restoreUrl = (e) => {
     if (!this.state.show) {
@@ -28,17 +28,32 @@ export default class ShowModal extends React.Component {
 
   componentDidMount() {
     this.setState({
-      show: this.props.volume != null
+      show: this.props.id != null
     })
+    if(!this.props.volume) {
+      this.props.loadVolume().catch((loadError) => this.setState({loadError}))
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      show: nextProps.volume != null
+      show: nextProps.id != null,
+      loadError: nextProps.volume != null ? null : this.state.loadError
     })
   }
 
   renderOverview(volume){
+    if (this.state.loadError) {
+      return (
+        <React.Fragment>
+          <div className='text-danger'>
+            <h4>Could not load volume!</h4>
+            <p>{this.state.loadError}</p>
+          </div>
+        </React.Fragment>
+      )
+    }
+
     if (!volume) {
       return <React.Fragment><span className='spinner'></span> Loading...</React.Fragment>
     }
@@ -141,7 +156,7 @@ export default class ShowModal extends React.Component {
           <Modal.Title id="contained-modal-title-lg">Volume {
               volume
                 ? volume.name
-                : ''
+                : <span className='info-text'>{this.props.id}</span>
             }
           </Modal.Title>
         </Modal.Header>

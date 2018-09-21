@@ -70,6 +70,36 @@ module ServiceLayer
           { 'os-force_delete' => {} }
         end
       end
+
+      def attach(volume_id, server_id, device = nil)
+        # block storage api does not support empty device option.
+        # In this case use attach method frm compute which accepts blank
+        # device option.
+        if device.nil? && service_manager.compute.available?
+          return service_manager.compute.attach_volume(
+            volume_id, server_id, device
+          )
+        end
+
+        elektron_volumes.post("volumes/#{volume_id}/action") do
+          {
+            "os-attach": {
+              "instance_uuid": server_id,
+              "mountpoint": device
+            }
+          }
+        end
+      end
+
+      def detach(volume_id, attachment_id)
+        elektron_volumes.post("volumes/#{volume_id}/action") do
+          {
+            "os-detach": {
+              "attachment_id": attachment_id
+            }
+          }
+        end
+      end
     end
   end
 end

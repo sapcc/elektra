@@ -11,7 +11,7 @@ const Row = ({label, value, children}) => {
 };
 
 export default class ShowModal extends React.Component {
-  state = {show: false}
+  state = {show: false, loadError: null}
 
   restoreUrl = (e) => {
     if (!this.state.show)
@@ -25,13 +25,19 @@ export default class ShowModal extends React.Component {
 
   componentDidMount() {
     this.setState({
-      show: this.props.snapshot != null
+      show: this.props.id != null
     })
+    if(!this.props.snapshot) {
+      this.props.loadSnapshot().catch((loadError) => {
+        if(!this.props.snapshot) this.setState({loadError})
+      })
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      show: nextProps.snapshot != null
+      show: nextProps.id != null,
+      loadError: nextProps.snapshot != null ? null : this.state.loadError
     })
   }
 
@@ -49,11 +55,19 @@ export default class ShowModal extends React.Component {
           <Modal.Title id="contained-modal-title-lg">Snapshot {
               snapshot
                 ? snapshot.name
-                : ''
+                : <span className='info-text'>{this.props.id}</span>
             }
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          { this.state.loadError &&
+            <React.Fragment>
+              <div className='text-danger'>
+                <h4>Could not load snapshot!</h4>
+                <p>{this.state.loadError}</p>
+              </div>
+            </React.Fragment>
+          }
           {snapshot ?
             <table className='table no-borders'>
               <tbody>

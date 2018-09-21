@@ -111,18 +111,32 @@ module BlockStorage
 
     # GET /snapshots
     def index
-      per_page = (params[:per_page] || 30).to_i
+      per_page = (params[:per_page] || 5).to_i
 
-      options = { sort_key: 'name', sort_dir: 'asc', limit: per_page + 1 }
+      options = { sort: 'id:asc', limit: per_page + 1 }
       options[:marker] = params[:marker] if params[:marker]
-      @snapshots = services.block_storage.snapshots_detail(options)
-
-      extend_snapshot_data(@snapshots)
+      snapshots = services.block_storage.snapshots_detail(options)
+      
+      extend_snapshot_data(snapshots)
 
       # byebug
       render json: {
-        snapshots: @snapshots,
-        has_next: @snapshots.length > per_page
+        snapshots: snapshots,
+        has_next: snapshots.length > per_page
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: {
+        errors: e.message
+      }
+    end
+
+    def show
+      render json: {
+        snapshot: services.block_storage.find_snapshot!(params[:id])
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: {
+        errors: e.message
       }
     end
 

@@ -60,7 +60,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :compute, 'Compute', nil, html: {class: "fancy-nav-header", 'data-icon': "compute-icon"},
     if: -> {services.available?(:compute,:instances) or services.available?(:image,:os_images) or plugin_available?(:block_storage)} do |compute_nav|
       compute_nav.item :instances, 'Servers', -> {plugin('compute').instances_path}, if: -> { services.available?(:compute,:instances) }, highlights_on: Proc.new { params[:controller][/compute\/instances/] }
-      compute_nav.item :block_storage, 'Volumes & Snapshots', -> {plugin('block_storage').volumes_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage/] }
+      compute_nav.item :block_storage, 'Volumes & Snapshots', -> {plugin('block_storage').root_path}, if: -> { plugin_available?(:block_storage) }, highlights_on: Proc.new { params[:controller][/block_storage/] }
 
       compute_nav.item :images, 'Server Images & Snapshots', -> {
         services.image.current_version >= 'v2.5' ? plugin('image').ng_path : plugin('image').os_images_public_index_path

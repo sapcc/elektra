@@ -1,19 +1,31 @@
 BlockStorage::Engine.routes.draw do
-  get 'widget' => 'application#widget'
+  root to: 'application#widget'
   resources :volumes do
-    member do
-      get 'new_snapshot'
-      post 'snapshot', as: 'snapshot'
-      get 'edit_attach'
-      put 'attach'
-      get 'edit_detach'
-      put 'detach'
-      get 'update_item'
-
-      get 'new_status'
-      post 'reset_status'
-      delete 'force_delete'
+    collection do
+      get 'availability-zones' => 'volumes#availability_zones'
     end
+
+    member do
+      put 'attach'
+      put 'detach'
+      put 'reset-status' => 'volumes#reset_status'
+      delete 'force-delete' => 'volumes#force_delete'
+    end
+
+
+    # member do
+    #   get 'new_snapshot'
+    #   post 'snapshot', as: 'snapshot'
+    #   get 'edit_attach'
+    #   put 'attach'
+    #   get 'edit_detach'
+    #   put 'detach'
+    #   get 'update_item'
+    #
+    #   get 'new_status'
+    #   post 'reset_status'
+    #   delete 'force_delete'
+    # end
   end
   resources :snapshots, except: [:new, :create] do
     member do
