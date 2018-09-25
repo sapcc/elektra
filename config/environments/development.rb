@@ -71,6 +71,16 @@ Rails.application.configure do
 
   puts "=> Auth Endpoint #{ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']}" if ENV['MONSOON_OPENSTACK_AUTH_API_ENDPOINT']
 
+  # reduce active record logging
+  config.after_initialize do
+    if ENV['ACTIVE_RECORD_QUIET']
+      ActiveRecord::Base.logger = Rails.logger.clone
+      ActiveRecord::Base.logger.level = Logger::INFO
+      puts "=> ActiveRecord Logging: QUIET"
+    end
+  end
+  puts "=> Elektron Logging: QUIET" if ENV['ELEKTRON_QUIET']
+
   # config.exceptions_app = self.routes
   # config.exceptions_app = ->(env) { ErrorsController.action(:show).call(env) }
   # config.log_tags = [ :uuid ]
