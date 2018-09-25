@@ -121,6 +121,19 @@ module BlockStorage
       render json: { errors: e.message }, status: e.code
     end
 
+    def extend_size
+      volume = services.block_storage.find_volume(params[:id])
+
+      if volume.extend_size(params[:size])
+        audit_logger.info(current_user, 'has extended volume size', volume.id, params[:size])
+        head 202
+      else
+        render json: { errors: volume.errors }, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
     def force_delete
       volume = services.block_storage.new_volume
       volume.id = params[:id]

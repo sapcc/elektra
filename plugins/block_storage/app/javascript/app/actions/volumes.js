@@ -216,6 +216,13 @@ const fetchVolumesIfNeeded= () =>
 ;
 
 //################ VOLUME FORM ###################
+const requestVolumeExtend= (id) => (
+  {
+    type: constants.REQUEST_VOLUME_EXTEND,
+    id
+  }
+)
+
 const submitNewVolumeForm= (values) => (
   (dispatch) =>
     new Promise((handleSuccess,handleErrors) =>
@@ -245,6 +252,16 @@ const submitResetVolumeStatusForm= (id,values) => (
       ajaxHelper.put(`/volumes/${id}/reset-status`, { status: values }
       ).then((response) => {
         dispatch(receiveVolume(response.data))
+        handleSuccess()
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
+const submitExtendVolumeSizeForm= (id,values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/volumes/${id}/extend-size`, values).then((response) => {
+        dispatch(requestVolumeExtend(id))
         handleSuccess()
       }).catch(error => handleErrors({errors: errorMessage(error)}))
     )
@@ -300,5 +317,6 @@ export {
   submitNewVolumeForm,
   submitEditVolumeForm,
   submitResetVolumeStatusForm,
+  submitExtendVolumeSizeForm,
   loadNext
 }

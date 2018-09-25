@@ -134,10 +134,15 @@ export default class Volume extends React.Component {
                     <li><a href='#' onClick={this.handleDelete}>Delete</a></li>
                   </React.Fragment>
                 }
-                { policy.isAllowed("block_storage:volume_reset_status") &&
+                { (policy.isAllowed("block_storage:volume_reset_status") || policy.isAllowed("block_storage:volume_extend_size")) &&
                   <React.Fragment>
                     <li className="divider"></li>
-                    <li><Link to={`/volumes/${volume.id}/reset-status`}>Reset Status</Link></li>
+                    {policy.isAllowed("block_storage:volume_reset_status") &&
+                      <li><Link to={`/volumes/${volume.id}/reset-status`}>Reset Status</Link></li>
+                    }
+                    {policy.isAllowed("block_storage:volume_extend_size") &&
+                      <li><Link to={`/volumes/${volume.id}/extend-size`}>Extend Size</Link></li>
+                    }
                   </React.Fragment>
                 }
                 { policy.isAllowed("block_storage:volume_force_delete") &&

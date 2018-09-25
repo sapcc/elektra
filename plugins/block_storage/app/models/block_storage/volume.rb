@@ -33,6 +33,13 @@ module BlockStorage
       end
     end
 
+    def extend_size(size)
+      rescue_api_errors do
+        service.extend_volume_size(id, size)
+        self.size = size
+      end
+    end
+
     def force_delete
       rescue_api_errors do
         service.force_delete_volume(id)

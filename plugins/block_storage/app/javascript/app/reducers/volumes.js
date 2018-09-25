@@ -56,6 +56,14 @@ const requestVolumeDelete = (state,{id})=> {
   return {...state, items: newItems}
 }
 
+const requestVolumeExtend = (state,{id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].status = constants.VOLUME_STATE_EXTENDING
+  return {...state, items: newItems}
+}
+
 const removeVolume = (state,{id}) => {
   const index = state.items.findIndex((item) => item.id==id);
   if (index<0) { return state; }
@@ -89,6 +97,7 @@ export default(state=initialState, action) => {
     case constants.RECEIVE_VOLUME: return receiveVolume(state,action);
     case constants.SET_VOLUME_SEARCH_TERM: return setSearchTerm(state,action);
     case constants.REQUEST_VOLUME_DELETE: return requestVolumeDelete(state,action);
+    case constants.REQUEST_VOLUME_EXTEND: return requestVolumeExtend(state,action);
     case constants.REQUEST_VOLUME_ATTACH: return requestVolumeAttach(state,action);
     case constants.REQUEST_VOLUME_DETACH: return requestVolumeDetach(state,action);
     case constants.REMOVE_VOLUME: return removeVolume(state,action);

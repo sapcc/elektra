@@ -65,6 +65,16 @@ module ServiceLayer
         end
       end
 
+      def extend_volume_size(id, size)
+        elektron_volumes.post("volumes/#{id}/action") do
+          {
+            'os-extend': {
+              'new_size': size
+            }
+          }
+        end
+      end
+
       def force_delete_volume(id)
         elektron_volumes.post("volumes/#{id}/action") do
           { 'os-force_delete' => {} }

@@ -11,6 +11,7 @@ import NewVolumeModal from '../containers/volumes/new'
 import EditVolumeModal from '../containers/volumes/edit'
 import AttachVolumeModal from '../containers/volumes/attach'
 import ResetVolumeStatusModal from '../containers/volumes/reset_status'
+import ExtendVolumeSizeModal from '../containers/volumes/extend_size'
 
 import ShowSnapshotModal from '../containers/snapshots/show'
 import NewSnapshotModal from '../containers/snapshots/new'
@@ -57,6 +58,9 @@ export default (props) => {
         }
         { policy.isAllowed("block_storage:volume_reset_status") &&
           <Route exact path="/volumes/:id/reset-status" component={ResetVolumeStatusModal}/>
+        }
+        { policy.isAllowed("block_storage:volume_extend_size") &&
+          <Route exact path="/volumes/:id/extend-size" component={ExtendVolumeSizeModal}/>
         }
 
         { policy.isAllowed("block_storage:snapshot_get") &&
