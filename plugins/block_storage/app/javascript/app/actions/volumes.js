@@ -111,7 +111,7 @@ const deleteVolume=(id) =>
           errors: errorMessage(error)
         }))
       });
-    })
+    }).catch(cancel => true)
 
 const forceDeleteVolume=(id) =>
   (dispatch) =>
@@ -123,7 +123,7 @@ const forceDeleteVolume=(id) =>
           errors: errorMessage(error)
         }))
       });
-    })
+    }).catch(cancel => true)
 
 //################################
 
@@ -223,6 +223,7 @@ const submitNewVolumeForm= (values) => (
       ).then((response) => {
         dispatch(receiveVolume(response.data))
         handleSuccess()
+        addNotice('Volume is being created.')
       }).catch(error => handleErrors({errors: errorMessage(error)}))
     )
 );
@@ -285,7 +286,7 @@ const detachVolume=(id, attachmentId) =>
           })
           .catch(error => handleErrors({errors: errorMessage(error)}))
       })
-    })
+    }).catch(cancel => true)
 
 export {
   fetchVolumesIfNeeded,

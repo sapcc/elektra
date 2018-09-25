@@ -41,7 +41,7 @@ module BlockStorage
       volume.attributes = params[:volume]
 
       if volume.save
-        audit_logger.info(current_user, "has created", volume)
+        audit_logger.info(current_user, 'has created', volume)
         extend_volume_data(volume)
         render json: volume
       else
@@ -55,7 +55,7 @@ module BlockStorage
       volume = services.block_storage.find_volume!(params[:id])
 
       if volume.update(params[:volume])
-        audit_logger.info(current_user, "has updated", volume)
+        audit_logger.info(current_user, 'has updated', volume)
         extend_volume_data(volume)
         render json: volume
       else
@@ -71,7 +71,7 @@ module BlockStorage
       volume.id = params[:id]
 
       if volume.destroy
-        audit_logger.info(current_user, "has deleted", volume)
+        audit_logger.info(current_user, 'has deleted', volume)
         head 202
       else
         render json: { errors: volume.errors }, status: 422
@@ -126,7 +126,7 @@ module BlockStorage
       volume.id = params[:id]
 
       if volume.force_delete
-        audit_logger.info(current_user, "has deleted (force-delete)", volume.id)
+        audit_logger.info(current_user, 'has deleted (force-delete)', volume.id)
         head 202
       else
         render json: { errors: volume.errors }, status: 422

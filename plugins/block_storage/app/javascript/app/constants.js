@@ -14,12 +14,16 @@ export const REQUEST_AVAILABILITY_ZONES_FAILURE = 'block_storage/app/REQUEST_AVA
 
 export const REQUEST_SNAPSHOTS =               'block_storage/app/REQUEST_SNAPSHOTS'
 export const RECEIVE_SNAPSHOTS =               'block_storage/app/RECEIVE_SNAPSHOTS'
-export const REQUEST_SNAPSHOT =                'block_storage/app/REQUEST_SNAPSHOT'
+export const REMOVE_SNAPSHOT =                'block_storage/app/REMOVE_SNAPSHOT'
 export const REQUEST_SNAPSHOTS_FAILURE =       'block_storage/app/REQUEST_SNAPSHOT_FAILURE'
-export const REQUEST_SNAPSHOT_FAILURE =        'block_storage/app/REQUEST_SNAPSHOTS_FAILURE'
+export const REQUEST_SNAPSHOT_DELETE =        'block_storage/app/REQUEST_SNAPSHOT_DELETE'
 export const RECEIVE_SNAPSHOT =                'block_storage/app/RECEIVE_SNAPSHOT'
 export const SET_SNAPSHOT_SEARCH_TERM =        'block_storage/app/SET_SNAPSHOT_SEARCH_TERM'
 
+//##################### SERVERS ###########################
+export const REQUEST_SERVERS =                 'block_storage/app/REQUEST_SERVERS'
+export const RECEIVE_SERVERS =                 'block_storage/app/RECEIVE_SERVERS'
+export const REQUEST_SERVERS_FAILURE =         'block_storage/app/REQUEST_SERVER_FAILURE'
 
 //#################### VOLUEM STATES #######################
 export const VOLUME_STATE_CREATING = 'creating'
@@ -57,4 +61,24 @@ export const VOLUME_RESET_STATUS = [
 
 export const VOLUME_RESET_ATTACH_STATUS = [
   VOLUME_STATE_ATTACHED, VOLUME_STATE_DETACHED
+]
+
+//####################### SNAPSHOT STATES ########################
+export const SNAPSHOT_STATE_CREATING         = 'creating' //The snapshot is being created.
+export const SNAPSHOT_STATE_AVAILABLE        = 'available' //The snapshot is ready to use.
+export const SNAPSHOT_STATE_DELETING         = 'deleting' //The snapshot is being deleted.
+export const SNAPSHOT_STATE_BACKING_UP       = 'backing-up' //The snapshot is being backed up.
+export const SNAPSHOT_STATE_ERROR            = 'error' //A snapshot creation error occurred.
+export const SNAPSHOT_STATE_ERROR_DELETING   = 'error_deleting' //A snapshot deletion error occurred.
+export const SNAPSHOT_STATE_DELETED          = 'deleted' //The snapshot has been deleted.
+export const SNAPSHOT_STATE_UNMANAGING       = 'unmanaging' //The snapshot is being unmanaged.
+export const SNAPSHOT_STATE_RESTORING        = 'restoring' //The snapshot is being restored to a volume.
+
+export const SNAPSHOT_PENDING_STATUS = [
+  SNAPSHOT_STATE_CREATING,SNAPSHOT_STATE_DELETING,SNAPSHOT_STATE_BACKING_UP,
+  SNAPSHOT_STATE_BACKING_UP,SNAPSHOT_STATE_UNMANAGING,SNAPSHOT_STATE_RESTORING
+]
+
+export const SNAPSHOT_RESET_STATUS = [
+  SNAPSHOT_STATE_AVAILABLE, SNAPSHOT_STATE_ERROR
 ]

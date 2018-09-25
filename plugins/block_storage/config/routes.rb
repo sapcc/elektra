@@ -27,11 +27,16 @@ BlockStorage::Engine.routes.draw do
     #   delete 'force_delete'
     # end
   end
-  resources :snapshots, except: [:new, :create] do
+  resources :snapshots do
+
     member do
-      get 'create_volume'
-      get 'new_status'
-      post 'reset_status'
+      put 'reset-status' => 'snapshots#reset_status'
     end
+
+    # member do
+    #   get 'create_volume'
+    #   get 'new_status'
+    #   post 'reset_status'
+    # end
   end
 end

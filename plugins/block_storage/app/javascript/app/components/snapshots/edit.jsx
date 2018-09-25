@@ -15,17 +15,17 @@ const FormBody = ({values}) =>
     </Form.ElementHorizontal>
   </Modal.Body>
 
-export default class EditVolumeForm extends React.Component {
+export default class EditSnapshotForm extends React.Component {
   state = { show: true }
 
   componentDidMount() {
-    if(!this.props.volume) {
-      this.props.loadVolume().catch((loadError) => this.setState({loadError}))
+    if(!this.props.snapshot) {
+      this.props.loadSnapshot().catch((loadError) => this.setState({loadError}))
     }
   }
 
   validate = (values) => {
-    return values.name && values.description && true
+    return values.name && true
   }
 
   close = (e) => {
@@ -35,7 +35,7 @@ export default class EditVolumeForm extends React.Component {
 
   restoreUrl = (e) => {
     if (!this.state.show)
-      this.props.history.replace(`/volumes`)
+      this.props.history.replace(`/snapshots`)
   }
 
   onSubmit = (values) =>{
@@ -43,9 +43,9 @@ export default class EditVolumeForm extends React.Component {
   }
 
   render(){
-    const initialValues = this.props.volume ? {
-      name: this.props.volume.name,
-      description: this.props.volume.description
+    const initialValues = this.props.snapshot ? {
+      name: this.props.snapshot.name,
+      description: this.props.snapshot.description
     } : {}
 
     return (
@@ -57,7 +57,7 @@ export default class EditVolumeForm extends React.Component {
         onExited={this.restoreUrl}
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Edit Volume</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">Edit Snapshot</Modal.Title>
         </Modal.Header>
 
         <Form
@@ -66,7 +66,7 @@ export default class EditVolumeForm extends React.Component {
           onSubmit={this.onSubmit}
           initialValues={initialValues}>
 
-          {this.props.volume ?
+          {this.props.snapshot ?
             <FormBody/>
             :
             <Modal.Body>

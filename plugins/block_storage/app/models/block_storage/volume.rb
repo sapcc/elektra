@@ -2,8 +2,10 @@
 
 module BlockStorage
   class Volume < Core::ServiceLayer::Model
-    validates :name, :description, :size, presence: true
-    validates :size, numericality: { only_integer: true, greater_than: 0 }
+    validates :name, :description, presence: true
+    validates :size, presence: true, if: proc { |v| v.snapshot_id.blank? }
+    validates :size, numericality: { only_integer: true, greater_than: 0 },
+                     if: proc { |v| v.snapshot_id.blank? }
     validate :avalability_zone_or_snapshot_id
 
     def attributes_for_create
@@ -11,7 +13,8 @@ module BlockStorage
         'name'              => read('name'),
         'description'       => read('description'),
         'size'              => read('size'),
-        'availability_zone' => read('availability_zone')
+        'availability_zone' => read('availability_zone'),
+        'snapshot_id'       => read('snapshot_id')
       }.delete_if { |_k, v| v.blank? }
     end
 

@@ -40,7 +40,7 @@ const FormBody = ({values, availabilityZones}) =>
     </Form.ElementHorizontal>
   </Modal.Body>
 
-export default class NewPortForm extends React.Component {
+export default class NewVolumeForm extends React.Component {
   state = { show: true }
 
   componentDidMount() {
@@ -82,6 +82,7 @@ export default class NewPortForm extends React.Component {
         show={this.state.show}
         onHide={this.close}
         bsSize="large"
+        backdrop='static'
         onExited={this.restoreUrl}
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>

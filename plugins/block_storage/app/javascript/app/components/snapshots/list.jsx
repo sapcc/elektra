@@ -78,7 +78,12 @@ export default class List extends React.Component {
           <tbody>
             { items && items.length>0 ?
               items.map( (snapshot, index) =>
-                <Item snapshot={snapshot} key={index} searchTerm={searchTerm}/>
+                <Item
+                  snapshot={snapshot}
+                  key={index}
+                  searchTerm={searchTerm}
+                  reloadSnapshot={this.props.reloadSnapshot}
+                  deleteSnapshot={this.props.deleteSnapshot}/>
               )
               :
               <tr>

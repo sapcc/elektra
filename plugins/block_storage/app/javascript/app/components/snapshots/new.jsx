@@ -2,30 +2,39 @@ import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
 
-const FormBody = ({values}) =>
+const FormBody = ({values,volume}) =>
   <Modal.Body>
     <Form.Errors/>
+
+    <Form.ElementHorizontal label='Source Volume' name="volume_id" required>
+      <p className='form-control-static'>
+        {volume ?
+          <React.Fragment>
+            {volume.name}
+            <br/>
+            <span className='info-text'>{volume.id}</span>
+          </React.Fragment>
+          :
+          values.volume_id
+        }
+      </p>
+    </Form.ElementHorizontal>
 
     <Form.ElementHorizontal label='Name' name="name" required>
       <Form.Input elementType='input' type='text' name='name'/>
     </Form.ElementHorizontal>
 
-    <Form.ElementHorizontal label='Description' name="description" required>
+    <Form.ElementHorizontal label='Description' name="description">
       <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
     </Form.ElementHorizontal>
   </Modal.Body>
 
-export default class EditVolumeForm extends React.Component {
+export default class NewPortForm extends React.Component {
   state = { show: true }
 
-  componentDidMount() {
-    if(!this.props.volume) {
-      this.props.loadVolume().catch((loadError) => this.setState({loadError}))
-    }
-  }
-
   validate = (values) => {
-    return values.name && values.description && true
+    console.log(values)
+    return values.volume_id && values.name && true
   }
 
   close = (e) => {
@@ -44,8 +53,9 @@ export default class EditVolumeForm extends React.Component {
 
   render(){
     const initialValues = this.props.volume ? {
-      name: this.props.volume.name,
-      description: this.props.volume.description
+      volume_id: this.props.volume_id,
+      name: `snap-${this.props.volume.name}`,
+      description: `Snapshot of the volume ${this.props.volume.name}`
     } : {}
 
     return (
@@ -57,7 +67,7 @@ export default class EditVolumeForm extends React.Component {
         onExited={this.restoreUrl}
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Edit Volume</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">New Snapshot</Modal.Title>
         </Modal.Header>
 
         <Form
@@ -66,14 +76,7 @@ export default class EditVolumeForm extends React.Component {
           onSubmit={this.onSubmit}
           initialValues={initialValues}>
 
-          {this.props.volume ?
-            <FormBody/>
-            :
-            <Modal.Body>
-              <span className='spinner'></span>
-              Loading...
-            </Modal.Body>
-          }
+          <FormBody volume={this.props.volume}/>
 
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>

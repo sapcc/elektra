@@ -14,6 +14,9 @@ import ResetVolumeStatusModal from '../containers/volumes/reset_status'
 
 import ShowSnapshotModal from '../containers/snapshots/show'
 import NewSnapshotModal from '../containers/snapshots/new'
+import EditSnapshotModal from '../containers/snapshots/edit'
+import ResetSnapshotStatusModal from '../containers/snapshots/reset_status'
+import NewSnapshotVolumeModal from '../containers/snapshots/new_volume'
 
 const tabsConfig = [
   { to: '/volumes', label: 'Volumes', component: Volumes },
@@ -43,6 +46,9 @@ export default (props) => {
         { policy.isAllowed("block_storage:volume_create",{target:{scoped_domain_name: scope.domain}}) &&
           <Route exact path="/volumes/new" component={NewVolumeModal}/>
         }
+        { policy.isAllowed("block_storage:snapshot_create", {target: {scoped_domain_name: scope.domain}}) &&
+          <Route exact path="/snapshots/:snapshot_id/volumes/new" component={NewSnapshotVolumeModal}/>
+        }
         { policy.isAllowed("block_storage:volume_update", {target: {scoped_domain_name: scope.domain}}) &&
           <Route exact path="/volumes/:id/edit" component={EditVolumeModal}/>
         }
@@ -56,8 +62,14 @@ export default (props) => {
         { policy.isAllowed("block_storage:snapshot_get") &&
           <Route exact path="/snapshots/:id/show" component={ShowSnapshotModal}/>
         }
+        { policy.isAllowed("block_storage:snapshot_update", {target: {scoped_domain_name: scope.domain}}) &&
+          <Route exact path="/snapshots/:id/edit" component={EditSnapshotModal}/>
+        }
         { policy.isAllowed("block_storage:snapshot_create", {target: {scoped_domain_name: scope.domain}}) &&
-          <Route exact path="/volumes/:id/snapshots/new" component={NewSnapshotModal}/>
+          <Route exact path="/volumes/:volume_id/snapshots/new" component={NewSnapshotModal}/>
+        }
+        { policy.isAllowed("block_storage:snapshot_reset_status") &&
+          <Route exact path="/snapshots/:id/reset-status" component={ResetSnapshotStatusModal}/>
         }
       </div>
     </HashRouter>

@@ -1,17 +1,20 @@
 import { connect } from  'react-redux';
-import NewVolumeModal from '../../components/volumes/new';
-import {fetchAvailabilityZonesIfNeeded, submitNewVolumeForm} from '../../actions/volumes';
+import NewSnapshotModal from '../../components/snapshots/new';
+import {submitNewSnapshotForm} from '../../actions/snapshots';
 
 export default connect(
-  (state ) => (
-    {
-      availabilityZones: state.availabilityZones
+  (state,ownProps ) => {
+    let volume;
+    let volume_id = ownProps.match && ownProps.match.params && ownProps.match.params.volume_id
+
+    if (volume_id) {
+      volume = state.volumes.items.find(item => item.id == volume_id)
     }
-  ),
+    return { volume, volume_id }
+  },
   (dispatch) => (
     {
-      loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded()),
-      handleSubmit: (values) => dispatch(submitNewVolumeForm(values))
+      handleSubmit: (values) => dispatch(submitNewSnapshotForm(values))
     }
   )
-)(NewVolumeModal);
+)(NewSnapshotModal);

@@ -1,31 +1,38 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
+import * as constants from '../../constants';
 
 const FormBody = ({values}) =>
   <Modal.Body>
     <Form.Errors/>
 
-    <Form.ElementHorizontal label='Name' name="name" required>
-      <Form.Input elementType='input' type='text' name='name'/>
-    </Form.ElementHorizontal>
-
-    <Form.ElementHorizontal label='Description' name="description" required>
-      <Form.Input elementType='textarea' className="text optional form-control" name="description"/>
+    <Form.ElementHorizontal label='Status' name="status" required>
+      <Form.Input
+        elementType='select'
+        className="select required form-control"
+        name='status'>
+        <option></option>
+        {constants.SNAPSHOT_RESET_STATUS.map((state,index) =>
+          <option value={state} key={index}>
+            {state}
+          </option>
+        )}
+      </Form.Input>
     </Form.ElementHorizontal>
   </Modal.Body>
 
-export default class EditVolumeForm extends React.Component {
+export default class ResetSnapshotStatusForm extends React.Component {
   state = { show: true }
 
   componentDidMount() {
-    if(!this.props.volume) {
-      this.props.loadVolume().catch((loadError) => this.setState({loadError}))
+    if(!this.props.snapshot) {
+      this.props.loadSnapshot().catch((loadError) => this.setState({loadError}))
     }
   }
 
   validate = (values) => {
-    return values.name && values.description && true
+    return values.status && true
   }
 
   close = (e) => {
@@ -35,7 +42,7 @@ export default class EditVolumeForm extends React.Component {
 
   restoreUrl = (e) => {
     if (!this.state.show)
-      this.props.history.replace(`/volumes`)
+      this.props.history.replace(`/snapshots`)
   }
 
   onSubmit = (values) =>{
@@ -43,9 +50,9 @@ export default class EditVolumeForm extends React.Component {
   }
 
   render(){
-    const initialValues = this.props.volume ? {
-      name: this.props.volume.name,
-      description: this.props.volume.description
+    const {snapshot} = this.props
+    const initialValues = snapshot ? {
+      status: snapshot.status,
     } : {}
 
     return (
@@ -57,7 +64,9 @@ export default class EditVolumeForm extends React.Component {
         onExited={this.restoreUrl}
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">Edit Volume</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            Reset Snapshot Status <span className="info-text">{snapshot && snapshot.name || this.props.id}</span>
+          </Modal.Title>
         </Modal.Header>
 
         <Form
@@ -66,7 +75,7 @@ export default class EditVolumeForm extends React.Component {
           onSubmit={this.onSubmit}
           initialValues={initialValues}>
 
-          {this.props.volume ?
+          {this.props.snapshot ?
             <FormBody/>
             :
             <Modal.Body>

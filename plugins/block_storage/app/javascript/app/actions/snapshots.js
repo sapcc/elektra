@@ -1,23 +1,17 @@
 import * as constants from '../constants';
 import { pluginAjaxHelper } from 'ajax_helper';
 import { confirm } from 'lib/dialogs';
+import { addNotice, addError } from 'lib/flashes';
+
+import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 
 const ajaxHelper = pluginAjaxHelper('block-storage')
+const errorMessage = (error) =>
+  error.response && error.response.data && error.response.data.errors ||
+  error.message
+
 
 //################### SNAPSHOTS #########################
-const requestSnapshot= (id) => (
-  {
-    type: constants.REQUEST_SNAPSHOT,
-    id
-  }
-)
-
-const requestSnapshotFailure= (id) => (
-  {
-    type: constants.REQUEST_SNAPSHOT_FAILURE
-  }
-);
-
 const receiveSnapshot= (snapshot) =>
   ({
     type: constants.RECEIVE_SNAPSHOT,
@@ -25,26 +19,50 @@ const receiveSnapshot= (snapshot) =>
   })
 ;
 
+const requestSnapshotDelete= (id) => (
+  {
+    type: constants.REQUEST_SNAPSHOT_DELETE,
+    id
+  }
+)
+
+const removeSnapshot= (id) => (
+  {
+    type: constants.REMOVE_SNAPSHOT,
+    id
+  }
+)
+
 const fetchSnapshot= (id) =>
   (dispatch) => {
-    dispatch(requestSnapshot(id));
-
     return new Promise((handleSuccess,handleError) =>
       ajaxHelper.get(`/snapshots/${id}`).then( (response) => {
-        if (response.data.errors) {
-          throw(response.data.errors)
-        } else {
-          dispatch(receiveSnapshot(response.data.snapshot));
-          handleSuccess(response.data.snapshot)
-        }
+        dispatch(receiveSnapshot(response.data.snapshot));
+        handleSuccess(response.data.snapshot)
       })
       .catch( (error) => {
-        dispatch(requestSnapshotFailure(id));
-        handleError(error.message || error)
+        if(error.response.status == 404) {
+          dispatch(removeSnapshot(id))
+        } else {
+          handleError(errorMessage(error))
+        }
       })
     )
   }
 ;
+
+const deleteSnapshot=(id) =>
+  (dispatch) =>
+    confirm(`Do you really want to delete the snapshot ${id}?`).then(() => {
+      return ajaxHelper.delete(`/snapshots/${id}`)
+      .then(response => dispatch(requestSnapshotDelete(id)))
+      .catch( (error) => {
+        addError(React.createElement(ErrorsList, {
+          errors: errorMessage(error)
+        }))
+      });
+    }).catch(cancel => true)
+
 
 //################################
 
@@ -80,14 +98,10 @@ const fetchSnapshots= () =>
     if(marker) params['marker'] = marker.id
 
     return ajaxHelper.get('/snapshots', {params: params }).then( (response) => {
-      if (response.data.errors) {
-        throw(response.data.errors)
-      } else {
-        dispatch(receiveSnapshots(response.data.snapshots, response.data.has_next));
-      }
+      dispatch(receiveSnapshots(response.data.snapshots, response.data.has_next));
     })
     .catch( (error) => {
-      dispatch(requestSnapshotsFailure(error.message || error));
+      dispatch(requestSnapshotsFailure(errorMessage(error)));
     });
   }
 ;
@@ -140,9 +154,49 @@ const fetchSnapshotsIfNeeded= () =>
   }
 ;
 
+//################ SNAPSHOT FORM ###################
+const submitNewSnapshotForm= (values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.post('/snapshots/', { snapshot: values }
+      ).then((response) => {
+        dispatch(receiveSnapshot(response.data))
+        handleSuccess()
+        addNotice('Snapshot is being created.')
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
+const submitEditSnapshotForm= (id,values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/snapshots/${id}`, { snapshot: values }
+      ).then((response) => {
+        dispatch(receiveSnapshot(response.data))
+        handleSuccess()
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
+const submitResetSnapshotStatusForm= (id,values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/snapshots/${id}/reset-status`, values
+      ).then((response) => {
+        dispatch(receiveSnapshot(response.data))
+        handleSuccess()
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
 export {
   fetchSnapshotsIfNeeded,
   fetchSnapshot,
+  fetchAvailabilityZonesIfNeeded,
   searchSnapshots,
+  deleteSnapshot,
+  submitNewSnapshotForm,
+  submitEditSnapshotForm,
+  submitResetSnapshotStatusForm,
   loadNext
 }

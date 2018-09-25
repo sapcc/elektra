@@ -40,25 +40,6 @@ const setSearchTerm= (state,{searchTerm}) => (
   {...state, searchTerm}
 );
 
-const requestSnapshot= function(state,{id}) {
-  const index = state.items.findIndex((item) => item.id==id);
-  if (index<0) { return state; }
-
-  const newState = {...state};
-  newState.items[index].isFetching = true;
-  return newState;
-};
-
-const requestSnapshotFailure=function(state,{id}){
-  const index = state.items.findIndex((item) => item.id==id);
-  if (index<0) { return state; }
-
-  const newState = {...state}
-
-  newState.items[index].isFetching = false;
-  return newState;
-};
-
 const receiveSnapshot= function(state,{snapshot}) {
   const index = state.items.findIndex((item) => item.id==snapshot.id);
   const items = state.items.slice();
@@ -67,6 +48,21 @@ const receiveSnapshot= function(state,{snapshot}) {
   return {... state, items: items}
 };
 
+const requestSnapshotDelete = (state,{id})=> {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems[index].status = constants.SNAPSHOT_STATE_DELETING
+  return {...state, items: newItems}
+}
+
+const removeSnapshot = (state,{id}) => {
+  const index = state.items.findIndex((item) => item.id==id);
+  if (index<0) { return state; }
+  let newItems = state.items.slice()
+  newItems.splice(index,1)
+  return {...state, items: newItems}
+}
 
 // osImages reducer
 export default(state=initialState, action) => {
@@ -74,10 +70,10 @@ export default(state=initialState, action) => {
     case constants.REQUEST_SNAPSHOTS: return requestSnapshots(state,action);
     case constants.REQUEST_SNAPSHOTS_FAILURE: return requestSnapshotsFailure(state,action);
     case constants.RECEIVE_SNAPSHOTS: return receiveSnapshots(state,action);
-    case constants.REQUEST_SNAPSHOT: return requestSnapshot(state,action);
-    case constants.REQUEST_SNAPSHOT_FAILURE: return requestSnapshotFailure(state,action);
     case constants.RECEIVE_SNAPSHOT: return receiveSnapshot(state,action);
     case constants.SET_SNAPSHOT_SEARCH_TERM: return setSearchTerm(state,action);
+    case constants.REQUEST_SNAPSHOT_DELETE: return requestSnapshotDelete(state,action);
+    case constants.REMOVE_SNAPSHOT: return removeSnapshot(state,action);
     default: return state;
   }
 };
