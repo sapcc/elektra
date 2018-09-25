@@ -7,14 +7,15 @@ Feature: Volumes
     Then I am redirected to domain path "home"
 
   Scenario: The Volumes page is reachable
-    When I visit project path "block-storage/volumes"
+    When I visit project path "block-storage/#/volumes"
     Then the page status code is successful
-     And I see "Create new" button
-    When I click on "Create new"
+     And All AJAX calls are successful
+     And I see "Create New" button
+    When I click on "Create New"
     Then the page status code is successful
 
   Scenario: The Snapshots page is reachable
-    When I visit project path "block-storage/snapshots"
+    When I visit project path "block-storage/#/snapshots"
     Then the page status code is successful
-    And I see "Snapshots"
-
+     And All AJAX calls are successful
+     And I see "Snapshots"

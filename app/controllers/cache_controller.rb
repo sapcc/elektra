@@ -19,10 +19,11 @@ class CacheController < ::ScopeController
 
   def index
     page = (params[:page] || 1).to_i
+    per_page = (params[:per_page] || 30).to_i
 
     items = ObjectCache.find_objects(
       type: params[:type], term: params[:term], include_scope: true,
-      paginate: { page: page, per_page: 30 }
+      paginate: { page: page, per_page: per_page }
     ) do |sql|
       where_current_token_scope(sql).order(:name)
     end

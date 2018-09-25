@@ -1,9 +1,0 @@
-<%if @volume && !@volume.errors.empty?%>
-  InfoDialog.show('Could not delete volume!', '<p><%= @volume.errors.full_messages.join(', ')%></p><p>Please remove all associated snapshots before deleting the volume.</p>', {dialogSize: 'lg'});
-  $("#volume_<%=params[:id]%>").removeClass('updating');
-<%elsif @volume%>
-$("#volume_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'block_storage/volumes/item', locals: {volume: @volume, target_state: @target_state, servers: @servers })) %>");
-$("#volume_<%=params[:id]%>").update();
-<%else%>
-$("#volume_<%=params[:id]%>").remove();
-<%end%>

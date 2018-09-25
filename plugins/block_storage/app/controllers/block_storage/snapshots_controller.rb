@@ -1,103 +1,111 @@
-require_dependency "block_storage/application_controller"
+# frozen_string_literal: true
 
 module BlockStorage
-  class SnapshotsController < ApplicationController
-    before_action :set_snapshot, except: [:index]
-
+  class SnapshotsController < BlockStorage::ApplicationController
     authorization_context 'block_storage'
     authorization_required
 
     # GET /snapshots
     def index
-      if @scoped_project_id
-        @snapshots = paginatable(per_page: (params[:per_page] || 20)) do |pagination_options|
-          services.block_storage.snapshots(pagination_options)
-        end
+      per_page = (params[:per_page] || 5).to_i
 
-        @quota_data = []
-        if current_user.is_allowed?("access_to_project")
-          @quota_data = services.resource_management.quota_data(
-            current_user.domain_id || current_user.project_domain_id,
-            current_user.project_id,[
-            {service_type: :volumev2, resource_name: :snapshots, usage: @snapshots.length},
-            {service_type: :volumev2, resource_name: :capacity}
-          ])
-        end
+      options = { sort: 'id:asc', limit: per_page + 1 }
+      options[:marker] = params[:marker] if params[:marker]
+      snapshots = services.block_storage.snapshots_detail(options)
 
-        # this is relevant in case an ajax paginate call is made.
-        # in this case we don't render the layout, only the list!
-        if request.xhr?
-          render partial: 'list', locals: {snapshots: @snapshots}
-        else
-          # comon case, render index page with layout
-          render action: :index
-        end
-      end
+      extend_snapshot_data(snapshots)
+
+      # byebug
+      render json: {
+        snapshots: snapshots,
+        has_next: snapshots.length > per_page
+      }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: {
+        errors: e.message
+      }
     end
 
-    # GET /snapshots/1
     def show
+      snapshot = services.block_storage.find_snapshot!(params[:id])
+      extend_snapshot_data(snapshot)
+
+      render json: { snapshot: snapshot }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
     end
 
-    # GET /snapshots/1/edit
-    def edit
+    def create
+      snapshot = services.block_storage.new_snapshot(
+        params[:snapshot].merge(force: false)
+      )
+
+      if snapshot.save
+        audit_logger.info(current_user, 'has created', snapshot)
+        render json: snapshot
+      else
+        render json: { errors: snapshot.errors }, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
     end
 
-    # PATCH/PUT /snapshots/1
     def update
-      if @snapshot.update(snapshot_params)
-        audit_logger.info(current_user, 'has updated', @snapshot)
-        redirect_to @snapshot, notice: 'Snapshot was successfully updated.'
+      snapshot = services.block_storage.find_snapshot!(params[:id])
+
+      if snapshot.update(params[:snapshot])
+        audit_logger.info(current_user, 'has updated', snapshot)
+        extend_snapshot_data(snapshot)
+        render json: snapshot
       else
-        @snapshot.errors[:base]
-        render :edit
+        render json: { errors: snapshot.errors }, status: 422
       end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
     end
 
-    # DELETE /snapshots/1
     def destroy
-      if @snapshot.destroy
-        audit_logger.info(current_user, 'has deleted', @snapshot)
+      snapshot = services.block_storage.new_snapshot
+      snapshot.id = params[:id]
+      if snapshot.destroy
+        audit_logger.info(current_user, 'has deleted', snapshot)
+        head 202
       else
-        flash.now[:error] = 'Error during Snapshot deletion!'
+        render json: { errors: snapshot.errors }, status: 422
       end
-      redirect_to snapshots_url, notice: 'Snapshot was successfully deleted.'
-    end
-
-    def create_volume
-      @volume = services.block_storage_.new_volume
-      @volume.name = 'vol-' + @snapshot.name
-      @volume.description = @snapshot.description
-      @volume.size = @snapshot.size
-      @volume.snapshot_id = @snapshot.id
-      render 'block_storage/volumes/new.html'
-    end
-
-
-    def new_status
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
     end
 
     def reset_status
-      @snapshot.reset_status(params[:snapshot][:status])
-      # reload snapshot
-      @snapshot = services.block_storage.find_snapshot(params[:id])
-      if @snapshot.status == params[:snapshot][:status]
-        audit_logger.info(current_user, 'has reset', @snapshot)
-        render template: 'block_storage/snapshots/reset_status.js'
+      snapshot = services.block_storage.find_snapshot(params[:id])
+
+      if snapshot.reset_status(params[:status])
+        audit_logger.info(current_user, 'has reset snapshot', snapshot.id)
+        render json: snapshot
       else
-        render action: :new_status
+        render json: { errors: snapshot.errors }, status: 422
       end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
     end
 
-    private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_snapshot
-      @snapshot = services.block_storage.find_snapshot(params[:id])
-    end
+    protected
+    # this method extends volumes with data from cache
+    def extend_snapshot_data(snapshots)
+      snapshots = [snapshots] unless snapshots.is_a?(Array)
 
-    # Only allow a trusted parameter "white list" through.
-    def snapshot_params
-      params[:snapshot]
+      volume_ids = snapshots.collect(&:volume_id)
+
+      cached_volumes = ObjectCache.where(id: volume_ids).pluck(:id,:name).each_with_object({}) do |v,map|
+        map[v[0]] = v[1]
+      end
+
+      snapshots.each do |snapshot|
+        if cached_volumes[snapshot.volume_id]
+          snapshot.volume_name = cached_volumes[snapshot.volume_id]
+        end
+      end
     end
   end
 end

@@ -4,15 +4,23 @@ module BlockStorage
   class Snapshot < Core::ServiceLayer::Model
     validates :name, :description, presence: true
 
-    STATUS = [
-      # 'creating',
-      'available',
-      # 'deleting',
-      'error',
-      # 'error_deleting'
-    ].freeze
+    def attributes_for_create
+      {
+        'name'              => read('name'),
+        'description'       => read('description'),
+        'volume_id'         => read('volume_id'),
+        'force'             => read('force'),
+        'metadata'          => read('metadata')
+      }.delete_if { |_k, v| v.blank? }
+    end
 
-    # { status: '...', attach_status: '...', migration_status: '...' }
+    def attributes_for_update
+      {
+        'name'              => read('name'),
+        'description'       => read('description')
+      }.delete_if { |_k, v| v.blank? }
+    end
+
     def reset_status(new_status)
       rescue_api_errors do
         service.reset_snapshot_status(id, status: new_status)

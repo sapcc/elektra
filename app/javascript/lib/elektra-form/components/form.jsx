@@ -40,7 +40,10 @@ export default class Form extends React.Component {
   componentWillReceiveProps(nextProps) {
     // set initialValues unless already set.
     if( nextProps.initialValues && Object.keys(this.state.values).length==0) {
-      this.setState({values: nextProps.initialValues})
+      this.setState({
+        values: nextProps.initialValues,
+        isValid: nextProps.validate ? nextProps.validate(nextProps.initialValues) : true
+      })
     }
   }
 

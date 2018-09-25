@@ -1,7 +1,0 @@
-<%if @volume%>
-$("#volume_<%=params[:id]%>").replaceWith("<%= j(render(partial: 'block_storage/volumes/item', locals: {volume: @volume, target_state: @target_state, servers: @servers })) %>");
-$("#volume_<%=params[:id]%>").update();
-MoModal.close();
-<%else%>
-$("#volume_<%=params[:id]%>").remove();
-<%end%>
