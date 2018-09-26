@@ -81,6 +81,21 @@ module ServiceLayer
         end
       end
 
+      def upload_volume_to_image(id, options = {})
+        elektron_volumes.post("volumes/#{id}/action") do
+          {
+            'os-volume_upload_image'=> {
+              'image_name' => options['image_name'],
+              'force' => options['force'] || false,
+              'disk_format' => options['disk_format'] || 'vmdk',
+              'container_format' => options['container_format'] || 'bare',
+              'visibility' => options['visibility'] || 'private',
+              'protected' => false
+            }
+          }
+        end
+      end
+
       def attach(volume_id, server_id, device = nil)
         # block storage api does not support empty device option.
         # In this case use attach method frm compute which accepts blank

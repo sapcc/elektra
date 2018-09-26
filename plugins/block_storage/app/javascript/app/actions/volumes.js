@@ -61,6 +61,57 @@ const fetchAvailabilityZonesIfNeeded= () =>
   }
 ;
 
+// #################### Images ################
+const requestImages= () => (
+  {
+    type: constants.REQUEST_IMAGES,
+    requestedAt: Date.now()
+  }
+)
+
+const requestImagesFailure= (error) => (
+  {
+    type: constants.REQUEST_IMAGES_FAILURE,
+    error
+  }
+);
+
+const receiveImages= (items) =>
+  ({
+    type: constants.RECEIVE_IMAGES,
+    items
+  })
+;
+
+const fetchImages= () =>
+  (dispatch) => {
+    dispatch(requestImages());
+
+    ajaxHelper.get(`/volumes/images`).then( (response) => {
+      dispatch(receiveImages(response.data.images));
+    })
+    .catch( (error) => {
+      dispatch(requestImagesFailure(errorMessage(error)));
+    })
+  }
+;
+
+const shouldFetchImages= (state) => {
+  if (state.images.isFetching || state.images.requestedAt) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+const fetchImagesIfNeeded= () =>
+  (dispatch, getState) => {
+    if (shouldFetchImages(getState())) {
+      return dispatch(fetchImages());
+    }
+  }
+;
+
 //################### VOLUMES #########################
 const receiveVolume= (volume) =>
   ({
@@ -267,6 +318,29 @@ const submitExtendVolumeSizeForm= (id,values) => (
     )
 );
 
+const submitCloneVolumeForm= (values) => (
+  (dispatch) => {
+    return new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.post('/volumes/', { volume: values }
+      ).then((response) => {
+        dispatch(receiveVolume(response.data))
+        handleSuccess()
+        addNotice('Volume is being created.')
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+  }
+);
+
+const submitVolumeToImageForm= (id,values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.post(`/volumes/${id}/to-image`, {image: values}).then((response) => {
+        handleSuccess()
+        addNotice('Image is being uploaded.')
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
 const requestVolumeAttach= (id) => (
   {
     type: constants.REQUEST_VOLUME_ATTACH,
@@ -309,6 +383,7 @@ export {
   fetchVolumesIfNeeded,
   fetchVolume,
   fetchAvailabilityZonesIfNeeded,
+  fetchImagesIfNeeded,
   searchVolumes,
   deleteVolume,
   forceDeleteVolume,
@@ -318,5 +393,7 @@ export {
   submitEditVolumeForm,
   submitResetVolumeStatusForm,
   submitExtendVolumeSizeForm,
+  submitCloneVolumeForm,
+  submitVolumeToImageForm,
   loadNext
 }

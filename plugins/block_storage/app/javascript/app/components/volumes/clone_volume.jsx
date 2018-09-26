@@ -1,37 +1,25 @@
 import { Modal, Button } from 'react-bootstrap';
 import { Form } from 'lib/elektra-form';
 import { Link } from 'react-router-dom';
+import * as constants from '../../constants';
 
-const FormBody = ({values, availabilityZones, images}) =>
+const FormBody = ({values,volume,availabilityZones}) =>
   <Modal.Body>
     <Form.Errors/>
 
-    {/*
-    <Form.ElementHorizontal label='Image ID' name="imageRef">
-      { images.isFetching ?
-        <span className='spinner'/>
-        :
-        images.error ?
-          <span className='text-danger'>Could not load images</span>
+    <Form.ElementHorizontal label='Source Volume' name="source_volid">
+      <p className='form-control-static'>
+        {volume ?
+          <React.Fragment>
+            {volume.name}
+            <br/>
+            <span className='info-text'>ID: {volume.id}</span>
+          </React.Fragment>
           :
-          <Form.Input
-            elementType='select'
-            className="select required form-control"
-            name='imageRef'>
-            <option></option>
-            {images.items.map((image,index) =>
-              <option value={image.id} key={index}>
-                {image.name}
-              </option>
-            )}
-          </Form.Input>
-      }
-      <span className="help-block">
-        The UUID of the image from which you want to create the volume.
-        Required to create a bootable volume.
-      </span>
+          volume.id
+        }
+      </p>
     </Form.ElementHorizontal>
-    */}
 
     <Form.ElementHorizontal label='Name' name="name" required>
       <Form.Input elementType='input' type='text' name='name'/>
@@ -67,10 +55,14 @@ const FormBody = ({values, availabilityZones, images}) =>
     </Form.ElementHorizontal>
   </Modal.Body>
 
-export default class NewVolumeForm extends React.Component {
+
+export default class ResetVolumeStatusForm extends React.Component {
   state = { show: true }
 
   componentDidMount() {
+    if(!this.props.volume) {
+      this.props.loadVolume().catch((loadError) => this.setState({loadError}))
+    }
     this.loadDependencies(this.props)
   }
 
@@ -80,11 +72,10 @@ export default class NewVolumeForm extends React.Component {
 
   loadDependencies = (props) => {
     props.loadAvailabilityZonesOnce()
-    props.loadImagesOnce()
   }
 
   validate = (values) => {
-    return values.name && values.size && values.availability_zone && values.description && true
+    return values.name && values.size && values.availability_zone && values.description && values.source_volid && true
   }
 
   close = (e) => {
@@ -102,18 +93,26 @@ export default class NewVolumeForm extends React.Component {
   }
 
   render(){
-    const initialValues = {}
+    const {volume, availabilityZones, id} = this.props
+    const initialValues = volume ? {
+      source_volid: volume.id,
+      name: `clone-${volume.name}`,
+      description: `Clone of the volume ${volume.name} (${volume.id})`,
+      availability_zone: volume.availability_zone,
+      size: volume.size
+    } : {}
 
     return (
       <Modal
         show={this.state.show}
         onHide={this.close}
         bsSize="large"
-        backdrop='static'
         onExited={this.restoreUrl}
         aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-lg">New Volume</Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">
+            Clone Volume <span className="info-text">{volume && volume.name || this.props.id}</span>
+          </Modal.Title>
         </Modal.Header>
 
         <Form
@@ -122,13 +121,18 @@ export default class NewVolumeForm extends React.Component {
           onSubmit={this.onSubmit}
           initialValues={initialValues}>
 
-          <FormBody
-            availabilityZones={this.props.availabilityZones}
-            images={this.props.images}/>
+          {this.props.volume ?
+            <FormBody volume={volume} availabilityZones={availabilityZones}/>
+            :
+            <Modal.Body>
+              <span className='spinner'></span>
+              Loading...
+            </Modal.Body>
+          }
 
           <Modal.Footer>
             <Button onClick={this.close}>Cancel</Button>
-            <Form.SubmitButton label='Save'/>
+            <Form.SubmitButton label='Clone'/>
           </Modal.Footer>
         </Form>
       </Modal>

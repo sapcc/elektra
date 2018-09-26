@@ -134,6 +134,20 @@ module BlockStorage
       render json: { errors: e.message }, status: e.code
     end
 
+    def to_image
+      volume = services.block_storage.new_volume
+      volume.id = params[:id]
+
+      if volume.upload_to_image(params[:image])
+        audit_logger.info(current_user, 'has uploaded volume to image', volume.id, params[:image])
+        head 202
+      else
+        render json: { errors: volume.errors }, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
     def force_delete
       volume = services.block_storage.new_volume
       volume.id = params[:id]
@@ -150,6 +164,12 @@ module BlockStorage
 
     def availability_zones
       render json: { availability_zones: services.compute.availability_zones }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
+    def images
+      render json: { images: services.image.images }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     end

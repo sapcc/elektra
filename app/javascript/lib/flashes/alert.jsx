@@ -59,5 +59,5 @@ Alert.propTypes = {
 };
 
 Alert.defaultProps = {
-  timeout: 5000
+  timeout: 15000
 };

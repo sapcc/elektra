@@ -1,6 +1,9 @@
 import { connect } from  'react-redux';
-import ExtendVolumeSizeModal from '../../components/volumes/extend_size';
-import {submitExtendVolumeSizeForm,fetchVolume} from '../../actions/volumes';
+import VolumeToImageModal from '../../components/volumes/to_image';
+import {
+  submitVolumeToImageForm,
+  fetchVolume
+} from '../../actions/volumes';
 
 export default connect(
   (state,ownProps ) => {
@@ -15,8 +18,8 @@ export default connect(
   (dispatch,ownProps) => {
     let id = ownProps.match && ownProps.match.params && ownProps.match.params.id
     return {
-      handleSubmit: (values) => id ? dispatch(submitExtendVolumeSizeForm(id,values)) : null,
+      handleSubmit: (values) => dispatch(submitVolumeToImageForm(id,values)),
       loadVolume: () => id ? dispatch(fetchVolume(id)) : null
     }
   }
-)(ExtendVolumeSizeModal);
+)(VolumeToImageModal);

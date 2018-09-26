@@ -8,10 +8,12 @@ import Volumes from '../containers/volumes/list'
 import Snapshots from '../containers/snapshots/list'
 import ShowVolumeModal from '../containers/volumes/show'
 import NewVolumeModal from '../containers/volumes/new'
+import CloneVolumeModal from '../containers/volumes/clone_volume'
 import EditVolumeModal from '../containers/volumes/edit'
 import AttachVolumeModal from '../containers/volumes/attach'
 import ResetVolumeStatusModal from '../containers/volumes/reset_status'
 import ExtendVolumeSizeModal from '../containers/volumes/extend_size'
+import VolumeToImageModal from '../containers/volumes/to_image'
 
 import ShowSnapshotModal from '../containers/snapshots/show'
 import NewSnapshotModal from '../containers/snapshots/new'
@@ -44,8 +46,14 @@ export default (props) => {
             <Route exact path="/snapshots/volumes/:id/show" component={ShowVolumeModal}/>
           </React.Fragment>
         }
+        { policy.isAllowed("image:image_create") &&
+          <Route exact path="/volumes/:id/images/new" component={VolumeToImageModal}/>
+        }
         { policy.isAllowed("block_storage:volume_create",{target:{scoped_domain_name: scope.domain}}) &&
-          <Route exact path="/volumes/new" component={NewVolumeModal}/>
+          <React.Fragment>
+            <Route exact path="/volumes/new" component={NewVolumeModal}/>
+            <Route exact path="/volumes/:id/new" component={CloneVolumeModal}/>
+          </React.Fragment>
         }
         { policy.isAllowed("block_storage:snapshot_create", {target: {scoped_domain_name: scope.domain}}) &&
           <Route exact path="/snapshots/:snapshot_id/volumes/new" component={NewSnapshotVolumeModal}/>

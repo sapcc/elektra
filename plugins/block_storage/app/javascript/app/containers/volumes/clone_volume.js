@@ -1,6 +1,10 @@
 import { connect } from  'react-redux';
-import ExtendVolumeSizeModal from '../../components/volumes/extend_size';
-import {submitExtendVolumeSizeForm,fetchVolume} from '../../actions/volumes';
+import CloneVolumeModal from '../../components/volumes/clone_volume';
+import {
+  fetchAvailabilityZonesIfNeeded,
+  submitCloneVolumeForm,
+  fetchVolume
+} from '../../actions/volumes';
 
 export default connect(
   (state,ownProps ) => {
@@ -10,13 +14,14 @@ export default connect(
     if (id) {
       volume = state.volumes.items.find(item => item.id == id)
     }
-    return { volume, id }
+    return { volume, id, availabilityZones: state.availabilityZones }
   },
   (dispatch,ownProps) => {
     let id = ownProps.match && ownProps.match.params && ownProps.match.params.id
     return {
-      handleSubmit: (values) => id ? dispatch(submitExtendVolumeSizeForm(id,values)) : null,
+      loadAvailabilityZonesOnce: () => dispatch(fetchAvailabilityZonesIfNeeded()),
+      handleSubmit: (values) => dispatch(submitCloneVolumeForm(values)),
       loadVolume: () => id ? dispatch(fetchVolume(id)) : null
     }
   }
-)(ExtendVolumeSizeModal);
+)(CloneVolumeModal);

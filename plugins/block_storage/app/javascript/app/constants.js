@@ -13,11 +13,15 @@ export const REQUEST_AVAILABILITY_ZONES =      'block_storage/app/REQUEST_AVAILA
 export const RECEIVE_AVAILABILITY_ZONES =      'block_storage/app/RECEIVE_AVAILABILITY_ZONES'
 export const REQUEST_AVAILABILITY_ZONES_FAILURE = 'block_storage/app/REQUEST_AVAILABILITY_ZONE_FAILURE'
 
+export const REQUEST_IMAGES =                  'block_storage/app/REQUEST_IMAGES'
+export const RECEIVE_IMAGES =                  'block_storage/app/RECEIVE_IMAGES'
+export const REQUEST_IMAGES_FAILURE =          'block_storage/app/REQUEST_IMAGE_FAILURE'
+
 export const REQUEST_SNAPSHOTS =               'block_storage/app/REQUEST_SNAPSHOTS'
 export const RECEIVE_SNAPSHOTS =               'block_storage/app/RECEIVE_SNAPSHOTS'
-export const REMOVE_SNAPSHOT =                'block_storage/app/REMOVE_SNAPSHOT'
+export const REMOVE_SNAPSHOT =                 'block_storage/app/REMOVE_SNAPSHOT'
 export const REQUEST_SNAPSHOTS_FAILURE =       'block_storage/app/REQUEST_SNAPSHOT_FAILURE'
-export const REQUEST_SNAPSHOT_DELETE =        'block_storage/app/REQUEST_SNAPSHOT_DELETE'
+export const REQUEST_SNAPSHOT_DELETE =         'block_storage/app/REQUEST_SNAPSHOT_DELETE'
 export const RECEIVE_SNAPSHOT =                'block_storage/app/RECEIVE_SNAPSHOT'
 export const SET_SNAPSHOT_SEARCH_TERM =        'block_storage/app/SET_SNAPSHOT_SEARCH_TERM'
 

@@ -1,5 +1,5 @@
 import { connect } from  'react-redux';
-import RestVolumeStatusModal from '../../components/volumes/reset_status';
+import ResetVolumeStatusModal from '../../components/volumes/reset_status';
 import {submitResetVolumeStatusForm,fetchVolume} from '../../actions/volumes';
 
 export default connect(
@@ -19,4 +19,4 @@ export default connect(
       loadVolume: () => id ? dispatch(fetchVolume(id)) : null
     }
   }
-)(RestVolumeStatusModal);
+)(ResetVolumeStatusModal);

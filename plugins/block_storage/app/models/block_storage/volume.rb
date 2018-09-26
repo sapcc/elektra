@@ -14,7 +14,14 @@ module BlockStorage
         'description'       => read('description'),
         'size'              => read('size'),
         'availability_zone' => read('availability_zone'),
-        'snapshot_id'       => read('snapshot_id')
+        'snapshot_id'       => read('snapshot_id'),
+        'source_volid'      => read('source_volid'),
+        'multiattach'       => read('multiattach'),
+        'backup_id'         => read('backup_id'),
+        'imageRef'          => read('imageRef'),
+        'volume_type'       => read('volume_type'),
+        'metadata'          => read('metadata'),
+        'consistencygroup_id' => read('consistencygroup_id')
       }.delete_if { |_k, v| v.blank? }
     end
 
@@ -37,6 +44,19 @@ module BlockStorage
       rescue_api_errors do
         service.extend_volume_size(id, size)
         self.size = size
+      end
+    end
+
+    def upload_to_image(image_options)
+      rescue_api_errors do
+        service.upload_volume_to_image(id, {
+          'image_name' => image_options[:image_name],
+          'force' => image_options[:force],
+          'disk_format' => image_options[:disk_format],
+          'container_format' => image_options[:container_format],
+          'visibility' => image_options[:visibility],
+          'protected' => image_options[:protected]
+        })
       end
     end
 

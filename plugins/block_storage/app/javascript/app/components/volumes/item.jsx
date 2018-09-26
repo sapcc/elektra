@@ -116,6 +116,9 @@ export default class Volume extends React.Component {
                 { volume.status == 'available' &&
                   <li><Link to={`/volumes/${volume.id}/snapshots/new`}>Create Snapshot</Link></li>
                 }
+                { policy.isAllowed("block_storage:volume_create", {target: {scoped_domain_name: scope.domain}}) &&
+                  <li><Link to={`/volumes/${volume.id}/new`}>Clone Volume</Link></li>
+                }
                 { volume.attachments && volume.attachments.length==0 && policy.isAllowed("compute:attach_volume", {target: {scoped_domain_name: scope.domain}}) ?
                   <React.Fragment>
                     <li className="divider"></li>
@@ -144,6 +147,9 @@ export default class Volume extends React.Component {
                       <li><Link to={`/volumes/${volume.id}/extend-size`}>Extend Size</Link></li>
                     }
                   </React.Fragment>
+                }
+                {policy.isAllowed("image:image_create") &&
+                  <li><Link to={`/volumes/${volume.id}/images/new`}>Upload To Image</Link></li>
                 }
                 { policy.isAllowed("block_storage:volume_force_delete") &&
                   <li><a href='#' onClick={this.handleForceDelete}>Force Delete</a></li>

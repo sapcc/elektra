@@ -13,6 +13,7 @@ export const formatModificationTime = (mtime) => {
   // DateTime gives a diff in days, but subtraction of
   // ActiveSupport::TimeWithZone gives a diff in seconds)
   if(typeof mtime == 'string') mtime = new Date(mtime)
+  if(!mtime) return ''
 
   const now = new Date()
   // the minus operator returns the difference in days; convert to seconds
