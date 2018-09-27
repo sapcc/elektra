@@ -25,7 +25,7 @@
 
     .toolbar
       %h4 Masterdata
-      - if current_user.is_allowed?('identity:project_update', {target: {project: @active_project}})
+      - if current_user.is_allowed?('masterdata_cockpit:project_masterdatum_update', {target: {project: @active_project}})
         .main-buttons
           = link_to 'Edit', plugin('masterdata_cockpit').project_masterdata_edit_path(), data: {modal: true, toggle: "tooltip", placement: "left"}, class: 'btn btn-primary'
 

@@ -1,5 +1,12 @@
 {
-  "masterdata_cockpit:masterdata_get": "role:admin or role:masterdata_viewer",
-  "masterdata_cockpit:masterdata_edit": "rule:project_admin or rule:domain_admin",
-  "masterdata_cockpit:masterdata_create": "rule:project_admin or rule:domain_admin"
+  "masterdata_or_project_admin": "rule:project_admin or role:masterdata_admin",
+  "masterdata_or_domain_admin": "role:masterdata_admin or rule:domain_admin",
+
+  "masterdata_cockpit:project_masterdatum_list": "rule:masterdata_or_project_admin or role:masterdata_viewer",
+  "masterdata_cockpit:project_masterdatum_update": "rule:masterdata_or_project_admin",
+  "masterdata_cockpit:project_masterdatum_create": "rule:masterdata_or_project_admin",
+
+  "masterdata_cockpit:domain_masterdatum_list": "rule:masterdata_or_domain_admin or role:masterdata_viewer",
+  "masterdata_cockpit:domain_masterdatum_update": "rule:masterdata_or_domain_admin",
+  "masterdata_cockpit:domain_masterdatum_create": "rule:masterdata_or_domain_admin"
 }
