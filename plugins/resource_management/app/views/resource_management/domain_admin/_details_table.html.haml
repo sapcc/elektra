@@ -1,26 +1,25 @@
 %table.table.resource-details
   %thead
     %tr
-      %th.sortable#sortable_name_column 
+      %th.details_table#sortable_name_column
         Project
         %i.fa.fa-sort-alpha-asc.hide-sort-order
-      %th.sortable#quota_column
+      %th.details_table#quota_column
         Approved Quota
         %i.fa.fa-sort-amount-asc.hide-sort-order
-      %th.sortable#current_quota_column
+      %th.details_table#current_quota_column
         Current Quota
         %i.fa.fa-sort-amount-asc.hide-sort-order
-      %th.sortable#usage_column
+      %th.details_table#usage_column
         Usage
         %i.fa.fa-sort-amount-asc.hide-sort-order
       %th Actions
   %tbody
     - @project_resources.each do |project_resource|
       = render partial: 'details_table_row', locals: { project_resource: project_resource }
-  
+
 = paginate @project_resources, theme: 'twitter-bootstrap-3', remote: true
 
 = content_for :javascripts do
   :javascript
     #{ render partial: 'details_table_script.js', locals: { scope: 'admin' } }
-
