@@ -36,6 +36,7 @@ RUN curl -L -o /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/dow
 
 WORKDIR /home/app/webapp
 ENV RAILS_ENV=production
+LABEL quay.expires-after=26w
 
 # RUN gem install bundler 1.16.0
 
