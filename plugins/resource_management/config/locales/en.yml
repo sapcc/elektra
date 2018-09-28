@@ -46,3 +46,5 @@ en:
     share_snapshots: Share Snapshots
     snapshot_capacity: Share Snapshot Capacity
     per_flavor: Restricted Flavors
+    database: Cloud Frame Manager
+    cfm_share_capacity: Share Capacity
