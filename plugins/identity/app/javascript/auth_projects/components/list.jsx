@@ -94,7 +94,7 @@ export default class List extends React.Component {
       }
 
       let labelClass
-      if(searchMode && project.name.indexOf(this.state.searchTerm)<0) {
+      if(searchMode && this.state.searchTerm && project.name.toLowerCase().indexOf(this.state.searchTerm.toLowerCase())<0) {
         if(!hasChildren || children.length == 0) return null
         labelClass = 'info-text'
       }
