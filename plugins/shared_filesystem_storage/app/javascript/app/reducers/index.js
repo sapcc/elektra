@@ -1,3 +1,4 @@
+export { shareServers } from './share_servers';
 export { shares } from './shares/shares';
 export { shareRules } from './shares/share_rules';
 export { shareTypes } from './shares/share_types';

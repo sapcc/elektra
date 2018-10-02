@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
+import ReactJson from 'react-json-view'
 
 const Row = ({label,value,children}) => {
   return (
@@ -26,6 +27,10 @@ export default class ShowShareNetwork extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({show: nextProps.shareNetwork!=null})
+  }
+
+  componentDidMount(){
+    this.props.loadShareServersOnce()
   }
 
   renderOverview(shareNetwork) {
@@ -61,6 +66,18 @@ export default class ShowShareNetwork extends React.Component {
     )
   }
 
+  renderShareServers = () => {
+    const {shareServerItems, isFetchingShareServers} = this.props
+
+    if (isFetchingShareServers) return <span className='spinner'/>
+
+    if (!shareServerItems || shareServerItems.length == 0) {
+      return <p className='alert'>No share servers found!</p>
+    }
+
+    return <ReactJson src={shareServerItems} collapsed={3}/>
+  }
+
   renderSubnet(subnet){
     if(!subnet) return null
     return(
@@ -80,7 +97,8 @@ export default class ShowShareNetwork extends React.Component {
 
 
   render() {
-    let { isFetchingShareNetwork, isFetchingSubnet, isFetchingNetwork, shareNetwork, subnet, network } = this.props
+    let { isFetchingShareNetwork, isFetchingSubnet, isFetchingNetwork,
+      shareNetwork, subnet, network} = this.props
     return (
       <Modal show={this.state.show} onHide={this.close} bsSize="large" aria-labelledby="contained-modal-title-lg">
         <Modal.Header closeButton>
@@ -97,10 +115,15 @@ export default class ShowShareNetwork extends React.Component {
             ) : (
               <Tabs defaultActiveKey={1} id="shareNetwork">
                 <Tab eventKey={1} title="Overview">{this.renderOverview(shareNetwork)}</Tab>
-                <Tab eventKey={2} title="Network">
+                {policy.isAllowed('context_is_sharedfilesystem_admin') &&
+                  <Tab eventKey={2} title='Sahre Servers'>
+                    { this.renderShareServers() }
+                  </Tab>
+                }
+                <Tab eventKey={3} title="Network">
                   {isFetchingNetwork ? <span className='spinner'/> : this.renderNetwork(network)}
                 </Tab>
-                <Tab eventKey={3} title="Subnet">
+                <Tab eventKey={4} title="Subnet">
                   {isFetchingSubnet ? <span className='spinner'/> : this.renderSubnet(subnet)}
                 </Tab>
               </Tabs>

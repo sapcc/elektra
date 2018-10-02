@@ -39,6 +39,11 @@ export const REQUEST_DELETE_SHARE_NETWORK    = 'shared_filesystem_storage/share_
 export const DELETE_SHARE_NETWORK_FAILURE    = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_FAILURE';
 export const DELETE_SHARE_NETWORK_SUCCESS    = 'shared_filesystem_storage/share_networks/DELETE_SHARE_NETWORK_SUCCESS';
 
+// SHARE_SERVERS
+export const REQUEST_SHARE_SERVERS            = 'shared_filesystem_storage/share_networks/REQUEST_SHARE_SERVERS';
+export const RECEIVE_SHARE_SERVERS            = 'shared_filesystem_storage/share_networks/RECEIVE_SHARE_SERVERS';
+export const REQUEST_SHARE_SERVERS_FAILURE    = 'shared_filesystem_storage/share_networks/REQUEST_SHARE_SERVERS_FAILURE';
+
 // SHARE NETWORK SECURITY SERVICES
 export const REQUEST_SHARE_NETWORK_SECURITY_SERVICES             = 'shared_filesystem_storage/share_networks/REQUEST_SHARE_NETWORK_SECURITY_SERVICES'
 export const RECEIVE_SHARE_NETWORK_SECURITY_SERVICES             = 'shared_filesystem_storage/share_networks/RECEIVE_SHARE_NETWORK_SECURITY_SERVICES'

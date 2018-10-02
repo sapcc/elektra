@@ -8,6 +8,7 @@ module ServiceLayer
     include SharedFilesystemStorageServices::Share
     include SharedFilesystemStorageServices::ShareRule
     include SharedFilesystemStorageServices::ShareNetwork
+    include SharedFilesystemStorageServices::ShareServer
     include SharedFilesystemStorageServices::SecurityService
     include SharedFilesystemStorageServices::Snapshot
     include SharedFilesystemStorageServices::ErrorMessage

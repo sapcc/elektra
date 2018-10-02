@@ -54,6 +54,21 @@ module SharedFilesystemStorage
       end
     end
 
+    def share_servers
+      # byebug
+      enforce_permissions(['shared_filesystem_storage:share_server_get'])
+      share_servers = cloud_admin.shared_filesystem_storage.share_servers(share_network: params[:id])
+      if share_servers && share_servers.length > 0
+        share_servers = share_servers.map do |share_server|
+          cloud_admin.shared_filesystem_storage.find_share_server(share_server.id)
+        end
+      end
+
+      render json: { share_servers: share_servers }
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
     protected
 
     def share_network_params

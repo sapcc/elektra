@@ -1,8 +1,10 @@
 import { connect } from  'react-redux';
 import ShowShareModal from '../../components/share_networks/show';
+import { fetchShareServersIfNeeded } from '../../actions/share_servers'
 
 const stateValues = function(state,shareNetworkId) {
-  let isFetchingShareNetwork, isFetchingSubnet, isFetchingNetwork, shareNetwork, subnet, network;
+  let isFetchingShareNetwork, isFetchingSubnet, isFetchingNetwork,
+      shareNetwork, subnet, network;
 
   if (shareNetworkId && state.shareNetworks) {
     isFetchingShareNetwork = state.shareNetworks.isFetching
@@ -27,14 +29,21 @@ const stateValues = function(state,shareNetworkId) {
     isFetchingNetwork,
     shareNetwork,
     subnet,
-    network
+    network,
+    isFetchingShareServers: state.shareServers.isFetching,
+    shareServerItems: state.shareServers.items.find(i => i.share_network_id == shareNetworkId)
   }
 }
 
 export default connect(
   (state,ownProps ) => {
     let shareNetworkId = ((ownProps['match'] || {})['params'] || {})['id'];
-    return stateValues(state,shareNetworkId)  
+    return stateValues(state,shareNetworkId)
   },
-  dispatch => ({})
+  (dispatch,ownProps) => {
+    let shareNetworkId = ((ownProps['match'] || {})['params'] || {})['id'];
+    return {
+      loadShareServersOnce: () => dispatch(fetchShareServersIfNeeded(shareNetworkId))
+    }
+  }
 )(ShowShareModal);

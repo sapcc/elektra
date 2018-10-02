@@ -32,5 +32,8 @@ SharedFilesystemStorage::Engine.routes.draw do
                                   path: 'security-services'
     get :networks, constraints: { format: :json }, on: :collection
     get :subnets, constraints: { format: :json }, on: :collection
+
+    get :share_servers, constraints: { format: :json }, on: :member,
+                        path: 'share-servers'
   end
 end

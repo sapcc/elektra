@@ -46,5 +46,7 @@
   "shared_filesystem_storage:security_service_list": "rule:context_is_share_viewer",
   "shared_filesystem_storage:security_service_get": "rule:context_is_sharedfilesystem_admin",
 
+  "shared_filesystem_storage:share_server_get": "rule:context_is_cloud_sharedfilesystem_admin",
+
   "shared_filesystem_storage:application_get": "rule:shared_filesystem_storage:share_list or rule:shared_filesystem_storage:share_network_list or rule:shared_filesystem_storage:snapshot_list"
 }
