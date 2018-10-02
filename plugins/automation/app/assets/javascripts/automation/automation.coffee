@@ -39,6 +39,8 @@
         $(".flashes").append($(data).contents())
       else
         $(".flashes").append(data)
+    error: (request, status, error) ->
+      $(".flashes").append(request.responseText)
     complete: () ->
       spinner.addClass('hide')
       btn_group.removeClass('hide')

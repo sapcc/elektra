@@ -17,9 +17,9 @@
           %a.help-link{href: "#", data: {toggle: "popover", "popover-type": "help-hint", content: 'Search by name tag, hostname or ID. To use the advanced search use the format “key=value”. Advanced search will find nodes with the given key and value from tags and facts.'}}
             %i.fa.fa-question-circle
 
-
-      .main-buttons
-        = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary'
+      - if current_user.is_allowed?('automation:node_install')
+        .main-buttons
+          = link_to "Add Node", plugin('automation').install_nodes_path, data: {modal: true}, class: 'btn btn-primary'
 
 
     .search-dimmed-area.js-search-dimmed-area
