@@ -1,4 +1,4 @@
-ALLOWED_ROLES = %w(
+ALLOWED_ROLES = %w[
   admin
   audit_viewer
   compute_admin
@@ -20,7 +20,7 @@ ALLOWED_ROLES = %w(
   swiftoperator
   volume_admin
   volume_viewer
-).freeze
+].freeze
 
-BETA_ROLES = %w(
-).freeze
+BETA_ROLES = %w[
+].freeze
