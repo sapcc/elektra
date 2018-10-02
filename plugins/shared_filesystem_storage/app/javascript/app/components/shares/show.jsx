@@ -70,9 +70,9 @@ export default class ShowShareModal extends React.Component{
       return (
         <table className="table no-borders">
           <tbody>
-            Object.keys(share.metadata).map((key) =>
-              <Row label={key} value={share.metadata[key]}/>
-            )
+            {Object.keys(share.metadata).map((key,index) =>
+              <Row label={key} key={index} value={share.metadata[key]}/>
+            )}
           </tbody>
         </table>
       )
