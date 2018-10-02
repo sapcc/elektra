@@ -316,6 +316,18 @@ const submitResetShareStatusForm= (id,values) => (
     )
 );
 
+const submitRevertToSnapshotForm= (id,values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/shares/${id}/revert-to-snapshot`, values
+      ).then((response) => {
+        handleSuccess()
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
+
+
 //####################### AVAILABILITY ZONES ###########################
 // Manila availability zones, not nova!!!
 const shouldFetchAvailabilityZones= function(state) {
@@ -372,6 +384,7 @@ export {
   submitEditShareForm,
   submitEditShareSizeForm,
   submitResetShareStatusForm,
+  submitRevertToSnapshotForm,
   searchShares,
   loadNext
 }

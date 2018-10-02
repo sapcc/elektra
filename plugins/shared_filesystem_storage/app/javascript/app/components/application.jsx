@@ -10,6 +10,7 @@ import ShowShareModal from '../containers/shares/show';
 import NewShareModal from '../containers/shares/new';
 import AccessControlModal from '../containers/shares/access_control';
 import ResetShareStatusModal from '../containers/shares/reset_status'
+import RevertShareToSnapshotModal from '../containers/shares/revert_to_snapshot'
 
 import Snapshots from '../containers/snapshots/list';
 import EditSnapshotModal from '../containers/snapshots/edit';
@@ -77,6 +78,9 @@ export default (props) => {
         }
         { policy.isAllowed("shared_filesystem_storage:share_reset_status") &&
           <Route exact path="/shares/:id/reset-status" component={ResetShareStatusModal}/>
+        }
+        { policy.isAllowed("shared_filesystem_storage:share_revert_to_snapshot") &&
+          <Route exact path="/shares/:id/revert-to-snapshot" component={RevertShareToSnapshotModal}/>
         }
 
         { policy.isAllowed("shared_filesystem_storage:share_network_create") &&

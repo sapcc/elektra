@@ -125,33 +125,47 @@ export default class ShareItem extends React.Component {
                 <i className='fa fa-cog'></i>
               </button>
               <ul className='dropdown-menu dropdown-menu-right' role="menu">
-                { policy.isAllowed("shared_filesystem_storage:share_delete") &&
-                  <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(share.id) } }>Delete</a></li>
-                }
-                { policy.isAllowed("shared_filesystem_storage:share_force_delete") &&
-                  <li><a href='#' onClick={ (e) => { e.preventDefault(); handleForceDelete(share.id) } }>Force Delete</a></li>
-                }
-                { policy.isAllowed("shared_filesystem_storage:share_update") && !this.pendignState() &&
-                  <React.Fragment>
-                    <li><Link to={`/shares/${share.id}/edit`}>Edit</Link></li>
-                    <li><Link to={`/shares/${share.id}/edit-size`}>Extend / Shrink</Link></li>
-                  </React.Fragment>
-                }
-                { policy.isAllowed("shared_filesystem_storage:share_update") && share.status=='available' &&
+                { policy.isAllowed("shared_filesystem_storage:snapshot_create") && share.status=='available' &&
                   <li>
                     <Link to={`/shares/${share.id}/snapshots/new`}>Create Snapshot</Link>
                   </li>
                 }
-                { policy.isAllowed("shared_filesystem_storage:share_update") && share.status=='available' &&
+
+                { policy.isAllowed("shared_filesystem_storage:share_update") && !this.pendignState() &&
+                  <li><Link to={`/shares/${share.id}/edit`}>Edit</Link></li>
+                }
+
+                { policy.isAllowed("shared_filesystem_storage:share_delete") &&
+                  <li><a href='#' onClick={ (e) => { e.preventDefault(); handleDelete(share.id) } }>Delete</a></li>
+                }
+
+                <li className="divider"></li>
+
+                { policy.isAllowed("shared_filesystem_storage:share_extend") && !this.pendignState() &&
+                  <li><Link to={`/shares/${share.id}/edit-size`}>Extend / Shrink</Link></li>
+                }
+
+                { policy.isAllowed("shared_filesystem_storage:share_access_control") && share.status=='available' &&
                   <li>
                     <Link to={`/shares/${share.id}/access-control`}>Access Control</Link>
                   </li>
                 }
+
+                { policy.isAllowed("shared_filesystem_storage:share_force_delete") &&
+                  <li><a href='#' onClick={ (e) => { e.preventDefault(); handleForceDelete(share.id) } }>Force Delete</a></li>
+                }
+
                 { policy.isAllowed("shared_filesystem_storage:share_reset_status") &&
                   <li>
                     <Link to={`/shares/${share.id}/reset-status`}>Reset Status</Link>
                   </li>
                 }
+                { policy.isAllowed("shared_filesystem_storage:share_revert_to_snapshot") &&
+                  <li>
+                    <Link to={`/shares/${share.id}/revert-to-snapshot`}>Revert To Snapshot</Link>
+                  </li>
+                }
+                <li className="divider"></li>
                 <li>
                   <Link to={`/shares/${share.id}/error-log`}>Error Log</Link>
                 </li>

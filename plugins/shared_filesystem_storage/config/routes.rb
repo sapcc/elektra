@@ -11,6 +11,7 @@ SharedFilesystemStorage::Engine.routes.draw do
       put :size, to: 'shares#update_size'
 
       put 'reset-status' => 'shares#reset_status'
+      put 'revert-to-snapshot' => 'shares#revert_to_snapshot'
       delete 'force-delete' => 'shares#force_delete'
     end
   end

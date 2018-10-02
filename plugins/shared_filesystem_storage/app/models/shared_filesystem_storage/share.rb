@@ -40,5 +40,11 @@ module SharedFilesystemStorage
         service.force_delete_share(id)
       end
     end
+
+    def revert_to_snapshot(snapshot_id)
+      rescue_api_errors do
+        service.revert_share_to_snapshot(id,snapshot_id)
+      end
+    end
   end
 end

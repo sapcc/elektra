@@ -83,6 +83,18 @@ module SharedFilesystemStorage
       render json: { errors: e.message }, status: e.code
     end
 
+    def revert_to_snapshot
+      share = services.shared_filesystem_storage.find_share(params[:id])
+
+      if share.revert_to_snapshot(params[:snapshot_id])
+        head 202
+      else
+        render json: { errors: share.errors }, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
     def force_delete
       share = services.shared_filesystem_storage.new_share
       share.id = params[:id]

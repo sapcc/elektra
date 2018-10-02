@@ -108,6 +108,12 @@ module ServiceLayer
         end
       end
 
+      def revert_share_to_snapshot(share_id, snapshot_id)
+        elektron_shares.post("shares/#{share_id}/action") do
+          { 'revert': { 'snapshot_id': snapshot_id } }
+        end
+      end
+
       protected
 
       def types
