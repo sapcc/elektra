@@ -167,6 +167,7 @@ export default class List extends React.Component {
                           shareNetwork={this.shareNetwork(share)}
                           shareRules={this.shareRules(share)}
                           handleDelete={this.props.handleDelete}
+                          handleForceDelete={this.props.handleForceDelete}
                           reloadShare={this.props.reloadShare}
                           loadShareRulesOnce={this.props.loadShareRulesOnce}
                           policy={this.props.policy}/>

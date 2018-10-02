@@ -91,3 +91,24 @@ export const REQUEST_ERROR_MESSAGES             = 'shared_filesystem_storage/err
 export const RECEIVE_ERROR_MESSAGES             = 'shared_filesystem_storage/error_messages/RECEIVE_ERROR_MESSAGES'
 export const REQUEST_ERROR_MESSAGES_FAILURE     = 'shared_filesystem_storage/error_messages/REQUEST_ERROR_MESSAGES_FAILURE'
 export const SET_ERROR_MESSAGE_SEARCH_TERM      = 'shared_filesystem_storage/error_messages/SET_ERROR_MESSAGE_SEARCH_TERM'
+
+
+//####################### SHARE STATES ########################
+export const SHARE_STATE_CREATING         = 'creating' //The share is being created.
+export const SHARE_STATE_AVAILABLE        = 'available' //The share is ready to use.
+export const SHARE_STATE_DELETING         = 'deleting' //The share is being deleted.
+export const SHARE_STATE_ERROR            = 'error' //A share creation error occurred.
+export const SHARE_STATE_ERROR_DELETING   = 'error_deleting' //A share deletion error occurred.
+
+export const SHARE_STATE_MIGRATING        = 'migrating' //A share deletion error occurred.
+export const SHARE_STATE_MIGRATING_TO     = 'migrating_to' //A share deletion error occurred.
+
+export const SHARE_PENDING_STATUS = [
+  SHARE_STATE_CREATING,SHARE_STATE_DELETING,SHARE_STATE_MIGRATING,SHARE_STATE_MIGRATING_TO
+]
+
+export const SHARE_RESET_STATUS = [
+  SHARE_STATE_CREATING, SHARE_STATE_AVAILABLE, SHARE_STATE_ERROR,
+  SHARE_STATE_MIGRATING,SHARE_STATE_DELETING,SHARE_STATE_ERROR_DELETING,
+  SHARE_STATE_MIGRATING_TO
+]

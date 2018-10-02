@@ -6,6 +6,10 @@ import { addNotice, addError } from 'lib/flashes';
 import { ErrorsList } from 'lib/elektra-form/components/errors_list';
 import { removeShareRules } from './share_rules';
 
+const errorMessage = (error) =>
+  error.response && error.response.data && error.response.data.errors ||
+  error.message
+
 //################### SHARES #########################
 const requestShares= () =>
   ({
@@ -126,7 +130,7 @@ const reloadShare= shareId =>
     if (!canReloadShare(getState(),shareId)) { return; }
 
     dispatch(requestShare(shareId));
-    ajaxHelper.get(`/shares/${shareId}`)
+    return ajaxHelper.get(`/shares/${shareId}`)
       .then((response) => dispatch(receiveShare(response.data)))
       .catch((error) => {
         dispatch(requestShareFailure());
@@ -189,6 +193,24 @@ const deleteShare= shareId =>
     }).catch((aborted) => null)
   }
 ;
+
+const forceDeleteShare=(shareId) =>
+  (dispatch) =>
+    confirm(`Do you really want to force delete the share ${shareId}?`).then(() => {
+      dispatch(requestDelete(shareId));
+      ajaxHelper.delete(`/shares/${shareId}/force-delete`).then((response) => {
+        if (response.data && response.data.errors) {
+          addError(React.createElement(ErrorsList, {errors: response.data.errors}));
+          dispatch(deleteShareFailure(shareId))
+        } else {
+          dispatch(removeShare(shareId));
+          dispatch(removeShareRules(shareId));
+        }
+      }).catch((error) => {
+        dispatch(deleteShareFailure(shareId))
+        addError(React.createElement(ErrorsList, {errors: errorMessage(error)}));
+      })
+    }).catch((aborted) => null)
 
 //############### SHARE EXPORT LOCATIONS ################
 const requestShareExportLocations= shareId =>
@@ -283,6 +305,17 @@ const submitEditShareSizeForm= (values) => (
     )
 );
 
+const submitResetShareStatusForm= (id,values) => (
+  (dispatch) =>
+    new Promise((handleSuccess,handleErrors) =>
+      ajaxHelper.put(`/shares/${id}/reset-status`, values
+      ).then((response) => {
+        dispatch(receiveShare(response.data))
+        handleSuccess()
+      }).catch(error => handleErrors({errors: errorMessage(error)}))
+    )
+);
+
 //####################### AVAILABILITY ZONES ###########################
 // Manila availability zones, not nova!!!
 const shouldFetchAvailabilityZones= function(state) {
@@ -332,11 +365,13 @@ export {
   fetchSharesIfNeeded,
   reloadShare,
   deleteShare,
+  forceDeleteShare,
   fetchShareExportLocationsIfNeeded,
   fetchAvailabilityZonesIfNeeded,
   submitNewShareForm,
   submitEditShareForm,
   submitEditShareSizeForm,
+  submitResetShareStatusForm,
   searchShares,
   loadNext
 }

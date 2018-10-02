@@ -13,6 +13,8 @@
   "shared_filesystem_storage:share_delete": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_update": "rule:context_is_share_editor",
   "shared_filesystem_storage:share_export_locations": "rule:context_is_share_viewer",
+  "shared_filesystem_storage:share_force_delete": "rule:context_is_sharedfilesystem_admin",
+  "shared_filesystem_storage:share_reset_status": "rule:context_is_sharedfilesystem_admin",
 
   "shared_filesystem_storage:rule_create": "rule:context_is_share_editor",
   "shared_filesystem_storage:rule_list": "rule:context_is_share_viewer",

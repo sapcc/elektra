@@ -9,6 +9,7 @@ import EditShareSizeModal from '../containers/shares/edit_size';
 import ShowShareModal from '../containers/shares/show';
 import NewShareModal from '../containers/shares/new';
 import AccessControlModal from '../containers/shares/access_control';
+import ResetShareStatusModal from '../containers/shares/reset_status'
 
 import Snapshots from '../containers/snapshots/list';
 import EditSnapshotModal from '../containers/snapshots/edit';
@@ -59,7 +60,7 @@ export default (props) => {
           <React.Fragment>
             <Route exact path="/shares/:id/edit" component={EditShareModal}/>
             <Route exact path="/shares/:id/edit-size" component={EditShareSizeModal}/>
-          </React.Fragment>  
+          </React.Fragment>
         }
         { policy.isAllowed("shared_filesystem_storage:share_update") &&
           <Route exact path="/shares/:id/access-control" component={AccessControlModal}/>
@@ -73,6 +74,9 @@ export default (props) => {
         }
         { policy.isAllowed("shared_filesystem_storage:snapshot_update") &&
           <Route exact path="/snapshots/:id/edit" component={EditSnapshotModal}/>
+        }
+        { policy.isAllowed("shared_filesystem_storage:share_reset_status") &&
+          <Route exact path="/shares/:id/reset-status" component={ResetShareStatusModal}/>
         }
 
         { policy.isAllowed("shared_filesystem_storage:share_network_create") &&

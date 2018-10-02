@@ -5,6 +5,7 @@ import {
   fetchShareExportLocations,
   fetchAvailabilityZonesIfNeeded,
   deleteShare,
+  forceDeleteShare,
   reloadShare,
   searchShares,
   loadNext
@@ -31,6 +32,7 @@ export default connect(
     loadNext: () => dispatch(loadNext()),
     searchShares: (term) => dispatch(searchShares(term)),
     reloadShare: (shareId) => dispatch(reloadShare(shareId)),
-    handleDelete: (shareId) => dispatch(deleteShare(shareId))
+    handleDelete: (shareId) => dispatch(deleteShare(shareId)),
+    handleForceDelete: (shareId) => dispatch(forceDeleteShare(shareId))
   })
 )(ShareList);

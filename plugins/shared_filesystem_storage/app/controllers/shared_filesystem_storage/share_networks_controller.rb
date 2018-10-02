@@ -56,7 +56,7 @@ module SharedFilesystemStorage
 
     def share_servers
       # byebug
-      enforce_permissions(['shared_filesystem_storage:share_server_get'])
+      enforce_permissions(['context_is_sharedfilesystem_admin'])
       share_servers = cloud_admin.shared_filesystem_storage.share_servers(share_network: params[:id])
       if share_servers && share_servers.length > 0
         share_servers = share_servers.map do |share_server|

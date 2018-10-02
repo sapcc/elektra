@@ -71,6 +71,31 @@ module SharedFilesystemStorage
       end
     end
 
+    def reset_status
+      share = services.shared_filesystem_storage.find_share(params[:id])
+
+      if share.reset_state(params[:status])
+        render json: share
+      else
+        render json: { errors: share.errors }, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
+    def force_delete
+      share = services.shared_filesystem_storage.new_share
+      share.id = params[:id]
+
+      if share.force_delete
+        head 202
+      else
+        render json: { errors: share.errors }, status: 422
+      end
+    rescue Elektron::Errors::ApiResponse => e
+      render json: { errors: e.message }, status: e.code
+    end
+
     protected
 
     def share_params

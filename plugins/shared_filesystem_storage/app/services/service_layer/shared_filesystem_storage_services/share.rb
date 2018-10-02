@@ -96,6 +96,18 @@ module ServiceLayer
         end
       end
 
+      def reset_share_state(share_id, new_state)
+        elektron_shares.post("shares/#{share_id}/action") do
+          { 'reset_status': { 'status': new_state } }
+        end
+      end
+
+      def force_delete_share(share_id)
+        elektron_shares.post("shares/#{share_id}/action") do
+          { 'force_delete': nil }
+        end
+      end
+
       protected
 
       def types

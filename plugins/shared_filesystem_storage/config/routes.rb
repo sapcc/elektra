@@ -9,6 +9,9 @@ SharedFilesystemStorage::Engine.routes.draw do
     member do
       get :export_locations, constraints: { format: :json }
       put :size, to: 'shares#update_size'
+
+      put 'reset-status' => 'shares#reset_status'
+      delete 'force-delete' => 'shares#force_delete'
     end
   end
   resources :snapshots, except: %i[new edit], constraints: { format: :json }

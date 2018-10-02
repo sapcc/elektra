@@ -27,5 +27,18 @@ module SharedFilesystemStorage
       end
       false
     end
+
+    def reset_state(new_state)
+      rescue_api_errors do
+        service.reset_share_state(id, new_state)
+        self.status = new_state
+      end
+    end
+
+    def force_delete
+      rescue_api_errors do
+        service.force_delete_share(id)
+      end
+    end
   end
 end

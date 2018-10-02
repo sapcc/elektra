@@ -141,6 +141,7 @@ const submitNewSnapshotForm= (values) =>
         else {
           dispatch(receiveSnapshot(response.data));
           handleSuccess()
+          addNotice('Snapshot is being created.')
         }
       }).catch(error => handleErrors({errors: error.message}))
     })
