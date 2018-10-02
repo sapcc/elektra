@@ -2,6 +2,9 @@ require 'ostruct'
 
 module Automation
   class NodesController < ::Automation::ApplicationController
+    authorization_context 'automation'
+    authorization_required
+
     before_action :search_options, only: %i[index index_update]
     before_action :nodes_with_jobs, only: %i[index index_update]
     before_action :automations, only: %i[index index_update]
@@ -72,6 +75,7 @@ module Automation
       @errors = [{ key: 'danger', message: I18n.t('automation.errors.node_install_show_instructions_error') }]
     end
 
+    # update node tags
     def update
       @node_form = ::Automation::Forms::NodeTags.new(params.to_unsafe_hash['forms_node_tags'])
       @error = false

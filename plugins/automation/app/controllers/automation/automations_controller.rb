@@ -1,5 +1,8 @@
 module Automation
   class AutomationsController < ::Automation::ApplicationController
+    authorization_context 'automation'
+    authorization_required
+
     before_action :automation, only: %i[show edit]
 
     PER_PAGE = 10
