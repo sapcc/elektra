@@ -116,7 +116,7 @@ export default class ShowShareNetwork extends React.Component {
               <Tabs defaultActiveKey={1} id="shareNetwork">
                 <Tab eventKey={1} title="Overview">{this.renderOverview(shareNetwork)}</Tab>
                 {policy.isAllowed('context_is_sharedfilesystem_admin') &&
-                  <Tab eventKey={2} title='Sahre Servers'>
+                  <Tab eventKey={2} title='Share Servers'>
                     { this.renderShareServers() }
                   </Tab>
                 }
