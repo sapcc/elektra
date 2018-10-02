@@ -72,8 +72,8 @@ module ErrorRenderer
         else
           # byebug
           respond_to do |format|
-            format.html { render '/application/exceptions/warning.html' }
-            format.js { render '/application/exceptions/warning.js' }
+            format.html { render '/application/exceptions/warning.html', status: @status }
+            format.js { render '/application/exceptions/warning.js', status: @status }
             format.json { render json: { error: @description }, status: @status }
           end
         end
@@ -91,8 +91,8 @@ module ErrorRenderer
         # no render error if polling service
         unless params[:polling_service]
           respond_to do |format|
-            format.html { render '/application/exceptions/error.html' }
-            format.js { render '/application/exceptions/error.js' }
+            format.html { render '/application/exceptions/error.html', status: @status }
+            format.js { render '/application/exceptions/error.js', status: @status }
             format.json { render json: { error: @description }, status: @status }
           end
         end
