@@ -78,7 +78,7 @@ describe Automation::NodesController, type: :controller do
         end
       end
 
-      it 'returns http success' do
+      it 'not allowed' do
         get :index, params: default_params
         expect(response).to_not be_success
       end
@@ -132,7 +132,7 @@ describe Automation::NodesController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :show, params: default_params.merge(id: 'node_id')
         expect(response).to_not be_success
       end
@@ -177,7 +177,7 @@ describe Automation::NodesController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :install, params: default_params
         expect(response).to_not be_success
       end
@@ -188,7 +188,7 @@ describe Automation::NodesController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :install, params: default_params
         expect(response).to_not be_success
       end
@@ -218,7 +218,7 @@ describe Automation::NodesController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :show_instructions, params: default_params.merge(id: 'instance_id', type: 'external'), xhr: true
         expect(response).to_not be_success
       end
@@ -229,7 +229,7 @@ describe Automation::NodesController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :show_instructions, params: default_params.merge(id: 'instance_id', type: 'external'), xhr: true
         expect(response).to_not be_success
       end
@@ -268,7 +268,7 @@ describe Automation::NodesController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         put :update, params: default_params.merge(id: 'node_id'), xhr: true
         expect(response).to_not be_success
       end
@@ -279,7 +279,7 @@ describe Automation::NodesController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         put :update, params: default_params.merge(id: 'node_id'), xhr: true
         expect(response).to_not be_success
       end
@@ -317,7 +317,7 @@ describe Automation::NodesController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
         expect(response).to_not be_success
       end
@@ -328,7 +328,7 @@ describe Automation::NodesController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         get :run_automation, params: default_params.merge(id: 'node_id'), xhr: true
         expect(response).to_not be_success
       end
@@ -356,7 +356,7 @@ describe Automation::NodesController, type: :controller do
           token
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         expect(delete(:destroy, params: default_params.merge(id: 'node_id'))).to_not be_success
       end
     end
@@ -366,7 +366,7 @@ describe Automation::NodesController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success' do
+      it 'not allowed' do
         expect(delete(:destroy, params: default_params.merge(id: 'node_id'))).to_not be_success
       end
     end

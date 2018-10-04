@@ -76,7 +76,7 @@ describe Automation::JobsController, type: :controller do
           token['roles'].delete_if { |h| h['id'] == 'automation_role' }
         end
       end
-      it 'returns http success and renders the right template' do
+      it 'not allowed' do
         get :show, params: default_params.merge(id: @job.id)
         expect(response).to_not be_success
       end
@@ -144,12 +144,12 @@ describe Automation::JobsController, type: :controller do
             token['roles'].delete_if { |h| h['id'] == 'automation_role' }
           end
         end
-        it 'returns http success and render the template for payload' do
+        it 'not allowed for payload' do
           get :show_data, params: default_params.merge(id: @job.id, attr: 'payload')
           expect(response).to_not be_success
         end
 
-        it 'returns http success and render the template for log' do
+        it 'not allowed for log' do
           get :show_data, params: default_params.merge(id: @job.id, attr: 'log')
           expect(response).to_not be_success
         end
@@ -216,12 +216,12 @@ describe Automation::JobsController, type: :controller do
             token['roles'].delete_if { |h| h['id'] == 'automation_role' }
           end
         end
-        it 'returns http success and render the template for payload' do
+        it 'not allowed for payload' do
           get :show_data, params: default_params.merge(id: @job.id, attr: 'payload')
           expect(response).to_not be_success
         end
 
-        it 'returns http success and render the template for log' do
+        it 'not allowed for log' do
           get :show_data, params: default_params.merge(id: @job.id, attr: 'log')
           expect(response).to_not be_success
         end
