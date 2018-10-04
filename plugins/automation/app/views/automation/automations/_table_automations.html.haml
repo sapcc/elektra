@@ -1,3 +1,5 @@
+- user_allowed = current_user.is_allowed?('automation:automation_update') || current_user.is_allowed?('automation:automation_delete')
+
 .automations_table
   %table.table
     %thead
@@ -6,11 +8,12 @@
         %th Type
         %th Repository
         %th Repository revision
-        %th.snug
+        - if user_allowed
+          %th.snug
     %tbody
       - if automations.empty?
         %tr
-          %td{colspan: 5} No automations available
+          %td{colspan: (user_allowed ? 5 : 4 )} No automations available
       - else
         -automations.each do | automation |
           = render partial: 'table_automations_item', locals: {automation: automation}
