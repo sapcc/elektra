@@ -6,16 +6,14 @@ require_relative '../factories/factories'
 describe Automation::RunsController, type: :controller do
   routes { Automation::Engine.routes }
 
-  default_params = {domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id}
+  default_params = { domain_id: AuthenticationStub.domain_id, project_id: AuthenticationStub.project_id }
 
   before(:all) do
-    FriendlyIdEntry.find_or_create_entry('Domain',nil,default_params[:domain_id],'default')
-    FriendlyIdEntry.find_or_create_entry('Project',default_params[:domain_id],default_params[:project_id],default_params[:project_id])
+    FriendlyIdEntry.find_or_create_entry('Domain', nil, default_params[:domain_id], 'default')
+    FriendlyIdEntry.find_or_create_entry('Project', default_params[:domain_id], default_params[:project_id], default_params[:project_id])
   end
 
   before :each do
-    stub_authentication
-
     client = double('arc_client').as_null_object
     automation_service = double('automation_service').as_null_object
     automation_run_service = double('automation_run_service').as_null_object
@@ -28,23 +26,88 @@ describe Automation::RunsController, type: :controller do
   end
 
   describe "GET 'show'" do
-
-    it "returns http success" do
-      get :show, params: default_params.merge(id: 'run_id')
-      expect(response).to be_success
-      expect(response).to render_template(:show)
+    context 'automation_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'automation_role' }
+          token['roles'] << { 'id' => 'automation_role', 'name' => 'automation_admin' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :show, params: default_params.merge(id: 'run_id')
+        expect(response).to be_success
+        expect(response).to render_template(:show)
+      end
     end
-
+    context 'automation_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'automation_role' }
+          token['roles'] << { 'id' => 'automation_role', 'name' => 'automation_viewer' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :show, params: default_params.merge(id: 'run_id')
+        expect(response).to be_success
+        expect(response).to render_template(:show)
+      end
+    end
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'automation_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        get :show, params: default_params.merge(id: 'run_id')
+        expect(response).to_not be_success
+      end
+    end
   end
 
   describe "GET 'show_log'" do
-
-    it "returns http success" do
-      get :show_log, params: default_params.merge(id: 'run_id')
-      expect(response).to be_success
-      expect(response).to render_template(:show_log)
+    context 'automation_admin' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'automation_role' }
+          token['roles'] << { 'id' => 'automation_role', 'name' => 'automation_admin' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :show_log, params: default_params.merge(id: 'run_id')
+        expect(response).to be_success
+        expect(response).to render_template(:show_log)
+      end
     end
-
+    context 'automation_viewer' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'automation_role' }
+          token['roles'] << { 'id' => 'automation_role', 'name' => 'automation_viewer' }
+          token
+        end
+      end
+      it 'returns http success' do
+        get :show_log, params: default_params.merge(id: 'run_id')
+        expect(response).to be_success
+        expect(response).to render_template(:show_log)
+      end
+    end
+    context 'other roles' do
+      before :each do
+        stub_authentication do |token|
+          token['roles'].delete_if { |h| h['id'] == 'automation_role' }
+          token
+        end
+      end
+      it 'not allowed' do
+        get :show_log, params: default_params.merge(id: 'run_id')
+        expect(response).to_not be_success
+      end
+    end
   end
-
 end

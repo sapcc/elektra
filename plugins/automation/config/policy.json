@@ -16,6 +16,8 @@
   "automation:automation_create": "role:automation_admin",
   "automation:automation_get": "rule:automation_role_required",
   "automation:automation_update": "role:automation_admin",
-  "automation:automation_delete": "role:automation_admin"
+  "automation:automation_delete": "role:automation_admin",
 
+  "automation:run_get": "rule:automation_role_required",
+  "automation:run_show_log": "rule:automation_role_required"
 }

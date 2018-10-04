@@ -1,18 +1,20 @@
 module Automation
-
   class RunsController < ::Automation::ApplicationController
-    before_action :run, only: [:show, :show_log]
-    NO_DATA_FOUND = 'No log available.'
+    authorization_context 'automation'
+    authorization_required
+
+    before_action :run, only: %i[show show_log]
+    NO_DATA_FOUND = 'No log available.'.freeze
     LINES_TRUNCATION = 25
 
     def show
       # get the jobs
-      list_run_jobs()
+      list_run_jobs
       @truncated_log = ::Automation::DataTruncation.new(@run.log)
     end
 
     def show_log
-      render :layout => false
+      render layout: false
     end
 
     # private
@@ -34,10 +36,7 @@ module Automation
             raise exception
           end
         end
-
       end
     end
-
   end
-
 end
