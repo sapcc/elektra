@@ -1549,7 +1549,10 @@ blockquote, .bs-callout {
 .infobox {
   border-top: 10px solid $bright-blue;
 
-
+  hr {
+    margin: 0;
+    margin-bottom: 8px;
+  }
   .table {
     th, td {
 

@@ -1,9 +1,0 @@
-var html="<%= j(render(partial: 'networking/security_groups/item', locals: {security_group: @security_group})) %>"
-
-
-if($("table#security_groups tr[data-empty]").length==1) {
-  $("table#security_groups tr[data-empty]").replaceWith(html);
-} else {
-  $("table#security_groups tbody").prepend(html);
-}
-MoModal.close();

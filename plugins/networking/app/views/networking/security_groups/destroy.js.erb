@@ -1,7 +1,0 @@
-<% if @error %>
-  $('.flashes').append('<div class="alert alert-error"><%=@error%></div>'); 
-<% else %>
-  $('.flashes').append('<div class="alert alert-info">Security Group successfully deleted!</div>');
-  $("#security_group_<%=params[:id]%>").remove();
-<% end %>
-  

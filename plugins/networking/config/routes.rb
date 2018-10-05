@@ -8,7 +8,8 @@ Networking::Engine.routes.draw do
     get 'security_groups', on: :collection
   end
 
-  resources :security_groups, except: %i[edit update] do
+  resources :security_groups, except: %i[edit new], path: 'security-groups' do
+    get 'widget', on: :collection
     resources :rules, module: :security_groups
   end
 
