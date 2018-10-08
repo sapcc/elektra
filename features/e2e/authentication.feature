@@ -24,6 +24,7 @@ Feature: Authentication
      And I click on user navigation
      And I see a "Log out" button
 
+  @admin
   Scenario: User is redirected to the requested url after login
     Given Test user has accepted terms of use
     Given I am not logged in
