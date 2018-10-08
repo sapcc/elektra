@@ -1,3 +1,4 @@
+- user_allowed = current_user.is_allowed?('automation:node_install') || current_user.is_allowed?('automation:node_delete')
 - data = {update_path: plugin('automation').nodes_path(page: @node_page, filter: @filter), update_interval: 10}
 .nodes_table.js-nodes-table{data: data}
   %table.table
@@ -9,11 +10,12 @@
         %th Tags
         %th Online
         %th Job history
-        %th.snug
+        - if user_allowed
+          %th.snug
     %tbody
       - if nodes.empty?
         %tr
-          %td{colspan: 7} No nodes available
+          %td{colspan: (user_allowed ? 7 : 6)} No nodes available
       - else
         -nodes.each do | node |
           = render partial: 'table_nodes_item', locals: {node: node, jobs: jobs[node.id.to_sym].fetch(:elements, {})}

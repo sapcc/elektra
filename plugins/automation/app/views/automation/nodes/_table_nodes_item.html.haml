@@ -23,16 +23,20 @@
 
   %td.no-wrap
     = render partial: "table_nodes_item_jobs", locals: {jobs: jobs}
-  %td.no-wrap
-    %i.loading-spinner-section.hide{data: {node_id: node.id}}
-    .btn-group{data: {node_id: node.id}}
-      %button.btn.btn-default.btn-sm.dropdown-toggle{type: "button", data: {toggle: "dropdown"}, "aria-haspopup" => "true", "aria-expanded" => "false"}
-        %i.fa.fa-gears.fa-fw
-      %ul.dropdown-menu.dropdown-menu-right.dropdown-scrolly{ role:"menu"}
-        %li.dropdown-header
-          Run Automation
-        - @automations.each do |automation|
-          %li= link_to(automation.form_attribute('name'), "#", data: {toggle: "run_automation_link", node_id: node.id, link: plugin('automation').run_automation_nodes_path(node_id: node.id, automation_id: automation.form_attribute('id'), automation_name: automation.form_attribute('name')) })
 
-    = link_to plugin('automation').node_path(id: node.id), class: 'btn btn-default btn-sm', :method => 'delete', data: { confirm: "Are you sure you want to remove the node #{node.name}?", ok: "Yes, remove it", confirmed: :loading_status} do
-      %i.fa.fa-trash.fa-fw
+  - if current_user.is_allowed?('automation:node_install') || current_user.is_allowed?('automation:node_delete')
+    %td.no-wrap
+      %i.loading-spinner-section.hide{data: {node_id: node.id}}
+      - if current_user.is_allowed?('automation:node_install')
+        .btn-group{data: {node_id: node.id}}
+          %button.btn.btn-default.btn-sm.dropdown-toggle{type: "button", data: {toggle: "dropdown"}, "aria-haspopup" => "true", "aria-expanded" => "false"}
+            %i.fa.fa-gears.fa-fw
+          %ul.dropdown-menu.dropdown-menu-right.dropdown-scrolly{ role:"menu"}
+            %li.dropdown-header
+              Run Automation
+            - @automations.each do |automation|
+              %li= link_to(automation.form_attribute('name'), "#", data: {toggle: "run_automation_link", node_id: node.id, link: plugin('automation').run_automation_nodes_path(node_id: node.id, automation_id: automation.form_attribute('id'), automation_name: automation.form_attribute('name')) })
+
+      - if current_user.is_allowed?('automation:node_delete')
+        = link_to plugin('automation').node_path(id: node.id), class: 'btn btn-default btn-sm', :method => 'delete', data: { confirm: "Are you sure you want to remove the node #{node.name}?", ok: "Yes, remove it", confirmed: :loading_status} do
+          %i.fa.fa-trash.fa-fw

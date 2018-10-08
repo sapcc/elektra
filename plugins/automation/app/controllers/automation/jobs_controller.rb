@@ -1,5 +1,8 @@
 module Automation
   class JobsController < ::Automation::ApplicationController
+    authorization_context 'automation'
+    authorization_required
+
     def show
       @job = services.automation.job(params[:id])
 

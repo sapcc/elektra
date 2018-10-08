@@ -1,9 +1,10 @@
 %h3
   Tags
-  %small
-    = link_to '#', data: {modal: true}, class: 'js-node-tags-link-edit' do
-      %i.fa.fa-pencil
-    %i.fa.fa-pencil.js-node-tags-icon-read
+  - if current_user.is_allowed?('automation:node_update')
+    %small
+      = link_to '#', data: {modal: true}, class: 'js-node-tags-link-edit' do
+        %i.fa.fa-pencil
+      %i.fa.fa-pencil.js-node-tags-icon-read
 
 %p
   Use a tag to give this node a human readable display name. Ex:
