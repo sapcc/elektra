@@ -14,5 +14,7 @@
     = data_type.format(project_resource.usage)
   %td.col-md-2
     .resource-actions
-      = link_to 'Edit', plugin('resource_management').admin_edit_path(id: project_resource.project_id, service: project_resource.service_type, resource: project_resource.name), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
-
+      - if resource.externally_managed
+        = link_to 'Edit', '#', disabled: true, class: 'btn btn-default btn-sm', title: 'Externally Managed', data: { toggle: 'popover', placement: 'right', content: 'The resource is flagged as externally managed. No configuration possible.' }
+      - else
+        = link_to 'Edit', plugin('resource_management').admin_edit_path(id: project_resource.project_id, service: project_resource.service_type, resource: project_resource.name), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true

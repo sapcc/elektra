@@ -29,3 +29,9 @@
       = render partial: 'data_age'
   .col-md-3
     = render partial: 'good_to_know'
+
+- content_for :javascripts do
+  :javascript
+    $(function() {
+      $('[data-toggle=popover]').popover();
+    });

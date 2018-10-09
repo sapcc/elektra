@@ -13,6 +13,9 @@
       = data_type.format(resource.projects_quota)
   %td.col-md-2
     = data_type.format(resource.usage)
-  %td.col-md-2
+  %td.col-md-2.quota-configure
     .resource-actions
-      = link_to 'Edit', plugin('resource_management').cloud_admin_edit_path(id: resource.domain_id, service: resource.service_type, resource: resource.name, cluster: @cluster_id), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true
+      - if resource.externally_managed
+        = link_to 'Edit', '#', disabled: true, class: 'btn btn-default btn-sm', title: 'Externally Managed', data: { toggle: 'popover', placement: 'right', content: 'The resource is flagged as externally managed. No configuration possible.' }
+      - else
+        = link_to 'Edit', plugin('resource_management').cloud_admin_edit_path(id: resource.domain_id, service: resource.service_type, resource: resource.name, cluster: @cluster_id), data: { disable_with: 'Loading' }, class: 'btn btn-primary btn-sm', remote: true

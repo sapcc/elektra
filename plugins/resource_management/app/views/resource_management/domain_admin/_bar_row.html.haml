@@ -6,10 +6,15 @@
   .col-md-1.quota-details
     = link_to 'Details', plugin('resource_management').admin_details_path(service: resource.service_type, resource: resource.name, overview: overview), data: {modal: true}, class: 'btn btn-primary btn-sm', title: 'Open related service'
   .col-md-1.quota-request-more
-    = link_to 'Request more',plugin('resource_management').admin_new_request_path(service: resource.service_type, resource: resource.name), data: {modal: true}, class: 'btn btn-default btn-sm'
+    - if resource.externally_managed
+      = link_to 'Request more', '#', disabled: true, class: 'btn btn-default btn-sm', title: 'Externally Managed'
+    - else
+      = link_to 'Request more',plugin('resource_management').admin_new_request_path(service: resource.service_type, resource: resource.name), data: {modal: true}, class: 'btn btn-default btn-sm'
   - unless @index
     .col-md-1.quota-request-more
-      - if resource.quota > 0
+      - if resource.externally_managed
+        = link_to 'Reduce', '#', disabled: true, class: 'btn btn-default btn-sm', title: 'Externally Managed', data: { toggle: 'popover', placement: 'right', content: 'The resource is flagged as externally managed. No configuration possible.' }
+      - elsif resource.quota > 0
         = link_to 'Reduce',plugin('resource_management').admin_confirm_reduce_quota_path(service: resource.service_type, resource: resource.name), data: {modal: true}, class: 'btn btn-default btn-sm'
       - else
         = link_to 'Reduce', '#', class: 'btn btn-default btn-sm disabled'
