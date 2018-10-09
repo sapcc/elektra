@@ -6,7 +6,7 @@ module BlockStorage
   # volumes controller
   class VolumesController < BlockStorage::ApplicationController
     authorization_context 'block_storage'
-    authorization_required
+    authorization_required except: %i[availability_zones images]
 
     def index
       per_page = (params[:per_page] || 30).to_i
@@ -163,13 +163,13 @@ module BlockStorage
     end
 
     def availability_zones
-      render json: { availability_zones: services.compute.availability_zones }
+      render json: { availability_zones: cloud_admin.compute.availability_zones }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     end
 
     def images
-      render json: { images: services.image.images }
+      render json: { images: cloud_admin.image.images }
     rescue Elektron::Errors::ApiResponse => e
       render json: { errors: e.message }, status: e.code
     end
