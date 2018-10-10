@@ -7,7 +7,6 @@ import EditSecurityGroupModal from '../containers/security_groups/edit';
 
 import SecurityGroupRules from '../containers/security_group_rules/list'
 import NewSecurityGroupRuleModal from '../containers/security_group_rules/new';
-import EditSecurityGroupRuleModal from '../containers/security_group_rules/edit';
 
 // render all components inside a hash router
 export default (props) => {
@@ -35,9 +34,6 @@ export default (props) => {
 
         { policy.isAllowed("networking:rule_create") &&
           <Route exact path="/security-groups/:securityGroupId/rules/new" component={NewSecurityGroupRuleModal}/>
-        }
-        { policy.isAllowed("networking:rule_update") &&
-          <Route exact path="/security-groups/:securityGroupId/rules/:id/edit" component={EditSecurityGroupRuleModal}/>
         }
       </React.Fragment>
     </HashRouter>

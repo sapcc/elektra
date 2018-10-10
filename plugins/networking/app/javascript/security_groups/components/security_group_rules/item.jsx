@@ -7,16 +7,14 @@ import {
 
 export default ({rule,handleDelete,securityGroups}) => {
   const displayPort = () => {
-    let port;
+    let port = rule.port_range_min || rule.port_range_max
+    if(rule.port_range_min && rule.port_range_max && rule.port_range_min!=rule.port_range_max) {
+      port = `${rule.port_range_min} - ${rule.port_range_max}`
+    }
+    if(!port) port = 'Any'
 
-    if(!rule.port_range_min && !rule.port_range_max) return 'Any'
-    else if(!rule.port_range_min && rule.port_range_max) port = rule.port_range_max
-    else if(rule.port_range_min && !rule.port_range_max) port = rule.port_range_min
-    else if(rule.port_range_min == rule.port_range_max) port = rule.port_range_min
-    else port = `${rule.port_range_min}-${rule.port_range_max}`
-
-    rule = SECURITY_GROUP_RULE_PREDEFINED_TYPES.find(r => r.portRange==port)
-    if(rule) port = port + ` (${rule.label})`
+    let ruleType = SECURITY_GROUP_RULE_PREDEFINED_TYPES.find(r => r.portRange==port && r.protocol == rule.protocol)
+    if(ruleType) port = port + ` (${ruleType.label})`
     return port
   }
 
@@ -29,7 +27,7 @@ export default ({rule,handleDelete,securityGroups}) => {
   const canDelete = policy.isAllowed("networking:rule_delete")
 
   return (
-    <tr className={rule.deleting ? 'updating' : ''}>
+    <tr className={rule.status == 'deleting' ? 'updating' : ''}>
       <td>{rule.direction}</td>
       <td>{rule.ethertype}</td>
       <td>{rule.protocol || 'Any'}</td>
@@ -43,7 +41,7 @@ export default ({rule,handleDelete,securityGroups}) => {
       </td>
       <td>{rule.description}</td>
       <td>
-        {canDelete &&
+        {canDelete && rule.status!='deleting' &&
           <a
             className='btn btn-default btn-sm'
             href='#'

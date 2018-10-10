@@ -5,7 +5,7 @@ import SecurityGroupRuleItem from './item';
 import {policy} from 'policy'
 
 export default class List extends React.Component {
-  state = {searchTerm: ''}
+  state = {searchTerm: '', sortByProtocol: null, sortByPort: null}
 
   componentDidMount() {
     // load dependencies unless already loaded
@@ -14,8 +14,21 @@ export default class List extends React.Component {
     }
   }
 
+  sortBy = (name) => {
+    if(name=='protocol') {
+      let direction = this.state.sortByProtocol || 'desc'
+      direction=='asc' ? direction='desc' : direction = 'asc'
+      this.setState({sortByProtocol: direction, sortByPort: null})
+    } else if(name='port') {
+      let direction = this.state.sortByPort || 'desc'
+      direction=='asc' ? direction='desc' : direction = 'asc'
+      this.setState({sortByPort: direction, sortByProtocol: null})
+    }
+  }
+
   filterItems = () => {
     let items = this.props.securityGroupRules || []
+
     if(this.state.searchTerm && this.state.searchTerm.replace(/\s/g, '').length>0) {
       const regex = new RegExp(this.state.searchTerm.trim(), "i");
 
@@ -23,19 +36,39 @@ export default class List extends React.Component {
         `${i.direction} ${i.protocol} ${i.port_range_min} ${i.port_range_max}`.search(regex) >= 0
       )
     }
+
+    if(this.state.sortByPort) {
+      items.sort((a,b) => {
+        if(a.port_range_min < b.port_range_min) return -1
+        if(a.port_range_min > b.port_range_min) return 1
+        return 0
+      })
+      if(this.state.sortByPort=='desc') items.reverse()
+    }
+
+    else if(this.state.sortByProtocol) {
+      items.sort((a,b) => {
+        if((a.protocol || 'Any') < (b.protocol || 'Any')) return -1
+        if((a.protocol || 'Any') > (b.protocol || 'Any')) return 1
+        return 0
+      })
+      if(this.state.sortByProtocol=='desc') items.reverse()
+    }
     return items
   }
 
   renderToolbar = () => {
     return(
       <div className='toolbar toolbar-aligntop'>
-        <SearchField
-          onChange={(term) => this.setState({searchTerm: term})}
-          placeholder='Direction, IP protocol or port range'
-          text='Searches direction, IP protocol or port range in visible security group rule list only.
-                Entering a search term will automatically start loading the next pages
-                and filter the loaded items using the search term. Emptying the search
-                input field will show all currently loaded items.'/>
+        {this.props.securityGroupRules && this.props.securityGroupRules.length>=10 &&
+          <SearchField
+            onChange={(term) => this.setState({searchTerm: term})}
+            placeholder='Direction, IP protocol or port range'
+            text='Searches direction, IP protocol or port range in visible security group rule list only.
+                  Entering a search term will automatically start loading the next pages
+                  and filter the loaded items using the search term. Emptying the search
+                  input field will show all currently loaded items.'/>
+        }
 
         <div className="main-buttons">
           {policy.isAllowed("networking:rule_create") &&
@@ -60,8 +93,22 @@ export default class List extends React.Component {
           <tr>
             <th>Direction</th>
             <th>Ether Type</th>
-            <th>IP Protocol</th>
-            <th>Port Range</th>
+            <th>
+              IP Protocol
+              <a
+                href='javascript:void(0)'
+                onClick={(e) => {e.preventDefault(); this.sortBy('protocol')}}>
+                <i className={`fa fa-fw fa-sort${!this.state.sortByProtocol ? '' : '-'+this.state.sortByProtocol}`}/>
+              </a>
+            </th>
+            <th>
+              Port Range
+              <a
+                href='javascript:void(0)'
+                onClick={(e) => {e.preventDefault(); this.sortBy('port')}}>
+                <i className={`fa fa-fw fa-sort${!this.state.sortByPort ? '' : '-'+this.state.sortByPort}`}/>
+              </a>
+            </th>
             <th>Remote Source</th>
             <th>Description</th>
             <th className='snug'></th>

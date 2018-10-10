@@ -7,22 +7,31 @@ export const REQUEST_SECURITY_GROUP_DELETE            = 'networking/security_gro
 export const REMOVE_SECURITY_GROUP                    = 'networking/security_groups/REMOVE_SECURITY_GROUP';
 
 // RULES
-export const REQUEST_RULES               = 'networking/security_groups/REQUEST_RULES';
-export const RECEIVE_RULES               = 'networking/security_groups/RECEIVE_RULES';
-export const REQUEST_RULES_FAILURE       = 'networking/security_groups/REQUEST_RULES_FAILURE';
+export const REMOVE_SECURITY_GROUP_RULE               = 'networking/security_groups/REMOVE_SECURITY_GROUP_RULE';
+export const RECEIVE_SECURITY_GROUP_RULE              = 'networking/security_groups/RECEIVE_SECURITY_GROUP_RULE';
+export const REQUEST_SECURITY_GROUP_RULE_DELETE       = 'networking/security_groups/REQUEST_SECURITY_GROUP_RULE_DELETE';
 
-
-export const SECURITY_GROUP_RULE_PROTOCOLS = {
-  tcp: 'TCP',
-  udp: 'UDP',
-  icmp: 'ICMP'
-}
+export const SECURITY_GROUP_RULE_PROTOCOLS = [
+  {
+    key: 'tcp',
+    label: 'TCP',
+  },
+  {
+    key: 'udp',
+    label: 'UDP'
+  },
+  {
+    key: 'icmp',
+    label: 'ICMP'
+  }
+]
 
 export const SECURITY_GROUP_RULE_DESCRIPTIONS = [
-  {title: 'Rules', text: "Rules define which traffic is allowed to instances assigned to the security group. A security group rule consists of three main parts: Type, Port Range and Remote Source."},
-  {title: 'Type', text: "You can specify the desired rule template or use custom rules, the options are Custom TCP Rule, Custom UDP Rule, or Custom ICMP Rule."},
-  {title: 'Port Range', text: "For TCP and UDP rules you may choose to open either a single port or a range of ports. For as range provide the starting and ending ports devided by minus (e.g. 0-80). For ICMP rules you instead specify an ICMP type and code in the spaces provided."},
-  {title: 'Remote', text: "You must specify the source of the traffic to be allowed via this rule. You may do so either in the form of an IP address block (CIDR, recommended) or via a source group (Security Group, not recommended). Selecting a security group as the source will allow any other instance in that security group access."}
+  {key: 'rules', title: 'Rules', text: "Rules define which traffic is allowed to instances assigned to the security group. A security group rule consists of three main parts: Type, Port Range and Remote Source."},
+  {key: 'type', title: 'Type', text: "You can specify the desired rule template or use custom rules, the options are Custom TCP Rule, Custom UDP Rule, or Custom ICMP Rule."},
+  {key: 'portRange', title: 'Port Range', text: "For TCP and UDP rules you may choose to open either a single port or a range of ports. For as range provide the starting and ending ports devided by minus (e.g. 0-80)."},
+  {key: 'icmp', title: 'ICMP', text: "For ICMP rules you should specify an ICMP type and code in the spaces provided."},
+  {key: 'remote', title: 'Remote', text: "You must specify the source of the traffic to be allowed via this rule. You may do so either in the form of an IP address block (CIDR, recommended) or via a source group (Security Group, not recommended). Selecting a security group as the source will allow any other instance in that security group access."}
 ]
 
 export const SECURITY_GROUP_RULE_PREDEFINED_TYPES = [

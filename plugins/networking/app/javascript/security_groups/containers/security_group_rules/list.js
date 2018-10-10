@@ -32,7 +32,7 @@ export default connect(
   (dispatch,ownProps) => {
     let securityGroupId = ownProps.match && ownProps.match.params && ownProps.match.params.securityGroupId
     return {
-      handleDelete: (id) => dispatch(deleteSecurityGroupRule(id)),
+      handleDelete: (id) => dispatch(deleteSecurityGroupRule(securityGroupId, id)),
       handleGroupDelete: () => dispatch(deleteSecurityGroup(securityGroupId)),
       loadSecurityGroup: () => dispatch(fetchSecurityGroup(securityGroupId))
     }

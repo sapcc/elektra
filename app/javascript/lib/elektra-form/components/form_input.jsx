@@ -28,7 +28,7 @@ export const FormInput = ({
   }
 
   return (
-    <div>{React.createElement(elementType, inputProps, children)}</div>
+    <React.Fragment>{React.createElement(elementType, inputProps, children)}</React.Fragment>
   )
 };
 

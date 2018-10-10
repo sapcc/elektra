@@ -1,11 +1,12 @@
 import { connect } from  'react-redux';
 import NewModal from '../../components/security_group_rules/new';
 import {
+  fetchSecurityGroupsIfNeeded,
   fetchSecurityGroup
 } from '../../actions/security_groups'
 
 import {
-  submitNewRuleForm
+  submitNewSecurityGroupRuleForm
 } from '../../actions/security_group_rules'
 
 export default connect(
@@ -19,11 +20,16 @@ export default connect(
 
     return {
       securityGroupId,
-      securityGroup
+      securityGroup,
+      securityGroups: state.securityGroups
     }
   },
-  dispatch => ({
-    handleSubmit: (values) => dispatch(submitNewRuleForm(values)),
-    loadSecurityGroup: () => dispatch(fetchSecurityGroup(securityGroupId))
-  })
+  (dispatch,ownProps) => {
+    let securityGroupId = ownProps.match && ownProps.match.params && ownProps.match.params.securityGroupId
+    return {
+      loadSecurityGroupsOnce: () => dispatch(fetchSecurityGroupsIfNeeded()),
+      handleSubmit: (values) => dispatch(submitNewSecurityGroupRuleForm(securityGroupId, values)),
+      loadSecurityGroup: () => securityGroupId ? dispatch(fetchSecurityGroup(securityGroupId)) : null
+    }
+  }
 )(NewModal);
