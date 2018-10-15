@@ -30,6 +30,7 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "*",
     "react-transition-group": "*",
+    "react-virtualized": "^9.20.1",
     "redux": "^3.7.2",
     "redux-devtools-extension": "*",
     "redux-thunk": "^2.2.0"

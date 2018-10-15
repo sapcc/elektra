@@ -75,10 +75,14 @@ export default class Form extends React.Component {
   }
 
   updateValue(name,value) {
-    let values = Object.assign({},this.state.values)
-    values[name] = value
-    let isValid = this.props.validate ? (this.props.validate(values) ? true : false) : true
+    let values = {...this.state.values}
 
+    if(typeof name === 'object') {
+      values = Object.assign(values,name)
+    } else {
+      values[name] = value
+    }
+    let isValid = this.props.validate ? (this.props.validate(values) ? true : false) : true
     this.setState({ values, isValid }, this.props.onValueChange ? this.props.onValueChange(name, values) : null)
   }
 

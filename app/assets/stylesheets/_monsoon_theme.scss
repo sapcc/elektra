@@ -463,6 +463,9 @@ section {
   word-break: break-word;
 }
 
+.u-nowrap {
+  white-space: nowrap;
+}
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -1549,7 +1552,10 @@ blockquote, .bs-callout {
 .infobox {
   border-top: 10px solid $bright-blue;
 
-
+  hr {
+    margin: 0;
+    margin-bottom: 8px;
+  }
   .table {
     th, td {
 
