@@ -92,16 +92,16 @@ export default class List extends React.Component {
         <thead>
           <tr>
             <th>Direction</th>
-            <th>Ether Type</th>
-            <th>
-              IP Protocol
+            <th>Type</th>
+            <th className='u-nowrap'>
+              Protocol
               <a
                 href='javascript:void(0)'
                 onClick={(e) => {e.preventDefault(); this.sortBy('protocol')}}>
                 <i className={`fa fa-fw fa-sort${!this.state.sortByProtocol ? '' : '-'+this.state.sortByProtocol}`}/>
               </a>
             </th>
-            <th>
+            <th width="20%" className='u-nowrap'>
               Port Range
               <a
                 href='javascript:void(0)'
@@ -109,7 +109,7 @@ export default class List extends React.Component {
                 <i className={`fa fa-fw fa-sort${!this.state.sortByPort ? '' : '-'+this.state.sortByPort}`}/>
               </a>
             </th>
-            <th>Remote Source</th>
+            <th className='u-nowrap'>Remote Source</th>
             <th>Description</th>
             <th className='snug'></th>
           </tr>
@@ -153,7 +153,7 @@ export default class List extends React.Component {
                 <li>
                   <a
                     href='#'
-                    onClick={(e) => {e.preventDefault(); this.props.handleGroupDelete()} }>
+                    onClick={(e) => {e.preventDefault(); this.props.handleGroupDelete().then(success => this.props.history.replace(`/`))} }>
                     Delete Security Group
                   </a>
                 </li>

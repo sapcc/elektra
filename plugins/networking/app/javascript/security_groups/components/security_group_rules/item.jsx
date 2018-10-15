@@ -43,10 +43,10 @@ export default ({rule,handleDelete,securityGroups}) => {
       <td>
         {canDelete && rule.status!='deleting' &&
           <a
-            className='btn btn-default btn-sm'
+            className='btn btn-default btn-sm hover-danger'
             href='#'
             onClick={ (e) => { e.preventDefault(); handleDelete(rule.id) } }>
-            <i className="fa fa-trash fa-fw"></i> Remove
+            <i className="fa fa-trash fa-fw"></i>
           </a>
         }
       </td>
