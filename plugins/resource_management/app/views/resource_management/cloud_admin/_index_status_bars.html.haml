@@ -2,9 +2,3 @@
   = render partial: 'bar_row', locals: { overview: true, resource: res }
 
 =render partial: 'data_age'
-
-- content_for :javascripts do
-  :javascript
-    $(function() {
-      $('[data-toggle=popover]').popover();
-    });

@@ -27,6 +27,10 @@ module ResourceManagement
       Core::DataType.from_unit_name(read(:unit) || '')
     end
 
+    def externally_managed?
+      read(:externally_managed) || false
+    end
+
     def project_id
       read(:project_id)
     end
