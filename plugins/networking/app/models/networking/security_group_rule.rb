@@ -23,5 +23,28 @@ module Networking
         'description'       => read('description')
       }.delete_if { |_k, v| v.blank? }
     end
+
+    def to_s(security_groups = [])
+      result = "ALLOW #{ethertype} #{display_protocol} #{display_port} #{direction == 'ingress' ? 'from' : 'to'} "
+      result += if remote_ip_prefix.blank? && remote_group_id.blank?
+                  if (ethertype || '').downcase == 'ipv4'
+                    '0.0.0.0/0'
+                  else
+                    '::/0'
+                  end
+                elsif remote_ip_prefix.blank?
+                  sg = catch :found do
+                    security_groups.each do |sg|
+                      throw :found, sg if sg.id == remote_group_id
+                    end
+                    nil
+                  end
+                  sg.nil? ? remote_group_id : sg.name
+                else
+                  remote_ip_prefix
+                end
+
+      result
+    end
   end
 end
