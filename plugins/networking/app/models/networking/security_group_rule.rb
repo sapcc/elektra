@@ -25,7 +25,19 @@ module Networking
     end
 
     def to_s(security_groups = [])
-      result = "ALLOW #{ethertype} #{display_protocol} #{display_port} #{direction == 'ingress' ? 'from' : 'to'} "
+      port = if port_range_min.blank? && port_range_max.blank?
+         'any port'
+       elsif port_range_min.blank? && !port_range_max.blank?
+         port_range_max
+       elsif !port_range_min.blank? && port_range_max.blank?
+         port_range_min
+       elsif port_range_min == port_range_max
+         port_range_min
+       else
+         "#{port_range_min}-#{port_range_max}"
+       end
+
+      result = "ALLOW #{ethertype} #{protocol || 'any protocol'} #{port} #{direction == 'ingress' ? 'from' : 'to'} "
       result += if remote_ip_prefix.blank? && remote_group_id.blank?
                   if (ethertype || '').downcase == 'ipv4'
                     '0.0.0.0/0'
