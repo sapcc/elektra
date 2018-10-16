@@ -42,7 +42,7 @@ export default class Search extends React.Component {
   render() {
     const availableTypes = this.props.types.items.sort()
     return (
-      <React.Fragment>
+      <div className="tools">
 
         <div className="toolbar">
           { this.props.types.isFetching ?
@@ -136,7 +136,7 @@ export default class Search extends React.Component {
           text={`${this.props.objects.items.length}/${this.props.objects.total}`}
           onLoadNext={this.props.loadNext}/>
       */}
-      </React.Fragment>
+    </div>
     )
   }
 }
