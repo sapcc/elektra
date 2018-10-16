@@ -4,7 +4,7 @@ module Networking
   # Implements Security Group actions
   class SecurityGroupsController < DashboardController
     authorization_context 'networking'
-    authorization_required
+    authorization_required except: %i[widget]
 
     def widget
       @quota_data = []

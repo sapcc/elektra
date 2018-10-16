@@ -41,7 +41,8 @@ Then /^I see active panel "(.*?)"$/ do |panel_id|
 end
 
 Then(/^I see a "(.*?)" (button|link)$/) do |button_text,l|
-  expect(page).to have_selector('a', text: button_text)
+  #expect(page).to have_selector('a', text: button_text)
+  expect(find(:link, button_text)).not_to be(nil)
 end
 
 Then(/^I see a selectbox with id "(.*?)"$/) do |id|
