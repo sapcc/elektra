@@ -5,6 +5,8 @@ import SecurityGroupItem from './item';
 import { AjaxPaginate } from 'lib/components/ajax_paginate';
 
 export default class List extends React.Component {
+  state = {searchTerm: ''}
+
   componentWillReceiveProps(nextProps) {
     // load dependencies unless already loaded
     this.loadDependencies(nextProps)
@@ -20,7 +22,16 @@ export default class List extends React.Component {
   }
 
   filterItems = () => {
-    return this.props.securityGroups.items || []
+    let items = this.props.securityGroups.items || []
+
+    if(this.state.searchTerm && this.state.searchTerm.replace(/\s/g, '').length>0) {
+      const regex = new RegExp(this.state.searchTerm.trim(), "i");
+
+      items = items.filter(i =>
+        `${i.id} ${i.name} ${i.description} `.search(regex) >= 0
+      )
+    }
+    return items
   }
 
 
@@ -35,13 +46,15 @@ export default class List extends React.Component {
     return (
       <React.Fragment>
         <div className='toolbar'>
-          <SearchField
-            onChange={(term) => console.log('search for',term)}
-            placeholder='ID, name or description'
-            text='Searches by ID, name or description in visible security group list only.
-                  Entering a search term will automatically start loading the next pages
-                  and filter the loaded items using the search term. Emptying the search
-                  input field will show all currently loaded items.'/>
+          {this.props.securityGroups.items && this.props.securityGroups.items.length>=10 &&
+            <SearchField
+              onChange={(term) => this.setState({searchTerm: term})}
+              placeholder='ID, name or description'
+              text='Searches by ID, name or description in visible security group list only.
+                    Entering a search term will automatically start loading the next pages
+                    and filter the loaded items using the search term. Emptying the search
+                    input field will show all currently loaded items.'/>
+          }
 
           <div className="main-buttons">
             {policy.isAllowed("networking:security_group_create") &&
