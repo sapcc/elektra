@@ -68,7 +68,7 @@ const FormBody = ({values,securityGroups},context) => {
               elementType='select'
               className="select required form-control"
               name='direction'
-              onChange={(e) => updateAndResetType('protocol', e.target.value)}>
+              onChange={(e) => updateAndResetType('direction', e.target.value)}>
               <option value='ingress'>Ingress</option>
               <option value='egress'>Egress</option>
             </Form.Input>
