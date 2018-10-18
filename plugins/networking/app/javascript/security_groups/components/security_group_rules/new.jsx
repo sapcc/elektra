@@ -222,6 +222,8 @@ export default class NewRuleForm extends React.Component {
       parsedValues['ethertype'] = values.ethertype
     }
 
+    // console.log('values',values)
+    // console.log('parsedValues',parsedValues)
     return this.props.handleSubmit(parsedValues).then(() => this.close());
   }
 

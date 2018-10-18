@@ -20,6 +20,7 @@ module Networking
         'protocol'          => read('protocol'),
         'remote_group_id'   => read('remote_group_id'),
         'security_group_id' => read('security_group_id'),
+        'remote_ip_prefix' => read('remote_ip_prefix'),
         'description'       => read('description')
       }.delete_if { |_k, v| v.blank? }
     end
