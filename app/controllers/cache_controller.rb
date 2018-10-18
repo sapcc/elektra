@@ -104,11 +104,13 @@ class CacheController < ::ScopeController
       include_scope: false,
       paginate: false
     ) do |scope|
-      if current_user.is_allowed?('cloud_admin')
+      # allow all users from scoped domain.
+      # this action is called by autocomplete widget.
+      #if current_user.is_allowed?('cloud_admin')
         scope.where(domain_id: params[:domain]).order(:name)
-      else
-        where_current_token_scope(scope).order(:name)
-      end
+      #else
+      #  where_current_token_scope(scope).order(:name)
+      #end
     end
 
     items = items.to_a.map do |u|
