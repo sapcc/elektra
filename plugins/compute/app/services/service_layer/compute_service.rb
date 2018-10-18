@@ -20,7 +20,7 @@ module ServiceLayer
     end
 
     def elektron_compute
-      @elektron_identity ||= elektron.service('compute')
+      @elektron_identity ||= elektron.service('compute', http_client: { read_timeout: 180 })
     end
 
     def usage(filter = {})
