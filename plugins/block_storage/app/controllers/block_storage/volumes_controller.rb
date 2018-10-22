@@ -95,11 +95,11 @@ module BlockStorage
     end
 
     def detach
-      volume = services.block_storage.new_volume
-      volume.id = params[:id]
+      volume = services.block_storage.find_volume!(params[:id])
+      attachment = volume.attachments.find { |a| a['attachment_id'] == params[:attachment_id] }
 
-      if volume.detach(params[:attachment_id])
-        audit_logger.info(current_user, "has detached #{volume.id} #{params[:attachment_id]}")
+      if volume.detach(attachment['server_id'])
+        audit_logger.info(current_user, "has detached #{volume.id} #{attachment['server_id']}")
         head 202
       else
         render json: { errors: volume.errors }, status: 422

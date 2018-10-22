@@ -72,9 +72,9 @@ module BlockStorage
       end
     end
 
-    def detach(attachment_id)
+    def detach(server_id)
       rescue_api_errors do
-        service.detach(id, attachment_id)
+        service.detach(id, server_id)
       end
     end
 
