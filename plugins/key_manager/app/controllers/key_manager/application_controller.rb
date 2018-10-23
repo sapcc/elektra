@@ -6,8 +6,5 @@ module KeyManager
 
      private
 
-     def release_state
-       'experimental'
-     end
   end
 end
