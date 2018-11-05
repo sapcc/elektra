@@ -345,6 +345,7 @@ Pagination
 end
 ```
 
+
 ### View
 
 ```ruby
