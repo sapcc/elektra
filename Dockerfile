@@ -12,7 +12,7 @@ RUN apk --no-cache add build-base postgresql-dev --virtual .builddeps \
       && gem install ffi -v 1.9.25 \
       && gem install json -v 1.8.6 \
       && gem install nio4r -v 2.1.0 \
-      && gem install nokogiri -v 1.8.4 \
+      && gem install nokogiri -v 1.8.5 \
       && gem install pg -v 0.21.0 \
       && gem install puma -v 3.9.1  \
       && gem install redcarpet -v 3.4.0 \
