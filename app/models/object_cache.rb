@@ -34,7 +34,7 @@ class ObjectCache < ApplicationRecord
     'security_group' => %w[description],
     'security_group_rule' => %w[direction protocol description security_group_id],
     'security_service' => %w[dns_ip description],
-    'server' => %w[description hostId user_id addresses],
+    'server' => %w[description hostId user_id addresses OS-EXT-SRV-ATTR:host],
     'share' => %w[availability_zone share_network_id user_id share_proto],
     'share_network' => %w[neutron_subnet_id neutron_net_id cidr description],
     'snapshot' => %w[volume_id description],
@@ -63,7 +63,7 @@ class ObjectCache < ApplicationRecord
     'domain_group_role_project_assignment' => %w[scope role user group],
     'domain_user_role_assignment' => %w[scope role user group],
     'domain_user_role_project_assignment' => %w[scope role user group]
-  }
+  }.freeze
 
   def self.cache_objects(objects)
     # create a id => object map
@@ -80,7 +80,7 @@ class ObjectCache < ApplicationRecord
       index = registered_ids.index { |id_payload| id_payload[0] == id }
 
       if index # object is already registered
-        if (registered_ids[index][1])
+        if registered_ids[index][1]
           # merge old payload with the new one
           attributes[:payload] = registered_ids[index][1].merge(attributes[:payload])
         end
@@ -126,6 +126,7 @@ class ObjectCache < ApplicationRecord
   def self.search(args)
     return where(args) if args.is_a?(Hash)
     return nil unless args.is_a?(String)
+
     where(
       [
         'id ILIKE :term or name ILIKE :term or project_id ILIKE :term or ' \
@@ -235,5 +236,4 @@ class ObjectCache < ApplicationRecord
       search_string << "#{key}: #{data[key]}" unless data[key].blank?
     end.join(' ')
   end
-
 end
