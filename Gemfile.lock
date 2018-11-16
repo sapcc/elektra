@@ -414,7 +414,7 @@ GEM
     public_suffix (3.0.3)
     puma (3.9.1)
     quantile (0.2.0)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-proxy (0.6.2)
       rack
     rack-test (0.6.3)
