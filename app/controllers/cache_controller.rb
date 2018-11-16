@@ -98,6 +98,8 @@ class CacheController < ::ScopeController
   end
 
   def users
+    retries ||= 0
+
     items = ObjectCache.find_objects(
       type: 'user',
       term:  params[:name] || params[:term] || '',
@@ -113,6 +115,8 @@ class CacheController < ::ScopeController
       #end
     end
 
+    raise NotFound if (items.nil? || items.empty?) && retries < 1
+
     items = items.to_a.map do |u|
       {
         id: u.payload['description'], name: u.name, key: u.name,
@@ -122,6 +126,11 @@ class CacheController < ::ScopeController
     end
 
     render json: items
+  rescue NotFound
+    retries += 1
+    # search live against API and then retry
+    service_user.identity.users(domain_id: params[:domain])
+    retry
   end
 
   def groups
