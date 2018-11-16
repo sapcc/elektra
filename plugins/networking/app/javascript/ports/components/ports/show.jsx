@@ -31,7 +31,7 @@ export default class ShowPortModal extends React.Component{
   }
 
   loadDependencies(props) {
-    props.loadPortsOnce()
+    props.loadPort()
     props.loadNetworksOnce()
     props.loadSubnetsOnce()
     props.loadSecurityGroupsOnce()
@@ -66,13 +66,13 @@ export default class ShowPortModal extends React.Component{
   renderSecurityGroups = (port) => {
     const items = port.security_groups.map((groupId) => {
       if(!this.props.securityGroups || !this.props.securityGroups.items) {
-        return <div>{groupId}</div>
+        return <div key={groupId}>{groupId}</div>
       }
       const securityGroup = this.props.securityGroups.items.filter(i =>
         i.id==groupId
       )[0]
 
-      if(!securityGroup) return <div>{groupId}</div>
+      if(!securityGroup) return <div key={groupId}>{groupId}</div>
 
       return(
         <li key={groupId}>

@@ -73,6 +73,25 @@ const fetchPorts= (page) =>
   }
 ;
 
+const fetchPort= (id) =>
+  function(dispatch,getState) {
+    let ports = getState()['ports']['items']
+    let portIndex = ports.findIndex(i => i.id == id)
+    if(portIndex>=0) return;
+
+    return ajaxHelper.get(`/ports/${id}`).then( (response) => {
+      if (response.data.errors) {
+        addError(React.createElement(ErrorsList, {errors: response.data.errors}))
+      } else {
+        dispatch(receivePort(response.data));
+      }
+    })
+    .catch( (error) => {
+      addError(`Could not load port (${error.message})`)
+    });
+  }
+;
+
 const loadNext= () =>
   function(dispatch, getState) {
     let state = getState();
@@ -197,5 +216,6 @@ export {
   submitNewPortForm,
   submitEditPortForm,
   searchPorts,
+  fetchPort,
   loadNext
 }

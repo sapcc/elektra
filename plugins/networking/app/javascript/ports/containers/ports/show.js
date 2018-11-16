@@ -1,7 +1,7 @@
 import { connect } from  'react-redux';
 import Items from '../../components/ports/show';
 
-import { fetchPortsIfNeeded } from '../../actions/ports';
+import { fetchPort } from '../../actions/ports';
 import { fetchNetworksIfNeeded } from '../../actions/networks';
 import { fetchSubnetsIfNeeded } from '../../actions/subnets';
 import { fetchSecurityGroupsIfNeeded } from '../../actions/security_groups';
@@ -23,10 +23,13 @@ export default connect(
     }
   },
 
-  dispatch => ({
-    loadSecurityGroupsOnce: () => dispatch(fetchSecurityGroupsIfNeeded()),
-    loadPortsOnce: () => dispatch(fetchPortsIfNeeded()),
-    loadNetworksOnce: () => dispatch(fetchNetworksIfNeeded()),
-    loadSubnetsOnce: () => dispatch(fetchSubnetsIfNeeded())
-  })
+  (dispatch,ownProps) => {
+    let id = ownProps.match && ownProps.match.params && ownProps.match.params.id 
+    return {
+      loadSecurityGroupsOnce: () => dispatch(fetchSecurityGroupsIfNeeded()),
+      loadPort: () => dispatch(fetchPort(id)),
+      loadNetworksOnce: () => dispatch(fetchNetworksIfNeeded()),
+      loadSubnetsOnce: () => dispatch(fetchSubnetsIfNeeded())
+    }
+  }
 )(Items);
