@@ -1,6 +1,6 @@
-%tr{id: "spec_#{key}"}
+%tr{id: "spec_#{Digest::SHA256.hexdigest(key)}"}
   %td= key
   %td= value
   %td.snug
-    - if current_user.is_allowed?("flavor_manage_metadata") 
+    - if current_user.is_allowed?("flavor_manage_metadata")
       = link_to 'Remove', plugin('compute').flavor_metadatum_path(flavor_id: flavor_id, key: key), method: :delete, data: { confirm: 'Are you sure you want to remove this key?', ok: "Yes, remove it", confirmed: :loading_status}, remote: true, class: 'btn btn-danger btn-sm'

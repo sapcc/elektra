@@ -10,12 +10,12 @@
         %th.snug
     %tbody
       - if @metadata.attributes.empty?
-        %tr
+        %tr{data: {empty: true}}
           %td{ colspa: 3 } No specs defined.
       - else
         - @metadata.attributes.each do |key,value|
           = render partial: 'item', locals: { key: key, value: value, flavor_id: @flavor.id }
-      
+
       - if current_user.is_allowed?("compute:flavor_manage_metadata", {flavor: @flavor.attributes})
         %tr
           %td{colspan: 2}
@@ -25,7 +25,7 @@
 
                 .form-group= f.text_field :key, class: "form-control", placeholder: 'Key'
                 .form-group= f.text_field :value, class: "form-control", placeholder: 'Value'
-                = button_tag "Add", { class: 'btn btn-primary', data: { disable_with: "Please wait..." } }         
+                = button_tag "Add", { class: 'btn btn-primary', data: { disable_with: "Please wait..." } }
           %td
             = link_to ' + ', '#', class: 'btn btn-info', id:'toggle_form'
 
@@ -39,9 +39,8 @@
 
 :javascript
   $(document).ready(function(){
-    $('#metadata .form-wrapper').removeClass('hidden').hide();  
+    $('#metadata .form-wrapper').removeClass('hidden').hide();
     $('#toggle_form').click(function(){
       $(this).closest('tr').find('.form-wrapper').fadeToggle();
     });
-  });  
-    
+  });

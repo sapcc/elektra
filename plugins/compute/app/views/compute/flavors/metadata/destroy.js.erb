@@ -1,6 +1,6 @@
 <% if @metadata.errors.empty? %>
-  $("#spec_<%=params[:key]%>").remove();
+  $("#spec_<%=Digest::SHA256.hexdigest(params[:key])%>").remove();
 <% else %>
 InfoDialog.showError('<%=@metadata.errors.full_messages.to_sentence%>');
-  $("#spec_<%=params[:key]%>").removeClass('updating');
-<% end %>  
+  $("#spec_<%=Digest::SHA256.hexdigest(params[:key])%>").removeClass('updating');
+<% end %>
