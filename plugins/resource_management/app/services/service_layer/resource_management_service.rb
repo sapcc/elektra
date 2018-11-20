@@ -119,9 +119,9 @@ module ServiceLayer
       elektron_limes.post("domains/#{domain_id}/projects/#{project_id}/sync")
     end
 
-    def put_project_data(domain_id, project_id, services)
+    def put_project_data(domain_id, project_id, services, bursting)
       elektron_limes.put("domains/#{domain_id}/projects/#{project_id}") do
-        { project: { services: services } }
+        { project: { bursting: bursting, services: services } }
       end
     end
 

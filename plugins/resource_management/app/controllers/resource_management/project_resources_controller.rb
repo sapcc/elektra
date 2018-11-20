@@ -3,7 +3,7 @@ require_dependency "resource_management/application_controller"
 module ResourceManagement
   class ProjectResourcesController < ::ResourceManagement::ApplicationController
 
-    before_action :load_project,          only: [:new_package_request]
+    before_action :load_project,          only: [:new_package_request, :settings, :save_settings]
     before_action :load_project_resource, only: [:new_request, :create_request, :reduce_quota, :confirm_reduce_quota]
     before_action :check_first_visit,     only: [:index, :show_area, :create_package_request]
 
@@ -43,6 +43,21 @@ module ResourceManagement
 
     def confirm_reduce_quota
       # please do not delete
+    end
+
+    def save_settings
+
+      if @project.save
+      else
+        respond_to do |format|
+          format.html do
+            render action: 'settings'
+          end
+        end
+      end
+    end
+
+    def settings
     end
 
     def reduce_quota
