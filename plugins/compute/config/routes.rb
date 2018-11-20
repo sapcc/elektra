@@ -40,6 +40,7 @@ Compute::Engine.routes.draw do
   resources :services, constraints: { id: %r{[^\/]+} } do
     member do
       put 'enable'
+      get 'confirm-disable', to: 'services#confirm_disable'
       put 'disable'
     end
   end

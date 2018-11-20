@@ -17,15 +17,15 @@
         - if service.enabled?
           - if current_user.is_allowed?('compute:service_disable')
             %li= link_to 'Disable',
-              plugin('compute').disable_service_path(service.host),
-              method: :put,
-              data: { confirm: 'Are you sure you want to disable this service?' }
+              plugin('compute').confirm_disable_service_path(service.host),
+              data: { modal: true }
+              -#plugin('compute').disable_service_path(service.host),
         - else
           - if current_user.is_allowed?('compute:service_enable')
             %li= link_to 'Enable',
               plugin('compute').enable_service_path(service.host),
               method: :put
-          - if current_user.is_allowed?('compute:service_update')
-            %li= link_to 'Edit Disablement Reason',
-              plugin('compute').edit_service_path(service.host, reason: service.disabled_reason),
-              data: { modal: true }
+          -# - if current_user.is_allowed?('compute:service_update')
+          -#   %li= link_to 'Edit Disablement Reason',
+          -#     plugin('compute').edit_service_path(service.host, reason: service.disabled_reason),
+          -#     data: { modal: true }

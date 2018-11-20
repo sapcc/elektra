@@ -1,0 +1,14 @@
+= content_for :title do
+  Please provide the reason for the deactivation
+
+%div{class: modal? ? 'modal-body' : ''}
+
+  = simple_form_for @service, url: plugin('compute').disable_service_path(@service.id), method: :put, remote: request.xhr?, html: {id: 'form_service', data: {modal: true}, class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+    = f.input :reason, required: true
+
+    %div.buttons{class: modal? ? 'modal-footer' : ''}
+      - if modal?
+        %button.btn.btn-default{type:"button", data: {dismiss:"modal"}, aria: {label: "Cancel"}} Cancel
+      - else
+        = link_to "Cancel", snapshots_url(), class: 'btn btn-default'
+      = button_tag "Disable", { class: 'btn btn-primary pull-right', data: { disable_with: "Please wait..." } }

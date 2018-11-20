@@ -14,10 +14,20 @@ module Compute
       redirect_to services_url
     end
 
+    def confirm_disable
+      @service = services.compute.new_service
+      @service.id = params[:id]
+    end
+
     def disable
-      host = params['id']
-      services.compute.disable_service(host, 'nova-compute')
-      redirect_to services_url
+      @service = services.compute.new_service(params[:service])
+      @service.id = params[:id]
+
+      if @service.disable
+        redirect_to services_url
+      else
+        render :confirm_disable
+      end
     end
 
     def edit

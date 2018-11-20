@@ -14,6 +14,10 @@ module ServiceLayer
         )
       end
 
+      def new_service(attributes = {})
+        service_map.call(attributes)
+      end
+
       def disable_service_reason(host, name, disabled_reason)
         elektron_compute.put('os-services/disable-log-reason') do
           {
