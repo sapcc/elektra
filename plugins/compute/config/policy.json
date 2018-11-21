@@ -42,6 +42,9 @@
 
   "compute:instance_console": "rule:context_is_compute_editor and (not rule:monsoon2_domain)",
 
+  "compute:server_list": "rule:context_is_compute_viewer",
+  "compute:service_confirm_disable": "rule:context_is_cloud_compute_admin",
+
   "compute:attach_volume": "rule:instance_actions",
   "compute:detach_volume": "rule:instance_actions",
 
