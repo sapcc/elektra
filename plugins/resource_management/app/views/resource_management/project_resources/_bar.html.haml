@@ -2,7 +2,7 @@
   = render partial: 'resource_name', locals: { resource: resource, scope: 'resources', overview: overview }
 
   .col-md-6
-    = resource_bar(fill: resource.usage, maximum: resource.quota, data_type: resource.data_type)
+    = resource_bar(fill: resource.real_usage, maximum: resource.max_usage, data_type: resource.data_type, threshold: { value: resource.bursting, label:"resource is in bursting mode" })
 
     - if resource.backend_quota != nil
       %p.text-danger.quota-warning

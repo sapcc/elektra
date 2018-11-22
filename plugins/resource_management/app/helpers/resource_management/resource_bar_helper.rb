@@ -16,6 +16,11 @@ module ResourceManagement
     # If the threshold is not given, the maximum value is used for the threshold, but without displaying it as threshold.
     # In all the label fields, a placeholder of $VALUE will be replaced with the value.
     def resource_bar(options = {})
+
+      # delete threshold if value is 0
+      options.delete(:threshold) if options[:threshold] == 0
+      options.delete(:threshold) if options[:threshold].is_a?(Hash) &&  options[:threshold][:value] == 0
+
       fill, maximum, threshold, upper_bound, warning_level = resbar_prepare_options(options)
       bars = resbar_compile_bars(fill, maximum, threshold, warning_level)
 
