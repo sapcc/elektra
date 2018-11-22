@@ -27,11 +27,6 @@ module ResourceManagement
       Core::DataType.from_unit_name(read(:unit) || '')
     end
 
-    def burst_usage
-     #return 5
-     read(:burst_usage) || nil
-    end
-
     def externally_managed?
       read(:externally_managed) || false
     end
@@ -134,41 +129,26 @@ module ResourceManagement
       return "#{data_type.format(available)} #{I18n.t("resource_management.#{name}")}"
     end
 
-    #|-------------------------------------|---|
-    #|    usage                            |  -|-> real_usage = usage + burst_usage
-    #|-------------------------------------|---|   max_usage = quota + burst_usage
-    #                                      |       max_usage = real_usage
-    #                                      | threshold = given quota
+    # project level: if burst_usage > 0
+    # usage = burst_usage inclusive
+    #|---------------------------------|----|---|
+    #|                                 |    |  -|-> maximum = quota + (quota*multiplier)
+    #|---------------------------------|----|---|
+    #                                  |     fill = usage
+    #                                  | threshold = quota
     #
-    # burst_usage only counts if the usage goes over quota so in that case
-    # "max_usage" should be equal "real_usage"
+    # domain level/cluster level:
+    # if quota bursting is available on this cluster, the burst_usage field
+    # contains sum(max(0, usage - quota)) over all projects in this domain.
+    # usage = burst_usage inclusive
+    #|---------------------------------|----|---|
+    #|                                 |    |  -|-> maximum = quota
+    #|---------------------------------|----|---|
+    #                                  |     fill = usage
+    #                                  | threshold = usage - burst_usage
 
-    # this is used to draw the burst withing our resource_bar render funktion
-    def max_usage
-      #return 5+100
-      if(read(:burst_usage))
-        return read(:quota)+read(:burst_usage)
-      else
-        read(:quota)
-      end
-    end
-
-    def bursting
-      #return 100
-      if(read(:burst_usage))
-        return read(:quota)
-      else
-        return 0
-      end
-    end
-
-    def real_usage
-      #return 100+5
-      if(read(:burst_usage))
-        return read(:usage)+read(:burst_usage)
-      else
-        return read(:usage)
-      end
+    def burst_usage
+     read(:burst_usage) || 0
     end
 
     private

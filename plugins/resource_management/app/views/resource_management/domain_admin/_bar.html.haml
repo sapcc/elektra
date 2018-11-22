@@ -1,7 +1,12 @@
 - render_usage = false if !render_usage
 - fill = render_usage ? resource.usage : resource.projects_quota
+- data_type = resource.data_type
 
 - if fill > resource.quota
   = resource_bar(fill: fill, maximum: { value: fill, label: "" }, threshold: { value: resource.quota, label: "Approved quota: $VALUE" }, data_type: resource.data_type)
 - else
-  = resource_bar(fill: fill, maximum: resource.quota, data_type: resource.data_type)
+  - if resource.burst_usage > 0 && render_usage
+    - threshold = resource.usage - resource.burst_usage
+    = resource_bar(fill: fill, maximum: resource.quota, data_type: resource.data_type, threshold: { value: threshold, label:"resource are with #{data_type.format(resource.burst_usage)} in bursting mode" })
+  - else
+    = resource_bar(fill: fill, maximum: resource.quota, data_type: resource.data_type)
