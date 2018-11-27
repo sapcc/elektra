@@ -46,9 +46,8 @@ module ResourceManagement
     end
 
     def save_settings
-
-      if @project.save
-      else
+      @project.bursting[:enabled] = params[:project][:bursting_mode] == "true"
+      unless @project.save
         respond_to do |format|
           format.html do
             render action: 'settings'
@@ -58,6 +57,7 @@ module ResourceManagement
     end
 
     def settings
+      # please do not delete
     end
 
     def reduce_quota

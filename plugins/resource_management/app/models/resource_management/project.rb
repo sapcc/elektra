@@ -26,23 +26,19 @@ module ResourceManagement
     end
 
     def bursting
-      # return fake date for testing
-      return {
-        enabled: true,
-        multiplier: 0.2
-      }
+      read(:bursting)
     end
 
     def bursting_mode
-      # TODO: read bursting here if available
-      return true
       read(:bursting)[:enabled]
     end
 
     def bursting_multiplier
-      # TODO: read bursting here if available
-      return 0.2
       read(:bursting)[:multiplier]
+    end
+
+    def bursting_stretch
+      "#{read(:bursting)[:multiplier]*100}%"
     end
 
     def find_resource(service_type, resource_name)
@@ -66,7 +62,7 @@ module ResourceManagement
 
       rescue_api_errors do
         # TODO: read bursting here if available
-        @service.put_project_data(domain_id, id, data, {enabled: true, multiplier: 0.2})
+        @service.put_project_data(domain_id, id, data, bursting)
       end
     end
 
