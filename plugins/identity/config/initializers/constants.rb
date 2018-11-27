@@ -26,3 +26,11 @@ ALLOWED_ROLES = %w[
 
 BETA_ROLES = %w[
 ].freeze
+
+# not even cloud admins are allowed to assign these, they're intentionally
+# restricted to a few technical users (and those assignments are maintained in
+# helm-charts)
+BLACKLISTED_ROLES = %w[
+  resource_service
+  swiftreseller
+].freeze

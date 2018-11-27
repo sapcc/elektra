@@ -11,6 +11,8 @@ module Identity
                 end
               end
 
+      roles.delete_if { |role| BLACKLISTED_ROLES.include?(role.name) }
+
       roles.each do |role|
         role.description = I18n.t(
           "roles.#{role.name}", default: role.name.try(:titleize)
