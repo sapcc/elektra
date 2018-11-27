@@ -6,11 +6,25 @@
 
     - unless @project.errors.empty?
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
-
-    = f.input :bursting_mode,
-      label: 'Bursting mode',
-      as: :boolean,
-      icon_hint:  ""
+    .row
+      .col-sm-2
+        = f.input :bursting_mode,
+          label: 'Bursting mode',
+          as: :radio_buttons,
+          icon_hint:  "",
+          wrapper_html: { style: "padding-left:20px" }
+      .col-sm-10
+        .bs-callout.bs-callout-primary
+          %p
+            If
+            %strong Bursting
+            is enabled it gives you the abillity to stretch your usage over the given ressource quota. You can see it as a special kind of credit. This is very usefull if you need to build up something new without knowing which related resources are needed. That will prevent you from the situation that you are stucked during the installation with out of resource. In other words you can try and than you know what you realy need and adjust the quota afterwards. This is a nice feature is it?
+            %br
+            %br
+            But a little
+            %strong warning
+            on the end.
+            Resources that are used in bursting mode are different charged that regular used resources withing your quota boundaries.
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?
