@@ -119,13 +119,13 @@ module ServiceLayer
       elektron_limes.post("domains/#{domain_id}/projects/#{project_id}/sync")
     end
 
-    def put_project_data(domain_id, project_id, services, bursting)
+    def put_project_data(domain_id, project_id, services, bursting = nil)
       unless bursting
         elektron_limes.put("domains/#{domain_id}/projects/#{project_id}") do
           { project: { services: services } }
         end
       else
-        # currently not allowed to set quotas and bursting.enabled in the same request
+        # currently not allowed to set quotas and bursting in the same request
         elektron_limes.put("domains/#{domain_id}/projects/#{project_id}") do
           { project: { bursting: bursting } }
         end

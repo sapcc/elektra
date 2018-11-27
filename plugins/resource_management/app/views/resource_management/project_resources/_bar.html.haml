@@ -3,8 +3,8 @@
 
   .col-md-6
     - if resource.burst_usage > 0
-      - maximum = resource.quota + (resource.quota * @project.bursting_multiplier)
-      = resource_bar(fill: resource.usage, maximum: maximum, data_type: resource.data_type, threshold: { value: resource.quota, label:"resource is in bursting mode" })
+      - maximum = (resource.quota + (resource.quota * @project.bursting_multiplier)).to_i
+      = resource_bar(fill: resource.usage, maximum: { value: maximum, label:"resource is in bursting mode with max: #{maximum}"}, data_type: resource.data_type, threshold: { value: resource.quota, label:"given quota: #{resource.quota}" })
     - else
       = resource_bar(fill: resource.usage, maximum: resource.quota, data_type: resource.data_type)
 
