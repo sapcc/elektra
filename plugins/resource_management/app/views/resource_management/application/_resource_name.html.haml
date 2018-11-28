@@ -2,6 +2,7 @@
 -# * resource: a Resource or Capacity record (required)
 -# * scope: one of "resources", "admin", "cloud_admin" (required)
 -# * overview: if true, render the service name below the resource name (for views that mix multiple services)
+-# * burst_warning: if true, it shows a small warning that burst is in use
 
 .col-md-2.quota-label
   - name = resource.name
@@ -10,7 +11,12 @@
   - if overview
     = link_to translated_name, plugin('resource_management').send("#{scope}_area_path", area: resource.service_area)
     .small
-      .small= t("resource_management.#{resource.service_type}")
+      .small
+        - if burst_warning
+          =icon("bell")
+          burst in use
+        - else
+          = t("resource_management.#{resource.service_type}")
   - else
     - linktitle = "Open #{service} service"
     - if scope == 'resources'
@@ -77,3 +83,9 @@
           %small.text-muted= primary_desc
       - else
         = translated_name
+        - if burst_warning
+          %br
+          .small
+            .small
+              =icon("bell")
+              burst in use

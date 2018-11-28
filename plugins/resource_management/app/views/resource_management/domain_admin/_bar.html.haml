@@ -7,6 +7,11 @@
 - else
   - if resource.burst_usage > 0 && render_usage
     - threshold = resource.usage - resource.burst_usage
-    = resource_bar(fill: fill, maximum: resource.quota, data_type: resource.data_type, threshold: { value: threshold, label:"resource are with #{data_type.format(resource.burst_usage)} in bursting mode" })
+    - warning_level = 1.0
+    - danger_level = 1.5
+    - if resource.usage / resource.quota >= 0.8
+      - warning_level = 0.8
+      - danger_level = 1.0
+    = resource_bar(fill: { value: fill, label: "#{data_type.format(threshold)} + #{data_type.format(resource.burst_usage)}"}, maximum: resource.quota, data_type: resource.data_type, threshold: { value: threshold, label:"burst usage: #{data_type.format(resource.burst_usage)}"}, warning_level: 1.0, danger_level: 2.0)
   - else
     = resource_bar(fill: fill, maximum: resource.quota, data_type: resource.data_type)
