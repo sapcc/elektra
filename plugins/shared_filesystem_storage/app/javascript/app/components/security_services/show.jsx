@@ -1,19 +1,20 @@
 import { Modal, Button } from 'react-bootstrap';
 import { policy } from 'policy';
 
-const Row = ({label,value}) =>
+const Row = ({label,value,children}) =>
   <tr>
     <th>{label}</th>
-    <td>{value}</td>
+    <td>{children || value}</td>
   </tr>
 
 export default class ShowSecurityService extends React.Component {
   constructor(props){
   	super(props);
-  	this.state = {show: true};
+  	this.state = {show: true, showPassword:false};
     this.close = this.close.bind(this)
+    this.togglePasswordDisplay = this.togglePasswordDisplay.bind(this)
   }
-  
+
   close(e){
     if(e) e.stopPropagation()
     //this.props.history.goBack()
@@ -21,8 +22,12 @@ export default class ShowSecurityService extends React.Component {
     setTimeout(() => this.props.history.replace('/security-services'),300)
   }
 
+  togglePasswordDisplay(){
+    this.setState({showPassword: !this.state.showPassword})
+  }
+
   renderBody(securityService){
-    return <table className='table no-borders'>
+    return (<table className='table no-borders'>
       { policy.isAllowed("shared_filesystem_storage:security_service_get") ? (
         <tbody>
           <Row label="Type" value={securityService.type}/>
@@ -33,7 +38,15 @@ export default class ShowSecurityService extends React.Component {
           <Row label="Description" value={securityService.description}/>
           <Row label="DNS IP" value={securityService.dns_ip}/>
           <Row label="User" value={securityService.user}/>
-          <Row label="Password" value={securityService.password}/>
+          <Row label="Password">
+            {this.state.showPassword ? securityService.password : '******'}
+            &nbsp;
+            <button
+              className={`btn btn-${this.state.showPassword ? 'success' : 'danger'} btn-sm pull-right`} 
+              onClick={this.togglePasswordDisplay}>
+              {this.state.showPassword ? 'Hide' : 'Show'}
+            </button>
+          </Row>
           <Row label='Domain' value={securityService.domain}/>
           <Row label='Server' value={securityService.server}/>
           <Row label='Created At' value={securityService.created_at}/>
@@ -47,7 +60,7 @@ export default class ShowSecurityService extends React.Component {
           <Row label='Status' value={securityService.status}/>
         </tbody>
       )}
-    </table>
+    </table>)
   }
 
   render(){
