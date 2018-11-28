@@ -17,7 +17,7 @@ const TableRowFadeTransition = ({
 
 export default class List extends React.Component {
   state = {
-    visibilityFilters: [],
+    visibilityFilters: ['private','public','shared'],
     activeFilter: null
   }
 
@@ -25,7 +25,7 @@ export default class List extends React.Component {
     if (nextProps.items && nextProps.items.length > 0) {
 
       // build available filters array
-      let availableFilters = []
+      let availableFilters = this.state.visibilityFilters.slice()
       for(let i of nextProps.items) {
         if(availableFilters.indexOf(i.visibility) <0) availableFilters.push(i.visibility)
       }
