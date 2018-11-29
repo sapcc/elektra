@@ -53,7 +53,7 @@ class CacheController < ::ScopeController
 
   def show
     objects = ObjectCache.find_objects(include_scope: true) do |scope|
-      where_current_token_scope(scope, to_bool(params[:ignore_scope])).where(id: params[:id])
+      where_current_token_scope(scope).where(id: params[:id])
     end
 
     render json: objects.first
