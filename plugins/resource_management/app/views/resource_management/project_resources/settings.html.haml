@@ -1,4 +1,4 @@
-= content_for(:title, "Settings for project #{@project.name}")
+= content_for(:title, "Resource settings for project #{@project.name}")
 
 =simple_form_for @project, url: plugin('resource_management').resources_save_settings_path(), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
 
@@ -8,8 +8,8 @@
       %p.alert.alert-error= @project.errors.full_messages.to_sentence
     .row
       .col-sm-2
-        = f.input :bursting_mode,
-          label: 'Bursting mode',
+        = f.input :bursting_enabled,
+          label: 'Bursting enabled',
           as: :radio_buttons,
           icon_hint:  "",
           wrapper_html: { style: "padding-left:20px" }
@@ -18,7 +18,7 @@
           %p
             If
             %strong Bursting
-            is enabled it gives you the abillity to overshoot your usage over the given ressource quota by #{@project.bursting_stretch}. That will prevent you from the situation that you are stucked during installation or setup when you running out of resources. In other words you can try and than you know what you realy need and adjust the quota afterwards. This is a nice feature is it?
+            is enabled it gives you the abillity to overshoot your usage over the given ressource quota by #{@project.bursting_multiplier*100}%. That will prevent you from the situation that you are stucked during installation or setup when you running out of resources. In other words you can try and than you know what you realy need and adjust the quota afterwards. This is a nice feature is it?
             %br
             %br
             But a

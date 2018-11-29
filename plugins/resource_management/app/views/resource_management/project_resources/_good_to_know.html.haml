@@ -1,4 +1,5 @@
-= link_to 'Settings',plugin('resource_management').resources_settings_path(), data: {modal: true}, class: 'btn btn-primary btn-sm', style: 'margin-bottom:10px'
+- if @project.bursting
+  = link_to 'Settings',plugin('resource_management').resources_settings_path(), data: {modal: true}, class: 'btn btn-primary btn-sm', style: 'margin-bottom:10px'
 .bs-callout.bs-callout-primary
   %p
     These bars show the current resource usage in your project. The total

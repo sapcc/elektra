@@ -14,6 +14,23 @@
           Description:
         %td
           = @active_project.description
+      - if @project_resource.bursting && !@project_resource.burst_usage.empty?
+        .alert.alert-warning
+          =icon("bell")
+          Burst is in use
+          %br
+          for #{@project_resource.burst_usage.keys.length} resource/s bursting is in use. You can check the status
+          =link_to 'here',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
+      - elsif @project_resource.bursting && @project_resource.bursting_enabled
+        .alert.alert-warning
+          =icon("bell")
+          Disclaimer!
+          %br
+          For your convenience
+          =link_to 'Bursting',plugin('resource_management').resources_settings_path(), data: {modal: true}, style: "color:#91703B; text-decoration:underline;"
+          in
+          =link_to 'Resource Management',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
+          is enabled.
 
 
 - if current_user.is_allowed?('identity:project_request')

@@ -46,7 +46,7 @@ module ResourceManagement
     end
 
     def save_settings
-      @project.bursting[:enabled] = params[:project][:bursting_mode] == "true"
+      @project.bursting[:enabled] = params[:project][:bursting_enabled] == "true"
       unless @project.save
         respond_to do |format|
           format.html do

@@ -29,7 +29,7 @@ module ResourceManagement
       read(:bursting)
     end
 
-    def bursting_mode
+    def bursting_enabled
       read(:bursting)[:enabled]
     end
 
@@ -37,8 +37,17 @@ module ResourceManagement
       read(:bursting)[:multiplier]
     end
 
-    def bursting_stretch
-      "#{read(:bursting)[:multiplier]*100}%"
+    def burst_usage
+      usage = {}
+      services.each do |service|
+        service.resources.each do |resource|
+          if resource.burst_usage > 0
+            usage[service.area] = [] if usage[service.area].nil?
+            usage[service.area].push({resource.name => resource.burst_usage})
+          end
+        end
+      end
+      return usage
     end
 
     def find_resource(service_type, resource_name)

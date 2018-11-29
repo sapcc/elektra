@@ -8,6 +8,7 @@ module Identity
 
     # check wizard state and redirect unless finished
     before_action :check_wizard_status, only: [:show]
+    before_action :load_project_resource, only: [:show, :show_wizard]
 
     before_action do
       @scoped_project_fid = params[:project_id] || @project_id
@@ -19,7 +20,9 @@ module Identity
       }
     )
 
-    def show; end
+    def show
+
+    end
 
     def view
       @project = services.identity.find_project(
@@ -229,5 +232,10 @@ module Identity
 
       @project_profile.wizard_finished?('networking')
     end
+
+    def load_project_resource
+      @project_resource = services.resource_management.find_project( @scoped_domain_id, @scoped_project_id ) || raise(ActiveRecord::RecordNotFound)
+    end
+
   end
 end
