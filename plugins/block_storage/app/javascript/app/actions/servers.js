@@ -40,7 +40,7 @@ const fetchNextServers= () =>
     const itemsCount = servers && servers.items && servers.items.length || 0
     const perPage = servers && servers.perPage || 100
     let page = Math.floor(itemsCount/perPage)
-    const params = { type: 'server', page: page+1, per_page: perPage }
+    const params = { type: 'server', page: page+1, per_page: perPage, enforce_scope: true }
 
     dispatch(requestServers());
 

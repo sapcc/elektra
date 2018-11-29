@@ -17,6 +17,14 @@ class CacheController < ::ScopeController
                           project: ->(c) { c.instance_variable_get(:@scoped_project_id) },
                           rescope: true#, except: %i[related_objects]
 
+  before_action do
+    @enforce_scope = if params[:enforce_scope].nil? || params[:enforce_scope] =~ (/(false|f|no|n|0)$/i)
+                       false
+                     elsif params[:enforce_scope].empty? || params[:enforce_scope] =~ (/(true|t|yes|y|1)$/i)
+                       true
+                     end
+  end
+
   def index
     page = (params[:page] || 1).to_i
     per_page = (params[:per_page] || 30).to_i
@@ -45,7 +53,7 @@ class CacheController < ::ScopeController
 
   def show
     objects = ObjectCache.find_objects(include_scope: true) do |scope|
-      where_current_token_scope(scope).where(id: params[:id])
+      where_current_token_scope(scope, to_bool(params[:ignore_scope])).where(id: params[:id])
     end
 
     render json: objects.first
@@ -229,8 +237,8 @@ class CacheController < ::ScopeController
 
   protected
 
-  def where_current_token_scope(scope)
-    return scope if current_user.is_allowed?('cloud_admin_or_support')
+  def where_current_token_scope(scope, enforce_scope = @enforce_scope)
+    return scope if !enforce_scope && current_user.is_allowed?('cloud_admin_or_support')
 
     if current_user.project_id && params[:type] == 'project'
       scope = scope.where(id: current_user.project_id)
