@@ -8,12 +8,6 @@
   -# capacity is also given as threshold to account for the case
   -# that fill > capacity for overcommittable resources
   - if resource.burst_usage > 0 && render_usage
-    - threshold = resource.usage - resource.burst_usage
-    - warning_level = 1.0
-    - danger_level = 1.5
-    - if resource.usage / resource.capacity >= 0.8
-      - warning_level = 0.8
-      - danger_level = 0.9
-    = resource_bar(fill: { value: fill, label: "#{data_type.format(threshold)} + #{data_type.format(resource.burst_usage)}"}, maximum: resource.capacity, data_type: resource.data_type, threshold: { value: threshold, label:"burst usage: #{data_type.format(resource.burst_usage)}"}, warning_level: warning_level, danger_level: danger_level)
+    = resource_bar(fill: { value: fill, label: "#{data_type.format(resource.burst_usage)} + #{data_type.format(resource.burst_usage)} burst"}, maximum: resource.capacity, data_type: resource.data_type)
   -else
     = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, data_type: resource.data_type)
