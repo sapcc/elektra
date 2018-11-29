@@ -17,9 +17,7 @@
       - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
         .alert.alert-warning
           =icon("bell")
-          Burst is in use
-          %br
-          for #{@project_resource.burst_usage.keys.length} resource/s bursting in use. You can check the status
+          For #{@project_resource.burst_usage.keys.length} resource/s burst mode is in use. You can check the status
           =link_to 'here',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
       - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
         .alert.alert-warning
