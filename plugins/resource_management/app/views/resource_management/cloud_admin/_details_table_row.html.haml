@@ -13,6 +13,11 @@
       = data_type.format(resource.projects_quota)
   %td.col-md-2
     = data_type.format(resource.usage)
+  - if resource.burst_usage > 0
+    %td.col-md-2.danger
+      = data_type.format(resource.burst_usage)
+  - else
+    %td.col-md-2=0
   %td.col-md-2
     .resource-actions
       - if resource.externally_managed?

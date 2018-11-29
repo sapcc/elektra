@@ -14,14 +14,14 @@
           Description:
         %td
           = @active_project.description
-      - if @project_resource.bursting && !@project_resource.burst_usage.empty?
+      - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
         .alert.alert-warning
           =icon("bell")
           Burst is in use
           %br
           for #{@project_resource.burst_usage.keys.length} resource/s bursting is in use. You can check the status
           =link_to 'here',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
-      - elsif @project_resource.bursting && @project_resource.bursting_enabled
+      - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
         .alert.alert-warning
           =icon("bell")
           Disclaimer!

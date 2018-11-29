@@ -10,8 +10,6 @@
   %td.col-md-2
     .resource-current-quota
       = data_type.format(project_resource.current_quota)
-  %td.col-md-2
-    = data_type.format(project_resource.usage)
   - if project_resource.burst_usage > 0
     %td.col-md-2.danger
       = data_type.format(project_resource.burst_usage)
