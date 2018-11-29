@@ -148,6 +148,13 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
     this.setState({newMemberRoleIDs})
   }
 
+  selectEndUserAdminRoles = () => {
+    const newMemberRoleIDs = this.state.availableRoles.filter((r) =>
+      r.name.indexOf('cloud')<0 && !r.restricted
+    ).map((r) => r.id)
+    this.setState({newMemberRoleIDs})
+  }
+
   selectAllRoles = () => {
     this.setState({newMemberRoleIDs: this.state.availableRoles.map((r) => r.id)})
   }
@@ -183,6 +190,14 @@ export default class ProjectRoleAssignmentsInlineForm extends React.Component {
                   disabled={this.state.saving}>
                   Select Admin Roles
                 </button>
+                {policy.isAllowed('cloud_admin') &&
+                  <button
+                    className='btn btn-default btn-sm'
+                    onClick={this.selectEndUserAdminRoles}
+                    disabled={this.state.saving}>
+                    Select End User Admin Roles
+                  </button>
+                }
                 <button
                   className='btn btn-default btn-sm hover-danger'
                   onClick={this.removeAllRoles}

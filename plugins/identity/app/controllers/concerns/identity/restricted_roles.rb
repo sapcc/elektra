@@ -2,7 +2,10 @@ module Identity
   module RestrictedRoles
     def available_roles
       roles = if current_user.is_allowed?('cloud_admin')
-                services.identity.roles.sort_by(&:name)
+                services.identity.roles.sort_by(&:name).map do |r|
+                  r.restricted = true unless ALLOWED_ROLES.include?(r.name)
+                  r
+                end
               else
                 service_user.identity.roles.keep_if do |role|
                   ALLOWED_ROLES.include?(role.name) ||
