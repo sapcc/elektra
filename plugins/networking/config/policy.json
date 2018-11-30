@@ -45,8 +45,9 @@
   "networking:router_get":    "rule:context_is_network_viewer",
   "networking:router_delete": "rule:context_is_network_admin and project_id:%(router.tenant_id)s",
 
-  "networking:port_create":   "rule:context_is_network_admin",
+  "networking:port_create": "rule:context_is_network_admin",
   "networking:port_list":   "rule:context_is_network_admin",
+  "networking:port_widget": "rule:context_is_network_admin",
   "networking:port_get":    "rule:context_is_network_viewer and (project_id:%(port.tenant_id)s or project_id:%(target.id)s)",
   "networking:port_delete": "rule:context_is_network_admin and project_id:%(port.tenant_id)s",
   "networking:port_update": "rule:context_is_network_editor",
