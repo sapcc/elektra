@@ -61,6 +61,7 @@ export default class Asr extends React.Component {
     if(this.state.active=='router') {
       componentProps['handleSyncRouter'] = this.handleSyncRouter
     }
+    componentProps['routerId'] = this.props.routerId
 
     return (
       <React.Fragment>
