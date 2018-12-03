@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'csv'
+
 class CacheController < ::ScopeController
   include ApiLookup
 
@@ -39,6 +41,36 @@ class CacheController < ::ScopeController
     render json: { items: items, total: items.total, has_next: items.has_next }
   rescue StandardError
     render json: { items: [] }
+  end
+
+  def csv
+    items = ObjectCache.find_objects(
+      type: params[:type], term: params[:term], include_scope: true,
+      paginate: false
+    ) do |sql|
+      where_current_token_scope(sql).order(:name)
+    end
+
+    csv_string = CSV.generate do |csv|
+      csv << ['Type', 'Name', 'ID', 'Details', 'Domain Name', 'Domain ID', '(Parent) Project Name', 'Project Name']
+      items.each do |item|
+        if item.payload['scope']
+          csv << [
+            item.cached_object_type, item.name, item.id, item.search_label,
+            item.payload['scope']['domain_name'], item.payload['scope']['domain_id'],
+            item.payload['scope']['project_name'], item.payload['scope']['project_id']
+          ]
+        end
+      end
+    end
+
+    filename = []
+    filename << params[:type].to_s unless params[:type].blank?
+    filename << params[:term].to_s unless params[:term].blank?
+    filename = filename.join('_')
+    filename = 'all' if filename.blank?
+
+    send_data csv_string,  filename: "#{filename}.csv"
   end
 
   def live_search

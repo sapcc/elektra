@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   scope '/:domain_id(/:project_id)(/:plugin)' do
     resources :cache, only: %i[index show] do
       collection do
+        get 'csv'
         get 'types'
         get 'users'
         get 'groups'

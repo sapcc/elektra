@@ -42,7 +42,8 @@ const fetchObjects = (options) => {
   const params = {
     page: options.page || 1,
     type: options.objectType,
-    term: options.term
+    term: options.term,
+    per_page: 100
   }
   return ajaxHelper.get('/cache', {params: params})
 }

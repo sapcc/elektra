@@ -75,6 +75,11 @@ export default class Search extends React.Component {
               total: {this.props.objects.total}
             </React.Fragment>
           }
+          {this.props.objects.total > 0 && !this.props.objects.isFetching &&
+            <div className='main-buttons'>
+              <a className='btn btn-primary btn-sm' href={`cache/csv?term=${this.props.searchTerm || ''}&type=${this.props.searchType || ''}`} target='_blank'>Export AS CSV</a>
+            </div>
+          }
         </div>
 
         { this.props.objects.items && this.props.objects.items.length > 0 ?

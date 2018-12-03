@@ -12,7 +12,9 @@ import { fetchTypesIfNeeded } from '../actions/types'
 export default connect(
   (state) => ({
     objects: state.search.objects,
-    types: state.search.types
+    types: state.search.types,
+    searchTerm: (state.search.objects || {}).searchTerm,
+    searchType: (state.search.objects || {}).searchType
   }),
   dispatch => ({
     search: (searchOptions) => dispatch(searchObjects(searchOptions)),
