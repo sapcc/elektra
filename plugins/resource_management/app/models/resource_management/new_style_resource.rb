@@ -137,25 +137,6 @@ module ResourceManagement
     #                                  |     fill = usage
     #                                  | threshold = quota
     #
-    # domain level
-    # if quota bursting is available on this cluster, the burst_usage field
-    # contains sum(max(0, usage - quota)) over all projects in this domain.
-    # usage = burst_usage inclusive
-    #|---------------------------------|----|---|
-    #|                                 |    |  -|-> maximum = quota
-    #|---------------------------------|----|---|
-    #                                  |     fill = usage
-    #                                  | threshold = usage - burst_usage
-    #
-    # cluster level
-    # if quota bursting is available on this cluster, the burst_usage field
-    # contains sum(max(0, usage - quota)) over all projects in this cluster.
-    # usage = burst_usage inclusive
-    #|---------------------------------|----|---|
-    #|                                 |    |  -|-> maximum = capacity
-    #|---------------------------------|----|---|
-    #                                  |     fill = usage
-    #                                  | threshold = usage - burst_usage
 
     def burst_usage
      read(:burst_usage) || 0
