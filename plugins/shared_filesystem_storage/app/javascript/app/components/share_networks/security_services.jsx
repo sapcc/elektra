@@ -128,7 +128,7 @@ export default class ShareNetworkSecurityServicesModal extends React.Component {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.close}>Cancel</Button>
+          <Button onClick={this.close}>Close</Button>
         </Modal.Footer>
       </Modal>
     );
