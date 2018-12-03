@@ -368,7 +368,7 @@ const attachVolume=(id, serverId) =>
 
 const detachVolume=(id, attachmentId) =>
   (dispatch) =>
-    confirm(`Do you really want to delete the volume ${id}?`).then(() => {
+    confirm(`Do you really want to detach the volume ${id}?`).then(() => {
       return new Promise((handleSuccess,handleErrors) => {
         ajaxHelper.put(`/volumes/${id}/detach`, {attachment_id: attachmentId})
           .then((response) => {
