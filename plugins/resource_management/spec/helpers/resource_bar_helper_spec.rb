@@ -11,8 +11,8 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
       # convert the array returned by resbar_prepare_options() into a hash, to
       # locate its elements more easily
       a = helper.send(:resbar_prepare_options, options)
-      expect(a.size).to eq(5)
-      return { fill: a[0], maximum: a[1], threshold: a[2], upper_bound: a[3], warning_level: a[4] }
+      expect(a.size).to eq(6)
+      return { fill: a[0], maximum: a[1], threshold: a[2], upper_bound: a[3], warning_level: a[4], danger_level:a[5] }
     end
 
     it 'requires that a fill value be given' do
@@ -114,8 +114,8 @@ RSpec.describe ResourceManagement::ResourceBarHelper, type: :helper do
   describe '#resbar_compile_bars' do
 
     def bars_for(options)
-      fill, maximum, threshold, _, warning_level = helper.send(:resbar_prepare_options, options)
-      return helper.send(:resbar_compile_bars, fill, maximum, threshold, warning_level)
+      fill, maximum, threshold, _, warning_level, danger_level = helper.send(:resbar_prepare_options, options)
+      return helper.send(:resbar_compile_bars, fill, maximum, threshold, warning_level, danger_level)
     end
 
     it 'renders a single plain bar for fill < maximum and no threshold' do
