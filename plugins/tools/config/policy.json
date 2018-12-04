@@ -4,7 +4,7 @@
   "tools:universal_search_netstats": "rule:cloud_admin",
   "tools:universal_search_topology": "rule:cloud_admin",
   "tools:universal_search_role_assignments": "@",
-  "tools:universal_search_user_role_assignments": "rule:cloud_admin or user_id:%(user.id)s",
+  "tools:universal_search_user_role_assignments": "rule:cloud_admin or role:cloud_support_tools_viewer or user_id:%(user.id)s",
   "tools:switch_to_project": "not project_id:%(project.id)s",
-  "tools:show_scope_object": "rule:cloud_admin"
+  "tools:show_scope_object": "rule:cloud_admin or role:cloud_support_tools_viewer"
 }
