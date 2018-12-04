@@ -3,10 +3,15 @@ import { SearchField } from 'lib/components/search_field';
 import SearchItem from './search_item'
 // import { AjaxPaginate } from 'lib/components/ajax_paginate';
 import { Pagination } from 'lib/components/pagination';
+import {scope} from 'ajax_helper'
 
 
 export default class Search extends React.Component {
   componentDidMount() {
+    this.currentScope = scope.domain ? scope.domain : ''
+    if(scope.project && scope.project!='cc-tools') {
+      this.currentScope = this.currentScope +'/'+scope.project
+    }
     this.props.loadTypesOnce()
 
     // try to find init search term in url
@@ -77,7 +82,12 @@ export default class Search extends React.Component {
           }
           {this.props.objects.total > 0 && !this.props.objects.isFetching &&
             <div className='main-buttons'>
-              <a className='btn btn-primary btn-sm' href={`cache/csv?term=${this.props.searchTerm || ''}&type=${this.props.searchType || ''}`} target='_blank'>Export AS CSV</a>
+              <a
+                className='btn btn-primary btn-sm'
+                href={`/${this.currentScope}/cache/csv?term=${this.props.searchTerm || ''}&type=${this.props.searchType || ''}`}
+                target='_blank'>
+                Export AS CSV
+              </a>
             </div>
           }
         </div>
