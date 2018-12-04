@@ -95,7 +95,6 @@ module ResourceManagement
 
     def new_request
       # please do not delete
-      pp @resource.bursting_usage
     end
 
     def create_request
