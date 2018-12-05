@@ -1,6 +1,5 @@
 .row
-  - burst_warning = resource.burst_usage > 0
-  = render partial: 'resource_name', locals: { resource: resource, scope: 'admin', overview: overview, burst_warning: burst_warning }
+  = render partial: 'resource_name', locals: { resource: resource, scope: 'admin', overview: overview }
   .col-md-6
     = render partial: 'bar', locals: { resource: resource }
 

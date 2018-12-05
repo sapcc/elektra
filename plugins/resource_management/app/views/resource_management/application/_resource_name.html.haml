@@ -2,7 +2,6 @@
 -# * resource: a Resource or Capacity record (required)
 -# * scope: one of "resources", "admin", "cloud_admin" (required)
 -# * overview: if true, render the service name below the resource name (for views that mix multiple services)
--# * burst_warning: if true, it shows a small warning bell
 
 .col-md-2.quota-label
   - name = resource.name
@@ -13,9 +12,6 @@
     .small
       .small
         = t("resource_management.#{resource.service_type}")
-        - if burst_warning
-          %span{title: "burst in use"}
-            =icon("bell")
   - else
     - linktitle = "Open #{service} service"
     - if scope == 'resources'
@@ -82,9 +78,3 @@
           %small.text-muted= primary_desc
       - else
         = translated_name
-        - if burst_warning
-          %br
-          .small
-            .small
-              =icon("bell")
-              burst in use
