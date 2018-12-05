@@ -53,6 +53,7 @@ export default class ShowShareModal extends React.Component{
           </Row>
           <Row label='Availability zone' value={share.availability_zone}/>
           <Row label='Size' value={share.size+' GiB'}/>
+          <Row label='Snapshot ID' value={share.snapshot_id}/>
           <Row label='Protocol' value={share.share_proto}/>
           <Row label='Share Type' value={share.share_type_name + ' ('+share.share_type+')'}/>
           <Row label='Share network'>

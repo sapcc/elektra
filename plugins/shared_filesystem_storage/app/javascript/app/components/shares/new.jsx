@@ -98,6 +98,14 @@ export default class NewShareForm extends React.Component {
                 name="size"/>
             </Form.ElementHorizontal>
 
+            <Form.ElementHorizontal label='Snapshot ID' name="snapshot_id" required={false}>
+              <Form.Input elementType='input' className="integer required optional form-control" type="text"
+                name="snapshot_id"/>
+              <p className='help-block'>
+                The UUID of the share’s base snapshot.
+              </p>
+            </Form.ElementHorizontal>
+
             <Form.ElementHorizontal label='Availability Zone' name="share_az">
               { this.props.availabilityZones.isFetching ? (
                 <span><span className='spinner'></span>Loading...</span>
