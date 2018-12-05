@@ -3,6 +3,12 @@ module ResourceManagement
 
     validate :validate_resources
 
+    def after_initialize
+      # store some information about the initial attributes separately, so that
+      # we can decide what to include in PUT requests during perform_update()
+      @has_bursting = bursting_enabled
+    end
+
     def name
       read(:name)
     end
@@ -62,16 +68,20 @@ module ResourceManagement
     end
 
     def perform_update
-      data = services.map do |srv|
-        {
-          type: srv.type,
-          resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
-        }
-      end
-
-      rescue_api_errors do
-        # TODO: read bursting here if available
-        @service.put_project_data(domain_id, id, data, bursting)
+      if @has_bursting == bursting_enabled
+        data = services.map do |srv|
+          {
+            type: srv.type,
+            resources: srv.resources.map { |res| { name: res.name, quota: res.quota } },
+          }
+        end
+        rescue_api_errors do
+          @service.put_project_data(domain_id, id, data, nil)
+        end
+      else
+        rescue_api_errors do
+          @service.put_project_data(domain_id, id, nil, { enabled: bursting_enabled })
+        end
       end
     end
 
