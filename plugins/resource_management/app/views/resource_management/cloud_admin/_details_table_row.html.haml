@@ -2,7 +2,7 @@
 - critical  = resource.quota < [resource.projects_quota, resource.usage].max
 
 %tr{ class: critical ? 'danger' : '', data: { id: resource.domain_id } }
-  %td.col-md-4
+  %td.col-md-3
     = resource.domain_name
     .small.text-muted= resource.domain_id
   %td.col-md-2
@@ -11,13 +11,10 @@
   %td.col-md-2
     .resource-current-quota
       = data_type.format(resource.projects_quota)
-  %td.col-md-2
+  %td.col-md-1
     = data_type.format(resource.usage)
-  - if resource.burst_usage > 0
-    %td.col-md-2.danger
-      = data_type.format(resource.burst_usage)
-  - else
-    %td.col-md-2 0
+  %td.col-md-1
+    = data_type.format(resource.burst_usage)
   %td.col-md-2
     .resource-actions
       - if resource.externally_managed?
