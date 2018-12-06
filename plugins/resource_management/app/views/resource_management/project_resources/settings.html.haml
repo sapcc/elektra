@@ -16,15 +16,10 @@
       .col-sm-10
         .bs-callout.bs-callout-primary
           %p
-            If
-            %strong Bursting
-            is enabled it gives you the abillity to overshoot your usage over the given ressource quota by #{@project.bursting_multiplier*100}%. That will prevent you from the situation that you are stucked during installation or setup when you running out of resources. In other words you can try and than you know what you realy need and adjust the quota afterwards. This is a nice feature is it?
-            %br
-            %br
-            But a
-            %strong little warning
-            on the end.
-            Resources that are used in bursting mode are different charged than regular used resources withing your quota boundaries.
+            %strong Quota Bursting
+            allows overshooting usage of a resource quota. See
+            =link_to 'Documentation',@sap_docu_url + "docs/quota/#quota-bursting"
+            for details.
 
   .buttons{class: modal? ? 'modal-footer' : ''}
     - if modal?

@@ -17,18 +17,13 @@
   - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
     .alert.alert-warning
       =icon("bell")
-      For #{@project_resource.burst_usage.keys.length} resource/s burst mode is in use. You can check the status
+      Your resource usage is bursting. Check details
       =link_to 'here',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
   - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
     .alert.alert-warning
       =icon("bell")
-      Disclaimer!
-      %br
-      For your convenience
-      =link_to 'Bursting',plugin('resource_management').resources_settings_path(), data: {modal: true}, style: "color:#91703B; text-decoration:underline;"
-      in
-      =link_to 'Resource Management',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
-      is enabled.
+      Quota burst is now available. see
+      =link_to 'Documentation',@sap_docu_url + "docs/quota/#quota-bursting", style: "color:#91703B; text-decoration:underline;"
 
 
 - if current_user.is_allowed?('identity:project_request')
