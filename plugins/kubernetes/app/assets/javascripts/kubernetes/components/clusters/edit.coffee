@@ -95,9 +95,9 @@ EditCluster = ({
             React.createElement AdvancedOptions, clusterForm: clusterForm, metaData: metaData, edit: true
 
 
-      div className: 'toolbar toolbar-controlcenter',
+      div className: 'toolbar',
         h4 null, "Nodepools"
-        div className: 'main-control-buttons',
+        div className: 'main-buttons',
           button className: 'btn btn-primary', onClick: ((e) => e.preventDefault(); handleNodePoolAdd()),
             'Add Pool'
 
@@ -166,9 +166,9 @@ EditCluster = ({
             button
               className: 'btn btn-default',
               "data-index": index,
-              disabled: 'disabled' unless nodePool.new,
-              onClick: ((e) -> e.preventDefault(); handleNodePoolRemove(e.target.dataset.index)),
-                span className: "fa #{if nodePool.new then 'fa-trash' else 'fa-lock'}"
+              disabled: 'disabled' if nodePool.size > 0,
+              onClick: ((e) -> e.preventDefault(); handleNodePoolRemove(e.currentTarget.dataset.index)),
+                span className: "fa #{if nodePool.size == 0 then 'fa-trash' else 'fa-lock'}"
 
 
 

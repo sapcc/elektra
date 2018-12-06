@@ -104,6 +104,7 @@
     stateClone = state
     stateClone.data.spec.nodePools = nodePoolsFiltered
     ReactHelpers.mergeObjects({}, state, stateClone)
+    ReactHelpers.mergeObjects({}, state, {updatePending: true})
 
 
 
