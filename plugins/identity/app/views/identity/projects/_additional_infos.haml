@@ -18,12 +18,13 @@
     .alert.alert-warning
       =icon("bell")
       Your resource usage is bursting. Check details
-      =link_to 'here',plugin('resource_management').resources_path(), style: "color:#91703B; text-decoration:underline;"
+      =link_to 'here',plugin('resource_management').resources_path(), style: "color:inherit; text-decoration:underline;"
   - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
     .alert.alert-warning
       =icon("bell")
-      Quota burst is now available. see
-      =link_to 'Documentation',@sap_docu_url + "docs/quota/#quota-bursting", style: "color:#91703B; text-decoration:underline;"
+      Quota bursting is now available. See
+      =link_to 'documentation', sap_url_for('documentation') + "docs/quota/#quota-bursting", style: "color:inherit; text-decoration:underline;"
+      for details.
 
 
 - if current_user.is_allowed?('identity:project_request')
