@@ -42,6 +42,7 @@ build
 tags
 .tags
 .tags_swap
+.tags_swap.tmp
 
 .byebug_history
 vendor_4.2.4/

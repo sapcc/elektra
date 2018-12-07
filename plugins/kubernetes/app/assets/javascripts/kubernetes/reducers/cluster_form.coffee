@@ -19,7 +19,11 @@
         sshPublicKey: ''
         keyPair: ''
       }
+      status: {
+        nodePools: []
+      }
     }
+
     isSubmitting: false
     errors: null
     isValid: false
