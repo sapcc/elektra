@@ -264,6 +264,16 @@ h5, h6 {
   }
 }
 
+.nav-with-buttons {
+  position: relative;
+
+  .nav-main-buttons {
+    position: absolute;
+    right: 0;
+    top: 5px;
+  }
+}
+
 
 ul {
   &.content-list {
@@ -413,59 +423,6 @@ section {
   color: #777;
 }
 
-
-// Utilities
-
-.u-margin-top-small {
-  margin-top: 8px;
-}
-
-.u-margin-top-normal {
-  margin-top: $line-height-computed;
-}
-
-.u-margin-top-large {
-  margin-top: $line-height-computed*2;
-}
-
-.u-clearfix {
-  @include pie-clearfix;
-}
-
-.u-text-monospace {
-  font-family: monospace;
-}
-
-.u-text-small {
-  font-size: $font-size-small;
-}
-
-.u-flex-container {
-  display: flex;
-  align-items: center;
-}
-
-.u-flex-pos-right {
-  margin-left: auto;
-}
-
-.u-text-remove-highlight {
-  background-color: #ddd;
-  text-decoration: line-through;
-}
-
-.u-text-icon-left-margin {
-  margin-left: 5px;
-}
-
-.u-text-break-word {
-  word-break: break-all;
-  word-break: break-word;
-}
-
-.u-nowrap {
-  white-space: nowrap;
-}
 
 // ---------------------------------------------------------------------------------
 // Scaffolding
@@ -2482,4 +2439,61 @@ label {
   .context-breadcrumb.context-breadcrumb-fancy {
     background: $context-breadcrumb-fancy-bg-danger;
   }
+}
+
+
+// ---------------------------------------------------------------------------------
+// Utilities
+// ---------------------------------------------------------------------------------
+
+
+.u-margin-top-small {
+  margin-top: 8px;
+}
+
+.u-margin-top-normal {
+  margin-top: $line-height-computed;
+}
+
+.u-margin-top-large {
+  margin-top: $line-height-computed*2;
+}
+
+.u-clearfix {
+  @include pie-clearfix;
+}
+
+.u-text-monospace {
+  font-family: monospace;
+}
+
+.u-text-small {
+  font-size: $font-size-small;
+}
+
+.u-flex-container {
+  display: flex;
+  align-items: center;
+}
+
+.u-flex-pos-right {
+  margin-left: auto;
+}
+
+.u-text-remove-highlight {
+  background-color: #ddd;
+  text-decoration: line-through;
+}
+
+.u-text-icon-left-margin {
+  margin-left: 5px;
+}
+
+.u-text-break-word {
+  word-break: break-all;
+  word-break: break-word;
+}
+
+.u-nowrap {
+  white-space: nowrap;
 }
