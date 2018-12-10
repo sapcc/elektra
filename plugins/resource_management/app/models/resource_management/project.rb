@@ -32,15 +32,15 @@ module ResourceManagement
     end
 
     def bursting
-      read(:bursting)
+      read(:bursting) || {}
     end
 
     def bursting_enabled
-      read(:bursting)[:enabled]
+      bursting[:enabled]
     end
 
     def bursting_multiplier
-      read(:bursting)[:multiplier]
+      bursting[:multiplier]
     end
 
     def burst_usage
