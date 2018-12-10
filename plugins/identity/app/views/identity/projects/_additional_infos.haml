@@ -31,7 +31,7 @@
 
 
 - if @project_resource.bursting && !@project_resource.burst_usage.empty? && @active_project.name != "cloud_admin"
-  .bs-callout.bs-callout-alert.bs-callout-emphasize.u-margin-top-normal
+  .bs-callout.bs-callout-warning.bs-callout-emphasize.u-margin-top-normal
     Your resource usage is bursting.
     =link_to 'Check details here',plugin('resource_management').resources_path(), style: "color:inherit; text-decoration:underline;"
 - elsif @project_resource.bursting && @project_resource.bursting_enabled && @active_project.name != "cloud_admin"
