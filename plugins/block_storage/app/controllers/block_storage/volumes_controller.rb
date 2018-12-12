@@ -109,7 +109,12 @@ module BlockStorage
     end
 
     def reset_status
-      volume = services.block_storage.find_volume(params[:id])
+      # there is a bug in cinder permissions check.
+      # The API does not allow volume admin to change
+      # the state. For now we switch to cloud admin.
+      # TODO: switch back to service.block_storage once
+      # the API is fixed
+      volume = cloud_admin.block_storage.find_volume(params[:id])
 
       if volume.reset_status(params[:status])
         audit_logger.info(current_user, 'has reset volume', volume.id)
