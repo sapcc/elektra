@@ -38,9 +38,10 @@ export default ({
         { policy.isAllowed("networking:port_get", {port: port}) ?
           <Link to={`/ports/${port.id}/show`}>{port.description || truncate(port.id,20)}</Link>
           :
-          port.description || truncate(port.id,20)
+          port.name || truncate(port.id,20)
         }
       </td>
+      <td>{port.description}</td>
       <td>
         { (network && network.name) || port.network_id }
         { isFetchingNetworks && <span className='spinner'></span> }
@@ -84,7 +85,7 @@ export default ({
           </button>
           <ul className='dropdown-menu dropdown-menu-right' role="menu">
             <li><Link to={`/ports/${port.id}/show`}>Show</Link></li>
-            { canUpdate && 
+            { canUpdate &&
               <li><Link to={`/ports/${port.id}/edit`}>Edit</Link></li>
             }
             { canDelete &&

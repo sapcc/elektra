@@ -144,7 +144,8 @@ export default class List extends React.Component {
           <thead>
             <tr>
               <th className='snug'></th>
-              <th>Port ID / Description</th>
+              <th>Port ID / Name</th>
+              <th>Description</th>
               <th>Network</th>
               <th>Fixed IPs / Subnet</th>
               <th>Device Owner / ID</th>
