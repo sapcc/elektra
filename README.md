@@ -67,8 +67,8 @@ First: Application Installation with bundler
 
 Second: Install nodejs modules
 -------------------------------------
-1. [install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. Current working version v8.12.0
-2. [install](https://yarnpkg.com/en/docs/install) **yarn** if not installed. Current working version 1.9.4 (latest).
+1. [install](https://nodejs.org/en/download/package-manager/) **nodejs** if not installed. Current working version 11.4.0
+2. [install](https://yarnpkg.com/en/docs/install) **yarn** if not installed. Current working version 1.12.3
 3. cd into elektra/ directory and run: ```yarn```
 
 Third: Start the Elektra Dashboard Application
