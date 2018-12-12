@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@nivo/bar": "^0.42.1",
-    "@rails/webpacker": "^3.0.2",
+    "@rails/webpacker": "^3.5.5",
     "axios": "*",
     "babel-plugin-react-require": "*",
     "babel-preset-react": "^6.24.1",
