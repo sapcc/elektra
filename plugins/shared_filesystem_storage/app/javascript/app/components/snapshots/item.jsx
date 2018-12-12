@@ -38,9 +38,13 @@ export default class SnapshotItem extends React.Component {
     return(
       <tr className={ (snapshot.isFetching || snapshot.isDeleting) ? 'updating' : ''}>
         <td>
-          <Link to={`/snapshots/${snapshot.id}/show`}>{snapshot.name}</Link>
-          <br/>
-          <span className='info-text'>{snapshot.id}</span>
+          <Link to={`/snapshots/${snapshot.id}/show`}>{snapshot.name || snapshot.id}</Link>
+          {snapshot.name &&
+            <React.Fragment>
+              <br/>
+              <span className='info-text'>{snapshot.id}</span>
+            </React.Fragment>
+          }
         </td>
         <td>
           { share ? (

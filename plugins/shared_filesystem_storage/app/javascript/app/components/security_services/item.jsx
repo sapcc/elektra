@@ -4,9 +4,13 @@ import 'policy';
 export default ({ securityService, handleDelete }) =>
   <tr className={ securityService.isDeleting ? 'updating' : ''}>
     <td>
-      <Link to={`/security-services/${securityService.id}/show`}>{securityService.name}</Link>
-      <br/>
-      <span className='info-text'>{securityService.id}</span>
+      <Link to={`/security-services/${securityService.id}/show`}>{securityService.name || securityService.id}</Link>
+      {securityService.name &&
+        <React.Fragment>
+          <br/>
+          <span className='info-text'>{securityService.id}</span>
+        </React.Fragment>
+      }
     </td>
     <td>{securityService.type}</td>
     <td>{securityService.status}</td>

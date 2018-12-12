@@ -41,9 +41,9 @@ export default ({
       </td>
       <td>
         { policy.isAllowed("shared_filesystem_storage:share_network_get") ? (
-          <Link to={`/share-networks/${shareNetwork.id}/show`}>{shareNetwork.name}</Link>
+          <Link to={`/share-networks/${shareNetwork.id}/show`}>{shareNetwork.name || shareNetwork.id}</Link>
         ) : (
-          shareNetwork.name
+          shareNetwork.name || shareNetwork.id
         )}
       </td>
       <td>
