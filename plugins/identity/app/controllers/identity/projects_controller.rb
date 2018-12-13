@@ -234,7 +234,12 @@ module Identity
     end
 
     def load_project_resource
-      @project_resource = services.resource_management.find_project( @scoped_domain_id, @scoped_project_id ) || raise(ActiveRecord::RecordNotFound)
+      begin
+        @project_resource = services.resource_management.find_project(@scoped_domain_id, @scoped_project_id)
+      rescue
+        # do not fail when Limes is down
+        @project_resource = nil
+      end
     end
 
   end
