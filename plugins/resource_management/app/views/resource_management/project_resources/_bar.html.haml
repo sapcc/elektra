@@ -2,7 +2,11 @@
   = render partial: 'resource_name', locals: { resource: resource, scope: 'resources', overview: overview }
 
   .col-md-6
-    = resource_bar(fill: resource.usage, maximum: resource.quota, data_type: resource.data_type)
+    - if resource.burst_usage > 0
+      - maximum = (resource.quota + (resource.quota * @project.bursting_multiplier)).to_i
+      = resource_bar(fill: { value: resource.usage, label: "#{resource.quota}+#{resource.burst_usage}" }, maximum: { value: maximum, label:"max burst: #{maximum}"}, data_type: resource.data_type, threshold: { value: resource.quota, label:"quota: #{resource.quota}" })
+    - else
+      = resource_bar(fill: resource.usage, maximum: resource.quota, data_type: resource.data_type)
 
     - if resource.backend_quota != nil
       %p.text-danger.quota-warning

@@ -1,9 +1,14 @@
 - render_usage = false if !render_usage
 - fill = render_usage ? resource.usage : resource.domains_quota
+- data_type = resource.data_type
 
 - if resource.capacity.nil?
   = resource_bar(fill: fill, maximum: { value: -1, label: "No total capacity maintained" }, threshold: { value: fill, label: "" }, data_type: resource.data_type)
 - else
   -# capacity is also given as threshold to account for the case
   -# that fill > capacity for overcommittable resources
-  = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, data_type: resource.data_type)
+  - if resource.burst_usage > 0 && render_usage
+    - usage_without_burst = resource.usage - resource.burst_usage
+    = resource_bar(fill: { value: fill, label: "#{data_type.format(usage_without_burst)} + #{data_type.format(resource.burst_usage)} burst"}, maximum: resource.capacity, data_type: resource.data_type)
+  -else
+    = resource_bar(fill: fill, maximum: [fill, resource.capacity].max, threshold: { value: resource.capacity, label: "Capacity: $VALUE" }, data_type: resource.data_type)

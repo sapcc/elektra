@@ -4,14 +4,16 @@
   %td.col-md-3
     = project_resource.project_name
     .small.text-muted= project_resource.project_id
-  %td.col-md-3
+  %td.col-md-2
     .resource-approved-quota.input-group.input-group-sm
       = data_type.format(project_resource.quota)
   %td.col-md-2
     .resource-current-quota
       = data_type.format(project_resource.current_quota)
-  %td.col-md-2
+  %td.col-md-1
     = data_type.format(project_resource.usage)
+  %td.col-md-1
+    = data_type.format(project_resource.burst_usage)
   %td.col-md-2
     .resource-actions
       - if project_resource.externally_managed?

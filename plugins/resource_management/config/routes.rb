@@ -10,6 +10,8 @@ ResourceManagement::Engine.routes.draw do
     get  'sync_now' => 'project_resources#sync_now'
     get  'request-package'          => 'project_resources#new_package_request', as: 'new_package_request'
     post 'request-package/:package' => 'project_resources#create_package_request', as: 'create_package_request'
+    post  'save_settings' => 'project_resources#save_settings'
+    get  'settings' => 'project_resources#settings'
   end
 
   scope 'admin', as: 'admin' do

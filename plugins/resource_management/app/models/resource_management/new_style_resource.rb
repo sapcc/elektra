@@ -129,6 +129,19 @@ module ResourceManagement
       return "#{data_type.format(available)} #{I18n.t("resource_management.#{name}")}"
     end
 
+    # project level: if burst_usage > 0
+    # usage = burst_usage inclusive
+    #|---------------------------------|----|---|
+    #|                                 |    |  -|-> maximum = quota + (quota*multiplier)
+    #|---------------------------------|----|---|
+    #                                  |     fill = usage
+    #                                  | threshold = quota
+    #
+
+    def burst_usage
+     read(:burst_usage) || 0
+    end
+
     private
 
     def validate_quota

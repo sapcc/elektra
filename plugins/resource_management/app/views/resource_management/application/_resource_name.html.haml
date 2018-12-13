@@ -10,7 +10,8 @@
   - if overview
     = link_to translated_name, plugin('resource_management').send("#{scope}_area_path", area: resource.service_area)
     .small
-      .small= t("resource_management.#{resource.service_type}")
+      .small
+        = t("resource_management.#{resource.service_type}")
   - else
     - linktitle = "Open #{service} service"
     - if scope == 'resources'

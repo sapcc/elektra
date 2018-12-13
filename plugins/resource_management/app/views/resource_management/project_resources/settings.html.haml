@@ -1,0 +1,29 @@
+= content_for(:title, "Resource settings for project #{@project.name}")
+
+=simple_form_for @project, url: plugin('resource_management').resources_save_settings_path(), method: :post, remote: request.xhr?, html: { data: { modal: true } } do |f|
+
+  %div{class: modal? ? 'modal-body' : ''}
+
+    - unless @project.errors.empty?
+      %p.alert.alert-error= @project.errors.full_messages.to_sentence
+    .row
+      .col-sm-2
+        = f.input :bursting_enabled,
+          label: 'Bursting enabled',
+          as: :radio_buttons,
+          icon_hint:  "",
+          wrapper_html: { style: "padding-left:20px" }
+      .col-sm-10
+        .bs-callout.bs-callout-primary
+          %p
+            %strong Quota Bursting
+            allows overshooting usage of a resource quota. See
+            =link_to 'documentation', sap_url_for('documentation') + "docs/quota/#quota-bursting"
+            for details.
+
+  .buttons{class: modal? ? 'modal-footer' : ''}
+    - if modal?
+      %button.btn.btn-default{type:"button", data: { dismiss:"modal" }, aria: { label: "Cancel" }} Cancel
+    - else
+      = link_to "Cancel", data: {dismiss:"modal"}, class: 'btn btn-default'
+    %button.btn.btn-primary{type: "submit", data: { disable_with: 'Please wait...'}} Save
