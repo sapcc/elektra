@@ -16,6 +16,6 @@
         %li{role: 'presentation'}
           = link_to t("resource_management.#{area_str}"), plugin('resource_management').send("#{scope}_area_path", area: area_str)
 
-  - if @project.bursting
+  - if @project and @project.bursting
     .nav-main-buttons
       = link_to 'Settings',plugin('resource_management').resources_settings_path(), data: {modal: true}, class: 'btn btn-primary btn-sm', style: 'margin-bottom:10px'
