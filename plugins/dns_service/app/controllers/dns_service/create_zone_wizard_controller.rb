@@ -9,14 +9,38 @@ module DnsService
       payload = @inquiry.payload
       @zone_request.attributes = payload
       @pool = load_pool(@zone_request.domain_pool)
+
+      if @inquiry
+        scraped_at = cloud_admin.resource_management.find_project(
+          @inquiry.domain_id,
+          @inquiry.project_id,
+          service: 'dns',
+          resource: 'zones'
+        ).services.first.scraped_at rescue 0
+
+        # sync if last sync was more than 5 minutes ago
+        if (Time.now.to_i - scraped_at.to_i) > 300
+          Thread.new {
+            cloud_admin.resource_management.sync_project_asynchronously(
+              @inquiry.domain_id, @inquiry.project_id
+            )
+          }
+        end
+      end
     end
 
     def create
       @zone_request = ::DnsService::ZoneRequest.new(nil, params[:zone_request])
-      @zone = services.dns_service.new_zone(@zone_request.attributes)
+
+      # try to find zone with given name
+      @zone = services.dns_service.zones(name: @zone_request.zone_name)[:items].first
+
+      # create new zone if it does not already exist
+      @zone ||= services.dns_service.new_zone(@zone_request.attributes)
       @zone.name = @zone_request.zone_name
       @pool = load_pool(@zone_request.domain_pool)
       @zone.write('attributes', @pool.read('attributes'))
+
 
       # get dns zones quota for target project
       dns_zone_resource = cloud_admin.resource_management.find_project(
@@ -42,11 +66,20 @@ module DnsService
       end
 
       if @zone.save
-        @zone_transfer_request = services.dns_service.new_zone_transfer_request(
+        # try to find existing zone transfer request
+        @zone_transfer_request = services.dns_service.zone_transfer_requests(
+          status: 'ACTIVE'
+        ).select do |zone_transfer_request|
+          zone_transfer_request.target_project_id == @inquiry.project_id &&
+            zone_transfer_request.zone_id == @zone.id
+        end.first
+
+        # create a new zone transfer request if not exists
+        @zone_transfer_request ||= services.dns_service.new_zone_transfer_request(
           @zone.id, target_project_id: @inquiry.project_id
         )
-        if @zone_transfer_request.save
-          @zone_transfer_request.accept(@inquiry.project_id)
+
+        if @zone_transfer_request.save && @zone_transfer_request.accept(@inquiry.project_id)
           if @inquiry
             services.inquiry.set_inquiry_state(
               @inquiry.id, :approved,
@@ -58,6 +91,7 @@ module DnsService
           # catch errors for transfer zone request
           @zone_transfer_request.errors.each { |k, m| @zone_request.errors.add(k,m) }
         end
+
       else
         # catch errors for zone update
         @zone.errors.each{|k,m| @zone_request.errors.add(k,m)}
