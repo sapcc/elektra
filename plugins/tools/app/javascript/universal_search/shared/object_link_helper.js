@@ -50,3 +50,24 @@ export const objectUrl = (item) => {
   const scope = item.payload.scope || {}
   return(`/${scope.domain_id}/${scope.project_id}/${path(item.id)}`)
 }
+
+export const vCenterUrl = (item) => {
+  if(!item) return null
+
+  let objectType = item.cached_object_type
+
+  if (objectType == 'server') {
+    let az = item.payload['OS-EXT-AZ:availability_zone']
+    if(az) {
+      // parse region and zone
+      let region = az.slice(0,-1)
+      let zone = az.slice(-1)
+      
+      return (`https://vc-${zone}-0.cc.${region}.cloud.sap/vsphere-client/`)
+    } else {
+      return null
+    }
+  } else {
+    return null
+  }
+}

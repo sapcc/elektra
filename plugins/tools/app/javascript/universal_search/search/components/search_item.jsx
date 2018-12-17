@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Highlighter } from 'react-bootstrap-typeahead'
-import { projectUrl, objectUrl } from '../../shared/object_link_helper'
+import { projectUrl, objectUrl, vCenterUrl } from '../../shared/object_link_helper'
 import moment from 'moment'
 
 
@@ -40,6 +40,7 @@ export default ({item, term}) => {
   const scope = item.payload.scope || {}
   const projectLink = projectUrl(item)
   const objectLink = objectUrl(item)
+  const vCenterLink = vCenterUrl(item)
 
   return(
     <tr>
@@ -91,13 +92,22 @@ export default ({item, term}) => {
             term={term}/>
         }
       </td>
-      <td>
-        {(projectLink || objectLink) &&
+      <td className="snug">
+        {(projectLink || objectLink || vCenterLink) &&
           <div className='btn-group'>
             <button className="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
               <i className='fa fa-cog'></i>
             </button>
             <ul className='dropdown-menu dropdown-menu-right' role="menu">
+              {vCenterLink &&
+                <li>
+                  <a
+                    href={vCenterLink}
+                    target='_blank'>
+                    <i className='fa fa-fw fa-external-link'/> Jump to VCenter
+                  </a>
+                </li>
+              }
               {objectLink &&
                 <li>
                   <a

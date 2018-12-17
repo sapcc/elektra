@@ -1,7 +1,7 @@
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view'
-import { projectUrl, objectUrl } from '../../shared/object_link_helper'
+import { projectUrl, objectUrl, vCenterUrl } from '../../shared/object_link_helper'
 
 import ProjectRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/project_role_assignments'
 import UserRoleAssignments from '../../../../../../identity/app/javascript/role_assignments/containers/user_role_assignments'
@@ -57,6 +57,7 @@ export default class ShowSearchObjectModal extends React.Component{
     const { item } = this.props
     const projectLink = projectUrl(item)
     const objectLink = objectUrl(item)
+    const vCenterLink = vCenterUrl(item)
     const found = this.props.location.search.match(/\?tab=([^\&]+)/)
     let activeTab = found ? found[1] : null
     const isProject = item && item.cached_object_type == 'project'
@@ -136,6 +137,15 @@ export default class ShowSearchObjectModal extends React.Component{
           }
         </Modal.Body>
         <Modal.Footer>
+          {vCenterLink &&
+            <a
+              href={vCenterLink}
+              target='_blank'
+              className='btn btn-primary'>
+              Switch to VCenter
+            </a>
+          }
+
           {objectLink &&
             <a
               href={objectLink}
