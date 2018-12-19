@@ -8,7 +8,7 @@ const DetailsViewHighlightTransition = ({
   {children}
 </CSSTransition>);
 
-const keysNotPrinted = ["region", "year", "month", "project_id", "price_sec", "allocation_type"]
+const keysNotPrinted = ["region", "year", "month", "project_id", "price_sec"]
 const keysNotFormatted = ["cost_object", "object_id"]
 
 const renderValue = (props, key) => {
