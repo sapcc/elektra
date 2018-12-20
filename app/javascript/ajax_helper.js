@@ -67,7 +67,8 @@ export const createAjaxHelper = (options = {}) => {
   // console.log('instanceOptions',instanceOptions)
   const axiosInstance = axios.create(instanceOptions)
   // overwrite default Accept Header to use json only
-  axiosInstance.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
+  axiosInstance.defaults.headers.common['Accept'] = 'application/json';
+  axiosInstance.defaults.headers.common['Accept-Charset'] = 'utf-8';
 
   // use request interceptor to merge globalOptions.
   // The global options are available only after the entire JS
