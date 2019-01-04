@@ -136,6 +136,11 @@ PATH
     resource_management (0.0.1)
 
 PATH
+  remote: plugins/resources
+  specs:
+    resources (0.0.1)
+
+PATH
   remote: plugins/shared_filesystem_storage
   specs:
     shared_filesystem_storage (0.0.1)
@@ -616,6 +621,7 @@ DEPENDENCIES
   redcarpet
   reports!
   resource_management!
+  resources!
   responders
   rspec
   rspec-rails
@@ -636,4 +642,4 @@ DEPENDENCIES
   webpacker (~> 3.0)
 
 BUNDLED WITH
-   1.16.6
+   1.17.1

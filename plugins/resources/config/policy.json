@@ -1,0 +1,10 @@
+{
+  "member": "role:member or role:Member",
+  "admin": "role:admin",
+
+  "resources:entry_list": "rule:admin or rule:member",
+  "resources:entry_get": "rule:admin or rule:member",
+  "resources:entry_create": "rule:admin or rule:member",
+  "resources:entry_delete": "rule:admin or rule:member",
+  "resources:entry_update": "rule:admin or rule:member"
+}

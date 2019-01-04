@@ -1,0 +1,10 @@
+export const REQUEST_ENTRIES                 = 'resources/entries/REQUEST_ENTRIES';
+export const RECEIVE_ENTRIES                 = 'resources/entries/RECEIVE_ENTRIES';
+export const REQUEST_ENTRY                   = 'resources/entries/REQUEST_ENTRY';
+export const REQUEST_ENTRY_FAILURE           = 'resources/entries/REQUEST_ENTRY_FAILURE';
+export const REQUEST_ENTRIES_FAILURE         = 'resources/entries/REQUEST_ENTRIES_FAILURE';
+export const RECEIVE_ENTRY                   = 'resources/entries/RECEIVE_ENTRY';
+export const REQUEST_DELETE_ENTRY            = 'resources/entries/REQUEST_DELETE_ENTRY';
+export const DELETE_ENTRY_FAILURE            = 'resources/entries/DELETE_ENTRY_FAILURE';
+export const DELETE_ENTRY_SUCCESS            = 'resources/entries/DELETE_ENTRY_SUCCESS';
+export const FILTER_ENTRIES                  = 'resources/entries/FILTER_ENTRIES';
