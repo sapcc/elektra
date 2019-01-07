@@ -1,10 +1,10 @@
 {
-  "member": "role:member or role:Member",
-  "admin": "role:admin",
+  "context_is_cloud_resource_admin": "role:cloud_resource_admin",
+  "context_is_domain_resource_admin": "(role:resource_admin or role:cloud_resource_admin) and not domain_id:nil",
+  "context_is_domain_resource_viewer": "(role:resource_admin or role:resource_viewer or role:cloud_resource_admin) and not domain_id:nil",
+  "context_is_project_resource_admin": "role:resource_admin and not project_id:nil",
+  "context_is_project_resource_viewer": "(role:resource_admin or role:resource_viewer or role:member) and not project_id:nil",
 
-  "resources:entry_list": "rule:admin or rule:member",
-  "resources:entry_get": "rule:admin or rule:member",
-  "resources:entry_create": "rule:admin or rule:member",
-  "resources:entry_delete": "rule:admin or rule:member",
-  "resources:entry_update": "rule:admin or rule:member"
+  "project:show": "rule:context_is_project_resource_viewer",
+  "project:edit": "rule:context_is_project_resource_admin"
 }
