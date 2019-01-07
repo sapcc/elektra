@@ -58,12 +58,14 @@ export const vCenterUrl = (item) => {
 
   if (objectType == 'server') {
     let az = item.payload['OS-EXT-AZ:availability_zone']
+
     if(az) {
       // parse region and zone
       let region = az.slice(0,-1)
       let zone = az.slice(-1)
-      
-      return (`https://vc-${zone}-0.cc.${region}.cloud.sap/vsphere-client/`)
+      let serverID = item.id
+
+      return (`https://vc-${zone}-0.cc.${region}.cloud.sap/ui/#?extensionId=vsphere.core.search.domainView&query=${serverID}&searchType=simple`)
     } else {
       return null
     }
