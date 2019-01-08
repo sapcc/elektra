@@ -27,8 +27,8 @@ export default class ProjectOverview extends React.Component {
     // console.log(this.props);
     return (
       <React.Fragment>
-        <p>This is your project:</p>
-        <pre>{JSON.stringify(this.props.project.data, null, 2)}</pre>
+        <p>These are my props:</p>
+        <pre>{JSON.stringify(this.props, null, 2)}</pre>
       </React.Fragment>
     );
   }

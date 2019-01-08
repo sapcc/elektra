@@ -6,7 +6,8 @@ import {
 
 export default connect(
   (state, props) => ({
-    project: state.project,
+    metadata: state.project.metadata,
+    overview: state.project.overview,
   }),
   dispatch => ({
     loadProjectOnce: (args) => dispatch(fetchProjectIfNeeded(args)),
