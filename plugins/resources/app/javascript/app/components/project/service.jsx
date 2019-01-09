@@ -27,7 +27,7 @@ export default class ProjectService extends React.Component {
             {(idx !== 0 || t(category) != t(area)) && <h3>{t(category)}</h3>}
             {categories[category].sort(byUIString).map(resourceName => {
               const fullName = `${serviceType}/${resourceName}`;
-              return <ProjectResource key={fullName} fullResourceName={fullName} />;
+              return <ProjectResource key={fullName} fullResourceName={fullName} flavorData={this.props.flavorData} />;
             })}
           </React.Fragment>
         ))}

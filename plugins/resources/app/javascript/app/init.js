@@ -9,6 +9,7 @@ createWidget(__dirname).then((widget) => {
   })
   delete(widget.config.scriptParams.limesApi)
   delete(widget.config.scriptParams.token)
+  widget.config.scriptParams.flavorData = JSON.parse(widget.config.scriptParams.flavorData)
   widget.setPolicy()
   widget.createStore(reducers)
   widget.render(App)

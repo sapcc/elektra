@@ -67,7 +67,7 @@ export default class ProjectOverview extends React.Component {
       <React.Fragment>
         {this.renderNavbar(currentArea)}
         {currentServices.sort(byUIString).map(serviceType => (
-          <ProjectService key={serviceType} serviceType={serviceType} />
+          <ProjectService key={serviceType} serviceType={serviceType} flavorData={this.props.flavorData} />
         ))}
       </React.Fragment>
     );

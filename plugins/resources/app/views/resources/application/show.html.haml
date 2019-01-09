@@ -1,4 +1,4 @@
 = content_for :main_toolbar do
   Resource Management
 = javascript_pack_tag "resources_app",
-    data: { token: current_user.token, limes_api: @limes_endpoint, scoped_domain_id: @scoped_domain_id, scoped_project_id: @scoped_project_id }
+    data: { token: current_user.token, limes_api: @limes_endpoint, scoped_domain_id: @scoped_domain_id, scoped_project_id: @scoped_project_id, flavor_data: @flavor_data }

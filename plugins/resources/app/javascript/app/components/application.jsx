@@ -5,7 +5,7 @@ import ProjectOverview from '../containers/project/overview';
 
 // render all components inside a hash router
 export default (props) => {
-  const { scopedDomainId, scopedProjectId } = props
+  const { scopedDomainId, scopedProjectId, flavorData } = props
   return (
     <HashRouter /*hashType="noslash"*/ >
       <div>
@@ -13,10 +13,10 @@ export default (props) => {
 
         {/* routes for project level */}
         <Route exact path="/project" render={(props) =>
-          <ProjectOverview domainID={scopedDomainId} projectID={scopedProjectId} {...props}/>
+          <ProjectOverview domainID={scopedDomainId} projectID={scopedProjectId} flavorData={flavorData} {...props} />
         }/>
         <Route exact path="/project/:domain_id/:project_id" render={(props) =>
-          <ProjectOverview domainID={props.match.params.domain_id} projectID={props.match.params.project_id} {...props}/>
+          <ProjectOverview domainID={props.match.params.domain_id} projectID={props.match.params.project_id} flavorData={flavorData} {...props} />
         }/>
       </div>
     </HashRouter>
