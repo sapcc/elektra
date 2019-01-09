@@ -36,7 +36,8 @@ module MonsoonDashboard
     # config.i18n.default_locale = :de
 
     config.middleware.insert_before Rack::Sendfile, DebugHeadersMiddleware
-
+    config.i18n.fallbacks = [I18n.default_locale]
+    
     # build a map from the plugins
     plugin_mount_points = {}
     Core::PluginsManager.available_plugins.each{|plugin| plugin_mount_points[plugin.mount_point] = plugin.mount_point}
