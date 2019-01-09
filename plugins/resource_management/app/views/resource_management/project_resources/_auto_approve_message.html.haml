@@ -1,0 +1,7 @@
+- if @auto_approve_success
+  .alert.alert-info
+    %p
+      Your quota request for
+      %strong=@resource.name
+      was auto aproved to your needs. New value is
+      %strong=@resource.data_type.format(@resource.quota)
