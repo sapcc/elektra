@@ -7,7 +7,7 @@ const ResourceName = ({name, flavorData}) => {
     return <div className='col-md-2'>{name}</div>;
   }
 
-  let tooltip = <Tooltip id={`tooltip-${name}`}>{flavorData.secondary}</Tooltip>;
+  let tooltip = <Tooltip id={`tooltip-${name}`} className='tooltip-no-break'>{flavorData.secondary}</Tooltip>;
   return (
     <div className='col-md-2'>
       <OverlayTrigger overlay={tooltip} placement='right' delayShow={300} delayHide={150}><span>{name}</span></OverlayTrigger>

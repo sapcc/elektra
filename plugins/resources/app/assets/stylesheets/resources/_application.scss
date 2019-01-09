@@ -20,11 +20,3 @@
   ***************************************************
 
 */
-
-/* avoid line breaks in tooltips containing flavor descriptions */
-/* TODO FIXME react-bootstrap mounts the tooltips outside of <div class="content resources">, so this rule does not match */
-.tooltip.right > .tooltip-inner {
-  white-space: nowrap;
-  max-width: 600px;
-}
-
