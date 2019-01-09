@@ -73,7 +73,7 @@ ADD . /home/app/webapp
 
 RUN bundle binstubs bundler --force
 # create webpacker binstubs
-RUN bundle binstubs webpacker --force --path ./bin
+RUN bin/rails webpacker:binstubs
 # precompile assets including webpacker packs
 RUN bin/rails assets:precompile && rm -rf tmp/cache/assets
 
