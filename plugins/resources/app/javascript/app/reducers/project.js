@@ -50,7 +50,7 @@ const receive = (state, {projectData, receivedAt}) => {
   overview.areas = areas;
 
   // `services` is what the ProjectService component needs.
-  const services = [];
+  const services = {};
   for (let srv of serviceList) {
     var {resources: resourceList, ...serviceData} = srv;
 
@@ -63,13 +63,13 @@ const receive = (state, {projectData, receivedAt}) => {
     }
     serviceData.categories = categories;
 
-    services.push(serviceData);
+    services[serviceData.type] = serviceData;
   }
 
   // `resources` is what the ProjectResource component needs.
   const resources = {};
   for (let srv of serviceList) {
-    for (let res of resourceList) {
+    for (let res of srv.resources) {
       resources[`${srv.type}/${res.name}`] = res;
     }
   }

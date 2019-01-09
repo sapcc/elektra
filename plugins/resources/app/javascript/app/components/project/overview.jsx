@@ -1,4 +1,6 @@
-import { STRINGS } from '../../constants';
+import { byUIString, t } from '../../utils';
+
+import ProjectService from '../../containers/project/service';
 
 export default class ProjectOverview extends React.Component {
   state = {
@@ -26,15 +28,14 @@ export default class ProjectOverview extends React.Component {
     this.setState({...this.state, currentArea: area});
   }
 
-  // TODO make this its own component
   renderNavbar(currentArea) {
     return (
       <nav className='nav-with-buttons'>
         <ul className='nav nav-tabs'>
-          { Object.keys(this.props.overview.areas).sort().map((area, idx) => (
+          { Object.keys(this.props.overview.areas).sort(byUIString).map(area => (
             <li key={area} role="presentation" className={currentArea == area ? "active" : ""}>
               <a href="#" onClick={(e) => { e.preventDefault(); this.changeArea(area); }}>
-                {STRINGS[area]}
+                {t(area)}
               </a>
             </li>
           ))}
@@ -52,22 +53,21 @@ export default class ProjectOverview extends React.Component {
     if (props.isFetching) {
       return <p><span className='spinner'/> Loading project...</p>;
     }
-    console.log("Props for ProjectOverview");
-    console.log(this.props);
 
     const currentArea = this.state.currentArea || Object.keys(props.overview.areas).sort()[0];
+    const currentServices = props.overview.areas[currentArea];
 
     // TODO: overview page with critical resources?
     // TODO: Settings dialog for enabling/disabling bursting
+    // TODO: info message: bursting is active/enabled/disabled
     // TODO: button: Request Quota Package
 
     return (
       <React.Fragment>
         {this.renderNavbar(currentArea)}
-        <p>This is my state:</p>
-        <pre>{JSON.stringify(this.state, null, 2)}</pre>
-        <p>These are my props:</p>
-        <pre>{JSON.stringify(this.props, null, 2)}</pre>
+        {currentServices.sort(byUIString).map(serviceType => (
+          <ProjectService key={serviceType} serviceType={serviceType} />
+        ))}
       </React.Fragment>
     );
   }
