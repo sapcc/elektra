@@ -2,6 +2,7 @@ export const REQUEST_PROJECT         = 'resources/project/REQUEST_PROJECT';
 export const REQUEST_PROJECT_FAILURE = 'resources/project/REQUEST_PROJECT_FAILURE';
 export const RECEIVE_PROJECT         = 'resources/project/RECEIVE_PROJECT';
 
+// Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {
     "block_storage":             "Block Storage",
     "capacity":                  "Capacity",

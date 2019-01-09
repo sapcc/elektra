@@ -61,6 +61,7 @@ export default class ProjectOverview extends React.Component {
     // TODO: Settings dialog for enabling/disabling bursting
     // TODO: info message: bursting is active/enabled/disabled
     // TODO: button: Request Quota Package
+    // TODO: "Usage data last updated ..." + button: Sync Now
 
     return (
       <React.Fragment>

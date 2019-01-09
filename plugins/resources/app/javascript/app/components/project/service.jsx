@@ -7,6 +7,7 @@ export default class ProjectService extends React.Component {
 
   render() {
     const serviceType = this.props.serviceType;
+    const area        = this.props.service.area || serviceType;
     const categories  = this.props.service.categories;
 
     //show categories sorted by name, but categories named after their service
@@ -21,9 +22,9 @@ export default class ProjectService extends React.Component {
 
     return (
       <React.Fragment>
-        {categoryList.map(category => (
+        {categoryList.map((category, idx) => (
           <React.Fragment key={category}>
-            <h3>{t(category)}</h3>
+            {(idx !== 0 || t(category) != t(area)) && <h3>{t(category)}</h3>}
             {categories[category].sort(byUIString).map(resourceName => {
               const fullName = `${serviceType}/${resourceName}`;
               return <ProjectResource key={fullName} fullResourceName={fullName} />;
