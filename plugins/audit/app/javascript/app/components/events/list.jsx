@@ -53,7 +53,7 @@ export default ({
         </select>
       </div>
       <div className='inputwrapper'>
-        { (attributeValues[filterType] && attributeValues[filterType].length > 0) ?
+        { (!/target_id|initiator_id/.test(filterType) && attributeValues[filterType] && attributeValues[filterType].length > 0) ?
           <select
             name='filterTerm'
             className='form-control filter-term'
