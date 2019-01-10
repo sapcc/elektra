@@ -90,6 +90,14 @@ module ServiceLayer
         end
       end
 
+      def console_log(server_id, length=500)
+        response = elektron_compute.post("servers/#{server_id}/action") do
+          { 'os-getConsoleOutput': { 'length': length } }
+        end
+        
+        response.map_to('body.output')
+      end
+
       def rebuild_server(server_id, image_ref, name, admin_pass = nil,
                          metadata = nil, personality = nil)
         # prepare data
