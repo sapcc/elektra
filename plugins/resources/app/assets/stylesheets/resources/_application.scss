@@ -20,3 +20,20 @@
   ***************************************************
 
 */
+
+.progress-bar-empty {
+  background: none;
+  box-shadow: none;
+}
+.progress-bar-burst, .progress-bar-disabled {
+  @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
+  box-shadow: none;
+}
+.progress-bar-empty + .progress-bar-burst {
+  border-left: 1px solid #DCDCDC;
+}
+
+p.resource-error {
+  position: relative;
+  top: -10px;
+}
