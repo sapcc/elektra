@@ -1,5 +1,6 @@
-import { byUIString, t } from '../../utils';
+import moment from 'moment';
 
+import { byUIString, t } from '../../utils';
 import ProjectService from '../../containers/project/service';
 
 export default class ProjectOverview extends React.Component {
@@ -57,11 +58,15 @@ export default class ProjectOverview extends React.Component {
     const currentArea = this.state.currentArea || Object.keys(props.overview.areas).sort()[0];
     const currentServices = props.overview.areas[currentArea];
 
+    const minScrapedStr = moment.unix(props.overview.minScrapedAt).fromNow(true);
+    const maxScrapedStr = moment.unix(props.overview.maxScrapedAt).fromNow(true);
+    const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
+
     // TODO: overview page with critical resources?
     // TODO: Settings dialog for enabling/disabling bursting
     // TODO: info message: bursting is active/enabled/disabled
     // TODO: button: Request Quota Package
-    // TODO: "Usage data last updated ..." + button: Sync Now
+    // TODO: button: Sync Now
 
     return (
       <React.Fragment>
@@ -69,6 +74,11 @@ export default class ProjectOverview extends React.Component {
         {currentServices.sort(byUIString).map(serviceType => (
           <ProjectService key={serviceType} serviceType={serviceType} flavorData={this.props.flavorData} />
         ))}
+        <div className='row'>
+          <div className='col-md-6 col-md-offset-2'>
+            Usage data last updated {ageDisplay} ago
+          </div>
+        </div>
       </React.Fragment>
     );
   }
