@@ -28,8 +28,6 @@ export class Unit {
     this.unitData = units[this.name] || { base: name, steps: 0 };
     const baseData = bases[this.unitData.base] || { scale: 'none' };
     this.scaleData = scales[baseData.scale];
-    console.log(units);
-    console.log(this);
   }
 
   //Formats a value in this unit. May use bigger units for big values. For

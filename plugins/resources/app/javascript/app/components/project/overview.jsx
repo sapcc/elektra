@@ -55,11 +55,13 @@ export default class ProjectOverview extends React.Component {
       return <p><span className='spinner'/> Loading project...</p>;
     }
 
-    const currentArea = this.state.currentArea || Object.keys(props.overview.areas).sort()[0];
-    const currentServices = props.overview.areas[currentArea];
+    const { areas, scrapedAt } = props.overview;
+    const currentArea = this.state.currentArea || Object.keys(areas).sort()[0];
+    const currentServices = areas[currentArea];
 
-    const minScrapedStr = moment.unix(props.overview.minScrapedAt).fromNow(true);
-    const maxScrapedStr = moment.unix(props.overview.maxScrapedAt).fromNow(true);
+    const currScrapedAt = currentServices.map(serviceType => scrapedAt[serviceType]);
+    const minScrapedStr = moment.unix(Math.min(...currScrapedAt)).fromNow(true);
+    const maxScrapedStr = moment.unix(Math.max(...currScrapedAt)).fromNow(true);
     const ageDisplay = minScrapedStr == maxScrapedStr ? minScrapedStr : `between ${minScrapedStr} and ${maxScrapedStr}`;
 
     // TODO: overview page with critical resources?

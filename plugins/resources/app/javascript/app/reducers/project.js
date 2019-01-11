@@ -35,10 +35,10 @@ const receive = (state, {projectData, receivedAt}) => {
   var {services: serviceList, ...metadata} = projectData;
 
   // `overview` is what the ProjectOverview component needs.
-  const allScrapedAt = serviceList.map(srv => srv.scraped_at);
   const overview = {
-    minScrapedAt: Math.min(...allScrapedAt),
-    maxScrapedAt: Math.max(...allScrapedAt),
+    scrapedAt: Object.fromEntries(
+      serviceList.map(srv => [ srv.type, srv.scraped_at ]),
+    ),
   };
   const areas = {};
   for (let srv of serviceList) {
