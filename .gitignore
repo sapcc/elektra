@@ -22,7 +22,6 @@ pickle-email-*.html
 *.log
 .env*
 .idea
-/bin/*
 /spec/reports
 /features/reports
 features/screenshots
