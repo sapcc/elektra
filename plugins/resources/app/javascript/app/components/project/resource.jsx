@@ -1,6 +1,7 @@
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import { byUIString, t } from '../../utils';
+import { Unit } from '../../unit';
+import { byUIString, t, formatLargeInteger } from '../../utils';
 
 const ResourceName = ({name, flavorData}) => {
   if (!flavorData.primary || !flavorData.secondary) {
@@ -22,6 +23,15 @@ const ResourceError = (props) => (
     {props.children}
   </p>
 );
+
+const UnitValue = ({ unit, value }) => {
+  if (unit === '' || !unit) {
+    return <span className='value-with-unit'>{formatLargeInteger(value)}</span>;
+  }
+
+  const formattedValue = (new Unit(unit)).format(value);
+  return <span className='value-with-unit' title={`${value} ${unit}`}>{formattedValue}</span>;
+};
 
 export default class ProjectResource extends React.Component {
   state = {}
@@ -67,7 +77,7 @@ export default class ProjectResource extends React.Component {
     const displayName = t(this.props.resource.name);
     const flavorData = this.props.flavorData[displayName] || {};
 
-    const { quota, usage, backendQuota } = this.props.resource || {};
+    const { quota, usage, backendQuota, unit } = this.props.resource || {};
     const { enabled: hasBursting, multiplier: burstMultiplier } =
       this.props.metadata.bursting || {};
 
@@ -91,8 +101,8 @@ export default class ProjectResource extends React.Component {
             Expected backend quota to be {desiredBackendQuota}, but is {actualBackendQuota}.
           </ResourceError>}
         </div>
-        <div className='col-md-1 text-right'>{usage}</div>
-        <div className='col-md-1 text-right'>{quota}</div>
+        <div className='col-md-1 text-right'><UnitValue unit={unit} value={usage} /></div>
+        <div className='col-md-1 text-right'><UnitValue unit={unit} value={quota} /></div>
       </div>
     );
   }

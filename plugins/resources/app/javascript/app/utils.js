@@ -22,3 +22,12 @@ export const byUIString = (a, b) => {
   const bb = t(b);
   return (aa < bb) ? -1 : (aa > bb) ? 1 : 0;
 };
+
+//Formats large integer numbers for display by adding digit group separators.
+export const formatLargeInteger = (value) => {
+  //The SI/ISO 31-0 standard recommends to separate each block of three
+  //digits by a thin space; Unicode offers the narrow no-break space U+202F
+  //for this purpose.
+  return Math.round(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u202F");
+  //^ This beautiful regex courtesy of <https://stackoverflow.com/a/2901298/334761>.
+};
