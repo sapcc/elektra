@@ -153,12 +153,14 @@ module ResourceManagement
         if inquiry.errors?
           render action: :new_request
           return
+        else
+          @send_resource_request = true
         end
       end
 
       # load data to reload the bars in the main view
       show_area(@resource.service_area)
-      
+
       respond_to do |format|
         format.js
       end

@@ -1,4 +1,4 @@
-= render partial: 'auto_approve_message'
+= render partial: 'message'
 
 - @view_services.sort_by { |srv| t("resource_management.#{srv.type}") }.each do |service|
   - if service.type.to_s != @area.to_s
