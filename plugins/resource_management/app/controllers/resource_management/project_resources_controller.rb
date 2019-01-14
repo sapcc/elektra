@@ -83,6 +83,7 @@ module ResourceManagement
       if @resource.save
         # load data to reload the bars in the main view
         show_area(@resource.service_area)
+        @reduce_resource_success = true
       else
         # reload the reduce quota window with error
         respond_to do |format|

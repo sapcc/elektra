@@ -11,3 +11,10 @@
       Your quota request for
       %strong=@resource.name
       was successfully send.
+- if @reduce_resource_success
+  .alert.alert-info
+    %p
+      Your quota for
+      %strong=@resource.name
+      was successfully reduces to
+      %strong=@resource.data_type.format(@resource.quota)
