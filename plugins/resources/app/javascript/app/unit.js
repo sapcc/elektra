@@ -54,6 +54,11 @@ export class Unit {
       value = Math.round(value * 100) / 100;
     }
 
-    return `${value} ${displayUnit}`;
+    if (displayUnit == '') {
+      return value.toString();
+    } else {
+      //join with no-break space instead of regular space
+      return `${value}\u00A0${displayUnit}`;
+    }
   }
 }

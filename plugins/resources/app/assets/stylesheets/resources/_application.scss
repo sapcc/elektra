@@ -21,19 +21,33 @@
 
 */
 
-.progress-bar-empty {
-  background: none;
-  box-shadow: none;
-}
-.progress-bar-burst, .progress-bar-disabled {
-  @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
-  box-shadow: none;
-}
-.progress-bar-empty + .progress-bar-burst {
-  border-left: 1px solid #DCDCDC;
+.progress-bar {
+
+  &.progress-bar-empty {
+    background: none;
+    box-shadow: none;
+    color: black;
+    white-space: nowrap;
+    overflow-x: visible;
+  }
+
+  &.progress-bar-disabled {
+    @include background(repeating-linear-gradient(-55deg, transparent, transparent 3px, #DCDCDC 3px, #DCDCDC 5px));
+    box-shadow: none;
+    color: black;
+  }
+
+  &.has-label {
+    /* We restrict this to an extra class instead of applying this style to all
+     * bars because the padding-left would imply a min-width of 0.5em, even for
+     * bars with width:0%. */
+    text-align: left;
+    padding-left: 0.5em;
+  }
+
 }
 
-p.resource-error {
-  position: relative;
-  top: -10px;
+div.flavor-data {
+  /* ensure that flavor data text appears grouped with its resource */
+  margin-bottom: 1em;
 }
