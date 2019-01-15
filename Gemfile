@@ -64,7 +64,7 @@ gem 'arc-client', git: 'https://github.com/sapcc/arc-client.git'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'sdoc', '~> 1.0.0', group: :doc
 
 gem 'puma', require: false
 ###################### PLUGINS #####################
