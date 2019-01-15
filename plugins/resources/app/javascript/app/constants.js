@@ -1,6 +1,10 @@
 export const REQUEST_PROJECT         = 'resources/project/REQUEST_PROJECT';
 export const REQUEST_PROJECT_FAILURE = 'resources/project/REQUEST_PROJECT_FAILURE';
 export const RECEIVE_PROJECT         = 'resources/project/RECEIVE_PROJECT';
+export const SYNC_PROJECT_REQUESTED  = 'resources/project/SYNC_PROJECT_REQUESTED';
+export const SYNC_PROJECT_FAILURE    = 'resources/project/SYNC_PROJECT_FAILURE';
+export const SYNC_PROJECT_STARTED    = 'resources/project/SYNC_PROJECT_STARTED';
+export const SYNC_PROJECT_FINISHED   = 'resources/project/SYNC_PROJECT_FINISHED';
 
 // Please do not use this directly. Use t() from ./utils.js instead.
 export const STRINGS = {

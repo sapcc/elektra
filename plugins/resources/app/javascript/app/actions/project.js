@@ -17,7 +17,13 @@ const limesErrorMessage = (error) =>
   error.response && error.response.data ||
   error.message
 
+const showLimesError = (error) =>
+  addError(React.createElement(ErrorsList, {
+    errors: limesErrorMessage(error)
+  }))
+
 ////////////////////////////////////////////////////////////////////////////////
+// get project
 
 const requestProject = (projectID) => ({
   type: constants.REQUEST_PROJECT,
@@ -45,9 +51,7 @@ export const fetchProject = ({domainID, projectID}) => function(dispatch, getSta
     })
     .catch((error) => {
       dispatch(requestProjectFailure(projectID));
-      addError(React.createElement(ErrorsList, {
-        errors: limesErrorMessage(error)
-      }))
+      showLimesError(error);
     });
 };
 
@@ -59,4 +63,70 @@ export const fetchProjectIfNeeded = ({domainID, projectID}) => function(dispatch
     }
   }
   return dispatch(fetchProject({domainID, projectID}));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// sync project
+
+const syncProjectFailure = (projectID) => ({
+  type: constants.SYNC_PROJECT_FAILURE,
+  projectID,
+});
+
+const syncProjectRequested = (projectID) => ({
+  type: constants.SYNC_PROJECT_REQUESTED,
+  projectID,
+});
+
+const syncProjectStarted = (projectID) => ({
+  type: constants.SYNC_PROJECT_STARTED,
+  projectID,
+});
+
+const syncProjectFinished = (projectID) => ({
+  type: constants.SYNC_PROJECT_FINISHED,
+  projectID,
+});
+
+export const syncProject = ({domainID, projectID}) => function(dispatch, getState) {
+  dispatch(syncProjectRequested(projectID));
+  ajaxHelper.post(`/v1/domains/${domainID}/projects/${projectID}/sync`)
+    .then((response) => {
+      dispatch(syncProjectStarted(projectID));
+    })
+    .catch((error) => {
+      dispatch(syncProjectFailure(projectID));
+      showLimesError(error);
+    });
+};
+
+export const pollRunningSyncProject = ({domainID, projectID}) => function(dispatch, getState) {
+  //check the scraped_at timestamps of all project services to see if the
+  //running sync has completed
+  ajaxHelper.get(`/v1/domains/${domainID}/projects/${projectID}`, { resource: 'none' })
+    .catch((error) => {
+      dispatch(syncProjectFailure(projectID));
+      showLimesError(error);
+    })
+    .then((response) => {
+      const oldServices = getState().project.services || {};
+      const newServices = ((response.data.project || {}).services || []);
+      let allUpdated = true; //until proven otherwise
+      for (const srv of newServices) {
+        const oldScrapedAt = (oldServices[srv.type] || {}).scraped_at || 0;
+        const newScrapedAt = srv.scraped_at || 0;
+        if (newScrapedAt <= oldScrapedAt) {
+          allUpdated = false;
+        }
+      }
+
+      // when polling shows that all project services have been synced, reload
+      // the project in the UI (this will also break the polling since the
+      // polling is done by a React component which vanishes during the project
+      // reload)
+      if (allUpdated) {
+        dispatch(syncProjectFinished(projectID));
+        dispatch(fetchProject({domainID, projectID}));
+      }
+    });
 };

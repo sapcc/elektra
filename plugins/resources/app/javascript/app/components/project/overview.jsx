@@ -2,6 +2,7 @@ import moment from 'moment';
 
 import { byUIString, t } from '../../utils';
 import ProjectService from '../../containers/project/service';
+import ProjectSyncAction from '../../components/project/sync_action';
 
 export default class ProjectOverview extends React.Component {
   state = {
@@ -46,9 +47,10 @@ export default class ProjectOverview extends React.Component {
   }
 
   render() {
-    if (!policy.isAllowed("project:show")) {
+    if (!policy.isAllowed('project:show')) {
       return <p>You are not allowed to see this page</p>;
     }
+    const canEdit = policy.isAllowed('project:edit');
 
     const props = this.props;
     if (props.isFetching) {
@@ -68,7 +70,14 @@ export default class ProjectOverview extends React.Component {
     // TODO: Settings dialog for enabling/disabling bursting
     // TODO: info message: bursting is active/enabled/disabled
     // TODO: button: Request Quota Package
-    // TODO: button: Sync Now
+
+    const syncActionProps = {
+      domainID: props.domainID,
+      projectID: props.projectID,
+      syncStatus: props.syncStatus,
+      syncProject: props.syncProject,
+      pollRunningSyncProject: props.pollRunningSyncProject,
+    };
 
     return (
       <React.Fragment>
@@ -78,7 +87,8 @@ export default class ProjectOverview extends React.Component {
         ))}
         <div className='row'>
           <div className='col-md-6 col-md-offset-2'>
-            Usage data last updated {ageDisplay} ago
+            Usage data last updated {ageDisplay} ago{' '}
+            {canEdit && <ProjectSyncAction {...syncActionProps} />}
           </div>
         </div>
       </React.Fragment>
