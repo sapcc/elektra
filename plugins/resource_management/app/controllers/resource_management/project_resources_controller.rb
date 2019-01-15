@@ -129,7 +129,7 @@ module ResourceManagement
         base_url    = plugin('resource_management').admin_area_path(area: @resource.service_area.to_s, domain_id: @scoped_domain_id, project_id: nil)
         overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
 
-        inquiry = services.inquiry.create_inquiry(
+        @inquiry = services.inquiry.create_inquiry(
           'project_quota',
           "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
           current_user,
@@ -151,7 +151,7 @@ module ResourceManagement
               region: current_region
           }
         )
-        if inquiry.errors?
+        if @inquiry.errors?
           render action: :new_request
           return
         else
