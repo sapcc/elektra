@@ -1,11 +1,10 @@
-# encoding: UTF-8
 source 'https://rubygems.org'
 
 # Avoid g++ dependency https://github.com/knu/ruby-domain_name/issues/3
 # # unf is pulled in by the ruby-arc-client
 gem 'unf', '>= 0.2.0beta2'
 
-gem 'rails', '~> 5.1' #Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
+gem 'rails', '~> 5.1' # Don't use 5.1.3 because of redirect errors in tests (scriptr vs. script name in ActionPack)
 gem 'webpacker', '~> 3.5'
 
 # Views and Assets
@@ -29,7 +28,7 @@ gem 'font-awesome-sass'
 gem 'responders'
 
 # make it fancy with react
-gem 'react-rails' #, "1.8.2"
+gem 'react-rails' # , "1.8.2"
 
 # Database
 gem 'pg'
@@ -71,13 +70,13 @@ gem 'puma', require: false
 ###################### PLUGINS #####################
 
 # backlist plugins (global)
-black_list = ['webconsole','bare_metal_hana'] #e.g. ['compute']
-if ENV.has_key?('BLACK_LIST_PLUGINS')
-  ENV['BLACK_LIST_PLUGINS'].split(',').each{|plugin_name| black_list << plugin_name.strip}
+black_list = %w[webconsole bare_metal_hana] # e.g. ['compute']
+if ENV.key?('BLACK_LIST_PLUGINS')
+  ENV['BLACK_LIST_PLUGINS'].split(',').each { |plugin_name| black_list << plugin_name.strip }
 end
 
 # load all plugins except blacklisted plugins
-Dir.glob("plugins/*").each do |plugin_path|
+Dir.glob('plugins/*').each do |plugin_path|
   unless black_list.include?(plugin_path.gsub('plugins/', ''))
     gemspec path: plugin_path
   end
@@ -99,15 +98,13 @@ group :production do
 end
 
 group :development do
-
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 3.0'
 
-  #gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
+  # gem 'quiet_assets' #can be removed once we upgraded to sprockets >=3.1.0
 end
 
 group :development, :test do
-
   # load .env.bak needed for cucumber tests!
   gem 'dotenv-rails'
 
@@ -117,26 +114,26 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 
-  gem "foreman"
+  gem 'foreman'
 
   # Testing
 
-  gem "rspec-rails"
-  gem "factory_girl_rails", "~> 4.0"
-  gem "database_cleaner"
+  gem 'rspec-rails'
+  gem 'factory_girl_rails', '~> 4.0'
+  gem 'database_cleaner'
 
   gem 'pry-rails'
 end
 
 group :development, :test, :integration_tests do
-  gem "rspec"
+  gem 'rspec'
   gem 'colorize'
 end
 
 group :integration_tests do
-  gem "capybara"
+  gem 'capybara'
   gem 'capybara-screenshot'
-  gem "cucumber-rails", require: false
+  gem 'cucumber-rails', require: false
   gem 'phantomjs', require: false
   gem 'poltergeist'
 end
@@ -155,5 +152,5 @@ end
 
 # load SAP specific extension for fonts, ....
 if ENV['ELEKTRA_EXTENSION'].to_s == 'true'
-  gem 'elektra-extension', git: "git://github.wdf.sap.corp/monsoon/elektra-extension.git", branch: :master
+  gem 'elektra-extension', git: 'git://github.wdf.sap.corp/monsoon/elektra-extension.git', branch: :master
 end
