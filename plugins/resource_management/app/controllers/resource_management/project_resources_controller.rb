@@ -83,6 +83,7 @@ module ResourceManagement
       if @resource.save
         # load data to reload the bars in the main view
         show_area(@resource.service_area)
+        @reduce_resource_success = true
       else
         # reload the reduce quota window with error
         respond_to do |format|
@@ -120,40 +121,51 @@ module ResourceManagement
         return
       end
 
-      # now we can create the inquiry
-      base_url    = plugin('resource_management').admin_area_path(area: @resource.service_area.to_s, domain_id: @scoped_domain_id, project_id: nil)
-      overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
+      # try to auto-approve
+      if @resource.save
+        @auto_approve_success = true
+      else
+        # if auto-aprove failed create the inquiry
+        base_url    = plugin('resource_management').admin_area_path(area: @resource.service_area.to_s, domain_id: @scoped_domain_id, project_id: nil)
+        overlay_url = plugin('resource_management').admin_review_request_path(project_id: nil)
 
-      inquiry = services.inquiry.create_inquiry(
-        'project_quota',
-        "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
-        current_user,
-        {
-          service: @resource.service_type,
-          resource: @resource.name,
-          desired_quota: new_value,
-        },
-        service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
-        {
-          "approved": {
-            "name": "Approve",
-            "action": "#{base_url}?overlay=#{overlay_url}",
+        @inquiry = services.inquiry.create_inquiry(
+          'project_quota',
+          "project #{@scoped_domain_name}/#{@scoped_project_name}: add #{@resource.data_type.format(new_value - old_value)} #{@resource.service_type}/#{@resource.name}",
+          current_user,
+          {
+            service: @resource.service_type,
+            resource: @resource.name,
+            desired_quota: new_value,
           },
-        },
-        nil,
-        {
-            domain_name: @scoped_domain_name,
-            region: current_region
-        }
-      )
-      if inquiry.errors?
-        render action: :new_request
-        return
+          service_user.identity.list_scope_resource_admins(domain_id: @scoped_domain_id),
+          {
+            "approved": {
+              "name": "Approve",
+              "action": "#{base_url}?overlay=#{overlay_url}",
+            },
+          },
+          nil,
+          {
+              domain_name: @scoped_domain_name,
+              region: current_region
+          }
+        )
+        if @inquiry.errors?
+          render action: :new_request
+          return
+        else
+          @send_resource_request = true
+        end
       end
+
+      # load data to reload the bars in the main view
+      show_area(@resource.service_area)
 
       respond_to do |format|
         format.js
       end
+
     end
 
     def new_package_request
